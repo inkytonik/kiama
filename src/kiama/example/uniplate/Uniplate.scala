@@ -8,7 +8,6 @@ import org.scalacheck._
 /**
  * Tests based on examples from the paper "Uniform boilerplate and list
  * processing" by Mitchell and Runciman, from Haskell workshop 2007.
- * Run this object to perform the tests.
  */
 
 abstract class Exp extends Product {
