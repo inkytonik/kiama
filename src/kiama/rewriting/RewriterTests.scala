@@ -108,20 +108,3 @@ object RewriterTests extends Application {
     Test.checkProperties (AllTests)
 }
 
-/**
- * Run this to perform the see test cases.  Argument should be number to see
- * (defaults to 5).
- */
-object RewriterTestcases extends RewriterTests.TestBase {
-    def main (args : Array[String]) = {
-        var count = 0
-        args.length match {
-            case 0 => count = 5
-            case 1 => count = args(0).toInt
-            case _ => println ("usage: RewriterTestcases [number]"); exit (1)
-        }
-        val genStmt = Arbitrary.arbitrary[Stmt]
-        for (i <- 1 to count)
-            println ("testcase " + i + ": " + genStmt (Gen.defaultParams))
-    }
-}
