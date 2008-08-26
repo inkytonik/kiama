@@ -17,12 +17,7 @@ object PackratTests extends Packrat with Application {
      * @return the constructed reader
      */
     def input (str : String) = new CharArrayReader (str.toArray)
-    
-    /**
-     * An input with nothing in it.
-     */
-    val empty = input ("")
-    
+        
     /**
      * Convert a predicate on input to a predicate on strings.
      */
@@ -65,6 +60,7 @@ object PackratTests extends Packrat with Application {
      * Tests that don't involve reading any input.
      */
     object NoReadTests extends Properties ("noread") {
+        val empty = input ("")
         specify ("success.empty", same (success ("hi") (empty), Success ("hi", empty)))
         specify ("failure.empty", same (failure ("fail") (empty), Failure ("fail", empty)))
         specify ("success.gen", pred (in => same (success (42) (in), Success (42, in))))
