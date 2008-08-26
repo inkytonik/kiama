@@ -26,8 +26,8 @@ object PackratTests extends Packrat with Application {
     /**
      * Convert a predicate on input to a predicate on strings.
      */
-    def pred (pred : Input => Boolean) : String => Boolean =
-        s => { val in = input (s); pred (in) }
+    def pred (p : Input => Boolean) : String => Boolean =
+        s => p (input (s))
         
     /**
      * Equality of inputs by content.
@@ -117,7 +117,7 @@ object PackratTests extends Packrat with Application {
     object AllTests extends Properties ("packrat") {
         include (NoReadTests)
         include (SingleElemTests)
-        include (ImperativeTests)
+//        include (ImperativeTests)
     }
     
     Test.checkProperties (AllTests)
