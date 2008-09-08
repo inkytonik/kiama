@@ -24,7 +24,7 @@ object RewriterTests extends Application {
         specify ("root.stmt", (t : Stmt) => issubterm (t) (t) == Some (t))
         specify ("root.exp", (t : Exp) => issubterm (t) (t) == Some (t))
     
-        private val random = new scala.util.Random
+        private val random = new scala.Random /*scala.util.Random*/
     
         /**
          * Pick a random Term child of t, returning t if there are no
