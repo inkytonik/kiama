@@ -178,7 +178,6 @@ class PackratTests extends TestCase with Packrat with TestBase
         check ((t : T) => {
             val buffer = new StringBuilder
             t.pretty (buffer)
-            println (buffer)
             expectBool (parser, buffer.toString, t)
         })
     }
