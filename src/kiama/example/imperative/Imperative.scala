@@ -7,11 +7,14 @@ object AST {
 
     type Idn = String
     
-    abstract class Exp extends Product {
+    trait PrettyPrintable {
+        def pretty (o : StringBuilder)
+    }
+    
+    abstract class Exp extends Product with PrettyPrintable {
         val isconst : Boolean = false
         val value : Int = 0
         val vars : Set[Idn] = Set ()
-        def pretty (o : StringBuilder)
     }
     case class Num (i : Int) extends Exp {
         override val isconst = true
@@ -56,9 +59,8 @@ object AST {
         }
     }
 
-    abstract class Stmt extends Product {
+    abstract class Stmt extends Product with PrettyPrintable {
         val vars : Set[Idn] = Set ()
-        def pretty (o : StringBuilder)
     }
     case class Null extends Stmt {
         def pretty (o : StringBuilder) = o.append (";\n")
@@ -93,11 +95,20 @@ trait PrettyPrinter {
     import AST._
 
     /**
-     * Simple pretty-printer.
+     * Simple pretty-printer for statements.
      */
     def pretty (s : Stmt) : String = {
         val buffer = new StringBuilder
         s.pretty (buffer)
+        buffer.toString
+    }
+    
+    /**
+     * Simple pretty-printer for expressions.
+     */
+    def pretty (e : Exp) : String = {
+        val buffer = new StringBuilder
+        e.pretty (buffer)
         buffer.toString
     }
 
@@ -159,59 +170,68 @@ trait TestBase extends Parser with PrettyPrinter {
     import org.scalacheck._
 
     val genNum = for (i <- Gen.choose (1,10)) yield Num (i)
-    val genIdn = for (i <- Gen.choose (1,5)) yield ("var" + i)
+    val genIdn = for (s <- Gen.identifier) yield (s)
     val genVar = for (v <- genIdn) yield Var (v)
-                
+    
     val genLeafExp = Gen.oneOf (genNum, genVar)
 
     def genAdd (sz : Int) =
-        for { l <- sizedExp (sz/2); r <- sizedExp (sz/2) } yield Add (l, r)
+        for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Add (l, r)
                     
     def genSub (sz : Int) =
-        for { l <- sizedExp (sz/2); r <- sizedExp (sz/2) } yield Sub (l, r)
+        for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Sub (l, r)
                  
     def genMul (sz : Int) =
-        for { l <- sizedExp (sz/2); r <- sizedExp (sz/2) } yield Mul (l, r)
+        for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Mul (l, r)
 
     def genDiv (sz : Int) =
-        for { l <- sizedExp (sz/2); r <- sizedExp (sz/2) } yield Div (l, r)
+        for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Div (l, r)
    
     def genInternalExp (sz : Int) =
         Gen.oneOf (genAdd (sz), genSub (sz), genMul (sz), genDiv (sz))
         
-    def sizedExp (sz : Int) : Gen[Exp] =
+    def genExp (sz : Int) : Gen[Exp] =
         if (sz <= 0)
             genLeafExp
         else
             Gen.frequency ((1, genLeafExp), (3, genInternalExp (sz)))
                     
     implicit def arbExp : Arbitrary[Exp] =
-        Arbitrary { Gen.sized (sz => sizedExp (sz)) }
+        Arbitrary { Gen.sized (sz => genExp (sz)) }
     
     val genLeafStmt = Gen.value (Null ())
     
     def genSeqn (sz : Int) =
         for { len <- Gen.choose (1,sz)
-              ss <- Gen.containerOfN[List,Stmt] (len, sizedStmt (sz / len)) }
+              ss <- Gen.containerOfN[List,Stmt] (len, genStmt (sz / len)) }
             yield Seqn (ss)
+            
+    implicit def arbSeqn : Arbitrary[Seqn] =
+        Arbitrary { Gen.sized (sz => genSeqn (sz)) }
     
     def genAsgn (sz : Int) =
-        for { i <- genIdn; e <- sizedExp (sz-1) } yield Asgn (i, e)
+        for { i <- genIdn; e <- genExp (sz-1) } yield Asgn (i, e)
+    
+    implicit def arbAsgn : Arbitrary[Asgn] =
+        Arbitrary { Gen.sized (sz => genAsgn (sz)) }
                 
     def genWhile (sz : Int) =
-        for { e <- sizedExp (sz/3); b <- sizedStmt (sz - 1) } yield While (e, b)
+        for { e <- genExp (sz/3); b <- genStmt (sz - 1) } yield While (e, b)
         
+    implicit def arbWhile : Arbitrary[While] =
+        Arbitrary { Gen.sized (sz => genWhile (sz)) }
+
     def genInternalStmt (sz : Int) : Gen[Stmt] =
         Gen.frequency ((1, genSeqn (sz)), (5, genAsgn (sz)), (3, genWhile (sz)))
                 
-    def sizedStmt (sz : Int) =
+    def genStmt (sz : Int) =
         if (sz <= 0)
             genLeafStmt
         else
             Gen.frequency ((1, genLeafStmt), (9, genInternalStmt (sz)))
             
     implicit def arbStmt : Arbitrary[Stmt] =
-        Arbitrary { Gen.sized (sz => sizedStmt (sz)) }
+        Arbitrary { Gen.sized (sz => genStmt (sz)) }
     
 }
 
@@ -229,7 +249,7 @@ object Imperative extends TestBase {
         args.length match {
             case 0 => count = 5
             case 1 => count = args(0).toInt
-            case _ => println ("usage: ImperativeTestcases [number]"); exit (1)
+            case _ => println ("usage: Imperative [number]"); exit (1)
         }
         val genStmt = Arbitrary.arbitrary[Stmt]
         for (i <- 1 to count) {

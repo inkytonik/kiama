@@ -1,13 +1,20 @@
 package kiama.parsing
 
+import junit.framework.Assert._
+import junit.framework.TestCase
 import org.scalacheck._
-import kiama.example.imperative.AST._
+import org.scalacheck.Prop._ 
+import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.prop.Checkers 
+import kiama.example.imperative.TestBase
 
 /**
  * Run this to perform the tests.
  */
-object PackratTests extends Packrat with Application {
+class PackratTests extends TestCase with Packrat with TestBase
+                   with JUnit3Suite with Checkers {
     
+    import kiama.example.imperative.AST._
     import scala.util.parsing.input.CharArrayReader
 
     /**
@@ -18,6 +25,11 @@ object PackratTests extends Packrat with Application {
      */
     def input (str : String) = new CharArrayReader (str.toArray)
         
+    /**
+     * Empty input.
+     */
+    val empty = input ("")
+
     /**
      * Convert a predicate on input to a predicate on strings.
      */
@@ -57,32 +69,55 @@ object PackratTests extends Packrat with Application {
     }
         
     /**
-     * Tests that don't involve reading any input.
+     * A successful parse on empty input succeeds with the specified
+     * result.
      */
-    object NoReadTests extends Properties ("noread") {
-        val empty = input ("")
-        specify ("success.empty", same (success ("hi") (empty), Success ("hi", empty)))
-        specify ("failure.empty", same (failure ("fail") (empty), Failure ("fail", empty)))
-        specify ("success.gen", pred (in => same (success (42) (in), Success (42, in))))
-        specify ("failure.gen", pred (in => same (failure ("fail") (in), Failure ("fail", in))))
+    def testNoReadSuccess () {
+        assertTrue (same (success ("hi") (empty), Success ("hi", empty)))
     }
     
     /**
-     * Tests that examine a single element of the input.
+     * A failing parse on empty input fails with the specified message.
      */
-    object SingleElemTests extends Properties ("singleelem") {
-        // Looking for the first element of the input (if there is one) should
-        // succeed
-        specify ("success.gen", pred (in => {
+    def testNoReadFailure () {
+        assertTrue (same (failure ("fail") (empty), Failure ("fail", empty)))
+    }
+    
+    /**
+     * A successful parse succeeds with the specified result no matter
+     * what the input is.
+     */
+    def testAnyInputSuccess () {
+        check (pred (in => same (success (42) (in), Success (42, in))))
+    }
+    
+    /**
+     * A failing parse fails with the specified message no matter
+     * what the input is.
+     */
+    def testAnyInputFail () {
+        check (pred (in => same (failure ("fail") (in), Failure ("fail", in))))
+    }
+    
+    /**
+     * Looking for the first element of the input (if there is one) should
+     * succeed.
+     */
+    def testFirstElementSuccess () {
+        check (pred (in => {
             if (in.atEnd)
                 true
             else
                 same ((in.first) (in), Success (in.first, in.rest))
         }))
+    }
         
-        // Looking for something that cannot be the first element of the input
-        // (if there is one) should fail
-        specify ("failure.gen", pred (in => {
+    /**
+     * Looking for something that cannot be the first element of the input
+     * (if there is one) should fail.
+     */
+    def testFirstElementFailure () {
+        check (pred (in => {
             import scala.Math.{MAX_CHAR,MIN_CHAR}
             if (in.atEnd) {
                 true
@@ -94,28 +129,101 @@ object PackratTests extends Packrat with Application {
     }
     
     /**
-     * Tests of recognising the imperative language.
+     * Try to parse a string and expect the given result.  Also check that
+     * there is no more input left.  This is the JUnit version.
+     * 
+     * @param str the string to try to parse
+     * @param result the result value that the parser should return 
      */
-    object ImperativeTests extends Properties ("imperative")
-                           with kiama.example.imperative.TestBase {
-        // Randomly generate imperative programs, pretty-print them and
-        // parse the resulting string.  The resulting AST should be what
-        // we started with.
-        
-        specify ("roundtrip", (s : Stmt) => {
-            parse (input (pretty (s))) match {
-                case Success (v, in) => v == s
-                case failure         => println (failure); false
-            }
+    def expect[T] (parser : Parser[T], str : String, result : T) {
+        parser (input (str)) match {
+            case Success (r, in) => if (r != result) fail ("found " + r + " not " + result)
+                                    if (!in.atEnd) fail ("input remaining at " + in.pos)
+            case Failure (m, in) => fail (m + " at " + in.pos)
+        }
+    }
+    
+    /**
+     * A Boolean version of expect for use in ScalaCheck checks.
+     */
+    def expectBool[T] (parser : Parser[T], str : String, result : T) : Boolean = {
+        parser (input (str)) match {
+            case Success (r, in) => (r == result) && in.atEnd
+            case Failure (m, in) => false            
+        }
+    }
+    
+    /**
+     * Parse numbers.
+     */
+    def testParseNumbers () {
+        check ((i : Int) => (i >= 0) ==> expectBool (number, i.toString, Num (i)))
+    }
+    
+    /**
+     * Parse variables (subsumes tests for identifier parsing).
+     */
+    def testParseVariables () {
+        expect (variable, "a", Var ("a"))
+        expect (variable, "total", Var ("total"))
+        expect (variable, "sum123", Var ("sum123"))
+        implicit def arbIdn : Arbitrary[String] = Arbitrary (genIdn)
+        check ((s : String) => expectBool (variable, s, Var (s)))
+    }
+    
+    /**
+     * Roundtrip test parse of pretty-printed value.
+     */
+    def roundtrip[T <: PrettyPrintable] (parser : Parser[T])(implicit arbT : Arbitrary[T]) {
+        check ((t : T) => {
+            val buffer = new StringBuilder
+            t.pretty (buffer)
+            println (buffer)
+            expectBool (parser, buffer.toString, t)
         })
     }
     
-    object AllTests extends Properties ("packrat") {
-        include (NoReadTests)
-        include (SingleElemTests)
-//        include (ImperativeTests)
+    /**
+     * Parse expressions
+     */
+    def testParseExpressions () {
+        roundtrip (exp)
     }
     
-    Test.checkProperties (AllTests)
+    /**
+     * Parse a null statement.
+     */
+    def testParseNullStmt () {
+        expect (stmt, ";", Null ())
+        expect (stmt, "     ;", Null ())
+    }
+    
+    /**
+     * Parse assignment statements.
+     */
+    def testParseAssignStmts () {
+        roundtrip (asgnStmt)
+    }
 
+    /**
+     * Parse statement sequences.
+     */
+    def testParseSequences () {
+        roundtrip (sequence)
+    }
+    
+    /**
+     * Parse while statements.
+     */
+    def testParseWhiles () {
+        roundtrip (whileStmt)
+    }
+    
+    /**
+     * Parse statements.
+     */
+    def testParseStatements () {
+        roundtrip (stmt)
+    }
+    
 }
