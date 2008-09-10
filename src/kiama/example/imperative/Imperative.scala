@@ -120,44 +120,41 @@ trait PrettyPrinter {
 trait Parser extends kiama.parsing.Packrat {
 
     import AST._
+                
+    val idn : Parser[String] =
+        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
     
-    def parse : Parser[Stmt] =
-        stmt
-
-    def stmt : Parser[Stmt] =
-        ";" ^^ (s => Null ()) | sequence | asgnStmt | whileStmt
+    val variable : Parser[Var] =
+        idn ^^ Var
+    
+    val number : Parser[Num] =
+        token (digit+) ^^ (l => Num (l.mkString.toInt))
         
-    def sequence : Parser[Seqn] =
+    val factor : Parser[Exp] =
+        memo (number | variable | "(" ~> exp <~ ")")
+    
+    val term : Parser[Exp] =
+        memo (term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
+              term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
+              factor)
+    
+    val exp : Parser[Exp] =
+        memo (exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
+              exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
+              term)
+
+    val sequence : Parser[Seqn] =
         "{" ~> (stmt+) <~ "}" ^^ Seqn
         
-    def asgnStmt : Parser[Asgn] =
+    val asgnStmt : Parser[Asgn] =
         idn ~ ("=" ~> exp) ^^ { case s ~ e => Asgn (s, e) }
     
-    def whileStmt : Parser[While] =
+    val whileStmt : Parser[While] =
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
 
-    def exp : Parser[Exp] =
-        exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
-        exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
-        term
-    
-    def term : Parser[Exp] =
-        term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
-        term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
-        factor
-
-    def factor : Parser[Exp] =
-        number | variable | "(" ~> exp <~ ")"
-
-    def number : Parser[Num] =
-        token (digit+) ^^ (l => Num (l.mkString.toInt))
-
-    def variable : Parser[Var] =
-        idn ^^ Var
-        
-    def idn : Parser[String] =
-        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
-
+    val stmt : Parser[Stmt] =
+        ";" ^^ (s => Null ()) | sequence | asgnStmt | whileStmt
+       
 }
         
 /**

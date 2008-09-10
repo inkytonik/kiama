@@ -6,7 +6,7 @@ package kiama.parsing
  * the Scala Library parser combinator library as much as possible to
  * reduce the learning curve and conversion costs.
  */
-trait Packrat {
+trait Parsers {
     
     import scala.util.parsing.input.Reader
     
@@ -24,60 +24,67 @@ trait Packrat {
     type Input = Reader[Elem]
 
     /**
-     * Parse results.
+     * Parse results represented as an answer and the point to which the
+     * input was processed.
      */
-    sealed abstract class ParseResult[+T] {
-        def map[U] (f : T => U) : ParseResult[U]
-        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U]  
-        def append[U >: T] (a : => ParseResult[U]) : ParseResult[U]
+    case class ParseResult[+T] (ans : ParseAnswer[T], in : Input) {
+        def map[U] (f : T => U) : ParseResult[U] =
+            ParseResult (ans map f, in)
+        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U] =
+            (ans flatMapWithNext (f, (b : ParseAnswer[U]) => in => ParseResult (b, in))) (in)
+        def append[U >: T] (a : => ParseResult[U]) : ParseResult[U] =
+            ans append (b => ParseResult (b, in), a)      
+        override def toString = "[" + in.pos + "] " + ans
     }
     
     /**
-     * A successful parse result.
+     * Parsing answers.
+     */
+    abstract class ParseAnswer[+T] {
+        def map[U] (f : T => U) : ParseAnswer[U]
+        def flatMapWithNext[U] (f : T => Input => ParseResult[U], g : ParseAnswer[U] => Input => ParseResult[U]) : Input => ParseResult[U]
+        def append[U >: T] (f : ParseAnswer[T] => ParseResult[U], a : => ParseResult[U]) : ParseResult[U]
+    }
+    
+    /**
+     * A successful parse answer.
      *
      * @param result a value representing the result of the parse
-     * @param in the remainder of the input
      */
-    case class Success[T] (result : T, in : Input) extends ParseResult[T] {
-        
+    case class Success[T] (result : T) extends ParseAnswer[T] {
         def map[U] (f : T => U) =
-            Success (f (result), in)
-
-        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U] =
-            f (result) (in) 
-            
-        def append[U >: T] (a : => ParseResult[U]) : ParseResult[U] =
-            this
-            
-        override def toString = 
-            "[" + in.pos + "] parsed: " + result
-
+            Success (f (result))
+        def flatMapWithNext[U] (f : T => Input => ParseResult[U], g : ParseAnswer[U] => Input => ParseResult[U]) : Input => ParseResult[U] =
+            f (result)
+        def append[U >: T] (f : ParseAnswer[T] => ParseResult[U], a : => ParseResult[U]) : ParseResult[U] =
+            f (this)
+        override def toString = "parsed: " + result
     }
+    
+    /**
+     * Convenience factory method for success results.
+     */
+    def success[T] (result : T, in : Input) = ParseResult (Success (result), in)
      
     /**
-     * A parse result representing failure of a parse.
+     * A parse answer representing failure of a parse.
      *
      * @param msg a message describing the failure
-     * @param in the remainder of the input
      */
-    case class Failure (msg : String, in : Input) extends ParseResult[Nothing] {
-        
-        def map[U] (f : Nothing => U) =
+    case class Failure (msg : String) extends ParseAnswer[Nothing] {
+        def map[U] (f : Nothing => U) : ParseAnswer[U] =
             this
-
-        def flatMapWithNext[U] (f : Nothing => Input => ParseResult[U]) : ParseResult[U] =
-            this
-            
-        def append[U >: Nothing] (a : => ParseResult[U]) : ParseResult[U] =
-            // FIXME: is this right?  The Scala lib version does some stuff with
-            // the position to return the "furthest" position, but we just want
-            // to do whatever a does, right?
+        def flatMapWithNext[U] (f : Nothing => Input => ParseResult[U], g : ParseAnswer[U] => Input => ParseResult[U]) : Input => ParseResult[U] =
+            g (this)
+        def append[U >: Nothing] (f : ParseAnswer[Nothing] => ParseResult[U], a : => ParseResult[U]) : ParseResult[U] =
             a
-            
-        override def toString =
-            "[" + in.pos + "] failure: " + msg + "\n\n" + in.pos.longString
-            
-    }
+        override def toString = "failure: " + msg
+    }    
+        
+    /**
+     * Convenience factory method for failure results.
+     */
+    def failure[T] (msg : String, in : Input) = ParseResult (Failure (msg), in)
 
     /**
      * A special kind of tuple for compound parser result values.
@@ -149,39 +156,6 @@ trait Packrat {
             map (f)
  
     }
-    
-    /**
-     * A parser that memoises the results returned by a given parser.  Assumes
-     * that the underlying readers share a common source.
-     */
-    class MemoParser[T] (p : Parser[T]) extends Parser[T] {
-        
-        import scala.util.parsing.input.Position
-        import scala.collection.mutable.HashMap
-    
-        /**
-         * The memo table.
-         */
-        var memo = new HashMap[Position,ParseResult[T]]
-
-        /** 
-         * Run this parser, memoising its results.
-         *
-         * @param in the input on which the parser should run
-         * @return the result of the parse
-         */
-        def apply (in : Input) : ParseResult[T] = {
-            val pos = in.pos
-            if (memo.contains (pos)) {
-                return memo (pos)
-            } else {
-                val res = p.apply (in)
-                memo += (pos -> res)
-                return res
-            }
-        }
-
-    }
 
     /**
      * Construct a parser from a function on input.
@@ -196,7 +170,7 @@ trait Packrat {
      * @return the constructed parser
      */
     def success[T] (result : T) : Parser[T] =
-        Parser { in => Success (result, in) }
+        Parser { in => success (result, in) }
     
     /**
      * Construct a parser that always fails without consuming any input.
@@ -205,7 +179,7 @@ trait Packrat {
      * @return the constructed parser
      */
     def failure (msg : String) : Parser[Nothing] =
-        Parser { in => Failure (msg, in) }
+        Parser { in => failure (msg, in) }
         
     /**
      * Construct a parser that recognises a given input element.
@@ -216,9 +190,9 @@ trait Packrat {
     implicit def accept (e : Elem) : Parser[Elem] =
         Parser { in =>
             if (e == in.first)
-                Success (in.first, in.rest)
+                success (in.first, in.rest)
             else
-                Failure (e.toString, in)
+                failure (e.toString, in)
         }
         
     /**
@@ -228,21 +202,16 @@ trait Packrat {
     implicit def acceptIf (pred : Elem => Boolean) : Parser[Elem] =
         Parser { in =>
             if (pred (in.first))
-                Success (in.first, in.rest)
+                success (in.first, in.rest)
             else
-                Failure ("acceptIf", in)
+                failure ("acceptIf", in)
         }
-        
-    /**
-     * Construct a memoising parser based on a given parser.
-     */
-    def memo[T] (p : Parser[T]) : Parser[T] =
-        new MemoParser (p)
-        
+                
     // Character reader-specific ones are below here
     
     /**
-     * Construct a parser that accepts a given string.
+     * Construct a parser that accepts a given string.  Implicitly invoked
+     * on strings where parsers are expected.
      */
     implicit def accceptString (s : String) : Parser[String] =
         token (Parser { in =>
@@ -255,25 +224,62 @@ trait Packrat {
                 j += 1
             }
             if (i == s.length)
-                Success (source.subSequence (offset, j).toString, in.drop (j - offset))
+                success (source.subSequence (offset, j).toString, in.drop (j - offset))
             else 
-                Failure ("'" + s + "' expected", in)
+                failure ("'" + s + "' expected", in)
         })
 
     def token[T] (p : Parser[T]) : Parser[T] =
         (whitespace*) ~> p
         
-    def whitespace : Parser[Char] =
+    val whitespace : Parser[Char] =
         (ch : Char) => ch.isWhitespace
 
-    def digit : Parser[Char] =
+    val digit : Parser[Char] =
         (ch : Char) => ch.isDigit
 
-    def letter : Parser[Char] =
+    val letter : Parser[Char] =
         (ch : Char) => ch.isLetter
         
-    def letterOrDigit : Parser[Char] =
+    val letterOrDigit : Parser[Char] =
         (ch : Char) => ch.isLetterOrDigit
+    
+}
+
+trait Packrat extends Parsers {
+          
+    /**
+     * A rule is a memoising, left recursion-detecting encapsulation of a parser.
+     */
+    class Rule[T] (body : => Parser[T]) extends Parser[T] {
+
+        import scala.collection.mutable.HashMap
+      
+        /*
+         * The section of the memo table relating to this rule.
+         */
+        private val table = new HashMap[Input,ParseResult[T]]
+
+        /**
+         * Apply this rule, memoising the result.
+         */
+        def apply (in : Input) : ParseResult[T] = {
+            if (table contains in)
+                table (in)
+            else {
+                table += (in -> ParseResult (Failure ("left recursion"), in))
+                val m = body (in)
+                table += (in -> m)
+                m
+            }
+        }
+                      
+    }
+    
+    /**
+     * Convenience function for turning a parser into a memoising one.
+     */
+    def memo[T] (parser : => Parser[T]) : Rule[T] = new Rule (parser)
 
 }
 
