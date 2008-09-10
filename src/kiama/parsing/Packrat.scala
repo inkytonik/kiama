@@ -246,7 +246,7 @@ trait Parsers {
     
 }
 
-trait Packrat extends Parsers {
+trait PackratParsers extends Parsers {
           
     /**
      * A rule is a memoising, left recursion-detecting encapsulation of a parser.

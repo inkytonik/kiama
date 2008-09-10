@@ -117,7 +117,7 @@ trait PrettyPrinter {
 /**
  * Parser to AST.
  */
-trait Parser extends kiama.parsing.Packrat {
+trait Parser extends kiama.parsing.PackratParsers {
 
     import AST._
                 
