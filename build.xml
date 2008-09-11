@@ -1,0 +1,122 @@
+<project name="Kiama" basedir="." default="build">
+
+  <!-- Global properties -->
+
+  <property environment="env"/>
+	
+  <property name="test.class.name" value="kiama.parsing.PackratTests" />
+
+  <property name="scala.home" value="/sbaz"/>
+  <property name="scala.lib" value="${scala.home}/lib/scala-library.jar"/>
+
+  <property name="scalacheck.lib" value="${scala.home}/lib/scalacheck-1.3.jar"/>
+  <property name="specs.lib" value="${scala.home}/lib/specs-1.3.1.jar"/>
+  <property name="scalatest.lib" value="${scala.home}/lib/scalatest-0.9.3.jar"/>
+  <property name="junit.lib" value="/usr/share/junit/junit-4.1.jar"/>
+
+
+  <path id="scala.classpath">
+    <pathelement location="${scala.home}/lib/scala-compiler.jar"/>
+    <pathelement location="${scala.lib}"/>
+  </path>
+
+  <path id="kiama.classpath">
+    <pathelement location="${specs.lib}"/>
+    <pathelement location="${scalacheck.lib}"/>
+    <pathelement location="${scalatest.lib}"/>
+    <pathelement location="${junit.lib}"/>
+    <pathelement location="${scala.lib}"/>
+    <pathelement location="bin"/>
+  </path>
+
+  <taskdef resource="scala/tools/ant/antlib.xml"
+           classpathref="scala.classpath"/>
+
+
+  <!-- Project properties -->
+
+  <property name="name"          value="${ant.project.name}"/>
+  <property name="version.nr"    value="0.1"/>
+  <property name="version"       value="${version.nr}dev"/>
+  <property name="author"        value="Anthony M Sloane"/>
+
+
+  <!-- Targets -->
+
+  <target name="prepare">
+    <mkdir dir="bin"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="bin"/>
+  </target>
+
+  <target name="build" depends="prepare">
+    <scalac addParams="-unchecked -deprecation" srcdir="src" destdir="bin" classpathref="kiama.classpath"/>
+  </target>
+	
+  <target name="scalatest" depends="build">
+    <java classname="org.scalatest.tools.Runner" classpathref="kiama.classpath" fork="true">
+      <arg value="-s"/>
+      <arg value="kiama.parsing.PackratTests"/>
+  	</java>
+  </target>	
+	
+  <target name="doc" depends="prepare">
+    <copy todir="bin/doc">
+      <fileset dir=".">
+        <include name="LICENSE"/>
+        <include name="RELEASE"/>
+      </fileset>
+    </copy>
+    <scaladoc
+      srcdir="src"
+      destdir="bin/doc/api"
+      windowtitle="${name} ${version}"
+      doctitle="${name} ${version}"
+      addparams="-linksource"
+      classpathref="kiama.classpath">
+      <include name="**/*.scala"/>
+    </scaladoc>
+  </target>
+
+  <target name="jar" depends="clean,build">
+    <jar destfile="dist/${name}-${version}.jar">
+      <fileset dir="bin">
+        <include name="kiama/**"/>
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${author}"/>
+        <attribute name="Export-Package" value='kiama;version="${version}"'/>
+        <section name="kiama">
+          <attribute name="Specification-Title"    value="${name}"/>
+          <attribute name="Specification-Version"  value="${version}"/>
+          <attribute name="Specification-Vendor"   value="${author}"/>
+          <attribute name="Implementation-Title"   value="scalacheck"/>
+          <attribute name="Implementation-Version" value="${version}"/>
+          <attribute name="Implementation-Vendor"  value="${author}"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="jar-src" depends="clean,build">
+    <jar destfile="dist/${name}-${version}-src.jar">
+      <fileset dir="src">
+        <include name="kiama/**"/>
+      </fileset>
+      <manifest>
+        <attribute name="Built-By" value="${author}"/>
+        <section name="kiama">
+          <attribute name="Specification-Title"    value="${name}"/>
+          <attribute name="Specification-Version"  value="${version}"/>
+          <attribute name="Specification-Vendor"   value="${author}"/>
+          <attribute name="Implementation-Title"   value="kiama"/>
+          <attribute name="Implementation-Version" value="${version}"/>
+          <attribute name="Implementation-Vendor"  value="${author}"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+
+</project>
