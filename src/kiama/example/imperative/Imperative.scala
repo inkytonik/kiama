@@ -72,6 +72,7 @@ object AST {
         }
     }
     case class Asgn (s : Idn, e : Exp) extends Stmt {
+        override def toString = "Asgn(\"" + s + "\"," + e + ")"
         override val vars = Set (s)
         def pretty (o : StringBuilder) = {
             o.append (s); o.append (" = "); e.pretty (o); o.append (";\n")
@@ -144,10 +145,10 @@ trait Parser extends kiama.parsing.PackratParsers {
               term)
 
     val sequence : Parser[Seqn] =
-        "{" ~> (stmt+) <~ "}" ^^ Seqn
+        "{" ~> (stmt*) <~ "}" ^^ Seqn
         
     val asgnStmt : Parser[Asgn] =
-        idn ~ ("=" ~> exp) ^^ { case s ~ e => Asgn (s, e) }
+        idn ~ ("=" ~> exp) <~ ";" ^^ { case s ~ e => Asgn (s, e) }
     
     val whileStmt : Parser[While] =
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
