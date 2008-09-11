@@ -58,7 +58,7 @@
   <target name="scalatest" depends="build">
     <java classname="org.scalatest.tools.Runner" classpathref="kiama.classpath" fork="true">
       <arg value="-s"/>
-      <arg value="kiama.parsing.PackratTests"/>
+      <arg value="kiama.parsing.PackratParsersTests"/>
   	</java>
   </target>	
 	
