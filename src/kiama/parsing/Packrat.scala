@@ -24,67 +24,44 @@ trait Parsers {
     type Input = Reader[Elem]
 
     /**
-     * Parse results represented as an answer and the point to which the
-     * input was processed.
+     * Parse results.
      */
-    case class ParseResult[+T] (ans : ParseAnswer[T], in : Input) {
-        def map[U] (f : T => U) : ParseResult[U] =
-            ParseResult (ans map f, in)
-        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U] =
-            (ans flatMapWithNext (f, (b : ParseAnswer[U]) => in => ParseResult (b, in))) (in)
-        def append[U >: T] (a : => ParseResult[U]) : ParseResult[U] =
-            ans append (b => ParseResult (b, in), a)      
-        override def toString = "[" + in.pos + "] " + ans
+    sealed abstract class ParseResult[+T] {
+        val in : Input
+        def map[U] (f : T => U) : ParseResult[U]
+        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U]  
+        def append[U >: T] (a : => ParseResult[U]) : ParseResult[U]
     }
-    
-    /**
-     * Parsing answers.
-     */
-    abstract class ParseAnswer[+T] {
-        def map[U] (f : T => U) : ParseAnswer[U]
-        def flatMapWithNext[U] (f : T => Input => ParseResult[U], g : ParseAnswer[U] => Input => ParseResult[U]) : Input => ParseResult[U]
-        def append[U >: T] (f : ParseAnswer[T] => ParseResult[U], a : => ParseResult[U]) : ParseResult[U]
-    }
-    
-    /**
-     * A successful parse answer.
-     *
-     * @param result a value representing the result of the parse
-     */
-    case class Success[T] (result : T) extends ParseAnswer[T] {
-        def map[U] (f : T => U) =
-            Success (f (result))
-        def flatMapWithNext[U] (f : T => Input => ParseResult[U], g : ParseAnswer[U] => Input => ParseResult[U]) : Input => ParseResult[U] =
-            f (result)
-        def append[U >: T] (f : ParseAnswer[T] => ParseResult[U], a : => ParseResult[U]) : ParseResult[U] =
-            f (this)
-        override def toString = "parsed: " + result
-    }
-    
-    /**
-     * Convenience factory method for success results.
-     */
-    def success[T] (result : T, in : Input) = ParseResult (Success (result), in)
-     
-    /**
-     * A parse answer representing failure of a parse.
-     *
-     * @param msg a message describing the failure
-     */
-    case class Failure (msg : String) extends ParseAnswer[Nothing] {
-        def map[U] (f : Nothing => U) : ParseAnswer[U] =
-            this
-        def flatMapWithNext[U] (f : Nothing => Input => ParseResult[U], g : ParseAnswer[U] => Input => ParseResult[U]) : Input => ParseResult[U] =
-            g (this)
-        def append[U >: Nothing] (f : ParseAnswer[Nothing] => ParseResult[U], a : => ParseResult[U]) : ParseResult[U] =
-            a
-        override def toString = "failure: " + msg
-    }    
         
     /**
-     * Convenience factory method for failure results.
+     * A successful parse result.
+     *
+     * @param result a value representing the result of the parse
+     * @param in the remainder of the input
      */
-    def failure[T] (msg : String, in : Input) = ParseResult (Failure (msg), in)
+    case class Success[T] (result : T, in : Input) extends ParseResult[T] {
+        def map[U] (f : T => U) = Success (f (result), in)
+        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U] =
+            f (result) (in) 
+        def append[U >: T] (a : => ParseResult[U]) : ParseResult[U] =
+            this
+        override def toString = "[" + in.pos + "] parsed: " + result
+    }
+     
+    /**
+     * A parse result representing failure of a parse.
+     *
+     * @param msg a message describing the failure
+     * @param in the remainder of the input
+     */
+    case class Failure (msg : String, in : Input) extends ParseResult[Nothing] {
+        def map[U] (f : Nothing => U) = this
+        def flatMapWithNext[U] (f : Nothing => Input => ParseResult[U]) : ParseResult[U] =
+            this
+        def append[U >: Nothing] (a : => ParseResult[U]) : ParseResult[U] =
+            a
+        override def toString = "[" + in.pos + "] failure: " + msg + "\n\n" + in.pos.longString
+    }
 
     /**
      * A special kind of tuple for compound parser result values.
@@ -170,7 +147,7 @@ trait Parsers {
      * @return the constructed parser
      */
     def success[T] (result : T) : Parser[T] =
-        Parser { in => success (result, in) }
+        Parser { in => Success (result, in) }
     
     /**
      * Construct a parser that always fails without consuming any input.
@@ -179,7 +156,7 @@ trait Parsers {
      * @return the constructed parser
      */
     def failure (msg : String) : Parser[Nothing] =
-        Parser { in => failure (msg, in) }
+        Parser { in => Failure (msg, in) }
         
     /**
      * Construct a parser that recognises a given input element.
@@ -190,9 +167,9 @@ trait Parsers {
     implicit def accept (e : Elem) : Parser[Elem] =
         Parser { in =>
             if (e == in.first)
-                success (in.first, in.rest)
+                Success (in.first, in.rest)
             else
-                failure (e.toString, in)
+                Failure (e.toString, in)
         }
         
     /**
@@ -202,9 +179,9 @@ trait Parsers {
     implicit def acceptIf (pred : Elem => Boolean) : Parser[Elem] =
         Parser { in =>
             if (pred (in.first))
-                success (in.first, in.rest)
+                Success (in.first, in.rest)
             else
-                failure ("acceptIf", in)
+                Failure ("acceptIf", in)
         }
                 
     // Character reader-specific ones are below here
@@ -224,9 +201,9 @@ trait Parsers {
                 j += 1
             }
             if (i == s.length)
-                success (source.subSequence (offset, j).toString, in.drop (j - offset))
+                Success (source.subSequence (offset, j).toString, in.drop (j - offset))
             else 
-                failure ("'" + s + "' expected", in)
+                Failure ("'" + s + "' expected", in)
         })
 
     def token[T] (p : Parser[T]) : Parser[T] =
@@ -247,39 +224,177 @@ trait Parsers {
 }
 
 trait PackratParsers extends Parsers {
-          
+  
+    import scala.collection.mutable.HashMap
+    import scala.collection.mutable.Set
+    import scala.util.parsing.input.Position
+  
+    /**
+     * Information about a left recursion. 
+     */
+    case class Head (rule : Rule, var involvedSet : Set[Rule], var evalSet : Set[Rule])
+    
+    /**
+     * Heads map
+     */
+    var heads = new HashMap[Input,Head]  
+    
+    /**
+     * Parsing answers.
+     */
+    abstract class Answer[T]
+    
+    /**
+     * An answer that is a parser result.
+     */
+    case class Result[T] (result : ParseResult[T]) extends Answer[T]
+    
+    /**
+     * An answer that is a left recursion record.
+     */
+    case class LR[T] (var seed : ParseResult[T], rule : Rule, var head : Head, next : LR[_]) extends Answer[T]
+  
+    /**
+     * Left recursion stack.
+     */
+    var LRStack : LR[_] = null
+    
+    /**
+     * Common supertype for all rules.
+     */
+    trait Rule
+    
     /**
      * A rule is a memoising, left recursion-detecting encapsulation of a parser.
      */
-    class Rule[T] (body : => Parser[T]) extends Parser[T] {
-
-        import scala.collection.mutable.HashMap
+    class TypedRule[T] (body : => Parser[T]) extends Parser[T] with Rule {
       
-        /*
+	    /**
+	     * Memo table entries.
+	     */
+        case class MemoEntry (var ans : Answer[T], var in : Input)
+        
+        /**
          * The section of the memo table relating to this rule.
          */
-        private val table = new HashMap[Input,ParseResult[T]]
-
+        val memo = new HashMap[Input,MemoEntry]
+                        
         /**
          * Apply this rule, memoising the result.
          */
         def apply (in : Input) : ParseResult[T] = {
-            if (table contains in)
-                table (in)
-            else {
-                table += (in -> ParseResult (Failure ("left recursion"), in))
-                val m = body (in)
-                table += (in -> m)
-                m
+            recall (in) match {
+                case None =>
+                    val lr = LR[T] (Failure ("left recursion", in), this, null, LRStack)
+                    LRStack = lr
+                    val m = MemoEntry (lr, in)
+                    memo += (in -> m)
+                    val ans = body (in)
+                    LRStack = LRStack.next
+                    m.in = ans.in
+                    if (lr.head == null) {
+                        m.ans = Result (ans)
+                        ans
+                    } else {
+                        lr.seed = ans
+                        lranswer (in, m)
+                    }
+                case Some (MemoEntry (Result (r), _)) =>
+                    r
+                case Some (MemoEntry (lr @ LR (_, _, _, _), _)) =>                    
+                    setuplr (lr)
+                    lr.seed
+            }                                
+        }
+        
+        /**
+         *
+         */
+        def setuplr (l : LR[T]) {
+            if (l.head == null)
+                l.head = Head (this, Set (), Set ())
+            var s = LRStack
+            while (s.head != l.head) {
+                s.head= l.head
+                l.head.involvedSet = l.head.involvedSet + s.rule
+                s = s.next
             }
         }
-                      
+        
+        /**
+         *
+         */
+        def lranswer (in : Input, m : MemoEntry) : ParseResult[T] = {
+            m.ans match {
+                case lr @ LR (_, _, _, _) =>
+                    val h = lr.head
+                    if (h.rule == this) {
+                        m.ans = Result (lr.seed)
+                        m.ans match {
+                            case Result (f @ Failure (_, _)) =>
+                                f
+                            case _ =>
+                                 growlr (in, m, h)
+                        }
+                    } else
+                        lr.seed                      
+                case _ =>
+                    error ("lranswer: unexpected non-LR answer")
+            }
+        }
+        
+        /**
+         *
+         */
+        def recall (in : Input) : Option[MemoEntry] = {
+            val om = memo.get (in) 
+            heads.get (in) match {
+                case None     => om
+                case Some (h) =>
+                    if ((om == None) && !((h.involvedSet + h.rule) contains this))
+                        return Some (MemoEntry (Result (Failure ("left recursion skip", in)), in))
+                    if (h.evalSet contains this) {
+                        h.evalSet = h.evalSet - this
+                        val ans = body (in)
+                        memo += (in -> MemoEntry (Result (ans), ans.in))
+                        memo.get (in)
+                    } else
+                        om
+            }
+        }
+        
+        /**
+         *
+         */
+        def growlr (in : Input, m : MemoEntry, h : Head) : ParseResult[T] = {
+          
+            def nolater (p1 : Position, p2 : Position) : Boolean =
+                (p1 == p2) || (p1 < p2)
+          
+            heads += (in -> h)
+            while (true) {
+                h.evalSet = h.involvedSet.clone
+                val ans = body (in)
+                if (ans.isInstanceOf[Failure] || nolater (ans.in.pos, m.in.pos)) {
+                    heads -= in
+                    m.ans match {
+                        case Result (r) =>
+                            return r
+                        case _ =>
+                            error ("growlr: unexpected non-result answer")
+                    }
+                }
+                m.ans = Result (ans)
+                m.in = ans.in
+            }
+            error ("growlr: went where I shouldn't go")
+        }
+
     }
     
     /**
      * Convenience function for turning a parser into a memoising one.
      */
-    def memo[T] (parser : => Parser[T]) : Rule[T] = new Rule (parser)
+    def memo[T] (parser : => Parser[T]) : TypedRule[T] = new TypedRule[T] (parser)
 
 }
-

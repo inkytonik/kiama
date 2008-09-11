@@ -55,15 +55,15 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      */
     def same[T] (l : ParseResult[T], r : ParseResult[T]) : Boolean = {
         l match {
-            case ParseResult (Success (lr), li) =>
+            case Success (lr, li) =>
                 r match {
-                    case ParseResult (Success (rr), ri) => (lr == rr) && same (li, ri)
-                    case _                              => false
+                    case Success (rr, ri) => (lr == rr) && same (li, ri)
+                    case _                => false
                 }
-            case ParseResult (Failure (lm), li) =>
+            case Failure (lm, li) =>
                 r match {
-                    case ParseResult (Failure (rm), ri) => (lm == rm) && same (li, ri)
-                    case _                              => false
+                    case Failure (rm, ri) => (lm == rm) && same (li, ri)
+                    case _                => false
                 }
         }
     }
@@ -73,14 +73,14 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * result.
      */
     def testNoReadSuccess () {
-        assertTrue (same (success ("hi") (empty), success ("hi", empty)))
+        assertTrue (same (success ("hi") (empty), Success ("hi", empty)))
     }
     
     /**
      * A failing parse on empty input fails with the specified message.
      */
     def testNoReadFailure () {
-        assertTrue (same (failure ("fail") (empty), failure ("fail", empty)))
+        assertTrue (same (failure ("fail") (empty), Failure ("fail", empty)))
     }
     
     /**
@@ -88,7 +88,7 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * what the input is.
      */
     def testAnyInputSuccess () {
-        check (pred (in => same (success (42) (in), success (42, in))))
+        check (pred (in => same (success (42) (in), Success (42, in))))
     }
     
     /**
@@ -96,7 +96,7 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * what the input is.
      */
     def testAnyInputFail () {
-        check (pred (in => same (failure ("fail") (in), failure ("fail", in))))
+        check (pred (in => same (failure ("fail") (in), Failure ("fail", in))))
     }
     
     /**
@@ -108,7 +108,7 @@ class PackratTests extends TestCase with PackratParsers with TestBase
             if (in.atEnd)
                 true
             else
-                same ((in.first) (in), success (in.first, in.rest))
+                same ((in.first) (in), Success (in.first, in.rest))
         }))
     }
         
@@ -123,7 +123,7 @@ class PackratTests extends TestCase with PackratParsers with TestBase
                 true
             } else {
                 val ch = if (in.first == MAX_CHAR) MIN_CHAR else MAX_CHAR
-                same (ch (in), failure (ch.toString, in))
+                same (ch (in), Failure (ch.toString, in))
             }
         }))
     }
@@ -137,10 +137,10 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      */
     def expect[T] (parser : Parser[T], str : String, result : T) {
         parser (input (str)) match {
-            case ParseResult (Success (r), in) =>
+            case Success (r, in) =>
                 if (r != result) fail ("found " + r + " not " + result)
                 if (!in.atEnd) fail ("input remaining at " + in.pos)
-            case ParseResult (Failure (m), in) =>
+            case Failure (m, in) =>
                 fail (m + " at " + in.pos)
         }
     }
@@ -149,10 +149,11 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * A Boolean version of expect for use in ScalaCheck checks.
      */
     def expectBool[T] (parser : Parser[T], str : String, result : T) : Boolean = {
-        parser (input (str)) match {
-            case ParseResult (Success (r), in) =>
+        val p = parser <~ (whitespace*)
+        p (input (str)) match {
+            case Success (r, in) =>
                 (r == result) && in.atEnd
-            case ParseResult (Failure (_), _) =>
+            case Failure (_, _) =>
                 false            
         }
     }
@@ -190,8 +191,11 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * Parse expressions
      */
     def testParseExpressions () {
+        expect (exp, "1", Num (1))
         expect (exp, "1+2", Add (Num (1), Num (2)))
-        //roundtrip (exp)
+        expect (exp, "1+2*3", Add (Num (1), Mul (Num (2), Num (3))))
+        expect (exp, "(1+2)*3", Mul (Add (Num (1), Num (2)), Num (3)))
+        roundtrip (exp)
     }
     
     /**
@@ -206,6 +210,8 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * Parse assignment statements.
      */
     def testParseAssignStmts () {
+        expect (asgnStmt, "a = 5;", Asgn ("a", Num (5)))
+        expect (asgnStmt, "a = b;", Asgn ("a", Var ("b")))
         roundtrip (asgnStmt)
     }
 
@@ -213,6 +219,10 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * Parse statement sequences.
      */
     def testParseSequences () {
+        expect (sequence, "{}", Seqn (List ()))
+        expect (sequence, "{ ; }", Seqn (List (Null ())))
+        expect (sequence, "{ v = 1; v = 2; }",
+                Seqn (List (Asgn ("v", Num (1)), Asgn ("v", Num (2)))))
         roundtrip (sequence)
     }
     
@@ -220,6 +230,10 @@ class PackratTests extends TestCase with PackratParsers with TestBase
      * Parse while statements.
      */
     def testParseWhiles () {
+        expect (whileStmt, "while (1) ;", While (Num (1), Null ()))
+        expect (whileStmt, "while (a + 3) { a = a - 1; }",
+                While (Add (Var ("a"), Num (3)),
+                       Seqn (List (Asgn ("a", Sub (Var ("a"), Num (1)))))))
         roundtrip (whileStmt)
     }
     
