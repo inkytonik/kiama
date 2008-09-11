@@ -3,5 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="ch.epfl.lamp.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/sbaz/lib/scalatest-0.9.3.jar"/>
+	<classpathentry kind="lib" path="/sbaz/lib/scalacheck-1.3.jar"/>
+	<classpathentry kind="lib" path="/sbaz/lib/specs-1.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
