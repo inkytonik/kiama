@@ -110,7 +110,7 @@ trait Rewriter {
      * 
      * @return the constructed strategy
      */
-    val fail : Strategy =
+    val failure : Strategy =
         new Strategy {
             def apply (t : Term) = None
         }
@@ -442,7 +442,7 @@ trait Rewriter {
      * @return the constructed strategy
      */
     def not (s : => Strategy) : Strategy =
-        s <++ (fail, id)
+        s <++ (failure, id)
         
     /**
      * Create a strategy that applies a given strategy for its side-effects
