@@ -230,7 +230,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     /**
      * Parse while statements.
      */
-    def testParseWhiles () {
+    def testParseWhilestmts () {
         expect (whileStmt, "while (1) ;", While (Num (1), Null ()))
         expect (whileStmt, "while (a + 3) { a = a - 1; }",
                 While (Add (Var ("a"), Num (3)),
