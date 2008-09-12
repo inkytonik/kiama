@@ -11,8 +11,8 @@ import kiama.example.imperative.TestBase
 /**
  * Run this to perform the tests.
  */
-class PackratParsersTests extends TestCase with PackratParsers with TestBase
-                          with JUnit3Suite with Checkers {
+class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
+                          with PackratParsers with TestBase {
     
     import kiama.example.imperative.AST._
     import scala.util.parsing.input.CharArrayReader
@@ -162,7 +162,8 @@ class PackratParsersTests extends TestCase with PackratParsers with TestBase
      * Parse numbers.
      */
     def testParseNumbers () {
-        check ((i : Int) => (i >= 0) ==> expectBool (number, i.toString, Num (i)))
+        check ((i : Int) => (i >= 0) ==> expectBool (integer, i.toString, Num (i)))
+        check ((d : Double) => (d >= 0) ==> expectBool (double, d.toString, Num (d)))
     }
     
     /**

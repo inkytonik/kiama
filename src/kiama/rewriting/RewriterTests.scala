@@ -1,36 +1,45 @@
 package kiama.rewriting
 
+import junit.framework.Assert._
+import junit.framework.TestCase
 import org.scalacheck._
-import kiama.example.imperative.AST._
+import org.scalacheck.Prop._ 
+import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.prop.Checkers 
+import kiama.example.imperative.TestBase
 
 /**
  * Run this to perform the tests.
  */
-object RewriterTests extends Application {
+class RewriterTests extends TestCase with JUnit3Suite with Checkers
+                    with Rewriter with TestBase {
+                       
+    import kiama.example.imperative.AST._
     
-    trait TestBase extends kiama.example.imperative.TestBase with Rewriter
-    
-    object EvaluationTests extends Properties ("evaluation") with TestBase {
+    def testEvaluation () {
         val eval =
             rule {
                 case Add (Num (i), Num (j)) => Num (i + j)
                 case Sub (Num (i), Num (j)) => Num (i - j)
-                case Var (_)                => Num (0)
+                case Mul (Num (i), Num (j)) => Num (i * j)
+                case Div (Num (i), Num (0)) => Num (0)  // Hack
+                case Div (Num (i), Num (j)) => Num (i / j)
+                case Var (_)                => Num (3)  // Hack
             }
-        specify ("eval", (t : Exp) => everywherebu (eval) (t) == Some (Num (t.value)))
+        check ((t : Exp) => everywherebu (eval) (t) == Some (Num (t.value)))
     }
     
-    object SubtermTests extends Properties ("subterm") with TestBase {
-        specify ("root.stmt", (t : Stmt) => issubterm (t) (t) == Some (t))
-        specify ("root.exp", (t : Exp) => issubterm (t) (t) == Some (t))
+    def testSubtermMatching () {
+        check ((t : Stmt) => issubterm (t) (t) == Some (t))
+        check ((t : Exp) => issubterm (t) (t) == Some (t))
     
-        private val random = new scala.Random /*scala.util.Random*/
+        val random = new scala.Random
     
         /**
          * Pick a random Term child of t, returning t if there are no
          * children or there are children but none of them are Terms.
          */
-        private def pickchild (t : Product) : Term = {
+        def pickchild (t : Product) : Term = {
             def isterm (c : Any) : Boolean = {
                 c match {
                     case t : Term => true
@@ -51,7 +60,7 @@ object RewriterTests extends Application {
         /**
          * Pick a random descendant of t (including possibly t).
          */
-        private def pickdesc (t : Term) : Term = {
+        def pickdesc (t : Term) : Term = {
             t match {
                 case p : Product =>
                     if (random.nextBoolean) {
@@ -68,43 +77,34 @@ object RewriterTests extends Application {
             }
         }
             
-        specify ("desc.stmt", (t : Stmt) => issubterm (pickdesc (t)) (t) == Some (t))
-        specify ("desc.exp", (t : Exp) => issubterm (pickdesc (t)) (t) == Some (t))
+        check ((t : Stmt) => issubterm (pickdesc (t)) (t) == Some (t))
+        check ((t : Exp) => issubterm (pickdesc (t)) (t) == Some (t))
     }
     
-    object NoChangeTests extends Properties ("nochange") with TestBase {
-        specify ("id.stmt", (t : Stmt) => id (t) == Some (t))
-        specify ("id.exp", (t : Exp) => id (t) == Some (t))
+    def testNoChange () {
+        check ((t : Stmt) => id (t) == Some (t))
+        check ((t : Exp) => id (t) == Some (t))
         
         val noopstmt = everywherebu (rule { case Asgn (s, e) => Asgn (s, e) })
-        specify ("noopstmt.stmt", (t : Stmt) => noopstmt (t) == Some (t))
-        specify ("noopstmt.exp", (t : Exp) => noopstmt (t) == Some (t))
+        check ((t : Stmt) => noopstmt (t) == Some (t))
+        check ((t : Exp) => noopstmt (t) == Some (t))
         
         val noopexp = everywherebu (rule { case Num (i) => Num (i) })
-        specify ("noopexp.stmt", (t : Stmt) => noopexp (t) == Some (t))
-        specify ("noopexp.exp", (t : Exp) => noopexp (t) == Some (t))
+        check ((t : Stmt) => noopexp (t) == Some (t))
+        check ((t : Exp) => noopexp (t) == Some (t))
     }
     
-    object FailTests extends Properties ("fail") with TestBase {
-        specify ("failure.stmt", (t : Stmt) => fail (t) == None)
-        specify ("failure.exp", (t : Exp) => fail (t) == None)
+    def testFailure () {
+        check ((t : Stmt) => failure (t) == None)
+        check ((t : Exp) => failure (t) == None)
     }
     
-    object TermTests extends Properties ("term") with TestBase {
-        specify ("const.stmt.exp", (t : Stmt, u : Exp) => t (u) == Some (t))
-        specify ("const.exp.exp", (t : Exp, u : Exp) => t (u) == Some (t))
-        specify ("const.stmt.stmt", (t : Stmt, u : Stmt) => t (u) == Some (t))
-        specify ("const.exp.stmt", (t : Exp, u : Stmt) => t (u) == Some (t))
+    def testTermsAsStrategies () {
+        check ((t : Stmt, u : Exp) => t (u) == Some (t))
+        check ((t : Exp, u : Exp) => t (u) == Some (t))
+        check ((t : Stmt, u : Stmt) => t (u) == Some (t))
+        check ((t : Exp, u : Stmt) => t (u) == Some (t))
     }
-    
-    object AllTests extends Properties ("rewriting") {
-        include (EvaluationTests)
-        include (SubtermTests)
-        include (NoChangeTests)
-        include (FailTests)
-        include (TermTests)
-    }
-    
-    Test.checkProperties (AllTests)
+
 }
 

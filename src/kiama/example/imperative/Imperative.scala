@@ -12,74 +12,117 @@ object AST {
     }
     
     abstract class Exp extends Product with PrettyPrintable {
-        val isconst : Boolean = false
-        val value : Int = 0
-        val vars : Set[Idn] = Set ()
+        def isconst : Boolean = false
+        def value : Double
+        def vars : Set[Idn] = Set ()
+        def divsbyzero : Int = 0
+        def depth : Int = 0
+        def intadds : Int = 0
     }
-    case class Num (i : Int) extends Exp {
-        override val isconst = true
-        override val value = i
-        def pretty (o : StringBuilder) = o.append (i)
+    
+    case class Num (d : Double) extends Exp {
+        override def isconst = true
+        override def value = d
+        override def depth = 2
+        def pretty (o : StringBuilder) = o.append (d)
     }
+    
     case class Var (s : Idn) extends Exp {
+        // Hack to make tests more interesting
+        override def value = 3
+        override def vars = Set (s)
+        override def depth = 2
         override def toString = "Var(\"" + s + "\")"
-        override val vars = Set (s)
         def pretty (o : StringBuilder) = o.append (s)
     }
-    case class Add (l : Exp, r : Exp) extends Exp {
-        override val isconst = l.isconst && r.isconst
-        override val value = l.value + r.value
-        override val vars = l.vars ++ r.vars
+    
+	case class Neg (e : Exp) extends Exp {
+	    override def isconst = e.isconst
+	    override def value = - e.value
+	    override def vars = e.vars
+	    override def divsbyzero = e.divsbyzero
+	    override def depth = 1 + e.depth
+	    override def intadds = e.intadds
+        def pretty (o : StringBuilder) = {
+            o.append ("(-"); e.pretty (o); o.append (')')
+        }
+	}    
+    
+    abstract class Binary (l : Exp, r : Exp) extends Exp {
+        override def vars = l.vars ++ r.vars
+        override def divsbyzero = l.divsbyzero + r.divsbyzero
+        override def depth = 1 + (l.depth).max (r.depth)
+        override def intadds = l.intadds + r.intadds
+    }
+
+    case class Add (l : Exp, r : Exp) extends Binary (l, r) {
+        override def isconst = l.isconst && r.isconst
+        override def value = l.value + r.value
+        override def intadds =
+	        (l, r) match {
+	            case (Num (_), Num (_)) => 1
+	            case _                  => super.intadds
+	        }
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" + "); r.pretty (o); o.append (')')
         }
     }
-    case class Sub (l : Exp, r : Exp) extends Exp {
-        override val isconst = l.isconst && r.isconst
-        override val value = l.value - r.value
-        override val vars = l.vars ++ r.vars
+    
+    case class Sub (l : Exp, r : Exp) extends Binary (l, r) {
+        override def isconst = l.isconst && r.isconst
+        override def value = l.value - r.value
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" - "); r.pretty (o); o.append (')')
         }
     }
-    case class Mul (l : Exp, r : Exp) extends Exp {
-        override val isconst = l.isconst && r.isconst
-        override val value = l.value * r.value
-        override val vars = l.vars ++ r.vars
+    
+    case class Mul (l : Exp, r : Exp) extends Binary (l, r) {
+        override def isconst = l.isconst && r.isconst
+        override def value = l.value * r.value
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" * "); r.pretty (o); o.append (')')
         }
     }
-    case class Div (l : Exp, r : Exp) extends Exp {
-        override val isconst = l.isconst && r.isconst
-        override val value = if (r.value == 0) 0 else l.value / r.value
-        override val vars = l.vars ++ r.vars
+    
+    case class Div (l : Exp, r : Exp) extends Binary (l, r) {
+        override def isconst = l.isconst && r.isconst
+        // Hack: no errors, so return zero for divide by zero
+        override def value = if (r.value == 0) 0 else l.value / r.value
+        override def divsbyzero = 
+            l.divsbyzero + (r match {
+                                case Num (0) => 1
+                                case _       => r.divsbyzero
+                            })
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" / "); r.pretty (o); o.append (')')
         }
     }
 
     abstract class Stmt extends Product with PrettyPrintable {
-        val vars : Set[Idn] = Set ()
+        def vars : Set[Idn] = Set ()
     }
+    
     case class Null extends Stmt {
         def pretty (o : StringBuilder) = o.append (";\n")
     }
+    
     case class Seqn (ss : List[Stmt]) extends Stmt {
-        override val vars = Set (ss flatMap (_ vars) : _*)
+        override def vars = Set (ss flatMap (_ vars) : _*)
         def pretty (o : StringBuilder) = {
             o.append ("{\n"); ss.foreach (_.pretty (o)); o.append ("}\n")
         }
     }
+    
     case class Asgn (s : Idn, e : Exp) extends Stmt {
+        override def vars = Set (s)
         override def toString = "Asgn(\"" + s + "\"," + e + ")"
-        override val vars = Set (s)
         def pretty (o : StringBuilder) = {
             o.append (s); o.append (" = "); e.pretty (o); o.append (";\n")
         }
     }
+    
     case class While (e : Exp, b : Stmt) extends Stmt {
-        override val vars = e.vars ++ b.vars
+        override def vars = e.vars ++ b.vars
         def pretty (o : StringBuilder) = {
             o.append ("while ("); e.pretty (o); o.append (")\n"); 
             b.pretty (o);
@@ -128,11 +171,14 @@ trait Parser extends kiama.parsing.PackratParsers {
     val variable : Parser[Var] =
         idn ^^ Var
     
-    val number : Parser[Num] =
+    val integer : Parser[Num] =
         token (digit+) ^^ (l => Num (l.mkString.toInt))
+    
+    val double : Parser[Num] =
+        token ((digit+) ~ ("." ~> (digit+))) ^^ { case l ~ r => Num ((l.mkString + "." + r.mkString).toDouble) }
         
     val factor : Parser[Exp] =
-        memo (number | variable | "(" ~> exp <~ ")")
+        memo (double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")")
     
     val term : Parser[Exp] =
         memo (term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
@@ -172,6 +218,9 @@ trait TestBase extends Parser with PrettyPrinter {
     val genVar = for (v <- genIdn) yield Var (v)
     
     val genLeafExp = Gen.oneOf (genNum, genVar)
+    
+    def genNeg (sz : Int) = 
+        for { e <- genExp (sz/2) } yield Neg (e)
 
     def genAdd (sz : Int) =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Add (l, r)
