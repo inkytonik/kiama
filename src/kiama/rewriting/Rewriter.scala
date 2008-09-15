@@ -20,8 +20,6 @@
                                 
 package kiama.rewriting
 
-import Predef.{ byte2Byte => _, int2Integer => _, _ }
-
 /**
  * Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).
  * The implementation here is partially based on the semantics given in "Program
