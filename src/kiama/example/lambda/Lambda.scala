@@ -100,6 +100,45 @@ trait Parser extends kiama.parsing.PackratParsers {
 }
 
 /**
+ * ScalaCheck generators for programs in the imperative language. 
+ */
+trait Generator {
+    
+    import org.scalacheck._
+    import AST._
+
+    val genNum = for (i <- Gen.choose (1, 100)) yield Num (i)
+    val genIdn : Gen[String] = for (s <- Gen.identifier) yield (s.take (5))
+    val genVar = for (v <- genIdn) yield Var (v)
+    
+    implicit def arbVar : Arbitrary[Var] = Arbitrary (genVar)
+
+    val genLeafExp = Gen.oneOf (genNum, genVar)
+    
+    def genLamExp (sz : Int) =
+        for { i <- genIdn; b <- genExp (sz/2) } yield Lam (i, b)
+    
+    def genAppExp (sz : Int) =
+        for { l <- genExp (sz/2); r <- genExp (sz/2) } yield App (l, r)
+        
+    def genExp (sz : Int) : Gen[Exp] =
+        if (sz <= 0)
+            genLeafExp
+        else
+            Gen.frequency ((1, genLeafExp), (1, genLamExp (sz)), (3, genAppExp (sz)))
+                    
+    implicit def arbExp : Arbitrary[Exp] =
+        Arbitrary { Gen.sized (sz => genExp (sz)) }
+        
+}
+
+/**
+ * Basis for tests using the lambda calculus language.  Includes access to the
+ * parser and evaluator.
+ */
+trait TestBase extends Parser with Generator with Evaluator
+
+/**
  * Lambda calculus evaluator following Rose's \xgc, ie with explicit
  * substitutions and garbage collection.  See "Explicit Substitution
  * - Tutorial and Survey, Kristoffer H. Rose,BRICS LS-96-3, October
@@ -147,8 +186,11 @@ trait Evaluator extends Rewriter {
     val normal = outermost (xgc_reduction)
         
 }
- 
-object Lambda extends Application with Parser with Evaluator {
+
+/**
+ * A read-eval-print loop for lambda calculus expressions.
+ */
+object LambdaREPL extends Application with Parser with Evaluator {
   
     import AST._
     import scala.util.parsing.input.CharArrayReader
@@ -178,3 +220,33 @@ object Lambda extends Application with Parser with Evaluator {
     }
     
 }
+
+/**
+ * Run this to print test cases for the lambda calculus langauge.
+ */
+object Lambda extends Generator {
+
+    import org.scalacheck._
+    import AST._
+    
+    /**
+     * Print n test cases where n is specified by the first command-line
+     * argument (defaults to five).
+     */
+    def main (args : Array[String]) = {
+        var count = 0
+        args.length match {
+            case 0 => count = 5
+            case 1 => count = args(0).toInt
+            case _ => println ("usage: Lambda [number]"); exit (1)
+        }
+        val genExp = Arbitrary.arbitrary[Exp]
+        for (i <- 1 to count) {
+            genExp (Gen.defaultParams) match {
+                case Some (s) => println ("testcase " + i + ": " + s)
+                case None     => println ("no testcases")
+            }
+        }
+    }
+}
+
