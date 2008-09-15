@@ -62,7 +62,9 @@
   <target name="doc" depends="prepare">
     <copy todir="bin/doc">
       <fileset dir=".">
-        <include name="LICENSE"/>
+        <include name="README.txt"/>
+        <include name="COPYING"/>
+        <include name="COPYING.LESSER"/>
       </fileset>
     </copy>
     <scaladoc

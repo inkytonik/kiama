@@ -4,7 +4,9 @@ Kiama is a Scala library for language processing.  In the Kiama project we are
 investigating embedding of language processing formalisms such as grammars,
 parsers, rewriters and analysers into general-purpose programming languages.
 
-This document provides a short overview of Kiama and how to build it.
+This document provides a short overview of Kiama and how to build it.  See
+"Licensing" for information on distributing Kiama and including it in your
+programs.
 
 IMPORTANT NOTE: Kiama is a research project, it's early days and the code is
 undergoing heavy development, so many details will change.  Consult with us
@@ -65,7 +67,7 @@ jar        make a jar of the Kiama library (in dist)
 jar-src    make a jar of the Kiama library source (in dist)
 scalatest  run tests using the ScalaTest GUI
 
-4. Acknowledgements
+5. Acknowledgements
 
 Kiama is currently concentrating on incorporating existing language processing
 formalisms, so credit goes to the original developers of those formalisms.  See
@@ -73,3 +75,9 @@ the code for details of the sources of ideas that come from elsewhere.
 
 Most of the build process has been adapted from that used by Rickard Nilsson
 in ScalaCheck.
+
+5. Licensing
+
+Kiama is distributed under the GNU Lesser General Public License.  See the files
+COPYING and COPYING.LESSER for details of these licenses.  More information can
+be found at http://www.gnu.org/licenses/.
