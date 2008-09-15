@@ -48,10 +48,12 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     val empty = input ("")
 
     /**
-     * Convert a predicate on input to a predicate on strings.
-     */
-    def pred (p : Input => Boolean) : String => Boolean =
-        s => p (input (s))
+     * Implicitly generate an input by generating a non-empty string to form its
+     * contents.
+     */    
+    implicit def arbInput : Arbitrary[Input] = {
+        Arbitrary (for (s <- Arbitrary.arbString.arbitrary if !s.isEmpty) yield (input (s)))
+    }
         
     /**
      * Equality of inputs by content.
@@ -105,7 +107,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * what the input is.
      */
     def testAnyInputSuccess () {
-        check (pred (in => same (success (42) (in), Success (42, in))))
+        check ((in : Input) => same (success (42) (in), Success (42, in)))
     }
     
     /**
@@ -113,7 +115,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * what the input is.
      */
     def testAnyInputFailure () {
-        check (pred (in => same (failure ("fail") (in), Failure ("fail", in))))
+        check ((in : Input) => same (failure ("fail") (in), Failure ("fail", in)))
     }
     
     /**
@@ -121,12 +123,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * succeed.
      */
     def testFirstElementSuccess () {
-        check (pred (in => {
-            if (in.atEnd)
-                true
-            else
-                same ((in.first) (in), Success (in.first, in.rest))
-        }))
+        check ((in : Input) => same ((in.first) (in), Success (in.first, in.rest)))
     }
         
     /**
@@ -134,15 +131,11 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * (if there is one) should fail.
      */
     def testFirstElementFailure () {
-        check (pred (in => {
+        check ((in : Input) => {
             import scala.Math.{MAX_CHAR,MIN_CHAR}
-            if (in.atEnd) {
-                true
-            } else {
-                val ch = if (in.first == MAX_CHAR) MIN_CHAR else MAX_CHAR
-                same (ch (in), Failure (ch.toString, in))
-            }
-        }))
+            val ch = if (in.first == MAX_CHAR) MIN_CHAR else MAX_CHAR
+            same (ch (in), Failure (ch.toString, in))
+        })
     }
     
     /**
