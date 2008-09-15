@@ -85,7 +85,7 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
          	def divsbyzero = count { case Div (_, Num (0)) => 1 }
             assertEquals (divsbyzero (numexp), 0)
             assertEquals (divsbyzero (varexp), 0)
-            check ((e : Exp) => divsbyzero (e) == e.divsbyzero)
+            check ((e : Exp) => (e.divsbyzero != 0) ==> (divsbyzero (e) == e.divsbyzero))
 		}
 	    TestDivsByZero ()	  
 	}
