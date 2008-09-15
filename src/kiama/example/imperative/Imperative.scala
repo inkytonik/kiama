@@ -1,32 +1,71 @@
 package kiama.example.imperative
 
 /**
- * A simple imperative language abstract syntax.
+ * A simple imperative language abstract syntax designed for testing.
  */
 object AST {
 
+    /**
+     * Identifiers are represented as strings.
+     */
     type Idn = String
     
+    /**
+     * Simple interface for pretty-printing capabilities.
+     */
     trait PrettyPrintable {
+      
+        /**
+         * Pretty-print the object at the end of the given string builder.
+         */
         def pretty (o : StringBuilder)
+        
     }
     
+    /**
+     * Expressions.
+     */
     abstract class Exp extends Product with PrettyPrintable {
-        def isconst : Boolean = false
+
+        /**
+         * The numeric value of the expression.
+         */
         def value : Double
+        
+        /**
+         * The set of all variable references in the expression.
+         */
         def vars : Set[Idn] = Set ()
+        
+        /**
+         * The number of divisions by the constant zero in the expression. 
+         */
         def divsbyzero : Int = 0
+        
+        /**
+         * The depth of the expression, i.e., the number of levels from the
+         * root to the leaf values.
+         */
         def depth : Int = 0
+
+        /**
+         * The number of additions of integer constants in the expression.
+         */
         def intadds : Int = 0
     }
     
+    /**
+     * Numeric expressions.
+     */
     case class Num (d : Double) extends Exp {
-        override def isconst = true
         override def value = d
         override def depth = 2
         def pretty (o : StringBuilder) = o.append (d)
     }
     
+    /**
+     * Variable expressions.
+     */
     case class Var (s : Idn) extends Exp {
         // Hack to make tests more interesting
         override def value = 3
@@ -36,8 +75,10 @@ object AST {
         def pretty (o : StringBuilder) = o.append (s)
     }
     
+    /**
+     * Unary negation expressions.
+     */
 	case class Neg (e : Exp) extends Exp {
-	    override def isconst = e.isconst
 	    override def value = - e.value
 	    override def vars = e.vars
 	    override def divsbyzero = e.divsbyzero
@@ -48,6 +89,9 @@ object AST {
         }
 	}    
     
+    /**
+     * Binary expressions.
+     */
     abstract class Binary (l : Exp, r : Exp) extends Exp {
         override def vars = l.vars ++ r.vars
         override def divsbyzero = l.divsbyzero + r.divsbyzero
@@ -55,8 +99,10 @@ object AST {
         override def intadds = l.intadds + r.intadds
     }
 
+    /**
+     * Addition expressions.
+     */
     case class Add (l : Exp, r : Exp) extends Binary (l, r) {
-        override def isconst = l.isconst && r.isconst
         override def value = l.value + r.value
         override def intadds =
 	        (l, r) match {
@@ -68,24 +114,30 @@ object AST {
         }
     }
     
+    /**
+     * Subtraction expressions.
+     */
     case class Sub (l : Exp, r : Exp) extends Binary (l, r) {
-        override def isconst = l.isconst && r.isconst
         override def value = l.value - r.value
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" - "); r.pretty (o); o.append (')')
         }
     }
     
+    /**
+     * Multiplication expressions.
+     */
     case class Mul (l : Exp, r : Exp) extends Binary (l, r) {
-        override def isconst = l.isconst && r.isconst
         override def value = l.value * r.value
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" * "); r.pretty (o); o.append (')')
         }
     }
-    
+
+    /**
+     * Division expressions.
+     */
     case class Div (l : Exp, r : Exp) extends Binary (l, r) {
-        override def isconst = l.isconst && r.isconst
         // Hack: no errors, so return zero for divide by zero
         override def value = if (r.value == 0) 0 else l.value / r.value
         override def divsbyzero = 
@@ -98,14 +150,28 @@ object AST {
         }
     }
 
+    /**
+     * Statements.
+     */
     abstract class Stmt extends Product with PrettyPrintable {
+
+        /**
+         * The set of all variable references in the statement.
+         */
         def vars : Set[Idn] = Set ()
+        
     }
     
+    /**
+     * Empty statements.
+     */
     case class Null extends Stmt {
         def pretty (o : StringBuilder) = o.append (";\n")
     }
     
+    /**
+     * Statement sequences.
+     */
     case class Seqn (ss : List[Stmt]) extends Stmt {
         override def vars = Set (ss flatMap (_ vars) : _*)
         def pretty (o : StringBuilder) = {
@@ -113,6 +179,9 @@ object AST {
         }
     }
     
+    /**
+     * Assignment statements.
+     */
     case class Asgn (s : Idn, e : Exp) extends Stmt {
         override def vars = Set (s)
         override def toString = "Asgn(\"" + s + "\"," + e + ")"
@@ -121,6 +190,9 @@ object AST {
         }
     }
     
+    /**
+     * While loops.
+     */
     case class While (e : Exp, b : Stmt) extends Stmt {
         override def vars = e.vars ++ b.vars
         def pretty (o : StringBuilder) = {
@@ -139,23 +211,14 @@ trait PrettyPrinter {
     import AST._
 
     /**
-     * Simple pretty-printer for statements.
+     * Return a pretty-printed version of t.
      */
-    def pretty (s : Stmt) : String = {
+    def pretty[T <: PrettyPrintable] (t : T) : String = {
         val buffer = new StringBuilder
-        s.pretty (buffer)
+        t.pretty (buffer)
         buffer.toString
     }
     
-    /**
-     * Simple pretty-printer for expressions.
-     */
-    def pretty (e : Exp) : String = {
-        val buffer = new StringBuilder
-        e.pretty (buffer)
-        buffer.toString
-    }
-
 }
 
 /**
@@ -205,16 +268,18 @@ trait Parser extends kiama.parsing.PackratParsers {
 }
         
 /**
- * Basis for ScalaCheck tests using this language.  Support for generating
- * random AST instances plus convenient access to the parser and pretty-printer.
+ * ScalaCheck generators for programs in the imperative language. 
  */
-trait TestBase extends Parser with PrettyPrinter {
+trait Generator {
     
-    import AST._
     import org.scalacheck._
+    import AST._
 
-    val genNum = for (i <- Gen.choose (1,10)) yield Num (i)
-    val genIdn = for (s <- Gen.identifier) yield (s)
+    val genInteger = for (i <- Gen.choose (1, 100)) yield Num (i)
+    val genDouble = for (i <- Gen.choose (1.0, 1000000.0)) yield Num (i)
+    val genNum = Gen.frequency ((3, genInteger), (1, genDouble))
+    
+    val genIdn : Gen[String] = for (s <- Gen.identifier) yield (s.take (5))
     val genVar = for (v <- genIdn) yield Var (v)
     
     val genLeafExp = Gen.oneOf (genNum, genVar)
@@ -283,14 +348,23 @@ trait TestBase extends Parser with PrettyPrinter {
 }
 
 /**
- * Run this to perform the see test cases.  Argument should be number to see
- * (defaults to 5).
+ * Basis for tests using the imperative language.  Includes support for generating
+ * random AST instances plus convenient access to the parser and pretty-printer.
  */
-object Imperative extends TestBase {
+trait TestBase extends Generator with Parser with PrettyPrinter
+
+/**
+ * Run this to print test cases for the imperative langauge.
+ */
+object Imperative extends Generator with PrettyPrinter {
 
     import org.scalacheck._
     import AST._
     
+    /**
+     * Print n test cases where n is specified by the first command-line
+     * argument (defaults to five).
+     */
     def main (args : Array[String]) = {
         var count = 0
         args.length match {

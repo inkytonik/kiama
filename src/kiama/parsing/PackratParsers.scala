@@ -1,20 +1,17 @@
 package kiama.parsing
 
 /**
- * Implementation of packrat parsers for parsing expression grammars with
- * extensions.  The general structure of this library is modelled after
- * the Scala Library parser combinator library as much as possible to
- * reduce the learning curve and conversion costs.
+ * Parser combinator library modelled on the Scala parser combinator
+ * library.
  */
 trait Parsers {
     
     import scala.util.parsing.input.Reader
     
     /**
-     * The type of input element that these parsers process.  Just Char
-     * for now, but ultimately will extend to any type, probably.
+     * The abstract type of input element that these parsers process.
      */
-    type Elem = Char
+    type Elem
 
     /**
      * The input for these parsers comes from a reader of the element 
@@ -24,13 +21,33 @@ trait Parsers {
     type Input = Reader[Elem]
 
     /**
-     * Parse results.
+     * Representations of the results of parsing.
      */
     sealed abstract class ParseResult[+T] {
+      
+        /**
+         * The input that remains to be consumed.
+         */
         val in : Input
+        
+        /**
+         * If this result reflects a successful parse, apply f to the value
+         * produced and return the result of that application.
+         */
         def map[U] (f : T => U) : ParseResult[U]
-        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U]  
+        
+        /**
+         * If this result reflects a successful parse, feed the resulting
+         * value and the remainder of the input to f to obtain a final result.
+         */
+        def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U]
+        
+        /**
+         * If this result reflects a successful parse, return it, otherwise 
+         * return a.
+         */
         def append[U >: T] (a : => ParseResult[U]) : ParseResult[U]
+        
     }
         
     /**
@@ -64,18 +81,19 @@ trait Parsers {
     }
 
     /**
-     * A special kind of tuple for compound parser result values.
+     * A tuple for compound parser result values.  Designed to match the ~
+     * combinator used for sequencing.
      */
     case class ~[+U,+V] (l : U, r : V)
 
     /**
-     * A parser implemented as a function from input to a parse result.
+     * A parser from inputs to parse results.
      */
     abstract class Parser[+T] extends (Input => ParseResult[T]) {
         
         /**
-         * Alias this as p to make it easier to refer to in the combinator
-         * definitions below.
+         * Alias this parser as p to make it easier to refer to in the
+         * combinator definitions.
          */
         p => 
         
@@ -87,38 +105,67 @@ trait Parsers {
          */
         def apply (in : Input) : ParseResult[T]
         
+        /**
+         * Run this parser and, if the parse was successful, apply f to the
+         * result.
+         */
         def map[U] (f : T => U) : Parser[U] =
             Parser { in =>
                 p (in) map (f)
             }
         
+        /**
+         * Run this parser and, if the parse was successful, feed the resulting
+         * value to f to continue parsing.
+         */
         def flatMap[U] (f : T => Parser[U]) : Parser[U] =
             Parser { in =>
                 p (in) flatMapWithNext (f)
             }
         
+        /**
+         * Run this parser and, if the parse was successful, return its result.
+         * Otherwise try parsing with q.
+         */
         def append[U >: T] (q : => Parser[U]) : Parser[U] =
             Parser { in =>
                 p (in) append q (in)
             }
         
         /**
-         * Construct a parser that parses zero or more occurrences of
-         * what this parser parses.
+         * Construct a parser that applies this parser and then q, returning
+         * a tuple of the results if the parses succeed.
          */
-            
         def ~[U] (q : => Parser[U]) : Parser[~[T, U]] =
             for (v <- p; w <- q) yield new ~ (v,w)
         
+        /** 
+         * Construct a parser that applies this parser and then q, returning
+         * the result of q if the parses succeed.
+         */
         def ~>[U] (q : => Parser[U]) : Parser[U] =
             for (v <- p; w <- q) yield w
-            
+
+        /** 
+         * Construct a parser that applies this parser and then q, returning
+         * the result of this parser if the parses succeed.
+         */            
         def <~[U] (q : => Parser[U]) : Parser[T] =
             for (v <- p; w <- q) yield v
-            
+
+        /**
+         * Construct a parser that parses zero or more occurrences of
+         * what this parser parses.  Collect the result values in a
+         * list.
+         */
         def * : Parser[List[T]] =
             (p+) | success (List ())
 
+        /**
+         * Construct a parser that parses one or more occurrences of
+         * what this parser parses.  Collect the result values in a
+         * list.  This parser is right recursive.
+         */
         def + : Parser[List[T]] = {
             def q : Parser[List[T]] =
                 (p ~ q) ^^ { case t ~ ts => t :: ts } |
@@ -126,43 +173,47 @@ trait Parsers {
             q
         }
             
+        /**
+         * Construct a parser that tries to parse using this parser,
+         * and if successful, returns the result of that parse.  If
+         * the parse fails, try parsing with q.
+         */
         def |[U >: T] (q : => Parser[U]) : Parser[U] =
             append (q)
 
+        /**
+         * Construct a parser that parse what this parser parses and,
+         * if successful, applies f to the result. 
+         */
         def ^^[U] (f : T => U) : Parser[U] =
             map (f)
  
     }
 
     /**
-     * Construct a parser from a function on input.
+     * Construct a parser that produces whatever result f produces when
+     * applied to the input.
      */
     def Parser[T] (f : Input => ParseResult[T]) : Parser[T] =
        new Parser[T] { def apply (in : Input) = f (in) }
     
     /**
-     * Construct a parser that always succeeds without consuming any input.
-     * 
-     * @param result the value to succeed with
-     * @return the constructed parser
+     * Construct a parser that always succeeds with the given result 
+     * without consuming any input.
      */
     def success[T] (result : T) : Parser[T] =
         Parser { in => Success (result, in) }
     
     /**
-     * Construct a parser that always fails without consuming any input.
-     * 
-     * @param msg the message to fail with
-     * @return the constructed parser
+     * Construct a parser that always fails with the given message without
+     * consuming any input.
      */
-    def failure (msg : String) : Parser[Nothing] =
-        Parser { in => Failure (msg, in) }
+    def failure (message : String) : Parser[Nothing] =
+        Parser { in => Failure (message, in) }
         
     /**
-     * Construct a parser that recognises a given input element.
-     *
-     * @param e the input element to recognise
-     * @return the constructed parser
+     * (Implicitly) construct a parser that succeeds with e if the next input
+     * element is e, and otherwise fails.
      */
     implicit def accept (e : Elem) : Parser[Elem] =
         Parser { in =>
@@ -173,8 +224,9 @@ trait Parsers {
         }
         
     /**
-     * Construct a parser that accepts an element for which a
-     * predicate evaluates to true.
+     * (Implicitly) construct a parser that succeeds if the given predicate 
+     * answers true when applied to the next input element, and otherwise
+     * fails.
      */
     implicit def acceptIf (pred : Elem => Boolean) : Parser[Elem] =
         Parser { in =>
@@ -183,12 +235,19 @@ trait Parsers {
             else
                 Failure ("acceptIf", in)
         }
-                
-    // Character reader-specific ones are below here
-    
+
+}
+
+trait CharParsers extends Parsers {
+  
     /**
-     * Construct a parser that accepts a given string.  Implicitly invoked
-     * on strings where parsers are expected.
+     * CharParsers parse character elements.
+     */
+    type Elem = Char
+                
+    /**
+     * (Implicitly) construct a parser that succeeds if the next part
+     * of the input is the given string, and otherwise fails.
      */
     implicit def accceptString (s : String) : Parser[String] =
         token (Parser { in =>
@@ -206,36 +265,59 @@ trait Parsers {
                 Failure ("'" + s + "' expected", in)
         })
 
+    /**
+     * Parse wahtever p parses preceded by optional white space.
+     */
     def token[T] (p : Parser[T]) : Parser[T] =
         (whitespace*) ~> p
         
+    /**
+     * Parse a whitespace character.
+     */
     val whitespace : Parser[Char] =
         (ch : Char) => ch.isWhitespace
 
+    /**
+     * Parse a digit character.
+     */
     val digit : Parser[Char] =
         (ch : Char) => ch.isDigit
 
+    /**
+     * Parse a letter character.
+     */
     val letter : Parser[Char] =
         (ch : Char) => ch.isLetter
-        
+
+    /**
+     * Parse a letter or digit character.
+     */
     val letterOrDigit : Parser[Char] =
         (ch : Char) => ch.isLetterOrDigit
     
 }
 
-trait PackratParsers extends Parsers {
+/**
+ * Parsers that use the packrat parsing approach to memoise parsing results,
+ * including support for left recursive grammar rules.
+ * 
+ * The algorithsm used here are from "Packrat parsers can support left
+ * recursion" by Warth, Douglass and Millstein, ACM SIGPLAN Symposium on
+ * Partial Evaluation and Semantics-based Program Manipulation, 2008.
+ */
+trait PackratParsers extends CharParsers {
   
     import scala.collection.mutable.HashMap
     import scala.collection.mutable.Set
     import scala.util.parsing.input.Position
   
     /**
-     * Information about a left recursion. 
+     * Information about an active instance of left recursion. 
      */
     case class Head (rule : Rule, var involvedSet : Set[Rule], var evalSet : Set[Rule])
     
     /**
-     * Heads map
+     * Map between left input positions and active left recursion instances.
      */
     var heads = new HashMap[Input,Head]  
     
@@ -260,12 +342,13 @@ trait PackratParsers extends Parsers {
     var LRStack : LR[_] = null
     
     /**
-     * Common supertype for all rules.
+     * Common supertype for all rules (ie regardless of result type).
      */
     trait Rule
     
     /**
-     * A rule is a memoising, left recursion-detecting encapsulation of a parser.
+     * A typed rule is a memoising, left recursion-detecting encapsulation
+     * of a parser that returns a value of a particular type.
      */
     class TypedRule[T] (body : => Parser[T]) extends Parser[T] with Rule {
       
@@ -308,7 +391,8 @@ trait PackratParsers extends Parsers {
         }
         
         /**
-         *
+         * Initialise the left recursion data for a new application of this
+         * rule.
          */
         def setuplr (l : LR[T]) {
             if (l.head == null)
@@ -322,7 +406,7 @@ trait PackratParsers extends Parsers {
         }
         
         /**
-         *
+         * Process a given left recursion instance.
          */
         def lranswer (in : Input, m : MemoEntry) : ParseResult[T] = {
             m.ans match {
@@ -344,7 +428,8 @@ trait PackratParsers extends Parsers {
         }
         
         /**
-         *
+         * Look up the memoised result for this rule, taking into account that 
+         * it might be participating in an active left recursion.
          */
         def recall (in : Input) : Option[MemoEntry] = {
             val om = memo.get (in) 
@@ -364,7 +449,7 @@ trait PackratParsers extends Parsers {
         }
         
         /**
-         *
+         * Grow the current parse result according to a left recursion.
          */
         def growlr (in : Input, m : MemoEntry, h : Head) : ParseResult[T] = {
           

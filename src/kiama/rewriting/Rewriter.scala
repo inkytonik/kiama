@@ -4,6 +4,11 @@ import Predef.{ byte2Byte => _, int2Integer => _, _ }
 
 /**
  * Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).
+ * The implementation here is partially based on the semantics given in "Program
+ * Transformation with Scoped Dynamic Rewrite Rules", by Bravenboer, van Dam, Olmos
+ * and Visser, Fundamenta Informaticae, 69, 2005. The library strategies are mostly
+ * based on the Stratego library, but also on combinators found in the Scrap Your
+ * Boilerplate and Uniplate libraries for Haskell.
  */
 trait Rewriter {
     
@@ -15,89 +20,75 @@ trait Rewriter {
 
     /**
      * The type of terms that can be rewritten.  Any type of object value is
-     * acceptable but generic traversals will only work on Products (eg instances
-     * of case classes).
+     * acceptable but generic traversals will only work on Products (e.g.,
+     * instances of case classes).
      */
     type Term = AnyRef
 
     /**
-     * Class Strategy represents term-rewriting strategies.
+     * Term-rewriting strategies.
      */
     abstract class Strategy extends Function[Term,Option[Term]] {
         
-        self =>
+        /**
+         * Alias this strategy as p to make it easier to refer to in the
+         * combinator definitions.
+         */
+        p =>
         
         /**
-         * Apply this strategy to a term.
-         *
-         * @param r the subject term
-         * @return Some(t) if the strategy succeeded resulting in term t,
-         *   or None if the strategy failed
+         * Apply this strategy to a term, producing either a transformed term
+         * or None, representing a rewriting failure.
          */
         def apply (r : Term) : Option[Term]
         
         /**
-         * Sequential composition.  Create a strategy that first applies
-         * this strategy. If it succeeds, then apply the given strategy to the
-         * new subject term.  Otherwise fail.
-         *
-         * @param s the strategy to apply if this strategy succeeds
-         * @return the constructed strategy
+         * Sequential composition.  Construct a strategy that first applies
+         * this strategy. If it succeeds, then apply q to the new subject
+         * term.  Otherwise fail.
          */
-        def <* (s : => Strategy) : Strategy =
+        def <* (q : => Strategy) : Strategy =
             new Strategy {
                 def apply (t1 : Term) =
-                    self (t1) match {
-                        case Some (t2) => s (t2)
+                    p (t1) match {
+                        case Some (t2) => q (t2)
                         case None      => None
                     }
             }
     
         /**
-         * Deterministic choice.  Create a strategy that first applies
+         * Deterministic choice.  Construct a strategy that first applies
          * this strategy.  If it succeeds, succeed with the resulting term.
-         * Otherwise, apply the given strategy to the original subject
-         * term.
-         *
-         * @param s the strategy to apply if this strategy fails
-         * @return the constructed strategy
+         * Otherwise, apply q to the original subject term.
          */
-        def <+ (s : => Strategy) : Strategy =
+        def <+ (q : => Strategy) : Strategy =
             new Strategy {
                 def apply (t1 : Term) =
-                    self (t1) match {
+                    p (t1) match {
                         case Some (t2) => Some (t2)
-                        case None      => s (t1)
+                        case None      => q (t1)
                     }
             }
     
         /**
-         * Non-deterministic choice.  Create a strategy that first applies
+         * Non-deterministic choice.  Construct a strategy that first applies
          * either this strategy or the given strategy.  If it succeeds,
-         * succeed with the resulting term. Otherwise, apply the other strategy.
+         * succeed with the resulting term. Otherwise, apply q.
          * Currently implemented as deterministic choice, but this behaviour
          * should not be relied upon.
-         *
-         * @param s the other strategy to apply
-         * @return the constructed strategy
          */
-        def + (s : => Strategy) : Strategy =
-            <+ (s)
+        def + (q : => Strategy) : Strategy =
+            <+ (q)
             
         /**
-         * Guarded choice.  Create a strategy that first applies this 
-         * strategy.  If it succeeds, apply one given strategy to the 
-         * resulting term, otherwise apply another given strategy to
-         * the original subject term.
-         * 
-         * @param l the strategy to apply if this strategy succeeds
-         * @param r the strategy to apply if this strategy fails
-         * @return the constructed strategy
+         * Guarded choice.  Construct a strategy that first applies this 
+         * strategy.  If it succeeds, apply l to the resulting term,
+         * otherwise apply r to the original subject term.
          */
         def <++ (l : => Strategy, r: => Strategy) : Strategy =
             new Strategy {
                 def apply (t1 : Term) =
-                    self (t1) match {
+                    p (t1) match {
                         case Some (t2) => l (t2)
                         case None      => r (t1)
                     }
@@ -106,9 +97,7 @@ trait Rewriter {
     }
     
     /**
-     * Failure. Create a strategy that always fails.
-     * 
-     * @return the constructed strategy
+     * A strategy that always fails.
      */
     val failure : Strategy =
         new Strategy {
@@ -116,10 +105,8 @@ trait Rewriter {
         }
     
     /**
-     * Identity.  Create a strategy that always succeeds with the subject
-     * term unchanged.
-     * 
-     * @return the constructed strategy
+     * A strategy that always succeeds with the subject term unchanged (i.e.,
+     * this is the identity strategy).
      */
     val id : Strategy =
         new Strategy {
@@ -127,11 +114,8 @@ trait Rewriter {
         }
         
     /**
-     * Constant strategies.  Any term value implicitly defines a strategy
-     * that always succeeds returning that term.
-     *
-     * @param a the term which should be returned
-     * @return the constructed strategy
+     * (Implicitly) construct a strategy that always succeeds, changing the subject
+     * term to a given term.
      */
     implicit def termToStrategy (a : Term) =
         new Strategy {
@@ -139,12 +123,9 @@ trait Rewriter {
         }
     
     /**
-     * Define a rewrite rule.  Create a strategy based on a (possibly partial)
-     * function. If the function does not apply, the strategy fails, otherwise
-     * the strategy succeeds with the result of the function.
-     *
-     * @param f the function that defines the behaviour of the strategy
-     * @return the constructed strategy
+     * Define a rewrite rule.  Construct a strategy based on a (possibly partial)
+     * function f. If f does not apply, the strategy fails, otherwise the strategy
+     * succeeds with the result of aplying f to the subject term.
      */
     def rule (f : Term => Term) : Strategy =
         new Strategy {
@@ -161,24 +142,25 @@ trait Rewriter {
         }
 
     /**
-     * Define a term query.  Create a strategy that always succeeds with no
+     * Define a term query.  Construct a strategy that always succeeds with no
      * effect on the subject term but applies a given (possibly partial)
-     * function to the subject term.  In other words, the strategy runs the
-     * function for its side-effects.
-     *
-     * @param f the function that defines the behaviour of the strategy
-     * @return the constructed strategy
+     * function f to the subject term.  In other words, the strategy runs f
+     * for its side-effects.
      */
     def query[T] (f : PartialFunction[Term,T]) : Strategy =
         rule { case t => f (t); t }
 
     /**
-     * Generic term deconstruction.  An extractor that decomposes Products
-     * into the product itself and a sequence of its children.  Terms that
-     * are not products are not decomposable (ie the list of children will
-     * be empty).
+     * Generic term deconstruction.
      */
     object Term {
+      
+        /**
+         * Generic term deconstruction.  An extractor that decomposes Products
+         * into the product itself and a sequence of its children.  Terms that
+         * are not products are not decomposable (ie the list of children will
+         * be empty).
+         */
         def unapply (t : Any) : Option[(Any,Seq[Any])] = {
             t match {
                 case p : Product => {
@@ -194,25 +176,21 @@ trait Rewriter {
     /**
      * Perform a paramorphism over a value.  This is a fold in which the
      * recursive step may refer to the recursive component of the value
-     * and the results of folding over the children.  When f is called,
-     * the first parameter is the value and the second is a sequence of
-     * the values that f has returned for the children.  This will work
-     * on any value, but will only decompose Products.  This one is
-     * as seen in the Uniplate library.
-     *
-     * @param f the function to apply at each level
-     * @return a function that can be applied to any value to perform the fold
+     * and the results of folding over the children.  When the function f
+     * is called, the first parameter is the value and the second is a
+     * sequence of the values that f has returned for the children.  This
+     * will work on any value, but will only decompose Products.  This 
+     * operation is similar to that used in the Uniplate library.
      */
     def para[T] (f : (Any, Seq[T]) => T) : Any => T = {
         case Term (t, ts) => f (t, ts.map (para (f)))
     }
 
     /**
-     * General product duplication function.
-     * 
-     * @param t the product to duplicate
-     * @param children the new children to use
-     * @return a product with the same constructor as t but with the new children
+     * General product duplication function.  Returns a product that applies
+     * the same constructor as the product t, but with the given children
+     * instead of t's children.  Fails if a constructor cannot be found or
+     * if one of the children is not of the appropriate type.
      */
     private def dup (t : Product, children : Array[AnyRef]) : Product = {
         val ctor = (t.getClass.getConstructors())(0)
@@ -228,10 +206,8 @@ trait Rewriter {
     }
 
     /**
-     * Make a child, checking that it worked properly.
-     *
-     * @param child the value of the child
-     * @return the child converted to an object reference
+     * Make an arbitrary value into a term child, checking that it worked properly.
+     * Object references will be returned unchanged; other values will be boxed.
      */
     private def makechild (child : Any) : AnyRef = {
         try {
@@ -243,14 +219,11 @@ trait Rewriter {
     }        
 
     /**
-     * Traversal to all children.  Create a strategy that applies a given
-     * strategy to all term children of the subject term in left-to-right order.
-     * If it succeeds on all of the children, then succeed, forming a new term
-     * from the constructor of the original term and the result for each child.
-     * If the strategy fails on any child, fail.
-     *
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Traversal to all children.  Construct a strategy that applies s to all
+     * term children of the subject term in left-to-right order.  If s succeeds
+     * on all of the children, then succeed, forming a new term from the constructor
+     * of the original term and the result of s for each child.  If s fails on any
+     * child, fail.
      */
     def all (s : => Strategy) : Strategy =
         new Strategy {
@@ -296,16 +269,12 @@ trait Rewriter {
         }
     
     /**
-     * Traversal to one child.  Create a strategy that applies a given strategy
-     * to the term children of the subject term in left-to-right order.  Assume
-     * c is the first child on which the strategy succeeds.  Stop applying the 
-     * strategy to the children and succeed, forming a new term from the constructor
-     * of the original term and the original children, except that c is replaced by
-     * the result of applying the strategy to c.  In the event that the strategy
-     * fails on all children, then fail.
-     *
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Traversal to one child.  Construct a strategy that applies s to the term
+     * children of the subject term in left-to-right order.  Assume that c is the
+     * first child on which s succeeds.  Then stop applying s to the children and
+     * succeed, forming a new term from the constructor of the original term and
+     * the original children, except that c is replaced by the result of applying
+     * s to c.  In the event that the strategy fails on all children, then fail.
      */
     def one (s : => Strategy) : Strategy =
         new Strategy {
@@ -348,16 +317,10 @@ trait Rewriter {
                 }
             }
         }
-        
-    // End-to-end interface 
-    
+            
     /**
-     * Rewrite a term.  Apply a strategy to a term returning the result term
-     * if the strategy succeeds, otherwise return the original term.
-     *
-     * @param s the strategy to apply
-     * @param t the term to which to apply s
-     * @return either the result of applying s, or the original term if s fails
+     * Rewrite a term.  Apply the strategy s to a term returning the result term
+     * if s succeeds, otherwise return the original term.
      */
     def rewrite[T <: Term] (s : => Strategy) (t : T) : T = {
         if (debug)
@@ -375,14 +338,10 @@ trait Rewriter {
     }
 
     /**
-     * Collect query results in a Set.  Run a given function as a top-down
+     * Collect query results in a set.  Run the function f as a top-down
      * query on the subject term.  Accumulate the values produced by the
      * function in a set and return the final value of the set.
-     * 
-     * @param f the function that forms the basis of the query
-     * @return a set of the values produced by f
      */
-        
     def collects[T] (f : PartialFunction[Term,T]) : Term => Set[T] =
         (t : Term) => {
             var collection = Set[T]()
@@ -391,6 +350,11 @@ trait Rewriter {
             collection
         }
         
+    /**
+     * Collect query results in a list.  Run the function f as a top-down
+     * query on the subject term.  Accumulate the values produced by the
+     * function in a list and return the final value of the list.
+     */
     def collectl[T] (f : PartialFunction[Term,T]) : Term => List[T] =
         (t : Term) => {
             var collection = List[T]()
@@ -399,8 +363,11 @@ trait Rewriter {
             collection
         }
         
-    // Counting
-    
+    /**
+     * Count function results.  Run the function f as a top-down query on
+     * the subject term.  Sum the integer values returned by f from all
+     * applications.
+     */
     def count (f : PartialFunction[Term,Int]) : Term => Int =
         (t : Term) => {
             var total = 0
@@ -410,113 +377,119 @@ trait Rewriter {
         }
     
     /**
-     * Create a strategy that applies a given strategy, yielding the result
-     * of that strategy if it succeeds, or if it fails, leaving the original
-     * subject term unchanged.
-     *
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Construct a strategy that applies s, yielding the result of s if it
+     * succeeds, otherwise leave the original subject term unchanged.  In
+     * Stratego library this strategy is called "try".
      */
     def attempt (s : => Strategy) : Strategy =
         s <+ id
           
     /**
-     * Create a strategy that applies a given strategy, repeatedly until it
-     * fails.  The 
-     
-     , yielding the result
-     * of that strategy if it succeeds, or if it failed, leaving the original
-     * subject term unchanged.
-     *
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Construct a strategy that applies s repeatedly until it fails.
      */
     def repeat (s : => Strategy) : Strategy =
         attempt (s <* repeat (s))
     
     /**
-     * Create a strategy that applies a given strategy, then fails if it
-     * succeeded or, if it failed, succeeds with the subject term unchanged, 
-     * 
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Construct a strategy that applies s, then fails if s succeeded or, if s
+     * failed, succeeds with the subject term unchanged,  I.e., it tests if
+     * s applies, but has no effect on the subject term.
      */
     def not (s : => Strategy) : Strategy =
         s <++ (failure, id)
         
     /**
-     * Create a strategy that applies a given strategy for its side-effects
-     * and always succeed with the subject term unchanged.  Note: this
-     * is not exactly the same as Stratego's "where" since in this version
-     * the environment effects of the strategy are not visible outside.
-     *
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Construct a strategy that applies s for its side-effects and always
+     * succeed with the subject term unchanged.  This strategy is similar 
+     * to Stratego's "where", except that in this version any effects on
+     * bindings are not visible outside s. 
      */
     def where (s : => Strategy) : Strategy =
         rule { case t => s (t); t }
-    
+
+    /**
+     * Construct a strategy that applies s in a top-down, prefix fashion
+     * to the subject term.
+     */
     def topdown (s : => Strategy) : Strategy =
         s <* all (topdown (s)) 
 
+    /**
+     * Construct a strategy that applies s in a bottom-up, postfix fashion
+     * to the subject term.
+     */
     def bottomup (s : => Strategy) : Strategy =
         all (bottomup (s)) <* s
   
+    /**
+     * Construct a strategy that applies s in a combined top-down and
+     * bottom-up fashion (i.e., both prefix and postfix) to the subject
+     * term.
+     */
     def downup (s : => Strategy) : Strategy =
         s <* all (downup (s)) <* s 
 
+    /**
+     * Construct a strategy that applies s1 in a top-down, prefix fashion
+     * and s2 in a bottom-up, postfix fashion to the subject term.
+     */
     def downup (s1 : => Strategy, s2 : => Strategy) : Strategy =
         s1 <* all (downup (s1, s2)) <* s2
 
-    def downup2 (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        s1 <* all (downup2 (s1, s2)) <* s2
-
-    def outermost (s : Strategy) : Strategy = 
-        repeat (oncetd (s))        
-    
-    def innermost (s : => Strategy) : Strategy =
-        bottomup (attempt (s <* innermost (s)))
-
+    /**
+     * Construct a strategy that applies s in a top-down fashion stopping
+     * as soon as it succeeds once (at any level).
+     */
     def oncetd (s : => Strategy) : Strategy =
         s <+ one (oncetd (s))
     
+    /**
+     * Construct a strategy that applies s in a bottom-up fasion stopping
+     * as soon as it succeeds once (at any level).
+     */
     def oncebu (s : => Strategy) : Strategy =
         one (oncebu (s)) <+ s 
-        
+
+    /**
+     * Construct a strategy that applies s repeatedly in a top-down fashion
+     * stopping each time as soon as it succeeds once (at any level). The
+     * outermost fails when s fails to apply to any (sub-)term.
+     */
+    def outermost (s : Strategy) : Strategy = 
+        repeat (oncetd (s))        
+    
+    /**
+     * Construct a strategy that applies s repeatedly to the innermost
+     * (i.e., lowest and left-most) (sub-)term to which it applies.
+     * Stop with the current term if s doesn't apply anywhere.
+     */
+    def innermost (s : => Strategy) : Strategy =
+        bottomup (attempt (s <* innermost (s)))
+    
+    /**
+     * Construct a strategy that applies s in a top-down fashion, stopping
+     * at a frontier where s applies.
+     */
     def alltd (s : => Strategy) : Strategy =
         s <+ all (alltd (s))
         
     /**
-     * Create a strategy that succeeds if a given term is a subterm
-     * of the subject term.  The subject term is unchanged.
-     *
-     * @param t the term to look for
-     * @return the constructed strategy
+     * Construct a strategy that succeeds if t is a subterm  of the subject
+     * term.  The subject term is unchanged.
      */
     def issubterm (t : Term)  : Strategy =
         oncetd (rule { case `t` => t })
         
-    // Not sure if these are in the Stratego library.  They are
-    // the SYB combinators everywhere and everywhere'.
-
     /**
-     * Create a strategy to apply a given strategy at every term in a
-     * bottom-up fashion regardless of failure.  Terms for which the 
-     * strategy fails are left unchanged.
-     *
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Construct a strategy that applies s at every term in a bottom-up fashion
+     * regardless of failure.  (Sub-)terms for which the strategy fails are left unchanged.
      */
     def everywherebu (s : => Strategy) : Strategy =
         bottomup (attempt (s))
  
     /**
-     * Create a strategy to apply a given strategy at every term in a
-     * top-down fashion regardless of failure.  Terms for which the 
-     * strategy fails are left unchanged.
-     *
-     * @param s the strategy to apply
-     * @return the constructed strategy
+     * Construct a strategy applies s at every term in a top-down fashion regardless
+     * of failure.  (Sub-)terms for which the strategy fails are left unchanged.
      */  
     def everywheretd (s : => Strategy) : Strategy =
         topdown (attempt (s))

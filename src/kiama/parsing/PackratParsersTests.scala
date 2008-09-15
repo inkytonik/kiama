@@ -9,7 +9,7 @@ import org.scalatest.prop.Checkers
 import kiama.example.imperative.TestBase
 
 /**
- * Run this to perform the tests.
+ * Packrat parsing test cases.
  */
 class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                           with PackratParsers with TestBase {
@@ -18,15 +18,12 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     import scala.util.parsing.input.CharArrayReader
 
     /**
-     * Convenience method for creating a reader that reads from a string.
-     *
-     * @param str the string to read from
-     * @return the constructed reader
+     * Convenience method for creating a reader that reads from a given string.
      */
     def input (str : String) = new CharArrayReader (str.toArray)
         
     /**
-     * Empty input.
+     * Input containing no characters at all.
      */
     val empty = input ("")
 
@@ -51,7 +48,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Equality of parser results.
+     * Equality of parser results, including input states.
      */
     def same[T] (l : ParseResult[T], r : ParseResult[T]) : Boolean = {
         l match {
@@ -95,7 +92,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * A failing parse fails with the specified message no matter
      * what the input is.
      */
-    def testAnyInputFail () {
+    def testAnyInputFailure () {
         check (pred (in => same (failure ("fail") (in), Failure ("fail", in))))
     }
     
@@ -129,11 +126,8 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Try to parse a string and expect the given result.  Also check that
-     * there is no more input left.  This is the JUnit version.
-     * 
-     * @param str the string to try to parse
-     * @param result the result value that the parser should return 
+     * Try to parse a string and expect a given result.  Also check that
+     * there is no more input left.  Return a JUnit test case result.
      */
     def expect[T] (parser : Parser[T], str : String, result : T) {
         parser (input (str)) match {
@@ -146,7 +140,8 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * A Boolean version of expect for use in ScalaCheck checks.
+     * Try to parse a string and expect a given result.  Also check that
+     * there is no more input left.  Return a Boolean result.
      */
     def expectBool[T] (parser : Parser[T], str : String, result : T) : Boolean = {
         val p = parser <~ (whitespace*)
@@ -159,7 +154,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Parse numbers.
+     * Test parsing of arbitrary numbers.
      */
     def testParseNumbers () {
         check ((i : Int) => (i >= 0) ==> expectBool (integer, i.toString, Num (i)))
@@ -167,7 +162,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Parse variables (subsumes tests for identifier parsing).
+     * Test parsing of variables (subsumes tests for identifier parsing).
      */
     def testParseVariables () {
         expect (variable, "a", Var ("a"))
@@ -178,7 +173,8 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Roundtrip test parse of pretty-printed value.
+     * Roundtrip test.  Pretty print a value, parse the resulting string and
+     * check that the parse result is the same as the original value.
      */
     def roundtrip[T <: PrettyPrintable] (parser : Parser[T])(implicit arbT : Arbitrary[T]) {
         check ((t : T) => {
@@ -189,7 +185,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Parse expressions
+     * Test parsing of expressions.
      */
     def testParseExpressions () {
         expect (exp, "1", Num (1))
@@ -200,7 +196,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Parse a null statement.
+     * Test parsing of null statements.
      */
     def testParseNullStmt () {
         expect (stmt, ";", Null ())
@@ -208,7 +204,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Parse assignment statements.
+     * Test parsing of assignment statements.
      */
     def testParseAssignStmts () {
         expect (asgnStmt, "a = 5;", Asgn ("a", Num (5)))
@@ -217,7 +213,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
 
     /**
-     * Parse statement sequences.
+     * Test parsing of statement sequences.
      */
     def testParseSequences () {
         expect (sequence, "{}", Seqn (List ()))
@@ -228,7 +224,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Parse while statements.
+     * Test parsing of while statements.
      */
     def testParseWhilestmts () {
         expect (whileStmt, "while (1) ;", While (Num (1), Null ()))
@@ -239,7 +235,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Parse statements.
+     * Test parse of arbitrary statements.
      */
     def testParseStatements () {
         roundtrip (stmt)

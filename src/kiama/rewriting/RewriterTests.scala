@@ -9,13 +9,17 @@ import org.scalatest.prop.Checkers
 import kiama.example.imperative.TestBase
 
 /**
- * Run this to perform the tests.
+ * Rewriting tests.
  */
 class RewriterTests extends TestCase with JUnit3Suite with Checkers
                     with Rewriter with TestBase {
                        
     import kiama.example.imperative.AST._
     
+    /**
+     * Test arithmetic evaluation with variable references and division by
+     * zero worked around.
+     */
     def testEvaluation () {
         val eval =
             rule {
@@ -29,6 +33,9 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp) => everywherebu (eval) (t) == Some (Num (t.value)))
     }
     
+    /**
+     * Test the issubterm combinator.
+     */
     def testSubtermMatching () {
         check ((t : Stmt) => issubterm (t) (t) == Some (t))
         check ((t : Exp) => issubterm (t) (t) == Some (t))
@@ -81,6 +88,9 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp) => issubterm (pickdesc (t)) (t) == Some (t))
     }
     
+    /**
+     * Test strategies that should have no effect on the subject term.
+     */
     def testNoChange () {
         check ((t : Stmt) => id (t) == Some (t))
         check ((t : Exp) => id (t) == Some (t))
@@ -94,11 +104,17 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp) => noopexp (t) == Some (t))
     }
     
+    /**
+     * Test strategies that fail immediately.
+     */
     def testFailure () {
         check ((t : Stmt) => failure (t) == None)
         check ((t : Exp) => failure (t) == None)
     }
     
+    /**
+     * Test strategies defined from a specific term.
+     */
     def testTermsAsStrategies () {
         check ((t : Stmt, u : Exp) => t (u) == Some (t))
         check ((t : Exp, u : Exp) => t (u) == Some (t))
