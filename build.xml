@@ -63,15 +63,13 @@
     <copy todir="bin/doc">
       <fileset dir=".">
         <include name="LICENSE"/>
-        <include name="RELEASE"/>
       </fileset>
     </copy>
     <scaladoc
       srcdir="src"
       destdir="bin/doc/api"
-      windowtitle="${name} ${version}"
+      windowtitle="${name} ${version} API Documentation"
       doctitle="${name} ${version}"
-      addparams="-linksource"
       classpathref="kiama.classpath">
       <include name="**/*.scala"/>
     </scaladoc>
