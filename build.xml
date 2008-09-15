@@ -62,7 +62,7 @@
   <target name="doc" depends="prepare">
     <copy todir="bin/doc">
       <fileset dir=".">
-        <include name="README.txt"/>
+        <include name="README"/>
         <include name="COPYING"/>
         <include name="COPYING.LESSER"/>
       </fileset>
