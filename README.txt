@@ -1,0 +1,75 @@
+Kiama
+
+Kiama is a Scala library for language processing.  In the Kiama project we are
+investigating embedding of language processing formalisms such as grammars,
+parsers, rewriters and analysers into general-purpose programming languages.
+
+This document provides a short overview of Kiama and how to build it.
+
+IMPORTANT NOTE: Kiama is a research project, it's early days and the code is
+undergoing heavy development, so many details will change.  Consult with us
+before you rely on it for serious work.  We make no guarantees about the
+features or performance of the Kiama library if you do choose to use it.
+
+Anthony Sloane
+Department of Computing, Macquarie University
+Anthony.Sloane@mq.edu.au
+
+1. Contents
+
+The source distribution of Kiama is structured as follows:
+
+src/
+    example             Example language specifications that use Kiama
+        imperative      A simple imperative language for testing
+    parsing             Packrat parsing library                            
+    rewriting           Strategy-based rewriting library
+        
+Tests for each section of the library are located in the relevant
+source directories.        
+        
+2. Requirements
+
+To build and use Kiama you will need to install the following software:
+
+* Scala (http://www.scala-lang.org/)
+  Tested with version 2.7.1
+
+* ScalaCheck (http://code.google.com/p/scalacheck/)
+  Tested with version 1.3
+  
+* ScalaTest (http://www.artima.com/scalatest/)
+  Tested with version 0.9.3
+  
+* JUnit (www.junit.org)
+  Tested with version 4.1  
+  
+* Java (www.java.com)
+  Tested with version 1.5 on Mac OS X 10.5.4
+
+3. Building
+
+Kiama is built using ant.  Examine build.xml and adjust the settings for
+scala.home, scala.lib, scalacheck.lib, scalatest.lib and junit.lib as
+appropriate. 
+
+Build kiama with "ant build" or just "ant" since "build" is the default.  The
+build should compile the library into the "bin" directory.  To run Kiama-based
+code you will need to put this directory on your CLASSPATH.
+
+Other useful ant targets are:
+
+clean      remove all generated files
+doc        generate the API documentation into bin/doc/api
+jar        make a jar of the Kiama library (in dist)
+jar-src    make a jar of the Kiama library source (in dist)
+scalatest  run tests using the ScalaTest GUI
+
+4. Acknowledgements
+
+Kiama is currently concentrating on incorporating existing language processing
+formalisms, so credit goes to the original developers of those formalisms.  See
+the code for details of the sources of ideas that come from elsewhere.
+
+Most of the build process has been adapted from that used by Rickard Nilsson
+in ScalaCheck.
