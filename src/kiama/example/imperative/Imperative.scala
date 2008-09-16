@@ -299,6 +299,9 @@ trait Generator {
     val genDouble = for (i <- Gen.choose (1.0, 1000000.0)) yield Num (i)
     val genNum = Gen.frequency ((3, genInteger), (1, genDouble))
     
+    implicit def arbNum : Arbitrary[Num] =
+        Arbitrary (genNum)
+    
     val genIdn : Gen[String] = for (s <- Gen.identifier) yield (s.take (5))
     val genVar = for (v <- genIdn) yield Var (v)
     

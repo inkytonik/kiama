@@ -54,6 +54,11 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     implicit def arbInput : Arbitrary[Input] = {
         Arbitrary (for (s <- Arbitrary.arbString.arbitrary if !s.isEmpty) yield (input (s)))
     }
+    
+    /**
+     * Random value generator used by some tests.
+     */
+    val random = new scala.Random
         
     /**
      * Equality of inputs by content.
@@ -252,6 +257,92 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      */
     def testParseStatements () {
         roundtrip (stmt)
+    }
+    
+    /**
+     * Test a predicate parser on a given string.  Return true if it succeeds
+     * with true and the input unchanged, otherwise return false.
+     */
+    def predSucceeds[T] (parser : Parser[T], str : String) : Boolean = {
+        val in = input (str)
+        parser (in) match {
+            case Success (true, in2) =>
+                same (in, in2)
+            case Failure (_, _) =>
+                false
+        }
+    }
+
+    /**
+     * Test a predicate parser on a given string.  Return true if it fails
+     * with the expected message and the input unchanged, otherwise return
+     * false.
+     */
+    def predFails[T] (parser : Parser[T], str : String) : Boolean = {
+        val in = input (str)
+        parser (in) match {
+            case Success (_, _) =>
+                false
+            case Failure (m, in2) =>
+                (m == "predicate failure") && (same (in, in2))
+        }
+    }
+    
+    /**
+     * Test that the not predicate appropriately negates the behaviour of
+     * other parsers.
+     */
+    def testNotPredicate () {
+        assertTrue (predSucceeds (!integer, "hello"))
+        assertTrue (predFails (!integer, "42"))
+        assertTrue (predSucceeds (!asgnStmt, "a = ;"))
+        assertTrue (predFails (!asgnStmt, "a = 5;"))
+        assertTrue (predSucceeds (!stmt, "while (c + 3) { a = 5; b = ; }"))
+        assertTrue (predFails (!stmt, "while (c + 3) { a = 5; b = c; }"))
+        check ((s : Stmt) => predFails (!stmt, pretty (s)))
+        check ((e : Exp) => predSucceeds (!stmt, pretty (e))) 
+    }
+    
+    /**
+     * Check that +p returns the same result as p on random input, but
+     * doesn't change the input.  Starts with valid phrases for the parser
+     * but randomly injects whitespace to provoke errors.
+     */
+    def sameResultNoInput[T <: PrettyPrintable] (p : Parser[T])(implicit arbT : Arbitrary[T]) {
+        check ((t : T) => {
+            var s = pretty (t)
+            if (random.nextBoolean) {
+                val pos = random.nextInt (s.length)
+                s = s.take (pos) + " " + s.drop (pos)
+            }
+            val in = input (s)
+            val pv = p (in)
+            val ppv = (+p) (in)
+	        pv match {
+	            case Success (lr, _) =>
+	                ppv match {
+	                    case Success (rr, ri) => (lr == rr) && (ri == in)
+	                    case _                => false
+	                }
+	            case Failure (lm, _) =>
+	                ppv match {
+	                    case Failure (rm, ri) => (lm == rm) && (ri == in)
+	                    case _                => false
+	                }
+	        }            
+        })
+    }
+    
+    /**
+     * Test that the and predicate preserves the results of other parsers
+     * but has no effect on the input.
+     */
+    def testAndPredicate () {
+        sameResultNoInput (integer)
+        sameResultNoInput (double)
+        sameResultNoInput (asgnStmt)
+        sameResultNoInput (whileStmt)
+        sameResultNoInput (stmt)
     }
     
 }

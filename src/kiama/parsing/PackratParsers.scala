@@ -207,7 +207,36 @@ trait Parsers {
          */
         def ^^[U] (f : T => U) : Parser[U] =
             map (f)
- 
+        
+        /**
+	     * Construct a parser that returns the result of parsing with p, except
+	     * that it unconditionally backtracks to the input position when p was
+	     * invoked.  I.e., the resulting parser is only useful for its success
+	     * or failure result, not its effect on the input.
+	     */
+	    def unary_+ : Parser[T] =
+	        new Parser[T] {
+	            def apply (in : Input) =
+	                p (in) match {
+	                    case Success (t, _) => Success (t, in)
+	                    case Failure (m, _) => Failure (m, in)
+	                }
+	        }
+
+        /**
+	     * Construct a parser that succeeds if this parser fails and fails if
+         * this parser succeeds.  In the case of success (i.e., this parser has
+         * failed), the constructed parser returns true.
+	     */
+	    def unary_! : Parser[Boolean] =
+	        new Parser[Boolean] {
+	            def apply (in : Input) =
+	                p (in) match {
+	                    case Success (t, _) => Failure ("predicate failure", in)
+	                    case Failure (_, _) => Success (true, in)
+	                }
+	        }
+         
     }
 
     /**
@@ -255,7 +284,7 @@ trait Parsers {
             else
                 Failure ("acceptIf", in)
         }
-
+        
 }
 
 /**
