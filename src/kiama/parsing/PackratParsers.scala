@@ -258,6 +258,9 @@ trait Parsers {
 
 }
 
+/**
+ * Parsers that operate on character input.
+ */
 trait CharParsers extends Parsers {
   
     /**
@@ -318,10 +321,10 @@ trait CharParsers extends Parsers {
 }
 
 /**
- * Parsers that use the packrat parsing approach to memoise parsing results,
- * including support for left recursive grammar rules.
+ * Character parsers that use the packrat parsing approach to memoise parsing
+ * results, including support for left recursive grammar rules.
  * 
- * The algorithsm used here are from "Packrat parsers can support left
+ * The algorithms used here are from "Packrat parsers can support left
  * recursion" by Warth, Douglass and Millstein, ACM SIGPLAN Symposium on
  * Partial Evaluation and Semantics-based Program Manipulation, 2008.
  */
