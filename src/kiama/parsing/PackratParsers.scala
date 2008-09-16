@@ -288,76 +288,14 @@ trait Parsers {
 }
 
 /**
- * Parsers that operate on character input.
- */
-trait CharParsers extends Parsers {
-  
-    /**
-     * CharParsers parse character elements.
-     */
-    type Elem = Char
-                
-    /**
-     * (Implicitly) construct a parser that succeeds if the next part
-     * of the input is the given string, and otherwise fails.
-     */
-    implicit def accceptString (s : String) : Parser[String] =
-        token (Parser { in =>
-            val source = in.source
-            val offset = in.offset
-            var i = 0
-            var j = offset
-            while (i < s.length && j < source.length && s.charAt (i) == source.charAt (j)) {
-                i += 1
-                j += 1
-            }
-            if (i == s.length)
-                Success (source.subSequence (offset, j).toString, in.drop (j - offset))
-            else 
-                Failure ("'" + s + "' expected", in)
-        })
-
-    /**
-     * Parse wahtever p parses preceded by optional white space.
-     */
-    def token[T] (p : Parser[T]) : Parser[T] =
-        (whitespace*) ~> p
-        
-    /**
-     * Parse a whitespace character.
-     */
-    val whitespace : Parser[Char] =
-        (ch : Char) => ch.isWhitespace
-
-    /**
-     * Parse a digit character.
-     */
-    val digit : Parser[Char] =
-        (ch : Char) => ch.isDigit
-
-    /**
-     * Parse a letter character.
-     */
-    val letter : Parser[Char] =
-        (ch : Char) => ch.isLetter
-
-    /**
-     * Parse a letter or digit character.
-     */
-    val letterOrDigit : Parser[Char] =
-        (ch : Char) => ch.isLetterOrDigit
-    
-}
-
-/**
- * Character parsers that use the packrat parsing approach to memoise parsing
+ * Parsers that use the packrat parsing approach to memoise parsing
  * results, including support for left recursive grammar rules.
  * 
  * The algorithms used here are from "Packrat parsers can support left
  * recursion" by Warth, Douglass and Millstein, ACM SIGPLAN Symposium on
  * Partial Evaluation and Semantics-based Program Manipulation, 2008.
  */
-trait PackratParsers extends CharParsers {
+trait PackratParsers extends Parsers {
   
     import scala.collection.mutable.HashMap
     import scala.collection.mutable.Set
@@ -535,3 +473,68 @@ trait PackratParsers extends CharParsers {
     def memo[T] (parser : => Parser[T]) : TypedRule[T] = new TypedRule[T] (parser)
 
 }
+
+/**
+ * Parsers that operate on character input.
+ */
+trait CharParsers extends Parsers {
+  
+    /**
+     * CharParsers parse character elements.
+     */
+    type Elem = Char
+                
+    /**
+     * (Implicitly) construct a parser that succeeds if the next part
+     * of the input is the given string, and otherwise fails.
+     */
+    implicit def accceptString (s : String) : Parser[String] =
+        token (Parser { in =>
+            val source = in.source
+            val offset = in.offset
+            var i = 0
+            var j = offset
+            while (i < s.length && j < source.length && s.charAt (i) == source.charAt (j)) {
+                i += 1
+                j += 1
+            }
+            if (i == s.length)
+                Success (source.subSequence (offset, j).toString, in.drop (j - offset))
+            else 
+                Failure ("'" + s + "' expected", in)
+        })
+
+    /**
+     * Parse wahtever p parses preceded by optional white space.
+     */
+    def token[T] (p : Parser[T]) : Parser[T] =
+        (whitespace*) ~> p
+        
+    /**
+     * Parse a whitespace character.
+     */
+    val whitespace : Parser[Char] =
+        (ch : Char) => ch.isWhitespace
+
+    /**
+     * Parse a digit character.
+     */
+    val digit : Parser[Char] =
+        (ch : Char) => ch.isDigit
+
+    /**
+     * Parse a letter character.
+     */
+    val letter : Parser[Char] =
+        (ch : Char) => ch.isLetter
+
+    /**
+     * Parse a letter or digit character.
+     */
+    val letterOrDigit : Parser[Char] =
+        (ch : Char) => ch.isLetterOrDigit
+    
+}
+
+trait CharPackratParsers extends PackratParsers with CharParsers
+
