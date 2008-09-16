@@ -24,6 +24,7 @@ The source distribution of Kiama is structured as follows:
 src/
     example             Example language specifications that use Kiama
         imperative      A simple imperative language for testing
+        lambda          A small lambda calculus with explicit substitutions
     parsing             Packrat parsing library                            
     rewriting           Strategy-based rewriting library
         
