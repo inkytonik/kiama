@@ -51,10 +51,21 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * Implicitly generate an input by generating a non-empty string to form its
      * contents.
      */    
-    implicit def arbInput : Arbitrary[Input] = {
+    implicit def arbInput : Arbitrary[Input] =
         Arbitrary (for (s <- Arbitrary.arbString.arbitrary if !s.isEmpty) yield (input (s)))
-    }
     
+    /**
+     * Implicitly generate an input based on a pretty-printable language construct.
+     */
+    implicit def arbASTToInput[T <: PrettyPrintable] (t : T) : Input =
+        input (pretty (t))        
+    
+    /**
+     * Implicitly generate a string based on a pretty-printable language construct.
+     */
+    implicit def arbASTToString[T <: PrettyPrintable] (t : T) : String =
+        pretty (t)        
+
     /**
      * Random value generator used by some tests.
      */
@@ -261,9 +272,9 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     
     /**
      * Test a not predicate parser on a given string.  Return true if it succeeds
-     * with true and the input unchanged, otherwise return false.
+     * with ()true) and the input unchanged, otherwise return false.
      */
-    def predSucceeds[T] (parser : Parser[T], str : String) : Boolean = {
+    def notPredSucceeds[T] (parser : Parser[T], str : String) : Boolean = {
         val in = input (str)
         parser (in) match {
             case Success ((), in2) =>
@@ -278,7 +289,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * with the expected message and the input unchanged, otherwise return
      * false.
      */
-    def predFails[T] (parser : Parser[T], str : String) : Boolean = {
+    def notPredFails[T] (parser : Parser[T], str : String) : Boolean = {
         val in = input (str)
         parser (in) match {
             case Success (_, _) =>
@@ -293,14 +304,14 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * other parsers.
      */
     def testNotPredicate () {
-        assertTrue (predSucceeds (!integer, "hello"))
-        assertTrue (predFails (!integer, "42"))
-        assertTrue (predSucceeds (!asgnStmt, "a = ;"))
-        assertTrue (predFails (!asgnStmt, "a = 5;"))
-        assertTrue (predSucceeds (!stmt, "while (c + 3) { a = 5; b = ; }"))
-        assertTrue (predFails (!stmt, "while (c + 3) { a = 5; b = c; }"))
-        check ((s : Stmt) => predFails (!stmt, pretty (s)))
-        check ((e : Exp) => predSucceeds (!stmt, pretty (e))) 
+        assertTrue (notPredSucceeds (!integer, "hello"))
+        assertTrue (notPredFails (!integer, "42"))
+        assertTrue (notPredSucceeds (!asgnStmt, "a = ;"))
+        assertTrue (notPredFails (!asgnStmt, "a = 5;"))
+        assertTrue (notPredSucceeds (!stmt, "while (c + 3) { a = 5; b = ; }"))
+        assertTrue (notPredFails (!stmt, "while (c + 3) { a = 5; b = c; }"))
+        check ((s : Stmt) => notPredFails (!stmt, pretty (s)))
+        check ((e : Exp) => notPredSucceeds (!stmt, pretty (e))) 
     }
     
     /**
@@ -345,4 +356,13 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         sameResultNoInput (stmt)
     }
     
+    /**
+     * Make sure that optional parsers work both ways (so to speak).
+     */
+    def testOptionality () {
+        check ((s : Stmt) => same (stmt (s) map (t => Some (t)), (stmt?) (s)))
+        check ((e : Exp) => { val in = input (e); same (stmt? (in), Success (None, in)) })
+    }
+
 }
+                          

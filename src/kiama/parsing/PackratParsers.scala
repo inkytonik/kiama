@@ -192,7 +192,14 @@ trait Parsers {
                 p ^^ (t => List (t))
             q
         }
-            
+        
+        /**
+         * Construct a parser that parsers either what this parser parses
+         * or nothing.
+         */
+        def ? : Parser[Option[T]] =
+            p ^^ (t => Some (t)) | success (None)
+        
         /**
          * Construct a parser that tries to parse using this parser,
          * and if successful, returns the result of that parse.  If
