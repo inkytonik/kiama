@@ -160,7 +160,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     def testAny () {
         check ((c : Char) => {
             val in = input (c.toString)  
-            same (any (input (c.toString)), Success (c, in.rest))
+            same (any (in), Success (c, in.rest))
         })
     }    
 
