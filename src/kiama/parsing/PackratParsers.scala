@@ -535,7 +535,26 @@ trait CharParsers extends Parsers {
      * CharParsers parse character elements.
      */
     type Elem = Char
+    
+    /**
+     * Parse a whitespace character.
+     */
+    val whitespace : Parser[Char] =
+        (ch : Char) => ch.isWhitespace
+
+    /**
+     * The layout to be allowed between tokens.  Defaults to zero or more
+     * whitespace characters.
+     */
+    val layout : Parser[Seq[Char]] =
+        whitespace*
                 
+    /**
+     * Parse whatever p parses preceded by layout.
+     */
+    def token[T] (p : Parser[T]) : Parser[T] =
+        layout ~> p
+          
     /**
      * (Implicitly) construct a parser that succeeds if the next part
      * of the input is the given string, and otherwise fails.  NOTE: at the
@@ -576,18 +595,6 @@ trait CharParsers extends Parsers {
 	        }
 	    }
     
-    /**
-     * Parse whatever p parses preceded by optional white space.
-     */
-    def token[T] (p : Parser[T]) : Parser[T] =
-        (whitespace*) ~> p
-          
-    /**
-     * Parse a whitespace character.
-     */
-    val whitespace : Parser[Char] =
-        (ch : Char) => ch.isWhitespace
-
     /**
      * Parse a digit character.
      */
