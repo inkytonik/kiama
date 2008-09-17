@@ -65,6 +65,7 @@
         <include name="README"/>
         <include name="COPYING"/>
         <include name="COPYING.LESSER"/>
+        <include name="COPYING.SCALA"/>
       </fileset>
     </copy>
     <scaladoc
