@@ -536,5 +536,8 @@ trait CharParsers extends Parsers {
     
 }
 
+/**
+ * Packrat parsers that operate on character input.
+ */
 trait CharPackratParsers extends PackratParsers with CharParsers
 
