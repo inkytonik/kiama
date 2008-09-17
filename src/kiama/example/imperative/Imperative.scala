@@ -192,7 +192,7 @@ object AST {
     /**
      * Statement sequences.
      */
-    case class Seqn (ss : List[Stmt]) extends Stmt {
+    case class Seqn (ss : Seq[Stmt]) extends Stmt {
         override def vars = Set (ss flatMap (_ vars) : _*)
         def pretty (o : StringBuilder) = {
             o.append ("{\n"); ss.foreach (_.pretty (o)); o.append ("}\n")

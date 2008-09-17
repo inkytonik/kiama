@@ -186,17 +186,18 @@ trait Parsers {
         /**
          * Construct a parser that parses zero or more occurrences of
          * what this parser parses.  Collect the result values in a
-         * list.
+         * sequence.
          */
-        def * : Parser[List[T]] =
+        def * : Parser[Seq[T]] =
             (p+) | success (List ())
 
         /**
          * Construct a parser that parses one or more occurrences of
          * what this parser parses.  Collect the result values in a
-         * list.  This parser is right recursive.
+         * list.  This parser is right recursive to avoid infinite
+         * recursion.
          */
-        def + : Parser[List[T]] = {
+        def + : Parser[Seq[T]] = {
             def q : Parser[List[T]] =
                 (p ~ q) ^^ { case t ~ ts => t :: ts } |
                 p ^^ (t => List (t))
@@ -358,6 +359,14 @@ trait PackratParsers extends Parsers {
      * of a parser that returns a value of a particular type.
      */
     class TypedRule[T] (body : => Parser[T]) extends Parser[T] with Rule {
+     
+        /**
+         * Alias this parser as p to make it easier to refer to in the
+         * combinator definitions.
+         */
+        p => 
+      
+        import scala.collection.mutable.ListBuffer
       
 	    /**
 	     * Memo table entries.
@@ -394,16 +403,33 @@ trait PackratParsers extends Parsers {
                 case Some (MemoEntry (lr @ LR (_, _, _, _), _)) =>                    
                     setuplr (lr)
                     lr.seed
-            }                                
+            }
+            
         }
         
+        /**
+         * Construct a parser that parses one or more occurrences of
+         * what this parser parses.  Collect the result values in a
+         * sequence.  Because these parsers are able to deal with left
+         * recursion and the iteration used to handle left recursion
+         * is more efficient than a general stack-based right recursion,
+         * left recursion is used here.
+         */
+        override def + : Parser[Seq[T]] = {
+            val l = new ListBuffer[T]
+            def q : Parser[ListBuffer[T]] =
+                (q ~ p) ^^ { case ts ~ t => ts += t; l } |
+                p ^^ (t => { l += t; l })
+            q
+        }
+
         /**
          * Initialise the left recursion data for a new application of this
          * rule.
          */
         def setuplr (l : LR[T]) {
             if (l.head == null)
-                l.head = Head (this, Set (), Set ())
+                l.head = Head (p, Set (), Set ())
             var s = LRStack
             while (s.head != l.head) {
                 s.head= l.head
@@ -419,7 +445,7 @@ trait PackratParsers extends Parsers {
             m.ans match {
                 case lr @ LR (_, _, _, _) =>
                     val h = lr.head
-                    if (h.rule == this) {
+                    if (h.rule == p) {
                         m.ans = Result (lr.seed)
                         m.ans match {
                             case Result (f @ Failure (_, _)) =>
@@ -443,10 +469,10 @@ trait PackratParsers extends Parsers {
             heads.get (in) match {
                 case None     => om
                 case Some (h) =>
-                    if ((om == None) && !((h.involvedSet + h.rule) contains this))
+                    if ((om == None) && !((h.involvedSet + h.rule) contains p))
                         return Some (MemoEntry (Result (Failure ("left recursion skip", in)), in))
                     if (h.evalSet contains this) {
-                        h.evalSet = h.evalSet - this
+                        h.evalSet = h.evalSet - p
                         val ans = body (in)
                         memo += (in -> MemoEntry (Result (ans), ans.in))
                         memo.get (in)
