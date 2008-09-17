@@ -260,18 +260,18 @@ trait Parser extends kiama.parsing.CharPackratParsers {
     val double : Parser[Num] =
         token ((digit+) ~ ("." ~> (digit+))) ^^ { case l ~ r => Num ((l.mkString + "." + r.mkString).toDouble) }
         
-    val factor : Parser[Exp] =
-        memo (double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")")
+    val factor : MemoParser[Exp] =
+        double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")"
     
-    val term : Parser[Exp] =
-        memo (term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
-              term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
-              factor)
+    val term : MemoParser[Exp] =
+        term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
+        term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
+        factor
     
-    val exp : Parser[Exp] =
-        memo (exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
-              exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
-              term)
+    val exp : MemoParser[Exp] =
+        exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
+        exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
+        term
 
     val sequence : Parser[Seqn] =
         "{" ~> (stmt*) <~ "}" ^^ Seqn

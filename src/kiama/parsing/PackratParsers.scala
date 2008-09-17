@@ -364,7 +364,7 @@ trait PackratParsers extends Parsers {
      * A typed rule is a memoising, left recursion-detecting encapsulation
      * of a parser that returns a value of a particular type.
      */
-    class TypedRule[T] (body : => Parser[T]) extends Parser[T] with Rule {
+    class MemoParser[T] (body : => Parser[T]) extends Parser[T] with Rule {
      
         /**
          * Alias this parser as p to make it easier to refer to in the
@@ -517,9 +517,10 @@ trait PackratParsers extends Parsers {
     }
     
     /**
-     * Convenience function for turning a parser into a memoising one.
+     * (Implicit) conversion of non-memoising parser into a memoising one.
      */
-    def memo[T] (parser : => Parser[T]) : TypedRule[T] = new TypedRule[T] (parser)
+    implicit def memo[T] (parser : => Parser[T]) : MemoParser[T] =
+        new MemoParser[T] (parser)
 
 }
 

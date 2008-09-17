@@ -88,14 +88,14 @@ trait Parser extends kiama.parsing.CharPackratParsers {
     val integer : Parser[Num] =
         token (digit+) ^^ (l => Num (l.mkString.toInt))
 
-    val factor : Parser[Exp] =
-        memo (integer | variable | "(" ~> exp <~ ")")
+    val factor : MemoParser[Exp] =
+        integer | variable | "(" ~> exp <~ ")"
     
-    val exp : Parser[Exp] =
-        memo (exp ~ factor ^^ { case l ~ r => App (l, r) } |
-              ("\\" ~> idn) ~ ("." ~> exp) ^^ { case i ~ b => Lam (i, b) } |
-              factor |
-              failure ("expression expected"))
+    val exp : MemoParser[Exp] =
+        exp ~ factor ^^ { case l ~ r => App (l, r) } |
+        ("\\" ~> idn) ~ ("." ~> exp) ^^ { case i ~ b => Lam (i, b) } |
+        factor |
+        failure ("expression expected")
               
 }
 
