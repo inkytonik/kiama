@@ -260,13 +260,13 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
-     * Test a predicate parser on a given string.  Return true if it succeeds
+     * Test a not predicate parser on a given string.  Return true if it succeeds
      * with true and the input unchanged, otherwise return false.
      */
     def predSucceeds[T] (parser : Parser[T], str : String) : Boolean = {
         val in = input (str)
         parser (in) match {
-            case Success (true, in2) =>
+            case Success ((), in2) =>
                 same (in, in2)
             case Failure (_, _) =>
                 false
@@ -274,7 +274,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
 
     /**
-     * Test a predicate parser on a given string.  Return true if it fails
+     * Test a not predicate parser on a given string.  Return true if it fails
      * with the expected message and the input unchanged, otherwise return
      * false.
      */

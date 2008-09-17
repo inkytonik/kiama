@@ -226,14 +226,14 @@ trait Parsers {
         /**
 	     * Construct a parser that succeeds if this parser fails and fails if
          * this parser succeeds.  In the case of success (i.e., this parser has
-         * failed), the constructed parser returns true.
+         * failed), the constructed parser returns ().
 	     */
-	    def unary_! : Parser[Boolean] =
-	        new Parser[Boolean] {
+	    def unary_! : Parser[Unit] =
+	        new Parser[Unit] {
 	            def apply (in : Input) =
 	                p (in) match {
 	                    case Success (t, _) => Failure ("predicate failure", in)
-	                    case Failure (_, _) => Success (true, in)
+	                    case Failure (_, _) => Success ((), in)
 	                }
 	        }
          
