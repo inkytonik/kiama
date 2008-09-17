@@ -529,6 +529,8 @@ trait PackratParsers extends Parsers {
  */
 trait CharParsers extends Parsers {
   
+    import scala.util.matching.Regex
+  
     /**
      * CharParsers parse character elements.
      */
@@ -536,9 +538,12 @@ trait CharParsers extends Parsers {
                 
     /**
      * (Implicitly) construct a parser that succeeds if the next part
-     * of the input is the given string, and otherwise fails.
+     * of the input is the given string, and otherwise fails.  NOTE: at the
+     * moment this parser will also skip whitespace before checking for
+     * the string, but this will change to separate out the whitespace
+     * checking.
      */
-    implicit def accceptString (s : String) : Parser[String] =
+    implicit def literal (s : String) : Parser[String] =
         token (Parser { in =>
             val source = in.source
             val offset = in.offset
@@ -555,7 +560,24 @@ trait CharParsers extends Parsers {
         })
 
     /**
-     * Parse wahtever p parses preceded by optional white space.
+     * (Implicitly) construct a parser that succeeds if the next part of
+     * the input matches the given regular expression.
+     */
+    implicit def regex (r: Regex) : Parser[String] = 
+        Parser { in =>
+            val source = in.source
+	        val offset = in.offset
+	        (r findPrefixMatchOf (source.subSequence (offset, source.length))) match {
+   	            case Some (matched) =>
+	                Success (source.subSequence (offset, offset + matched.end).toString,
+	                         in.drop (matched.end))
+	            case None =>
+	                Failure ("string matching regex `" + r + "' expected but `" + in.first + "' found", in)
+	        }
+	    }
+    
+    /**
+     * Parse whatever p parses preceded by optional white space.
      */
     def token[T] (p : Parser[T]) : Parser[T] =
         (whitespace*) ~> p

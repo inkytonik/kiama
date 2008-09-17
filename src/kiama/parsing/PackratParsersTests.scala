@@ -295,18 +295,22 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
 
     /**
+     * Return true if the given parser result is a failure at the given input
+     * position, regardless of the message.  Otherwise return false.
+     */
+    def isFailAt[T] (r : ParseResult[T], in : Input) : Boolean =
+        r match {
+            case Failure (_, in2) => same (in, in2)
+            case _                => false
+        }
+    
+    /**
      * Test a not predicate parser on a given string.  Return true if it fails
-     * with the expected message and the input unchanged, otherwise return
-     * false.
+     * with the input unchanged, otherwise return false.
      */
     def notPredFails[T] (parser : Parser[T], str : String) : Boolean = {
         val in = input (str)
-        parser (in) match {
-            case Success (_, _) =>
-                false
-            case Failure (m, in2) =>
-                (m == "predicate failure") && (same (in, in2))
-        }
+        isFailAt (parser (in), in)
     }
     
     /**
@@ -373,6 +377,17 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         check ((s : Stmt) => same (stmt (s) map (t => Some (t)), (stmt?) (s)))
         check ((e : Exp) => { val in = input (e); same (stmt? (in), Success (None, in)) })
     }
-
+    
+    /**
+     * Test that basic regular expression matching works.
+     */
+    def testRegexes () {
+        val decimal : Parser[String] = """-?\d+\.(\d*)?""".r
+        for (s <- List ("1.", "123.456", "-99.0"))
+            expect (decimal, s, s)
+        for (s <- List ("123", ".99", "-.001", "harold"))
+            assertTrue ({val in = input (s); isFailAt (decimal (in), in)})
+    }
+    
 }
                           
