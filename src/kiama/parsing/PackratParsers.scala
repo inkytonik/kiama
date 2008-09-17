@@ -186,7 +186,7 @@ trait Parsers {
         /**
          * Construct a parser that parses zero or more occurrences of
          * what this parser parses.  Collect the result values in a
-         * sequence.
+         * sequence.  Defined in terms of +.
          */
         def * : Parser[Seq[T]] =
             (p+) | success (List ())
@@ -308,6 +308,24 @@ trait Parsers {
             else
                 Failure ("acceptIf", in)
         }
+    
+    /**
+     * Construct a parser that parses with p and then makes sure that the
+     * entire input has been consumed (i.e., the input was a phrase that
+     * was recognised by p).
+     */
+    def phrase[T] (p : => Parser[T]) : Parser[T] =
+        new Parser[T] {
+            def apply (in : Input) =
+                p (in) match {
+                    case s @ Success (_, in1) if in1.atEnd =>
+                        s
+                    case Success (_, in1) =>
+                        Failure ("end of input expected", in1)
+                    case f @ Failure (_, _) =>
+                        f                        
+                }
+        }        
         
 }
 
@@ -544,7 +562,8 @@ trait CharParsers extends Parsers {
 
     /**
      * The layout to be allowed between tokens.  Defaults to zero or more
-     * whitespace characters.
+     * whitespace characters.  Override this to change the processing of
+     * whitespace.
      */
     val layout : Parser[Seq[Char]] =
         whitespace*
@@ -554,13 +573,19 @@ trait CharParsers extends Parsers {
      */
     def token[T] (p : Parser[T]) : Parser[T] =
         layout ~> p
-          
+
+    /**
+     * Construct a parser that parses with p and then makes sure that the
+     * entire input has been consumed (i.e., the input was a phrase that
+     * was recognised by p). Layout is allowed at the end.
+     */
+    override def phrase[T] (p : => Parser[T]) : Parser[T] =
+        super.phrase (p <~ layout)
+
     /**
      * (Implicitly) construct a parser that succeeds if the next part
-     * of the input is the given string, and otherwise fails.  NOTE: at the
-     * moment this parser will also skip whitespace before checking for
-     * the string, but this will change to separate out the whitespace
-     * checking.
+     * of the input is the given string, and otherwise fails.  Layout is
+     * skipped before an attempt is made to match the string. 
      */
     implicit def literal (s : String) : Parser[String] =
         token (Parser { in =>
@@ -580,7 +605,7 @@ trait CharParsers extends Parsers {
 
     /**
      * (Implicitly) construct a parser that succeeds if the next part of
-     * the input matches the given regular expression.
+     * the input matches the given regular expression, and otherwise fails.
      */
     implicit def regex (r: Regex) : Parser[String] = 
         Parser { in =>

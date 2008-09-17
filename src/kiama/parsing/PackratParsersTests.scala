@@ -183,7 +183,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * there is no more input left.  Return a Boolean result.
      */
     def expectBool[T] (parser : Parser[T], str : String, result : T) : Boolean = {
-        val p = parser <~ (whitespace*)
+        val p = parser <~ layout
         p (input (str)) match {
             case Success (r, in) =>
                 (r == result) && in.atEnd
@@ -278,6 +278,13 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      */
     def testParseStatements () {
         roundtrip (stmt)
+    }
+    
+    /**
+     * Test parsing of whole programs.
+     */
+    def testParsePrograms () {
+        roundtrip (parse)
     }
     
     /**

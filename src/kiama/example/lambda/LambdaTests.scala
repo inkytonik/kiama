@@ -42,7 +42,7 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
      */
     def assertEval (term : String, result : Exp) {
         val in = new CharArrayReader (term.toArray) 
-        exp (in) match {
+        parse (in) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
                     case Some (r) => assertEquals (r, result)
@@ -61,7 +61,7 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
      */
     def evalTo (term : String, result : Exp) : Boolean = {
         val in = new CharArrayReader (term.toArray) 
-        exp (in) match {
+        parse (in) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
                     case Some (r) => r == result

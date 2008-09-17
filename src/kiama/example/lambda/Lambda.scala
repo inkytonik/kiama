@@ -96,6 +96,9 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         ("\\" ~> idn) ~ ("." ~> exp) ^^ { case i ~ b => Lam (i, b) } |
         factor |
         failure ("expression expected")
+    
+    val parse : Parser[Exp] =
+        phrase (exp)
               
 }
 
@@ -201,7 +204,7 @@ object LambdaREPL extends Application with Parser with Evaluator {
 	        val s = readLine ()
 	        if (s != null) {
 	            val in = new CharArrayReader (s.toArray) 
-	            exp (in) match {
+	            parse (in) match {
 	                case Success (e, in) if in.atEnd =>
 	                    normal (e) match {
 	                        case Some (r) => println (r)
