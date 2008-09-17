@@ -20,12 +20,12 @@
 
 /**
  * Some parts of this file are based on code in the Scala Library, which is
- * distrbuted under the following copyright. 
+ * distributed under the following copyright. 
  * 
  * Copyright (c) 2002-2008 EPFL, Lausanne, unless otherwise specified.
  * All rights reserved.
  * 
- * (See the file COPYING.SCALA for details on the Scala license.) 
+ * (See the file COPYING.SCALA for details of the Scala license.) 
  */
                                 
 package kiama.parsing
