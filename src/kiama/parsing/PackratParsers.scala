@@ -194,7 +194,7 @@ trait Parsers {
         /**
          * Construct a parser that parses one or more occurrences of
          * what this parser parses.  Collect the result values in a
-         * list.  This parser is right recursive to avoid infinite
+         * sequence.  This parser is right recursive to avoid infinite
          * recursion.
          */
         def + : Parser[Seq[T]] = {
