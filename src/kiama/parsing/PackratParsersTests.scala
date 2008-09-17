@@ -155,6 +155,16 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
+     * The any parser should indeed accept anything.
+     */
+    def testAny () {
+        check ((c : Char) => {
+            val in = input (c.toString)  
+            same (any (input (c.toString)), Success (c, in.rest))
+        })
+    }    
+
+    /**
      * Try to parse a string and expect a given result.  Also check that
      * there is no more input left.  Return a JUnit test case result.
      */

@@ -277,7 +277,13 @@ trait Parsers {
      */
     def failure (message : String) : Parser[Nothing] =
         Parser { in => Failure (message, in) }
-        
+
+    /**
+     * Parse any element.
+     */
+    val any : Parser[Elem] =
+        (e : Elem) => true
+    
     /**
      * (Implicitly) construct a parser that succeeds with e if the next input
      * element is e, and otherwise fails.
@@ -552,7 +558,7 @@ trait CharParsers extends Parsers {
      */
     def token[T] (p : Parser[T]) : Parser[T] =
         (whitespace*) ~> p
-        
+          
     /**
      * Parse a whitespace character.
      */
