@@ -273,6 +273,13 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
+     * Test whether keywords are appropriately rejected as identifiers.
+     */
+    def testKeywords () {
+        assertTrue (isFail (asgnStmt (input ("while = 3;"))))
+    }
+    
+    /**
      * Test parsing of null statements.
      */
     def testParseNullStmt () {

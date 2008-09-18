@@ -247,9 +247,12 @@ trait PrettyPrinter {
 trait Parser extends kiama.parsing.CharPackratParsers {
 
     import AST._
+    
+    val keyword : Parser[String] =
+        "while"
                 
     val idn : Parser[String] =
-        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+        !keyword ~> token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
     
     val variable : Parser[Var] =
         idn ^^ Var
