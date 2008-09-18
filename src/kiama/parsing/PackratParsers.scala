@@ -67,6 +67,14 @@ trait Parsers {
         def map[U] (f : T => U) : ParseResult[U]
         
         /**
+         * If this result reflects a successful parse, apply the partial function
+         * f to the value produced and, if it's defined, return the result of that
+         * application.  If f is not defined, produce a failure result with the
+         * message produced by applying error to the result value. 
+         */
+        def mapPartial[U] (f : PartialFunction[T,U], error : T => String) : ParseResult[U]
+        
+        /**
          * If this result reflects a successful parse, feed the resulting
          * value and the remainder of the input to f to obtain a final result.
          */
@@ -87,7 +95,13 @@ trait Parsers {
      * @param in the remainder of the input
      */
     case class Success[T] (result : T, in : Input) extends ParseResult[T] {
-        def map[U] (f : T => U) = Success (f (result), in)
+        def map[U] (f : T => U) =
+            Success (f (result), in)
+        def mapPartial[U] (f : PartialFunction[T,U], error : T => String) : ParseResult[U] =
+            if (f.isDefinedAt (result))
+                Success (f (result), in)
+            else
+                Failure (error (result), in)
         def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U] =
             f (result) (in) 
         def append[U >: T] (a : => ParseResult[U]) : ParseResult[U] =
@@ -102,7 +116,10 @@ trait Parsers {
      * @param in the remainder of the input
      */
     case class Failure (msg : String, in : Input) extends ParseResult[Nothing] {
-        def map[U] (f : Nothing => U) = this
+        def map[U] (f : Nothing => U) =
+            this
+        def mapPartial[U] (f : PartialFunction[Nothing,U], error : Nothing => String) : ParseResult[U] =
+            this
         def flatMapWithNext[U] (f : Nothing => Input => ParseResult[U]) : ParseResult[U] =
             this
         def append[U >: Nothing] (a : => ParseResult[U]) : ParseResult[U] =
@@ -143,7 +160,7 @@ trait Parsers {
             Parser { in =>
                 p (in) map (f)
             }
-        
+       
         /**
          * Run this parser and, if the parse was successful, feed the resulting
          * value to f to continue parsing.
@@ -240,6 +257,27 @@ trait Parsers {
          */
         def ^^^[U] (u : U) : Parser[U] =
             ^^ (x => u)
+
+        /**
+         * Construct a parser that runs this parser, and if the parse was
+         * successful, applies the partial function f to the result.  If
+         * f applies, return its result a successful parse result, otherwise
+         * fail with a generic message.
+         */
+        def ^?[U] (f : PartialFunction[T,U]) : Parser[U] =
+            ^? (f, r => "function not defined at " + r) 
+
+        /**
+         * Construct a parser that runs this parser, and if the parse was
+         * successful, applies the partial function f to the result.  If
+         * f applies, return its result a successful parse result, otherwise
+         * fail with the message produced by error from the result of this
+         * parser.
+         */
+        def ^?[U] (f : PartialFunction[T,U], error : T => String) : Parser[U] =
+            Parser { in =>
+                p (in).mapPartial (f, error)
+            }        
         
         /**
 	     * Construct a parser that returns the result of parsing with p, except

@@ -114,6 +114,16 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         }
     
     /**
+     * Return true if the given parser result is a failure with the given
+     * message but regardless of position.  Otherwise return false.
+     */
+    def isFailWith[T] (r : ParseResult[T], m : String) : Boolean =
+        r match {
+            case Failure (m1, _) => m == m1
+            case _               => false
+        }
+    
+    /**
      * Return true if the given parser result is a failure at the given input
      * position, regardless of the message.  Otherwise return false.
      */
@@ -417,6 +427,23 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         expect (nntimes2, "21 42", "42")
         assertTrue (isFail (nntimes2 (input ("4"))))  
         assertTrue (isFail (nntimes2 (input ("12 99"))))  
+    }
+    
+    /**
+     * Test use of partial functions to process parse results.
+     */
+    def testPartialFunction () {
+        val p = integer ^? { case Num (i) => (i-1).toString }
+        expect (p, "123", "122.0")
+        assertTrue (isFail (p (input ("hello"))))
+        
+        val q = exp ^? { case Var (v) => v }
+        assertTrue (isFail (q (input ("123"))))
+        assertTrue (isFail (q (input ("9.0"))))
+        
+        val r = idn ^? ({case s if s.length == 3 => s + " has length 3"},
+                        s => s + " unexpected")
+        assertTrue (isFailWith (r (input ("hello")), "hello unexpected"))
     }
     
 }
