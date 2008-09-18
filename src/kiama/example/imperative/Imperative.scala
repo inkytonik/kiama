@@ -283,7 +283,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
 
     val stmt : Parser[Stmt] =
-        ";" ^^ (s => Null ()) | sequence | asgnStmt | whileStmt
+        ";" ^^^ Null () | sequence | asgnStmt | whileStmt
  
     val parse : Parser[Stmt] =
         phrase (stmt)

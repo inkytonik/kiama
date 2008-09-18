@@ -184,6 +184,14 @@ trait Parsers {
             for (v <- p; w <- q) yield v
 
         /**
+         * Construct a parser that runs this parser and, if successful, passes
+         * the result to f and runs the resulting parser, returning the result
+         * of the second parser.
+         */
+        def >>[U] (f : T => Parser[U]) : Parser[U] =
+            flatMap (f)
+        
+        /**
          * Construct a parser that parses zero or more occurrences of
          * what this parser parses.  Collect the result values in a
          * sequence.  Defined in terms of +.
@@ -203,7 +211,7 @@ trait Parsers {
                 p ^^ (t => List (t))
             q
         }
-        
+
         /**
          * Construct a parser that parsers either what this parser parses
          * or nothing.
@@ -220,11 +228,18 @@ trait Parsers {
             append (q)
 
         /**
-         * Construct a parser that parse what this parser parses and,
+         * Construct a parser that parses what this parser parses and,
          * if successful, applies f to the result. 
          */
         def ^^[U] (f : T => U) : Parser[U] =
             map (f)
+        
+        /**
+         * Construct a parser that parses what this parser parses and,
+         * if it's successful, returns u.
+         */
+        def ^^^[U] (u : U) : Parser[U] =
+            ^^ (x => u)
         
         /**
 	     * Construct a parser that returns the result of parsing with p, except

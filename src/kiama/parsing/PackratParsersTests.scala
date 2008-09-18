@@ -102,7 +102,67 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                 }
         }
     }
-        
+    
+    /**
+     * Return true if the given parser result is a failure regardless of the
+     * message or position.  Otherwise return false.
+     */
+    def isFail[T] (r : ParseResult[T]) : Boolean =
+        r match {
+            case Failure (_, _) => true
+            case _              => false
+        }
+    
+    /**
+     * Return true if the given parser result is a failure at the given input
+     * position, regardless of the message.  Otherwise return false.
+     */
+    def isFailAt[T] (r : ParseResult[T], in : Input) : Boolean =
+        r match {
+            case Failure (_, in2) => same (in, in2)
+            case _                => false
+        }
+
+    /**
+     * Try to parse a string and expect a given result.  Also check that
+     * there is no more input left.  Return a JUnit test case result.
+     */
+    def expect[T] (parser : Parser[T], str : String, result : T) {
+        parser (input (str)) match {
+            case Success (r, in) =>
+                if (r != result) fail ("found " + r + " not " + result)
+                if (!in.atEnd) fail ("input remaining at " + in.pos)
+            case Failure (m, in) =>
+                fail (m + " at " + in.pos)
+        }
+    }
+    
+    /**
+     * Try to parse a string and expect a given result.  Also check that
+     * there is no more input left.  Return a Boolean result.
+     */
+    def expectBool[T] (parser : Parser[T], str : String, result : T) : Boolean = {
+        val p = parser <~ layout
+        p (input (str)) match {
+            case Success (r, in) =>
+                (r == result) && in.atEnd
+            case Failure (_, _) =>
+                false            
+        }
+    }
+
+    /**
+     * Roundtrip test.  Pretty print a value, parse the resulting string and
+     * check that the parse result is the same as the original value.
+     */
+    def roundtrip[T <: PrettyPrintable] (parser : Parser[T])(implicit arbT : Arbitrary[T]) {
+        check ((t : T) => {
+            val buffer = new StringBuilder
+            t.pretty (buffer)
+            expectBool (parser, buffer.toString, t)
+        })
+    }
+
     /**
      * A successful parse on empty input succeeds with the specified
      * result.
@@ -165,34 +225,6 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     }    
 
     /**
-     * Try to parse a string and expect a given result.  Also check that
-     * there is no more input left.  Return a JUnit test case result.
-     */
-    def expect[T] (parser : Parser[T], str : String, result : T) {
-        parser (input (str)) match {
-            case Success (r, in) =>
-                if (r != result) fail ("found " + r + " not " + result)
-                if (!in.atEnd) fail ("input remaining at " + in.pos)
-            case Failure (m, in) =>
-                fail (m + " at " + in.pos)
-        }
-    }
-    
-    /**
-     * Try to parse a string and expect a given result.  Also check that
-     * there is no more input left.  Return a Boolean result.
-     */
-    def expectBool[T] (parser : Parser[T], str : String, result : T) : Boolean = {
-        val p = parser <~ layout
-        p (input (str)) match {
-            case Success (r, in) =>
-                (r == result) && in.atEnd
-            case Failure (_, _) =>
-                false            
-        }
-    }
-    
-    /**
      * Test parsing of arbitrary numbers.
      */
     def testParseNumbers () {
@@ -210,19 +242,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         implicit def arbIdn : Arbitrary[String] = Arbitrary (genIdn)
         check ((s : String) => expectBool (variable, s, Var (s)))
     }
-    
-    /**
-     * Roundtrip test.  Pretty print a value, parse the resulting string and
-     * check that the parse result is the same as the original value.
-     */
-    def roundtrip[T <: PrettyPrintable] (parser : Parser[T])(implicit arbT : Arbitrary[T]) {
-        check ((t : T) => {
-            val buffer = new StringBuilder
-            t.pretty (buffer)
-            expectBool (parser, buffer.toString, t)
-        })
-    }
-    
+        
     /**
      * Test parsing of expressions.
      */
@@ -300,16 +320,6 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                 false
         }
     }
-
-    /**
-     * Return true if the given parser result is a failure at the given input
-     * position, regardless of the message.  Otherwise return false.
-     */
-    def isFailAt[T] (r : ParseResult[T], in : Input) : Boolean =
-        r match {
-            case Failure (_, in2) => same (in, in2)
-            case _                => false
-        }
     
     /**
      * Test a not predicate parser on a given string.  Return true if it fails
@@ -394,6 +404,19 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
             expect (decimal, s, s)
         for (s <- List ("123", ".99", "-.001", "harold"))
             assertTrue ({val in = input (s); isFailAt (decimal (in), in)})
+    }
+    
+    /**
+     * Test passing values from one parser to another.
+     */
+    def testValueSequence () {
+        // Recognise sequences of the form: n n*2
+        val number = (digit+) ^^ (s => s.mkString.toInt)
+        val nntimes2 = number >> (i => token ((i*2).toString))
+        expect (nntimes2, "0 0", "0")
+        expect (nntimes2, "21 42", "42")
+        assertTrue (isFail (nntimes2 (input ("4"))))  
+        assertTrue (isFail (nntimes2 (input ("12 99"))))  
     }
     
 }
