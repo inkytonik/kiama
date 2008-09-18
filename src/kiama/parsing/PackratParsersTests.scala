@@ -451,6 +451,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         
         val r = idn ^? ({case s if s.length == 3 => s + " has length 3"},
                         s => s + " unexpected")
+        assertTrue (isSuccessWith (r (input ("abc")), "abc has length 3"))
         assertTrue (isFailWith (r (input ("hello")), "hello unexpected"))
     }
     
