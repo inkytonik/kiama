@@ -32,7 +32,8 @@ package kiama.parsing
 
 /**
  * Parser combinator library modelled on the Scala parser combinator
- * library.
+ * library, and through it on various versions of parser combinator
+ * libraries for Haskell.
  */
 trait Parsers {
     
@@ -211,30 +212,48 @@ trait Parsers {
         /**
          * Construct a parser that parses zero or more occurrences of
          * what this parser parses.  Collect the result values in a
-         * sequence.  Defined in terms of +.
+         * list.  Defined in terms of +.
          */
-        def * : Parser[Seq[T]] =
-            (p+) | success (List ())
+        def * : Parser[List[T]] =
+            rep (p)
+
+        /**
+         * Construct a parser that parses zero or more occurrences of
+         * what this parser parses, where each pair of occurrences is
+         * separated by something that sep parses.  At the moment, there
+         * is no way to get at the results of sep.
+         */
+        def *[U] (sep: => Parser[U]) : Parser[List[T]] =
+             repsep (p, sep)
 
         /**
          * Construct a parser that parses one or more occurrences of
          * what this parser parses.  Collect the result values in a
-         * sequence.  This parser is right recursive to avoid infinite
+         * list.  This parser is right recursive to avoid infinite
          * recursion.
          */
-        def + : Parser[Seq[T]] = {
+        def + : Parser[List[T]] = {
             def q : Parser[List[T]] =
                 (p ~ q) ^^ { case t ~ ts => t :: ts } |
                 p ^^ (t => List (t))
             q
         }
+        
+        /**
+         * Construct a parser that parses one or more occurrences of
+         * what this parser parses, where each pair of occurrences is
+         * separated by something that sep parses.  At the moment, there
+         * is no way to get at the results of sep.
+         */
+        def +[U] (sep: => Parser[U]) : Parser[List[T]] =
+            rep1sep (p, sep)
 
         /**
          * Construct a parser that parsers either what this parser parses
          * or nothing.
          */
         def ? : Parser[Option[T]] =
-            p ^^ (t => Some (t)) | success (None)
+            opt (p)
         
         /**
          * Construct a parser that tries to parse using this parser,
@@ -280,19 +299,13 @@ trait Parsers {
             }        
         
         /**
-	     * Construct a parser that returns the result of parsing with p, except
-	     * that it unconditionally backtracks to the input position when p was
-	     * invoked.  I.e., the resulting parser is only useful for its success
-	     * or failure result, not its effect on the input.
+	     * Construct a parser that returns the result of parsing with this
+         * parser, except that it unconditionally backtracks to the input position
+         * when this parser was invoked.  I.e., the resulting parser is only useful
+         * for its success or failure result, not its effect on the input.
 	     */
 	    def unary_+ : Parser[T] =
-	        new Parser[T] {
-	            def apply (in : Input) =
-	                p (in) match {
-	                    case Success (t, _) => Success (t, in)
-	                    case Failure (m, _) => Failure (m, in)
-	                }
-	        }
+            and (p)
 
         /**
 	     * Construct a parser that succeeds if this parser fails and fails if
@@ -300,13 +313,7 @@ trait Parsers {
          * failed), the constructed parser returns ().
 	     */
 	    def unary_! : Parser[Unit] =
-	        new Parser[Unit] {
-	            def apply (in : Input) =
-	                p (in) match {
-	                    case Success (t, _) => Failure ("predicate failure", in)
-	                    case Failure (_, _) => Success ((), in)
-	                }
-	        }
+            not (p)
          
     }
 
@@ -361,7 +368,62 @@ trait Parsers {
             else
                 Failure ("acceptIf", in)
         }
-    
+
+    /**
+     * Construct a parser that parsers either what p parses or nothing.
+     */
+    def opt[T] (p : => Parser[T]) : Parser[Option[T]] =
+        p ^^ (t => Some (t)) | success (None)
+        
+    /**
+     * Construct a parser that parses zero or more occurrences of
+     * what p parses.  Collect the result values in a list.
+     * Defined in terms of rep1.
+     */
+    def rep[T] (p : => Parser[T]) : Parser[List[T]] =
+        rep1 (p) | success (Nil)
+
+    /**
+     * Construct a parser that parses one or more occurrences of
+     * what p parses.  Collect the result values in a list. 
+     * This parser is right recursive to avoid infinite recursion.
+     */
+    def rep1[T] (p : => Parser[T]) : Parser[List[T]] = {
+        def q : Parser[List[T]] =
+            (p ~ q) ^^ { case t ~ ts => t :: ts } |
+            p ^^ (t => List (t))
+        q
+    }
+
+    /**
+     * Construct a parser that parses exactly n repetitions of what
+     * p parses.  Collect the result values in a list.
+     */
+    def repN[T] (n : Int, p : => Parser[T]) : Parser[List[T]] =
+	    if (n == 0)
+            success (Nil)
+        else
+            p ~ repN (n-1, p) ^^ { case t ~ ts => t :: ts }
+      
+    /**
+     * Construct a parser that parses zero or more occurrences of
+     * what p parses, where each pair of occurrences is separated
+     * by something  that sep parses.  At the moment, there is no
+     * way to get at the results of sep.
+     */
+    def repsep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[List[T]] =
+        rep1sep (p, sep) | success (Nil)
+
+    /**
+     * Construct a parser that parses one or more occurrences of
+     * what p parses, where each pair of occurrences is separated
+     * by something that sep parses.  At the moment, there is no
+     * way to get at the results of sep.
+     */
+    def rep1sep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[List[T]] =
+        (p ~ ((sep ~> rep1sep (p, sep)) | success (Nil))) ^^
+            { case t ~ ts => t :: ts }
+
     /**
      * Construct a parser that parses with p and then makes sure that the
      * entire input has been consumed (i.e., the input was a phrase that
@@ -378,7 +440,36 @@ trait Parsers {
                     case f @ Failure (_, _) =>
                         f                        
                 }
-        }        
+        }       
+    
+    /**
+     * Construct a parser that returns the result of parsing with p, except
+     * that it unconditionally backtracks to the input position when p was
+     * invoked.  I.e., the resulting parser is only useful for its success
+     * or failure result, not its effect on the input.
+     */
+    def and[T] (p : => Parser[T]) : Parser[T] =
+        new Parser[T] {
+            def apply (in : Input) =
+                p (in) match {
+                    case Success (t, _) => Success (t, in)
+                    case Failure (m, _) => Failure (m, in)
+                }
+        }
+
+    /**
+     * Construct a parser that succeeds if p fails and fails if p succeeds.
+     * In the case of success (i.e., p has failed), the constructed parser
+     * returns ().
+     */
+    def not[T] (p : => Parser[T]) : Parser[Unit] =
+        new Parser[Unit] {
+            def apply (in : Input) =
+                p (in) match {
+                    case Success (t, _) => Failure ("predicate failure", in)
+                    case Failure (_, _) => Success ((), in)
+                }
+        }
         
 }
 
@@ -393,6 +484,7 @@ trait Parsers {
 trait PackratParsers extends Parsers {
   
     import scala.collection.mutable.HashMap
+    import scala.collection.mutable.ListBuffer
     import scala.collection.mutable.Set
     import scala.util.parsing.input.Position
   
@@ -443,8 +535,6 @@ trait PackratParsers extends Parsers {
          */
         p => 
       
-        import scala.collection.mutable.ListBuffer
-      
 	    /**
 	     * Memo table entries.
 	     */
@@ -484,22 +574,6 @@ trait PackratParsers extends Parsers {
             
         }
         
-        /**
-         * Construct a parser that parses one or more occurrences of
-         * what this parser parses.  Collect the result values in a
-         * sequence.  Because these parsers are able to deal with left
-         * recursion and the iteration used to handle left recursion
-         * is more efficient than a general stack-based right recursion,
-         * left recursion is used here.
-         */
-        override def + : Parser[Seq[T]] = {
-            val l = new ListBuffer[T]
-            def q : Parser[ListBuffer[T]] =
-                (q ~ p) ^^ { case ts ~ t => ts += t; l } |
-                p ^^ (t => { l += t; l })
-            q
-        }
-
         /**
          * Initialise the left recursion data for a new application of this
          * rule.
@@ -588,6 +662,21 @@ trait PackratParsers extends Parsers {
     }
     
     /**
+     * Construct a parser that parses one or more occurrences of
+     * what p parses.  Collect the result values in a list.  Because
+     * these parsers are able to deal with left recursion and the
+     * iteration used to handle left recursion is more efficient than
+     * a general stack-based right recursion, left recursion is used here.
+     */
+    def rep1[T] (p : => MemoParser[T]) : MemoParser[List[T]] = {
+        val l = new ListBuffer[T]
+        def q : MemoParser[ListBuffer[T]] =
+            (q ~ p) ^^ { case ts ~ t => ts += t; l } |
+            p ^^ (t => { l += t; l })
+        q ^^ (lb => lb.toList)
+    }
+
+    /**
      * (Implicit) conversion of non-memoising parser into a memoising one.
      */
     implicit def memo[T] (parser : => Parser[T]) : MemoParser[T] =
@@ -618,7 +707,7 @@ trait CharParsers extends Parsers {
      * whitespace characters.  Override this to change the processing of
      * whitespace.
      */
-    val layout : Parser[Seq[Char]] =
+    val layout : Parser[List[Char]] =
         whitespace*
                 
     /**

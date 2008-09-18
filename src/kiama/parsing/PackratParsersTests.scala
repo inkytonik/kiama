@@ -119,8 +119,18 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      */
     def isFailWith[T] (r : ParseResult[T], m : String) : Boolean =
         r match {
-            case Failure (m1, _) => m == m1
-            case _               => false
+            case Failure (`m`, _) => true
+            case _                => false
+        }
+    
+    /**
+     * Return true if the given parser result is a success with the given
+     * value but regardless of position.  Otherwise return false.
+     */
+    def isSuccessWith[T] (r : ParseResult[T], t : T) : Boolean =
+        r match {
+            case Success (`t`, _) => true
+            case _                => false
         }
     
     /**
@@ -154,10 +164,8 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     def expectBool[T] (parser : Parser[T], str : String, result : T) : Boolean = {
         val p = parser <~ layout
         p (input (str)) match {
-            case Success (r, in) =>
-                (r == result) && in.atEnd
-            case Failure (_, _) =>
-                false            
+            case Success (`result`, in) => in.atEnd
+            case _                      => false
         }
     }
 
@@ -285,7 +293,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      * Test parsing of statement sequences.
      */
     def testParseSequences () {
-        expect (sequence, "{}", Seqn (List ()))
+        expect (sequence, "{}", Seqn (Nil))
         expect (sequence, "{ ; }", Seqn (List (Null ())))
         expect (sequence, "{ v = 1; v = 2; }",
                 Seqn (List (Asgn ("v", Num (1)), Asgn ("v", Num (2)))))
@@ -444,6 +452,34 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         val r = idn ^? ({case s if s.length == 3 => s + " has length 3"},
                         s => s + " unexpected")
         assertTrue (isFailWith (r (input ("hello")), "hello unexpected"))
+    }
+    
+    /**
+     * Test separator parsing.
+     */
+    def testSeparators () {
+        val p = repsep (exp, ",")
+        expect (p, "", Nil)
+        assertTrue (isSuccessWith (p (empty), Nil))
+        assertTrue (isSuccessWith (p (input (":=")), Nil))
+        expect (p, "1, 2", List (Num (1), Num (2)))
+        expect (p, "v, 67, 12.3", List (Var ("v"), Num (67), Num (12.3)))
+        
+        val q = rep1sep (exp, ",")
+        assertTrue (isFail (q (empty)))
+        assertTrue (isFail (q (input (":="))))
+        expect (q, "1,2", List (Num (1), Num (2)))
+        expect (q, "v,67,12.3", List (Var ("v"), Num (67), Num (12.3)))
+    }
+    
+    /**
+     * Test repetition a fixed number of times.
+     */
+    def testFixedRepetition () {
+        expect (repN (0, exp), "", Nil)
+        assertTrue (isSuccessWith (repN (0, exp) (input ("[]")), Nil))
+        expect (repN (3, exp), "56 val 2.3", List (Num (56), Var ("val"), Num (2.3)))
+        assertTrue (isSuccessWith (repN (2, exp) (input ("56 val 2.3")), List (Num (56), Var ("val"))))
     }
     
 }
