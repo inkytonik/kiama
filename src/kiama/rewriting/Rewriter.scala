@@ -213,7 +213,7 @@ trait Rewriter {
     private def dup (t : Product, children : Array[AnyRef]) : Product = {
         val ctor = (t.getClass.getConstructors())(0)
         try {
-            ctor.newInstance (children/* : _* */).asInstanceOf[Product]
+            ctor.newInstance (children : _*).asInstanceOf[Product]
         } catch {
             case e : java.lang.ClassCastException =>
                 error ("dup cast failed: " + t)

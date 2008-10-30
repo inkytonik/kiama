@@ -60,7 +60,7 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Stmt) => issubterm (t) (t) == Some (t))
         check ((t : Exp) => issubterm (t) (t) == Some (t))
     
-        val random = new scala.Random
+        val random = new scala.util.Random
     
         /**
          * Pick a random Term child of t, returning t if there are no

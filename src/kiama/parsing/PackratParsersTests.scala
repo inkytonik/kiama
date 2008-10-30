@@ -69,7 +69,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     /**
      * Random value generator used by some tests.
      */
-    val random = new scala.Random
+    val random = new scala.util.Random
         
     /**
      * Equality of inputs by content.
