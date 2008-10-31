@@ -103,7 +103,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 }
 
 /**
- * ScalaCheck generators for programs in the imperative language. 
+ * ScalaCheck generators for programs in the lambda language. 
  */
 trait Generator {
     
