@@ -95,14 +95,15 @@ trait Rewriter {
          * Currently implemented as deterministic choice, but this behaviour
          * should not be relied upon.
          */
-        def + (q : => Strategy) : Strategy =
-            <+ (q)
+        def + (q : => Strategy) : PlusStrategy =
+            new PlusStrategy(p, q)
             
         /**
-         * Guarded choice.  Construct a strategy that first applies this 
-         * strategy.  If it succeeds, apply l to the resulting term,
-         * otherwise apply r to the original subject term.
+         * Conditional choice.
+         *
+         * @see #<(PlusStrategy)
          */
+        @deprecated
         def <++ (l : => Strategy, r: => Strategy) : Strategy =
             new Strategy {
                 def apply (t1 : Term) =
@@ -111,7 +112,28 @@ trait Rewriter {
                         case None      => r (t1)
                     }
             }
+        
+        /**
+         * Conditional choice: c < l + r
+         * Construct a strategy that first applies this
+         * strategy (c). If it succeeds, apply l to the resulting term,
+         * otherwise apply r to the original subject term.
+         */
+        def < (q : PlusStrategy) : Strategy =
+            new Strategy {
+                def apply (t1 : Term) =
+                  p (t1) match {
+                      case Some (t2) => q.lhs (t2)
+                      case None      => q.rhs (t1)
+                  }
+            }
 
+    }
+        
+    class PlusStrategy (p : => Strategy, q : => Strategy) extends Strategy {
+        def lhs = p
+        def rhs = q
+        def apply(t : Term) = (p <+ q)(t)
     }
     
     /**
