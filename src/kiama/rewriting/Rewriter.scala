@@ -145,17 +145,15 @@ trait Rewriter {
      * function f. If f does not apply, the strategy fails, otherwise the strategy
      * succeeds with the result of aplying f to the subject term.
      */
-    def rule (f : Term => Term) : Strategy =
+    def rule (f : PartialFunction[Term,Term]) : Strategy =
         new Strategy {
             def apply (t : Term) =
-                try {
-                    val t1 = f (t)
-                    if (debug) println ("rule success: " + t + " => "+ t1)
-                    Some (t1)
-                } catch {
-                    case _ : scala.MatchError =>
-                        if (debug) println ("rule failure: " + t)
-                        None
+                if (f isDefinedAt t) {
+                    if (debug) println ("rule success: " + t + " => " + f (t))
+                    Some (f (t))
+                } else {
+                    if (debug) println ("rule failure: " + t)
+                    None
                 }
         }
 
@@ -166,7 +164,17 @@ trait Rewriter {
      * for its side-effects.
      */
     def query[T] (f : PartialFunction[Term,T]) : Strategy =
-        rule { case t => f (t); t }
+        new Strategy {
+            def apply (t : Term) = {
+                if (f isDefinedAt t) {
+                    val v = f (t)
+                    if (debug) println ("query success: " + t + " => " + v)
+                } else {
+                    if (debug) println ("query failure: " + t)
+                }
+                Some (t)
+            }
+        }
 
     /**
      * Generic term deconstruction.
