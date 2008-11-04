@@ -444,7 +444,7 @@ trait Rewriter {
      * s applies, but has no effect on the subject term.
      */
     def not (s : => Strategy) : Strategy =
-        s <++ (failure, id)
+        s < failure + id
         
     /**
      * Construct a strategy that applies s for its side-effects and always
