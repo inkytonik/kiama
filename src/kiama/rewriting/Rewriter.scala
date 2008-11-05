@@ -96,12 +96,12 @@ trait Rewriter {
          * should not be relied upon.
          */
         def + (q : => Strategy) : PlusStrategy =
-            new PlusStrategy(p, q)
+            new PlusStrategy (p, q)
             
         /**
          * Conditional choice.
          *
-         * @see #<(PlusStrategy)
+         * @see <(PlusStrategy)
          */
         @deprecated
         def <++ (l : => Strategy, r: => Strategy) : Strategy =
@@ -114,7 +114,7 @@ trait Rewriter {
             }
         
         /**
-         * Conditional choice: c < l + r
+         * Conditional choice: c < l + r.
          * Construct a strategy that first applies this
          * strategy (c). If it succeeds, apply l to the resulting term,
          * otherwise apply r to the original subject term.
@@ -130,10 +130,14 @@ trait Rewriter {
 
     }
         
+    /**
+     * Helper class to contain commonality of choice in non-deterministic
+     * choice operator and then-else part of a conditional choice.
+     */
     class PlusStrategy (p : => Strategy, q : => Strategy) extends Strategy {
-        def lhs = p
-        def rhs = q
-        def apply(t : Term) = (p <+ q)(t)
+        val lhs = p
+        val rhs = q
+        def apply (t : Term) = (p <+ q) (t)
     }
     
     /**

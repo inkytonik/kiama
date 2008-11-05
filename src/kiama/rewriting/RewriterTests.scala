@@ -141,6 +141,34 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Stmt, u : Stmt) => t (u) == Some (t))
         check ((t : Exp, u : Stmt) => t (u) == Some (t))
     }
+    
+    /**
+     * Simple tests of conditional choice strategy combinator.
+     */
+    def testConditional () {
+        // Test expressions
+        val e1 = Mul (Num (2), Num (3))
+        val e2 = Add (Num (2), Num (3))
+        
+        // Check identity and failure
+        assertEquals (Num (1), rewrite (id < (Num (1) : Strategy) + Num (2)) (e1))
+        assertEquals (Num (2), rewrite (failure < (Num (1) : Strategy) + Num (2)) (e1))
+        
+        // Condition used just for success or failure
+        val ismulbytwo = rule { case t @ Mul (Num (2), _) => t }
+        val multoadd = rule { case Mul (Num (2), x) => Add (x, x) }
+        val error : Strategy = Num (99)
+        val trans1 = ismulbytwo < multoadd + error
+        assertEquals (Add (Num (3), Num (3)), rewrite (trans1) (e1))
+        assertEquals (Num (99), rewrite (trans1) (e2))
+
+        // Condition that transforms subject
+        val mulbytwotoadd = rule { case t @ Mul (Num (2), x) => Add (x, x) }
+        val add = rule { case Add (_, _) => Num (42) }
+        val trans2 = mulbytwotoadd < add + id
+        assertEquals (Num (42), rewrite (trans2) (e1))
+        assertEquals (Add (Num (2), Num (3)), rewrite (trans2) (e2))
+    }
 
 }
 
