@@ -122,10 +122,10 @@ trait Rewriter {
         def < (q : PlusStrategy) : Strategy =
             new Strategy {
                 def apply (t1 : Term) =
-                  p (t1) match {
-                      case Some (t2) => q.lhs (t2)
-                      case None      => q.rhs (t1)
-                  }
+                    p (t1) match {
+                        case Some (t2) => q.lhs (t2)
+                        case None      => q.rhs (t1)
+                    }
             }
 
     }
