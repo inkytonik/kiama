@@ -67,10 +67,10 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
 	
 	    // Simple check of set and list versions of collect
 	    val variablesl = collectl { case Var (s) => s }
-	    assertEquals (variabless (numexp), Set ())
-	    assertEquals (variablesl (numexp), List ())
-	    assertEquals (variabless (varexp), Set ("var1", "var2"))
-	    assertEquals (variablesl (varexp), List ("var1", "var2", "var1"))
+	    assertEquals (Set (), variabless (numexp))
+	    assertEquals (List (), variablesl (numexp))
+	    assertEquals (Set ("var1", "var2"), variabless (varexp))
+	    assertEquals (List ("var1", "var2", "var1"), variablesl (varexp))
     }                      
     
 	/**
@@ -83,8 +83,8 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
 		    def genDivByZero (sz : Int) =
 		        for { l <- genExp (sz/2) } yield Div (l, Num (0))
          	def divsbyzero = count { case Div (_, Num (0)) => 1 }
-            assertEquals (divsbyzero (numexp), 0)
-            assertEquals (divsbyzero (varexp), 0)
+            assertEquals (0, divsbyzero (numexp))
+            assertEquals (0, divsbyzero (varexp))
             check ((e : Exp) => (e.divsbyzero != 0) ==> (divsbyzero (e) == e.divsbyzero))
 		}
 	    TestDivsByZero ()	  
@@ -99,18 +99,18 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
 	            case Sub (x, y)           => simplify (Add (x, Neg (y)))
 	            case Add (x, y) if x == y => Mul (Num (2), x)
 	        }))
-	    assertEquals (simplify (numexp), numexp)
-	    assertEquals (simplify (varexp), varexp)
+	    assertEquals (numexp, simplify (numexp))
+	    assertEquals (varexp, simplify (varexp))
 	
 	    val e = Sub (Add (Var ("a"), Var ("a")),
 	                 Add (Sub (Var ("b"), Num (1)), Sub (Var ("b"), Num (1))))
 	    val simpe = Add (Mul (Num (2), Var ("a")),
 	                     Neg (Mul (Num (2), Add (Var ("b"), Neg (Num (1))))))
-	    assertEquals (simplify (e), simpe)
+	    assertEquals (simpe, simplify (e))
 	
 	    val f = Sub (Neg (Num (1)), Num (1))
 	    val simpf = Mul (Num (2), Neg (Num (1)))
-	    assertEquals (simplify (f), simpf)
+	    assertEquals (simpf, simplify (f))
 	
 	    check ((e : Exp) => simplify (e).value == e.value)
 	}
@@ -126,8 +126,8 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
 		        for { e <- super.genNeg (sz) } yield Neg (e)
       	    def doubleneg : Exp => Exp =
                 rewrite (everywherebu ( rule { case Neg (Neg (x)) => x }))
-            assertEquals (doubleneg (numexp), numexp)
-            assertEquals (doubleneg (varexp), varexp)
+            assertEquals (numexp, doubleneg (numexp))
+            assertEquals (varexp, doubleneg (varexp))
             check ((e : Exp) => doubleneg (e).value == e.value)
 		}
         TestDoubleNegSimplification ()
@@ -143,10 +143,10 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
 	        }))
      
         val e1 = Div (Num (1), Num (2))
-        assertEquals (reciprocal (e1).value, 0.5)
+        assertEquals (0.5, reciprocal (e1).value)
      
         val e2 = Mul (Num (2), Div (Num (3), Num (4)))
-        assertEquals (reciprocal (e2).value, 1.5)
+        assertEquals (1.5, reciprocal (e2).value)
     }
 
 	/**
@@ -158,10 +158,10 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
 	            var count = 0
 	            everywheretd (rule { case Var (s) => count = count + 1; Var ("x" + count) })
 	        })
-	    assertEquals (uniquevars (numexp), numexp)
+	    assertEquals (numexp, uniquevars (numexp))
 	    // Run this twice to make sure that count is not shared
-	    assertEquals (uniquevars (varexp), Div (Mul (Var ("x1"), Var ("x2")), Var ("x3")))
-	    assertEquals (uniquevars (varexp), Div (Mul (Var ("x1"), Var ("x2")), Var ("x3")))
+	    assertEquals (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3")), uniquevars (varexp))
+	    assertEquals (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3")), uniquevars (varexp))
 	    check ((e : Exp) => uniquevars (e).value == e.value)
 	}
 
@@ -171,8 +171,8 @@ class UniplateTests extends TestCase with JUnit3Suite with Checkers
 	def testDepth () {
 	    def maximum (l : Seq[Int]) : Int = l.drop (1).foldLeft (l.first)(_.max(_))
 	    def depth = para ((t : Any, cs : Seq[Int]) => 1 + maximum (List (0) ++ cs))
-	    assertEquals (depth (numexp), 2)
-	    assertEquals (depth (varexp), 4)
+	    assertEquals (2, depth (numexp))
+	    assertEquals (4, depth (varexp))
 	    check ((e : Exp) => depth (e) == e.depth)
 	}
 	

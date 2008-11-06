@@ -45,7 +45,7 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
         parse (in) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
-                    case Some (r) => assertEquals (r, result)
+                    case Some (r) => assertEquals (result, r)
                     case None     => fail ("reduction failed: " + term)
                 }
             case Success (_, in) =>
