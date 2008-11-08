@@ -30,8 +30,8 @@ import org.scalatest.prop.Checkers
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends TestCase with JUnit3Suite with Checkers
-                  with TestBase {
+class LambdaTests extends TestCase ("LambdaTests")
+                  with JUnit3Suite with Checkers with TestBase {
                        
     import AST._
     import scala.util.parsing.input.CharArrayReader

@@ -31,8 +31,8 @@ import kiama.example.imperative.TestBase
 /**
  * Rewriting tests.
  */
-class RewriterTests extends TestCase with JUnit3Suite with Checkers
-                    with Rewriter with TestBase {
+class RewriterTests extends TestCase ("RewriterTests")
+                    with JUnit3Suite with Checkers with Rewriter with TestBase {
                        
     import kiama.example.imperative.AST._
     
