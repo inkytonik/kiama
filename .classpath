@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="ch.epfl.lamp.sdt.launching.SCALA_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/scalatest-0.9.3-2.7.2.RC2.jar"/>
 	<classpathentry kind="lib" path="lib/ScalaCheck-1.4-2.7.2.RC4.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

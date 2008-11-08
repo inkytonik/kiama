@@ -9,7 +9,7 @@
 
   <property name="scalacheck.lib" value="lib/ScalaCheck-1.4-2.7.2.RC4.jar"/>
   <property name="scalatest.lib" value="lib/scalatest-0.9.3-2.7.2.RC2.jar"/>
-  <property name="junit.lib" value="lib/junit-4.1.jar"/>
+  <property name="junit.lib" value="lib/junit-4.5.jar"/>
 
   <path id="scala.classpath">
     <pathelement location="${scala.home}/lib/scala-compiler.jar"/>
