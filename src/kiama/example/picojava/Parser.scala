@@ -43,7 +43,7 @@ object Parser extends CharPackratParsers {
             case f @ Failure (_, _) => error (f.toString)
         }    
 
-    lazy val program =
+    lazy val program : Parser[Program] =
         block ^^ Program
     
     lazy val block : Parser[Block] =
