@@ -460,7 +460,7 @@ trait Parsers {
     /**
      * Construct a parser that succeeds if p fails and fails if p succeeds.
      * In the case of success (i.e., p has failed), the constructed parser
-     * returns ().
+     * returns ().  In neither case is the input affected.
      */
     def not[T] (p : => Parser[T]) : Parser[Unit] =
         new Parser[Unit] {
@@ -690,6 +690,8 @@ trait PackratParsers extends Parsers {
 trait CharParsers extends Parsers {
   
     import scala.util.matching.Regex
+    import scala.util.parsing.input.{CharSequenceReader,PagedSeqReader}
+    import scala.collection.immutable.PagedSeq
   
     /**
      * CharParsers parse character elements.
@@ -780,6 +782,45 @@ trait CharParsers extends Parsers {
     val letterOrDigit : Parser[Char] =
         (ch : Char) => ch.isLetterOrDigit
     
+    /**
+     * Run a parser on a given input and return its result.
+     */
+    def parse[T] (p : => Parser[T], in: Input) : ParseResult[T] = 
+        p (in)
+    
+    /**
+     * Run a parser on a given character sequence and return its result.
+     */
+    def parse[T] (p : => Parser[T], in: java.lang.CharSequence) : ParseResult[T] = 
+        p (new CharSequenceReader (in))
+  
+    /**
+     * Run a parser on a given character sequence and return its result.
+     */
+    def parse[T] (p : => Parser[T], in: java.io.Reader) : ParseResult[T] =
+        p (new PagedSeqReader (PagedSeq.fromReader(in)))
+    
+    /**
+     * Run a parser on a given input and return its result, requiring
+     * that all of the input be consumed.
+     */
+    def parseAll[T] (p : => Parser[T], in: Input) : ParseResult[T] = 
+        parse (phrase(p), in)
+    
+    /**
+     * Run a parser on a given reader and return its result, requiring
+     * that all of the input be consumed.
+     */                               
+    def parseAll[T] (p : => Parser[T], in: java.io.Reader) : ParseResult[T] =
+        parse (phrase (p), in)
+
+    /**
+     * Run a parser on a given character sequence and return its result, requiring
+     * that all of the input be consumed.
+     */                               
+    def parseAll[T] (p : => Parser[T], in: java.lang.CharSequence): ParseResult[T] = 
+        parse (phrase (p), in)
+
 }
 
 /**
