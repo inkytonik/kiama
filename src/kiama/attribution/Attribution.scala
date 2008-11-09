@@ -125,11 +125,11 @@ object Attribution {
     /**
      * An attribute of a node type T with value of type U, supported by a memo
      * table and circularity test.  The value of the attribute is computed by
-     * the partial function f.  The result is memoised so that it is only
-     * evaluated once.  f should not itself require the value of this attribute.
-     * If it does, a circularity error is reported.
+     * the function f.  The result is memoised so that it is only evaluated once.
+     * f should not itself require the value of this attribute. If it does, a
+     * circularity error is reported.
      */
-    class Attribute[T,U] (f : PartialFunction[T,U]) extends (T => U) {
+    class Attribute[T,U] (f : T => U) extends (T => U) {
 
         /**
          * The memo table for this attribute, with memo(t) = Some(v) representing
@@ -168,9 +168,9 @@ object Attribution {
     
     /**
      * An attribute of a node type T with value of type U which has a circular
-     * definition.  The value of the attribute is computed by the partial function f
+     * definition.  The value of the attribute is computed by the function f
      * which may itself use the value of the attribute.  init specifies an 
-     * initial value for the attribute.  The attribtue (and any circular attributes
+     * initial value for the attribute.  The attribute (and any circular attributes
      * on which it depends) are evaluated until no value changes (i.e., a fixed
      * point is reached).  The final result is memoised so that subsequent evaluations
      * return the same value.
@@ -179,7 +179,7 @@ object Attribution {
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T,U] (init : U, f : PartialFunction[T,U]) extends (T => U) {
+    class CircularAttribute[T,U] (init : U, f : T => U) extends (T => U) {
       
         /**
          * Has the value of this attribute for a given tree already been computed?
@@ -252,7 +252,7 @@ object Attribution {
      * Define an attribute of T nodes of type U by the function f, which 
      * should not depend on the value of this attribute.
      */
-    def attr[T,U] (f : PartialFunction[T,U]) : T => U =
+    def attr[T,U] (f : T => U) : T => U =
         new Attribute (f)
     
     /**
@@ -262,7 +262,13 @@ object Attribution {
      * fixed point is reached (in conjunction with other circular attributes
      * on which it depends).
      */
-    def circular[T,U] (init : U) (f : PartialFunction[T,U]) : T => U =
+    def circular[T,U] (init : U) (f : T => U) : T => U =
         new CircularAttribute (init, f)
+    
+    /**
+     * Define an attribute of T nodes of type U given by the constant value u.
+     */
+    def constant[T,U] (u : U) : T => U =
+        new Attribute (_ => u)
 
 }

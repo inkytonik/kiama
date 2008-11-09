@@ -55,7 +55,7 @@ object Dataflow {
      */
     val following : Stm => Set[Stm] =
         attr {
-            case s =>
+            s =>
                 s.parent match {
                      case t @ While (_, _)           => Set (t)                                          
                      case b @ Block (_*) if s.isLast => following (b)
@@ -90,7 +90,7 @@ object Dataflow {
      */
     val in : Stm => Set[String] =
         circular (Set[String]()) {
-            case s => uses (s) ++ (out (s) -- defines (s))
+            s => uses (s) ++ (out (s) -- defines (s))
         }
     
     /**
@@ -98,7 +98,7 @@ object Dataflow {
      */
     val out : Stm => Set[String] =
         circular (Set[String]()) {
-            case s => succ (s).flatMap (in) 
+            s => succ (s).flatMap (in) 
         }
         
 }
