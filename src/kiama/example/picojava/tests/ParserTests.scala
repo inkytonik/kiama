@@ -32,8 +32,7 @@ import junit.framework.Assert._
 import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite 
 
-class ParserTests extends TestCase ("ParserTests")
-                  with JUnit3Suite {
+class ParserTests extends TestCase with JUnit3Suite {
 
     import kiama.example.picojava.AbstractSyntax._
     import kiama.example.picojava.Parser._

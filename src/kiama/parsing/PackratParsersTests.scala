@@ -31,8 +31,7 @@ import kiama.example.imperative.TestBase
 /**
  * Packrat parsing test cases.
  */
-class PackratParsersTests extends TestCase ("PackratParsersTests")
-                          with JUnit3Suite with Checkers
+class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                           with CharPackratParsers with TestBase {
     
     import kiama.example.imperative.AST._

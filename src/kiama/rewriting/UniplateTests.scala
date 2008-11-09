@@ -32,8 +32,8 @@ import kiama.example.imperative.TestBase
  * Tests based on examples from the paper "Uniform boilerplate and list
  * processing" by Mitchell and Runciman, from Haskell Workshop 2007.
  */
-class UniplateTests extends TestCase ("UniplateTests")
-                    with JUnit3Suite with Checkers with Rewriter with TestBase {
+class UniplateTests extends TestCase with JUnit3Suite with Checkers
+                    with Rewriter with TestBase {
                       
     import kiama.example.imperative.AST._
     
