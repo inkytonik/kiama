@@ -146,7 +146,7 @@ object NameResolution {
          unknownDecl (t)
     }
     
-    /*
+    /**
      * Perform a remote name lookup.
      *
      *  Looks through declarations of this type that are accessible from outside the type
