@@ -32,36 +32,38 @@ package kiama.example.picojava
  * PicoJava abstract syntax
  */
 object AbstractSyntax {
+  
+    import kiama.attribution.Attribution._
 
     // Created by parser
-    case class Program (Block : Block)  // FIXME: /PredefinedType:TypeDecl* /
+    case class Program (Block : Block) extends Attributable /* (PredefinedType : Seq[TypeDecl]) */
 
-    case class Block (BlockStmts : Seq[BlockStmt])
-    abstract class BlockStmt
+    case class Block (BlockStmts : Seq[BlockStmt]) extends Attributable
+    abstract class BlockStmt extends Attributable
 
-    abstract class Decl (Name : String) extends BlockStmt
-    abstract class TypeDecl (Name : String) extends Decl (Name)
-    case class ClassDecl (Name : String, Superclass : Option[IdUse], Body : Block) extends TypeDecl (Name)
-    case class VarDecl (Name : String, Type : Access) extends Decl (Name)
+    abstract case class Decl (Name : String) extends BlockStmt
+    abstract case class TypeDecl (override val Name : String) extends Decl (Name)
+    case class ClassDecl (override val Name : String, Superclass : Option[IdUse], Body : Block) extends TypeDecl (Name)
+    case class VarDecl (override val Name : String, Type : Access) extends Decl (Name)
 
     abstract class Stmt extends BlockStmt
     case class AssignStmt (Variable : Access, Value : Exp) extends Stmt
     case class WhileStmt (Condition : Exp, Body : Stmt) extends Stmt
 
-    abstract class Exp
+    abstract class Exp extends Attributable
     abstract class Access extends Exp
-    abstract class IdUse (Name : String) extends Access
+    abstract case class IdUse (Name : String) extends Access
     
-    case class Use (Name : String) extends IdUse (Name)
+    case class Use (override val Name : String) extends IdUse (Name)
     case class Dot (ObjectReference : Access, IdUse : IdUse) extends Access
     case class BooleanLiteral (Value : String) extends Exp
 
     // Created by NTA equations
-    case class PrimitiveDecl (Name : String) extends TypeDecl (Name)
-    case class UnknownDecl (Name : String) extends TypeDecl (Name)
+    case class PrimitiveDecl (override val Name : String) extends TypeDecl (Name)
+    case class UnknownDecl (override val Name : String) extends TypeDecl (Name)
 
     // Created by Rewrites
-    case class TypeUse (Name : String) extends IdUse (Name)
-    case class VariableUse (Name : String) extends IdUse (Name)
+    case class TypeUse (override val Name : String) extends IdUse (Name)
+    case class VariableUse (override val Name : String) extends IdUse (Name)
   
 }
