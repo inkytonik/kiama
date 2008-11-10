@@ -87,6 +87,9 @@ object Attribution {
         
         /**
          * House-keeping method to connect my children to me and their siblings.
+         * If a node is a direct child of a Seq or Some, then the parent link
+         * "bypasses" that parent to go to the Attributable parent above.  It
+         * is assumed at that sequences and options are not directly nested.
          */
         private def setChildConnections = {
           
@@ -94,6 +97,13 @@ object Attribution {
                 productElement (i) match {
                     case c : Attributable =>
                         c.parent = this
+                    case o : Some[_] =>
+                        o.get match {
+                            case c : Attributable =>
+                                c.parent = this
+                            case _ =>
+                                // Ignore optional items that are non-Attributables
+                        }
                     case s : Seq[_] => {
                         var prev : Attributable = null
                         for (i <- 0 until s.length) {
