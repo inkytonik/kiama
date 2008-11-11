@@ -122,7 +122,7 @@ object Attribution {
                         }
                     }
                     case _ =>
-                        // Ignore children that are not Attributable or sequences
+                        // Ignore children that are not Attributable, options or sequences
                 }
             }
             
