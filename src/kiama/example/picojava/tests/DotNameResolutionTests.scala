@@ -38,7 +38,7 @@ class DotNameResolutionTests extends TestCase with JUnit3Suite {
     import kiama.example.picojava.NameResolution._
     import kiama.example.picojava.TypeAnalysis._
 
-    // For the actual program text, see DotNameResolutionTests.pico
+    // For the actual program text, see DotNameResolutionTests.pj
 
     private val axInA   = Use ("x")
     private val declAAx = VarDecl ("x", Use ("int"))

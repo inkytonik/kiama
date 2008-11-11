@@ -38,7 +38,7 @@ class BasicNameResolutionTests extends TestCase with JUnit3Suite {
     import kiama.example.picojava.NameResolution._
     import kiama.example.picojava.TypeAnalysis._
 
-    // For the actual program text, see BasicNameResolutionTests.pico
+    // For the actual program text, see BasicNameResolutionTests.pj
 
     private val declRx = VarDecl ("x", Use ("int"))
     private val xInR   = Use ("x")

@@ -38,7 +38,7 @@ class InheritanceNameResolutionTests extends TestCase with JUnit3Suite {
     import kiama.example.picojava.NameResolution._
     import kiama.example.picojava.TypeAnalysis._
 
-    // For the actual program text, see InheritanceNameResolutionTests.pico
+    // For the actual program text, see InheritanceNameResolutionTests.pj
 
     private val declAa  = VarDecl ("a", Use ("int"))
     private val aInAA   = Use ("a")
