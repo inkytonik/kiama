@@ -144,9 +144,11 @@ object Attribution {
         /**
          * The memo table for this attribute, with memo(t) = Some(v) representing
          * the node t having the value v.  memo(t) = None means that the
-         * attribute for t is currently being evaluated.
+         * attribute for t is currently being evaluated.  Note that this needs
+         * to be some form of identity map so that value equal trees are not
+         * treated as equal unless they are actually the same reference.
          */
-        private val memo = new scala.collection.mutable.HashMap[T,Option[U]]
+        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
 
         /**
          * Return the value of this attribute for node t, raising an error if

@@ -60,11 +60,11 @@ class DotNameResolutionTests extends TestCase with JUnit3Suite {
                                                   Dot (Use ("b"), bxInBB)))))))))))
 
     def testSimpleDot {
-        assertEquals (declAAx, decl (axInA))
+        assertSame (declAAx, decl (axInA))
     }
 
     def testInheritedDot {
-        assertEquals (declAAx, decl (bxInBB))
+        assertSame (declAAx, decl (bxInBB))
     }
     
     def testSurroundingContextIsNotVisible {

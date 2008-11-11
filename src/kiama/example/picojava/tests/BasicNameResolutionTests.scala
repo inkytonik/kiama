@@ -48,7 +48,7 @@ class BasicNameResolutionTests extends TestCase with JUnit3Suite {
     private val yInA   = Use("y")
     private val xInA   = Use ("x")
     private val declAz = VarDecl ("z", Use ("int"))
-    private val zInA   = Use("z")
+    private val zInA   = Use ("z")
 
     val ast =
         Program (Block (
@@ -59,14 +59,14 @@ class BasicNameResolutionTests extends TestCase with JUnit3Suite {
                   ClassDecl ("A", None, Block (
                       List (declAz,
                             AssignStmt (xInA, zInA),
-                            AssignStmt (yInA, Use("z"))))))))
+                            AssignStmt (yInA, Use ("z"))))))))
 
     def testBindingInSameBlock {
-        assertEquals (declRx, decl (xInR))
+        assertSame (declRx, decl (xInR))
     }
       
     def testDeclarationOrderIrrelevant {
-        assertEquals (declRz, decl (zInR))
+        assertSame (declRz, decl (zInR))
     }
   
     def testMissingDecl {
@@ -75,11 +75,12 @@ class BasicNameResolutionTests extends TestCase with JUnit3Suite {
     }
   
     def testBindingInOuterBlock {
-        assertEquals (declRx, decl (xInA))
+        assertSame (declRx, decl (xInA))
     }
   
     def testShadowingDeclaration {
-        assertEquals (declAz, decl (zInA))
+        assertSame (declAz, decl (zInA))
     }
 
 }
+
