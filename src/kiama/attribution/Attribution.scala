@@ -86,10 +86,27 @@ object Attribution {
         var index : Int = 0
         
         /**
+         * This node's attributable children in left-to-right order.  Children
+         * that are not Attributable are ignored, except for sequences (Seq[_])
+         * and optional children (Option[_]).  In the case of sequences and
+         * options, their contents are processed and any immediate Attributable
+         * contents are included in the sequence.
+         */
+        def children : Iterator[Attributable] =
+            _children.elements
+          
+        /**
+         * Record of this node's attributable children.
+         */
+        private val _children = new scala.collection.mutable.ListBuffer[Attributable]
+        
+        /**
          * House-keeping method to connect my children to me and their siblings.
          * If a node is a direct child of a Seq or Some, then the parent link
          * "bypasses" that parent to go to the Attributable parent above.  It
          * is assumed at that sequences and options are not directly nested.
+         * As a side-effect, this method remembers the attributable children
+         * so that they can be accessed easily via the children iterator.
          */
         private def setChildConnections = {
           
@@ -97,10 +114,12 @@ object Attribution {
                 productElement (i) match {
                     case c : Attributable =>
                         c.parent = this
+                        _children += c
                     case o : Some[_] =>
                         o.get match {
                             case c : Attributable =>
                                 c.parent = this
+                                _children += c
                             case _ =>
                                 // Ignore optional items that are non-Attributables
                         }
@@ -111,6 +130,7 @@ object Attribution {
                                 case c : Attributable =>
                                     // Bypass Seq node in parent relation
                                     c.parent = this
+                                    _children += c                                    
                                     // Set sequence element properties
                                     c.index = i
                                     c._prev = prev

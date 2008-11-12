@@ -94,26 +94,8 @@ object ErrorCheck {
         attr {
             case t => c =>
                 // Process the errors of the children of t
-                for (i <- 0 until t.productArity)
-                    t.productElement (i) match {
-                        case a : Attributable => collectErrors (a) (c)
-                        case o : Some[_] =>
-                            o.get match {
-                                case a : Attributable => collectErrors (a) (c)
-                            case _ =>
-                                // Ignore optional items that are non-Attributables
-                        }
-                        case s : Seq[_] => {
-                            for (i <- 0 until s.length)
-                                s (i) match {
-                                    case a : Attributable => collectErrors (a) (c)
-                                    case _ =>
-                                        // Ignore elements that are non-Attributables
-                                }
-                        }
-                        case _ =>
-                            // Ignore children that are not Attributable, options or sequences
-                    }
+                for (child <- t.children)
+                    collectErrors (child) (c)
                 // Process the errors at t
                 t match {
                     case a : AssignStmt =>
