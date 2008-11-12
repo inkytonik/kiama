@@ -10,7 +10,7 @@ object Main {
             val program = Parser.run (new FileReader (filename))
             val messages = errors (program)
             for (msg <- messages)
-                println (msg)
+                println (filename + ":" + msg)
         }
     }
     

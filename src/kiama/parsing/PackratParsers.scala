@@ -37,7 +37,7 @@ package kiama.parsing
  */
 trait Parsers {
     
-    import scala.util.parsing.input.Reader
+    import scala.util.parsing.input._
     
     /**
      * The abstract type of input element that these parsers process.
@@ -87,6 +87,12 @@ trait Parsers {
          */
         def append[U >: T] (a : => ParseResult[U]) : ParseResult[U]
         
+        /**
+         * Set the position of this result to that of in, if it is capable of
+         * holding position information and doesn't already have some.
+         */
+        def position (in : Input) : ParseResult[T]
+        
     }
         
     /**
@@ -107,6 +113,13 @@ trait Parsers {
             f (result) (in) 
         def append[U >: T] (a : => ParseResult[U]) : ParseResult[U] =
             this
+        def position (in : Input) : ParseResult[T] = {
+            result match {
+                case p : Positional => if (p.pos == NoPosition) p.setPos (in.pos)
+                case _              => 
+            }
+            this
+        }
         override def toString = "[" + in.pos + "] parsed: " + result
     }
      
@@ -125,6 +138,8 @@ trait Parsers {
             this
         def append[U >: Nothing] (a : => ParseResult[U]) : ParseResult[U] =
             a
+        def position (in : Input) : ParseResult[Nothing] =
+            this
         override def toString = "[" + in.pos + "] failure: " + msg + "\n\n" + in.pos.longString
     }
 
@@ -265,10 +280,12 @@ trait Parsers {
 
         /**
          * Construct a parser that parses what this parser parses and,
-         * if successful, applies f to the result. 
+         * if successful, applies f to the result. The starting position
+         * is attached to the result if it holds position information
+         * and doesn't already have some.
          */
         def ^^[U] (f : T => U) : Parser[U] =
-            map (f)
+            Parser { in => p (in) map (f) position in }
         
         /**
          * Construct a parser that parses what this parser parses and,
@@ -713,23 +730,23 @@ trait CharParsers extends Parsers {
         whitespace*
                 
     /**
-     * Parse whatever p parses preceded by layout.
+     * Parse whatever p parses followed by layout.
      */
     def token[T] (p : Parser[T]) : Parser[T] =
-        layout ~> p
+        p <~ layout
 
     /**
      * Construct a parser that parses with p and then makes sure that the
      * entire input has been consumed (i.e., the input was a phrase that
-     * was recognised by p). Layout is allowed at the end.
+     * was recognised by p). Layout is allowed at the beginning.
      */
     override def phrase[T] (p : => Parser[T]) : Parser[T] =
-        super.phrase (p <~ layout)
+        super.phrase (layout ~> p)
 
     /**
      * (Implicitly) construct a parser that succeeds if the next part
      * of the input is the given string, and otherwise fails.  Layout is
-     * skipped before an attempt is made to match the string. 
+     * skipped after the string.
      */
     implicit def literal (s : String) : Parser[String] =
         token (Parser { in =>

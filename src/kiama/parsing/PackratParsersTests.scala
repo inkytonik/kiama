@@ -284,7 +284,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      */
     def testParseNullStmt () {
         expect (stmt, ";", Null ())
-        expect (stmt, "     ;", Null ())
+        expect (stmt, ";     ", Null ())
     }
     
     /**
@@ -436,7 +436,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
      */
     def testValueSequence () {
         // Recognise sequences of the form: n n*2
-        val number = (digit+) ^^ (s => s.mkString.toInt)
+        val number = token (digit+) ^^ (s => s.mkString.toInt)
         val nntimes2 = number >> (i => token ((i*2).toString))
         expect (nntimes2, "0 0", "0")
         expect (nntimes2, "21 42", "42")

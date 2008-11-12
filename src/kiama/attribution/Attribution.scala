@@ -25,12 +25,15 @@ package kiama.attribution
  */
 object Attribution {
   
+    import scala.util.parsing.input.Positional
+  
     /**
      * Common functionality for all classes that can be attributed.  This trait
      * must be extended by all such classes, which must also implement Product.
-     * In practice, this means that they are usually case classes.
+     * In practice, this means that they are usually case classes.  They are
+     * also equipped with position information.
      */
-    trait Attributable extends Product {
+    trait Attributable extends Product with Positional {
   
         /**
          * A link to the parent attributable node of this node or null if this

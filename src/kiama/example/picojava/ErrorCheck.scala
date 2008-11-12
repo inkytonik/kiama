@@ -130,9 +130,7 @@ object ErrorCheck {
      * }
      */
     val record : Attributable => ((Buffer[String],String) => Unit) =
-        constant {
-            (b,s) => b + s
-        }
+        a => (b,s) => b + ((a.pos) + ": " + s)
 
     /**
      * Is this entity qualified?

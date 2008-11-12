@@ -79,7 +79,7 @@ object Parser extends CharPackratParsers {
         token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString } 
     
     val comment =
-        "//" ~> ((not (endofline) ~> any)*) <~ endofline
+        '/' ~> '/' ~> ((not (endofline) ~> any)*) <~ endofline
     val endofline =
         '\r' ~ '\n' | '\r' | '\n'    
     override val layout =
