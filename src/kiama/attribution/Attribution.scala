@@ -219,18 +219,18 @@ object Attribution {
         /**
          * Has the value of this attribute for a given tree already been computed?
          */
-        private val computed = new scala.collection.mutable.HashSet[T]
+        private val computed = new scala.collection.jcl.IdentityHashMap[T,Unit]
         
         /**
          * Has the attribute for given tree been computed on this iteration of the
          * circular evaluation?
          */
-        private val visited = new scala.collection.mutable.HashSet[T]
+        private val visited = new scala.collection.jcl.IdentityHashMap[T,Unit]
         
         /**
          * The memo table for this attribute.
          */
-        private val memo = new scala.collection.mutable.HashMap[T,U]
+        private val memo = new scala.collection.jcl.IdentityHashMap[T,U]
         
         /**
          * Return the value of the attribute for tree t, or the initial value if
@@ -251,7 +251,7 @@ object Attribution {
                 value (t)
             } else if (!State.IN_CIRCLE) {
                 State.IN_CIRCLE = true
-                visited += t
+                visited += (t -> ())
                 var u = init
                 do {
                     State.CHANGE = false
@@ -262,12 +262,12 @@ object Attribution {
                     }
                 } while (State.CHANGE)
                 visited -= t
-                computed += t
+                computed += (t -> ())
                 memo += (t -> u)
                 State.IN_CIRCLE = false
                 u
             } else if (! (visited contains t)) {
-                visited += t
+                visited += (t -> ())
                 var u = value (t)
                 val newu = f (t)
                 if (u != newu) {
