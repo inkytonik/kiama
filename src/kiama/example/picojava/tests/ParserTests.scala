@@ -128,16 +128,11 @@ class ParserTests extends TestCase with JUnit3Suite {
     }
       
     /**
-     * Convenience method for creating a reader that reads from a given string.
-     */
-    def input (str : String) = new CharArrayReader (str.toArray)
-   
-    /**
-     * Try to parse str as a program, which is expected to work.  Assert a
+     * Try to parse str as a T, which is expected to work.  Assert a
      * failure if it doesn't.
      */
     def assertParseOk[T] (str : String, p : Parser[T], value : T) {
-        p (input (str)) match {
+        parse (p, str) match {
             case Success (`value`, _) => // do nothing
             case Success (v, _)       => fail ("succeeded wrongly with " + v)
             case f @ Failure (_, _)   => fail (f.toString)
@@ -145,11 +140,11 @@ class ParserTests extends TestCase with JUnit3Suite {
     }
     
     /**
-     * Try to parse str as a program, which is expected to fail.  Assert a
+     * Try to parse str as a TCharArrayReader, which is expected to fail.  Assert a
      * failure if it doesn't.
      */
     def assertParseError[T] (str : String, p : Parser[T]) {
-        p (input (str)) match {
+        parse (p, str) match {
             case Success (_, _)     => fail ("expected to find parse error in " + str)
             case f @ Failure (_, _) => // do nothing
         } 

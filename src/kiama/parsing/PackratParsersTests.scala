@@ -38,10 +38,11 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     import scala.util.parsing.input.CharArrayReader
 
     /**
-     * Convenience method for creating a reader that reads from a given string.
+     * Convenience method for creating a parser input that reads from
+     * a given string.
      */
     def input (str : String) = new CharArrayReader (str.toArray)
-        
+
     /**
      * Input containing no characters at all.
      */

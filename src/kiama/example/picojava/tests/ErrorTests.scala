@@ -40,11 +40,6 @@ class ErrorTests extends TestCase with JUnit3Suite {
     import scala.util.parsing.input.CharArrayReader
     
     /**
-     * Convenience method for creating a reader that reads from a given string.
-     */
-    def input (str : String) = new CharArrayReader (str.toArray)
-
-    /**
      * Parse the illegal program and make sure that the errors and their
      * positions are as expected.
      */
@@ -68,7 +63,7 @@ class ErrorTests extends TestCase with JUnit3Suite {
   refC = refD;
 }
 """;      
-        phrase (program) (input (text)) match {
+        parseAll (program, text) match {
             case Success (ast, _) => {
                 val messages = errors (ast)
                 assertEquals ("5.9: Unknown identifier b", messages (0))
