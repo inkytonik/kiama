@@ -58,6 +58,14 @@
       <arg value="bin"/>
   	</java>
   </target>	
+ 
+  <target name="scalatestone" depends="build">
+    <java classname="org.scalatest.tools.Runner" classpathref="kiama.classpath" fork="true">
+      <arg value="-o"/>
+      <arg value="-s"/>
+      <arg value="${env.KIAMA_TEST}"/>
+  	</java>
+  </target>	
 	
   <target name="doc" depends="prepare">
     <copy todir="bin/doc">
