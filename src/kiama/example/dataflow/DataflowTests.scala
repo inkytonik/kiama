@@ -33,43 +33,43 @@ class DataflowTests extends TestCase with JUnit3Suite {
     
     /*
      * begin                 (prog)
-     *     bogus1 = value    (s1)
-     *     bogus2 = bogus1   (s2)
-     *     x = value         (s3)
+     *     y = v             (s1)
+     *     z = y             (s2)
+     *     x = v             (s3)
      *     while (x) begin   (s4, s41)
-     *         x = bogus3    (s411)
-     *         x = value     (s412)
+     *         x = w         (s411)
+     *         x = v         (s412)
      *     end
      *     return x          (s5)
      * end
      */
-    val s1 = Assign ("bogus1", "value")
-    val s2 = Assign ("bogus2", "bogus1")
-    val s3 = Assign ("x", "value")
-    val s411 = Assign ("x", "bogus3")
-    val s412 = Assign ("x", "value")
+    val s1 = Assign ("y", "v")
+    val s2 = Assign ("z", "y")
+    val s3 = Assign ("x", "v")
+    val s411 = Assign ("x", "w")
+    val s412 = Assign ("x", "v")
     val s41 = Block (s411, s412)
     val s4 = While ("x", s41)
     val s5 = Return ("x")
     val prog = Block (s1, s2, s3, s4, s5)
     
     def testIn {
-        assertEquals (Set ("bogus3", "value"), in (s1))
-        assertEquals (Set ("bogus1", "bogus3", "value"), in (s2))
-        assertEquals (Set ("bogus3", "value"), in (s3))
-        assertEquals (Set ("x", "bogus3", "value"), in (s4))
-        assertEquals (Set ("bogus3", "value"), in (s411))
-        assertEquals (Set ("bogus3", "value"), in (s412))
+        assertEquals (Set ("w", "v"), in (s1))
+        assertEquals (Set ("y", "w", "v"), in (s2))
+        assertEquals (Set ("w", "v"), in (s3))
+        assertEquals (Set ("x", "w", "v"), in (s4))
+        assertEquals (Set ("w", "v"), in (s411))
+        assertEquals (Set ("w", "v"), in (s412))
         assertEquals (Set ("x"), in (s5))
     }
     
     def testOut {
-        assertEquals (Set ("bogus1", "bogus3", "value"), out (s1))
-        assertEquals (Set ("bogus3", "value"), out (s2))
-        assertEquals (Set ("x", "bogus3", "value"), out (s3))
-        assertEquals (Set ("x", "bogus3", "value"), out (s4))
-        assertEquals (Set ("bogus3", "value"), out (s411))
-        assertEquals (Set ("x", "bogus3", "value"), out (s412))
+        assertEquals (Set ("y", "w", "v"), out (s1))
+        assertEquals (Set ("w", "v"), out (s2))
+        assertEquals (Set ("x", "w", "v"), out (s3))
+        assertEquals (Set ("x", "w", "v"), out (s4))
+        assertEquals (Set ("w", "v"), out (s411))
+        assertEquals (Set ("x", "w", "v"), out (s412))
         assertEquals (Set (), out (s5))
     }
     
