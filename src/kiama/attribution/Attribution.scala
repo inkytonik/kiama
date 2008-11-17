@@ -23,8 +23,8 @@ package kiama.attribution
 /**
  * Support for attribution of syntax trees in a functional style.
  */
-object Attribution {
-  
+object Attribution {  
+
     import scala.util.parsing.input.Positional
   
     /**
@@ -102,6 +102,12 @@ object Attribution {
          * Record of this node's attributable children.
          */
         private val _children = new scala.collection.mutable.ListBuffer[Attributable]
+        
+        /**
+         * Reference an attribute or function that can be applied to this node.
+         * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
+         */
+        def ->[TOut](attr : this.type => TOut) = attr(this)
         
         /**
          * House-keeping method to connect my children to me and their siblings.
@@ -304,6 +310,9 @@ object Attribution {
      * Define an attribute of T nodes of type U given by the constant value u.
      */
     def constant[T,U] (u : U) : T => U =
-        new Attribute (_ => u)
+        new PartialFunction[T,U] {
+    	  def apply(t : T) = u
+    	  def isDefinedAt(t : T) = true
+    	}
 
 }

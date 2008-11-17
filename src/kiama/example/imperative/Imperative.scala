@@ -45,7 +45,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp extends Product with PrettyPrintable {
+    abstract class Exp extends PrettyPrintable {
 
         /**
          * The numeric value of the expression.
