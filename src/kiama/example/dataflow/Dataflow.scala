@@ -25,12 +25,13 @@ package kiama.example.dataflow
  */
 object Dataflow {
 
-    import kiama.attribution.Attribution._
+    import kiama.attribution.DynamicAttribution._
+    import kiama.attribution.Attribution.Attributable // FIXME: This should not be here
 
     type Var = String
     
     case class Program (body : Stm) extends Attributable
-    sealed abstract class Stm extends Attributable
+    abstract class Stm extends Attributable
     case class Assign (left : Var, right : Var) extends Stm
     case class While (cond : Var, body : Stm) extends Stm
     case class If (cond : Var, tru : Stm, fls : Stm) extends Stm
