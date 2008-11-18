@@ -1,0 +1,17 @@
+{
+  class A extends B{
+    boolean a;
+    a = b;
+    A refA;
+    a = refA;
+  }
+  class B extends A {
+  }
+  class C {
+  }
+  class D {
+  }
+  C refC;
+  D refD;
+  refC = refD;
+}
