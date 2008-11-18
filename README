@@ -100,6 +100,8 @@ scalatest  run all of the tests using the ScalaTest GUI
 
 5. Acknowledgements
 
+Contributors to the Kiama code are: Tony Sloane and Lennart Kats.
+
 Kiama is currently concentrating on incorporating existing language processing
 formalisms, so credit goes to the original developers of those formalisms.  See
 the code for details of the sources of ideas that come from elsewhere.
