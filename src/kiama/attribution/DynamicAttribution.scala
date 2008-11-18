@@ -121,7 +121,7 @@ trait DynamicAttribution {
         }
         
         def remove (f : PartialFunction[T, U]) {
-            val removed = functions.lasTdexOf(f)
+            val removed = functions.lastIndexOf(f)
             functions.remove(removed)
             equationsVersion += 1 // clear all caches
         }
