@@ -15,10 +15,10 @@ trait DynamicAttribution {
     private val allRecordedChanges = new IdentityHashMap[AnyRef, ChangeBuffer]    
     private var equationsVersion = 0
 
-    def attr[TIn <: Attributable, TOut](f : PartialFunction[TIn, TOut]) : Attr[TIn, TOut] =
-        new Attr(new ComposedPartialFunction[TIn, TOut] { add(f) })
+    def attr[T <: Attributable, U] (f : PartialFunction[T, U]) : Attr[T, U] =
+        new Attr(new ComposedPartialFunction[T, U] { add(f) })
 
-    def circular[TIn,TOut] (init : TOut) (f : TIn => TOut) : TIn => TOut =
+    def circular[T,U] (init : U) (f : T => U) : T => U =
         Attribution.circular(init)(f)
     
     def childAttr[T <: Attributable,U] (f : PartialFunction[(T, Attributable), U]) : PartialFunction[T, U] = {
@@ -32,13 +32,13 @@ trait DynamicAttribution {
     /**
      * Implicitly converts (partial) functions to support the + operator.
      **/
-    implicit def internalToAttr[TIn <: Attributable, TOut](f : Function[TIn, TOut]) : Attr[TIn, TOut] =
+    implicit def internalToAttr[T <: Attributable, U] (f : Function[T, U]) : Attr[T, U] =
         f match {
-            case f : DynamicAttribution#Attr[_, _] => f.asInstanceOf[Attr[TIn,TOut]]
+            case f : DynamicAttribution#Attr[_, _] => f.asInstanceOf[Attr[T,U]]
             case f => throw new UnsupportedOperationException()
         }
 
-    def using[T](attributeInitializer : => AnyRef)(block : => T) = {
+    def using[T] (attributeInitializer : => AnyRef)(block : => T) = {
         try {
             use(attributeInitializer)
             block
@@ -47,7 +47,7 @@ trait DynamicAttribution {
         }
     }
     
-    def use[T](attributeInitializer : => AnyRef) {
+    def use[T] (attributeInitializer : => AnyRef) {
         val prevRecordedChanges = currentRecordedChanges
         try {
             currentRecordedChanges = new ArrayBuffer
@@ -62,25 +62,25 @@ trait DynamicAttribution {
         }  
     }
     
-    private def reuse(attributeInitializer : AnyRef) {
+    private def reuse (attributeInitializer : AnyRef) {
         for ((attr, function) <- allRecordedChanges(attributeInitializer))
             attr.f.add(function)
     }
     
-    def endUse(attributeInitializer : AnyRef) {
+    def endUse (attributeInitializer : AnyRef) {
         for ((attr, function) <- allRecordedChanges(attributeInitializer))
             attr.f.remove(function)
     }
     
     // TODO: Rename to DynamicAttribute, inherit and reuse from Attribute?
     
-    class Attr[TIn <: Attributable, TOut] (var f : ComposedPartialFunction[TIn, TOut])
-            extends PartialFunction[TIn, TOut] {
+    class Attr[T <: Attributable, U] (var f : ComposedPartialFunction[T, U])
+            extends PartialFunction[T, U] {
     
-        private val cache = new IdentityHashMap[TIn, Option[TOut]]
+        private val cache = new IdentityHashMap[T, Option[U]]
         private var cacheVersion = equationsVersion
     
-        def apply(node : TIn) = {
+        def apply (node : T) = {
             if (cacheVersion != equationsVersion) {
                 cacheVersion = equationsVersion
                 cache.clear
@@ -99,34 +99,34 @@ trait DynamicAttribution {
             }
         }
         
-        def isDefinedAt(node : TIn) = f.isDefinedAt(node)
+        def isDefinedAt (node : T) = f.isDefinedAt(node)
         
-        def +=(that : PartialFunction[TIn, TOut]) = {
+        def += (that : PartialFunction[T, U]) = {
             if (currentRecordedChanges != null) currentRecordedChanges += (this, that)
             
             f.add(that)
         }
     }
             
-    trait ComposedPartialFunction[TIn, TOut] extends PartialFunction[TIn, TOut] {
-        val functions = new ArrayBuffer[PartialFunction[TIn, TOut]]
+    trait ComposedPartialFunction[T, U] extends PartialFunction[T, U] {
+        val functions = new ArrayBuffer[PartialFunction[T, U]]
       
-        def isDefinedAt(i : TIn) = functions.exists(_ isDefinedAt i)
+        def isDefinedAt (i : T) = functions.exists(_ isDefinedAt i)
         
-        def apply(node : TIn) : TOut = {
+        def apply (node : T) : U = {
             for (i <- (functions.size - 1) until (-1, -1)) {
                 if (functions(i) isDefinedAt node) return functions(i)(node)
             }
             throw new MatchError("Function not defined for " + node)
         }
         
-        def remove(f : PartialFunction[TIn, TOut]) {
-            val removed = functions.lastIndexOf(f)
+        def remove (f : PartialFunction[T, U]) {
+            val removed = functions.lasTdexOf(f)
             functions.remove(removed)
             equationsVersion += 1 // clear all caches
         }
         
-        def add(f : PartialFunction[TIn, TOut]) {
+        def add (f : PartialFunction[T, U]) {
             functions += f
             equationsVersion += 1 // clear all caches
         }
