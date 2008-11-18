@@ -96,8 +96,8 @@ trait AttributionTrait {
         
         /**
          * This node's attributable children in left-to-right order.  Children
-         * that are not Attributable are ignored, except for sequences (Seq[_])
-         * and optional children (Option[_]).  In the case of sequences and
+         * that are not Attributable are ignored, except for sequences (<code>Seq[_]</code>)
+         * and optional children (<code>Option[_]</code>).  In the case of sequences and
          * options, their contents are processed and any immediate Attributable
          * contents are included in the sequence.
          */
@@ -113,13 +113,13 @@ trait AttributionTrait {
          * Reference an attribute or function that can be applied to this node.
          * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
          */
-        def ->[TOut](attr : this.type => TOut) = attr(this)
+        def ->[T] (attr : this.type => T) = attr (this)
         
         /**
          * House-keeping method to connect my children to me and their siblings.
-         * If a node is a direct child of a Seq or Some, then the parent link
-         * "bypasses" that parent to go to the Attributable parent above.  It
-         * is assumed at that sequences and options are not directly nested.
+         * If a node is a direct child of a <code>Seq</code> or <code>Some</code>,
+         * then the parent link "bypasses" that parent to go to the <code>Attributable</code>
+         * parent above.  It is assumed at that sequences and options are not directly nested.
          * As a side-effect, this method remembers the attributable children
          * so that they can be accessed easily via the children iterator.
          */
@@ -177,11 +177,11 @@ trait AttributionTrait {
     class Attribute[T,U] (f : T => U) extends (T => U) {
 
         /**
-         * The memo table for this attribute, with memo(t) = Some(v) representing
-         * the node t having the value v.  memo(t) = None means that the
-         * attribute for t is currently being evaluated.  Note that this needs
-         * to be some form of identity map so that value equal trees are not
-         * treated as equal unless they are actually the same reference.
+         * The memo table for this attribute, with <code>memo(t) == Some(v)</code>
+         * representing the node t having the value v.  <code>memo(t) = None</code>
+         * means that the attribute for t is currently being evaluated.  Note that
+         * this needs to be some form of identity map so that value equal trees are
+         * not treated as equal unless they are actually the same reference.
          */
         private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
 
@@ -317,8 +317,8 @@ trait AttributionTrait {
      */
     def constant[T,U] (u : U) : T => U =
         new PartialFunction[T,U] {
-    	  def apply(t : T) = u
-    	  def isDefinedAt(t : T) = true
+    	    def apply (t : T) = u
+    	    def isDefinedAt (t : T) = true
     	}
 
 }
