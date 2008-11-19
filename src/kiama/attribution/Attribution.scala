@@ -113,7 +113,8 @@ trait AttributionTrait {
          * Reference an attribute or function that can be applied to this node.
          * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
          */
-        def ->[T] (attr : this.type => T) = attr (this)
+        @inline
+        final def ->[T] (attr : this.type => T) = attr (this)
         
         /**
          * House-keeping method to connect my children to me and their siblings.
@@ -209,8 +210,61 @@ trait AttributionTrait {
                 u
             }
         }
-
     }
+    
+    
+    /**
+     * A variation of the Attribute class for parameterised attributes.
+     */
+    class ArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
+
+        private val memo = new scala.collection.jcl.WeakHashMap[ArgAttributeKey,Option[U]]
+        
+        private var memoVersion = State.MEMO_VERSION
+
+        /**
+         * Return the value of this attribute for node t, raising an error if
+         * it depends on itself.
+         */
+        def apply (arg : TArg) : T => U = node => {
+            if (memoVersion != State.MEMO_VERSION) {
+                memoVersion = State.MEMO_VERSION
+                memo.clear
+            }
+            
+            val key = new ArgAttributeKey(arg, node)
+              
+            if (memo contains key) {
+                memo (key) match {
+                    case Some (u) => u
+                    case None     => error ("attribution circularity detected")
+                }
+            } else {
+                memo += (key -> None)
+                val u = f(arg)(node)
+                memo += (key -> Some (u))
+                u
+            }
+        }
+    }
+    
+    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
+        new ArgAttribute(f)
+        
+    // TODO: Use a wrapper class like ArgAttributeKey so regular attributes can use a WeakHashMap with reference equality
+    
+    private class ArgAttributeKey (var arg : Any, var node : Attributable) {
+        override def equals(o : Any) =
+            o match {
+                case o : ArgAttributeKey =>
+                  arg == o.arg &&                                        // object equality
+                  (if (node eq null) o.node eq null else node eq o.node) // reference equality
+                case _ => false
+            }
+        
+        override def hashCode = System.identityHashCode(node) ^ arg.hashCode
+    }
+    
     
     /**
      * Global state for the circular attribute evaluation algorithm
@@ -316,8 +370,9 @@ trait AttributionTrait {
      * Define an attribute of T nodes of type U by the function f, which 
      * should not depend on the value of this attribute.
      */
-    def attr[T,U] (f : T => U) : T => U =
+    def attr[T,U] (f : T => U) : T => U =  {
         new Attribute (f)
+    }
     
     /**
      * Define a circular attribute of T nodes of type U by the function f.

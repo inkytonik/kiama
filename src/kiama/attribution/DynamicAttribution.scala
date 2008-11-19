@@ -21,10 +21,10 @@ trait DynamicAttribution {
     def circular[T,U] (init : U) (f : T => U) : T => U =
         Attribution.circular(init)(f)
     
-    def childAttr[T <: Attributable,U] (f : PartialFunction[(T, Attributable),U]) : PartialFunction[T,U] = {
+    def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : PartialFunction[T,U] = { // TODO: Fix caching?
         val childF = new PartialFunction[T,U] {
-            def apply(t : T) = f((t, t.parent))
-            def isDefinedAt(t : T) = f.isDefinedAt((t, t.parent))
+            def apply(t : T) = f(t)(t.parent)
+            def isDefinedAt(t : T) = f(t) isDefinedAt t.parent
         }
         attr(childF)
     }

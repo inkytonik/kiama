@@ -91,7 +91,8 @@ object ErrorCheck {
      * }
      */
     val collectErrors : Buffer[String] => Attributable => Unit = 
-        c => attr {
+        // NOTE: Not using argAttr here, since we don't want caching for this
+        c => {
             case t =>
                 // Process the errors of the children of t
                 for (child <- t.children)
@@ -116,7 +117,7 @@ object ErrorCheck {
                     case i : IdUse =>
                         if (isUnknown (i->decl) &&
                             (!isQualified (i) || !isUnknown (i->qualifier->tipe)))
-                            i->record (c, "Unknown identifier " + i.Name)
+                        i->record (c, "Unknown identifier " + i.Name)
                     case _ =>
                 }
         }

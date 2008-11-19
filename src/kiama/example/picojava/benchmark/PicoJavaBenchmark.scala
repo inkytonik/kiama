@@ -33,17 +33,19 @@ object PicoJavaBenchmark extends Application {
         Attribution.resetMemo
     }
     
-	val start = System.currentTimeMillis
-	for (i <- 0 to 10) {
-	    // Create a big AST
-	    
-	    var bigAsst = createAst(basicAst)
-	    for (i <- 0 to 200) bigAsst = createAst(bigAsst)
-	    
-	    // Evaluate some attributes
-	    createProgram(bigAsst)->errors
-	    
-	    Attribution.resetMemo
-	}
-	println(System.currentTimeMillis - start)
+    var time : Long = 0;
+    for (i <- 0 to 10) {
+        // Create a big AST
+        
+        var bigAsst = createAst(basicAst)
+        for (i <- 0 to 150) bigAsst = createAst(bigAsst)
+        
+        // Evaluate some attributes
+        val start = System.currentTimeMillis
+        createProgram(bigAsst)->errors
+        time += (System.currentTimeMillis - start)
+        
+        Attribution.resetMemo
+    }
+    println(time)
 }
