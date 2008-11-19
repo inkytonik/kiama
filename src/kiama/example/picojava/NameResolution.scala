@@ -83,32 +83,34 @@ object NameResolution {
      *    getObjectReference().decl().type().remoteLookup(name);
      */
     val lookup : String => Attributable => Decl =
-        name => attr {
-             case b : Block =>
-                 b.parent match {
-                     case p : Program   => p->locallookup (name)
-                     case c : ClassDecl =>
-                         if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
-                             c->superClass->remoteLookup (name)
-                         else
-                             c->lookup (name)
-                 }
-             case s : BlockStmt =>
-                 s.parent match {
-                     case b : Block => {
-                         val d = b->locallookup (name)
-                         if (isUnknown (d)) b->lookup (name) else d                      
-                     }
-                     case p => p->lookup (name)
-                 }
-             case i : IdUse =>
-                 i.parent match {
-                   case Dot (a, `i`) => a->decl->tipe->remoteLookup (name)
-                   case p            => p->lookup (name)
-                 }
-             case t =>
-                 t.parent->lookup (name) 
-        }
+        argAttr {
+            name => {
+                case b : Block =>
+                    b.parent match {
+                        case p : Program   => p->locallookup (name)
+                        case c : ClassDecl =>
+                            if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
+                                c->superClass->remoteLookup (name)
+                            else
+                                c->lookup (name)
+                    }
+                case s : BlockStmt =>
+                    s.parent match {
+                        case b : Block => {
+                            val d = b->locallookup (name)
+                            if (isUnknown (d)) b->lookup (name) else d                      
+                        }
+                        case p => p->lookup (name)
+                    }
+                case i : IdUse =>
+                    i.parent match {
+                      case Dot (a, `i`) => a->decl->tipe->remoteLookup (name)
+                      case p            => p->lookup (name)
+                    }
+                case t =>
+                    t.parent->lookup (name) 
+           }
+       }
                    
     /**
      * Look through the local declarations in a block.
@@ -130,9 +132,11 @@ object NameResolution {
      * }
      */
     val locallookup : String => Attributable => Decl =
-        name => attr {
-             case p : Program => finddecl (p, name, p->predefinedTypes)
-             case b : Block   => finddecl (b, name, b.BlockStmts)             
+        argAttr {
+            name => {
+                case p : Program => finddecl (p, name, p->predefinedTypes)
+                case b : Block   => finddecl (b, name, b.BlockStmts)             
+            }
         }
 
     /**
@@ -167,16 +171,18 @@ object NameResolution {
      * }
      */
     val remoteLookup : String => Attributable => Decl =
-        name => attr {
-            case c : ClassDecl =>
-                if (!isUnknown (c.Body->locallookup (name)))
-                    c.Body->locallookup (name)
-                else if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
-                    c->superClass->remoteLookup (name)
-                else
-                    c->unknownDecl
-            case t : TypeDecl =>
-                t->unknownDecl
+        argAttr {
+            name => {
+                case c : ClassDecl =>
+                    if (!isUnknown (c.Body->locallookup (name)))
+                        c.Body->locallookup (name)
+                    else if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
+                        c->superClass->remoteLookup (name)
+                    else
+                        c->unknownDecl
+                case t : TypeDecl =>
+                    t->unknownDecl
+            }
         }
 
     /**
@@ -188,9 +194,11 @@ object NameResolution {
      * }
      */
     val declarationOf : String => BlockStmt => Decl =
-         name => attr {
-              case d : Decl => if (name == d.Name) d else null 
-              case _        => null
+         argAttr { 
+             name => {
+                 case d : Decl => if (name == d.Name) d else null 
+                 case _        => null
+             }
          }
     
 }

@@ -11,7 +11,9 @@ object DataflowForeach extends DynamicAttribution {
     
     Dataflow.following += 
         childAttr {
-            case (_, t @ Foreach (_, body)) => t->following + body
+            _ => {
+                case t @ Foreach (_, body) => following(t) + body
+            }
         }
 }
 
@@ -23,10 +25,12 @@ object DataflowFor extends DynamicAttribution {
     
     Dataflow.following += 
         childAttr {
-            case (s, t @ For (init, c, inc, body)) if s == init => Set (c)
-            case (s, t @ For (init, c, inc, body)) if s == body => Set (inc)
-            case (s, t @ For (init, c, inc, body)) if s == c    => (t->following) + body
-            case (s, t @ For (init, c, inc, body)) if s == inc  => Set (body)
+            S => {
+                case t @ For (S, c, _, _) => Set (c)
+                case t @ For (_, S, _, b) => following(t) + b
+                case t @ For (_, c, S, _) => Set (c)
+                case t @ For (_, _, i, S) => Set (i)
+            }
         }
 
 }

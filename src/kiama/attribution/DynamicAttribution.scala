@@ -15,16 +15,16 @@ trait DynamicAttribution {
     private val allRecordedChanges = new IdentityHashMap[AnyRef, ChangeBuffer]    
     private var equationsVersion = 0
 
-    def attr[T <: Attributable, U] (f : PartialFunction[T, U]) : Attr[T, U] =
-        new Attr(new ComposedPartialFunction[T, U] { add(f) })
+    def attr[T <: Attributable,U] (f : PartialFunction[T,U]) : Attr[T,U] =
+        new Attr(new ComposedPartialFunction[T,U] { add(f) })
 
     def circular[T,U] (init : U) (f : T => U) : T => U =
         Attribution.circular(init)(f)
     
-    def childAttr[T <: Attributable,U] (f : PartialFunction[(T, Attributable), U]) : PartialFunction[T, U] = {
-        val childF = new PartialFunction[T, U] {
-            def apply(t : T) = f((t, t.parent))
-            def isDefinedAt(t : T) = f.isDefinedAt((t, t.parent))
+    def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : PartialFunction[T,U] = { // TODO: Fix caching?
+        val childF = new PartialFunction[T,U] {
+            def apply(t : T) = f(t)(t.parent)
+            def isDefinedAt(t : T) = f(t) isDefinedAt t.parent
         }
         attr(childF)
     }
@@ -32,7 +32,7 @@ trait DynamicAttribution {
     /**
      * Implicitly converts (partial) functions to support the + operator.
      **/
-    implicit def internalToAttr[T <: Attributable, U] (f : Function[T, U]) : Attr[T, U] =
+    implicit def internalToAttr[T <: Attributable,U] (f : Function[T,U]) : Attr[T,U] =
         f match {
             case f : DynamicAttribution#Attr[_, _] => f.asInstanceOf[Attr[T,U]]
             case f => throw new UnsupportedOperationException()
@@ -74,8 +74,8 @@ trait DynamicAttribution {
     
     // TODO: Rename to DynamicAttribute, inherit and reuse from Attribute?
     
-    class Attr[T <: Attributable, U] (var f : ComposedPartialFunction[T, U])
-            extends PartialFunction[T, U] {
+    class Attr[T <: Attributable,U] (var f : ComposedPartialFunction[T,U])
+            extends PartialFunction[T,U] {
     
         private val cache = new IdentityHashMap[T, Option[U]]
         private var cacheVersion = equationsVersion
@@ -101,15 +101,15 @@ trait DynamicAttribution {
         
         def isDefinedAt (node : T) = f.isDefinedAt(node)
         
-        def += (that : PartialFunction[T, U]) = {
+        def += (that : PartialFunction[T,U]) = {
             if (currentRecordedChanges != null) currentRecordedChanges += (this, that)
             
             f.add(that)
         }
     }
             
-    trait ComposedPartialFunction[T, U] extends PartialFunction[T, U] {
-        val functions = new ArrayBuffer[PartialFunction[T, U]]
+    trait ComposedPartialFunction[T,U] extends PartialFunction[T,U] {
+        val functions = new ArrayBuffer[PartialFunction[T,U]]
       
         def isDefinedAt (i : T) = functions.exists(_ isDefinedAt i)
         
@@ -120,13 +120,13 @@ trait DynamicAttribution {
             throw new MatchError("Function not defined for " + node)
         }
         
-        def remove (f : PartialFunction[T, U]) {
+        def remove (f : PartialFunction[T,U]) {
             val removed = functions.lastIndexOf(f)
             functions.remove(removed)
             equationsVersion += 1 // clear all caches
         }
         
-        def add (f : PartialFunction[T, U]) {
+        def add (f : PartialFunction[T,U]) {
             functions += f
             equationsVersion += 1 // clear all caches
         }
