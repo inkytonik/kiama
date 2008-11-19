@@ -184,12 +184,19 @@ trait AttributionTrait {
          * not treated as equal unless they are actually the same reference.
          */
         private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
+        
+        private var memoVersion = State.MEMO_VERSION
 
         /**
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
         def apply (t : T) : U = {
+            if (memoVersion != State.MEMO_VERSION) {
+                memoVersion = State.MEMO_VERSION
+                memo.clear
+            }
+              
             if (memo contains t) {
                 memo (t) match {
                     case Some (u) => u
@@ -206,11 +213,21 @@ trait AttributionTrait {
     }
     
     /**
-     * Global state for the circular attribute evaluation algorithm.
+     * Global state for the circular attribute evaluation algorithm
+     * and the memoisation tables.
      */
     private object State {
         var IN_CIRCLE = false
         var CHANGE = false
+        var MEMO_VERSION = 0
+    }
+    
+    /**
+     * Lazily resets all memoisation tables.
+     */
+    def resetMemo() {
+        // Reset the memo tables by incrementing the global memo version
+        State.MEMO_VERSION += 1
     }
     
     /**
