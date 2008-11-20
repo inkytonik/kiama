@@ -204,9 +204,9 @@ trait AttributionTrait {
                     case None     => error ("attribution circularity detected")
                 }
             } else {
-                memo += (t -> None)
+                memo(t) = None
                 val u = f (t)
-                memo += (t -> Some (u))
+                memo(t) = Some (u)
                 u
             }
         }
@@ -218,7 +218,7 @@ trait AttributionTrait {
      */
     class ArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
 
-        private val memo = new scala.collection.jcl.WeakHashMap[ArgAttributeKey,Option[U]]
+        private val memo = new scala.collection.jcl.HashMap[ArgAttributeKey,Option[U]]
         
         private var memoVersion = State.MEMO_VERSION
 
@@ -240,9 +240,9 @@ trait AttributionTrait {
                     case None     => error ("attribution circularity detected")
                 }
             } else {
-                memo += (key -> None)
+                memo(key) = None
                 val u = f(arg)(node)
-                memo += (key -> Some (u))
+                memo(key) = Some (u)
                 u
             }
         }
@@ -250,8 +250,6 @@ trait AttributionTrait {
     
     def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
         new ArgAttribute(f)
-        
-    // TODO: Use a wrapper class like ArgAttributeKey so regular attributes can use a WeakHashMap with reference equality
     
     private class ArgAttributeKey (var arg : Any, var node : Attributable) {
         override def equals(o : Any) =
@@ -334,7 +332,7 @@ trait AttributionTrait {
                 value (t)
             } else if (!State.IN_CIRCLE) {
                 State.IN_CIRCLE = true
-                visited += (t -> ())
+                visited(t) = ()
                 var u = init
                 do {
                     State.CHANGE = false
@@ -345,18 +343,18 @@ trait AttributionTrait {
                     }
                 } while (State.CHANGE)
                 visited -= t
-                computed += (t -> ())
-                memo += (t -> u)
+                computed(t) = ()
+                memo(t) = u
                 State.IN_CIRCLE = false
                 u
             } else if (! (visited contains t)) {
-                visited += (t -> ())
+                visited(t) = ()
                 var u = value (t)
                 val newu = f (t)
                 if (u != newu) {
                     State.CHANGE = true
                     u = newu
-                    memo += (t -> u)
+                    memo(t) = u
                 }
                 visited -= t
                 u            
