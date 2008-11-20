@@ -29,12 +29,13 @@ object PicoJavaBenchmark extends Application {
     
     for (i <- 0 to 10000) {
         val result = createProgram(createAst(basicAst))->errors
-        // print(result.size)
         Attribution.resetMemo
     }
     
-    var time : Long = 0;
-    for (i <- 0 to 10) {
+    var time : Long = 0
+    var result = 0
+    
+    for (i <- 0 to 100) {
         // Create a big AST
         
         var bigAsst = createAst(basicAst)
@@ -42,10 +43,11 @@ object PicoJavaBenchmark extends Application {
         
         // Evaluate some attributes
         val start = System.currentTimeMillis
-        createProgram(bigAsst)->errors
+        result = (createProgram(bigAsst)->errors).size
         time += (System.currentTimeMillis - start)
+        
         
         Attribution.resetMemo
     }
-    println(time)
+    println("Found " + result + " errors in each run; this took " + time + "ms")
 }
