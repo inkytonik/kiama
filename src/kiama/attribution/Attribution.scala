@@ -199,7 +199,7 @@ trait AttributionTrait {
             }
               
             if (memo contains t) {
-                memo (t) match {
+                memo(t) match {
                     case Some (u) => u
                     case None     => error ("attribution circularity detected")
                 }
@@ -226,32 +226,29 @@ trait AttributionTrait {
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
-        def apply (arg : TArg) : T => U = node => {
+        def apply (arg : TArg) : T => U = t => {
             if (memoVersion != State.MEMO_VERSION) {
                 memoVersion = State.MEMO_VERSION
                 memo.clear
             }
             
-            val key = new ArgAttributeKey(arg, node)
+            val key = new ArgAttributeKey(arg, t)
               
             if (memo contains key) {
-                memo (key) match {
+                memo(key) match {
                     case Some (u) => u
                     case None     => error ("attribution circularity detected")
                 }
             } else {
                 memo(key) = None
-                val u = f(arg)(node)
+                val u = f(arg)(t)
                 memo(key) = Some (u)
                 u
             }
         }
     }
     
-    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
-        new ArgAttribute(f)
-    
-    private class ArgAttributeKey (var arg : Any, var node : Attributable) {
+    private class ArgAttributeKey (val arg : Any, val node : Attributable) {
         override def equals(o : Any) =
             o match {
                 case o : ArgAttributeKey =>
@@ -260,7 +257,7 @@ trait AttributionTrait {
                 case _ => false
             }
         
-        override def hashCode = System.identityHashCode(node) ^ arg.hashCode
+        override val hashCode = System.identityHashCode(node) ^ arg.hashCode
     }
     
     
@@ -277,10 +274,7 @@ trait AttributionTrait {
     /**
      * Lazily resets all memoisation tables.
      */
-    def resetMemo() {
-        // Reset the memo tables by incrementing the global memo version
-        State.MEMO_VERSION += 1
-    }
+    def resetMemo = State.MEMO_VERSION += 1
     
     /**
      * An attribute of a node type T with value of type U which has a circular
@@ -368,9 +362,22 @@ trait AttributionTrait {
      * Define an attribute of T nodes of type U by the function f, which 
      * should not depend on the value of this attribute.
      */
-    def attr[T,U] (f : T => U) : T => U =  {
+    def attr[T,U] (f : T => U) : T => U =
         new Attribute (f)
-    }
+
+	/**
+	 * Define an attribute of T nodes of type U by the function f,
+	 * which takes an argument of type TArg.
+	 */ 
+    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
+        new ArgAttribute(f)
+        
+	/**
+	 * Define an attribute of T nodes of type U by the function f,
+	 * which takes the current node and its parent as its arguments.
+	 */ 
+    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
+        attr(t => f(t)(t.parent))
     
     /**
      * Define a circular attribute of T nodes of type U by the function f.
@@ -385,10 +392,10 @@ trait AttributionTrait {
     /**
      * Define an attribute of T nodes of type U given by the constant value u.
      */
-    def constant[T,U] (u : U) : T => U =
-        new PartialFunction[T,U] {
-    	    def apply (t : T) = u
-    	    def isDefinedAt (t : T) = true
+    def constant[T,U] (u : => U) : T => U =
+        new Function[T,U] {
+            lazy val result = u
+    	    def apply (t : T) = result
     	}
 
 }

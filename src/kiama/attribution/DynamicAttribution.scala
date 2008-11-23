@@ -10,18 +10,52 @@ trait DynamicAttribution {
     import scala.collection.mutable._
     import scala.collection.jcl.IdentityHashMap
 
-    type ChangeBuffer = Buffer[(Attr[_, _], PartialFunction[_, _])]
+    type ChangeBuffer = ArrayBuffer[(DynamicAttribute[_, _], PartialFunction[_, _])]
+    
     private var currentRecordedChanges : ChangeBuffer = null
     private val allRecordedChanges = new IdentityHashMap[AnyRef, ChangeBuffer]    
     private var equationsVersion = 0
+    
+    /**
+     * Lazily resets all memoisation tables.
+     */
+    def resetMemo = equationsVersion += 1
 
-    def attr[T <: Attributable,U] (f : PartialFunction[T,U]) : Attr[T,U] =
-        new Attr(new ComposedPartialFunction[T,U] { add(f) })
+	/**
+	 * Define an attribute of T nodes of type U by the function f,
+	 * which takes an argument of type TArg.
+	 */ 
+    def attr[T <: Attributable,U] (f : PartialFunction[T,U]) : DynamicAttribute[T,U] =
+        new DynamicAttribute(f)
 
+    /**
+     * Define a circular attribute of T nodes of type U by the function f.
+     * f is allowed to depend on the value of this attribute, which will be
+     * given by init initially and will be evaluated iteratively until a
+     * fixed point is reached (in conjunction with other circular attributes
+     * on which it depends).
+     */
     def circular[T,U] (init : U) (f : T => U) : T => U =
         Attribution.circular(init)(f)
     
-    def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : PartialFunction[T,U] = { // TODO: Fix caching?
+	/**
+	 * Define an attribute of T nodes of type U by the function f,
+	 * which takes the current node and its parent as its arguments.
+	 */ 
+    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) =
+        Attribution.argAttr(f)
+        
+    /**
+     * Define an attribute of T nodes of type U given by the constant value u.
+     */
+    def constant[T,U] (u : => U) : T => U =
+        Attribution.constant(u)
+
+	/**
+	 * Define an attribute of T nodes of type U by the function f,
+	 * which takes the current node and its parent as its arguments.
+	 */ 
+    def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : DynamicAttribute[T,U] = {
         val childF = new PartialFunction[T,U] {
             def apply(t : T) = f(t)(t.parent)
             def isDefinedAt(t : T) = f(t) isDefinedAt t.parent
@@ -30,15 +64,15 @@ trait DynamicAttribution {
     }
 
     /**
-     * Implicitly converts (partial) functions to support the + operator.
+     * Implicitly converts partial functions to support the + operator.
      **/
-    implicit def internalToAttr[T <: Attributable,U] (f : Function[T,U]) : Attr[T,U] =
+    implicit def internalToDynamicAttribute[T <: Attributable,U] (f : Function[T,U]) : DynamicAttribute[T,U] =
         f match {
-            case f : DynamicAttribution#Attr[_, _] => f.asInstanceOf[Attr[T,U]]
-            case f => throw new UnsupportedOperationException()
+            case f : DynamicAttribution#DynamicAttribute[_, _] => f.asInstanceOf[DynamicAttribute[T,U]]
+            case f => throw new UnsupportedOperationException("Cannot only add partial functions to existing attributes")
         }
 
-    def using[T] (attributeInitializer : => AnyRef)(block : => T) = {
+    def using[T] (attributeInitializer : => AnyRef) (block : => T) = {
         try {
             use(attributeInitializer)
             block
@@ -64,71 +98,85 @@ trait DynamicAttribution {
     
     private def reuse (attributeInitializer : AnyRef) {
         for ((attr, function) <- allRecordedChanges(attributeInitializer))
-            attr.f.add(function)
+            attr += function
     }
     
     def endUse (attributeInitializer : AnyRef) {
         for ((attr, function) <- allRecordedChanges(attributeInitializer))
-            attr.f.remove(function)
+            attr -= function
     }
     
-    // TODO: Rename to DynamicAttribute, inherit and reuse from Attribute?
+    class DynamicAttribute[T,U] (private var f : PartialFunction[T,U]) extends PartialFunction[T,U] {
+        private val memo = new java.util.IdentityHashMap[T, Option[U]]
+        private var memoVersion = equationsVersion
     
-    class Attr[T <: Attributable,U] (var f : ComposedPartialFunction[T,U])
-            extends PartialFunction[T,U] {
-    
-        private val cache = new IdentityHashMap[T, Option[U]]
-        private var cacheVersion = equationsVersion
-    
-        def apply (node : T) = {
-            if (cacheVersion != equationsVersion) {
-                cacheVersion = equationsVersion
-                cache.clear
+        def apply (t : T) = {
+            if (memoVersion != equationsVersion) {
+                memoVersion = equationsVersion
+                memo.clear
             }
-          
-            if (cache contains node) {
-                cache(node) match {
-                    case Some(node) => node
-                    case None       => throw new IllegalStateException("Cycle detected in attribute evaluation")
-                }
-            } else {
-                cache(node) = None
-                val result = f(node)
-                cache(node) = Some(result)
-                result
+            
+            memo.get(t) match {
+                case Some(t) => t
+                case None    => throw new IllegalStateException("Cycle detected in attribute evaluation")
+                case null =>
+                    memo.put(t, None)
+                    val result = f(t)
+                    memo.put(t, Some(result))
+                    result
             }
         }
         
-        def isDefinedAt (node : T) = f.isDefinedAt(node)
+        def isDefinedAt (t : T) = f isDefinedAt t
         
-        def += (that : PartialFunction[T,U]) = {
-            if (currentRecordedChanges != null) currentRecordedChanges += (this, that)
+        def composedF : ComposedPartialFunction[T,U] =
+            f match {
+                case _ : ComposedPartialFunction[_,_] => f.asInstanceOf[ComposedPartialFunction[T,U]]
+                case _ : PartialFunction[_,_]         => val g = new ComposedPartialFunction(f); f = g; g
+            }
+        
+        def += (g : PartialFunction[T,U]) {
+            val uncached : PartialFunction[T,U] = g match {
+                case g : DynamicAttribute[_, _] => g.f
+                case _                          => g
+            }
             
-            f.add(that)
+            if (currentRecordedChanges != null) currentRecordedChanges += (this, uncached)
+            composedF += uncached
+            resetMemo
+        }
+        
+        def -= (g : PartialFunction[T,U]) {
+            composedF -= g
+            resetMemo
         }
     }
             
-    trait ComposedPartialFunction[T,U] extends PartialFunction[T,U] {
+    /**
+     * A partial function composed of an ordered, mutable buffer of
+     * PartialFunction instances.
+     */
+    class ComposedPartialFunction[T,U] (f : PartialFunction[T,U]) extends PartialFunction[T,U] {
         val functions = new ArrayBuffer[PartialFunction[T,U]]
       
         def isDefinedAt (i : T) = functions.exists(_ isDefinedAt i)
         
-        def apply (node : T) : U = {
+        def apply (t : T) : U = {
             for (i <- (functions.size - 1) until (-1, -1)) {
-                if (functions(i) isDefinedAt node) return functions(i)(node)
+                if (functions(i) isDefinedAt t) return functions(i)(t)
             }
-            throw new MatchError("Function not defined for " + node)
+            throw new MatchError("Function not defined for " + t)
         }
         
-        def remove (f : PartialFunction[T,U]) {
+        def += (g : PartialFunction[T,U]) {
+            functions += g
+        }
+        
+        def -= (g : PartialFunction[T,U]) {
             val removed = functions.lastIndexOf(f)
             functions.remove(removed)
-            equationsVersion += 1 // clear all caches
         }
         
-        def add (f : PartialFunction[T,U]) {
-            functions += f
-            equationsVersion += 1 // clear all caches
-        }
+        this += f
     }
 }
