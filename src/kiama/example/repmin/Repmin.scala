@@ -30,7 +30,7 @@ object Repmin {
 
     val locmin : Tree => Int = 
         attr {
-            case Pair (l, r) => (l->locmin).min (r->locmin)
+            case Pair (l, r) => (l->locmin) min (r->locmin)
             case Leaf (v)    => v
         }  
     
