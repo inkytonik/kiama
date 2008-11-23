@@ -32,22 +32,46 @@ object PicoJavaBenchmark extends Application {
         Attribution.resetMemo
     }
     
-    var time : Long = 0
-    var result = 0
+    /* Two-step benchmark
     
+    // Initialize inputs
+    
+    val inputs = new scala.collection.mutable.ArrayBuffer[Program]
     for (i <- 0 to 100) {
-        // Create a big AST
-        
         var bigAsst = createAst(basicAst)
         for (i <- 0 to 150) bigAsst = createAst(bigAsst)
+        inputs += createProgram(bigAsst)
+    }
+
+    // Evaluate some attributes
+
+    var result = 0
+    val start = System.currentTimeMillis
+    
+    for (p <- inputs) {
+        result = (p->errors).size
+        Attribution.resetMemo
+        DynamicAttribution.resetMemo
+    }
+    
+    println("Found " + result + " errors in each run; this took a total of " + (System.currentTimeMillis - start) + "ms")
+    */
+
+    var time : Long = 0
+    var result : Int = 0
+    
+    for (i <- 0 to 100) {
+        var bigAsst = createAst(basicAst)
+        for (j <- 0 to 150) bigAsst = createAst(bigAsst)
+        val p = createProgram(bigAsst)
         
-        // Evaluate some attributes
-        val start = System.currentTimeMillis
-        result = (createProgram(bigAsst)->errors).size
-        time += (System.currentTimeMillis - start)
-        
+        val start = System.nanoTime
+        result = (p->errors).size
+        time += (System.nanoTime - start)
         
         Attribution.resetMemo
+        DynamicAttribution.resetMemo
     }
-    println("Found " + result + " errors in each run; this took " + time + "ms")
+    
+    System.out.println("Found " + result + " errors in each run; this took " + (time / 1000000) + "ms")
 }
