@@ -127,7 +127,7 @@ object TypeAnalysis {
      */
     val superClass : ClassDecl => ClassDecl =
         attr {
-            c => c.Superclass match {
+            case c => c.Superclass match {
                      case Some (i) =>
                          i->decl match {
                              case sc : ClassDecl if !hasCycleOnSuperclassChain (c) => sc
