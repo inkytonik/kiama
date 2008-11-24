@@ -1,0 +1,15 @@
+{
+    class A {
+        int y;
+        AA a;
+        y = a.x;
+        class AA {
+            int x;
+        }
+        class BB extends AA {
+            BB b;
+            b.y = b.x;
+        }
+    }
+}
+
