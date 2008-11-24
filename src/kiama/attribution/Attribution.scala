@@ -365,17 +365,17 @@ trait AttributionTrait {
     def attr[T,U] (f : T => U) : T => U =
         new Attribute (f)
 
-	/**
-	 * Define an attribute of T nodes of type U by the function f,
-	 * which takes an argument of type TArg.
-	 */ 
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes an argument of type TArg.
+     */ 
     def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
         new ArgAttribute(f)
         
-	/**
-	 * Define an attribute of T nodes of type U by the function f,
-	 * which takes the current node and its parent as its arguments.
-	 */ 
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes the current node and its parent as its arguments.
+     */ 
     def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
         attr(t => f(t)(t.parent))
     
@@ -395,7 +395,7 @@ trait AttributionTrait {
     def constant[T,U] (u : => U) : T => U =
         new Function[T,U] {
             lazy val result = u
-    	    def apply (t : T) = result
-    	}
+            def apply (t : T) = result
+        }
 
 }

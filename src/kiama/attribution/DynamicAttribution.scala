@@ -21,10 +21,10 @@ trait DynamicAttribution {
      */
     def resetMemo = equationsVersion += 1
 
-	/**
-	 * Define an attribute of T nodes of type U by the function f,
-	 * which takes an argument of type TArg.
-	 */ 
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes an argument of type TArg.
+     */ 
     def attr[T <: Attributable,U] (f : PartialFunction[T,U]) : DynamicAttribute[T,U] =
         new DynamicAttribute(f)
 
@@ -38,10 +38,10 @@ trait DynamicAttribution {
     def circular[T,U] (init : U) (f : T => U) : T => U =
         Attribution.circular(init)(f)
     
-	/**
-	 * Define an attribute of T nodes of type U by the function f,
-	 * which takes the current node and its parent as its arguments.
-	 */ 
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes the current node and its parent as its arguments.
+     */ 
     def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) =
         Attribution.argAttr(f)
         
@@ -51,10 +51,10 @@ trait DynamicAttribution {
     def constant[T,U] (u : => U) : T => U =
         Attribution.constant(u)
 
-	/**
-	 * Define an attribute of T nodes of type U by the function f,
-	 * which takes the current node and its parent as its arguments.
-	 */ 
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes the current node and its parent as its arguments.
+     */ 
     def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : DynamicAttribute[T,U] = {
         val childF = new PartialFunction[T,U] {
             def apply(t : T) = f(t)(t.parent)
