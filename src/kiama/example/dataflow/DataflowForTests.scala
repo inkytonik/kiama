@@ -27,7 +27,7 @@ import org.scalatest.junit.JUnit3Suite
 /**
  * Tests of extended data flow attribution.
  */
-class DataflowExtTests extends TestCase with JUnit3Suite {
+class DataflowForTests extends TestCase with JUnit3Suite {
 
     import Dataflow._
     
