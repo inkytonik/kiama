@@ -7,7 +7,7 @@ case class Foreach(cond : Var, body : Stm) extends Stm
 
 object DataflowForeach extends DynamicAttribution {
     
-    Dataflow.succ += attr { case t @ Foreach (_, body) => t->following + body }
+    Dataflow.succ += { case t @ Foreach (_, body) => t->following + body }
     
     Dataflow.following += 
         childAttr {
