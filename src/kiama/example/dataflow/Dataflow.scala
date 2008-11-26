@@ -23,7 +23,10 @@ package kiama.example.dataflow
 /**
  * Simple dataflow equation attribution example.
  */
-object Dataflow extends kiama.attribution.DynamicAttribution {
+object Dataflow {
+    
+    import kiama.attribution.DynamicAttribution._
+
     type Var = String
     
     case class Program (body : Stm) extends Attributable
@@ -41,10 +44,10 @@ object Dataflow extends kiama.attribution.DynamicAttribution {
     val succ : Stm => Set[Stm] =
         attr {
             case If (_, s1, s2)   => Set (s1, s2)
-            case t @ While (_, s) => following(t) + s
+            case t @ While (_, s) => following (t) + s
             case Return (_)       => Set ()
             case Block (s, _*)    => Set (s)
-            case s                => following(s)
+            case s                => following (s)
         }
 
     /**
@@ -52,9 +55,9 @@ object Dataflow extends kiama.attribution.DynamicAttribution {
      */
     val following : Stm => Set[Stm] =
         childAttr {
-            s => {
+            case s => {
                  case t @ While (_, _)           => Set (t)                                          
-                 case b @ Block (_*) if s.isLast => following(b)
+                 case b @ Block (_*) if s.isLast => following (b)
                  case Block (_*)                 => Set (s.next)
                  case _                          => Set ()
             }

@@ -2,10 +2,7 @@ package kiama.attribution
 
 object DynamicAttribution extends DynamicAttribution
 
-trait DynamicAttribution {
-    // TODO: extend Attribution (work around some serious scalac b0rkage)
-    import Attribution._
-    type Attributable = Attribution.Attributable
+trait DynamicAttribution extends AttributionBase {
 
     import scala.collection.mutable._
     import scala.collection.jcl.IdentityHashMap
@@ -22,45 +19,21 @@ trait DynamicAttribution {
     def resetMemo = equationsVersion += 1
 
     /**
-     * Define an attribute of T nodes of type U by the function f,
-     * which takes an argument of type TArg.
+     * Define an attribute of T nodes of type U by the function f.
      */ 
-    def attr[T <: Attributable,U] (f : PartialFunction[T,U]) : DynamicAttribute[T,U] =
-        new DynamicAttribute(f)
-
-    /**
-     * Define a circular attribute of T nodes of type U by the function f.
-     * f is allowed to depend on the value of this attribute, which will be
-     * given by init initially and will be evaluated iteratively until a
-     * fixed point is reached (in conjunction with other circular attributes
-     * on which it depends).
-     */
-    def circular[T,U] (init : U) (f : T => U) : T => U =
-        Attribution.circular(init)(f)
-    
-    /**
-     * Define an attribute of T nodes of type U by the function f,
-     * which takes the current node and its parent as its arguments.
-     */ 
-    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) =
-        Attribution.argAttr(f)
-        
-    /**
-     * Define an attribute of T nodes of type U given by the constant value u.
-     */
-    def constant[T,U] (u : => U) : T => U =
-        Attribution.constant(u)
+    def attr[T <: Attributable,U] (f : PartialFunction[T,U]) : PartialFunction[T,U] =
+        new DynamicAttribute (f)
 
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes the current node and its parent as its arguments.
      */ 
-    def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : DynamicAttribute[T,U] = {
+    def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : PartialFunction[T,U] = {
         val childF = new PartialFunction[T,U] {
-            def apply(t : T) = f(t)(t.parent)
-            def isDefinedAt(t : T) = f(t) isDefinedAt t.parent
+            def apply (t : T) = f (t) (t.parent)
+            def isDefinedAt (t : T) = f (t) isDefinedAt t.parent
         }
-        attr(childF)
+        attr (childF)
     }
 
     /**
@@ -74,10 +47,10 @@ trait DynamicAttribution {
 
     def using[T] (attributeInitializer : => AnyRef) (block : => T) = {
         try {
-            use(attributeInitializer)
+            use (attributeInitializer)
             block
         } finally {
-            endUse(attributeInitializer)
+            endUse (attributeInitializer)
         }
     }
     
@@ -90,19 +63,19 @@ trait DynamicAttribution {
             val initialized = attributeInitializer // import initializer
             currentRecordedChanges = null
     
-            if (allRecordedChanges contains initialized) reuse(initialized)
+            if (allRecordedChanges contains initialized) reuse (initialized)
         } finally {  
            currentRecordedChanges = prevRecordedChanges
         }  
     }
     
     private def reuse (attributeInitializer : AnyRef) {
-        for ((attr, function) <- allRecordedChanges(attributeInitializer))
+        for ((attr, function) <- allRecordedChanges (attributeInitializer))
             attr += function
     }
     
     def endUse (attributeInitializer : AnyRef) {
-        for ((attr, function) <- allRecordedChanges(attributeInitializer))
+        for ((attr, function) <- allRecordedChanges (attributeInitializer))
             attr -= function
     }
     
@@ -116,13 +89,13 @@ trait DynamicAttribution {
                 memo.clear
             }
             
-            memo.get(t) match {
-                case Some(t) => t
+            memo.get (t) match {
+                case Some (u) => u
                 case None    => throw new IllegalStateException("Cycle detected in attribute evaluation")
                 case null =>
-                    memo.put(t, None)
-                    val result = f(t)
-                    memo.put(t, Some(result))
+                    memo.put (t, None)
+                    val result = f (t)
+                    memo.put (t, Some (result))
                     result
             }
         }

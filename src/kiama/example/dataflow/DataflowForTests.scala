@@ -30,9 +30,10 @@ import org.scalatest.junit.JUnit3Suite
 class DataflowForTests extends TestCase with JUnit3Suite {
 
     import Dataflow._
+    import kiama.attribution.DynamicAttribution._
     
-    use(DataflowFor)
-    use(DataflowForeach)
+    use (DataflowFor)
+    use (DataflowForeach)
     
     /*
      * begin                 (prog)

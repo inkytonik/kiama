@@ -25,145 +25,14 @@ package kiama.attribution
  * Includes circular attributes but needs to be augmented with basic attributes
  * and parameterised attributes.
  */
-trait AttributionBase {  
-
-    import scala.util.parsing.input.Positional
-  
-    /**
-     * Common functionality for all classes that can be attributed.  This trait
-     * must be extended by all such classes, which must also implement Product.
-     * In practice, this means that they are usually case classes.  They are
-     * also equipped with position information.
-     */
-    trait Attributable extends Product with Positional {
-  
-        /**
-         * A link to the parent attributable node of this node or null if this
-         * node has no parent.
-         */
-        var parent : Attributable = null
-            
-        /**
-         * Is this node the root of the hierarchy?
-         */
-        def isRoot : Boolean = parent == null
-          
-        /**
-         * If this node is a member of a sequence, a link to the previous
-         * node in the sequence.  Null if this is the first node of the
-         * sequence, or if it is not a member of a sequence.
-         */          
-        def prev : this.type = _prev.asInstanceOf[this.type]
-        
-        /**
-         * Private field backing prev to make the types work correctly.
-         */
-        private var _prev : Attributable = null
-
-        /**
-         * If this node is a member of a sequence, a link to the next
-         * node in the sequence.  Null if this is the first node of the
-         * sequence, or if it is not a member of a sequence.
-         */          
-        def next : this.type = _next.asInstanceOf[this.type]
-
-        /**
-         * Private field backing next to make the types work correctly.
-         */
-        var _next : Attributable = null
-
-        /**
-         * If this node is in a sequence, is it the first element?
-         * Otherwise, true.
-         */
-        def isFirst : Boolean = prev == null
-        
-        /**
-         * If this node is in a sequence, is it the last element?
-         * Otherwise, true.
-         */
-        def isLast : Boolean = next == null
-                
-        /**
-         * If this node is in a sequence, which child number is it
-         * (counting from zero)?  Otherwise, zero.
-         */             
-        var index : Int = 0
-        
-        /**
-         * This node's attributable children in left-to-right order.  Children
-         * that are not Attributable are ignored, except for sequences (<code>Seq[_]</code>)
-         * and optional children (<code>Option[_]</code>).  In the case of sequences and
-         * options, their contents are processed and any immediate Attributable
-         * contents are included in the sequence.
-         */
-        def children : Iterator[Attributable] =
-            _children.elements
-          
-        /**
-         * Record of this node's attributable children.
-         */
-        private val _children = new scala.collection.mutable.ListBuffer[Attributable]
-        
-        /**
-         * Reference an attribute or function that can be applied to this node.
-         * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
-         */
-        @inline
-        final def ->[T] (attr : this.type => T) = attr (this)
-        
-        /**
-         * House-keeping method to connect my children to me and their siblings.
-         * If a node is a direct child of a <code>Seq</code> or <code>Some</code>,
-         * then the parent link "bypasses" that parent to go to the <code>Attributable</code>
-         * parent above.  It is assumed at that sequences and options are not directly nested.
-         * As a side-effect, this method remembers the attributable children
-         * so that they can be accessed easily via the children iterator.
-         */
-        private def setChildConnections = {
-          
-            for (i <- 0 until productArity) {
-                productElement (i) match {
-                    case c : Attributable =>
-                        c.parent = this
-                        _children += c
-                    case o : Some[_] =>
-                        o.get match {
-                            case c : Attributable =>
-                                c.parent = this
-                                _children += c
-                            case _ =>
-                                // Ignore optional items that are non-Attributables
-                        }
-                    case s : Seq[_] => {
-                        var prev : Attributable = null
-                        for (i <- 0 until s.length) {
-                            s (i) match {
-                                case c : Attributable =>
-                                    // Bypass Seq node in parent relation
-                                    c.parent = this
-                                    _children += c                                    
-                                    // Set sequence element properties
-                                    c.index = i
-                                    c._prev = prev
-                                    if (prev != null) prev._next = c
-                                    prev = c
-                                case _ =>
-                                    // Ignore elements that are non-Attributables
-                            }                            
-                        }
-                    }
-                    case _ =>
-                        // Ignore children that are not Attributable, options or sequences
-                }
-            }
-            
-        }
-        
-        setChildConnections
-        
-    }
+trait AttributionBase {
     
+    /**
+     * All attributable nodes must extend this type.  This is a local alias
+     * so that the actual type does not have to be explicitly imported.
+     */
+    type Attributable = kiama.attribution.Attributable
+
     /**
      * Global state for the circular attribute evaluation algorithm
      * and the memoisation tables.
@@ -186,7 +55,7 @@ trait AttributionBase {
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T,U] (init : U, f : T => U) extends (T => U) {
+    class CircularAttribute[T <: Attributable,U] (init : U, f : T => U) extends (T => U) {
       
         /**
          * Has the value of this attribute for a given tree already been computed?
@@ -209,7 +78,7 @@ trait AttributionBase {
          * no value for t has been computed.
          */
         private def value (t : T) : U =
-            memo.get(t) match {
+            memo.get (t) match {
                 case Some (u) => u
                 case None     => init
             }
@@ -223,7 +92,7 @@ trait AttributionBase {
                 value (t)
             } else if (!CircularState.IN_CIRCLE) {
                 CircularState.IN_CIRCLE = true
-                visited(t) = ()
+                visited (t) = ()
                 var u = init
                 do {
                     CircularState.CHANGE = false
@@ -234,18 +103,18 @@ trait AttributionBase {
                     }
                 } while (CircularState.CHANGE)
                 visited -= t
-                computed(t) = ()
-                memo(t) = u
+                computed (t) = ()
+                memo (t) = u
                 CircularState.IN_CIRCLE = false
                 u
             } else if (! (visited contains t)) {
-                visited(t) = ()
+                visited (t) = ()
                 var u = value (t)
                 val newu = f (t)
                 if (u != newu) {
                     CircularState.CHANGE = true
                     u = newu
-                    memo(t) = u
+                    memo (t) = u
                 }
                 visited -= t
                 u            
@@ -253,6 +122,21 @@ trait AttributionBase {
                 value (t)
         }
         
+    }
+
+    /**
+     * Support for parameterised attributes: argument, node pair comparison.
+     */
+    protected class ArgAttributeKey (val arg : Any, val node : Attributable) {
+        override def equals(o : Any) =
+            o match {
+                case o : ArgAttributeKey =>
+                  arg == o.arg &&                                        // object equality
+                  (if (node eq null) o.node eq null else node eq o.node) // reference equality
+                case _ => false
+            }
+        
+        override val hashCode = System.identityHashCode(node) ^ arg.hashCode
     }
     
     /**
@@ -262,14 +146,14 @@ trait AttributionBase {
      * fixed point is reached (in conjunction with other circular attributes
      * on which it depends).  The final value is cached.
      */
-    def circular[T,U] (init : U) (f : T => U) : T => U =
+    def circular[T <: Attributable,U] (init : U) (f : T => U) : T => U =
         new CircularAttribute (init, f)
     
     /**
      * Define an attribute of T nodes of type U given by the constant value u.
-     * u is only evaluated if needed.
+     * u is evaluated at most once.
      */
-    def constant[T,U] (u : => U) : T => U =
+    def constant[T <: Attributable,U] (u : => U) : T => U =
         new Function[T,U] {
             lazy val result = u
             def apply (t : T) = result
@@ -281,7 +165,13 @@ trait AttributionBase {
  * Attribution of syntax trees in a functional style with attribute values
  * cached so that each value is computed at most once.
  */
-object Attribution extends AttributionBase {    
+object Attribution extends Attribution
+
+/**
+ * Attribution of syntax trees in a functional style with attribute values
+ * cached so that each value is computed at most once.
+ */
+trait Attribution extends AttributionBase {    
 
     /**
      * Global state for the memoisation tables.
@@ -302,7 +192,7 @@ object Attribution extends AttributionBase {
      * f should not itself require the value of this attribute. If it does, a
      * circularity error is reported.
      */
-    class Attribute[T,U] (f : T => U) extends (T => U) {
+    class CachedAttribute[T <: Attributable,U] (f : T => U) extends (T => U) {
 
         /**
          * The memo table for this attribute, with <code>memo(t) == Some(v)</code>
@@ -311,8 +201,7 @@ object Attribution extends AttributionBase {
          * this needs to be some form of identity map so that value equal trees are
          * not treated as equal unless they are actually the same reference.
          */
-        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
-        
+        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]        
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -324,28 +213,24 @@ object Attribution extends AttributionBase {
                 memoVersion = MemoState.MEMO_VERSION
                 memo.clear
             }
-              
-            if (memo contains t) {
-                memo(t) match {
-                    case Some (u) => u
-                    case None     => error ("attribution circularity detected")
-                }
-            } else {
-                memo(t) = None
-                val u = f (t)
-                memo(t) = Some (u)
-                u
+            memo.get (t) match {
+                case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
+                case Some (Some (u)) => u
+                case None =>
+                    memo (t) = None
+                    val u = f (t)
+                    memo (t) = Some (u)
+                    u
             }
         }
     }    
     
     /**
-     * A variation of the Attribute class for parameterised attributes.
+     * A variation of the CachedAttribute class for parameterised attributes.
      */
-    class ArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
+    class CachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
 
-        private val memo = new scala.collection.jcl.HashMap[ArgAttributeKey,Option[U]]
-        
+        private val memo = new scala.collection.jcl.HashMap[ArgAttributeKey,Option[U]]        
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -356,34 +241,111 @@ object Attribution extends AttributionBase {
             if (memoVersion != MemoState.MEMO_VERSION) {
                 memoVersion = MemoState.MEMO_VERSION
                 memo.clear
-            }
-            
-            val key = new ArgAttributeKey(arg, t)
-              
-            if (memo contains key) {
-                memo(key) match {
-                    case Some (u) => u
-                    case None     => error ("attribution circularity detected")
-                }
-            } else {
-                memo(key) = None
-                val u = f(arg)(t)
-                memo(key) = Some (u)
-                u
+            }            
+            val key = new ArgAttributeKey (arg, t)
+            memo.get (key) match {
+                case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
+                case Some (Some (u)) => u
+                case None =>
+                    memo (key) = None
+                    val u = f (arg) (t)
+                    memo (key) = Some (u)
+                    u
             }
         }
     }
     
-    private class ArgAttributeKey (val arg : Any, val node : Attributable) {
-        override def equals(o : Any) =
-            o match {
-                case o : ArgAttributeKey =>
-                  arg == o.arg &&                                        // object equality
-                  (if (node eq null) o.node eq null else node eq o.node) // reference equality
-                case _ => false
-            }
+    /**
+     * Define an attribute of T nodes of type U by the function f, which 
+     * should not depend on the value of this attribute.  The computed
+     * attribute value is cached so it will be computed at most once.
+     */
+    def attr[T <: Attributable,U] (f : T => U) : T => U =
+        new CachedAttribute (f)
+
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes an argument of type TArg.  The computed attribute value
+     * for a given TArg is cached so it will be computed at most once.
+     */ 
+    def argAttr[TArg,T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
+        new CachedArgAttribute (f)
         
-        override val hashCode = System.identityHashCode(node) ^ arg.hashCode
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes the current node and its parent as its arguments.
+     */ 
+    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
+        attr (t => f (t) (t.parent))  
+
+}
+
+/**
+ * Attribution of syntax trees in a functional style with attribute values
+ * computed each time they are accessed.
+ */
+object UncachedAttribution extends UncachedAttribution
+
+/**
+ * Attribution of syntax trees in a functional style with attribute values
+ * computed each time they are accessed.
+ */
+trait UncachedAttribution extends AttributionBase {    
+
+    /**
+     * An attribute of a node type T with value of type U, supported by a circularity
+     * test.  The value of the attribute is computed by the function f.  f will be 
+     * called each time the value of the attribute is accessed.  f should not itself
+     * require the value of this attribute. If it does, a circularity error is reported.
+     */
+    class UncachedAttribute[T <: Attributable,U] (f : T => U) extends (T => U) {
+
+        /**
+         * Are we currently evaluating this attribute for a given tree?
+         */
+        private val visited = new scala.collection.jcl.IdentityHashMap[T,Unit]
+
+        /**
+         * Return the value of this attribute for node t, raising an error if
+         * it depends on itself.
+         */
+        def apply (t : T) : U = {              
+            if (visited contains t) {
+                throw new IllegalStateException ("Cycle detected in attribute evaluation")
+            } else {
+                visited (t) = ()
+                val u = f (t)
+                visited -= t
+                u
+            }
+        }
+    }    
+    
+    /**
+     * A variation of the UncachedAttribute class for parameterised attributes.
+     */
+    class UncachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
+
+        /**
+         * Are we currently evaluating this attribute for a given argument and tree?
+         */
+        private val visited = new scala.collection.jcl.IdentityHashMap[ArgAttributeKey,Unit]
+
+        /**
+         * Return the value of this attribute for node t, raising an error if
+         * it depends on itself.
+         */
+        def apply (arg : TArg) : T => U = t => {
+            val key = new ArgAttributeKey (arg, t)              
+            if (visited contains key) {
+                throw new IllegalStateException ("Cycle detected in attribute evaluation")
+            } else {
+                visited (key) = ()
+                val u = f (arg) (t)
+                visited -= key
+                u
+            }
+        }
     }
 
     /**
@@ -391,22 +353,24 @@ object Attribution extends AttributionBase {
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T,U] (f : T => U) : T => U =
-        new Attribute (f)
+    def attr[T <: Attributable,U] (f : T => U) : T => U =
+        new UncachedAttribute (f)
 
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */ 
-    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
-        new ArgAttribute (f)
+    def argAttr[TArg,T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
+        new UncachedArgAttribute (f)
         
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes the current node and its parent as its arguments.
      */ 
     def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
-        attr (t => f(t) (t.parent))  
+        attr (t => f (t) (t.parent))  
 
 }
+
+

@@ -26,31 +26,125 @@ import org.scalatest.junit.JUnit3Suite
 
 class AttributionTests extends TestCase with JUnit3Suite {
   
-    import Attribution._
+    abstract class Tree extends Attributable
+    case class Pair (left : Tree, right : Tree) extends Tree
+    case class Leaf (value : Int) extends Tree
 
     /**
-     * Test that attribute definitions are only executed once.
+     * Test that cached attribute definitions are only executed once.
      */
-    def testMemoisation {
+    def testCachedAttributes {        
+        import Attribution._
         
-        abstract class Tree extends Attributable
-        case class Pair (left : Tree, right : Tree) extends Tree
-        case class Leaf (value : Int) extends Tree
-       
         var count = 0
 
         lazy val maximum : Tree => Int =
             attr {
-                case Pair (l,r) => count = count + 1; maximum (l).max (maximum (r))
+                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
             }
             
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        assertEquals (10, maximum (t))
-        assertEquals (10, maximum (t))
-        assertEquals (2, count)
-    
+        assertEquals (10, t->maximum)
+        assertEquals (10, t->maximum)
+        assertEquals (2, count)    
     }
+    
+    /**
+     * Test that uncached attribute definitions are executed each time.
+     */
+    def testUncachedAttributes {        
+        import UncachedAttribution._
+               
+        var count = 0
+
+        lazy val maximum : Tree => Int =
+            attr {
+                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
+                case Leaf (v)   => v
+            }
+            
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+
+        assertEquals (10, t->maximum)
+        assertEquals (10, t->maximum)
+        assertEquals (4, count)    
+    }
+    
+    /**
+     * Test that circularities are detected when caching.
+     */
+    def testCachedCircularity {
+        import Attribution._
+
+        lazy val direct : Tree => Int =
+            attr {
+                t => t->direct
+            }
+        lazy val indirect : Tree => Int =
+            attr {
+                t => t->indirect2
+            }
+        lazy val indirect2 : Tree => Int =
+            attr {
+                t => t->indirect
+            }
+
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))            
+            
+        try {
+            t->direct
+            fail ("direct circular computation finished without exception")
+        } catch {
+            case e : IllegalStateException =>
+                // succeed
+        }
+        try {
+            t->indirect
+            fail ("indirect circular computation finished without exception")
+        } catch {
+            case e : IllegalStateException =>
+                // succeed
+        }
+    }
+    
+    /**
+     * Test that circularities are detected when not caching.
+     */
+    def testUncachedDirectCircularity {
+        import UncachedAttribution._
+
+        lazy val direct : Tree => Int =
+            attr {
+                t => t->direct
+            }
+        lazy val indirect : Tree => Int =
+            attr {
+                t => t->indirect2
+            }
+        lazy val indirect2 : Tree => Int =
+            attr {
+                t => t->indirect
+            }
+            
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))            
+
+        try {
+            t->direct
+            fail ("direct circular computation finished without exception")
+        } catch {
+            case e : IllegalStateException =>
+                // succeed
+        }
+        try {
+            t->indirect
+            fail ("indirect circular computation finished without exception")
+        } catch {
+            case e : IllegalStateException =>
+                // succeed
+        }
+    }
+
   
 }

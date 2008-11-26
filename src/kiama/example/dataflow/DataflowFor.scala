@@ -1,27 +1,30 @@
 package kiama.example.dataflow
 
-import kiama.attribution.DynamicAttribution
-import Dataflow._ // import case classes
+import kiama.attribution.DynamicAttribution._
+import Dataflow._
 
-case class Foreach(cond : Var, body : Stm) extends Stm
+case class Foreach (cond : Var, body : Stm) extends Stm
 
-object DataflowForeach extends DynamicAttribution {
+object DataflowForeach {
     
-    Dataflow.succ += { case t @ Foreach (_, body) => t->following + body }
+    Dataflow.succ +=
+        attr { case t @ Foreach (_, body) => t->following + body }
     
     Dataflow.following += 
         childAttr {
             _ => {
-                case t @ Foreach (_, body) => following(t) + body
+                case t @ Foreach (_, body) => following (t) + body
             }
         }
+        
 }
 
 case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
     
-object DataflowFor extends DynamicAttribution {
+object DataflowFor {
 
-    Dataflow.succ += { case For (init, c, inc, body) => Set(init) }
+    Dataflow.succ += 
+        attr { case For (init, c, inc, body) => Set (init) }
     
     Dataflow.following += 
         childAttr {
