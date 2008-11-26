@@ -27,19 +27,23 @@ object PicoJavaBenchmark extends Application {
     
     // Warm up the JIT compiler
     
-    for (i <- 0 to 10000) {
-        val result = createProgram(createAst(basicAst))->errors
+    for (i <- 0 until 15000) {
+        val result = createProgram(createAst(createAst(basicAst)))->errors
         Attribution.resetMemo
+        DynamicAttribution.resetMemo
     }
     
-    /* Two-step benchmark
+    System.gc
+    
+    /*
+    // Two-step benchmark
     
     // Initialize inputs
     
     val inputs = new scala.collection.mutable.ArrayBuffer[Program]
-    for (i <- 0 to 100) {
+    for (i <- 0 until 100) {
         var bigAsst = createAst(basicAst)
-        for (i <- 0 to 150) bigAsst = createAst(bigAsst)
+        for (i <- 0 until 150) bigAsst = createAst(bigAsst)
         inputs += createProgram(bigAsst)
     }
 
@@ -48,7 +52,9 @@ object PicoJavaBenchmark extends Application {
     var result = 0
     val start = System.currentTimeMillis
     
-    for (p <- inputs) {
+    for (i <- 0 until inputs.size) {
+        val p = inputs(i)
+        inputs(i) = null
         result = (p->errors).size
         Attribution.resetMemo
         DynamicAttribution.resetMemo
@@ -60,9 +66,9 @@ object PicoJavaBenchmark extends Application {
     var time : Long = 0
     var result : Int = 0
     
-    for (i <- 0 to 100) {
+    for (i <- 0 until 100) {
         var bigAsst = createAst(basicAst)
-        for (j <- 0 to 150) bigAsst = createAst(bigAsst)
+        for (j <- 0 until 150) bigAsst = createAst(bigAsst)
         val p = createProgram(bigAsst)
         
         val start = System.nanoTime
