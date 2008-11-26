@@ -21,15 +21,11 @@
 package kiama.attribution
 
 /**
- * Support for attribution of syntax trees in a functional style,
- * provided as a singleton object.
+ * Base support for attribution of syntax trees in a functional style.
+ * Includes circular attributes but needs to be augmented with basic attributes
+ * and parameterised attributes.
  */
-object Attribution extends AttributionTrait
-
-/**
- * Support for attribution of syntax trees in a functional style.
- */
-trait AttributionTrait {  
+trait AttributionBase {  
 
     import scala.util.parsing.input.Positional
   
@@ -167,114 +163,15 @@ trait AttributionTrait {
         setChildConnections
         
     }
-          
-    /**
-     * An attribute of a node type T with value of type U, supported by a memo
-     * table and circularity test.  The value of the attribute is computed by
-     * the function f.  The result is memoised so that it is only evaluated once.
-     * f should not itself require the value of this attribute. If it does, a
-     * circularity error is reported.
-     */
-    class Attribute[T,U] (f : T => U) extends (T => U) {
-
-        /**
-         * The memo table for this attribute, with <code>memo(t) == Some(v)</code>
-         * representing the node t having the value v.  <code>memo(t) = None</code>
-         * means that the attribute for t is currently being evaluated.  Note that
-         * this needs to be some form of identity map so that value equal trees are
-         * not treated as equal unless they are actually the same reference.
-         */
-        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
-        
-        private var memoVersion = State.MEMO_VERSION
-
-        /**
-         * Return the value of this attribute for node t, raising an error if
-         * it depends on itself.
-         */
-        def apply (t : T) : U = {
-            if (memoVersion != State.MEMO_VERSION) {
-                memoVersion = State.MEMO_VERSION
-                memo.clear
-            }
-              
-            if (memo contains t) {
-                memo(t) match {
-                    case Some (u) => u
-                    case None     => error ("attribution circularity detected")
-                }
-            } else {
-                memo(t) = None
-                val u = f (t)
-                memo(t) = Some (u)
-                u
-            }
-        }
-    }
-    
-    
-    /**
-     * A variation of the Attribute class for parameterised attributes.
-     */
-    class ArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
-
-        private val memo = new scala.collection.jcl.HashMap[ArgAttributeKey,Option[U]]
-        
-        private var memoVersion = State.MEMO_VERSION
-
-        /**
-         * Return the value of this attribute for node t, raising an error if
-         * it depends on itself.
-         */
-        def apply (arg : TArg) : T => U = t => {
-            if (memoVersion != State.MEMO_VERSION) {
-                memoVersion = State.MEMO_VERSION
-                memo.clear
-            }
-            
-            val key = new ArgAttributeKey(arg, t)
-              
-            if (memo contains key) {
-                memo(key) match {
-                    case Some (u) => u
-                    case None     => error ("attribution circularity detected")
-                }
-            } else {
-                memo(key) = None
-                val u = f(arg)(t)
-                memo(key) = Some (u)
-                u
-            }
-        }
-    }
-    
-    private class ArgAttributeKey (val arg : Any, val node : Attributable) {
-        override def equals(o : Any) =
-            o match {
-                case o : ArgAttributeKey =>
-                  arg == o.arg &&                                        // object equality
-                  (if (node eq null) o.node eq null else node eq o.node) // reference equality
-                case _ => false
-            }
-        
-        override val hashCode = System.identityHashCode(node) ^ arg.hashCode
-    }
-    
     
     /**
      * Global state for the circular attribute evaluation algorithm
      * and the memoisation tables.
      */
-    private object State {
+    private object CircularState {
         var IN_CIRCLE = false
         var CHANGE = false
-        var MEMO_VERSION = 0
     }
-    
-    /**
-     * Lazily resets all memoisation tables.
-     */
-    def resetMemo = State.MEMO_VERSION += 1
     
     /**
      * An attribute of a node type T with value of type U which has a circular
@@ -324,29 +221,29 @@ trait AttributionTrait {
         override def apply (t : T) : U = {
             if (computed contains t) { 
                 value (t)
-            } else if (!State.IN_CIRCLE) {
-                State.IN_CIRCLE = true
+            } else if (!CircularState.IN_CIRCLE) {
+                CircularState.IN_CIRCLE = true
                 visited(t) = ()
                 var u = init
                 do {
-                    State.CHANGE = false
+                    CircularState.CHANGE = false
                     val newu = f (t)
                     if (u != newu) {
-                        State.CHANGE = true
+                        CircularState.CHANGE = true
                         u = newu
                     }
-                } while (State.CHANGE)
+                } while (CircularState.CHANGE)
                 visited -= t
                 computed(t) = ()
                 memo(t) = u
-                State.IN_CIRCLE = false
+                CircularState.IN_CIRCLE = false
                 u
             } else if (! (visited contains t)) {
                 visited(t) = ()
                 var u = value (t)
                 val newu = f (t)
                 if (u != newu) {
-                    State.CHANGE = true
+                    CircularState.CHANGE = true
                     u = newu
                     memo(t) = u
                 }
@@ -359,43 +256,157 @@ trait AttributionTrait {
     }
     
     /**
-     * Define an attribute of T nodes of type U by the function f, which 
-     * should not depend on the value of this attribute.
-     */
-    def attr[T,U] (f : T => U) : T => U =
-        new Attribute (f)
-
-    /**
-     * Define an attribute of T nodes of type U by the function f,
-     * which takes an argument of type TArg.
-     */ 
-    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
-        new ArgAttribute(f)
-        
-    /**
-     * Define an attribute of T nodes of type U by the function f,
-     * which takes the current node and its parent as its arguments.
-     */ 
-    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
-        attr(t => f(t)(t.parent))
-    
-    /**
      * Define a circular attribute of T nodes of type U by the function f.
      * f is allowed to depend on the value of this attribute, which will be
      * given by init initially and will be evaluated iteratively until a
      * fixed point is reached (in conjunction with other circular attributes
-     * on which it depends).
+     * on which it depends).  The final value is cached.
      */
     def circular[T,U] (init : U) (f : T => U) : T => U =
         new CircularAttribute (init, f)
     
     /**
      * Define an attribute of T nodes of type U given by the constant value u.
+     * u is only evaluated if needed.
      */
     def constant[T,U] (u : => U) : T => U =
         new Function[T,U] {
             lazy val result = u
             def apply (t : T) = result
         }
+
+}
+
+/**
+ * Attribution of syntax trees in a functional style with attribute values
+ * cached so that each value is computed at most once.
+ */
+object Attribution extends AttributionBase {    
+
+    /**
+     * Global state for the memoisation tables.
+     */
+    private object MemoState {
+        var MEMO_VERSION = 0
+    }
+
+    /**
+     * Lazily reset all memoisation tables.
+     */
+    def resetMemo = MemoState.MEMO_VERSION += 1
+
+    /**
+     * An attribute of a node type T with value of type U, supported by a memo
+     * table and circularity test.  The value of the attribute is computed by
+     * the function f.  The result is memoised so that it is only evaluated once.
+     * f should not itself require the value of this attribute. If it does, a
+     * circularity error is reported.
+     */
+    class Attribute[T,U] (f : T => U) extends (T => U) {
+
+        /**
+         * The memo table for this attribute, with <code>memo(t) == Some(v)</code>
+         * representing the node t having the value v.  <code>memo(t) = None</code>
+         * means that the attribute for t is currently being evaluated.  Note that
+         * this needs to be some form of identity map so that value equal trees are
+         * not treated as equal unless they are actually the same reference.
+         */
+        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
+        
+        private var memoVersion = MemoState.MEMO_VERSION
+
+        /**
+         * Return the value of this attribute for node t, raising an error if
+         * it depends on itself.
+         */
+        def apply (t : T) : U = {
+            if (memoVersion != MemoState.MEMO_VERSION) {
+                memoVersion = MemoState.MEMO_VERSION
+                memo.clear
+            }
+              
+            if (memo contains t) {
+                memo(t) match {
+                    case Some (u) => u
+                    case None     => error ("attribution circularity detected")
+                }
+            } else {
+                memo(t) = None
+                val u = f (t)
+                memo(t) = Some (u)
+                u
+            }
+        }
+    }    
+    
+    /**
+     * A variation of the Attribute class for parameterised attributes.
+     */
+    class ArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
+
+        private val memo = new scala.collection.jcl.HashMap[ArgAttributeKey,Option[U]]
+        
+        private var memoVersion = MemoState.MEMO_VERSION
+
+        /**
+         * Return the value of this attribute for node t, raising an error if
+         * it depends on itself.
+         */
+        def apply (arg : TArg) : T => U = t => {
+            if (memoVersion != MemoState.MEMO_VERSION) {
+                memoVersion = MemoState.MEMO_VERSION
+                memo.clear
+            }
+            
+            val key = new ArgAttributeKey(arg, t)
+              
+            if (memo contains key) {
+                memo(key) match {
+                    case Some (u) => u
+                    case None     => error ("attribution circularity detected")
+                }
+            } else {
+                memo(key) = None
+                val u = f(arg)(t)
+                memo(key) = Some (u)
+                u
+            }
+        }
+    }
+    
+    private class ArgAttributeKey (val arg : Any, val node : Attributable) {
+        override def equals(o : Any) =
+            o match {
+                case o : ArgAttributeKey =>
+                  arg == o.arg &&                                        // object equality
+                  (if (node eq null) o.node eq null else node eq o.node) // reference equality
+                case _ => false
+            }
+        
+        override val hashCode = System.identityHashCode(node) ^ arg.hashCode
+    }
+
+    /**
+     * Define an attribute of T nodes of type U by the function f, which 
+     * should not depend on the value of this attribute.  The computed
+     * attribute value is cached so it will be computed at most once.
+     */
+    def attr[T,U] (f : T => U) : T => U =
+        new Attribute (f)
+
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes an argument of type TArg.  The computed attribute value
+     * for a given TArg is cached so it will be computed at most once.
+     */ 
+    def argAttr[TArg, T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
+        new ArgAttribute (f)
+        
+    /**
+     * Define an attribute of T nodes of type U by the function f,
+     * which takes the current node and its parent as its arguments.
+     */ 
+    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
+        attr (t => f(t) (t.parent))  
 
 }
