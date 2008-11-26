@@ -20,8 +20,8 @@ object DataflowForeach {
     Dataflow.following += 
         attr {
             case t if t.parent.isInstanceOf[Foreach] =>
-                 val parent = t.parent[Foreach]
-                 following (parent) + parent.body
+                val parent = t.parent[Foreach]
+                following (parent) + parent.body
         }
 }
 
