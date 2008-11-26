@@ -37,7 +37,7 @@ object Repmin {
     val globmin : Tree => Int =
         attr {
             case t if t.isRoot => t->locmin
-            case t             => t.parent.asInstanceOf[Tree]->globmin 
+            case t             => t.parent[Tree]->globmin 
         }
                 
     val repmin : Tree => Tree = 

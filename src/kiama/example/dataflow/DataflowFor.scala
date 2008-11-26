@@ -10,13 +10,19 @@ object DataflowForeach {
     Dataflow.succ +=
         attr { case t @ Foreach (_, body) => t->following + body }
     
+    // Using the childAttr notation
     Dataflow.following += 
         childAttr {
-            _ => {
-                case t @ Foreach (_, body) => following (t) + body
-            }
+            _ => { case t @ Foreach(_, body) => following(t) + body }
         }
-        
+    
+    // Alternatively, using the regular attr notation
+    Dataflow.following += 
+        attr {
+            case t if t.parent.isInstanceOf[Foreach] =>
+                 val parent = t.parent[Foreach]
+                 following(parent) + parent.body
+        }
 }
 
 case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm

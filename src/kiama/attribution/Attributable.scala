@@ -35,6 +35,11 @@ trait Attributable extends Product with Positional {
      * node has no parent.
      */
     var parent : Attributable = null
+    
+    /**
+     * A short-hand for parent.asInstanceOf[T].
+     */
+    def parent[T] : T = parent.asInstanceOf[T]
         
     /**
      * Is this node the root of the hierarchy?
