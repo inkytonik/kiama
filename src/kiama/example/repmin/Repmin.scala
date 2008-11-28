@@ -20,30 +20,40 @@
     
 package kiama.example.repmin
 
+import kiama.attribution.Attribution._
+
+/**
+ * AST for Repmin examples.
+ */
+abstract class Tree extends Attributable
+case class Pair (left : Tree, right : Tree) extends Tree
+case class Leaf (value : Int) extends Tree
+
+/**
+ * Classic repmin problem defined in an "attributes first" style.
+ * repmin is a tree with the same structure as its argument tree
+ * but with all of the leaves replaced by leaves containing the
+ * minimum leaf value from the input tree.
+ */
 object Repmin {
-  
-    import kiama.attribution.Attribution._
-
-    abstract class Tree extends Attributable
-    case class Pair (left : Tree, right : Tree) extends Tree
-    case class Leaf (value : Int) extends Tree
-
-    val locmin : Tree => Int = 
+    
+    val locmin : Tree ==> Int = 
         attr {
             case Pair (l, r) => (l->locmin) min (r->locmin)
             case Leaf (v)    => v
         }  
     
-    val globmin : Tree => Int =
+    val globmin : Tree ==> Int =
         attr {
             case t if t.isRoot => t->locmin
             case t             => t.parent[Tree]->globmin 
         }
                 
-    val repmin : Tree => Tree = 
+    val repmin : Tree ==> Tree = 
         attr {
             case Pair (l, r)  => Pair (l->repmin, r->repmin)
             case t @ Leaf (_) => Leaf (t->globmin)
         }
 
 }
+

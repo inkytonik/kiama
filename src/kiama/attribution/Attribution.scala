@@ -26,7 +26,12 @@ package kiama.attribution
  * and parameterised attributes.
  */
 trait AttributionBase {
-    
+
+    /**
+     * Convenient type constructor for partial functions.
+     */
+    type ==>[T,U] = PartialFunction[T,U]
+        
     /**
      * All attributable nodes must extend this type.  This is a local alias
      * so that the actual type does not have to be explicitly imported.
@@ -55,7 +60,7 @@ trait AttributionBase {
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T <: Attributable,U] (init : U, f : T => U) extends (T => U) {
+    class CircularAttribute[T <: Attributable,U] (init : U, f : T ==> U) extends (T ==> U) {
       
         /**
          * Has the value of this attribute for a given tree already been computed?
@@ -87,7 +92,7 @@ trait AttributionBase {
          * Return the value of this attribute for node t.  Essentially Figure 6
          * from the CRAG paper.
          */
-        override def apply (t : T) : U = {
+        def apply (t : T) : U = {
             if (computed contains t) { 
                 value (t)
             } else if (!CircularState.IN_CIRCLE) {
@@ -122,6 +127,13 @@ trait AttributionBase {
                 value (t)
         }
         
+        /**
+         * A circular attribute is defined at the same places as its
+         * defining function.
+         */
+        def isDefinedAt (t : T) =
+            f isDefinedAt t
+        
     }
 
     /**
@@ -146,17 +158,18 @@ trait AttributionBase {
      * fixed point is reached (in conjunction with other circular attributes
      * on which it depends).  The final value is cached.
      */
-    def circular[T <: Attributable,U] (init : U) (f : T => U) : T => U =
+    def circular[T <: Attributable,U] (init : U) (f : T ==> U) : T ==> U =
         new CircularAttribute (init, f)
     
     /**
      * Define an attribute of T nodes of type U given by the constant value u.
      * u is evaluated at most once.
      */
-    def constant[T <: Attributable,U] (u : => U) : T => U =
-        new Function[T,U] {
+    def constant[T <: Attributable,U] (u : => U) : T ==> U =
+        new (T ==> U) {
             lazy val result = u
             def apply (t : T) = result
+            def isDefinedAt (t : T) = true
         }
 
 }
@@ -192,7 +205,7 @@ trait Attribution extends AttributionBase {
      * f should not itself require the value of this attribute. If it does, a
      * circularity error is reported.
      */
-    class CachedAttribute[T <: Attributable,U] (f : T => U) extends (T => U) {
+    class CachedAttribute[T <: Attributable,U] (f : T ==> U) extends (T ==> U) {
 
         /**
          * The memo table for this attribute, with <code>memo(t) == Some(v)</code>
@@ -223,12 +236,21 @@ trait Attribution extends AttributionBase {
                     u
             }
         }
+        
+        /**
+         * A cached attribute is defined at the same places as its
+         * defining function.
+         */
+        def isDefinedAt (t : T) =
+            f isDefinedAt t
+
     }    
     
     /**
      * A variation of the CachedAttribute class for parameterised attributes.
      */
-    class CachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
+    class CachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T ==> U)
+            extends (TArg => T ==> U) {
 
         private val memo = new scala.collection.jcl.HashMap[ArgAttributeKey,Option[U]]        
         private var memoVersion = MemoState.MEMO_VERSION
@@ -237,22 +259,31 @@ trait Attribution extends AttributionBase {
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
-        def apply (arg : TArg) : T => U = t => {
-            if (memoVersion != MemoState.MEMO_VERSION) {
-                memoVersion = MemoState.MEMO_VERSION
-                memo.clear
-            }            
-            val key = new ArgAttributeKey (arg, t)
-            memo.get (key) match {
-                case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
-                case Some (Some (u)) => u
-                case None =>
-                    memo (key) = None
-                    val u = f (arg) (t)
-                    memo (key) = Some (u)
-                    u
-            }
-        }
+        def apply (arg : TArg) : T ==> U =
+            new (T ==> U) {
+                
+                def apply (t : T) : U = {
+                    if (memoVersion != MemoState.MEMO_VERSION) {
+                        memoVersion = MemoState.MEMO_VERSION
+                        memo.clear
+                    }            
+                    val key = new ArgAttributeKey (arg, t)
+                    memo.get (key) match {
+                        case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
+                        case Some (Some (u)) => u
+                        case None =>
+                            memo (key) = None
+                            val u = f (arg) (t)
+                            memo (key) = Some (u)
+                            u
+                    }                    
+                }
+                
+                def isDefinedAt (t : T) =
+                    f (arg) isDefinedAt t
+                    
+            }                    
+
     }
     
     /**
@@ -260,7 +291,7 @@ trait Attribution extends AttributionBase {
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: Attributable,U] (f : T => U) : T => U =
+    def attr[T <: Attributable,U] (f : T ==> U) : T ==> U =
         new CachedAttribute (f)
 
     /**
@@ -268,15 +299,15 @@ trait Attribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */ 
-    def argAttr[TArg,T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
+    def argAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
         new CachedArgAttribute (f)
         
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes the current node and its parent as its arguments.
      */ 
-    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
-        attr (t => f (t) (t.parent))  
+    def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U =
+        attr { case t => f (t) (t.parent) }
 
 }
 
@@ -298,7 +329,7 @@ trait UncachedAttribution extends AttributionBase {
      * called each time the value of the attribute is accessed.  f should not itself
      * require the value of this attribute. If it does, a circularity error is reported.
      */
-    class UncachedAttribute[T <: Attributable,U] (f : T => U) extends (T => U) {
+    class UncachedAttribute[T <: Attributable,U] (f : T ==> U) extends (T ==> U) {
 
         /**
          * Are we currently evaluating this attribute for a given tree?
@@ -319,12 +350,20 @@ trait UncachedAttribution extends AttributionBase {
                 u
             }
         }
+        
+        /**
+         * An uncached attribute is defined at the same places as its
+         * defining function.
+         */
+        def isDefinedAt (t : T) =
+            f isDefinedAt t
+
     }    
     
     /**
      * A variation of the UncachedAttribute class for parameterised attributes.
      */
-    class UncachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T => U) extends (TArg => T => U) {
+    class UncachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T ==> U) extends (TArg => T ==> U) {
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
@@ -335,17 +374,25 @@ trait UncachedAttribution extends AttributionBase {
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
-        def apply (arg : TArg) : T => U = t => {
-            val key = new ArgAttributeKey (arg, t)              
-            if (visited contains key) {
-                throw new IllegalStateException ("Cycle detected in attribute evaluation")
-            } else {
-                visited (key) = ()
-                val u = f (arg) (t)
-                visited -= key
-                u
+        def apply (arg : TArg) : T ==> U =
+            new (T ==> U) {
+
+                def apply (t : T) : U = {
+                    val key = new ArgAttributeKey (arg, t)              
+                    if (visited contains key) {
+                        throw new IllegalStateException ("Cycle detected in attribute evaluation")
+                    } else {
+                        visited (key) = ()
+                        val u = f (arg) (t)
+                        visited -= key
+                        u
+                    }
+                }
+                
+                def isDefinedAt (t : T) =
+                    f (arg) isDefinedAt t
+
             }
-        }
     }
 
     /**
@@ -353,7 +400,7 @@ trait UncachedAttribution extends AttributionBase {
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: Attributable,U] (f : T => U) : T => U =
+    def attr[T <: Attributable,U] (f : T ==> U) : T ==> U =
         new UncachedAttribute (f)
 
     /**
@@ -361,15 +408,15 @@ trait UncachedAttribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */ 
-    def argAttr[TArg,T <: Attributable,U] (f : TArg => T => U) : TArg => T => U =
+    def argAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
         new UncachedArgAttribute (f)
         
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes the current node and its parent as its arguments.
      */ 
-    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
-        attr (t => f (t) (t.parent))  
+    def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U =
+        attr { case t => f (t) (t.parent) }
 
 }
 

@@ -26,14 +26,13 @@ import org.scalatest.junit.JUnit3Suite
 
 class RepminTests extends TestCase with JUnit3Suite {
   
-    import Repmin._
-
     /**
-     * Basic test that repmin actually works.
+     * Basic test that attributes first repmin actually works.
      */
-    def testBasic {
+    def testBasicAttr {
+        import Repmin._
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         assertEquals (Pair (Leaf (1), Pair (Leaf (1), Leaf (1))), t->repmin)
     }
-      
+    
 }
