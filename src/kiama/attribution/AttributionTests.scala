@@ -38,7 +38,7 @@ class AttributionTests extends TestCase with JUnit3Suite {
         
         var count = 0
 
-        lazy val maximum : Tree => Int =
+        lazy val maximum : Tree ==> Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -59,7 +59,7 @@ class AttributionTests extends TestCase with JUnit3Suite {
                
         var count = 0
 
-        lazy val maximum : Tree => Int =
+        lazy val maximum : Tree ==> Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -78,17 +78,17 @@ class AttributionTests extends TestCase with JUnit3Suite {
     def testCachedCircularity {
         import Attribution._
 
-        lazy val direct : Tree => Int =
+        lazy val direct : Tree ==> Int =
             attr {
-                t => t->direct
+                case t => t->direct
             }
-        lazy val indirect : Tree => Int =
+        lazy val indirect : Tree ==> Int =
             attr {
-                t => t->indirect2
+                case t => t->indirect2
             }
-        lazy val indirect2 : Tree => Int =
+        lazy val indirect2 : Tree ==> Int =
             attr {
-                t => t->indirect
+                case t => t->indirect
             }
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))            
@@ -115,17 +115,17 @@ class AttributionTests extends TestCase with JUnit3Suite {
     def testUncachedDirectCircularity {
         import UncachedAttribution._
 
-        lazy val direct : Tree => Int =
+        lazy val direct : Tree ==> Int =
             attr {
-                t => t->direct
+                case t => t->direct
             }
-        lazy val indirect : Tree => Int =
+        lazy val indirect : Tree ==> Int =
             attr {
-                t => t->indirect2
+                case t => t->indirect2
             }
-        lazy val indirect2 : Tree => Int =
+        lazy val indirect2 : Tree ==> Int =
             attr {
-                t => t->indirect
+                case t => t->indirect
             }
             
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))            

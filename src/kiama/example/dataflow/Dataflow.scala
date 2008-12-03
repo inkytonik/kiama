@@ -20,28 +20,33 @@
 
 package kiama.example.dataflow
 
+import kiama.attribution.DynamicAttribution._
+import DataflowAST._
+    
 /**
- * Simple dataflow equation attribution example.
+ * Control flow interface.
  */
-object Dataflow {
-    
-    import kiama.attribution.DynamicAttribution._
-
-    type Var = String
-    
-    case class Program (body : Stm) extends Attributable
-    abstract class Stm extends Attributable
-    case class Assign (left : Var, right : Var) extends Stm
-    case class While (cond : Var, body : Stm) extends Stm
-    case class If (cond : Var, tru : Stm, fls : Stm) extends Stm
-    case class Block (stms : Stm*) extends Stm
-    case class Return (ret : Var) extends Stm
-    case class Empty () extends Stm
+trait ControlFlow {
     
     /**
      * Control flow successor relation.
      */
-    val succ : Stm => Set[Stm] =
+    val succ : Stm ==> Set[Stm]   
+         
+         
+    /**
+     * Control flow default successor relation.
+     */
+    val following : Stm ==> Set[Stm]   
+
+}
+
+/**
+ * Control flow implementation.
+ */
+trait ControlFlowImpl extends ControlFlow {
+
+    val succ : Stm ==> Set[Stm] =
         attr {
             case If (_, s1, s2)   => Set (s1, s2)
             case t @ While (_, s) => following (t) + s
@@ -50,10 +55,7 @@ object Dataflow {
             case s                => following (s)
         }
 
-    /**
-     * Default following statement.
-     */
-    val following : Stm => Set[Stm] =
+    val following : Stm ==> Set[Stm] =
         childAttr {
             case s => {
                  case t @ While (_, _)           => Set (t)                                          
@@ -62,11 +64,32 @@ object Dataflow {
                  case _                          => Set ()
             }
         }
-        
+    
+}
+
+/**
+ * Variable use and definition interface.
+ */
+trait Variables {
+    
     /**
      * Variable uses.
      */
-    val uses : Stm => Set[String] =
+    val uses : Stm ==> Set[String]
+    
+    /**
+     * Variable definitions.
+     */
+    val defines : Stm ==> Set[String]
+    
+}
+
+/**
+ * Variable use and definition implementation.
+ */
+trait VariablesImpl extends Variables {        
+    
+    val uses : Stm ==> Set[String] =
         attr {
             case If (v, _, _)  => Set (v)
             case While (v, _)  => Set (v)
@@ -75,29 +98,48 @@ object Dataflow {
             case _             => Set ()
         }
 
-    /**
-     * Defined variables.
-     */
-    val defines : Stm => Set[String] =
+    val defines : Stm ==> Set[String] =
         attr {
             case Assign (v, _) => Set (v)
             case _             => Set ()
         }
-    
+
+}
+
+/**
+ * Variable liveness interface.
+ */
+trait Liveness {
+
     /**
      * Variables "live" into a statement.
      */
-    val in : Stm => Set[String] =
-        circular (Set[String]()) {
-            s => uses (s) ++ (out (s) -- defines (s))
-        }
-    
+    val in : Stm ==> Set[String]
+
     /**
      * Variables "live" out of a statement.
      */
-    val out : Stm => Set[String] =
+    val out : Stm ==> Set[String]
+
+}
+
+/**
+ * Variable liveness implementation.
+ */
+trait LivenessImpl extends Liveness {
+    
+    self : Liveness with Variables with ControlFlow =>
+        
+    val in : Stm ==> Set[String] =
         circular (Set[String]()) {
-            s => (s->succ).flatMap (in) 
+            case s => uses (s) ++ (out (s) -- defines (s))
+        }
+    
+    val out : Stm ==> Set[String] =
+        circular (Set[String]()) {
+            case s => (s->succ).flatMap (in) 
         }
         
 }
+
+object Dataflow extends LivenessImpl with VariablesImpl with ControlFlowImpl

@@ -44,7 +44,7 @@ object NameResolution {
      * eq IdUse.decl() = lookup(getName());
      * eq Dot.decl() = getIdUse().decl();
      */
-    val decl : Access => Decl =
+    val decl : Access ==> Decl =
         attr {
             case Dot (_, n)    => n->decl
             case u @ IdUse (n) => u->lookup (n) 
@@ -82,7 +82,7 @@ object NameResolution {
      *    // Do a remote lookup on the object's type.
      *    getObjectReference().decl().type().remoteLookup(name);
      */
-    val lookup : String => Attributable => Decl =
+    val lookup : String => Attributable ==> Decl =
         argAttr {
             name => {
                 case b : Block =>
@@ -131,7 +131,7 @@ object NameResolution {
      *     return unknownDecl();
      * }
      */
-    val locallookup : String => Attributable => Decl =
+    val locallookup : String => Attributable ==> Decl =
         argAttr {
             name => {
                 case p : Program => finddecl (p, name, p->predefinedTypes)
@@ -170,7 +170,7 @@ object NameResolution {
      *     return unknownDecl();
      * }
      */
-    val remoteLookup : String => Attributable => Decl =
+    val remoteLookup : String => Attributable ==> Decl =
         argAttr {
             name => {
                 case c : ClassDecl =>
@@ -193,7 +193,7 @@ object NameResolution {
      *     return null;
      * }
      */
-    val declarationOf : String => BlockStmt => Decl =
+    val declarationOf : String => BlockStmt ==> Decl =
          argAttr { 
              name => {
                  case d : Decl => if (name == d.Name) d else null 

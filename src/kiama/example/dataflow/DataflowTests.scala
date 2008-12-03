@@ -29,6 +29,7 @@ import org.scalatest.junit.JUnit3Suite
  */
 class DataflowTests extends TestCase with JUnit3Suite {
 
+    import DataflowAST._
     import Dataflow._
     
     /*
