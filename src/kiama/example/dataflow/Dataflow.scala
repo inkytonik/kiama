@@ -59,7 +59,7 @@ trait ControlFlowImpl extends ControlFlow {
         childAttr {
             case s => {
                  case t @ While (_, _)           => Set (t)                                          
-                 case b @ Block (_*) if s.isLast => following (b)
+                 case b @ Block (_*) if s isLast => following (b)
                  case Block (_*)                 => Set (s.next)
                  case _                          => Set ()
             }
@@ -137,7 +137,7 @@ trait LivenessImpl extends Liveness {
     
     val out : Stm ==> Set[String] =
         circular (Set[String]()) {
-            case s => (s->succ).flatMap (in) 
+            case s => (s->succ) flatMap (in) 
         }
         
 }
