@@ -91,7 +91,7 @@ object ErrorCheck {
      * }
      */
     val collectErrors : Buffer[String] => Attributable => Unit = 
-        // NOTE: Not using argAttr here, since we don't want caching for this
+        // NOTE: Not using paramAttr here, since we don't want caching for this
         c => {
             case t =>
                 // Process the errors of the children of t

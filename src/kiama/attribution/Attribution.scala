@@ -139,10 +139,10 @@ trait AttributionBase {
     /**
      * Support for parameterised attributes: argument, node pair comparison.
      */
-    protected class ArgAttributeKey (val arg : Any, val node : Attributable) {
+    protected class ParamAttributeKey (val arg : Any, val node : Attributable) {
         override def equals(o : Any) =
             o match {
-                case o : ArgAttributeKey =>
+                case o : ParamAttributeKey =>
                   arg == o.arg &&                                        // object equality
                   (if (node eq null) o.node eq null else node eq o.node) // reference equality
                 case _ => false
@@ -249,10 +249,10 @@ trait Attribution extends AttributionBase {
     /**
      * A variation of the CachedAttribute class for parameterised attributes.
      */
-    class CachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T ==> U)
+    class CachedParamAttribute[TArg,T <: Attributable,U] (f : TArg => T ==> U)
             extends (TArg => T ==> U) {
 
-        private val memo = new scala.collection.jcl.HashMap[ArgAttributeKey,Option[U]]        
+        private val memo = new scala.collection.jcl.HashMap[ParamAttributeKey,Option[U]]        
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -267,7 +267,7 @@ trait Attribution extends AttributionBase {
                         memoVersion = MemoState.MEMO_VERSION
                         memo.clear
                     }            
-                    val key = new ArgAttributeKey (arg, t)
+                    val key = new ParamAttributeKey (arg, t)
                     memo.get (key) match {
                         case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
                         case Some (Some (u)) => u
@@ -299,8 +299,8 @@ trait Attribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */ 
-    def argAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
-        new CachedArgAttribute (f)
+    def paramAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
+        new CachedParamAttribute (f)
         
     /**
      * Define an attribute of T nodes of type U by the function f,
@@ -363,12 +363,12 @@ trait UncachedAttribution extends AttributionBase {
     /**
      * A variation of the UncachedAttribute class for parameterised attributes.
      */
-    class UncachedArgAttribute[TArg,T <: Attributable,U] (f : TArg => T ==> U) extends (TArg => T ==> U) {
+    class UncachedParamAttribute[TArg,T <: Attributable,U] (f : TArg => T ==> U) extends (TArg => T ==> U) {
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
          */
-        private val visited = new scala.collection.jcl.IdentityHashMap[ArgAttributeKey,Unit]
+        private val visited = new scala.collection.jcl.IdentityHashMap[ParamAttributeKey,Unit]
 
         /**
          * Return the value of this attribute for node t, raising an error if
@@ -378,7 +378,7 @@ trait UncachedAttribution extends AttributionBase {
             new (T ==> U) {
 
                 def apply (t : T) : U = {
-                    val key = new ArgAttributeKey (arg, t)              
+                    val key = new ParamAttributeKey (arg, t)              
                     if (visited contains key) {
                         throw new IllegalStateException ("Cycle detected in attribute evaluation")
                     } else {
@@ -408,8 +408,8 @@ trait UncachedAttribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */ 
-    def argAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
-        new UncachedArgAttribute (f)
+    def paramAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
+        new UncachedParamAttribute (f)
         
     /**
      * Define an attribute of T nodes of type U by the function f,

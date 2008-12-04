@@ -83,7 +83,7 @@ object NameResolution {
      *    getObjectReference().decl().type().remoteLookup(name);
      */
     val lookup : String => Attributable ==> Decl =
-        argAttr {
+        paramAttr {
             name => {
                 case b : Block =>
                     b.parent match {
@@ -132,7 +132,7 @@ object NameResolution {
      * }
      */
     val locallookup : String => Attributable ==> Decl =
-        argAttr {
+        paramAttr {
             name => {
                 case p : Program => finddecl (p, name, p->predefinedTypes)
                 case b : Block   => finddecl (b, name, b.BlockStmts)             
@@ -171,7 +171,7 @@ object NameResolution {
      * }
      */
     val remoteLookup : String => Attributable ==> Decl =
-        argAttr {
+        paramAttr {
             name => {
                 case c : ClassDecl =>
                     if (!isUnknown (c.Body->locallookup (name)))
@@ -194,7 +194,7 @@ object NameResolution {
      * }
      */
     val declarationOf : String => BlockStmt ==> Decl =
-         argAttr { 
+         paramAttr { 
              name => {
                  case d : Decl => if (name == d.Name) d else null 
                  case _        => null
