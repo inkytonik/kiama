@@ -428,7 +428,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         val decimal : Parser[String] = """-?\d+\.(\d*)?""".r
         for (s <- List ("1.", "123.456", "-99.0"))
             expect (decimal, s, s)
-        for (s <- List ("123", ".99", "-.001", "harold"))
+        for (s <- List ("123", "  123", ".99", "-.001", "harold"))
             assertTrue ({val in = input (s); isFailAt (decimal (in), in)})
     }
     
