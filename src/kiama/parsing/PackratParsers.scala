@@ -815,14 +815,14 @@ trait CharParsers extends Parsers {
      * Run a parser on a given character sequence and return its result.
      */
     def parse[T] (p : => Parser[T], in: java.io.Reader) : ParseResult[T] =
-        p (new PagedSeqReader (PagedSeq.fromReader(in)))
+        p (new PagedSeqReader (PagedSeq.fromReader (in)))
     
     /**
      * Run a parser on a given input and return its result, requiring
      * that all of the input be consumed.
      */
     def parseAll[T] (p : => Parser[T], in: Input) : ParseResult[T] = 
-        parse (phrase(p), in)
+        parse (phrase (p), in)
     
     /**
      * Run a parser on a given reader and return its result, requiring
