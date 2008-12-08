@@ -4,9 +4,9 @@ http://www.program-transformation.org/Sts/TinyImperativeLanguage
 http://www.program-transformation.org/Sts/TILChairmarks
 
 TIL Chairmark 1 Parsing
-1.1 Basic parser/syntax checker (done: just abstract syntax)
+1.1 Basic parser/syntax checker (done)
 1.2 Pretty printer
-1.3 Begin-end extension (done: just abstract syntax)
+1.3 Begin-end extension
 
 TIL Chairmark 2 Restructuring
 2.1 For-to-Nondeclaring For

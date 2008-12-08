@@ -20,17 +20,22 @@
                                 
 package kiama.example.til
 
+import java.io.Reader
 import kiama.parsing.CharPackratParsers
 
 /**
  * Parser for the Tiny Imperative Language.
  */
-object TIL1_1 extends CharPackratParsers {
+object TIL1_1 extends Main with CharPackratParsers {
     
     import AST._
 
-    val parse =
-        phrase (program)
+    def process (reader : Reader) {
+        parseAll (program, reader) match {
+            case Success (p, _) => println (p)
+            case f : Failure    => println (f)
+        }        
+    }
 
     lazy val program = (statement*) ^^ Program 
     
@@ -95,5 +100,12 @@ object TIL1_1 extends CharPackratParsers {
 
     lazy val string =
         token ('"' ~> """[^\"]+""".r <~ '"') ^^ Str
+
+    val comment =
+        '/' ~> '/' ~> ((not (endofline) ~> any)*) <~ endofline
+    val endofline =
+        '\r' ~ '\n' | '\r' | '\n'    
+    override val layout =
+        ((whitespace | comment)*) ^^^ List()
 
 }
