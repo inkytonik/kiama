@@ -88,7 +88,7 @@ write "\n";"""
                     Write (Str (" is ")),
                     Write (Var ("fact")),
                     Write (Str ("\\n"))))
-        expect (parse, input, tree)
+        expect (program, input, tree)
     }
     
     def testFactorsParse {
@@ -122,7 +122,7 @@ end"""
                                     Write (Var ("f")),
                                     Assign ("n", Div (Var ("n"), Var ("f"))))),
                             Assign ("f", Add (Var ("f"), Num (1)))))))
-        expect (parse, input, tree)
+        expect (program, input, tree)
     }
     
     def testMultiplesParse {
@@ -140,7 +140,7 @@ end
                         List (
                             For ("j", Num (1), Num (10),
                                 List (Write (Mul (Var ("i"), Var ("j")))))))))
-        expect (parse, input, tree)
+        expect (program, input, tree)
     }
 
 }
