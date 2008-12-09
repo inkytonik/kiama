@@ -34,6 +34,12 @@
   <property name="version"       value="${version.nr}dev"/>
   <property name="author"        value="Anthony M. Sloane"/>
 
+  <!-- Task definitions -->
+
+  <taskdef name="scalatest" classname="org.scalatest.tools.ScalaTestTask">
+    <classpath refid="kiama.classpath"/>
+  </taskdef>
+
   <!-- Targets -->
 
   <target name="prepare">
@@ -52,19 +58,23 @@
   </target>
 	
   <target name="scalatest" depends="build">
-    <java classname="org.scalatest.tools.Runner" classpathref="kiama.classpath" fork="true">
-      <arg value="-g"/>
-      <arg value="-p"/>
-      <arg value="bin"/>
-  	</java>
+    <scalatest>
+      <runpath>
+        <pathelement location="bin"/>
+      </runpath>
+      <reporter type="graphic"/>
+      <wildcard package="kiama"/>
+  	</scalatest>
   </target>	
  
   <target name="scalatestone" depends="build">
-    <java classname="org.scalatest.tools.Runner" classpathref="kiama.classpath" fork="true">
-      <arg value="-g"/>
-      <arg value="-s"/>
-      <arg value="${env.KIAMA_TEST}"/>
-  	</java>
+    <scalatest>
+      <runpath>
+        <pathelement location="bin"/>
+      </runpath>
+      <reporter type="graphic"/>
+      <suite classname="${env.KIAMA_TEST}"/>
+  	</scalatest>
   </target>	
 	
   <target name="doc" depends="prepare">
