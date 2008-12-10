@@ -78,28 +78,28 @@ object AST {
 trait Parser extends kiama.parsing.CharPackratParsers {
   
     import AST._
-
-    val idn : Parser[String] =
-        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
     
-    val variable : Parser[Var] =
-        idn ^^ Var
-    
-    val integer : Parser[Num] =
-        token (digit+) ^^ (l => Num (l.mkString.toInt))
-
-    val factor : MemoParser[Exp] =
-        integer | variable | "(" ~> exp <~ ")"
-    
-    val exp : MemoParser[Exp] =
+    lazy val parse : Parser[Exp] =
+        phrase (exp)
+        
+    lazy val exp : MemoParser[Exp] =
         exp ~ factor ^^ { case l ~ r => App (l, r) } |
         ("\\" ~> idn) ~ ("." ~> exp) ^^ { case i ~ b => Lam (i, b) } |
         factor |
         failure ("expression expected")
+        
+    lazy val factor : MemoParser[Exp] =
+        integer | variable | "(" ~> exp <~ ")"
     
-    val parse : Parser[Exp] =
-        phrase (exp)
-              
+    lazy val integer : Parser[Num] =
+        token (digit+) ^^ (l => Num (l.mkString.toInt))
+
+    lazy val variable : Parser[Var] =
+        idn ^^ Var
+
+    lazy val idn : Parser[String] =
+        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+    
 }
 
 /**

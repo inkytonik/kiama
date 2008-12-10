@@ -718,7 +718,7 @@ trait CharParsers extends Parsers {
     /**
      * Parse a whitespace character.
      */
-    val whitespace : Parser[Char] =
+    lazy val whitespace : Parser[Char] =
         (ch : Char) => ch.isWhitespace
 
     /**
@@ -726,7 +726,7 @@ trait CharParsers extends Parsers {
      * whitespace characters.  Override this to change the processing of
      * whitespace.
      */
-    val layout : Parser[List[Char]] =
+    lazy val layout : Parser[List[Char]] =
         whitespace*
                 
     /**
@@ -784,19 +784,19 @@ trait CharParsers extends Parsers {
     /**
      * Parse a digit character.
      */
-    val digit : Parser[Char] =
+    lazy val digit : Parser[Char] =
         (ch : Char) => ch.isDigit
 
     /**
      * Parse a letter character.
      */
-    val letter : Parser[Char] =
+    lazy val letter : Parser[Char] =
         (ch : Char) => ch.isLetter
 
     /**
      * Parse a letter or digit character.
      */
-    val letterOrDigit : Parser[Char] =
+    lazy val letterOrDigit : Parser[Char] =
         (ch : Char) => ch.isLetterOrDigit
     
     /**

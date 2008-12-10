@@ -78,11 +78,11 @@ object Parser extends CharPackratParsers {
     lazy val IDENTIFIER : MemoParser[String] =
         token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString } 
     
-    val comment =
+    lazy val comment =
         '/' ~> '/' ~> ((not (endofline) ~> any)*) <~ endofline
-    val endofline =
+    lazy val endofline =
         '\r' ~ '\n' | '\r' | '\n'    
-    override val layout =
+    override lazy val layout =
         ((whitespace | comment)*) ^^^ List()
     
 }

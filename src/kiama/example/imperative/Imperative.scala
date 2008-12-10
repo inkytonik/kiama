@@ -248,48 +248,48 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     import AST._
     
-    val keyword : Parser[String] =
-        "while"
-                
-    val idn : Parser[String] =
-        !keyword ~> token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+    lazy val parse : Parser[Stmt] =
+        phrase (stmt)
     
-    val variable : Parser[Var] =
-        idn ^^ Var
+    lazy val stmt : Parser[Stmt] =
+        ";" ^^^ Null () | sequence | asgnStmt | whileStmt
+
+    lazy val asgnStmt : Parser[Asgn] =
+        idn ~ ("=" ~> exp) <~ ";" ^^ { case s ~ e => Asgn (s, e) }
     
-    val integer : Parser[Num] =
-        token (digit+) ^^ (l => Num (l.mkString.toInt))
+    lazy val whileStmt : Parser[While] =
+        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
+
+    lazy val sequence : Parser[Seqn] =
+        "{" ~> (stmt*) <~ "}" ^^ Seqn
     
-    val double : Parser[Num] =
-        token ((digit+) ~ ("." ~> (digit+))) ^^ { case l ~ r => Num ((l.mkString + "." + r.mkString).toDouble) }
-        
-    val factor : MemoParser[Exp] =
-        double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")"
-    
-    val term : MemoParser[Exp] =
-        term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
-        term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
-        factor
-    
-    val exp : MemoParser[Exp] =
+    lazy val exp : MemoParser[Exp] =
         exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
         exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
         term
 
-    val sequence : Parser[Seqn] =
-        "{" ~> (stmt*) <~ "}" ^^ Seqn
-        
-    val asgnStmt : Parser[Asgn] =
-        idn ~ ("=" ~> exp) <~ ";" ^^ { case s ~ e => Asgn (s, e) }
+    lazy val term : MemoParser[Exp] =
+        term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
+        term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
+        factor
     
-    val whileStmt : Parser[While] =
-        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
+    lazy val factor : MemoParser[Exp] =
+        double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")"
 
-    val stmt : Parser[Stmt] =
-        ";" ^^^ Null () | sequence | asgnStmt | whileStmt
- 
-    val parse : Parser[Stmt] =
-        phrase (stmt)
+    lazy val double : Parser[Num] =
+        token ((digit+) ~ ("." ~> (digit+))) ^^ { case l ~ r => Num ((l.mkString + "." + r.mkString).toDouble) }        
+
+    lazy val integer : Parser[Num] =
+        token (digit+) ^^ (l => Num (l.mkString.toInt))
+
+    lazy val variable : Parser[Var] =
+        idn ^^ Var
+
+    lazy val idn : Parser[String] =
+        !keyword ~> token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+    
+    lazy val keyword : Parser[String] =
+        "while" 
     
 }
         
