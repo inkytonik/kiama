@@ -24,11 +24,42 @@ import java.io.Reader
 import kiama.parsing.CharPackratParsers
 
 /**
- * Parser for the Tiny Imperative Language.
+ * AST and parser for the basic Tiny Imperative Language.
  */
 object TIL1_1 extends Main with CharPackratParsers {
+        
+    case class Program (ss : Seq[Stat])
+
+    abstract case class Stat
+
+    case class Decl (i : Id) extends Stat
+
+    case class Assign (i : Id, e : Exp) extends Stat
+
+    case class IfThen (e : Exp, t : Seq[Stat]) extends Stat
+    case class IfElse (e : Exp, t : Seq[Stat], f : Seq[Stat]) extends Stat
+
+    case class While (e : Exp, b : Seq[Stat]) extends Stat
+    case class For (i : Id, f : Exp, t : Exp, b : Seq[Stat]) extends Stat
+
+    case class Read (i : Id) extends Stat
+    case class Write (e : Exp) extends Stat
     
-    import AST._
+    type Id = String
+    
+    abstract case class Exp
+        
+    case class Var (i : Id) extends Exp
+    case class Num (n : Int) extends Exp
+    case class Str (s : String) extends Exp
+    
+    case class Mul (l : Exp, r : Exp) extends Exp
+    case class Div (l : Exp, r : Exp) extends Exp
+    case class Add (l : Exp, r : Exp) extends Exp
+    case class Sub (l : Exp, r : Exp) extends Exp
+    
+    case class Eq (l : Exp, r : Exp) extends Exp
+    case class Ne (l : Exp, r : Exp) extends Exp
 
     def process (reader : Reader) {
         parseAll (program, reader) match {
@@ -36,6 +67,8 @@ object TIL1_1 extends Main with CharPackratParsers {
             case f : Failure    => println (f)
         }        
     }
+
+    lazy val parse = phrase (program)
 
     lazy val program = (statement*) ^^ Program 
     
@@ -64,7 +97,7 @@ object TIL1_1 extends Main with CharPackratParsers {
             { case i ~ f ~ t ~ b => For (i, f, t, b) }
 
     lazy val read_statement = "read" ~> identifier <~ ";" ^^ Read
-
+    
     lazy val write_statement = "write" ~> expression <~ ";" ^^ Write
 
     lazy val expression : MemoParser[Exp] =
@@ -101,11 +134,11 @@ object TIL1_1 extends Main with CharPackratParsers {
     lazy val string =
         token ('"' ~> """[^\"]+""".r <~ '"') ^^ Str
 
-    val comment =
+    lazy val comment =
         '/' ~> '/' ~> ((not (endofline) ~> any)*) <~ endofline
-    val endofline =
+    lazy val endofline =
         '\r' ~ '\n' | '\r' | '\n'    
-    override val layout =
+    override lazy val layout =
         ((whitespace | comment)*) ^^^ List()
 
 }

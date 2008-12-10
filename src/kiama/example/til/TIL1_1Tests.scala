@@ -30,7 +30,6 @@ import kiama.parsing.CharPackratParsers
 
 class TIL1_1Tests extends TestCase with JUnit3Suite with Checkers {
     
-    import AST._
     import TIL1_1._
     import scala.util.parsing.input.CharArrayReader
     
@@ -88,7 +87,7 @@ write "\n";"""
                     Write (Str (" is ")),
                     Write (Var ("fact")),
                     Write (Str ("\\n"))))
-        expect (program, input, tree)
+        expect (parse, input, tree)
     }
     
     def testFactorsParse {
@@ -122,7 +121,7 @@ end"""
                                     Write (Var ("f")),
                                     Assign ("n", Div (Var ("n"), Var ("f"))))),
                             Assign ("f", Add (Var ("f"), Num (1)))))))
-        expect (program, input, tree)
+        expect (parse, input, tree)
     }
     
     def testMultiplesParse {
@@ -140,7 +139,7 @@ end
                         List (
                             For ("j", Num (1), Num (10),
                                 List (Write (Mul (Var ("i"), Var ("j")))))))))
-        expect (program, input, tree)
+        expect (parse, input, tree)
     }
 
 }
