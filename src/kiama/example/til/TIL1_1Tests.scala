@@ -20,39 +20,16 @@
                                 
 package kiama.example.til
 
-import junit.framework.Assert._
 import junit.framework.TestCase
-import org.scalacheck._
-import org.scalacheck.Prop._ 
 import org.scalatest.junit.JUnit3Suite 
 import org.scalatest.prop.Checkers 
 import kiama.parsing.CharPackratParsers
 
 class TIL1_1Tests extends TestCase with JUnit3Suite with Checkers {
     
-    import TIL1_1._
-    import scala.util.parsing.input.CharArrayReader
-    
-    /**
-     * Convenience method for creating a parser input that reads from
-     * a given string.
-     */
-    def input (str : String) = new CharArrayReader (str.toArray)
-
-    /**
-     * Try to parse a string and expect a given result.  Also check that
-     * there is no more input left.  Return a JUnit test case result.
-     */
-    def expect[T] (parser : Parser[T], str : String, result : T) {
-        parser (input (str)) match {
-            case Success (r, in) =>
-                if (r != result) fail ("found " + r + " not " + result)
-                if (!in.atEnd) fail ("input remaining at " + in.pos)
-            case Failure (m, in) =>
-                fail (m + " at " + in.pos)
-        }
-    }
-        
+    import AST._
+    import TIL1_1Main._
+            
     /**
      * Make sure that the Factorial program parses to what we expect.
      */
@@ -74,20 +51,20 @@ write "\n";"""
         val tree =
             Program (
                 List (
-                    Decl ("n"),
-                    Read ("n"),
-                    Decl ("x"),
-                    Decl ("fact"),
-                    Assign ("fact", Num (1)),
-                    For ("x", Num (1), Var ("n"),
+                    Decl (Id ("n")),
+                    Read (Id ("n")),
+                    Decl (Id ("x")),
+                    Decl (Id ("fact")),
+                    Assign (Id ("fact"), Num (1)),
+                    For (Id ("x"), Num (1), Var (Id ("n")),
                         List (
-                            Assign ("fact", Mul (Var ("x"), Var ("fact"))))),
+                            Assign (Id ("fact"), Mul (Var (Id ("x")), Var (Id ("fact")))))),
                     Write (Str ("factorial of ")),
-                    Write (Var ("n")),
+                    Write (Var (Id ("n"))),
                     Write (Str (" is ")),
-                    Write (Var ("fact")),
+                    Write (Var (Id ("fact"))),
                     Write (Str ("\\n"))))
-        expect (parse, input, tree)
+        test (input, tree)
     }
     
     def testFactorsParse {
@@ -108,20 +85,20 @@ end"""
         val tree =
             Program (
                 List (
-                    Decl ("n"),
+                    Decl (Id ("n")),
                     Write (Str ("Input n please")),
-                    Read ("n"),
+                    Read (Id ("n")),
                     Write (Str ("The factors of n are")),
-                    Decl ("f"),
-                    Assign ("f", Num (2)),
-                    While (Ne (Var ("n"), Num (1)),
+                    Decl (Id ("f")),
+                    Assign (Id ("f"), Num (2)),
+                    While (Ne (Var (Id ("n")), Num (1)),
                         List (
-                            While (Eq (Mul (Div (Var ("n"), Var ("f")), Var ("f")), Var ("n")),
+                            While (Eq (Mul (Div (Var (Id ("n")), Var (Id ("f"))), Var (Id ("f"))), Var (Id ("n"))),
                                 List (
-                                    Write (Var ("f")),
-                                    Assign ("n", Div (Var ("n"), Var ("f"))))),
-                            Assign ("f", Add (Var ("f"), Num (1)))))))
-        expect (parse, input, tree)
+                                    Write (Var (Id ("f"))),
+                                    Assign (Id ("n"), Div (Var (Id ("n")), Var (Id ("f")))))),
+                            Assign (Id ("f"), Add (Var (Id ("f")), Num (1)))))))
+        test (input, tree)
     }
     
     def testMultiplesParse {
@@ -135,11 +112,11 @@ end
         val tree =
             Program (
                 List (
-                    For ("i", Num (1), Num (9),
+                    For (Id ("i"), Num (1), Num (9),
                         List (
-                            For ("j", Num (1), Num (10),
-                                List (Write (Mul (Var ("i"), Var ("j")))))))))
-        expect (parse, input, tree)
+                            For (Id ("j"), Num (1), Num (10),
+                                List (Write (Mul (Var (Id ("i")), Var (Id ("j"))))))))))
+        test (input, tree)
     }
 
 }

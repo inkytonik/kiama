@@ -24,12 +24,12 @@ import java.io.Reader
 import kiama.parsing.CharPackratParsers
 
 /**
- * AST and parser for the basic Tiny Imperative Language.
+ * AST the basic Tiny Imperative Language.
  */
-object TIL1_1 extends Main with CharPackratParsers {
+object AST {
         
     case class Program (ss : Seq[Stat])
-
+    
     abstract case class Stat
 
     case class Decl (i : Id) extends Stat
@@ -44,14 +44,18 @@ object TIL1_1 extends Main with CharPackratParsers {
 
     case class Read (i : Id) extends Stat
     case class Write (e : Exp) extends Stat
-    
-    type Id = String
-    
+        
     abstract case class Exp
+        
+    case class Id (s : String) {
+        override def toString = "\"" + s + "\""
+    }
         
     case class Var (i : Id) extends Exp
     case class Num (n : Int) extends Exp
-    case class Str (s : String) extends Exp
+    case class Str (s : String) extends Exp {
+        override def toString = "\"" + s + "\""
+    }
     
     case class Mul (l : Exp, r : Exp) extends Exp
     case class Div (l : Exp, r : Exp) extends Exp
@@ -61,15 +65,19 @@ object TIL1_1 extends Main with CharPackratParsers {
     case class Eq (l : Exp, r : Exp) extends Exp
     case class Ne (l : Exp, r : Exp) extends Exp
 
-    def process (reader : Reader) {
-        parseAll (program, reader) match {
-            case Success (p, _) => println (p)
-            case f : Failure    => println (f)
-        }        
-    }
-
-    lazy val parse = phrase (program)
-
+}
+ 
+/**
+ * Parser for the basic Tiny Imperative Language.
+ */
+trait TIL1_1 extends ParsingMain {
+    
+    import AST._
+    
+    type Root = Program
+        
+    lazy val parse = program
+        
     lazy val program = (statement*) ^^ Program 
     
     lazy val statement : Parser[Stat] =
@@ -126,7 +134,7 @@ object TIL1_1 extends Main with CharPackratParsers {
 
     lazy val identifier =
         !keyword ~> token (letter ~ (letterOrDigit*)) ^^
-            { case c ~ cs => c + cs.mkString }
+            { case c ~ cs => Id (c + cs.mkString) }
         
     lazy val integer =
         token (digit+) ^^ (l => Num (l.mkString.toInt))
@@ -142,3 +150,6 @@ object TIL1_1 extends Main with CharPackratParsers {
         ((whitespace | comment)*) ^^^ List()
 
 }
+
+object TIL1_1Main extends TIL1_1
+

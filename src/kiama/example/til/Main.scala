@@ -20,34 +20,106 @@
 
 package kiama.example.til
 
- /**
-  * Standard main program for TIL chairmarks.
-  */
- trait Main {
- 
-     import java.io.{FileNotFoundException,FileReader,Reader}
- 
-     /**
-      * Accept file name arguments and pass them one-by-one to the process
-      * function.
-      */
-     def main (args : Array[java.lang.String]) {
-         for (arg <- args) {
-             try {
-                 val reader = new FileReader (arg)
-                 process (reader)
-             } catch {
-                 case e : FileNotFoundException =>
-                     println ("can't open " + arg + " for reading")
-             }
-         }
-     }
+import java.io.Reader
+import kiama.parsing.CharPackratParsers
+import kiama.rewriting.Rewriter
 
-     /**
-      * Process the file given by the argument reader.
+/**
+ * Standard main program for TIL chairmarks.  Also includes a simple
+ * testing framework.
+ */
+trait Main {
+    
+    import java.io.{CharArrayReader,FileNotFoundException,FileReader}
+    import junit.framework.Assert._
+    
+    /**
+     * Accept file name arguments and process them one-by-one by 
+     * passing a reader on the file to process.  The resulting
+     * value is printed.
+     */
+    def main (args : Array[String]) {
+        for (arg <- args) {
+            try {
+                val reader = new FileReader (arg)
+                val result = process (reader)
+                println (result)
+            } catch {
+                case e : FileNotFoundException =>
+                    println ("can't open " + arg + " for reading")
+            }
+        }
+    }
+    
+    /**
+      * Process the file given by the argument reader and return
+      * some useful result.
       */
-     def process (reader : Reader)
+    def process (reader : Reader) : Any
 
- }
- 
- 
+    /**
+     * Try to process a string and expect a given result.  Return a
+     * JUnit test case result.
+     */
+    def test[T] (str : String, result : T) {
+        val r = process (new CharArrayReader (str.toArray))
+        if (r != result)
+            fail (r.toString)
+    }
+
+}
+
+/**
+ * Standard main program for TIL chairmarks that parse.
+ */
+trait ParsingMain extends Main with CharPackratParsers {
+      
+    /**
+      * Process the file given by the argument reader by parsing it
+      * and returning the resulting AST.
+      */
+    def process (reader : Reader) : Any =
+        parseAll (parse, reader) match {
+            case Success (p, _) => p
+            case f : Failure    => f
+        }        
+
+    /**
+     * The root type of the AST being processed.
+     */
+    type Root
+    
+    /**
+     * Parse a file, returning an AST.
+     */
+    def parse : Parser[Root]
+    
+}
+
+/**
+ * Standard main program for TIL chairmarks that parse and rewrite.
+ */
+trait RewritingMain extends ParsingMain with Rewriter {    
+
+    /**
+     * The root type of the AST being processed. Needs to be sub-type
+     * of Term so that we can rewrite it.
+     */
+    type Root <: Term
+    
+    /**
+      * Process the file given by the argument reader by parsing it,
+      * rewriting it and returning the resulting AST.
+      */
+    override def process (reader : Reader) : Any =
+        parseAll (parse, reader) match {
+            case Success (p, _) => rewrite (p)
+            case f : Failure    => f
+        }        
+        
+    /**
+     * Rewrite a single AST.
+     */
+    def rewrite (ast : Root) : Root
+        
+}
