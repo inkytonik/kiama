@@ -54,7 +54,7 @@ source directories.
 To build and use Kiama you need the following software:
 
 * Scala (http://www.scala-lang.org/)
-  Tested with version 2.7.2.RC4
+  Tested with version 2.7.2-final
   
 * Java (http://www.java.com)
   Tested with version 1.5 on Mac OS X 10.5.4
@@ -63,10 +63,10 @@ The following libraries are also needed.  Compatible versions are
 distributed with the Kiama source distribution in the lib directory.
 
 * ScalaCheck (http://code.google.com/p/scalacheck/)
-  Tested with version 1.4 compiled with Scala 2.7.4.RC4
+  Tested with version 1.4 compiled with Scala 2.7.2-final
   
 * ScalaTest (http://www.artima.com/scalatest/)
-  Tested with version 0.9.3 compiled with Scala 2.7.2.RC2
+  Tested with version 0.9.3 compiled with Scala 2.7.2-final
   
 * JUnit (http://www.junit.org)
   Tested with version 4.1
@@ -109,8 +109,11 @@ the code for details of the sources of ideas that come from elsewhere.
 Most of the build process has been adapted from that used by Rickard Nilsson
 in ScalaCheck.
 
-Some parts of this library is based on code in the Scala Library, most notably
-the parsing library.
+Some parts of this library are based on code in the Scala Library,
+most notably the parsing library.  See http://www.scala-lang.org/node/216.
+
+Many of the library rewriting strategies are based on the Stratego library.
+See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 
 6. Licensing
 
