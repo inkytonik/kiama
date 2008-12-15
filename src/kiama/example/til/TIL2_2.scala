@@ -23,22 +23,28 @@ package kiama.example.til
 import kiama.rewriting.Rewriter
 
 /**
- * Rewrite TILs for loops that automatically declare the control variable
- * adding an explicit declaration of the variable.
+ * Transform for loops into equivalent while loops.
  */
-trait TIL2_1 extends TIL1_1 with RewritingMain {
+trait TIL2_2 extends TIL1_1 with RewritingMain {
         
     import AST._
 
     override def rewrite (ast : Root) : Root =
-        rewrite (declareforvars) (ast)
+        rewrite (fortowhile) (ast)
         
-    val declareforvars =
-        everywherebu (rule {
-            case (s @ For (Id (i), f, t, b)) :: ss =>
-                Decl (Id (i)) :: s :: ss
+    val fortowhile =
+        everywheretd (rule {
+            case (s @ For (id @ Id (i), f, t, b)) :: ss =>
+                val upperid = Id ("Upper" + i)
+                Decl (id) ::
+                Assign (id, f) ::
+                Decl (upperid) ::
+                Assign (upperid, Add (t, Num (1))) ::
+                While (Sub (Var (id), Var (upperid)),
+                    b ++ List (Assign (id, Add (Var (id), Num (1))))) ::
+                ss
         })
-    
+            
 }
 
-object TIL2_1Main extends TIL2_1
+object TIL2_2Main extends TIL2_2

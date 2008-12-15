@@ -23,12 +23,15 @@ package kiama.example.til
 import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite 
 import org.scalatest.prop.Checkers 
-import kiama.parsing.CharPackratParsers
 
 class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
     
     import AST._
     import TIL2_1Main._
+
+    private val x = Id ("x")
+    private val y = Id ("y")
+    private val n = Id ("n")
             
     /**
      * Simple test of transforming a singleton statement.
@@ -37,9 +40,9 @@ class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
         val input = "for x := 1 to n do write x; end"
         val tree =
             Program (List (
-                Decl (Id ("x")),
-                For (Id ("x"), Num (1), Var (Id ("n")), List (
-                    Write (Var (Id ("x")))))))
+                Decl (x),
+                For (x, Num (1), Var (n), List (
+                    Write (Var (x))))))
         test (input, tree)
     }
     
@@ -50,10 +53,10 @@ class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
         val input = "for x := 1 to n do write x; end write x;"
         val tree =
             Program (List (
-                Decl (Id ("x")),
-                For (Id ("x"), Num (1), Var (Id ("n")), List (
-                    Write (Var (Id ("x"))))),
-                Write (Var (Id ("x")))))
+                Decl (x),
+                For (x, Num (1), Var (n), List (
+                    Write (Var (x)))),
+                Write (Var (x))))
         test (input, tree)
     }
     
@@ -64,10 +67,10 @@ class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
         val input = "write x; for x := 1 to n do write x; end"
         val tree =
             Program (List (
-                Write (Var (Id ("x"))),
-                Decl (Id ("x")),
-                For (Id ("x"), Num (1), Var (Id ("n")), List (
-                    Write (Var (Id ("x")))))))
+                Write (Var (x)),
+                Decl (x),
+                For (x, Num (1), Var (n), List (
+                    Write (Var (x))))))
         test (input, tree)
     }
 
@@ -78,12 +81,27 @@ class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
         val input = "write x; for x := 1 to n do write x; end write x;"
         val tree =
             Program (List (
-                Write (Var (Id ("x"))),
-                Decl (Id ("x")),
-                For (Id ("x"), Num (1), Var (Id ("n")), List (
-                    Write (Var (Id ("x"))))),
-                Write (Var (Id ("x")))))
+                Write (Var (x)),
+                Decl (x),
+                For (x, Num (1), Var (n), List (
+                    Write (Var (x)))),
+                Write (Var (x))))
         test (input, tree)
     }
 
+    /**
+     * Simple test of transforming nested statements.
+     */
+    def testForDeclNested {
+        val input = "for x := 1 to n do for y := 0 to x do write y; end end"
+        val tree =
+            Program (List (
+                Decl (x),
+                For (x, Num (1), Var (n), List (
+                     Decl (y),
+                     For (y, Num (0), Var (x), List (
+                         Write (Var (y))))))))
+        test (input, tree)
+    }
+    
 }

@@ -29,6 +29,9 @@ class TIL1_1Tests extends TestCase with JUnit3Suite with Checkers {
     
     import AST._
     import TIL1_1Main._
+
+    private val n = Id ("n")
+    private val f = Id ("f")
             
     /**
      * Make sure that the Factorial program parses to what we expect.
@@ -48,21 +51,23 @@ write n;
 write " is ";
 write fact;
 write "\n";"""
+        val x = Id ("x")
+        val fact = Id ("fact")
         val tree =
             Program (
                 List (
-                    Decl (Id ("n")),
-                    Read (Id ("n")),
-                    Decl (Id ("x")),
-                    Decl (Id ("fact")),
-                    Assign (Id ("fact"), Num (1)),
-                    For (Id ("x"), Num (1), Var (Id ("n")),
+                    Decl (n),
+                    Read (n),
+                    Decl (x),
+                    Decl (fact),
+                    Assign (fact, Num (1)),
+                    For (x, Num (1), Var (n),
                         List (
-                            Assign (Id ("fact"), Mul (Var (Id ("x")), Var (Id ("fact")))))),
+                            Assign (fact, Mul (Var (x), Var (fact))))),
                     Write (Str ("factorial of ")),
-                    Write (Var (Id ("n"))),
+                    Write (Var (n)),
                     Write (Str (" is ")),
-                    Write (Var (Id ("fact"))),
+                    Write (Var (fact)),
                     Write (Str ("\\n"))))
         test (input, tree)
     }
@@ -85,19 +90,19 @@ end"""
         val tree =
             Program (
                 List (
-                    Decl (Id ("n")),
+                    Decl (n),
                     Write (Str ("Input n please")),
-                    Read (Id ("n")),
+                    Read (n),
                     Write (Str ("The factors of n are")),
-                    Decl (Id ("f")),
-                    Assign (Id ("f"), Num (2)),
-                    While (Ne (Var (Id ("n")), Num (1)),
+                    Decl (f),
+                    Assign (f, Num (2)),
+                    While (Ne (Var (n), Num (1)),
                         List (
-                            While (Eq (Mul (Div (Var (Id ("n")), Var (Id ("f"))), Var (Id ("f"))), Var (Id ("n"))),
+                            While (Eq (Mul (Div (Var (n), Var (f)), Var (f)), Var (n)),
                                 List (
-                                    Write (Var (Id ("f"))),
-                                    Assign (Id ("n"), Div (Var (Id ("n")), Var (Id ("f")))))),
-                            Assign (Id ("f"), Add (Var (Id ("f")), Num (1)))))))
+                                    Write (Var (f)),
+                                    Assign (n, Div (Var (n), Var (f))))),
+                            Assign (f, Add (Var (f), Num (1)))))))
         test (input, tree)
     }
     
@@ -109,13 +114,15 @@ for i := 1 to 9 do
     end
 end
 """
+        val i = Id ("i")
+        val j = Id ("j")
         val tree =
             Program (
                 List (
-                    For (Id ("i"), Num (1), Num (9),
+                    For (i, Num (1), Num (9),
                         List (
-                            For (Id ("j"), Num (1), Num (10),
-                                List (Write (Mul (Var (Id ("i")), Var (Id ("j"))))))))))
+                            For (j, Num (1), Num (10),
+                                List (Write (Mul (Var (i), Var (j)))))))))
         test (input, tree)
     }
 

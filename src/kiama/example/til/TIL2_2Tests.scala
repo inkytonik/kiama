@@ -20,25 +20,33 @@
                                 
 package kiama.example.til
 
-import kiama.rewriting.Rewriter
+import junit.framework.TestCase
+import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.prop.Checkers 
 
-/**
- * Rewrite TILs for loops that automatically declare the control variable
- * adding an explicit declaration of the variable.
- */
-trait TIL2_1 extends TIL1_1 with RewritingMain {
-        
-    import AST._
-
-    override def rewrite (ast : Root) : Root =
-        rewrite (declareforvars) (ast)
-        
-    val declareforvars =
-        everywherebu (rule {
-            case (s @ For (Id (i), f, t, b)) :: ss =>
-                Decl (Id (i)) :: s :: ss
-        })
+class TIL2_2Tests extends TestCase with JUnit3Suite with Checkers {
     
-}
+    import AST._
+    import TIL2_2Main._
+            
+    /**
+     * Simple test of transforming a singleton statement.
+     */
+    def testForToWhileSingle {
+        val input = "for x := 1 to n do write x; end"
+        val x = Id ("x")
+        val upperx = Id ("Upperx")
+        val tree =
+            Program (List (
+                Decl (x),
+                Assign (x, Num (1)),
+                Decl (upperx),
+                Assign (upperx, Add (Var (Id ("n")), Num (1))),
+                While (Sub (Var (x), Var (upperx)),
+                    List (
+                        Write (Var (x)),
+                        Assign (x, Add (Var (x), Num (1)))))))
+        test (input, tree)
+    }
 
-object TIL2_1Main extends TIL2_1
+}
