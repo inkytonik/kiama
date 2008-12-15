@@ -42,10 +42,36 @@ class TIL2_2Tests extends TestCase with JUnit3Suite with Checkers {
                 Assign (x, Num (1)),
                 Decl (upperx),
                 Assign (upperx, Add (Var (Id ("n")), Num (1))),
-                While (Sub (Var (x), Var (upperx)),
-                    List (
-                        Write (Var (x)),
-                        Assign (x, Add (Var (x), Num (1)))))))
+                While (Sub (Var (x), Var (upperx)), List (
+                    Write (Var (x)),
+                    Assign (x, Add (Var (x), Num (1)))))))
+        test (input, tree)
+    }
+    
+    /**
+     * Simple test of transforming nested statements.
+     */
+    def testForToWhileNested {
+        val input = "for i := 1 to 9 do for j := 1 to 10 do write i*j; end end"
+        val i = Id ("i")
+        val upperi = Id ("Upperi")
+        val j = Id ("j")
+        val upperj = Id ("Upperj")
+        val tree =
+            Program (List (
+                Decl (i),
+                Assign (i, Num (1)),
+                Decl (upperi),
+                Assign (upperi, Add (Num (9), Num (1))),
+                While (Sub (Var (i), Var (upperi)), List (
+                    Decl (j),
+                    Assign (j, Num (1)),
+                    Decl (upperj),
+                    Assign (upperj, Add (Num (10), Num (1))),
+                    While (Sub (Var (j), Var (upperj)), List (
+                        Write (Mul (Var (i), Var (j))),
+                        Assign (j, Add (Var (j), Num (1))))),
+                    Assign (i, Add (Var (i), Num (1)))))))
         test (input, tree)
     }
 

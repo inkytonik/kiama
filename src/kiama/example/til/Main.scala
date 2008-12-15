@@ -64,7 +64,7 @@ trait Main {
     def test[T] (str : String, result : T) {
         val r = process (new CharArrayReader (str.toArray))
         if (r != result)
-            fail (r.toString)
+            fail ("got : " + r.toString + ", expected : " + result)
     }
 
 }
