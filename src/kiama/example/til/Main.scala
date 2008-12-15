@@ -97,29 +97,29 @@ trait ParsingMain extends Main with CharPackratParsers {
 }
 
 /**
- * Standard main program for TIL chairmarks that parse and rewrite.
+ * Standard main program for TIL chairmarks that parse and transform.
  */
-trait RewritingMain extends ParsingMain with Rewriter {    
+trait TransformingMain extends ParsingMain with Rewriter {    
 
     /**
      * The root type of the AST being processed. Needs to be sub-type
-     * of Term so that we can rewrite it.
+     * of Term so that we can transform it using rewriting.
      */
     type Root <: Term
     
     /**
       * Process the file given by the argument reader by parsing it,
-      * rewriting it and returning the resulting AST.
+      * transforming it and returning the resulting AST.
       */
     override def process (reader : Reader) : Any =
         parseAll (parse, reader) match {
-            case Success (p, _) => rewrite (p)
+            case Success (p, _) => transform (p)
             case f : Failure    => f
         }        
         
     /**
-     * Rewrite a single AST.
+     * Transform a single AST.
      */
-    def rewrite (ast : Root) : Root
+    def transform (ast : Root) : Root
         
 }

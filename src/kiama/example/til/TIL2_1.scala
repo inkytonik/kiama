@@ -26,11 +26,11 @@ import kiama.rewriting.Rewriter
  * Rewrite TILs for loops that automatically declare the control variable
  * adding an explicit declaration of the variable.
  */
-trait TIL2_1 extends TIL1_1 with RewritingMain {
+trait TIL2_1 extends TIL1_1 with TransformingMain {
         
     import AST._
 
-    override def rewrite (ast : Root) : Root =
+    override def transform (ast : Root) : Root =
         rewrite (declareforvars) (ast)
         
     val declareforvars =
