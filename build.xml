@@ -8,7 +8,7 @@
   <property name="scala.lib" value="${scala.home}/lib/scala-library.jar"/>
 
   <property name="scalacheck.lib" value="lib/ScalaCheck-1.5.jar"/>
-  <property name="scalatest.lib" value="lib/scalatest-0.9.3-2.7.2-final.jar"/>
+  <property name="scalatest.lib" value="lib/scalatest-0.9.4.jar"/>
   <property name="junit.lib" value="lib/junit-4.5.jar"/>
 
   <path id="scala.classpath">
@@ -57,7 +57,7 @@
     <scalac addParams="-unchecked -deprecation -Yinline -Yclosure-elim" srcdir="src" destdir="bin" classpathref="kiama.classpath"/>
   </target>
 	
-  <target name="scalatest" depends="build">
+  <target name="test" depends="build">
     <scalatest>
       <runpath>
         <pathelement location="bin"/>
@@ -67,7 +67,7 @@
   	</scalatest>
   </target>	
  
-  <target name="scalatestone" depends="build">
+  <target name="testone" depends="build">
     <scalatest>
       <runpath>
         <pathelement location="bin"/>
