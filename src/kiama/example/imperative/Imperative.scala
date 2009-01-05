@@ -173,7 +173,7 @@ object AST {
     /**
      * Statements.
      */
-    abstract case class Stmt extends PrettyPrintable {
+    abstract case class Stmt () extends PrettyPrintable {
 
         /**
          * The set of all variable references in the statement.
@@ -185,7 +185,7 @@ object AST {
     /**
      * Empty statements.
      */
-    case class Null extends Stmt {
+    case class Null () extends Stmt {
         def pretty (o : StringBuilder) = o.append (";\n")
     }
     
