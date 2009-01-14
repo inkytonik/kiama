@@ -35,7 +35,7 @@ package kiama.parsing
  * library, and through it on various versions of parser combinator
  * libraries for Haskell.
  */
-trait Parsers {
+abstract trait Parsers {
     
     import scala.util.parsing.input._
     
@@ -238,7 +238,7 @@ trait Parsers {
          * separated by something that sep parses.  At the moment, there
          * is no way to get at the results of sep.
          */
-        def *[U] (sep: => Parser[U]) : Parser[List[T]] =
+        def *[U] (sep : => Parser[U]) : Parser[List[T]] =
              repsep (p, sep)
 
         /**
@@ -247,12 +247,8 @@ trait Parsers {
          * list.  This parser is right recursive to avoid infinite
          * recursion.
          */
-        def + : Parser[List[T]] = {
-            def q : Parser[List[T]] =
-                (p ~ q) ^^ { case t ~ ts => t :: ts } |
-                p ^^ (t => List (t))
-            q
-        }
+        def + : Parser[List[T]] =
+            rep1 (p)
         
         /**
          * Construct a parser that parses one or more occurrences of
@@ -260,7 +256,7 @@ trait Parsers {
          * separated by something that sep parses.  At the moment, there
          * is no way to get at the results of sep.
          */
-        def +[U] (sep: => Parser[U]) : Parser[List[T]] =
+        def +[U] (sep : => Parser[U]) : Parser[List[T]] =
             rep1sep (p, sep)
 
         /**
@@ -428,7 +424,7 @@ trait Parsers {
      * by something  that sep parses.  At the moment, there is no
      * way to get at the results of sep.
      */
-    def repsep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[List[T]] =
+    def repsep[T,U] (p : => Parser[T], sep : => Parser[U]) : Parser[List[T]] =
         rep1sep (p, sep) | success (Nil)
 
     /**
@@ -437,7 +433,7 @@ trait Parsers {
      * by something that sep parses.  At the moment, there is no
      * way to get at the results of sep.
      */
-    def rep1sep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[List[T]] =
+    def rep1sep[T,U] (p : => Parser[T], sep : => Parser[U]) : Parser[List[T]] =
         (p ~ ((sep ~> rep1sep (p, sep)) | success (Nil))) ^^
             { case t ~ ts => t :: ts }
 
@@ -844,4 +840,3 @@ trait CharParsers extends Parsers {
  * Packrat parsers that operate on character input.
  */
 trait CharPackratParsers extends PackratParsers with CharParsers
-
