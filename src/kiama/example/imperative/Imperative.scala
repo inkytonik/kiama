@@ -20,6 +20,9 @@
                                 
 package kiama.example.imperative
 
+import kiama.util.GeneratingREPL
+import kiama.util.ParsingREPL
+
 /**
  * A simple imperative language abstract syntax designed for testing.
  */
@@ -383,30 +386,30 @@ trait Generator {
 trait TestBase extends Generator with Parser with PrettyPrinter
 
 /**
- * Run this to print test cases for the imperative langauge.
+ * A read-eval-print loop for parsing imperative programs and printing thei
+ * abstract synax trees.
  */
-object Imperative extends Generator with PrettyPrinter {
+object Imperative extends ParsingREPL[AST.Stmt] with Parser {
 
-    import org.scalacheck._
-    import AST._
+    override def setup { println ("Enter imperative language programs for parsing.") }
+    override def prompt { print ("imperative> ") }
     
-    /**
-     * Print n test cases where n is specified by the first command-line
-     * argument (defaults to five).
-     */
-    def main (args : Array[String]) = {
-        var count = 0
-        args.length match {
-            case 0 => count = 5
-            case 1 => count = args(0).toInt
-            case _ => println ("usage: Imperative [number]"); exit (1)
-        }
-        val genStmt = Arbitrary.arbitrary[Stmt]
-        for (i <- 1 to count) {
-            genStmt (Gen.defaultParams) match {
-                case Some (s) => println ("testcase " + i + ": " + s + "\n" + pretty (s))
-                case None     => println ("no testcases")
-            }
-        }
+    def process (s : AST.Stmt) {
+        println (s)
     }
+    
+}
+
+/**
+ * A read-eval-print loop for generating random imperative statements.
+ */
+object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator with PrettyPrinter {
+    
+    def generator = arbStmt
+    
+    override def process (s : AST.Stmt) {
+        println (s)
+        println (pretty (s))
+    }    
+
 }

@@ -21,6 +21,8 @@
 package kiama.example.lambda
 
 import kiama.rewriting.Rewriter
+import kiama.util.GeneratingREPL
+import kiama.util.ParsingREPL
 
 /**
  * A simple lambda calculus.
@@ -137,14 +139,14 @@ trait Generator {
 
 /**
  * Basis for tests using the lambda calculus language.  Includes access to the
- * parser and evaluator.
+ * parser, generator and evaluator.
  */
 trait TestBase extends Parser with Generator with Evaluator
 
 /**
  * Lambda calculus evaluator following Rose's \xgc, ie with explicit
  * substitutions and garbage collection.  See "Explicit Substitution
- * - Tutorial and Survey, Kristoffer H. Rose,BRICS LS-96-3, October
+ * - Tutorial and Survey, Kristoffer H. Rose, BRICS LS-96-3, October
  * 1996.
  */
 trait Evaluator extends Rewriter {
@@ -191,65 +193,27 @@ trait Evaluator extends Rewriter {
 }
 
 /**
- * A read-eval-print loop for lambda calculus expressions.
+ * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-object LambdaREPL extends Application with Parser with Evaluator {
-  
+object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
+
     import AST._
-    import scala.util.parsing.input.CharArrayReader
-    
-    try {
-        while (true) {
-	        print ("> ")
-	        val s = readLine ()
-	        if (s != null) {
-	            val in = new CharArrayReader (s.toArray) 
-	            parse (in) match {
-	                case Success (e, in) if in.atEnd =>
-	                    normal (e) match {
-	                        case Some (r) => println (r)
-	                        case None     => println ("reduction failed")
-	                    }
-	                case Success (_, in) =>
-	                    println ("extraneous input at " + in.pos)
-	                case f @ Failure (_, _) =>
-	                    println (f) 
-	            }
-	        }
-	    }
-    } catch {
-        case e : java.io.EOFException =>
-            ;
+
+    override def setup { println ("Enter lambda calculus expressions for evaluation.") }
+    override def prompt { print ("lambda> ") }
+
+    def process (e : Exp) {
+        normal (e) match {
+            case Some (r) => println (r)
+            case None     => println ("reduction failed")
+        }
     }
     
 }
 
 /**
- * Run this to print test cases for the lambda calculus langauge.
+ * A read-eval-print loop for generating random expressions.
  */
-object Lambda extends Generator {
-
-    import org.scalacheck._
-    import AST._
-    
-    /**
-     * Print n test cases where n is specified by the first command-line
-     * argument (defaults to five).
-     */
-    def main (args : Array[String]) = {
-        var count = 0
-        args.length match {
-            case 0 => count = 5
-            case 1 => count = args(0).toInt
-            case _ => println ("usage: Lambda [number]"); exit (1)
-        }
-        val genExp = Arbitrary.arbitrary[Exp]
-        for (i <- 1 to count) {
-            genExp (Gen.defaultParams) match {
-                case Some (s) => println ("testcase " + i + ": " + s)
-                case None     => println ("no testcases")
-            }
-        }
-    }
+object LambdaGen extends GeneratingREPL[AST.Exp] with Generator {
+    def generator = arbExp
 }
-
