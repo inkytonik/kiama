@@ -101,7 +101,11 @@ scalatest  run all of the tests using the ScalaTest GUI
 
 5. Acknowledgements
 
-Contributors to the Kiama code are: Tony Sloane and Lennart Kats.
+Contributors to the Kiama code have been:
+
+Tony Sloane
+Lennart Kats (particularly in attribution)
+Ben Mockler (the Oberon-0 example)
 
 Kiama is currently concentrating on incorporating existing language processing
 formalisms, so credit goes to the original developers of those formalisms.  See
