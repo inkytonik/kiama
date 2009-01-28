@@ -52,22 +52,22 @@ class JVMI (code : Code) extends Machine ("JVMI") {
     /**
      * Program counter.
      */
-    var pc = State[Pc] ("pc")
+    val pc = State[Pc] ("pc")
 
     /**
      * Register file.
      */
-    var reg = State[Map[RegNo, Word]] ("reg")
+    val reg = State[Map[RegNo, Word]] ("reg")
 
     /**
      * Operand stack.
      */
-    var opd = State[JList[Word]] ("opd")
+    val opd = State[JList[Word]] ("opd")
     
     /**
      * Halt flag.  Undefined until the machine is to stop executing.
      */
-    var halt = State[String] ("halt")
+    val halt = State[String] ("halt")
     
     /**
      * Initialise the state.
