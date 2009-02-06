@@ -22,6 +22,8 @@
  
 package kiama.example.oberon0.compiler
 
+import kiama.parsing.CharPackratParsers
+
 /**
  * Parse Oberon-0 to an abstract syntax tree.
  */
@@ -33,13 +35,13 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         phrase (moduledecl)
         
     // Declarations
-        
+
     lazy val moduledecl : Parser[ModuleDecl] =
         "MODULE" ~> (ident <~ ";") ~ declarations ~
             (("BEGIN" ~> statementSequence)?) ~ ("END" ~> ident) <~ "." ^^
                 { case id1 ~ decs ~ opstseq ~ id2 =>
-                     ModuleDecl (id1, decs, optionalListToList (opstseq), id2) }
-              
+                     ModuleDecl (id1, decs, optionalListToList (opstseq), id2, ModuleType()) }
+
     lazy val declarations : Parser[List[Declaration]] =
         (constdecls?) ~ (typedecls?) ~ (vardecls?) ~ procdecls  ^^
              { case c ~ t ~ v ~ p =>
@@ -75,57 +77,59 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     lazy val procdecls : Parser[List[ProcDecl]] =
         (procdecl <~ ";")*
-                                                      
+
     lazy val procdecl : Parser[ProcDecl] =
         ("PROCEDURE" ~> ident) ~ (formalParameters?) ~ (";" ~> declarations) ~
             (("BEGIN" ~> statementSequence)?) ~ ("END" ~> ident) ^^
                 { case id1 ~ opfps ~ decs ~opstseq ~ id2 =>
                      ProcDecl (id1, optionalListToList (opfps), decs,
-                               optionalListToList (opstseq), id2 ) }
+                               optionalListToList (opstseq), id2, ProcType(optionalListToList (opfps))) }
 
-    // Types           
-    
+    // Types
+
     lazy val type1 : Parser[Type] =
         ident ^^ NamedType |
         arrayType |
-        recordType
+        recordType |
+        "INTEGER" ^^ { case _ => IntegerType }
 
     lazy val identList : Parser[List[Ident]] =
-        rep1sep (ident, ",")
-    
+        repsep (ident, ",")
+
     lazy val arrayType : Parser[ArrayType] =
         (("ARRAY" ~> expression) <~ "OF") ~ type1 ^^
             { case e ~ tp => ArrayType (e, tp) }
-    
-    lazy val fieldList1 : Parser[List[FieldDecl]] =
-        (identList <~ ":") ~ type1 ^^
-            { case lst ~ tp => lst.map (id => FieldDecl (id, tp)) }
 
     lazy val fieldList : Parser[List[FieldDecl]] =
-        (fieldList1?) ^^ optionalListToList[FieldDecl]
+        (identList <~ ":") ~ type1 ^^
+            { case lst ~ tp => lst.map (id => FieldDecl (id, tp)) }
 
     lazy val recordType : Parser[RecordType] =
         "RECORD" ~> repsep (fieldList, ";") <~ "END" ^^
             (lst => RecordType (lst.flatten))
-    
+
     // Statements
-    
+
     lazy val statementSequence : Parser[List[Statement]] =
-        repsep (statement, ";") ^^ listOfOptionsToList[Statement]
-        
-    lazy val statement : Parser[Option[Statement]] = 
-        (assignment | procedureCall | ifStatement | whileStatement)?
-        
+        repsep (statement, ";")
+
+    lazy val statement : Parser[Statement] = 
+        assignment |
+        procedureCall |
+        ifStatement |
+        whileStatement
+
     lazy val assignment : Parser[Assignment] =
         (desig <~ ":=") ~ expression ^^ { case d ~ e => Assignment (d, e) }
 
     lazy val actualParameters : Parser[List[Exp]] =
         "(" ~> repsep (expression, ",") <~ ")"
 
-    lazy val procedureCall : Parser[ProcedureCall] =
+    lazy val procedureCall : Parser[Statement] =
+        "Write(" ~> expression <~ ")" ^^ WriteProcCall |
         desig ~ actualParameters ^^ { case d ~ aps => ProcedureCall (d, aps) } |
         desig ^^ (d => ProcedureCall (d, Nil))
-    
+
     lazy val ifStatement : Parser[IfStatement] =
         ("IF" ~> expression) ~ ("THEN" ~> statementSequence) <~ "END" ^^
             { case con ~ thnss => IfStatement (con, thnss, Nil) } |
@@ -166,7 +170,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         (term <~ "MOD") ~ factor ^^ { case t ~ f => Mod (t, f) } |
         (term <~ "&") ~ factor ^^ { case t ~ f => And (t, f) } |
         factor
-    
+
     lazy val factor : MemoParser[Exp] =
         desig |
         number |
@@ -174,41 +178,75 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         "~" ~> factor ^^ Not |
         "+" ~> factor ^^ Pos |
         "-" ~> factor ^^ Neg
-    
+
     lazy val desig : MemoParser[Exp] =
         (desig <~ "[") ~ (expression <~ "]") ^^ { case d ~ e => ArrayDesig (d, e) } |
         (desig <~ ".") ~ ident ^^ { case d ~ id => FieldDesig (d, id) } |
         ident
-    
-    lazy val number : Parser[Number] =
-        integer ^^ Number
-        
+
+    lazy val number : Parser[Literal] =
+        integer
+
     lazy val keyword : Parser[String] =
         "ARRAY" | "BEGIN" | "CONST" | "ELSIF" | "ELSE" | "END" | "IF" |
-        "MODULE" | "OF" | "PROCEDURE" | "RECORD" | "THEN" | "TYPE" |
-        "VAR" | "WHILE"
+        "INTEGER" | "MODULE" | "OF" | "PROCEDURE" | "RECORD" | "THEN" |
+        "TYPE" | "VAR" | "WHILE"
     
-    lazy val ident : Parser[Ident] =
+    lazy val ident : MemoParser[Ident] =
         !keyword ~> token (letter ~ (letterOrDigit*)) ^^
         { case c ~ cs => Ident (c + cs.mkString) }
     
-    lazy val integer : Parser[Int] =
-        token (digit+) ^^ (l => l.mkString.toInt)  
-    
-    /**
-     * Convert an option list into either the list (if present) or nil if None.
-     */
-    def optionalListToList[T] (op: Option[List[T]]) : List[T] =
-        op.getOrElse (Nil)
+    lazy val integer : Parser[IntegerLiteral] =
+        token (digit+) ^^ (l => IntegerLiteral(l.mkString.toInt))  
+
+    lazy val comment =
+        "(*" ~> ((not ("*)") ~> any)*) <~ "*)"
+
+    override lazy val layout =
+        ((whitespace | comment)*) ^^^ List()
 
     /**
-     * Convert a list of option values into a list of all of the non-None values.
+     * Convert an option list into either the list (if present) or Nil if None.
      */
-    def listOfOptionsToList[T] (lst: List[Option[T]]) : List[T] =
-        lst match {
-            case Some (x) :: xs => x :: listOfOptionsToList (xs)
-            case None :: xs     => listOfOptionsToList (xs)
-            case Nil            => Nil
+    def optionalListToList[T] (op: Option[List[T]]) : List[T] =
+        op.getOrElse (Nil)    
+}
+
+// Object Compile
+object Compile extends Parser
+{
+    import AST._
+    import ErrorCheck._
+    import java.io.FileReader
+
+    def main (args: Array[String])
+    {
+        println ("Input : " + args(0))
+
+        // PARSING
+        val result : ParseResult[ModuleDecl] = parseAll(moduledecl, new FileReader(args(0)))
+
+        result match {
+            case Success (mod, in) => {
+
+                val buffer = new StringBuilder
+                mod.pretty(buffer, 0)
+                println ("Successful parse:")
+                println (buffer.toString)
+                println ("Position = " + in.pos)
+
+                // SEMANTIC ANALYSIS
+                val errs : List[String] = mod->collectErrors
+
+                if(errs.size == 0)
+                    println ("No semantic errors")
+                else {
+                    println ("Semantic errors occurred:")
+                    errs.foreach (err => println (err))
+                }
+            }
+
+            case f @ Failure (_, _) => println (f) 
         }
-    
+    }
 }
