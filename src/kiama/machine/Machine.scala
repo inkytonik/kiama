@@ -117,7 +117,7 @@ abstract class Machine (val name : String) {
     /**
      * The updates for the current step of execution of this machine.
      */
-    var updates : List[Update[_]] = _
+    private var updates : List[Update[_]] = _
     
     /**
      * Initialise the state of this machine.  This routine is called
