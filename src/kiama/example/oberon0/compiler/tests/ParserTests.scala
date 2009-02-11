@@ -79,8 +79,8 @@ class ParserTests extends TestCase with JUnit3Suite with Checkers
         expect (ident, "var786", Ident ("var786"))
     }
 
-    def testNumber () {
-        expect (number, "5", Number (5))
+    def testIntegerLiteral () {
+        expect (number, "5", IntegerLiteral (5))
         assertTrue (isFail (number (input ("x"))))
     }
 
@@ -88,11 +88,11 @@ class ParserTests extends TestCase with JUnit3Suite with Checkers
      * Test parsing of expressions.
      */
     def testParseExpressions () {
-        expect (expression, "1", Number (1))
-        expect (expression, "1+2", Plus (Number (1), Number (2)))
-        expect (expression, "1+2+3", Plus (Plus (Number (1), Number (2)), Number (3)))
-        expect (expression, "1+2*3", Plus (Number(1), Mult (Number (2), Number (3))))
-        expect (expression, "(1+2)*3", Mult (Plus (Number (1), Number (2)), Number (3)))
+        expect (expression, "1", IntegerLiteral (1))
+        expect (expression, "1+2", Plus (IntegerLiteral (1), IntegerLiteral (2)))
+        expect (expression, "1+2+3", Plus (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
+        expect (expression, "1+2*3", Plus (IntegerLiteral(1), Mult (IntegerLiteral (2), IntegerLiteral (3))))
+        expect (expression, "(1+2)*3", Mult (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
     }
 
     /**
@@ -106,7 +106,7 @@ class ParserTests extends TestCase with JUnit3Suite with Checkers
      * Test parsing of assignment statements.
      */
     def testParseAssignStmts () {
-        expect (assignment, "a := 5", Assignment (Ident ("a"), Number (5)))
+        expect (assignment, "a := 5", Assignment (Ident ("a"), IntegerLiteral (5)))
         expect (assignment, "a := b", Assignment (Ident ("a"), Ident ("b")))
     }
 
@@ -116,8 +116,8 @@ class ParserTests extends TestCase with JUnit3Suite with Checkers
     def testParseSequences() {
         expect(statementSequence, "", Nil)
         expect(statementSequence, "v := 1; v := 2",
-            List (Assignment (Ident ("v"), Number (1)),
-                  Assignment (Ident ("v"), Number (2))))
+            List (Assignment (Ident ("v"), IntegerLiteral (1)),
+                  Assignment (Ident ("v"), IntegerLiteral (2))))
     }
 
     /**
@@ -126,7 +126,7 @@ class ParserTests extends TestCase with JUnit3Suite with Checkers
     def testParseWhilestmts() {
         expect (whileStatement, "WHILE x DO x:= 1 END",
                 WhileStatement (Ident ("x"),
-                    List (Assignment (Ident ("x"), Number (1)))))
+                    List (Assignment (Ident ("x"), IntegerLiteral (1)))))
     }
 
 }
