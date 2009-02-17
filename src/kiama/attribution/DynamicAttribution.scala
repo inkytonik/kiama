@@ -1,7 +1,34 @@
+/*
+ * This file is part of Kiama.
+ *
+ * Copyright (C) 2008 Anthony M Sloane, Macquarie University.
+ *
+ * Kiama is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * Kiama is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */                         
+
 package kiama.attribution
 
 object DynamicAttribution extends DynamicAttribution
 
+/**
+ * Support for dynamic attribution of syntax trees.
+ * Dynamic attributes definitions can be extended at runtime.
+ *
+ * @author Lennart Kats <lennart add lclnet.nl>
+ * @author Tony Sloane <Anthony.Sloane add mq.edu.au>
+ */
 trait DynamicAttribution extends AttributionBase {
 
     import scala.collection.mutable._
@@ -45,6 +72,13 @@ trait DynamicAttribution extends AttributionBase {
             case f => throw new UnsupportedOperationException("Cannot only add partial functions to existing attributes")
         }
 
+    /**
+     * Defines a new scope in which a dynamic attribution module is active.
+     * At the end of the scope, the module is unloaded again.
+     *
+     * @param attributeInitializer  A module defining dynamic attributes.
+     * @param block                 A block to evaluate.
+     */
     def using[T] (attributeInitializer : => AnyRef) (block : => T) = {
         try {
             use (attributeInitializer)
@@ -54,6 +88,10 @@ trait DynamicAttribution extends AttributionBase {
         }
     }
     
+    /**
+     * Activates a module that defines dynamic attributes,
+     * allowing it to be deactivated again using {@link #endUse}.
+     */
     def use[T] (attributeInitializer : => AnyRef) {
         val prevRecordedChanges = currentRecordedChanges
         try {
@@ -74,6 +112,10 @@ trait DynamicAttribution extends AttributionBase {
             attr += function
     }
     
+    /**
+     * Dectivates a module that defines dynamic attributes,
+     * activated using {@link #use}.
+     */
     def endUse (attributeInitializer : AnyRef) {
         for ((attr, function) <- allRecordedChanges (attributeInitializer))
             attr -= function
