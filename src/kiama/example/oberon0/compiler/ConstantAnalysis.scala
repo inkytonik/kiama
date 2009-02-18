@@ -32,20 +32,16 @@ object ConstantAnalysis {
         attr {
             case il : IntegerLiteral => true
 
-            case Pos (e) => e->isConstant
+            // Unary
+            case Not (e) => e->isConstant
 
-            case Neg (e) => e->isConstant
+            case ue : UnaryNumExp => (ue.getExp)->isConstant
+            
+            // Binary
+            case be : BinaryNumExp => (be.getLeft)->isConstant && (be.getRight)->isConstant
+            case be : BinaryBoolExp => (be.getLeft)->isConstant && (be.getRight)->isConstant
 
-            case Mult (l, r) => (l->isConstant) && (r->isConstant)
-
-            case Div (l, r) => (l->isConstant) && (r->isConstant)
-
-            case Mod (l, r) => (l->isConstant) && (r->isConstant)
-
-            case Plus (l, r) => (l->isConstant) && (r->isConstant)
-
-            case Minus (l, r) => (l->isConstant) && (r->isConstant)
-
+            // Other
             case _ => false
         }
 

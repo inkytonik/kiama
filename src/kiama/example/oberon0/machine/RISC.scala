@@ -70,13 +70,14 @@ class RISC (code : Code) extends Machine ("RISC") {
      * Halt flag.  Undefined until the machine is to stop executing.
      */
     val halt = State[String] ("halt")
-    
+
     /**
      * Initialise the machine.
      */
     def init {
         Mem.update (Map ())
         PC.update (0)
+        R (0).update(0)		// BEN MOD
         Z.update (false)
         N.update (false)
         halt.undefine
@@ -120,12 +121,13 @@ class RISC (code : Code) extends Machine ("RISC") {
             case DIVI (a, b, im) => R (a) := R (b) / im
             case MOD (a, b, c)   => R (a) := R (b) % (R (c) : Int)
             case MODI (a, b, im) => R (a) := R (b) % im
-            case CMP (b, c)      => Z := R (b) == R (c)
-                                    N := R (b) < (R (c) : Int)
-            case CMPI (b, im)    => Z := R (b) == im
-                                    N := R (b) < im
+            case CMP (b, c)      => Z := R (b).value == R (c).value             // BEN MOD
+                                    N := R (b).value < (R (c).value : Int)      // BEN MOD
+            case CMPI (b, im)    => Z := R (b).value == im		// BEN MOD
+                                    N := R (b).value < im		// BEN MOD
             case CHKI (a, im)    => if ((R (a) < 0) || (R (a) >= im))
                                         R (a) := 0
+            case _ => ()		// BEN MOD
         }
 
     /**
@@ -141,6 +143,7 @@ class RISC (code : Code) extends Machine ("RISC") {
             case STB (a, b, im) => halt := "STB not implemented"
             case PSH (a, b, im) => Mem := Mem + (((R (b) - im) / 4, R (a)))
                                    R (b) := R (b) - im
+            case _ => ()		// BEN MOD
         }
 
     /**
@@ -148,20 +151,20 @@ class RISC (code : Code) extends Machine ("RISC") {
      */
     def control (instr : Instr) =
         instr match {
-            case BEQ (disp) => if (Z) PC := PC + disp * 4
-            case BNE (disp) => if (!Z) PC := PC + disp * 4
-            case BLT (disp) => if (N) PC := PC + disp  * 4
-            case BGE (disp) => if (!N) PC := PC + disp * 4
-            case BLE (disp) => if (Z || N) PC := PC + disp * 4
-            case BGT (disp) => if (!Z && !N) PC := PC + disp * 4
-            case BR (disp)  => PC := PC + disp * 4
-            case BSR (disp) => PC := PC + disp * 4
-                               R (14) := PC + 4
-            case RET (c)    => PC := R (c)
-                               if (R (c) == 0) halt := "Halt"
-            case _          => PC := PC + 4
+            case b : BEQ if (Z.value) => PC := PC + b.disp
+            case b : BNE if (!Z.value) => PC := PC + b.disp
+            case b : BLT if (N.value) => PC := PC + b.disp
+            case b : BGE if (!N.value) => PC := PC + b.disp
+            case b : BLE if (Z.value || N.value) => PC := PC + b.disp
+            case b : BGT if (!Z.value && !N.value) => PC := PC + b.disp
+            case b : BR => PC := PC + b.disp
+            case b : BSR => PC := PC + b.disp
+                               R (14) := PC
+            case RET (c) => PC := R (c)
+                            if (R (c).value == 0) halt := "Halt"
+            case _  => PC := PC + 1
         }
-        
+
     /**
      * Execute input/output instructions.
      */
@@ -171,6 +174,26 @@ class RISC (code : Code) extends Machine ("RISC") {
             case WRD (c) => print (R (c))
             case WRH (c) => print (R (c) toHexString)
             case WRL     => println
+            case _ => ()	// BEN MOD
         }    
 
+}
+
+object MachineTest {
+    def main (args: Array[String]) {
+        val mycode = List (
+            ADDI (1, 0, 1),
+            ADDI (2, 0, 0),
+            STW (1, 2, 0),
+            CMPI (1, 5),
+            BGT (4),
+            WRH (1),
+            ADDI (1, 1, 1),
+            BR (-4),
+            RET (0)
+        )
+        val mymachine = new RISC (mycode)
+        mymachine.init
+        mymachine.steps
+    }
 }

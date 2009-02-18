@@ -88,10 +88,10 @@ trait Parser extends kiama.parsing.CharPackratParsers {
     // Types
 
     lazy val type1 : Parser[Type] =
+        "INTEGER" ^^ { case _ => IntegerType } |
         ident ^^ NamedType |
         arrayType |
-        recordType |
-        "INTEGER" ^^ { case _ => IntegerType }
+        recordType
 
     lazy val identList : Parser[List[Ident]] =
         repsep (ident, ",")
@@ -126,7 +126,6 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         "(" ~> repsep (expression, ",") <~ ")"
 
     lazy val procedureCall : Parser[Statement] =
-        "Write(" ~> expression <~ ")" ^^ WriteProcCall |
         desig ~ actualParameters ^^ { case d ~ aps => ProcedureCall (d, aps) } |
         desig ^^ (d => ProcedureCall (d, Nil))
 
@@ -189,13 +188,13 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     lazy val keyword : Parser[String] =
         "ARRAY" | "BEGIN" | "CONST" | "ELSIF" | "ELSE" | "END" | "IF" |
-        "INTEGER" | "MODULE" | "OF" | "PROCEDURE" | "RECORD" | "THEN" |
-        "TYPE" | "VAR" | "WHILE"
-    
+        "MODULE" | "OF" | "PROCEDURE" | "RECORD" | "THEN" | "TYPE" | "VAR" |
+        "WHILE"
+
     lazy val ident : MemoParser[Ident] =
         !keyword ~> token (letter ~ (letterOrDigit*)) ^^
         { case c ~ cs => Ident (c + cs.mkString) }
-    
+
     lazy val integer : Parser[IntegerLiteral] =
         token (digit+) ^^ (l => IntegerLiteral(l.mkString.toInt))  
 
@@ -212,41 +211,4 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         op.getOrElse (Nil)    
 }
 
-// Object Compile
-object Compile extends Parser
-{
-    import AST._
-    import ErrorCheck._
-    import java.io.FileReader
 
-    def main (args: Array[String])
-    {
-        println ("Input : " + args(0))
-
-        // PARSING
-        val result : ParseResult[ModuleDecl] = parseAll(moduledecl, new FileReader(args(0)))
-
-        result match {
-            case Success (mod, in) => {
-
-                val buffer = new StringBuilder
-                mod.pretty(buffer, 0)
-                println ("Successful parse:")
-                println (buffer.toString)
-                println ("Position = " + in.pos)
-
-                // SEMANTIC ANALYSIS
-                val errs : List[String] = mod->collectErrors
-
-                if(errs.size == 0)
-                    println ("No semantic errors")
-                else {
-                    println ("Semantic errors occurred:")
-                    errs.foreach (err => println (err))
-                }
-            }
-
-            case f @ Failure (_, _) => println (f) 
-        }
-    }
-}

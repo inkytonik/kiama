@@ -60,11 +60,7 @@ object TypeAnalysis {
 
             case Not (e) if e->objType == BooleanType => BooleanType
 
-            case Pos (e) if e->objType == IntegerType => IntegerType
-
-            case Neg (e) if e->objType == IntegerType => IntegerType
-
-            case Mult (l, r) if (l->objType == IntegerType && r->objType == IntegerType) => IntegerType
+            case ue : UnaryNumExp if (ue.getExp)->objType == IntegerType => IntegerType
 
             case Div (l, r) if (l->objType == IntegerType && r->objType == IntegerType) => {
                 if (r->isConstant && r->intValue == 0)
@@ -73,13 +69,10 @@ object TypeAnalysis {
                     IntegerType
             }
 
-            case Mod (l, r) if (l->objType == IntegerType && r->objType == IntegerType) => IntegerType
+            case be : BinaryNumExp if ((be.getLeft)->objType == IntegerType
+                                       && (be.getRight)->objType == IntegerType) => IntegerType
 
             case And (l, r) if (l->objType == BooleanType && r->objType == BooleanType) => BooleanType
-
-            case Plus (l, r) if (l->objType == IntegerType && r->objType == IntegerType) => IntegerType
-
-            case Minus (l, r) if (l->objType == IntegerType && r->objType == IntegerType) => IntegerType
 
             case Or (l, r) if (l->objType == BooleanType && r->objType == BooleanType) => BooleanType
 
@@ -115,9 +108,15 @@ object TypeAnalysis {
     // Exclude records and arrays (temporarily?)
     val isAssignable : Exp ==> Boolean = 
         attr {
-            case id : Ident if (id->decl).isInstanceOf[VarDecl] => {
-                !((id->objType).isInstanceOf[ArrayType] ||
-                      (id->objType).isInstanceOf[RecordType])
+            case id : Ident => {
+                if ((id->decl).isInstanceOf[VarDecl] || (id->decl).isInstanceOf[RefVarDecl] ) {
+                    if ((id->objType).isInstanceOf[ArrayType] || (id->objType).isInstanceOf[RecordType])
+                        false
+                    else
+                        true
+                }
+                else
+                    false
             }
             case fd : FieldDesig => true
             case ad : ArrayDesig => true
@@ -164,4 +163,26 @@ object TypeAnalysis {
             errs
         }
     }
+
+    // *** Attribute 'byteSize':  Memory size associated with types and declarations
+    val byteSize : Attributable ==> Int = 
+        attr {
+            case dec : Declaration => dec->objType->byteSize
+
+		    case nt : NamedType => nt->objType->byteSize
+
+            case at @ ArrayType (sz, tp) if (sz->objType == IntegerType && sz->isConstant) =>
+		        (sz->intValue) * (tp->objType->byteSize)
+
+		    case RecordType (flds) => {
+		        var sz : Int = 0
+		        for (fld <- flds)
+                    sz += fld->byteSize
+                sz
+		    }
+
+		    case IntegerType => 4
+		    case BooleanType => 4
+		    case _ => -1
+        }
 }

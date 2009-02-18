@@ -74,7 +74,7 @@ object ErrorCheck {
 
                     // Check for assignable expression on LHS of assignment statement
                     case as @ Assignment (desig, _) if !(desig->isAssignable) => {
-		                errs = ("LHS of := is not assignable: " + (desig->objType).toString) :: errs
+		                errs = ("LHS of := is not assignable: " + desig) :: errs
     	            }
 
                     // Check for non-integer size expression in array type declaration
@@ -109,6 +109,7 @@ object ErrorCheck {
                                 if (exp->intValue >= sz->intValue)
                                     errs = ("Out-of-bounds array index expression: " + ad) :: errs
                             }
+                            case _ => errs = ("Error processing: " + ad) :: errs
                         }
     	            }
 

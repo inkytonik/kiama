@@ -30,7 +30,7 @@ import kiama.attribution.Attribution._
 object AST {
 
     import TypeAnalysis._
-  
+
     /**
      * Simple interface for pretty-printing capabilities.
      */
@@ -73,38 +73,68 @@ object AST {
 
     abstract class Exp extends Attributable with PrettyPrintable
 
-    case class Ident (name: String) extends Exp {
-      
-//        override def toString = {
-//          "Ident(" + name + "[objType=" + (this->objType).toString + "])"
-//        }
-    }
-
-    abstract class Literal extends Exp
-    case class IntegerLiteral (num: Int) extends Literal
-    case object TrueLiteral extends Literal
-    case object FalseLiteral extends Literal
-    case object ErrorLiteral extends Literal
-
-    case class Not (e : Exp) extends Exp
-    case class Pos (e : Exp) extends Exp
-    case class Neg (e : Exp) extends Exp
+    case class Ident (name: String) extends Exp
     case class FieldDesig (left : Exp, id : Ident) extends Exp
     case class ArrayDesig (left : Exp, exp : Exp) extends Exp
 
-    case class Mult (l : Exp, r : Exp) extends Exp
-    case class Div (l : Exp, r : Exp) extends Exp
-    case class Mod (l : Exp, r : Exp) extends Exp
-    case class And (l : Exp, r : Exp) extends Exp
-    case class Plus (l : Exp, r : Exp) extends Exp
-    case class Minus (l : Exp, r : Exp) extends Exp
-    case class Or (l : Exp, r : Exp) extends Exp
-    case class Equal (l : Exp, r: Exp) extends Exp
-    case class NotEqual (l : Exp, r: Exp) extends Exp
-    case class LessThan (l : Exp, r: Exp) extends Exp
-    case class LessThanOrEqual (l : Exp, r : Exp) extends Exp
-    case class GreaterThan (l : Exp, r : Exp) extends Exp
-    case class GreaterThanOrEqual (l : Exp, r : Exp) extends Exp
+    abstract class Literal extends Exp
+    case class IntegerLiteral (num: Int) extends Literal
+
+    abstract class UnaryNumExp (e : Exp) extends Exp {
+        def getExp = e
+        val op : Int => Int
+    }
+
+    case class Pos (e : Exp) extends UnaryNumExp (e) {
+        override val op = {x : Int => x}
+    }
+
+    case class Neg (e : Exp) extends UnaryNumExp (e) {
+        override val op = {x : Int => -x}
+    }
+
+    abstract class BinaryNumExp (l : Exp, r : Exp) extends Exp {
+        def getLeft = l
+        def getRight = r
+        val op : (Int, Int) => Int
+    }
+
+    case class Mult (l : Exp, r : Exp) extends BinaryNumExp (l, r) {
+        override val op = {(x : Int, y : Int) => x * y}
+    }
+    
+    case class Div (l : Exp, r : Exp) extends BinaryNumExp (l, r) {
+        override val op = {(x : Int, y : Int) => x / y}
+    }
+
+    case class Mod (l : Exp, r : Exp) extends BinaryNumExp (l, r) {
+        override val op = {(x : Int, y : Int) => x % y}
+    }
+
+    case class Plus (l : Exp, r : Exp) extends BinaryNumExp (l, r) {
+        override val op = {(x : Int, y : Int) => x + y}
+    }
+
+    case class Minus (l : Exp, r : Exp) extends BinaryNumExp (l, r) {
+        override val op = {(x : Int, y : Int) => x - y}
+    }
+
+    case class Not (e : Exp) extends Exp
+    
+    abstract class BinaryBoolExp (l : Exp, r : Exp) extends Exp
+    {
+        def getLeft = l
+        def getRight = r
+    }
+ 
+    case class And (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+    case class Or (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+    case class Equal (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+    case class NotEqual (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+    case class LessThan (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+    case class LessThanOrEqual (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+    case class GreaterThan (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+    case class GreaterThanOrEqual (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
 
     abstract class Statement extends Attributable with PrettyPrintable {
         override def pretty (o : StringBuilder, indent : Int) {
@@ -115,7 +145,6 @@ object AST {
 
     case class Assignment (desig : Exp, exp : Exp) extends Statement
     case class ProcedureCall (desig : Exp, aps : List[Exp]) extends Statement
-    case class WriteProcCall (ap : Exp) extends Statement
     
     case class IfStatement (condexp : Exp, thenstmts : List[Statement], elsestmts: List[Statement]) extends Statement {
         override def pretty (o : StringBuilder, indent : Int) {
@@ -136,6 +165,8 @@ object AST {
 
     abstract class Declaration (id: Ident) extends Attributable with PrettyPrintable {
         def getId = id 
+
+        var byteOffset : Int = _
 
         override def pretty (o : StringBuilder, indent : Int) {
             super.pretty(o, indent)

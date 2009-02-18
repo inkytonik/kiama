@@ -23,6 +23,7 @@
 package kiama.example.oberon0.compiler
 
 import AST._
+import TypeAnalysis._
 
 // class Environment
 class Environment (parent: Environment) {
@@ -36,15 +37,22 @@ class Environment (parent: Environment) {
     }
 
     val decls = new HashMap [String, EnvEntry]
+    var memSize : Int = 0
 
     /**
      * Add new entry to the environment.  Note: if the entry already exists, it is
      * overwritten by the new entry, but with it's 'multiplyDefined' field set to true
      */
-    def addToEnv (nm: String, dec: Declaration) {
+    def addToEnv (nm : String, dec : Declaration) {
 
-        val existingDec: Declaration = findDecl (nm, false)
-        val alreadyDefined: Boolean = !(existingDec.isInstanceOf[UnknownDecl])
+        val alreadyDefined = decls.contains (nm)
+
+        // For objects which require memory, set offset and update memSize
+        if (dec.isInstanceOf[VarDecl] | dec.isInstanceOf[RefVarDecl] | dec.isInstanceOf[FieldDecl])
+        {
+            dec.byteOffset = memSize
+            memSize += dec->objType->byteSize
+        }
 
         decls += (nm -> new EnvEntry(dec, alreadyDefined))
     }
@@ -60,28 +68,23 @@ class Environment (parent: Environment) {
      * Find a declaration in the environment.  If a parent is specified, and 'searchAll'
      * is true, then also search parent environments
      */
-    def findDecl (nm: String, searchAll: Boolean) : Declaration = {
-        try {
+    def findDecl (nm : String, searchAll : Boolean) : Declaration = {
+        if (decls.contains (nm))
             decls(nm).getDec
-        }
-        catch {
-            case e : java.util.NoSuchElementException if (searchAll && (parent != null)) =>
-                parent.findDecl (nm, true)
-
-            case _ => UnknownDecl (Ident (nm))
-        }
+        else if (searchAll && (parent != null))
+            parent.findDecl (nm, true)
+        else
+            UnknownDecl (Ident (nm))
     }
 
     /**
      * Return whether the name is multiply defined in this scope
      */
-    def isMultiplyDefined (nm: String) : Boolean = {
-        try {
+    def isMultiplyDefined (nm : String) : Boolean = {
+        if (decls.contains (nm))
             decls(nm).getMultDef
-        }
-        catch {
-            case _ => false
-        }
+        else
+            false
     }
 
     override def toString = decls.toString
@@ -109,7 +112,10 @@ object NameAnalysis {
                 // Create a global environment (necessary for resolving function calls such
                 // as <ModuleName>.<ProcName>)
                 var globalEnv = new Environment (null)
-                globalEnv.addToEnv (id.name, md)
+//                globalEnv.addToEnv (id.name, md)
+                globalEnv.addToEnv ("Write", ProcDecl (Ident ("Write"), List (VarDecl ( Ident ("exp"), IntegerType) ), null, null, Ident ("Write"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
+                globalEnv.addToEnv ("WriteLn", ProcDecl (Ident ("Write"), List (VarDecl ( Ident ("exp"), IntegerType) ), null, null, Ident ("WriteLn"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
+                globalEnv.addToEnv ("Read", ProcDecl (Ident ("Write"), List (RefVarDecl ( Ident ("var"), IntegerType) ), null, null, Ident ("Read"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
 
                 // Create module environment
                 var env1 = new Environment (globalEnv)
