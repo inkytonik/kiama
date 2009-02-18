@@ -120,7 +120,7 @@ object AST {
     }
 
     case class Not (e : Exp) extends Exp
-    
+
     abstract class BinaryBoolExp (l : Exp, r : Exp) extends Exp
     {
         def getLeft = l

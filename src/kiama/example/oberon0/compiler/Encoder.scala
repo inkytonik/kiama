@@ -50,8 +50,12 @@ object Encoder {
             case ModuleDecl (_, decls, stmts, _, _) => EncodeModule (decls, stmts)
 
             case Assignment (desig, exp) => EncodeAssignment (desig, exp)
-            
+
             case IfStatement (condexp, thenstmts, elsestmts) => EncodeIfStmt (condexp, thenstmts, elsestmts)
+
+            case WhileStatement (condexp, bodystmts) => EncodeWhileStmt (condexp, bodystmts)
+
+            case ProcedureCall (desig, aps) => EncodeProcedureCall (desig, aps)
         }
     }
 
@@ -95,7 +99,7 @@ object Encoder {
                 else {
 
                     // Process exp
-                    val tempReg = processExp (exp)
+                    val tempReg = processNumExp (exp)
 
                     // Multiply by array item size
                     Assembler.emit ( MULI (tempReg, tempReg, (ad->objType->byteSize)))
@@ -121,8 +125,8 @@ object Encoder {
         }
     }
 
-    // Resolve an expression into a register number
-    def processExp (exp : Exp) : Byte = {
+    // Resolve a numeric expression into a register number
+    def processNumExp (exp : Exp) : Byte = {
 
         var reg : Byte = 0
 
@@ -162,7 +166,7 @@ object Encoder {
         exp match {
 
             case ue : UnaryNumExp => {
-                reg = processExp (ue.getExp)
+                reg = processNumExp (ue.getExp)
                 
                 exp match {
                     case n : Neg => Assembler.emit ( MULI (reg, reg, -1))
@@ -172,8 +176,8 @@ object Encoder {
             }
 
             case be : BinaryNumExp => {
-                reg = processExp (be.getLeft)
-                val rreg = processExp (be.getRight)
+                reg = processNumExp (be.getLeft)
+                val rreg = processNumExp (be.getRight)
 
                 exp match {
                     case m : Mult => Assembler.emit ( MUL (reg, reg, rreg))
@@ -186,96 +190,86 @@ object Encoder {
                 RegMngr.freeReg (rreg)
                 reg
             }
-
-            case n @ Not (e) => {
-              
-                0
-            }            
-            
-            // And: Uses short-circuit evaluation
-            case a @ And (l, r) => {
-
-                // Test LHS
-                reg = processExp (l)
-                Assembler.emit ( CMPI (reg, true.asInstanceOf[Int]))
-                val truelbl1 = Assembler.newlabel
-                Assembler.emit (BEQ (truelbl1))
-
-                // Action if LHS is false
-                Assembler.emit ( ADDI (reg, 0, false.asInstanceOf[Int]))
-
-                val exitlbl = Assembler.newlabel
-                Assembler.emit ( BR (exitlbl))
-
-                // Test RHS
-                Assembler.mark (truelbl1)
-
-                val rreg = processExp (r)
-                Assembler.emit ( CMPI (rreg, true.asInstanceOf[Int]))
-                val truelbl2 = Assembler.newlabel
-                Assembler.emit (BEQ (truelbl2))
-
-                // Action if RHS is false
-                Assembler.emit ( ADDI (reg, 0, false.asInstanceOf[Int]))
-                Assembler.emit ( BR (exitlbl))
-
-                // Action if LHS and RHS are true
-                Assembler.emit ( ADDI (reg, 0, true.asInstanceOf[Int]))
-                Assembler.mark (exitlbl)
-
-                RegMngr.freeReg (rreg)
-                reg
-            }
-
-            case o @ Or (l, r) => {
-              
-                0
-            }
-
-            case be : BinaryBoolExp => {
-                reg = processExp (be.getLeft)
-                val rreg = processExp (be.getRight)
-                Assembler.emit ( CMP (reg, rreg))
-                val truelbl = Assembler.newlabel
-
-                exp match {
-                    case e : Equal => Assembler.emit (BEQ (truelbl))
-                    case ne : NotEqual => Assembler.emit (BNE (truelbl))
-                    case lt : LessThan => Assembler.emit (BLT (truelbl))
-                    case lte : LessThanOrEqual => Assembler.emit (BLE (truelbl))
-                    case gt : GreaterThan => Assembler.emit (BGT (truelbl))
-                    case gte : GreaterThanOrEqual => Assembler.emit (BGE (truelbl))
-                }
-
-                // Action if false
-                Assembler.emit ( ADDI (reg, 0, false.asInstanceOf[Int]))
-
-                val exitlbl = Assembler.newlabel
-
-                Assembler.emit ( BR (exitlbl))
-
-                // Action if true
-                Assembler.mark (truelbl)
-
-                Assembler.emit ( ADDI (reg, 0, true.asInstanceOf[Int]))
-
-                Assembler.mark (exitlbl)
-
-                RegMngr.freeReg (rreg)
-                reg
-            }
-            
         }
-
     }
 
+    // processBoolExp (saying where to go if true)
+    def processBoolExp (exp : Exp, truelbl : Int, negate : Boolean) {
+
+        exp match {
+
+            // Not 
+            case Not (e) => processBoolExp (e, truelbl, true)
+            
+            // And: Uses short-circuit evaluation
+            case And (l, r) => {
+
+                val truelbl2 = Assembler.newlabel
+                val andendlbl = Assembler.newlabel
+
+                // Process LHS
+                processBoolExp (l, truelbl2, false)
+
+                // If false (go to end)
+                Assembler.emit ( BR (andendlbl))
+
+                // If true, process RHS
+                Assembler.mark (truelbl2)
+                processBoolExp (r, truelbl, false)
+
+                // Mark end-of-And
+                Assembler.mark (andendlbl)
+            }
+
+            // Or: Uses short-circuit evaluation
+            case Or (l, r) => {
+
+                // Process LHS
+                processBoolExp (l, truelbl, false)
+
+                // If false, process RHS
+                processBoolExp (r, truelbl, false)
+            }
+
+            // Other binary expressions
+            case be : BinaryBoolExp => {
+                val lreg = processNumExp (be.getLeft)
+                val rreg = processNumExp (be.getRight)
+                Assembler.emit ( CMP (lreg, rreg))
+
+                if (negate)
+	                exp match {
+	                    case e : Equal => Assembler.emit (BNE (truelbl))
+	                    case ne : NotEqual => Assembler.emit (BEQ (truelbl))
+	                    case lt : LessThan => Assembler.emit (BGE (truelbl))
+	                    case lte : LessThanOrEqual => Assembler.emit (BGT (truelbl))
+	                    case gt : GreaterThan => Assembler.emit (BLE (truelbl))
+	                    case gte : GreaterThanOrEqual => Assembler.emit (BLT (truelbl))
+                     }
+                else
+                  exp match {
+	                    case e : Equal => Assembler.emit (BEQ (truelbl))
+	                    case ne : NotEqual => Assembler.emit (BNE (truelbl))
+	                    case lt : LessThan => Assembler.emit (BLT (truelbl))
+	                    case lte : LessThanOrEqual => Assembler.emit (BLE (truelbl))
+	                    case gt : GreaterThan => Assembler.emit (BGT (truelbl))
+	                    case gte : GreaterThanOrEqual => Assembler.emit (BGE (truelbl))
+                    }
+
+                RegMngr.freeReg (lreg)
+                RegMngr.freeReg (rreg)
+            }
+        }
+    }
+
+    // EncodeAssignment
     def EncodeAssignment (desig : Exp, exp : Exp) {
 
         // Process destination
         val desResult = processDesig (desig)
 
         // Process source
-        val srcReg = processExp (exp)
+        val srcReg = processNumExp (exp)
 
         // Make assignment
         Assembler.emit ( STW (srcReg, desResult.regno, desResult.offset))
@@ -287,14 +281,13 @@ object Encoder {
         RegMngr.freeReg (srcReg)
     }
 
+    // EncodeIfStmt
     def EncodeIfStmt (condexp: Exp, thenstmts: List[Statement], elsestmts: List[Statement]) {
-        
-        // Process condition expression
-        val condReg = processExp (condexp)
 
-        Assembler.emit ( CMPI (condReg, true.asInstanceOf[Int]))
+        // Process condition expression
         val truelbl = Assembler.newlabel
-        Assembler.emit (BEQ (truelbl))
+
+        processBoolExp (condexp, truelbl, false)
 
         // Action if false
         elsestmts.foreach (stmt => Encode (stmt))
@@ -309,7 +302,55 @@ object Encoder {
         thenstmts.foreach (stmt => Encode (stmt))
 
         Assembler.mark (exitlbl)
+    }
 
-        RegMngr.freeReg (condReg)
+    // EncodeWhileStmt
+    def EncodeWhileStmt (condexp: Exp, bodystmts: List[Statement]) {
+
+        // Jump to test code
+        val testlbl = Assembler.newlabel
+        Assembler.emit ( BR (testlbl))
+
+        // Output loop statements
+        val looplbl = Assembler.newlabel
+        Assembler.mark (looplbl)
+        bodystmts.foreach (stmt => Encode (stmt))
+
+        // Loop test
+        Assembler.mark (testlbl)
+        processBoolExp (condexp, looplbl, false)
+    }
+
+    // EncodeWrite
+    def EncodeWrite (exp : Exp) {
+
+        // Process expression
+        val reg = processNumExp (exp)
+
+        // Call WRD
+        Assembler.emit ( WRD (reg))
+
+        RegMngr.freeReg (reg)
+    }
+
+    // EncodeWriteLn
+    def EncodeWriteLn (exp : Exp) {
+
+        // Process expression
+        EncodeWrite (exp)
+
+        // Call WRL
+        Assembler.emit ( WRL )
+    }
+
+    // EncodeProcedureCall
+    def EncodeProcedureCall (desig: Exp, aps: List[Exp]) {
+      
+        desig match {
+          case Ident(nm) if nm == "Write" => EncodeWrite (aps.head)
+          case Ident(nm) if nm == "WriteLn" => EncodeWriteLn (aps.head)
+          case _ => ()
+        }
+      
     }
 }

@@ -171,29 +171,10 @@ class RISC (code : Code) extends Machine ("RISC") {
     def inputoutput (instr : Instr) = 
         instr match {
             case RD (a)  => R (a) := readInt
-            case WRD (c) => print (R (c))
+            case WRD (c) => print (R (c).value)			// BEN MOD
             case WRH (c) => print (R (c) toHexString)
             case WRL     => println
             case _ => ()	// BEN MOD
         }    
 
-}
-
-object MachineTest {
-    def main (args: Array[String]) {
-        val mycode = List (
-            ADDI (1, 0, 1),
-            ADDI (2, 0, 0),
-            STW (1, 2, 0),
-            CMPI (1, 5),
-            BGT (4),
-            WRH (1),
-            ADDI (1, 1, 1),
-            BR (-4),
-            RET (0)
-        )
-        val mymachine = new RISC (mycode)
-        mymachine.init
-        mymachine.steps
-    }
 }

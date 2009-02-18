@@ -28,6 +28,7 @@ object Assembler {
 
     import kiama.example.oberon0.machine.RISCISA._
     import scala.collection.mutable.ArrayBuffer
+    import scala.collection.mutable.HashMap
     
     /**
      * The code sequence that is being assembled.
@@ -62,8 +63,8 @@ object Assembler {
     /**
      * Map betwen labels and code positions.
      */
-    private var labelmap = Map[Label,Int] ()	// BEN MOD (val -> var)
-    
+    private var labelmap = HashMap[Label,Int] ()	// BEN MOD (val -> var)
+
     /**
      * Mark the current code emission position with the given label.
      */
@@ -98,44 +99,5 @@ object Assembler {
         if (! (labelmap contains label))
             error ("Assembler.resolve: unmarked label: " + label)
         labelmap (label) - offset
-    }
-}
-
-object AssemblerTest {
-  
-    import kiama.example.oberon0.machine.RISC
-    import kiama.example.oberon0.machine.RISCISA._
-    
-    def main(args: Array[String]) {
-
-/*        Assembler.emit (ADDI (1, 0, 1))	  // Put 1 in R1
-        Assembler.emit (ADDI (2, 0, 0))	  // Put memory address (0) in R2 
-        Assembler.emit (STW (1, 2, 0))
-
-        val loopstart = Assembler.newlabel
-        Assembler.mark (loopstart)
-        Assembler.emit (CMPI (1, 5))
-
-        val afterloop = Assembler.newlabel
-        Assembler.emit (BGT (afterloop))
-        Assembler.emit (WRH (1))
-        Assembler.emit (ADDI (1, 1, 1))
-        Assembler.emit (BR (loopstart))
-
-        Assembler.mark (afterloop)
-        Assembler.emit (WRL)		      // New line
-        Assembler.emit (LDW (3, 2, 0))
-        Assembler.emit (WRH (3))
-        Assembler.emit (RET (0)) */
-
-      Assembler.emit (ADDI(1,0,5))
-      Assembler.emit (ADDI(2,0,0))
-      Assembler.emit (LDW(1,2,0))
-      Assembler.emit (RET(0))
-      
-//        println (Assembler.getcode)
-        val mymachine = new RISC (Assembler.getcode)
-        mymachine.init
-        mymachine.steps
     }
 }
