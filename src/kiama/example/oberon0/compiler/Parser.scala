@@ -81,7 +81,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
     lazy val procdecl : Parser[ProcDecl] =
         ("PROCEDURE" ~> ident) ~ (formalParameters?) ~ (";" ~> declarations) ~
             (("BEGIN" ~> statementSequence)?) ~ ("END" ~> ident) ^^
-                { case id1 ~ opfps ~ decs ~opstseq ~ id2 =>
+                { case id1 ~ opfps ~ decs ~ opstseq ~ id2 =>
                      ProcDecl (id1, optionalListToList (opfps), decs,
                                optionalListToList (opstseq), id2, ProcType(optionalListToList (opfps))) }
 

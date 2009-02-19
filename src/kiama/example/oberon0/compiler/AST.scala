@@ -166,7 +166,7 @@ object AST {
     abstract class Declaration (id: Ident) extends Attributable with PrettyPrintable {
         def getId = id 
 
-        var byteOffset : Int = _
+        var byteOffset : Int = -999		// Should get overwritten.
 
         override def pretty (o : StringBuilder, indent : Int) {
             super.pretty(o, indent)

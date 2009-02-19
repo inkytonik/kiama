@@ -30,14 +30,9 @@ class Environment (parent: Environment) {
 
     import scala.collection.mutable.HashMap
 
-    class EnvEntry (dec : Declaration, multiplyDefined : Boolean) {
-        def getDec = dec
-        def getMultDef = multiplyDefined
-        override def toString = dec.toString
-    }
+    case class EnvEntry (dec : Declaration, multiplyDefined : Boolean)
 
     val decls = new HashMap [String, EnvEntry]
-    var memSize : Int = 0
 
     /**
      * Add new entry to the environment.  Note: if the entry already exists, it is
@@ -47,21 +42,14 @@ class Environment (parent: Environment) {
 
         val alreadyDefined = decls.contains (nm)
 
-        // For objects which require memory, set offset and update memSize
-        if (dec.isInstanceOf[VarDecl] | dec.isInstanceOf[RefVarDecl] | dec.isInstanceOf[FieldDecl])
-        {
-            dec.byteOffset = memSize
-            memSize += dec->objType->byteSize
-        }
-
-        decls += (nm -> new EnvEntry(dec, alreadyDefined))
+        decls += (nm -> EnvEntry (dec, alreadyDefined))
     }
 
     /**
      * Add declaration list to the environment
      */
     def addDeclsToEnv (decls : List[Declaration]) {
-        decls.foreach(dec => addToEnv(dec.getId.name, dec))
+        decls.foreach (dec => addToEnv (dec.getId.name, dec))
     }
 
     /**
@@ -70,7 +58,7 @@ class Environment (parent: Environment) {
      */
     def findDecl (nm : String, searchAll : Boolean) : Declaration = {
         if (decls.contains (nm))
-            decls(nm).getDec
+            decls(nm).dec
         else if (searchAll && (parent != null))
             parent.findDecl (nm, true)
         else
@@ -82,7 +70,7 @@ class Environment (parent: Environment) {
      */
     def isMultiplyDefined (nm : String) : Boolean = {
         if (decls.contains (nm))
-            decls(nm).getMultDef
+            decls(nm).multiplyDefined
         else
             false
     }
@@ -114,8 +102,8 @@ object NameAnalysis {
                 var globalEnv = new Environment (null)
 //                globalEnv.addToEnv (id.name, md)
                 globalEnv.addToEnv ("Write", ProcDecl (Ident ("Write"), List (VarDecl ( Ident ("exp"), IntegerType) ), null, null, Ident ("Write"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
-                globalEnv.addToEnv ("WriteLn", ProcDecl (Ident ("Write"), List (VarDecl ( Ident ("exp"), IntegerType) ), null, null, Ident ("WriteLn"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
-                globalEnv.addToEnv ("Read", ProcDecl (Ident ("Write"), List (RefVarDecl ( Ident ("var"), IntegerType) ), null, null, Ident ("Read"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
+                globalEnv.addToEnv ("WriteLn", ProcDecl (Ident ("WriteLn"), List (VarDecl ( Ident ("exp"), IntegerType) ), null, null, Ident ("WriteLn"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
+                globalEnv.addToEnv ("Read", ProcDecl (Ident ("Read"), List (RefVarDecl ( Ident ("var"), IntegerType) ), null, null, Ident ("Read"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
 
                 // Create module environment
                 var env1 = new Environment (globalEnv)
@@ -147,12 +135,12 @@ object NameAnalysis {
         attr {
             case id @ Ident (nm) =>
                 id.parent match {
-                    // RHS side of a field designation
+                    // RHS of a field designation
                     case FieldDesig (left, id2) if (id == id2) => {
                         val rectp = left->objType
                         left->objType match { case InvalidType => UnknownDecl (id)
                                               case _ => (rectp->env).findDecl (nm, false)
-                        }
+                                            }
                     }
                     // Other
                     case _ => (id->env).findDecl (nm, true)

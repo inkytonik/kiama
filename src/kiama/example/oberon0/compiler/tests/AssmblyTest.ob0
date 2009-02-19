@@ -10,7 +10,8 @@ MODULE Sample;
 
 BEGIN
 
-    a := 6;
+    Read (a);
+(*    a := 6; *)
     WriteLn (a);
 
     IF (a < 5) OR (a >= 10) THEN

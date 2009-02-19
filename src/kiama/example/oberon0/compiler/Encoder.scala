@@ -47,7 +47,10 @@ object Encoder {
     // Encode an object
     def Encode (obj : Attributable) {
         obj match {
-            case ModuleDecl (_, decls, stmts, _, _) => EncodeModule (decls, stmts)
+            case md @ ModuleDecl (_, decls, stmts, _, _) => {
+                setByteOffsets (md, -999)
+                EncodeModule (decls, stmts)
+            }
 
             case Assignment (desig, exp) => EncodeAssignment (desig, exp)
 
@@ -56,6 +59,63 @@ object Encoder {
             case WhileStatement (condexp, bodystmts) => EncodeWhileStmt (condexp, bodystmts)
 
             case ProcedureCall (desig, aps) => EncodeProcedureCall (desig, aps)
+        }
+    }
+
+    /**
+     * For objects which require memory, set offset and update memSize
+     */
+    def setByteOffsets (obj : Attributable, byteOffset : Int) : Int = {
+
+        obj match {
+
+            case ModuleDecl (_, decls, _, _, _) => {
+                var varbyteOffset : Int = 0
+                for (dec <- decls) {
+                    varbyteOffset = setByteOffsets (dec, varbyteOffset)
+                }
+                0
+            }
+
+            case ProcDecl (_, fps, decls, _, _, _) => {
+                var varbyteOffset : Int = 0
+                for (fp <- fps) {
+                    varbyteOffset = setByteOffsets (fp, varbyteOffset)
+                }
+                for (dec <- decls) {
+                    varbyteOffset = setByteOffsets (dec, varbyteOffset)
+                }
+                0
+            }
+
+            case RecordType (fldlst) => {
+                var varbyteOffset : Int = 0
+                for (fld <- fldlst) {
+                    varbyteOffset = setByteOffsets (fld, varbyteOffset)
+                }
+                0
+            }
+
+            case TypeDecl (_, tp) => setByteOffsets (tp, -999)
+
+            case vd @ VarDecl (_, tp) => {
+                vd.byteOffset = byteOffset
+                setByteOffsets (tp, -999)
+                byteOffset + (vd->objType->byteSize)
+            }
+
+            case fd @ FieldDecl (_, tp) => {
+                fd.byteOffset = byteOffset
+                setByteOffsets (tp, -999)
+                byteOffset + (fd->objType->byteSize)
+            }
+
+            case rvd : RefVarDecl => {
+                -999
+            }
+
+            case _ => byteOffset
+
         }
     }
 
@@ -204,31 +264,41 @@ object Encoder {
             // And: Uses short-circuit evaluation
             case And (l, r) => {
 
-                val truelbl2 = Assembler.newlabel
-                val andendlbl = Assembler.newlabel
-
-                // Process LHS
-                processBoolExp (l, truelbl2, false)
-
-                // If false (go to end)
-                Assembler.emit ( BR (andendlbl))
-
-                // If true, process RHS
-                Assembler.mark (truelbl2)
-                processBoolExp (r, truelbl, false)
-
-                // Mark end-of-And
-                Assembler.mark (andendlbl)
+                if (negate) {
+                    processBoolExp (Or (Not (l), Not(r)), truelbl, false)
+                }
+                else {
+	                val truelbl2 = Assembler.newlabel
+	                val andendlbl = Assembler.newlabel
+	
+	                // Process LHS
+	                processBoolExp (l, truelbl2, false)
+	
+	                // If false (go to end)
+	                Assembler.emit ( BR (andendlbl))
+	
+	                // If true, process RHS
+	                Assembler.mark (truelbl2)
+	                processBoolExp (r, truelbl, false)
+	
+	                // Mark end-of-And
+	                Assembler.mark (andendlbl)
+                }
             }
 
             // Or: Uses short-circuit evaluation
             case Or (l, r) => {
 
-                // Process LHS
-                processBoolExp (l, truelbl, false)
-
-                // If false, process RHS
-                processBoolExp (r, truelbl, false)
+                if (negate) {
+                    processBoolExp (And (Not (l), Not(r)), truelbl, false)
+                }
+                else {
+	                // Process LHS
+	                processBoolExp (l, truelbl, false)
+	
+	                // If false, process RHS
+	                processBoolExp (r, truelbl, false)
+                }
             }
 
             // Other binary expressions
@@ -343,12 +413,35 @@ object Encoder {
         Assembler.emit ( WRL )
     }
 
+    // EncodeRead
+    def EncodeRead (desig : Exp) {
+
+        // Get a register to put the result of the read
+        val reg = RegMngr.getFreeReg
+
+        // Read a value
+        Assembler.emit ( RD (reg))
+
+        // Process destination
+        val desResult = processDesig (desig)
+
+        // Make assignment
+        Assembler.emit ( STW (reg, desResult.regno, desResult.offset))
+
+        // Free registers
+        if (desResult.regno != 0)
+            RegMngr.freeReg (desResult.regno)
+
+        RegMngr.freeReg (reg)
+    }
+
     // EncodeProcedureCall
     def EncodeProcedureCall (desig: Exp, aps: List[Exp]) {
-      
+
         desig match {
           case Ident(nm) if nm == "Write" => EncodeWrite (aps.head)
           case Ident(nm) if nm == "WriteLn" => EncodeWriteLn (aps.head)
+          case Ident(nm) if nm == "Read" => EncodeRead (aps.head)
           case _ => ()
         }
       

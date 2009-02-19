@@ -26,6 +26,7 @@ object ConstantAnalysis {
 
     import kiama.attribution.Attribution._
     import AST._
+    import NameAnalysis._
 
     // *** Attribute 'isConstant':  Whether the expression is constant
     val isConstant : Exp ==> Boolean =
@@ -40,6 +41,9 @@ object ConstantAnalysis {
             // Binary
             case be : BinaryNumExp => (be.getLeft)->isConstant && (be.getRight)->isConstant
             case be : BinaryBoolExp => (be.getLeft)->isConstant && (be.getRight)->isConstant
+
+            // Constants
+            case id @ Ident (nm) if (id->decl).isInstanceOf[ConstDecl] => true
 
             // Other
             case _ => false

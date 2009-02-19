@@ -26,6 +26,7 @@ object ValueAnalysis {
 
     import kiama.attribution.Attribution._
     import AST._
+    import NameAnalysis._
     import TypeAnalysis._
     
     // *** Attribute 'intValue':  The integer value of the expression
@@ -33,6 +34,10 @@ object ValueAnalysis {
     val intValue : Exp ==> Int =
         attr {
             case IntegerLiteral (num) => num
+
+            case id : Ident => id->decl match {
+                case ConstDecl (_, valexp) => valexp->intValue
+            }
 
             case Pos (e) => e->intValue
 
