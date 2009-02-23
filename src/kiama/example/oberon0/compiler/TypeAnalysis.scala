@@ -105,19 +105,9 @@ object TypeAnalysis {
         }
 
     // *** Attribute 'isAssignable':  Whether an object can store a value
-    // Exclude records and arrays (temporarily?)
     val isAssignable : Exp ==> Boolean = 
         attr {
-            case id : Ident => {
-                if ((id->decl).isInstanceOf[VarDecl] || (id->decl).isInstanceOf[RefVarDecl] ) {
-                    if ((id->objType).isInstanceOf[ArrayType] || (id->objType).isInstanceOf[RecordType])
-                        false
-                    else
-                        true
-                }
-                else
-                    false
-            }
+            case id : Ident => true
             case fd : FieldDesig => true
             case ad : ArrayDesig => true
             case _ => false

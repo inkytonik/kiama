@@ -181,6 +181,8 @@ object AST {
     case class FieldDecl (id : Ident, tp : Type) extends Declaration (id)
 
     case class ModuleDecl (id : Ident, decls : List[Declaration], stmts : List[Statement], id2 : Ident, tp : ModuleType) extends Declaration (id) {
+        var byteSize = -999
+        
         override def pretty (o : StringBuilder, indent : Int) {
             o.append ("ModuleDecl(id = ")
             id.pretty (o, 0)
@@ -197,7 +199,10 @@ object AST {
     }
 
     case class ProcDecl (id : Ident, fps : List[Declaration], decls : List[Declaration], stmts : List[Statement], id2 : Ident, tp: ProcType) extends Declaration (id) {
-        override def pretty (o : StringBuilder, indent : Int) {
+      var byteSize = -999
+      var label : Int = 0
+
+      override def pretty (o : StringBuilder, indent : Int) {
             printTabs (o, indent)
             o.append ("ProcDecl(id = ")
             id.pretty (o, 0)

@@ -1,0 +1,58 @@
+abstract class Exp extends Attributable with PrettyPrintable
+
+case class Ident (name : String) extends Exp
+case class FieldDesig (left : Exp, id : Ident) extends Exp
+case class ArrayDesig (left : Exp, exp : Exp) extends Exp
+
+abstract class Literal extends Exp
+case class IntegerLiteral (num : Int) extends Literal
+
+abstract class UnaryNumExp (e : Exp) extends Exp
+case class Pos (e : Exp) extends UnaryNumExp (e)
+case class Neg (e : Exp) extends UnaryNumExp (e)
+
+abstract class BinaryNumExp (l : Exp, r : Exp) extends Exp
+case class Mult (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Div (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Mod (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Plus (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Minus (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+
+case class Not (e : Exp) extends Exp
+
+abstract class BinaryBoolExp (l : Exp, r : Exp) extends Exp
+case class And (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class Or (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class Equal (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+case class NotEqual (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+case class LessThan (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+case class LessThanOrEqual (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class GreaterThan (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class GreaterThanOrEqual (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+
+abstract class Statement extends Attributable with PrettyPrintable
+case class Assignment (desig : Exp, exp : Exp) extends Statement
+case class ProcedureCall (desig : Exp, aps : List[Exp]) extends Statement
+case class IfStatement (condexp : Exp, thenstmts : List[Statement], elsestmts: List[Statement]) extends Statement
+case class WhileStatement (condexp : Exp, bodystmts : List[Statement]) extends Statement
+
+abstract class Declaration (id: Ident) extends Attributable with PrettyPrintable
+case class ConstDecl (id : Ident, constval : Exp) extends Declaration (id)
+case class VarDecl (id : Ident, tp : Type) extends Declaration (id)
+case class RefVarDecl (id : Ident, tp : Type) extends Declaration (id)
+case class TypeDecl (id : Ident, tp : Type) extends Declaration (id)
+case class FieldDecl (id : Ident, tp : Type) extends Declaration (id)
+case class ModuleDecl (id : Ident, decls : List[Declaration], stmts : List[Statement], id2 : Ident, tp : ModuleType) extends Declaration (id)
+case class ProcDecl (id : Ident, fps : List[Declaration], decls : List[Declaration], stmts : List[Statement], id2 : Ident, tp: ProcType) extends Declaration (id)
+case class UnknownDecl (id : Ident) extends Declaration(id)
+
+abstract class Type extends Attributable with PrettyPrintable
+case class NamedType (id : Ident) extends Type
+case class ArrayType (size : Exp, tp : Type) extends Type
+case class RecordType (fldlst : List[FieldDecl]) extends Type
+case class ProcType (fps : List[Declaration]) extends Type
+case class ModuleType () extends Type
+case object IntegerType extends Type
+case object BooleanType extends Type
+case object InvalidType extends Type
+case object StatementType extends Type

@@ -31,7 +31,7 @@ object RISCISA {
     type Code = Seq[Instr]
         
     /**
-     * Register numbers (0-15).  Program counter is R15.
+     * Register numbers (0-31).  Program counter is R28.
      */
     type RegNo = Byte
      
@@ -156,7 +156,7 @@ object RISCISA {
     
     /**
      * Load register a with the word value stored in register b.  The
-     * lowest two bits of the address are ignored. Subtract im from
+     * lowest two bits of the address are ignored. Subtract (???) im from
      * the contents of register b and store the result in register b.  
      */
     case class POP (a : RegNo, b : RegNo, im : Int) extends Instr
@@ -176,7 +176,7 @@ object RISCISA {
     case class STB (a : RegNo, b : RegNo, im : Int) extends Instr
     
     /**
-     * Subtract im from the contents of register b and store the
+     * Add im to the contents of register b and store the
      * result in register b.  Store the value in register a into
      * memory at the address given by the contents of register b.
      * The lowest two bits of the address are ignored.
@@ -254,13 +254,13 @@ object RISCISA {
     case class BGT (val label : Int) extends Branch
 
     /**
-     * Set the program counter to its value plus four times disp.
+     * Set the program counter to its value plus disp.
      */
     case class BR (val label : Int) extends Branch
 
     /**
-     * Set R14 to the value of the program counter plus four. Set the
-     * program counter to its value plus four times disp.
+     * Set R31 to the value of the program counter plus one. Set the
+     * program counter to its value plus disp.
      */
     case class BSR (val label : Int) extends Branch
 

@@ -65,7 +65,7 @@ object Main extends Parser
                     println ("\nNo semantic errors")
 
                     // Encode
-                    Encode(mod)
+                    EncodeModule (mod)
 
                     // Assemble
                     val instrs = Assembler.getcode

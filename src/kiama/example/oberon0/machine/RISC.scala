@@ -42,14 +42,17 @@ class RISC (code : Code) extends Machine ("RISC") {
     case class Reg (name : String) extends State[Int] (name)
 
     /**
-     * Integer register file addressed by 0-15.
+     * Integer register file addressed by 0-31.
      */
-    lazy val R = Array.fromFunction (i => Reg ("R" + i.toString)) (16)
+    lazy val R = Array.fromFunction (i => Reg ("R" + i.toString)) (32)
     
     /**
-     * The program counter is register 15.
+     * The program counter is register 28.
      */
-    lazy val PC = R (15)
+    lazy val PC = R (28)
+    lazy val FP = R (29)
+    lazy val SP = R (30)
+    lazy val LNK = R (31)
     
     /**
      * Byte addressed store of words.
@@ -77,7 +80,7 @@ class RISC (code : Code) extends Machine ("RISC") {
     def init {
         Mem.update (Map ())
         PC.update (0)
-        R (0).update(0)		// BEN MOD
+        R (0).update(0)		// Set R0 = 0
         Z.update (false)
         N.update (false)
         halt.undefine
@@ -137,12 +140,12 @@ class RISC (code : Code) extends Machine ("RISC") {
         instr match {
             case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
             case LDB (a, b, im) => halt := "LDB not implemented"
-            case POP (a, b, im) => R (a) := Mem (R (b) / 4)
-                                   R (b) := R (b) + im
+            case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
+                                   R (b) := R (b) - im						 // BEN MOD: '+' to '-'
             case STW (a, b, im) => Mem := Mem + (((R (b) + im) / 4, R (a)))
             case STB (a, b, im) => halt := "STB not implemented"
-            case PSH (a, b, im) => Mem := Mem + (((R (b) - im) / 4, R (a)))
-                                   R (b) := R (b) - im
+            case PSH (a, b, im) => Mem := Mem + ((R (b) / 4, R (a)))  		 // BEN MOD: Remove '- im'
+                                   R (b) := R (b) + im						 // BEN MOD: '-' to '+'
             case _ => ()		// BEN MOD
         }
 
@@ -158,8 +161,9 @@ class RISC (code : Code) extends Machine ("RISC") {
             case b : BLE if (Z.value || N.value) => PC := PC + b.disp
             case b : BGT if (!Z.value && !N.value) => PC := PC + b.disp
             case b : BR => PC := PC + b.disp
-            case b : BSR => PC := PC + b.disp
-                               R (14) := PC
+            case b : BSR => R (31) := PC + 1		// BEN MOD: 14 -> 31, and save PC BEFORE PC update
+                            PC := PC + b.disp
+
             case RET (c) => PC := R (c)
                             if (R (c).value == 0) halt := "Halt"
             case _  => PC := PC + 1
