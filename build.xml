@@ -64,9 +64,18 @@
       </runpath>
       <reporter type="graphic"/>
       <wildcard package="kiama"/>
-  	</scalatest>
+    </scalatest>
   </target>	
  
+   <target name="testbatch" depends="build">
+    <scalatest>
+      <runpath>
+        <pathelement location="bin"/>
+      </runpath>
+      <wildcard package="kiama"/>
+    </scalatest>
+  </target>	
+
   <target name="testone" depends="build">
     <scalatest>
       <runpath>
