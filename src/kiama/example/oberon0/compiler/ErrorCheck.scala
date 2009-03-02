@@ -24,6 +24,9 @@ package kiama.example.oberon0.compiler
 
 import kiama.attribution.Attribution._
 
+/**
+ * ErrorCheck:  Performs semantic analysis of a program.
+ */
 object ErrorCheck {
 
     import AST._
@@ -32,6 +35,9 @@ object ErrorCheck {
     import ValueAnalysis._
     import ConstantAnalysis._
 
+    /**
+     * Attribute 'collectErrors':  A list of all the semantic errors found
+     */
     val collectErrors : Attributable ==> List[String] =
         attr {
             case obj => {
@@ -114,39 +120,43 @@ object ErrorCheck {
     	            }
 
                     // Check procedure call is on an actual procedure
-                    case pc @ ProcedureCall (desig, _) if !(desig->objType).isInstanceOf[ProcType] => {
+                    case ProcedureCall (desig, _) if !(desig->objType).isInstanceOf[ProcType] => {
                         errs = (desig + " is not a procedure") :: errs
                     }
 
-                    // Check procedure call actual params against formal params
-                    case pc : ProcedureCall => {
-                        errs = pc->procArgErrors ::: errs
-                    }
+                    // The procedure name must be a plain identifier
+                    case pc @ ProcedureCall (desig, _) => {
+                      
+                        desig match {
+                            case fd : FieldDesig => {
+                                errs = (fd + "Procedure calls cannot use field designators") :: errs  
+                            }
+                            case ad : ArrayDesig => {
+                                errs = (ad + "Procedure calls cannot use array designators") :: errs
+                            }
+                            case id : Ident => {
+                                // The procedure called must be a child or sibling of the
+                                // current procedure
+                                if (!(id->decl).isInstanceOf[BuiltInProcDecl])
+                                    if (id->decl->level < id->level)
+                                        errs = (pc + " is not a child or sibling of " + pc.parent) :: errs
 
+                                // Check procedure call actual params against formal params
+                                errs = pc->procArgErrors ::: errs
+                            }
+                                
+                            case _ => ()
+                        }
+                    }
+                    
                     // Check If-statement expressions are boolean
-                    case is @ IfStatement (condexp, _, _) if condexp->objType != BooleanType => {
+                    case IfStatement (condexp, _, _) if condexp->objType != BooleanType => {
                         errs = (condexp + " must be a boolean expression") :: errs
                     }
 
                     // Check While-statement expressions are boolean
                     case ws @ WhileStatement (condexp, _) if condexp->objType != BooleanType => {
                         errs = (condexp + " must be a boolean expression") :: errs
-                    }
-                    
-                    // Rule out using procedures with field designators (temporarily?)
-                    // On LHS
-                    case fd @ FieldDesig (left, id) if (left->objType).isInstanceOf[ProcType] => {
-                        errs = (fd + "Procedure calls cannot use field designators") :: errs
-                    }
-
-                    // On RHS
-                    case fd : FieldDesig if (fd->objType).isInstanceOf[ProcType] => {
-                        errs = (fd + "Procedure calls cannot use field designators") :: errs
-                    }
-
-                    // Rule out using procedures with array designators (temporarily?)
-                    case ad : ArrayDesig if (ad->objType).isInstanceOf[ProcType] => {
-                        errs = (ad + "Procedure calls cannot use array designators") :: errs
                     }
 
                     case _ => ()

@@ -1,39 +1,30 @@
+/*
+ * This file is part of Kiama.
+ *
+ * Copyright (C) 2009 Anthony M Sloane, Macquarie University.
+ *
+ * Contributed by Ben Mockler.
+ *
+ * Kiama is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * Kiama is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
 package kiama.example.oberon0.compiler
 
-// class RegMngr:  Manage allocation and deallocation of registers
-object RegMngr {
-
-    val numreg : Int = 32
-    val regs = new Array[Boolean] (numreg)
-
-    // Init registers
-    var i : Int = 1
-    while (i < 28) {
-        regs (i) = false
-        i += 1
-    }
-
-    // Get free reg (between 1 and 28)
-    // Reserve R0 (=zero), R28 (PC), R29 (FP), R30 (SP), R31 (LNK)
-    def getFreeReg : Byte = {
-        var i : Int = 1
-        while (i < 28) {
-            if (!regs (i)) {
-                regs (i) = true
-				return i.asInstanceOf[Byte]
-			}
-            i += 1
-        }
-		println ("No registers available")
-		-1
-    }
-
-    // Free a register
-    def freeReg (i : Byte) {
-        regs (i) = false
-    }
-}
-
+/**
+ * Build the assembly/RISC code for the program
+ */
 object Encoder {
 
     import AST._
@@ -44,19 +35,6 @@ object Encoder {
     import kiama.attribution.Attribution._
     import kiama.example.oberon0.assembler._
     import kiama.example.oberon0.machine.RISCISA._
-
-    // Encode an object
-    def EncodeStatement (stmt : Statement) {
-        stmt match {
-            case Assignment (desig, exp) => EncodeAssignment (desig, exp)
-
-            case IfStatement (condexp, thenstmts, elsestmts) => EncodeIfStmt (condexp, thenstmts, elsestmts)
-
-            case WhileStatement (condexp, bodystmts) => EncodeWhileStmt (condexp, bodystmts)
-
-            case ProcedureCall (desig, aps) => EncodeProcedureCall (desig, aps)
-        }
-    }
 
     /**
      * For objects which require memory (VarDecls, RefVarDecls and FieldDecls), set byteOffset
@@ -73,7 +51,6 @@ object Encoder {
                     varbyteOffset = setByteOffsets (dec, varbyteOffset)
                 }
                 md.byteSize = varbyteOffset
-                println ("Module " + md.id.name + " requires " + md.byteSize + " bytes")
                 byteOffset
             }
 
@@ -87,7 +64,6 @@ object Encoder {
                 }
                 pd.byteSize = varbyteOffset
                 pd.label = Assembler.newlabel
-                println ("Proc " + pd.id.name + " requires " + pd.byteSize + " bytes")
                 byteOffset					// The proc does not affect the byteSize of the
                                             // enclosing module or proc
             }
@@ -97,12 +73,15 @@ object Encoder {
                 for (fld <- fldlst) {
                     varbyteOffset = setByteOffsets (fld, varbyteOffset)
                 }
-                byteOffset
+                byteOffset					// The record type does not affect the byteSize of
+                                            // the enclosing module or proc
             }
 
             case TypeDecl (_, tp) => {
-                setByteOffsets (tp, byteOffset)
-                byteOffset
+                setByteOffsets (tp, -999)   // -999 is a nonsense value.  Should not get used,
+                                            // and will crash the program if it does.
+                byteOffset					// The (named) type does not affect the byteSize of
+                                            // the enclosing module or proc
             }
 
             case vd @ VarDecl (_, tp) => {
@@ -129,7 +108,24 @@ object Encoder {
         }
     }
 
-    // Encode a module
+    /**
+     * Encode a statement
+     */
+    def EncodeStatement (stmt : Statement, procOrModDecl : Declaration) {
+        stmt match {
+            case Assignment (desig, exp) => EncodeAssignment (desig, exp, procOrModDecl)
+
+            case IfStatement (condexp, thenstmts, elsestmts) => EncodeIfStmt (condexp, thenstmts, elsestmts, procOrModDecl)
+
+            case WhileStatement (condexp, bodystmts) => EncodeWhileStmt (condexp, bodystmts, procOrModDecl)
+
+            case ProcedureCall (desig, aps) => EncodeProcedureCall (desig, aps, procOrModDecl)
+        }
+    }
+
+    /**
+     * Encode a module
+     */
     def EncodeModule(md : ModuleDecl) {
 
         md match {
@@ -140,16 +136,16 @@ object Encoder {
 
 		        // Set the frame pointer (to 0)
 		        Assembler.emit ( ADDI (29, 0, 0))
-		
+
 		        // Set the stack pointer
 		        Assembler.emit ( ADDI (30, 0, md.byteSize))
 
 		        // Encode each statement
-		        stmts.foreach (stmt => EncodeStatement(stmt))
-		
+		        stmts.foreach (stmt => EncodeStatement(stmt, md))
+
 		        // Encode a RET(0) statement
 		        Assembler.emit (RET (0))
-		        
+
 		        // Encode all procedure decls
 		        val pdlst = decls.filter (dec => dec.isInstanceOf[ProcDecl])
                 pdlst.foreach (dec => EncodeProc (dec.asInstanceOf[ProcDecl]))
@@ -157,6 +153,9 @@ object Encoder {
         }
     }
 
+    /**
+     * Encode a procedure
+     */
     def EncodeProc (pd : ProcDecl) {
 
         pd match {
@@ -179,7 +178,7 @@ object Encoder {
 		        Assembler.emit ( ADDI (30, 30, pd.byteSize))
 
 		        // Encode each statement
-		        stmts.foreach (stmt => EncodeStatement (stmt))
+		        stmts.foreach (stmt => EncodeStatement (stmt, pd))
 
                 // Set SP to current FP
                 Assembler.emit ( ADDI (30, 29, 0))
@@ -189,6 +188,9 @@ object Encoder {
 
                 // Restore return address
                 Assembler.emit ( POP (31, 30, 4))
+
+                // Discard the stored SL
+                Assembler.emit ( ADDI (30, 30, -4))
 
 		        // Encode a RET(0) statement
 		        Assembler.emit (RET (31))
@@ -200,93 +202,146 @@ object Encoder {
         }
     }
 
-    // Return-value of processDesig procedure
+    /**
+     * Return-value of processDesig procedure
+     */
     case class desigResult(regno : Byte, offset : Int)
 
-    // Resolve a designation into a memory address (register contents + offset)
-    def processDesig (exp : Exp) : desigResult = {
+    /**
+     * Process an ident designator
+     */
+    def processIdent (id : Ident, procOrModDecl : Declaration) : desigResult = {
+
+        var baseAddrReg : Byte = 0
+
+        // If a global variable ...
+        if (id->decl->level == 0)
+            // Start at memory location 0
+            baseAddrReg = 0
+
+        // If the id belongs to this proc or module ...
+        else if ((id->decl).parent == procOrModDecl)
+            // Start in this frame
+            baseAddrReg = 29
+
+        // If at an intermediate level ...
+        else {
+            // Load the static link (stored at FP - 12) into a register
+            // ie. Get the base address of the statically enclosing stack frame
+            baseAddrReg = Assembler.getFreeReg
+
+            Assembler.emit ( LDW (baseAddrReg, 29, -12))
+
+            // Traverse further if necessary
+            val steps = (procOrModDecl->level) - (id->decl->level)
+            var i : Int = 1;
+
+            while (i < steps)
+            {
+                Assembler.emit ( LDW (baseAddrReg, baseAddrReg, -12))
+                i = i + 1
+            }
+        }
+
+        // Handle reference parameter redirection
+        id->decl match {
+
+            // Load address into an available register
+            case rvd : RefVarDecl => {
+                var reg : Byte = 0
+                
+                if (baseAddrReg == 0 || baseAddrReg == 29)
+                    reg = Assembler.getFreeReg
+                else
+                    reg = baseAddrReg
+
+                // Initialize reg to the value in the base register
+                Assembler.emit ( LDW (reg, baseAddrReg, rvd.byteOffset))
+
+                desigResult (reg, 0)
+            }
+
+            case _ => desigResult (baseAddrReg, (id->decl).byteOffset)
+        }
+    }
+
+    /**
+     * Process an array designator
+     */
+    def processArrayDesig (ad : ArrayDesig, left : Exp, exp : Exp, procOrModDecl : Declaration) : desigResult = {
+
+        val leftResult = processDesig (left, procOrModDecl)
+
+        // Constant index
+        if (exp->objType == IntegerType && exp->isConstant) {
+            desigResult (leftResult.regno,
+                       leftResult.offset + (exp->intValue) * (ad->objType->byteSize))
+        }
+        // Variable index
+        else {
+
+            // Process exp
+            val tempReg = processNumExp (exp, procOrModDecl)
+
+            // Multiply by array item size
+            Assembler.emit ( MULI (tempReg, tempReg, (ad->objType->byteSize)))
+
+            var dstReg : Byte = 0
+
+            // If no reg currently allocated, can use tempReg
+            if (leftResult.regno == 0) {
+                dstReg = tempReg
+            }
+            // If FP is current base, can use tempReg, but add on the address in FP
+            else if (leftResult.regno == 29) {
+                dstReg = tempReg
+                Assembler.emit ( ADD (dstReg, dstReg, 29))
+            }
+            // Otherwise use the same reg as the LHS (but need to add index result to it)
+            else {
+                dstReg = leftResult.regno
+
+                // Add the result of the index calculation to this register
+                Assembler.emit ( ADD (dstReg, dstReg, tempReg))
+                Assembler.freeReg (tempReg)
+            }
+
+            desigResult (dstReg, leftResult.offset)
+        }
+    }
+
+    /**
+     * Resolve a designation into a memory address (register contents + offset)
+     */
+    def processDesig (exp : Exp, procOrModDecl : Declaration) : desigResult = {
 
         exp match {
 
             // Identifier
-            case id : Ident => {
-
-                id->decl match {
-
-                    // Load address into an available register
-                    case rvd : RefVarDecl => {
-                        val reg = RegMngr.getFreeReg
-
-                        Assembler.emit ( LDW (reg, 29, rvd.byteOffset))
-                        desigResult (reg, 0)
-                    }
-
-                    // Initialize reg to the value in the FP
-                    case _ => {
-                        desigResult (29, (id->decl).byteOffset)
-                    }
-                }
-            }
+            case id : Ident => processIdent (id, procOrModDecl)
 
             // Field designation
             case FieldDesig (left, id) => {
-                val leftResult = processDesig (left)
+                val leftResult = processDesig (left, procOrModDecl)
                 desigResult (leftResult.regno, leftResult.offset + (id->decl).byteOffset)
             }
 
             // Array designation
-            case ad @ ArrayDesig (left, exp) => {
-                val leftResult = processDesig (left)
-
-                // Constant index
-                if (exp->objType == IntegerType && exp->isConstant) {
-                    desigResult (leftResult.regno,
-                               leftResult.offset + (exp->intValue) * (ad->objType->byteSize))
-                }
-                // Variable index
-                else {
-
-                    // Process exp
-                    val tempReg = processNumExp (exp)
-
-                    // Multiply by array item size
-                    Assembler.emit ( MULI (tempReg, tempReg, (ad->objType->byteSize)))
-
-                    var dstReg : Byte = 0
-
-                    // If no reg currently allocated, can use tempReg
-                    if (leftResult.regno == 0) {
-                        dstReg = tempReg
-                    }
-                    // If FP is current base, can use tempReg, but add on the address in FP
-                    else if (leftResult.regno == 29) {
-                        dstReg = tempReg
-                        Assembler.emit ( ADD (dstReg, dstReg, 29))
-                    }
-                    // Otherwise use the same reg as the LHS (but need to add index result to it)
-                    else {
-                        dstReg = leftResult.regno
-
-                        // Add the result of the index calculation to this register
-                        Assembler.emit ( ADD (dstReg, dstReg, tempReg))
-                        RegMngr.freeReg (tempReg)
-                    }
-
-                    desigResult (dstReg, leftResult.offset)
-                }
-            }
+            case ad @ ArrayDesig (left, exp) => processArrayDesig (ad, left, exp, procOrModDecl) 
         }
     }
 
-    // Resolve a numeric expression into a register number
-    def processNumExp (exp : Exp) : Byte = {
+    /**
+     * Resolve a numeric expression into a register number
+     */
+    def processNumExp (exp : Exp, procOrModDecl : Declaration) : Byte = {
 
         var reg : Byte = 0
 
         // If the expression is constant, put value in a register
         if (exp->isConstant) {
 
-            reg = RegMngr.getFreeReg
+            reg = Assembler.getFreeReg
 
             if (exp->objType == IntegerType)
                 Assembler.emit ( ADDI (reg, 0, exp->intValue))
@@ -301,11 +356,11 @@ object Encoder {
         if (exp.isInstanceOf[Ident] || exp.isInstanceOf[FieldDesig] || exp.isInstanceOf[ArrayDesig]) {
 
             // Get memory address as register and offset
-            val desResult = processDesig (exp)
+            val desResult = processDesig (exp, procOrModDecl)
 
             // If no register allocated, allocate one
             if (desResult.regno == 0 || desResult.regno == 29) 
-                reg = RegMngr.getFreeReg
+                reg = Assembler.getFreeReg
             else
                 reg = desResult.regno
 
@@ -319,7 +374,7 @@ object Encoder {
         exp match {
 
             case ue : UnaryNumExp => {
-                reg = processNumExp (ue.getExp)
+                reg = processNumExp (ue.getExp, procOrModDecl)
 
                 exp match {
                     case n : Neg => Assembler.emit ( MULI (reg, reg, -1))
@@ -329,8 +384,8 @@ object Encoder {
             }
 
             case be : BinaryNumExp => {
-                reg = processNumExp (be.getLeft)
-                val rreg = processNumExp (be.getRight)
+                reg = processNumExp (be.getLeft, procOrModDecl)
+                val rreg = processNumExp (be.getRight, procOrModDecl)
 
                 exp match {
                     case m : Mult => Assembler.emit ( MUL (reg, reg, rreg))
@@ -340,39 +395,41 @@ object Encoder {
                     case m : Minus => Assembler.emit ( SUB (reg, reg, rreg))
                 }
 
-                RegMngr.freeReg (rreg)
+                Assembler.freeReg (rreg)
                 reg
             }
         }
     }
 
-    // processBoolExp (saying where to go if true)
-    def processBoolExp (exp : Exp, truelbl : Int, negate : Boolean) {
+    /**
+     * processBoolExp (saying where to go if true)
+     */
+    def processBoolExp (exp : Exp, truelbl : Int, negate : Boolean, procOrModDecl : Declaration) {
 
         exp match {
 
             // Not 
-            case Not (e) => processBoolExp (e, truelbl, true)
+            case Not (e) => processBoolExp (e, truelbl, true, procOrModDecl)
             
             // And: Uses short-circuit evaluation
             case And (l, r) => {
 
                 if (negate) {
-                    processBoolExp (Or (Not (l), Not(r)), truelbl, false)
+                    processBoolExp (Or (Not (l), Not(r)), truelbl, false, procOrModDecl)
                 }
                 else {
 	                val truelbl2 = Assembler.newlabel
 	                val andendlbl = Assembler.newlabel
 	
 	                // Process LHS
-	                processBoolExp (l, truelbl2, false)
+	                processBoolExp (l, truelbl2, false, procOrModDecl)
 	
 	                // If false (go to end)
 	                Assembler.emit ( BR (andendlbl))
 	
 	                // If true, process RHS
 	                Assembler.mark (truelbl2)
-	                processBoolExp (r, truelbl, false)
+	                processBoolExp (r, truelbl, false, procOrModDecl)
 	
 	                // Mark end-of-And
 	                Assembler.mark (andendlbl)
@@ -383,21 +440,21 @@ object Encoder {
             case Or (l, r) => {
 
                 if (negate) {
-                    processBoolExp (And (Not (l), Not(r)), truelbl, false)
+                    processBoolExp (And (Not (l), Not(r)), truelbl, false, procOrModDecl)
                 }
                 else {
 	                // Process LHS
-	                processBoolExp (l, truelbl, false)
+	                processBoolExp (l, truelbl, false, procOrModDecl)
 	
 	                // If false, process RHS
-	                processBoolExp (r, truelbl, false)
+	                processBoolExp (r, truelbl, false, procOrModDecl)
                 }
             }
 
             // Other binary expressions
             case be : BinaryBoolExp => {
-                val lreg = processNumExp (be.getLeft)
-                val rreg = processNumExp (be.getRight)
+                val lreg = processNumExp (be.getLeft, procOrModDecl)
+                val rreg = processNumExp (be.getRight, procOrModDecl)
                 Assembler.emit ( CMP (lreg, rreg))
 
                 if (negate)
@@ -419,41 +476,45 @@ object Encoder {
 	                    case gte : GreaterThanOrEqual => Assembler.emit (BGE (truelbl))
                     }
 
-                RegMngr.freeReg (lreg)
-                RegMngr.freeReg (rreg)
+                Assembler.freeReg (lreg)
+                Assembler.freeReg (rreg)
             }
         }
     }
 
-    // EncodeAssignment
-    def EncodeAssignment (desig : Exp, exp : Exp) {
+    /**
+     * EncodeAssignment
+     */
+    def EncodeAssignment (desig : Exp, exp : Exp, procOrModDecl : Declaration) {
 
         // Process destination
-        val desResult = processDesig (desig)
+        val desResult = processDesig (desig, procOrModDecl)
 
         // Process source
-        val srcReg = processNumExp (exp)
+        val srcReg = processNumExp (exp, procOrModDecl)
 
         // Make assignment
         Assembler.emit ( STW (srcReg, desResult.regno, desResult.offset))
 
         // Free registers
         if (desResult.regno != 0 && desResult.regno != 29)
-            RegMngr.freeReg (desResult.regno)
+            Assembler.freeReg (desResult.regno)
 
-        RegMngr.freeReg (srcReg)
+        Assembler.freeReg (srcReg)
     }
 
-    // EncodeIfStmt
-    def EncodeIfStmt (condexp: Exp, thenstmts: List[Statement], elsestmts: List[Statement]) {
+    /**
+     * EncodeIfStmt
+     */
+    def EncodeIfStmt (condexp : Exp, thenstmts : List[Statement], elsestmts : List[Statement], procOrModDecl : Declaration) {
 
         // Process condition expression
         val truelbl = Assembler.newlabel
 
-        processBoolExp (condexp, truelbl, false)
+        processBoolExp (condexp, truelbl, false, procOrModDecl)
 
         // Action if false
-        elsestmts.foreach (stmt => EncodeStatement (stmt))
+        elsestmts.foreach (stmt => EncodeStatement (stmt, procOrModDecl))
 
         val exitlbl = Assembler.newlabel
 
@@ -462,13 +523,15 @@ object Encoder {
         // Action if true
         Assembler.mark (truelbl)
 
-        thenstmts.foreach (stmt => EncodeStatement (stmt))
+        thenstmts.foreach (stmt => EncodeStatement (stmt, procOrModDecl))
 
         Assembler.mark (exitlbl)
     }
 
-    // EncodeWhileStmt
-    def EncodeWhileStmt (condexp: Exp, bodystmts: List[Statement]) {
+    /**
+     * EncodeWhileStmt
+     */
+    def EncodeWhileStmt (condexp : Exp, bodystmts : List[Statement], procOrModDecl : Declaration) {
 
         // Jump to test code
         val testlbl = Assembler.newlabel
@@ -477,59 +540,67 @@ object Encoder {
         // Output loop statements
         val looplbl = Assembler.newlabel
         Assembler.mark (looplbl)
-        bodystmts.foreach (stmt => EncodeStatement (stmt))
+        bodystmts.foreach (stmt => EncodeStatement (stmt, procOrModDecl))
 
         // Loop test
         Assembler.mark (testlbl)
-        processBoolExp (condexp, looplbl, false)
+        processBoolExp (condexp, looplbl, false, procOrModDecl)
     }
 
-    // EncodeWrite
-    def EncodeWrite (exp : Exp) {
+    /**
+     * EncodeWrite
+     */
+    def EncodeWrite (exp : Exp, procOrModDecl : Declaration) {
 
         // Process expression
-        val reg = processNumExp (exp)
+        val reg = processNumExp (exp, procOrModDecl)
 
         // Call WRD
         Assembler.emit ( WRD (reg))
 
-        RegMngr.freeReg (reg)
+        Assembler.freeReg (reg)
     }
 
-    // EncodeWriteLn
-    def EncodeWriteLn (exp : Exp) {
+    /**
+     * EncodeWriteLn
+     */
+    def EncodeWriteLn (exp : Exp, procOrModDecl : Declaration) {
 
         // Process expression
-        EncodeWrite (exp)
+        EncodeWrite (exp, procOrModDecl)
 
         // Call WRL
         Assembler.emit ( WRL )
     }
 
-    // EncodeRead
-    def EncodeRead (desig : Exp) {
+    /**
+     * EncodeRead
+     */
+    def EncodeRead (desig : Exp, procOrModDecl : Declaration) {
 
         // Get a register to put the result of the read
-        val reg = RegMngr.getFreeReg
+        val reg = Assembler.getFreeReg
 
         // Read a value
         Assembler.emit ( RD (reg))
 
         // Process destination
-        val desResult = processDesig (desig)
+        val desResult = processDesig (desig, procOrModDecl)
 
         // Make assignment
         Assembler.emit ( STW (reg, desResult.regno, desResult.offset))
 
         // Free registers
         if (desResult.regno != 0 && desResult.regno != 29)
-            RegMngr.freeReg (desResult.regno)
+            Assembler.freeReg (desResult.regno)
 
-        RegMngr.freeReg (reg)
+        Assembler.freeReg (reg)
     }
 
-    // Encode procedure parameters
-    def ProcessActualParams (fps : List[Declaration], aps : List[Exp]) {
+    /**
+     * Encode procedure actual parameters
+     */
+    def ProcessActualParams (fps : List[Declaration], aps : List[Exp], procOrModDecl : Declaration) {
 
         if (!fps.isEmpty) {
 
@@ -540,14 +611,14 @@ object Encoder {
             // this would break the logic in EncodeProc()
             fp match {
                 case rvd : RefVarDecl => {
-                    val desResult = processDesig (ap)
+                    val desResult = processDesig (ap, procOrModDecl)
 
                     // Store parameter address
                     var reg : Byte = 0
 
                     // If no register allocated, allocate one
-                    if (desResult.regno == 0 || desResult.regno == 29) {
-                        reg = RegMngr.getFreeReg
+                    if (desResult.regno == 0 || desResult.regno >= 27) {
+                        reg = Assembler.getFreeReg
                     }
                     // Otherwise use the same reg returned from processDesig
                     else {
@@ -556,45 +627,68 @@ object Encoder {
 
                     Assembler.emit ( ADDI (reg, desResult.regno, desResult.offset))
 
-                    // The +8 here is to skip over where the backups of LNK and
-                    // the old FP goes
+                    // The +8 here is to skip over the backups of LNK and the old FP
                     Assembler.emit ( STW (reg, 30, fp.byteOffset + 8))
 
                     // Free registers
-                    RegMngr.freeReg (reg)
+                    Assembler.freeReg (reg)
                 }
 
                 case _ => {
-                    val reg = processNumExp (ap)
+                    val reg = processNumExp (ap, procOrModDecl)
 
                     // The +8 is as above
                     Assembler.emit ( STW (reg, 30, fp.byteOffset + 8))
-                    RegMngr.freeReg (reg)
+                    Assembler.freeReg (reg)
                 }
             }
 
-            ProcessActualParams (fps.tail, aps.tail)
+            ProcessActualParams (fps.tail, aps.tail, procOrModDecl)
         }
     }
 
-    // EncodeProcedureCall
-    def EncodeProcedureCall (desig: Exp, aps: List[Exp]) {
+    /**
+     * EncodeProcedureCall
+     */
+    def EncodeProcedureCall (desig: Exp, aps: List[Exp], procOrModDecl : Declaration) {
 
         desig match {
-          case Ident(nm) if nm == "Write" => EncodeWrite (aps.head)
-          case Ident(nm) if nm == "WriteLn" => EncodeWriteLn (aps.head)
-          case Ident(nm) if nm == "Read" => EncodeRead (aps.head)
-          case id : Ident => {
-              val pd = (id->decl).asInstanceOf[ProcDecl]
-              pd match {
-                  case ProcDecl (_, fps, _, _, _, _) => {
-                      ProcessActualParams (fps, aps)
-                  }
-              }
-              Assembler.emit ( BSR (pd.label))
-          }
-          case _ => ()
-        }
+            case Ident(nm) if nm == "Write" => EncodeWrite (aps.head, procOrModDecl)
+            case Ident(nm) if nm == "WriteLn" => EncodeWriteLn (aps.head, procOrModDecl)
+            case Ident(nm) if nm == "Read" => EncodeRead (aps.head, procOrModDecl)
+            case id : Ident => {
+                val pd = (id->decl).asInstanceOf[ProcDecl]
 
+                // Set the static link
+                // If the proc being called is a child of the current proc,
+                // set the static link to the current proc's FP
+                if (pd.parent == procOrModDecl) {
+                    Assembler.emit ( PSH (29, 30, 4))
+                }
+                // Otherwise the proc being called must be a sibling proc.
+                // In this case, set the static link to the parent proc's static link
+                else {
+                    val reg = Assembler.getFreeReg
+
+                    // Load the current static link
+                    Assembler.emit ( LDW (reg, 29, -12))
+
+                    // Put it on the stack
+                    Assembler.emit ( PSH (reg, 30, 4))
+
+                    Assembler.freeReg (reg)
+                }
+
+                // Process the actual parameters
+                pd match {
+                    case ProcDecl (_, fps, _, _, _, _) => {
+                        ProcessActualParams (fps, aps, procOrModDecl)
+                    }
+                }
+
+                Assembler.emit ( BSR (pd.label))
+            }
+            case _ => ()
+        }
     }
 }

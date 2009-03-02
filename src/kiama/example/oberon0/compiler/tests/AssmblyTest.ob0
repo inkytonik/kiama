@@ -3,15 +3,14 @@
 
 MODULE Sample;
     VAR a, b : INTEGER;
-(*        c : RECORD
+        c : RECORD
                 fld1, fld2 : INTEGER
 	        END;
-	    d : ARRAY 7 OF INTEGER; *)
+	    d : ARRAY 7 OF INTEGER;
 
 BEGIN
 
     Read (a);
-(*    a := 6; *)
     WriteLn (a);
 
     IF (a < 5) OR (a >= 10) THEN
@@ -20,19 +19,14 @@ BEGIN
 		b := 11
 	END;
 
-    Write (b)
-
-(*	a := 5;
-	b := 2
-
     c.fld1 := 5;
-    c.fld2 := 19
+    c.fld2 := 19;
 
-    d[3] := 7
+    d[3] := 7;
 
     a := 2;
     b := 3;
     d[2 + 3] := 99;
-    d[a + 3] := 100 *)
+    d[a + 3] := 100
 
 END Sample.

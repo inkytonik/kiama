@@ -47,6 +47,7 @@ object TypeAnalysis {
             case FieldDecl (_, tp)    => tp->objType
             case ModuleDecl (_, _, _, _, tp)  => tp
             case ProcDecl (_, _, _, _, _, tp) => tp
+            case BuiltInProcDecl (_, _, tp)	  => tp
 
             // Expressions
             case id : Ident => id->decl->objType
@@ -174,5 +175,15 @@ object TypeAnalysis {
 		    case IntegerType => 4
 		    case BooleanType => 4
 		    case _ => -1
+        }
+
+    // *** Attribute 'level':  Nesting depth of the declaration
+    val level : Attributable ==> Int = 
+        attr {
+            case md : ModuleDecl => 0
+
+		    case pd : ProcDecl => (pd.parent)->level + 1
+
+		    case x @ _ => (x.parent)->level
         }
 }

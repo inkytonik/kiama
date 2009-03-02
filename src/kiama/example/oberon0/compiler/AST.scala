@@ -219,6 +219,8 @@ object AST {
         }
     }
 
+    case class BuiltInProcDecl (id : Ident, fps : List[Declaration], tp: ProcType) extends Declaration (id)
+
     case class UnknownDecl (id : Ident) extends Declaration(id)
 
     abstract class Type extends Attributable with PrettyPrintable

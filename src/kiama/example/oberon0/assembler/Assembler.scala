@@ -29,12 +29,12 @@ object Assembler {
     import kiama.example.oberon0.machine.RISCISA._
     import scala.collection.mutable.ArrayBuffer
     import scala.collection.mutable.HashMap
-    
+
     /**
      * The code sequence that is being assembled.
      */
     private val code = new ArrayBuffer[Instr]
-    
+
     /**
      * Emit a RISC instruction.
      */
@@ -88,7 +88,7 @@ object Assembler {
         }
         code
     }
-    
+
     /**
      * Resolve a symbolic label occurring in an instruction at the
      * given code offset, by returning the equivalent numeric offset.
@@ -99,5 +99,42 @@ object Assembler {
         if (! (labelmap contains label))
             error ("Assembler.resolve: unmarked label: " + label)
         labelmap (label) - offset
+    }
+
+    /**
+     * Register data
+     */
+    val numreg : Int = 32
+    val regs = new Array[Boolean] (numreg)
+
+    // Init registers
+    var i : Int = 1
+    while (i < 28) {
+        regs (i) = false
+        i += 1
+    }    
+
+    /**
+     * Get free reg (between 1 and 28)
+     * Reserve R0 (=zero), R28 (PC), R29 (FP), R30 (SP), R31 (LNK)
+     */
+    def getFreeReg : Byte = {
+        var i : Int = 1
+        while (i < 28) {
+            if (!regs (i)) {
+                regs (i) = true
+				return i.asInstanceOf[Byte]
+			}
+            i += 1
+        }
+		println ("No registers available")
+		-1
+    }
+
+    /**
+     * Free a register
+     */
+    def freeReg (i : Byte) {
+        regs (i) = false
     }
 }

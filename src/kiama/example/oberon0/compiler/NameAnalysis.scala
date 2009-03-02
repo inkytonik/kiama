@@ -78,20 +78,26 @@ class Environment (parent: Environment) {
     override def toString = decls.toString
 }
 
-// Semantic attributes
+/**
+ * Semantic attributes
+ */
 object NameAnalysis {
 
     import kiama.attribution.Attribution._
     import TypeAnalysis._
 
-    // *** Attribute 'isMultiplyDefined':  Whether the name has already been declared
-    // in this scope
+    /**
+     * Attribute 'isMultiplyDefined':  Whether the name has already been declared
+     * in this scope
+     */
     val isMultiplyDefined : Declaration ==> Boolean =
         attr {
             case dec : Declaration => (dec->env).isMultiplyDefined(dec.getId.name) 
         }
 
-    // *** Attribute 'env':  The accessible names and types at a given point in the program
+    /**
+     * Attribute 'env':  The accessible names and types at a given point in the program
+     */
     val env : Attributable ==> Environment =
         attr {
             // Modules: Create a new environment
@@ -101,9 +107,9 @@ object NameAnalysis {
                 // as <ModuleName>.<ProcName>)
                 var globalEnv = new Environment (null)
 //                globalEnv.addToEnv (id.name, md)
-                globalEnv.addToEnv ("Write", ProcDecl (Ident ("Write"), List (VarDecl ( Ident ("exp"), IntegerType) ), null, null, Ident ("Write"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
-                globalEnv.addToEnv ("WriteLn", ProcDecl (Ident ("WriteLn"), List (VarDecl ( Ident ("exp"), IntegerType) ), null, null, Ident ("WriteLn"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
-                globalEnv.addToEnv ("Read", ProcDecl (Ident ("Read"), List (RefVarDecl ( Ident ("var"), IntegerType) ), null, null, Ident ("Read"), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
+                globalEnv.addToEnv ("Write", BuiltInProcDecl (Ident ("Write"), List (VarDecl ( Ident ("exp"), IntegerType) ), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
+                globalEnv.addToEnv ("WriteLn", BuiltInProcDecl (Ident ("WriteLn"), List (VarDecl ( Ident ("exp"), IntegerType) ), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
+                globalEnv.addToEnv ("Read", BuiltInProcDecl (Ident ("Read"), List (RefVarDecl ( Ident ("var"), IntegerType) ), ProcType (List (RefVarDecl ( Ident ("var"), IntegerType) ))))
 
                 // Create module environment
                 var env1 = new Environment (globalEnv)
@@ -130,7 +136,9 @@ object NameAnalysis {
             case obj @ _ => obj.parent->env
         }
 
-    // *** Attribute 'decl':  The declaration associated with each applied occurrence of an Ident
+    /**
+     * Attribute 'decl':  The declaration associated with each applied occurrence of an Ident
+     */
     val decl : Ident ==> Declaration =
         attr {
             case id @ Ident (nm) =>

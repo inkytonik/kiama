@@ -137,16 +137,23 @@ class RISC (code : Code) extends Machine ("RISC") {
      * Execute memory instructions.
      */
     def memory (instr : Instr) =
-        instr match {
-            case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
-            case LDB (a, b, im) => halt := "LDB not implemented"
-            case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
-                                   R (b) := R (b) - im						 // BEN MOD: '+' to '-'
-            case STW (a, b, im) => Mem := Mem + (((R (b) + im) / 4, R (a)))
-            case STB (a, b, im) => halt := "STB not implemented"
-            case PSH (a, b, im) => Mem := Mem + ((R (b) / 4, R (a)))  		 // BEN MOD: Remove '- im'
-                                   R (b) := R (b) + im						 // BEN MOD: '-' to '+'
-            case _ => ()		// BEN MOD
+        try {
+            instr match {
+                case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
+                case LDB (a, b, im) => halt := "LDB not implemented"
+                case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
+                                       R (b) := R (b) - im						 // BEN MOD: '+' to '-'
+                case STW (a, b, im) => Mem := Mem + (((R (b) + im) / 4, R (a)))
+                case STB (a, b, im) => halt := "STB not implemented"
+                case PSH (a, b, im) => Mem := Mem + ((R (b) / 4, R (a)))  		 // BEN MOD: Remove '- im'
+                                       R (b) := R (b) + im						 // BEN MOD: '-' to '+'
+                case _ => ()		// BEN MOD
+            }
+        }
+        catch {
+            case _ => println ("XXX Exception at " + instr)
+            println ("Mem = " + Mem)
+            halt := "Halt"
         }
 
     /**

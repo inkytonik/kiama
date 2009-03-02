@@ -6,6 +6,7 @@ MODULE ProcTest1;
     VAR i, j : INTEGER;
         A : ARRAY Size OF INTEGER;
         B : ARRAY 3 OF INTEGER;
+        globres : INTEGER;
 
     (* Multiply x & y and put result in res *)
     PROCEDURE Multiply1 (x, y : INTEGER; VAR res : INTEGER);
@@ -21,8 +22,16 @@ MODULE ProcTest1;
 		Write (data[2])
 	END Multiply2;
 
+    (* Multiply x & y and put result in globres *)
+    PROCEDURE Multiply3 (x, y : INTEGER);
+	BEGIN
+	    globres := x * y;
+		Write (globres)
+	END Multiply3;
+
 BEGIN
 
+    (* Test Multiply1 *)
     j := 0;
 
     WHILE j < Size DO
@@ -33,6 +42,7 @@ BEGIN
 
     END;
 
+    (* Test Multiply2 *)
     j := 0;
 
     WHILE j < Size DO
@@ -43,6 +53,10 @@ BEGIN
         WriteLn (B[2]);
         j := j + 1
 
-    END
+    END;
+
+    (* Test Multiply3 *)
+    Multiply3 (5, 3);
+	WriteLn (globres)    
 
 END ProcTest1.
