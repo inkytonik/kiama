@@ -73,9 +73,10 @@ object AST {
 
     abstract class Exp extends Attributable with PrettyPrintable
 
-    case class Ident (name: String) extends Exp
-    case class FieldDesig (left : Exp, id : Ident) extends Exp
-    case class ArrayDesig (left : Exp, exp : Exp) extends Exp
+    abstract class Desig extends Exp
+    case class Ident (name : String) extends Desig
+    case class FieldDesig (left : Desig, id : Ident) extends Desig
+    case class ArrayDesig (left : Desig, exp : Exp) extends Desig
 
     abstract class Literal extends Exp
     case class IntegerLiteral (num: Int) extends Literal
@@ -143,7 +144,7 @@ object AST {
         }
     }
 
-    case class Assignment (desig : Exp, exp : Exp) extends Statement
+    case class Assignment (desig : Desig, exp : Exp) extends Statement
     case class ProcedureCall (desig : Exp, aps : List[Exp]) extends Statement
     
     case class IfStatement (condexp : Exp, thenstmts : List[Statement], elsestmts: List[Statement]) extends Statement {
@@ -163,8 +164,7 @@ object AST {
 
     case class WhileStatement (condexp : Exp, bodystmts : List[Statement]) extends Statement
 
-    abstract class Declaration (id: Ident) extends Attributable with PrettyPrintable {
-        def getId = id 
+    abstract class Declaration (name : String) extends Attributable with PrettyPrintable {
 
         var byteOffset : Int = -999		// Should get overwritten.
 
@@ -172,56 +172,46 @@ object AST {
             super.pretty(o, indent)
             o.append("\n")
         }
+
+        def getName = name
     }
 
-    case class ConstDecl (id : Ident, constval : Exp) extends Declaration (id)
-    case class VarDecl (id : Ident, tp : Type) extends Declaration (id)
-    case class RefVarDecl (id : Ident, tp : Type) extends Declaration (id)
-    case class TypeDecl (id : Ident, tp : Type) extends Declaration (id)
-    case class FieldDecl (id : Ident, tp : Type) extends Declaration (id)
+    case class ConstDecl (name : String, constval : Exp) extends Declaration (name)
+    case class VarDecl (name : String, tp : Type) extends Declaration (name)
+    case class RefVarDecl (name : String, tp : Type) extends Declaration (name)
+    case class TypeDecl (name : String, tp : Type) extends Declaration (name)
+    case class FieldDecl (name : String, tp : Type) extends Declaration (name)
 
-    case class ModuleDecl (id : Ident, decls : List[Declaration], stmts : List[Statement], id2 : Ident, tp : ModuleType) extends Declaration (id) {
+    case class ModuleDecl (name : String, decls : List[Declaration], stmts : List[Statement], name2 : String, tp : ModuleType) extends Declaration (name) {
         var byteSize = -999
         
         override def pretty (o : StringBuilder, indent : Int) {
-            o.append ("ModuleDecl(id = ")
-            id.pretty (o, 0)
-            o.append ("\n")
-
+            o.append ("ModuleDecl(id = " + name + "\n")
             printList (o, indent + 1, decls, "decls = ")
             printList (o, indent + 1, stmts, "stmts = ")
-
             printTabs (o, indent + 1)
-            o.append ("id2 = ")
-            id2.pretty (o, 0)
-            o.append (" )\n")
+            o.append ("id2 = " + name2 + ")\n")
         }
     }
 
-    case class ProcDecl (id : Ident, fps : List[Declaration], decls : List[Declaration], stmts : List[Statement], id2 : Ident, tp: ProcType) extends Declaration (id) {
+    case class ProcDecl (name : String, fps : List[Declaration], decls : List[Declaration], stmts : List[Statement], name2 : String, tp: ProcType) extends Declaration (name) {
       var byteSize = -999
       var label : Int = 0
 
       override def pretty (o : StringBuilder, indent : Int) {
             printTabs (o, indent)
-            o.append ("ProcDecl(id = ")
-            id.pretty (o, 0)
-            o.append ("\n")
-
+            o.append ("ProcDecl(id = " + name + "\n")
             printList (o, indent + 1, fps, "fps = ")
             printList (o, indent + 1, decls, "decls = ")
             printList (o, indent + 1, stmts, "stmts = ")
-
             printTabs (o, indent + 1)
-            o.append ("id2 = ")
-            id2.pretty (o, 0)
-            o.append (" )\n")
+            o.append ("id2 = " + name2 + ")\n")
         }
     }
 
-    case class BuiltInProcDecl (id : Ident, fps : List[Declaration], tp: ProcType) extends Declaration (id)
+    case class BuiltInProcDecl (name : String, fps : List[Declaration], tp: ProcType) extends Declaration (name)
 
-    case class UnknownDecl (id : Ident) extends Declaration(id)
+    case class UnknownDecl (name : String) extends Declaration(name)
 
     abstract class Type extends Attributable with PrettyPrintable
 

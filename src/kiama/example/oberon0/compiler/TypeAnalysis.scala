@@ -30,7 +30,9 @@ object TypeAnalysis {
     import ValueAnalysis._
     import ConstantAnalysis._
 
-    // *** Attribute 'objType':  The associated Type object
+    /**
+     * Attribute 'objType':  The associated Type object
+     */
     val objType : Attributable ==> Type =
         attr {
             // Named types
@@ -105,16 +107,9 @@ object TypeAnalysis {
             case _ => InvalidType
         }
 
-    // *** Attribute 'isAssignable':  Whether an object can store a value
-    val isAssignable : Exp ==> Boolean = 
-        attr {
-            case id : Ident => true
-            case fd : FieldDesig => true
-            case ad : ArrayDesig => true
-            case _ => false
-        }
-    
-    // *** Attribute 'validProcArgs': Verify that number and type of formal params equals
+    /**
+     * Attribute 'validProcArgs': Verify that number and type of formal params equals
+     */
     // number and type of actual params
     val procArgErrors : ProcedureCall ==> List[String] =
         attr {
@@ -132,7 +127,9 @@ object TypeAnalysis {
             }
         }
 
-    // Check individual procedure call parameters
+    /**
+     * checkParams: Check individual procedure call parameters
+     */
     def checkParams (fps : List[Declaration], aps : List[Exp]) : List[String] = {
         if (fps.isEmpty)
             Nil
@@ -146,7 +143,7 @@ object TypeAnalysis {
                 errs = (ap + " is not of type " + (fp->objType)) :: errs
 
             // Check for by-ref formal param with non-assignable actual param
-            if (fp.isInstanceOf[RefVarDecl] && !(ap->isAssignable)) {
+            if (fp.isInstanceOf[RefVarDecl] && !(ap.isInstanceOf[Desig])) {
                 errs = (ap + " must be a variable, record field or array element") :: errs
             }
 
@@ -155,7 +152,9 @@ object TypeAnalysis {
         }
     }
 
-    // *** Attribute 'byteSize':  Memory size associated with types and declarations
+    /**
+     * Attribute 'byteSize':  Memory size associated with types and declarations
+     */
     val byteSize : Attributable ==> Int = 
         attr {
             case dec : Declaration => dec->objType->byteSize

@@ -49,7 +49,7 @@ class Environment (parent: Environment) {
      * Add declaration list to the environment
      */
     def addDeclsToEnv (decls : List[Declaration]) {
-        decls.foreach (dec => addToEnv (dec.getId.name, dec))
+        decls.foreach (dec => addToEnv (dec.getName, dec))
     }
 
     /**
@@ -62,7 +62,7 @@ class Environment (parent: Environment) {
         else if (searchAll && (parent != null))
             parent.findDecl (nm, true)
         else
-            UnknownDecl (Ident (nm))
+            UnknownDecl (nm)
     }
 
     /**
@@ -92,7 +92,7 @@ object NameAnalysis {
      */
     val isMultiplyDefined : Declaration ==> Boolean =
         attr {
-            case dec : Declaration => (dec->env).isMultiplyDefined(dec.getId.name) 
+            case dec : Declaration => (dec->env).isMultiplyDefined(dec.getName) 
         }
 
     /**
@@ -107,9 +107,9 @@ object NameAnalysis {
                 // as <ModuleName>.<ProcName>)
                 var globalEnv = new Environment (null)
 //                globalEnv.addToEnv (id.name, md)
-                globalEnv.addToEnv ("Write", BuiltInProcDecl (Ident ("Write"), List (VarDecl ( Ident ("exp"), IntegerType) ), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
-                globalEnv.addToEnv ("WriteLn", BuiltInProcDecl (Ident ("WriteLn"), List (VarDecl ( Ident ("exp"), IntegerType) ), ProcType (List (VarDecl ( Ident ("exp"), IntegerType) ))))
-                globalEnv.addToEnv ("Read", BuiltInProcDecl (Ident ("Read"), List (RefVarDecl ( Ident ("var"), IntegerType) ), ProcType (List (RefVarDecl ( Ident ("var"), IntegerType) ))))
+                globalEnv.addToEnv ("Write", BuiltInProcDecl ("Write", List (VarDecl ("exp", IntegerType) ), ProcType (List (VarDecl ("exp", IntegerType) ))))
+                globalEnv.addToEnv ("WriteLn", BuiltInProcDecl ("WriteLn", List (VarDecl ("exp", IntegerType) ), ProcType (List (VarDecl ("exp", IntegerType) ))))
+                globalEnv.addToEnv ("Read", BuiltInProcDecl ("Read", List (RefVarDecl ("var", IntegerType) ), ProcType (List (RefVarDecl ("var", IntegerType) ))))
 
                 // Create module environment
                 var env1 = new Environment (globalEnv)
@@ -146,7 +146,7 @@ object NameAnalysis {
                     // RHS of a field designation
                     case FieldDesig (left, id2) if (id == id2) => {
                         val rectp = left->objType
-                        left->objType match { case InvalidType => UnknownDecl (id)
+                        left->objType match { case InvalidType => UnknownDecl (nm)
                                               case _ => (rectp->env).findDecl (nm, false)
                                             }
                     }
