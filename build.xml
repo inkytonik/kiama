@@ -8,7 +8,7 @@
   <property name="scala.lib" value="${scala.home}/lib/scala-library.jar"/>
 
   <property name="scalacheck.lib" value="lib/ScalaCheck-1.5.jar"/>
-  <property name="scalatest.lib" value="lib/scalatest-0.9.4.jar"/>
+  <property name="scalatest.lib" value="lib/scalatest-0.9.5.jar"/>
   <property name="junit.lib" value="lib/junit-4.5.jar"/>
 
   <path id="scala.classpath">

@@ -24,7 +24,7 @@ Anthony.Sloane@mq.edu.au
 Kiama is hosted on the Programming Languages Research Group redmine site
 at:
 
-    http://plrg.ics.mq.edu.au:3000/
+    http://plrg.ics.mq.edu.au/
    
 (Access to this site is currently restricted.  Contact us if you would
 like to have access.)
@@ -67,10 +67,10 @@ distributed with the Kiama source distribution in the lib directory.
   Tested with version 1.5
   
 * ScalaTest (http://www.artima.com/scalatest/)
-  Tested with version 0.9.4
+  Tested with version 0.9.5
   
 * JUnit (http://www.junit.org)
-  Tested with version 4.1
+  Tested with version 4.5
 
 4. Building
 
