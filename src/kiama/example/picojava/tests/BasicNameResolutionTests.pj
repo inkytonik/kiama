@@ -1,0 +1,12 @@
+{
+    int x; // hello
+    x = z;
+    int z;
+    y = x;
+    class A {
+        int z;
+        x = z;
+        y = z;
+    }
+}
+

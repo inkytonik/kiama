@@ -1,0 +1,39 @@
+(* Some complex array & record dereferencing *)
+
+MODULE StressTest2;
+    CONST Size = 4 DIV 2;
+
+    TYPE RecType = RECORD
+                fld1, fld2 : INTEGER;
+                fld3 : ARRAY Size OF INTEGER
+	        END;
+
+    VAR i, j : INTEGER;
+	    a : ARRAY Size OF ARRAY Size OF RecType;
+
+BEGIN
+
+    i := 0;
+
+    WHILE ~( (i >= Size) OR (i < 0) ) DO
+
+        j := 0;
+
+        WHILE ~(j >= Size) DO
+
+            a[i][j].fld1 := i;
+            a[i][j].fld2 := j;
+            a[i][j].fld3[0] := i * j;
+            a[i][j].fld3[1] := i * j * 2;
+            j := j + 1
+
+        END;
+
+        i := i + 1
+
+    END;
+
+    WriteLn (a[1][1].fld3[0]);
+    WriteLn (a[1][1].fld3[1])
+
+END StressTest2.
