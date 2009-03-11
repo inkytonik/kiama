@@ -40,7 +40,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         "MODULE" ~> (ident <~ ";") ~ declarations ~
             (("BEGIN" ~> statementSequence)?) ~ ("END" ~> ident) <~ "." ^^
                 { case id1 ~ decs ~ opstseq ~ id2 =>
-                     ModuleDecl (id1, decs, optionalListToList (opstseq), id2, ModuleType()) }
+                     ModuleDecl (id1.name, decs, optionalListToList (opstseq), id2.name, ModuleType()) }
 
     lazy val declarations : Parser[List[Declaration]] =
         (constdecls?) ~ (typedecls?) ~ (vardecls?) ~ procdecls  ^^
@@ -49,28 +49,28 @@ trait Parser extends kiama.parsing.CharPackratParsers {
                   optionalListToList (v) ::: p }
 
     lazy val constdecl : Parser[ConstDecl] =
-        (ident <~ "=") ~ expression <~ ";" ^^ { case id ~ ex => ConstDecl (id, ex) }
+        (ident <~ "=") ~ expression <~ ";" ^^ { case id ~ ex => ConstDecl (id.name, ex) }
     
     lazy val constdecls : Parser[List[ConstDecl]] =
         "CONST" ~> (constdecl*)
 
     lazy val typedecl : Parser[TypeDecl] =
-        (ident <~ "=") ~ type1 <~ ";" ^^ {case id ~ tp => TypeDecl (id, tp) }
+        (ident <~ "=") ~ type1 <~ ";" ^^ {case id ~ tp => TypeDecl (id.name, tp) }
     
     lazy val typedecls : Parser[List[TypeDecl]] =
         "TYPE" ~> (typedecl*)
     
     lazy val vardeclspertype : Parser[List[VarDecl]] =
         (identList <~ ":") ~ type1 ^^
-            { case lst ~ tp => lst.map (id => VarDecl (id, tp)) }
+            { case lst ~ tp => lst.map (id => VarDecl (id.name, tp)) }
     
     lazy val vardecls : Parser[List[VarDecl]] =
         "VAR" ~> ((vardeclspertype <~ ";")*) ^^ (lst => lst.flatten)
 
     lazy val fpSection : Parser[List[Declaration]] =
         (("VAR"?) ~ identList <~ ":") ~ type1 ^^
-           { case Some (_) ~ lst ~ tp => lst.map (id => RefVarDecl (id, tp))
-             case None     ~ lst ~ tp => lst.map (id => VarDecl (id, tp)) }
+           { case Some (_) ~ lst ~ tp => lst.map (id => RefVarDecl (id.name, tp))
+             case None     ~ lst ~ tp => lst.map (id => VarDecl (id.name, tp)) }
 
     lazy val formalParameters : Parser[List[Declaration]] =
         "(" ~> repsep(fpSection, ";") <~ ")" ^^ (lst => lst.flatten)
@@ -82,8 +82,8 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         ("PROCEDURE" ~> ident) ~ (formalParameters?) ~ (";" ~> declarations) ~
             (("BEGIN" ~> statementSequence)?) ~ ("END" ~> ident) ^^
                 { case id1 ~ opfps ~ decs ~ opstseq ~ id2 =>
-                     ProcDecl (id1, optionalListToList (opfps), decs,
-                               optionalListToList (opstseq), id2, ProcType(optionalListToList (opfps))) }
+                     ProcDecl (id1.name, optionalListToList (opfps), decs,
+                               optionalListToList (opstseq), id2.name, ProcType(optionalListToList (opfps))) }
 
     // Types
 
@@ -102,7 +102,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     lazy val fieldList : Parser[List[FieldDecl]] =
         (identList <~ ":") ~ type1 ^^
-            { case lst ~ tp => lst.map (id => FieldDecl (id, tp)) }
+            { case lst ~ tp => lst.map (id => FieldDecl (id.name, tp)) }
 
     lazy val recordType : Parser[RecordType] =
         "RECORD" ~> repsep (fieldList, ";") <~ "END" ^^
@@ -178,7 +178,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         "+" ~> factor ^^ Pos |
         "-" ~> factor ^^ Neg
 
-    lazy val desig : MemoParser[Exp] =
+    lazy val desig : MemoParser[Desig] =
         (desig <~ "[") ~ (expression <~ "]") ^^ { case d ~ e => ArrayDesig (d, e) } |
         (desig <~ ".") ~ ident ^^ { case d ~ id => FieldDesig (d, id) } |
         ident
@@ -210,5 +210,3 @@ trait Parser extends kiama.parsing.CharPackratParsers {
     def optionalListToList[T] (op: Option[List[T]]) : List[T] =
         op.getOrElse (Nil)    
 }
-
-

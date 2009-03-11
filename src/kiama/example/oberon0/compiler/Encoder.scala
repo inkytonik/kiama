@@ -255,7 +255,7 @@ object Encoder {
                 else
                     reg = baseAddrReg
 
-                // Initialize reg to the value in the base register
+                // Load the address
                 Assembler.emit ( LDW (reg, baseAddrReg, rvd.byteOffset))
 
                 desigResult (reg, 0)
@@ -268,7 +268,7 @@ object Encoder {
     /**
      * Process an array designator
      */
-    def processArrayDesig (ad : ArrayDesig, left : Exp, exp : Exp, procOrModDecl : Declaration) : desigResult = {
+    def processArrayDesig (ad : ArrayDesig, left : Desig, exp : Exp, procOrModDecl : Declaration) : desigResult = {
 
         val leftResult = processDesig (left, procOrModDecl)
 
@@ -313,9 +313,9 @@ object Encoder {
     /**
      * Resolve a designation into a memory address (register contents + offset)
      */
-    def processDesig (exp : Exp, procOrModDecl : Declaration) : desigResult = {
+    def processDesig (des : Desig, procOrModDecl : Declaration) : desigResult = {
 
-        exp match {
+        des match {
 
             // Identifier
             case id : Ident => processIdent (id, procOrModDecl)
@@ -353,27 +353,28 @@ object Encoder {
 
         // If the expression is non-constant, build it at runtime
         // If a designator ...
-        if (exp.isInstanceOf[Ident] || exp.isInstanceOf[FieldDesig] || exp.isInstanceOf[ArrayDesig]) {
-
-            // Get memory address as register and offset
-            val desResult = processDesig (exp, procOrModDecl)
-
-            // If no register allocated, allocate one
-            if (desResult.regno == 0 || desResult.regno == 29) 
-                reg = Assembler.getFreeReg
-            else
-                reg = desResult.regno
-
-            // Load the item from memory
-            Assembler.emit ( LDW (reg, desResult.regno, desResult.offset))
-
-            return reg
-        }
-
-        // Other expressions
         exp match {
+          
+            case des : Desig => {
 
+                // Get memory address as register and offset
+                val desResult = processDesig (des, procOrModDecl)
+
+                // If no register allocated, allocate one
+                if (desResult.regno == 0 || desResult.regno == 29) 
+                    reg = Assembler.getFreeReg
+                else
+                    reg = desResult.regno
+
+                // Load the item from memory
+                Assembler.emit ( LDW (reg, desResult.regno, desResult.offset))
+
+                return reg
+            }
+
+            // Other expressions
             case ue : UnaryNumExp => {
+
                 reg = processNumExp (ue.getExp, procOrModDecl)
 
                 exp match {
@@ -485,22 +486,49 @@ object Encoder {
     /**
      * EncodeAssignment
      */
-    def EncodeAssignment (desig : Exp, exp : Exp, procOrModDecl : Declaration) {
+    def EncodeAssignment (targetdes : Desig, exp : Exp, procOrModDecl : Declaration) {
 
         // Process destination
-        val desResult = processDesig (desig, procOrModDecl)
+        val tgtDesResult = processDesig (targetdes, procOrModDecl)
 
         // Process source
-        val srcReg = processNumExp (exp, procOrModDecl)
+        exp match {
+          
+            // If source is a designator ...
+            case srcdes : Desig => {
 
-        // Make assignment
-        Assembler.emit ( STW (srcReg, desResult.regno, desResult.offset))
+                // Get memory address as register and offset
+                val srcDesResult = processDesig (srcdes, procOrModDecl)
+
+                // Copy word-by-word
+                val tempreg = Assembler.getFreeReg
+
+                var i : Int = 0
+                while (i < targetdes->objType->byteSize)
+                {
+                    Assembler.emit (LDW (tempreg, srcDesResult.regno, srcDesResult.offset + i))
+                    Assembler.emit (STW (tempreg, tgtDesResult.regno, tgtDesResult.offset + i))
+                    i = i + 4
+                }
+
+                Assembler.freeReg (tempreg)
+            }
+
+            // Other (single-valued) expressions
+            case _ => {
+
+                val srcReg = processNumExp (exp, procOrModDecl)
+
+                // Make assignment
+                Assembler.emit ( STW (srcReg, tgtDesResult.regno, tgtDesResult.offset))
+
+                Assembler.freeReg (srcReg)
+            }
+        }
 
         // Free registers
-        if (desResult.regno != 0 && desResult.regno != 29)
-            Assembler.freeReg (desResult.regno)
-
-        Assembler.freeReg (srcReg)
+        if (tgtDesResult.regno != 0 && tgtDesResult.regno != 29)
+            Assembler.freeReg (tgtDesResult.regno)
     }
 
     /**
@@ -576,25 +604,30 @@ object Encoder {
     /**
      * EncodeRead
      */
-    def EncodeRead (desig : Exp, procOrModDecl : Declaration) {
-
-        // Get a register to put the result of the read
-        val reg = Assembler.getFreeReg
-
-        // Read a value
-        Assembler.emit ( RD (reg))
+    def EncodeRead (exp : Exp, procOrModDecl : Declaration) {
 
         // Process destination
-        val desResult = processDesig (desig, procOrModDecl)
+        exp match {
+            case des : Desig => {
 
-        // Make assignment
-        Assembler.emit ( STW (reg, desResult.regno, desResult.offset))
+                // Get a register to put the result of the read
+                val reg = Assembler.getFreeReg
 
-        // Free registers
-        if (desResult.regno != 0 && desResult.regno != 29)
-            Assembler.freeReg (desResult.regno)
+                // Read a value
+                Assembler.emit ( RD (reg))
 
-        Assembler.freeReg (reg)
+                val desResult = processDesig (des, procOrModDecl)
+
+                // Make assignment
+                Assembler.emit ( STW (reg, desResult.regno, desResult.offset))
+
+                // Free registers
+                if (desResult.regno != 0 && desResult.regno != 29)
+                    Assembler.freeReg (desResult.regno)
+
+                Assembler.freeReg (reg)
+            }
+        }
     }
 
     /**
@@ -610,35 +643,80 @@ object Encoder {
             // Note:  Can't just push the parameters onto the stack because
             // this would break the logic in EncodeProc()
             fp match {
+
+                // RefVarDecls
                 case rvd : RefVarDecl => {
-                    val desResult = processDesig (ap, procOrModDecl)
+                  
+                    ap match {
+                        case des : Desig => {
 
-                    // Store parameter address
-                    var reg : Byte = 0
+                            val desResult = processDesig (des, procOrModDecl)
 
-                    // If no register allocated, allocate one
-                    if (desResult.regno == 0 || desResult.regno >= 27) {
-                        reg = Assembler.getFreeReg
+                            // Store parameter address
+                            var reg : Byte = 0
+
+                            // If no register allocated, allocate one
+                            if (desResult.regno == 0 || desResult.regno >= 27) {
+                                reg = Assembler.getFreeReg
+                            }
+                            // Otherwise use the same reg returned from processDesig
+                            else {
+                                reg = desResult.regno
+                            }
+
+                            Assembler.emit ( ADDI (reg, desResult.regno, desResult.offset))
+
+                            // The +8 here is to skip over the backups of LNK and the old FP
+                            Assembler.emit ( STW (reg, 30, fp.byteOffset + 8))
+
+                            // Free registers
+                            Assembler.freeReg (reg)
+                        }
                     }
-                    // Otherwise use the same reg returned from processDesig
-                    else {
-                        reg = desResult.regno
-                    }
-
-                    Assembler.emit ( ADDI (reg, desResult.regno, desResult.offset))
-
-                    // The +8 here is to skip over the backups of LNK and the old FP
-                    Assembler.emit ( STW (reg, 30, fp.byteOffset + 8))
-
-                    // Free registers
-                    Assembler.freeReg (reg)
                 }
 
+                // Value parameters
                 case _ => {
+
+                    // Process source
+                    ap match {
+
+                        // If source is a designator ...
+                        case srcdes : Desig => {
+
+                            // Get memory address as register and offset
+                            val srcDesResult = processDesig (srcdes, procOrModDecl)
+
+                            // Copy word-by-word
+                            val tempreg = Assembler.getFreeReg
+
+                            var i : Int = 0
+                            while (i < fp->objType->byteSize)
+                            {
+                                Assembler.emit (LDW (tempreg, srcDesResult.regno, srcDesResult.offset + i))
+
+                                // The +8 is as above
+                                Assembler.emit (STW (tempreg, 30, fp.byteOffset + 8 + i))
+                                i = i + 4
+                            }
+
+                            Assembler.freeReg (tempreg)
+                        }
+
+                        // Other (single-valued) expressions
+                        case _ => {
+
+                            val srcReg = processNumExp (ap, procOrModDecl)
+
+                            // The +8 is as above
+                            Assembler.emit ( STW (srcReg, 30, fp.byteOffset + 8))
+
+                            Assembler.freeReg (srcReg)
+                        }
+                    }
+                  
                     val reg = processNumExp (ap, procOrModDecl)
 
-                    // The +8 is as above
-                    Assembler.emit ( STW (reg, 30, fp.byteOffset + 8))
                     Assembler.freeReg (reg)
                 }
             }

@@ -51,36 +51,30 @@ object ErrorCheck {
 		        obj match {
 		
 		            // Check for name-mismatch errors in module declarations
-		            case md @ ModuleDecl (id, _, _, id2, _) if id.name != id2.name => {
-                        errs = ("Name mismatch: Opening identifier = " + id.name + ", Closing identifier = " + id2.name) :: errs
+		            case md @ ModuleDecl (nm, _, _, nm2, _) if nm != nm2 => {
+                        errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
 		            }
 
 		            // Check for name-mismatch errors in procedure declarations
-		            case pd @ ProcDecl (id, _, _, _, id2, _) if id.name != id2.name => {
-                        errs = ("Name mismatch: Opening identifier = " + id.name + ", Closing identifier = " + id2.name) :: errs
+		            case pd @ ProcDecl (nm, _, _, _, nm2, _) if nm != nm2 => {
+                        errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
 		            }
 
 		            // Check for undeclared identifiers (applied occurrences only)
 		            case id @ Ident (nm) => {
-		                if (!(id.parent.isInstanceOf[Declaration]))
-		                    if ((id->decl).isInstanceOf[UnknownDecl])
-                                errs = ("Declaration not found: " + nm) :: errs
+		                if ((id->decl).isInstanceOf[UnknownDecl])
+                            errs = ("Declaration not found: " + nm) :: errs
 		            }
 
 		            // Check for duplicate declarations
 		            case dec : Declaration if dec->isMultiplyDefined => {
-    	                errs = ("Duplicate declaration = " + dec.getId.name) :: errs
+    	                errs = ("Duplicate declaration = " + dec.getName) :: errs
     	            }
 
                     // Check for incompatible types on either side of assignment statement
                     case as @ Assignment (desig, exp) if as->objType == InvalidType => {
 		                errs = ("Type mismatch in assignment expression: LHS is " + (desig->objType).toString
                             + ", RHS is " + (exp->objType).toString) :: errs
-    	            }
-
-                    // Check for assignable expression on LHS of assignment statement
-                    case as @ Assignment (desig, _) if !(desig->isAssignable) => {
-		                errs = ("LHS of := is not assignable: " + desig) :: errs
     	            }
 
                     // Check for non-integer size expression in array type declaration
