@@ -742,7 +742,7 @@ trait Rewriter {
         bottomup (attempt (s))
  
     /**
-     * Construct a strategy applies s at every term in a top-down fashion regardless
+     * Construct a strategy that applies s at every term in a top-down fashion regardless
      * of failure.  (Sub-)terms for which the strategy fails are left unchanged.
      */  
     def everywheretd (s : => Strategy) : Strategy =
