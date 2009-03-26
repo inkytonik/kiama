@@ -73,7 +73,6 @@ class JVMITests extends TestCase with JUnit3Suite with Checkers {
         mc.init
         mc.reg.update (Map (x -> 1, y -> 1, z -> 0))
         mc.steps
-        println (mc.reg.value)
         assertEquals (1, mc.reg.value (a))
         assertEquals (1, mc.reg.value (z))
         
