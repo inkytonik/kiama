@@ -69,6 +69,7 @@
  
    <target name="testbatch" depends="build">
     <scalatest>
+      <reporter type="stdout" config="YFABR"/>
       <runpath>
         <pathelement location="bin"/>
       </runpath>
