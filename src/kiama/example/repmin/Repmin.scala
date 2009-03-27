@@ -51,8 +51,8 @@ object Repmin {
                 
     val repmin : Tree ==> Tree = 
         attr {
-            case Pair (l, r)  => Pair (l->repmin, r->repmin)
-            case t @ Leaf (_) => Leaf (t->globmin)
+            case Pair (l, r) => Pair (l->repmin, r->repmin)
+            case t : Leaf    => Leaf (t->globmin)
         }
 
 }
