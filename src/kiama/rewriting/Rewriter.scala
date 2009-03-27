@@ -643,7 +643,7 @@ trait Rewriter {
      * stopping each time as soon as it succeeds once (at any level). The
      * outermost fails when s fails to apply to any (sub-)term.
      */
-    def outermost (s : Strategy) : Strategy = 
+    def outermost (s : => Strategy) : Strategy = 
         repeat (oncetd (s))        
     
     /**
