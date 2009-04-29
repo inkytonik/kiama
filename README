@@ -24,15 +24,12 @@ Anthony.Sloane@mq.edu.au
 Kiama is hosted on the Programming Languages Research Group redmine site
 at:
 
-    http://plrg.ics.mq.edu.au/
-   
-(Access to this site is currently restricted.  Contact us if you would
-like to have access.)
+    http://plrg.science.mq.edu.au/
 
 The sources can be checked out of our Mercurial repository using the
 following command:
 
-    hg clone https://plrg.ics.mq.edu.au/hg/Kiama
+    hg clone https://plrg.science.mq.edu.au/hg/Kiama
 
 2. Contents
 
@@ -55,7 +52,7 @@ source directories.
 To build and use Kiama you need the following software:
 
 * Scala (http://www.scala-lang.org/)
-  Tested with version 2.7.3-final
+  Tested with version 2.7.4
   
 * Java (http://www.java.com)
   Tested with version 1.5 on Mac OS X 10.5.6
@@ -77,11 +74,11 @@ distributed with the Kiama source distribution in the lib directory.
 Kiama is most easily built using ant.  If you have the SCALA_HOME environment
 variable set to the location of your Scala distribution, then you should not
 need to modify build.xml.  This distribution has been tested with
-Scala 2.7.3-final.
+Scala 2.7.4.
 
 Kiama can also be built using Eclipse.  The source distribution is an
 Eclipse project.  Builds have most recently been tested with Eclipse 3.4
-and version 2.7.3-final of the Eclipse Scala plugin.
+and version 2.7.4 of the Eclipse Scala plugin.
 
 Alternatively, you may want to examine and modify the build.xml settings
 for scala.home, scala.lib, scalacheck.lib, scalatest.lib and junit.lib as
@@ -95,9 +92,9 @@ Other useful ant targets are:
 
 clean      remove all generated files
 doc        generate the API documentation into bin/doc/api
-jar        make a jar of the Kiama library (in dist)
-jar-src    make a jar of the Kiama library source (in dist)
-scalatest  run all of the tests using the ScalaTest GUI
+test       run all of the tests using the ScalaTest GUI
+testbatch  run all of the tests in batch mode
+dist       make a distrbution jar of the Kiama library and sources in dist directory
 
 5. Acknowledgements
 
