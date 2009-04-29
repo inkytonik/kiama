@@ -87,7 +87,7 @@ object NameResolution {
             name => {
                 case b : Block =>
                     b.parent match {
-                        case p : Program   => p->locallookup (name)
+                        case p : Program   => p->localLookup (name)
                         case c : ClassDecl =>
                             if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
                                 c->superClass->remoteLookup (name)
@@ -97,7 +97,7 @@ object NameResolution {
                 case s : BlockStmt =>
                     s.parent match {
                         case b : Block => {
-                            val d = b->locallookup (name)
+                            val d = b->localLookup (name)
                             if (isUnknown (d)) b->lookup (name) else d                      
                         }
                         case p => p->lookup (name)
@@ -131,10 +131,10 @@ object NameResolution {
      *     return unknownDecl();
      * }
      */
-    val locallookup : String => Attributable ==> Decl =
+    val localLookup : String => Attributable ==> Decl =
         paramAttr {
             name => {
-                case p : Program => finddecl (p, name, p->predefinedTypes)
+                case p : Program => finddecl (p, name, p->getPredefinedTypeList)
                 case b : Block   => finddecl (b, name, b.BlockStmts)             
             }
         }
@@ -174,8 +174,8 @@ object NameResolution {
         paramAttr {
             name => {
                 case c : ClassDecl =>
-                    if (!isUnknown (c.Body->locallookup (name)))
-                        c.Body->locallookup (name)
+                    if (!isUnknown (c.Body->localLookup (name)))
+                        c.Body->localLookup (name)
                     else if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
                         c->superClass->remoteLookup (name)
                     else

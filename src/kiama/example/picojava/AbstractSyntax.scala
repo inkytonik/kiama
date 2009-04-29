@@ -36,7 +36,7 @@ object AbstractSyntax {
     import kiama.attribution.Attribution._
 
     // Created by parser
-    case class Program (Block : Block) extends Attributable /* (PredefinedType : Seq[TypeDecl]) */
+    case class Program (Block : Block) extends Attributable
 
     case class Block (BlockStmts : Seq[BlockStmt]) extends Attributable
     abstract class BlockStmt extends Attributable
@@ -62,8 +62,4 @@ object AbstractSyntax {
     case class PrimitiveDecl (override val Name : String) extends TypeDecl (Name)
     case class UnknownDecl (override val Name : String) extends TypeDecl (Name)
 
-    // Created by Rewrites
-    case class TypeUse (override val Name : String) extends IdUse (Name)
-    case class VariableUse (override val Name : String) extends IdUse (Name)
-  
 }
