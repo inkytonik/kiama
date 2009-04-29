@@ -106,6 +106,8 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
             
         check ((t : Stmt) => issubterm (pickdesc (t)) (t) == Some (t))
         check ((t : Exp) => issubterm (pickdesc (t)) (t) == Some (t))
+
+        assertEquals (None, issubterm (Num (42)) (Add (Num (1), Num (2))))
     }
     
     /**
