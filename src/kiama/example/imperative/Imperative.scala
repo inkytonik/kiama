@@ -176,7 +176,7 @@ object AST {
     /**
      * Statements.
      */
-    abstract case class Stmt () extends PrettyPrintable {
+    abstract class Stmt extends PrettyPrintable {
 
         /**
          * The set of all variable references in the statement.

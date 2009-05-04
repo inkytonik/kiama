@@ -46,8 +46,8 @@ object NameResolution {
      */
     val decl : Access ==> Decl =
         attr {
-            case Dot (_, n)    => n->decl
-            case u @ IdUse (n) => u->lookup (n) 
+            case Dot (_, n) => n->decl
+            case u : IdUse  => u->lookup (u.Name) 
         }
 
     /**
@@ -170,7 +170,7 @@ object NameResolution {
      *     return unknownDecl();
      * }
      */
-    val remoteLookup : String => Attributable ==> Decl =
+    val remoteLookup : String => TypeDecl ==> Decl =
         paramAttr {
             name => {
                 case c : ClassDecl =>
@@ -180,7 +180,7 @@ object NameResolution {
                         c->superClass->remoteLookup (name)
                     else
                         c->unknownDecl
-                case t : TypeDecl =>
+                case t =>
                     t->unknownDecl
             }
         }

@@ -30,7 +30,7 @@ object AST {
         
     case class Program (ss : Seq[Stat])
     
-    abstract case class Stat ()
+    abstract class Stat
 
     case class Decl (i : Id) extends Stat
 
@@ -45,7 +45,7 @@ object AST {
     case class Read (i : Id) extends Stat
     case class Write (e : Exp) extends Stat
         
-    abstract case class Exp ()
+    abstract class Exp
         
     case class Id (s : String) {
         override def toString = "Id (\"" + s + "\")"
