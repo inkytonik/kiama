@@ -48,7 +48,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp extends PrettyPrintable {
+    abstract class Exp extends PrettyPrintable with Product {
 
         /**
          * The numeric value of the expression.
@@ -176,7 +176,7 @@ object AST {
     /**
      * Statements.
      */
-    abstract class Stmt extends PrettyPrintable {
+    abstract class Stmt extends PrettyPrintable with Product {
 
         /**
          * The set of all variable references in the statement.

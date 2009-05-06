@@ -51,14 +51,15 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
                 case Var (_)                => Num (3)  // Hack
             }
         check ((t : Exp) => everywherebu (eval) (t) == Some (Num (t.value)))
+        check ((t : Exp) => reduce (eval) (t) == Some (Num (t.value)))
     }
     
     /**
      * Test the issubterm combinator.
      */
     def testSubtermMatching () {
-        check ((t : Stmt) => issubterm (t) (t) == Some (t))
-        check ((t : Exp) => issubterm (t) (t) == Some (t))
+        check ((t : Stmt) => issubterm (t, t) == Some (t))
+        check ((t : Exp) => issubterm (t, t) == Some (t))
     
         val random = new scala.util.Random
     
@@ -104,10 +105,25 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
             }
         }
             
-        check ((t : Stmt) => issubterm (pickdesc (t)) (t) == Some (t))
-        check ((t : Exp) => issubterm (pickdesc (t)) (t) == Some (t))
+        check ((t : Stmt) => issubterm (pickdesc (t), t) == Some (t))
+        check ((t : Exp) => issubterm (pickdesc (t), t) == Some (t))
 
-        assertEquals (None, issubterm (Num (42)) (Add (Num (1), Num (2))))
+        val t = Add (Num (1), Num (2))
+
+        assertEquals (None, issubterm (Num (42), t))
+        assertEquals (Some (t), issubterm (Num (1), t))
+        assertEquals (Some (t), issubterm (t, t))
+        assertEquals (None, ispropersubterm (Num (42), t))
+        assertEquals (Some (t), ispropersubterm (Num (1), t))
+        assertEquals (None, ispropersubterm (t, t))
+        
+        assertEquals (None, issuperterm (t, Num (42)))
+        assertEquals (Some (t), issuperterm (t, Num (1)))
+        assertEquals (Some (t), issuperterm (t, t))
+        assertEquals (None, ispropersuperterm (t, Num (42)))
+        assertEquals (Some (t), ispropersuperterm (t, Num (1)))
+        assertEquals (None, ispropersuperterm (t, t))
+        
     }
     
     /**
@@ -135,6 +151,24 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
     }
     
     /**
+     * Test where combinator (basic only).
+     */
+    def testWhere () {
+        check ((t : Exp) => where (failure) (t) == None)
+        check ((t : Exp) => where (id) (t) == Some (t))
+    }
+    
+    /**
+     * Tests for leaf detection.
+     */
+    def testLeaves () {
+        check ((t : Exp) =>
+            isleaf (t) == (if (t.productArity == 0) Some (t) else None))
+        check ((t : Exp) =>
+            isinnernode (t) == (if (t.productArity == 0) None else Some (t)))
+    }
+    
+    /**
      * Test strategies defined from a specific term.
      */
     def testTermsAsStrategies () {
@@ -142,6 +176,13 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp, u : Exp) => t (u) == Some (t))
         check ((t : Stmt, u : Stmt) => t (u) == Some (t))
         check ((t : Exp, u : Stmt) => t (u) == Some (t))
+        
+        check ((t : Stmt) => (term (t)) (t) == Some (t))
+        check ((t : Exp) => (term (t)) (t) == Some (t))
+        
+        val t = Add (Num (1), Num (2))
+        assertEquals (None, term (Num (1)) (t))
+        assertEquals (None, term (Num (42)) (t))        
     }
     
     /**

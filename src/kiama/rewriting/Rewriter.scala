@@ -39,14 +39,15 @@ trait Rewriter {
     /**
      * The type of terms that can be rewritten.  Any type of object value is
      * acceptable but generic traversals will only work on Products (e.g.,
-     * instances of case classes).
+     * instances of case classes).  We use AnyRef here so that non-Product
+     * values can be present in rewritten structures.
      */
     type Term = AnyRef
 
     /**
      * Term-rewriting strategies.
      */
-    abstract class Strategy extends Function[Term,Option[Term]] {
+    abstract class Strategy extends (Term => Option[Term]) {
         
         /**
          * Alias this strategy as p to make it easier to refer to in the
@@ -97,21 +98,6 @@ trait Rewriter {
          */
         def + (q : => Strategy) : PlusStrategy =
             new PlusStrategy (p, q)
-            
-        /**
-         * Conditional choice.
-         *
-         * @see <(PlusStrategy)
-         */
-        @deprecated
-        def <++ (l : => Strategy, r: => Strategy) : Strategy =
-            new Strategy {
-                def apply (t1 : Term) =
-                    p (t1) match {
-                        case Some (t2) => l (t2)
-                        case None      => r (t1)
-                    }
-            }
         
         /**
          * Conditional choice: c < l + r.
@@ -139,50 +125,68 @@ trait Rewriter {
         val rhs = q
         def apply (t : Term) = (p <+ q) (t)
     }
-    
+
     /**
-     * A strategy that always fails.  Stratego's fail is avoided here to
-     * avoid a clash with JUnit's method of the same name.
+     * Make a strategy from a function.  The function return value determines
+     * whether the strategy succeeds or fails.
      */
-    val failure : Strategy =
-        new Strategy {
-            def apply (t : Term) = None
-        }
-    
+    def strategyf (f : Term => Option[Term]) : Strategy =
+    	new Strategy {
+    	    def apply (t : Term) = f (t)
+    	}
+
     /**
-     * A strategy that always succeeds with the subject term unchanged (i.e.,
-     * this is the identity strategy).
+     * Make a strategy from a partial function.  If the function is
+     * defined at the current term, then the function return value
+     * when applied to the current term determines whether the strategy
+     * succeeds or fails.  If the function is not defined at the current
+     * term, the strategy fails.
      */
-    val id : Strategy =
-        new Strategy {
-            def apply (t : Term) = Some (t)
-        }
-        
-    /**
-     * (Implicitly) construct a strategy that always succeeds, changing the subject
-     * term to a given term.
-     */
-    implicit def termToStrategy (a : Term) =
-        new Strategy {
-            def apply (t : Term) = Some (a)
-        }
-    
-    /**
-     * Define a rewrite rule.  Construct a strategy based on a (possibly partial)
-     * function f. If f does not apply, the strategy fails, otherwise the strategy
-     * succeeds with the result of aplying f to the subject term.
-     */
-    def rule (f : PartialFunction[Term,Term]) : Strategy =
-        new Strategy {
-            def apply (t : Term) =
+    def strategy (f : PartialFunction[Term,Option[Term]]) : Strategy =
+    	new Strategy {
+    	    def apply (t : Term) = {
                 if (f isDefinedAt t) {
-                    if (debug) println ("rule success: " + t + " => " + f (t))
-                    Some (f (t))
+                    if (debug) println ("strategy success: " + t + " => " + f (t))
+                    f (t)
                 } else {
-                    if (debug) println ("rule failure: " + t)
+                    if (debug) println ("strategy failure: " + t)
                     None
                 }
-        }
+            }
+    	}
+
+    /**
+     * Define a rewrite rule using a function.  The rule always succeeds
+     * with the return value of the function.
+     */        
+    def rulef (f : Term => Term) : Strategy =
+        strategyf (t => Some (f (t)))
+    
+    /**
+     * Define a rewrite rule using a partial function.  If the function is
+     * defined at the current term, then the strategy succeeds with the return
+     * value of the function applied to the current term.  Otherwise the
+     * strategy fails.
+     */
+    def rule (f : PartialFunction[Term,Term]) : Strategy =
+    	new Strategy {
+    	    def apply (t : Term) = {
+                if (f isDefinedAt t) {
+                    if (debug) println ("strategy success: " + t + " => " + f (t))
+                    Some (f (t))
+                } else {
+                    if (debug) println ("strategy failure: " + t)
+                    None
+                }
+            }
+    	}
+
+    /**
+     * (Implicitly) construct a strategy that always succeeds, changing
+     * the subject term to a given term.
+     */
+    implicit def termToStrategy (a : Term) : Strategy =
+         strategyf (_ => Some (a))
 
     /**
      * Define a term query.  Construct a strategy that always succeeds with no
@@ -204,6 +208,29 @@ trait Rewriter {
         }
 
     /**
+     * A strategy that always fails.  Stratego's fail is avoided here to
+     * avoid a clash with JUnit's method of the same name.
+     */
+    val failure : Strategy =
+        strategyf (_ => None)
+    
+    /**
+     * A strategy that always succeeds with the subject term unchanged (i.e.,
+     * this is the identity strategy).
+     */
+    val id : Strategy =
+        strategyf (t => Some (t))
+    
+    /**
+     * Construct a strategy that succeeds only if the subject term matches
+     * a given term.
+     */
+    def term (t : Term) =
+    	rule {
+    	    case `t` => t
+    	}
+    
+    /**
      * Generic term deconstruction.
      */
     object Term {
@@ -224,6 +251,7 @@ trait Rewriter {
                     Some ((t, Nil))
             }
         }
+        
     }
     
     /**
@@ -424,6 +452,64 @@ trait Rewriter {
                 }
             }
         }
+    
+    /**
+     * Traversal to as many children as possible, but at least one.  Construct a
+     * strategy that applies s to the term children of the subject term in
+     * left-to-right order.  If s succeeds on any of the children, then succeed,
+     * forming a new term from the constructor of the original term and the result
+     * of s for each succeeding child, with other children unchanged.  In the event
+     * that the strategy fails on all children, then fail.
+     */
+    def some (s : => Strategy) : Strategy =
+        new Strategy {
+            def apply (t : Term) : Option[Term] = {
+                if (debug)
+                    println ("some: " + t)
+                t match {
+                    case p : Product =>
+                        val numchildren = p.productArity
+                        if (numchildren == 0) {
+                            if (debug)
+                                println ("some failure (no children): " + p)
+                            None
+                        } else {
+                            val children = new Array[AnyRef](numchildren)
+                            var success = false
+                            for (i <- 0 until numchildren) {
+                                p.productElement (i) match {
+                                    case ct : Term =>
+                                        s (ct) match {
+                                            case Some (ti) =>
+                                                children (i) = ti
+                                                success = true
+                                            case None      =>
+                                                // Child failed, don't transform it
+                                                children (i) = ct
+                                        }
+                                    case ci =>
+                                        // Child is not a term, don't try to transform it
+                                        children (i) = makechild (ci)
+                                }
+                            }
+                            if (success) {
+                            	val ret = dup (p, children)
+                            	if (debug)
+                            		println ("some success: " + ret)
+                            	Some (ret)
+                            } else {
+                            	if (debug)
+                            		println ("some failure (no success)")
+                                None
+                            }                              
+                        }
+                    case _ =>
+                        if (debug)
+                            println ("some failure (any)")
+                        None
+                }
+            }
+        }    
             
     /**
      * Rewrite a term.  Apply the strategy s to a term returning the result term
@@ -580,21 +666,27 @@ trait Rewriter {
         s < failure + id
         
     /**
-     * Construct a strategy that applies s for its side-effects and always
-     * succeeds with the subject term unchanged.  This strategy is similar 
+     * Construct a strategy that tests whether strategy s succeeds,
+     * restoring the original term on success.  This is similar 
      * to Stratego's "where", except that in this version any effects on
      * bindings are not visible outside s. 
      */
     def where (s : => Strategy) : Strategy =
-        rule { case t => s (t); t }
-                
+        strategyf (t => (s <* t) (t))
+    
     /**
-     * Construct a strategy that applies s for its side-effects and always
-     * succeeds with the subject term unchanged.  A synonym for where.
+     * Construct a strategy that tests whether strategy s succeeds,
+     * restoring the original term on success.  A synonym for where.
      */
     def test (s : => Strategy) : Strategy =
         where (s)
 
+    /**
+     * Construct a strategy that applies s in breadth first order.
+     */
+    def breadthfirst (s : => Strategy) : Strategy =
+        all (s) <* all (breadthfirst (s))
+      
     /**
      * Construct a strategy that applies s in a top-down, prefix fashion
      * to the subject term.
@@ -603,12 +695,26 @@ trait Rewriter {
         s <* all (topdown (s)) 
 
     /**
+     * Construct a strategy that applies s in a top-down, prefix fashion
+     * to the subject term but stops when stop succeeds.
+     */
+    def topdownS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
+        s <* (stop (topdownS (s, stop)) <+ all (topdownS (s, stop)))        
+    
+    /**
      * Construct a strategy that applies s in a bottom-up, postfix fashion
      * to the subject term.
      */
     def bottomup (s : => Strategy) : Strategy =
         all (bottomup (s)) <* s
-  
+
+    /**
+     * Construct a strategy that applies s in a bottom-up, postfix fashion
+     * to the subject term but stops when stop succeeds.
+     */
+    def bottomupS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
+        (stop (bottomupS (s, stop)) <+ all (bottomupS (s, stop))) <* s
+        
     /**
      * Construct a strategy that applies s in a combined top-down and
      * bottom-up fashion (i.e., both prefix and postfix) to the subject
@@ -623,21 +729,62 @@ trait Rewriter {
      */
     def downup (s1 : => Strategy, s2 : => Strategy) : Strategy =
         s1 <* all (downup (s1, s2)) <* s2
-        
+
     /**
-     * Construct a strategy that applies s in a top-down fashion stopping
-     * as soon as it succeeds once (at any level).
+     * Construct a strategy that applies s in a combined top-down and
+     * bottom-up fashion (i.e., both prefix and postfix) to the subject
+     * term but stops when stop succeeds.
+     */
+    def downupS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
+        s <* (stop (downupS (s, stop)) <+ all (downupS (s, stop))) <* s 
+
+    /**
+     * Construct a strategy that applies s1 in a top-down, prefix fashion
+     * and s2 in a bottom-up, postfix fashion to the subject term but stops
+     * when stop succeeds.
+     */
+    def downupS (s1 : => Strategy, s2 : => Strategy, stop : Strategy => Strategy) : Strategy =
+        s1 <* (stop (downupS (s1, s2, stop)) <+ all (downupS (s1, s2, stop))) <* s2
+
+    /**
+     * A unit for topdownS, bottomupS and downupS.  For example, topdown (s)
+     * is equivalent to topdownS (s, dontstop).
+     */
+    def dontstop (s : => Strategy) : Strategy =
+        failure
+    
+    /**
+     * Construct a strategy that applies s in a top-down fashion to one
+     * subterm at each level, stopping as soon as it succeeds once (at
+     * any level).
      */
     def oncetd (s : => Strategy) : Strategy =
         s <+ one (oncetd (s))
-    
+
     /**
-     * Construct a strategy that applies s in a bottom-up fasion stopping
-     * as soon as it succeeds once (at any level).
+     * Construct a strategy that applies s in a bottom-up fashion to one
+     * subterm at each level, stopping as soon as it succeeds once (at
+     * any level).
      */
     def oncebu (s : => Strategy) : Strategy =
         one (oncebu (s)) <+ s 
 
+    /**
+     * Construct a strategy that applies s in a top-down fashion to some
+     * subterms at each level, stopping as soon as it succeeds once (at
+     * any level).
+     */
+    def sometd (s : => Strategy) : Strategy =
+        s <+ some (sometd (s))
+
+    /**
+     * Construct a strategy that applies s in a bottom-up fashion to some
+     * subterms at each level, stopping as soon as it succeeds once (at
+     * any level).
+     */
+    def somebu (s : => Strategy) : Strategy =
+        some (somebu (s)) <+ s 
+    
     /**
      * Construct a strategy that applies s repeatedly in a top-down fashion
      * stopping each time as soon as it succeeds once (at any level). The
@@ -653,87 +800,144 @@ trait Rewriter {
      */
     def innermost (s : => Strategy) : Strategy =
         bottomup (attempt (s <* innermost (s)))
-    
+
+    /**
+     * An alternative version of innermost.
+     */
+    def innermost2 (s : => Strategy) : Strategy =
+        repeat (oncebu (s))
+
+    /**
+     * Construct a strategy that applies s repeatedly to subterms
+     * until it fails on all of them.
+     */
+    def reduce (s : => Strategy) : Strategy = {
+        def x : Strategy = some (x) + s
+        repeat (x)
+    }
+
     /**
      * Construct a strategy that applies s in a top-down fashion, stopping
-     * at a frontier where s applies.
+     * at a frontier where s succeeds.
      */
     def alltd (s : => Strategy) : Strategy =
         s <+ all (alltd (s))
-        
-    /**
-     * Construct a strategy that succeeds if t is a subterm  of the subject
-     * term.  The subject term is unchanged.  This operator is slightly 
-     * different to Stratego's, which takes a tuple of terms.
+
+   /**
+     * Construct a strategy that applies s1 in a top-down, prefix fashion
+     * stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     * postfix fashion to the result. 
      */
-    def issubterm (t : Term) : Strategy =
-        oncetd (rule { case `t` => t })
+    def alldownup2 (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    	(s1 <+ all (alldownup2 (s1, s2))) <* s2 
 
     /**
-     * Construct a strategy that succeeds if t is a subterm  of the subject
-     * term but is not equal to the subject term.  The subject term is unchanged.
-     * This operator is slightly different to Stratego's, which takes a tuple
-     * of terms.
+     * Construct a strategy that applies s1 in a top-down, prefix fashion
+     * stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     * postfix fashion to the results of the recursive calls. 
      */
-    def ispropersubterm (t : Term)  : Strategy =
-        rule {
-            case `t` => failure
-            case u   => 
+    def alltdfold (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    	s1 <+ (all (alltdfold (s1, s2)) <* s2)
+
+   /**
+     * Construct a strategy that applies s1 in a top-down, prefix fashion
+     * stopping at a frontier where s succeeds on some children.  s2 is applied in a bottom-up,
+     * postfix fashion to the subject term the result. 
+     */
+   def somedownup (s : => Strategy) : Strategy =
+	   (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
+
+    /**
+     * Construct a strategy that applies s as many times as possible, but
+     * at least once, in bottom up order.
+     */
+    def manybu (s : Strategy) : Strategy =
+        some (manybu (s)) <* (attempt (s) <+ s)
+
+    /**
+     * Construct a strategy that applies s as many times as possible, but
+     * at least once, in top down order.
+     */
+    def manytd (s : Strategy) : Strategy =
+        s <* all (attempt (manytd (s))) <+ some (manytd (s))
+
+    /**
+     * Construct a strategy that tests whether the two sub-terms of a
+     * pair of terms are equal.
+     */
+    val eq : Strategy =
+       rule {
+           case t @ (x, y) if x == y => t
+       }
+
+    /**
+     * Construct a strategy that tests whether the two sub-terms of a
+     * pair of terms are equal. Synonym for eq.
+     */
+    val equal : Strategy =
+        eq
+        
+    /**
+     * Construct a strategy that succeeds when applied to a pair (x,y)
+     * if x is a sub-term of y.
+     */
+    val issubterm : Strategy =
+        strategy {
+            case (x : Term, y : Term) => where (oncetd (term (x))) (y) 
         }
+    
+    /**
+     * Construct a strategy that succeeds when applied to a pair (x,y)
+     * if x is a sub-term of y but is not equal to y.
+     */
+    val ispropersubterm : Strategy =
+    	not (eq) <* issubterm
         
-  /**
-   * Succeeds if the first argument (x) is a subterm of the second (y) and x is not y.
-   *
-   * @type  (a, b) -> (a, b)
-   */
-//   is-proper-subterm =
-//     ?(x, y); not(eq); is-subterm
-// 
-// strategies
+    /**
+     * Construct a strategy that succeeds when applied to a pair (x,y)
+     * if x is a superterm of y.
+     */
+    val issuperterm : Strategy =
+        strategy {
+            case (x, y) => issubterm (y, x)
+        }
 
-  /**
-   * Succeeds if the first argument (x) is a superterm of the second (y).
-   *
-   * @type  (a, b) -> (a, b)
-   */
-  // is-superterm =
-  //   ?(x, y); where(<oncetd(?y)> x)
+    /**
+     * Construct a strategy that succeeds when applied to a pair (x,y)
+     * if x is a super-term of y but is not equal to y.
+     */
+    val ispropersuperterm : Strategy =
+    	not (eq) <* issuperterm
+    
+    /**
+     * Construct a strategy that succeeds if the current term has no
+     * direct subterms.
+     */
+    val isleaf : Strategy =
+    	all (failure)
 
-  /**
-   * Succeeds if the first argument (x) is a superterm of the second (y) and x is not y.
-   *
-   * @type  (a, b) -> (a, b)
-   */
-//   is-proper-superterm =
-//     ?(x, y); not(eq); is-superterm
-// 
-// strategies
-// 
-//   is-proper-subterm-set =
-//     ?([y|_], xs); where(<fetch(not(?y); oncetd(?y))> xs)
-// 
-//   is-proper-superterm-set =
-//     ?([x|_], ys); where(<fetch(<is-proper-superterm>(x,<id>))> ys)
-// 
-// strategies
-
-
-  /**
-   * Succeeds if the current term has no direct subterms.
-   *
-   * @type  a -> a
-   */
-  // is-leaf = 
-  //   all(fail)
-
-  /**
-   * Succeeds if the current term has at least one direct subterm.
-   *
-   * @type  a -> a
-   */
-  // is-inner-node =
-  //   one(id)
-        
+    /**
+     * Construct a strategy that applies to all of the leaves of the 
+     * current term, using isleaf as the leaf predicate.
+     */
+    def leaves (s : => Strategy, isleaf : => Strategy) : Strategy =
+    	(isleaf <* s) <+ all (leaves (s, isleaf))
+	
+    /**
+     * Construct a strategy that applies to all of the leaves of the 
+     * current term, using isleaf as the leaf predicate, skipping
+     * subterms for which skip succeeds.
+     */
+    def leaves (s : => Strategy, isleaf : => Strategy, skip : Strategy => Strategy) : Strategy =
+    	(isleaf <* s) <+ skip (leaves (s, isleaf)) <+ all (leaves (s, isleaf))
+    
+    /**
+     * Construct a strategy that succeeds if the current term has at
+     * least one direct subterm.
+     */
+    val isinnernode : Strategy =
+    	one (id)
+            
     /**
      * Construct a strategy that applies s at every term in a bottom-up fashion
      * regardless of failure.  (Sub-)terms for which the strategy fails are left unchanged.
@@ -797,318 +1001,5 @@ trait Rewriter {
      */
     def and (s1 : => Strategy, s2 : => Strategy) : Strategy = 
         where (s1) < test (s2) + (test (s2) <* failure)
-        
-/**
- * The memo operator makes a strategy
- * into a memoizing strategy that looks up the term to be transformed
- * in a memo table and only computes the transformation if the
- * term is not found.
- */
-// module strategy/general/memo
-// imports
-//   lang/dynamic-rules
-// 
-// strategies
-// 
-//   memo-scope(s) = {| Memo: s |}
-
- /**
-  * <memo(tbl, s)> t first looks up the term t in the memo table. If 
-  * present the association in the table is produced, else the result 
-  * of <s> t is computed and stored in the table.
-  */
-  // memo(s) :
-  //   t -> t'
-  //   where ( <Memo> t => t' )
-  //      <+ ( <s> t => t'; rules(Memo: t -> t') )
-  // 
-  // reduce(s) = 
-  //   repeat(rec x(some(x) + s))
-  // 
-  // outermost(s) = 
-  //   repeat(oncetd(s))
-  // 
-  // innermost'(s) = 
-  //   repeat(oncebu(s))
-  // 
-  // innermost(s)  = 
-  //   bottomup(try(s; innermost(s)))
-  // 
-  // innermost-old(s) =
-  //   rec x(all(x); (s; x <+ id))
-  // 
-  // pseudo-innermost3(s) =
-  //   rec x(all(x); rec y(try(s; all(all(all(y); y); y); y)))
-  // 
-  // innermost-memo(s) =
-  //   rec x(memo(all(x); (s; x <+ id)))
-
- /**
-  * innermost-tagged(s) reduces the subject term by applying s to
-  * innermost redices first. Terms in normal form are tagged (using
-  * attributes) to prevent renormalization.
-  */
-  // innermost-tagged(s : a -> a) = // : a -> a
-  //   where(new => tag);
-  //   rec x(?_{tag} <+ (all(x); (s; x <+ !<id>{tag})));
-  //   bottomup(?<id>{tag})
-
-  /** Apply strategy s to each term in a top down, left to right, (prefix)
-   * order, but stop traversal when stop succeeds.
-   *
-   * @param s         Term -> Term
-   * @param stop      (a -> a) * a -> a
-   * @type Term -> Term
-   * @see topdown
-   */
-  // topdownS(s, stop: (a -> a) * a -> a) = 
-  //   s
-  //   ; (stop(topdownS(s,stop)) <+ all(topdownS(s,stop)))
-
-  /** Apply strategy s to each term in a bottom up, left to right,  (postfix)
-   * order, but stop traversal when stop succeeds.
-   *
-   * @param s         Term -> Term
-   * @param stop      (a -> a) * a -> a
-   * @type Term -> Term
-   * @see bottomup
-   */
-  // bottomupS(s, stop: (a -> a) * a -> a) = 
-  //   (stop(bottomupS(s, stop)) <+ all(bottomupS(s, stop)))
-  //   ; s
-
-  /** Apply strategy s to all terms when going down then when going up,
-   * but stop traversal when stop succeeds.
-   *
-   * @param s         Term -> Term
-   * @param stop      (a -> a) * a -> a
-   * @type Term -> Term
-   * @see downup
-   */
-  // downupS(s, stop: (a -> a) * a -> a) = 
-  //   s
-  //   ; (stop(downupS(s, stop)) <+ all(downupS(s, stop))); s
-
-  /** Apply strategy s1 to all terms going down then apply s2 to all terms
-   * when going up, but stop travesal when stop succeeds.
-   *
-   * @param s1         Term -> Term
-   * @param s2         Term -> Term
-   * @param stop      (a -> a) * a -> a
-   * @type  Term -> Term
-   * @see downup
-   */
-  // downupS(s1, s2, stop: (a -> a) * a -> a) = 
-  //   s1
-  //   ; (stop(downupS(s1, s2, stop)) <+ all(downupS(s1, s2, stop)))
-  //   ; s2
-
-  /**
-   * A unit for topdownS, bottomupS and downupS. For example, 
-   * topdown(s) is equivalent to topdownS(s,don't-stop).
-   *
-   * @param s Term -> Term
-   * @type _ -> fail
-   * @see topdownS
-   * @see bottomupS
-   * @see downupS
-   */
-  // don't-stop(s) =
-  //   fail
-
-  /**
-   * A variation on bottomup is a traversal that also provides the
-   * original term as well as the term in which the direct subterms
-   * have been transformed. (also known as a paramorphism?)
-   */
-  // bottomup-para(s) = 
-  //   !(<id>, <all(bottomup-para(s))>)
-  //   ; s
-
-/**
- * Traversal of a term along a spine.
- *
- * A spine of a term is a chain of nodes from the root to some
- * subterm. 'spinetd' goes down one spine and applies 's' along
- * the way to each node on the spine. The traversal stops when
- * 's' fails for all children of a node.
- */
-
-  /**
-   * Apply s along the spine of a term, in top down order. 
-   *
-   * A spine of a term is a chain of nodes from the root to some
-   * subterm. The traversal stops when 's' fails for all children
-   * of a node.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   */
-  // spinetd(s) = 
-  //   s; try(one(spinetd(s)))
-
-  /**
-   * Apply s along the spine of a term, in bottom up order. 
-   *
-   * A spine of a term is a chain of nodes from the root to some
-   * subterm. The traversal stops when 's' fails for all children
-   * of a node.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   */
-  // spinebu(s) = 
-  //   try(one(spinebu(s))); s
-  // 
-  // spinetd'(s) = 
-  //   s; (one(spinetd'(s)) + all(fail))
-  // 
-  // spinebu'(s) = 
-  //   (one(spinebu'(s)) + all(fail)); s
-
-
-/**
- * Apply s everywhere along all spines where s applies.
- */
-
-  /** Apply s everywhere along all spines where s applies, in top down
-   * order.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term 
-   * @see   spinetd
-   */
-  // somespinetd(s) = 
-  //   rec x(s; try(some(x)))
-
-  /** Apply s everywhere along all spines where s applies, in bottom
-   * up order.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term 
-   * @see   spinetd
-   */
-  // somespinebu(s) = 
-  //   rec x(try(some(x)); s)
-
-/**
- * Apply s at one position. One s application has to succeed.
- */
-
-  /** Apply s at one position inside a term, in top down order. Once
-   * s has succeeded, the traversal stops. If s never succeeds, this
-   * strategy fails.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term 
-   */
-  // oncetd(s) = 
-  //   rec x(s <+ one(x))
-
-  /** Apply s at one position inside a term, in bottom up order. Once
-   * s has succeeded, the traversal stops. If s never succeeds, this
-   * strategy fails.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term 
-   */
-  // oncebu(s) = 
-  //   rec x(one(x) <+ s)
-  // 
-  // oncetd-skip(s, skip: (a -> a) * a -> a) = 
-  //   rec x(s <+ skip(x) <+ one(x))
-
-/**
- * Apply s at some positions, but at least one.
- *
- * As soon as one is found, searching is stopped, i.e., in the top-down case
- * searching in subtrees is stopped, in bottom-up case, searching
- * in upper spine is stopped.
- */	
-
-  /** Apply s at some positions inside a term, at least once, in top
-   * down order. Once s succeeds, the traversal stopped.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   * @see oncetd
-   */
-  // sometd(s) = 
-  //   rec x(s <+ some(x))
-
-  /** Apply s at some positions inside a term, at least once, in bottom
-   * up order. Once s succeeds, the traversal stopped.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   * @see oncetd
-   */
-  // somebu(s) = 
-  //   rec x(some(x) <+ s)
-
-/**
- * Frontier
- *
- * Find all topmost applications of 's'
- */
-
-  /** Find all topmost applications of s. 
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   */
-  // alltd(s) = 
-  //   rec x(s <+ all(x))
-  // 
-  // alldownup2(s1, s2) = 
-  //   rec x((s1 <+ all(x)); s2)
-  // 
-  // alltd-fold(s1, s2) = 
-  //   rec x(s1 <+ all(x); s2)
-	
-/**
- * Leaves
- */
-// strategies
-// 
-//   leaves(s, is-leaf, skip: (a -> a) * a -> a) =
-//     rec x((is-leaf; s) <+ skip(x) <+ all(x))
-// 
-//   leaves(s, is-leaf) =
-//     rec x((is-leaf; s) <+ all(x))
-
-/**
- * Find as many applications as possible, but at least one.
- */
-
-  /** Apply s as many times as possible, but at least once, in bottom up
-   * order.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   */
-  // manybu(s) = 
-  //   rec x(some(x); try(s) <+ s)
-
-  /** Apply s as many times as possible, but at least once, in top down
-   * order.
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   */
-  // manytd(s) = 
-  //   rec x(s; all(try(x)) <+ some(x))
-
-
-  // somedownup(s) = 
-  //   rec x(s; all(x); try(s) <+ some(x); try(s))
-
-  /** Apply s to a term in breadth first order. 
-   *
-   * @param s          Term -> Term
-   * @type  Term -> Term
-   */
-  // breadthfirst(s) = 
-  //   rec x(all(s); all(x))
 
 }
