@@ -17,19 +17,23 @@ Anthony Sloane
 
 Programming Languages Research Group
 Department of Computing, Macquarie University
+
 Anthony.Sloane@mq.edu.au
+inkytonik@gmail.com
+
+http://plrg.science.mq.edu.au/
+http://www.comp.mq.edu.au/~asloane
 
 1. Obtaining Kiama
 
-Kiama is hosted on the Programming Languages Research Group redmine site
-at:
+Kiama is hosted on Google Code at
 
-    http://plrg.science.mq.edu.au/
+    http://kiama.googlecode.com
 
 The sources can be checked out of our Mercurial repository using the
 following command:
 
-    hg clone https://plrg.science.mq.edu.au/hg/Kiama
+    hg clone http://kiama.googlecode.com/hg/ kiama
 
 2. Contents
 
