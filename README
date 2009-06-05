@@ -96,9 +96,21 @@ clean      remove all generated files
 doc        generate the API documentation into bin/doc/api
 test       run all of the tests using the ScalaTest GUI
 testbatch  run all of the tests in batch mode
-dist       make a distrbution jar of the Kiama library and sources in dist directory
+dist       make a distribution jar of the Kiama library and sources in dist directory
 
-5. Acknowledgements
+5. Mailing lists
+
+There are two Google Groups for Kiama:
+
+kiama           General announcements and discussions
+                http://groups.google.com/group/kiama
+                kiama@googlegroups.com
+            
+kiama-commit    Commit messages and Hudson build problems
+                http://groups.google.com/group/kiama-commit
+                kiama-commit@googlegroups.com
+
+6. Acknowledgements
 
 Contributors to the Kiama code have been:
 
@@ -119,7 +131,7 @@ most notably the parsing library.  See http://www.scala-lang.org/node/216.
 Many of the library rewriting strategies are based on the Stratego library.
 See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 
-6. Licensing
+7. Licensing
 
 Kiama is distributed under the GNU Lesser General Public License.  See the files
 COPYING and COPYING.LESSER for details of these licenses.  More information can
