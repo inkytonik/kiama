@@ -20,6 +20,7 @@
                                 
 package kiama.util
 
+import jline.ConsoleReader
 import kiama.parsing.CharPackratParsers
 import org.scalacheck._
 
@@ -36,26 +37,25 @@ trait REPL {
      */
     def main (args : Array[String]) {
         setup
-        var line : String = ""
-        do {
-            prompt
-            line = readLine ()
-            if (line != null) processline (line)
-        } while (line != null)
+        val reader = new ConsoleReader ()
+        while (true) {
+            val line = reader.readLine (prompt)
+            if (line == null)
+            	return
+            else
+                processline (line)
+        }
     }
     
     /**
      * Carry out setup processing for the REPL.  Default: do nothing.
      */
-    def setup {
-    }
+    def setup { }
     
     /**
-     * Display a prompt.  Default: prints "> ".
+     * Define the prompt (default: "> ").
      */
-    def prompt {
-        print ("> ")
-    }
+    def prompt = "> "
 
     /**
      * Process a user input line.
@@ -116,9 +116,7 @@ trait GeneratingREPL[T] extends REPL {
     /**
      * Display a prompt.
      */
-    override def prompt {
-        print ("Hit ENTER to generate an instance: ")
-    }
+    override def prompt = "Hit ENTER to generate an instance: "
     
     /**
      * The generator to use to make values of type T.

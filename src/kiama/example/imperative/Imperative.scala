@@ -392,7 +392,7 @@ trait TestBase extends Generator with Parser with PrettyPrinter
 object Imperative extends ParsingREPL[AST.Stmt] with Parser {
 
     override def setup { println ("Enter imperative language programs for parsing.") }
-    override def prompt { print ("imperative> ") }
+    override def prompt = "imperative> "
     
     def process (s : AST.Stmt) {
         println (s)
