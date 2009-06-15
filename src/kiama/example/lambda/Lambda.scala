@@ -200,7 +200,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
     import AST._
 
     override def setup { println ("Enter lambda calculus expressions for evaluation.") }
-    override def prompt { print ("lambda> ") }
+    override def prompt = "lambda> "
 
     def process (e : Exp) {
         normal (e) match {
