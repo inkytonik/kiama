@@ -194,6 +194,20 @@ trait Rewriter {
      * function f to the subject term.  In other words, the strategy runs f
      * for its side-effects.
      */
+    def queryf[T] (f : Term => T) : Strategy =
+        new Strategy {
+            def apply (t : Term) = {
+                val v = f (t)
+                if (debug) println ("query success: " + t + " => " + v)
+                Some (t)
+            }
+        }
+
+    /**
+     * Define a term query.  Construct a strategy that always succeeds with no
+     * effect on the subject term but applies a given partial function f to the
+     * subject term.  In other words, the strategy runs f for its side-effects.
+     */
     def query[T] (f : PartialFunction[Term,T]) : Strategy =
         new Strategy {
             def apply (t : Term) = {
