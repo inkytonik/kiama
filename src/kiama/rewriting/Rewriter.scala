@@ -106,12 +106,12 @@ trait Rewriter {
          * strategy (c). If it succeeds, apply l to the resulting term,
          * otherwise apply r to the original subject term.
          */
-        def < (q : => PlusStrategy) : Strategy =
+        def < (lr : => PlusStrategy) : Strategy =
             new Strategy {
                 def apply (t1 : Term) =
                     p (t1) match {
-                        case Some (t2) => q.lhs (t2)
-                        case None      => q.rhs (t1)
+                        case Some (t2) => lr.lhs (t2)
+                        case None      => lr.rhs (t1)
                     }
             }
 
@@ -186,14 +186,28 @@ trait Rewriter {
      * (Implicitly) construct a strategy that always succeeds, changing
      * the subject term to a given term.
      */
-    implicit def termToStrategy (a : Term) : Strategy =
-         strategyf (_ => Some (a))
+    implicit def termToStrategy (t : Term) : Strategy =
+         strategyf (_ => Some (t))
 
     /**
      * Define a term query.  Construct a strategy that always succeeds with no
      * effect on the subject term but applies a given (possibly partial)
      * function f to the subject term.  In other words, the strategy runs f
      * for its side-effects.
+     */
+    def queryf[T] (f : Term => T) : Strategy =
+        new Strategy {
+            def apply (t : Term) = {
+                val v = f (t)
+                if (debug) println ("query success: " + t + " => " + v)
+                Some (t)
+            }
+        }
+
+    /**
+     * Define a term query.  Construct a strategy that always succeeds with no
+     * effect on the subject term but applies a given partial function f to the
+     * subject term.  In other words, the strategy runs f for its side-effects.
      */
     def query[T] (f : PartialFunction[Term,T]) : Strategy =
         new Strategy {
@@ -226,7 +240,7 @@ trait Rewriter {
      * Construct a strategy that succeeds only if the subject term matches
      * a given term.
      */
-    def term (t : Term) =
+    def term (t : Term) : Strategy =
     	rule {
     	    case `t` => t
     	}
