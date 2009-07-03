@@ -56,7 +56,7 @@
   </target>
 
   <target name="build" depends="prepare">
-    <scalac addParams="-unchecked -deprecation -Yinline -Yclosure-elim" srcdir="src" destdir="bin" classpathref="kiama.classpath"/>
+      <scalac addParams="-unchecked -deprecation" srcdir="src" destdir="bin" classpathref="kiama.classpath"/>
   </target>
 	
   <target name="test" depends="build">

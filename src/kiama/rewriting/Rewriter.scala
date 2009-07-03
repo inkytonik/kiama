@@ -85,7 +85,8 @@ trait Rewriter {
                 def apply (t1 : Term) =
                     p (t1) match {
                         case Some (t2) => Some (t2)
-                        case None      => q (t1)
+                        case None      => if (q == null) println (t1)
+                          				  q (t1)
                     }
             }
     
