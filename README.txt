@@ -81,6 +81,15 @@ variable set to the location of your Scala distribution, then you should not
 need to modify build.xml.  This distribution has been tested with
 Scala 2.7.5.
 
+Depending on your setup, you may need to set ANT_OPTS to give the ant process
+more memory.  The following setting seems to work OK with the current version
+of Kiama.
+
+ANT_OPTS="-Xms512m -Xmx512m"
+
+(Note: the syntax of setting this variable will vary depending on your shell
+environment.)
+
 Kiama can also be built using Eclipse.  The source distribution is an
 Eclipse project.  Builds have most recently been tested with Eclipse 3.4
 and version 2.7.5 of the Eclipse Scala plugin.
