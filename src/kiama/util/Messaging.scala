@@ -32,12 +32,12 @@ object Messaging {
     /**
      * A message record.
      */
-    case class Record (val pos : Position, message : String)
+    case class Record (pos : Position, message : String)
         
     /**
      * Buffer of messages.
      */
-    private val messages = new ListBuffer[Record] ()
+    var messages = new ListBuffer[Record] ()
 
     /**
      * Buffer a new message associated with the given positioned value.
@@ -62,5 +62,12 @@ object Messaging {
             print (": ")
             println (m.message)
         }
+    
+    /**
+     * Reset the message buffer to empty.
+     */
+    def resetmessages = {
+        messages = new ListBuffer[Record] ()
+    }
     
 }
