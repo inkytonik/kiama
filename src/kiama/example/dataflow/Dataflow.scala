@@ -75,12 +75,12 @@ trait Variables {
     /**
      * Variable uses.
      */
-    val uses : Stm ==> Set[String]
+    val uses : Stm ==> Set[Var]
     
     /**
      * Variable definitions.
      */
-    val defines : Stm ==> Set[String]
+    val defines : Stm ==> Set[Var]
     
 }
 
@@ -89,7 +89,7 @@ trait Variables {
  */
 trait VariablesImpl extends Variables {        
     
-    val uses : Stm ==> Set[String] =
+    val uses : Stm ==> Set[Var] =
         attr {
             case If (v, _, _)  => Set (v)
             case While (v, _)  => Set (v)
@@ -98,7 +98,7 @@ trait VariablesImpl extends Variables {
             case _             => Set ()
         }
 
-    val defines : Stm ==> Set[String] =
+    val defines : Stm ==> Set[Var] =
         attr {
             case Assign (v, _) => Set (v)
             case _             => Set ()
@@ -114,12 +114,12 @@ trait Liveness {
     /**
      * Variables "live" into a statement.
      */
-    val in : Stm ==> Set[String]
+    val in : Stm ==> Set[Var]
 
     /**
      * Variables "live" out of a statement.
      */
-    val out : Stm ==> Set[String]
+    val out : Stm ==> Set[Var]
 
 }
 
@@ -130,13 +130,13 @@ trait LivenessImpl extends Liveness {
     
     self : Liveness with Variables with ControlFlow =>
         
-    val in : Stm ==> Set[String] =
-        circular (Set[String]()) {
+    val in : Stm ==> Set[Var] =
+        circular (Set[Var]()) {
             case s => uses (s) ++ (out (s) -- defines (s))
         }
     
-    val out : Stm ==> Set[String] =
-        circular (Set[String]()) {
+    val out : Stm ==> Set[Var] =
+        circular (Set[Var]()) {
             case s => (s->succ) flatMap (in) 
         }
         
