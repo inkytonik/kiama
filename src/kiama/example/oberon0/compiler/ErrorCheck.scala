@@ -14,7 +14,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
@@ -44,66 +44,66 @@ object ErrorCheck {
                 var errs : List[String] = Nil
 
                 // Process the errors of the children of t
-		        for (child <- obj.children)
+                for (child <- obj.children)
                     errs = errs ::: collectErrors(child)
 
-		        // Process the errors at t
-		        obj match {
-		
-		            // Check for name-mismatch errors in module declarations
-		            case md @ ModuleDecl (nm, _, _, nm2, _) if nm != nm2 => {
-                        errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
-		            }
+                // Process the errors at t
+                obj match {
 
-		            // Check for name-mismatch errors in procedure declarations
-		            case pd @ ProcDecl (nm, _, _, _, nm2, _) if nm != nm2 => {
-                        errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
-		            }
-
-		            // Check for undeclared identifiers (applied occurrences only)
-		            case id @ Ident (nm) => {
-		                if ((id->decl).isInstanceOf[UnknownDecl])
-                            errs = ("Declaration not found: " + nm) :: errs
-		            }
-
-		            // Check for duplicate declarations
-		            case dec : Declaration if dec->isMultiplyDefined => {
-    	                errs = ("Duplicate declaration = " + dec.getName) :: errs
-    	            }
+                    // Check for name-mismatch errors in module declarations
+                    case md @ ModuleDecl (nm, _, _, nm2, _) if nm != nm2 => {
+                            errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
+                    }
+                    
+                    // Check for name-mismatch errors in procedure declarations
+                    case pd @ ProcDecl (nm, _, _, _, nm2, _) if nm != nm2 => {
+                            errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
+                    }
+                    
+                    // Check for undeclared identifiers (applied occurrences only)
+                    case id @ Ident (nm) => {
+                        if ((id->decl).isInstanceOf[UnknownDecl])
+                                errs = ("Declaration not found: " + nm) :: errs
+                    }
+                    
+                    // Check for duplicate declarations
+                    case dec : Declaration if dec->isMultiplyDefined => {
+                        errs = ("Duplicate declaration = " + dec.getName) :: errs
+                    }
 
                     // Check for incompatible types on either side of assignment statement
                     case as @ Assignment (desig, exp) if as->objType == InvalidType => {
-		                errs = ("Type mismatch in assignment expression: LHS is " + (desig->objType).toString
+                        errs = ("Type mismatch in assignment expression: LHS is " + (desig->objType).toString
                             + ", RHS is " + (exp->objType).toString) :: errs
-    	            }
+                    }
 
                     // Check for non-integer size expression in array type declaration
-		            case at @ ArrayType (sz, _) if sz->objType !=  IntegerType => {
+                    case at @ ArrayType (sz, _) if sz->objType !=  IntegerType => {
                         errs = ("Non-integer array size expression: " + at) :: errs
-    	            }
+                    }
 
                     // Check for non-constant size expression in array type declaration
-		            case at @ ArrayType (sz, _) if !(sz->isConstant) => {
+                    case at @ ArrayType (sz, _) if !(sz->isConstant) => {
                         errs = ("Non-constant array size expression: " + at) :: errs
-    	            }
+                    }
 
                     // Check for negative size expression in array type declaration
-		            case at @ ArrayType (sz, _) if sz->intValue < 0 => {
+                    case at @ ArrayType (sz, _) if sz->intValue < 0 => {
                         errs = ("Negative array size expression: " + at) :: errs
-    	            }              
-              
+                    }
+
                     // Check for non-integer index expression in array designation
-		            case ad @ ArrayDesig (_, exp) if exp->objType !=  IntegerType => {
+                    case ad @ ArrayDesig (_, exp) if exp->objType !=  IntegerType => {
                         errs = ("Non-integer array index expression: " + ad) :: errs
-    	            }
+                    }
 
                     // Check for constant, negative index expression in array designation
-		            case ad @ ArrayDesig (_, exp) if (exp->isConstant && (exp->intValue < 0)) => {
+                    case ad @ ArrayDesig (_, exp) if (exp->isConstant && (exp->intValue < 0)) => {
                         errs = ("Negative array index expression: " + ad) :: errs
-    	            }
+                    }
 
                     // Check for constant, out-of-bounds index expression in array designation
-		            case ad @ ArrayDesig (left, exp) if exp->isConstant => {
+                    case ad @ ArrayDesig (left, exp) if exp->isConstant => {
                         left->objType match {
                             case ArrayType (sz, _) => {
                                 if (exp->intValue >= sz->intValue)
@@ -111,7 +111,7 @@ object ErrorCheck {
                             }
                             case _ => errs = ("Error processing: " + ad) :: errs
                         }
-    	            }
+                    }
 
                     // Check procedure call is on an actual procedure
                     case ProcedureCall (desig, _) if !(desig->objType).isInstanceOf[ProcType] => {
@@ -120,10 +120,10 @@ object ErrorCheck {
 
                     // The procedure name must be a plain identifier
                     case pc @ ProcedureCall (desig, _) => {
-                      
+
                         desig match {
                             case fd : FieldDesig => {
-                                errs = (fd + "Procedure calls cannot use field designators") :: errs  
+                                errs = (fd + "Procedure calls cannot use field designators") :: errs
                             }
                             case ad : ArrayDesig => {
                                 errs = (ad + "Procedure calls cannot use array designators") :: errs
@@ -138,11 +138,11 @@ object ErrorCheck {
                                 // Check procedure call actual params against formal params
                                 errs = pc->procArgErrors ::: errs
                             }
-                                
+
                             case _ => ()
                         }
                     }
-                    
+
                     // Check If-statement expressions are boolean
                     case IfStatement (condexp, _, _) if condexp->objType != BooleanType => {
                         errs = (condexp + " must be a boolean expression") :: errs
@@ -154,9 +154,9 @@ object ErrorCheck {
                     }
 
                     case _ => ()
-		        }
+            }
 
-		        errs
-	        }
+            errs
         }
+    }
 }

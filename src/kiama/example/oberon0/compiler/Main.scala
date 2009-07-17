@@ -2,7 +2,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009 Anthony M Sloane, Macquarie University.
- * 
+ *
  * Contributed by Ben Mockler.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
@@ -14,7 +14,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
@@ -32,7 +32,7 @@ object Main extends Parser
     import kiama.example.oberon0.machine.RISC
     import java.io.FileReader
     import java.io.FileNotFoundException
-    
+
     def main (args: Array[String])
     {
         println ("Input : " + args(0))
@@ -84,7 +84,7 @@ object Main extends Parser
                 }
             }
 
-            case f : Failure => println (f) 
+            case f : Failure => println (f)
         }
     }
 }

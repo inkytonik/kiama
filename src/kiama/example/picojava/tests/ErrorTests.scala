@@ -12,17 +12,17 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */           
+ */
 
 /**
  * This file is derived from a JastAdd implementation of PicoJava, created
  * in the Department of Computer Science at Lund University.  See the
  * following web site for details:
- * 
+ *
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
@@ -30,7 +30,7 @@ package kiama.example.picojava.tests
 
 import junit.framework.Assert._
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.junit.JUnit3Suite
 
 class ErrorTests extends TestCase with JUnit3Suite {
 
@@ -38,7 +38,7 @@ class ErrorTests extends TestCase with JUnit3Suite {
     import kiama.example.picojava.ErrorCheck._
     import kiama.example.picojava.Parser._
     import scala.util.parsing.input.CharArrayReader
-    
+
     /**
      * Parse the illegal program and make sure that the errors and their
      * positions are as expected.
@@ -62,7 +62,7 @@ class ErrorTests extends TestCase with JUnit3Suite {
   D refD;
   refC = refD;
 }
-""";      
+""";
         parseAll (program, text) match {
             case Success (ast, _) => {
                 val messages = ast->errors
@@ -71,9 +71,9 @@ class ErrorTests extends TestCase with JUnit3Suite {
                 assertEquals ("3.3: Cyclic inheritance chain for class A", messages (2))
                 assertEquals ("9.3: Cyclic inheritance chain for class B", messages (3))
                 assertEquals ("17.3: Can not assign a variable of type C to a value of type D", messages (4))
-            }             
+            }
             case f : Failure => fail (f.toString)
         }
     }
-      
+
 }

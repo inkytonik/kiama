@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
@@ -21,10 +21,10 @@
 package kiama.example.picojava
 
 object Main {
-  
+
     import java.io.FileReader
     import ErrorCheck._
-  
+
     def main (args : Array[String]) : Unit = {
         for (filename <- args) {
             val program = Parser.run (new FileReader (filename))
@@ -33,5 +33,5 @@ object Main {
                 println (filename + ":" + msg)
         }
     }
-    
+
 }

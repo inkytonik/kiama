@@ -14,7 +14,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
@@ -120,7 +120,7 @@ object TypeAnalysis {
                         if (fps.size == aps.size)
                             checkParams (fps, aps)
                         else
-                            List("Incorrect number of arguments in call to " + des)  
+                            List("Incorrect number of arguments in call to " + des)
                     }
                     case _ => Nil
                 }
@@ -155,34 +155,34 @@ object TypeAnalysis {
     /**
      * Attribute 'byteSize':  Memory size associated with types and declarations
      */
-    val byteSize : Attributable ==> Int = 
+    val byteSize : Attributable ==> Int =
         attr {
             case dec : Declaration => dec->objType->byteSize
 
-		    case nt : NamedType => nt->objType->byteSize
+            case nt : NamedType => nt->objType->byteSize
 
             case at @ ArrayType (sz, tp) if (sz->objType == IntegerType && sz->isConstant) =>
-		        (sz->intValue) * (tp->objType->byteSize)
+                (sz->intValue) * (tp->objType->byteSize)
 
-		    case RecordType (flds) => {
-		        var sz : Int = 0
-		        for (fld <- flds)
+            case RecordType (flds) => {
+                var sz : Int = 0
+                for (fld <- flds)
                     sz += fld->byteSize
                 sz
-		    }
+            }
 
-		    case IntegerType => 4
-		    case BooleanType => 4
-		    case _ => -1
+            case IntegerType => 4
+            case BooleanType => 4
+            case _ => -1
         }
 
     // *** Attribute 'level':  Nesting depth of the declaration
-    val level : Attributable ==> Int = 
+    val level : Attributable ==> Int =
         attr {
             case md : ModuleDecl => 0
 
-		    case pd : ProcDecl => (pd.parent)->level + 1
+            case pd : ProcDecl => (pd.parent)->level + 1
 
-		    case x @ _ => (x.parent)->level
+            case x @ _ => (x.parent)->level
         }
 }

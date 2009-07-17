@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.imperative
 
 import kiama.util.GeneratingREPL
@@ -32,19 +32,19 @@ object AST {
      * Identifiers are represented as strings.
      */
     type Idn = String
-    
+
     /**
      * Simple interface for pretty-printing capabilities.
      */
     trait PrettyPrintable {
-      
+
         /**
          * Pretty-print the object at the end of the given string builder.
          */
         def pretty (o : StringBuilder)
-        
+
     }
-    
+
     /**
      * Expressions.
      */
@@ -54,17 +54,17 @@ object AST {
          * The numeric value of the expression.
          */
         def value : Double
-        
+
         /**
          * The set of all variable references in the expression.
          */
         def vars : Set[Idn] = Set ()
-        
+
         /**
-         * The number of divisions by the constant zero in the expression. 
+         * The number of divisions by the constant zero in the expression.
          */
         def divsbyzero : Int = 0
-        
+
         /**
          * The depth of the expression, i.e., the number of levels from the
          * root to the leaf values.
@@ -76,7 +76,7 @@ object AST {
          */
         def intadds : Int = 0
     }
-    
+
     /**
      * Numeric expressions.
      */
@@ -85,7 +85,7 @@ object AST {
         override def depth = 2
         def pretty (o : StringBuilder) = o.append (d)
     }
-    
+
     /**
      * Variable expressions.
      */
@@ -97,21 +97,21 @@ object AST {
         override def toString = "Var(\"" + s + "\")"
         def pretty (o : StringBuilder) = o.append (s)
     }
-    
+
     /**
      * Unary negation expressions.
      */
-	case class Neg (e : Exp) extends Exp {
-	    override def value = - e.value
-	    override def vars = e.vars
-	    override def divsbyzero = e.divsbyzero
-	    override def depth = 1 + e.depth
-	    override def intadds = e.intadds
+    case class Neg (e : Exp) extends Exp {
+        override def value = - e.value
+        override def vars = e.vars
+        override def divsbyzero = e.divsbyzero
+        override def depth = 1 + e.depth
+        override def intadds = e.intadds
         def pretty (o : StringBuilder) = {
             o.append ("(-"); e.pretty (o); o.append (')')
         }
-	}    
-    
+    }
+
     /**
      * Binary expressions.
      */
@@ -128,15 +128,15 @@ object AST {
     case class Add (l : Exp, r : Exp) extends Binary (l, r) {
         override def value = l.value + r.value
         override def intadds =
-	        (l, r) match {
-	            case (Num (_), Num (_)) => 1
-	            case _                  => super.intadds
-	        }
+            (l, r) match {
+                case (Num (_), Num (_)) => 1
+                case _                  => super.intadds
+            }
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" + "); r.pretty (o); o.append (')')
         }
     }
-    
+
     /**
      * Subtraction expressions.
      */
@@ -146,7 +146,7 @@ object AST {
             o.append ('('); l.pretty (o); o.append (" - "); r.pretty (o); o.append (')')
         }
     }
-    
+
     /**
      * Multiplication expressions.
      */
@@ -163,7 +163,7 @@ object AST {
     case class Div (l : Exp, r : Exp) extends Binary (l, r) {
         // Hack: no errors, so return zero for divide by zero
         override def value = if (r.value == 0) 0 else l.value / r.value
-        override def divsbyzero = 
+        override def divsbyzero =
             l.divsbyzero + (r match {
                                 case Num (0) => 1
                                 case _       => r.divsbyzero
@@ -182,16 +182,16 @@ object AST {
          * The set of all variable references in the statement.
          */
         def vars : Set[Idn] = Set ()
-        
+
     }
-    
+
     /**
      * Empty statements.
      */
     case class Null () extends Stmt {
         def pretty (o : StringBuilder) = o.append (";\n")
     }
-    
+
     /**
      * Statement sequences.
      */
@@ -201,7 +201,7 @@ object AST {
             o.append ("{\n"); ss.foreach (_.pretty (o)); o.append ("}\n")
         }
     }
-    
+
     /**
      * Assignment statements.
      */
@@ -212,25 +212,25 @@ object AST {
             o.append (s); o.append (" = "); e.pretty (o); o.append (";\n")
         }
     }
-    
+
     /**
      * While loops.
      */
     case class While (e : Exp, b : Stmt) extends Stmt {
         override def vars = e.vars ++ b.vars
         def pretty (o : StringBuilder) = {
-            o.append ("while ("); e.pretty (o); o.append (")\n"); 
+            o.append ("while ("); e.pretty (o); o.append (")\n");
             b.pretty (o);
         }
     }
-    
+
 }
-    
+
 /**
  * AST pretty-printing.
  */
 trait PrettyPrinter {
-    
+
     import AST._
 
     /**
@@ -241,7 +241,7 @@ trait PrettyPrinter {
         t.pretty (buffer)
         buffer.toString
     }
-    
+
 }
 
 /**
@@ -250,22 +250,22 @@ trait PrettyPrinter {
 trait Parser extends kiama.parsing.CharPackratParsers {
 
     import AST._
-    
+
     lazy val parse : Parser[Stmt] =
         phrase (stmt)
-    
+
     lazy val stmt : Parser[Stmt] =
         ";" ^^^ Null () | sequence | asgnStmt | whileStmt
 
     lazy val asgnStmt : Parser[Asgn] =
         idn ~ ("=" ~> exp) <~ ";" ^^ { case s ~ e => Asgn (s, e) }
-    
+
     lazy val whileStmt : Parser[While] =
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
 
     lazy val sequence : Parser[Seqn] =
         "{" ~> (stmt*) <~ "}" ^^ Seqn
-    
+
     lazy val exp : MemoParser[Exp] =
         exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
         exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
@@ -275,12 +275,12 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
         term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
         factor
-    
+
     lazy val factor : MemoParser[Exp] =
         double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")"
 
     lazy val double : Parser[Num] =
-        token ((digit+) ~ ("." ~> (digit+))) ^^ { case l ~ r => Num ((l.mkString + "." + r.mkString).toDouble) }        
+        token ((digit+) ~ ("." ~> (digit+))) ^^ { case l ~ r => Num ((l.mkString + "." + r.mkString).toDouble) }
 
     lazy val integer : Parser[Num] =
         token (digit+) ^^ (l => Num (l.mkString.toInt))
@@ -290,93 +290,93 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     lazy val idn : Parser[String] =
         !keyword ~> token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
-    
+
     lazy val keyword : Parser[String] =
-        "while" 
-    
+        "while"
+
 }
-        
+
 /**
- * ScalaCheck generators for programs in the imperative language. 
+ * ScalaCheck generators for programs in the imperative language.
  */
 trait Generator {
-    
+
     import org.scalacheck._
     import AST._
 
     val genInteger = for (i <- Gen.choose (1, 100)) yield Num (i)
     val genDouble = for (i <- Gen.choose (1.0, 1000000.0)) yield Num (i)
     val genNum = Gen.frequency ((3, genInteger), (1, genDouble))
-    
+
     implicit def arbNum : Arbitrary[Num] =
         Arbitrary (genNum)
-    
+
     val genIdn : Gen[String] = for (s <- Gen.identifier) yield (s.take (5))
     val genVar = for (v <- genIdn) yield Var (v)
-    
+
     val genLeafExp = Gen.oneOf (genNum, genVar)
-    
-    def genNeg (sz : Int) = 
+
+    def genNeg (sz : Int) =
         for { e <- genExp (sz/2) } yield Neg (e)
 
     def genAdd (sz : Int) =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Add (l, r)
-                    
+
     def genSub (sz : Int) =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Sub (l, r)
-                 
+
     def genMul (sz : Int) =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Mul (l, r)
 
     def genDiv (sz : Int) =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Div (l, r)
-   
+
     def genInternalExp (sz : Int) =
         Gen.oneOf (genAdd (sz), genSub (sz), genMul (sz), genDiv (sz))
-        
+
     def genExp (sz : Int) : Gen[Exp] =
         if (sz <= 0)
             genLeafExp
         else
             Gen.frequency ((1, genLeafExp), (3, genInternalExp (sz)))
-                    
+
     implicit def arbExp : Arbitrary[Exp] =
         Arbitrary { Gen.sized (sz => genExp (sz)) }
-    
+
     val genLeafStmt = Gen.value (Null ())
-    
+
     def genSeqn (sz : Int) =
         for { len <- Gen.choose (1,sz)
               ss <- Gen.containerOfN[List,Stmt] (len, genStmt (sz / len)) }
             yield Seqn (ss)
-            
+
     implicit def arbSeqn : Arbitrary[Seqn] =
         Arbitrary { Gen.sized (sz => genSeqn (sz)) }
-    
+
     def genAsgn (sz : Int) =
         for { i <- genIdn; e <- genExp (sz-1) } yield Asgn (i, e)
-    
+
     implicit def arbAsgn : Arbitrary[Asgn] =
         Arbitrary { Gen.sized (sz => genAsgn (sz)) }
-                
+
     def genWhile (sz : Int) =
         for { e <- genExp (sz/3); b <- genStmt (sz - 1) } yield While (e, b)
-        
+
     implicit def arbWhile : Arbitrary[While] =
         Arbitrary { Gen.sized (sz => genWhile (sz)) }
 
     def genInternalStmt (sz : Int) : Gen[Stmt] =
         Gen.frequency ((1, genSeqn (sz)), (5, genAsgn (sz)), (3, genWhile (sz)))
-                
+
     def genStmt (sz : Int) =
         if (sz <= 0)
             genLeafStmt
         else
             Gen.frequency ((1, genLeafStmt), (9, genInternalStmt (sz)))
-            
+
     implicit def arbStmt : Arbitrary[Stmt] =
         Arbitrary { Gen.sized (sz => genStmt (sz)) }
-    
+
 }
 
 /**
@@ -393,23 +393,23 @@ object Imperative extends ParsingREPL[AST.Stmt] with Parser {
 
     override def setup { println ("Enter imperative language programs for parsing.") }
     override def prompt = "imperative> "
-    
+
     def process (s : AST.Stmt) {
         println (s)
     }
-    
+
 }
 
 /**
  * A read-eval-print loop for generating random imperative statements.
  */
 object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator with PrettyPrinter {
-    
+
     def generator = arbStmt
-    
+
     override def process (s : AST.Stmt) {
         println (s)
         println (pretty (s))
-    }    
+    }
 
 }

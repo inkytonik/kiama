@@ -12,20 +12,20 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.parsing
 
 import junit.framework.Assert._
 import junit.framework.TestCase
 import org.scalacheck._
-import org.scalacheck.Prop._ 
-import org.scalatest.junit.JUnit3Suite 
-import org.scalatest.prop.Checkers 
+import org.scalacheck.Prop._
+import org.scalatest.junit.JUnit3Suite
+import org.scalatest.prop.Checkers
 import kiama.example.imperative.TestBase
 
 /**
@@ -33,7 +33,7 @@ import kiama.example.imperative.TestBase
  */
 class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                           with CharPackratParsers with TestBase {
-    
+
     import kiama.example.imperative.AST._
     import scala.util.parsing.input.CharArrayReader
 
@@ -51,27 +51,27 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     /**
      * Implicitly generate an input by generating a non-empty string to form its
      * contents.
-     */    
+     */
     implicit def arbInput : Arbitrary[Input] =
         Arbitrary (for (s <- Arbitrary.arbString.arbitrary if !s.isEmpty) yield (input (s)))
-    
+
     /**
      * Implicitly generate an input based on a pretty-printable language construct.
      */
     implicit def arbASTToInput[T <: PrettyPrintable] (t : T) : Input =
-        input (pretty (t))        
-    
+        input (pretty (t))
+
     /**
      * Implicitly generate a string based on a pretty-printable language construct.
      */
     implicit def arbASTToString[T <: PrettyPrintable] (t : T) : String =
-        pretty (t)        
+        pretty (t)
 
     /**
      * Random value generator used by some tests.
      */
     val random = new scala.util.Random
-        
+
     /**
      * Equality of inputs by content.
      */
@@ -85,7 +85,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         }
         rv.atEnd
     }
-    
+
     /**
      * Equality of parser results, including input states.
      */
@@ -103,7 +103,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                 }
         }
     }
-    
+
     /**
      * Return true if the given parser result is a failure regardless of the
      * message or position.  Otherwise return false.
@@ -113,7 +113,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
             case Failure (_, _) => true
             case _              => false
         }
-    
+
     /**
      * Return true if the given parser result is a failure with the given
      * message but regardless of position.  Otherwise return false.
@@ -123,7 +123,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
             case Failure (`m`, _) => true
             case _                => false
         }
-    
+
     /**
      * Return true if the given parser result is a success with the given
      * value but regardless of position.  Otherwise return false.
@@ -133,7 +133,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
             case Success (`t`, _) => true
             case _                => false
         }
-    
+
     /**
      * Return true if the given parser result is a failure at the given input
      * position, regardless of the message.  Otherwise return false.
@@ -157,7 +157,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                 fail (m + " at " + in.pos)
         }
     }
-    
+
     /**
      * Try to parse a string and expect a given result.  Also check that
      * there is no more input left.  Return a Boolean result.
@@ -189,14 +189,14 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     def testNoReadSuccess () {
         assertTrue (same (success ("hi") (empty), Success ("hi", empty)))
     }
-    
+
     /**
      * A failing parse on empty input fails with the specified message.
      */
     def testNoReadFailure () {
         assertTrue (same (failure ("fail") (empty), Failure ("fail", empty)))
     }
-    
+
     /**
      * A successful parse succeeds with the specified result no matter
      * what the input is.
@@ -204,7 +204,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     def testAnyInputSuccess () {
         check ((in : Input) => same (success (42) (in), Success (42, in)))
     }
-    
+
     /**
      * A failing parse fails with the specified message no matter
      * what the input is.
@@ -212,7 +212,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     def testAnyInputFailure () {
         check ((in : Input) => same (failure ("fail") (in), Failure ("fail", in)))
     }
-    
+
     /**
      * Looking for the first element of the input (if there is one) should
      * succeed.
@@ -220,7 +220,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
     def testFirstElementSuccess () {
         check ((in : Input) => same ((in.first) (in), Success (in.first, in.rest)))
     }
-        
+
     /**
      * Looking for something that cannot be the first element of the input
      * (if there is one) should fail.
@@ -232,16 +232,16 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
             same (ch (in), Failure (ch.toString, in))
         })
     }
-    
+
     /**
      * The any parser should indeed accept anything.
      */
     def testAny () {
         check ((c : Char) => {
-            val in = input (c.toString)  
+            val in = input (c.toString)
             same (any (in), Success (c, in.rest))
         })
-    }    
+    }
 
     /**
      * Test parsing of arbitrary numbers.
@@ -250,7 +250,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         check ((i : Int) => (i >= 0) ==> expectBool (integer, i.toString, Num (i)))
         check ((d : Double) => (d >= 0) ==> expectBool (double, d.toString, Num (d)))
     }
-    
+
     /**
      * Test parsing of variables (subsumes tests for identifier parsing).
      */
@@ -261,7 +261,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         implicit def arbIdn : Arbitrary[String] = Arbitrary (genIdn)
         check ((s : String) => expectBool (variable, s, Var (s)))
     }
-        
+
     /**
      * Test parsing of expressions.
      */
@@ -272,14 +272,14 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         expect (exp, "(1+2)*3", Mul (Add (Num (1), Num (2)), Num (3)))
         roundtrip (exp)
     }
-    
+
     /**
      * Test whether keywords are appropriately rejected as identifiers.
      */
     def testKeywords () {
         assertTrue (isFail (asgnStmt (input ("while = 3;"))))
     }
-    
+
     /**
      * Test parsing of null statements.
      */
@@ -287,7 +287,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         expect (stmt, ";", Null ())
         expect (stmt, ";     ", Null ())
     }
-    
+
     /**
      * Test parsing of assignment statements.
      */
@@ -307,7 +307,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                 Seqn (List (Asgn ("v", Num (1)), Asgn ("v", Num (2)))))
         roundtrip (sequence)
     }
-    
+
     /**
      * Test parsing of while statements.
      */
@@ -318,21 +318,21 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                        Seqn (List (Asgn ("a", Sub (Var ("a"), Num (1)))))))
         roundtrip (whileStmt)
     }
-    
+
     /**
      * Test parse of arbitrary statements.
      */
     def testParseStatements () {
         roundtrip (stmt)
     }
-    
+
     /**
      * Test parsing of whole programs.
      */
     def testParsePrograms () {
         roundtrip (parse)
     }
-    
+
     /**
      * Test a not predicate parser on a given string.  Return true if it succeeds
      * with ()true) and the input unchanged, otherwise return false.
@@ -346,7 +346,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
                 false
         }
     }
-    
+
     /**
      * Test a not predicate parser on a given string.  Return true if it fails
      * with the input unchanged, otherwise return false.
@@ -355,7 +355,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         val in = input (str)
         isFailAt (parser (in), in)
     }
-    
+
     /**
      * Test that the not predicate appropriately negates the behaviour of
      * other parsers.
@@ -368,9 +368,9 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         assertTrue (notPredSucceeds (!stmt, "while (c + 3) { a = 5; b = ; }"))
         assertTrue (notPredFails (!stmt, "while (c + 3) { a = 5; b = c; }"))
         check ((s : Stmt) => notPredFails (!stmt, pretty (s)))
-        check ((e : Exp) => notPredSucceeds (!stmt, pretty (e))) 
+        check ((e : Exp) => notPredSucceeds (!stmt, pretty (e)))
     }
-    
+
     /**
      * Check that +p returns the same result as p on random input, but
      * doesn't change the input.  Starts with valid phrases for the parser
@@ -386,21 +386,21 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
             val in = input (s)
             val pv = p (in)
             val ppv = (+p) (in)
-	        pv match {
-	            case Success (lr, _) =>
-	                ppv match {
-	                    case Success (rr, ri) => (lr == rr) && (ri == in)
-	                    case _                => false
-	                }
-	            case Failure (lm, _) =>
-	                ppv match {
-	                    case Failure (rm, ri) => (lm == rm) && (ri == in)
-	                    case _                => false
-	                }
-	        }            
+            pv match {
+                case Success (lr, _) =>
+                    ppv match {
+                        case Success (rr, ri) => (lr == rr) && (ri == in)
+                        case _                => false
+                    }
+                case Failure (lm, _) =>
+                    ppv match {
+                        case Failure (rm, ri) => (lm == rm) && (ri == in)
+                        case _                => false
+                    }
+            }
         })
     }
-    
+
     /**
      * Test that the and predicate preserves the results of other parsers
      * but has no effect on the input.
@@ -412,7 +412,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         sameResultNoInput (whileStmt)
         sameResultNoInput (stmt)
     }
-    
+
     /**
      * Make sure that optional parsers work both ways (so to speak).
      */
@@ -420,7 +420,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         check ((s : Stmt) => same (stmt (s) map (t => Some (t)), (stmt?) (s)))
         check ((e : Exp) => { val in = input (e); same (stmt? (in), Success (None, in)) })
     }
-    
+
     /**
      * Test that basic regular expression matching works.
      */
@@ -431,7 +431,7 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         for (s <- List ("123", "  123", ".99", "-.001", "harold"))
             assertTrue ({val in = input (s); isFailAt (decimal (in), in)})
     }
-    
+
     /**
      * Test passing values from one parser to another.
      */
@@ -441,10 +441,10 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         val nntimes2 = number >> (i => token ((i*2).toString))
         expect (nntimes2, "0 0", "0")
         expect (nntimes2, "21 42", "42")
-        assertTrue (isFail (nntimes2 (input ("4"))))  
-        assertTrue (isFail (nntimes2 (input ("12 99"))))  
+        assertTrue (isFail (nntimes2 (input ("4"))))
+        assertTrue (isFail (nntimes2 (input ("12 99"))))
     }
-    
+
     /**
      * Test use of partial functions to process parse results.
      */
@@ -452,17 +452,17 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         val p = integer ^? { case Num (i) => (i-1).toString }
         expect (p, "123", "122.0")
         assertTrue (isFail (p (input ("hello"))))
-        
+
         val q = exp ^? { case Var (v) => v }
         assertTrue (isFail (q (input ("123"))))
         assertTrue (isFail (q (input ("9.0"))))
-        
+
         val r = idn ^? ({case s if s.length == 3 => s + " has length 3"},
                         s => s + " unexpected")
         assertTrue (isSuccessWith (r (input ("abc")), "abc has length 3"))
         assertTrue (isFailWith (r (input ("hello")), "hello unexpected"))
     }
-    
+
     /**
      * Test separator parsing.
      */
@@ -473,14 +473,14 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         assertTrue (isSuccessWith (p (input (":=")), Nil))
         expect (p, "1, 2", List (Num (1), Num (2)))
         expect (p, "v, 67, 12.3", List (Var ("v"), Num (67), Num (12.3)))
-        
+
         val q = rep1sep (exp, ",")
         assertTrue (isFail (q (empty)))
         assertTrue (isFail (q (input (":="))))
         expect (q, "1,2", List (Num (1), Num (2)))
         expect (q, "v,67,12.3", List (Var ("v"), Num (67), Num (12.3)))
     }
-    
+
     /**
      * Test repetition a fixed number of times.
      */
@@ -490,6 +490,6 @@ class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
         expect (repN (3, exp), "56 val 2.3", List (Num (56), Var ("val"), Num (2.3)))
         assertTrue (isSuccessWith (repN (2, exp) (input ("56 val 2.3")), List (Num (56), Var ("val"))))
     }
-    
+
 }
-                          
+

@@ -12,27 +12,27 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.til
 
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
-import org.scalatest.prop.Checkers 
+import org.scalatest.junit.JUnit3Suite
+import org.scalatest.prop.Checkers
 
 class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
-    
+
     import AST._
     import TIL2_1Main._
 
     private val x = Id ("x")
     private val y = Id ("y")
     private val n = Id ("n")
-            
+
     /**
      * Simple test of transforming a singleton statement.
      */
@@ -45,7 +45,7 @@ class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
                     Write (Var (x))))))
         test (input, tree)
     }
-    
+
     /**
      * Simple test of transforming the first statement of a sequence.
      */
@@ -59,7 +59,7 @@ class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
                 Write (Var (x))))
         test (input, tree)
     }
-    
+
     /**
      * Simple test of transforming the last statement of a sequence.
      */
@@ -103,5 +103,5 @@ class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
                          Write (Var (y))))))))
         test (input, tree)
     }
-    
+
 }

@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.lambda2
 
@@ -27,11 +27,11 @@ package kiama.example.lambda2
  * nodes of their binding lambda expressions.
  */
 object Analysis {
-  
+
     import AST._
     import kiama.attribution.Attribution._
     import kiama.util.Messaging._
-  
+
     /**
      * The environment of an expression is the list of variable names that
      * are visible in that expression and their types.
@@ -54,7 +54,7 @@ object Analysis {
                 // Other expressions do not bind new identifiers so they just
                 // get their environment from their parent
                 case p : Exp           => p->env
-                
+
             }
         }
 
@@ -64,10 +64,10 @@ object Analysis {
      */
     val tipe : Exp ==> Type =
         attr {
-            
+
             // A number is always of integer type
             case Num (_)          => IntType
-            
+
             // An identifier is looked up in the environement of the current
             // expression.  If we find it, then we use the type that we find.
             // Otherwise it's an error.
@@ -77,11 +77,11 @@ object Analysis {
                                             message (e, "'" + x + "' unknown")
                                             IntType
                                      }
-                                     
+
             // A lambda expression is a function from the type of its argument
             // to the type of the body expression
             case Lam (_, t, e)    => FunType (t, e->tipe)
-            
+
             // For an application we first determine the type of the expression
             // being applied.  If it's a function whose argument type is the same
             // as the type of the argument in the application, then the type of
@@ -97,7 +97,7 @@ object Analysis {
                                              message (e1, "application of non-function")
                                              IntType
                                      }
-                                     
+
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (op, e1, e2) => if (e1->tipe != IntType)
@@ -118,7 +118,7 @@ object Analysis {
             // this lambda expression binds the name we are looking for, then
             // return this node.
             case e @ Lam (x, t, _) if x == name => Some (e)
-          
+
             // Nothing is visible at the root of the tree
             case e if e isRoot                  => None
 
@@ -127,7 +127,7 @@ object Analysis {
             // get their environment from their parent
             case e                              => e.parent[Exp]->lookup (name)
         }
-    
+
     /**
      * The type of an expression.  Checks constituent names and types. Uses
      * the lookup attribute to get the lambda node that binds a name. For
@@ -135,10 +135,10 @@ object Analysis {
      */
     val tipe2 : Exp ==> Type =
         attr {
-          
+
             // A number is always of integer type
             case Num (_)          => IntType
-            
+
             // An identifier is looked up in the environement of the current
             // expression.  If we find it, then we use the type that we find.
             // Otherwise it's an error.
@@ -148,11 +148,11 @@ object Analysis {
                                         message (e, "'" + x + "' unknown")
                                         IntType
                                 }
-            
+
             // A lambda expression is a function from the type of its argument
             // to the type of the body expression
             case Lam (_, t, e)    => FunType (t, e->tipe2)
-            
+
             // For an application we first determine the type of the expression
             // being applied.  If it's a function whose argument type is the same
             // as the type of the argument in the application, then the type of
@@ -168,7 +168,7 @@ object Analysis {
                                              message (e1, "application of non-function")
                                              IntType
                                      }
-                                     
+
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (op, e1, e2) => if (e1->tipe2 != IntType)
@@ -176,7 +176,7 @@ object Analysis {
                                      if (e2->tipe2 != IntType)
                                          message (e2, "expected Int, found " + (e2->tipe2))
                                      IntType
-            
+
         }
-    
+
 }

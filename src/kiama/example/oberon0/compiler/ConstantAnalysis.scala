@@ -14,7 +14,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
@@ -37,7 +37,7 @@ object ConstantAnalysis {
             case Not (e) => e->isConstant
 
             case ue : UnaryNumExp => (ue.getExp)->isConstant
-            
+
             // Binary
             case be : BinaryNumExp => (be.getLeft)->isConstant && (be.getRight)->isConstant
             case be : BinaryBoolExp => (be.getLeft)->isConstant && (be.getRight)->isConstant

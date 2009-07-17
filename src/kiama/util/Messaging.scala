@@ -12,28 +12,28 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.util
 
 /**
  * Facility for buffering of messages associated with positioned values.
  */
 object Messaging {
-    
+
     import scala.collection.mutable.ListBuffer
     import scala.util.parsing.input.Positional
     import scala.util.parsing.input.Position
-    
+
     /**
      * A message record.
      */
     case class Record (pos : Position, message : String)
-        
+
     /**
      * Buffer of messages.
      */
@@ -62,12 +62,12 @@ object Messaging {
             print (": ")
             println (m.message)
         }
-    
+
     /**
      * Reset the message buffer to empty.
      */
     def resetmessages = {
         messages = new ListBuffer[Record] ()
     }
-    
+
 }

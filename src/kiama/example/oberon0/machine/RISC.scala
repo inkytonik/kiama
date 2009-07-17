@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.oberon0.machine
 
@@ -35,7 +35,7 @@ class RISC (code : Code) extends Machine ("RISC") {
      * Words are 32-bits long.
      */
     type Word = Int
-    
+
     /**
      * A named register.
      */
@@ -45,7 +45,7 @@ class RISC (code : Code) extends Machine ("RISC") {
      * Integer register file addressed by 0-31.
      */
     lazy val R = Array.fromFunction (i => Reg ("R" + i.toString)) (32)
-    
+
     /**
      * The program counter is register 28.
      */
@@ -53,12 +53,12 @@ class RISC (code : Code) extends Machine ("RISC") {
     lazy val FP = R (29)
     lazy val SP = R (30)
     lazy val LNK = R (31)
-    
+
     /**
      * Byte addressed store of words.
      */
     val Mem = State[Map[Int,Word]] ("Mem")
-    
+
     /**
      * Condition code: zero.
      */
@@ -104,11 +104,11 @@ class RISC (code : Code) extends Machine ("RISC") {
         control (instr)
         inputoutput (instr)
     }
-    
+
     /**
      * Execute arithmetic instructions.
      */
-    def arithmetic (instr : Instr) = 
+    def arithmetic (instr : Instr) =
         instr match {
             case MOV (a, b, c)   => R (a) := R (c) << b
             case MOVI (a, b, im) => R (a) := im << b
@@ -179,13 +179,13 @@ class RISC (code : Code) extends Machine ("RISC") {
     /**
      * Execute input/output instructions.
      */
-    def inputoutput (instr : Instr) = 
+    def inputoutput (instr : Instr) =
         instr match {
             case RD (a)  => R (a) := readInt
             case WRD (c) => print (R (c).value)			// BEN MOD
             case WRH (c) => print (R (c) toHexString)
             case WRL     => println
             case _ => ()	// BEN MOD
-        }    
+        }
 
 }

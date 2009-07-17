@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.til
 
 import kiama.rewriting.Rewriter
@@ -26,12 +26,12 @@ import kiama.rewriting.Rewriter
  * Transform for loops into equivalent while loops.
  */
 trait TIL2_2 extends TIL1_1 with TransformingMain {
-        
+
     import AST._
 
     override def transform (ast : Root) : Root =
         rewrite (fortowhile) (ast)
-        
+
     val fortowhile =
         everywheretd (rule {
             case (s @ For (id @ Id (i), f, t, b)) :: ss =>
@@ -44,7 +44,7 @@ trait TIL2_2 extends TIL1_1 with TransformingMain {
                     b ++ List (Assign (id, Add (Var (id), Num (1))))) ::
                 ss
         })
-            
+
 }
 
 object TIL2_2Main extends TIL2_2

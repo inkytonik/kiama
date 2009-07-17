@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.lambda
 
 import kiama.rewriting.Rewriter
@@ -33,66 +33,66 @@ object AST {
      * Identifiers are represented as strings.
      */
     type Idn = String
-    
+
     /**
      * Expressions.
      */
     abstract class Exp extends Product
-    
+
     /**
      * Numeric expressions.
      */
     case class Num (i : Int) extends Exp {
         override def toString = i.toString
     }
-    
+
     /**
      * Variable expressions.
-     */    
+     */
     case class Var (x : Idn) extends Exp {
         override def toString = x
     }
-    
+
     /**
      * Lambda expressions binding x within e.
      */
     case class Lam (x : Idn, e : Exp) extends Exp {
         override def toString = "(\\" + x + "." + e + ")"
     }
-    
+
     /**
      * Application of l to r.
      */
     case class App (l : Exp, r : Exp) extends Exp {
         override def toString = "(" + l + " " + r + ")"
     }
-    
+
     /**
      * Substitution of n for x within m.
      */
     case class Sub (m : Exp, x : Idn, n : Exp) extends Exp
-  
+
 }
 
 /**
  * Parser to AST.
  */
 trait Parser extends kiama.parsing.CharPackratParsers {
-  
+
     import AST._
-    
+
     lazy val parse : Parser[Exp] =
         phrase (exp)
-        
+
     lazy val exp : MemoParser[Exp] =
         exp ~ factor ^^ { case l ~ r => App (l, r) } |
         ("\\" ~> idn) ~ ("." ~> exp) ^^ { case i ~ b => Lam (i, b) } |
         factor |
         failure ("expression expected")
-        
+
     lazy val factor : MemoParser[Exp] =
         integer | variable | "(" ~> exp <~ ")"
-    
+
     lazy val integer : Parser[Num] =
         token (digit+) ^^ (l => Num (l.mkString.toInt))
 
@@ -101,40 +101,40 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     lazy val idn : Parser[String] =
         token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
-    
+
 }
 
 /**
- * ScalaCheck generators for programs in the lambda language. 
+ * ScalaCheck generators for programs in the lambda language.
  */
 trait Generator {
-    
+
     import org.scalacheck._
     import AST._
 
     val genNum = for (i <- Gen.choose (1, 100)) yield Num (i)
     val genIdn : Gen[String] = for (s <- Gen.identifier) yield (s.take (5))
     val genVar = for (v <- genIdn) yield Var (v)
-    
+
     implicit def arbVar : Arbitrary[Var] = Arbitrary (genVar)
 
     val genLeafExp = Gen.oneOf (genNum, genVar)
-    
+
     def genLamExp (sz : Int) =
         for { i <- genIdn; b <- genExp (sz/2) } yield Lam (i, b)
-    
+
     def genAppExp (sz : Int) =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield App (l, r)
-        
+
     def genExp (sz : Int) : Gen[Exp] =
         if (sz <= 0)
             genLeafExp
         else
             Gen.frequency ((1, genLeafExp), (1, genLamExp (sz)), (3, genAppExp (sz)))
-                    
+
     implicit def arbExp : Arbitrary[Exp] =
         Arbitrary { Gen.sized (sz => genExp (sz)) }
-        
+
 }
 
 /**
@@ -150,9 +150,9 @@ trait TestBase extends Parser with Generator with Evaluator
  * 1996.
  */
 trait Evaluator extends Rewriter {
-  
+
     import AST._
-        
+
     /**
      * Free variables
      */
@@ -165,7 +165,7 @@ trait Evaluator extends Rewriter {
             case Sub (m, x, n) => (fv (m) - x) ++ fv (n)
         }
     }
-    
+
     /**
      * \xgc-reduction
      */
@@ -184,12 +184,12 @@ trait Evaluator extends Rewriter {
             case Sub (m, x, n) if ! (fv (m) contains (x))
                                                  => m
         }
-    
+
     /**
      * Normal-order reduction
      */
     val normal = outermost (xgc_reduction)
-        
+
 }
 
 /**
@@ -208,7 +208,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
             case None     => println ("reduction failed")
         }
     }
-    
+
 }
 
 /**

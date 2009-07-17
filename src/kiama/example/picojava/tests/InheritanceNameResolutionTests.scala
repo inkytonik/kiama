@@ -12,17 +12,17 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */           
+ */
 
 /**
  * This file is derived from a JastAdd implementation of PicoJava, created
  * in the Department of Computer Science at Lund University.  See the
  * following web site for details:
- * 
+ *
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
@@ -30,7 +30,7 @@ package kiama.example.picojava.tests
 
 import junit.framework.Assert._
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.junit.JUnit3Suite
 
 class InheritanceNameResolutionTests extends TestCase with JUnit3Suite {
 
@@ -60,12 +60,12 @@ class InheritanceNameResolutionTests extends TestCase with JUnit3Suite {
                                    VarDecl ("d", Use ("int")),
                                    declAAe,
                                    AssignStmt (aInAA, bInAA))))
-    
+
     private val declA = ClassDecl ("A", None, Block(
                             List (declAa,
                                   VarDecl ("b", Use ("int")),
                                   VarDecl ("c", Use ("int")),
-                                  declAA))) 
+                                  declAA)))
 
     val ast =
         Program (Block (
@@ -79,39 +79,39 @@ class InheritanceNameResolutionTests extends TestCase with JUnit3Suite {
                                 List (VarDecl ("d", Use ("int")),
                                       AssignStmt (aInBB, Use ("d")),
                                       AssignStmt (eInBB, fInBB))))))))))
-  
+
       def testBindingInOuterBlock {
           assertSame (declAa, aInAA->decl)
       }
-      
+
       def testBlockStructureShadowing {
           assertSame (declAAb, bInAA->decl)
       }
-  
+
       def testSuperclassBinding {
           assertSame (declA, AinB->decl)
       }
-  
+
       def testInheritance {
           assertSame (declAa, aInB->decl)
       }
-  
+
       def testInheritanceShadowing {
           assertSame (declBc, cInB->decl)
       }
-  
+
       def testSuperclassBindingOfInnerClass {
           assertSame (declAA, AAinBB->decl)
       }
-  
+
       def testInheritanceInOuterClass {
           assertSame (declAa, aInBB->decl);
       }
-  
+
       def testSuperclassShadowsOuterBlock {
           assertSame (declAAe, eInBB->decl);
       }
-        
+
       def testSuperclassDoesNotShadowOuterBlock {
           assertSame (declBf, fInBB->decl)
       }

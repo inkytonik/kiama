@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.util
 
 import jline.ConsoleReader
@@ -28,7 +28,7 @@ import org.scalacheck._
  * General support for applications that implement read-eval-print loops.
  */
 trait REPL {
-    
+
     /**
      * Read lines from standard input and pass non-null ones to processline.
      * Continue until processline returns false. The command-line arguments
@@ -41,17 +41,17 @@ trait REPL {
         while (true) {
             val line = reader.readLine (prompt)
             if (line == null)
-            	return
+                return
             else
                 processline (line)
         }
     }
-    
+
     /**
      * Carry out setup processing for the REPL.  Default: do nothing.
      */
     def setup { }
-    
+
     /**
      * Define the prompt (default: "> ").
      */
@@ -61,7 +61,7 @@ trait REPL {
      * Process a user input line.
      */
     def processline (line : String)
-    
+
 }
 
 /**
@@ -69,35 +69,35 @@ trait REPL {
  * tree), then processes them.
  */
 trait ParsingREPL[T] extends REPL with CharPackratParsers {
-    
+
     import scala.util.parsing.input.CharArrayReader
-    
+
     /**
      * Process a user input line by parsing it to get a value of type T,
      * then passing it to the type-specific process.
      */
     def processline (line : String) {
-        val in = new CharArrayReader (line.toArray) 
+        val in = new CharArrayReader (line.toArray)
         parse (in) match {
             case Success (e, in) if in.atEnd =>
                 process (e)
             case Success (_, in) =>
                 println ("extraneous input at " + in.pos)
             case f @ Failure (_, _) =>
-                println (f) 
+                println (f)
         }
     }
-    
+
     /**
      * The parser to use to convert user input lines into values.
      */
     def parse : Parser[T]
-    
+
     /**
      * Process a user input value.
      */
     def process (t : T)
-    
+
 }
 
 /**
@@ -105,7 +105,7 @@ trait ParsingREPL[T] extends REPL with CharPackratParsers {
  * syntax trees of type T and prints them.
  */
 trait GeneratingREPL[T] extends REPL {
-        
+
     /**
      * Carry out setup processing for the REPL.
      */
@@ -117,12 +117,12 @@ trait GeneratingREPL[T] extends REPL {
      * Display a prompt.
      */
     override def prompt = "Hit ENTER to generate an instance: "
-    
+
     /**
      * The generator to use to make values of type T.
      */
     def generator : Arbitrary[T]
-    
+
     /**
      * Generate a new instance and print it, ignoring the input line.
      */
@@ -132,12 +132,12 @@ trait GeneratingREPL[T] extends REPL {
             case None     => println ("can't generate an instance")
         }
     }
-    
+
     /**
      * Process a generated value.  Default: print it.
      */
     def process (t : T) {
         println (t)
     }
-    
+
 }

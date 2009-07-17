@@ -46,9 +46,9 @@ trait ReduceSubst extends Reduce {
      */
     override lazy val beta =
         rule {
-    	    case App (Lam (x, t, e1), e2) => Let (x, t, e2, e1)
-    	}
-      
+            case App (Lam (x, t, e1), e2) =>  Let (x, t, e2, e1)
+        }
+
     /**
      * Substitution in numeric terms.
      */

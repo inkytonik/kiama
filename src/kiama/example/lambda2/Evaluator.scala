@@ -12,26 +12,26 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.lambda2
 
 /**
  * Interface for an individual rewriting-based lambda2 evaluator.
  */
 trait Evaluator extends kiama.rewriting.Rewriter {
-  
-	/**
+
+    /**
      * Evaluate the given expression, returning the result of the
      * evaluation if it succeeded, or exp if it failed.
      */
     def eval (exp : AST.Exp) : AST.Exp =
         rewrite (evals) (exp)
-        
+
     /**
      * The strategy to use to perform the evaluation.
      */
@@ -42,7 +42,7 @@ trait Evaluator extends kiama.rewriting.Rewriter {
      * testing.  Default: false.
      */
     def reducesinlambdas = false
-    
+
     /**
      * Generate a fresh variable name.  Prefix the name with an underscore
      * to avoid the potential for clashes with user-level varaibles (which
@@ -55,5 +55,5 @@ trait Evaluator extends kiama.rewriting.Rewriter {
             "_v" + count
         }
     }
-    
+
 }

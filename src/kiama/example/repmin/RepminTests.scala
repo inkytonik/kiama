@@ -12,20 +12,20 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.repmin
 
 import junit.framework.Assert._
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.junit.JUnit3Suite
 
 class RepminTests extends TestCase with JUnit3Suite {
-  
+
     /**
      * Basic test that attributes first repmin actually works.
      */
@@ -34,5 +34,5 @@ class RepminTests extends TestCase with JUnit3Suite {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         assertEquals (Pair (Leaf (1), Pair (Leaf (1), Leaf (1))), t->repmin)
     }
-    
+
 }

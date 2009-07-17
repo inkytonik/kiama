@@ -12,17 +12,17 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 /**
  * This file is derived from a JastAdd implementation of PicoJava, created
  * in the Department of Computer Science at Lund University.  See the
  * following web site for details:
- * 
+ *
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
@@ -35,11 +35,11 @@ object NameResolution {
     import PredefinedTypes._
     import TypeAnalysis._
     import kiama.attribution.Attribution._
-        
+
     /**
      * decl refers to the appropriate declaration of the Access,
      * or to unknownDecl if the declaration is missing.
-     * 
+     *
      * syn lazy Decl Access.decl();
      * eq IdUse.decl() = lookup(getName());
      * eq Dot.decl() = getIdUse().decl();
@@ -47,21 +47,21 @@ object NameResolution {
     val decl : Access ==> Decl =
         attr {
             case Dot (_, n) => n->decl
-            case u : IdUse  => u->lookup (u.Name) 
+            case u : IdUse  => u->lookup (u.Name)
         }
 
     /**
      * Lookup a name.
-     * 
+     *
      * inh Decl IdUse.lookup(String name);
      * inh Decl Block.lookup(String name);
      * inh Decl TypeDecl.lookup(String name);
-     * 
+     *
      * eq Program.getBlock().lookup(String name) = localLookup(name); // lookup predefined types
-     * 
+     *
      * FIXME: haven't encoded this one, needed?
      * eq Program.getPredefinedType(int index).lookup(String name) = unknownDecl();
-     *  
+     *
      * eq Block.getBlockStmt(int index).lookup(String name) {
      *    // First, look in the local declarations
      *    if (!localLookup(name).isUnknown())
@@ -98,7 +98,7 @@ object NameResolution {
                     s.parent match {
                         case b : Block => {
                             val d = b->localLookup (name)
-                            if (isUnknown (d)) b->lookup (name) else d                      
+                            if (isUnknown (d)) b->lookup (name) else d
                         }
                         case p => p->lookup (name)
                     }
@@ -108,13 +108,13 @@ object NameResolution {
                         case p            => p->lookup (name)
                     }
                 case t =>
-                    t.parent->lookup (name) 
+                    t.parent->lookup (name)
            }
        }
-                   
+
     /**
      * Look through the local declarations in a block.
-     *  
+     *
      * syn lazy Decl Block.localLookup(String name) {
      *     for (int k = 0; k < getNumBlockStmt(); k++) {
      *         Decl d = getBlockStmt(k).declarationOf(name);
@@ -122,7 +122,7 @@ object NameResolution {
      *     }
      *     return unknownDecl();
      * }
-     *  
+     *
      * syn lazy Decl Program.localLookup(String name) {
      *     for (int k = 0; k < getNumPredefinedType(); k++) {
      *         Decl d = getPredefinedType(k).declarationOf(name);
@@ -135,7 +135,7 @@ object NameResolution {
         paramAttr {
             name => {
                 case p : Program => finddecl (p, name, p->getPredefinedTypeList)
-                case b : Block   => finddecl (b, name, b.BlockStmts)             
+                case b : Block   => finddecl (b, name, b.BlockStmts)
             }
         }
 
@@ -150,7 +150,7 @@ object NameResolution {
          }
          t->unknownDecl
     }
-    
+
     /**
      * Perform a remote name lookup.
      *
@@ -158,11 +158,11 @@ object NameResolution {
      * By default, there are no such declarations, so return unknownDecl.
      *
      * syn Decl TypeDecl.remoteLookup(String name) = unknownDecl();
-     * 
+     *
      * eq ClassDecl.remoteLookup(String name) {
      *     // First, look in local declarations
      *     if (!getBody().localLookup(name).isUnknown())
-     *         return getBody().localLookup(name); 
+     *         return getBody().localLookup(name);
      *     // Then, look in the superclass chain
      *     if (superClass() != null && !superClass().remoteLookup(name).isUnknown())
      *         return superClass().remoteLookup(name);
@@ -186,7 +186,7 @@ object NameResolution {
         }
 
     /**
-     *  
+     *
      * syn Decl BlockStmt.declarationOf(String name) = null;
      * eq Decl.declarationOf(String name) {
      *     if (getName().equals(name)) return this;
@@ -194,11 +194,11 @@ object NameResolution {
      * }
      */
     val declarationOf : String => BlockStmt ==> Decl =
-         paramAttr { 
+         paramAttr {
              name => {
-                 case d : Decl => if (name == d.Name) d else null 
+                 case d : Decl => if (name == d.Name) d else null
                  case _        => null
              }
          }
-    
+
 }

@@ -2,7 +2,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009 Anthony M Sloane, Macquarie University.
- * 
+ *
  * Contributed by Ben Mockler.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
@@ -14,19 +14,19 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
  */
- 
+
 package kiama.example.oberon0.compiler.tests
 
 import junit.framework.Assert._
 import junit.framework.TestCase
 import org.scalacheck._
-import org.scalacheck.Prop._ 
-import org.scalatest.junit.JUnit3Suite 
+import org.scalacheck.Prop._
+import org.scalatest.junit.JUnit3Suite
 import org.scalatest.prop.Checkers
 import kiama.parsing.CharPackratParsers
 import kiama.example.oberon0.compiler.Parser
@@ -37,7 +37,7 @@ import kiama.example.oberon0.compiler.Parser
 class ParserTests extends TestCase with JUnit3Suite with Checkers
                           with CharPackratParsers with Parser {
 
-    import kiama.example.oberon0.compiler.AST._    
+    import kiama.example.oberon0.compiler.AST._
     import scala.util.parsing.input.CharArrayReader
 
     /**

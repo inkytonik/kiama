@@ -12,17 +12,17 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.dataflow
 
 import junit.framework.Assert._
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.junit.JUnit3Suite
 
 /**
  * Tests of data flow attribution.
@@ -31,7 +31,7 @@ class DataflowTests extends TestCase with JUnit3Suite {
 
     import DataflowAST._
     import Dataflow._
-    
+
     /*
      * begin                 (prog)
      *     y = v             (s1)
@@ -53,7 +53,7 @@ class DataflowTests extends TestCase with JUnit3Suite {
     val s4 = While ("x", s41)
     val s5 = Return ("x")
     val prog = Block (s1, s2, s3, s4, s5)
-    
+
     def testIn {
         assertEquals (Set ("w", "v"), in (s1))
         assertEquals (Set ("y", "w", "v"), in (s2))
@@ -63,7 +63,7 @@ class DataflowTests extends TestCase with JUnit3Suite {
         assertEquals (Set ("w", "v"), in (s412))
         assertEquals (Set ("x"), in (s5))
     }
-    
+
     def testOut {
         assertEquals (Set ("y", "w", "v"), out (s1))
         assertEquals (Set ("w", "v"), out (s2))
@@ -73,5 +73,5 @@ class DataflowTests extends TestCase with JUnit3Suite {
         assertEquals (Set ("x", "w", "v"), out (s412))
         assertEquals (Set (), out (s5))
     }
-    
+
 }

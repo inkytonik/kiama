@@ -12,7 +12,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
@@ -42,18 +42,18 @@ abstract class Machine (val name : String) {
          * The value of this item of state.  None means undefined.
          */
         private var _value : Option[T] = None
-        
+
         /**
          * Is this state item undefined or not?
          */
         def isUndefined : Boolean = _value isEmpty
-        
+
         /**
          * Make this state item undefined.
          */
         def undefine =
             _value = None
-        
+
         /**
          * Return the value of this state item if it's defined.  Otherwise
          * abort execution.
@@ -63,7 +63,7 @@ abstract class Machine (val name : String) {
                 case None     => error ("State.value: " + name + "." + sname + " is undefined")
                 case Some (t) => t
             }
-        
+
         /**
          * Update this item of state to the value t.  The update is actually
          * delayed until the end of the step when all updates in that
@@ -75,14 +75,14 @@ abstract class Machine (val name : String) {
             if (debug)
                 println (name + " new update: " + sname + " := " + t)
         }
-        
+
         /**
          * Update this item of state to the value t.  The update occurs
          * immediately.
          */
         def update (t : T) =
             _value = Some (t)
-                
+
         /**
          * Make a printable representation.
          */
@@ -92,7 +92,7 @@ abstract class Machine (val name : String) {
                     case None     => "undef"
                     case Some (t) => t
                  })
-        
+
     }
 
     /**
@@ -104,21 +104,21 @@ abstract class Machine (val name : String) {
      * An update of an item of state s to have the value t.
      */
     case class Update[T] (s : State[T], t : T) {
-        
+
         /**
          * Perform this update.
          */
         def perform {
             s.update (t)
         }
-        
+
     }
 
     /**
      * The updates for the current step of execution of this machine.
      */
     private var updates : List[Update[_]] = _
-    
+
     /**
      * Initialise the state of this machine.  This routine is called
      * before the first step of the machine is attempted.
@@ -129,7 +129,7 @@ abstract class Machine (val name : String) {
      * The rule to execute to run one step of this machine.
      */
     def main
-    
+
     /**
      * Perform a step of this machine.  Return true if some updates were
      * made or false if none.
@@ -159,7 +159,7 @@ abstract class Machine (val name : String) {
             }
         } while (step)
     }
-    
+
     /**
      * Run this machine by initialising its state and then executing
      * its steps.
@@ -168,5 +168,5 @@ abstract class Machine (val name : String) {
         init
         steps
     }
-    
+
 }

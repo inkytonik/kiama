@@ -12,17 +12,17 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */           
+ */
 
 /**
  * This file is derived from a JastAdd implementation of PicoJava, created
  * in the Department of Computer Science at Lund University.  See the
  * following web site for details:
- * 
+ *
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
@@ -30,7 +30,7 @@ package kiama.example.picojava.tests
 
 import junit.framework.Assert._
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.junit.JUnit3Suite
 
 class DotNameResolutionTests extends TestCase with JUnit3Suite {
 
@@ -49,7 +49,7 @@ class DotNameResolutionTests extends TestCase with JUnit3Suite {
     private val declBB  = ClassDecl ("BB", Some (Use ("AA")), Block (
                               List (VarDecl ("b", BBinBB),
                                     AssignStmt (Dot (Use ("b"), byInBB),
-                                                Dot (Use ("b"), bxInBB)))))    
+                                                Dot (Use ("b"), bxInBB)))))
 
     val ast =
         Program (Block (
@@ -71,7 +71,7 @@ class DotNameResolutionTests extends TestCase with JUnit3Suite {
     def testInheritedDot {
         assertSame (declAAx, bxInBB->decl)
     }
-    
+
     def testSurroundingContextIsNotVisible {
         assertTrue (isUnknown (byInBB->decl))
     }

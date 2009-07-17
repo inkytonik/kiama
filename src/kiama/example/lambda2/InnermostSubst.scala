@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.lambda2
 
@@ -25,11 +25,11 @@ package kiama.example.lambda2
  * with term-level substitution and arithmetic operations.
  */
 trait InnermostSubst extends ReduceSubst {
-  
-	import AST._
+
+    import AST._
 
     /**
-     * Evaluate expressions starting with the innermost sub-expressions. 
+     * Evaluate expressions starting with the innermost sub-expressions.
      */
     override lazy val evals : Strategy =
         innermost (lambda)
