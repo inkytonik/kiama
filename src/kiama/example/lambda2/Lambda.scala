@@ -66,7 +66,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
             // Otherwise it's an expression for evaluation
             case _ => super.processline (line)
         }
-	}
+    }
 
     /**
      * Extractor for commands, splits the line into separate words.

@@ -54,18 +54,18 @@ object ErrorCheck {
                     case md @ ModuleDecl (nm, _, _, nm2, _) if nm != nm2 => {
                             errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
                     }
-                    
+
                     // Check for name-mismatch errors in procedure declarations
                     case pd @ ProcDecl (nm, _, _, _, nm2, _) if nm != nm2 => {
                             errs = ("Name mismatch: Opening identifier = " + nm + ", Closing identifier = " + nm2) :: errs
                     }
-                    
+
                     // Check for undeclared identifiers (applied occurrences only)
                     case id @ Ident (nm) => {
                         if ((id->decl).isInstanceOf[UnknownDecl])
                                 errs = ("Declaration not found: " + nm) :: errs
                     }
-                    
+
                     // Check for duplicate declarations
                     case dec : Declaration if dec->isMultiplyDefined => {
                         errs = ("Duplicate declaration = " + dec.getName) :: errs

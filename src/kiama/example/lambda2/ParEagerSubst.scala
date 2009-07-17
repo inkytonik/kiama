@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.lambda2
 
@@ -25,17 +25,17 @@ package kiama.example.lambda2
  * and arithmetic operations.
  */
 trait ParEagerSubst extends ReduceSubst {
-  
-	import AST._
- 
+
+    import AST._
+
     /**
      * Eagerly evaluate within the expression then try to reduce the
      * expression itself, repeating until no change.  Would be much
      * nicer if we had congruences!
      */
-    override lazy val evals : Strategy =        
+    override lazy val evals : Strategy =
         attempt (traverse) <* {
-    	    def evaly (exp : AST.Exp) : AST.Exp =
+            def evaly (exp : AST.Exp) : AST.Exp =
                 rewrite (y) (exp)
             lazy val y : Strategy =
                 attempt (rule {
@@ -45,7 +45,7 @@ trait ParEagerSubst extends ReduceSubst {
             lazy val e = attempt (lambda <* y)
             e
         }
-    
+
     /**
      * Recursively try to eagerly evaluate expressions in applications,
      * substitutions and operations, but not within lambdas.
@@ -55,12 +55,12 @@ trait ParEagerSubst extends ReduceSubst {
 
             // In an application we need to traverse to both sub-expressions.
             case App (e1, e2)       => App (eval (e1), eval (e2))
-            
+
             // In a parallel substitution, traverse to all bound expressions.
             case Letp (ds, e)       =>
                 Letp (ds map {
                           case Bind (x, t, e1) => Bind (x, t, eval (e1))
-            	      }, e)
+                      }, e)
 
             // In an operation we need to traverse to both sub-expressions.
             case Opn (op, e1, e2)   => Opn (op, eval (e1), eval (e2))
@@ -79,12 +79,12 @@ trait ParEagerSubst extends ReduceSubst {
      */
     override lazy val beta =
         rule {
-    	    case App (Lam (x, t, e1), e2) =>
-    	        val y = freshvar ()
-    	        Letp (List (Bind (y, t, e2)),
+            case App (Lam (x, t, e1), e2) =>
+                val y = freshvar ()
+                Letp (List (Bind (y, t, e2)),
                       Letp (List (Bind (x, t, Var (y))), e1))
-    	}
-      
+        }
+
     /**
      * Substitution in numeric terms.
      */
@@ -92,7 +92,7 @@ trait ParEagerSubst extends ReduceSubst {
         rule {
             case Letp (_, e : Num) => e
         }
-    
+
     /**
      * Substitution in variable terms.
      */
@@ -113,7 +113,7 @@ trait ParEagerSubst extends ReduceSubst {
             case Letp (ds, App (e1, e2)) =>
                 App (Letp (ds, e1), Letp (ds, e2))
         }
-    
+
     /**
      * Substitution in lambda abstractions.
      */
@@ -123,7 +123,7 @@ trait ParEagerSubst extends ReduceSubst {
                 val y = freshvar ()
                 Lam (y, t, Letp (ds, Letp (List (Bind (x, t, Var (y))), e)))
         }
-        
+
     /**
      * Substitution in primitive operations
      */
@@ -132,9 +132,9 @@ trait ParEagerSubst extends ReduceSubst {
             case Letp (ds, Opn (op, e1, e2)) =>
                 Opn (op, Letp (ds, e1), Letp (ds, e2))
         }
-    
+
     /**
-     * Merging two singleton parallel binders. 
+     * Merging two singleton parallel binders.
      */
     lazy val letLetOne =
         rule {
@@ -154,11 +154,11 @@ trait ParEagerSubst extends ReduceSubst {
             case Letp (ds1, Letp (ds2, e1)) =>
                 val ds3 = ds2 map {
                     case Bind (x, t, e) => Bind (x, t, Letp (ds1, e))
-                } 
+                }
                 val ds4 = ds3 ++ ds1
                 Letp (ds4, e1)
         }
-    
+
 }
 
 class ParEagerSubstEvaluator extends ParEagerSubst
