@@ -12,20 +12,20 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.attribution
 
 import junit.framework.Assert._
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
+import org.scalatest.junit.JUnit3Suite
 
 class AttributionTests extends TestCase with JUnit3Suite {
-  
+
     abstract class Tree extends Attributable
     case class Pair (left : Tree, right : Tree) extends Tree
     case class Leaf (value : Int) extends Tree
@@ -33,9 +33,9 @@ class AttributionTests extends TestCase with JUnit3Suite {
     /**
      * Test that cached attribute definitions are only executed once.
      */
-    def testCachedAttributes {        
+    def testCachedAttributes {
         import Attribution._
-        
+
         var count = 0
 
         lazy val maximum : Tree ==> Int =
@@ -43,20 +43,20 @@ class AttributionTests extends TestCase with JUnit3Suite {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
             }
-            
+
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         assertEquals (10, t->maximum)
         assertEquals (10, t->maximum)
-        assertEquals (2, count)    
+        assertEquals (2, count)
     }
-    
+
     /**
      * Test that uncached attribute definitions are executed each time.
      */
-    def testUncachedAttributes {        
+    def testUncachedAttributes {
         import UncachedAttribution._
-               
+
         var count = 0
 
         lazy val maximum : Tree ==> Int =
@@ -64,14 +64,14 @@ class AttributionTests extends TestCase with JUnit3Suite {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
             }
-            
+
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         assertEquals (10, t->maximum)
         assertEquals (10, t->maximum)
-        assertEquals (4, count)    
+        assertEquals (4, count)
     }
-    
+
     /**
      * Test that circularities are detected when caching.
      */
@@ -91,8 +91,8 @@ class AttributionTests extends TestCase with JUnit3Suite {
                 case t => t->indirect
             }
 
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))            
-            
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+
         try {
             t->direct
             fail ("direct circular computation finished without exception")
@@ -108,7 +108,7 @@ class AttributionTests extends TestCase with JUnit3Suite {
                 // succeed
         }
     }
-    
+
     /**
      * Test that circularities are detected when not caching.
      */
@@ -127,8 +127,8 @@ class AttributionTests extends TestCase with JUnit3Suite {
             attr {
                 case t => t->indirect
             }
-            
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))            
+
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         try {
             t->direct
@@ -146,5 +146,5 @@ class AttributionTests extends TestCase with JUnit3Suite {
         }
     }
 
-  
+
 }

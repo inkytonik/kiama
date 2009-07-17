@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.rewriting
 
 /**
@@ -29,7 +29,7 @@ package kiama.rewriting
  * Boilerplate and Uniplate libraries for Haskell.
  */
 trait Rewriter {
-    
+
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
      * tracing information during rewriting.
@@ -48,19 +48,19 @@ trait Rewriter {
      * Term-rewriting strategies.
      */
     abstract class Strategy extends (Term => Option[Term]) {
-        
+
         /**
          * Alias this strategy as p to make it easier to refer to in the
          * combinator definitions.
          */
         p =>
-        
+
         /**
          * Apply this strategy to a term, producing either a transformed term
          * or None, representing a rewriting failure.
          */
         def apply (r : Term) : Option[Term]
-        
+
         /**
          * Sequential composition.  Construct a strategy that first applies
          * this strategy. If it succeeds, then apply q to the new subject
@@ -74,7 +74,7 @@ trait Rewriter {
                         case None      => None
                     }
             }
-    
+
         /**
          * Deterministic choice.  Construct a strategy that first applies
          * this strategy.  If it succeeds, succeed with the resulting term.
@@ -85,11 +85,10 @@ trait Rewriter {
                 def apply (t1 : Term) =
                     p (t1) match {
                         case Some (t2) => Some (t2)
-                        case None      => if (q == null) println (t1)
-                          				  q (t1)
+                        case None      => q (t1)
                     }
             }
-    
+
         /**
          * Non-deterministic choice.  Construct a strategy that first applies
          * either this strategy or the given strategy.  If it succeeds,
@@ -99,7 +98,7 @@ trait Rewriter {
          */
         def + (q : => Strategy) : PlusStrategy =
             new PlusStrategy (p, q)
-        
+
         /**
          * Conditional choice: c < l + r.
          * Construct a strategy that first applies this
@@ -116,7 +115,7 @@ trait Rewriter {
             }
 
     }
-        
+
     /**
      * Helper class to contain commonality of choice in non-deterministic
      * choice operator and then-else part of a conditional choice.
@@ -132,9 +131,9 @@ trait Rewriter {
      * whether the strategy succeeds or fails.
      */
     def strategyf (f : Term => Option[Term]) : Strategy =
-    	new Strategy {
-    	    def apply (t : Term) = f (t)
-    	}
+        new Strategy {
+            def apply (t : Term) = f (t)
+        }
 
     /**
      * Make a strategy from a partial function.  If the function is
@@ -144,8 +143,8 @@ trait Rewriter {
      * term, the strategy fails.
      */
     def strategy (f : PartialFunction[Term,Option[Term]]) : Strategy =
-    	new Strategy {
-    	    def apply (t : Term) = {
+        new Strategy {
+            def apply (t : Term) = {
                 if (f isDefinedAt t) {
                     if (debug) println ("strategy success: " + t + " => " + f (t))
                     f (t)
@@ -154,15 +153,15 @@ trait Rewriter {
                     None
                 }
             }
-    	}
+        }
 
     /**
      * Define a rewrite rule using a function.  The rule always succeeds
      * with the return value of the function.
-     */        
+     */
     def rulef (f : Term => Term) : Strategy =
         strategyf (t => Some (f (t)))
-    
+
     /**
      * Define a rewrite rule using a partial function.  If the function is
      * defined at the current term, then the strategy succeeds with the return
@@ -170,8 +169,8 @@ trait Rewriter {
      * strategy fails.
      */
     def rule (f : PartialFunction[Term,Term]) : Strategy =
-    	new Strategy {
-    	    def apply (t : Term) = {
+        new Strategy {
+            def apply (t : Term) = {
                 if (f isDefinedAt t) {
                     if (debug) println ("strategy success: " + t + " => " + f (t))
                     Some (f (t))
@@ -180,7 +179,7 @@ trait Rewriter {
                     None
                 }
             }
-    	}
+        }
 
     /**
      * (Implicitly) construct a strategy that always succeeds, changing
@@ -228,28 +227,28 @@ trait Rewriter {
      */
     val failure : Strategy =
         strategyf (_ => None)
-    
+
     /**
      * A strategy that always succeeds with the subject term unchanged (i.e.,
      * this is the identity strategy).
      */
     val id : Strategy =
         strategyf (t => Some (t))
-    
+
     /**
      * Construct a strategy that succeeds only if the subject term matches
      * a given term.
      */
     def term (t : Term) : Strategy =
-    	rule {
-    	    case `t` => t
-    	}
-    
+        rule {
+            case `t` => t
+        }
+
     /**
      * Generic term deconstruction.
      */
     object Term {
-      
+
         /**
          * Generic term deconstruction.  An extractor that decomposes Products
          * into the product itself and a sequence of its children.  Terms that
@@ -266,16 +265,16 @@ trait Rewriter {
                     Some ((t, Nil))
             }
         }
-        
+
     }
-    
+
     /**
      * Perform a paramorphism over a value.  This is a fold in which the
      * recursive step may refer to the recursive component of the value
      * and the results of folding over the children.  When the function f
      * is called, the first parameter is the value and the second is a
      * sequence of the values that f has returned for the children.  This
-     * will work on any value, but will only decompose Products.  This 
+     * will work on any value, but will only decompose Products.  This
      * operation is similar to that used in the Uniplate library.
      */
     def para[T] (f : (Any, Seq[T]) => T) : Any => T = {
@@ -312,7 +311,7 @@ trait Rewriter {
             case e : ClassCastException =>
                 error ("makechild: can't cast child: " + child + " " + e)
         }
-    }        
+    }
 
     /**
      * Traversal to a single child.  Construct a strategy that applies s to
@@ -351,7 +350,7 @@ trait Rewriter {
                                     val ret = dup (p, children)
                                     if (debug)
                                         println ("child (" + i + ") success: " + ret)
-                                    Some (ret)                                    
+                                    Some (ret)
                                 case ci =>
                                     if (debug)
                                         println ("child (" + i + ") failure (not term): " + ci)
@@ -363,7 +362,7 @@ trait Rewriter {
                             println ("child (" + i + ") failure (any): " + a)
                         None
                 }
-                
+
             }
         }
 
@@ -417,7 +416,7 @@ trait Rewriter {
                 }
             }
         }
-    
+
     /**
      * Traversal to one child.  Construct a strategy that applies s to the term
      * children of the subject term in left-to-right order.  Assume that c is the
@@ -450,7 +449,7 @@ trait Rewriter {
                                                 println ("one success: " + ret)
                                             return Some (ret)
                                         }
-                                        case None => 
+                                        case None =>
                                             // Transformation failed, this child stays unchanged
                                     }
                                 case _ =>
@@ -467,7 +466,7 @@ trait Rewriter {
                 }
             }
         }
-    
+
     /**
      * Traversal to as many children as possible, but at least one.  Construct a
      * strategy that applies s to the term children of the subject term in
@@ -508,15 +507,15 @@ trait Rewriter {
                                 }
                             }
                             if (success) {
-                            	val ret = dup (p, children)
-                            	if (debug)
-                            		println ("some success: " + ret)
-                            	Some (ret)
+                                val ret = dup (p, children)
+                                if (debug)
+                                    println ("some success: " + ret)
+                                Some (ret)
                             } else {
-                            	if (debug)
-                            		println ("some failure (no success)")
+                                if (debug)
+                                    println ("some failure (no success)")
                                 None
-                            }                              
+                            }
                         }
                     case _ =>
                         if (debug)
@@ -524,8 +523,8 @@ trait Rewriter {
                         None
                 }
             }
-        }    
-            
+        }
+
     /**
      * Rewrite a term.  Apply the strategy s to a term returning the result term
      * if s succeeds, otherwise return the original term.
@@ -534,7 +533,7 @@ trait Rewriter {
         if (debug)
             println ("rewrite: " + t)
         s (t) match {
-            case Some (t1) => 
+            case Some (t1) =>
                 if (debug)
                     println ("rewrite success: " + t + " => " + t1)
                 t1.asInstanceOf[T]
@@ -557,7 +556,7 @@ trait Rewriter {
             (everywheretd (query (f andThen collect))) (t)
             collection
         }
-        
+
     /**
      * Collect query results in a list.  Run the function f as a top-down
      * query on the subject term.  Accumulate the values produced by the
@@ -570,7 +569,7 @@ trait Rewriter {
             (everywheretd (query (f andThen collect))) (t)
             collection
         }
-        
+
     /**
      * Count function results.  Run the function f as a top-down query on
      * the subject term.  Sum the integer values returned by f from all
@@ -583,7 +582,7 @@ trait Rewriter {
             (everywheretd (query (f andThen count))) (t)
             total
         }
-    
+
     /**
      * Construct a strategy that applies s, yielding the result of s if it
      * succeeds, otherwise leave the original subject term unchanged.  In
@@ -591,23 +590,23 @@ trait Rewriter {
      */
     def attempt (s : => Strategy) : Strategy =
         s <+ id
-          
+
     /**
      * Construct a strategy that applies s repeatedly until it fails.
      */
     def repeat (s : => Strategy) : Strategy =
         attempt (s <* repeat (s))
-        
-    /** 
+
+    /**
      * Construct a strategy that repeatedly applies s until it fails and
      * then terminates with application of c.
-     */ 
+     */
     def repeat (s : => Strategy, c : => Strategy) : Strategy =
         (s <* repeat (s, c)) <+ c
 
     /**
      * Construct a strategy that applies s repeatedly exactly n times. If
-     * s fails at some point during the n applications, the entire strategy 
+     * s fails at some point during the n applications, the entire strategy
      * fails. The result of the strategy is that of the nth application of s.
      */
     def repeat (s : => Strategy, n : Int) : Strategy =
@@ -616,13 +615,13 @@ trait Rewriter {
     /**
      * Construct a strategy that repeatedly applies s (at least once) and
      * terminates with application of c.
-     */ 
+     */
     def repeat1 (s : => Strategy, c : => Strategy) : Strategy =
         s <* (repeat1 (s, c) <+ c)
 
     /**
      * Construct a strategy that repeatedly applies s (at least once).
-     */ 
+     */
     def repeat1 (s : => Strategy) : Strategy =
         repeat1 (s, id)
 
@@ -636,7 +635,7 @@ trait Rewriter {
      * Construct a strategy that while c succeeds applies s.  This operator
      * is called "while" in the Stratego library.
      */
-    def loop (c : => Strategy, s : => Strategy) : Strategy = 
+    def loop (c : => Strategy, s : => Strategy) : Strategy =
         attempt (c <* s <* loop (c, s))
 
     /**
@@ -659,7 +658,7 @@ trait Rewriter {
      * initialization with i.  This operator is called "for" in the Stratego
      * library.
      */
-    def loopiter (i : => Strategy, c : => Strategy, s : => Strategy) : Strategy = 
+    def loopiter (i : => Strategy, c : => Strategy, s : => Strategy) : Strategy =
         i <* loopnot (c, s)
 
     /**
@@ -671,7 +670,7 @@ trait Rewriter {
             s (low) <* loopiter (s, low + 1, up)
         else
             id
-    
+
     /**
      * Construct a strategy that applies s, then fails if s succeeded or, if s
      * failed, succeeds with the subject term unchanged,  I.e., it tests if
@@ -679,16 +678,16 @@ trait Rewriter {
      */
     def not (s : => Strategy) : Strategy =
         s < failure + id
-        
+
     /**
      * Construct a strategy that tests whether strategy s succeeds,
-     * restoring the original term on success.  This is similar 
+     * restoring the original term on success.  This is similar
      * to Stratego's "where", except that in this version any effects on
-     * bindings are not visible outside s. 
+     * bindings are not visible outside s.
      */
     def where (s : => Strategy) : Strategy =
         strategyf (t => (s <* t) (t))
-    
+
     /**
      * Construct a strategy that tests whether strategy s succeeds,
      * restoring the original term on success.  A synonym for where.
@@ -701,21 +700,21 @@ trait Rewriter {
      */
     def breadthfirst (s : => Strategy) : Strategy =
         all (s) <* all (breadthfirst (s))
-      
+
     /**
      * Construct a strategy that applies s in a top-down, prefix fashion
      * to the subject term.
      */
     def topdown (s : => Strategy) : Strategy =
-        s <* all (topdown (s)) 
+        s <* all (topdown (s))
 
     /**
      * Construct a strategy that applies s in a top-down, prefix fashion
      * to the subject term but stops when stop succeeds.
      */
     def topdownS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
-        s <* (stop (topdownS (s, stop)) <+ all (topdownS (s, stop)))        
-    
+        s <* (stop (topdownS (s, stop)) <+ all (topdownS (s, stop)))
+
     /**
      * Construct a strategy that applies s in a bottom-up, postfix fashion
      * to the subject term.
@@ -729,14 +728,14 @@ trait Rewriter {
      */
     def bottomupS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
         (stop (bottomupS (s, stop)) <+ all (bottomupS (s, stop))) <* s
-        
+
     /**
      * Construct a strategy that applies s in a combined top-down and
      * bottom-up fashion (i.e., both prefix and postfix) to the subject
      * term.
      */
     def downup (s : => Strategy) : Strategy =
-        s <* all (downup (s)) <* s 
+        s <* all (downup (s)) <* s
 
     /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
@@ -751,7 +750,7 @@ trait Rewriter {
      * term but stops when stop succeeds.
      */
     def downupS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
-        s <* (stop (downupS (s, stop)) <+ all (downupS (s, stop))) <* s 
+        s <* (stop (downupS (s, stop)) <+ all (downupS (s, stop))) <* s
 
     /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
@@ -767,7 +766,7 @@ trait Rewriter {
      */
     def dontstop (s : => Strategy) : Strategy =
         failure
-    
+
     /**
      * Construct a strategy that applies s in a top-down fashion to one
      * subterm at each level, stopping as soon as it succeeds once (at
@@ -782,7 +781,7 @@ trait Rewriter {
      * any level).
      */
     def oncebu (s : => Strategy) : Strategy =
-        one (oncebu (s)) <+ s 
+        one (oncebu (s)) <+ s
 
     /**
      * Construct a strategy that applies s in a top-down fashion to some
@@ -798,16 +797,16 @@ trait Rewriter {
      * any level).
      */
     def somebu (s : => Strategy) : Strategy =
-        some (somebu (s)) <+ s 
-    
+        some (somebu (s)) <+ s
+
     /**
      * Construct a strategy that applies s repeatedly in a top-down fashion
      * stopping each time as soon as it succeeds once (at any level). The
      * outermost fails when s fails to apply to any (sub-)term.
      */
-    def outermost (s : => Strategy) : Strategy = 
-        repeat (oncetd (s))        
-    
+    def outermost (s : => Strategy) : Strategy =
+        repeat (oncetd (s))
+
     /**
      * Construct a strategy that applies s repeatedly to the innermost
      * (i.e., lowest and left-most) (sub-)term to which it applies.
@@ -841,26 +840,26 @@ trait Rewriter {
    /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
      * stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
-     * postfix fashion to the result. 
+     * postfix fashion to the result.
      */
     def alldownup2 (s1 : => Strategy, s2 : => Strategy) : Strategy =
-    	(s1 <+ all (alldownup2 (s1, s2))) <* s2 
+        (s1 <+ all (alldownup2 (s1, s2))) <* s2
 
     /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
      * stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
-     * postfix fashion to the results of the recursive calls. 
+     * postfix fashion to the results of the recursive calls.
      */
     def alltdfold (s1 : => Strategy, s2 : => Strategy) : Strategy =
-    	s1 <+ (all (alltdfold (s1, s2)) <* s2)
+        s1 <+ (all (alltdfold (s1, s2)) <* s2)
 
    /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
      * stopping at a frontier where s succeeds on some children.  s2 is applied in a bottom-up,
-     * postfix fashion to the subject term the result. 
+     * postfix fashion to the subject term the result.
      */
    def somedownup (s : => Strategy) : Strategy =
-	   (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
+       (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
 
     /**
      * Construct a strategy that applies s as many times as possible, but
@@ -891,23 +890,23 @@ trait Rewriter {
      */
     val equal : Strategy =
         eq
-        
+
     /**
      * Construct a strategy that succeeds when applied to a pair (x,y)
      * if x is a sub-term of y.
      */
     val issubterm : Strategy =
         strategy {
-            case (x : Term, y : Term) => where (oncetd (term (x))) (y) 
+            case (x : Term, y : Term) => where (oncetd (term (x))) (y)
         }
-    
+
     /**
      * Construct a strategy that succeeds when applied to a pair (x,y)
      * if x is a sub-term of y but is not equal to y.
      */
     val ispropersubterm : Strategy =
-    	not (eq) <* issubterm
-        
+        not (eq) <* issubterm
+
     /**
      * Construct a strategy that succeeds when applied to a pair (x,y)
      * if x is a superterm of y.
@@ -922,58 +921,58 @@ trait Rewriter {
      * if x is a super-term of y but is not equal to y.
      */
     val ispropersuperterm : Strategy =
-    	not (eq) <* issuperterm
-    
+        not (eq) <* issuperterm
+
     /**
      * Construct a strategy that succeeds if the current term has no
      * direct subterms.
      */
     val isleaf : Strategy =
-    	all (failure)
+      all (failure)
 
     /**
-     * Construct a strategy that applies to all of the leaves of the 
+     * Construct a strategy that applies to all of the leaves of the
      * current term, using isleaf as the leaf predicate.
      */
     def leaves (s : => Strategy, isleaf : => Strategy) : Strategy =
-    	(isleaf <* s) <+ all (leaves (s, isleaf))
-	
+        (isleaf <* s) <+ all (leaves (s, isleaf))
+
     /**
-     * Construct a strategy that applies to all of the leaves of the 
+     * Construct a strategy that applies to all of the leaves of the
      * current term, using isleaf as the leaf predicate, skipping
      * subterms for which skip succeeds.
      */
     def leaves (s : => Strategy, isleaf : => Strategy, skip : Strategy => Strategy) : Strategy =
-    	(isleaf <* s) <+ skip (leaves (s, isleaf)) <+ all (leaves (s, isleaf))
-    
+        (isleaf <* s) <+ skip (leaves (s, isleaf)) <+ all (leaves (s, isleaf))
+
     /**
      * Construct a strategy that succeeds if the current term has at
      * least one direct subterm.
      */
     val isinnernode : Strategy =
-    	one (id)
-            
+        one (id)
+
     /**
      * Construct a strategy that applies s at every term in a bottom-up fashion
      * regardless of failure.  (Sub-)terms for which the strategy fails are left unchanged.
      */
     def everywherebu (s : => Strategy) : Strategy =
         bottomup (attempt (s))
- 
+
     /**
      * Construct a strategy that applies s at every term in a top-down fashion regardless
      * of failure.  (Sub-)terms for which the strategy fails are left unchanged.
-     */  
+     */
     def everywheretd (s : => Strategy) : Strategy =
         topdown (attempt (s))
-        
+
    /**
     * Apply restoring action 'rest' if s fails, and then fail.
     * Typically useful if s performs side effects that should be
     * restored/undone in case s fails.
     */
-    def restore (s : => Strategy, rest : => Strategy) : Strategy = 
-        s <+ (rest <* failure)        
+    def restore (s : => Strategy, rest : => Strategy) : Strategy =
+        s <+ (rest <* failure)
 
     /**
      * Apply restoring action 'rest' after s terminates, and preserve
@@ -981,14 +980,14 @@ trait Rewriter {
      * Typically useful if s performs side effects that should be
      * restored always, e.g., when maintaining scope information.
      */
-    def restorealways (s : => Strategy, rest : => Strategy) : Strategy = 
+    def restorealways (s : => Strategy, rest : => Strategy) : Strategy =
         s < rest + (rest <* failure)
 
     /**
-     * Applies s followed by f whether s failed or not.  
-     * This operator is called "finally" in the Stratego library.     
+     * Applies s followed by f whether s failed or not.
+     * This operator is called "finally" in the Stratego library.
      */
-    def lastly (s : => Strategy, f : => Strategy) : Strategy = 
+    def lastly (s : => Strategy, f : => Strategy) : Strategy =
         s < where (f) + (where (f) <* failure)
 
     /**
@@ -998,7 +997,7 @@ trait Rewriter {
      * when s1 succeeds it also tries to apply s2.
      * The results of the transformations are returned.
      */
-    def ior (s1 : => Strategy, s2 : => Strategy) : Strategy = 
+    def ior (s1 : => Strategy, s2 : => Strategy) : Strategy =
         (s1 <* attempt (s2)) <+ s2
 
     /**
@@ -1011,10 +1010,10 @@ trait Rewriter {
     /**
      * and (s1, s2) applies s1 and s2 to the current
      * term and succeeds if both succeed. s2 will always
-     * be applied, i.e., and is *not* a short-circuit 
+     * be applied, i.e., and is *not* a short-circuit
      * operator
      */
-    def and (s1 : => Strategy, s2 : => Strategy) : Strategy = 
+    def and (s1 : => Strategy, s2 : => Strategy) : Strategy =
         where (s1) < test (s2) + (test (s2) <* failure)
 
 }

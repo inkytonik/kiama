@@ -1,5 +1,5 @@
 parse  : Parser[ModuleDecl] = phrase (moduledecl)
-        
+
 // Declarations
 
 moduledecl : Parser[ModuleDecl] = "MODULE" ident ";" declarations ("BEGIN" statementSequence)? "END" ident "."

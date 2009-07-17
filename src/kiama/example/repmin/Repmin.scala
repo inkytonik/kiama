@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-    
+ */
+
 package kiama.example.repmin
 
 import kiama.attribution.Attribution._
@@ -36,20 +36,20 @@ case class Leaf (value : Int) extends Tree
  * minimum leaf value from the input tree.
  */
 object Repmin {
-    
-    val locmin : Tree ==> Int = 
+
+    val locmin : Tree ==> Int =
         attr {
             case Pair (l, r) => (l->locmin) min (r->locmin)
             case Leaf (v)    => v
-        }  
-    
+        }
+
     val globmin : Tree ==> Int =
         attr {
             case t if t isRoot => t->locmin
-            case t             => t.parent[Tree]->globmin 
+            case t             => t.parent[Tree]->globmin
         }
-                
-    val repmin : Tree ==> Tree = 
+
+    val repmin : Tree ==> Tree =
         attr {
             case Pair (l, r) => Pair (l->repmin, r->repmin)
             case t : Leaf    => Leaf (t->globmin)

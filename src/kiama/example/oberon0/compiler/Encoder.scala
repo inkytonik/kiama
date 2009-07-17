@@ -14,7 +14,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
@@ -134,21 +134,22 @@ object Encoder {
                 // Set memory usage data for the whole program
                 setByteOffsets (md, -999)
 
-		        // Set the frame pointer (to 0)
-		        Assembler.emit ( ADDI (29, 0, 0))
+                // Set the frame pointer (to 0)
+                Assembler.emit ( ADDI (29, 0, 0))
 
-		        // Set the stack pointer
-		        Assembler.emit ( ADDI (30, 0, md.byteSize))
+                // Set the stack pointer
+                Assembler.emit ( ADDI (30, 0, md.byteSize))
 
-		        // Encode each statement
-		        stmts.foreach (stmt => EncodeStatement(stmt, md))
+                // Encode each statement
+                stmts.foreach (stmt => EncodeStatement(stmt, md))
 
-		        // Encode a RET(0) statement
-		        Assembler.emit (RET (0))
+                // Encode a RET(0) statement
+                Assembler.emit (RET (0))
 
-		        // Encode all procedure decls
-		        val pdlst = decls.filter (dec => dec.isInstanceOf[ProcDecl])
+                // Encode all procedure decls
+                val pdlst = decls.filter (dec => dec.isInstanceOf[ProcDecl])
                 pdlst.foreach (dec => EncodeProc (dec.asInstanceOf[ProcDecl]))
+
             }
         }
     }
@@ -162,8 +163,8 @@ object Encoder {
 
             case pd @ ProcDecl (_, fps, decls, stmts, _, _) => {
 
-		        // Emit the label
-	            Assembler.mark (pd.label)
+                // Emit the label
+                Assembler.mark (pd.label)
 
                 // Backup the return address to the stack
                 Assembler.emit ( PSH (31, 30, 4))
@@ -171,14 +172,14 @@ object Encoder {
                 // Backup the FP to the stack
                 Assembler.emit ( PSH (29, 30, 4))
 
-		        // Set the FP to the current SP
-		        Assembler.emit ( ADDI (29, 30, 0))
+                // Set the FP to the current SP
+                Assembler.emit ( ADDI (29, 30, 0))
 
-		        // Set the SP to the current SP + the frame size
-		        Assembler.emit ( ADDI (30, 30, pd.byteSize))
+                // Set the SP to the current SP + the frame size
+                Assembler.emit ( ADDI (30, 30, pd.byteSize))
 
-		        // Encode each statement
-		        stmts.foreach (stmt => EncodeStatement (stmt, pd))
+                // Encode each statement
+                stmts.foreach (stmt => EncodeStatement (stmt, pd))
 
                 // Set SP to current FP
                 Assembler.emit ( ADDI (30, 29, 0))
@@ -192,12 +193,13 @@ object Encoder {
                 // Discard the stored SL
                 Assembler.emit ( ADDI (30, 30, -4))
 
-		        // Encode a RET(0) statement
-		        Assembler.emit (RET (31))
+                // Encode a RET(0) statement
+                Assembler.emit (RET (31))
 
-		        // Encode all procedure decls
-		        val pdlst = decls.filter (dec => dec.isInstanceOf[ProcDecl])
+                // Encode all procedure decls
+                val pdlst = decls.filter (dec => dec.isInstanceOf[ProcDecl])
                 pdlst.foreach (dec => EncodeProc (dec.asInstanceOf[ProcDecl]))
+
             }
         }
     }
@@ -249,7 +251,7 @@ object Encoder {
             // Load address into an available register
             case rvd : RefVarDecl => {
                 var reg : Byte = 0
-                
+
                 if (baseAddrReg == 0 || baseAddrReg == 29)
                     reg = Assembler.getFreeReg
                 else
@@ -327,7 +329,7 @@ object Encoder {
             }
 
             // Array designation
-            case ad @ ArrayDesig (left, exp) => processArrayDesig (ad, left, exp, procOrModDecl) 
+            case ad @ ArrayDesig (left, exp) => processArrayDesig (ad, left, exp, procOrModDecl)
         }
     }
 
@@ -347,21 +349,21 @@ object Encoder {
                 Assembler.emit ( ADDI (reg, 0, exp->intValue))
             else if (exp->objType == BooleanType)
                 Assembler.emit ( ADDI (reg, 0, (exp->boolValue).asInstanceOf[Int]))
-            
+
             return reg
         }
 
         // If the expression is non-constant, build it at runtime
         // If a designator ...
         exp match {
-          
+
             case des : Desig => {
 
                 // Get memory address as register and offset
                 val desResult = processDesig (des, procOrModDecl)
 
                 // If no register allocated, allocate one
-                if (desResult.regno == 0 || desResult.regno == 29) 
+                if (desResult.regno == 0 || desResult.regno == 29)
                     reg = Assembler.getFreeReg
                 else
                     reg = desResult.regno
@@ -409,9 +411,9 @@ object Encoder {
 
         exp match {
 
-            // Not 
+            // Not
             case Not (e) => processBoolExp (e, truelbl, true, procOrModDecl)
-            
+
             // And: Uses short-circuit evaluation
             case And (l, r) => {
 
@@ -419,21 +421,21 @@ object Encoder {
                     processBoolExp (Or (Not (l), Not(r)), truelbl, false, procOrModDecl)
                 }
                 else {
-	                val truelbl2 = Assembler.newlabel
-	                val andendlbl = Assembler.newlabel
-	
-	                // Process LHS
-	                processBoolExp (l, truelbl2, false, procOrModDecl)
-	
-	                // If false (go to end)
-	                Assembler.emit ( BR (andendlbl))
-	
-	                // If true, process RHS
-	                Assembler.mark (truelbl2)
-	                processBoolExp (r, truelbl, false, procOrModDecl)
-	
-	                // Mark end-of-And
-	                Assembler.mark (andendlbl)
+                    val truelbl2 = Assembler.newlabel
+                    val andendlbl = Assembler.newlabel
+
+                    // Process LHS
+                    processBoolExp (l, truelbl2, false, procOrModDecl)
+
+                    // If false (go to end)
+                    Assembler.emit ( BR (andendlbl))
+
+                    // If true, process RHS
+                    Assembler.mark (truelbl2)
+                    processBoolExp (r, truelbl, false, procOrModDecl)
+
+                    // Mark end-of-And
+                    Assembler.mark (andendlbl)
                 }
             }
 
@@ -444,11 +446,11 @@ object Encoder {
                     processBoolExp (And (Not (l), Not(r)), truelbl, false, procOrModDecl)
                 }
                 else {
-	                // Process LHS
-	                processBoolExp (l, truelbl, false, procOrModDecl)
-	
-	                // If false, process RHS
-	                processBoolExp (r, truelbl, false, procOrModDecl)
+                    // Process LHS
+                    processBoolExp (l, truelbl, false, procOrModDecl)
+
+                    // If false, process RHS
+                    processBoolExp (r, truelbl, false, procOrModDecl)
                 }
             }
 
@@ -459,22 +461,22 @@ object Encoder {
                 Assembler.emit ( CMP (lreg, rreg))
 
                 if (negate)
-	                exp match {
-	                    case e : Equal => Assembler.emit (BNE (truelbl))
-	                    case ne : NotEqual => Assembler.emit (BEQ (truelbl))
-	                    case lt : LessThan => Assembler.emit (BGE (truelbl))
-	                    case lte : LessThanOrEqual => Assembler.emit (BGT (truelbl))
-	                    case gt : GreaterThan => Assembler.emit (BLE (truelbl))
-	                    case gte : GreaterThanOrEqual => Assembler.emit (BLT (truelbl))
+                    exp match {
+                        case e : Equal => Assembler.emit (BNE (truelbl))
+                        case ne : NotEqual => Assembler.emit (BEQ (truelbl))
+                        case lt : LessThan => Assembler.emit (BGE (truelbl))
+                        case lte : LessThanOrEqual => Assembler.emit (BGT (truelbl))
+                        case gt : GreaterThan => Assembler.emit (BLE (truelbl))
+                        case gte : GreaterThanOrEqual => Assembler.emit (BLT (truelbl))
                      }
                 else
-                  exp match {
-	                    case e : Equal => Assembler.emit (BEQ (truelbl))
-	                    case ne : NotEqual => Assembler.emit (BNE (truelbl))
-	                    case lt : LessThan => Assembler.emit (BLT (truelbl))
-	                    case lte : LessThanOrEqual => Assembler.emit (BLE (truelbl))
-	                    case gt : GreaterThan => Assembler.emit (BGT (truelbl))
-	                    case gte : GreaterThanOrEqual => Assembler.emit (BGE (truelbl))
+                    exp match {
+                        case e : Equal => Assembler.emit (BEQ (truelbl))
+                        case ne : NotEqual => Assembler.emit (BNE (truelbl))
+                        case lt : LessThan => Assembler.emit (BLT (truelbl))
+                        case lte : LessThanOrEqual => Assembler.emit (BLE (truelbl))
+                        case gt : GreaterThan => Assembler.emit (BGT (truelbl))
+                        case gte : GreaterThanOrEqual => Assembler.emit (BGE (truelbl))
                     }
 
                 Assembler.freeReg (lreg)
@@ -493,7 +495,7 @@ object Encoder {
 
         // Process source
         exp match {
-          
+
             // If source is a designator ...
             case srcdes : Desig => {
 
@@ -646,7 +648,7 @@ object Encoder {
 
                 // RefVarDecls
                 case rvd : RefVarDecl => {
-                  
+
                     ap match {
                         case des : Desig => {
 
@@ -714,7 +716,7 @@ object Encoder {
                             Assembler.freeReg (srcReg)
                         }
                     }
-                  
+
                     val reg = processNumExp (ap, procOrModDecl)
 
                     Assembler.freeReg (reg)

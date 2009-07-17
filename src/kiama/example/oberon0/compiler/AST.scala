@@ -14,12 +14,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
  */
- 
+
 package kiama.example.oberon0.compiler
 
 import kiama.attribution.Attribution._
@@ -103,7 +103,7 @@ object AST {
     case class Mult (l : Exp, r : Exp) extends BinaryNumExp (l, r) {
         override val op = {(x : Int, y : Int) => x * y}
     }
-    
+
     case class Div (l : Exp, r : Exp) extends BinaryNumExp (l, r) {
         override val op = {(x : Int, y : Int) => x / y}
     }
@@ -127,7 +127,7 @@ object AST {
         def getLeft = l
         def getRight = r
     }
- 
+
     case class And (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
     case class Or (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
     case class Equal (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
@@ -146,7 +146,7 @@ object AST {
 
     case class Assignment (desig : Desig, exp : Exp) extends Statement
     case class ProcedureCall (desig : Exp, aps : List[Exp]) extends Statement
-    
+
     case class IfStatement (condexp : Exp, thenstmts : List[Statement], elsestmts: List[Statement]) extends Statement {
         override def pretty (o : StringBuilder, indent : Int) {
             printTabs (o, indent)
@@ -184,7 +184,7 @@ object AST {
 
     case class ModuleDecl (name : String, decls : List[Declaration], stmts : List[Statement], name2 : String, tp : ModuleType) extends Declaration (name) {
         var byteSize = -999
-        
+
         override def pretty (o : StringBuilder, indent : Int) {
             o.append ("ModuleDecl(id = " + name + "\n")
             printList (o, indent + 1, decls, "decls = ")

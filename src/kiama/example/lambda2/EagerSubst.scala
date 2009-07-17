@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.lambda2
 
@@ -25,8 +25,8 @@ package kiama.example.lambda2
  * arithmetic operations.
  */
 trait EagerSubst extends ReduceSubst {
-  
-	import AST._
+
+    import AST._
 
     /**
      * Eagerly evaluate within the expression then try to reduce the
@@ -34,7 +34,7 @@ trait EagerSubst extends ReduceSubst {
      */
     override lazy val evals : Strategy =
         attempt (traverse) <* attempt (lambda_es <* evals)
-    
+
     /**
      * Recursively try to eagerly evaluate expressions in applications,
      * substitutions and operations, but not within lambdas.

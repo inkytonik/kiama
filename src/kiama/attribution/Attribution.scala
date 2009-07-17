@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-    
+ */
+
 package kiama.attribution
 
 /**
@@ -31,7 +31,7 @@ trait AttributionBase {
      * Convenient type constructor for partial functions.
      */
     type ==>[T,U] = PartialFunction[T,U]
-        
+
     /**
      * All attributable nodes must extend this type.  This is a local alias
      * so that the actual type does not have to be explicitly imported.
@@ -46,38 +46,38 @@ trait AttributionBase {
         var IN_CIRCLE = false
         var CHANGE = false
     }
-    
+
     /**
      * An attribute of a node type T with value of type U which has a circular
      * definition.  The value of the attribute is computed by the function f
-     * which may itself use the value of the attribute.  init specifies an 
+     * which may itself use the value of the attribute.  init specifies an
      * initial value for the attribute.  The attribute (and any circular attributes
      * on which it depends) are evaluated until no value changes (i.e., a fixed
      * point is reached).  The final result is memoised so that subsequent evaluations
      * return the same value.
-     * 
+     *
      * This code implements the basic circular evaluation algorithm from "Circular
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
     class CircularAttribute[T <: Attributable,U] (init : U, f : T ==> U) extends (T ==> U) {
-      
+
         /**
          * Has the value of this attribute for a given tree already been computed?
          */
         private val computed = new scala.collection.jcl.IdentityHashMap[T,Unit]
-        
+
         /**
          * Has the attribute for given tree been computed on this iteration of the
          * circular evaluation?
          */
         private val visited = new scala.collection.jcl.IdentityHashMap[T,Unit]
-        
+
         /**
          * The memo table for this attribute.
          */
         private val memo = new scala.collection.jcl.IdentityHashMap[T,U]
-        
+
         /**
          * Return the value of the attribute for tree t, or the initial value if
          * no value for t has been computed.
@@ -93,7 +93,7 @@ trait AttributionBase {
          * from the CRAG paper.
          */
         def apply (t : T) : U = {
-            if (computed contains t) { 
+            if (computed contains t) {
                 value (t)
             } else if (!CircularState.IN_CIRCLE) {
                 CircularState.IN_CIRCLE = true
@@ -122,18 +122,18 @@ trait AttributionBase {
                     memo (t) = u
                 }
                 visited -= t
-                u            
+                u
             } else
                 value (t)
         }
-        
+
         /**
          * A circular attribute is defined at the same places as its
          * defining function.
          */
         def isDefinedAt (t : T) =
             f isDefinedAt t
-        
+
     }
 
     /**
@@ -147,10 +147,10 @@ trait AttributionBase {
                   (if (node eq null) o.node eq null else node eq o.node) // reference equality
                 case _ => false
             }
-        
+
         override val hashCode = System.identityHashCode(node) ^ arg.hashCode
     }
-    
+
     /**
      * Define a circular attribute of T nodes of type U by the function f.
      * f is allowed to depend on the value of this attribute, which will be
@@ -160,7 +160,7 @@ trait AttributionBase {
      */
     def circular[T <: Attributable,U] (init : U) (f : T ==> U) : T ==> U =
         new CircularAttribute (init, f)
-    
+
     /**
      * Define an attribute of T nodes of type U given by the constant value u.
      * u is evaluated at most once.
@@ -184,7 +184,7 @@ object Attribution extends Attribution
  * Attribution of syntax trees in a functional style with attribute values
  * cached so that each value is computed at most once.
  */
-trait Attribution extends AttributionBase {    
+trait Attribution extends AttributionBase {
 
     /**
      * Global state for the memoisation tables.
@@ -214,7 +214,7 @@ trait Attribution extends AttributionBase {
          * this needs to be some form of identity map so that value equal trees are
          * not treated as equal unless they are actually the same reference.
          */
-        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]        
+        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -236,7 +236,7 @@ trait Attribution extends AttributionBase {
                     u
             }
         }
-        
+
         /**
          * A cached attribute is defined at the same places as its
          * defining function.
@@ -244,15 +244,15 @@ trait Attribution extends AttributionBase {
         def isDefinedAt (t : T) =
             f isDefinedAt t
 
-    }    
-    
+    }
+
     /**
      * A variation of the CachedAttribute class for parameterised attributes.
      */
     class CachedParamAttribute[TArg,T <: Attributable,U] (f : TArg => T ==> U)
             extends (TArg => T ==> U) {
 
-        private val memo = new scala.collection.jcl.HashMap[ParamAttributeKey,Option[U]]        
+        private val memo = new scala.collection.jcl.HashMap[ParamAttributeKey,Option[U]]
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -261,12 +261,12 @@ trait Attribution extends AttributionBase {
          */
         def apply (arg : TArg) : T ==> U =
             new (T ==> U) {
-                
+
                 def apply (t : T) : U = {
                     if (memoVersion != MemoState.MEMO_VERSION) {
                         memoVersion = MemoState.MEMO_VERSION
                         memo.clear
-                    }            
+                    }
                     val key = new ParamAttributeKey (arg, t)
                     memo.get (key) match {
                         case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
@@ -276,18 +276,18 @@ trait Attribution extends AttributionBase {
                             val u = f (arg) (t)
                             memo (key) = Some (u)
                             u
-                    }                    
+                    }
                 }
-                
+
                 def isDefinedAt (t : T) =
                     f (arg) isDefinedAt t
-                    
-            }                    
+
+            }
 
     }
-    
+
     /**
-     * Define an attribute of T nodes of type U by the function f, which 
+     * Define an attribute of T nodes of type U by the function f, which
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
@@ -298,14 +298,14 @@ trait Attribution extends AttributionBase {
      * Define an attribute of T nodes of type U by the function f,
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
-     */ 
+     */
     def paramAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
         new CachedParamAttribute (f)
-        
+
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes the current node and its parent as its arguments.
-     */ 
+     */
     def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U =
         attr { case t => f (t) (t.parent) }
 
@@ -321,11 +321,11 @@ object UncachedAttribution extends UncachedAttribution
  * Attribution of syntax trees in a functional style with attribute values
  * computed each time they are accessed.
  */
-trait UncachedAttribution extends AttributionBase {    
+trait UncachedAttribution extends AttributionBase {
 
     /**
      * An attribute of a node type T with value of type U, supported by a circularity
-     * test.  The value of the attribute is computed by the function f.  f will be 
+     * test.  The value of the attribute is computed by the function f.  f will be
      * called each time the value of the attribute is accessed.  f should not itself
      * require the value of this attribute. If it does, a circularity error is reported.
      */
@@ -340,7 +340,7 @@ trait UncachedAttribution extends AttributionBase {
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
-        def apply (t : T) : U = {              
+        def apply (t : T) : U = {
             if (visited contains t) {
                 throw new IllegalStateException ("Cycle detected in attribute evaluation")
             } else {
@@ -350,7 +350,7 @@ trait UncachedAttribution extends AttributionBase {
                 u
             }
         }
-        
+
         /**
          * An uncached attribute is defined at the same places as its
          * defining function.
@@ -358,8 +358,8 @@ trait UncachedAttribution extends AttributionBase {
         def isDefinedAt (t : T) =
             f isDefinedAt t
 
-    }    
-    
+    }
+
     /**
      * A variation of the UncachedAttribute class for parameterised attributes.
      */
@@ -378,7 +378,7 @@ trait UncachedAttribution extends AttributionBase {
             new (T ==> U) {
 
                 def apply (t : T) : U = {
-                    val key = new ParamAttributeKey (arg, t)              
+                    val key = new ParamAttributeKey (arg, t)
                     if (visited contains key) {
                         throw new IllegalStateException ("Cycle detected in attribute evaluation")
                     } else {
@@ -388,7 +388,7 @@ trait UncachedAttribution extends AttributionBase {
                         u
                     }
                 }
-                
+
                 def isDefinedAt (t : T) =
                     f (arg) isDefinedAt t
 
@@ -396,7 +396,7 @@ trait UncachedAttribution extends AttributionBase {
     }
 
     /**
-     * Define an attribute of T nodes of type U by the function f, which 
+     * Define an attribute of T nodes of type U by the function f, which
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
@@ -407,14 +407,14 @@ trait UncachedAttribution extends AttributionBase {
      * Define an attribute of T nodes of type U by the function f,
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
-     */ 
+     */
     def paramAttr[TArg,T <: Attributable,U] (f : TArg => T ==> U) : TArg => T ==> U =
         new UncachedParamAttribute (f)
-        
+
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes the current node and its parent as its arguments.
-     */ 
+     */
     def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U =
         attr { case t => f (t) (t.parent) }
 

@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.dataflow
 
@@ -27,34 +27,34 @@ import Dataflow._
 case class Foreach (cond : Var, body : Stm) extends Stm
 
 object DataflowForeach {
-    
+
     Dataflow.succ +=
         attr { case t @ Foreach (_, body) => following (t) + body }
-    
+
     // Using the childAttr notation
-    Dataflow.following += 
+    Dataflow.following +=
         childAttr {
             _ => { case t @ Foreach(_, body) => following (t) + body }
         }
-    
+
     // Alternatively, using the regular attr notation
-    Dataflow.following += 
+    Dataflow.following +=
         attr {
             case t if t.parent.isInstanceOf[Foreach] =>
                 val parent = t.parent[Foreach]
                 following (parent) + parent.body
         }
-        
+
 }
 
 case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
-    
+
 object DataflowFor {
 
-    Dataflow.succ += 
+    Dataflow.succ +=
         attr { case For (init, c, inc, body) => Set (init) }
-    
-    Dataflow.following += 
+
+    Dataflow.following +=
         childAttr {
             S => {
                 case t @ For (S, c, _, _) => Set (c)

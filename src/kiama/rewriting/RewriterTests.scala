@@ -12,20 +12,20 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.rewriting
 
 import junit.framework.Assert._
 import junit.framework.TestCase
 import org.scalacheck._
-import org.scalacheck.Prop._ 
-import org.scalatest.junit.JUnit3Suite 
-import org.scalatest.prop.Checkers 
+import org.scalacheck.Prop._
+import org.scalatest.junit.JUnit3Suite
+import org.scalatest.prop.Checkers
 import kiama.example.imperative.TestBase
 
 /**
@@ -33,9 +33,9 @@ import kiama.example.imperative.TestBase
  */
 class RewriterTests extends TestCase with JUnit3Suite with Checkers
                     with Rewriter with TestBase {
-                       
+
     import kiama.example.imperative.AST._
-    
+
     /**
      * Test arithmetic evaluation with variable references and division by
      * zero worked around.
@@ -53,16 +53,16 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp) => everywherebu (eval) (t) == Some (Num (t.value)))
         check ((t : Exp) => reduce (eval) (t) == Some (Num (t.value)))
     }
-    
+
     /**
      * Test the issubterm combinator.
      */
     def testSubtermMatching () {
         check ((t : Stmt) => issubterm (t, t) == Some (t))
         check ((t : Exp) => issubterm (t, t) == Some (t))
-    
+
         val random = new scala.util.Random
-    
+
         /**
          * Pick a random Term child of t, returning t if there are no
          * children or there are children but none of them are Terms.
@@ -84,7 +84,7 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
                 childterms (termnum).asInstanceOf[Term]
             }
         }
-    
+
         /**
          * Pick a random descendant of t (including possibly t).
          */
@@ -104,7 +104,7 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
                     t
             }
         }
-            
+
         check ((t : Stmt) => issubterm (pickdesc (t), t) == Some (t))
         check ((t : Exp) => issubterm (pickdesc (t), t) == Some (t))
 
@@ -116,32 +116,32 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         assertEquals (None, ispropersubterm (Num (42), t))
         assertEquals (Some (t), ispropersubterm (Num (1), t))
         assertEquals (None, ispropersubterm (t, t))
-        
+
         assertEquals (None, issuperterm (t, Num (42)))
         assertEquals (Some (t), issuperterm (t, Num (1)))
         assertEquals (Some (t), issuperterm (t, t))
         assertEquals (None, ispropersuperterm (t, Num (42)))
         assertEquals (Some (t), ispropersuperterm (t, Num (1)))
         assertEquals (None, ispropersuperterm (t, t))
-        
+
     }
-    
+
     /**
      * Test strategies that should have no effect on the subject term.
      */
     def testNoChange () {
         check ((t : Stmt) => id (t) == Some (t))
         check ((t : Exp) => id (t) == Some (t))
-        
+
         val noopstmt = everywherebu (rule { case Asgn (s, e) => Asgn (s, e) })
         check ((t : Stmt) => noopstmt (t) == Some (t))
         check ((t : Exp) => noopstmt (t) == Some (t))
-        
+
         val noopexp = everywherebu (rule { case Num (i) => Num (i) })
         check ((t : Stmt) => noopexp (t) == Some (t))
         check ((t : Exp) => noopexp (t) == Some (t))
     }
-    
+
     /**
      * Test strategies that fail immediately.
      */
@@ -149,7 +149,7 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Stmt) => failure (t) == None)
         check ((t : Exp) => failure (t) == None)
     }
-    
+
     /**
      * Test where combinator (basic only).
      */
@@ -157,7 +157,7 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp) => where (failure) (t) == None)
         check ((t : Exp) => where (id) (t) == Some (t))
     }
-    
+
     /**
      * Tests for leaf detection.
      */
@@ -167,7 +167,7 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp) =>
             isinnernode (t) == (if (t.productArity == 0) None else Some (t)))
     }
-    
+
     /**
      * Test strategies defined from a specific term.
      */
@@ -176,15 +176,15 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         check ((t : Exp, u : Exp) => t (u) == Some (t))
         check ((t : Stmt, u : Stmt) => t (u) == Some (t))
         check ((t : Exp, u : Stmt) => t (u) == Some (t))
-        
+
         check ((t : Stmt) => (term (t)) (t) == Some (t))
         check ((t : Exp) => (term (t)) (t) == Some (t))
-        
+
         val t = Add (Num (1), Num (2))
         assertEquals (None, term (Num (1)) (t))
-        assertEquals (None, term (Num (42)) (t))        
+        assertEquals (None, term (Num (42)) (t))
     }
-    
+
     /**
      * Simple tests of conditional choice strategy combinator.
      */
@@ -192,11 +192,11 @@ class RewriterTests extends TestCase with JUnit3Suite with Checkers
         // Test expressions
         val e1 = Mul (Num (2), Num (3))
         val e2 = Add (Num (2), Num (3))
-        
+
         // Check identity and failure
         assertEquals (Num (1), rewrite (id < (Num (1) : Strategy) + Num (2)) (e1))
         assertEquals (Num (2), rewrite (failure < (Num (1) : Strategy) + Num (2)) (e1))
-        
+
         // Condition used just for success or failure
         val ismulbytwo = rule { case t @ Mul (Num (2), _) => t }
         val multoadd = rule { case Mul (Num (2), x) => Add (x, x) }

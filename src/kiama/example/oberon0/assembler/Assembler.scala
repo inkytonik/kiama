@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.oberon0.assembler
 
@@ -112,7 +112,7 @@ object Assembler {
     while (i < 28) {
         regs (i) = false
         i += 1
-    }    
+    }
 
     /**
      * Get free reg (between 1 and 28)
@@ -123,12 +123,12 @@ object Assembler {
         while (i < 28) {
             if (!regs (i)) {
                 regs (i) = true
-				return i.asInstanceOf[Byte]
-			}
+                return i.asInstanceOf[Byte]
+            }
             i += 1
         }
-		println ("No registers available")
-		-1
+        println ("No registers available")
+        -1
     }
 
     /**

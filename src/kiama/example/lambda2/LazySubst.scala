@@ -12,21 +12,21 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.lambda2
 
 /**
- * Evaluation of lambda calculus using lazy evaluation with 
+ * Evaluation of lambda calculus using lazy evaluation with
  * term-level substitution and arithmetic operations.
  */
 trait LazySubst extends EagerSubst {
-  
-	import AST._
+
+    import AST._
 
     /**
      * Recursively try to lazily evaluate expressions in applied functions,
@@ -46,7 +46,7 @@ trait LazySubst extends EagerSubst {
             case Opn (op, e1, e2)   => Opn (op, eval (e1), eval (e2))
 
         }
-    
+
 }
 
 class LazySubstEvaluator extends LazySubst

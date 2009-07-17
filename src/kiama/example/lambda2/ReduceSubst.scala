@@ -12,21 +12,21 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.lambda2
 
 /**
- * Evaluation of lambda calculus using global beta reduction with 
+ * Evaluation of lambda calculus using global beta reduction with
  * term-level substitution and arithmetic operations.
  */
 trait ReduceSubst extends Reduce {
-  
-	import AST._
+
+    import AST._
 
     /**
      * Evaluate by repeatedly trying to apply beta reduction and arithmetic
@@ -34,7 +34,7 @@ trait ReduceSubst extends Reduce {
      */
     override lazy val evals =
         reduce (lambda_es)
-    
+
     /**
      * Reusable strategy for reduction with explicit term-level substitution.
      */
@@ -46,9 +46,9 @@ trait ReduceSubst extends Reduce {
      */
     override lazy val beta =
         rule {
-    	    case App (Lam (x, t, e1), e2) =>  Let (x, t, e2, e1)
-    	}
-      
+            case App (Lam (x, t, e1), e2) =>  Let (x, t, e2, e1)
+        }
+
     /**
      * Substitution in numeric terms.
      */
@@ -56,7 +56,7 @@ trait ReduceSubst extends Reduce {
         rule {
             case Let (_, _, _, e : Num) => e
         }
-    
+
     /**
      * Substitution in variable terms.
      */
@@ -74,7 +74,7 @@ trait ReduceSubst extends Reduce {
             case Let (x, t, e, App (e1, e2)) =>
                 App (Let (x, t, e, e1), Let (x, t, e, e2))
         }
-    
+
     /**
      * Substitution in lambda abstractions.
      */
@@ -86,7 +86,7 @@ trait ReduceSubst extends Reduce {
                 val z = freshvar ()
                 Lam (z, t2, Let (x, t1, e1, Let (y, t2, Var (z), e2)))
         }
-        
+
     /**
      * Substitution in primitive operations
      */

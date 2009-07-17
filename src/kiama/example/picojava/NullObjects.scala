@@ -12,28 +12,28 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 /**
  * This file is derived from a JastAdd implementation of PicoJava, created
  * in the Department of Computer Science at Lund University.  See the
  * following web site for details:
- * 
+ *
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
 package kiama.example.picojava
 
 object NullObjects {
-  
+
     import AbstractSyntax._
     import NameResolution._
     import kiama.attribution.Attribution._
-    
+
     /**
      * A declaration object representing an unknown entity.
      *

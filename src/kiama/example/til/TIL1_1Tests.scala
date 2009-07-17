@@ -12,27 +12,27 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.til
 
 import junit.framework.TestCase
-import org.scalatest.junit.JUnit3Suite 
-import org.scalatest.prop.Checkers 
+import org.scalatest.junit.JUnit3Suite
+import org.scalatest.prop.Checkers
 import kiama.parsing.CharPackratParsers
 
 class TIL1_1Tests extends TestCase with JUnit3Suite with Checkers {
-    
+
     import AST._
     import TIL1_1Main._
 
     private val n = Id ("n")
     private val f = Id ("f")
-            
+
     /**
      * Make sure that the Factorial program parses to what we expect.
      */
@@ -71,7 +71,7 @@ write "\n";"""
                     Write (Str ("\\n"))))
         test (input, tree)
     }
-    
+
     def testFactorsParse {
         val input = """
 var n;
@@ -105,7 +105,7 @@ end"""
                             Assign (f, Add (Var (f), Num (1)))))))
         test (input, tree)
     }
-    
+
     def testMultiplesParse {
         val input = """
 for i := 1 to 9 do

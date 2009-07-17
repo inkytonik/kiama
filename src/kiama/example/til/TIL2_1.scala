@@ -12,12 +12,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.til
 
 import kiama.rewriting.Rewriter
@@ -27,18 +27,18 @@ import kiama.rewriting.Rewriter
  * adding an explicit declaration of the variable.
  */
 trait TIL2_1 extends TIL1_1 with TransformingMain {
-        
+
     import AST._
 
     override def transform (ast : Root) : Root =
         rewrite (declareforvars) (ast)
-        
+
     val declareforvars =
         everywherebu (rule {
             case (s @ For (Id (i), f, t, b)) :: ss =>
                 Decl (Id (i)) :: s :: ss
         })
-    
+
 }
 
 object TIL2_1Main extends TIL2_1

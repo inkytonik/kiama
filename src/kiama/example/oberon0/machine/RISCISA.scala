@@ -12,34 +12,34 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
  */
 
 package kiama.example.oberon0.machine
- 
+
 /**
  * Instruction set architecture for a simple RISC machine.
  */
 object RISCISA {
-    
+
     /**
      * A code sequence.
      */
     type Code = Seq[Instr]
-        
+
     /**
      * Register numbers (0-31).  Program counter is R28.
      */
     type RegNo = Byte
-     
+
     /**
      * Machine instructions.
      */
     abstract class Instr
-    
+
     /**
      * Shift the value in register c by b and store the result in register a.
      */
@@ -49,7 +49,7 @@ object RISCISA {
      * Shift the value im by b and store the result in register a.
      */
     case class MOVI (a : RegNo, b : RegNo, im : Int) extends Instr
-    
+
     /**
      * Shift the value in register c by b and store the negation of the result
      * in register a.
@@ -140,24 +140,24 @@ object RISCISA {
      * or equal to the value im, set register a to zero.
      */
     case class CHKI (a : RegNo, im : Int) extends Instr
-    
+
     /**
      * Load register a with the word value stored in memory at the
      * address given by the contents of register b plus the value im.
      * The lowest two bits of the address are ignored.
      */
     case class LDW (a : RegNo, b : RegNo, im : Int) extends Instr
-    
+
     /**
      * Load register a with the byte value stored in memory at the
      * address given by the contents of register b plus the value im.
      */
     case class LDB (a : RegNo, b : RegNo, im : Int) extends Instr
-    
+
     /**
      * Load register a with the word value stored in register b.  The
      * lowest two bits of the address are ignored. Subtract (???) im from
-     * the contents of register b and store the result in register b.  
+     * the contents of register b and store the result in register b.
      */
     case class POP (a : RegNo, b : RegNo, im : Int) extends Instr
 
@@ -174,7 +174,7 @@ object RISCISA {
      * value im.
      */
     case class STB (a : RegNo, b : RegNo, im : Int) extends Instr
-    
+
     /**
      * Add im to the contents of register b and store the
      * result in register b.  Store the value in register a into
@@ -182,30 +182,30 @@ object RISCISA {
      * The lowest two bits of the address are ignored.
      */
     case class PSH (a : RegNo, b : RegNo, im : Int) extends Instr
-    
+
     /**
      * Read an integer variable from standard input and store the value
      * in register a.
      */
     case class RD (a : RegNo) extends Instr
-    
+
     /**
      * Write a decimal representation of the value in register c to
      * standard output.
      */
     case class WRD (c : RegNo) extends Instr
-    
+
     /**
      * Write a hexadecimal representation of the value in register c to
      * standard output.
      */
     case class WRH (c : RegNo) extends Instr
-    
+
     /**
      * Write a newline to standard output.
      */
     case object WRL extends Instr
-    
+
     /**
      * Abstract interface for all branch instructions.  Branches are
      * created using symbolic labels. The assembler sets the disp
@@ -228,7 +228,7 @@ object RISCISA {
      * value plus four times disp.
      */
     case class BNE (val label : Int) extends Branch
-    
+
     /**
      * If the N condition code is set, set the program counter to its
      * value plus four times disp.
@@ -240,7 +240,7 @@ object RISCISA {
      * value plus four times disp.
      */
     case class BGE (val label : Int) extends Branch
-    
+
     /**
      * If either of the Z or N condition codes is set, set the program
      * counter to its value plus four times disp.
@@ -269,5 +269,5 @@ object RISCISA {
      * value is zero, halt the machine.
      */
     case class RET (c : Int) extends Instr
-    
+
 }

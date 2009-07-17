@@ -12,31 +12,31 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
-                                
+ */
+
 package kiama.example.lambda2
 
 import junit.framework.Assert._
 import junit.framework.TestCase
 import kiama.rewriting.Rewriter
 import org.scalacheck._
-import org.scalacheck.Prop._ 
-import org.scalatest.junit.JUnit3Suite 
-import org.scalatest.prop.Checkers 
+import org.scalacheck.Prop._
+import org.scalatest.junit.JUnit3Suite
+import org.scalatest.prop.Checkers
 
 import AST._
 
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends TestCase with JUnit3Suite with Checkers 
+class LambdaTests extends TestCase with JUnit3Suite with Checkers
                   with Parser with Rewriter {
-				      
-    import Analysis._                    
+
+    import Analysis._
     import Evaluators._
     import kiama.attribution.Attribution._
     import kiama.util.Messaging._
@@ -48,12 +48,11 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
      * sure the relevant message is reported.
      */
     def assertType (e : Exp, aname : String, a : Exp ==> Type, line : Int, col : Int, msg : String) {
-        //e->a
         a (e)
-       	if (messagecount == 0)
+        if (messagecount == 0)
             fail (aname + ": no messages produced, expected (" + line + "," + col + ") " + msg)
         else {
-           	val m = messages (0)
+            val m = messages (0)
             if ((m.pos.line != line) || (m.pos.column != col) ||
                 (m.message != msg))
                 fail (aname + ": incorrect message, expected (" + line + "," + col + ") " + msg +
@@ -61,7 +60,7 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
         }
         resetmessages
     }
-    
+
     /**
      * Compute the tipe of the expression and check to see if the specified
      * message is produced.  We test both of the analysis methods.
@@ -78,7 +77,7 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
                 fail ("parse failure: " + f)
         }
     }
-    
+
     /**
      * Test analysis of names in expressions.
      */
@@ -92,14 +91,14 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
         assertMessage ("""1 3""", 1, 1, "application of non-function")
         assertMessage ("""(\x : Int . x 5) 7""", 1, 13, "application of non-function")
     }
-        
+
     /**
      * Canonicalise an expression so that its binding variable names
      * are given by the depth of their binder in the whole expression.
      * Unbound vars are not changed.
      */
     def canon (x : Exp) : Exp = {
-        def canons (d : Int, e : Map[Idn,Idn]) : Strategy = 
+        def canons (d : Int, e : Map[Idn,Idn]) : Strategy =
             rule {
                 case Var (n)            =>
                     Var (e (n))
@@ -111,21 +110,21 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
                     Let (m, t, canonise (e2, d + 1, e), canonise (e1, d + 1, e + (n->m)))
             } +
             all (canons (d, e))
-        def canonise (x : Exp, d : Int, e : Map[Idn,Idn]) : Exp = 
+        def canonise (x : Exp, d : Int, e : Map[Idn,Idn]) : Exp =
            rewrite (canons (d, e)) (x)
         canonise (x, 1, Map () withDefault (n => n))
     }
-    
-    /** 
+
+    /**
      * Assert true if the two expressions are the same modulo variable
-     * renaming, otherwise assert an equality failure.  Make sure to 
+     * renaming, otherwise assert an equality failure.  Make sure to
      * make a failure assertion using the mechanism name on the original
      * expressions so that it makes sense to the user.
      */
     def assertSame (mech : String, e1 : Exp, e2 : Exp) =
         if (canon (e1) != canon (e2))
-          	assertEquals (mech, e1, e2)
-    
+            assertEquals (mech, e1, e2)
+
     /**
      * Parse and evaluate term using the specified mechanism
      * (which is assumed to already have been set) then compare to
@@ -144,17 +143,17 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
                 fail ("parse failure: " + f)
         }
     }
-        
+
     /**
-     * Test the assertion on all available evaluation mechanisms. 
+     * Test the assertion on all available evaluation mechanisms.
      */
     def assertEvalAll (term : String, result : Exp) {
         for (mech <- mechanisms) {
-        	setEvaluator (mech)
+            setEvaluator (mech)
             assertEval (mech, term, result)
         }
     }
-    
+
     /**
      * Test the assertion on all available evaluation mechanisms.
      * Same as single result version, except that result1 is
@@ -163,14 +162,14 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
      */
     def assertEvalAll (term : String, result1 : Exp, result2 : Exp) {
         for (mech <- mechanisms) {
-        	setEvaluator (mech)          
+            setEvaluator (mech)
             if (evaluator reducesinlambdas)
-            	assertEval (mech, term, result1)
+              assertEval (mech, term, result1)
             else
-            	assertEval (mech, term, result2)
+              assertEval (mech, term, result2)
         }
     }
-        
+
     /**
      * Test expressions with no sub-structure.
      */
@@ -182,14 +181,14 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
         assertEvalAll ("var", Var ("var"))
         assertEvalAll ("v45", Var ("v45"))
     }
-    
+
     /**
      * Test expressions involving only primitive operations.
      */
     def testPrimitives () {
         assertEvalAll ("4 + 1", Num (5))
     }
-    
+
     /**
      * Test lambda expressions with no reduction.
      */
@@ -197,9 +196,9 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
         assertEvalAll ("""\x:Int.4""",
                        Lam ("x", IntType, Num (4)))
         assertEvalAll ("""\x : Int . x - 1""",
-                       Lam ("x", IntType, Opn (SubOp, Var ("x"), Num (1))))                       
+                       Lam ("x", IntType, Opn (SubOp, Var ("x"), Num (1))))
     }
-    
+
     /**
      * Tests only requiring a small number of reductions.
      */
@@ -212,7 +211,7 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
         assertEvalAll ("""(\x : Int -> Int . x) (\y : Int . y)""",
                        Lam ("y", IntType, Var ("y")))
     }
-    
+
     /**
      * Tests invlving more complex reduction patterns.
      */
@@ -234,5 +233,5 @@ class LambdaTests extends TestCase with JUnit3Suite with Checkers
         assertEvalAll ("""\x:Int.4+3""", Lam ("x", IntType, Num (7)),
                        Lam ("x", IntType, Opn (AddOp, Num (4), Num (3))))
     }
-        
+
 }

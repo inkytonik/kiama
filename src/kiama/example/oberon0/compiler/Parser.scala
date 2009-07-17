@@ -2,7 +2,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009 Anthony M Sloane, Macquarie University.
- * 
+ *
  * Contributed by Ben Mockler.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
@@ -14,12 +14,12 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
  */
- 
+
 package kiama.example.oberon0.compiler
 
 import kiama.parsing.CharPackratParsers
@@ -30,10 +30,10 @@ import kiama.parsing.CharPackratParsers
 trait Parser extends kiama.parsing.CharPackratParsers {
 
     import AST._
-    
+
     lazy val parse  : Parser[ModuleDecl] =
         phrase (moduledecl)
-        
+
     // Declarations
 
     lazy val moduledecl : Parser[ModuleDecl] =
@@ -50,20 +50,20 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     lazy val constdecl : Parser[ConstDecl] =
         (ident <~ "=") ~ expression <~ ";" ^^ { case id ~ ex => ConstDecl (id.name, ex) }
-    
+
     lazy val constdecls : Parser[List[ConstDecl]] =
         "CONST" ~> (constdecl*)
 
     lazy val typedecl : Parser[TypeDecl] =
         (ident <~ "=") ~ type1 <~ ";" ^^ {case id ~ tp => TypeDecl (id.name, tp) }
-    
+
     lazy val typedecls : Parser[List[TypeDecl]] =
         "TYPE" ~> (typedecl*)
-    
+
     lazy val vardeclspertype : Parser[List[VarDecl]] =
         (identList <~ ":") ~ type1 ^^
             { case lst ~ tp => lst.map (id => VarDecl (id.name, tp)) }
-    
+
     lazy val vardecls : Parser[List[VarDecl]] =
         "VAR" ~> ((vardeclspertype <~ ";")*) ^^ (lst => lst.flatten)
 
@@ -113,7 +113,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
     lazy val statementSequence : Parser[List[Statement]] =
         repsep (statement, ";")
 
-    lazy val statement : Parser[Statement] = 
+    lazy val statement : Parser[Statement] =
         assignment |
         procedureCall |
         ifStatement |
@@ -134,12 +134,12 @@ trait Parser extends kiama.parsing.CharPackratParsers {
             { case con ~ thnss => IfStatement (con, thnss, Nil) } |
         ("IF" ~> expression) ~ ("THEN" ~> statementSequence) ~ ifTail ^^
             { case con ~ thnss ~ els => IfStatement (con, thnss, els) }
-    
+
     lazy val ifTail : Parser[List[Statement]] =
         ("ELSIF" ~> expression) ~ ("THEN" ~> statementSequence) ~ ifTail ^^
             { case con ~ thnss ~ els => List (IfStatement (con, thnss, els)) } |
         ("ELSIF" ~> expression) ~ ("THEN" ~> statementSequence) <~ "END" ^^
-            { case con ~ thnss => List (IfStatement (con, thnss, Nil)) } |                                                
+            { case con ~ thnss => List (IfStatement (con, thnss, Nil)) } |
         ("ELSE" ~> statementSequence) <~ "END"
 
     lazy val whileStatement : Parser[WhileStatement] =
@@ -161,7 +161,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         (simpleExpression <~ "+") ~ term ^^ {case se ~ t => Plus (se, t) } |
         (simpleExpression <~ "-") ~ term ^^ {case se ~ t => Minus (se, t) } |
         (simpleExpression <~ "OR") ~ term ^^ {case se ~ t => Or (se, t) } |
-        term                                              
+        term
 
     lazy val term : MemoParser[Exp] =
         (term <~ "*") ~ factor ^^ { case t ~ f => Mult (t, f) } |
@@ -196,7 +196,7 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         { case c ~ cs => Ident (c + cs.mkString) }
 
     lazy val integer : Parser[IntegerLiteral] =
-        token (digit+) ^^ (l => IntegerLiteral(l.mkString.toInt))  
+        token (digit+) ^^ (l => IntegerLiteral(l.mkString.toInt))
 
     lazy val comment =
         "(*" ~> ((not ("*)") ~> any)*) <~ "*)"
@@ -208,5 +208,5 @@ trait Parser extends kiama.parsing.CharPackratParsers {
      * Convert an option list into either the list (if present) or Nil if None.
      */
     def optionalListToList[T] (op: Option[List[T]]) : List[T] =
-        op.getOrElse (Nil)    
+        op.getOrElse (Nil)
 }

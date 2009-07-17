@@ -12,14 +12,14 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.attribution
-    
+
 import scala.util.parsing.input.Positional
 
 /**
@@ -35,24 +35,24 @@ trait Attributable extends Product with Positional {
      * node has no parent.
      */
     var parent : Attributable = null
-    
+
     /**
      * A short-hand for parent.asInstanceOf[T].
      */
     def parent[T] : T = parent.asInstanceOf[T]
-        
+
     /**
      * Is this node the root of the hierarchy?
      */
     def isRoot : Boolean = parent == null
-      
+
     /**
      * If this node is a member of a sequence, a link to the previous
      * node in the sequence.  Null if this is the first node of the
      * sequence, or if it is not a member of a sequence.
-     */          
+     */
     def prev : this.type = _prev.asInstanceOf[this.type]
-    
+
     /**
      * Private field backing prev to make the types work correctly.
      */
@@ -62,7 +62,7 @@ trait Attributable extends Product with Positional {
      * If this node is a member of a sequence, a link to the next
      * node in the sequence.  Null if this is the first node of the
      * sequence, or if it is not a member of a sequence.
-     */          
+     */
     def next : this.type = _next.asInstanceOf[this.type]
 
     /**
@@ -75,19 +75,19 @@ trait Attributable extends Product with Positional {
      * Otherwise, true.
      */
     def isFirst : Boolean = prev == null
-    
+
     /**
      * If this node is in a sequence, is it the last element?
      * Otherwise, true.
      */
     def isLast : Boolean = next == null
-            
+
     /**
      * If this node is in a sequence, which child number is it
      * (counting from zero)?  Otherwise, zero.
-     */             
+     */
     var index : Int = 0
-    
+
     /**
      * This node's attributable children in left-to-right order.  Children
      * that are not Attributable are ignored, except for sequences (<code>Seq[_]</code>)
@@ -97,19 +97,19 @@ trait Attributable extends Product with Positional {
      */
     def children : Iterator[Attributable] =
         _children.elements
-      
+
     /**
      * Record of this node's attributable children.
      */
     private val _children = new scala.collection.mutable.ListBuffer[Attributable]
-    
+
     /**
      * Reference an attribute or function that can be applied to this node.
      * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
      */
     @inline
     final def ->[T] (attr : this.type => T) = attr (this)
-    
+
     /**
      * House-keeping method to connect my children to me and their siblings.
      * If a node is a direct child of a <code>Seq</code> or <code>Some</code>,
@@ -119,7 +119,7 @@ trait Attributable extends Product with Positional {
      * so that they can be accessed easily via the children iterator.
      */
     private def setChildConnections = {
-      
+
         for (i <- 0 until productArity) {
             productElement (i) match {
                 case c : Attributable =>
@@ -140,7 +140,7 @@ trait Attributable extends Product with Positional {
                             case c : Attributable =>
                                 // Bypass Seq node in parent relation
                                 c.parent = this
-                                _children += c                                    
+                                _children += c
                                 // Set sequence element properties
                                 c.index = i
                                 c._prev = prev
@@ -148,16 +148,16 @@ trait Attributable extends Product with Positional {
                                 prev = c
                             case _ =>
                                 // Ignore elements that are non-Attributables
-                        }                            
+                        }
                     }
                 }
                 case _ =>
                     // Ignore children that are not Attributable, options or sequences
             }
         }
-        
+
     }
-    
+
     setChildConnections
-    
+
 }

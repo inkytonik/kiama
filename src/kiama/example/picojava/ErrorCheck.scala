@@ -12,34 +12,34 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 /**
  * This file is derived from a JastAdd implementation of PicoJava, created
  * in the Department of Computer Science at Lund University.  See the
  * following web site for details:
- * 
+ *
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
 package kiama.example.picojava
 
 object ErrorCheck {
-  
+
     import AbstractSyntax._
     import NameResolution._
     import PredefinedTypes._
     import TypeAnalysis._
     import kiama.attribution.Attribution._
     import scala.collection.mutable.{Buffer,ListBuffer}
-  
+
     /**
      * All of the error messages for a program.
-     * 
+     *
      * public Collection Program.errors() {
      *    Collection c = new ArrayList();
      *    collectErrors(c);
@@ -69,13 +69,13 @@ object ErrorCheck {
      *         error(c, "Can not assign a variable of type " + getVariable().type().getName() +
      *               " to a value of type " + getValue().type().getName());
      * }
-     * 
+     *
      * public void ClassDecl.collectErrors(Collection c) {
      *    super.collectErrors(c);
      *    if(hasCycleOnSuperclassChain())
      *       error(c, "Cyclic inheritance chain for class " + getName());
      * }
-     * 
+     *
      * public void WhileStmt.collectErrors(Collection c) {
      *     super.collectErrors(c);
      *     if(!getCondition().type().isSubtypeOf(booleanType()))
@@ -83,14 +83,14 @@ object ErrorCheck {
      *     if(!getCondition().isValue())
      *         error(c, "Condition must be a value");
      * }
-     * 
+     *
      * public void IdUse.collectErrors(Collection c) {
      *     super.collectErrors(c);
      *     if(decl().isUnknown() && (!isQualified() || !qualifier().type().isUnknown()))
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val collectErrors : Buffer[String] => Attributable => Unit = 
+    val collectErrors : Buffer[String] => Attributable => Unit =
         // NOTE: Not using paramAttr here, since we don't want caching for this
         c => {
             case t =>
@@ -121,7 +121,7 @@ object ErrorCheck {
                     case _ =>
                 }
         }
-    
+
     /**
      * Record a new error in the collection.
      *
@@ -135,7 +135,7 @@ object ErrorCheck {
 
     /**
      * Is this entity qualified?
-     * 
+     *
      * eq Program.getBlock().isQualified() = false;
      * eq Program.getPredefinedType(int i).isQualified() = false;
      * eq Dot.getIdUse().isQualified() = true;
@@ -149,10 +149,10 @@ object ErrorCheck {
                 case _           => false
             }
         }
-      
+
     /**
      * What is the qualifier?
-     * 
+     *
      * eq Program.getBlock().qualifier() {
      *    throw new Error("Can not compute qualifier for non qualified names");
      * }
@@ -163,11 +163,11 @@ object ErrorCheck {
      * inh Access IdUse.qualifier();
      * inh Access TypeDecl.qualifier();
      */
-    val qualifier : IdUse ==> Access = 
+    val qualifier : IdUse ==> Access =
         attr {
             i => i.parent match {
                 case Dot (o, _)  => o
-                case _           => error ("Can not compute qualifier for non qualified names") 
+                case _           => error ("Can not compute qualifier for non qualified names")
             }
         }
 

@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.lambda2
 
@@ -25,8 +25,8 @@ package kiama.example.lambda2
  * substitution and arithmetic operations.
  */
 trait Reduce extends Evaluator {
-  
-	import AST._
+
+    import AST._
 
     /**
      * Evaluate by repeatedly trying to apply beta reduction and arithmetic
@@ -34,15 +34,15 @@ trait Reduce extends Evaluator {
      */
     lazy val evals =
         reduce (beta + arithop)
-    
+
     /**
      * Beta reduction via meta-level substitution.
      */
     lazy val beta =
-    	rule {
-    	  case App (Lam (x, _, e1), e2) => substitute (x, e2, e1) 
-    	}
-    
+        rule {
+            case App (Lam (x, _, e1), e2) => substitute (x, e2, e1)
+        }
+
     /*
      * Evaluation of arithmetic operators.
      */
@@ -55,9 +55,9 @@ trait Reduce extends Evaluator {
      * Capture-free substitution of free occurrences of x in e1 with e2.
      */
     def substitute (x : Idn, e2: Exp, e1 : Exp) : Exp =
-    	e1 match {
-    	    case Var (y) if x == y =>
-    	        e2
+        e1 match {
+            case Var (y) if x == y =>
+                e2
             case Lam (y, t, e3) =>
                 val z = freshvar ()
                 Lam (z, t, substitute (x, e2, substitute (y, Var (z), e3)))
@@ -65,10 +65,10 @@ trait Reduce extends Evaluator {
                 App (substitute (x, e2, l), substitute (x, e2, r))
             case Opn (op, l, r) =>
                 Opn (op, substitute (x, e2, l), substitute (x, e2, r))
-    	    case e =>
-    	        e         
-    	}
-    
+            case e =>
+                e
+        }
+
 }
 
 class ReduceEvaluator extends Reduce {

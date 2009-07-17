@@ -12,11 +12,11 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
  * more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
  * <http://www.gnu.org/licenses/>.
- */                         
+ */
 
 package kiama.example.til
 
@@ -29,12 +29,12 @@ import kiama.rewriting.Rewriter
  * testing framework.
  */
 trait Main {
-    
+
     import java.io.{CharArrayReader,FileNotFoundException,FileReader}
     import junit.framework.Assert._
-    
+
     /**
-     * Accept file name arguments and process them one-by-one by 
+     * Accept file name arguments and process them one-by-one by
      * passing a reader on the file to process.  The resulting
      * value is printed.
      */
@@ -50,7 +50,7 @@ trait Main {
             }
         }
     }
-    
+
     /**
       * Process the file given by the argument reader and return
       * some useful result.
@@ -73,7 +73,7 @@ trait Main {
  * Standard main program for TIL chairmarks that parse.
  */
 trait ParsingMain extends Main with CharPackratParsers {
-      
+
     /**
       * Process the file given by the argument reader by parsing it
       * and returning the resulting AST.
@@ -82,31 +82,31 @@ trait ParsingMain extends Main with CharPackratParsers {
         parseAll (parse, reader) match {
             case Success (p, _) => p
             case f : Failure    => f
-        }        
+        }
 
     /**
      * The root type of the AST being processed.
      */
     type Root
-    
+
     /**
      * Parse a file, returning an AST.
      */
     def parse : Parser[Root]
-    
+
 }
 
 /**
  * Standard main program for TIL chairmarks that parse and transform.
  */
-trait TransformingMain extends ParsingMain with Rewriter {    
+trait TransformingMain extends ParsingMain with Rewriter {
 
     /**
      * The root type of the AST being processed. Needs to be sub-type
      * of Term so that we can transform it using rewriting.
      */
     type Root <: Term
-    
+
     /**
       * Process the file given by the argument reader by parsing it,
       * transforming it and returning the resulting AST.
@@ -115,11 +115,11 @@ trait TransformingMain extends ParsingMain with Rewriter {
         parseAll (parse, reader) match {
             case Success (p, _) => transform (p)
             case f : Failure    => f
-        }        
-        
+        }
+
     /**
      * Transform a single AST.
      */
     def transform (ast : Root) : Root
-        
+
 }
