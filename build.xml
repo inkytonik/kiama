@@ -85,7 +85,7 @@
         <pathelement location="bin"/>
       </runpath>
       <reporter type="graphic"/>
-      <suite classname="${env.KIAMA_TEST}"/>
+      <suite classname="${kiama.test}"/>
   	</scalatest>
   </target>	
 	
@@ -95,7 +95,7 @@
       <runpath>
         <pathelement location="bin"/>
       </runpath>
-      <suite classname="${env.KIAMA_TEST}"/>
+      <suite classname="${kiama.test}"/>
     </scalatest>
   </target> 
 	
