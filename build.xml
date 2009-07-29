@@ -89,6 +89,16 @@
   	</scalatest>
   </target>	
 	
+  <target name="testonebatch" depends="build">
+    <scalatest>
+      <reporter type="stdout" config="YFABR"/>
+      <runpath>
+        <pathelement location="bin"/>
+      </runpath>
+      <suite classname="${env.KIAMA_TEST}"/>
+    </scalatest>
+  </target> 
+	
   <target name="doc" depends="prepare">
     <copy todir="bin/doc">
       <fileset dir=".">
