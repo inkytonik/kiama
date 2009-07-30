@@ -36,7 +36,7 @@ object Analysis {
      * The environment of an expression is the list of variable names that
      * are visible in that expression and their types.
      */
-    val env : Exp ==> List[(String,Type)] =
+    val env : Exp ==> List[(Idn,Type)] =
         childAttr {
             case _ => {
 

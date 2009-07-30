@@ -96,7 +96,7 @@ object AST {
     /**
      * Types.
      */
-    abstract class Type extends Product with Attributable
+    abstract class Type extends Product
 
     /**
      * Primitive integer type.
@@ -115,7 +115,7 @@ object AST {
     /**
      * Primitive binary operators.
      */
-    abstract class Op extends Attributable {
+    abstract class Op {
         /**
          * Evaluate the oeprator on the given integer operands.
          */
