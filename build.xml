@@ -8,6 +8,7 @@
   <property name="scala.complib" value="${scala.home}/lib/scala-compiler.jar"/>
   <property name="scala.lib" value="${scala.home}/lib/scala-library.jar"/>
 
+  <property name="jline.lib" value="lib/jline-0.9.94.jar"/>
   <property name="junit.lib" value="lib/junit-4.5.jar"/>
   <property name="scalacheck.lib" value="lib/ScalaCheck-1.5.jar"/>
   <property name="scalatest.lib" value="lib/scalatest-0.9.5.jar"/>
@@ -18,11 +19,11 @@
   </path>
 
   <path id="kiama.classpath">
+    <pathelement location="${jline.lib}"/>
     <pathelement location="${junit.lib}"/>
     <pathelement location="${scalacheck.lib}"/>
     <pathelement location="${scalatest.lib}"/>
     <pathelement location="${scala.lib}"/>
-    <pathelement location="${scala.complib}"/>
     <pathelement location="bin"/>
   </path>
 
