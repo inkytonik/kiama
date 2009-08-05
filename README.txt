@@ -24,19 +24,73 @@ inkytonik@gmail.com
 http://plrg.science.mq.edu.au/
 http://www.comp.mq.edu.au/~asloane
 
-1. Obtaining Kiama
+1. Obtaining binary versions of Kiama
 
 Kiama is hosted on Google Code at
 
     http://kiama.googlecode.com
+    
+Binary versions of the library as a Java archive (jar file) can be 
+downloaded from the Google Code site.  Put the jar file on your
+CLASSPATH to make it accessible to other Scala code.
 
-The sources can be checked out of our Mercurial repository using the
-following command:
+To use Kiama you need the following software:
+
+* Scala (http://www.scala-lang.org/)
+  Tested with version 2.7.5
+  
+* Java (http://www.java.com)
+  Tested with version 1.5 on Mac OS X 10.5.6
+  
+The following libraries are also needed in order to use some parts
+of Kiama.  Compatible versions of these libraries are also 
+distributed with the Kiama source distribution in the lib directory.
+
+* To use the read-eval-print loop functionality of Kiama, you need:
+
+  + JLine (http://jline.sourceforge.net/)
+    Tested with version 0.9.94
+
+* To run Kiama tests, you need:
+
+  + JUnit (http://www.junit.org)
+    Tested with version 4.5
+
+  + ScalaCheck (http://code.google.com/p/scalacheck/)
+    Tested with version 1.5
+  
+  + ScalaTest (http://www.artima.com/scalatest/)
+    Tested with version 0.9.5
+
+2. Documentation and mailing lists
+
+The main documentation for Kiama takes the form of wiki pages
+covering library features and examples, available at the Google
+Code site.  The User Manual page is a good place to start:
+
+    http://code.google.com/p/kiama/wiki/UserManual
+
+The API documentation for Kiama releases is available at:
+
+    http://code.google.com/p/kiama/wiki/API
+
+There are also two Google Groups for Kiama:
+
+kiama           General announcements and discussions
+                http://groups.google.com/group/kiama
+                kiama@googlegroups.com
+            
+kiama-commit    Commit messages and Hudson build problems
+                http://groups.google.com/group/kiama-commit
+                kiama-commit@googlegroups.com
+
+3. Obtaining the Kiama source
+
+The sources for Kiama can be checked out of our Mercurial repository
+using the following command:
 
     hg clone http://kiama.googlecode.com/hg/ kiama
-
-2. Contents
-
+    
 The source distribution of Kiama is structured as follows:
 
 src/
@@ -49,32 +103,11 @@ lib/                    Third-party libraries
 Tests for each section of the library are located in the relevant
 source directories.        
         
-3. Requirements
+4. Building Kiama
 
-To build and use Kiama you need the following software:
-
-* Scala (http://www.scala-lang.org/)
-  Tested with version 2.7.5
-  
-* Java (http://www.java.com)
-  Tested with version 1.5 on Mac OS X 10.5.6
-  
-The following libraries are also needed.  Compatible versions are
-distributed with the Kiama source distribution in the lib directory.
-
-* JLine (http://jline.sourceforge.net/)
-  Tested with version 0.9.94
-
-* JUnit (http://www.junit.org)
-  Tested with version 4.5
-
-* ScalaCheck (http://code.google.com/p/scalacheck/)
-  Tested with version 1.5
-  
-* ScalaTest (http://www.artima.com/scalatest/)
-  Tested with version 0.9.5
-
-4. Building
+To build Kiama you need the software detailed under Section 1 above.  
+Compatible versions are distributed with the Kiama sources in the lib
+directory. 
 
 Kiama is most easily built using ant.  If you have the SCALA_HOME environment
 variable set to the location of your Scala distribution, then you should not
@@ -110,19 +143,7 @@ test       run all of the tests using the ScalaTest GUI
 testbatch  run all of the tests in batch mode
 dist       make a distribution jar of the Kiama library and sources in dist directory
 
-5. Mailing lists
-
-There are two Google Groups for Kiama:
-
-kiama           General announcements and discussions
-                http://groups.google.com/group/kiama
-                kiama@googlegroups.com
-            
-kiama-commit    Commit messages and Hudson build problems
-                http://groups.google.com/group/kiama-commit
-                kiama-commit@googlegroups.com
-
-6. Acknowledgements
+5. Acknowledgements
 
 Contributors to the Kiama code have been:
 
@@ -143,7 +164,7 @@ most notably the parsing library.  See http://www.scala-lang.org/node/216.
 Many of the library rewriting strategies are based on the Stratego library.
 See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 
-7. Licensing
+6. Licensing
 
 Kiama is distributed under the GNU Lesser General Public License.  See the files
 COPYING and COPYING.LESSER for details of these licenses.  More information can

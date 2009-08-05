@@ -34,7 +34,7 @@
 
   <property name="name"          value="${ant.project.name}"/>
   <property name="version.nr"    value="0.8"/>
-  <property name="version"       value="${version.nr}dev"/>
+  <property name="version"       value="${version.nr}"/>
   <property name="author"        value="Anthony M. Sloane"/>
 
   <!-- Task definitions -->
@@ -103,7 +103,7 @@
   <target name="doc" depends="prepare">
     <copy todir="bin/doc">
       <fileset dir=".">
-        <include name="README"/>
+        <include name="README.txt"/>
         <include name="COPYING*"/>
       </fileset>
     </copy>
