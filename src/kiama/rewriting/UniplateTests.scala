@@ -21,7 +21,6 @@
 package kiama.rewriting
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest.junit.JUnit3Suite
@@ -32,8 +31,8 @@ import kiama.example.imperative.TestBase
  * Tests based on examples from the paper "Uniform boilerplate and list
  * processing" by Mitchell and Runciman, from Haskell Workshop 2007.
  */
-class UniplateTests extends TestCase with JUnit3Suite with Checkers
-                    with Rewriter with TestBase {
+class UniplateTests extends JUnit3Suite with Checkers with Rewriter
+                    with TestBase {
 
     import kiama.example.imperative.AST._
 

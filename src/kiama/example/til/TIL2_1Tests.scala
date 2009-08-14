@@ -20,11 +20,10 @@
 
 package kiama.example.til
 
-import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite
 import org.scalatest.prop.Checkers
 
-class TIL2_1Tests extends TestCase with JUnit3Suite with Checkers {
+class TIL2_1Tests extends JUnit3Suite with Checkers {
 
     import AST._
     import TIL2_1Main._

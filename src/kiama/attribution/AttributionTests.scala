@@ -21,10 +21,9 @@
 package kiama.attribution
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite
 
-class AttributionTests extends TestCase with JUnit3Suite {
+class AttributionTests extends JUnit3Suite {
 
     abstract class Tree extends Attributable
     case class Pair (left : Tree, right : Tree) extends Tree

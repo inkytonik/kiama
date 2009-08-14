@@ -21,7 +21,6 @@
 package kiama.example.lambda
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest.junit.JUnit3Suite
@@ -30,8 +29,7 @@ import org.scalatest.prop.Checkers
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends TestCase with JUnit3Suite with Checkers
-                  with TestBase {
+class LambdaTests extends JUnit3Suite with Checkers with TestBase {
 
     import AST._
     import scala.util.parsing.input.CharArrayReader

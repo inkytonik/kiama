@@ -23,7 +23,6 @@
 package kiama.example.oberon0.compiler.tests
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest.junit.JUnit3Suite
@@ -34,8 +33,8 @@ import kiama.example.oberon0.compiler.Parser
 /**
  * Oberon0 parsing test cases.
  */
-class ParserTests extends TestCase with JUnit3Suite with Checkers
-                          with CharPackratParsers with Parser {
+class ParserTests extends JUnit3Suite with Checkers with CharPackratParsers
+                  with Parser {
 
     import kiama.example.oberon0.compiler.AST._
     import scala.util.parsing.input.CharArrayReader

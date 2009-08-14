@@ -21,7 +21,6 @@
 package kiama.example.lambda2
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import kiama.rewriting.Rewriter
 import org.scalacheck._
 import org.scalacheck.Prop._
@@ -33,8 +32,7 @@ import AST._
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends TestCase with JUnit3Suite with Checkers
-                  with Parser with Rewriter {
+class LambdaTests extends JUnit3Suite with Checkers with Parser with Rewriter {
 
     import Analysis._
     import Evaluators._

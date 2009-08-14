@@ -20,12 +20,11 @@
 
 package kiama.example.til
 
-import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite
 import org.scalatest.prop.Checkers
 import kiama.parsing.CharPackratParsers
 
-class TIL1_1Tests extends TestCase with JUnit3Suite with Checkers {
+class TIL1_1Tests extends JUnit3Suite with Checkers {
 
     import AST._
     import TIL1_1Main._

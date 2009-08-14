@@ -21,13 +21,12 @@
 package kiama.example.dataflow
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite
 
 /**
  * Tests of extended data flow attribution.
  */
-class DataflowForTests extends TestCase with JUnit3Suite {
+class DataflowForTests extends JUnit3Suite {
 
     import DataflowAST._
     import Dataflow._

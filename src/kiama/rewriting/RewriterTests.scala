@@ -21,7 +21,6 @@
 package kiama.rewriting
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest.junit.JUnit3Suite
@@ -31,8 +30,8 @@ import kiama.example.imperative.TestBase
 /**
  * Rewriting tests.
  */
-class RewriterTests extends TestCase with JUnit3Suite with Checkers
-                    with Rewriter with TestBase {
+class RewriterTests extends JUnit3Suite with Checkers with Rewriter
+                    with TestBase {
 
     import kiama.example.imperative.AST._
 

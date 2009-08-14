@@ -21,7 +21,6 @@
 package kiama.parsing
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest.junit.JUnit3Suite
@@ -31,7 +30,7 @@ import kiama.example.imperative.TestBase
 /**
  * Packrat parsing test cases.
  */
-class PackratParsersTests extends TestCase with JUnit3Suite with Checkers
+class PackratParsersTests extends JUnit3Suite with Checkers
                           with CharPackratParsers with TestBase {
 
     import kiama.example.imperative.AST._

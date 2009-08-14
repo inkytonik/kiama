@@ -29,10 +29,9 @@
 package kiama.example.picojava.tests
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite
 
-class ErrorTests extends TestCase with JUnit3Suite {
+class ErrorTests extends JUnit3Suite {
 
     import java.io.FileReader
     import kiama.example.picojava.ErrorCheck._

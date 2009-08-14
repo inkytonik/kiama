@@ -29,10 +29,9 @@
 package kiama.example.picojava.tests
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite
 
-class DotNameResolutionTests extends TestCase with JUnit3Suite {
+class DotNameResolutionTests extends JUnit3Suite {
 
     import kiama.example.picojava.AbstractSyntax._
     import kiama.example.picojava.NameResolution._

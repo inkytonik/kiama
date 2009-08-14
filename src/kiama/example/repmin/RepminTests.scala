@@ -21,10 +21,9 @@
 package kiama.example.repmin
 
 import junit.framework.Assert._
-import junit.framework.TestCase
 import org.scalatest.junit.JUnit3Suite
 
-class RepminTests extends TestCase with JUnit3Suite {
+class RepminTests extends JUnit3Suite {
 
     /**
      * Basic test that attributes first repmin actually works.
