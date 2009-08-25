@@ -33,7 +33,7 @@
   <!-- Project properties -->
 
   <property name="name"          value="${ant.project.name}"/>
-  <property name="version.nr"    value="0.8"/>
+  <property name="version.nr"    value="0.9dev"/>
   <property name="version"       value="${version.nr}"/>
   <property name="author"        value="Anthony M. Sloane"/>
 
