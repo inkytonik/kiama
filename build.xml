@@ -54,6 +54,7 @@
 
   <target name="clean">
     <delete dir="bin"/>
+    <delete dir="dist"/>
   </target>
 
   <target name="build" depends="prepare">
