@@ -672,6 +672,15 @@ trait PackratParsers extends Parsers {
             error ("growlr: went where I shouldn't go")
         }
 
+        /**
+         * Construct a parser that parses what this parser parses and,
+         * if successful, applies f to the result. The starting position
+         * is attached to the result if it holds position information
+         * and doesn't already have some.
+         */
+        override def ^^[U] (f : T => U) : MemoParser[U] =
+            super.^^ (f)
+
     }
 
     /**
