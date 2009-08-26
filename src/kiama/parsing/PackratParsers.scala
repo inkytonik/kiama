@@ -287,8 +287,8 @@ abstract trait Parsers {
          * Construct a parser that parses what this parser parses and,
          * if it's successful, returns u.
          */
-        def ^^^[U] (u : U) : Parser[U] =
-            ^^ (x => u)
+        def ^^^[U] (u : => U) : Parser[U] =
+            ^^ (_ => u)
 
         /**
          * Construct a parser that runs this parser, and if the parse was
@@ -596,7 +596,7 @@ trait PackratParsers extends Parsers {
                 l.head = Head (p, Set (), Set ())
             var s = LRStack
             while (s.head != l.head) {
-                s.head= l.head
+                s.head = l.head
                 l.head.involvedSet = l.head.involvedSet + s.rule
                 s = s.next
             }
