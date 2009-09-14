@@ -4,10 +4,6 @@ Kiama is a Scala library for language processing.  In the Kiama project we are
 investigating embedding of language processing formalisms such as grammars,
 parsers, rewriters and analysers into general-purpose programming languages.
 
-This document provides a short overview of Kiama and how to build it.  See
-"Licensing" for information on distributing Kiama and including it in your
-programs.
-
 IMPORTANT NOTE: Kiama is a research project, it's early days and the code is
 undergoing heavy development, so many details will change.  Consult with us
 before you rely on it for serious work.  We make no guarantees about the
@@ -24,43 +20,12 @@ inkytonik@gmail.com
 http://plrg.science.mq.edu.au/
 http://www.comp.mq.edu.au/~asloane
 
-1. Obtaining binary versions of Kiama
+1. The Kiama project site at Google code
 
-Kiama is hosted on Google Code at
+Information about how to build, install and use Kiama can be found on
+the Kiama project site:
 
-    http://kiama.googlecode.com
-    
-Binary versions of the library as a Java archive (jar file) can be 
-downloaded from the Google Code site.  Put the jar file on your
-CLASSPATH to make it accessible to other Scala code.
-
-To use Kiama you need the following software:
-
-* Scala (http://www.scala-lang.org/)
-  Tested with version 2.7.5
-  
-* Java (http://www.java.com)
-  Tested with version 1.5 on Mac OS X 10.5.6
-  
-The following libraries are also needed in order to use some parts
-of Kiama.  Compatible versions of these libraries are also 
-distributed with the Kiama source distribution in the lib directory.
-
-* To use the read-eval-print loop functionality of Kiama, you need:
-
-  + JLine (http://jline.sourceforge.net/)
-    Tested with version 0.9.94
-
-* To run Kiama tests, you need:
-
-  + JUnit (http://www.junit.org)
-    Tested with version 4.5
-
-  + ScalaCheck (http://code.google.com/p/scalacheck/)
-    Tested with version 1.5
-  
-  + ScalaTest (http://www.artima.com/scalatest/)
-    Tested with version 0.9.5
+kiama.googlecode.com
 
 2. Documentation and mailing lists
 
@@ -84,66 +49,7 @@ kiama-commit    Commit messages and Hudson build problems
                 http://groups.google.com/group/kiama-commit
                 kiama-commit@googlegroups.com
 
-3. Obtaining the Kiama source
-
-The sources for Kiama can be checked out of our Mercurial repository
-using the following command:
-
-    hg clone http://kiama.googlecode.com/hg/ kiama
-    
-The source distribution of Kiama is structured as follows:
-
-src/
-    attribution         Dynamically-schedule attribute grammar library
-    example             Example language specifications that use Kiama
-    parsing             Packrat parsing library                            
-    rewriting           Strategy-based rewriting library
-lib/                    Third-party libraries
-        
-Tests for each section of the library are located in the relevant
-source directories.        
-        
-4. Building Kiama
-
-To build Kiama you need the software detailed under Section 1 above.  
-Compatible versions are distributed with the Kiama sources in the lib
-directory. 
-
-Kiama is most easily built using ant.  If you have the SCALA_HOME environment
-variable set to the location of your Scala distribution, then you should not
-need to modify build.xml.  This distribution has been tested with
-Scala 2.7.5.
-
-Depending on your setup, you may need to set ANT_OPTS to give the ant process
-more memory.  The following setting seems to work OK with the current version
-of Kiama.
-
-ANT_OPTS="-Xms512m -Xmx512m"
-
-(Note: the syntax of setting this variable will vary depending on your shell
-environment.)
-
-Kiama can also be built using Eclipse.  The source distribution is an
-Eclipse project.  Builds have most recently been tested with Eclipse 3.4
-and version 2.7.5 of the Eclipse Scala plugin.
-
-Alternatively, you may want to examine and modify the build.xml settings
-for scala.home, scala.lib, scalacheck.lib, scalatest.lib and junit.lib as
-appropriate.
-
-Build kiama with "ant build" or just "ant" since "build" is the default.  The
-build should compile the library into the "bin" directory.  To run Kiama-based
-code you will need to put this directory on your CLASSPATH.
-
-Other useful ant targets are:
-
-clean      remove all generated files
-doc        generate the API documentation into bin/doc/api
-test       run all of the tests using the ScalaTest GUI
-testbatch  run all of the tests in batch mode
-dist       make a distribution jar of the Kiama library and sources in dist directory
-
-5. Acknowledgements
+3. Acknowledgements
 
 Contributors to the Kiama code have been:
 
@@ -155,20 +61,17 @@ Kiama is currently concentrating on incorporating existing language processing
 formalisms, so credit goes to the original developers of those formalisms.  See
 the code for details of the sources of ideas that come from elsewhere.
 
-Most of the build process has been adapted from that used by Rickard Nilsson
-in ScalaCheck.
-
 Some parts of this library are based on code in the Scala Library,
 most notably the parsing library.  See http://www.scala-lang.org/node/216.
 
 Many of the library rewriting strategies are based on the Stratego library.
 See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 
-6. Licensing
+4. Licensing
 
 Kiama is distributed under the GNU Lesser General Public License.  See the files
 COPYING and COPYING.LESSER for details of these licenses.  More information can
 be found at http://www.gnu.org/licenses/.
 
-Licenses that apply to libraries that are distributed with the Kiama sources
-or code from which Kiama code was derived are provided in COPYING.OTHER.
+Licenses that apply to code from which Kiama code was derived are
+provided in COPYING.OTHER.

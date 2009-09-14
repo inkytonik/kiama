@@ -3,3 +3,7 @@ syntax: glob
 bin
 dist
 .manager
+
+lib_managed
+project/boot
+project/build/target
