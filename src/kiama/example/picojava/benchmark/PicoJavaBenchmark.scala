@@ -1,7 +1,6 @@
 package kiama.example.picojava.benchmark
 
 import kiama.attribution._
-import kiama.example.picojava.tests._
 import kiama.example.picojava.AbstractSyntax._
 import kiama.example.picojava.ErrorCheck._
 
