@@ -70,14 +70,14 @@ trait REPL {
  */
 trait ParsingREPL[T] extends REPL with CharPackratParsers {
 
-    import scala.util.parsing.input.CharArrayReader
+    import scala.util.parsing.input.CharSequenceReader
 
     /**
      * Process a user input line by parsing it to get a value of type T,
      * then passing it to the type-specific process.
      */
     def processline (line : String) {
-        val in = new CharArrayReader (line.toArray)
+        val in = new CharSequenceReader (line)
         parse (in) match {
             case Success (e, in) if in.atEnd =>
                 process (e)

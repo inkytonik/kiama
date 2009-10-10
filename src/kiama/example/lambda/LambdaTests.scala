@@ -32,14 +32,14 @@ import org.scalatest.prop.Checkers
 class LambdaTests extends JUnit3Suite with Checkers with TestBase {
 
     import AST._
-    import scala.util.parsing.input.CharArrayReader
+    import scala.util.parsing.input.CharSequenceReader
 
     /**
      * Parse and evaluate term then compare to result. Fail if any the parsing
      * or the comparison fail.  This is the JUnit version.
      */
     def assertEval (term : String, result : Exp) {
-        val in = new CharArrayReader (term.toArray)
+        val in = new CharSequenceReader (term)
         parse (in) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
@@ -58,7 +58,7 @@ class LambdaTests extends JUnit3Suite with Checkers with TestBase {
      * or the comparison fail.  This is the Boolean version.
      */
     def evalTo (term : String, result : Exp) : Boolean = {
-        val in = new CharArrayReader (term.toArray)
+        val in = new CharSequenceReader (term)
         parse (in) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {

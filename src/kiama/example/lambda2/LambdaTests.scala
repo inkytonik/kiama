@@ -39,7 +39,7 @@ class LambdaTests extends JUnit3Suite with Checkers with Parser with Rewriter {
     import kiama.attribution.Attribution._
     import kiama.util.Messaging._
     import scala.collection.mutable.HashMap
-    import scala.util.parsing.input.CharArrayReader
+    import scala.util.parsing.input.CharSequenceReader
 
     /**
      * Compute the type of e using the specified attribute and check to make
@@ -64,7 +64,7 @@ class LambdaTests extends JUnit3Suite with Checkers with Parser with Rewriter {
      * message is produced.  We test both of the analysis methods.
      */
     def assertMessage (term : String, line : Int, col : Int, msg : String) {
-        val in = new CharArrayReader (term.toArray)
+        val in = new CharSequenceReader (term)
         parse (in) match {
             case Success (e, in) if in.atEnd =>
                 assertType (e, "tipe", tipe, line, col, msg)
@@ -130,7 +130,7 @@ class LambdaTests extends JUnit3Suite with Checkers with Parser with Rewriter {
      * the result fails.
      */
     def assertEval (mech : String, term : String, result : Exp) {
-        val in = new CharArrayReader (term.toArray)
+        val in = new CharSequenceReader (term)
         parse (in) match {
             case Success (e, in) if in.atEnd =>
                 val r = evaluator.eval (e)

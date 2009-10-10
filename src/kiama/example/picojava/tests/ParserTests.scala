@@ -35,7 +35,6 @@ class ParserTests extends JUnit3Suite {
 
     import kiama.example.picojava.AbstractSyntax._
     import kiama.example.picojava.Parser._
-    import scala.util.parsing.input.CharArrayReader
 
     def testValidIdentifiers {
         assertParseOk ("a", IDENTIFIER, "a")
@@ -139,7 +138,7 @@ class ParserTests extends JUnit3Suite {
     }
 
     /**
-     * Try to parse str as a TCharArrayReader, which is expected to fail.  Assert a
+     * Try to parse str as a T, which is expected to fail.  Assert a
      * failure if it doesn't.
      */
     def assertParseError[T] (str : String, p : Parser[T]) {

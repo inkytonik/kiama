@@ -36,7 +36,6 @@ class ErrorTests extends JUnit3Suite {
     import java.io.FileReader
     import kiama.example.picojava.ErrorCheck._
     import kiama.example.picojava.Parser._
-    import scala.util.parsing.input.CharArrayReader
 
     /**
      * Parse the illegal program and make sure that the errors and their

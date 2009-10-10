@@ -34,13 +34,13 @@ class PackratParsersTests extends JUnit3Suite with Checkers
                           with CharPackratParsers with TestBase {
 
     import kiama.example.imperative.AST._
-    import scala.util.parsing.input.CharArrayReader
+    import scala.util.parsing.input.CharSequenceReader
 
     /**
      * Convenience method for creating a parser input that reads from
      * a given string.
      */
-    def input (str : String) = new CharArrayReader (str.toArray)
+    def input (str : String) = new CharSequenceReader (str)
 
     /**
      * Input containing no characters at all.
