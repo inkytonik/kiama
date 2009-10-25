@@ -1,0 +1,32 @@
+(* Some complex conditions *)
+
+MODULE CondTest1;
+    CONST TWO = 4 DIV 2;
+
+    VAR i, j : INTEGER;
+
+BEGIN
+
+    Read (i);
+
+    WHILE i # 999 DO
+
+        (*  If 0 <= i < 2  *)
+(*      IF ~( (i >= TWO) OR (i < 0) ) THEN *)
+
+        (*  If i < 0 and i > 2  *)
+        IF ~( (i >= 0) & (i <= 2) ) THEN
+
+            WriteLn (1)
+
+        ELSE
+
+            WriteLn (2)
+
+        END;
+
+        Read (i)
+
+    END
+
+END CondTest1.
