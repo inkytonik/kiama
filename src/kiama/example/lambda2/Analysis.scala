@@ -21,8 +21,9 @@
 package kiama.example.lambda2
 
 /**
- * Name and type analysis for typed lambda calculus expressions.  There are
- * two versions here: one (tipe) that constructs an explicit environment separate
+ * Analyses for typed lambda calculus expressions.  A simple free variable
+ * analysis plus name and type analysis.  There are two versions of the 
+ * latter here: one (tipe) that constructs an explicit environment separate
  * from the AST, and one (tipe2) that represents names by references to the
  * nodes of their binding lambda expressions.
  */
@@ -31,6 +32,18 @@ object Analysis {
     import AST._
     import kiama.attribution.Attribution._
     import kiama.util.Messaging._
+
+    /**
+     * The variables that are free in the given expression.
+     */
+    val fv : Exp ==> Set[Idn] =
+        attr {
+            case Num (_)         => Set ()
+            case Var (v)         => Set (v)
+            case Lam (v, _, e)   => fv (e) -- Set (v)
+            case App (e1, e2)    => fv (e1) ++ fv (e2)
+            case Opn (_, e1, e2) => fv (e1) ++ fv (e2)
+        }
 
     /**
      * The environment of an expression is the list of variable names that
