@@ -24,7 +24,7 @@ package kiama.example.lambda2
  * Evaluation of lambda calculus using global beta reduction with meta-level
  * substitution and arithmetic operations.
  */
-trait Reduce extends Evaluator {
+trait Reduce extends RewritingEvaluator {
 
     import AST._
 
@@ -49,24 +49,6 @@ trait Reduce extends Evaluator {
     lazy val arithop =
         rule {
             case Opn (op, Num (l), Num (r)) => Num (op.eval (l, r))
-        }
-
-    /**
-     * Capture-free substitution of free occurrences of x in e1 with e2.
-     */
-    def substitute (x : Idn, e2: Exp, e1 : Exp) : Exp =
-        e1 match {
-            case Var (y) if x == y =>
-                e2
-            case Lam (y, t, e3) =>
-                val z = freshvar ()
-                Lam (z, t, substitute (x, e2, substitute (y, Var (z), e3)))
-            case App (l, r) =>
-                App (substitute (x, e2, l), substitute (x, e2, r))
-            case Opn (op, l, r) =>
-                Opn (op, substitute (x, e2, l), substitute (x, e2, r))
-            case e =>
-                e
         }
 
 }

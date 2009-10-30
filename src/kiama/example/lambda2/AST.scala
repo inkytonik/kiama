@@ -40,57 +40,57 @@ object AST {
     /**
      * Numeric expressions.
      */
-    case class Num (value : Int) extends Exp {
-        override def toString = value.toString
+    case class Num (n : Int) extends Exp {
+        override def toString = n.toString
     }
 
     /**
      * Variable expressions.
      */
-    case class Var (name : Idn) extends Exp {
-        override def toString = name
+    case class Var (i : Idn) extends Exp {
+        override def toString = i
     }
 
     /**
      * Lambda expressions binding name of type tipe within body.
      */
-    case class Lam (name : Idn, tipe : Type, body : Exp) extends Exp {
-        override def toString = "(\\" + name + " : " + tipe + " . " + body + ")"
+    case class Lam (i : Idn, t : Type, e : Exp) extends Exp {
+        override def toString = "(\\" + i + " : " + t + " . " + e + ")"
     }
 
     /**
      * Application of l to r.
      */
-    case class App (l : Exp, r : Exp) extends Exp {
-        override def toString = "(" + l + " " + r + ")"
+    case class App (e1 : Exp, e2 : Exp) extends Exp {
+        override def toString = "(" + e1 + " " + e2 + ")"
     }
 
     /**
      * An application of a primitive binary operation.
      */
-    case class Opn (op : Op, left : Exp, right : Exp) extends Exp {
-        override def toString = "(" + left + " " + op + " " + right + ")"
+    case class Opn (o : Op, e1 : Exp, e2 : Exp) extends Exp {
+        override def toString = "(" + e1 + " " + o + " " + e2 + ")"
     }
 
     /**
      * Bind name of type tipe to the value of exp in body.
      */
-    case class Let (name : Idn, tipe : Type, exp : Exp, body : Exp) extends Exp {
-        override def toString = "(let " + name + " : " + tipe + " = " + exp + " in " + body + ")"
+    case class Let (i : Idn, t : Type, e1 : Exp, e2 : Exp) extends Exp {
+        override def toString = "(let " + i + " : " + t + " = " + e1 + " in " + e2 + ")"
     }
 
     /**
      * Parallel bindings in body.
      */
-    case class Letp (bindings : List[Bind], body : Exp) extends Exp {
-        override def toString = "(letp " + bindings.mkString ("; ") + " in " + body + ")"
+    case class Letp (bs : List[Bind], e : Exp) extends Exp {
+        override def toString = "(letp " + bs.mkString ("; ") + " in " + e + ")"
     }
 
     /**
      * A single binding from a set of parallel bindings (Letp).
      */
-    case class Bind (name : Idn, tipe : Type, exp : Exp) {
-        override def toString = name + " : " + tipe + " = " + exp
+    case class Bind (i : Idn, t : Type, e : Exp) {
+        override def toString = i + " : " + t + " = " + e
     }
 
     /**
@@ -108,8 +108,8 @@ object AST {
     /**
      * Function type from an argument type arg to a result type res.
      */
-    case class FunType (arg : Type, res : Type) extends Type {
-        override def toString = "" + arg + " -> " + res
+    case class FunType (t1 : Type, t2 : Type) extends Type {
+        override def toString = "" + t1 + " -> " + t2
     }
 
     /**

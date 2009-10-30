@@ -20,22 +20,18 @@
 
 package kiama.example.lambda2
 
-/**
- * Interface for an individual rewriting-based lambda2 evaluator.
- */
-trait Evaluator extends kiama.rewriting.Rewriter {
+import AST._
 
+/**
+ * Interface for a lambda2 evaluator.
+ */
+trait Evaluator {
+    
     /**
      * Evaluate the given expression, returning the result of the
      * evaluation if it succeeded, or exp if it failed.
      */
-    def eval (exp : AST.Exp) : AST.Exp =
-        rewrite (evals) (exp)
-
-    /**
-     * The strategy to use to perform the evaluation.
-     */
-    val evals : Strategy
+    def eval (exp : Exp) : Exp
 
     /**
      * Whether this mechanism evaluates inside lambdas.  Used for
@@ -55,5 +51,42 @@ trait Evaluator extends kiama.rewriting.Rewriter {
             "_v" + count
         }
     }
+    
+    /**
+     * Capture-free substitution of free occurrences of x in e1 with e2.
+     */
+    def substitute (x : Idn, e2: Exp, e1 : Exp) : Exp =
+        e1 match {
+            case Var (y) if x == y =>
+                e2
+            case Lam (y, t, e3) =>
+                val z = freshvar ()
+                Lam (z, t, substitute (x, e2, substitute (y, Var (z), e3)))
+            case App (l, r) =>
+                App (substitute (x, e2, l), substitute (x, e2, r))
+            case Opn (op, l, r) =>
+                Opn (op, substitute (x, e2, l), substitute (x, e2, r))
+            case e =>
+                e
+        }
+    
+}
 
+/**
+ * Interface for an individual rewriting-based lambda2 evaluator.
+ */
+trait RewritingEvaluator extends Evaluator with kiama.rewriting.Rewriter {
+    
+    /**
+     * Evaluate the given expression by rewriting it with the evals
+     * strategy.
+     */
+    def eval (exp : Exp) : Exp =
+        rewrite (evals) (exp)
+
+    /**
+     * The strategy to use to perform the evaluation.
+     */
+    val evals : Strategy
+    
 }

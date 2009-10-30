@@ -38,7 +38,8 @@ object Evaluators {
              "eagersubst"     -> new EagerSubstEvaluator,      // eval4, eval5
              "lazysubst"      -> new LazySubstEvaluator,       // eval6
              "pareagersubst"  -> new ParEagerSubstEvaluator,   // eval7
-             "parlazysubst"   -> new ParLazySubstEvaluator)    // eval8
+             "parlazysubst"   -> new ParLazySubstEvaluator,    // eval8
+             "circular"       -> new CircularEvaluator)        // attributes
 
     /**
      * Return the names of the available evaluation mechanisms.
