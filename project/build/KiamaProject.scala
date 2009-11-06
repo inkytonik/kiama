@@ -40,12 +40,15 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def mainSources = descendents (mainSourceRoots, mainSourceFilter)
     override def testSources = descendents (testSourceRoots, testSourceFilter)
     
+    // There is no main class since this is a library
+    override def getMainClass (promptIfMultipleChoices : Boolean) = None
+
     // Set compiler options
     override def compileOptions = super.compileOptions ++ Seq (Unchecked)
 
     // Declare dependencies on other libraries
     override def libraryDependencies =
-        Set ("org.scalacheck" % "scalacheck" % "1.5",
+        Set ("org.scala-tools.testing" % "scalacheck" % "1.6",
              "org.scalatest" % "scalatest" % "1.0",
              "junit" % "junit" % "4.7",
              "jline" % "jline" % "0.9.94")
@@ -62,4 +65,18 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     
     // By default, only log warnings or worse
     log.setLevel (Level.Warn)
+
+    // Publish to Maven style repo at scala-tools.org
+    override def managedStyle = ManagedStyle.Maven
+    val publishTo = "Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/"
+
+    // Get credentials from here
+    Credentials (Path.userHome / ".ivy2" / ".credentials", log)
+
+    // Publish sources and scaladocs too
+    override def packageDocsJar = defaultJarPath ("-scaladoc.jar")
+    override def packageSrcJar= defaultJarPath ("-sources.jar")
+    val sourceArtifact = Artifact (artifactID, "src", "jar", Some ("sources"), Nil, None)
+    val docsArtifact = Artifact (artifactID, "docs", "jar", Some ("scaladoc"), Nil, None)
+    override def packageToPublishActions = super.packageToPublishActions ++ Seq (packageDocs, packageSrc)    
 }
