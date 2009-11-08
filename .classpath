@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib_managed/compile/jline-0.9.94.jar"/>
 	<classpathentry kind="lib" path="lib_managed/compile/junit-4.7.jar"/>
-	<classpathentry kind="lib" path="lib_managed/compile/scalacheck-1.6.jar"/>
+	<classpathentry kind="lib" path="lib_managed/compile/scalacheck-1.5.jar"/>
 	<classpathentry kind="lib" path="lib_managed/compile/scalatest-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
