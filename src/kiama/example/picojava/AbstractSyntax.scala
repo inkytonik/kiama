@@ -33,6 +33,7 @@ package kiama.example.picojava
  */
 object AbstractSyntax {
 
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
 
     // Created by parser

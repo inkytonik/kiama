@@ -24,6 +24,7 @@ package kiama.example.oberon0.compiler
 
 object TypeAnalysis {
 
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
     import AST._
     import NameAnalysis._

@@ -32,6 +32,7 @@ object PredefinedTypes {
 
     import AbstractSyntax._
     import NameResolution._
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
 
     /*

@@ -34,6 +34,7 @@ object NameResolution {
     import NullObjects._
     import PredefinedTypes._
     import TypeAnalysis._
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
 
     /**

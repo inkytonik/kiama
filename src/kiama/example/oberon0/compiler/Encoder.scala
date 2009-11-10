@@ -32,6 +32,7 @@ object Encoder {
     import TypeAnalysis._
     import ConstantAnalysis._
     import ValueAnalysis._
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
     import kiama.example.oberon0.assembler._
     import kiama.example.oberon0.machine.RISCISA._

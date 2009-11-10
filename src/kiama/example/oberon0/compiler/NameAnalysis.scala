@@ -83,6 +83,7 @@ class Environment (parent: Environment) {
  */
 object NameAnalysis {
 
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
     import TypeAnalysis._
 

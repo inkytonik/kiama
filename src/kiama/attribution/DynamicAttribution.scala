@@ -34,7 +34,7 @@ trait DynamicAttribution extends AttributionBase {
     import scala.collection.mutable._
     import scala.collection.jcl.IdentityHashMap
 
-    type ChangeBuffer = ArrayBuffer[(DynamicAttribute[_, _], PartialFunction[_, _])]
+    type ChangeBuffer = ArrayBuffer[(DynamicAttribute[_, _], _ ==> _)]
 
     private var currentRecordedChanges : ChangeBuffer = null
     private val allRecordedChanges = new IdentityHashMap[AnyRef, ChangeBuffer]
@@ -48,14 +48,15 @@ trait DynamicAttribution extends AttributionBase {
     /**
      * Define an attribute of T nodes of type U by the function f.
      */
-    def attr[T <: Attributable,U] (f : PartialFunction[T,U]) : PartialFunction[T,U] =
+    def attr[T <: AnyRef,U] (f : T ==> U) : T ==> U =
         new DynamicAttribute (f)
 
     /**
      * Define an attribute of T nodes of type U by the function f,
      * which takes the current node and its parent as its arguments.
+     * T must be Attributable so that parents can be accessed.
      */
-    def childAttr[T <: Attributable,U] (f : T => PartialFunction[Attributable,U]) : PartialFunction[T,U] = {
+    def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U = {
         val childF = new PartialFunction[T,U] {
             def apply (t : T) = f (t) (t.parent)
             def isDefinedAt (t : T) = f (t) isDefinedAt t.parent
@@ -66,7 +67,7 @@ trait DynamicAttribution extends AttributionBase {
     /**
      * Implicitly converts partial functions to support the + operator.
      **/
-    implicit def internalToDynamicAttribute[T <: Attributable,U] (f : Function[T,U]) : DynamicAttribute[T,U] =
+    implicit def internalToDynamicAttribute[T <: AnyRef,U] (f : Function[T,U]) : DynamicAttribute[T,U] =
         f match {
             case f : DynamicAttribution#DynamicAttribute[_, _] => f.asInstanceOf[DynamicAttribute[T,U]]
             case f => throw new UnsupportedOperationException("Cannot only add partial functions to existing attributes")
@@ -121,7 +122,7 @@ trait DynamicAttribution extends AttributionBase {
             attr -= function
     }
 
-    class DynamicAttribute[T,U] (private var f : PartialFunction[T,U]) extends PartialFunction[T,U] {
+    class DynamicAttribute[T,U] (private var f : T ==> U) extends (T ==> U) {
         private val memo = new java.util.IdentityHashMap[T, Option[U]]
         private var memoVersion = equationsVersion
 
@@ -150,8 +151,8 @@ trait DynamicAttribution extends AttributionBase {
                 case _ : PartialFunction[_,_]         => val g = new ComposedPartialFunction(f); f = g; g
             }
 
-        def += (g : PartialFunction[T,U]) {
-            val uncached : PartialFunction[T,U] = g match {
+        def += (g : T ==> U) {
+            val uncached : T ==> U = g match {
                 case g : DynamicAttribute[_, _] => g.f
                 case _                          => g
             }
@@ -161,7 +162,7 @@ trait DynamicAttribution extends AttributionBase {
             resetMemo
         }
 
-        def -= (g : PartialFunction[T,U]) {
+        def -= (g : T ==> U) {
             composedF -= g
             resetMemo
         }
@@ -171,8 +172,8 @@ trait DynamicAttribution extends AttributionBase {
      * A partial function composed of an ordered, mutable buffer of
      * PartialFunction instances.
      */
-    class ComposedPartialFunction[T,U] (f : PartialFunction[T,U]) extends PartialFunction[T,U] {
-        val functions = new ArrayBuffer[PartialFunction[T,U]]
+    class ComposedPartialFunction[T,U] (f : T ==> U) extends (T ==> U) {
+        val functions = new ArrayBuffer[T ==> U]
 
         def isDefinedAt (i : T) = functions.exists(_ isDefinedAt i)
 
@@ -183,11 +184,11 @@ trait DynamicAttribution extends AttributionBase {
             throw new MatchError("Function not defined for " + t)
         }
 
-        def += (g : PartialFunction[T,U]) {
+        def += (g : T ==> U) {
             functions += g
         }
 
-        def -= (g : PartialFunction[T,U]) {
+        def -= (g : T ==> U) {
             val removed = functions.lastIndexOf(f)
             functions.remove(removed)
         }

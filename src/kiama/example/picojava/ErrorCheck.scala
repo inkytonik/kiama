@@ -34,6 +34,7 @@ object ErrorCheck {
     import NameResolution._
     import PredefinedTypes._
     import TypeAnalysis._
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
     import scala.collection.mutable.{Buffer,ListBuffer}
 

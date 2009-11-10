@@ -25,6 +25,7 @@ package kiama.example.lambda2
  */
 object AST {
 
+    import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
 
     /**

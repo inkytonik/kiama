@@ -22,6 +22,7 @@
 
 package kiama.example.oberon0.compiler
 
+import kiama.attribution.Attributable
 import kiama.attribution.Attribution._
 
 /**

@@ -20,6 +20,7 @@
 
 package kiama.example.repmin
 
+import kiama.attribution.Attributable
 import kiama.attribution.Attribution._
 
 /**
