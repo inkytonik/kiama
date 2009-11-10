@@ -90,11 +90,14 @@ trait Rewriter {
             }
 
         /**
-         * Non-deterministic choice.  Construct a strategy that first applies
-         * either this strategy or the given strategy.  If it succeeds,
-         * succeed with the resulting term. Otherwise, apply q.
+         * Non-deterministic choice.  Normally, construct a strategy that
+         * first applies either this strategy or the given strategy.  If it
+         * succeeds, succeed with the resulting term. Otherwise, apply q.
          * Currently implemented as deterministic choice, but this behaviour
          * should not be relied upon.
+         * When used as the argument to the <code>&lt;</code> conditional
+         * choice combinator, <code>+</code> just serves to hold the two
+         * strategies that are chosen between by the conditional choice.
          */
         def + (q : => Strategy) : PlusStrategy =
             new PlusStrategy (p, q)
@@ -118,7 +121,8 @@ trait Rewriter {
 
     /**
      * Helper class to contain commonality of choice in non-deterministic
-     * choice operator and then-else part of a conditional choice.
+     * choice operator and then-else part of a conditional choice.  Only
+     * returned by the non-deterministic choice operator.
      */
     class PlusStrategy (p : => Strategy, q : => Strategy) extends Strategy {
         val lhs = p

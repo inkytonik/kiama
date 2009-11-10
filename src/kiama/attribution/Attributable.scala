@@ -23,21 +23,25 @@ package kiama.attribution
 import scala.util.parsing.input.Positional
 
 /**
- * Common functionality for all classes that can be attributed.  This trait
- * must be extended by all such classes, which must also implement Product.
- * In practice, this means that they are usually case classes.  They are
- * also equipped with position information.
+ * Common functionality for all classes that are to be attributed.  This
+ * trait must be extended by all classes for which the node properties
+ * such as parent and the attribute shorthand notation <code>-></code>
+ * are desired.
  */
 trait Attributable extends Product with Positional {
 
     /**
-     * A link to the parent attributable node of this node or null if this
-     * node has no parent.
+     * A link to the parent Attributable node of this node or null if this
+     * node has no parent.  Note that this link will skip intervening 
+     * non-Attributable ancestors, such as <code>Option</code> or
+     * <code>Seq</code> nodes.
      */
     var parent : Attributable = null
 
     /**
-     * A short-hand for parent.asInstanceOf[T].
+     * A short-hand for parent.asInstanceOf[T], which is useful in cases
+     * a T-specific operation is applied to the parent, which otherwise
+     * would be Attributable.
      */
     def parent[T] : T = parent.asInstanceOf[T]
 

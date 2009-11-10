@@ -25,7 +25,7 @@ import kiama.parsing.CharPackratParsers
 import org.scalacheck._
 
 /**
- * General support for applications that implement read-eval-print loops.
+ * General support for applications that implement read-eval-print loops (REPLs).
  */
 trait REPL {
 
@@ -65,7 +65,7 @@ trait REPL {
 }
 
 /**
- * A REPL that parses its input lines into a value (probably an abstract syntax
+ * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them.
  */
 trait ParsingREPL[T] extends REPL with CharPackratParsers {

@@ -415,5 +415,3 @@ trait UncachedAttribution extends AttributionBase {
         attr { case t => f (t) (t.parent) }
 
 }
-
-

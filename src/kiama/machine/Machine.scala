@@ -34,7 +34,7 @@ abstract class Machine (val name : String) {
 
     /**
      * An item of abstract state machine state holding a value of type T
-     * and called name.
+     * and called sname.
      */
     case class State[T] (sname : String) {
 
