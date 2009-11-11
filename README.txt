@@ -35,9 +35,15 @@ Code site.  The User Manual page is a good place to start:
 
     http://code.google.com/p/kiama/wiki/UserManual
 
-The API documentation for Kiama releases is available at:
+For summary information about Kiama releases, including dependencies
+on other software and links to API documentation, see the Releases
+wiki page:
 
-    http://code.google.com/p/kiama/wiki/API
+    http://code.google.com/p/kiama/wiki/Releases
+    
+Installation instructions can be found here:
+
+    http://code.google.com/p/kiama/wiki/Installation
 
 There are also two Google Groups for Kiama:
 
