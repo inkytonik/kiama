@@ -31,12 +31,6 @@ package kiama.rewriting
 trait Rewriter {
 
     /**
-     * Debug flag. Set this to true in sub-classes or objects to obtain
-     * tracing information during rewriting.
-     */
-    def debug = false
-
-    /**
      * The type of terms that can be rewritten.  Any type of object value is
      * acceptable but generic traversals will only work on Products (e.g.,
      * instances of case classes).  We use AnyRef here so that non-Product
@@ -150,10 +144,8 @@ trait Rewriter {
         new Strategy {
             def apply (t : Term) = {
                 if (f isDefinedAt t) {
-                    if (debug) println ("strategy success: " + t + " => " + f (t))
                     f (t)
                 } else {
-                    if (debug) println ("strategy failure: " + t)
                     None
                 }
             }
@@ -176,10 +168,8 @@ trait Rewriter {
         new Strategy {
             def apply (t : Term) = {
                 if (f isDefinedAt t) {
-                    if (debug) println ("strategy success: " + t + " => " + f (t))
                     Some (f (t))
                 } else {
-                    if (debug) println ("strategy failure: " + t)
                     None
                 }
             }
@@ -201,8 +191,7 @@ trait Rewriter {
     def queryf[T] (f : Term => T) : Strategy =
         new Strategy {
             def apply (t : Term) = {
-                val v = f (t)
-                if (debug) println ("query success: " + t + " => " + v)
+                f (t)
                 Some (t)
             }
         }
@@ -216,10 +205,7 @@ trait Rewriter {
         new Strategy {
             def apply (t : Term) = {
                 if (f isDefinedAt t) {
-                    val v = f (t)
-                    if (debug) println ("query success: " + t + " => " + v)
-                } else {
-                    if (debug) println ("query failure: " + t)
+                    f (t)
                 }
                 Some (t)
             }
@@ -328,14 +314,10 @@ trait Rewriter {
     def child (i : Int, s : Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (debug)
-                    println ("child (" + i + "): " + t)
                 t match {
                     case p : Product =>
                         val numchildren = p.productArity
                         if ((i < 1) || (i > numchildren)) {
-                            if (debug)
-                                println ("child (" + i + ") failure (no ith child): " + p)
                             None
                         } else {
                             p.productElement (i-1) match {
@@ -347,23 +329,15 @@ trait Rewriter {
                                         case Some (ti) =>
                                             children (i-1) = ti
                                         case None      =>
-                                            if (debug)
-                                                println ("child (" + i + ") failure")
                                             return None
                                     }
                                     val ret = dup (p, children)
-                                    if (debug)
-                                        println ("child (" + i + ") success: " + ret)
                                     Some (ret)
                                 case ci =>
-                                    if (debug)
-                                        println ("child (" + i + ") failure (not term): " + ci)
                                     None
                             }
                         }
                     case a =>
-                        if (debug)
-                            println ("child (" + i + ") failure (any): " + a)
                         None
                 }
 
@@ -381,14 +355,10 @@ trait Rewriter {
     def all (s : => Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (debug)
-                    println ("all: " + t)
                 t match {
                     case p : Product =>
                         val numchildren = p.productArity
                         if (numchildren == 0) {
-                            if (debug)
-                                println ("all success (no children): " + p)
                             Some (t)
                         } else {
                             val children = new Array[AnyRef](numchildren)
@@ -399,8 +369,6 @@ trait Rewriter {
                                             case Some (ti) =>
                                                 children (i) = ti
                                             case None      =>
-                                                if (debug)
-                                                    println ("all failure")
                                                 return None
                                         }
                                     case ci =>
@@ -409,13 +377,9 @@ trait Rewriter {
                                 }
                             }
                             val ret = dup (p, children)
-                            if (debug)
-                                println ("all success: " + ret)
                             Some (ret)
                         }
                     case a =>
-                        if (debug)
-                            println ("all success (any): " + a)
                         Some (a)
                 }
             }
@@ -432,8 +396,6 @@ trait Rewriter {
     def one (s : => Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (debug)
-                    println ("one: " + t)
                 t match {
                     case p : Product =>
                         val numchildren = p.productArity
@@ -449,8 +411,6 @@ trait Rewriter {
                                             for (j <- i + 1 until numchildren)
                                                 children (j) = makechild (p.productElement (j))
                                             val ret = dup (p, children)
-                                            if (debug)
-                                                println ("one success: " + ret)
                                             return Some (ret)
                                         }
                                         case None =>
@@ -460,12 +420,8 @@ trait Rewriter {
                                     // Child is not a term, don't try to transform it
                             }
                         }
-                        if (debug)
-                            println ("one failure")
                         None
                     case _ =>
-                        if (debug)
-                            println ("one failure (any)")
                         None
                 }
             }
@@ -482,14 +438,10 @@ trait Rewriter {
     def some (s : => Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (debug)
-                    println ("some: " + t)
                 t match {
                     case p : Product =>
                         val numchildren = p.productArity
                         if (numchildren == 0) {
-                            if (debug)
-                                println ("some failure (no children): " + p)
                             None
                         } else {
                             val children = new Array[AnyRef](numchildren)
@@ -512,18 +464,12 @@ trait Rewriter {
                             }
                             if (success) {
                                 val ret = dup (p, children)
-                                if (debug)
-                                    println ("some success: " + ret)
                                 Some (ret)
                             } else {
-                                if (debug)
-                                    println ("some failure (no success)")
                                 None
                             }
                         }
                     case _ =>
-                        if (debug)
-                            println ("some failure (any)")
                         None
                 }
             }
@@ -534,16 +480,10 @@ trait Rewriter {
      * if s succeeds, otherwise return the original term.
      */
     def rewrite[T <: Term] (s : => Strategy) (t : T) : T = {
-        if (debug)
-            println ("rewrite: " + t)
         s (t) match {
             case Some (t1) =>
-                if (debug)
-                    println ("rewrite success: " + t + " => " + t1)
                 t1.asInstanceOf[T]
             case None =>
-                if (debug)
-                    println ("rewrite failure: " + t)
                 t
         }
     }
