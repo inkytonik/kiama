@@ -1,0 +1,17 @@
+MODULE GCD;
+
+VAR
+    x : INTEGER;
+    y : INTEGER;
+
+BEGIN
+    Read (x);
+    Read (y);
+    WHILE x # y DO
+        IF x > y
+            THEN x := x - y
+            ELSE y := y - x
+        END
+    END;
+    WriteLn (x)
+END GCD.

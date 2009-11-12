@@ -22,6 +22,9 @@
 
 package kiama.example.oberon0.compiler
 
+/**
+ * Value analysis for Oberon0 expressions.
+ */
 object ValueAnalysis {
 
     import kiama.attribution.Attribution._
@@ -29,8 +32,10 @@ object ValueAnalysis {
     import NameAnalysis._
     import TypeAnalysis._
 
-    // *** Attribute 'intValue':  The integer value of the expression
-    // Don't get this attribute before checking that it is an IntegerType and constant
+    /**
+     * The integer value of an expression that is assumed to be of IntegerType
+     * and constant.
+     */
     val intValue : Exp ==> Int =
         attr {
             case IntegerLiteral (num) => num
@@ -46,8 +51,10 @@ object ValueAnalysis {
             case be : BinaryNumExp => be.op ((be.getLeft)->intValue, (be.getRight)->intValue)
         }
 
-    // *** Attribute 'boolValue':  The boolean value of the expression
-    // Don't get this attribute before checking that it is a BooleanType and constant
+    /**
+     * The Boolean value of an expression that is assumed to be of BooleanType
+     * and constant.
+     */
     val boolValue : Exp ==> Boolean =
         attr {
             case Not (e) => !(e->boolValue)

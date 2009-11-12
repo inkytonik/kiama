@@ -22,17 +22,22 @@
 
 package kiama.example.oberon0.compiler
 
+/**
+ * Oberon0 type analysis.
+ */
 object TypeAnalysis {
 
     import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
+    import kiama.util.Messaging._
     import AST._
     import NameAnalysis._
     import ValueAnalysis._
     import ConstantAnalysis._
 
     /**
-     * Attribute 'objType':  The associated Type object
+     * The Type object associated with a given node.  Will be InvalidType
+     * if the node cannot be typed.
      */
     val objType : Attributable ==> Type =
         attr {
@@ -109,10 +114,10 @@ object TypeAnalysis {
         }
 
     /**
-     * Attribute 'validProcArgs': Verify that number and type of formal params equals
+     * Verify that number and type of formal params equals number and type
+     * of actual params.  Report errors if violations are detected.
      */
-    // number and type of actual params
-    val procArgErrors : ProcedureCall ==> List[String] =
+    val procArgErrors : ProcedureCall ==> Unit =
         attr {
             case ProcedureCall (des, aps) => {
                 des->objType match {
@@ -121,37 +126,32 @@ object TypeAnalysis {
                         if (fps.size == aps.size)
                             checkParams (fps, aps)
                         else
-                            List("Incorrect number of arguments in call to " + des)
+                            message (des, "number of arguments in call should be " + fps.size)
                     }
-                    case _ => Nil
+                    case _ =>
                 }
             }
         }
 
     /**
-     * checkParams: Check individual procedure call parameters
+     * Check individual procedure call parameters for type compatibility.
+     * Report errors if violations are detected.
      */
-    def checkParams (fps : List[Declaration], aps : List[Exp]) : List[String] = {
-        if (fps.isEmpty)
-            Nil
-        else {
-            var errs : List[String] = Nil
+    def checkParams (fps : List[Declaration], aps : List[Exp]) : Unit =
+        if (!fps.isEmpty) {
             val fp = fps.head
             val ap = aps.head
 
             // Check for type mismatch
             if (fp->objType != aps.head->objType)
-                errs = (ap + " is not of type " + (fp->objType)) :: errs
+                message (ap, "expected value of type " + (fp->objType))
 
             // Check for by-ref formal param with non-assignable actual param
-            if (fp.isInstanceOf[RefVarDecl] && !(ap.isInstanceOf[Desig])) {
-                errs = (ap + " must be a variable, record field or array element") :: errs
-            }
+            if (fp.isInstanceOf[RefVarDecl] && !(ap.isInstanceOf[Desig]))
+                message (ap, "by-reference parameter must be variable, record field or array element")
 
-            errs = checkParams (fps.tail, aps.tail) ::: errs
-            errs
+            checkParams (fps.tail, aps.tail)
         }
-    }
 
     /**
      * Attribute 'byteSize':  Memory size associated with types and declarations
@@ -177,7 +177,9 @@ object TypeAnalysis {
             case _ => -1
         }
 
-    // *** Attribute 'level':  Nesting depth of the declaration
+    /**
+     * Nesting depth of a declaration
+     */
     val level : Attributable ==> Int =
         attr {
             case md : ModuleDecl => 0
@@ -186,4 +188,5 @@ object TypeAnalysis {
 
             case x @ _ => (x.parent)->level
         }
+
 }

@@ -216,14 +216,33 @@ object AST {
 
     abstract class Type extends Attributable with PrettyPrintable
 
-    case class NamedType (id : Ident) extends Type
-    case class ArrayType (size : Exp, tp : Type) extends Type
-    case class RecordType (fldlst : List[FieldDecl]) extends Type
-    case class ProcType (fps : List[Declaration]) extends Type
-    case class ModuleType () extends Type
+    case class NamedType (id : Ident) extends Type {
+        override def toString = id.name
+    }
+    case class ArrayType (size : Exp, tp : Type) extends Type {
+        override def toString = "ARRAY"
+    }
+    case class RecordType (fldlst : List[FieldDecl]) extends Type {
+        override def toString = "RECORD"
+    }
+    case class ProcType (fps : List[Declaration]) extends Type {
+        override def toString = "PROCEDURE"
+    }
+    case class ModuleType () extends Type {
+        override def toString = "MODULE"
+    }
 
-    case object IntegerType extends Type
-    case object BooleanType extends Type
-    case object InvalidType extends Type
-    case object StatementType extends Type
+    case object IntegerType extends Type {
+        override def toString = "INTEGER"
+    }
+    case object BooleanType extends Type {
+        override def toString = "BOOLEAN"
+    }
+    case object InvalidType extends Type {
+        override def toString = "unknown type"
+    }
+    case object StatementType extends Type {
+        override def toString = "statement"
+    }
+    
 }

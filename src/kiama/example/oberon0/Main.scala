@@ -20,22 +20,30 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler
+package kiama.example.oberon0
 
-// Object Main
+import compiler.Parser
+
+/**
+ * Main program for the Oberon0 implementation.  Parses and checks
+ * the Oberon0 program named on the command line.  If checking passes,
+ * then encodes the program as RISC assembler and runs the assembler
+ * using a machine simulator.
+ */
 object Main extends Parser
 {
-    import AST._
-    import ErrorCheck._
-    import Encoder._
-    import kiama.example.oberon0.assembler._
-    import kiama.example.oberon0.machine.RISC
+    import compiler.AST._
+    import compiler.ErrorCheck.collectErrors
+    import compiler.Encoder.EncodeModule
+    import assembler.Assembler
+    import machine.RISC
     import java.io.FileReader
     import java.io.FileNotFoundException
+    import kiama.util.Messaging._
 
     def main (args: Array[String])
     {
-        println ("Input : " + args(0))
+        // println ("Input : " + args(0))
 
         var result : ParseResult[ModuleDecl] = null
 
@@ -52,35 +60,35 @@ object Main extends Parser
         result match {
             case Success (mod, in) => {
 
-                val buffer = new StringBuilder
-                mod.pretty(buffer, 0)
-                println ("Successful parse:")
-                println (buffer.toString)
-                println ("Position = " + in.pos)
+                // val buffer = new StringBuilder
+                // mod.pretty(buffer, 0)
+                // println ("Successful parse:")
+                // println (buffer.toString)
+                // println ("Position = " + in.pos)
 
                 // SEMANTIC ANALYSIS
-                val errs : List[String] = mod->collectErrors
+                mod->collectErrors
 
-                if(errs.size == 0) {
-                    println ("\nNo semantic errors")
+                if (messagecount == 0) {
+                    // println ("\nNo semantic errors")
 
                     // Encode
                     EncodeModule (mod)
 
                     // Assemble
                     val instrs = Assembler.getcode
-                    println ("\nInstructions: ")
-                    instrs.foreach (instr => println (instr))
+                    // println ("\nInstructions: ")
+                    // instrs.foreach (instr => println (instr))
 
                     // Run
-                    println ("\nProgram output: ")
+                    // println ("\nProgram output: ")
                     val mymachine = new RISC (instrs)
                     mymachine.init
                     mymachine.steps
                 }
                 else {
-                    println ("\nSemantic errors occurred:")
-                    errs.foreach (err => println (err))
+                    // println ("\nSemantic errors occurred:")
+                    report
                 }
             }
 

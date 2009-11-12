@@ -28,7 +28,9 @@ object ConstantAnalysis {
     import AST._
     import NameAnalysis._
 
-    // *** Attribute 'isConstant':  Whether the expression is constant
+    /**
+     * Is an expression constant or not?
+     */
     val isConstant : Exp ==> Boolean =
         attr {
             case il : IntegerLiteral => true

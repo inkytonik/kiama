@@ -25,7 +25,9 @@ package kiama.example.oberon0.compiler
 import AST._
 import TypeAnalysis._
 
-// class Environment
+/**
+ * An environment to hold name bindings, nested within a parent environment.
+ */
 class Environment (parent: Environment) {
 
     import scala.collection.mutable.HashMap
@@ -36,12 +38,10 @@ class Environment (parent: Environment) {
 
     /**
      * Add new entry to the environment.  Note: if the entry already exists, it is
-     * overwritten by the new entry, but with it's 'multiplyDefined' field set to true
+     * overwritten by the new entry, but with it' 'multiplyDefined' field set to true
      */
     def addToEnv (nm : String, dec : Declaration) {
-
         val alreadyDefined = decls.contains (nm)
-
         decls += (nm -> EnvEntry (dec, alreadyDefined))
     }
 
@@ -58,7 +58,7 @@ class Environment (parent: Environment) {
      */
     def findDecl (nm : String, searchAll : Boolean) : Declaration = {
         if (decls.contains (nm))
-            decls(nm).dec
+            decls (nm).dec
         else if (searchAll && (parent != null))
             parent.findDecl (nm, true)
         else
@@ -70,7 +70,7 @@ class Environment (parent: Environment) {
      */
     def isMultiplyDefined (nm : String) : Boolean = {
         if (decls.contains (nm))
-            decls(nm).multiplyDefined
+            decls (nm).multiplyDefined
         else
             false
     }
@@ -88,8 +88,7 @@ object NameAnalysis {
     import TypeAnalysis._
 
     /**
-     * Attribute 'isMultiplyDefined':  Whether the name has already been declared
-     * in this scope
+     * Is the name already declared in this scope or not?
      */
     val isMultiplyDefined : Declaration ==> Boolean =
         attr {
@@ -97,7 +96,7 @@ object NameAnalysis {
         }
 
     /**
-     * Attribute 'env':  The accessible names and types at a given point in the program
+     * The accessible names and types at a given point in the program.
      */
     val env : Attributable ==> Environment =
         attr {
@@ -108,9 +107,9 @@ object NameAnalysis {
                 // as <ModuleName>.<ProcName>)
                 var globalEnv = new Environment (null)
 //                globalEnv.addToEnv (id.name, md)
-                globalEnv.addToEnv ("Write", BuiltInProcDecl ("Write", List (VarDecl ("exp", IntegerType) ), ProcType (List (VarDecl ("exp", IntegerType) ))))
-                globalEnv.addToEnv ("WriteLn", BuiltInProcDecl ("WriteLn", List (VarDecl ("exp", IntegerType) ), ProcType (List (VarDecl ("exp", IntegerType) ))))
-                globalEnv.addToEnv ("Read", BuiltInProcDecl ("Read", List (RefVarDecl ("var", IntegerType) ), ProcType (List (RefVarDecl ("var", IntegerType) ))))
+                globalEnv.addToEnv ("Write", BuiltInProcDecl ("Write", List (VarDecl ("exp", IntegerType)), ProcType (List (VarDecl ("exp", IntegerType)))))
+                globalEnv.addToEnv ("WriteLn", BuiltInProcDecl ("WriteLn", List (VarDecl ("exp", IntegerType)), ProcType (List (VarDecl ("exp", IntegerType)))))
+                globalEnv.addToEnv ("Read", BuiltInProcDecl ("Read", List (RefVarDecl ("var", IntegerType)), ProcType (List (RefVarDecl ("var", IntegerType)))))
 
                 // Create module environment
                 var env1 = new Environment (globalEnv)
@@ -138,7 +137,7 @@ object NameAnalysis {
         }
 
     /**
-     * Attribute 'decl':  The declaration associated with each applied occurrence of an Ident
+     * The declaration associated with each applied occurrence of an Ident.
      */
     val decl : Ident ==> Declaration =
         attr {

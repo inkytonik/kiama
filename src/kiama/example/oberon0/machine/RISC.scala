@@ -23,6 +23,9 @@ package kiama.example.oberon0.machine
 import RISCISA._
 import kiama.machine.Machine
 
+/**
+ * Abstract state machine simulation of a simple RISC architecture.
+ */
 class RISC (code : Code) extends Machine ("RISC") {
 
     /**
@@ -124,13 +127,13 @@ class RISC (code : Code) extends Machine ("RISC") {
             case DIVI (a, b, im) => R (a) := R (b) / im
             case MOD (a, b, c)   => R (a) := R (b) % (R (c) : Int)
             case MODI (a, b, im) => R (a) := R (b) % im
-            case CMP (b, c)      => Z := R (b).value == R (c).value             // BEN MOD
-                                    N := R (b).value < (R (c).value : Int)      // BEN MOD
-            case CMPI (b, im)    => Z := R (b).value == im		// BEN MOD
-                                    N := R (b).value < im		// BEN MOD
+            case CMP (b, c)      => Z := R (b).value == R (c).value
+                                    N := R (b).value < (R (c).value : Int)
+            case CMPI (b, im)    => Z := R (b).value == im
+                                    N := R (b).value < im
             case CHKI (a, im)    => if ((R (a) < 0) || (R (a) >= im))
                                         R (a) := 0
-            case _ => ()		// BEN MOD
+            case _ => ()
         }
 
     /**
@@ -142,12 +145,12 @@ class RISC (code : Code) extends Machine ("RISC") {
                 case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
                 case LDB (a, b, im) => halt := "LDB not implemented"
                 case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
-                                       R (b) := R (b) - im						 // BEN MOD: '+' to '-'
+                                       R (b) := R (b) - im
                 case STW (a, b, im) => Mem := Mem + (((R (b) + im) / 4, R (a)))
                 case STB (a, b, im) => halt := "STB not implemented"
-                case PSH (a, b, im) => Mem := Mem + ((R (b) / 4, R (a)))  		 // BEN MOD: Remove '- im'
-                                       R (b) := R (b) + im						 // BEN MOD: '-' to '+'
-                case _ => ()		// BEN MOD
+                case PSH (a, b, im) => Mem := Mem + ((R (b) / 4, R (a)))
+                                       R (b) := R (b) + im
+                case _ => ()
             }
         }
         catch {
@@ -168,7 +171,7 @@ class RISC (code : Code) extends Machine ("RISC") {
             case b : BLE if (Z.value || N.value) => PC := PC + b.disp
             case b : BGT if (!Z.value && !N.value) => PC := PC + b.disp
             case b : BR => PC := PC + b.disp
-            case b : BSR => R (31) := PC + 1		// BEN MOD: 14 -> 31, and save PC BEFORE PC update
+            case b : BSR => R (31) := PC + 1
                             PC := PC + b.disp
 
             case RET (c) => PC := R (c)
@@ -182,10 +185,10 @@ class RISC (code : Code) extends Machine ("RISC") {
     def inputoutput (instr : Instr) =
         instr match {
             case RD (a)  => R (a) := readInt
-            case WRD (c) => print (R (c).value)			// BEN MOD
+            case WRD (c) => print (R (c).value)
             case WRH (c) => print (R (c) toHexString)
             case WRL     => println
-            case _ => ()	// BEN MOD
+            case _       =>
         }
 
 }
