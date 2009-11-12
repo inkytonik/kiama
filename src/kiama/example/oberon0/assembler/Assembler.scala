@@ -63,7 +63,7 @@ object Assembler {
     /**
      * Map betwen labels and code positions.
      */
-    private var labelmap = HashMap[Label,Int] ()	// BEN MOD (val -> var)
+    private var labelmap = HashMap[Label,Int] ()
 
     /**
      * Mark the current code emission position with the given label.
