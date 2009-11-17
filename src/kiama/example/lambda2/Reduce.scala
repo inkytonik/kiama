@@ -27,6 +27,7 @@ package kiama.example.lambda2
 trait Reduce extends RewritingEvaluator {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * Evaluate by repeatedly trying to apply beta reduction and arithmetic

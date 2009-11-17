@@ -149,9 +149,10 @@ trait TestBase extends Parser with Generator with Evaluator
  * - Tutorial and Survey, Kristoffer H. Rose, BRICS LS-96-3, October
  * 1996.
  */
-trait Evaluator extends Rewriter {
+trait Evaluator {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * Free variables

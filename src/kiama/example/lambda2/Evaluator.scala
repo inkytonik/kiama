@@ -75,7 +75,9 @@ trait Evaluator {
 /**
  * Interface for an individual rewriting-based lambda2 evaluator.
  */
-trait RewritingEvaluator extends Evaluator with kiama.rewriting.Rewriter {
+trait RewritingEvaluator extends Evaluator {
+    
+    import kiama.rewriting.Rewriter._
     
     /**
      * Evaluate the given expression by rewriting it with the evals

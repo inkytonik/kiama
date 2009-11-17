@@ -20,14 +20,13 @@
 
 package kiama.example.til
 
-import kiama.rewriting.Rewriter
-
 /**
  * Move all declarations to the start of the program.
  */
 trait TIL2_3 extends TIL1_1 with TransformingMain {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     override def transform (ast : Root) : Root = {
         var decls = new scala.collection.mutable.ListBuffer[Decl] ()

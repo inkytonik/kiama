@@ -27,6 +27,7 @@ package kiama.example.lambda2
 trait LazySubst extends EagerSubst {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * Recursively try to lazily evaluate expressions in applied functions,

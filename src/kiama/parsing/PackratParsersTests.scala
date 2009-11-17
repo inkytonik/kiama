@@ -34,6 +34,7 @@ class PackratParsersTests extends JUnit3Suite with Checkers
                           with CharPackratParsers with TestBase {
 
     import kiama.example.imperative.AST._
+    import kiama.example.imperative.PrettyPrinter.pretty
     import scala.util.parsing.input.CharSequenceReader
 
     /**

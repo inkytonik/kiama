@@ -27,6 +27,7 @@ package kiama.example.lambda2
 trait ParLazySubst extends ParEagerSubst {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * Lazily evaluate within the expression then try to reduce the

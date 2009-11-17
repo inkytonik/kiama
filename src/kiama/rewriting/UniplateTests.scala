@@ -25,16 +25,16 @@ import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest.junit.JUnit3Suite
 import org.scalatest.prop.Checkers
-import kiama.example.imperative.TestBase
+import kiama.example.imperative.Generator
 
 /**
  * Tests based on examples from the paper "Uniform boilerplate and list
  * processing" by Mitchell and Runciman, from Haskell Workshop 2007.
  */
-class UniplateTests extends JUnit3Suite with Checkers with Rewriter
-                    with TestBase {
+class UniplateTests extends JUnit3Suite with Checkers with Generator {
 
     import kiama.example.imperative.AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * A simple numeric test expression.
@@ -76,7 +76,7 @@ class UniplateTests extends JUnit3Suite with Checkers with Rewriter
      * Tests that search for divisions by literal zero.
      */
     def testDivsByZero () {
-        object TestDivsByZero extends TestBase {
+        object TestDivsByZero extends Generator {
             override def genDiv (sz : Int) =
                 Gen.frequency ((1, genDivByZero (sz)), (1, super.genDiv (sz)))
             def genDivByZero (sz : Int) =
@@ -118,7 +118,7 @@ class UniplateTests extends JUnit3Suite with Checkers with Rewriter
      * Tests that remove double negations.
      */
     def testDoubleNegSimplification () {
-        object TestDoubleNegSimplification extends TestBase {
+        object TestDoubleNegSimplification extends Generator {
             override def genNeg (sz : Int) =
                 Gen.frequency ((1, genDoubleNeg (sz)), (1, super.genNeg (sz)))
             def genDoubleNeg (sz : Int) =
@@ -190,7 +190,7 @@ class UniplateTests extends JUnit3Suite with Checkers with Rewriter
      * Test optimisation of integer addition.
      */
     def testOptimiseAdd () {
-        object OptimiseAdd extends TestBase {
+        object OptimiseAdd extends Generator {
             override def genAdd (sz : Int) =
                 Gen.frequency ((1, genIntAdd (sz)), (1, super.genAdd (sz)))
             def genIntAdd (sz : Int) =

@@ -27,6 +27,7 @@ package kiama.example.lambda2
 trait InnermostSubst extends ReduceSubst {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * Evaluate expressions starting with the innermost sub-expressions.

@@ -27,6 +27,7 @@ package kiama.example.lambda2
 trait ParEagerSubst extends ReduceSubst {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * Eagerly evaluate within the expression then try to reduce the

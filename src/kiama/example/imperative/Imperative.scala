@@ -229,7 +229,7 @@ object AST {
 /**
  * AST pretty-printing.
  */
-trait PrettyPrinter {
+object PrettyPrinter {
 
     import AST._
 
@@ -383,14 +383,14 @@ trait Generator {
  * Basis for tests using the imperative language.  Includes support for generating
  * random AST instances plus convenient access to the parser and pretty-printer.
  */
-trait TestBase extends Generator with Parser with PrettyPrinter
+trait TestBase extends Generator with Parser
 
 /**
  * A read-eval-print loop for parsing imperative programs and printing thei
  * abstract synax trees.
  */
 object Imperative extends ParsingREPL[AST.Stmt] with Parser {
-
+    
     override def setup { println ("Enter imperative language programs for parsing.") }
     override def prompt = "imperative> "
 
@@ -403,13 +403,13 @@ object Imperative extends ParsingREPL[AST.Stmt] with Parser {
 /**
  * A read-eval-print loop for generating random imperative statements.
  */
-object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator with PrettyPrinter {
+object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
 
     def generator = arbStmt
 
     override def process (s : AST.Stmt) {
         println (s)
-        println (pretty (s))
+        println (PrettyPrinter.pretty (s))
     }
 
 }

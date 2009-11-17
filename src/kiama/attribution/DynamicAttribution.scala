@@ -20,8 +20,6 @@
 
 package kiama.attribution
 
-object DynamicAttribution extends DynamicAttribution
-
 /**
  * Support for dynamic attribution of syntax trees.
  * Dynamic attributes definitions can be extended at runtime.
@@ -29,7 +27,7 @@ object DynamicAttribution extends DynamicAttribution
  * @author Lennart Kats <lennart add lclnet.nl>
  * @author Tony Sloane <Anthony.Sloane add mq.edu.au>
  */
-trait DynamicAttribution extends AttributionBase {
+object DynamicAttribution extends AttributionBase {
 
     import scala.collection.mutable._
     import scala.collection.jcl.IdentityHashMap
@@ -69,7 +67,7 @@ trait DynamicAttribution extends AttributionBase {
      **/
     implicit def internalToDynamicAttribute[T <: AnyRef,U] (f : Function[T,U]) : DynamicAttribute[T,U] =
         f match {
-            case f : DynamicAttribution#DynamicAttribute[_, _] => f.asInstanceOf[DynamicAttribute[T,U]]
+            case f : DynamicAttribute[_, _] => f.asInstanceOf[DynamicAttribute[T,U]]
             case f => throw new UnsupportedOperationException("Cannot only add partial functions to existing attributes")
         }
 

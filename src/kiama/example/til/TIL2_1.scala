@@ -20,8 +20,6 @@
 
 package kiama.example.til
 
-import kiama.rewriting.Rewriter
-
 /**
  * Rewrite TILs for loops that automatically declare the control variable
  * adding an explicit declaration of the variable.
@@ -29,6 +27,7 @@ import kiama.rewriting.Rewriter
 trait TIL2_1 extends TIL1_1 with TransformingMain {
 
     import AST._
+    import kiama.rewriting.Rewriter._
 
     override def transform (ast : Root) : Root =
         rewrite (declareforvars) (ast)

@@ -28,7 +28,7 @@ package kiama.rewriting
  * based on the Stratego library, but also on combinators found in the Scrap Your
  * Boilerplate and Uniplate libraries for Haskell.
  */
-trait Rewriter {
+object Rewriter {
 
     /**
      * The type of terms that can be rewritten.  Any type of object value is

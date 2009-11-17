@@ -99,7 +99,9 @@ trait ParsingMain extends Main with CharPackratParsers {
 /**
  * Standard main program for TIL chairmarks that parse and transform.
  */
-trait TransformingMain extends ParsingMain with Rewriter {
+trait TransformingMain extends ParsingMain {
+    
+    import kiama.rewriting.Rewriter._
 
     /**
      * The root type of the AST being processed. Needs to be sub-type

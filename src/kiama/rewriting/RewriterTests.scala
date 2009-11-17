@@ -25,15 +25,15 @@ import org.scalacheck._
 import org.scalacheck.Prop._
 import org.scalatest.junit.JUnit3Suite
 import org.scalatest.prop.Checkers
-import kiama.example.imperative.TestBase
+import kiama.example.imperative.Generator
 
 /**
  * Rewriting tests.
  */
-class RewriterTests extends JUnit3Suite with Checkers with Rewriter
-                    with TestBase {
+class RewriterTests extends JUnit3Suite with Checkers with Generator {
 
     import kiama.example.imperative.AST._
+    import kiama.rewriting.Rewriter._
 
     /**
      * Test arithmetic evaluation with variable references and division by

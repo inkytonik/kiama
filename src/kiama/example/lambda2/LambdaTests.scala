@@ -32,11 +32,12 @@ import AST._
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends JUnit3Suite with Checkers with Parser with Rewriter {
+class LambdaTests extends JUnit3Suite with Checkers with Parser {
 
     import Analysis._
     import Evaluators._
     import kiama.attribution.Attribution._
+    import kiama.rewriting.Rewriter._
     import kiama.util.Messaging._
     import scala.collection.mutable.HashMap
     import scala.util.parsing.input.CharSequenceReader
