@@ -28,102 +28,12 @@
 
 package kiama.example.picojava.tests
 
-import junit.framework.Assert._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 
-class ParserTests extends JUnit3Suite {
+class ParserTests extends FunSuite {
 
     import kiama.example.picojava.AbstractSyntax._
     import kiama.example.picojava.Parser._
-
-    def testValidIdentifiers {
-        assertParseOk ("a", IDENTIFIER, "a")
-        assertParseOk ("ab", IDENTIFIER, "ab")
-        assertParseOk ("a1", IDENTIFIER, "a1")
-        assertParseOk ("a1b", IDENTIFIER, "a1b")
-        assertParseOk ("a1b1", IDENTIFIER, "a1b1")
-    }
-
-    def testValidComments {
-        assertParseOk ("// !@#$%^&*abc\n", comment,
-            List (' ', '!', '@', '#', '$', '%', '^', '&', '*', 'a', 'b', 'c'));
-    }
-
-    def testInvalidTokens {
-        assertParseError ("_a", IDENTIFIER);
-        assertParseError ("1", IDENTIFIER);
-        assertParseError ("1a", IDENTIFIER);
-        assertParseError ("/* abc */", comment);
-    }
-
-    def testSimpleBlock {
-        assertParseOk ("{}", program, Program (Block (List ())))
-    }
-
-    def testSimpleSemi {
-        assertParseError (";", program)
-    }
-
-    // Class declarations
-    def testClassDecl {
-        assertParseOk ("{ class A { } }", program,
-            Program (Block (List (ClassDecl ("A", None, Block (List ()))))))
-    }
-
-    def testClassDeclWithExtends {
-        assertParseOk ("{ class A extends B { } }", program,
-            Program (Block (List (ClassDecl ("A", Some (Use ("B")), Block (List ()))))))
-    }
-
-    def testClassDeclWithQualifiedExtends { // TODO: should this be valid?
-        assertParseError ("{ class A extends A.B { } }", program)
-    }
-
-    def testNestedClassDecl {
-        assertParseOk ("{ class A { class B { } } }", program,
-            Program (Block (List (ClassDecl ("A", None, Block (List (ClassDecl ("B", None, Block (List ())))))))))
-    }
-
-    // Variable declarations
-    def testVarDecl {
-        assertParseOk ("{ A a; }", program,
-            Program (Block (List (VarDecl ("a", Use ("A"))))))
-    }
-
-    def testVarDeclQualifiedType {
-        assertParseOk ("{ A.B.C a; }", program,
-            Program (Block (List (VarDecl ("a", Dot (Dot (Use ("A"), Use ("B")), Use ("C")))))))
-    }
-
-    def testVarDeclComplexName {
-        assertParseError ("{ A.B.C a.b; }", program)
-    }
-
-    // Assignment
-    def testAssignStmt {
-        assertParseOk ("{ a = b; }", program,
-            Program (Block (List (AssignStmt (Use ("a"), Use ("b"))))))
-    }
-
-    def testAssignStmtQualifiedLHS {
-        assertParseOk ("{ a.b.c = b; }", program,
-            Program (Block (List (AssignStmt (Dot (Dot (Use ("a"), Use ("b")), Use ("c")), Use ("b"))))))
-    }
-
-    def testAssignStmtQualifiedRHS {
-        assertParseOk ("{ a = b.c.d; }", program,
-            Program (Block (List (AssignStmt (Use ("a"), Dot (Dot (Use ("b"), Use ("c")), Use ("d")))))))
-    }
-
-    // While statement
-    def testWhileStmt {
-        assertParseOk ("{ while ( a ) a = b; }", program,
-            Program (Block (List (WhileStmt (Use ("a"), AssignStmt (Use ("a"), Use ("b")))))))
-    }
-
-    def testWhileStmtBlock { // TODO: should this be valid?
-        assertParseError ("{ while ( a ) { a = b; } }", program)
-    }
 
     /**
      * Try to parse str as a T, which is expected to work.  Assert a
@@ -146,6 +56,92 @@ class ParserTests extends JUnit3Suite {
             case Success (_, _)     => fail ("expected to find parse error in " + str)
             case f @ Failure (_, _) => // do nothing
         }
+    }
+
+    test ("parse identifiers") {
+        assertParseOk ("a", IDENTIFIER, "a")
+        assertParseOk ("ab", IDENTIFIER, "ab")
+        assertParseOk ("a1", IDENTIFIER, "a1")
+        assertParseOk ("a1b", IDENTIFIER, "a1b")
+        assertParseOk ("a1b1", IDENTIFIER, "a1b1")
+    }
+
+    test ("parse comments") {
+        assertParseOk ("// !@#$%^&*abc\n", comment,
+            List (' ', '!', '@', '#', '$', '%', '^', '&', '*', 'a', 'b', 'c'));
+    }
+
+    test ("generate errors for invalid tokens") {
+        assertParseError ("_a", IDENTIFIER);
+        assertParseError ("1", IDENTIFIER);
+        assertParseError ("1a", IDENTIFIER);
+        assertParseError ("/* abc */", comment);
+    }
+
+    test ("parse an empty block") {
+        assertParseOk ("{}", program, Program (Block (List ())))
+    }
+
+    test ("generate a parse error for an empty program") {
+         assertParseError ("", program)
+         assertParseError (";", program)
+    }
+
+    test ("parse an empty class declaration") {
+        assertParseOk ("{ class A { } }", program,
+            Program (Block (List (ClassDecl ("A", None, Block (List ()))))))
+    }
+
+    test ("parse an empty class declaration with an extends clause") {
+        assertParseOk ("{ class A extends B { } }", program,
+            Program (Block (List (ClassDecl ("A", Some (Use ("B")), Block (List ()))))))
+    }
+
+    test ("generate a parse error for a class declaration with a qualified extends clause") {
+        assertParseError ("{ class A extends A.B { } }", program)
+    }
+
+    test ("parse a nested class") {
+        assertParseOk ("{ class A { class B { } } }", program,
+            Program (Block (List (ClassDecl ("A", None, Block (List (ClassDecl ("B", None, Block (List ())))))))))
+    }
+
+    test ("parse a variable declaration with a simple type") {
+        assertParseOk ("{ A a; }", program,
+            Program (Block (List (VarDecl ("a", Use ("A"))))))
+    }
+
+    test ("parse a variable declaration with a qualified type") {
+        assertParseOk ("{ A.B.C a; }", program,
+            Program (Block (List (VarDecl ("a", Dot (Dot (Use ("A"), Use ("B")), Use ("C")))))))
+    }
+
+    test ("generate an error for a qualified variable declaration") {
+        assertParseError ("{ A.B.C a.b; }", program)
+    }
+
+    test ("parse a simple assignment statement") {
+        assertParseOk ("{ a = b; }", program,
+            Program (Block (List (AssignStmt (Use ("a"), Use ("b"))))))
+    }
+
+    test ("parse an assignment statement with a qualified left-hand side") {
+        assertParseOk ("{ a.b.c = b; }", program,
+            Program (Block (List (AssignStmt (Dot (Dot (Use ("a"), Use ("b")), Use ("c")), Use ("b"))))))
+    }
+
+    test ("parse an assignment statement with a qualified right-hand side") {
+        assertParseOk ("{ a = b.c.d; }", program,
+            Program (Block (List (AssignStmt (Use ("a"), Dot (Dot (Use ("b"), Use ("c")), Use ("d")))))))
+    }
+
+    test ("parse a while statement") {
+        assertParseOk ("{ while ( a ) a = b; }", program,
+            Program (Block (List (WhileStmt (Use ("a"), AssignStmt (Use ("a"), Use ("b")))))))
+    }
+
+    test ("generate an error for a while statement with a block body") {
+        assertParseError ("{ while ( a ) { a = b; } }", program)
     }
 
 }

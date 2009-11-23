@@ -22,10 +22,8 @@
 
 package kiama.example.oberon0.compiler.tests
 
-import junit.framework.Assert._
-import org.scalacheck._
 import org.scalacheck.Prop._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 import kiama.parsing.CharPackratParsers
 import kiama.example.oberon0.compiler.Parser
@@ -33,7 +31,7 @@ import kiama.example.oberon0.compiler.Parser
 /**
  * Oberon0 parsing test cases.
  */
-class ParserTests extends JUnit3Suite with Checkers with CharPackratParsers
+class ParserTests extends FunSuite with Checkers with CharPackratParsers
                   with Parser {
 
     import kiama.example.oberon0.compiler.AST._
@@ -57,7 +55,7 @@ class ParserTests extends JUnit3Suite with Checkers with CharPackratParsers
 
     /**
      * Try to parse a string and expect a given result.  Also check that
-     * there is no more input left.  Return a JUnit test case result.
+     * there is no more input left.
      */
     def expect[T] (parser : Parser[T], str : String, result : T) {
         parser (input (str)) match {
@@ -69,24 +67,18 @@ class ParserTests extends JUnit3Suite with Checkers with CharPackratParsers
         }
     }
 
-    /**
-     * Test parsing of identifiers.
-     */
-    def testIdentifiers () {
+    test ("parse identifiers") {
         expect (ident, "a", Ident ("a"))
         expect (ident, "total", Ident ("total"))
         expect (ident, "var786", Ident ("var786"))
     }
 
-    def testIntegerLiteral () {
+    test ("parse integer literals") {
         expect (number, "5", IntegerLiteral (5))
-        assertTrue (isFail (number (input ("x"))))
+        assert (isFail (number (input ("x"))))
     }
 
-    /**
-     * Test parsing of expressions.
-     */
-    def testParseExpressions () {
+    test ("parse expressions") {
         expect (expression, "1", IntegerLiteral (1))
         expect (expression, "1+2", Plus (IntegerLiteral (1), IntegerLiteral (2)))
         expect (expression, "1+2+3", Plus (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
@@ -94,35 +86,23 @@ class ParserTests extends JUnit3Suite with Checkers with CharPackratParsers
         expect (expression, "(1+2)*3", Mult (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
     }
 
-    /**
-     * Test whether keywords are appropriately rejected as identifiers.
-     */
-    def testKeywords () {
-        assertTrue (isFail (assignment (input ("WHILE := 3"))))
+    test ("keywords are rejected as identifiers") {
+        assert (isFail (assignment (input ("WHILE := 3"))))
     }
 
-    /**
-     * Test parsing of assignment statements.
-     */
-    def testParseAssignStmts () {
+    test ("parse assignment statements") {
         expect (assignment, "a := 5", Assignment (Ident ("a"), IntegerLiteral (5)))
         expect (assignment, "a := b", Assignment (Ident ("a"), Ident ("b")))
     }
 
-    /**
-     * Test parsing of statement sequences.
-     */
-    def testParseSequences() {
+    test ("parse statement sequences") {
         expect(statementSequence, "", Nil)
         expect(statementSequence, "v := 1; v := 2",
             List (Assignment (Ident ("v"), IntegerLiteral (1)),
                   Assignment (Ident ("v"), IntegerLiteral (2))))
     }
 
-    /**
-     * Test parsing of while statements.
-     */
-    def testParseWhilestmts() {
+    test ("parse while statements") {
         expect (whileStatement, "WHILE x DO x:= 1 END",
                 WhileStatement (Ident ("x"),
                     List (Assignment (Ident ("x"), IntegerLiteral (1)))))

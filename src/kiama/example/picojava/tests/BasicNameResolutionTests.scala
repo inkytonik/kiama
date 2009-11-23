@@ -28,10 +28,9 @@
 
 package kiama.example.picojava.tests
 
-import junit.framework.Assert._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 
-class BasicNameResolutionTests extends JUnit3Suite {
+class BasicNameResolutionTests extends FunSuite {
 
     import kiama.example.picojava.AbstractSyntax._
     import kiama.example.picojava.NameResolution._
@@ -60,25 +59,28 @@ class BasicNameResolutionTests extends JUnit3Suite {
                             AssignStmt (xInA, zInA),
                             AssignStmt (yInA, Use ("z"))))))))
 
-    def testBindingInSameBlock {
-        assertSame (declRx, xInR->decl)
+    test ("bindings at the same nesting level are resolved") {
+        expect (declRx) (xInR->decl)
     }
 
-    def testDeclarationOrderIrrelevant {
-        assertSame (declRz, zInR->decl)
+    test ("bindings at an outer nesting level are resolved") {
+        expect (declRx) (xInA->decl)
     }
 
-    def testMissingDecl {
-        assertTrue (isUnknown (yInR->decl))
-        assertTrue (isUnknown (yInA->decl))
+    test ("names can be declared after use") {
+        expect (declRz) (zInR->decl)
     }
 
-    def testBindingInOuterBlock {
-        assertSame (declRx, xInA->decl)
+    test ("a missing declaration for a top-level use is detected") {
+        assert (isUnknown (yInR->decl))
+    }
+    
+    test ("a missing declaration for a nested use is detected") {
+        assert (isUnknown (yInA->decl))
     }
 
-    def testShadowingDeclaration {
-        assertSame (declAz, zInA->decl)
+    test ("a local shadowing binding is resolved") {
+        expect (declAz) (zInA->decl)
     }
 
 }

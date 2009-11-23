@@ -28,10 +28,9 @@
 
 package kiama.example.picojava.tests
 
-import junit.framework.Assert._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 
-class DotNameResolutionTests extends JUnit3Suite {
+class DotNameResolutionTests extends FunSuite {
 
     import kiama.example.picojava.AbstractSyntax._
     import kiama.example.picojava.NameResolution._
@@ -59,20 +58,20 @@ class DotNameResolutionTests extends JUnit3Suite {
                             declAA,
                             declBB))))))
 
-    def testSimpleDot {
-        assertSame (declAAx, axInA->decl)
+    test ("class members are resolved") {
+        expect (declAAx) (axInA->decl)
     }
 
-    def testClassTypeRef {
-        assertSame (declBB, BBinBB->decl)
+    test ("nested classes are resolved") {
+        expect (declBB) (BBinBB->decl)
     }
 
-    def testInheritedDot {
-        assertSame (declAAx, bxInBB->decl)
+    test ("nested names hide outer ones") {
+        expect (declAAx) (bxInBB->decl)
     }
 
-    def testSurroundingContextIsNotVisible {
-        assertTrue (isUnknown (byInBB->decl))
+    test ("non-members in scope are not resolved as members") {
+        assert (isUnknown (byInBB->decl))
     }
 
 }

@@ -23,15 +23,15 @@ package kiama.example.til
 import java.io.Reader
 import kiama.parsing.CharPackratParsers
 import kiama.rewriting.Rewriter
+import org.scalatest.Assertions
 
 /**
  * Standard main program for TIL chairmarks.  Also includes a simple
  * testing framework.
  */
-trait Main {
+trait Main extends Assertions {
 
     import java.io.{CharArrayReader,FileNotFoundException,FileReader}
-    import junit.framework.Assert._
 
     /**
      * Accept file name arguments and process them one-by-one by
@@ -58,13 +58,11 @@ trait Main {
     def process (reader : Reader) : Any
 
     /**
-     * Try to process a string and expect a given result.  Return a
-     * JUnit test case result.
+     * Try to process a string and expect a given result.
      */
-    def test[T] (str : String, result : T) {
+    def runtest[T] (str : String, result : T) {
         val r = process (new CharArrayReader (str.toArray))
-        if (r != result)
-            fail ("got : " + r.toString + ", expected : " + result)
+        expect (result) (r)
     }
 
 }

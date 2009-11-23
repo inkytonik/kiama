@@ -28,10 +28,9 @@
 
 package kiama.example.picojava.tests
 
-import junit.framework.Assert._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 
-class InheritanceNameResolutionTests extends JUnit3Suite {
+class InheritanceNameResolutionTests extends FunSuite {
 
     import kiama.example.picojava.AbstractSyntax._
     import kiama.example.picojava.NameResolution._
@@ -79,40 +78,40 @@ class InheritanceNameResolutionTests extends JUnit3Suite {
                                       AssignStmt (aInBB, Use ("d")),
                                       AssignStmt (eInBB, fInBB))))))))))
 
-      def testBindingInOuterBlock {
-          assertSame (declAa, aInAA->decl)
-      }
+    test ("members are resolved in nested classes") {
+        expect (declAa) (aInAA->decl)
+    }
 
-      def testBlockStructureShadowing {
-          assertSame (declAAb, bInAA->decl)
-      }
+    test ("nested members shadow outer members") {
+        expect (declAAb) (bInAA->decl)
+    }
 
-      def testSuperclassBinding {
-          assertSame (declA, AinB->decl)
-      }
+    test ("class names are resolved in extends clauses") {
+        expect (declA) (AinB->decl)
+    }
 
-      def testInheritance {
-          assertSame (declAa, aInB->decl)
-      }
+    test ("inherited members are resolved") {
+        expect (declAa) (aInB->decl)
+    }
 
-      def testInheritanceShadowing {
-          assertSame (declBc, cInB->decl)
-      }
+    test ("local members hide inherited ones") {
+        expect (declBc) (cInB->decl)
+    }
 
-      def testSuperclassBindingOfInnerClass {
-          assertSame (declAA, AAinBB->decl)
-      }
+    test ("inherited inner classes are resolved") {
+        expect (declAA) (AAinBB->decl)
+    }
+    
+    test ("inner references to members of outer class are resolved") {
+        expect (declBf) (fInBB->decl)
+    }
 
-      def testInheritanceInOuterClass {
-          assertSame (declAa, aInBB->decl);
-      }
+    test ("inner references to inherited members of outer class are resolved") {
+        expect (declAa) (aInBB->decl)
+    }
 
-      def testSuperclassShadowsOuterBlock {
-          assertSame (declAAe, eInBB->decl);
-      }
-
-      def testSuperclassDoesNotShadowOuterBlock {
-          assertSame (declBf, fInBB->decl)
-      }
+    test ("inherited members shadow outer occurrences of the same name") {
+        expect (declAAe) (eInBB->decl)
+    }
 
 }

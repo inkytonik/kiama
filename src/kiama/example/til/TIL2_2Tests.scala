@@ -20,18 +20,14 @@
 
 package kiama.example.til
 
-import org.scalatest.junit.JUnit3Suite
-import org.scalatest.prop.Checkers
+import org.scalatest.FunSuite
 
-class TIL2_2Tests extends JUnit3Suite with Checkers {
+class TIL2_2Tests extends FunSuite {
 
     import AST._
     import TIL2_2Main._
 
-    /**
-     * Simple test of transforming a singleton statement.
-     */
-    def testForToWhileSingle {
+    test ("transform a single for loop") {
         val input = "for x := 1 to n do write x; end"
         val x = Id ("x")
         val upperx = Id ("Upperx")
@@ -44,13 +40,10 @@ class TIL2_2Tests extends JUnit3Suite with Checkers {
                 While (Sub (Var (x), Var (upperx)), List (
                     Write (Var (x)),
                     Assign (x, Add (Var (x), Num (1)))))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
-    /**
-     * Simple test of transforming nested statements.
-     */
-    def testForToWhileNested {
+    test ("transform nested for loops") {
         val input = "for i := 1 to 9 do for j := 1 to 10 do write i*j; end end"
         val i = Id ("i")
         val upperi = Id ("Upperi")
@@ -71,7 +64,7 @@ class TIL2_2Tests extends JUnit3Suite with Checkers {
                         Write (Mul (Var (i), Var (j))),
                         Assign (j, Add (Var (j), Num (1))))),
                     Assign (i, Add (Var (i), Num (1)))))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
 }

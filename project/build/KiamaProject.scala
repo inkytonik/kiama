@@ -50,7 +50,6 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def libraryDependencies =
         Set ("org.scala-tools.testing" % "scalacheck" % "1.5",
              "org.scalatest" % "scalatest" % "1.0",
-             "junit" % "junit" % "4.7",
              "jline" % "jline" % "0.9.94")
 
     // Remove LinkSource from doc options since it doesn't appear to work

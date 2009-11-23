@@ -20,11 +20,10 @@
 
 package kiama.example.lambda2
 
-import junit.framework.Assert._
 import kiama.rewriting.Rewriter
 import org.scalacheck._
 import org.scalacheck.Prop._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 
 import AST._
@@ -32,7 +31,7 @@ import AST._
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends JUnit3Suite with Checkers with Parser {
+class LambdaTests extends FunSuite with Checkers with Parser {
 
     import Analysis._
     import Evaluators._
@@ -77,17 +76,30 @@ class LambdaTests extends JUnit3Suite with Checkers with Parser {
         }
     }
 
-    /**
-     * Test analysis of names in expressions.
-     */
-    def testNameAnalysis () {
+    test ("an unknown variable is reported") {
         assertMessage ("""\x : Int . x + y""", 1, 16, "'y' unknown")
+    }
+
+    test ("an Int -> Int cannot be used as an Int") {
         assertMessage ("""(\x : Int -> Int . x + 1) (\y : Int . y)""", 1, 20,
                        "expected Int, found Int -> Int")
-        assertMessage ("""(\x : Int -> Int . x 4) 3""", 1, 25, "expected Int -> Int, found Int")
+    }
+    
+    test ("an Int cannot be passed to an Int -> Int") {
+        assertMessage ("""(\x : Int -> Int . x 4) 3""", 1, 25,
+                       "expected Int -> Int, found Int")
+    }
+    
+    test ("an Int -> Int cannot be passed to an Int") {
         assertMessage ("""(\x : Int . x + x) (\y : Int . y + 1)""", 1, 21,
                        "expected Int, found Int -> Int")
+    }
+    
+    test ("an Int cannot be directly applied as a function") {
         assertMessage ("""1 3""", 1, 1, "application of non-function")
+    }
+    
+    test ("an Int cannot be applied as a function via a parameter") {
         assertMessage ("""(\x : Int . x 5) 7""", 1, 13, "application of non-function")
     }
 
@@ -116,13 +128,11 @@ class LambdaTests extends JUnit3Suite with Checkers with Parser {
 
     /**
      * Assert true if the two expressions are the same modulo variable
-     * renaming, otherwise assert an equality failure.  Make sure to
-     * make a failure assertion using the mechanism name on the original
-     * expressions so that it makes sense to the user.
+     * renaming, otherwise assert a failure.
      */
     def assertSame (mech : String, e1 : Exp, e2 : Exp) =
         if (canon (e1) != canon (e2))
-            assertEquals (mech, e1, e2)
+            fail (mech + ": " + e1 + " and " + e2 + " are not equal")
 
     /**
      * Parse and evaluate term using the specified mechanism
@@ -169,66 +179,70 @@ class LambdaTests extends JUnit3Suite with Checkers with Parser {
         }
     }
 
-    /**
-     * Test expressions with no sub-structure.
-     */
-    def testLeaves () {
+    test ("a number evaluates to itself") {
         assertEvalAll ("4", Num (4))
         assertEvalAll ("25", Num (25))
         assertEvalAll ("9876", Num (9876))
+    }
+
+    test ("a variable evaluates to itself") {
         assertEvalAll ("v", Var ("v"))
         assertEvalAll ("var", Var ("var"))
         assertEvalAll ("v45", Var ("v45"))
     }
 
-    /**
-     * Test expressions involving only primitive operations.
-     */
-    def testPrimitives () {
+    test ("primitives evaluate correctly") {
         assertEvalAll ("4 + 1", Num (5))
+        assertEvalAll ("20 - 12", Num (8))
+        assertEvalAll ("12 + 7 - 19", Num (0))
+        assertEvalAll ("2 - 3 - 4", Num (-5))
+        assertEvalAll ("12 + 7 - 19", Num (0))
     }
 
-    /**
-     * Test lambda expressions with no reduction.
-     */
-    def testLambda () {
+    test ("lambda expressions evaluate to themselves") {
         assertEvalAll ("""\x:Int.4""",
                        Lam ("x", IntType, Num (4)))
         assertEvalAll ("""\x : Int . x - 1""",
                        Lam ("x", IntType, Opn (SubOp, Var ("x"), Num (1))))
     }
 
-    /**
-     * Tests only requiring a small number of reductions.
-     */
-    def testSimple () {
+    test ("parameters are correctly substituted") {
         assertEvalAll ("""(\x : Int . x) 42""", Num (42))
-        assertEvalAll ("""(\x : Int . x + 1) 4""", Num (5))
-        assertEvalAll ("""(\x:Int.99)42""", Num (99))
-        assertEvalAll ("""(\x : Int . 4 + 3) 8""", Num (7))
-        assertEvalAll ("""(\x:Int->Int.99) (\y:Int.y)""", Num (99))
         assertEvalAll ("""(\x : Int -> Int . x) (\y : Int . y)""",
                        Lam ("y", IntType, Var ("y")))
     }
 
-    /**
-     * Tests invlving more complex reduction patterns.
-     */
-    def testComplex () {
+    test ("a beta reduction and an operator evaluation works") {
+        assertEvalAll ("""(\x : Int . x + 1) 4""", Num (5))
+    }
+
+    test ("an unused parameter is ignored") {
+        assertEvalAll ("""(\x:Int.99)42""", Num (99))
+        assertEvalAll ("""(\x : Int . 4 + 3) 8""", Num (7))
+        assertEvalAll ("""(\x:Int->Int.99) (\y:Int.y)""", Num (99))
+    }
+
+    test ("a function of one parameter passed as a parameter can be called") {
         assertEvalAll ("""(\f : Int -> Int . f 4) (\x : Int . x + 1)""",
                        Num (5))
+    }
+    
+    test ("a function of multiple parameters passed as a parameter can be called") {
         assertEvalAll ("""(\f : Int -> Int -> Int . f 1 2) (\x : Int . (\y : Int . x + y))""",
                        Num (3))
+    }
+    
+    test ("multiple parameters are passed correctly") {
         assertEvalAll ("""(\x : Int . \f : Int -> Int . f x) 4 (\y : Int . y - 1)""",
                        Num (3))
+    }
+    
+    test ("applicaions in arguments are evaluated correctly") {
         assertEvalAll ("""(\x : Int . x + x) ((\y : Int . y + 1) 5)""",
                        Num (12))
     }
 
-    /**
-     * Tests whose outcomes depend on whether we reduce inside lambdas or not.
-     */
-    def testVariants () {
+    test ("redexes inside lambdas are evaluated or ignored as appropriate") {
         assertEvalAll ("""\x:Int.4+3""", Lam ("x", IntType, Num (7)),
                        Lam ("x", IntType, Opn (AddOp, Num (4), Num (3))))
     }

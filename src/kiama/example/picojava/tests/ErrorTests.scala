@@ -28,10 +28,9 @@
 
 package kiama.example.picojava.tests
 
-import junit.framework.Assert._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 
-class ErrorTests extends JUnit3Suite {
+class ErrorTests extends FunSuite {
 
     import java.io.FileReader
     import kiama.example.picojava.ErrorCheck._
@@ -41,7 +40,7 @@ class ErrorTests extends JUnit3Suite {
      * Parse the illegal program and make sure that the errors and their
      * positions are as expected.
      */
-    def testErrorInfo {
+    test ("semantic errors are correctly reported") {
         val text = """
 {
   class A extends B{
@@ -64,13 +63,14 @@ class ErrorTests extends JUnit3Suite {
         parseAll (program, text) match {
             case Success (ast, _) => {
                 val messages = ast->errors
-                assertEquals ("5.9: Unknown identifier b", messages (0))
-                assertEquals ("7.5: Can not assign a variable of type boolean to a value of type A", messages (1))
-                assertEquals ("3.3: Cyclic inheritance chain for class A", messages (2))
-                assertEquals ("9.3: Cyclic inheritance chain for class B", messages (3))
-                assertEquals ("17.3: Can not assign a variable of type C to a value of type D", messages (4))
+                expect ("5.9: Unknown identifier b") (messages (0))
+                expect ("7.5: Can not assign a variable of type boolean to a value of type A") (messages (1))
+                expect ("3.3: Cyclic inheritance chain for class A") (messages (2))
+                expect ("9.3: Cyclic inheritance chain for class B") (messages (3))
+                expect ("17.3: Can not assign a variable of type C to a value of type D") (messages (4))
             }
-            case f : Failure => fail (f.toString)
+            case f : Failure =>
+                fail (f.toString)
         }
     }
 

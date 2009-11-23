@@ -20,26 +20,21 @@
 
 package kiama.rewriting
 
-import junit.framework.Assert._
 import org.scalacheck._
 import org.scalacheck.Prop._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 import kiama.example.imperative.Generator
 
 /**
  * Rewriting tests.
  */
-class RewriterTests extends JUnit3Suite with Checkers with Generator {
+class RewriterTests extends FunSuite with Checkers with Generator {
 
     import kiama.example.imperative.AST._
     import kiama.rewriting.Rewriter._
 
-    /**
-     * Test arithmetic evaluation with variable references and division by
-     * zero worked around.
-     */
-    def testEvaluation () {
+    test ("basic arithmetic evaluation") {
         val eval =
             rule {
                 case Add (Num (i), Num (j)) => Num (i + j)
@@ -53,10 +48,7 @@ class RewriterTests extends JUnit3Suite with Checkers with Generator {
         check ((t : Exp) => reduce (eval) (t) == Some (Num (t.value)))
     }
 
-    /**
-     * Test the issubterm combinator.
-     */
-    def testSubtermMatching () {
+    test ("issubterm combinator") {
         check ((t : Stmt) => issubterm (t, t) == Some (t))
         check ((t : Exp) => issubterm (t, t) == Some (t))
 
@@ -109,26 +101,22 @@ class RewriterTests extends JUnit3Suite with Checkers with Generator {
 
         val t = Add (Num (1), Num (2))
 
-        assertEquals (None, issubterm (Num (42), t))
-        assertEquals (Some (t), issubterm (Num (1), t))
-        assertEquals (Some (t), issubterm (t, t))
-        assertEquals (None, ispropersubterm (Num (42), t))
-        assertEquals (Some (t), ispropersubterm (Num (1), t))
-        assertEquals (None, ispropersubterm (t, t))
+        expect (None) (issubterm (Num (42), t))
+        expect (Some (t)) (issubterm (Num (1), t))
+        expect (Some (t)) (issubterm (t, t))
+        expect (None) (ispropersubterm (Num (42), t))
+        expect (Some (t)) (ispropersubterm (Num (1), t))
+        expect (None) (ispropersubterm (t, t))
 
-        assertEquals (None, issuperterm (t, Num (42)))
-        assertEquals (Some (t), issuperterm (t, Num (1)))
-        assertEquals (Some (t), issuperterm (t, t))
-        assertEquals (None, ispropersuperterm (t, Num (42)))
-        assertEquals (Some (t), ispropersuperterm (t, Num (1)))
-        assertEquals (None, ispropersuperterm (t, t))
-
+        expect (None) (issuperterm (t, Num (42)))
+        expect (Some (t)) (issuperterm (t, Num (1)))
+        expect (Some (t)) (issuperterm (t, t))
+        expect (None) (ispropersuperterm (t, Num (42)))
+        expect (Some (t)) (ispropersuperterm (t, Num (1)))
+        expect (None) (ispropersuperterm (t, t))
     }
 
-    /**
-     * Test strategies that should have no effect on the subject term.
-     */
-    def testNoChange () {
+    test ("strategies that have no effect") {
         check ((t : Stmt) => id (t) == Some (t))
         check ((t : Exp) => id (t) == Some (t))
 
@@ -141,36 +129,24 @@ class RewriterTests extends JUnit3Suite with Checkers with Generator {
         check ((t : Exp) => noopexp (t) == Some (t))
     }
 
-    /**
-     * Test strategies that fail immediately.
-     */
-    def testFailure () {
+    test ("strategies that fail immediately") {
         check ((t : Stmt) => failure (t) == None)
         check ((t : Exp) => failure (t) == None)
     }
 
-    /**
-     * Test where combinator (basic only).
-     */
-    def testWhere () {
+    test ("where combinator") {
         check ((t : Exp) => where (failure) (t) == None)
         check ((t : Exp) => where (id) (t) == Some (t))
     }
 
-    /**
-     * Tests for leaf detection.
-     */
-    def testLeaves () {
+    test ("leaf and innernode detection") {
         check ((t : Exp) =>
             isleaf (t) == (if (t.productArity == 0) Some (t) else None))
         check ((t : Exp) =>
             isinnernode (t) == (if (t.productArity == 0) None else Some (t)))
     }
 
-    /**
-     * Test strategies defined from a specific term.
-     */
-    def testTermsAsStrategies () {
+    test ("terms as strategies") {
         check ((t : Stmt, u : Exp) => t (u) == Some (t))
         check ((t : Exp, u : Exp) => t (u) == Some (t))
         check ((t : Stmt, u : Stmt) => t (u) == Some (t))
@@ -180,36 +156,33 @@ class RewriterTests extends JUnit3Suite with Checkers with Generator {
         check ((t : Exp) => (term (t)) (t) == Some (t))
 
         val t = Add (Num (1), Num (2))
-        assertEquals (None, term (Num (1)) (t))
-        assertEquals (None, term (Num (42)) (t))
+        expect (None) (term (Num (1)) (t))
+        expect (None) (term (Num (42)) (t))
     }
 
-    /**
-     * Simple tests of conditional choice strategy combinator.
-     */
-    def testConditional () {
+    test ("conditional choice operator") {
         // Test expressions
         val e1 = Mul (Num (2), Num (3))
         val e2 = Add (Num (2), Num (3))
 
         // Check identity and failure
-        assertEquals (Num (1), rewrite (id < (Num (1) : Strategy) + Num (2)) (e1))
-        assertEquals (Num (2), rewrite (failure < (Num (1) : Strategy) + Num (2)) (e1))
+        expect (Num (1)) (rewrite (id < (Num (1) : Strategy) + Num (2)) (e1))
+        expect (Num (2)) (rewrite (failure < (Num (1) : Strategy) + Num (2)) (e1))
 
         // Condition used just for success or failure
         val ismulbytwo = rule { case t @ Mul (Num (2), _) => t }
         val multoadd = rule { case Mul (Num (2), x) => Add (x, x) }
         val error : Strategy = Num (99)
         val trans1 = ismulbytwo < multoadd + error
-        assertEquals (Add (Num (3), Num (3)), rewrite (trans1) (e1))
-        assertEquals (Num (99), rewrite (trans1) (e2))
+        expect (Add (Num (3), Num (3))) (rewrite (trans1) (e1))
+        expect (Num (99)) (rewrite (trans1) (e2))
 
         // Condition that transforms subject
         val mulbytwotoadd = rule { case t @ Mul (Num (2), x) => Add (x, x) }
         val add = rule { case Add (_, _) => Num (42) }
         val trans2 = mulbytwotoadd < add + id
-        assertEquals (Num (42), rewrite (trans2) (e1))
-        assertEquals (Add (Num (2), Num (3)), rewrite (trans2) (e2))
+        expect (Num (42)) (rewrite (trans2) (e1))
+        expect (Add (Num (2), Num (3))) (rewrite (trans2) (e2))
     }
 
 }

@@ -20,18 +20,15 @@
 
 package kiama.example.repmin
 
-import junit.framework.Assert._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 
-class RepminTests extends JUnit3Suite {
+class RepminTests extends FunSuite {
 
-    /**
-     * Basic test that attributes first repmin actually works.
-     */
-    def testBasicAttr {
-        import Repmin._
+    import Repmin._
+
+    test ("repmin actually reps and mins") {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-        assertEquals (Pair (Leaf (1), Pair (Leaf (1), Leaf (1))), t->repmin)
+        expect (Pair (Leaf (1), Pair (Leaf (1), Leaf (1)))) (t->repmin)
     }
 
 }

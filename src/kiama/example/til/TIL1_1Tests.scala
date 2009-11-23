@@ -20,11 +20,9 @@
 
 package kiama.example.til
 
-import org.scalatest.junit.JUnit3Suite
-import org.scalatest.prop.Checkers
-import kiama.parsing.CharPackratParsers
+import org.scalatest.FunSuite
 
-class TIL1_1Tests extends JUnit3Suite with Checkers {
+class TIL1_1Tests extends FunSuite {
 
     import AST._
     import TIL1_1Main._
@@ -32,10 +30,7 @@ class TIL1_1Tests extends JUnit3Suite with Checkers {
     private val n = Id ("n")
     private val f = Id ("f")
 
-    /**
-     * Make sure that the Factorial program parses to what we expect.
-     */
-    def testFactorialParse {
+    test ("parse factorial program") {
         val input = """
 var n;
 read n;
@@ -68,10 +63,10 @@ write "\n";"""
                     Write (Str (" is ")),
                     Write (Var (fact)),
                     Write (Str ("\\n"))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
-    def testFactorsParse {
+    test ("parse factors program") {
         val input = """
 var n;
 write "Input n please";
@@ -102,10 +97,10 @@ end"""
                                     Write (Var (f)),
                                     Assign (n, Div (Var (n), Var (f))))),
                             Assign (f, Add (Var (f), Num (1)))))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
-    def testMultiplesParse {
+    test ("parse multiples program") {
         val input = """
 for i := 1 to 9 do
     for j := 1 to 10 do
@@ -122,7 +117,7 @@ end
                         List (
                             For (j, Num (1), Num (10),
                                 List (Write (Mul (Var (i), Var (j)))))))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
 }

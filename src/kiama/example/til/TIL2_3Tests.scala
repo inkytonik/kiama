@@ -20,18 +20,14 @@
 
 package kiama.example.til
 
-import org.scalatest.junit.JUnit3Suite
-import org.scalatest.prop.Checkers
+import org.scalatest.FunSuite
 
-class TIL2_3Tests extends JUnit3Suite with Checkers {
+class TIL2_3Tests extends FunSuite {
 
     import AST._
     import TIL2_3Main._
 
-    /**
-     * Simple test of transforming a singleton statement.
-     */
-    def testForToWhileSingle {
+    test ("transform a program with many nested declarations") {
         val input = """
 var d;
 d := 17;
@@ -114,7 +110,7 @@ end
                     Assign (n, Mul (Var (r), Var (y))),
                     Write (Var (n)),
                     Assign (y, Sub (Var (y), Num (1)))))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
 }

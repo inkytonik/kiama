@@ -20,19 +20,15 @@
 
 package kiama.attribution
 
-import junit.framework.Assert._
-import org.scalatest.junit.JUnit3Suite
+import org.scalatest.FunSuite
 
-class AttributionTests extends JUnit3Suite {
+class AttributionTests extends FunSuite {
 
     abstract class Tree extends Attributable
     case class Pair (left : Tree, right : Tree) extends Tree
     case class Leaf (value : Int) extends Tree
 
-    /**
-     * Test that cached attribute definitions are only executed once.
-     */
-    def testCachedAttributes {
+    test ("cached attributes are only evaluated once") {
         import Attribution._
 
         var count = 0
@@ -45,15 +41,12 @@ class AttributionTests extends JUnit3Suite {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        assertEquals (10, t->maximum)
-        assertEquals (10, t->maximum)
-        assertEquals (2, count)
+        expect (10, "first value") (t->maximum)
+        expect (10, "second value") (t->maximum)
+        expect (2, "evaluation count") (count)
     }
 
-    /**
-     * Test that uncached attribute definitions are executed each time.
-     */
-    def testUncachedAttributes {
+     test ("uncached attributes are evaluated each time") {
         import UncachedAttribution._
 
         var count = 0
@@ -66,15 +59,12 @@ class AttributionTests extends JUnit3Suite {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        assertEquals (10, t->maximum)
-        assertEquals (10, t->maximum)
-        assertEquals (4, count)
+        expect (10, "first value") (t->maximum)
+        expect (10, "second value") (t->maximum)
+        expect (4, "evaluation count") (count)
     }
 
-    /**
-     * Test that circularities are detected when caching.
-     */
-    def testCachedCircularity {
+    test ("circularities are detected for cached attributes") {
         import Attribution._
 
         lazy val direct : Tree ==> Int =
@@ -108,10 +98,7 @@ class AttributionTests extends JUnit3Suite {
         }
     }
 
-    /**
-     * Test that circularities are detected when not caching.
-     */
-    def testUncachedDirectCircularity {
+    test ("circularities are detected for uncached attributes") {
         import UncachedAttribution._
 
         lazy val direct : Tree ==> Int =
@@ -144,6 +131,5 @@ class AttributionTests extends JUnit3Suite {
                 // succeed
         }
     }
-
 
 }

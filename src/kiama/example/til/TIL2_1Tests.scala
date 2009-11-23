@@ -20,10 +20,9 @@
 
 package kiama.example.til
 
-import org.scalatest.junit.JUnit3Suite
-import org.scalatest.prop.Checkers
+import org.scalatest.FunSuite
 
-class TIL2_1Tests extends JUnit3Suite with Checkers {
+class TIL2_1Tests extends FunSuite {
 
     import AST._
     import TIL2_1Main._
@@ -32,23 +31,17 @@ class TIL2_1Tests extends JUnit3Suite with Checkers {
     private val y = Id ("y")
     private val n = Id ("n")
 
-    /**
-     * Simple test of transforming a singleton statement.
-     */
-    def testForDeclSingle {
+    test ("transform a single for loop") {
         val input = "for x := 1 to n do write x; end"
         val tree =
             Program (List (
                 Decl (x),
                 For (x, Num (1), Var (n), List (
                     Write (Var (x))))))
-        test (input, tree)
+        runtest (input, tree)
     }
-
-    /**
-     * Simple test of transforming the first statement of a sequence.
-     */
-    def testForDeclFirst {
+    
+    test ("transform a for loop that occurs first in a sequence") {
         val input = "for x := 1 to n do write x; end write x;"
         val tree =
             Program (List (
@@ -56,13 +49,10 @@ class TIL2_1Tests extends JUnit3Suite with Checkers {
                 For (x, Num (1), Var (n), List (
                     Write (Var (x)))),
                 Write (Var (x))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
-    /**
-     * Simple test of transforming the last statement of a sequence.
-     */
-    def testForDeclLast {
+    test ("transform a for loop that occurs last in a sequence") {
         val input = "write x; for x := 1 to n do write x; end"
         val tree =
             Program (List (
@@ -70,13 +60,10 @@ class TIL2_1Tests extends JUnit3Suite with Checkers {
                 Decl (x),
                 For (x, Num (1), Var (n), List (
                     Write (Var (x))))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
-    /**
-     * Simple test of transforming a middle statement of a sequence.
-     */
-    def testForDeclMiddle {
+    test ("transform a for loop that occurs in the middle of a sequence") {
         val input = "write x; for x := 1 to n do write x; end write x;"
         val tree =
             Program (List (
@@ -85,13 +72,10 @@ class TIL2_1Tests extends JUnit3Suite with Checkers {
                 For (x, Num (1), Var (n), List (
                     Write (Var (x)))),
                 Write (Var (x))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
-    /**
-     * Simple test of transforming nested statements.
-     */
-    def testForDeclNested {
+    test ("transform nested for loops") {
         val input = "for x := 1 to n do for y := 0 to x do write y; end end"
         val tree =
             Program (List (
@@ -100,7 +84,7 @@ class TIL2_1Tests extends JUnit3Suite with Checkers {
                      Decl (y),
                      For (y, Num (0), Var (x), List (
                          Write (Var (y))))))))
-        test (input, tree)
+        runtest (input, tree)
     }
 
 }
