@@ -215,7 +215,7 @@ object Rewriter {
      * A strategy that always fails.  Stratego's fail is avoided here to
      * avoid a clash with JUnit's method of the same name.
      */
-    val failure : Strategy =
+    val fail : Strategy =
         strategyf (_ => None)
 
     /**
@@ -621,7 +621,7 @@ object Rewriter {
      * s applies, but has no effect on the subject term.
      */
     def not (s : => Strategy) : Strategy =
-        s < failure + id
+        s < fail + id
 
     /**
      * Construct a strategy that tests whether strategy s succeeds,
@@ -709,7 +709,7 @@ object Rewriter {
      * is equivalent to topdownS (s, dontstop).
      */
     def dontstop (s : => Strategy) : Strategy =
-        failure
+        fail
 
     /**
      * Construct a strategy that applies s in a top-down fashion to one
@@ -872,7 +872,7 @@ object Rewriter {
      * direct subterms.
      */
     val isleaf : Strategy =
-      all (failure)
+      all (fail)
 
     /**
      * Construct a strategy that applies to all of the leaves of the
@@ -916,7 +916,7 @@ object Rewriter {
     * restored/undone in case s fails.
     */
     def restore (s : => Strategy, rest : => Strategy) : Strategy =
-        s <+ (rest <* failure)
+        s <+ (rest <* fail)
 
     /**
      * Apply restoring action 'rest' after s terminates, and preserve
@@ -925,14 +925,14 @@ object Rewriter {
      * restored always, e.g., when maintaining scope information.
      */
     def restorealways (s : => Strategy, rest : => Strategy) : Strategy =
-        s < rest + (rest <* failure)
+        s < rest + (rest <* fail)
 
     /**
      * Applies s followed by f whether s failed or not.
      * This operator is called "finally" in the Stratego library.
      */
     def lastly (s : => Strategy, f : => Strategy) : Strategy =
-        s < where (f) + (where (f) <* failure)
+        s < where (f) + (where (f) <* fail)
 
     /**
      * ior (s1, s2) implements 'inclusive or', that is, the
@@ -958,6 +958,6 @@ object Rewriter {
      * operator
      */
     def and (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        where (s1) < test (s2) + (test (s2) <* failure)
+        where (s1) < test (s2) + (test (s2) <* fail)
 
 }

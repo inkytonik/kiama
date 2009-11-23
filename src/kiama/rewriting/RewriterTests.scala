@@ -32,7 +32,7 @@ import kiama.example.imperative.Generator
 class RewriterTests extends FunSuite with Checkers with Generator {
 
     import kiama.example.imperative.AST._
-    import kiama.rewriting.Rewriter._
+    import kiama.rewriting.Rewriter.{fail => rwfail, _}
 
     test ("basic arithmetic evaluation") {
         val eval =
@@ -130,12 +130,12 @@ class RewriterTests extends FunSuite with Checkers with Generator {
     }
 
     test ("strategies that fail immediately") {
-        check ((t : Stmt) => failure (t) == None)
-        check ((t : Exp) => failure (t) == None)
+        check ((t : Stmt) => rwfail (t) == None)
+        check ((t : Exp) => rwfail (t) == None)
     }
 
     test ("where combinator") {
-        check ((t : Exp) => where (failure) (t) == None)
+        check ((t : Exp) => where (rwfail) (t) == None)
         check ((t : Exp) => where (id) (t) == Some (t))
     }
 
@@ -167,7 +167,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
 
         // Check identity and failure
         expect (Num (1)) (rewrite (id < (Num (1) : Strategy) + Num (2)) (e1))
-        expect (Num (2)) (rewrite (failure < (Num (1) : Strategy) + Num (2)) (e1))
+        expect (Num (2)) (rewrite (rwfail < (Num (1) : Strategy) + Num (2)) (e1))
 
         // Condition used just for success or failure
         val ismulbytwo = rule { case t @ Mul (Num (2), _) => t }
