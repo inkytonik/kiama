@@ -146,43 +146,43 @@ object AST {
 
     def VarC (s1 : => Strategy) : Strategy =
         rulefs {
-            case x : Var =>
+            case _ : Var =>
                 congruence (s1)
         }
 
     def AppC (s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs {
-            case x : App =>
+            case _ : App =>
                 congruence (s1, s2)
         }
         
     def LamC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
         rulefs {
-            case x : Lam =>
+            case _ : Lam =>
                 congruence (s1, s2, s3)
         }
         
     def LetC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy, s4 : => Strategy) : Strategy =
         rulefs {
-            case x : Let =>
+            case _ : Let =>
                 congruence (s1, s2, s3, s4)
         }
     
     def OpnC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
         rulefs {
-            case x : Opn =>
+            case _ : Opn =>
                 congruence (s1, s2, s3)
         }
         
     def LetpC (s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs {
-            case x : Letp =>
+            case _ : Letp =>
                 congruence (s1, s2)
         }
 
     def BindC (s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs {
-            case x : Bind =>
+            case _ : Bind =>
                 congruence (s1, s2)
         }
 
