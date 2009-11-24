@@ -46,7 +46,27 @@ class AttributionTests extends FunSuite {
         expect (2, "evaluation count") (count)
     }
 
-     test ("uncached attributes are evaluated each time") {
+    test ("cached attributes are distinct for nodes that are equal") {
+        import Attribution._
+
+        var count = 0
+
+        lazy val maximum : Tree ==> Int =
+            attr {
+                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
+                case Leaf (v)   => v
+            }
+
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+        val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+        
+        expect (10, "first value") (t->maximum)
+        expect (10, "second value") (s->maximum)
+        expect (4, "evaluation count") (count)
+
+    }
+
+    test ("uncached attributes are evaluated each time") {
         import UncachedAttribution._
 
         var count = 0
