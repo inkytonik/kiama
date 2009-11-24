@@ -55,7 +55,7 @@ object Messaging {
      * Output the messages that have been buffered in order of position.
      */
     def report =
-        for (m <- messages.toList.sort (_.pos < _.pos)) {
+        for (m <- messages.toList.sortWith (_.pos < _.pos)) {
             print (m.pos.line)
             print ('.')
             print (m.pos.column)

@@ -79,7 +79,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
             expect (0) (divsbyzero (varexp))
             check ((e : Exp) => (e.divsbyzero != 0) ==> (divsbyzero (e) == e.divsbyzero))
         }
-        TestDivsByZero ()
+        TestDivsByZero
     }
 
     test ("arithmetic simplification") {
@@ -116,7 +116,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
             expect (varexp) (doubleneg (varexp))
             check ((e : Exp) => doubleneg (e).value == e.value)
         }
-        TestDoubleNegSimplification ()
+        TestDoubleNegSimplification
     }
 
     test ("reciprocal division to multiplication conversion") {
@@ -146,7 +146,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
     }
 
     test ("calculate expression depth") {
-        def maximum (l : Seq[Int]) : Int = l.drop (1).foldLeft (l.first)(_.max(_))
+        def maximum (l : Seq[Int]) : Int = l.drop (1).foldLeft (l.head)(_.max(_))
         def depth = para ((t : Any, cs : Seq[Int]) => 1 + maximum (List (0) ++ cs))
         expect (2) (depth (numexp))
         expect (4) (depth (varexp))
@@ -174,7 +174,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
                 (eopt.intadds == 0) && (eopt.value == e.value)
             })
         }
-        OptimiseAdd ()
+        OptimiseAdd
     }
 
 }

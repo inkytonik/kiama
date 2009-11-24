@@ -49,19 +49,44 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
      */
     override def processline (line : String) {
         line match {
-            case Command (Array (":eval")) =>
-                println ("Available evaluation mechanisms:")
-                for (mech <- mechanisms) {
-                    print ("  " + mech)
-                    if (mech == mechanism)
-                        println (" (current)")
-                    else
-                        println
+            
+            // Work around bug in 2.8 compiler, real code is below
+            case Command (a) =>
+                a (0) match {
+                    case ":eval" =>
+                        a.length match {
+                            case 1 =>
+                                println ("Available evaluation mechanisms:")
+                                for (mech <- mechanisms) {
+                                    print ("  " + mech)
+                                    if (mech == mechanism)
+                                        println (" (current)")
+                                    else
+                                        println
+                                }
+                            case 2 =>
+                                if (!setEvaluator (a (1)))
+                                    println ("unknown evaluation mechanism: " + a (1))
+                            case _ =>
+                                super.processline (line)
+                        }
+                    case _ =>
+                        super.processline (line)
                 }
-
-            case Command (Array (":eval", mech)) =>
-                if (!setEvaluator (mech))
-                    println ("unknown evaluation mechanism: " + mech)
+            
+            // case Command (Array (":eval")) =>
+            //     println ("Available evaluation mechanisms:")
+            //     for (mech <- mechanisms) {
+            //         print ("  " + mech)
+            //         if (mech == mechanism)
+            //             println (" (current)")
+            //         else
+            //             println
+            //     }
+            // 
+            // case Command (Array (":eval", mech)) =>
+            //     if (!setEvaluator (mech))
+            //         println ("unknown evaluation mechanism: " + mech)
 
             // Otherwise it's an expression for evaluation
             case _ => super.processline (line)

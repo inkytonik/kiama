@@ -47,7 +47,7 @@ class RISC (code : Code) extends Machine ("RISC") {
     /**
      * Integer register file addressed by 0-31.
      */
-    lazy val R = Array.fromFunction (i => Reg ("R" + i.toString)) (32)
+    lazy val R = Array.tabulate (32) (i => Reg ("R" + i.toString))
 
     /**
      * The program counter is register 28.
@@ -60,22 +60,22 @@ class RISC (code : Code) extends Machine ("RISC") {
     /**
      * Byte addressed store of words.
      */
-    val Mem = State[Map[Int,Word]] ("Mem")
+    val Mem = new State[Map[Int,Word]] ("Mem")
 
     /**
      * Condition code: zero.
      */
-    val Z = State[Boolean] ("Z")
+    val Z = new State[Boolean] ("Z")
 
     /**
      * Condition code: less than.
      */
-    val N = State[Boolean] ("N")
+    val N = new State[Boolean] ("N")
 
     /**
      * Halt flag.  Undefined until the machine is to stop executing.
      */
-    val halt = State[String] ("halt")
+    val halt = new State[String] ("halt")
 
     /**
      * Initialise the machine.
@@ -186,7 +186,7 @@ class RISC (code : Code) extends Machine ("RISC") {
         instr match {
             case RD (a)  => R (a) := readInt
             case WRD (c) => print (R (c).value)
-            case WRH (c) => print (R (c) toHexString)
+            case WRH (c) => print (R (c).value.toHexString)
             case WRL     => println
             case _       =>
         }

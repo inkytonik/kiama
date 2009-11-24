@@ -100,7 +100,7 @@ trait Attributable extends Product with Positional {
      * contents are included in the sequence.
      */
     def children : Iterator[Attributable] =
-        _children.elements
+        _children.iterator
 
     /**
      * Record of this node's attributable children.

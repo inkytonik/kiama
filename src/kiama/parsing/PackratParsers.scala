@@ -498,7 +498,7 @@ trait PackratParsers extends Parsers {
 
     import scala.collection.mutable.HashMap
     import scala.collection.mutable.ListBuffer
-    import scala.collection.mutable.Set
+    import scala.collection.immutable.Set
     import scala.util.parsing.input.Position
 
     /**
@@ -655,7 +655,7 @@ trait PackratParsers extends Parsers {
 
             heads += (in -> h)
             while (true) {
-                h.evalSet = h.involvedSet.clone
+                h.evalSet = h.involvedSet.toSet
                 val ans = body (in)
                 if (ans.isInstanceOf[Failure] || nolater (ans.in.pos, m.in.pos)) {
                     heads -= in

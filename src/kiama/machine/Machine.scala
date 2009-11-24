@@ -36,7 +36,7 @@ abstract class Machine (val name : String) {
      * An item of abstract state machine state holding a value of type T
      * and called sname.
      */
-    case class State[T] (sname : String) {
+    class State[T] (sname : String) {
 
         /**
          * The value of this item of state.  None means undefined.

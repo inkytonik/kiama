@@ -20,6 +20,8 @@
 
 package kiama.attribution
 
+import java.util.IdentityHashMap
+
 /**
  * Base support for attribution of syntax trees in a functional style.
  * Includes circular attributes but needs to be augmented with basic attributes
@@ -59,18 +61,18 @@ trait AttributionBase {
         /**
          * Has the value of this attribute for a given tree already been computed?
          */
-        private val computed = new scala.collection.jcl.IdentityHashMap[T,Unit]
+        private val computed = new IdentityHashMap[T,Unit]
 
         /**
          * Has the attribute for given tree been computed on this iteration of the
          * circular evaluation?
          */
-        private val visited = new scala.collection.jcl.IdentityHashMap[T,Unit]
+        private val visited = new IdentityHashMap[T,Unit]
 
         /**
          * The memo table for this attribute.
          */
-        private val memo = new scala.collection.jcl.IdentityHashMap[T,U]
+        private val memo = new IdentityHashMap[T,U]
 
         /**
          * Return the value of the attribute for tree t, or the initial value if
@@ -78,8 +80,8 @@ trait AttributionBase {
          */
         private def value (t : T) : U =
             memo.get (t) match {
-                case Some (u) => u
-                case None     => init
+                case null => init
+                case u    => u
             }
 
         /**
@@ -87,11 +89,11 @@ trait AttributionBase {
          * from the CRAG paper.
          */
         def apply (t : T) : U = {
-            if (computed contains t) {
+            if (computed containsKey t) {
                 value (t)
             } else if (!CircularState.IN_CIRCLE) {
                 CircularState.IN_CIRCLE = true
-                visited (t) = ()
+                visited.put (t, ())
                 var u = init
                 do {
                     CircularState.CHANGE = false
@@ -101,21 +103,21 @@ trait AttributionBase {
                         u = newu
                     }
                 } while (CircularState.CHANGE)
-                visited -= t
-                computed (t) = ()
-                memo (t) = u
+                visited.remove (t)
+                computed.put (t, ())
+                memo.put (t, u)
                 CircularState.IN_CIRCLE = false
                 u
-            } else if (! (visited contains t)) {
-                visited (t) = ()
+            } else if (! (visited containsKey t)) {
+                visited.put (t, ())
                 var u = value (t)
                 val newu = f (t)
                 if (u != newu) {
                     CircularState.CHANGE = true
                     u = newu
-                    memo (t) = u
+                    memo.put (t, u)
                 }
-                visited -= t
+                visited.remove (t)
                 u
             } else
                 value (t)
@@ -202,7 +204,7 @@ object Attribution extends AttributionBase {
          * this needs to be some form of identity map so that value equal trees are
          * not treated as equal unless they are actually the same reference.
          */
-        private val memo = new scala.collection.jcl.IdentityHashMap[T,Option[U]]
+        private val memo = new IdentityHashMap[T,Option[U]]
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -215,12 +217,12 @@ object Attribution extends AttributionBase {
                 memo.clear
             }
             memo.get (t) match {
-                case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
-                case Some (Some (u)) => u
-                case None =>
-                    memo (t) = None
+                case None     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
+                case Some (u) => u
+                case null =>
+                    memo.put (t, None)
                     val u = f (t)
-                    memo (t) = Some (u)
+                    memo.put (t, Some (u))
                     u
             }
         }
@@ -239,8 +241,10 @@ object Attribution extends AttributionBase {
      */
     class CachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T ==> U)
             extends (TArg => T ==> U) {
+                
+        import scala.collection.mutable.HashMap
 
-        private val memo = new scala.collection.jcl.HashMap[ParamAttributeKey,Option[U]]
+        private val memo = new HashMap[ParamAttributeKey,Option[U]]
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -260,9 +264,9 @@ object Attribution extends AttributionBase {
                         case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
                         case Some (Some (u)) => u
                         case None =>
-                            memo (key) = None
+                            memo.put (key, None)
                             val u = f (arg) (t)
-                            memo (key) = Some (u)
+                            memo.put (key, Some (u))
                             u
                     }
                 }
@@ -317,19 +321,19 @@ object UncachedAttribution extends AttributionBase {
         /**
          * Are we currently evaluating this attribute for a given tree?
          */
-        private val visited = new scala.collection.jcl.IdentityHashMap[T,Unit]
+        private val visited = new IdentityHashMap[T,Unit]
 
         /**
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
         def apply (t : T) : U = {
-            if (visited contains t) {
+            if (visited containsKey t) {
                 throw new IllegalStateException ("Cycle detected in attribute evaluation")
             } else {
-                visited (t) = ()
+                visited.put (t, ())
                 val u = f (t)
-                visited -= t
+                visited.remove (t)
                 u
             }
         }
@@ -351,7 +355,7 @@ object UncachedAttribution extends AttributionBase {
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
          */
-        private val visited = new scala.collection.jcl.IdentityHashMap[ParamAttributeKey,Unit]
+        private val visited = new IdentityHashMap[ParamAttributeKey,Unit]
 
         /**
          * Return the value of this attribute for node t, raising an error if
@@ -362,12 +366,12 @@ object UncachedAttribution extends AttributionBase {
 
                 def apply (t : T) : U = {
                     val key = new ParamAttributeKey (arg, t)
-                    if (visited contains key) {
+                    if (visited containsKey key) {
                         throw new IllegalStateException ("Cycle detected in attribute evaluation")
                     } else {
-                        visited (key) = ()
+                        visited.put (key, ())
                         val u = f (arg) (t)
-                        visited -= key
+                        visited.remove (key)
                         u
                     }
                 }

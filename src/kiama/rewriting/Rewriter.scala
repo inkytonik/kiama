@@ -318,8 +318,9 @@ object Rewriter {
             case e : java.lang.ClassCastException =>
                 error ("dup cast failed: " + t)
             case e : IllegalArgumentException =>
-                error ("dup illegal arguments: " + ctor + " (" + children.deepMkString (",") +
-                       "), expects " + ctor.getParameterTypes.length)
+                error ("dup illegal arguments: " + ctor + " (" +
+                       children.deep.mkString (",") + "), expects " +
+                       ctor.getParameterTypes.length)
         }
     }
 

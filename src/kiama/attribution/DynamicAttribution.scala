@@ -30,7 +30,7 @@ package kiama.attribution
 object DynamicAttribution extends AttributionBase {
 
     import scala.collection.mutable._
-    import scala.collection.jcl.IdentityHashMap
+    import java.util.IdentityHashMap
 
     type ChangeBuffer = ArrayBuffer[(DynamicAttribute[_, _], _ ==> _)]
 
@@ -100,15 +100,17 @@ object DynamicAttribution extends AttributionBase {
             val initialized = attributeInitializer // import initializer
             currentRecordedChanges = null
 
-            if (allRecordedChanges contains initialized) reuse (initialized)
+            if (allRecordedChanges containsKey initialized) reuse (initialized)
         } finally {
            currentRecordedChanges = prevRecordedChanges
         }
     }
 
     private def reuse (attributeInitializer : AnyRef) {
-        for ((attr, function) <- allRecordedChanges (attributeInitializer))
-            attr += function
+        val changes = allRecordedChanges.get (attributeInitializer)
+        if (changes != null)
+            for ((attr, function) <- changes)
+                attr += function
     }
 
     /**
@@ -116,12 +118,14 @@ object DynamicAttribution extends AttributionBase {
      * activated using {@link #use}.
      */
     def endUse (attributeInitializer : AnyRef) {
-        for ((attr, function) <- allRecordedChanges (attributeInitializer))
-            attr -= function
+        val changes = allRecordedChanges.get (attributeInitializer)
+        if (changes != null)
+            for ((attr, function) <- changes)
+                attr -= function
     }
 
     class DynamicAttribute[T,U] (private var f : T ==> U) extends (T ==> U) {
-        private val memo = new java.util.IdentityHashMap[T, Option[U]]
+        private val memo = new IdentityHashMap[T, Option[U]]
         private var memoVersion = equationsVersion
 
         def apply (t : T) = {
@@ -155,7 +159,7 @@ object DynamicAttribution extends AttributionBase {
                 case _                          => g
             }
 
-            if (currentRecordedChanges != null) currentRecordedChanges += (this, uncached)
+            if (currentRecordedChanges != null) currentRecordedChanges += ((this, uncached))
             composedF += uncached
             resetMemo
         }
