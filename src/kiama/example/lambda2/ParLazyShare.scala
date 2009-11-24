@@ -21,22 +21,25 @@
 package kiama.example.lambda2
 
 /**
- * Evaluation of lambda calculus using lazy evaluation with
- * term-level substitution and arithmetic operations.
+ * Lazy evaluation of lambda calculus with parallel term-level substitution
+ * and arithmetic operations, plus sharing of substituted terms.
  */
-trait LazySubst extends EagerSubst {
+trait ParLazyShare extends ParLazy {
 
     import AST._
     import kiama.rewriting.Rewriter._
 
     /**
-     * Evaluate applied functions, scoped expressions and operands, then
-     * try to reduce the expression itself, repeating until no change.
+     * Lazily evaluate within the expression then try to reduce the
+     * expression itself, repeating until no change.
      */
-    override lazy val s : Strategy =
-        attempt (AppC (s, id) + LetC (id, id, id, s) + OpnC (id, s, s)) <*
-        attempt (lambda <* s)
+    override lazy val s : Strategy = {
+        lazy val e : Strategy =
+            attempt (letAppL (e) + letOpn (e)) <*
+            attempt ((subsVar + LetpC (id, beta + arithop) + letLetRen) <* e)
+        letLift <* e <* letDrop
+    }
 
 }
 
-class LazySubstEvaluator extends LazySubst
+class ParLazyShareEvaluator extends ParLazyShare

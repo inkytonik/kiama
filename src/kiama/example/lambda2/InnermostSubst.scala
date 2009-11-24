@@ -30,9 +30,15 @@ trait InnermostSubst extends ReduceSubst {
     import kiama.rewriting.Rewriter._
 
     /**
+     * Version of innermost library strategy that memoises.
+     */
+    def innermost (s : => Strategy) : Strategy =
+        memo (all (innermost (s) <* attempt (s <* innermost (s))))
+
+    /**
      * Evaluate expressions starting with the innermost sub-expressions.
      */
-    override lazy val evals : Strategy =
+    override lazy val s : Strategy =
         innermost (lambda)
 
 }

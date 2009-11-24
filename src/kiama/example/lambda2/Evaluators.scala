@@ -32,13 +32,15 @@ object Evaluators {
      * Coments refer to names in Dolstra and Visser paper.
      */
     private val evalmap =
-        Map ("reduce"         -> new ReduceEvaluator, 	       // eval1
+        Map ("reduce"         -> new ReduceEvaluator,          // eval1
              "reducesubst"    -> new ReduceSubstEvaluator,     // eval2
              "innermostsubst" -> new InnermostSubstEvaluator,  // eval3
              "eagersubst"     -> new EagerSubstEvaluator,      // eval4, eval5
              "lazysubst"      -> new LazySubstEvaluator,       // eval6
              "pareagersubst"  -> new ParEagerSubstEvaluator,   // eval7
-             "parlazysubst"   -> new ParLazySubstEvaluator)    // eval8
+             "parlazysubst"   -> new ParLazySubstEvaluator,    // eval8
+             "parlazyshare"   -> new ParLazyShareEvaluator,    // eval9
+             "parlazyupdate"  -> new ParLazyUpdateEvaluator)   // eval10
 
     /**
      * Return the names of the available evaluation mechanisms.

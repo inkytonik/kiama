@@ -30,30 +30,12 @@ trait EagerSubst extends ReduceSubst {
     import kiama.rewriting.Rewriter._
 
     /**
-     * Eagerly evaluate within the expression then try to reduce the
-     * expression itself, repeating until no change.
+     * Evaluate applications, local bindings and operands, then try to
+     * reduce the expression itself, repeating until no change.
      */
-    override lazy val evals : Strategy =
-        attempt (traverse) <* attempt (lambda <* evals)
-
-    /**
-     * Recursively try to eagerly evaluate expressions in applications,
-     * substitutions and operations, but not within lambdas.
-     */
-    lazy val traverse : Strategy =
-        rule {
-
-            // In an application we need to traverse to both sub-expressions.
-            case App (e1, e2)       => App (eval (e1), eval (e2))
-
-            // In a substitution we need to traverse to the bound expression
-            // as well as the body expression.
-            case Let (x, t, e1, e2) => Let (x, t, eval (e1), eval (e2))
-
-            // In an operation we need to traverse to both sub-expressions.
-            case Opn (op, e1, e2)   => Opn (op, eval (e1), eval (e2))
-
-        }
+    override lazy val s : Strategy =
+        attempt (AppC (s, s) + LetC (id, id, s, s) + OpnC (id, s, s)) <*
+        attempt (lambda <* s)
 
 }
 

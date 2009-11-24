@@ -46,7 +46,7 @@ trait Evaluator {
      */
     object freshvar {
         private var count = 0
-        def apply () : String = {
+        def apply () : Idn = {
             count = count + 1
             "_v" + count
         }
@@ -77,18 +77,18 @@ trait Evaluator {
  */
 trait RewritingEvaluator extends Evaluator {
     
-    import kiama.rewriting.Rewriter._
+    import kiama.rewriting.Rewriter.{rewrite, Strategy}
     
     /**
      * Evaluate the given expression by rewriting it with the evals
      * strategy.
      */
     def eval (exp : Exp) : Exp =
-        rewrite (evals) (exp)
+        rewrite (s) (exp)
 
     /**
      * The strategy to use to perform the evaluation.
      */
-    val evals : Strategy
+    val s : Strategy
     
 }

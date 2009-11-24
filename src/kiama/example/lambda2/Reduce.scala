@@ -33,7 +33,7 @@ trait Reduce extends RewritingEvaluator {
      * Evaluate by repeatedly trying to apply beta reduction and arithmetic
      * operators anywhere.
      */
-    lazy val evals =
+    lazy val s =
         reduce (beta + arithop)
 
     /**

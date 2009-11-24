@@ -172,10 +172,11 @@ class LambdaTests extends FunSuite with Checkers with Parser {
     def assertEvalAll (term : String, result1 : Exp, result2 : Exp) {
         for (mech <- mechanisms) {
             setEvaluator (mech)
-            if (evaluator reducesinlambdas)
-              assertEval (mech, term, result1)
-            else
-              assertEval (mech, term, result2)
+            assertEval (mech, term,
+                        if (evaluator reducesinlambdas)
+                            result1
+                        else 
+                            result2)
         }
     }
 

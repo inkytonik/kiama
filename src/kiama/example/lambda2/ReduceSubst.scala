@@ -33,7 +33,7 @@ trait ReduceSubst extends Reduce {
      * Evaluate by repeatedly trying to apply beta reduction and arithmetic
      * operators anywhere.
      */
-    override lazy val evals =
+    override lazy val s =
         reduce (lambda)
 
     /**

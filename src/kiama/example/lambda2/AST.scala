@@ -27,7 +27,8 @@ object AST {
 
     import kiama.attribution.Attributable
     import kiama.attribution.Attribution._
-
+    import kiama.rewriting.Rewriter._
+    
     /**
      * Identifiers are represented as strings.
      */
@@ -88,10 +89,12 @@ object AST {
     }
 
     /**
-     * A single binding from a set of parallel bindings (Letp).
+     * A single binding from a set of parallel bindings (Letp).  No type
+     * information because these bindings are only used inside the parallel
+     * evaluation mechanisms.
      */
-    case class Bind (i : Idn, t : Type, e : Exp) {
-        override def toString = i + " : " + t + " = " + e
+    case class Bind (i : Idn, e : Exp) {
+        override def toString = i + " = " + e
     }
 
     /**
@@ -138,5 +141,49 @@ object AST {
         def eval (l : Int, r : Int) = l - r
         override def toString = "-"
     }
+    
+    // Congruences
+
+    def VarC (s1 : => Strategy) : Strategy =
+        rulefs {
+            case x : Var =>
+                congruence (s1)
+        }
+
+    def AppC (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case x : App =>
+                congruence (s1, s2)
+        }
+        
+    def LamC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
+        rulefs {
+            case x : Lam =>
+                congruence (s1, s2, s3)
+        }
+        
+    def LetC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy, s4 : => Strategy) : Strategy =
+        rulefs {
+            case x : Let =>
+                congruence (s1, s2, s3, s4)
+        }
+    
+    def OpnC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
+        rulefs {
+            case x : Opn =>
+                congruence (s1, s2, s3)
+        }
+        
+    def LetpC (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case x : Letp =>
+                congruence (s1, s2)
+        }
+
+    def BindC (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case x : Bind =>
+                congruence (s1, s2)
+        }
 
 }
