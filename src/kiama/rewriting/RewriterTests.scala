@@ -184,6 +184,19 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         expect (Num (42)) (rewrite (trans2) (e1))
         expect (Add (Num (2), Num (3))) (rewrite (trans2) (e2))
     }
+    
+    test ("strategies can return other strategies") {
+        // Test expressions
+        val e1 = Mul (Num (2), Num (5))
+        val e2 = Add (Num (4), Num (5))
+        
+        // Single step passing
+        val twotothree = rule { case Num (2) => Num (3) }
+        val pass = rulefs { case Num (2) => twotothree }
+        val passtd = everywheretd (pass)
+        expect (Mul (Num (3), (Num (5)))) (rewrite (passtd) (e1))
+        expect (Add (Num (4), (Num (5)))) (rewrite (passtd) (e2))
+    }
 
 }
 

@@ -152,8 +152,8 @@ object Rewriter {
         }
 
     /**
-     * Define a rewrite rule using a function.  The rule always succeeds
-     * with the return value of the function.
+     * Define a rewrite rule using a function that returns a term.  The rule
+     * always succeeds with the return value of the function.
      */
     def rulef (f : Term => Term) : Strategy =
         strategyf (t => Some (f (t)))
@@ -176,11 +176,37 @@ object Rewriter {
         }
 
     /**
+     * Define a rewrite rule using a function that returns a strategy.  The
+     * rule applies the function to the subject term to get a strategy which
+     * is then applied again to the subject term.  In other words, the function
+     * is only used for side-effects such as pattern matching.  The whole thing
+     * also fails if f is not defined at the term in the first place.
+     */
+    def rulefs (f : PartialFunction[Term,Strategy]) : Strategy =
+        new Strategy {
+            def apply (t : Term) = {
+                if (f isDefinedAt t) {
+                    (f (t)) (t)
+                } else {
+                    None
+                }
+            }
+        }
+
+    /**
      * (Implicitly) construct a strategy that always succeeds, changing
      * the subject term to a given term.
      */
     implicit def termToStrategy (t : Term) : Strategy =
          strategyf (_ => Some (t))
+
+    /**
+     * (Implicitly) construct a strategy from an option value.  The 
+     * strategy succeeds or fails depending on whether the option is
+     * a Some or None, respectively.
+     */
+    implicit def optionToStrategy (o : Option[Term]) : Strategy =
+         strategyf (_ => o)
 
     /**
      * Define a term query.  Construct a strategy that always succeeds with no
@@ -212,8 +238,7 @@ object Rewriter {
         }
 
     /**
-     * A strategy that always fails.  Stratego's fail is avoided here to
-     * avoid a clash with JUnit's method of the same name.
+     * A strategy that always fails.
      */
     val fail : Strategy =
         strategyf (_ => None)
@@ -224,6 +249,14 @@ object Rewriter {
      */
     val id : Strategy =
         strategyf (t => Some (t))
+
+    /**
+     * A strategy that always succeeds with the subject term unchanged (i.e.,
+     * this is the identity strategy) with the side-effect that the subject
+     * term is printed to standard output, prefixed by the string s.
+     */
+    def debug (s : String) : Strategy =
+        strategyf (t => { Console.println (s + t); Some (t) })
 
     /**
      * Construct a strategy that succeeds only if the subject term matches
@@ -285,8 +318,8 @@ object Rewriter {
             case e : java.lang.ClassCastException =>
                 error ("dup cast failed: " + t)
             case e : IllegalArgumentException =>
-                error ("dup illegal arguments: " + ctor + " " + children.deepMkString (",") +
-                       " (expects " + ctor.getParameterTypes.length + ")")
+                error ("dup illegal arguments: " + ctor + " (" + children.deepMkString (",") +
+                       "), expects " + ctor.getParameterTypes.length)
         }
     }
 
@@ -476,6 +509,47 @@ object Rewriter {
         }
 
     /**
+     * Make a strategy that applies the elements of ss pairwise to the
+     * children of the subject term, returning a new term if all of the
+     * strategies succeed, otherwise failing.  The contructor of the new
+     * term is the same as that of the original term and the children
+     * are the results of the strategies.  If the length of ss is not
+     * the same as the number of children, then congruence (ss) fails.
+     */
+    def congruence (ss : Strategy*) : Strategy =
+        new Strategy {
+            def apply (t : Term) : Option[Term] = {
+                t match {
+                    case p : Product =>
+                        val numchildren = p.productArity
+                        if (numchildren == ss.length) {
+                            val children = new Array[AnyRef](numchildren)
+                            for (i <- 0 until numchildren) {
+                                p.productElement (i) match {
+                                    case ct : Term =>
+                                        (ss (i)) (ct) match {
+                                            case Some (ti) =>
+                                                children (i) = ti
+                                            case None      =>
+                                                return None
+                                        }
+                                    case ci =>
+                                        children (i) = makechild (ci)
+                                }
+                            }
+                            val ret = dup (p, children)
+                            Some (ret)
+                        } else {
+                            None
+                        }
+                    case a => {
+                        Some (a)
+                    }
+                }
+            }
+        }
+
+    /**
      * Rewrite a term.  Apply the strategy s to a term returning the result term
      * if s succeeds, otherwise return the original term.
      */
@@ -487,6 +561,21 @@ object Rewriter {
                 t
         }
     }
+
+    /**
+     * Return a strategy that behaves as s does, but memoises its arguments and
+     * results.  In other words, if memo (s) is called on a term t twice, the 
+     * second time will return the same result as the first, without having to
+     * invoke s.  For best results, it is important that s should have no side
+     * effects.
+     */
+    def memo (s : => Strategy) : Strategy =
+        new Strategy {
+            import scala.collection.mutable.HashMap
+            private val cache = new HashMap[Term,Option[Term]]
+            def apply (t : Term) : Option[Term] =
+                cache.getOrElseUpdate (t, s (t))
+        }
 
     /**
      * Collect query results in a set.  Run the function f as a top-down
@@ -525,6 +614,25 @@ object Rewriter {
             def count = (v : Int) => total += v
             (everywheretd (query (f andThen count))) (t)
             total
+        }
+
+    /**
+     * Construct a strategy that applies s to each element of a list,
+     * returning a new list of the results if all of the applications
+     * succeed, otherwise fail.
+     */
+    def map (s : => Strategy) : Strategy =
+        rulefs {
+            case Nil              =>
+                id
+            case (x : Term) :: xs =>
+                s (x) <* rulefs {
+                    case y =>
+                        (map (s)) (xs) <* rule {
+                            case ys : List[_] =>
+                                y :: ys
+                        }
+                }
         }
 
     /**
@@ -798,10 +906,10 @@ object Rewriter {
         s1 <+ (all (alltdfold (s1, s2)) <* s2)
 
    /**
-     * Construct a strategy that applies s1 in a top-down, prefix fashion
-     * stopping at a frontier where s succeeds on some children.  s2 is applied in a bottom-up,
-     * postfix fashion to the subject term the result.
-     */
+    * Construct a strategy that applies s in a top-down, prefix fashion
+    * stopping at a frontier where s succeeds on some children.  s is then
+    * applied in a bottom-up, postfix fashion to the result.
+    */
    def somedownup (s : => Strategy) : Strategy =
        (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
 
@@ -898,14 +1006,16 @@ object Rewriter {
 
     /**
      * Construct a strategy that applies s at every term in a bottom-up fashion
-     * regardless of failure.  (Sub-)terms for which the strategy fails are left unchanged.
+     * regardless of failure.  (Sub-)terms for which the strategy fails are left
+     * unchanged.
      */
     def everywherebu (s : => Strategy) : Strategy =
         bottomup (attempt (s))
 
     /**
-     * Construct a strategy that applies s at every term in a top-down fashion regardless
-     * of failure.  (Sub-)terms for which the strategy fails are left unchanged.
+     * Construct a strategy that applies s at every term in a top-down fashion
+     * regardless of failure.  (Sub-)terms for which the strategy fails are left
+     * unchanged.
      */
     def everywheretd (s : => Strategy) : Strategy =
         topdown (attempt (s))
