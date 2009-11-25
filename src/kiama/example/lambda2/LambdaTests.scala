@@ -237,7 +237,7 @@ class LambdaTests extends FunSuite with Checkers with Parser {
                        Num (3))
     }
     
-    test ("applicaions in arguments are evaluated correctly") {
+    test ("applications in arguments are evaluated correctly") {
         assertEvalAll ("""(\x : Int . x + x) ((\y : Int . y + 1) 5)""",
                        Num (12))
     }
