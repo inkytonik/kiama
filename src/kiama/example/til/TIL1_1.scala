@@ -139,7 +139,7 @@ trait TIL1_1 extends ParsingMain {
         """\"[^\"]+\"""".r ^^ Str
 
     override val whiteSpace =
-        """(\s+)|(//.*$)""".r
+        """(\s|(//.*\n))+""".r
 
 }
 

@@ -198,11 +198,8 @@ trait Parser extends RegexParsers with PackratParsers {
     lazy val integer : PackratParser[IntegerLiteral] =
         """[0-9]+""".r ^^ (s => IntegerLiteral (s.toInt))
 
-    // override protected val whiteSpace =
-    //     """(\s+)|(/\(\*(?:.|[\n\r])*?\*\))""".r
-
     override protected val whiteSpace =
-        """(\s+)""".r
+        """(\s|(\(\*(?:.|[\n\r])*?\*\)))+""".r
 
     /**
      * Convert an option list into either the list (if present) or Nil if None.

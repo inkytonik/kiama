@@ -92,6 +92,6 @@ object Parser extends RegexParsers with PackratParsers {
         """[a-zA-Z][a-zA-Z0-9]*""".r
 
     override val whiteSpace =
-        """(\s+)|(//.*\n)""".r
+        """(\s|(//.*\n))+""".r
 
 }

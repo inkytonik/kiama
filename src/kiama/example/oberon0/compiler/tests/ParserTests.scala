@@ -102,10 +102,13 @@ class ParserTests extends FunSuite with Checkers with Parser {
     test ("parse factorial program") {
         val program =
 """
+(* A multiline comment
+  another line
+  do do do *)
 MODULE Factorial;
     
 CONST
-    limit = 10;
+    limit = 10;  (* Hello *)
 
 VAR
     v : INTEGER;
@@ -113,16 +116,17 @@ VAR
     fact : INTEGER;
 
 BEGIN
+    (* Read (w); *)
     Read (v);
     IF (v < 0) OR (v > limit) THEN
         WriteLn (-1)
     ELSE
         c := 0;
         fact := 1;
-        WHILE c < v DO
+        WHILE (**)c < v DO
             c := c + 1;
             fact := fact * c
-        END;
+(* END *)  END;
         WriteLn (fact)
     END
 END Factorial.
@@ -145,7 +149,6 @@ END Factorial.
                                 ProcedureCall (Ident ("WriteLn"), List (Ident ("fact")))))),
                 "Factorial",
                 ModuleType ()))
-
     }
 
 }
