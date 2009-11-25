@@ -92,7 +92,7 @@ object Main extends Parser
                 }
             }
 
-            case f : Failure => println (f)
+            case f => println (f)
         }
     }
 }

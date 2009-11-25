@@ -58,11 +58,11 @@ write "\n";"""
                     For (x, Num (1), Var (n),
                         List (
                             Assign (fact, Mul (Var (x), Var (fact))))),
-                    Write (Str ("factorial of ")),
+                    Write (Str ("\"factorial of \"")),
                     Write (Var (n)),
-                    Write (Str (" is ")),
+                    Write (Str ("\" is \"")),
                     Write (Var (fact)),
-                    Write (Str ("\\n"))))
+                    Write (Str ("\"\\n\""))))
         runtest (input, tree)
     }
 
@@ -85,9 +85,9 @@ end"""
             Program (
                 List (
                     Decl (n),
-                    Write (Str ("Input n please")),
+                    Write (Str ("\"Input n please\"")),
                     Read (n),
-                    Write (Str ("The factors of n are")),
+                    Write (Str ("\"The factors of n are\"")),
                     Decl (f),
                     Assign (f, Num (2)),
                     While (Ne (Var (n), Num (1)),

@@ -20,26 +20,23 @@
 
 package kiama.example.lambda2
 
-import kiama.rewriting.Rewriter
-import org.scalacheck._
-import org.scalacheck.Prop._
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
-
-import AST._
 
 /**
  * Lambda calculus tests.
  */
 class LambdaTests extends FunSuite with Checkers with Parser {
 
+    import AST._
     import Analysis._
     import Evaluators._
     import kiama.attribution.Attribution._
     import kiama.rewriting.Rewriter._
     import kiama.util.Messaging._
+    import org.scalacheck._
+    import org.scalacheck.Prop.{all => _, _}
     import scala.collection.mutable.HashMap
-    import scala.util.parsing.input.CharSequenceReader
 
     /**
      * Compute the type of e using the specified attribute and check to make
@@ -51,12 +48,12 @@ class LambdaTests extends FunSuite with Checkers with Parser {
             fail (aname + ": no messages produced, expected (" + line + "," + col + ") " + msg)
         else {
             val m = messages (0)
+            resetmessages
             if ((m.pos.line != line) || (m.pos.column != col) ||
                 (m.message != msg))
                 fail (aname + ": incorrect message, expected (" + line + "," + col + ") " + msg +
                       ", got (" + m.pos.line + "," + m.pos.column + ") " + m.message)
         }
-        resetmessages
     }
 
     /**
@@ -64,19 +61,22 @@ class LambdaTests extends FunSuite with Checkers with Parser {
      * message is produced.  We test both of the analysis methods.
      */
     def assertMessage (term : String, line : Int, col : Int, msg : String) {
-        val in = new CharSequenceReader (term)
-        parse (in) match {
+        parseAll (start, term) match {
             case Success (e, in) if in.atEnd =>
                 assertType (e, "tipe", tipe, line, col, msg)
                 assertType (e, "tipe2", tipe2, line, col, msg)
             case Success (_, in) =>
                 fail ("extraneous input at " + in.pos + ": " + term)
-            case f @ Failure (_, _) =>
+            case f =>
                 fail ("parse failure: " + f)
         }
     }
 
-    test ("an unknown variable is reported") {
+    test ("an unknown variable by itself is reported") {
+        assertMessage ("y", 1, 1, "'y' unknown")
+    }
+
+    test ("an unknown variable in an abstraction is reported") {
         assertMessage ("""\x : Int . x + y""", 1, 16, "'y' unknown")
     }
 
@@ -141,14 +141,13 @@ class LambdaTests extends FunSuite with Checkers with Parser {
      * the result fails.
      */
     def assertEval (mech : String, term : String, result : Exp) {
-        val in = new CharSequenceReader (term)
-        parse (in) match {
+        parseAll (start, term) match {
             case Success (e, in) if in.atEnd =>
                 val r = evaluator.eval (e)
                 assertSame (mech, result, r)
             case Success (_, in) =>
                 fail ("extraneous input at " + in.pos + ": " + term)
-            case f @ Failure (_, _) =>
+            case f =>
                 fail ("parse failure: " + f)
         }
     }

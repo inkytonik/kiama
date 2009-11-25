@@ -69,8 +69,8 @@ class ErrorTests extends FunSuite {
                 expect ("9.3: Cyclic inheritance chain for class B") (messages (3))
                 expect ("17.3: Can not assign a variable of type C to a value of type D") (messages (4))
             }
-            case f : Failure =>
-                fail (f.toString)
+            case f =>
+                fail ("parse failure: " + f)
         }
     }
 

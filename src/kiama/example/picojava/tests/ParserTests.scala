@@ -40,10 +40,10 @@ class ParserTests extends FunSuite {
      * failure if it doesn't.
      */
     def assertParseOk[T] (str : String, p : Parser[T], value : T) {
-        parse (p, str) match {
+        parseAll (p, str) match {
             case Success (`value`, _) => // do nothing
-            case Success (v, _)       => fail ("succeeded wrongly with " + v)
-            case f @ Failure (_, _)   => fail (f.toString)
+            case Success (v, _)       => fail ("succeeded wrongly with '" + v + "'")
+            case f                    => fail (f.toString)
         }
     }
 
@@ -52,9 +52,9 @@ class ParserTests extends FunSuite {
      * failure if it doesn't.
      */
     def assertParseError[T] (str : String, p : Parser[T]) {
-        parse (p, str) match {
-            case Success (_, _)     => fail ("expected to find parse error in " + str)
-            case f @ Failure (_, _) => // do nothing
+        parseAll (p, str) match {
+            case Success (_, _) => fail ("expected to find parse error in " + str)
+            case f              => // do nothing
         }
     }
 
@@ -67,15 +67,14 @@ class ParserTests extends FunSuite {
     }
 
     test ("parse comments") {
-        assertParseOk ("// !@#$%^&*abc\n", comment,
-            List (' ', '!', '@', '#', '$', '%', '^', '&', '*', 'a', 'b', 'c'));
+        expect (whiteSpace.replaceFirstIn ("// !@#$%^&*abc\n", "")) ("")
     }
 
     test ("generate errors for invalid tokens") {
         assertParseError ("_a", IDENTIFIER);
         assertParseError ("1", IDENTIFIER);
         assertParseError ("1a", IDENTIFIER);
-        assertParseError ("/* abc */", comment);
+        assertParseError ("/* abc */", whiteSpace);
     }
 
     test ("parse an empty block") {
@@ -83,8 +82,8 @@ class ParserTests extends FunSuite {
     }
 
     test ("generate a parse error for an empty program") {
-         assertParseError ("", program)
-         assertParseError (";", program)
+        assertParseError ("", program)
+        assertParseError (";", program)
     }
 
     test ("parse an empty class declaration") {

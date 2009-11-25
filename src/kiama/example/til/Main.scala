@@ -21,9 +21,10 @@
 package kiama.example.til
 
 import java.io.Reader
-import kiama.parsing.CharPackratParsers
 import kiama.rewriting.Rewriter
 import org.scalatest.Assertions
+import scala.util.parsing.combinator.PackratParsers
+import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Standard main program for TIL chairmarks.  Also includes a simple
@@ -70,16 +71,16 @@ trait Main extends Assertions {
 /**
  * Standard main program for TIL chairmarks that parse.
  */
-trait ParsingMain extends Main with CharPackratParsers {
+trait ParsingMain extends Main with RegexParsers with PackratParsers {
 
     /**
       * Process the file given by the argument reader by parsing it
       * and returning the resulting AST.
       */
     def process (reader : Reader) : Any =
-        parseAll (parse, reader) match {
+        parseAll (start, reader) match {
             case Success (p, _) => p
-            case f : Failure    => f
+            case f              => f
         }
 
     /**
@@ -90,7 +91,7 @@ trait ParsingMain extends Main with CharPackratParsers {
     /**
      * Parse a file, returning an AST.
      */
-    def parse : Parser[Root]
+    def start : Parser[Root]
 
 }
 
@@ -112,9 +113,9 @@ trait TransformingMain extends ParsingMain {
       * transforming it and returning the resulting AST.
       */
     override def process (reader : Reader) : Any =
-        parseAll (parse, reader) match {
+        parseAll (start, reader) match {
             case Success (p, _) => transform (p)
-            case f : Failure    => f
+            case f              => f
         }
 
     /**

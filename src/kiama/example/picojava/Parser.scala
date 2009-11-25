@@ -28,61 +28,70 @@
 
 package kiama.example.picojava
 
-import kiama.parsing.CharPackratParsers
+import scala.util.parsing.combinator.PackratParsers
+import scala.util.parsing.combinator.RegexParsers
 
 /**
  * PicoJava parser
  */
-object Parser extends CharPackratParsers {
+object Parser extends RegexParsers with PackratParsers {
 
     import AbstractSyntax._
 
     def run (in : java.io.Reader) : Program =
         parseAll (program, in) match {
-            case Success (r, _)     => r
-            case f @ Failure (_, _) => error (f.toString)
+            case Success (r, _) => r
+            case f              => error (f.toString)
         }
+        
+    // "" is used in a few places to skip over leading whitespace, so the
+    // position of a result is the first non-trivial character in it, not
+    // the first of the whitespace preceding it, this is a flaw in the way
+    // that positioning is handled in the Scala parser library
 
-    lazy val program : Parser[Program] =
+    lazy val program : PackratParser[Program] =
         block ^^ Program
 
-    lazy val block : Parser[Block] =
+    lazy val block : PackratParser[Block] =
         "{" ~> (block_stmt*) <~ "}" ^^ { case bs => Block (bs) }
     lazy val block_stmt =
-        class_decl | var_decl | stmt
+        "" ~> class_decl | var_decl | stmt
 
     lazy val class_decl =
-        "class" ~> IDENTIFIER ~ (xtends?) ~ block ^^ { case i ~ e ~ b => ClassDecl (i, e, b) }
+        positioned (
+            "class" ~> IDENTIFIER ~ (xtends?) ~ block ^^
+                { case i ~ e ~ b => ClassDecl (i, e, b) }
+        )
     lazy val xtends =
         "extends" ~> IDENTIFIER ^^ Use
     lazy val var_decl =
         name ~ IDENTIFIER <~ ";" ^^ { case n ~ i => VarDecl (i, n) }
 
     lazy val stmt : Parser[Stmt] =
-        assign_stmt | while_stmt
+        "" ~> assign_stmt | while_stmt
     lazy val assign_stmt =
-        name ~ ("=" ~> exp <~ ";") ^^ { case n ~ e => AssignStmt (n, e) }
+        positioned (
+            name ~ ("=" ~> exp <~ ";") ^^ { case n ~ e => AssignStmt (n, e) }
+        )
     lazy val while_stmt =
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ s => WhileStmt (e, s) }
 
     lazy val exp =
-        name | boolean_literal
+        "" ~> name | boolean_literal
 
-    lazy val name : MemoParser[Access] =
-        name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |
-        IDENTIFIER ^^ Use
-
+    lazy val name : PackratParser[Access] =
+        positioned (
+            name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |
+            IDENTIFIER ^^ Use
+        )
+            
     lazy val boolean_literal =
         ("true" | "false") ^^ BooleanLiteral
 
-    lazy val IDENTIFIER : MemoParser[String] =
-        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+    lazy val IDENTIFIER : Parser[String] =
+        """[a-zA-Z][a-zA-Z0-9]*""".r
 
-    lazy val comment =
-        '/' ~> '/' ~> ((not (endofline) ~> any)*) <~ endofline
-    lazy val endofline =
-        '\r' ~ '\n' | '\r' | '\n'
-    override lazy val layout =
-        ((whitespace | comment)*) ^^^ List()
+    override val whiteSpace =
+        """(\s+)|(//.*\n)""".r
 
 }

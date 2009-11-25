@@ -21,7 +21,6 @@
 package kiama.example.til
 
 import java.io.Reader
-import kiama.parsing.CharPackratParsers
 
 /**
  * AST the basic Tiny Imperative Language.
@@ -76,11 +75,11 @@ trait TIL1_1 extends ParsingMain {
 
     type Root = Program
 
-    lazy val parse = program
+    lazy val start = program
 
     lazy val program = (statement*) ^^ Program
 
-    lazy val statement : Parser[Stat] =
+    lazy val statement : PackratParser[Stat] =
         declaration | assignment_statement | if_statement | while_statement |
         for_statement | read_statement | write_statement
 
@@ -108,22 +107,22 @@ trait TIL1_1 extends ParsingMain {
 
     lazy val write_statement = "write" ~> expression <~ ";" ^^ Write
 
-    lazy val expression : MemoParser[Exp] =
+    lazy val expression : PackratParser[Exp] =
         expression ~ ("=" ~> term) ^^ { case e ~ t => Eq (e, t) } |
         expression ~ ("!=" ~> term) ^^ { case e ~ t => Ne (e, t) } |
         term
 
-    lazy val term : MemoParser[Exp] =
+    lazy val term : PackratParser[Exp] =
         term ~ ("+" ~> factor) ^^ { case t ~ f => Add (t, f) } |
         term ~ ("-" ~> factor) ^^ { case t ~ f => Sub (t, f) } |
         factor
 
-    lazy val factor : MemoParser[Exp] =
+    lazy val factor : PackratParser[Exp] =
         factor ~ ("*" ~> primary) ^^ { case f ~ p => Mul (f, p) } |
         factor ~ ("/" ~> primary) ^^ { case f ~ p => Div (f, p) } |
         primary
 
-    lazy val primary : MemoParser[Exp] =
+    lazy val primary : PackratParser[Exp] =
         identifier ^^ Var |
         integer |
         string |
@@ -133,21 +132,16 @@ trait TIL1_1 extends ParsingMain {
         "for" | "read" | "write"
 
     lazy val identifier =
-        !keyword ~> token (letter ~ (letterOrDigit*)) ^^
-            { case c ~ cs => Id (c + cs.mkString) }
+        not (keyword) ~> """[a-zA-Z][a-zA-Z0-9]*""".r ^^ Id
 
     lazy val integer =
-        token (digit+) ^^ (l => Num (l.mkString.toInt))
+        """[0-9]+""".r ^^ (s => Num (s.toInt))
 
     lazy val string =
-        token ('"' ~> """[^\"]+""".r <~ '"') ^^ Str
+        """\"[^\"]+\"""".r ^^ Str
 
-    lazy val comment =
-        '/' ~> '/' ~> ((not (endofline) ~> any)*) <~ endofline
-    lazy val endofline =
-        '\r' ~ '\n' | '\r' | '\n'
-    override lazy val layout =
-        ((whitespace | comment)*) ^^^ List()
+    override val whiteSpace =
+        """(\s+)|(//.*$)""".r
 
 }
 

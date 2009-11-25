@@ -25,23 +25,14 @@ package kiama.example.oberon0.compiler.tests
 import org.scalacheck.Prop._
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
-import kiama.parsing.CharPackratParsers
 import kiama.example.oberon0.compiler.Parser
 
 /**
  * Oberon0 parsing test cases.
  */
-class ParserTests extends FunSuite with Checkers with CharPackratParsers
-                  with Parser {
+class ParserTests extends FunSuite with Checkers with Parser {
 
     import kiama.example.oberon0.compiler.AST._
-    import scala.util.parsing.input.CharSequenceReader
-
-    /**
-     * Convenience method for creating a parser input that reads from
-     * a given string.
-     */
-    def input (str : String) = new CharSequenceReader (str)
 
     /**
      * Return true if the given parser result is a failure regardless of the
@@ -58,12 +49,12 @@ class ParserTests extends FunSuite with Checkers with CharPackratParsers
      * there is no more input left.
      */
     def expect[T] (parser : Parser[T], str : String, result : T) {
-        parser (input (str)) match {
+        parseAll (parser, str) match {
             case Success (r, in) =>
                 if (r != result) fail ("found " + r + " not " + result)
                 if (!in.atEnd) fail ("input remaining at " + in.pos)
-            case Failure (m, in) =>
-                fail (m + " at " + in.pos)
+            case f =>
+                fail ("parse failure: " + f)
         }
     }
 
@@ -75,7 +66,7 @@ class ParserTests extends FunSuite with Checkers with CharPackratParsers
 
     test ("parse integer literals") {
         expect (number, "5", IntegerLiteral (5))
-        assert (isFail (number (input ("x"))))
+        assert (isFail (parseAll (number, "x")))
     }
 
     test ("parse expressions") {
@@ -87,7 +78,7 @@ class ParserTests extends FunSuite with Checkers with CharPackratParsers
     }
 
     test ("keywords are rejected as identifiers") {
-        assert (isFail (assignment (input ("WHILE := 3"))))
+        assert (isFail (parseAll (assignment, "WHILE := 3")))
     }
 
     test ("parse assignment statements") {
@@ -106,6 +97,55 @@ class ParserTests extends FunSuite with Checkers with CharPackratParsers
         expect (whileStatement, "WHILE x DO x:= 1 END",
                 WhileStatement (Ident ("x"),
                     List (Assignment (Ident ("x"), IntegerLiteral (1)))))
+    }
+    
+    test ("parse factorial program") {
+        val program =
+"""
+MODULE Factorial;
+    
+CONST
+    limit = 10;
+
+VAR
+    v : INTEGER;
+    c : INTEGER;
+    fact : INTEGER;
+
+BEGIN
+    Read (v);
+    IF (v < 0) OR (v > limit) THEN
+        WriteLn (-1)
+    ELSE
+        c := 0;
+        fact := 1;
+        WHILE c < v DO
+            c := c + 1;
+            fact := fact * c
+        END;
+        WriteLn (fact)
+    END
+END Factorial.
+"""
+        expect (start, program,
+            ModuleDecl ("Factorial",
+                List (ConstDecl ("limit", IntegerLiteral (10)),
+                      VarDecl ("v", IntegerType),
+                      VarDecl ("c", IntegerType),
+                      VarDecl ("fact", IntegerType)),
+                List (ProcedureCall (Ident ("Read"), List (Ident ("v"))),
+                      IfStatement (Or (LessThan (Ident ("v"), IntegerLiteral (0)),
+                                       GreaterThan (Ident ("v"), Ident ("limit"))),
+                          List (ProcedureCall (Ident ("WriteLn"), List (Neg (IntegerLiteral (1))))),
+                          List (Assignment (Ident ("c"), IntegerLiteral (0)),
+                                Assignment (Ident ("fact"), IntegerLiteral (1)),
+                                WhileStatement (LessThan (Ident ("c"), Ident ("v")),
+                                     List (Assignment (Ident ("c"), Plus (Ident ("c"), IntegerLiteral (1))),
+                                           Assignment (Ident ("fact"), Mult (Ident ("fact"), Ident ("c"))))),
+                                ProcedureCall (Ident ("WriteLn"), List (Ident ("fact")))))),
+                "Factorial",
+                ModuleType ()))
+
     }
 
 }

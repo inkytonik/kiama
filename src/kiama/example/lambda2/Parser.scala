@@ -20,47 +20,57 @@
 
 package kiama.example.lambda2
 
+import scala.util.parsing.combinator.PackratParsers
+import scala.util.parsing.combinator.RegexParsers
+
 /**
  * Parser to AST.
  */
-trait Parser extends kiama.parsing.CharPackratParsers {
+trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
+    
+    // "" is used in a few places to skip over leading whitespace, so the
+    // position of a result is the first non-trivial character in it, not
+    // the first of the whitespace preceding it, this is a flaw in the way
+    // that positioning is handled in the Scala parser library
 
-    lazy val parse : MemoParser[Exp] =
+    lazy val start : PackratParser[Exp] =
         exp
 
-    lazy val exp : MemoParser[Exp] =
-        "\\" ~> idn ~ (":" ~> ttype) ~ ("." ~> exp) ^^ { case i ~ t ~ e => Lam (i, t, e) } |
+    lazy val exp : PackratParser[Exp] =
+        "\\" ~> idn ~ (":" ~> ttype) ~ ("." ~> exp) ^^
+            { case i ~ t ~ e => Lam (i, t, e) } |
         exp2
 
-    lazy val exp2 : MemoParser[Exp] =
+    lazy val exp2 : PackratParser[Exp] =
         exp2 ~ op ~ exp1 ^^ { case l ~ o ~ r => Opn (o, l, r) } |
         exp1
 
-    lazy val exp1 : MemoParser[Exp] =
+    lazy val exp1 : PackratParser[Exp] =
         exp1 ~ exp0 ^^ { case l ~ r => App (l, r) } |
         exp0
 
-    lazy val exp0 : MemoParser[Exp] =
-        number | idn ^^ Var | "(" ~> exp <~ ")"
-
-    lazy val ttype : MemoParser[Type] =
+    lazy val exp0 : PackratParser[Exp] =
+        "" ~> positioned (number | idn ^^ Var) |
+        "(" ~> "" ~> positioned (exp) <~ ")"
+        
+    lazy val ttype : PackratParser[Type] =
         ttype0 ~ ("->" ~> ttype) ^^ { case l ~ r => FunType (l, r) } |
         ttype0
 
-    lazy val ttype0 : MemoParser[Type] =
+    lazy val ttype0 : PackratParser[Type] =
         "Int" ^^^ IntType |
         "(" ~> ttype <~ ")"
 
-    lazy val op : MemoParser[Op] =
+    lazy val op : PackratParser[Op] =
         "+" ^^^ AddOp |
         "-" ^^^ SubOp
 
-    lazy val idn : MemoParser[Idn] =
-        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+    lazy val idn : Parser[Idn] =
+        """[a-zA-Z][a-zA-Z0-9]*""".r
 
-    lazy val number : MemoParser[Num] =
-        token (digit+) ^^ (l => Num (l.mkString.toInt))
+    lazy val number : PackratParser[Num] =
+        """[0-9]+""".r ^^ (l => Num (l.mkString.toInt))
 
 }

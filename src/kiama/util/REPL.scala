@@ -21,7 +21,7 @@
 package kiama.util
 
 import jline.ConsoleReader
-import kiama.parsing.CharPackratParsers
+import scala.util.parsing.combinator.RegexParsers
 import org.scalacheck._
 
 /**
@@ -68,22 +68,19 @@ trait REPL {
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them.
  */
-trait ParsingREPL[T] extends REPL with CharPackratParsers {
-
-    import scala.util.parsing.input.CharSequenceReader
+trait ParsingREPL[T] extends REPL with RegexParsers {
 
     /**
      * Process a user input line by parsing it to get a value of type T,
      * then passing it to the type-specific process.
      */
     def processline (line : String) {
-        val in = new CharSequenceReader (line)
-        parse (in) match {
+        parseAll (start, line) match {
             case Success (e, in) if in.atEnd =>
                 process (e)
             case Success (_, in) =>
                 println ("extraneous input at " + in.pos)
-            case f @ Failure (_, _) =>
+            case f =>
                 println (f)
         }
     }
@@ -91,7 +88,7 @@ trait ParsingREPL[T] extends REPL with CharPackratParsers {
     /**
      * The parser to use to convert user input lines into values.
      */
-    def parse : Parser[T]
+    def start : Parser[T]
 
     /**
      * Process a user input value.

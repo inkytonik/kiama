@@ -22,6 +22,8 @@ package kiama.example.imperative
 
 import kiama.util.GeneratingREPL
 import kiama.util.ParsingREPL
+import scala.util.parsing.combinator.PackratParsers
+import scala.util.parsing.combinator.RegexParsers
 
 /**
  * A simple imperative language abstract syntax designed for testing.
@@ -247,49 +249,49 @@ object PrettyPrinter {
 /**
  * Parser to AST.
  */
-trait Parser extends kiama.parsing.CharPackratParsers {
+trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
 
-    lazy val parse : Parser[Stmt] =
+    lazy val start : PackratParser[Stmt] =
         phrase (stmt)
 
-    lazy val stmt : Parser[Stmt] =
+    lazy val stmt : PackratParser[Stmt] =
         ";" ^^^ Null () | sequence | asgnStmt | whileStmt
 
-    lazy val asgnStmt : Parser[Asgn] =
+    lazy val asgnStmt : PackratParser[Asgn] =
         idn ~ ("=" ~> exp) <~ ";" ^^ { case s ~ e => Asgn (s, e) }
 
-    lazy val whileStmt : Parser[While] =
+    lazy val whileStmt : PackratParser[While] =
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
 
-    lazy val sequence : Parser[Seqn] =
+    lazy val sequence : PackratParser[Seqn] =
         "{" ~> (stmt*) <~ "}" ^^ Seqn
 
-    lazy val exp : MemoParser[Exp] =
+    lazy val exp : PackratParser[Exp] =
         exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
         exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
         term
 
-    lazy val term : MemoParser[Exp] =
+    lazy val term : PackratParser[Exp] =
         term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
         term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
         factor
 
-    lazy val factor : MemoParser[Exp] =
+    lazy val factor : PackratParser[Exp] =
         double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")"
 
-    lazy val double : Parser[Num] =
-        token ((digit+) ~ ("." ~> (digit+))) ^^ { case l ~ r => Num ((l.mkString + "." + r.mkString).toDouble) }
+    lazy val double : PackratParser[Num] =
+        ("""[0-9]+\.[0-9]+""") ^^ { case s => Num (s.toDouble) }
 
-    lazy val integer : Parser[Num] =
-        token (digit+) ^^ (l => Num (l.mkString.toInt))
+    lazy val integer : PackratParser[Num] =
+        "[0-9]+".r ^^ (l => Num (l.mkString.toInt))
 
-    lazy val variable : Parser[Var] =
+    lazy val variable : PackratParser[Var] =
         idn ^^ Var
 
-    lazy val idn : Parser[String] =
-        !keyword ~> token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+    lazy val idn : PackratParser[String] =
+        not (keyword) ~> """[a-zA-Z][a-zA-Z0-9]*""".r
 
     lazy val keyword : Parser[String] =
         "while"

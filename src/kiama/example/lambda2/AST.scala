@@ -100,7 +100,7 @@ object AST {
     /**
      * Types.
      */
-    abstract class Type extends Product
+    abstract class Type extends Product with Attributable
 
     /**
      * Primitive integer type.

@@ -22,63 +22,64 @@
 
 package kiama.example.oberon0.compiler
 
-import kiama.parsing.CharPackratParsers
+import scala.util.parsing.combinator.PackratParsers
+import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Parse Oberon-0 to an abstract syntax tree.
  */
-trait Parser extends kiama.parsing.CharPackratParsers {
+trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
 
-    lazy val parse  : Parser[ModuleDecl] =
+    lazy val start  : PackratParser[ModuleDecl] =
         phrase (moduledecl)
 
     // Declarations
 
-    lazy val moduledecl : Parser[ModuleDecl] =
+    lazy val moduledecl : PackratParser[ModuleDecl] =
         "MODULE" ~> (ident <~ ";") ~ declarations ~
             (("BEGIN" ~> statementSequence)?) ~ ("END" ~> ident) <~ "." ^^
                 { case id1 ~ decs ~ opstseq ~ id2 =>
                      ModuleDecl (id1.name, decs, optionalListToList (opstseq), id2.name, ModuleType()) }
 
-    lazy val declarations : Parser[List[Declaration]] =
+    lazy val declarations : PackratParser[List[Declaration]] =
         (constdecls?) ~ (typedecls?) ~ (vardecls?) ~ procdecls  ^^
              { case c ~ t ~ v ~ p =>
                   optionalListToList (c) ::: optionalListToList (t) :::
                   optionalListToList (v) ::: p }
 
-    lazy val constdecl : Parser[ConstDecl] =
+    lazy val constdecl : PackratParser[ConstDecl] =
         (ident <~ "=") ~ expression <~ ";" ^^ { case id ~ ex => ConstDecl (id.name, ex) }
 
-    lazy val constdecls : Parser[List[ConstDecl]] =
+    lazy val constdecls : PackratParser[List[ConstDecl]] =
         "CONST" ~> (constdecl*)
 
-    lazy val typedecl : Parser[TypeDecl] =
+    lazy val typedecl : PackratParser[TypeDecl] =
         (ident <~ "=") ~ type1 <~ ";" ^^ {case id ~ tp => TypeDecl (id.name, tp) }
 
-    lazy val typedecls : Parser[List[TypeDecl]] =
+    lazy val typedecls : PackratParser[List[TypeDecl]] =
         "TYPE" ~> (typedecl*)
 
-    lazy val vardeclspertype : Parser[List[VarDecl]] =
+    lazy val vardeclspertype : PackratParser[List[VarDecl]] =
         (identList <~ ":") ~ type1 ^^
             { case lst ~ tp => lst.map (id => VarDecl (id.name, tp)) }
 
-    lazy val vardecls : Parser[List[VarDecl]] =
+    lazy val vardecls : PackratParser[List[VarDecl]] =
         "VAR" ~> ((vardeclspertype <~ ";")*) ^^ (lst => lst.flatten)
 
-    lazy val fpSection : Parser[List[Declaration]] =
+    lazy val fpSection : PackratParser[List[Declaration]] =
         (("VAR"?) ~ identList <~ ":") ~ type1 ^^
            { case Some (_) ~ lst ~ tp => lst.map (id => RefVarDecl (id.name, tp))
              case None     ~ lst ~ tp => lst.map (id => VarDecl (id.name, tp)) }
 
-    lazy val formalParameters : Parser[List[Declaration]] =
+    lazy val formalParameters : PackratParser[List[Declaration]] =
         "(" ~> repsep(fpSection, ";") <~ ")" ^^ (lst => lst.flatten)
 
-    lazy val procdecls : Parser[List[ProcDecl]] =
+    lazy val procdecls : PackratParser[List[ProcDecl]] =
         (procdecl <~ ";")*
 
-    lazy val procdecl : Parser[ProcDecl] =
+    lazy val procdecl : PackratParser[ProcDecl] =
         ("PROCEDURE" ~> ident) ~ (formalParameters?) ~ (";" ~> declarations) ~
             (("BEGIN" ~> statementSequence)?) ~ ("END" ~> ident) ^^
                 { case id1 ~ opfps ~ decs ~ opstseq ~ id2 =>
@@ -87,68 +88,68 @@ trait Parser extends kiama.parsing.CharPackratParsers {
 
     // Types
 
-    lazy val type1 : Parser[Type] =
+    lazy val type1 : PackratParser[Type] =
         "INTEGER" ^^ { case _ => IntegerType } |
         ident ^^ NamedType |
         arrayType |
         recordType
 
-    lazy val identList : Parser[List[Ident]] =
+    lazy val identList : PackratParser[List[Ident]] =
         repsep (ident, ",")
 
-    lazy val arrayType : Parser[ArrayType] =
+    lazy val arrayType : PackratParser[ArrayType] =
         (("ARRAY" ~> expression) <~ "OF") ~ type1 ^^
             { case e ~ tp => ArrayType (e, tp) }
 
-    lazy val fieldList : Parser[List[FieldDecl]] =
+    lazy val fieldList : PackratParser[List[FieldDecl]] =
         (identList <~ ":") ~ type1 ^^
             { case lst ~ tp => lst.map (id => FieldDecl (id.name, tp)) }
 
-    lazy val recordType : Parser[RecordType] =
+    lazy val recordType : PackratParser[RecordType] =
         "RECORD" ~> repsep (fieldList, ";") <~ "END" ^^
             (lst => RecordType (lst.flatten))
 
     // Statements
 
-    lazy val statementSequence : Parser[List[Statement]] =
+    lazy val statementSequence : PackratParser[List[Statement]] =
         repsep (statement, ";")
 
-    lazy val statement : Parser[Statement] =
+    lazy val statement : PackratParser[Statement] =
         assignment |
         procedureCall |
         ifStatement |
         whileStatement
 
-    lazy val assignment : Parser[Assignment] =
+    lazy val assignment : PackratParser[Assignment] =
         (desig <~ ":=") ~ expression ^^ { case d ~ e => Assignment (d, e) }
 
-    lazy val actualParameters : Parser[List[Exp]] =
+    lazy val actualParameters : PackratParser[List[Exp]] =
         "(" ~> repsep (expression, ",") <~ ")"
 
-    lazy val procedureCall : Parser[Statement] =
+    lazy val procedureCall : PackratParser[Statement] =
         desig ~ actualParameters ^^ { case d ~ aps => ProcedureCall (d, aps) } |
         desig ^^ (d => ProcedureCall (d, Nil))
 
-    lazy val ifStatement : Parser[IfStatement] =
+    lazy val ifStatement : PackratParser[IfStatement] =
         ("IF" ~> expression) ~ ("THEN" ~> statementSequence) <~ "END" ^^
             { case con ~ thnss => IfStatement (con, thnss, Nil) } |
         ("IF" ~> expression) ~ ("THEN" ~> statementSequence) ~ ifTail ^^
             { case con ~ thnss ~ els => IfStatement (con, thnss, els) }
 
-    lazy val ifTail : Parser[List[Statement]] =
+    lazy val ifTail : PackratParser[List[Statement]] =
         ("ELSIF" ~> expression) ~ ("THEN" ~> statementSequence) ~ ifTail ^^
             { case con ~ thnss ~ els => List (IfStatement (con, thnss, els)) } |
         ("ELSIF" ~> expression) ~ ("THEN" ~> statementSequence) <~ "END" ^^
             { case con ~ thnss => List (IfStatement (con, thnss, Nil)) } |
         ("ELSE" ~> statementSequence) <~ "END"
 
-    lazy val whileStatement : Parser[WhileStatement] =
+    lazy val whileStatement : PackratParser[WhileStatement] =
         (("WHILE" ~> expression) <~ "DO") ~ statementSequence <~ "END" ^^
             { case ex ~ ss => WhileStatement (ex, ss) }
 
     // Expressions
 
-    lazy val expression : MemoParser[Exp] =
+    lazy val expression : PackratParser[Exp] =
         (simpleExpression <~ "=") ~ simpleExpression ^^ { case se1 ~ se2 => Equal (se1, se2) } |
         (simpleExpression <~ "#") ~ simpleExpression ^^ { case se1 ~ se2 => NotEqual (se1, se2) } |
         (simpleExpression <~ "<") ~ simpleExpression ^^ { case se1 ~ se2 => LessThan (se1, se2) } |
@@ -157,20 +158,20 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         (simpleExpression <~ ">=") ~ simpleExpression ^^ { case se1 ~ se2 => GreaterThanOrEqual (se1, se2) } |
         simpleExpression
 
-    lazy val simpleExpression : MemoParser[Exp] =
+    lazy val simpleExpression : PackratParser[Exp] =
         (simpleExpression <~ "+") ~ term ^^ {case se ~ t => Plus (se, t) } |
         (simpleExpression <~ "-") ~ term ^^ {case se ~ t => Minus (se, t) } |
         (simpleExpression <~ "OR") ~ term ^^ {case se ~ t => Or (se, t) } |
         term
 
-    lazy val term : MemoParser[Exp] =
+    lazy val term : PackratParser[Exp] =
         (term <~ "*") ~ factor ^^ { case t ~ f => Mult (t, f) } |
         (term <~ "DIV") ~ factor ^^ { case t ~ f => Div (t, f) } |
         (term <~ "MOD") ~ factor ^^ { case t ~ f => Mod (t, f) } |
         (term <~ "&") ~ factor ^^ { case t ~ f => And (t, f) } |
         factor
 
-    lazy val factor : MemoParser[Exp] =
+    lazy val factor : PackratParser[Exp] =
         desig |
         number |
         "(" ~> expression <~ ")" |
@@ -178,35 +179,35 @@ trait Parser extends kiama.parsing.CharPackratParsers {
         "+" ~> factor ^^ Pos |
         "-" ~> factor ^^ Neg
 
-    lazy val desig : MemoParser[Desig] =
+    lazy val desig : PackratParser[Desig] =
         (desig <~ "[") ~ (expression <~ "]") ^^ { case d ~ e => ArrayDesig (d, e) } |
         (desig <~ ".") ~ ident ^^ { case d ~ id => FieldDesig (d, id) } |
         ident
 
-    lazy val number : Parser[Literal] =
+    lazy val number : PackratParser[Literal] =
         integer
 
-    lazy val keyword : Parser[String] =
+    lazy val keyword : PackratParser[String] =
         "ARRAY" | "BEGIN" | "CONST" | "ELSIF" | "ELSE" | "END" | "IF" |
         "MODULE" | "OF" | "PROCEDURE" | "RECORD" | "THEN" | "TYPE" | "VAR" |
         "WHILE"
 
-    lazy val ident : MemoParser[Ident] =
-        !keyword ~> token (letter ~ (letterOrDigit*)) ^^
-        { case c ~ cs => Ident (c + cs.mkString) }
+    lazy val ident : PackratParser[Ident] =
+        not (keyword) ~> """[a-zA-Z][a-zA-Z0-9]*""".r ^^ Ident
 
-    lazy val integer : Parser[IntegerLiteral] =
-        token (digit+) ^^ (l => IntegerLiteral(l.mkString.toInt))
+    lazy val integer : PackratParser[IntegerLiteral] =
+        """[0-9]+""".r ^^ (s => IntegerLiteral (s.toInt))
 
-    lazy val comment =
-        "(*" ~> ((not ("*)") ~> any)*) <~ "*)"
+    // override protected val whiteSpace =
+    //     """(\s+)|(/\(\*(?:.|[\n\r])*?\*\))""".r
 
-    override lazy val layout =
-        ((whitespace | comment)*) ^^^ List()
+    override protected val whiteSpace =
+        """(\s+)""".r
 
     /**
      * Convert an option list into either the list (if present) or Nil if None.
      */
     def optionalListToList[T] (op: Option[List[T]]) : List[T] =
         op.getOrElse (Nil)
+
 }

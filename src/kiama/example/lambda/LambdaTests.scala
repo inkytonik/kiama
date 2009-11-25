@@ -30,15 +30,13 @@ import org.scalatest.prop.Checkers
 class LambdaTests extends FunSuite with Checkers with TestBase {
 
     import AST._
-    import scala.util.parsing.input.CharSequenceReader
 
     /**
      * Parse and evaluate term then compare to result. Fail if any the parsing
      * or the comparison fail.
      */
     def expectEval (term : String, result : Exp) {
-        val in = new CharSequenceReader (term)
-        parse (in) match {
+        parse (start, term) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
                     case Some (r) => expect (result) (r)
@@ -46,7 +44,7 @@ class LambdaTests extends FunSuite with Checkers with TestBase {
                 }
             case Success (_, in) =>
                 fail ("extraneous input at " + in.pos + ": " + term)
-            case f @ Failure (_, _) =>
+            case f =>
                 fail ("parse failure: " + f)
         }
     }
@@ -56,8 +54,7 @@ class LambdaTests extends FunSuite with Checkers with TestBase {
      * parsing or the comparison fail.
      */
     def evalTo (term : String, result : Exp) : Boolean = {
-        val in = new CharSequenceReader (term)
-        parse (in) match {
+        parse (start, term) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
                     case Some (r) => r == result

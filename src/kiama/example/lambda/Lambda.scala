@@ -23,6 +23,8 @@ package kiama.example.lambda
 import kiama.rewriting.Rewriter
 import kiama.util.GeneratingREPL
 import kiama.util.ParsingREPL
+import scala.util.parsing.combinator.PackratParsers
+import scala.util.parsing.combinator.RegexParsers
 
 /**
  * A simple lambda calculus.
@@ -77,30 +79,30 @@ object AST {
 /**
  * Parser to AST.
  */
-trait Parser extends kiama.parsing.CharPackratParsers {
+ trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
 
-    lazy val parse : Parser[Exp] =
+    lazy val start : PackratParser[Exp] =
         phrase (exp)
 
-    lazy val exp : MemoParser[Exp] =
+    lazy val exp : PackratParser[Exp] =
         exp ~ factor ^^ { case l ~ r => App (l, r) } |
         ("\\" ~> idn) ~ ("." ~> exp) ^^ { case i ~ b => Lam (i, b) } |
         factor |
         failure ("expression expected")
 
-    lazy val factor : MemoParser[Exp] =
+    lazy val factor : PackratParser[Exp] =
         integer | variable | "(" ~> exp <~ ")"
 
-    lazy val integer : Parser[Num] =
-        token (digit+) ^^ (l => Num (l.mkString.toInt))
+    lazy val integer : PackratParser[Num] =
+        """[0-9]+""".r ^^ (l => Num (l.mkString.toInt))
 
-    lazy val variable : Parser[Var] =
+    lazy val variable : PackratParser[Var] =
         idn ^^ Var
 
     lazy val idn : Parser[String] =
-        token (letter ~ (letterOrDigit*)) ^^ { case c ~ cs => c + cs.mkString }
+        """[a-zA-Z][a-zA-Z0-9]*""".r
 
 }
 
