@@ -20,7 +20,6 @@
 
 package kiama.example.lambda
 
-import kiama.rewriting.Rewriter
 import kiama.util.GeneratingREPL
 import kiama.util.ParsingREPL
 import scala.util.parsing.combinator.PackratParsers

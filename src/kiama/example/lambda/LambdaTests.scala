@@ -20,7 +20,6 @@
 
 package kiama.example.lambda
 
-import org.scalacheck.Prop._
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 
@@ -30,6 +29,7 @@ import org.scalatest.prop.Checkers
 class LambdaTests extends FunSuite with Checkers with TestBase {
 
     import AST._
+    import org.scalacheck.Prop._
 
     /**
      * Parse and evaluate term then compare to result. Fail if any the parsing

@@ -21,7 +21,6 @@
 package kiama.example.repmin
 
 import kiama.attribution.Attributable
-import kiama.attribution.Attribution._
 
 /**
  * AST for Repmin examples.
@@ -37,6 +36,8 @@ case class Leaf (value : Int) extends Tree
  * minimum leaf value from the input tree.
  */
 object Repmin {
+
+    import kiama.attribution.Attribution._
 
     val locmin : Tree ==> Int =
         attr {

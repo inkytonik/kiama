@@ -21,7 +21,6 @@
 package kiama.example.til
 
 import java.io.Reader
-import kiama.rewriting.Rewriter
 import org.scalatest.Assertions
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers

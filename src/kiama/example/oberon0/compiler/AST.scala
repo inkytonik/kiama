@@ -22,15 +22,13 @@
 
 package kiama.example.oberon0.compiler
 
-import kiama.attribution.Attributable
-import kiama.attribution.Attribution._
-
 /**
  * Abstract syntax for Oberon-0.
  */
 object AST {
 
     import TypeAnalysis._
+    import kiama.attribution.Attributable
 
     /**
      * Simple interface for pretty-printing capabilities.

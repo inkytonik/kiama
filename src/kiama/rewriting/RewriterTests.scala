@@ -20,11 +20,9 @@
 
 package kiama.rewriting
 
-import org.scalacheck._
-import org.scalacheck.Prop._
+import kiama.example.imperative.Generator
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
-import kiama.example.imperative.Generator
 
 /**
  * Rewriting tests.
@@ -33,6 +31,8 @@ class RewriterTests extends FunSuite with Checkers with Generator {
 
     import kiama.example.imperative.AST._
     import kiama.rewriting.Rewriter.{fail => rwfail, _}
+    import org.scalacheck._
+    import org.scalacheck.Prop._
 
     test ("basic arithmetic evaluation") {
         val eval =

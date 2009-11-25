@@ -23,7 +23,6 @@
 package kiama.example.oberon0.compiler
 
 import AST._
-import TypeAnalysis._
 
 /**
  * An environment to hold name bindings, nested within a parent environment.

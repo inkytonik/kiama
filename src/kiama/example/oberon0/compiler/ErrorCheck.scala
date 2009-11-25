@@ -22,9 +22,6 @@
 
 package kiama.example.oberon0.compiler
 
-import kiama.attribution.Attributable
-import kiama.attribution.Attribution._
-
 /**
  * Drive the semantic analysis of a program by checking error conditions.
  */
@@ -35,6 +32,8 @@ object ErrorCheck {
     import TypeAnalysis._
     import ValueAnalysis._
     import ConstantAnalysis._
+    import kiama.attribution.Attributable
+    import kiama.attribution.Attribution._
     import kiama.util.Messaging.message
 
     /**

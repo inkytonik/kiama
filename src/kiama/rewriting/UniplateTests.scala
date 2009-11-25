@@ -20,8 +20,6 @@
 
 package kiama.rewriting
 
-import org.scalacheck._
-import org.scalacheck.Prop._
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 import kiama.example.imperative.Generator
@@ -34,6 +32,8 @@ class UniplateTests extends FunSuite with Checkers with Generator {
 
     import kiama.example.imperative.AST._
     import kiama.rewriting.Rewriter._
+    import org.scalacheck._
+    import org.scalacheck.Prop._
 
     /**
      * A simple numeric test expression.

@@ -20,8 +20,6 @@
 
 package kiama.example.til
 
-import java.io.Reader
-
 /**
  * AST the basic Tiny Imperative Language.
  */

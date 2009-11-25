@@ -20,14 +20,14 @@
 
 package kiama.util
 
-import jline.ConsoleReader
 import scala.util.parsing.combinator.RegexParsers
-import org.scalacheck._
 
 /**
  * General support for applications that implement read-eval-print loops (REPLs).
  */
 trait REPL {
+
+    import jline.ConsoleReader
 
     /**
      * Read lines from standard input and pass non-null ones to processline.
@@ -102,6 +102,8 @@ trait ParsingREPL[T] extends REPL with RegexParsers {
  * syntax trees of type T and prints them.
  */
 trait GeneratingREPL[T] extends REPL {
+    
+    import org.scalacheck._
 
     /**
      * Carry out setup processing for the REPL.

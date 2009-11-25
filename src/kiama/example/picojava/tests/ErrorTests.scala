@@ -32,7 +32,6 @@ import org.scalatest.FunSuite
 
 class ErrorTests extends FunSuite {
 
-    import java.io.FileReader
     import kiama.example.picojava.ErrorCheck._
     import kiama.example.picojava.Parser._
 

@@ -20,14 +20,17 @@
 
 package kiama.example.dataflow
 
-import kiama.attribution.Attributable
-
 /**
  * Imperative language AST for dataflow example.
  */
 object DataflowAST {
+
+    import kiama.attribution.Attributable
+
     type Var = String
+
     case class Program (body : Stm) extends Attributable
+
     abstract class Stm extends Attributable
     case class Assign (left : Var, right : Var) extends Stm
     case class While (cond : Var, body : Stm) extends Stm
@@ -35,4 +38,5 @@ object DataflowAST {
     case class Block (stms : Stm*) extends Stm
     case class Return (ret : Var) extends Stm
     case class Empty () extends Stm
+
 }

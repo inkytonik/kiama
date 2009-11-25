@@ -1,10 +1,11 @@
 package kiama.example.picojava.benchmark
 
-import kiama.attribution._
-import kiama.example.picojava.AbstractSyntax._
-import kiama.example.picojava.ErrorCheck._
-
 object PicoJavaBenchmark extends Application {
+
+    import kiama.attribution._
+    import kiama.example.picojava.AbstractSyntax._
+    import kiama.example.picojava.ErrorCheck._
+
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 
     def basicAst = ClassDecl ("AA", None, Block (List (VarDecl ("x", Use ("int")))))
