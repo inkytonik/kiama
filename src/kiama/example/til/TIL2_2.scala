@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.til
+package org.kiama.example.til
 
 /**
  * Transform for loops into equivalent while loops.
@@ -26,7 +26,7 @@ package kiama.example.til
 trait TIL2_2 extends TIL1_1 with TransformingMain {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     override def transform (ast : Root) : Root =
         rewrite (fortowhile) (ast)

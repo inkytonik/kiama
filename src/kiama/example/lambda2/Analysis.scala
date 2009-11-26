@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * Analyses for typed lambda calculus expressions.  A simple free variable
@@ -30,8 +30,8 @@ package kiama.example.lambda2
 object Analysis {
 
     import AST._
-    import kiama.attribution.Attribution._
-    import kiama.util.Messaging._
+    import org.kiama.attribution.Attribution._
+    import org.kiama.util.Messaging._
 
     /**
      * The variables that are free in the given expression.

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * Evaluation of lambda calculus using lazy evaluation with
@@ -27,7 +27,7 @@ package kiama.example.lambda2
 trait LazySubst extends EagerSubst {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * Evaluate applied functions, scoped expressions and operands, then

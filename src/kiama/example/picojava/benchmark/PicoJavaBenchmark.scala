@@ -1,10 +1,10 @@
-package kiama.example.picojava.benchmark
+package org.kiama.example.picojava.benchmark
 
 object PicoJavaBenchmark extends Application {
 
-    import kiama.attribution._
-    import kiama.example.picojava.AbstractSyntax._
-    import kiama.example.picojava.ErrorCheck._
+    import org.kiama.attribution._
+    import org.kiama.example.picojava.AbstractSyntax._
+    import org.kiama.example.picojava.ErrorCheck._
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 

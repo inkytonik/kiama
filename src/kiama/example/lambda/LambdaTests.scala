@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda
+package org.kiama.example.lambda
 
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers

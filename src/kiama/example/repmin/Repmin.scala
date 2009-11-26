@@ -18,9 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.repmin
+package org.kiama.example.repmin
 
-import kiama.attribution.Attributable
+import org.kiama.attribution.Attributable
 
 /**
  * AST for Repmin examples.
@@ -37,7 +37,7 @@ case class Leaf (value : Int) extends Tree
  */
 object Repmin {
 
-    import kiama.attribution.Attribution._
+    import org.kiama.attribution.Attribution._
 
     val locmin : Tree ==> Int =
         attr {

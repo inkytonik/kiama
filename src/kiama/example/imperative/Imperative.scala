@@ -18,10 +18,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.imperative
+package org.kiama.example.imperative
 
-import kiama.util.GeneratingREPL
-import kiama.util.ParsingREPL
+import org.kiama.util.GeneratingREPL
+import org.kiama.util.ParsingREPL
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers
 

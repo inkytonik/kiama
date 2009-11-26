@@ -20,16 +20,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler
+package org.kiama.example.oberon0.compiler
 
 /**
  * Oberon0 type analysis.
  */
 object TypeAnalysis {
 
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
-    import kiama.util.Messaging._
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
+    import org.kiama.util.Messaging._
     import AST._
     import NameAnalysis._
     import ValueAnalysis._

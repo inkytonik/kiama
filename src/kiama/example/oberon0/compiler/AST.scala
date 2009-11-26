@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler
+package org.kiama.example.oberon0.compiler
 
 /**
  * Abstract syntax for Oberon-0.
@@ -28,7 +28,7 @@ package kiama.example.oberon0.compiler
 object AST {
 
     import TypeAnalysis._
-    import kiama.attribution.Attributable
+    import org.kiama.attribution.Attributable
 
     /**
      * Simple interface for pretty-printing capabilities.

@@ -18,11 +18,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.rewriting
+package org.kiama.rewriting
 
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
-import kiama.example.imperative.Generator
+import org.kiama.example.imperative.Generator
 
 /**
  * Tests based on examples from the paper "Uniform boilerplate and list
@@ -30,8 +30,8 @@ import kiama.example.imperative.Generator
  */
 class UniplateTests extends FunSuite with Checkers with Generator {
 
-    import kiama.example.imperative.AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.example.imperative.AST._
+    import org.kiama.rewriting.Rewriter._
     import org.scalacheck._
     import org.scalacheck.Prop._
 

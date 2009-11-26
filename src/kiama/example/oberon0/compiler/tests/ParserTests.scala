@@ -20,19 +20,19 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler.tests
+package org.kiama.example.oberon0.compiler.tests
 
 import org.scalacheck.Prop._
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
-import kiama.example.oberon0.compiler.Parser
+import org.kiama.example.oberon0.compiler.Parser
 
 /**
  * Oberon0 parsing test cases.
  */
 class ParserTests extends FunSuite with Checkers with Parser {
 
-    import kiama.example.oberon0.compiler.AST._
+    import org.kiama.example.oberon0.compiler.AST._
 
     /**
      * Return true if the given parser result is a failure regardless of the

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * Interface to switchable evaluators for the lambda2 language.  Enables

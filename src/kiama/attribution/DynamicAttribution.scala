@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.attribution
+package org.kiama.attribution
 
 /**
  * Support for dynamic attribution of syntax trees.

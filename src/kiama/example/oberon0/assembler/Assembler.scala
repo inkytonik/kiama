@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.assembler
+package org.kiama.example.oberon0.assembler
 
 /**
  * Simple assembler for RISC machine programs.  Basically adds code
@@ -26,7 +26,7 @@ package kiama.example.oberon0.assembler
  */
 object Assembler {
 
-    import kiama.example.oberon0.machine.RISCISA._
+    import org.kiama.example.oberon0.machine.RISCISA._
     import scala.collection.mutable.ArrayBuffer
     import scala.collection.mutable.HashMap
 

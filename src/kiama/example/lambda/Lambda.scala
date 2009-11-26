@@ -18,10 +18,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda
+package org.kiama.example.lambda
 
-import kiama.util.GeneratingREPL
-import kiama.util.ParsingREPL
+import org.kiama.util.GeneratingREPL
+import org.kiama.util.ParsingREPL
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers
 
@@ -153,7 +153,7 @@ trait TestBase extends Parser with Generator with Evaluator
 trait Evaluator {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * Free variables

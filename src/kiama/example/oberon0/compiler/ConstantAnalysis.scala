@@ -20,11 +20,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler
+package org.kiama.example.oberon0.compiler
 
 object ConstantAnalysis {
 
-    import kiama.attribution.Attribution._
+    import org.kiama.attribution.Attribution._
     import AST._
     import NameAnalysis._
 

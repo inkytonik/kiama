@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * Evaluation of lambda calculus using an non-memoising innermost evaluation
@@ -27,7 +27,7 @@ package kiama.example.lambda2
 trait InnermostSubst extends ReduceSubst {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * Version of innermost library strategy that memoises.

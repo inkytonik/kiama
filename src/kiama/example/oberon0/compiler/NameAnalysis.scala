@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler
+package org.kiama.example.oberon0.compiler
 
 import AST._
 
@@ -82,8 +82,8 @@ class Environment (parent: Environment) {
  */
 object NameAnalysis {
 
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
     import TypeAnalysis._
 
     /**

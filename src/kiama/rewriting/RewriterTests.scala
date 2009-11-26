@@ -18,9 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.rewriting
+package org.kiama.rewriting
 
-import kiama.example.imperative.Generator
+import org.kiama.example.imperative.Generator
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
 
@@ -29,8 +29,8 @@ import org.scalatest.prop.Checkers
  */
 class RewriterTests extends FunSuite with Checkers with Generator {
 
-    import kiama.example.imperative.AST._
-    import kiama.rewriting.Rewriter.{fail => rwfail, _}
+    import org.kiama.example.imperative.AST._
+    import org.kiama.rewriting.Rewriter.{fail => rwfail, _}
     import org.scalacheck._
     import org.scalacheck.Prop._
 

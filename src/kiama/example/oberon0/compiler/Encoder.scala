@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler
+package org.kiama.example.oberon0.compiler
 
 /**
  * Build the assembly/RISC code for the program
@@ -32,10 +32,10 @@ object Encoder {
     import TypeAnalysis._
     import ConstantAnalysis._
     import ValueAnalysis._
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
-    import kiama.example.oberon0.assembler._
-    import kiama.example.oberon0.machine.RISCISA._
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
+    import org.kiama.example.oberon0.assembler._
+    import org.kiama.example.oberon0.machine.RISCISA._
 
     /**
      * For objects which require memory (VarDecls, RefVarDecls and FieldDecls), set byteOffset

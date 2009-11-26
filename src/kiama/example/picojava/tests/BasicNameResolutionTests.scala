@@ -26,15 +26,15 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package kiama.example.picojava.tests
+package org.kiama.example.picojava.tests
 
 import org.scalatest.FunSuite
 
 class BasicNameResolutionTests extends FunSuite {
 
-    import kiama.example.picojava.AbstractSyntax._
-    import kiama.example.picojava.NameResolution._
-    import kiama.example.picojava.TypeAnalysis._
+    import org.kiama.example.picojava.AbstractSyntax._
+    import org.kiama.example.picojava.NameResolution._
+    import org.kiama.example.picojava.TypeAnalysis._
 
     // For the actual program text, see BasicNameResolutionTests.pj
 

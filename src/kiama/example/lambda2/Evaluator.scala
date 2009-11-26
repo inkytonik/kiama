@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 import AST._
 
@@ -77,7 +77,7 @@ trait Evaluator {
  */
 trait RewritingEvaluator extends Evaluator {
     
-    import kiama.rewriting.Rewriter.{rewrite, Strategy}
+    import org.kiama.rewriting.Rewriter.{rewrite, Strategy}
     
     /**
      * Evaluate the given expression by rewriting it with the evals

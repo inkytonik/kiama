@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * Lazy evaluation of lambda calculus with parallel term-level substitution
@@ -27,7 +27,7 @@ package kiama.example.lambda2
 trait ParLazyShare extends ParLazy {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * Lazily evaluate within the expression then try to reduce the

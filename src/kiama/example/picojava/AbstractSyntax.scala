@@ -26,15 +26,15 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package kiama.example.picojava
+package org.kiama.example.picojava
 
 /**
  * PicoJava abstract syntax
  */
 object AbstractSyntax {
 
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
 
     // Created by parser
     case class Program (Block : Block) extends Attributable

@@ -26,14 +26,14 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package kiama.example.picojava
+package org.kiama.example.picojava
 
 object PredefinedTypes {
 
     import AbstractSyntax._
     import NameResolution._
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
 
     /*
      * A list of declarations of primitive types.

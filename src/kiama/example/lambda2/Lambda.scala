@@ -18,9 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
-import kiama.util.ParsingREPL
+import org.kiama.util.ParsingREPL
 
 /**
  * A simple typed lambda calculus read-eval-print-loop that offers
@@ -34,7 +34,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
 
     import Analysis._
     import Evaluators._
-    import kiama.util.Messaging._
+    import org.kiama.util.Messaging._
 
     override def setup { println ("Enter lambda calculus expressions for evaluation.") }
     override def prompt = "lambda2> "

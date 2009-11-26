@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 import org.scalatest.FunSuite
 import org.scalatest.prop.Checkers
@@ -31,9 +31,9 @@ class LambdaTests extends FunSuite with Checkers with Parser {
     import AST._
     import Analysis._
     import Evaluators._
-    import kiama.attribution.Attribution._
-    import kiama.rewriting.Rewriter._
-    import kiama.util.Messaging._
+    import org.kiama.attribution.Attribution._
+    import org.kiama.rewriting.Rewriter._
+    import org.kiama.util.Messaging._
     import org.scalacheck._
     import org.scalacheck.Prop.{all => _, _}
     import scala.collection.mutable.HashMap

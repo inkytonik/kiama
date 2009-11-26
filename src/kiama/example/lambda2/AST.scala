@@ -18,16 +18,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * A simple lambda calculus abstract syntax.
  */
 object AST {
 
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
+    import org.kiama.rewriting.Rewriter._
     
     /**
      * Identifiers are represented as strings.

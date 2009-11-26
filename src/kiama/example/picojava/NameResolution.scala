@@ -26,7 +26,7 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package kiama.example.picojava
+package org.kiama.example.picojava
 
 object NameResolution {
 
@@ -34,8 +34,8 @@ object NameResolution {
     import NullObjects._
     import PredefinedTypes._
     import TypeAnalysis._
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
 
     /**
      * decl refers to the appropriate declaration of the Access,

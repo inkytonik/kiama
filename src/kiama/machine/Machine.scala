@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.machine
+package org.kiama.machine
 
 /**
  * A deterministic abstract state machine defined by its main rule and

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.util
+package org.kiama.util
 
 /**
  * Facility for buffering of messages associated with positioned values.

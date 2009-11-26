@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.dataflow
+package org.kiama.example.dataflow
 
 import org.scalatest.FunSuite
 

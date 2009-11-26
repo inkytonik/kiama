@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * Evaluation of lambda calculus using global beta reduction with meta-level
@@ -27,7 +27,7 @@ package kiama.example.lambda2
 trait Reduce extends RewritingEvaluator {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * Evaluate by repeatedly trying to apply beta reduction and arithmetic

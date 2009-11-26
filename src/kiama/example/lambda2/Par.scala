@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.lambda2
+package org.kiama.example.lambda2
 
 /**
  * Common rules for parallel evaluation methods.
@@ -26,7 +26,7 @@ package kiama.example.lambda2
 trait Par extends ReduceSubst {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * Reusable strategy for reduction with explicit term-level substitution.

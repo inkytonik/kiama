@@ -18,10 +18,10 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.machine
+package org.kiama.example.oberon0.machine
 
 import RISCISA._
-import kiama.machine.Machine
+import org.kiama.machine.Machine
 
 /**
  * Abstract state machine simulation of a simple RISC architecture.

@@ -26,14 +26,14 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package kiama.example.picojava.tests
+package org.kiama.example.picojava.tests
 
 import org.scalatest.FunSuite
 
 class ErrorTests extends FunSuite {
 
-    import kiama.example.picojava.ErrorCheck._
-    import kiama.example.picojava.Parser._
+    import org.kiama.example.picojava.ErrorCheck._
+    import org.kiama.example.picojava.Parser._
 
     /**
      * Parse the illegal program and make sure that the errors and their

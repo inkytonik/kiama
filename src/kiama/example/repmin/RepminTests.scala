@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.repmin
+package org.kiama.example.repmin
 
 import org.scalatest.FunSuite
 

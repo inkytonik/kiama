@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.til
+package org.kiama.example.til
 
 import java.io.Reader
 import org.scalatest.Assertions
@@ -99,7 +99,7 @@ trait ParsingMain extends Main with RegexParsers with PackratParsers {
  */
 trait TransformingMain extends ParsingMain {
     
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * The root type of the AST being processed. Needs to be sub-type

@@ -18,9 +18,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.dataflow
+package org.kiama.example.dataflow
 
-import kiama.attribution.DynamicAttribution._
+import org.kiama.attribution.DynamicAttribution._
 import DataflowAST._
 
 /**

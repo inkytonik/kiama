@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.til
+package org.kiama.example.til
 
 /**
  * AST the basic Tiny Imperative Language.

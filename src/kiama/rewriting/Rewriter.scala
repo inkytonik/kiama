@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.rewriting
+package org.kiama.rewriting
 
 /**
  * Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).

@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.til
+package org.kiama.example.til
 
 /**
  * Rewrite TILs for loops that automatically declare the control variable
@@ -27,7 +27,7 @@ package kiama.example.til
 trait TIL2_1 extends TIL1_1 with TransformingMain {
 
     import AST._
-    import kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Rewriter._
 
     override def transform (ast : Root) : Root =
         rewrite (declareforvars) (ast)

@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.compiler
+package org.kiama.example.oberon0.compiler
 
 /**
  * Drive the semantic analysis of a program by checking error conditions.
@@ -32,9 +32,9 @@ object ErrorCheck {
     import TypeAnalysis._
     import ValueAnalysis._
     import ConstantAnalysis._
-    import kiama.attribution.Attributable
-    import kiama.attribution.Attribution._
-    import kiama.util.Messaging.message
+    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution._
+    import org.kiama.util.Messaging.message
 
     /**
      * Collect the errors at a node or its children.  The errors are recorded

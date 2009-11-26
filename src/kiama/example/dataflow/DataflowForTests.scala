@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.dataflow
+package org.kiama.example.dataflow
 
 import org.scalatest.FunSuite
 
@@ -29,7 +29,7 @@ class DataflowForTests extends FunSuite {
 
     import DataflowAST._
     import Dataflow._
-    import kiama.attribution.DynamicAttribution._
+    import org.kiama.attribution.DynamicAttribution._
 
     use (DataflowFor)
     use (DataflowForeach)

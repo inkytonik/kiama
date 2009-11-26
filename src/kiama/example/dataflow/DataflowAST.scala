@@ -18,14 +18,14 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.dataflow
+package org.kiama.example.dataflow
 
 /**
  * Imperative language AST for dataflow example.
  */
 object DataflowAST {
 
-    import kiama.attribution.Attributable
+    import org.kiama.attribution.Attributable
 
     type Var = String
 

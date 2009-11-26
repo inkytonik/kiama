@@ -26,14 +26,14 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package kiama.example.picojava.tests
+package org.kiama.example.picojava.tests
 
 import org.scalatest.FunSuite
 
 class ParserTests extends FunSuite {
 
-    import kiama.example.picojava.AbstractSyntax._
-    import kiama.example.picojava.Parser._
+    import org.kiama.example.picojava.AbstractSyntax._
+    import org.kiama.example.picojava.Parser._
 
     /**
      * Try to parse str as a T, which is expected to work.  Assert a

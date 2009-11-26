@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0.machine
+package org.kiama.example.oberon0.machine
 
 /**
  * Instruction set architecture for a simple RISC machine.

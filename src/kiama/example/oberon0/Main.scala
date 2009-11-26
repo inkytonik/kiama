@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package kiama.example.oberon0
+package org.kiama.example.oberon0
 
 import compiler.Parser
 
@@ -39,7 +39,7 @@ object Main extends Parser
     import machine.RISC
     import java.io.FileReader
     import java.io.FileNotFoundException
-    import kiama.util.Messaging._
+    import org.kiama.util.Messaging._
 
     def main (args: Array[String])
     {
