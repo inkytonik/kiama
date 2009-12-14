@@ -29,7 +29,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
-    
+
     // "" is used in a few places to skip over leading whitespace, so the
     // position of a result is the first non-trivial character in it, not
     // the first of the whitespace preceding it, this is a flaw in the way
@@ -54,7 +54,7 @@ trait Parser extends RegexParsers with PackratParsers {
     lazy val exp0 : PackratParser[Exp] =
         "" ~> positioned (number | idn ^^ Var) |
         "(" ~> "" ~> positioned (exp) <~ ")"
-        
+
     lazy val ttype : PackratParser[Type] =
         ttype0 ~ ("->" ~> ttype) ^^ { case l ~ r => FunType (l, r) } |
         ttype0
@@ -68,9 +68,9 @@ trait Parser extends RegexParsers with PackratParsers {
         "-" ^^^ SubOp
 
     lazy val idn : Parser[Idn] =
-        """[a-zA-Z][a-zA-Z0-9]*""".r
+        "[a-zA-Z][a-zA-Z0-9]*".r
 
     lazy val number : PackratParser[Num] =
-        """[0-9]+""".r ^^ (l => Num (l.mkString.toInt))
+        "[0-9]+".r ^^ (s => Num (s.toInt))
 
 }

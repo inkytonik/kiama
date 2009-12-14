@@ -130,10 +130,10 @@ trait TIL1_1 extends ParsingMain {
         "for" | "read" | "write"
 
     lazy val identifier =
-        not (keyword) ~> """[a-zA-Z][a-zA-Z0-9]*""".r ^^ Id
+        not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r ^^ Id
 
     lazy val integer =
-        """[0-9]+""".r ^^ (s => Num (s.toInt))
+        "[0-9]+".r ^^ (s => Num (s.toInt))
 
     lazy val string =
         """\"[^\"]+\"""".r ^^ Str

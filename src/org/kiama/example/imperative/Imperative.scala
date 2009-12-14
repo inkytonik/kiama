@@ -282,16 +282,16 @@ trait Parser extends RegexParsers with PackratParsers {
         double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")"
 
     lazy val double : PackratParser[Num] =
-        ("""[0-9]+\.[0-9]+""") ^^ { case s => Num (s.toDouble) }
+        """[0-9]+\.[0-9]+""" ^^ (s => Num (s.toDouble))
 
     lazy val integer : PackratParser[Num] =
-        "[0-9]+".r ^^ (l => Num (l.mkString.toInt))
+        "[0-9]+".r ^^ (s => Num (s.toInt))
 
     lazy val variable : PackratParser[Var] =
         idn ^^ Var
 
     lazy val idn : PackratParser[String] =
-        not (keyword) ~> """[a-zA-Z][a-zA-Z0-9]*""".r
+        not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r
 
     lazy val keyword : Parser[String] =
         "while"
@@ -392,7 +392,7 @@ trait TestBase extends Generator with Parser
  * abstract synax trees.
  */
 object Imperative extends ParsingREPL[AST.Stmt] with Parser {
-    
+
     override def setup { println ("Enter imperative language programs for parsing.") }
     override def prompt = "imperative> "
 

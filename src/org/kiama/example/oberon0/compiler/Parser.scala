@@ -193,10 +193,10 @@ trait Parser extends RegexParsers with PackratParsers {
         "WHILE"
 
     lazy val ident : PackratParser[Ident] =
-        not (keyword) ~> """[a-zA-Z][a-zA-Z0-9]*""".r ^^ Ident
+        not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r ^^ Ident
 
     lazy val integer : PackratParser[IntegerLiteral] =
-        """[0-9]+""".r ^^ (s => IntegerLiteral (s.toInt))
+        "[0-9]+".r ^^ (s => IntegerLiteral (s.toInt))
 
     override protected val whiteSpace =
         """(\s|(\(\*(?:.|[\n\r])*?\*\)))+""".r

@@ -95,13 +95,13 @@ object AST {
         integer | variable | "(" ~> exp <~ ")"
 
     lazy val integer : PackratParser[Num] =
-        """[0-9]+""".r ^^ (l => Num (l.mkString.toInt))
+        "[0-9]+".r ^^ (s => Num (s.toInt))
 
     lazy val variable : PackratParser[Var] =
         idn ^^ Var
 
     lazy val idn : Parser[String] =
-        """[a-zA-Z][a-zA-Z0-9]*""".r
+        "[a-zA-Z][a-zA-Z0-9]*".r
 
 }
 

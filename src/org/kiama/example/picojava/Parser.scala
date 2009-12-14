@@ -43,7 +43,7 @@ object Parser extends RegexParsers with PackratParsers {
             case Success (r, _) => r
             case f              => error (f.toString)
         }
-        
+
     // "" is used in a few places to skip over leading whitespace, so the
     // position of a result is the first non-trivial character in it, not
     // the first of the whitespace preceding it, this is a flaw in the way
@@ -84,12 +84,12 @@ object Parser extends RegexParsers with PackratParsers {
             name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |
             IDENTIFIER ^^ Use
         )
-            
+
     lazy val boolean_literal =
         ("true" | "false") ^^ BooleanLiteral
 
     lazy val IDENTIFIER : Parser[String] =
-        """[a-zA-Z][a-zA-Z0-9]*""".r
+        "[a-zA-Z][a-zA-Z0-9]*".r
 
     override val whiteSpace =
         """(\s|(//.*\n))+""".r
