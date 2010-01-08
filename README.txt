@@ -25,7 +25,7 @@ http://www.comp.mq.edu.au/~asloane
 Information about how to build, install and use Kiama can be found on
 the Kiama project site:
 
-kiama.googlecode.com
+http://kiama.googlecode.com
 
 2. Documentation and mailing lists
 
@@ -67,9 +67,6 @@ Kiama is currently concentrating on incorporating existing language processing
 formalisms, so credit goes to the original developers of those formalisms.  See
 the code for details of the sources of ideas that come from elsewhere.
 
-Some parts of this library are based on code in the Scala Library,
-most notably the parsing library.  See http://www.scala-lang.org/node/216.
-
 Many of the library rewriting strategies are based on the Stratego library.
 See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 
@@ -78,6 +75,3 @@ See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 Kiama is distributed under the GNU Lesser General Public License.  See the files
 COPYING and COPYING.LESSER for details of these licenses.  More information can
 be found at http://www.gnu.org/licenses/.
-
-Licenses that apply to code from which Kiama code was derived are
-provided in COPYING.OTHER.

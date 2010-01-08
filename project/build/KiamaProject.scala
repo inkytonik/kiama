@@ -62,7 +62,7 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
         Nil
     
     // Add extra files to included resources
-    def extraResources = "COPYING" +++ "COPYING.LESSER" +++ "COPYING.OTHER" +++ "README.txt"
+    def extraResources = "COPYING" +++ "COPYING.LESSER" +++ "README.txt"
     override def mainResources = super.mainResources +++ extraResources
     
     // By default, only log warnings or worse
