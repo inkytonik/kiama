@@ -3,6 +3,7 @@ syntax: glob
 bin
 dist
 .manager
+.scala_dependencies
 
 lib_managed
 project/boot
