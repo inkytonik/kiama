@@ -1,0 +1,21 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+
+VAR
+    v : INTEGER;
+    w : INTEGER;
+
+BEGIN
+    v := 0;
+    LOOP
+        v := v + 1;
+        w := 0;
+        LOOP
+            w := w + 1;
+            IF w = 3 THEN EXIT; END
+            w := w + 1;
+        END
+        IF v = 5 THEN EXIT; END
+        v := v + 1;
+    END
+    RETURN v + w;
+END X.

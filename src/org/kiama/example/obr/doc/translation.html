@@ -1,0 +1,828 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Obr Translation into SPARC Code</title>
+  </head>
+
+  <body>
+    <h1>Department of Computing, Macquarie University</h1>
+    <h2>Obr Translation into SPARC Code</h2>
+
+    This document describes
+    
+    <UL>
+    <LI>the structure of the target trees used by the Obr compiler to represent
+        SPARC target programs,
+    <LI>the appropriate target constructs for the translation of each Obr source
+        construct, and
+    <LI>how to assemble and run the SPARC assembly language code.
+    </UL>
+    
+    <P>The document concludes with examples of translations of a couple of
+    simple Obr programs.</P>
+    
+    <P>The code that supports the tree structure and encoding described in
+    this document can be found in <code>SPARCTree.scala</code> and
+    <code>Encoder.scala</code> in the Obr compiler.  The mapping from Obr
+    trees to SPARC trees can be found in <code>Transformation.scala</code>.</p>
+
+    <h2>The SPARC Target Program Tree</h2>
+    
+    <p>All of the information that the translation task of the compiler
+    provides about the target program is embodied in the target
+    program tree.  If a particular item of information cannot be
+    accessed via this tree, then it cannot be obtained at all.
+    Information is encoded in the "shape" of the tree and in values
+    stored at the leaves.</p>
+
+      <p>This section defines the set of possible target program trees by
+      defining all of the concepts and constructs of the target
+      language.</p>
+
+    <h3>SPARC Concepts</h3>
+
+    <h4>Datum</h4>
+
+    <p>A datum is a construct yielding an explicit value that can be
+    stored or used as an operand for other operations. The encoder
+    uses the attribute <code>reg</code> to associate a local machine
+    register with each Datum to provide storage for the Datum's
+    value; hence the transformation phase does not have to perform
+    register allocation.</p>
+
+    <h4>Item</h4>
+
+    <p>An item is a construct that does not yield a value.</p>
+
+    <h3>SPARC Constructs</h3>
+
+    <p>A SPARC is a complete SPARC program. The SPARC node is the root
+    of the target program tree, and never appears in any other
+    position.</p>
+
+    <p>The following productions summarise the constructs of the SPARC by
+    giving the structure of the subtree for each construct.</p>
+    
+<pre>
+SPARC:     SPARC: Item+ Int
+
+Beq:       Item: Datum Label
+Bne:       Item: Datum Label
+Jmp:       Item: Label
+LabelDef:  Item: Label
+Read:      Item: Address
+Ret:       Item
+StW:       Item: Address Datum
+Write:     Item: Datum
+
+AddW:      Datum: Datum Datum
+Cond:      Datum: Datum Datum Datum
+CmpeqW:    Datum: Datum Datum
+CmpneW:    Datum: Datum Datum
+CmpgtW:    Datum: Datum Datum
+CmpltW:    Datum: Datum Datum
+DivW:      Datum: Datum Datum
+IntDatum:  Datum: Int
+LdW:       Datum: Address
+MulW:      Datum: Datum Datum
+NegW:      Datum: Datum
+Not:       Datum: Datum
+RemW:      Datum: Datum Datum
+SubW:      Datum: Datum Datum
+
+Local:     Address: Int
+Indexed:   Address: Local Datum
+</pre>
+
+    <p>The "W" in some of the node names means that those operations
+    operate on word-sized values (four bytes on the SPARC) which in
+    this compiler are used to implement both integer and Boolean
+    values.</p>
+
+    <p>The following subsections describe the constructs of the table.
+    Some of those constructs represent specific SPARC instructions and
+    others represent collections of instructions that involve related
+    decisions about operand access.</p>
+
+    <h4>SPARC</h4>
+    
+<pre>
+SPARC:     SPARC: Item+ Int
+</pre>
+
+    <p>The encoding of a SPARC construct depends on the assembler and
+    operating system in use. The encoder will first encode a standard
+    prologue to enable the operating system to invoke the generated
+    code and establish memory space for the program's variables. The
+    <em>Int</em> component of the SPARC node is the required maximum
+    size for this storage in bytes. After the prologue the
+    <em>Items</em> in the component list are encoded in order.
+    Finally, a standard epilogue is encoded to enable return from the
+    program to the operating system. This epilogue is begun by a
+    standard label to enable the "Ret" construct (see below) to
+    transfer control to it.</p>
+
+    <h4>Branches</h4>
+    
+<pre>
+Beq:       Item: Datum Label
+Bne:       Item: Datum Label
+Jmp:       Item: Label
+</pre>
+
+    <p>A branch (Beq or Bne) is encoded as the encoding of its
+    <em>Datum</em> component followed by a test and branch to the
+    <em>Label</em> component. A Beq does a branch on equal to zero and
+    a Bne does a branch on not equal to zero.</p>
+    
+     <p>A Jmp does an unconditional branch to its <em>Label</em>
+    component.</p>
+
+    <h4>LabelDef</h4>
+
+<pre>
+LabelDef:  Item: Label
+</pre>
+    
+        <p>A LabelDef construct represents a definition of a label and is encoded
+        by emitting that definition in the appropriate assembler syntax.</p>
+        
+    <h4>Read, Write</h4>
+
+<pre>
+Read:      Item: Address
+Write:     Item: Datum
+</pre>
+
+        <p>These constructs are encoded as calls to C library routines to
+        read or write a single piece of integer data.  In the case of
+        Read the value read is stored in the location given by the
+        <em>Address</em> component.  In the case of Write the value written
+        is that given by the <em>Datum</em> component which is encoded first.</p>
+        
+        <h4>Ret</h4>
+        
+<pre>
+Ret:       Item
+</pre>            
+
+        <p>A Ret construct is encoded by an unconditional jump to a
+        label at the end of the code comprising the program (i.e., to
+        the beginning of the epilogue). This encoding ensures that a
+        return from any part of the program will complete necessary
+        processing before exiting the program.</p>
+
+        <h4>StW</h4>
+
+<pre>
+StW:       Item: Address Datum
+</pre>
+
+        <p>A StW construct is encoded by encoding the Datum component
+        followed by an instruction to store the value of the Datum into
+        the given address.</p>
+
+        <h4>Arithmetic operations: AddW, DivW, MulW, NegW, Not, RemW, SubW</h4>
+
+<pre>
+AddW:      Datum: Datum Datum
+DivW:      Datum: Datum Datum
+MulW:      Datum: Datum Datum
+NegW:      Datum: Datum
+Not:       Datum: Datum
+RemW:      Datum: Datum Datum
+SubW:      Datum: Datum Datum
+</pre>
+
+    <p>Most of the arithmetic operations are encoded by encoding their
+    <em>Datum</em> component(s) followed by a single instruction that
+    performs the appropriate operation.</p>
+
+    <p>The SPARC has no remainder instruction, so RemW constructs are
+    encoded by a call to a C run-time routine that implements integer
+    remainder.</p>
+
+        <h4>Cond</h4>
+        
+<pre>
+Cond:      Datum: Datum Datum Datum
+</pre>
+
+    <p>A Cond construct is encoded by encoding its first
+    <em>Datum</em> component, followed by a sequence of instructions
+    that evaluate the second <em>Datum</em> if the first <em>Datum</em>
+    is non-zero, or evaluate the third <em>Datum</em> if the first
+    <em>Datum</em> is zero. In either case the result value will be
+    left in the location required by the Cond Datum itself.</p>
+
+        <h4>Comparisons: CmpeqW, CmpneW, CmpgtW, CmpltW</h4>
+        
+<pre>
+CmpeqW:    Datum: Datum Datum
+CmpneW:    Datum: Datum Datum
+CmpgtW:    Datum: Datum Datum
+CmpltW:    Datum: Datum Datum
+</pre>
+
+    <p>The comparison constructs CmpeqW, CmpgtW, CmpltW, and CmpneW
+    are encoded as the encoding of their operands, followed by a
+    comparison instruction, followed by moves and conditional branches
+    as appropriate to establish the result value of 0 or 1 in the
+    location required by the comparison Datum.</p>
+
+        <h4>IntDatum</h4>
+        
+<pre>
+IntDatum:  Datum: Int
+</pre>
+
+    <p>An IntDatum construct is encoded as a move of the integer value
+    into the location required by the Datum.</p>
+
+        <h4>LdW</h4>
+
+<pre>
+LdW:       Datum: Address
+</pre>
+
+    <p>A LdW construct is encoded as a load of a word value from the
+    location specified by its <em>Address</em> component into the
+    location of the LdW.</p>
+    
+        <h4>Addresses: Local, Indexed</h4>
+    
+<pre>
+Local:     Address: Int
+Indexed:   Address: Local Datum
+</pre>        
+    
+
+    <p>A Local address represents a word-sized storage location in the
+    main block of memory that is accessible to an Obr program. The Int
+    component is the offset in bytes from the start of the memory block
+    at which the word is located.</p>
+    
+    <p>An Indexed address is an address that is computed as a byte offset
+    from a local address.  The offset is given by a computation expressed
+    as a Datum.</p>
+    
+    <p>When an address is used in another construct (i.e., an LdW or an
+    StW) it is first encoded, then used as an operand in the load or store.
+    Local address do not produce any code when they are encoded.  Indexed
+    addresses encode their Datum component.</p>
+
+    <h2>Transforming Obr Source Trees to SPARC Target Trees</h2>
+    
+    <p>The results of the mapping process from source to target are
+    reflected in the properties and structure of the target tree.
+    This section describes how Obr source data and actions are mapped
+    to target constructs.</p>
+    
+    <h3>Obr/SPARC Data Mapping</h3>
+
+    <p>Obr programs can manipulate only integer and Boolean basic values
+    plus structured values that are arrays and records.
+    Both parameters and variables can be declared.
+    Therefore, a definition of the data mapping task must specify how
+    values of these types are implemented on the SPARC, and how
+    storage is allocated for parameters and variables.</p>
+
+    <p>Because there is no possibility of recursion in Obr, it is
+    possible to implement data storage for parameters and variables
+    statically.  The Obr "parameters" really aren't parameters at
+    all---they are top-level variables that must be initialised by
+    reading them from the standard input before executing the body of
+    the Obr program.  Thus their storage is implemented just like
+    variables.</p>
+
+      <p>Obr constants do not need any storage since the compiler
+      knows their value and can construct an IntDatum node that can be
+      used directly.</p>
+
+    <p>An Obr integer is implemented by a SPARC word (32 bits). For
+    convenience, Boolean values are also represented by SPARC words.
+    True is represented by one, and false is represented by zero.</p>
+    
+     <p>Storage for all of the variables declared in an Obr program is
+    allocated in a single area of SPARC memory. During execution,
+    register %l0 contains the address of the beginning of the memory
+    area. Thus, any variable's location can be specified by the sum of
+    a non-negative integer and the contents of register %l0. Since
+    each variable occupies four bytes of memory, the offsets from the
+    content of register %l0 are all multiples of 4: The topmost
+    variable is in location [%l0], the next variable is in location
+    [%l0+4], and so on.</p>
+    
+     <p>Arrays and records are allocated as contiguous memory as if
+    the array elements or fields were declared as individual integer
+    variables. (Recall that array elements and fields must be
+    integers.) Therefore an array of N elements or a record with N
+    fields is allocated as N contiguous words of memory.</p>
+
+    <h3>Obr/SPARC Action Mapping</h3>
+
+    Most of the Obr constructs map to SPARC constructs in an obvious
+    way.  Some constructs do not generate any code (e.g, constructs
+    like IntVar and ArrayVar that represent declarations).  This
+    section describes how the other constructs are translated into
+    SPARC target tree constructs.<p>
+
+    <h4>Assignment</h4>
+
+    <p>AssignStmt constructs are translated into a StW construct whose
+    left child is the address of the variable, array element or field
+    being assigned, and whose right child is the translation of the
+    expression on the right-hand side of the assignment.</p>
+    
+    <h4>Boolean Expressions and Operations</h4>
+    
+    <p>A BoolExp is translated into an IntDatum where zero is used for
+    FALSE and 1 for TRUE.</p>
+
+    <p>AndExp and OrExp translate into uses of the Cond target
+    construct in order to achieve short-circuit evaluation. They are
+    translated as follows:</p>
+
+<pre>
+AndExp (e1, e2) -&gt; Cond (t1, t2, 0)
+OrExp (e1, e2) -&gt; Cond (t1, 1, t2)
+</pre>
+
+    <p>In both of these translations t1 and t2 are the translations of
+    e1 and e2, respectively.</p>
+    
+    <p>NotExp translates into a Boolean complement operation using the 
+    Not target construct.</p>
+
+    <h4>Comparison Operations</h4>
+
+    <p>The comparison operators EqualExp, NotEqualExp, GreaterExp,
+    and LessExp are translated to the CmpeqW, CmpneW, CmpgtW and
+    CmpltW constructs, respectively.</p>
+
+    <h4>ExitStmt</h4>
+
+    <p>An ExitStmt is implemented by a jump to the terminating label
+    of the closest containing LoopStmt. See also the description of
+    the LoopStmt construct below.</p>
+    
+    <h4>FieldExp</h4>
+        
+        <p>A FieldExp translates to a LdW from the address of the given
+        record field.</p>
+
+    <h4>ForStmt</h4>
+
+    <p>A ForStmt construct is implemented as follows:</p>
+
+<pre>
+ForStmt (id, e1, e2, s) -&gt;
+    StW (idmem, t1),
+    StW (mem, t2),
+    Bne (CmpgtW (LdW (idmem), LdW (mem)), L2),
+    Jmp (L1),
+    LabelDef (L3),
+    StW (idmem, AddW (LdW (idmem), IntDatum (1))),
+    LabelDef (L1),
+    i
+    Bne (CmpltW (LdW (idmem), LdW (mem)), L3),
+    LabelDef (L2)
+</pre>
+
+    <p>Here, i is the list of <em>Item</em> nodes that is the translation
+    of s, t1 is the translation of e1, and t2 is the translation of
+    e2.  idmem is the storage location being used for the variable id,
+    and mem is a new integer memory location not used elsewhere.</p>
+
+    <p>Note that this scheme avoids a problem if the maximum expression
+    e2 evaluates to the maximum integer possible, because id is not 
+    incremented unless overflow cannot happen.</p>
+
+    <h4>IdnExp</h4>
+    
+    <p>An IdnExp is translated into either an IntDatum containing the
+    integer value of the identifier (if it denotes a constant), or a
+    LdW from the location in which the variable is stored.</p>
+
+    <h4>IfStmt</h4>
+
+    <p>An IfStmt construct is implemented as follows:</p>
+
+<pre>
+IfStmt (e, s1, s2) -&gt;
+    Beq (t, L1)
+    i1
+    Jmp (L2)
+    LabelDef (L1)
+    i2
+    LabelDef (L2)
+</pre>
+
+        <p>Here, i1 and i2 are the lists of <em>Item</em> nodes that are the
+        translations of s1 and s2, respectively, and t is the translation
+        of e.</p>
+
+    <h4>IndexExp</h4>
+
+    <p>An IndexExp translates to a LdW from the address of the given
+    array element.  In general, the index is not constant so it must
+    be calculated as part of the address computation.</p>
+
+    <h4>Integer Expressions and Arithmetic Operations</h4>
+    
+    <p>An IntExp is translated into an IntDatum whose value is the
+    Int component of the IntExp.</p>
+
+    <p>The arithmetic target constructs are used to implement the 
+    arithmetic operators (MinusExp, NegExp, ModExp, PlusExp, SlashExp
+    and StarExp) in the obvious way. For example, PlusExp is
+    represented by AddW, ModExp by RemW, and NegExp by NegW.</p>
+
+    <h4>IntParam</h4>
+
+    <p>Parameter declarations are always represented by IntParam
+    constructs and are translated into a Read construct whose child is
+    address of the storage allocated to the parameter.</p>
+
+    <h4>LoopStmt</h4>
+
+    <p>A LoopStmt construct is implemented as follows:</p>
+
+<pre>
+Loop (s) -&gt;
+    LabelDef (L1)
+    i
+    Jmp (L1)
+    LabelDef (L2)
+</pre>
+
+    <p>Here, i is the list of <em>Item</em> nodes that is the
+    translation of s. L2 is a label that can be used as the
+    destination of jumps implementing ExitStmt constructs within the
+    loop.</p>
+
+    <h4>ObrInt</h4>
+
+    <p>The ObrInt construct is translated into a SPARC construct
+    whose children are the <em>Item</em> nodes comprising the
+    translation of its Declaration and Statement components. The SPARC
+    node also is given an Int component to record the maximum size of
+    storage used by the program.</p>
+
+    <h4>ReturnStmt</h4>
+
+    <p>The ReturnStmt construct is implemented by a Write construct
+    whose child is the translation of the component Expression to be
+    returned, followed by a Ret construct.</p>
+
+    <h4>WhileStmt</h4>
+
+    The WhileStmt construct is implemented as follows:
+
+<pre>
+WhileStmt (e, s) -&gt;
+    Jmp (L1)
+    LabelDef (L2)
+    i
+    LabelDef (L1)
+    Bne (t, L2)
+</pre>
+
+    <p>Here, i is the list of <em>Item</em> nodes that is the
+    translation of s, and t is the translation of e.</p>
+
+    <h2>Going from SPARC Target Trees to SPARC Assembly Code</h2>
+
+    <h3>Running Compiled Programs</h3>
+
+    <p>The assembly language code produced by the Obr compiler can be
+    assembled and run on SPARC machines such as pompeii in the
+    Department of Computing. It is necessary to use the
+    <code>gcc</code> command, since the Obr code uses
+    <code>scanf</code> and <code>printf</code> from the C library. If
+    <code>factorial.s</code> contains the code generated by the Obr
+    compiler for the factorial program then you can compile and run it
+    as follows on pompeii.</p>
+
+<pre>
+gcc -o factorial factorial.s
+factorial
+4
+</pre>
+
+    <p>This execution should print 24.</p>
+    
+    <h3>Detailed Examples</h3>
+    
+    <p>This section shows the complete SPARC target trees and assembly code that
+    would be produced for the factorial and GCD Obr programs.</p>
+
+<p>Consider the Obr version of Euclid's algorithm for calculating the greatest
+    common divisor of two numbers. </p>
+
+<pre>
+PROGRAM GCD (x : INTEGER; y : INTEGER) : INTEGER;
+
+BEGIN
+    WHILE x # y DO
+        IF x > y
+            THEN x := x - y
+            ELSE y := y - x
+        END
+    END;
+    RETURN x
+END GCD.
+</pre>
+
+<p>From this code, the Obr compiler generates the following target tree:</p>
+
+<pre>
+SPARC (List (Read(Local(0)),
+             Read(Local(4)),
+             Jmp(L1),
+             LabelDef(L2),
+             Beq(CmpgtW(LdW(Local(0)),LdW(Local(4))),L3),
+             StW(Local(0),SubW(LdW(Local(0)),LdW(Local(4)))),
+             Jmp(L4),
+             LabelDef(L3),
+             StW(Local(4),SubW(LdW(Local(4)),LdW(Local(0)))),
+             LabelDef(L4),
+             LabelDef(L1),
+             Bne(CmpneW(LdW(Local(0)),LdW(Local(4))),L2),
+             Write(LdW(Local(0))),
+             Ret),
+       8)
+</pre>
+
+<p>From this target tree, the encoder produces the following SPARC
+assembly code. Note that the encoder includes the target constructs as
+comments (starting with exclamation marks) to make the correspondence
+clearer.</p>
+
+<pre>
+    ! Prologue
+    .seg "data"
+ifmt:
+    .asciz "%d"
+ofmt:
+    .asciz "%d\n"
+    .align 4
+mem:
+    .skip 8
+    .seg "text"
+    .globl main
+main:
+    save %sp, -112, %sp
+    set mem, %l0
+    ! Read(Local(0))
+    set ifmt, %o0
+    add %l0, 0, %o1
+    call scanf
+    nop
+    ! Read(Local(4))
+    set ifmt, %o0
+    add %l0, 4, %o1
+    call scanf
+    nop
+    ! Jmp(L1)
+    ba L1
+    nop
+    ! LabelDef(L2)
+L2:
+    ! Beq(CmpgtW(LdW(Local(0)),LdW(Local(4))),L3)
+    ld [%l0], %l1
+    ld [%l0+4], %l2
+    cmp %l1, %l2
+    mov 1, %l2
+    bg L5
+    nop
+    mov 0, %l2
+L5:
+    tst %l2
+    be L3
+    nop
+    ! StW(Local(0),SubW(LdW(Local(0)),LdW(Local(4))))
+    ld [%l0], %l1
+    ld [%l0+4], %l2
+    sub %l1, %l2, %l2
+    st %l2, [%l0]
+    ! Jmp(L4)
+    ba L4
+    nop
+    ! LabelDef(L3)
+L3:
+    ! StW(Local(4),SubW(LdW(Local(4)),LdW(Local(0))))
+    ld [%l0+4], %l1
+    ld [%l0], %l2
+    sub %l1, %l2, %l2
+    st %l2, [%l0+4]
+    ! LabelDef(L4)
+L4:
+    ! LabelDef(L1)
+L1:
+    ! Bne(CmpneW(LdW(Local(0)),LdW(Local(4))),L2)
+    ld [%l0], %l1
+    ld [%l0+4], %l2
+    cmp %l1, %l2
+    mov 1, %l2
+    bne L6
+    nop
+    mov 0, %l2
+L6:
+    tst %l2
+    bne L2
+    nop
+    ! Write(LdW(Local(0)))
+    ld [%l0], %l1
+    set ofmt, %o0
+    mov %l1, %o1
+    call printf
+    nop
+    ! Ret
+    ba go
+    nop
+    ! Epilogue
+go:
+    ret
+    restore
+</pre>
+
+   <P>Here is the same information for the Obr factorial program.</P>
+   
+<pre>
+PROGRAM Factorial (v : INTEGER) : INTEGER;
+
+CONST
+    limit = 7;
+
+VAR
+    c : INTEGER;
+    fact : INTEGER;
+
+BEGIN
+    IF (v &lt; 0) OR (v &gt; limit) THEN
+        RETURN -1;
+    ELSE
+        c := 0;
+        fact := 1;
+        WHILE c &lt; v DO
+            c := c + 1;
+            fact := fact * c;
+        END
+        RETURN fact;
+    END
+END Factorial.
+</pre>
+
+   <p>From this code, the Obr compiler generates the following target tree:</p>
+
+<pre>
+SPARC (List (Read(Local(0)),
+             Beq(Cond(CmpltW(LdW(Local(0)),IntDatum(0)),IntDatum(1),
+                      CmpgtW(LdW(Local(0)),IntDatum(7))),L1),
+             Write(NegW(IntDatum(1))),
+             Ret,
+             Jmp(L2),
+             LabelDef(L1),
+             StW(Local(4),IntDatum(0)),
+             StW(Local(8),IntDatum(1)),
+             Jmp(L3),
+             LabelDef(L4),
+             StW(Local(4),AddW(LdW(Local(4)),IntDatum(1))),
+             StW(Local(8),MulW(LdW(Local(8)),LdW(Local(4)))),
+             LabelDef(L3),
+             Bne(CmpltW(LdW(Local(4)),LdW(Local(0))),L4),
+             Write(LdW(Local(8))),
+             Ret,
+             LabelDef(L2)),
+       12)
+</pre>
+
+   <p>From this target tree, the encoder produces the following SPARC assembly code:</p>
+
+<pre>
+    ! Prologue
+    .seg "data"
+ifmt:
+    .asciz "%d"
+ofmt:
+    .asciz "%d\n"
+    .align 4
+mem:
+    .skip 12
+    .seg "text"
+    .globl main
+main:
+    save %sp, -112, %sp
+    set mem, %l0
+    ! Read(Local(0))
+    set ifmt, %o0
+    add %l0, 0, %o1
+    call scanf
+    nop
+    ! Beq(Cond(CmpltW(LdW(Local(0)),IntDatum(0)),IntDatum(1),CmpgtW(LdW(Local(0)),IntDatum(7))),L1)
+    ld [%l0], %l1
+    mov 0, %l2
+    cmp %l1, %l2
+    mov 1, %l2
+    bl L7
+    nop
+    mov 0, %l2
+L7:
+    tst %l2
+    be L5
+    nop
+    mov 1, %l3
+    mov %l3, %l2
+    ba L6
+    nop
+L5:
+    ld [%l0], %l4
+    mov 7, %l5
+    cmp %l4, %l5
+    mov 1, %l5
+    bg L8
+    nop
+    mov 0, %l5
+L8:
+    mov %l5, %l2
+L6:
+    tst %l2
+    be L1
+    nop
+    ! Write(NegW(IntDatum(1)))
+    mov 1, %l1
+    neg %l1, %l1
+    set ofmt, %o0
+    mov %l1, %o1
+    call printf
+    nop
+    ! Ret
+    ba go
+    nop
+    ! Jmp(L2)
+    ba L2
+    nop
+    ! LabelDef(L1)
+L1:
+    ! StW(Local(4),IntDatum(0))
+    mov 0, %l1
+    st %l1, [%l0+4]
+    ! StW(Local(8),IntDatum(1))
+    mov 1, %l1
+    st %l1, [%l0+8]
+    ! Jmp(L3)
+    ba L3
+    nop
+    ! LabelDef(L4)
+L4:
+    ! StW(Local(4),AddW(LdW(Local(4)),IntDatum(1)))
+    ld [%l0+4], %l1
+    mov 1, %l2
+    add %l1, %l2, %l2
+    st %l2, [%l0+4]
+    ! StW(Local(8),MulW(LdW(Local(8)),LdW(Local(4))))
+    ld [%l0+8], %l1
+    ld [%l0+4], %l2
+    smul %l1, %l2, %l2
+    st %l2, [%l0+8]
+    ! LabelDef(L3)
+L3:
+    ! Bne(CmpltW(LdW(Local(4)),LdW(Local(0))),L4)
+    ld [%l0+4], %l1
+    ld [%l0], %l2
+    cmp %l1, %l2
+    mov 1, %l2
+    bl L9
+    nop
+    mov 0, %l2
+L9:
+    tst %l2
+    bne L4
+    nop
+    ! Write(LdW(Local(8)))
+    ld [%l0+8], %l1
+    set ofmt, %o0
+    mov %l1, %o1
+    call printf
+    nop
+    ! Ret
+    ba go
+    nop
+    ! LabelDef(L2)
+L2:
+    ! Epilogue
+go:
+    ret
+    restore    
+</pre>
+   
+    <hr>
+    <address><a href="mailto:asloane@comp.mq.edu.au">Tony Sloane</a> and <a href="mailto:domv@ics.mq.edu.au">Dominic Verity</a></address>
+<!-- Created: Thu Jul  9 11:51:06 EST 1998 -->
+<!-- hhmts start -->Last Modified: Tue 20 Oct 2009<!-- hhmts end -->
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 1998-2009 by
+Macquarie University. All rights reserved.</A></FONT><BR>
+  </body>
+</html>
