@@ -22,7 +22,7 @@ package org.kiama.example.lambda2
 
 /**
  * Analyses for typed lambda calculus expressions.  A simple free variable
- * analysis plus name and type analysis.  There are two versions of the 
+ * analysis plus name and type analysis.  There are two versions of the
  * latter here: one (tipe) that constructs an explicit environment separate
  * from the AST, and one (tipe2) that represents names by references to the
  * nodes of their binding lambda expressions.
@@ -190,6 +190,22 @@ object Analysis {
                                          message (e2, "expected Int, found " + (e2->tipe2))
                                      IntType
 
+        }
+
+    /**
+     * The declaration (if any) of an identifier use.
+     */
+    def decl : Var ==> Option[Lam] =
+        attr {
+            case e @ Var (x) => e->lookup (x)
+        }
+
+    /**
+     * The set of uses of a defined identifier (given by a lambda expression).
+     */
+    def uses : Lam ==> Set[(Int,Int)] =
+        attr {
+            case Lam (i, _, e) => Set ()
         }
 
 }

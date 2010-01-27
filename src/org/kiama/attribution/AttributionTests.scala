@@ -22,6 +22,9 @@ package org.kiama.attribution
 
 import org.scalatest.FunSuite
 
+/**
+ * Tests of basic attribution.
+ */
 class AttributionTests extends FunSuite {
 
     abstract class Tree extends Attributable
@@ -59,11 +62,10 @@ class AttributionTests extends FunSuite {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-        
+
         expect (10, "first value") (t->maximum)
         expect (10, "second value") (s->maximum)
         expect (4, "evaluation count") (count)
-
     }
 
     test ("uncached attributes are evaluated each time") {
@@ -151,5 +153,41 @@ class AttributionTests extends FunSuite {
                 // succeed
         }
     }
+
+}
+
+/**
+ * Tests of collection attributes.
+ */
+class CollectionAttributionTests extends FunSuite
+                                 with org.kiama.example.lambda2.Parser {
+
+    import Attribution._
+    import org.kiama.example.lambda2.AST._
+    import org.kiama.example.lambda2.Analysis._
+
+    def process (s : String, r : Set[(Int,Int)]) {
+        parseAll (start, s) match {
+            case Success (e : Lam, in) if in.atEnd =>
+                expect (r, "uses for " + e) (e->uses)
+            case Success (e, _) =>
+                fail ("non-Lam " + e + " parsed in test input '" + s + "'")
+            case _ =>
+                fail ("can't parse test input '" + s + "'")
+        }
+    }
+
+//    test ("collection attribute: no collected node") {
+//
+//
+//    }
+
+    test ("collection attribute: single collected node") {
+        process ("""\x : Int . x""", Set ((1,12)))
+    }
+
+//    test ("collection attribute: multiple collected nodes") {
+//        process ("""\\x : Int . x + (\\y : Int . x + y) 5""")
+//    }
 
 }

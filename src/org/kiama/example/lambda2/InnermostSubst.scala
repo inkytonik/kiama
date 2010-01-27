@@ -21,7 +21,7 @@
 package org.kiama.example.lambda2
 
 /**
- * Evaluation of lambda calculus using an non-memoising innermost evaluation
+ * Evaluation of lambda calculus using a memoising innermost evaluation
  * with term-level substitution and arithmetic operations.
  */
 trait InnermostSubst extends ReduceSubst {
