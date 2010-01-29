@@ -182,9 +182,9 @@ class CollectionAttributionTests extends FunSuite
 //
 //    }
 
-    test ("collection attribute: single collected node") {
-        process ("""\x : Int . x""", Set ((1,12)))
-    }
+//    test ("collection attribute: single collected node") {
+//        process ("""\x : Int . x""", Set ((1,12)))
+//    }
 
 //    test ("collection attribute: multiple collected nodes") {
 //        process ("""\\x : Int . x + (\\y : Int . x + y) 5""")
