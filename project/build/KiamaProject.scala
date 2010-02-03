@@ -31,28 +31,28 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def outputDirectoryName = "bin"
     override def mainCompilePath     = outputDirectoryName
     override def testCompilePath     = outputDirectoryName
-    
+
     // Specyify how to find source and test files.  Sources are
     //    - all .scala files, except
     //    - files whose names end in Tests.scala, which are tests
     def mainSourceFilter = "*.scala" && -testSourceFilter
-    def testSourceFilter = "*Tests.scala" 
+    def testSourceFilter = "*Tests.scala"
     override def mainSources = descendents (mainSourceRoots, mainSourceFilter)
     override def testSources = descendents (testSourceRoots, testSourceFilter)
-    
+
     // There is no main class since this is a library
     override def getMainClass (promptIfMultipleChoices : Boolean) = None
 
     // Set compiler options
     override def compileOptions = super.compileOptions ++ Seq (Unchecked)
-    
+
     // Include www.scala-tools.org snapshot repository in search
     val scalaToolsSnapshots = ScalaToolsSnapshots
 
     // Declare dependencies on other libraries
     override def libraryDependencies =
-        Set ("org.scala-tools.testing" % "scalacheck_2.8.0.Beta1-RC5" % "1.7-SNAPSHOT",
-             "org.scalatest" % "scalatest" % "1.0.1-for-scala-2.8.0.Beta1-RC5-with-test-interfaces-0.2-SNAPSHOT",
+        Set ("org.scala-tools.testing" % "scalacheck_2.8.0.Beta1" % "1.7-SNAPSHOT",
+             "org.scalatest" % "scalatest" % "1.0.1-for-scala-2.8.0.Beta1-with-test-interfaces-0.3-SNAPSHOT",
              "jline" % "jline" % "0.9.94")
 
     // Remove LinkSource from doc options since it doesn't appear to work
@@ -60,11 +60,11 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
         documentTitle (name + " " + version + " API") ::
         windowTitle (name + " " + version + " API") ::
         Nil
-    
+
     // Add extra files to included resources
     def extraResources = "COPYING" +++ "COPYING.LESSER" +++ "README.txt"
     override def mainResources = super.mainResources +++ extraResources
-    
+
     // By default, only log warnings or worse
     log.setLevel (Level.Warn)
 
@@ -80,5 +80,5 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def packageSrcJar= defaultJarPath ("-sources.jar")
     val sourceArtifact = Artifact (artifactID, "src", "jar", Some ("sources"), Nil, None)
     val docsArtifact = Artifact (artifactID, "docs", "jar", Some ("scaladoc"), Nil, None)
-    override def packageToPublishActions = super.packageToPublishActions ++ Seq (packageDocs, packageSrc)    
+    override def packageToPublishActions = super.packageToPublishActions ++ Seq (packageDocs, packageSrc)
 }

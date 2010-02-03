@@ -1,1 +1,1 @@
-scala -cp 'bin:lib_managed/scala_2.8.0.Beta1-RC5/compile/*' $*
+scala -cp 'bin:lib_managed/scala_2.8.0.Beta1/compile/*' $*
