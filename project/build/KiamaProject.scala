@@ -55,11 +55,9 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
              "org.scalatest" % "scalatest" % "1.0.1-for-scala-2.8.0.Beta1-with-test-interfaces-0.3-SNAPSHOT",
              "jline" % "jline" % "0.9.94")
 
-    // Remove LinkSource from doc options since it doesn't appear to work
-    override def documentOptions: Seq [ScaladocOption] =
-        documentTitle (name + " " + version + " API") ::
-        windowTitle (name + " " + version + " API") ::
-        Nil
+    // Setup document options (replace when sbt supports 2.8 scaladoc properly)
+    private val projectTitle = projectName + " " + projectVersion + " API"
+    override def documentOptions = List (CompoundDocOption ("-doc-title", projectTitle))
 
     // Add extra files to included resources
     def extraResources = "COPYING" +++ "COPYING.LESSER" +++ "README.txt"
