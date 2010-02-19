@@ -22,20 +22,7 @@
 
 package org.kiama.example.obr
 
-/**
- * Class of objects that can emit code.  By default, code is output to the
- * console.  Subclass this if you need it to go somewhere else.
- */
-class Emitter {
-
-    /**
-     * Emit a code line
-     */
-    def emit (line : String) {
-        println (line)
-    }
-
-}
+import org.kiama.util.Emitter
 
 /**
  * Translate SPARC programs into SPARC assembly code.  Completes the code
@@ -135,14 +122,14 @@ class Encoder (emitter : Emitter) {
      * Emit a formatted instruction.
      */
     private def emit (insn : String) {
-        emitter.emit ("    " + insn)
+        emitter.emit ("    " + insn + "\n")
     }
 
     /**
      * Emit a string label.
      */
     private def label (lab : String) {
-        emitter.emit (lab + ":")
+        emitter.emit (lab + ":\n")
     }
 
     /**

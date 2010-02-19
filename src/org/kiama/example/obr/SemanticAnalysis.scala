@@ -35,150 +35,117 @@ object SemanticAnalysis {
      * those errors using the Messaging module so that they can be
      * reported to the user later.
      */
-    val errors : ObrNode ==> Boolean =
+    val errors : ObrNode ==> Unit =
         attr {
             case p @ ObrInt (i1, ds, ss, i2) =>
                 // Apply errors to each child in turn and return true
                 // if there is one that contains errors
-                var err = haserrors (ds ++ ss)
-                if (i1 != i2) {
+                ds map (errors)
+                ss map (errors)
+                if (i1 != i2)
                     message (p, "identifier " + i2 + " at end should be " + i1)
-                    err = true
-                }
-                err
 
             case n @ AssignStmt (l, r)  =>
-                var err = l->errors | r->errors
-                if (!(l->assignable)) {
+                l->errors
+                r->errors
+                if (!(l->assignable))
                     message (l, "illegal assignment")
-                    err = true
-                }
-                err
 
             case n @ ExitStmt () if (!(n->isinloop)) =>
                 message (n, "an EXIT statement must be inside a LOOP statement")
-                true
 
             case n @ ForStmt (i, e1, e2, ss) =>
-                var err = e1->errors | e2->errors | haserrors (ss)
-                if (n->entity == Unknown) {
+                e1->errors
+                e2->errors
+                ss map (errors)
+                if (n->entity == Unknown)
                     message (n, i + " is not declared")
-                    err = true
-                }
                 val t = (n->entity).tipe;
-                if ((t != IntType) && (t != UnknownType)) {
+                if ((t != IntType) && (t != UnknownType))
                     message (n, "for loop variable " + i + " must be integer")
-                    err = true
-                }
-                err
 
             case IfStmt (e, ss1, ss2) =>
-                e->errors | haserrors (ss1) | haserrors (ss2)
+                e->errors
+                ss1 map (errors)
+                ss2 map (errors)
 
             case LoopStmt (ss) =>
-                haserrors (ss)
+                ss map (errors)
 
             case ReturnStmt (e) =>
                 e->errors
 
             case WhileStmt (e, ss) =>
-                e->errors | haserrors (ss)
+                e->errors
+                ss map (errors)
 
             case n @ IntParam (i) if (n->entity == Multiple) =>
                 message (n, i + " is declared more than once")
-                true
 
             case n @ IntVar (i) if (n->entity == Multiple) =>
                 message (n, i + " is declared more than once")
-                true
 
             case n @ BoolVar (i) if (n->entity == Multiple) =>
                 message (n, i + " is declared more than once")
-                true
 
             case n @ ArrayVar (i, v) if (n->entity == Multiple) =>
                 message (n, i + " is declared more than once")
-                true
 
             case n @ RecordVar (i, _) =>
-                var err = false
                 (n->entity) match {
                      case Variable (RecordType (fs)) =>
-                         if (fs.removeDuplicates.length != fs.length) {
+                         if (fs.removeDuplicates.length != fs.length)
                              message (n, i + " contains duplicate field(s)")
-                             err = true
-                         }
                      case Multiple =>
                          message (n, i + " is declared more than once")
-                         err = true
                 }
-                err
 
             case n @ IntConst (i, v) if (n->entity == Multiple) =>
                 message (n, i + " is declared more than once")
-                true
 
             case e : Expression =>
-                var err =
-                    e match {
-                        case v @ IdnExp (i) if (v->entity == Unknown) =>
-                            message (v, i + " is not declared")
-                            true
+                e match {
+                    case v @ IdnExp (i) if (v->entity == Unknown) =>
+                        message (v, i + " is not declared")
 
-                        case v @ IndexExp (a, r) =>
-                            var err2 = (r->errors)
-                            (v->entity).tipe match {
-                                case ArrayType (_) =>
-                                case _ =>
-                                    message (v, "attempt to index the non-array " + a)
-                                    err2 = true
-                            }
-                            err2
+                    case v @ IndexExp (a, r) =>
+                        r->errors
+                        (v->entity).tipe match {
+                            case ArrayType (_) =>
+                            case _ =>
+                                message (v, "attempt to index the non-array " + a)
+                        }
 
-                        case v @ FieldExp (r, f) =>
-                            var err2 = false
-                            ((v->entity).tipe) match {
-                                case RecordType (fs) =>
-                                    if (! (fs contains f)) {
-                                        message (v, f + " is not a field of " + r)
-                                        err2 = true
-                                    }
-                                case _ =>
-                                    message (v, "attempt to access field of non-record " + r)
-                                    err2 = true
-                            }
-                            err2
+                    case v @ FieldExp (r, f) =>
+                        ((v->entity).tipe) match {
+                            case RecordType (fs) =>
+                                if (! (fs contains f))
+                                    message (v, f + " is not a field of " + r)
+                            case _ =>
+                                message (v, "attempt to access field of non-record " + r)
+                        }
 
-                        case AndExp (l, r)      => (l->errors) | (r->errors)
-                        case EqualExp (l, r)    => (l->errors) | (r->errors)
-                        case GreaterExp (l, r)  => (l->errors) | (r->errors)
-                        case LessExp (l, r)     => (l->errors) | (r->errors)
-                        case MinusExp (l, r)    => (l->errors) | (r->errors)
-                        case ModExp (l, r)      => (l->errors) | (r->errors)
-                        case NegExp (e)         => e->errors
-                        case NotEqualExp (l, r) => (l->errors) | (r->errors)
-                        case NotExp (e)         => e->errors
-                        case OrExp (l, r)       => (l->errors) | (r->errors)
-                        case PlusExp (l, r)     => (l->errors) | (r->errors)
-                        case SlashExp (l, r)    => (l->errors) | (r->errors)
-                        case StarExp (l, r)     => (l->errors) | (r->errors)
-                        case _                  => false
-                    }
-                if (!iscompatible (e->tipe, e->exptipe)) {
-                    message (e, "type error: expected " + (e->exptipe) + " got " + (e->tipe))
-                    err = true
+                    case AndExp (l, r)      => l->errors; r->errors
+                    case EqualExp (l, r)    => l->errors; r->errors
+                    case GreaterExp (l, r)  => l->errors; r->errors
+                    case LessExp (l, r)     => l->errors; r->errors
+                    case MinusExp (l, r)    => l->errors; r->errors
+                    case ModExp (l, r)      => l->errors; r->errors
+                    case NegExp (e)         => e->errors
+                    case NotEqualExp (l, r) => l->errors; r->errors
+                    case NotExp (e)         => e->errors
+                    case OrExp (l, r)       => l->errors; r->errors
+                    case PlusExp (l, r)     => l->errors; r->errors
+                    case SlashExp (l, r)    => l->errors; r->errors
+                    case StarExp (l, r)     => l->errors; r->errors
+                    case _                  =>
                 }
-                err
+                if (!iscompatible (e->tipe, e->exptipe))
+                    message (e, "type error: expected " + (e->exptipe) + " got " + (e->tipe))
 
             case _ =>
-                false
-        }
 
-    /**
-     * Return true if any of the ns elements have errors, false otherwise.
-     */
-    def haserrors (ns : List[ObrNode]) : Boolean =
-        ns map (errors) exists (identity)
+        }
 
     /**
      * Are two types compatible?  If either of them are unknown then we

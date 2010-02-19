@@ -22,80 +22,74 @@
 
 package org.kiama.example.obr
 
+import ObrTree.ObrInt
+import org.kiama.util.Compiler
+
 /**
- * Obr language implementation main program.
+ * Obr language implementation compiler driver.
  */
-object Main extends SyntaxAnalysis {
+class Driver extends Compiler[ObrInt] with SyntaxAnalysis {
 
     import java.io.FileReader
+    import org.kiama.util.Emitter
+    import org.kiama.util.Messaging._
     import SemanticAnalysis._
     import Transformation._
-    import org.kiama.util.Messaging._
 
     /**
-     * Compile the Obr program in the file given as the first command-line
-     * argument and emit code to the console.
+     * The usage message for an erroneous invocation.
      */
-    def main (args : Array[String]) {
-        driver (args, new Emitter)
+    val usage = "usage: scala org.kiama.obr.Main file.obr"
+
+    /**
+     * The parser to use to process the input into an AST.
+     */
+    def parse (filename : String) : Option[ObrInt] = {
+        val reader = new FileReader (filename)
+        super.parse (parser, reader) match {
+            case Success (ast, _) =>
+                Some (ast)
+            case f =>
+                println (f)
+                None
+        }
     }
 
     /**
-     * Compile the Obr program in the file given as the first command-line
-     * argument.  Code is output using the specified emitter.  True is
-     * returned if it all worked, otherwise false.
+     * Function to process the input that was parsed.  emitter is
+     * used for output.  Return true if everything worked, false
+     * otherwise.
      */
-    def driver (args : Array[String], emitter : Emitter) : Boolean = {
+    def process (ast : ObrInt, emitter : Emitter) : Boolean = {
 
-          args.size match {
+        // Initialise compiler state
+        SymbolTable.reset ()
+        SPARCTree.reset ()
 
-              // If there is exactly one command-line argument
-              case 1 =>
-                  // Create a reader for the argument file name
-                  val reader = new FileReader (args (0))
+        // Conduct semantic analysis and report any errors
+        ast->errors
+        if (messagecount > 0) {
+            report
+            false
+        } else {
+            // Compile the source tree to a target tree
+            val targettree = ast->code
 
-                  // Parse the file
-                  parse (parser, reader) match {
-                      // If it worked, we get a source tree
-                      case Success (sourcetree, _) =>
+            // Print out the target tree for debugging
+            // println (targettree)
 
-                          // Print out the source tree for debugging
-                          // println (sourcetree)
-
-                          // Initialise compiler state
-                          SymbolTable.reset ()
-                          SPARCTree.reset ()
-
-                          // Conduct semantic analysis and report any errors
-                          if (sourcetree->errors) {
-                              report
-                              false
-                          } else {
-                              // Compile the source tree to a target tree
-                              val targettree = sourcetree->code
-
-                              // Print out the target tree for debugging
-                              // println (targettree)
-
-                              // Encode the target tree and emit the assembler
-                              val e = new Encoder (emitter)
-                              e.encode (targettree)
-                              true
-                          }
-
-                      // Parsing failed, so report it
-                      case f =>
-                          println (f)
-                          false
-                  }
-
-              // Complain otherwise
-              case _ =>
-                  println ("usage: scala obr.Main file.obr")
-                  false
-
+            // Encode the target tree and emit the assembler
+            val e = new Encoder (emitter)
+            e.encode (targettree)
+            true
         }
 
     }
 
 }
+
+/**
+ * Obr language implementation main program.
+ */
+object Main extends Driver
+

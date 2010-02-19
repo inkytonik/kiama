@@ -32,12 +32,20 @@ object Messaging {
     /**
      * A message record.
      */
-    case class Record (pos : Position, message : String)
+    case class Record (pos : Position, message : String) {
+        override def toString = pos.line + "." + pos.column + ": " + message
+    }
 
     /**
      * Buffer of messages.
      */
     var messages = new ListBuffer[Record] ()
+
+    /**
+     * The messages sorted by position.
+     */
+    def sortedmessages : Seq[Record] =
+        messages.toList.sortWith (_.pos < _.pos)
 
     /**
      * Buffer a new message associated with the given positioned value.
@@ -55,19 +63,13 @@ object Messaging {
      * Output the messages that have been buffered in order of position.
      */
     def report =
-        for (m <- messages.toList.sortWith (_.pos < _.pos)) {
-            print (m.pos.line)
-            print ('.')
-            print (m.pos.column)
-            print (": ")
-            println (m.message)
-        }
+        for (m <- sortedmessages)
+            print (m)
 
     /**
      * Reset the message buffer to empty.
      */
-    def resetmessages = {
+    def resetmessages =
         messages = new ListBuffer[Record] ()
-    }
 
 }

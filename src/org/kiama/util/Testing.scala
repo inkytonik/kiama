@@ -22,9 +22,60 @@ package org.kiama.util
 
 import org.scalatest.FunSuite
 
+/**
+ * Class of objects that can emit code.  By default, code is output to the
+ * console.  Subclass this if you need it to go somewhere else.
+ */
+class Emitter {
+
+    /**
+     * Emit anything.
+     */
+    def emit (any : Any) {
+        print (any.toString)
+    }
+
+    /**
+     * Emit anything and start a new line.
+     */
+    def emitln (any : Any) {
+        println (any.toString)
+    }
+
+}
+
+/**
+ * Trait to supply useful testing infrastructure.
+ */
 trait Testing {
 
-    self : FunSuite =>
+    self : Compiler[_] with FunSuite =>
+
+    import org.scalatest.TestFailedException
+
+    /**
+    * An emitter that records the code in a string that can be accessed
+    * via the result method.
+    */
+    private class StringEmitter extends Emitter {
+        val b = new StringBuilder
+        override def emit (any : Any) = b.append (any.toString)
+        override def emitln (any : Any) = b.append (any.toString).append('\n')
+        def result () = b.result ()
+    }
+
+    /**
+     * Compile the Obr program in the file given as the argument and return
+     * the code or None if compilation failed.
+     */
+    private def compile (filename : String) : Option[String] = {
+        val emitter = new StringEmitter
+        if (driver (Array (filename), emitter)) {
+            Some (emitter.result ())
+        } else {
+            None
+        }
+    }
 
     /**
      * Run tests that process files in path.  All files whose names end
@@ -35,7 +86,7 @@ trait Testing {
      * either the processing fails or it succeeds with the wrong result.
      */
     def filetests (path : String, srcext : String, resext : String,
-                   process : String => Option[String]) {
+                   process : String => Option[String] = compile) {
 
         import java.io.File
         import scala.io.Source
@@ -48,12 +99,21 @@ trait Testing {
             for (c <- children) {
                 if (c.endsWith (srcext)) {
                     val cp = path + "/" + c
-                    process (cp) match {
+                    val res =
+                        try {
+                            process (cp)
+                        } catch {
+                            case e : Exception =>
+                                info (cp + " failed with an exception ")
+                                throw (e)
+                        }
+                    res match {
                         case Some (cc) =>
                             val rp = cp.replace (srcext, resext)
                             val rc = Source.fromPath (rp).mkString
                             if (cc != rc)
-                                fail (cp + " generated bad code")
+                                fail (cp + " generated bad output:\n" + cc +
+                                     "expected:\n" + rc)
                         case None =>
                             fail (cp + " did not compile")
                     }

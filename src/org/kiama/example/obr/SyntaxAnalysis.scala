@@ -28,7 +28,7 @@ import scala.util.parsing.combinator.RegexParsers
 /**
  * Module containing parsers for the expression language.
  */
-class SyntaxAnalysis extends RegexParsers with PackratParsers {
+trait SyntaxAnalysis extends RegexParsers with PackratParsers {
 
     import ObrTree._
 

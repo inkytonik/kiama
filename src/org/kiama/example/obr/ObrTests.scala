@@ -1,5 +1,5 @@
 /**
- * Obr language implementation main program.
+ * Obr language implementation tests.
  *
  * This file is part of Kiama.
  *
@@ -28,33 +28,10 @@ import org.kiama.util.Testing
 /**
  * Obr compiler tests.
  */
-class ObrTests extends FunSuite with Testing {
-
-    /**
-    * An emitter that records the code in a string that can be accessed
-    * via the result method.
-    */
-    class StringEmitter extends Emitter {
-        val b = new StringBuilder
-        override def emit (line : String) = b.append (line + "\n")
-        def result () = b.result ()
-    }
-
-    /**
-     * Compile the Obr program in the file given as the argument and return
-     * the code or None if compilation failed.
-     */
-    def compile (filename : String) : Option[String] = {
-        val emitter = new StringEmitter
-        if (Main.driver (Array (filename), emitter)) {
-            Some (emitter.result ())
-        } else {
-            None
-        }
-    }
+class ObrTests extends Driver with FunSuite with Testing {
 
     test ("Obr compiler generates correct code") {
-        filetests ("src/org/kiama/example/obr/tests", ".obr", ".s", compile)
+        filetests ("src/org/kiama/example/obr/tests", ".obr", ".s")
     }
 
 }
