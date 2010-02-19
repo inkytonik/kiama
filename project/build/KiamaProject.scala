@@ -29,8 +29,6 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def mainScalaSourcePath = "src"
     override def testScalaSourcePath = "src"
     override def outputDirectoryName = "bin"
-    override def mainCompilePath     = outputDirectoryName
-    override def testCompilePath     = outputDirectoryName
 
     // Specyify how to find source and test files.  Sources are
     //    - all .scala files, except
