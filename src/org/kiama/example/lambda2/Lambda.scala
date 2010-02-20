@@ -36,23 +36,44 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     import Evaluators._
     import org.kiama.util.Messaging._
 
-    override def setup { println ("Enter lambda calculus expressions for evaluation.") }
+    override def setup {
+        println ("Enter lambda calculus expressions for evaluation (:help for help)")
+    }
+
     override def prompt = "lambda2> "
+
+    /**
+     * Are we currently type-checking or not?  Default: true.
+     */
+    var typecheck = true
+
+    /**
+     * Print help about the available commands.
+     */
+    def help {
+        println (""":eval                list the available evaluation mechanisms
+            |:eval <mechanism>    change to using <mechanism> to evaluate
+            |:type                print current type setting (default: on)
+            |:type (on|off)       turn typing on or off""".stripMargin)
+    }
 
     /**
      * Process a user input line by intercepting meta-level commands to
      * update the evaluation mechanisms.  By default we just parse what
-     * they type into an expression.  We support the following meta-level
-     * commands:
-     *    :eval                list the available evaluation mechanisms
-     *    :eval <mechanism>    change to using <mechanism> to evaluate
+     * they type into an expression.
      */
     override def processline (line : String) {
         line match {
-            
+
             // Work around bug in 2.8 compiler, real code is below
             case Command (a) =>
                 a (0) match {
+                    case ":help" =>
+                        a.length match {
+                            case 1 => help
+                            case _ => super.processline (line)
+                        }
+
                     case ":eval" =>
                         a.length match {
                             case 1 =>
@@ -70,10 +91,32 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                             case _ =>
                                 super.processline (line)
                         }
+
+                    case ":type" =>
+                        a.length match {
+                            case 1 =>
+                                println ("Typing is " + (if (typecheck) "on" else "off"))
+                            case 2 =>
+                                a (1) match {
+                                    case "on"  => typecheck = true
+                                                  println ("Typing is on")
+                                    case "off" => typecheck = false
+                                                  println ("Typing is off")
+                                    case _     => super.processline (line)
+                                }
+                            case _ =>
+                                super.processline (line)
+                        }
+
                     case _ =>
                         super.processline (line)
                 }
-            
+            // End of workaround
+
+            // This code should work with Scala versions after 2.8-Beta1
+            // case Command (Array (":help")) =>
+            //     help
+            //
             // case Command (Array (":eval")) =>
             //     println ("Available evaluation mechanisms:")
             //     for (mech <- mechanisms) {
@@ -83,10 +126,21 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
             //         else
             //             println
             //     }
-            // 
+            //
             // case Command (Array (":eval", mech)) =>
             //     if (!setEvaluator (mech))
             //         println ("unknown evaluation mechanism: " + mech)
+            //
+            // case Command (Array (":type", "on")) =>
+            //     println ("Typing is " + (if (typecheck) "on" else "off"))
+            //
+            // case Command (Array (":type", "on")) =>
+            //     typecheck = true
+            //     println ("Typing is on")
+            //
+            // case Command (Array (":type", "off")) =>
+            //     typecheck = false
+            //     println ("Typing is off")
 
             // Otherwise it's an expression for evaluation
             case _ => super.processline (line)
@@ -103,23 +157,24 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     }
 
     /**
-     * Process an expression by performing semantic analysis on it and then
-     * evaluating it.
+     * Process an expression.
      */
     def process (e : AST.Exp) {
-
-        // First conduct a semantic analysis check: compute the expression's
-        // type and see if any errors occurred
-        e->tipe
-        if (messagecount == 0) {
-            // If everything is OK, evaluate the expression
-            println (evaluator.eval (e))
+        if (typecheck) {
+            // First conduct a semantic analysis check: compute the expression's
+            // type and see if any errors occurred
+            e->tipe
+            if (messagecount == 0) {
+                // If everything is OK, evaluate the expression
+                println (evaluator.eval (e))
+            } else {
+                // Otherwise report the errors and reset for next expression
+                report
+                resetmessages
+            }
         } else {
-            // Otherwise report the errors and reset for next expression
-            report
-            resetmessages
+            println (evaluator.eval (e))
         }
-
     }
 
 }

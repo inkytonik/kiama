@@ -29,6 +29,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
+    import Lambda.typecheck
 
     // "" is used in a few places to skip over leading whitespace, so the
     // position of a result is the first non-trivial character in it, not
@@ -39,9 +40,12 @@ trait Parser extends RegexParsers with PackratParsers {
         exp
 
     lazy val exp : PackratParser[Exp] =
-        "\\" ~> idn ~ (":" ~> ttype) ~ ("." ~> exp) ^^
+        "\\" ~> idn ~ itype ~ ("." ~> exp) ^^
             { case i ~ t ~ e => Lam (i, t, e) } |
         exp2
+
+    def itype : PackratParser[Type] =
+        if (typecheck) (":" ~> ttype) else ("" ^^^ null)
 
     lazy val exp2 : PackratParser[Exp] =
         exp2 ~ op ~ exp1 ^^ { case l ~ o ~ r => Opn (o, l, r) } |

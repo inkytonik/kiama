@@ -28,7 +28,7 @@ object AST {
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter._
-    
+
     /**
      * Identifiers are represented as strings.
      */
@@ -57,7 +57,8 @@ object AST {
      * Lambda expressions binding name of type tipe within body.
      */
     case class Lam (i : Idn, t : Type, e : Exp) extends Exp {
-        override def toString = "(\\" + i + " : " + t + " . " + e + ")"
+        override def toString =
+            "(\\" + i + (if (t == null) "" else " : " + t) + " . " + e + ")"
     }
 
     /**
@@ -141,7 +142,7 @@ object AST {
         def eval (l : Int, r : Int) = l - r
         override def toString = "-"
     }
-    
+
     // Congruences
 
     def VarC (s1 : => Strategy) : Strategy =
@@ -155,25 +156,25 @@ object AST {
             case _ : App =>
                 congruence (s1, s2)
         }
-        
+
     def LamC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
         rulefs {
             case _ : Lam =>
                 congruence (s1, s2, s3)
         }
-        
+
     def LetC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy, s4 : => Strategy) : Strategy =
         rulefs {
             case _ : Let =>
                 congruence (s1, s2, s3, s4)
         }
-    
+
     def OpnC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
         rulefs {
             case _ : Opn =>
                 congruence (s1, s2, s3)
         }
-        
+
     def LetpC (s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs {
             case _ : Letp =>
