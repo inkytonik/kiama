@@ -64,7 +64,7 @@ object Messaging {
      */
     def report =
         for (m <- sortedmessages)
-            print (m)
+            println (m)
 
     /**
      * Reset the message buffer to empty.
