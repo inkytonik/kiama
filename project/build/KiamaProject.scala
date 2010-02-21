@@ -38,9 +38,6 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def mainSources = descendents (mainSourceRoots, mainSourceFilter)
     override def testSources = descendents (testSourceRoots, testSourceFilter)
 
-    // There is no main class since this is a library
-    override def getMainClass (promptIfMultipleChoices : Boolean) = None
-
     // Set compiler options
     override def compileOptions = super.compileOptions ++ Seq (Unchecked)
 
