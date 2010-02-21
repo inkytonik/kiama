@@ -51,7 +51,8 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
      * Print help about the available commands.
      */
     def help {
-        println (""":eval                list the available evaluation mechanisms
+        println ("""exp                  print the result of evaluating exp
+            |:eval                list the available evaluation mechanisms
             |:eval <mechanism>    change to using <mechanism> to evaluate
             |:type                print current type setting (default: on)
             |:type (on|off)       turn typing on or off""".stripMargin)
