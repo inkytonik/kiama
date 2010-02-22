@@ -61,6 +61,16 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     // By default, only log warnings or worse
     log.setLevel (Level.Warn)
 
+    // Action to run a specified main
+    lazy val main =
+        task {
+            args =>
+                if (args.length >= 1)
+                    runTask (Some (args (0)), runClasspath, args drop 1) dependsOn (compile, copyResources)
+                else
+                    task { Some ("usage: main foo.bar.Main arg...") }
+        }
+
     // Publish to Maven style repo at scala-tools.org
     override def managedStyle = ManagedStyle.Maven
     val publishTo = "Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/"
