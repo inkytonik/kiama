@@ -1,0 +1,2 @@
+Program(Map(+ -> 2, * -> 2),List(VarDecl(x), VarDecl(y), VarDecl(x)),BinExpR(Var(y),*,BinExpR(Var(x),*,Factor(Num(3)))))
+BinExp(BinExp(Var(y),*,Var(x)),*,Num(3))
