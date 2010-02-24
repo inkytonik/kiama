@@ -69,7 +69,7 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
                     runTask (Some (args (0)), runClasspath, args drop 1) dependsOn (compile, copyResources)
                 else
                     task { Some ("usage: main foo.bar.Main arg...") }
-        }
+        } describedAs ("Run a specific main with arguments")
 
     // Publish to Maven style repo at scala-tools.org
     override def managedStyle = ManagedStyle.Maven
