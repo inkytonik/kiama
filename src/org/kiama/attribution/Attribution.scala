@@ -241,7 +241,7 @@ object Attribution extends AttributionBase {
      */
     class CachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T ==> U)
             extends (TArg => T ==> U) {
-                
+
         import scala.collection.mutable.HashMap
 
         private val memo = new HashMap[ParamAttributeKey,Option[U]]
@@ -301,6 +301,20 @@ object Attribution extends AttributionBase {
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U =
         attr { case t => f (t) (t.parent) }
+
+    /**
+     * Define an attribute as per attr, except that the attribute must
+     * have a tree value and will be spliced into the tree to have the
+     * same parent as the node on which it is defined.  This kind of
+     * attribute is used to generate new trees that must share context
+     * with the node on which they are defined.
+     */
+    def tree[T <: Attributable,U <: Attributable] (f : T ==> U) : T ==> U =
+        attr {
+            case t => val u = f (t)
+                      u.parent = t.parent
+                      u
+        }
 
 }
 
