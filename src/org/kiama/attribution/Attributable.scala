@@ -112,15 +112,21 @@ trait Attributable extends Product with Positional {
      * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
      */
     @inline
-    final def ->[U] (attr : this.type => U) = attr (this)
+    final def ->[U] (a : this.type => U) = a (this)
 
     /**
      * Reference an attribute or function that can be applied to this node.
      * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
+     * The attribute definition is defined on a type other than that of the
+     * node to which it is applied.  An implicit value must exist to transform
+     * from the node type to the type expected by the attribute.  This form
+     * of attribute reference is commonly used to implement attribute forwarding
+     * where the implicit parameter enables references to the attribute to be
+     * implicitly forwarded to some other node.
      */
     @inline
-    final def ->[T,U] (attr : T => U) (implicit a : this.type => T) =
-        attr (a (this))
+    final def ->[T,U] (a : T => U) (implicit b : this.type => T) =
+        a (b (this))
 
     /**
      * House-keeping method to connect my children to me and their siblings.
