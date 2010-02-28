@@ -32,7 +32,7 @@ trait Attributable extends Product with Positional {
 
     /**
      * A link to the parent Attributable node of this node or null if this
-     * node has no parent.  Note that this link will skip intervening 
+     * node has no parent.  Note that this link will skip intervening
      * non-Attributable ancestors, such as <code>Option</code> or
      * <code>Seq</code> nodes.
      */
@@ -112,7 +112,15 @@ trait Attributable extends Product with Positional {
      * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
      */
     @inline
-    final def ->[T] (attr : this.type => T) = attr (this)
+    final def ->[U] (attr : this.type => U) = attr (this)
+
+    /**
+     * Reference an attribute or function that can be applied to this node.
+     * <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.
+     */
+    @inline
+    final def ->[T,U] (attr : T => U) (implicit a : this.type => T) =
+        attr (a (this))
 
     /**
      * House-keeping method to connect my children to me and their siblings.

@@ -103,12 +103,18 @@ object Analysis {
         /**
          * Version of op_tree that splices the new tree into the old.
          */
-        lazy val ast : ExpR ==> Exp =
+        implicit val ast : ExpR ==> Exp =
             tree {
                 case e => e->op_tree
             }
 
-        program.expr->ast->errors
+        // Explicit forward to ast
+        // program.expr->ast->errors
+
+        // Implicit forward to ast
+        program.expr->errors
+
+        // Return the AST for future processing
         program.expr->ast
 
     }
