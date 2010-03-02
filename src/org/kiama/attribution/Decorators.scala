@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2008-2010 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -18,21 +18,23 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.repmin
+package org.kiama.attribution
 
-import org.scalatest.FunSuite
+object Decorators {
 
-trait RepminTestsBase extends FunSuite {
+    import org.kiama.attribution.Attribution._
+    import org.kiama.attribution.Attributable
 
-    self : RepminImpl =>
-
-    test ("repmin actually reps and mins") {
-        val t = Fork (Leaf (3), Fork (Leaf (1), Leaf (10)))
-        expect (Fork (Leaf (1), Fork (Leaf (1), Leaf (1)))) (t->repmin)
-    }
+    /**
+     * A decorator that propogates an attribute value down the tree.
+     */
+    def down[T <: Attributable,U] (a : T ==> U) : T ==> U =
+        attr {
+            case t =>
+                if (a.isDefinedAt (t))
+                    a (t)
+                else
+                    (down (a)) (t.parent[T])
+        }
 
 }
-
-class RepminTests extends Repmin with RepminTestsBase
-
-class RepminDecTests extends RepminDec with RepminTestsBase

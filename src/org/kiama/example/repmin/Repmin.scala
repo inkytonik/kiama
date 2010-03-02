@@ -21,13 +21,43 @@
 package org.kiama.example.repmin
 
 import org.kiama.attribution.Attributable
+import org.kiama.attribution.Attribution._
 
 /**
  * AST for Repmin examples.
  */
 abstract class Tree extends Attributable
-case class Pair (left : Tree, right : Tree) extends Tree
+case class Fork (left : Tree, right : Tree) extends Tree
 case class Leaf (value : Int) extends Tree
+
+/**
+ * Repmin implementations must provide a repmin attribute.
+ */
+trait RepminImpl {
+    val repmin : Tree ==> Tree
+}
+
+
+/**
+ * Common base for Repmin implementations.
+ */
+trait RepminBase extends RepminImpl{
+
+    val locmin : Tree ==> Int =
+        attr {
+            case Fork (l, r) => (l->locmin) min (r->locmin)
+            case Leaf (v)    => v
+        }
+
+    val repmin : Tree ==> Tree =
+        attr {
+            case Fork (l, r) => Fork (l->repmin, r->repmin)
+            case t : Leaf    => Leaf (t->globmin)
+        }
+
+    val globmin : Tree ==> Int
+
+}
 
 /**
  * Classic repmin problem defined in an "attributes first" style.
@@ -35,15 +65,7 @@ case class Leaf (value : Int) extends Tree
  * but with all of the leaves replaced by leaves containing the
  * minimum leaf value from the input tree.
  */
-object Repmin {
-
-    import org.kiama.attribution.Attribution._
-
-    val locmin : Tree ==> Int =
-        attr {
-            case Pair (l, r) => (l->locmin) min (r->locmin)
-            case Leaf (v)    => v
-        }
+trait Repmin extends RepminBase {
 
     val globmin : Tree ==> Int =
         attr {
@@ -51,10 +73,19 @@ object Repmin {
             case t             => t.parent[Tree]->globmin
         }
 
-    val repmin : Tree ==> Tree =
-        attr {
-            case Pair (l, r) => Pair (l->repmin, r->repmin)
-            case t : Leaf    => Leaf (t->globmin)
+}
+
+/**
+ * Repmin problem defined using decorators.
+ */
+trait RepminDec extends RepminBase {
+
+    import org.kiama.attribution.Decorators._
+
+    val globmin : Tree ==> Int =
+        down {
+            case t if t isRoot => t->locmin
         }
 
 }
+
