@@ -46,8 +46,8 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
 
     // Declare dependencies on other libraries
     override def libraryDependencies =
-        Set ("org.scala-tools.testing" % "scalacheck_2.8.0.Beta1" % "1.7-SNAPSHOT" % "test",
-             "org.scalatest" % "scalatest" % "1.0.1-for-scala-2.8.0.Beta1-with-test-interfaces-0.3-SNAPSHOT" % "test",
+        Set ("org.scala-tools.testing" % "scalacheck_2.8.0.Beta1" % "1.7-SNAPSHOT",
+             "org.scalatest" % "scalatest" % "1.0.1-for-scala-2.8.0.Beta1-with-test-interfaces-0.3-SNAPSHOT",
              "jline" % "jline" % "0.9.94")
 
     // Add extra files to included resources
