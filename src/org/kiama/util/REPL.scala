@@ -28,6 +28,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait REPL {
 
     import jline.ConsoleReader
+    import jline.Terminal.getTerminal
 
     /**
      * Read lines from standard input and pass non-null ones to processline.
@@ -36,15 +37,31 @@ trait REPL {
      * each time input is about to be read.
      */
     def main (args : Array[String]) {
+
+        /**
+         * Read a line under controlled conditions.  Need to do this since
+         * console is a shared static resource.  In particular, it's shared
+         * with sbt.
+         */
+        def readLine (reader: ConsoleReader, msg: String) = {
+          val terminal = getTerminal
+          terminal.synchronized {
+            terminal.disableEcho
+            try { reader.readLine(msg) }
+            finally { terminal.enableEcho() }
+          }
+        }
+
         setup
         val reader = new ConsoleReader ()
         while (true) {
-            val line = reader.readLine (prompt)
+            val line = readLine (reader, prompt)
             if (line == null)
                 return
             else
                 processline (line)
         }
+
     }
 
     /**
@@ -102,7 +119,7 @@ trait ParsingREPL[T] extends REPL with RegexParsers {
  * syntax trees of type T and prints them.
  */
 trait GeneratingREPL[T] extends REPL {
-    
+
     import org.scalacheck._
 
     /**
