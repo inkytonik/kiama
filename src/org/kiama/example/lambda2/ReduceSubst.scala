@@ -99,7 +99,7 @@ trait ReduceSubst extends Reduce {
 
 }
 
-class ReduceSubstEvaluator extends ReduceSubst  {
+class ReduceSubstEvaluator extends ReduceSubst {
     override def reducesinlambdas = true
 }
 
