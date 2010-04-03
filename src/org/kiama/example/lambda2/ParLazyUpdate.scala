@@ -36,7 +36,7 @@ trait ParLazyUpdate extends ParLazy {
     override lazy val s : Strategy = {
         lazy val e : Strategy =
             attempt (letAppL (e) + letOpn (e)) <*
-            attempt (update (subsVar <* e) + LetpC (id, beta + arithop) +
+            attempt (update (subsVar <* e) + Letp (id, beta + arithop) +
                      letLetRen <* e)
         letLift <* e <* letDrop
     }

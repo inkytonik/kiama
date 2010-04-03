@@ -99,8 +99,8 @@ trait ParLazy extends Par {
                 case i : Idn => env.getOrElse (i, i)
             }
         lazy val r : Strategy = 
-            attempt (VarC (chgname) + AppC (r, r) + LamC (newname, id, r) +
-                OpnC (id, r, r) + LetpC (map (r), r) + BindC (newname, r))
+            attempt (Var (chgname) + App (r, r) + Lam (newname, id, r) +
+                Opn (id, r, r) + Letp (map (r), r) + Bind (newname, r))
         r
     }
     

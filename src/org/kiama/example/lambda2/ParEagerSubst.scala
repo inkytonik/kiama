@@ -35,10 +35,10 @@ trait ParEagerSubst extends Par {
      */
     override lazy val s : Strategy = {
         lazy val e : Strategy =
-            attempt (AppC (e, e) + LetpC (all (BindC (id, e)), id) +
-                     OpnC (id, e, e)) <* f
+            attempt (App (e, e) + Letp (all (Bind (id, e)), id) +
+                     Opn (id, e, e)) <* f
         lazy val y : Strategy =
-            attempt (AppC (y, y) + OpnC (id, y, y)) <* f
+            attempt (App (y, y) + Opn (id, y, y)) <* f
         lazy val f =
             attempt (lambda <* y)
         e

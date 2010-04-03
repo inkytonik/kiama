@@ -145,43 +145,43 @@ object AST {
 
     // Congruences
 
-    def VarC (s1 : => Strategy) : Strategy =
+    def Var (s1 : => Strategy) : Strategy =
         rulefs {
             case _ : Var =>
                 congruence (s1)
         }
 
-    def AppC (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def App (s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs {
             case _ : App =>
                 congruence (s1, s2)
         }
 
-    def LamC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
+    def Lam (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
         rulefs {
             case _ : Lam =>
                 congruence (s1, s2, s3)
         }
 
-    def LetC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy, s4 : => Strategy) : Strategy =
+    def Let (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy, s4 : => Strategy) : Strategy =
         rulefs {
             case _ : Let =>
                 congruence (s1, s2, s3, s4)
         }
 
-    def OpnC (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
+    def Opn (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
         rulefs {
             case _ : Opn =>
                 congruence (s1, s2, s3)
         }
 
-    def LetpC (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def Letp (s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs {
             case _ : Letp =>
                 congruence (s1, s2)
         }
 
-    def BindC (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def Bind (s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs {
             case _ : Bind =>
                 congruence (s1, s2)

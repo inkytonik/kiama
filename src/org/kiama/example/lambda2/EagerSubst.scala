@@ -34,7 +34,7 @@ trait EagerSubst extends ReduceSubst {
      * reduce the expression itself, repeating until no change.
      */
     override lazy val s : Strategy =
-        attempt (AppC (s, s) + LetC (id, id, s, s) + OpnC (id, s, s)) <*
+        attempt (App (s, s) + Let (id, id, s, s) + Opn (id, s, s)) <*
         attempt (lambda <* s)
 
 }
