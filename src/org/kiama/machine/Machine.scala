@@ -20,6 +20,9 @@
 
 package org.kiama.machine
 
+import org.kiama.util.PrettyPrinter
+import org.kiama.util.PrettyPrintable
+
 /**
  * A deterministic abstract state machine defined by its main rule and
  * called name.
@@ -36,7 +39,7 @@ abstract class Machine (val name : String) {
      * An item of abstract state machine state holding a value of type T
      * and called sname.
      */
-    class State[T] (sname : String) {
+    class State[T] (sname : String) extends PrettyPrintable {
 
         /**
          * The value of this item of state.  None means undefined.
@@ -72,10 +75,30 @@ abstract class Machine (val name : String) {
          */
         def := (t : T) {
             updates = Update (this, t) :: updates
-            if (debug)
-                println (name + " new update: " + sname + " := " + t)
+            if (debug) {
+                val p = new PrettyPrinter
+                p.text(name)
+                p.text(" new update: ")
+                p.text(sname)
+                p.text(" := ")
+                p.indent {
+                    this.pretty(p,t)
+                }
+                println(p)
+            }
         }
-
+        
+        /**
+         * Pretty printer for the contents of this state object.
+         */
+        def pretty (p : PrettyPrinter, t : T) : Unit = p.text(t.toString)
+        override def pretty(p : PrettyPrinter) {
+            _value match {
+                case Some(t) => pretty(p,t)
+                case None => p.text("** undefined **")
+            }
+        }
+        
         /**
          * Update this item of state to the value t.  The update occurs
          * immediately.
@@ -86,12 +109,16 @@ abstract class Machine (val name : String) {
         /**
          * Make a printable representation.
          */
-        override def toString : String =
-            sname + " = " +
-                (_value match {
-                    case None     => "undef"
-                    case Some (t) => t
-                 })
+        override def toString : String = {
+            val p : PrettyPrinter = new PrettyPrinter
+            p.text(name)
+            p.text(" = ")
+            p.indent {
+                p.newline
+                this.pretty(p)
+            }
+            p.toString
+        }
 
     }
 
