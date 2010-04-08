@@ -51,11 +51,10 @@ trait Attributable extends Product with Positional {
     def isRoot : Boolean = parent == null
 
     /**
-     * If this node is a member of a sequence, a link to the previous
-     * node in the sequence.  Null if this is the first node of the
-     * sequence, or if it is not a member of a sequence.
+     * A link to the child of the same Attributable parent immediately to the
+     * left of this one, or null if this is the first child of its parent.
      */
-    def prev : this.type = _prev.asInstanceOf[this.type]
+    def prev[T] : T = _prev.asInstanceOf[T]
 
     /**
      * Private field backing prev to make the types work correctly.
@@ -63,34 +62,31 @@ trait Attributable extends Product with Positional {
     private var _prev : Attributable = null
 
     /**
-     * If this node is a member of a sequence, a link to the next
-     * node in the sequence.  Null if this is the first node of the
-     * sequence, or if it is not a member of a sequence.
+     * A link to the child of the same Attributable parent immediately to the right
+     * of this one, or null if this is the last child of its parent.
      */
-    def next : this.type = _next.asInstanceOf[this.type]
+    def next[T] : T = _next.asInstanceOf[T]
 
     /**
      * Private field backing next to make the types work correctly.
      */
-    var _next : Attributable = null
+    private var _next : Attributable = null
 
     /**
-     * If this node is in a sequence, is it the first element?
-     * Otherwise, true.
+     * Is this node the first child of its parent?
      */
     def isFirst : Boolean = prev == null
 
     /**
-     * If this node is in a sequence, is it the last element?
-     * Otherwise, true.
+     * Is this node the last child of its parent? 
      */
     def isLast : Boolean = next == null
 
     /**
-     * If this node is in a sequence, which child number is it
-     * (counting from zero)?  Otherwise, zero.
+     * The index of this node as a child of its parent or -1 if this
+     * node has no parent (is root).
      */
-    var index : Int = 0
+    var index : Int = -1
 
     /**
      * This node's attributable children in left-to-right order.  Children
@@ -101,6 +97,23 @@ trait Attributable extends Product with Positional {
      */
     def children : Iterator[Attributable] =
         _children.iterator
+    
+    /**
+     * If this node has some attributable children then return true, else return false.
+     */
+    def hasChildren : Boolean = !_children.isEmpty
+    
+    /**
+     * This node's first attributable child.
+     * Raises an IndexOutOfBounds exception if this node has no children 
+     */
+    def firstChild[T] : T = _children(0).asInstanceOf[T]
+    
+    /**
+     * This node's last attributable child.
+     * Raises an IndexOutOfBounds exception if this node has no children 
+     */
+    def lastChild[T] : T = _children(_children.length - 1).asInstanceOf[T]
 
     /**
      * Record of this node's attributable children.
@@ -138,32 +151,26 @@ trait Attributable extends Product with Positional {
      */
     private def setChildConnections = {
 
+        var i : Int = 0
+        var prev : Attributable = null
+        def setConnections(c : Attributable) {
+           c.parent = this
+           _children += c
+           c.index = i
+           i += 1
+           c._prev = prev
+           if (prev != null) prev._next = c
+           prev = c
+        }
+        
         for (i <- 0 until productArity) {
             productElement (i) match {
-                case c : Attributable =>
-                    c.parent = this
-                    _children += c
-                case o : Some[_] =>
-                    o.get match {
-                        case c : Attributable =>
-                            c.parent = this
-                            _children += c
-                        case _ =>
-                            // Ignore optional items that are non-Attributables
-                    }
+                case c : Attributable => setConnections(c)
+                case Some(c : Attributable) => setConnections(c)
                 case s : Seq[_] => {
-                    var prev : Attributable = null
-                    for (i <- 0 until s.length) {
-                        s (i) match {
-                            case c : Attributable =>
-                                // Bypass Seq node in parent relation
-                                c.parent = this
-                                _children += c
-                                // Set sequence element properties
-                                c.index = i
-                                c._prev = prev
-                                if (prev != null) prev._next = c
-                                prev = c
+                    for (v <- s) {
+                        v match {
+                            case c : Attributable => setConnections(c)
                             case _ =>
                                 // Ignore elements that are non-Attributables
                         }
