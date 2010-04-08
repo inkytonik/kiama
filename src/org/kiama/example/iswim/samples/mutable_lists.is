@@ -1,0 +1,87 @@
+/**
+ * Title:     Code Sample - implementing a mutable list data structure and
+ *                          destructive "in-place" reverse function in ISWIM.
+ *
+ *            Here we represent functions with multiple parameters in
+ *            curried form, as single argument functions whose return
+ *            results are themselves function closures. 
+ *
+ * Author:    Dominic Verity
+ * Copyright: Macquarie University (c) 2010
+ *
+ */
+
+// Bring some useful primitives into scope.
+primitives newException, raise, write;
+
+// An exception value which is raised when we attempt illegal operations on lists.
+let listexn = newException "list exception";
+
+// We represent mutable cons cells as tuples of closures, each one of
+// which corresponds to one of the methods that can act on such objects.
+
+let cons = fun(hd) (fun (tl) (
+    let car = mkref hd
+    and cdr = mkref tl
+    in (fun(a){val car},
+        fun(a){val cdr},
+        fun(hd){car := hd},
+        fun(tl){cdr := tl})
+))
+
+and nil = 
+    let err = fun(a)(raise listexn)
+    in (err,err,err,err);
+
+// Functions for manipulating these cons objects
+let car = fun(lst) (lst match{ (a,c,h,t) -> a (); v -> raise listexn }) 
+and cdr = fun(lst) (lst match{ (a,c,h,t) -> c (); v -> raise listexn })
+and setcar = fun(lst) (lst match{ (a,c,h,t) -> h; v -> raise listexn })
+and setcdr = fun(lst) (lst match{ (a,c,h,t) -> t; v -> raise listexn });
+
+// Print a list out in a nice format
+let printList = fun(ls) {
+    write "[";
+    letrec printListAux = fun(xs) (
+        if (xs == nil)
+            write "]"
+        else {
+            write (car xs);
+            if ((cdr xs) != nil) write "," else ();
+            printListAux(cdr xs)
+        })
+    in (printListAux ls)
+}
+
+// Reverse a mutable list by reversing its pointers
+// We use the "shunting" technique discussed in the week 3 lecture.
+and reverse = fun(ls) (
+    letrec shuntReverse = fun(left) fun(right) (
+        if (left == nil) right                  // stop once left hand list is exhausted
+        else 
+            let lefttail = cdr left             // get hold of tail of left hand list
+            in {
+                setcdr left right;              // change tail pointer of first cons cell in left
+                                                // hand list to point to the right hand list
+                shuntReverse lefttail left      // recurse...
+            }
+    ) in shuntReverse ls nil                    // start with right hand list empty
+)
+
+// Test these functions        
+and ls1 = cons 1 (cons 2 (cons 3 (cons 4 (cons 5 nil))));
+
+{
+    printList(ls1);
+    write "\n";
+    printList(reverse ls1);
+    write "\n";
+    printList(ls1);             // Notice that after our destructive (mutable)
+    write "\n";                 // reverse ls1 has actually changed....
+    car nil                     // will raise a list exception - nil has no head.
+}
+        
+
+
+
+ 

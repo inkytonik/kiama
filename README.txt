@@ -1,4 +1,4 @@
-Kiama
+1. Kiama
 
 Kiama is a Scala library for language processing.  In the Kiama project we are
 investigating embedding of language processing formalisms such as grammars,
@@ -9,7 +9,7 @@ undergoing heavy development, so many details will change.  Consult with us
 before you rely on it for serious work.  We make no guarantees about the
 features or performance of the Kiama library if you do choose to use it.
 
-Anthony Sloane
+Tony Sloane
 
 Programming Languages Research Group
 Department of Computing, Macquarie University
@@ -20,14 +20,14 @@ inkytonik@gmail.com
 http://plrg.science.mq.edu.au/
 http://www.comp.mq.edu.au/~asloane
 
-1. The Kiama project site at Google code
+2. The Kiama project site at Google code
 
 Information about how to build, install and use Kiama can be found on
 the Kiama project site:
 
 http://kiama.googlecode.com
 
-2. Documentation and mailing lists
+3. Documentation and mailing lists
 
 The main documentation for Kiama takes the form of wiki pages
 covering library features and examples, available at the Google
@@ -55,11 +55,15 @@ kiama-commit    Commit messages and Hudson build problems
                 http://groups.google.com/group/kiama-commit
                 kiama-commit@googlegroups.com
 
-3. Acknowledgements
+4. Acknowledgements
 
-Contributors to the Kiama code have been:
+The Kiama Project team is:
 
 Tony Sloane
+Dominic Verity
+
+Other contributors have been:
+
 Lennart Kats (particularly in attribution)
 Ben Mockler (the Oberon-0 example)
 
@@ -70,7 +74,7 @@ the code for details of the sources of ideas that come from elsewhere.
 Many of the library rewriting strategies are based on the Stratego library.
 See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 
-4. Licensing
+5. Licensing
 
 Kiama is distributed under the GNU Lesser General Public License.  See the files
 COPYING and COPYING.LESSER for details of these licenses.  More information can
