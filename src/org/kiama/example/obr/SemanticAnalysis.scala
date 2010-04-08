@@ -164,7 +164,7 @@ object SemanticAnalysis {
         attr {
             case ObrInt (_, ds, ss, _)          => (ds.last)->envout
             case d : Declaration if (d.isFirst) => Map ()
-            case d : Declaration                => (d.prev)->envout
+            case d : Declaration                => (d.prev[Declaration])->envout
             case n                              => (n.parent[ObrNode])->env
         }
 
