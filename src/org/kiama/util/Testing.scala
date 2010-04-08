@@ -65,11 +65,12 @@ trait Testing {
     }
 
     /**
-     * Compile the Obr program in the file given as the argument and return
+     * Compile the program in the file given as the argument and return
      * the code or None if compilation failed.
      */
     private def compile (filename : String) : Option[String] = {
         val emitter = new StringEmitter
+        Messaging.resetmessages
         if (driver (Array (filename), emitter)) {
             Some (emitter.result ())
         } else {
