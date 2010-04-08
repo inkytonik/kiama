@@ -48,7 +48,6 @@ class LambdaTests extends FunSuite with Checkers with Parser {
             fail (aname + ": no messages produced, expected (" + line + "," + col + ") " + msg)
         else {
             val m = messages (0)
-            resetmessages
             if ((m.pos.line != line) || (m.pos.column != col) ||
                 (m.message != msg))
                 fail (aname + ": incorrect message, expected (" + line + "," + col + ") " + msg +
@@ -61,6 +60,7 @@ class LambdaTests extends FunSuite with Checkers with Parser {
      * message is produced.  We test both of the analysis methods.
      */
     def assertMessage (term : String, line : Int, col : Int, msg : String) {
+        resetmessages
         parseAll (start, term) match {
             case Success (e, in) if in.atEnd =>
                 assertType (e, "tipe", tipe, line, col, msg)
