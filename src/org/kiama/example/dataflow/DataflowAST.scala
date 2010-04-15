@@ -32,10 +32,11 @@ object DataflowAST {
     case class Program (body : Stm) extends Attributable
 
     abstract class Stm extends Attributable
+
     case class Assign (left : Var, right : Var) extends Stm
     case class While (cond : Var, body : Stm) extends Stm
     case class If (cond : Var, tru : Stm, fls : Stm) extends Stm
-    case class Block (stms : Stm*) extends Stm
+    case class Block (stms : List[Stm]) extends Stm
     case class Return (ret : Var) extends Stm
     case class Empty () extends Stm
 

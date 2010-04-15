@@ -21,36 +21,37 @@
 package org.kiama.example.dataflow
 
 import org.scalatest.FunSuite
+import org.kiama.util.Testing
 
 /**
  * Tests of data flow attribution.
  */
-class DataflowTests extends FunSuite {
+class DataflowTests extends Driver with FunSuite with Testing {
 
     import DataflowAST._
     import Dataflow._
 
     /*
-     * begin                 (prog)
+     * {                     (prog)
      *     y = v             (s1)
      *     z = y             (s2)
      *     x = v             (s3)
-     *     while (x) begin   (s4, s41)
+     *     while (x) {       (s4, s41)
      *         x = w         (s411)
      *         x = v         (s412)
-     *     end
+     *     }
      *     return x          (s5)
-     * end
+     * }
      */
     val s1 = Assign ("y", "v")
     val s2 = Assign ("z", "y")
     val s3 = Assign ("x", "v")
     val s411 = Assign ("x", "w")
     val s412 = Assign ("x", "v")
-    val s41 = Block (s411, s412)
+    val s41 = Block (List (s411, s412))
     val s4 = While ("x", s41)
     val s5 = Return ("x")
-    val prog = Block (s1, s2, s3, s4, s5)
+    val prog = Block (List (s1, s2, s3, s4, s5))
 
     test ("in (s1)") {
         expect (Set ("w", "v")) (in (s1))
@@ -106,6 +107,10 @@ class DataflowTests extends FunSuite {
 
     test ("out (s5)") {
         expect (Set ()) (out (s5))
+    }
+
+    test ("Dataflow-based dead code elimination eliminates the correct statements") {
+        filetests ("src/org/kiama/example/dataflow/tests", ".data", ".out")
     }
 
 }

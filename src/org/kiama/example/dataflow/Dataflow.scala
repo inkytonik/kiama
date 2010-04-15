@@ -51,17 +51,18 @@ trait ControlFlowImpl extends ControlFlow {
             case If (_, s1, s2)   => Set (s1, s2)
             case t @ While (_, s) => t->following + s
             case Return (_)       => Set ()
-            case Block (s, _*)    => Set (s)
+            case Block (s :: _)   => Set (s)
             case s                => s->following
         }
 
     val following : Stm ==> Set[Stm] =
         childAttr {
             case s => {
-                 case t @ While (_, _)           => Set (t)
-                 case b @ Block (_*) if s isLast => b->following
-                 case Block (_*)                 => Set (s.next)
-                 case _                          => Set ()
+                case t @ If (_, _, _)      => t->following
+                case t @ While (_, _)      => Set (t)
+                case b : Block if s isLast => b->following
+                case Block (_)             => Set (s.next)
+                case _                     => Set ()
             }
         }
 
@@ -132,6 +133,10 @@ trait LivenessImpl extends Liveness {
 
     val in : Stm ==> Set[Var] =
         circular (Set[Var]()) {
+            // Optimisation to not include vars used to calculate v
+            // if v is not live in the following.
+            // case s @ Assign (v, _) if (! (out (s) contains v)) =>
+            //    out (s)
             case s => uses (s) ++ (out (s) -- defines (s))
         }
 

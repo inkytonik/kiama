@@ -39,7 +39,7 @@ class Driver extends Compiler[ObrInt] with SyntaxAnalysis {
     /**
      * The usage message for an erroneous invocation.
      */
-    val usage = "usage: scala org.kiama.obr.Main file.obr"
+    val usage = "usage: scala org.kiama.example.obr.Main file.obr"
 
     /**
      * The parser to use to process the input into an AST.
