@@ -74,7 +74,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                             case 1 => help
                             case _ => super.processline (line)
                         }
-
+            
                     case ":eval" =>
                         a.length match {
                             case 1 =>
@@ -92,7 +92,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                             case _ =>
                                 super.processline (line)
                         }
-
+            
                     case ":type" =>
                         a.length match {
                             case 1 =>
@@ -108,16 +108,17 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                             case _ =>
                                 super.processline (line)
                         }
-
+            
                     case _ =>
                         super.processline (line)
                 }
             // End of workaround
 
             // This code should work with Scala versions after 2.8-Beta1
+            // but doesn't in 2.8RC1
             // case Command (Array (":help")) =>
             //     help
-            //
+            // 
             // case Command (Array (":eval")) =>
             //     println ("Available evaluation mechanisms:")
             //     for (mech <- mechanisms) {
@@ -127,18 +128,18 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
             //         else
             //             println
             //     }
-            //
+            // 
             // case Command (Array (":eval", mech)) =>
             //     if (!setEvaluator (mech))
             //         println ("unknown evaluation mechanism: " + mech)
-            //
-            // case Command (Array (":type", "on")) =>
+            // 
+            // case Command (Array (":type")) =>
             //     println ("Typing is " + (if (typecheck) "on" else "off"))
-            //
+            // 
             // case Command (Array (":type", "on")) =>
             //     typecheck = true
             //     println ("Typing is on")
-            //
+            // 
             // case Command (Array (":type", "off")) =>
             //     typecheck = false
             //     println ("Typing is off")
