@@ -1,10 +1,9 @@
-syntax: glob
-
 bin
 dist
 .manager
 .scala_dependencies
 
+boot
 lib_managed
-project/boot
-project/build/target
+src_managed
+target
