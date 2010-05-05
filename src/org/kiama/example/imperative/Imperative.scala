@@ -393,7 +393,11 @@ trait TestBase extends Generator with Parser
  */
 object Imperative extends ParsingREPL[AST.Stmt] with Parser {
 
-    override def setup { println ("Enter imperative language programs for parsing.") }
+    override def setup (args : Array[String]) : Boolean = {
+        println ("Enter imperative language programs for parsing.")
+        true
+    }
+
     override def prompt = "imperative> "
 
     def process (s : AST.Stmt) {

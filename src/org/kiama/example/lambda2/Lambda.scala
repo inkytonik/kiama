@@ -36,8 +36,9 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     import Evaluators._
     import org.kiama.util.Messaging._
 
-    override def setup {
+    override def setup (args : Array[String]) : Boolean = {
         println ("Enter lambda calculus expressions for evaluation (:help for help)")
+        true
     }
 
     override def prompt = "lambda2> "

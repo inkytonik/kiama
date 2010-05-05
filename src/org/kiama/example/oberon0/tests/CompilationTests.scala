@@ -1,5 +1,5 @@
 /**
- * Transformation compiler tests.
+ * Oberon0 execution tests.
  *
  * This file is part of Kiama.
  *
@@ -20,13 +20,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.transform
+package org.kiama.example.oberon0.tests
+
+import org.kiama.example.oberon0.Driver
 
 /**
- * Transformation compiler tests.
+ * Oberon0 compilation tests.
  */
-class TransformTests extends Driver {
+class CompilationTests extends Driver {
+    
+    val path = "src/org/kiama/example/oberon0/tests/"
 
-    filetests ("Transform", "src/org/kiama/example/transform/tests", ".exp", ".out")
+    filetest ("Oberon0", path + "ProcTest2.ob0", path + "ProcTest2.err")
 
 }

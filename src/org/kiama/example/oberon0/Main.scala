@@ -22,6 +22,8 @@
 
 package org.kiama.example.oberon0
 
+import org.kiama.util.Compiler
+import compiler.AST._
 import compiler.Parser
 
 /**
@@ -30,69 +32,55 @@ import compiler.Parser
  * then encodes the program as RISC assembler and runs the assembler
  * using a machine simulator.
  */
-object Main extends Parser
-{
-    import compiler.AST._
+class Driver extends Parser with Compiler[ModuleDecl] {
+
+    import assembler.Assembler
     import compiler.ErrorCheck.collectErrors
     import compiler.Encoder.EncodeModule
-    import assembler.Assembler
-    import machine.RISC
     import java.io.FileReader
-    import java.io.FileNotFoundException
+    import machine.RISC
+    import org.kiama.util.Console
+    import org.kiama.util.Emitter
+    import org.kiama.util.JLineConsole
     import org.kiama.util.Messaging._
+    
+    /**
+     * The usage message for an erroneous invocation.
+     */
+    val usage = "usage: scala org.kiama.example.oberon0.Main file.ob0"
+        
+    /**
+     * Function to process the input that was parsed.  emitter is
+     * used for output.  Return true if everything worked, false
+     * otherwise.
+     */
+    def process (ast : ModuleDecl, console : Console, emitter : Emitter) : Boolean = {
 
-    def main (args: Array[String])
-    {
-        // println ("Input : " + args(0))
+        // Check for semantic errors
+        ast->collectErrors
 
-        var result : ParseResult[ModuleDecl] = null
-
-        // PARSING
-        try {
-            val fr : FileReader = new FileReader(args(0))
-            result = parseAll(moduledecl, fr)
+        // If everything was OK
+        if (messagecount == 0) {
+            // Clear the machine code buffer
+            Assembler.resetcode
+            // Encode the module to RISC assembler
+            EncodeModule (ast)
+            // Assemble to machine code
+            val instrs = Assembler.getcode
+            // Run the machine code
+            val mymachine = new RISC (instrs, console, emitter)
+            mymachine.run
+            true
+        } else {
+            report (emitter)
+            false
         }
-        catch {
-            case exc : FileNotFoundException => println (exc.getMessage)
-            return
-        }
-
-        result match {
-            case Success (mod, in) => {
-
-                // val buffer = new StringBuilder
-                // mod.pretty(buffer, 0)
-                // println ("Successful parse:")
-                // println (buffer.toString)
-                // println ("Position = " + in.pos)
-
-                // SEMANTIC ANALYSIS
-                mod->collectErrors
-
-                if (messagecount == 0) {
-                    // println ("\nNo semantic errors")
-
-                    // Encode
-                    EncodeModule (mod)
-
-                    // Assemble
-                    val instrs = Assembler.getcode
-                    // println ("\nInstructions: ")
-                    // instrs.foreach (instr => println (instr))
-
-                    // Run
-                    // println ("\nProgram output: ")
-                    val mymachine = new RISC (instrs)
-                    mymachine.init
-                    mymachine.steps
-                }
-                else {
-                    // println ("\nSemantic errors occurred:")
-                    report
-                }
-            }
-
-            case f => println (f)
-        }
+        
     }
+
 }
+
+/**
+ * Oberon0 language implementation main program.
+ */
+object Main extends Driver

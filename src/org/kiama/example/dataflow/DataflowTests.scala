@@ -20,13 +20,10 @@
 
 package org.kiama.example.dataflow
 
-import org.scalatest.FunSuite
-import org.kiama.util.Testing
-
 /**
  * Tests of data flow attribution.
  */
-class DataflowTests extends Driver with FunSuite with Testing {
+class DataflowTests extends Driver {
 
     import DataflowAST._
     import Dataflow._
@@ -109,8 +106,6 @@ class DataflowTests extends Driver with FunSuite with Testing {
         expect (Set ()) (out (s5))
     }
 
-    test ("Dataflow-based dead code elimination eliminates the correct statements") {
-        filetests ("src/org/kiama/example/dataflow/tests", ".data", ".out")
-    }
+    filetests ("Dataflow", "src/org/kiama/example/dataflow/tests", ".data", ".out")
 
 }

@@ -27,39 +27,25 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait REPL {
 
-    import jline.ConsoleReader
-    import jline.Terminal.getTerminal
+    import Console.readLine
 
     /**
      * Read lines from standard input and pass non-null ones to processline.
      * Continue until processline returns false. The command-line arguments
-     * are ignored.  Calls setup before entering the loop and prompt
-     * each time input is about to be read.
+     * are passed to the setup function.  Calls setup before entering the
+     * loop and prompt each time input is about to be read.
      */
     def main (args : Array[String]) {
 
-        /**
-         * Read a line under controlled conditions.  Need to do this since
-         * console is a shared static resource.  In particular, it's shared
-         * with sbt.
-         */
-        def readLine (reader: ConsoleReader, msg: String) = {
-          val terminal = getTerminal
-          terminal.synchronized {
-            terminal.disableEcho
-            try { reader.readLine(msg) }
-            finally { terminal.enableEcho() }
-          }
-        }
-
-        setup
-        val reader = new ConsoleReader ()
-        while (true) {
-            val line = readLine (reader, prompt)
-            if (line == null)
-                return
-            else
-                processline (line)
+        // If the setup works, read lines and process them
+        if (setup (args)) {
+            while (true) {
+                val line = readLine (prompt)
+                if (line == null)
+                    return
+                else
+                    processline (line)
+            }
         }
 
     }
@@ -67,7 +53,8 @@ trait REPL {
     /**
      * Carry out setup processing for the REPL.  Default: do nothing.
      */
-    def setup { }
+    def setup (args : Array[String]) : Boolean =
+        true
 
     /**
      * Define the prompt (default: "> ").
@@ -119,14 +106,15 @@ trait ParsingREPL[T] extends REPL with RegexParsers {
  * syntax trees of type T and prints them.
  */
 trait GeneratingREPL[T] extends REPL {
-
+    
     import org.scalacheck._
 
     /**
      * Carry out setup processing for the REPL.
      */
-    override def setup {
+    override def setup (args : Array[String]) : Boolean = {
         println ("Each time you hit ENTER a new instance is generated and printed.")
+        true
     }
 
     /**

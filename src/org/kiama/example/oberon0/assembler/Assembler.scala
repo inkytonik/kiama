@@ -88,6 +88,13 @@ object Assembler {
         }
         code
     }
+    
+    /**
+     * Reset the code sequence to be empty.
+     */
+    def resetcode {
+        code.clear
+    }
 
     /**
      * Resolve a symbolic label occurring in an instruction at the

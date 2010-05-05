@@ -10,24 +10,24 @@ MODULE ProcTest1;
 
     (* Multiply x & y and put result in res *)
     PROCEDURE Multiply1 (x, y : INTEGER; VAR res : INTEGER);
-	BEGIN
-	    res := x * y;
-		Write (res)
-	END Multiply1;
+        BEGIN
+            res := x * y;
+            Write (res)
+        END Multiply1;
 
     (* Multiply the first two elements and put result in the third element *)
     PROCEDURE Multiply2 (VAR data : ARRAY 3 OF INTEGER);
-	BEGIN
-	    data[2] := data[0] * data[1];
-		Write (data[2])
-	END Multiply2;
+        BEGIN
+            data[2] := data[0] * data[1];
+            Write (data[2])
+        END Multiply2;
 
     (* Multiply x & y and put result in globres *)
     PROCEDURE Multiply3 (x, y : INTEGER);
-	BEGIN
-	    globres := x * y;
-		Write (globres)
-	END Multiply3;
+        BEGIN
+            globres := x * y;
+            Write (globres)
+        END Multiply3;
 
 BEGIN
 
@@ -57,6 +57,6 @@ BEGIN
 
     (* Test Multiply3 *)
     Multiply3 (5, 3);
-	WriteLn (globres)    
+    WriteLn (globres)    
 
 END ProcTest1.

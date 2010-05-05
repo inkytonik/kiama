@@ -20,37 +20,58 @@
 
 package org.kiama.util
 
+import org.scalatest.FunSuite
+import scala.util.parsing.combinator.RegexParsers
+
 /**
- * Trait to provide basic functionality for a compiler-like program that
- * parses an input file and processes it in some way, possibly emitting
- * some output.  T is the type of the AST that results from parsing.
+ * Trait to provide basic functionality for a compiler-like program
+ * constructed from phases.
  */
-trait Compiler[T] {
+trait Compiler[T] extends FunSuite {
+    
+    this : RegexParsers =>
 
+    import java.io.File
     import java.io.FileReader
-    import org.kiama.util.Messaging._
+    import java.io.FileNotFoundException
+    import org.kiama.util.Console
+    import org.kiama.util.JLineConsole
     import org.kiama.util.Emitter
-
+    import org.kiama.util.Messaging._
+    import org.kiama.util.StringEmitter
+    import org.scalatest.TestFailedException
+    import scala.io.Source
+        
     /**
-     * Compile the program in the file given as the first command-line
-     * argument and emit output to the console.
+     * Process the program in the file given as the first command-line
+     * argument, read input using JLine input editing, and emit output
+     * to the standard output.
      */
     def main (args : Array[String]) {
-        driver (args, new Emitter)
+        driver (args, JLineConsole, new Emitter)
     }
 
     /**
-     * Compile the program in the file given as the first command-line
-     * argument.  Output is produced using the specified emitter.  True is
-     * returned if it all worked, otherwise false.
+     * Process the program in the file given as the first command-line
+     * argument by building an AST for it and then processing that AST
+     * in an arbitrary way.  The AST is built by makeast and processing
+     * is performed by process.  Output is produced using the specified
+     * emitter.  True is returned if it all worked, otherwise false.
      */
-    def driver (args : Array[String], emitter : Emitter) : Boolean =
+    def driver (args : Array[String], console : Console, emitter : Emitter) : Boolean =
         args.size match {
             case 1 =>
-                parse (args (0)) match {
-                    case Some (ast) =>
-                        process (ast, emitter)
-                    case None =>
+                try {
+                    val reader = new FileReader (args (0))
+                    makeast (reader) match {
+                        case Some (ast) =>
+                            process (ast, console, emitter)
+                        case None =>
+                            false
+                    }
+                } catch {
+                    case e : FileNotFoundException =>
+                        println (e.getMessage)
                         false
                 }
             case _ =>
@@ -64,15 +85,138 @@ trait Compiler[T] {
     val usage : String
 
     /**
-     * The parser to use to process the input file into an AST.
+     * Make an AST from the input file.  Actually calls parser to do the real
+     * work and checks its output.
      */
-    def parse (filename : String) : Option[T]
+    def makeast (reader : FileReader) : Option[T] = {
+        parseAll (parser, reader) match {
+            case Success (ast, _) =>
+                Some (ast)
+            case f =>
+                println (f)
+                None
+        }
+    }
 
     /**
-     * Function to process the input that was parsed.  emitter is
-     * used for output.  Return true if everything worked, false
-     * otherwise.
+     * The actual parser used to produce the AST.
      */
-    def process (ast : T, emitter : Emitter) : Boolean
+    val parser : Parser[T]
+
+    /**
+     * Function to process the input that was parsed.  console should be
+     * used to read anything needed by the processing.  emitter should be
+     * used for output.  Return true if everything worked, false otherwise.
+     */
+    def process (ast : T, console : Console, emitter : Emitter) : Boolean
+
+    /**
+     * Compile the program in the file given as the argument by calling the 
+     * compiler driver and return the resulting output or None if compilation
+     * failed.  Read standard input from the specified console.
+     */
+    def compile (filename : String, console : Console) : Option[String] = {
+        val emitter = new StringEmitter
+        Messaging.resetmessages
+        if (driver (Array (filename), console, emitter)) {
+            Some (emitter.result ())
+        } else {
+            None
+        }
+    }
+    
+    /**
+     * Make a single file test processing the file cp, expecting output as in
+     * the file rp.  Use the given console for input.  The extra string is 
+     * used is appended to the normal test title. name is an identifying 
+     * string used in messages.  If the compilation fails, rp is assumed
+     * to contain the expected messages.
+     */
+    def filetest (name : String, cp : String, rp : String,
+                  console : Console = null, extra : String = "") {
+        val title = name + " processing " + cp + " expecting " + rp + extra
+        test (title) {
+            val res =
+                try {
+                    compile (cp, console)
+                } catch {
+                    case e : Exception =>
+                        info ("failed with an exception ")
+                        throw (e)
+                }
+            val rc = Source.fromPath (rp).mkString
+            res match {
+                case Some (cc) =>
+                    if (cc != rc)
+                        fail (title + " generated bad output:\n" + cc +
+                             "expected:\n" + rc)
+                case None =>
+                    val ec = Messaging.toString
+                    if (ec != rc)
+                        fail (cp + " compilation failed with wrong errors:\n" + ec +
+                              "expected:\n" + rc)
+            }
+        }
+    }
+    
+    /**
+     * Make tests that process the files in path.  name is an identifying
+     * name for this set of tests.  All files whose names end in srcext are
+     * processed.  Processing is done by the function compile which must
+     * return either Some (s) where s is the output or None if processing
+     * failed.  If srcext is .x and resext is .y, then the expected result
+     * for foo.x is found in file foo.y.  If optinext is Some (z), then
+     * foo.z is used for standard input.  A test fails if either the
+     * processing fails or it succeeds with the wrong result.
+     */
+    def filetests (name : String, path : String, srcext : String,
+                   resext : String, optinext : Option[String] = None) {
+
+        import java.io.FilenameFilter
+        
+        /**
+         * Make a set of file tests from using inputs from dir with inputs
+         * selected by infilter with extensions inext.  If there are no 
+         * such input files, then no tests are created.  name is an identifying 
+         * string used in messages.
+         */
+        def infiletests (name : String, cp : String, dir : File,
+                         infilter : FilenameFilter, inext : String) {
+            for (i <- dir.list (infilter)) {
+                val ip = path + "/" + i
+                val console = new FileConsole (ip)
+                val rp = ip.replace (inext, resext)
+                filetest (name, cp, rp, console, " from input " + ip)
+            }
+        }
+
+        val dir = new File (path)
+        val children = dir.list ()
+        if (children == null) {
+            test ("Run file tests at " + path) {
+                fail ("bad test file path " + path)
+            }
+        } else {
+            for (c <- children) {
+                if (c.endsWith (srcext)) {
+                    val cp = path + "/" + c
+                    optinext match {
+                        case Some (inext) =>
+                            val infilter = 
+                                new FilenameFilter {
+                                    def accept (dir : File, name : String) : Boolean = {
+                                        name.startsWith (c) && name.endsWith (inext)
+                                    }
+                                }
+                            infiletests (name, cp, dir, infilter, inext)
+                        case None =>
+                            val rp = cp.replace (srcext, resext)
+                            filetest (name, cp, rp)
+                    }
+                }
+            }
+        }
+
+    }
 
 }

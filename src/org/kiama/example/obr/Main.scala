@@ -28,9 +28,10 @@ import org.kiama.util.Compiler
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends Compiler[ObrInt] with SyntaxAnalysis {
+class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
 
     import java.io.FileReader
+    import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
     import SemanticAnalysis._
@@ -42,25 +43,11 @@ class Driver extends Compiler[ObrInt] with SyntaxAnalysis {
     val usage = "usage: scala org.kiama.example.obr.Main file.obr"
 
     /**
-     * The parser to use to process the input into an AST.
-     */
-    def parse (filename : String) : Option[ObrInt] = {
-        val reader = new FileReader (filename)
-        super.parse (parser, reader) match {
-            case Success (ast, _) =>
-                Some (ast)
-            case f =>
-                println (f)
-                None
-        }
-    }
-
-    /**
      * Function to process the input that was parsed.  emitter is
      * used for output.  Return true if everything worked, false
      * otherwise.
      */
-    def process (ast : ObrInt, emitter : Emitter) : Boolean = {
+    def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
         // Initialise compiler state
         SymbolTable.reset ()
@@ -92,4 +79,3 @@ class Driver extends Compiler[ObrInt] with SyntaxAnalysis {
  * Obr language implementation main program.
  */
 object Main extends Driver
-

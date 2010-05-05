@@ -28,30 +28,17 @@ import org.kiama.util.Compiler
 /**
  * Main program for transformation compiler.
  */
-class Driver extends Compiler[Program] with Parser {
+class Driver extends Parser with Compiler[Program] {
 
     import java.io.FileReader
+    import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
     /**
      * The usage message for an erroneous invocation.
      */
-    val usage = "usage: scala org.kiama.multipass.Main file.exp"
-
-    /**
-     * The parser to use to process the input into an AST.
-     */
-    def parse (filename : String) : Option[Program] = {
-        val reader = new FileReader (filename)
-        super.parse (parser, reader) match {
-            case Success (ast, _) =>
-                Some (ast)
-            case f =>
-                println (f)
-                None
-        }
-    }
+    val usage = "usage: scala org.kiama.transform.Main file.exp"
 
     /**
      * Function to process the input that was parsed.  emitter is
@@ -60,10 +47,10 @@ class Driver extends Compiler[Program] with Parser {
      * AST and print it, then perform semantic analysis on the second
      * AST and print any errors.
      */
-    def process (prog : Program, emitter : Emitter) : Boolean = {
+    def process (ast : Program, console : Console, emitter : Emitter) : Boolean = {
         resetmessages
-        emitter.emitln (prog)
-        val exp = Analysis.process (prog)
+        emitter.emitln (ast)
+        val exp = Analysis.process (ast)
         emitter.emitln (exp)
         for (m <- sortedmessages)
             emitter.emitln (m)

@@ -32,7 +32,7 @@ trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
 
-    lazy val start  : PackratParser[ModuleDecl] =
+    lazy val parser  : PackratParser[ModuleDecl] =
         phrase (moduledecl)
 
     // Declarations

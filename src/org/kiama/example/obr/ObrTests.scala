@@ -22,16 +22,11 @@
 
 package org.kiama.example.obr
 
-import org.scalatest.FunSuite
-import org.kiama.util.Testing
-
 /**
  * Obr compiler tests.
  */
-class ObrTests extends Driver with FunSuite with Testing {
+class ObrTests extends Driver {
 
-    test ("Obr compiler generates correct code") {
-        filetests ("src/org/kiama/example/obr/tests", ".obr", ".s")
-    }
+    filetests ("Obr", "src/org/kiama/example/obr/tests", ".obr", ".s")
 
 }

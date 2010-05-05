@@ -20,7 +20,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.compiler.tests
+package org.kiama.example.oberon0.tests
 
 import org.scalacheck.Prop._
 import org.scalatest.FunSuite
@@ -131,7 +131,7 @@ BEGIN
     END
 END Factorial.
 """
-        expect (start, program,
+        expect (parser, program,
             ModuleDecl ("Factorial",
                 List (ConstDecl ("limit", IntegerLiteral (10)),
                       VarDecl ("v", IntegerType),

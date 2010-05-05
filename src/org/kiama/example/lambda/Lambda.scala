@@ -201,7 +201,11 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
 
     import AST._
 
-    override def setup { println ("Enter lambda calculus expressions for evaluation.") }
+    override def setup (args : Array[String]) : Boolean = {
+        println ("Enter lambda calculus expressions for evaluation.")
+        true
+    }
+
     override def prompt = "lambda> "
 
     def process (e : Exp) {

@@ -1,5 +1,5 @@
 /**
- * Transformation compiler tests.
+ * Oberon0 execution tests.
  *
  * This file is part of Kiama.
  *
@@ -20,13 +20,15 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.transform
+package org.kiama.example.oberon0.tests
+
+import org.kiama.example.oberon0.Driver
 
 /**
- * Transformation compiler tests.
+ * Oberon0 execution tests.
  */
-class TransformTests extends Driver {
+class ExecutionTests extends Driver {
 
-    filetests ("Transform", "src/org/kiama/example/transform/tests", ".exp", ".out")
+    filetests ("Oberon0", "src/org/kiama/example/oberon0/tests", ".ob0", ".out", Some (".in"))
 
 }

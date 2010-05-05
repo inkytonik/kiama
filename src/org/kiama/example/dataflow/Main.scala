@@ -27,9 +27,10 @@ import org.kiama.util.Compiler
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
- class Driver extends Compiler[Stm] with SyntaxAnalyser {
+ class Driver extends SyntaxAnalyser with Compiler[Stm] {
 
      import java.io.FileReader
+     import org.kiama.util.Console
      import org.kiama.util.Emitter
 
      /**
@@ -40,9 +41,8 @@ import org.kiama.util.Compiler
      /**
       * The parser to use to process the input into an AST.
       */
-     def parse (filename : String) : Option[Stm] = {
-         val reader = new FileReader (filename)
-         super.parse (parser, reader) match {
+     def parse (reader : FileReader) : Option[Stm] = {
+         super.parseAll (parser, reader) match {
              case Success (ast, _) =>
                  Some (ast)
              case f =>
@@ -54,7 +54,7 @@ import org.kiama.util.Compiler
      /**
       * Process the AST by optimising it, then print optimised AST.
       */
-     def process (ast : Stm, emitter : Emitter) : Boolean = {
+     def process (ast : Stm, console : Console, emitter : Emitter) : Boolean = {
          val optast = Optimise.run (ast)
          emitter.emitln (optast)
          true

@@ -128,11 +128,12 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
      * Initialise the machine.
      */
     def init = {
-        stack.update(Nil)
-        envir.update(Map())
-        dump.update(EmptyCont)
-        handler.update(EmptyCont)
-        control.update(program match { case CodeSegment(seg) => seg })
+        stack := Nil
+        envir := Map()
+        dump := EmptyCont
+        handler := EmptyCont
+        control := program.code
+        performUpdates
     }
 }
 

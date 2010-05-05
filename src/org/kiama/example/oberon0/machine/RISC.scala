@@ -22,11 +22,16 @@ package org.kiama.example.oberon0.machine
 
 import RISCISA._
 import org.kiama.machine.Machine
+import org.kiama.util.Console
+import org.kiama.util.Emitter
 
 /**
- * Abstract state machine simulation of a simple RISC architecture.
+ * Abstract state machine simulation of a simple RISC architecture.  Run the
+ * given code, reading input from console and emitting output using emitter.
  */
-class RISC (code : Code) extends Machine ("RISC") {
+class RISC (code : Code, console : Console, emitter : Emitter) extends Machine ("RISC") {
+    
+    import org.kiama.util.Console
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
@@ -50,7 +55,7 @@ class RISC (code : Code) extends Machine ("RISC") {
     lazy val R = Array.tabulate (32) (i => Reg ("R" + i.toString))
 
     /**
-     * The program counter is register 28.
+     * Names for special registers.
      */
     lazy val PC = R (28)
     lazy val FP = R (29)
@@ -60,7 +65,7 @@ class RISC (code : Code) extends Machine ("RISC") {
     /**
      * Byte addressed store of words.
      */
-    val Mem = new State[Map[Int,Word]] ("Mem")
+    val Mem = new ParamState[Int,Int] ("Mem")
 
     /**
      * Condition code: zero.
@@ -80,28 +85,28 @@ class RISC (code : Code) extends Machine ("RISC") {
     /**
      * Initialise the machine.
      */
-    def init {
-        Mem.update (Map ())
-        PC.update (0)
-        R (0).update(0)		// Set R0 = 0
-        Z.update (false)
-        N.update (false)
-        halt.undefine
+    override def init {
+        PC := 0
+        R (0) := 0
+        Z := false
+        N := false
+        performUpdates
     }
 
     /**
      * The main rule of this machine.
      */
-    def main =
+    def main {
         if (halt isUndefined)
             execute (code (PC))
+    }
 
     /**
      * Execute a single instruction.
      */
-    def execute (instr : Instr) = {
+    def execute (instr : Instr) {
         if (debug)
-            println (name + " exec: " + instr)
+            emitter.emitln (name + " exec: " + instr)
         arithmetic (instr)
         memory (instr)
         control (instr)
@@ -111,7 +116,7 @@ class RISC (code : Code) extends Machine ("RISC") {
     /**
      * Execute arithmetic instructions.
      */
-    def arithmetic (instr : Instr) =
+    def arithmetic (instr : Instr) {
         instr match {
             case MOV (a, b, c)   => R (a) := R (c) << b
             case MOVI (a, b, im) => R (a) := im << b
@@ -127,68 +132,73 @@ class RISC (code : Code) extends Machine ("RISC") {
             case DIVI (a, b, im) => R (a) := R (b) / im
             case MOD (a, b, c)   => R (a) := R (b) % (R (c) : Int)
             case MODI (a, b, im) => R (a) := R (b) % im
-            case CMP (b, c)      => Z := R (b).value == R (c).value
+            case CMP (b, c)      => Z := R (b) =:= R (c).value
                                     N := R (b).value < (R (c).value : Int)
-            case CMPI (b, im)    => Z := R (b).value == im
+            case CMPI (b, im)    => Z := R (b) =:= im
                                     N := R (b).value < im
             case CHKI (a, im)    => if ((R (a) < 0) || (R (a) >= im))
                                         R (a) := 0
             case _ => ()
         }
+    }
 
     /**
      * Execute memory instructions.
      */
-    def memory (instr : Instr) =
+    def memory (instr : Instr) {
         try {
             instr match {
                 case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
                 case LDB (a, b, im) => halt := "LDB not implemented"
                 case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
                                        R (b) := R (b) - im
-                case STW (a, b, im) => Mem := Mem + (((R (b) + im) / 4, R (a)))
+                case STW (a, b, im) => Mem ((R (b) + im) / 4) := R (a)
                 case STB (a, b, im) => halt := "STB not implemented"
-                case PSH (a, b, im) => Mem := Mem + ((R (b) / 4, R (a)))
+                case PSH (a, b, im) => Mem (R (b) / 4) := R (a)
                                        R (b) := R (b) + im
                 case _ => ()
             }
         }
         catch {
-            case _ => println ("XXX Exception at " + instr)
-            println ("Mem = " + Mem)
-            halt := "Halt"
+            case e =>
+                println ("Exception at " + instr)
+                e.printStackTrace
+                println (Mem)
+                halt := "Halt"
         }
+    }
 
     /**
      * Execute control instructions, including default control step.
      */
-    def control (instr : Instr) =
+    def control (instr : Instr) {
         instr match {
-            case b : BEQ if (Z.value) => PC := PC + b.disp
-            case b : BNE if (!Z.value) => PC := PC + b.disp
-            case b : BLT if (N.value) => PC := PC + b.disp
-            case b : BGE if (!N.value) => PC := PC + b.disp
-            case b : BLE if (Z.value || N.value) => PC := PC + b.disp
+            case b : BEQ if (Z.value)              => PC := PC + b.disp
+            case b : BNE if (!Z.value)             => PC := PC + b.disp
+            case b : BLT if (N.value)              => PC := PC + b.disp
+            case b : BGE if (!N.value)             => PC := PC + b.disp
+            case b : BLE if (Z.value || N.value)   => PC := PC + b.disp
             case b : BGT if (!Z.value && !N.value) => PC := PC + b.disp
-            case b : BR => PC := PC + b.disp
-            case b : BSR => R (31) := PC + 1
-                            PC := PC + b.disp
-
+            case b : BR                            => PC := PC + b.disp
+            case b : BSR                           => R (31) := PC + 1
+                                                      PC := PC + b.disp
             case RET (c) => PC := R (c)
                             if (R (c).value == 0) halt := "Halt"
             case _  => PC := PC + 1
         }
+    }
 
     /**
      * Execute input/output instructions.
      */
-    def inputoutput (instr : Instr) =
+    def inputoutput (instr : Instr) {
         instr match {
-            case RD (a)  => R (a) := readInt
-            case WRD (c) => print (R (c).value)
-            case WRH (c) => print (R (c).value.toHexString)
-            case WRL     => println
+            case RD (a)  => R (a) := console.readInt ("Enter integer: ")
+            case WRD (c) => emitter.emit (R (c) : Int)
+            case WRH (c) => emitter.emit ((R (c) : Int).toHexString)
+            case WRL     => emitter.emitln
             case _       =>
         }
+    }
 
 }
