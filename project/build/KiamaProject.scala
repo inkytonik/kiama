@@ -25,18 +25,29 @@ import sbt._
  */
 class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
 {
-    // Configure paths
+    // Configure basic paths
     override def mainScalaSourcePath = "src"
     override def testScalaSourcePath = "src"
     override def outputDirectoryName = "bin"
-
-    // Specyify how to find source and test files.  Sources are
+    
+    // Configure extra paths
+    def exampleFilesPath = (mainScalaSourcePath ##) / "org" / "kiama" / "example"
+    
+    // Specyify how to find source and test files.  Main sources are
     //    - all .scala files, except
-    //    - files whose names end in Tests.scala, which are tests
-    def mainSourceFilter = "*.scala" && -testSourceFilter
+    // Test sources, which are
+    //    - Scala files within the examples src, which are example sources
+    //    - files whose names end in Tests.scala, which are actual test sources
+    def exampleSources = descendents (exampleFilesPath, "*.scala")
     def testSourceFilter = "*Tests.scala"
-    override def mainSources = descendents (mainSourceRoots, mainSourceFilter)
-    override def testSources = descendents (testSourceRoots, testSourceFilter)
+    def mainSourceFilter = "*.scala" && -testSourceFilter
+    override def mainSources = descendents (mainSourceRoots, mainSourceFilter) ---
+                               exampleSources
+    override def testSources = descendents (testSourceRoots, testSourceFilter) +++
+                               exampleSources
+                               
+    // Test resources are any non-Scala files in the examples
+    override def testResources = descendents (exampleFilesPath, -"*.scala")
 
     // Set compiler options
     override def compileOptions = super.compileOptions ++ Seq (Unchecked)
@@ -57,12 +68,12 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     // By default, only log warnings or worse
     log.setLevel (Level.Warn)
 
-    // Action to run a specified main
+    // Action to run a specified main (usually an example)
     lazy val main =
         task {
             args =>
                 if (args.length >= 1)
-                    runTask (Some (args (0)), runClasspath, args drop 1) dependsOn (compile, copyResources)
+                    runTask (Some (args (0)), testClasspath, args drop 1) dependsOn (testCompile, copyResources)
                 else
                     task { Some ("usage: main foo.bar.Main arg...") }
         } describedAs ("Run a specific main with arguments")
