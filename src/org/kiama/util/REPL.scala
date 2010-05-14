@@ -27,10 +27,8 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait REPL {
 
-    import Console.readLine
-
     /**
-     * Read lines from standard input and pass non-null ones to processline.
+     * Read lines from the console and pass non-null ones to processline.
      * Continue until processline returns false. The command-line arguments
      * are passed to the setup function.  Calls setup before entering the
      * loop and prompt each time input is about to be read.
@@ -40,10 +38,11 @@ trait REPL {
         // If the setup works, read lines and process them
         if (setup (args)) {
             while (true) {
-                val line = readLine (prompt)
-                if (line == null)
+                val line = JLineConsole.readLine (prompt)
+                if (line == null) {
+                    println
                     return
-                else
+                } else
                     processline (line)
             }
         }
@@ -106,7 +105,7 @@ trait ParsingREPL[T] extends REPL with RegexParsers {
  * syntax trees of type T and prints them.
  */
 trait GeneratingREPL[T] extends REPL {
-    
+
     import org.scalacheck._
 
     /**
