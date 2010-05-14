@@ -50,8 +50,7 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def testResources = descendents (exampleFilesPath, -"*.scala")
 
     // Set compiler options
-    val Nospecialization = CompileOption ("-no-specialization")
-    override def compileOptions = super.compileOptions ++ Seq (Unchecked, Nospecialization)
+    override def compileOptions = super.compileOptions ++ Seq (Unchecked)
 
     // Include www.scala-tools.org snapshot repository in search
     val scalaToolsSnapshots = ScalaToolsSnapshots
