@@ -1,3 +1,3 @@
-Program(Map(+ -> 1, * -> 2),List(VarDecl(y)),BinExpR(Num(1),+,BinExpR(Var(x),*,BinExpR(Num(3),*,BinExpR(Var(y),+,Factor(Num(5)))))))
+Program(List((+,1), (*,2)),List(VarDecl(y)),BinExpR(Num(1),+,BinExpR(Var(x),*,BinExpR(Num(3),*,BinExpR(Var(y),+,Factor(Num(5)))))))
 BinExp(BinExp(Num(1),+,BinExp(BinExp(Var(x),*,Num(3)),*,Var(y))),+,Num(5))
 4.5: x is not declared

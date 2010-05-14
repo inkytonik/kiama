@@ -20,11 +20,14 @@
 
 package org.kiama.attribution
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests of basic attribution.
  */
+@RunWith(classOf[JUnitRunner])
 class AttributionTests extends FunSuite {
 
     abstract class Tree extends Attributable
@@ -159,6 +162,7 @@ class AttributionTests extends FunSuite {
 /**
  * Tests of collection attributes.
  */
+@RunWith(classOf[JUnitRunner])
 class CollectionAttributionTests extends FunSuite
                                  with org.kiama.example.lambda2.Parser {
 

@@ -23,10 +23,13 @@
 package org.kiama.example.oberon0.tests
 
 import org.kiama.example.oberon0.Driver
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Oberon0 execution tests.
  */
+@RunWith(classOf[JUnitRunner])
 class ExecutionTests extends Driver {
 
     filetests ("Oberon0", "src/org/kiama/example/oberon0/tests", ".ob0", ".out", Some (".in"))

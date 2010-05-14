@@ -20,8 +20,11 @@
 
 package org.kiama.example.til
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class TIL2_2Tests extends FunSuite {
 
     import AST._

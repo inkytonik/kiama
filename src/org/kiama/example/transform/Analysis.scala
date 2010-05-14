@@ -34,11 +34,17 @@ object Analysis {
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Messaging._
+    import scala.collection.immutable.HashMap
 
     def process (program : Program) : Exp = {
 
-        def prioenv (op : String) : Int =
-            program.ops.getOrElse (op, 0)
+        lazy val prioenv : Program ==> Map[String,Int] =
+            attr {
+                case p => HashMap (p.ops : _*)
+            }
+
+        def prio (op : String) : Int =
+            (program->prioenv) getOrElse (op, 0)
 
         lazy val op_tree : ExpR ==> Exp =
             attr {
@@ -65,7 +71,7 @@ object Analysis {
             optor match {
                 case Nil                => (List (op), opnd)
                 case top_op :: rest_ops =>
-                    if (prioenv (top_op) < prioenv (op))
+                    if (prio (top_op) < prio (op))
                         (op :: top_op :: rest_ops, opnd)
                     else {
                         val o1 :: o2 :: rest = opnd

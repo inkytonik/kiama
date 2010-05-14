@@ -22,9 +22,13 @@
 
 package org.kiama.example.obr
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+
 /**
  * Obr compiler tests.
  */
+@RunWith(classOf[JUnitRunner])
 class ObrTests extends Driver {
 
     filetests ("Obr", "src/org/kiama/example/obr/tests", ".obr", ".s")

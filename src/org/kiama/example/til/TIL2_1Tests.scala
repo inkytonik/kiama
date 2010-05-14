@@ -20,8 +20,11 @@
 
 package org.kiama.example.til
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class TIL2_1Tests extends FunSuite {
 
     import AST._
@@ -40,7 +43,7 @@ class TIL2_1Tests extends FunSuite {
                     Write (Var (x))))))
         runtest (input, tree)
     }
-    
+
     test ("transform a for loop that occurs first in a sequence") {
         val input = "for x := 1 to n do write x; end write x;"
         val tree =

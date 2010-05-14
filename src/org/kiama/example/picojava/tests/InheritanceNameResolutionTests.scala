@@ -28,8 +28,11 @@
 
 package org.kiama.example.picojava.tests
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class InheritanceNameResolutionTests extends FunSuite {
 
     import org.kiama.example.picojava.AbstractSyntax._
@@ -101,7 +104,7 @@ class InheritanceNameResolutionTests extends FunSuite {
     test ("inherited inner classes are resolved") {
         expect (declAA) (AAinBB->decl)
     }
-    
+
     test ("inner references to members of outer class are resolved") {
         expect (declBf) (fInBB->decl)
     }

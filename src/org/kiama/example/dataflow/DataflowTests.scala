@@ -20,9 +20,13 @@
 
 package org.kiama.example.dataflow
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+
 /**
  * Tests of data flow attribution.
  */
+@RunWith(classOf[JUnitRunner])
 class DataflowTests extends Driver {
 
     import DataflowAST._
@@ -53,15 +57,15 @@ class DataflowTests extends Driver {
     test ("in (s1)") {
         expect (Set ("w", "v")) (in (s1))
     }
-    
+
     test ("in (s2)") {
         expect (Set ("y", "w", "v")) (in (s2))
     }
-    
+
     test ("in (s3)") {
         expect (Set ("w", "v")) (in (s3))
     }
-    
+
     test ("in (s4)") {
         expect (Set ("x", "w", "v")) (in (s4))
     }
@@ -69,7 +73,7 @@ class DataflowTests extends Driver {
     test ("in (s411)") {
         expect (Set ("w", "v")) (in (s411))
     }
-    
+
     test ("in (s412)") {
         expect (Set ("w", "v")) (in (s412))
     }

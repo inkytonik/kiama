@@ -18,19 +18,22 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.compiler
+package org.kiama.example.iswim.tests
 
 /*
  * Tests of the ISWIM parser combinators.
  */
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import org.kiama.example.iswim.compiler._
 
+@RunWith(classOf[JUnitRunner])
 class ParserTests extends FunSuite with Parser {
-    
+
     import Syntax._
-    
+
     /**
      * Assert that a parse did not work at a given line and column with a given
      * message.
@@ -46,27 +49,27 @@ class ParserTests extends FunSuite with Parser {
                 fail ("parse succeeded, but should have failed")
         }
     }
-    
+
     test("parse a 0-tuple") {
         val result = parseAll(expr, "()")
         assert(result.successful)
         assert(result.get === Empty())
     }
-    
+
     test("parse a 2-tuple of manifest boolean values") {
         val result = parseAll(expr, "(true,true)")
         assert(result.successful)
         assert(result.get === Tuple(List(BoolVal(true),BoolVal(true))))
     }
-    
+
     test("parse a 4-tuple of manifest boolean values") {
         val result = parseAll(expr, "(true,false,false,true)")
         assert(result.successful)
-        assert(result.get === 
+        assert(result.get ===
             Tuple(List(BoolVal(true),BoolVal(false),
                         BoolVal(false),BoolVal(true))))
     }
-    
+
     test("parse nested tuples of manifest boolean values") {
         val result = parseAll(expr, "(true,(false,false),true)")
         assert(result.successful)
@@ -76,22 +79,22 @@ class ParserTests extends FunSuite with Parser {
                 Tuple(List(BoolVal(false),BoolVal(false))),
                 BoolVal(true))))
     }
-        
+
     test("parse error: tuple missing open bracket") {
         val result = parseAll(expr, "true,false)")
         assertNoSucess(result, 1, 5, """string matching regex `\z' expected but `,' found""")
     }
-    
+
     test("parse error: tuple missing close bracket") {
         val result = parseAll(expr, "(true,()")
         assertNoSucess(result, 1, 9, """operator ")" expected""")
     }
-    
+
     test("parse a tuple of literal integers and boolean values") {
         val result = parseAll(expr, "(1,true,3,-5)")
         assert(result.successful)
     }
-    
+
     test("parse a tuple of literal integers and boolean values and verify result") {
         val result = parseAll(expr, "(1,true,3,-5)")
         assert(result.get ===
@@ -103,10 +106,10 @@ class ParserTests extends FunSuite with Parser {
         val result = parseAll(expr,"1 + 2 * 3 + 4 * (5- 4 + 7 % -2) / 6")
         assert(result.successful)
     }
-    
+
     test("parse a simple arithmetic expression and verify result") {
         val result = parseAll(expr,"1+2*3+4*(dom-4+7%-2)/6")
-        assert(result.get === 
+        assert(result.get ===
             Plus(Plus(NumVal(1),Times(NumVal(2),NumVal(3))),
                  Divide(Times(NumVal(4),
                               Plus(Minus(Variable("dom"),NumVal(4)),
@@ -118,22 +121,22 @@ class ParserTests extends FunSuite with Parser {
         val result = parseAll(variable, "callcc")
         assertNoSucess(result, 1, 7, """keyword "callcc" found where variable name expected""")
     }
-    
+
     test("parse a variable name whose prefix is a keyword") {
         val result = parseAll(variable, "elseifvar")
         assert(result.successful)
     }
-    
+
     test("attempted parse of non-matching keyword") {
         val result = parseAll(keyword("if"),"else")
         assertNoSucess(result, 1, 5, """keyword "if" expected""")
     }
-    
+
     test("attempted parse of matching keyword from front of variable name") {
         val result = parseAll(keyword("else"),"elseifvar")
         assertNoSucess(result, 1, 10, """keyword "else" expected""")
     }
-    
+
     test("parse a match clause") {
         val result = parseAll(matchclause, "(dom,sal) -> sal * dom + 1")
         assert(result.successful)
@@ -141,22 +144,22 @@ class ParserTests extends FunSuite with Parser {
             MatchClause(Pattern(List(Variable("dom"),Variable("sal"))),
                 Plus(Times(Variable("sal"),Variable("dom")),NumVal(1))))
     }
-    
+
     test("attempt to parse a match clause with a bad pattern") {
         val result = parseAll(matchclause, "(1,x) -> 1")
         assertNoSucess(result, 1, 2, "variable name expected")
     }
-    
+
     test("attempt to parse a letrec which binds a non-lambda expression") {
         val result = parseAll(expr, "letrec x = fun(y) (x y) and z = x in (x 10)")
         assertNoSucess(result, 1, 34, """keyword "fun" expected""")
     }
-    
+
     test("parse a match expression") {
         val result = parseAll(expr, """
 (dom 10) match {
     ()      -> 0;
-    x       -> x; 
+    x       -> x;
     (x,y,z) -> x * y + z
 }
 """)
@@ -168,7 +171,7 @@ class ParserTests extends FunSuite with Parser {
                        MatchClause(Pattern(List(Variable("x"), Variable("y"), Variable("z"))),
                                    Plus(Times(Variable("x"),Variable("y")),Variable("z"))))))
     }
-    
+
     test("parse a sequence of function applications") {
         val result = parseAll(expr, "dom 10 (sal + flo * 10) herb (10,30)")
         assert(result.successful)
@@ -180,7 +183,7 @@ class ParserTests extends FunSuite with Parser {
                         Variable("herb")),
                   Tuple(List(NumVal(10),NumVal(30)))))
     }
-    
+
     test("parse a code block") {
         val result = parseAll(expr, "{ 10 ; 15 * dom }")
         assert(result.successful)
@@ -188,7 +191,7 @@ class ParserTests extends FunSuite with Parser {
             Block(List(NumVal(10),
                        Times(NumVal(15),Variable("dom")))))
     }
-    
+
     test("parse application of a function to a code block") {
         val result = parseAll(expr, "domFun10 { 10 ; test }")
         assert(result.successful)
@@ -197,16 +200,16 @@ class ParserTests extends FunSuite with Parser {
                   Block(List(NumVal(10),Variable("test"))))
             )
     }
-    
+
     test("parse if ... else if ... else ... expression") {
         val result = parseAll(expr, """
-if (inp == 20) 
+if (inp == 20)
     test * 10 + 5
 else if (inp <= 40)
     (test + 5) * hello
 else if (inp >= 200)
     test % 4
-else 
+else
     10
         """)
         assert(result.successful)
@@ -226,25 +229,25 @@ else
             )
         )
     }
-    
+
     test("parse a while expression") {
         val result = parseAll(expr, """
 {
     i := 0;
     while (i <= 20)
         i := i + 1
-}        
+}
         """)
     assert(result.successful)
     }
-    
+
     test("parse a callcc expression") {
         val result = parseAll(expr, "10 + callcc dom")
         assert(result.successful)
         assert(result.get ===
             Plus(NumVal(10),CallCC(Variable("dom"))))
     }
-    
+
     test("parse throw...to expression") {
         val result = parseAll(expr, "10 + throw v to c * 20")
         assert(result.successful)
@@ -252,9 +255,9 @@ else
             Plus(NumVal(10),Times(ThrowTo(Variable("v"),
                 Variable("c")),NumVal(20))))
     }
-    
+
     test("parse some other builtins") {
-        val result = parseAll(expr, 
+        val result = parseAll(expr,
             """{ r := mkref 100; 10 + val r * 20; write dom }""")
         assert(result.successful)
         assert(result.get ==
@@ -262,7 +265,7 @@ else
                        Plus(NumVal(10),Times(Val(Variable("r")),NumVal(20))),
                        Apply(Variable("write"),Variable("dom")))))
     }
-    
+
     test("parse a lambda expression") {
         val result = parseAll(expr,
             "fun(x) { write 10; return (x+1) }")
@@ -271,12 +274,12 @@ else
             Lambda(Variable("x"),Block(List(Apply(Variable("write"),NumVal(10)),
                                             Return(Plus(Variable("x"),NumVal(1)))))))
     }
-    
+
     test("parse a simple correct let expression") {
         val result = parseAll(expr, "let a = 1 and b = 2 in a * b")
         assert(result.successful)
     }
-    
+
     test("parse a correct letrec expression") {
         val result = parseAll(expr, """
 letrec  plusone = fun(n) { n + 1 }
@@ -296,12 +299,12 @@ in      factorial(plusone 5)
                                                           Minus(Variable("n"),NumVal(1)))))))))),
                 Apply(Variable("factorial"),Apply(Variable("plusone"),NumVal(5)))))
     }
-    
+
     test("attempted parse of a letrec with a binding whose rhs is not a lambda clause") {
         val result = parseAll(expr, "letrec a = fun(n) n + 1 and b = 22 in (a b)")
         assertNoSucess(result, 1, 33, "keyword expected")
     }
-    
+
     test("parse an expression containing a string literal") {
         val result = parseAll(expr, """{ write "hello\n"; write "there!\n" }""")
         assert(result.successful)
@@ -309,10 +312,10 @@ in      factorial(plusone 5)
             Block(List(Apply(Variable("write"),StringVal("hello\\n")),
                        Apply(Variable("write"),StringVal("there!\\n")))))
     }
-    
+
     test("check that the expression parser correctly handles comments") {
         val result = parseAll(expr, """
-/* put */ fun /* a */ (/*comment*/x/*wherever*/)/* you */ { /* like */ write 
+/* put */ fun /* a */ (/*comment*/x/*wherever*/)/* you */ { /* like */ write
 /* and */ 10 /* everything */; /* should */ return /* still */(/*parse*/x
 /*just   */+/* perfectly */1/*dontcha*/)/* know */ } /* old bean */
         """)
@@ -321,33 +324,33 @@ in      factorial(plusone 5)
             Lambda(Variable("x"),Block(List(Apply(Variable("write"),NumVal(10)),
                                             Return(Plus(Variable("x"),NumVal(1)))))))
     }
-    
+
     test("parse a simple, but complete, program") {
         val result = parseAll(start, """
         /*
          * Title:       Fibonacci fun
          * Description: A very simple imperative Fibonacci function with driver.
          * Copyright:   (c) 2010 Dominic Verity, Macquarie University
-         */ 
-        
+         */
+
         // declare preloaded primitives
         primitives write, read, fields, type;
 
         // Imperative fibonacci function
-        letrec fib = fun(n) 
+        letrec fib = fun(n)
             let r1 = mkref 0
-            and r2 = mkref 1 
+            and r2 = mkref 1
             and r3 = mkref (-1)
             in  letrec f = fun(m)
-                    if (m == 0)  
+                    if (m == 0)
                         val r1
-                    else {  
+                    else {
                         r3 := val r1 + val r2;
                         r1 := val r2;
                         r2 := val r3;
                         f (m-1) }
                 in f n;
-        
+
         // Execute an example and print the result.
         {
             write (fib 200);
@@ -389,10 +392,10 @@ in      factorial(plusone 5)
                       , Apply(Variable("f"),Variable("n"))))))))
             , ExprStmt(Block(List(
                 Apply(Variable("write"),Apply(Variable("fib"),NumVal(200)))
-              , Apply(Variable("write"),StringVal("\\n")))))          
+              , Apply(Variable("write"),StringVal("\\n")))))
             )))
     }
-    
+
     test("check that the parser can handle very long comments") {
         val result = parseAll(start, """
 /**
@@ -411,29 +414,29 @@ in      factorial(plusone 5)
  *   |                       |
  *   |                       |                    code in the try block
  *   |                       |
- *   |                       |         at the end of the try block throw to normal 
- *   |                       V         exit continuation to avoid exectuing the exception 
+ *   |                       |         at the end of the try block throw to normal
+ *   |                       V         exit continuation to avoid exectuing the exception
  *   |                      ___        handler after successful execution of try code.
- *   |                              
+ *   |
  *   |
  *   |                                         code of corresponding
  *   |                                         exception handler.
  *   V
  *  ---
- * 
+ *
  * The SECD machine provides a primitive, called 'raise', which allows us
- * to raise an exception. This can be brought into scope in user code using the 'primitives' 
+ * to raise an exception. This can be brought into scope in user code using the 'primitives'
  * key word. The same mechanism also allows us to bring the names of the exception
  * values associated with the various machine exceptions into scope. Having done that we can
  * write code to catch and handle different kinds of machine error.
- * 
- * The SECD 'raise' primitive assumes that when it is called a variable named 'exceptionHandler' 
- * will be in scope and that it will be bound to a continuation. All it actually does is to 
+ *
+ * The SECD 'raise' primitive assumes that when it is called a variable named 'exceptionHandler'
+ * will be in scope and that it will be bound to a continuation. All it actually does is to
  * throw the exception value given as its argument to this continuation. The default provided
  * by the machine on startup is that 'exceptionHandler' is bound to a continuation marking the
- * exit point of the running program. 
+ * exit point of the running program.
  *
- * We can replace this simple "exit on error" mechanism with something a little more useful 
+ * We can replace this simple "exit on error" mechanism with something a little more useful
  * simply by re-binding 'exceptionHandler' to a more useful continuation. In the code given here
  * we organise things so that 'exceptionHandler' is bound always bound to the continuation
  * which marks the entry point to the catch block of the closest enclosing try...catch construct.

@@ -28,8 +28,11 @@
 
 package org.kiama.example.picojava.tests
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class ParserTests extends FunSuite {
 
     import org.kiama.example.picojava.AbstractSyntax._

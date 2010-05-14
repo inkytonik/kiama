@@ -23,13 +23,16 @@
 package org.kiama.example.oberon0.tests
 
 import org.scalacheck.Prop._
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 import org.kiama.example.oberon0.compiler.Parser
 
 /**
  * Oberon0 parsing test cases.
  */
+@RunWith(classOf[JUnitRunner])
 class ParserTests extends FunSuite with Checkers with Parser {
 
     import org.kiama.example.oberon0.compiler.AST._
@@ -98,7 +101,7 @@ class ParserTests extends FunSuite with Checkers with Parser {
                 WhileStatement (Ident ("x"),
                     List (Assignment (Ident ("x"), IntegerLiteral (1)))))
     }
-    
+
     test ("parse factorial program") {
         val program =
 """
@@ -106,7 +109,7 @@ class ParserTests extends FunSuite with Checkers with Parser {
   another line
   do do do *)
 MODULE Factorial;
-    
+
 CONST
     limit = 10;  (* Hello *)
 

@@ -44,18 +44,13 @@ object Parser extends RegexParsers with PackratParsers {
             case f              => error (f.toString)
         }
 
-    // "" is used in a few places to skip over leading whitespace, so the
-    // position of a result is the first non-trivial character in it, not
-    // the first of the whitespace preceding it, this is a flaw in the way
-    // that positioning is handled in the Scala parser library
-
     lazy val program : PackratParser[Program] =
         block ^^ Program
 
     lazy val block : PackratParser[Block] =
         "{" ~> (block_stmt*) <~ "}" ^^ { case bs => Block (bs) }
     lazy val block_stmt =
-        "" ~> class_decl | var_decl | stmt
+        class_decl | var_decl | stmt
 
     lazy val class_decl =
         positioned (
@@ -68,7 +63,7 @@ object Parser extends RegexParsers with PackratParsers {
         name ~ IDENTIFIER <~ ";" ^^ { case n ~ i => VarDecl (i, n) }
 
     lazy val stmt : Parser[Stmt] =
-        "" ~> assign_stmt | while_stmt
+        assign_stmt | while_stmt
     lazy val assign_stmt =
         positioned (
             name ~ ("=" ~> exp <~ ";") ^^ { case n ~ e => AssignStmt (n, e) }
@@ -77,13 +72,14 @@ object Parser extends RegexParsers with PackratParsers {
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ s => WhileStmt (e, s) }
 
     lazy val exp =
-        "" ~> name | boolean_literal
+        boolean_literal | posname
+
+    lazy val posname : PackratParser[Access] =
+        positioned (name)
 
     lazy val name : PackratParser[Access] =
-        positioned (
-            name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |
-            IDENTIFIER ^^ Use
-        )
+        name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |
+        IDENTIFIER ^^ Use
 
     lazy val boolean_literal =
         ("true" | "false") ^^ BooleanLiteral

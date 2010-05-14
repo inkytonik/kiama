@@ -28,8 +28,11 @@
 
 package org.kiama.example.picojava.tests
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
+@RunWith(classOf[JUnitRunner])
 class BasicNameResolutionTests extends FunSuite {
 
     import org.kiama.example.picojava.AbstractSyntax._
@@ -74,7 +77,7 @@ class BasicNameResolutionTests extends FunSuite {
     test ("a missing declaration for a top-level use is detected") {
         assert (isUnknown (yInR->decl))
     }
-    
+
     test ("a missing declaration for a nested use is detected") {
         assert (isUnknown (yInA->decl))
     }

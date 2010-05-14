@@ -23,12 +23,15 @@
 package org.kiama.example.oberon0.tests
 
 import org.kiama.example.oberon0.Driver
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
 
 /**
  * Oberon0 compilation tests.
  */
+@RunWith(classOf[JUnitRunner])
 class CompilationTests extends Driver {
-    
+
     val path = "src/org/kiama/example/oberon0/tests/"
 
     filetest ("Oberon0", path + "ProcTest2.ob0", path + "ProcTest2.err")

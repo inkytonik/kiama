@@ -31,11 +31,6 @@ trait Parser extends RegexParsers with PackratParsers {
     import AST._
     import Lambda.typecheck
 
-    // "" is used in a few places to skip over leading whitespace, so the
-    // position of a result is the first non-trivial character in it, not
-    // the first of the whitespace preceding it, this is a flaw in the way
-    // that positioning is handled in the Scala parser library
-
     lazy val start : PackratParser[Exp] =
         exp
 
@@ -56,8 +51,8 @@ trait Parser extends RegexParsers with PackratParsers {
         exp0
 
     lazy val exp0 : PackratParser[Exp] =
-        "" ~> positioned (number | idn ^^ Var) |
-        "(" ~> "" ~> positioned (exp) <~ ")"
+        positioned (number | idn ^^ Var) |
+        "(" ~> positioned (exp) <~ ")"
 
     lazy val ttype : PackratParser[Type] =
         ttype0 ~ ("->" ~> ttype) ^^ { case l ~ r => FunType (l, r) } |

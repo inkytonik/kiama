@@ -18,17 +18,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.compiler
+package org.kiama.example.iswim.tests
 
 /*
  * Tests of code generation attribution.
  */
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import org.kiama.util.PrettyPrinter
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
 
+@RunWith(classOf[JUnitRunner])
 class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalysis with Parser {
 
     import Syntax._
@@ -56,7 +59,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             Add()
         ))
     }
-    
+
     test("compile a simple boolean expression") {
         val prog = parseAll(expr, "true & x | y")
         assert(prog.successful)
@@ -67,7 +70,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             Test(PushTrue(),CodeSegment(Lookup("y")))
         ))
     }
-    
+
     test("compile a boolean comparison expression") {
         val prog = parseAll(expr, "(a == 20) | (b != 30) & (a > b)")
         assert(prog.successful)
@@ -90,7 +93,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             )
         ))
     }
-    
+
     test("compile a let expression") {
         val prog = parseAll(expr,"let x = 10 and y = 22 + 11 in x * y")
         assert(prog.successful)
@@ -108,7 +111,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             Exit()
         ))
     }
-    
+
     test("compile a letrec expression") {
         val prog = parseAll(expr,"letrec f = fun(n) (n + 1) and g = fun(m) (m - 1) in f")
         assert(prog.successful)
@@ -132,7 +135,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             Exit()
         ))
     }
-    
+
     test("compile a tuple expressio") {
         val prog = parseAll(expr,"(10,20,(),30)")
         assert(prog.successful)
@@ -176,7 +179,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             Exit()
         ))
     }
-    
+
     test("compile some function applications") {
         val prog = parseAll(expr,"f(10 + g(h(k)))")
         assert(prog.successful)
@@ -193,7 +196,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             App()
         ))
     }
-    
+
     test("compile a block expression") {
         val prog = parseAll(expr,"{10;20;\"hello\";();22} + {true}")
         assert(prog.successful)
@@ -213,7 +216,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             Add()
         ))
     }
-    
+
     test("compile a simple while loop - count from 1 to 20") {
         val prog = parseAll(expr,"""
     let c = mkref 0
@@ -259,7 +262,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             Exit()
         ))
     }
-    
+
     test("compile a simple match expression") {
         val prog = parseAll(expr,"""
     (1,2) match {
@@ -334,27 +337,27 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
     )
 )""")
     }
-    
+
     test("compile a simple, but complete, program") {
         val prog = parseAll(start, """
         /*
          * Title:       Fibonacci fun
          * Description: A very simple imperative Fibonacci function with driver.
          * Copyright:   (c) 2010 Dominic Verity, Macquarie University
-         */ 
+         */
 
         // declare preloaded primitives
         primitives write, read, fields, type;
 
         // Imperative fibonacci function
-        letrec fib = fun(n) 
+        letrec fib = fun(n)
             let r1 = mkref 0
-            and r2 = mkref 1 
+            and r2 = mkref 1
             and r3 = mkref (-1)
             in  letrec f = fun(m)
-                    if (m == 0)  
+                    if (m == 0)
                         val r1
-                    else {  
+                    else {
                         r3 := val r1 + val r2;
                         r1 := val r2;
                         r2 := val r3;

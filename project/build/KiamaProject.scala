@@ -29,10 +29,10 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def mainScalaSourcePath = "src"
     override def testScalaSourcePath = "src"
     override def outputDirectoryName = "bin"
-    
+
     // Configure extra paths
     def exampleFilesPath = (mainScalaSourcePath ##) / "org" / "kiama" / "example"
-    
+
     // Specyify how to find source and test files.  Main sources are
     //    - all .scala files, except
     // Test sources, which are
@@ -45,20 +45,22 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
                                exampleSources
     override def testSources = descendents (testSourceRoots, testSourceFilter) +++
                                exampleSources
-                               
+
     // Test resources are any non-Scala files in the examples
     override def testResources = descendents (exampleFilesPath, -"*.scala")
 
     // Set compiler options
-    override def compileOptions = super.compileOptions ++ Seq (Unchecked)
+    val Nospecialization = CompileOption ("-no-specialization")
+    override def compileOptions = super.compileOptions ++ Seq (Unchecked, Nospecialization)
 
     // Include www.scala-tools.org snapshot repository in search
     val scalaToolsSnapshots = ScalaToolsSnapshots
 
     // Declare dependencies on other libraries
     override def libraryDependencies =
-        Set ("org.scala-tools.testing" % "scalacheck_2.8.0.Beta1" % "1.7-SNAPSHOT",
-             "org.scalatest" % "scalatest" % "1.0.1-for-scala-2.8.0.Beta1-with-test-interfaces-0.3-SNAPSHOT",
+        Set ("org.scala-tools.testing" % "scalacheck_2.8.0.RC2" % "1.7",
+             "org.scalatest" % "scalatest" % "1.2-for-scala-2.8.0.RC2-SNAPSHOT",
+             "junit" % "junit" % "4.8.1",
              "jline" % "jline" % "0.9.94")
 
     // Add extra files to included resources

@@ -22,9 +22,13 @@
 
 package org.kiama.example.transform
 
+import org.junit.runner.RunWith
+import org.scalatest.junit.JUnitRunner
+
 /**
  * Transformation compiler tests.
  */
+@RunWith(classOf[JUnitRunner])
 class TransformTests extends Driver {
 
     filetests ("Transform", "src/org/kiama/example/transform/tests", ".exp", ".out")

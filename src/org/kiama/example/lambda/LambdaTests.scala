@@ -20,12 +20,15 @@
 
 package org.kiama.example.lambda
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
 /**
  * Lambda calculus tests.
  */
+@RunWith(classOf[JUnitRunner])
 class LambdaTests extends FunSuite with Checkers with TestBase {
 
     import AST._
@@ -92,10 +95,10 @@ class LambdaTests extends FunSuite with Checkers with TestBase {
     test ("a variable is substituted at multiple levels") {
         expectEval ("""(\y.(\z.z) y) x""", Var ("x"))
     }
-    
+
     /**
-     * 	true = \x.\y.x
-     *	false = \x.\y.y
+     *     true = \x.\y.x
+     *    false = \x.\y.y
      *  if-then-else = \a.\b.\c.((a)b)c
      *  (((if-then-else)false)42)99 -> 99
      */

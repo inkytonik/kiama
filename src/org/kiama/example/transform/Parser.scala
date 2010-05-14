@@ -31,14 +31,13 @@ import scala.util.parsing.combinator.RegexParsers
 trait Parser extends RegexParsers with PackratParsers {
 
     import AST._
-    import scala.collection.immutable.HashMap
 
     lazy val parser : PackratParser[Program] =
         phrase (program)
 
     lazy val program : PackratParser[Program] =
         rep (opdecl) ~ rep (vardecl) ~ exp ^^ {
-            case ops ~ vars ~ e => Program (HashMap (ops : _*), vars, e)
+            case ops ~ vars ~ e => Program (ops, vars, e)
         }
 
     lazy val opdecl : PackratParser[(String,Int)] =
@@ -53,17 +52,16 @@ trait Parser extends RegexParsers with PackratParsers {
         "var" ~> ident ^^ VarDecl
 
     lazy val exp : PackratParser[ExpR] =
-        pfactor ~ op ~ exp ^^ {
+        factor ~ op ~ exp ^^ {
             case l ~ o ~ r => BinExpR (l, o, r)
         } |
-        pfactor ^^ Factor
-
-    lazy val pfactor : PackratParser[PrimExp] =
-        "" ~> positioned (factor)
+        factor ^^ Factor
 
     lazy val factor : PackratParser[PrimExp] =
-        integer ^^ Num |
-        ident ^^ Var
+        positioned (
+            integer ^^ Num |
+            ident ^^ Var
+        )
 
     lazy val integer : PackratParser[Int] =
         "[0-9]+".r ^^ (s => s.toInt)

@@ -20,12 +20,15 @@
 
 package org.kiama.example.lambda2
 
+import org.junit.runner.RunWith
 import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
 /**
  * Lambda calculus tests.
  */
+@RunWith(classOf[JUnitRunner])
 class LambdaTests extends FunSuite with Checkers with Parser {
 
     import AST._
@@ -84,21 +87,21 @@ class LambdaTests extends FunSuite with Checkers with Parser {
         assertMessage ("""(\x : Int -> Int . x + 1) (\y : Int . y)""", 1, 20,
                        "expected Int, found Int -> Int")
     }
-    
+
     test ("an Int cannot be passed to an Int -> Int") {
         assertMessage ("""(\x : Int -> Int . x 4) 3""", 1, 25,
                        "expected Int -> Int, found Int")
     }
-    
+
     test ("an Int -> Int cannot be passed to an Int") {
         assertMessage ("""(\x : Int . x + x) (\y : Int . y + 1)""", 1, 21,
                        "expected Int, found Int -> Int")
     }
-    
+
     test ("an Int cannot be directly applied as a function") {
         assertMessage ("""1 3""", 1, 1, "application of non-function")
     }
-    
+
     test ("an Int cannot be applied as a function via a parameter") {
         assertMessage ("""(\x : Int . x 5) 7""", 1, 13, "application of non-function")
     }
@@ -174,7 +177,7 @@ class LambdaTests extends FunSuite with Checkers with Parser {
             assertEval (mech, term,
                         if (evaluator reducesinlambdas)
                             result1
-                        else 
+                        else
                             result2)
         }
     }
@@ -226,17 +229,17 @@ class LambdaTests extends FunSuite with Checkers with Parser {
         assertEvalAll ("""(\f : Int -> Int . f 4) (\x : Int . x + 1)""",
                        Num (5))
     }
-    
+
     test ("a function of multiple parameters passed as a parameter can be called") {
         assertEvalAll ("""(\f : Int -> Int -> Int . f 1 2) (\x : Int . (\y : Int . x + y))""",
                        Num (3))
     }
-    
+
     test ("multiple parameters are passed correctly") {
         assertEvalAll ("""(\x : Int . \f : Int -> Int . f x) 4 (\y : Int . y - 1)""",
                        Num (3))
     }
-    
+
     test ("applications in arguments are evaluated correctly") {
         assertEvalAll ("""(\x : Int . x + x) ((\y : Int . y + 1) 5)""",
                        Num (12))

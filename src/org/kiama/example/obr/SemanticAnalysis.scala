@@ -94,7 +94,7 @@ object SemanticAnalysis {
             case n @ RecordVar (i, _) =>
                 (n->entity) match {
                      case Variable (RecordType (fs)) =>
-                         if (fs.removeDuplicates.length != fs.length)
+                         if (fs.distinct.length != fs.length)
                              message (n, i + " contains duplicate field(s)")
                      case Multiple =>
                          message (n, i + " is declared more than once")
