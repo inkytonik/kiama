@@ -1,0 +1,4 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+BEGIN
+    RETURN 7 * 5;
+END X.

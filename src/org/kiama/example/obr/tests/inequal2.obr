@@ -1,0 +1,8 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+BEGIN
+    IF 1 # 2 THEN
+        RETURN 1;
+    ELSE
+        RETURN 0;
+    END
+END X.

@@ -1,0 +1,72 @@
+<FindBugsFilter>
+
+    <!-- Allow assert as a method name since used by testing frameworks -->
+
+    <Match>
+        <Bug pattern="NM_FUTURE_KEYWORD_USED_AS_MEMBER_IDENTIFIER" />
+        <Method name="assert" />
+    </Match>
+
+    <!-- Case classes that are nested within other classes cause a false
+         negative because they start with a capital letter but the Scala
+         compiler produces a method in the class to get at the companion
+         object (module).  This method is the subject of a report that it
+         should start with a lower-case letter.  We turn each specific
+         case off. -->
+
+    <Match>
+        <Class name="org.kiama.attribution.AttributionTests" />
+        <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
+        <Or>
+            <Method name="Leaf" />
+            <Method name="Pair" />
+        </Or>
+    </Match>
+
+    <Match>
+        <Class name="org.kiama.example.oberon0.compiler.Environment" />
+        <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
+        <Method name="EnvEntry" />
+    </Match>
+
+    <Match>
+        <Class name="org.kiama.example.oberon0.machine.RISC" />
+        <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
+        <Or>
+            <Method name="Mem" />
+            <Method name="Reg" />
+        </Or>
+    </Match>
+
+    <Match>
+        <Class name="org.kiama.machine.Machine" />
+        <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
+        <Method name="Update" />
+    </Match>
+
+    <Match>
+        <Class name="~org\.kiama\.example\.(imperative\.Imperative|lambda\.Lambda|lambda2\.Lambda|oberon0\.Main|obr\.Main|picojava\.Parser|til\.TIL\d+_\d+Main)" />
+        <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
+        <Or>
+            <Method name="OnceParser" />
+            <Method name="Parser" />
+        </Or>
+    </Match>
+
+    <!-- For a private final foo = exp construct where exp is constant, scalac
+         seems to inline the constant into the foo() accessor, but also leaves
+         the private foo field, which is now not used -->
+
+    <Match>
+        <Class name="org.kiama.example.obr.Encoder" />
+        <Bug pattern="UUF_UNUSED_FIELD" />
+        <Or>
+            <Field name="arg1reg" />
+            <Field name="arg2reg" />
+            <Field name="memreg" />
+            <Field name="resreg" />
+        </Or>
+    </Match>
+
+</FindBugsFilter>
+
