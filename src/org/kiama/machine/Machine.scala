@@ -118,7 +118,7 @@ abstract class Machine (val name : String) {
          * Equality on the underlying value.  If this state item is undefined
          * then it's not equal to anything.
          */
-        def =:= (t : Any) : Boolean =
+        def =:= (t : T) : Boolean =
         	if (isUndefined)
         		false
         	else
@@ -161,10 +161,10 @@ abstract class Machine (val name : String) {
 
         /**
          * Equality on the underlying value.  If this state item is undefined
-         * then it's not equal to anything.
+         * then it is not equal to anything.
          */
-        def =:= (u : Any) : Boolean =
-        	if (state.isUndefined)
+        def =:= (u : U) : Boolean =
+        	if (state.isUndefined (t))
         		false
         	else
         		state.value (t) == u
@@ -182,6 +182,15 @@ abstract class Machine (val name : String) {
      * of type U, associated with parameters of type T.
      */
     class ParamState[T,U] (val sname : String) extends State[HashMap[T,U]] (sname) {
+
+        /**
+         * Is this state item undefined at t or not ?
+         */
+        def isUndefined (t : T) : Boolean =
+            _value match {
+                case None     => true
+                case Some (m) => ! (m contains t)
+            }
 
         /**
          * Return an updater for the value at parameter t.  Used as s (t)
