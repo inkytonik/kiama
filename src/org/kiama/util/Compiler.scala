@@ -20,6 +20,7 @@
 
 package org.kiama.util
 
+import java.io.FileReader
 import org.scalatest.FunSuite
 import scala.util.parsing.combinator.RegexParsers
 
@@ -29,10 +30,7 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait Compiler[T] extends FunSuite {
     
-    this : RegexParsers =>
-
     import java.io.File
-    import java.io.FileReader
     import java.io.FileNotFoundException
     import org.kiama.util.Console
     import org.kiama.util.JLineConsole
@@ -63,7 +61,7 @@ trait Compiler[T] extends FunSuite {
             case 1 =>
                 try {
                     val reader = new FileReader (args (0))
-                    makeast (reader) match {
+                    makeast (reader, args (0)) match {
                         case Some (ast) =>
                             process (ast, console, emitter)
                         case None =>
@@ -85,23 +83,10 @@ trait Compiler[T] extends FunSuite {
     val usage : String
 
     /**
-     * Make an AST from the input file.  Actually calls parser to do the real
-     * work and checks its output.
+     * Make an AST from the file with the given name.  Returns None
+     * if an AST cannot be made.
      */
-    def makeast (reader : FileReader) : Option[T] = {
-        parseAll (parser, reader) match {
-            case Success (ast, _) =>
-                Some (ast)
-            case f =>
-                println (f)
-                None
-        }
-    }
-
-    /**
-     * The actual parser used to produce the AST.
-     */
-    val parser : Parser[T]
+    def makeast (reader : FileReader, filename : String) : Option[T]
 
     /**
      * Function to process the input that was parsed.  console should be
@@ -219,4 +204,33 @@ trait Compiler[T] extends FunSuite {
 
     }
 
+}
+
+/**
+ * A compiler that uses a Scala combinator character-level parser.
+ */
+trait RegexCompiler[T] extends Compiler[T] {
+ 
+    this : RegexParsers =>
+ 
+    /**
+     * The actual parser used to produce the AST.
+     */
+    val parser : Parser[T]
+
+    /**
+     * Make an AST from the file with the given name.  Actually calls
+     * parser to do the real work and checks its output.  Return None
+     * and print errors if the parse fails.
+     */
+    def makeast (reader : FileReader, filename : String) : Option[T] = {
+        parseAll (parser, reader) match {
+            case Success (ast, _) =>
+                Some (ast)
+            case f =>
+                println (f)
+                None
+        }
+    }
+  
 }

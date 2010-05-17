@@ -23,12 +23,12 @@
 package org.kiama.example.transform
 
 import AST.Program
-import org.kiama.util.Compiler
+import org.kiama.util.RegexCompiler
 
 /**
  * Main program for transformation compiler.
  */
-class Driver extends Parser with Compiler[Program] {
+class Driver extends Parser with RegexCompiler[Program] {
 
     import java.io.FileReader
     import org.kiama.util.Console

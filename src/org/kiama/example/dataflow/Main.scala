@@ -21,13 +21,13 @@
 package org.kiama.example.dataflow
 
 import DataflowAST._
-import org.kiama.util.Compiler
+import org.kiama.util.RegexCompiler
 
 /**
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
- class Driver extends SyntaxAnalyser with Compiler[Stm] {
+ class Driver extends SyntaxAnalyser with RegexCompiler[Stm] {
 
      import java.io.FileReader
      import org.kiama.util.Console
@@ -37,19 +37,6 @@ import org.kiama.util.Compiler
       * The usage message for an erroneous invocation.
       */
      val usage = "usage: scala org.kiama.example.dataflow.Main file.data"
-
-     /**
-      * The parser to use to process the input into an AST.
-      */
-     def parse (reader : FileReader) : Option[Stm] = {
-         super.parseAll (parser, reader) match {
-             case Success (ast, _) =>
-                 Some (ast)
-             case f =>
-                 println (f)
-                 None
-         }
-     }
 
      /**
       * Process the AST by optimising it, then print optimised AST.

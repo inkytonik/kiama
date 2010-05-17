@@ -22,7 +22,7 @@
 
 package org.kiama.example.oberon0
 
-import org.kiama.util.Compiler
+import org.kiama.util.RegexCompiler
 import compiler.AST._
 import compiler.Parser
 
@@ -32,7 +32,7 @@ import compiler.Parser
  * then encodes the program as RISC assembler and runs the assembler
  * using a machine simulator.
  */
-class Driver extends Parser with Compiler[ModuleDecl] {
+class Driver extends Parser with RegexCompiler[ModuleDecl] {
 
     import assembler.Assembler
     import compiler.ErrorCheck.collectErrors
@@ -41,7 +41,6 @@ class Driver extends Parser with Compiler[ModuleDecl] {
     import machine.RISC
     import org.kiama.util.Console
     import org.kiama.util.Emitter
-    import org.kiama.util.JLineConsole
     import org.kiama.util.Messaging._
     
     /**

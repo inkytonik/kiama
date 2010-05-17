@@ -23,12 +23,12 @@
 package org.kiama.example.obr
 
 import ObrTree.ObrInt
-import org.kiama.util.Compiler
+import org.kiama.util.RegexCompiler
 
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
+class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
 
     import java.io.FileReader
     import org.kiama.util.Console
