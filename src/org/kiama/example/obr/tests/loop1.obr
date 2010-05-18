@@ -1,0 +1,14 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+
+VAR
+    v : INTEGER;
+
+BEGIN
+    v := 0;
+    LOOP
+        v := v + 1;
+        IF v = 5 THEN EXIT; END
+        v := v + 1;
+    END
+    RETURN v;
+END X.

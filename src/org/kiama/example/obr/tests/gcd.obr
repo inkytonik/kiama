@@ -1,0 +1,13 @@
+(* Obr greatest-common divisor program *)
+
+PROGRAM GCD (x : INTEGER; y : INTEGER) : INTEGER;
+
+BEGIN
+    WHILE x # y DO
+        IF x > y
+            THEN x := x - y;
+            ELSE y := y - x;
+        END
+    END
+    RETURN x;
+END GCD.

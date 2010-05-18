@@ -1,0 +1,433 @@
+ <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Obr Language Reference Manual</title>
+  </head>
+
+  <body>
+    <h1>Department of Computing, Macquarie University</h1>
+    <h2>Obr Language Reference Manual</h2>
+
+    Obr is a simple imperative language modelled on the Oberon family
+    of languages designed by Niklaus Wirth.  
+    This document provides background information needed to understand
+    the semantics of the language.<p>
+
+    The document has five subsections, each dealing with one aspect of
+    the language: basic symbols, programs, declarations, statements,
+    and expressions.  Basic symbols are the indivisible atoms of the
+    language, and their meanings are defined by relating them to our
+    shared experience with programming languages.  All other
+    constructs are composite---each is formed by combining parts.
+    Their meanings can thus be defined in terms of the meanings of
+    their components and fundamental concepts such as ``sequence of
+    execution.''
+
+    <h3>Basic Symbols</h3>
+
+    The basic symbols of Obr are its identifiers, denotations, and
+    delimiters.  The following regular expressions describe the
+    structure of identifiers and integers in Obr.
+
+<pre>
+Identifier: [a-zA-Z][a-zA-Z0-9]*
+Integer: [0-9]+
+</pre>
+
+    Upper- and lower-case versions of the same letter are distinct.
+    The delimiters and other denotations of the language are the
+    following special characters and keywords:
+
+<pre>
+( ) : ; + - * = , := ~ # &lt; &gt; . [ ] .. |
+AND ARRAY BEGIN BOOLEAN CONST DIV DO ELSE ELSIF END EXIT FALSE FOR IF
+INTEGER LOOP MOD OF OR PROGRAM RETURN THEN TO TRUE VAR WHILE 
+</pre>
+
+    An identifier is a freely chosen representation for an object.  It
+    is given meaning by a construct of the program. The appearances at
+    which an identifier is given a meaning are called <em>defining
+    occurrences</em> of that identifier.  All other appearances of the
+    identifier are called <em>applied occurrences</em>.<p>
+
+    Denotations have the usual meanings.<p>
+
+    Keywords can be used only as indicated by the context-free grammar 
+    productions.<p>
+
+    Comments are arbitrary sequences of characters beginning with
+    ``(*'' and ending with ``*)''.  Comments cannot be nested.
+    Comments, spaces, and newlines may not appear within basic
+    symbols.  Two adjacent basic symbols must be separated by one or
+    more comments, spaces, or newlines, unless one of the basic
+    symbols is a special character.  Otherwise comments, spaces, and
+    newlines are meaningless.
+
+    <h3>Program Structure</h3>
+
+<pre>
+Program      : "PROGRAM" Identifier "(" ParameterDecl (";" ParameterDecl)* ")" ":" "INTEGER" ";"
+               Declarations "BEGIN" StatementSeq "END" Identifier ".".
+StatementSeq : Statement*.
+</pre>
+
+    A program specifies a computation by describing a sequence of
+    actions.  A computation specified in Obr may be realized by any
+    sequence of actions having the same effect as the one described
+    here for the given computation.  The meaning of constructs that do
+    not satisfy the rules given here is undefined. Whether, and in
+    what manner, a particular implementation of Obr gives meaning to
+    undefined constructs is outside the scope of this definition.<p>
+
+      A program is executed by reading parameter values from the
+      standard input and executing the component
+      <em>StatementSeq</em>.  A Return statement must be executed to
+      terminate the program.<p>
+
+      The component statements of a statement sequence are executed in
+      the sequence in which they were written.<p>
+
+    <h4>Visibility rules</h4>
+
+    Obr programs contain only one scope: the global scope.  Hence all
+    identifiers must be declared as either parameters to the program
+    or in the global declaration section.  Thus the visibility rules
+    of Obr are very simple: every applied occurrence of an identifier
+    must <em>identify</em> a defining occurrence of that identifier in
+    the global scope.  It is illegal to have two defining occurrences
+    of the same identifier, or an applied occurrence with no
+    corresponding defining occurrence.<p>
+
+      All of the occurrences of <em>Identifier</em> in the productions
+      for <em>Program</em>, <em>ParameterDecl</em>,
+      <em>ConstantDecl</em> and <em>VariableDecl</em> are defining
+      occurrences, except the last occurrence in <em>Program</em>.
+      All instances of <em>Identifier</em> in other productions are
+      applied occurrences.<p>
+
+      The last occurrence of <em>Identifier</em> in the
+      <em>Program</em> production must identify the defining
+      occurrence immediately after the "PROGRAM" keyword.
+
+    <h3>Declarations</h3>
+
+<pre>
+ParameterDecl : Identifier ":" "INTEGER". 
+Declarations  : ("CONST" (ConstantDecl ";")+)?
+                ("VAR" (VariableDecl ";")+)?.
+ConstantDecl  : Identifier "=" Integer.
+VariableDecl  : Identifier ":" TypeSpec.
+TypeSpec      : "INTEGER"
+              | "BOOLEAN"
+              | "ARRAY" Integer "OF" "INTEGER".
+</pre>
+
+    <h4>Values, Types, Objects, and Variables</h4>
+
+    <em>Values</em> are abstract entities upon which operations may be
+    performed, <em>types</em> classify values according to the
+    operations that may be performed on them, and <em>objects</em> are
+    the concrete instances of values that are operated upon.  Two
+    objects are <em>equal</em> if they are instances of the same
+    value. A <em>variable</em> of type <em>t</em> is a concrete
+    instance of an abstract entity that can <em>refer to</em> (or
+    <em>contain</em>) an object that is an instance of a value of type
+    <em>t</em>.<p>
+
+      Every object and variable has a specified <em>extent</em> during
+      which it can be operated upon.  The extents of denotations are
+      unbounded; the extents of constants and variables are determined
+      by their declarations.<p>
+
+      Values of type "INTEGER" have the usual meanings.  The range of
+      integer values is determined by the particular implementation of
+      Obr.<p>
+
+      Values of type "BOOLEAN" represent truth values.  Only two
+      Boolean values exist: true and false, denoted by the keywords
+      "TRUE" and "FALSE", respectively.<p>
+      
+      Values of array type represent collections of a given number of
+      integer elements.<p>
+
+    <h4>Parameter Declarations</h4>
+
+    A variable is created, and the identifier represents this
+    variable. The extent of the created variable is the entire
+    execution history of the program.  It refers initially to an
+    object read from the standard input before program execution
+    begins.  The objects read are referred to by the variables named
+    in the parameter list in order from left to right.<p>
+
+      If the parameter declaration has the form:
+
+<pre>
+<em>Identifier</em> : <em>t</em>
+</pre>
+
+    then the created variable can refer to objects of type <em>t</em>.
+
+    <h4>Constant Declarations</h4>
+
+    A constant is created, and the identifier represents this
+    constant.  The extent of the created constant begins when the
+    declaration is executed and ends when execution of the program is
+    complete.<p>
+
+      If the constant declaration has the form:
+
+<pre>
+<em>Identifier</em> = <em>integer</em>
+</pre>
+
+    then the created constant refers to an object whose value is that
+    of the specified integer denotation.
+
+    <h4>Variable Declarations</h4>
+
+    A variable is created, and the identifier represents this
+    variable. The extent of the created variable begins when the
+    declaration is executed and ends when execution of the program is
+    complete.<p>
+
+      If the variable declaration has the form:
+
+<pre>
+<em>Identifier</em> : <em>t</em>
+</pre>
+
+    then the created variable can refer to objects of type <em>t</em>.
+    Initially, it refers to an arbitrary object.
+
+    <h3>Statements</h3>
+
+<pre>
+Statement   : Identifier ":=" Expression ";"
+            | Identifier "[" Expression "]" ":=" Expression ";"
+            | Conditional
+            | Iteration
+            | "EXIT" ";"
+            | "RETURN" Expression ";".
+Conditional : "IF" Expression "THEN" StatementSeq ("ELSE" StatementSeq)? "END".
+Iteration   : "LOOP" StatementSeq "END"
+            | "WHILE" Expression "DO" StatementSeq "END"
+            | "FOR" Identifier ":=" Expression "TO" Expression "DO"
+              StatementSeq "END".
+</pre>
+
+    <h4>Assignments</h4>
+
+    An assignment statement causes the variable or array element represented
+    by the identifier or subscripted identifier on the left to refer to a
+    new instance of the value yielded by the expression on the right.
+    The type of the expression must be the same as the type of the
+    left-hand side.
+
+    <h4>Conditionals</h4>
+
+    Conditional statements specify the conditional execution of
+    guarded statements.  The Boolean expression preceding a statement
+    is called its <em>guard</em>.  The guards are evaluated in
+    sequence of occurrence, until one evaluates to true, whence its
+    associated statement sequence is executed.  If no guard is
+    satisfied, the statement sequence following the symbol "ELSE" is
+    executed, if there is one.
+
+    <h4>Iterations</h4>
+
+    A "LOOP" form of iteration repeatedly executes its component
+    statement sequence.  The only way to exit a "LOOP" is using an
+    exit statement or return statement.<p>
+
+      An iteration of the form
+
+<pre>
+WHILE <em>e</em> DO <em>s</em> END
+</pre>
+
+    is identical in meaning to the iteration
+
+<pre>
+LOOP IF ~ <em>e</em> THEN EXIT END; <em>s</em> END
+</pre>
+
+    An iteration of the form
+
+<pre>
+FOR <em>id</em> := <em>e1</em> TO <em>e2</em> DO <em>s</em> END
+</pre>
+
+    requires that <em>id</em> be an integer variable, <em>e1</em> and
+    <em>e2</em> be expressions yielding integer values, and the
+    iteration is identical in meaning to the sequence of statements
+
+<pre>
+<em>id</em> := <em>e1</em>;
+<em>limit</em> := <em>e2</em>;
+LOOP
+  IF <em>id</em> &gt; <em>limit</em> THEN EXIT END;
+  <em>s</em>; 
+  <em>id</em> := <em>id</em> + 1;
+END;
+</pre>
+where <em>limit</em> is a compiler-generated temporary integer variable.
+
+    <h4>Exit statements</h4>
+
+    An exit statement may appear only within the component statement
+    sequence of a "LOOP" iteration.  Execution of an exit statement
+    causes termination of the smallest enclosing "LOOP" statement and
+    continuation with the statement following that "LOOP" statement.
+
+    <h4>Return</h4>
+
+    A return statement is executed by first evaluating the component
+    expression. Execution of the program is then terminated, with the
+    value of the component expression as the result.  The type of the
+    expression must be the same as the return type of the program
+    (which is always "integer") or real in which case the real value
+    is truncated before being returned.
+
+    <h3>Expressions</h3>
+
+    Expression structure in Obr is determined by operator precedence and
+    associativity in the usual way:
+
+<pre>
+Expression : SimpleExp | Expression RelOp SimpleExp.
+RelOp      : "=" | "#" | "<" | ">".
+SimpleExp  : Term | SimpleExp AddOp Term.
+AddOp      : "+" | "-" | "OR".
+Term       : Factor | Term MulOp Factor.
+MulOp      : "*" | "/" | "MOD" | "AND".
+Factor     : Identifier | Integer |
+           | Identifier "[" Expression "]" 
+           | "TRUE" | "FALSE" | "(" Expression ")"
+           | "~" Factor | "-" Factor.
+</pre>
+
+    Each subexpression (<em>SimpleExp</em>, <em>Term</em> and
+    <em>Factor</em>) may be evaluated to yield an object of a certain
+    type.  The operands of an expression may be evaluated in an
+    arbitrary order unless the operator is "OR" or "AND" (see below).<p>
+
+      The following table shows all Obr operators with their the
+      operand type(s) and result type.
+
+<pre>
+     Op1      Op2      Result     Operation
+
+=    integer   integer   Boolean     integer equality 
+     Boolean   Boolean   Boolean     Boolean equality  
+#    integer   integer   Boolean     integer inequality 
+     Boolean   Boolean   Boolean     Boolean inequality  
+&lt;    integer   integer   Boolean     integer less than  
+&gt;    integer   integer   Boolean     integer greater than  
++    integer   integer   integer     integer addition  
+-    integer   integer   integer     integer subtraction  
+*    integer   integer   integer     integer multiplication  
+/    integer   integer   integer     integer division  
+MOD  integer   integer   integer     integer remainder  
+OR   Boolean   Boolean   Boolean     disjunction   
+AND  Boolean   Boolean   Boolean     conjunction   
+-    integer             integer     integer negation  
+~    Boolean             Boolean     Boolean complement  
+</pre>
+
+    Equality yields the value true if its operands have the same
+    value.  Otherwise, it yields the value false.<p>
+
+      The arithmetic operators addition, subtraction, multiplication,
+      division, and remainder have the usual meaning as long as the
+      values of all operands and results lie in the range permitted by
+      the mapping from Obr objects to target machine objects.
+      Division and remainder are defined only when the value of the
+      right operand is nonzero.<p>
+
+      The result of an integer division operation with dividend m and
+      divisor n # 0 is determined as follows:
+
+      <ol>
+      <li>Let q and 0 &lt; r &lt; |n| be two integers such that
+        m = q * n + r.
+      <li>If r = 0 then the result of m DIV n is q.
+      <li>Otherwise, if m &gt; 0 and n &gt; 0 then the result of 
+        m DIV n is q. 
+      <li>Otherwise, the result of m DIV n is either q or q+1
+        at the discretion of the implementor.
+    </ol>
+
+    The result of the remainder operation m MOD n is given by:
+    m - (m DIV n) * n.<p>
+
+      The Boolean operators "OR" and "AND" are evaluated in a ``short
+      circuit'' fashion.  That is, when evaluating "OR" if the left
+      operand evaluates to true then evaluation of the "OR" returns
+      true and the right operand is not evaluated.  Similarly, when
+      evaluating "AND" if the left operand evaluates to false then
+      evaluation of the "AND" returns false and the right operand is not
+      evaluated.
+
+    <h3>Sample Obr Programs</h3>
+
+    The following is an Obr program to compute the greatest common
+    divisor of two integers.  The initial values of the parameters are
+    read from the standard input device as a part of the
+    initialisation process.  The result returned by the program is
+    written to the standard output device as a part of the
+    finalisation process.
+
+<pre>
+PROGRAM GCD (x : INTEGER; y : INTEGER) : INTEGER;
+
+BEGIN
+    WHILE x # y DO
+        IF x > y
+            THEN x := x - y
+            ELSE y := y - x
+        END
+    END;
+    RETURN x
+END GCD.
+</pre>
+
+    The factorial program below uses a constant declaration to define
+    the limit imposed by machine arithmetic.  If the initial value of
+    v is invalid, the program returns -1 as the answer.
+
+<pre>
+PROGRAM Factorial (v : INTEGER) : INTEGER;
+
+CONST
+    limit = 7;
+
+VAR
+    c : INTEGER;
+    fact : INTEGER;
+
+BEGIN
+    IF (v < 0) OR (v > limit) THEN
+        RETURN -1
+    ELSE
+        c := 0;
+        fact := 1;
+        WHILE c < v DO
+            c := c + 1;
+            fact := fact * c
+        END;
+        RETURN fact
+    END
+END Factorial.
+</pre>
+
+    <hr>
+    <address><a href="mailto:asloane@mpce.mq.edu.au">Tony Sloane</a></address>
+<!-- Created: Thu Jul  9 11:51:06 EST 1998 -->
+<!-- hhmts start -->
+Last modified: Wed Sep 9 2009
+<!-- hhmts end -->
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2003-9 by
+Macquarie University. All rights reserved.</A></FONT><BR>
+  </body>
+</html>

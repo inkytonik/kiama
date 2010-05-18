@@ -1,0 +1,329 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Obr Source Program Tree Definition</title>
+  </head>
+
+  <body>
+    <h1>Department of Computing, Macquarie University</h1>
+    <h2>Obr Source Program Tree Definition</h2>
+
+    All of the information that the structuring task of the compiler
+    obtains about the source program is embodied in the the source
+    program tree.  If a particular item of information cannot be
+    accessed via this tree, then it cannot be obtained at
+    all. Information is encoded in the ``shape'' of the tree and in
+    the values stored at the leaves.  This section defines the set of
+    possible source program trees by defining all of the concepts and
+    constructs of the Obr source language and how they are
+    represented.<p>
+
+    <h3>Obr Concepts</h3>
+
+Obr is a rather simple language, having only a small number of
+distinct concepts.  Each of the concepts is described below in a
+separate subsection.  The subsections are ordered according to the
+order of appearance of the concepts in the Obr definition.<p>
+
+    <h4>Identifier</h4>
+
+An identifier is a freely chosen representation for an object. Its
+properties are a string representation and the associated entity
+determined by the scoping rules. The associated entity is determined
+during semantic analysis; it is not stored at the time the tree is
+constructed.<p>
+
+Each identifier occurrence in the source program is represented in the
+source program tree by a leaf of type <code>IdnLeaf</code>. The value
+of the integer represented is stored at that leaf when the source
+program tree is constructed.
+
+    <h4>Integer</h4>
+
+An integer denotation is a representation of an integer
+value.  Its only property is the value represented.
+According to the definition of Obr, any sign preceding a denotation is
+not part of that denotation; therefore, only nonnegative values are
+represented by integer denotations.<p>
+
+Each integer denotation in the source program is represented in the
+source program tree by a leaf of type <code>IntLeaf</code>. The value
+of the integer represented is stored at that leaf when the source
+program tree is constructed.
+
+    <h4>Boolean</h4>
+
+A Boolean denotation is a representation of a Boolean value. Since
+there are only two possible values, each value is represented by a
+different kind of leaf in the source program tree, either
+<code>FalseLeaf</code> or <code>TrueLeaf</code>.
+
+    <h4>Source</h4>
+
+A source is a complete Obr program.  Its properties are the scope that
+it provides for parameter and variable declaration and the type of its
+result.<p>
+
+Both properties are evaluated during semantic analysis; neither is
+stored at the time the tree is constructed.<p>
+
+A source node is the root of the source program tree, and never
+appears in any other position.
+
+    <h4>Declaration</h4>
+
+A declaration is a construct that associates an identifier with an
+entity.  Its only property is the identifier/entity relationship it
+establishes.<p>
+
+The identifier/entity relationship is established during semantic
+analysis; it is not stored at the time the tree is constructed.
+
+    <h4>Statement</h4>
+
+A statement is a construct that carries out an action but does not
+return a value.  It has no additional properties.
+
+    <h4>Expression</h4>
+
+An expression is a construct that returns a value.  Its only property
+is the type of the value it returns.<p>
+
+The type returned by an expression is determined during semantic
+analysis; it is not stored at the time the tree is constructed.
+
+    <h3>Obr Constructs</h3>
+
+The following table summarises the constructs in the abstract syntax
+of Obr.  Each construct is described by a labelled context-free
+grammar rule.  For example, the "IntConst" construct appears as a
+subtree whose root is a Declaration node.  The Declaration node has
+two children: an Identifier node and an Integer node.
+
+<pre>
+AndExp:         Expression : Expression Expression
+ArrayVar:       Declaration : Integer
+AssignStmt:     Statement : Expression Expression
+BoolExp:        Expression : Boolean
+BoolVar:        Declaration : Identifier
+EqualExp:       Expression : Expression Expression
+ExitStmt:       Statement
+ForStmt:        Statement: Identifier Expression Expression Statement* 
+GreaterExp:     Expression : Expression Expression
+IdnExp:         Expression : Identifier
+IdnLeaf:        Identifier
+IfStmt:         Statement : Expression Statement* Statement*
+IndexExp:       Expression : Expression Expression
+IntConst:       Declaration : Identifier Expression
+IntParam:       Declaration : Identifier
+IntExp:         Expression : Integer
+IntVar:         Declaration : Identifier
+LessExp:        Expression : Expression Expression
+LoopStmt:       Statement : Statement*
+MinusExp:       Expression : Expression Expression
+ModExp:         Expression : Expression Expression
+NegExp:         Expression : Expression
+NotEqualExp:    Expression : Expression Expression
+NotExp:         Expression : Expression
+ObrInt:         Source : Declaration+ Statement*
+OrExp:          Expression : Expression Expression
+PlusExp:        Expression : Expression Expression
+ReturnStmt:     Statement : Expression
+SlashExp:       Expression : Expression Expression
+StarExp:        Expression : Expression Expression
+WhileStmt:      Statement : Expression Statement*
+</pre>
+
+    Most of the constructs have a fixed number of components. Variable
+    numbers of components are indicated in the productions by the
+    notation "X*", specifying "zero or more" Xs and "X+", specifying
+    "one or more" Xs. Thus an ObrInt has one or more Declaration
+    components and zero or more Statement components.<p>
+
+    <h4>AssignStmt</h4>
+
+    An AssignStmt construct represents an assignment statement. The
+    first component Expression is the target of the assignment. It
+    must be either an identifier expression (IdnExp) or an array index
+    expression (IndexExp). The second component Expression is the
+    source of the value to be assigned. The type of the component
+    Expression must be the same as the type of the object related to
+    the identifier or array element by the visibility rules.
+
+    <h4>BoolExp</h4>
+
+    A Boolean may appear a denotation in an expression.  The type of
+    the value returned by the root Expression of the BoolExp construct
+    is Boolean.
+
+    <h4>BoolVar, IntVar, ArrayVar, IntParam</h4>
+
+    These constructs associate an identifier with a new variable of
+    the specified type (Boolean for BoolVar,
+    integer for IntVar, and array for ArrayVar).
+    The effect of the Declaration is the establishment of a
+    relationship between the new variable and the component Identifier
+    of the construct.  In the case
+    of an array variable the component is an integer that gives the
+    size of the array.  The lowest index of an array is always zero.
+    
+    <p>An IntParam construct is just like an IntVar except that the
+    initial value of the variable is read from the standard input
+    when the program begins execution.</p>
+
+    <h4>Dyadic Expressions</h4>
+
+    A dyadic expression applies a function to two operand values,
+    obtaining a single result. The first component Expression of the
+    dyadic expression is the left operand, the second component
+    Expression is the right operand. The function to be applied is
+    determined from the types returned by the operand expressions. The
+    type returned by the root Expression is determined by the
+    function. Each component expression must return a value that is
+    compatible with the corresponding argument type of the function.
+    
+     <p>AndExp, EqualExp, GreaterExp, LessExp, MinusExp,
+    ModExp, NotEqualExp, OrExp, PlusExp, SlashExp and StarExp are the dyadic
+    node types.</p>
+
+    <h4>EmptyStmt</h4>
+
+    An empty statement does nothing.
+
+    <h4>ExitStmt</h4>
+
+    An exit statement terminates execution of the smallest enclosing loop
+    statement.
+
+    <h4>ForStmt</h4>
+
+    A ForStmt represents an iteration whose body may be executed zero
+    or more times.  The component Identifier specifies a variable
+    whose value counts in steps of one from the value of the first
+    Expression component up to and including the value of the second
+    Expression component.  The types of the variable and the two
+    expressions must be integer.  The component Statements are the
+    body of the loop.  They are executed once for each value of the
+    variable.
+
+    <h4>IdnExp</h4>
+
+    An identifier may appear as an operand in an expression.  The type
+    of the value returned by the root Expression of the IdnExp
+    construct is the type of the object related to the identifier by
+    the visibility rules.
+
+    <h4>IdnLeaf</h4>
+
+    An identifier is a leaf of the source program tree.  Its unique
+    encoding is established at the time the tree is built.
+    
+    <h4>IfStmt</h4>
+
+    The IfStmt construct represents a conditional statement. The
+    component Expression of the construct is a tree that specifies the
+    condition, the first component Statements specifies the statements
+    to be executed if the condition yields true, and the second
+    component Statements specify the statements to be executed if the
+    condition yields false. The type of value returned by the
+    component Expression must be Boolean. Conditionals without an else
+    part are represented by an IfStmt construct with an empty second
+    sequence of statements.
+
+    <h4>IntConst</h4>
+
+    An IntConst construct associates an identifier with a new constant
+    integer value. The component expression calculates the value to be
+    used which must be constant. The relationship of the Declaration
+    is a relationship between the new constant and the value of the
+    component expression.
+
+    <h4>IntLeaf</h4>
+
+    An integer is a leaf of the source program tree.  Its value is
+    established at the time the tree is built.
+
+    <h4>IntExp</h4>
+
+    An integer may appear as a denotation in an expression.  The type
+    of the value returned by the root Expression of the IntExp
+    construct is integer.
+
+    <h4>LoopStmt</h4>
+
+    A LoopStmt represents an iteration whose body executes until an
+    exit statement is executed within that body.  The component
+    Statements are the loop body.
+
+    <h4>Monadic Expressions</h4>
+
+    A monadic expression applies a function to one operand value,
+    obtaining a result.  The function to be applied is determined from
+    the type returned by the operand expression.  The type returned by
+    the root Expression of the Monadic construct is determined by the
+    function. The component expression must return a value that is
+    compatible with the argument type of the function.
+    
+     <p>NegExp and NotExp are the monadic node types.</p>
+
+    <h4>ObrInt</h4>
+
+    An ObrInt construct represents an Obr program that returns an
+    integer value.  The component Declarations represent the
+    parameters to the program and the variables declared in the
+    program.  The component Statements represent the statements to be
+    executed in the body of the program.
+
+    <h4>ReturnStmt</h4>
+
+    A return statement terminates execution of the program, delivering
+    the value returned by the component Expression.  The value of the
+    component Expression must be of the type to be returned by the
+    program.
+
+    <h4>WhileStmt</h4>
+
+    A WhileStmt represents an iteration whose body may be executed
+    zero or more times.  The component Expression of the construct is
+    a tree that specifies the iteration's condition, while the
+    component Statements are the loop body controlled by that
+    condition. The type of value returned by the component Expression
+    must be Boolean.
+
+    <h3>Example</h3>
+
+      As a complete example, the following source tree represents the
+      Obr GCD program given in the Obr Language Reference Manual.  The
+      coordinate of each node is given with its construct.  Leaves
+      also have their converted value.  Coordinates in square brackets
+      represent nodes that are the first node in a sequence.
+
+<pre>
+ObrInt (
+  GCD,
+  List (
+    IntParam (x),
+    IntParam (y)),
+  List (
+    WhileStmt (NotEqualExp (IdnExp (x), IdnExp (y)),
+    List (
+      IfStmt (GreaterExp (IdnExp (x), IdnExp (y)),
+              List (AssignStmt (IdnExp (x),
+                                MinusExp (IdnExp (x), IdnExp (y)))),
+              List (AssignStmt (IdnExp (y),
+                                MinusExp (IdnExp (y), IdnExp (x))))))),
+  ReturnStmt (IdnExp (x))),
+  GCD)
+</pre>
+
+    <hr>
+    <address><a href="mailto:asloane@mpce.mq.edu.au">Tony Sloane</a></address>
+<!-- Created: Thu Jul  9 11:51:06 EST 1998 -->
+<!-- hhmts start -->
+Last modified: Mon Aug 18  9:24:56 EST 2003
+<!-- hhmts end -->
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2003,
+2000 by Macquarie University. All rights reserved.</A></FONT><BR>
+  </body>
+</html>
