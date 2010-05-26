@@ -24,6 +24,7 @@ import sbt._
  * sbt project configuration for kiama
  */
 class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
+    with posterous.Publish
 {
     // Configure basic paths
     override def mainScalaSourcePath = "src"
