@@ -29,7 +29,8 @@ import org.kiama.util.Emitter
  * Abstract state machine simulation of a simple RISC architecture.  Run the
  * given code, reading input from console and emitting output using emitter.
  */
-class RISC (code : Code, console : Console, emitter : Emitter) extends Machine ("RISC") {
+class RISC (code : Code, console : Console, emitter : Emitter)
+        extends Machine ("RISC", emitter) {
     
     import org.kiama.util.Console
 
@@ -122,20 +123,20 @@ class RISC (code : Code, console : Console, emitter : Emitter) extends Machine (
             case MOVI (a, b, im) => R (a) := im << b
             case MVN (a, b, c)   => R (a) := - (R (c) << b)
             case MVNI (a, b, im) => R (a) := - (im << b)
-            case ADD (a, b, c)   => R (a) := R (b) + (R (c) : Int)
+            case ADD (a, b, c)   => R (a) := R (b) + R (c)
             case ADDI (a, b, im) => R (a) := R (b) + im
-            case SUB (a, b, c)   => R (a) := R (b) - (R (c) : Int)
+            case SUB (a, b, c)   => R (a) := R (b) - R (c)
             case SUBI (a, b, im) => R (a) := R (b) - im
-            case MUL (a, b, c)   => R (a) := R (b) * (R (c) : Int)
+            case MUL (a, b, c)   => R (a) := R (b) * R (c)
             case MULI (a, b, im) => R (a) := R (b) * im
-            case DIV (a, b, c)   => R (a) := R (b) / (R (c) : Int)
+            case DIV (a, b, c)   => R (a) := R (b) / R (c)
             case DIVI (a, b, im) => R (a) := R (b) / im
-            case MOD (a, b, c)   => R (a) := R (b) % (R (c) : Int)
+            case MOD (a, b, c)   => R (a) := R (b) % R (c)
             case MODI (a, b, im) => R (a) := R (b) % im
-            case CMP (b, c)      => Z := R (b) =:= R (c).value
-                                    N := R (b).value < (R (c).value : Int)
+            case CMP (b, c)      => Z := R (b) =:= R (c)
+                                    N := R (b) < R (c)
             case CMPI (b, im)    => Z := R (b) =:= im
-                                    N := R (b).value < im
+                                    N := R (b) < im
             case CHKI (a, im)    => if ((R (a) < 0) || (R (a) >= im))
                                         R (a) := 0
             case _ => ()
@@ -173,17 +174,17 @@ class RISC (code : Code, console : Console, emitter : Emitter) extends Machine (
      */
     def control (instr : Instr) {
         instr match {
-            case b : BEQ if (Z.value)              => PC := PC + b.disp
-            case b : BNE if (!Z.value)             => PC := PC + b.disp
-            case b : BLT if (N.value)              => PC := PC + b.disp
-            case b : BGE if (!N.value)             => PC := PC + b.disp
-            case b : BLE if (Z.value || N.value)   => PC := PC + b.disp
-            case b : BGT if (!Z.value && !N.value) => PC := PC + b.disp
-            case b : BR                            => PC := PC + b.disp
-            case b : BSR                           => R (31) := PC + 1
-                                                      PC := PC + b.disp
+            case b : BEQ if (Z)        => PC := PC + b.disp
+            case b : BNE if (!Z)       => PC := PC + b.disp
+            case b : BLT if (N)        => PC := PC + b.disp
+            case b : BGE if (!N)       => PC := PC + b.disp
+            case b : BLE if (Z || N)   => PC := PC + b.disp
+            case b : BGT if (!Z && !N) => PC := PC + b.disp
+            case b : BR                => PC := PC + b.disp
+            case b : BSR               => R (31) := PC + 1
+                                          PC := PC + b.disp
             case RET (c) => PC := R (c)
-                            if (R (c).value == 0) halt := "Halt"
+                            if (R (c) =:= 0) halt := "Halt"
             case _  => PC := PC + 1
         }
     }
@@ -194,8 +195,8 @@ class RISC (code : Code, console : Console, emitter : Emitter) extends Machine (
     def inputoutput (instr : Instr) {
         instr match {
             case RD (a)  => R (a) := console.readInt ("Enter integer: ")
-            case WRD (c) => emitter.emit (R (c) : Int)
-            case WRH (c) => emitter.emit ((R (c) : Int).toHexString)
+            case WRD (c) => emitter.emit (R (c))
+            case WRH (c) => emitter.emit ((R (c) : Int) toHexString)
             case WRL     => emitter.emitln
             case _       =>
         }

@@ -21,14 +21,16 @@
 package org.kiama.machine
 
 import scala.collection.mutable.HashMap
+import org.kiama.util.Emitter
 import org.kiama.util.PrettyPrinter
 import org.kiama.util.PrettyPrintable
 
 /**
  * A deterministic abstract state machine defined by its main rule and
- * called name.
+ * called name.  Tracing messages are output to the given emitter, which
+ * defaults to standard output.
  */
-abstract class Machine (val name : String) {
+abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
@@ -87,7 +89,7 @@ abstract class Machine (val name : String) {
                 p.indent {
                     this.pretty (p, t)
                 }
-                println (p)
+                emitter.emitln (p)
 	        }
         }
         
@@ -102,8 +104,8 @@ abstract class Machine (val name : String) {
          */
         override def pretty (p : PrettyPrinter) {
             _value match {
-                case Some (t) => pretty (p,t)
                 case None     => p.text ("** undefined **")
+                case Some (t) => pretty (p, t)
             }
         }
 
@@ -128,11 +130,10 @@ abstract class Machine (val name : String) {
          * Make a printable representation.
          */
         override def toString : String =
-            sname + " = " +
-                (_value match {
-                    case None     => "undef"
-                    case Some (t) => t
-                 })
+            _value match {
+                 case None     => "** undefined **"
+                 case Some (t) => t.toString
+            }
 
     }
 
@@ -156,7 +157,7 @@ abstract class Machine (val name : String) {
         def := (u : U) = {
             updates = new ParamUpdate (state, t, u) :: updates
             if (debug)
-                println (name + "." + state.sname + " (" + t + ") := " + u)
+                emitter.emitln (name + "." + state.sname + " (" + t + ") := " + u)
         }
 
         /**
@@ -347,7 +348,7 @@ abstract class Machine (val name : String) {
         var nsteps = 0
         do {
             if (debug) {
-                println (name + " step " + nsteps)
+                emitter.emitln (name + " step " + nsteps)
                 nsteps += 1
             }
         } while (step)
