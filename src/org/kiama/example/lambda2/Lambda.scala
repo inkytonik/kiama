@@ -66,57 +66,6 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
      */
     override def processline (line : String) {
         line match {
-
-            // Work around bug in 2.8 compiler, real code is below
-            // case Command (a) =>
-            //     a (0) match {
-            //         case ":help" =>
-            //             a.length match {
-            //                 case 1 => help
-            //                 case _ => super.processline (line)
-            //             }
-            // 
-            //         case ":eval" =>
-            //             a.length match {
-            //                 case 1 =>
-            //                     println ("Available evaluation mechanisms:")
-            //                     for (mech <- mechanisms) {
-            //                         print ("  " + mech)
-            //                         if (mech == mechanism)
-            //                             println (" (current)")
-            //                         else
-            //                             println
-            //                     }
-            //                 case 2 =>
-            //                     if (!setEvaluator (a (1)))
-            //                         println ("unknown evaluation mechanism: " + a (1))
-            //                 case _ =>
-            //                     super.processline (line)
-            //             }
-            // 
-            //         case ":type" =>
-            //             a.length match {
-            //                 case 1 =>
-            //                     println ("Typing is " + (if (typecheck) "on" else "off"))
-            //                 case 2 =>
-            //                     a (1) match {
-            //                         case "on"  => typecheck = true
-            //                                       println ("Typing is on")
-            //                         case "off" => typecheck = false
-            //                                       println ("Typing is off")
-            //                         case _     => super.processline (line)
-            //                     }
-            //                 case _ =>
-            //                     super.processline (line)
-            //             }
-            // 
-            //         case _ =>
-            //             super.processline (line)
-            //     }
-            // End of workaround
-
-            // This code should work with Scala versions after 2.8-Beta1
-            // but doesn't in 2.8RC1
             case Command (Array (":help")) =>
                 help
             
