@@ -83,7 +83,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
             if (debug) {
                 val p = new PrettyPrinter
                 p.text (name)
-                p.text (" new update: ")
+                p.text (".")
                 p.text (sname)
                 p.text (" := ")
                 p.indent {
@@ -146,7 +146,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
     /**
      * Utility class for updaters for values of parameterised state.
      */
-    class Updater[T,U] (val state : ParamState[T,U], val t : T) {
+    class Updater[T,U] (val state : ParamState[T,U], val t : T) extends PrettyPrintable {
 
         /**
          * Update this item of state to the value u at parameter t.  The update
@@ -156,9 +156,27 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
          */
         def := (u : U) = {
             updates = new ParamUpdate (state, t, u) :: updates
-            if (debug)
-                emitter.emitln (name + "." + state.sname + " (" + t + ") := " + u)
+            if (debug) {
+                val p = new PrettyPrinter
+                p.text (name)
+                p.text (".")
+                p.text (state.sname)
+                p.text ("(")
+                p.text (t.toString)
+                p.text (")")
+                p.text (" := ")
+                p.indent {
+                    this.pretty (p, u)
+                }
+                emitter.emitln (p)
+	        }
         }
+
+        /**
+         * Pretty printer for values of type U.
+         */
+        def pretty (p : PrettyPrinter, u : U) : Unit =
+            p.text (u.toString)
 
         /**
          * Equality on the underlying value.  If this state item is undefined
@@ -360,6 +378,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      */
     def run = {
         init
+        performUpdates
         steps
         finit
     }

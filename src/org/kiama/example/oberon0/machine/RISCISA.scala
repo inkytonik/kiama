@@ -268,6 +268,6 @@ object RISCISA {
      * Set the program counter to the value in register c.  If that
      * value is zero, halt the machine.
      */
-    case class RET (c : Int) extends Instr
+    case class RET (c : RegNo) extends Instr
 
 }

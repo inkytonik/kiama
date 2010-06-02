@@ -46,7 +46,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     /**
      * Integer register file addressed by 0-31.
      */
-    lazy val R = new ParamState[Int,Int] ("R")
+    lazy val R = new ParamState[RegNo,Int] ("R")
 
     /**
      * Names for special registers.
@@ -84,7 +84,6 @@ class RISC (code : Code, console : Console, emitter : Emitter)
         R (0) := 0
         Z := false
         N := false
-        performUpdates
     }
 
     /**
@@ -174,7 +173,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
             case b : BLE if (Z || N)   => PC := PC + b.disp
             case b : BGT if (!Z && !N) => PC := PC + b.disp
             case b : BR                => PC := PC + b.disp
-            case b : BSR               => R (31) := PC + 1
+            case b : BSR               => LNK := PC + 1
                                           PC := PC + b.disp
             case RET (c) => PC := R (c)
                             if (R (c) =:= 0) halt := "Halt"

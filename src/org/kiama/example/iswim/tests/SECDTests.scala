@@ -82,7 +82,6 @@ class SECDTests extends FunSuite {
             envir := Map()
             dump := EmptyCont
             control := program.code
-            performUpdates
         }
     }
 

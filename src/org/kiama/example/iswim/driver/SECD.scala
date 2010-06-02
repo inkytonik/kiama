@@ -133,7 +133,6 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
         dump := EmptyCont
         handler := EmptyCont
         control := program.code
-        performUpdates
     }
 }
 
