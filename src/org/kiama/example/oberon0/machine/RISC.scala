@@ -31,8 +31,6 @@ import org.kiama.util.Emitter
  */
 class RISC (code : Code, console : Console, emitter : Emitter)
         extends Machine ("RISC", emitter) {
-    
-    import org.kiama.util.Console
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
