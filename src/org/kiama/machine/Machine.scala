@@ -318,11 +318,11 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
 
     /**
      * Initialise the state of this machine.  This routine is called
-     * before the first step of the machine is attempted.  To initialise
-     * state, define updates in an override of this routine and call
-     * performUpdates.  Default: do nothing.
+     * before the first step of the machine is attempted.  Any pending
+     * state updates will be performed after this routine returns.
+     * Default: do nothing.
      */
-    def init
+    def init = { }
 
     /**
      * The rule to execute to run one step of this machine.
