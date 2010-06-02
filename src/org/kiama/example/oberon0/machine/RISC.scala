@@ -46,14 +46,9 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     type Word = Int
 
     /**
-     * A named register.
-     */
-    case class Reg (name : String) extends State[Int] (name)
-
-    /**
      * Integer register file addressed by 0-31.
      */
-    lazy val R = Array.tabulate (32) (i => Reg ("R" + i.toString))
+    lazy val R = new ParamState[Int,Int] ("R")
 
     /**
      * Names for special registers.
