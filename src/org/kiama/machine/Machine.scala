@@ -20,6 +20,7 @@
 
 package org.kiama.machine
 
+import java.lang.Exception
 import scala.collection.mutable.HashMap
 import org.kiama.util.Emitter
 import org.kiama.util.PrettyPrinter
@@ -42,7 +43,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      * A scalar item of abstract state machine state holding a value of
      * type T and called sname.
      */
-    class State[T] (sname : String) extends PrettyPrintable {
+    class State[T] (val sname : String) extends PrettyPrintable {
 
         /**
          * The value of this item of state.  None means undefined.
@@ -146,7 +147,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
     /**
      * Utility class for updaters for values of parameterised state.
      */
-    class Updater[T,U] (val state : ParamState[T,U], val t : T) extends PrettyPrintable {
+    class ParamUpdater[T,U] (val state : ParamState[T,U], val t : T) extends PrettyPrintable {
 
         /**
          * Update this item of state to the value u at parameter t.  The update
@@ -200,7 +201,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      * A parameterised item of abstract state machine state holding values
      * of type U, associated with parameters of type T.
      */
-    class ParamState[T,U] (val sname : String) extends State[HashMap[T,U]] (sname) {
+    class ParamState[T,U] (val psname : String) extends State[HashMap[T,U]] (psname) {
 
         /**
          * Is this state item undefined at t or not ?
@@ -220,7 +221,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
          * checking).  The state value only becomes defined when this latter
          * process happens.
          */
-        def apply (t : T) = new Updater (this, t)
+        def apply (t : T) = new ParamUpdater (this, t)
 
         /**
          * Return the value of this state item if it's defined at parameter t.
@@ -267,7 +268,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
     /**
      * Allow an updater to be used to access a parameterised state value.
      */
-    implicit def updaterToU[T,U] (up : Updater[T,U]) : U =
+    implicit def paramUpdaterToU[T,U] (up : ParamUpdater[T,U]) : U =
         up.state.value (up.t)
 
     /**
@@ -279,7 +280,19 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
          * Perform this update
          */
         def perform
+        
+        /**
+         * Return a key for use when checking consistency of this update
+         * with other updates.  Must uniquely determine the state that is
+         * being updated.
+         */
+        def key : AnyRef
 
+        /**
+         * Return the value to which the state is being updated.
+         */
+        def value : Any
+        
     }
 
     /**
@@ -293,7 +306,25 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
         def perform {
             s.change (t)
         }
+        
+        /**
+         * Return a key for use when checking consistency of this update
+         * with other updates.  Must uniquely determine the state that is
+         * being updated.
+         */
+        def key : AnyRef = s
 
+        /**
+         * Return the value to which the state is being updated.
+         */
+        def value : Any = t
+        
+        /**
+         * Make a printable representation.
+         */
+        override def toString : String =
+            s.sname + " := " + t
+            
     }
 
     /**
@@ -308,6 +339,24 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
         def perform {
             s.change (t, u)
         }
+
+        /**
+         * Return a key for use when checking consistency of this update
+         * with other updates.  Must uniquely determine the state that is
+         * being updated.
+         */
+        def key : AnyRef = (s, t)
+
+        /**
+         * Return the value to which the state is being updated.
+         */
+        def value : Any = u
+
+        /**
+         * Make a printable representation.
+         */
+        override def toString : String =
+            s.sname + "(" + t + ") := " + u
 
     }
 
@@ -337,13 +386,27 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
 
     /**
      * Perform any pending updates, returning true if updates were
-     * performed and false otherwise.
+     * performed and false otherwise.  The updates are first checked
+     * for consistency.  If the same piece of state is updated more
+     * than once, it must be updated to the same value by all updates.
+     * If updates are not consistent, the machine is aborted.
      */
     def performUpdates =
         if (updates isEmpty)
             false
         else {
-            // FIXME: check updates for consistency
+            // Check updates for consistency
+            val m = new HashMap[AnyRef,Any]
+            for (u <- updates) {
+                val k = u.key
+                if (m contains k) {
+                    if (m (k) != u.value)
+                        throw new InconsistentUpdateException (this, u, m (k))
+                } else {
+                    m (k) = u.value
+                }
+            }
+            // Actually perform the updaes
             updates.map (_.perform)
             true
         }
@@ -384,3 +447,12 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
     }
 
 }
+
+/**
+ * A machine has performed an inconsistent update in the sense that a step
+ * has updated an item of state to two different values.  m is the machine
+ * that performed the update, u is the update and v is the value used by
+ * another update of the same state item in that step.
+ */
+class InconsistentUpdateException[T] (m : Machine, u : Machine#Update, v : T)
+    extends Exception ("Machine = " + m.name + ", update = " + u + ", other value = " + v)
