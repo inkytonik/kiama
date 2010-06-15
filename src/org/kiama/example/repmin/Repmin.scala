@@ -37,11 +37,10 @@ trait RepminImpl {
     val repmin : Tree ==> Tree
 }
 
-
 /**
  * Common base for Repmin implementations.
  */
-trait RepminBase extends RepminImpl{
+trait RepminBase extends RepminImpl {
 
     val locmin : Tree ==> Int =
         attr {
