@@ -129,7 +129,7 @@ trait Compiler[T] extends FunSuite {
                         info ("failed with an exception ")
                         throw (e)
                 }
-            val rc = Source.fromPath (rp).mkString
+            val rc = Source.fromFile (rp).mkString
             res match {
                 case Some (cc) =>
                     if (cc != rc)
