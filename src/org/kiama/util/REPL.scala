@@ -130,7 +130,7 @@ trait GeneratingREPL[T] extends REPL {
      * Generate a new instance and print it, ignoring the input line.
      */
     def processline (line : String) {
-        generator.arbitrary (Gen.Params ()) match {
+        generator.arbitrary (Gen.defaultParams) match {
             case Some (t) => process (t)
             case None     => println ("can't generate an instance")
         }
