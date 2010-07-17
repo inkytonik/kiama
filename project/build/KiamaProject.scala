@@ -89,8 +89,12 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
 
     // Publish sources and scaladocs too
     override def packageDocsJar = defaultJarPath ("-scaladoc.jar")
-    override def packageSrcJar= defaultJarPath ("-sources.jar")
-    val sourceArtifact = Artifact (artifactID, "src", "jar", Some ("sources"), Nil, None)
-    val docsArtifact = Artifact (artifactID, "docs", "jar", Some ("scaladoc"), Nil, None)
-    override def packageToPublishActions = super.packageToPublishActions ++ Seq (packageDocs, packageSrc)
+    override def packageSrcJar = defaultJarPath ("-sources.jar")
+    val sourceArtifact = Artifact (artifactID, "src", "jar", "sources")
+    val docsArtifact = Artifact (artifactID, "docs", "jar", "scaladoc")
+    val testArtifact = Artifact (artifactID, "jar", "jar", "test")
+    val testSrcArtifact = Artifact (artifactID, "src", "jar", "test-src")
+    override def packageToPublishActions =
+        super.packageToPublishActions ++
+            Seq (packageDocs, packageSrc, packageTest, packageTestSrc)
 }
