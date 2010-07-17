@@ -46,15 +46,15 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     /**
      * Integer register file addressed by 0-31.
      */
-    lazy val R = new ParamState[RegNo,Int] ("R")
+    val R = new ParamState[RegNo,Int] ("R")
 
     /**
      * Names for special registers.
      */
-    lazy val PC = R (28)
-    lazy val FP = R (29)
-    lazy val SP = R (30)
-    lazy val LNK = R (31)
+    val PC = R (28)
+    val FP = R (29)
+    val SP = R (30)
+    val LNK = R (31)
 
     /**
      * Byte addressed store of words.
@@ -72,9 +72,9 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     val N = new State[Boolean] ("N")
 
     /**
-     * Halt flag.  Undefined until the machine is to stop executing.
+     * Halt flag.  True if the machine should stop executing, false otherwise.
      */
-    val halt = new State[String] ("halt")
+    val halt = new State[Boolean] ("halt")
 
     /**
      * Initialise the machine.
@@ -84,13 +84,14 @@ class RISC (code : Code, console : Console, emitter : Emitter)
         R (0) := 0
         Z := false
         N := false
+        halt := false
     }
 
     /**
      * The main rule of this machine.
      */
     def main {
-        if (halt isUndefined)
+        if (!halt)
             execute (code (PC))
     }
 
@@ -131,7 +132,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
                                     N := R (b) < im
             case CHKI (a, im)    => if ((R (a) < 0) || (R (a) >= im))
                                         R (a) := 0
-            case _ => ()
+            case _               =>
         }
     }
 
@@ -142,14 +143,14 @@ class RISC (code : Code, console : Console, emitter : Emitter)
         try {
             instr match {
                 case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
-                case LDB (a, b, im) => halt := "LDB not implemented"
+                case LDB (a, b, im) => halt := true // not implemented
                 case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
                                        R (b) := R (b) - im
                 case STW (a, b, im) => Mem ((R (b) + im) / 4) := R (a)
-                case STB (a, b, im) => halt := "STB not implemented"
+                case STB (a, b, im) => halt := true // not implemented
                 case PSH (a, b, im) => Mem (R (b) / 4) := R (a)
                                        R (b) := R (b) + im
-                case _ => ()
+                case _              =>
             }
         }
         catch {
@@ -157,7 +158,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
                 println ("Exception at " + instr)
                 e.printStackTrace
                 println (Mem)
-                halt := "Halt"
+                halt := true
         }
     }
 
@@ -176,8 +177,8 @@ class RISC (code : Code, console : Console, emitter : Emitter)
             case b : BSR               => LNK := PC + 1
                                           PC := PC + b.disp
             case RET (c) => PC := R (c)
-                            if (R (c) =:= 0) halt := "Halt"
-            case _  => PC := PC + 1
+                            if (R (c) =:= 0) halt := true
+            case _       => PC := PC + 1
         }
     }
 
