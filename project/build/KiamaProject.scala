@@ -29,7 +29,6 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     // Configure basic paths
     override def mainScalaSourcePath = "src"
     override def testScalaSourcePath = "src"
-    override def outputDirectoryName = "bin"
 
     // Configure extra paths
     def exampleFilesPath = (mainScalaSourcePath ##) / "org" / "kiama" / "example"
