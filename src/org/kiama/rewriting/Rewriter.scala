@@ -346,33 +346,35 @@ object Rewriter {
      */
     def child (i : Int, s : Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] = {
+            def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product =>
-                        val numchildren = p.productArity
-                        if ((i < 1) || (i > numchildren)) {
-                            None
-                        } else {
-                            val ct = p.productElement (i-1)
-                            val children = new Array[AnyRef](numchildren)
-                            for (j <- 0 until numchildren)
-                                children (j) = makechild (p.productElement (j))
-                            s (ct) match {
-                                case Some (ti) =>
-                                    children (i-1) = makechild (ti)
-                                case None      =>
-                                    return None
-                            }
-                            val ret = dup (p, children)
-                            Some (ret)
-                        }
-                    case a =>
-                        None
+                    case p : Product => childProduct (p, i, s)
+                    case a           => None
                 }
-
-            }
         }
 
+    /**
+     * Implement a specific child traversal for a product.
+     */
+    private def childProduct (p : Product, i : Int, s : => Strategy) : Option[Term] = {
+        val numchildren = p.productArity
+        if ((i < 1) || (i > numchildren)) {
+            None
+        } else {
+            val ct = p.productElement (i-1)
+            val children = new Array[AnyRef](numchildren)
+            for (j <- 0 until numchildren)
+                children (j) = makechild (p.productElement (j))
+            s (ct) match {
+                case Some (ti) =>
+                    children (i-1) = makechild (ti)
+                case None      =>
+                    return None
+            }
+            val ret = dup (p, children)
+            Some (ret)
+        }
+    }
 
     /**
      * Traversal to all children.  Construct a strategy that applies s to all
@@ -383,31 +385,35 @@ object Rewriter {
      */
     def all (s : => Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] = {
+            def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product =>
-                        val numchildren = p.productArity
-                        if (numchildren == 0) {
-                            Some (t)
-                        } else {
-                            val children = new Array[AnyRef](numchildren)
-                            for (i <- 0 until numchildren) {
-                                val ct = p.productElement (i)
-                                s (ct) match {
-                                    case Some (ti) =>
-                                        children (i) = makechild (ti)
-                                    case None      =>
-                                        return None
-                                }
-                            }
-                            val ret = dup (p, children)
-                            Some (ret)
-                        }
-                    case a =>
-                        Some (a)
+                    case p : Product => allProduct (p, s)
+                    case a           => Some (a)
+                }
+        }
+
+    /**
+     * Implement an all children generic traversal for a product.
+     */
+    private def allProduct (p : Product, s : => Strategy) : Option[Term] = {
+        val numchildren = p.productArity
+        if (numchildren == 0) {
+            Some (p)
+        } else {
+            val children = new Array[AnyRef](numchildren)
+            for (i <- 0 until numchildren) {
+                val ct = p.productElement (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        children (i) = makechild (ti)
+                    case None      =>
+                        return None
                 }
             }
+            val ret = dup (p, children)
+            Some (ret)
         }
+    }
 
     /**
      * Traversal to one child.  Construct a strategy that applies s to the term
@@ -419,33 +425,37 @@ object Rewriter {
      */
     def one (s : => Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] = {
+            def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product =>
-                        val numchildren = p.productArity
-                        for (i <- 0 until numchildren) {
-                            val ct = p.productElement (i)
-                            s (ct) match {
-                                case Some (nct) => {
-                                    val children = new Array[AnyRef] (numchildren)
-                                    for (j <- 0 until i)
-                                        children (j) = makechild (p.productElement (j))
-                                    children (i) = makechild (nct)
-                                    for (j <- i + 1 until numchildren)
-                                        children (j) = makechild (p.productElement (j))
-                                    val ret = dup (p, children)
-                                    return Some (ret)
-                                }
-                                case None =>
-                                    // Transformation failed, this child stays unchanged
-                            }
-                        }
-                        None
-                    case _ =>
-                        None
+                    case p : Product => oneProduct (p, s)
+                    case _           => None
                 }
+        }
+
+    /**
+     * Implement a one child generic traversal for a product.
+     */
+    private def oneProduct (p : Product, s : => Strategy) : Option[Term] = {
+        val numchildren = p.productArity
+        for (i <- 0 until numchildren) {
+            val ct = p.productElement (i)
+            s (ct) match {
+                case Some (nct) => {
+                    val children = new Array[AnyRef] (numchildren)
+                    for (j <- 0 until i)
+                        children (j) = makechild (p.productElement (j))
+                    children (i) = makechild (nct)
+                    for (j <- i + 1 until numchildren)
+                        children (j) = makechild (p.productElement (j))
+                    val ret = dup (p, children)
+                    return Some (ret)
+                }
+                case None =>
+                    // Transformation failed, this child stays unchanged
             }
         }
+        None
+    }
 
     /**
      * Traversal to as many children as possible, but at least one.  Construct a
@@ -457,75 +467,82 @@ object Rewriter {
      */
     def some (s : => Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] = {
+            def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product =>
-                        val numchildren = p.productArity
-                        if (numchildren == 0) {
-                            None
-                        } else {
-                            val children = new Array[AnyRef](numchildren)
-                            var success = false
-                            for (i <- 0 until numchildren) {
-                                val ct = p.productElement (i)
-                                s (ct) match {
-                                    case Some (ti) =>
-                                        children (i) = makechild (ti)
-                                        success = true
-                                    case None      =>
-                                        // Child failed, don't transform it
-                                        children (i) = makechild (ct)
-                                }
-                            }
-                            if (success) {
-                                val ret = dup (p, children)
-                                Some (ret)
-                            } else {
-                                None
-                            }
-                        }
-                    case _ =>
-                        None
+                    case p : Product => someProduct (p, s)
+                    case _           => None
+                }
+        }
+
+    /**
+     * Implement a some children generic traversal for a product.
+     */
+    private def someProduct (p : Product, s : => Strategy) : Option[Term] = {
+        val numchildren = p.productArity
+        if (numchildren == 0) {
+            None
+        } else {
+            val children = new Array[AnyRef](numchildren)
+            var success = false
+            for (i <- 0 until numchildren) {
+                val ct = p.productElement (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        children (i) = makechild (ti)
+                        success = true
+                    case None      =>
+                        // Child failed, don't transform it
+                        children (i) = makechild (ct)
                 }
             }
+            if (success) {
+                val ret = dup (p, children)
+                Some (ret)
+            } else {
+                None
+            }
         }
+    }
 
     /**
      * Make a strategy that applies the elements of ss pairwise to the
      * children of the subject term, returning a new term if all of the
-     * strategies succeed, otherwise failing.  The contructor of the new
+     * strategies succeed, otherwise failing.  The constructor of the new
      * term is the same as that of the original term and the children
      * are the results of the strategies.  If the length of ss is not
      * the same as the number of children, then congruence (ss) fails.
      */
     def congruence (ss : Strategy*) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] = {
+            def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product =>
-                        val numchildren = p.productArity
-                        if (numchildren == ss.length) {
-                            val children = new Array[AnyRef](numchildren)
-                            for (i <- 0 until numchildren) {
-                                val ct = p.productElement (i)
-                                (ss (i)) (ct) match {
-                                    case Some (ti) =>
-                                        children (i) = makechild (ti)
-                                    case None      =>
-                                        return None
-                                }
-                            }
-                            val ret = dup (p, children)
-                            Some (ret)
-                        } else {
-                            None
-                        }
-                    case a => {
-                        Some (a)
-                    }
+                    case p : Product => congruenceProduct (p, ss : _*)
+                    case a           => Some (a)
+                }
+        }
+
+    /**
+     * Implement a congruence generic traversal for a product.
+     */
+    private def congruenceProduct (p : Product, ss : Strategy*) : Option[Term] = {
+        val numchildren = p.productArity
+        if (numchildren == ss.length) {
+            val children = new Array[AnyRef](numchildren)
+            for (i <- 0 until numchildren) {
+                val ct = p.productElement (i)
+                (ss (i)) (ct) match {
+                    case Some (ti) =>
+                        children (i) = makechild (ti)
+                    case None      =>
+                        return None
                 }
             }
+            val ret = dup (p, children)
+            Some (ret)
+        } else {
+            None
         }
+    }
 
     /**
      * Rewrite a term.  Apply the strategy s to a term returning the result term
