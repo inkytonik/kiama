@@ -226,23 +226,31 @@ class RewriterTests extends FunSuite with Checkers with Generator {
     }
 
     test ("rewriting lists") {
-        // Increment every integer
-        val inc = everywheretd (rule { case i : Int => i + 1 })
+        // Increment every integer, just first one or all odd ones
+        val incall = everywheretd (rule { case i : Int => i + 1 })
+        val incfirst = oncetd (rule { case i : Int => i + 1 })
+        val incodd = sometd (rule { case i : Int if i % 2 == 1 => i + 1 })
             
         // Single level
-        expect (List (2, 3, 4)) (rewrite (inc) (List (1, 2, 3)))
+        expect (List (2, 3, 4)) (rewrite (incall) (List (1, 2, 3)))
+        expect (List (2, 2, 3)) (rewrite (incfirst) (List (1, 2, 3)))
+        expect (List (2, 2, 4)) (rewrite (incodd) (List (1, 2, 3)))
                 
         // Nested
-        val l1 = List (List (1, 2), List (3), List (4, 5, 6))
+        val l = List (List (1, 2), List (3), List (4, 5, 6))
         val r1 = List (List (2, 3), List (4), List (5, 6, 7))
-        expect (r1) (rewrite (inc) (l1))
+        val r2 = List (List (2, 2), List (3), List (4, 5, 6))
+        val r3 = List (List (2, 2), List (4), List (4, 6, 6))
+        expect (r1) (rewrite (incall) (l))
+        expect (r2) (rewrite (incfirst) (l))
+        expect (r3) (rewrite (incodd) (l))
         
         // Lists of non-primitives
-        val l2 = List (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
-        val r2 = List (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
+        val ll = List (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+        val rr = List (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
         val numtozero = everywheretd (rule { case _ : Double => 0 })
-        expect (r2) (rewrite (numtozero) (l2))
+        expect (rr) (rewrite (numtozero) (ll))
     }
-
+    
 }
 
