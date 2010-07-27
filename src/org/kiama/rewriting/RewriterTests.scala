@@ -50,13 +50,13 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         check ((t : Exp) => everywherebu (eval) (t) == Some (Num (t.value)))
         check ((t : Exp) => reduce (eval) (t) == Some (Num (t.value)))
     }
-
+    
     test ("issubterm combinator") {
         check ((t : Stmt) => issubterm (t, t) == Some (t))
         check ((t : Exp) => issubterm (t, t) == Some (t))
-
+    
         val random = new scala.util.Random
-
+    
         /**
          * Pick a random Term child of t, returning t if there are no
          * children or there are children but none of them are Terms.
@@ -78,7 +78,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
                 childterms (termnum).asInstanceOf[Term]
             }
         }
-
+    
         /**
          * Pick a random descendant of t (including possibly t).
          */
@@ -98,19 +98,19 @@ class RewriterTests extends FunSuite with Checkers with Generator {
                     t
             }
         }
-
+    
         check ((t : Stmt) => issubterm (pickdesc (t), t) == Some (t))
         check ((t : Exp) => issubterm (pickdesc (t), t) == Some (t))
-
+    
         val t = Add (Num (1), Num (2))
-
+    
         expect (None) (issubterm (Num (42), t))
         expect (Some (t)) (issubterm (Num (1), t))
         expect (Some (t)) (issubterm (t, t))
         expect (None) (ispropersubterm (Num (42), t))
         expect (Some (t)) (ispropersubterm (Num (1), t))
         expect (None) (ispropersubterm (t, t))
-
+    
         expect (None) (issuperterm (t, Num (42)))
         expect (Some (t)) (issuperterm (t, Num (1)))
         expect (Some (t)) (issuperterm (t, t))
@@ -118,60 +118,60 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         expect (Some (t)) (ispropersuperterm (t, Num (1)))
         expect (None) (ispropersuperterm (t, t))
     }
-
+    
     test ("strategies that have no effect") {
         check ((t : Stmt) => id (t) == Some (t))
         check ((t : Exp) => id (t) == Some (t))
-
+    
         val noopstmt = everywherebu (rule { case Asgn (s, e) => Asgn (s, e) })
         check ((t : Stmt) => noopstmt (t) == Some (t))
         check ((t : Exp) => noopstmt (t) == Some (t))
-
+    
         val noopexp = everywherebu (rule { case Num (i) => Num (i) })
         check ((t : Stmt) => noopexp (t) == Some (t))
         check ((t : Exp) => noopexp (t) == Some (t))
     }
-
+    
     test ("strategies that fail immediately") {
         check ((t : Stmt) => rwfail (t) == None)
         check ((t : Exp) => rwfail (t) == None)
     }
-
+    
     test ("where combinator") {
         check ((t : Exp) => where (rwfail) (t) == None)
         check ((t : Exp) => where (id) (t) == Some (t))
     }
-
+    
     test ("leaf and innernode detection") {
         check ((t : Exp) =>
             isleaf (t) == (if (t.productArity == 0) Some (t) else None))
         check ((t : Exp) =>
             isinnernode (t) == (if (t.productArity == 0) None else Some (t)))
     }
-
+    
     test ("terms as strategies") {
         check ((t : Stmt, u : Exp) => t (u) == Some (t))
         check ((t : Exp, u : Exp) => t (u) == Some (t))
         check ((t : Stmt, u : Stmt) => t (u) == Some (t))
         check ((t : Exp, u : Stmt) => t (u) == Some (t))
-
+    
         check ((t : Stmt) => (term (t)) (t) == Some (t))
         check ((t : Exp) => (term (t)) (t) == Some (t))
-
+    
         val t = Add (Num (1), Num (2))
         expect (None) (term (Num (1)) (t))
         expect (None) (term (Num (42)) (t))
     }
-
+    
     test ("conditional choice operator") {
         // Test expressions
         val e1 = Mul (Num (2), Num (3))
         val e2 = Add (Num (2), Num (3))
-
+    
         // Check identity and failure
         expect (Num (1)) (rewrite (id < (Num (1) : Strategy) + Num (2)) (e1))
         expect (Num (2)) (rewrite (rwfail < (Num (1) : Strategy) + Num (2)) (e1))
-
+    
         // Condition used just for success or failure
         val ismulbytwo = rule { case t @ Mul (Num (2), _) => t }
         val multoadd = rule { case Mul (Num (2), x) => Add (x, x) }
@@ -179,7 +179,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         val trans1 = ismulbytwo < multoadd + error
         expect (Add (Num (3), Num (3))) (rewrite (trans1) (e1))
         expect (Num (99)) (rewrite (trans1) (e2))
-
+    
         // Condition that transforms subject
         val mulbytwotoadd = rule { case t @ Mul (Num (2), x) => Add (x, x) }
         val add = rule { case Add (_, _) => Num (42) }
@@ -187,18 +187,42 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         expect (Num (42)) (rewrite (trans2) (e1))
         expect (Add (Num (2), Num (3))) (rewrite (trans2) (e2))
     }
-
+    
     test ("strategies can return other strategies") {
         // Test expressions
         val e1 = Mul (Num (2), Num (5))
         val e2 = Add (Num (4), Num (5))
-
+    
         // Single step passing
         val twotothree = rule { case Num (2) => Num (3) }
         val pass = rulefs { case Num (2) => twotothree }
         val passtd = everywheretd (pass)
         expect (Mul (Num (3), (Num (5)))) (rewrite (passtd) (e1))
         expect (Add (Num (4), (Num (5)))) (rewrite (passtd) (e2))
+    }
+    
+    test ("rewriting leaf types") {
+        // Test expression
+        val e = Mul (Num (1), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
+        
+        // Increment every integer
+        val incint = everywheretd (rule { case i : Double => i + 1 })
+        val r1 = Mul (Num (2), Add (Sub (Var ("hello"), Num (3)), Var ("harold")))
+        expect (r1) (rewrite (incint) (e))
+        
+        // Reverse every identifier
+        val revidn = everywheretd (rule { case s : String => s.reverse })
+        val r2 = Mul (Num (1), Add (Sub (Var ("olleh"), Num (2)), Var ("dlorah")))
+        expect (r2) (rewrite (revidn) (e))
+        
+        // Both at once but bottom up this time
+        val incintrevidn = 
+            everywherebu (rule {
+                case i : Double => i + 1
+                case s : String => s.reverse
+            })
+        val r3 = Mul (Num (2), Add (Sub (Var ("olleh"), Num (3)), Var ("dlorah")))
+        expect (r3) (rewrite (incintrevidn) (e))
     }
 
 }

@@ -31,12 +31,11 @@ package org.kiama.rewriting
 object Rewriter {
 
     /**
-     * The type of terms that can be rewritten.  Any type of object value is
-     * acceptable but generic traversals will only work on Products (e.g.,
-     * instances of case classes).  We use AnyRef here so that non-Product
-     * values can be present in rewritten structures.
+     * The type of terms that can be rewritten.  Any type of value is acceptable
+     * but generic traversals will only work on Products (e.g., instances of case
+     * classes).
      */
-    type Term = AnyRef
+    type Term = Any
 
     /**
      * Term-rewriting strategies.
@@ -354,22 +353,18 @@ object Rewriter {
                         if ((i < 1) || (i > numchildren)) {
                             None
                         } else {
-                            p.productElement (i-1) match {
-                                case ct : Term =>
-                                    val children = new Array[AnyRef](numchildren)
-                                    for (j <- 0 until numchildren)
-                                        children (j) = makechild (p.productElement (j))
-                                    s (ct) match {
-                                        case Some (ti) =>
-                                            children (i-1) = ti
-                                        case None      =>
-                                            return None
-                                    }
-                                    val ret = dup (p, children)
-                                    Some (ret)
-                                case ci =>
-                                    None
+                            val ct = p.productElement (i-1)
+                            val children = new Array[AnyRef](numchildren)
+                            for (j <- 0 until numchildren)
+                                children (j) = makechild (p.productElement (j))
+                            s (ct) match {
+                                case Some (ti) =>
+                                    children (i-1) = makechild (ti)
+                                case None      =>
+                                    return None
                             }
+                            val ret = dup (p, children)
+                            Some (ret)
                         }
                     case a =>
                         None
@@ -397,17 +392,12 @@ object Rewriter {
                         } else {
                             val children = new Array[AnyRef](numchildren)
                             for (i <- 0 until numchildren) {
-                                p.productElement (i) match {
-                                    case ct : Term =>
-                                        s (ct) match {
-                                            case Some (ti) =>
-                                                children (i) = ti
-                                            case None      =>
-                                                return None
-                                        }
-                                    case ci =>
-                                        // Child is not a term, don't try to transform it
-                                        children (i) = makechild (ci)
+                                val ct = p.productElement (i)
+                                s (ct) match {
+                                    case Some (ti) =>
+                                        children (i) = makechild (ti)
+                                    case None      =>
+                                        return None
                                 }
                             }
                             val ret = dup (p, children)
@@ -434,24 +424,20 @@ object Rewriter {
                     case p : Product =>
                         val numchildren = p.productArity
                         for (i <- 0 until numchildren) {
-                            p.productElement (i) match {
-                                case ct : Term =>
-                                    s (ct) match {
-                                        case Some (nct) => {
-                                            val children = new Array[AnyRef] (numchildren)
-                                            for (j <- 0 until i)
-                                                children (j) = makechild (p.productElement (j))
-                                            children (i) = nct
-                                            for (j <- i + 1 until numchildren)
-                                                children (j) = makechild (p.productElement (j))
-                                            val ret = dup (p, children)
-                                            return Some (ret)
-                                        }
-                                        case None =>
-                                            // Transformation failed, this child stays unchanged
-                                    }
-                                case _ =>
-                                    // Child is not a term, don't try to transform it
+                            val ct = p.productElement (i)
+                            s (ct) match {
+                                case Some (nct) => {
+                                    val children = new Array[AnyRef] (numchildren)
+                                    for (j <- 0 until i)
+                                        children (j) = makechild (p.productElement (j))
+                                    children (i) = makechild (nct)
+                                    for (j <- i + 1 until numchildren)
+                                        children (j) = makechild (p.productElement (j))
+                                    val ret = dup (p, children)
+                                    return Some (ret)
+                                }
+                                case None =>
+                                    // Transformation failed, this child stays unchanged
                             }
                         }
                         None
@@ -481,19 +467,14 @@ object Rewriter {
                             val children = new Array[AnyRef](numchildren)
                             var success = false
                             for (i <- 0 until numchildren) {
-                                p.productElement (i) match {
-                                    case ct : Term =>
-                                        s (ct) match {
-                                            case Some (ti) =>
-                                                children (i) = ti
-                                                success = true
-                                            case None      =>
-                                                // Child failed, don't transform it
-                                                children (i) = ct
-                                        }
-                                    case ci =>
-                                        // Child is not a term, don't try to transform it
-                                        children (i) = makechild (ci)
+                                val ct = p.productElement (i)
+                                s (ct) match {
+                                    case Some (ti) =>
+                                        children (i) = makechild (ti)
+                                        success = true
+                                    case None      =>
+                                        // Child failed, don't transform it
+                                        children (i) = makechild (ct)
                                 }
                             }
                             if (success) {
@@ -526,16 +507,12 @@ object Rewriter {
                         if (numchildren == ss.length) {
                             val children = new Array[AnyRef](numchildren)
                             for (i <- 0 until numchildren) {
-                                p.productElement (i) match {
-                                    case ct : Term =>
-                                        (ss (i)) (ct) match {
-                                            case Some (ti) =>
-                                                children (i) = ti
-                                            case None      =>
-                                                return None
-                                        }
-                                    case ci =>
-                                        children (i) = makechild (ci)
+                                val ct = p.productElement (i)
+                                (ss (i)) (ct) match {
+                                    case Some (ti) =>
+                                        children (i) = makechild (ti)
+                                    case None      =>
+                                        return None
                                 }
                             }
                             val ret = dup (p, children)
@@ -554,7 +531,7 @@ object Rewriter {
      * Rewrite a term.  Apply the strategy s to a term returning the result term
      * if s succeeds, otherwise return the original term.
      */
-    def rewrite[T <: Term] (s : => Strategy) (t : T) : T = {
+    def rewrite[T] (s : => Strategy) (t : T) : T = {
         s (t) match {
             case Some (t1) =>
                 t1.asInstanceOf[T]
