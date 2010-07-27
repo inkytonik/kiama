@@ -205,8 +205,8 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         // Test expression
         val e = Mul (Num (1), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
         
-        // Increment every integer
-        val incint = everywheretd (rule { case i : Double => i + 1 })
+        // Increment every double
+        val incint = everywheretd (rule { case d : Double => d + 1 })
         val r1 = Mul (Num (2), Add (Sub (Var ("hello"), Num (3)), Var ("harold")))
         expect (r1) (rewrite (incint) (e))
         
@@ -215,14 +215,33 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         val r2 = Mul (Num (1), Add (Sub (Var ("olleh"), Num (2)), Var ("dlorah")))
         expect (r2) (rewrite (revidn) (e))
         
-        // Both at once but bottom up this time
+        // Both at once but bottom up this time, plus guard
         val incintrevidn = 
             everywherebu (rule {
-                case i : Double => i + 1
+                case i : Double if i < 2 => i + 1
                 case s : String => s.reverse
             })
-        val r3 = Mul (Num (2), Add (Sub (Var ("olleh"), Num (3)), Var ("dlorah")))
+        val r3 = Mul (Num (2), Add (Sub (Var ("olleh"), Num (2)), Var ("dlorah")))
         expect (r3) (rewrite (incintrevidn) (e))
+    }
+
+    test ("rewriting lists") {
+        // Increment every integer
+        val inc = everywheretd (rule { case i : Int => i + 1 })
+            
+        // Single level
+        expect (List (2, 3, 4)) (rewrite (inc) (List (1, 2, 3)))
+                
+        // Nested
+        val l1 = List (List (1, 2), List (3), List (4, 5, 6))
+        val r1 = List (List (2, 3), List (4), List (5, 6, 7))
+        expect (r1) (rewrite (inc) (l1))
+        
+        // Lists of non-primitives
+        val l2 = List (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+        val r2 = List (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
+        val numtozero = everywheretd (rule { case _ : Double => 0 })
+        expect (r2) (rewrite (numtozero) (l2))
     }
 
 }
