@@ -41,24 +41,20 @@ trait Compiler[T] extends FunSuite {
     import scala.io.Source
 
     /**
-     * Process the command-line arguments using `checkargs` and pass the
-     * return values to `driver`.  By default this will process no
-     * arguments, use a JLine console for command editing and history,
-     * and send output to standard output.
+     * Process the program in the file given as the first command-line
+     * argument, read input using JLine input editing, and emit output
+     * to the standard output.
      */
     def main (args : Array[String]) {
-        val (newargs, console, emitter) = checkargs (args)
-        driver (newargs, console, emitter)
+        driver (args, JLineConsole, new Emitter)
     }
 
     /**
      * Process the command-line arguments.  Returns the arguments that
-     * have not been processed along with the console and emitter to
-     * use for this run.  Default: no arguments are processed, a JLine
-     * console is used and the emitter sends to standard output.
+     * have not been processed.  Default: do no processing.
      */
-    def checkargs (args : Array[String]) : (Array[String], Console, Emitter) =
-        (args, JLineConsole, new Emitter)
+    def checkargs (args : Array[String]) : Array[String] =
+        args
 
     /**
      * Process the program in the file given as the first command-line
@@ -67,12 +63,13 @@ trait Compiler[T] extends FunSuite {
      * is performed by process.  Output is produced using the specified
      * emitter.  True is returned if it all worked, otherwise false.
      */
-    def driver (args : Array[String], console : Console, emitter : Emitter) : Boolean =
-        args.size match {
+    def driver (args : Array[String], console : Console, emitter : Emitter) : Boolean = {
+        val newargs = checkargs (args)
+        newargs.size match {
             case 1 =>
                 try {
-                    val reader = new FileReader (args (0))
-                    makeast (reader, args (0)) match {
+                    val reader = new FileReader (newargs (0))
+                    makeast (reader, newargs (0)) match {
                         case Some (ast) =>
                             process (ast, console, emitter)
                         case None =>
@@ -87,6 +84,7 @@ trait Compiler[T] extends FunSuite {
                 println (usage)
                 false
         }
+    }
 
     /**
      * The usage message for an erroneous invocation.
@@ -107,14 +105,14 @@ trait Compiler[T] extends FunSuite {
     def process (ast : T, console : Console, emitter : Emitter) : Boolean
 
     /**
-     * Compile the program in the file given as the argument by calling the
-     * compiler driver and return the resulting output or None if compilation
-     * failed.  Read standard input from the specified console.
+     * Run the driver using the given args and return the resulting output
+     * or None if the driver failed.  Read standard input from the specified
+     * console.  Reset the message buffer before calling the driver.
      */
-    def compile (filename : String, console : Console) : Option[String] = {
+    def compile (args : Array[String], console : Console) : Option[String] = {
         val emitter = new StringEmitter
         Messaging.resetmessages
-        if (driver (Array (filename), console, emitter)) {
+        if (driver (args, console, emitter)) {
             Some (emitter.result ())
         } else {
             None
@@ -122,19 +120,23 @@ trait Compiler[T] extends FunSuite {
     }
 
     /**
-     * Make a single file test processing the file cp, expecting output as in
-     * the file rp.  Use the given console for input.  The extra string is
-     * used is appended to the normal test title. name is an identifying
-     * string used in messages.  If the compilation fails, rp is assumed
-     * to contain the expected messages.
+     * Make a single file test processing the file cp with comamnd-line
+     * arguments args, expecting output as in the file rp.  Use the given
+     * console for input.  The extra string is used is appended to the
+     * normal test title. name is an identifying string used in messages.
+     * If the compilation fails, rp is assumed to contain the expected
+     * messages.
      */
-    def filetest (name : String, cp : String, rp : String,
-                  console : Console = null, extra : String = "") {
-        val title = name + " processing " + cp + " expecting " + rp + extra
+    private def filetest (name : String, cp : String, rp : String,
+                          console : Console,
+                  extra : String = "",
+                  args : Array[String] = Array()) {
+        val title = name + " " + args.mkString(" ") + " processing " + cp +
+                    " expecting " + rp + extra
         test (title) {
             val res =
                 try {
-                    compile (cp, console)
+                    compile (args :+ cp, console)
                 } catch {
                     case e : Exception =>
                         info ("failed with an exception ")
@@ -163,10 +165,14 @@ trait Compiler[T] extends FunSuite {
      * failed.  If srcext is .x and resext is .y, then the expected result
      * for foo.x is found in file foo.y.  If optinext is Some (z), then
      * foo.z is used for standard input.  A test fails if either the
-     * processing fails or it succeeds with the wrong result.
+     * processing fails or it succeeds with the wrong result.  argslist
+     * is used to specify the sets of command-line arguments that you want
+     * to use.  Each test is run with each set of arguments.  The default
+     * is an empty argument list.
      */
     def filetests (name : String, path : String, srcext : String,
-                   resext : String, optinext : Option[String] = None) {
+                   resext : String, optinext : Option[String] = None,
+                   argslist : List[Array[String]] = List (Array ())) {
 
         import java.io.FilenameFilter
 
@@ -177,12 +183,13 @@ trait Compiler[T] extends FunSuite {
          * string used in messages.
          */
         def infiletests (name : String, cp : String, dir : File,
-                         infilter : FilenameFilter, inext : String) {
+                         infilter : FilenameFilter, inext : String,
+                         args : Array[String]) {
             for (i <- dir.list (infilter)) {
                 val ip = path + "/" + i
                 val console = new FileConsole (ip)
                 val rp = ip.replace (inext, resext)
-                filetest (name, cp, rp, console, " from input " + ip)
+                filetest (name, cp, rp, console, " from input " + ip, args)
             }
         }
 
@@ -193,21 +200,23 @@ trait Compiler[T] extends FunSuite {
                 fail ("bad test file path " + path)
             }
         } else {
-            for (c <- children) {
-                if (c.endsWith (srcext)) {
-                    val cp = path + "/" + c
-                    optinext match {
-                        case Some (inext) =>
-                            val infilter =
-                                new FilenameFilter {
-                                    def accept (dir : File, name : String) : Boolean = {
-                                        name.startsWith (c) && name.endsWith (inext)
+            for (args <- argslist) {
+                for (c <- children) {
+                    if (c.endsWith (srcext)) {
+                        val cp = path + "/" + c
+                        optinext match {
+                            case Some (inext) =>
+                                val infilter =
+                                    new FilenameFilter {
+                                        def accept (dir : File, name : String) : Boolean = {
+                                            name.startsWith (c) && name.endsWith (inext)
+                                        }
                                     }
-                                }
-                            infiletests (name, cp, dir, infilter, inext)
-                        case None =>
-                            val rp = cp.replace (srcext, resext)
-                            filetest (name, cp, rp)
+                                infiletests (name, cp, dir, infilter, inext, args)
+                            case None =>
+                                val rp = cp.replace (srcext, resext)
+                                filetest (name, cp, rp, null, "", args)
+                        }
                     }
                 }
             }

@@ -32,8 +32,6 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class CompilationTests extends Driver {
 
-    val path = "src/org/kiama/example/oberon0/tests/"
-
-    filetest ("Oberon0", path + "ProcTest2.ob0", path + "ProcTest2.err")
+    filetests ("Oberon0", "src/org/kiama/example/oberon0/tests", ".ob0err", ".err")
 
 }
