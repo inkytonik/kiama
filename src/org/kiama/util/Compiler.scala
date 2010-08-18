@@ -29,7 +29,7 @@ import scala.util.parsing.combinator.RegexParsers
  * constructed from phases.
  */
 trait Compiler[T] extends FunSuite {
-    
+
     import java.io.File
     import java.io.FileNotFoundException
     import org.kiama.util.Console
@@ -39,15 +39,26 @@ trait Compiler[T] extends FunSuite {
     import org.kiama.util.StringEmitter
     import org.scalatest.TestFailedException
     import scala.io.Source
-        
+
     /**
-     * Process the program in the file given as the first command-line
-     * argument, read input using JLine input editing, and emit output
-     * to the standard output.
+     * Process the command-line arguments using `checkargs` and pass the
+     * return values to `driver`.  By default this will process no
+     * arguments, use a JLine console for command editing and history,
+     * and send output to standard output.
      */
     def main (args : Array[String]) {
-        driver (args, JLineConsole, new Emitter)
+        val (newargs, console, emitter) = checkargs (args)
+        driver (newargs, console, emitter)
     }
+
+    /**
+     * Process the command-line arguments.  Returns the arguments that
+     * have not been processed along with the console and emitter to
+     * use for this run.  Default: no arguments are processed, a JLine
+     * console is used and the emitter sends to standard output.
+     */
+    def checkargs (args : Array[String]) : (Array[String], Console, Emitter) =
+        (args, JLineConsole, new Emitter)
 
     /**
      * Process the program in the file given as the first command-line
@@ -96,7 +107,7 @@ trait Compiler[T] extends FunSuite {
     def process (ast : T, console : Console, emitter : Emitter) : Boolean
 
     /**
-     * Compile the program in the file given as the argument by calling the 
+     * Compile the program in the file given as the argument by calling the
      * compiler driver and return the resulting output or None if compilation
      * failed.  Read standard input from the specified console.
      */
@@ -109,11 +120,11 @@ trait Compiler[T] extends FunSuite {
             None
         }
     }
-    
+
     /**
      * Make a single file test processing the file cp, expecting output as in
-     * the file rp.  Use the given console for input.  The extra string is 
-     * used is appended to the normal test title. name is an identifying 
+     * the file rp.  Use the given console for input.  The extra string is
+     * used is appended to the normal test title. name is an identifying
      * string used in messages.  If the compilation fails, rp is assumed
      * to contain the expected messages.
      */
@@ -143,7 +154,7 @@ trait Compiler[T] extends FunSuite {
             }
         }
     }
-    
+
     /**
      * Make tests that process the files in path.  name is an identifying
      * name for this set of tests.  All files whose names end in srcext are
@@ -158,11 +169,11 @@ trait Compiler[T] extends FunSuite {
                    resext : String, optinext : Option[String] = None) {
 
         import java.io.FilenameFilter
-        
+
         /**
          * Make a set of file tests from using inputs from dir with inputs
-         * selected by infilter with extensions inext.  If there are no 
-         * such input files, then no tests are created.  name is an identifying 
+         * selected by infilter with extensions inext.  If there are no
+         * such input files, then no tests are created.  name is an identifying
          * string used in messages.
          */
         def infiletests (name : String, cp : String, dir : File,
@@ -187,7 +198,7 @@ trait Compiler[T] extends FunSuite {
                     val cp = path + "/" + c
                     optinext match {
                         case Some (inext) =>
-                            val infilter = 
+                            val infilter =
                                 new FilenameFilter {
                                     def accept (dir : File, name : String) : Boolean = {
                                         name.startsWith (c) && name.endsWith (inext)
@@ -210,9 +221,9 @@ trait Compiler[T] extends FunSuite {
  * A compiler that uses a Scala combinator character-level parser.
  */
 trait RegexCompiler[T] extends Compiler[T] {
- 
+
     this : RegexParsers =>
- 
+
     /**
      * The actual parser used to produce the AST.
      */
@@ -232,5 +243,5 @@ trait RegexCompiler[T] extends Compiler[T] {
                 None
         }
     }
-  
+
 }

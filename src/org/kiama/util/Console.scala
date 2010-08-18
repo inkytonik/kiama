@@ -21,14 +21,15 @@
 package org.kiama.util
 
 /**
- * A console from which input data can be read.
+ * A console using which input data can be read from standard input.
  */
-abstract class Console {
-    
+class Console {
+
     /**
      * Read a line after prompting with the given prompt.
      */
-    def readLine (prompt : String) : String
+    def readLine (prompt : String) : String =
+        scala.Console.readLine (prompt)
 
     /**
      * Read an integer after prompting with the given prompt.  Throws a
@@ -41,12 +42,12 @@ abstract class Console {
 
 /**
  * A console that provides line editing using JLine.
- */    
-object JLineConsole extends Console {    
+ */
+object JLineConsole extends Console {
 
     import jline.ConsoleReader
     import jline.Terminal.getTerminal
-    
+
     /**
      * The reader to use to access the conole.
      */
@@ -57,7 +58,7 @@ object JLineConsole extends Console {
      * console is a shared static resource.  In particular, it's shared
      * with sbt.
      */
-    def readLine (prompt : String) : String = {
+    override def readLine (prompt : String) : String = {
         val terminal = getTerminal
         terminal.synchronized {
             terminal.disableEcho
@@ -68,14 +69,14 @@ object JLineConsole extends Console {
             }
         }
     }
-    
+
 }
 
 /**
  * A console that reads from the given file.
- */    
+ */
 class FileConsole (filename : String) extends Console {
-    
+
     import java.io.BufferedReader
     import java.io.FileReader
 
@@ -83,11 +84,11 @@ class FileConsole (filename : String) extends Console {
      * A reader for the underlying file.
      */
     lazy val reader = new BufferedReader (new FileReader (filename))
-    
+
     /**
      * Read a line from the file.  The prompt is ignored.
      */
-    def readLine (prompt : String) : String =
+    override def readLine (prompt : String) : String =
         reader.readLine ()
 
 }
