@@ -27,29 +27,28 @@ import org.kiama.util.RegexCompiler
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
- class Driver extends SyntaxAnalyser with RegexCompiler[Stm] {
+class Driver extends SyntaxAnalyser with RegexCompiler[Stm] {
 
-     import java.io.FileReader
-     import org.kiama.util.Console
-     import org.kiama.util.Emitter
+    import java.io.FileReader
+    import org.kiama.util.Console
+    import org.kiama.util.Emitter
 
-     /**
-      * The usage message for an erroneous invocation.
-      */
-     val usage = "usage: scala org.kiama.example.dataflow.Main file.data"
+    /**
+     * The usage message for an erroneous invocation.
+     */
+    val usage = "usage: scala org.kiama.example.dataflow.Main file.data"
 
-     /**
-      * Process the AST by optimising it, then print optimised AST.
-      */
-     def process (ast : Stm, console : Console, emitter : Emitter) : Boolean = {
-         val optast = Optimise.run (ast)
-         emitter.emitln (optast)
-         true
-     }
+    /**
+     * Process the AST by optimising it, then print optimised AST.
+     */
+    def process (ast : Stm, console : Console, emitter : Emitter) : Boolean = {
+        val optast = Optimise.run (ast)
+        emitter.emitln (optast)
+        true
+    }
+}
 
- }
-
- /**
-  * Dataflow language implementation main program.
-  */
- object Main extends Driver
+/**
+ * Dataflow language implementation main program.
+ */
+object Main extends Driver
