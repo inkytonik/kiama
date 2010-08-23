@@ -26,7 +26,7 @@ import AST._
  * Interface for a lambda2 evaluator.
  */
 trait Evaluator {
-    
+
     /**
      * Evaluate the given expression, returning the result of the
      * evaluation if it succeeded, or exp if it failed.
@@ -41,7 +41,7 @@ trait Evaluator {
 
     /**
      * Generate a fresh variable name.  Prefix the name with an underscore
-     * to avoid the potential for clashes with user-level varaibles (which
+     * to avoid the potential for clashes with user-level variables (which
      * must start with a letter).
      */
     object freshvar {
@@ -51,7 +51,7 @@ trait Evaluator {
             "_v" + count
         }
     }
-    
+
     /**
      * Capture-free substitution of free occurrences of x in e1 with e2.
      */
@@ -69,16 +69,16 @@ trait Evaluator {
             case e =>
                 e
         }
-    
+
 }
 
 /**
  * Interface for an individual rewriting-based lambda2 evaluator.
  */
 trait RewritingEvaluator extends Evaluator {
-    
+
     import org.kiama.rewriting.Rewriter.{rewrite, Strategy}
-    
+
     /**
      * Evaluate the given expression by rewriting it with the evals
      * strategy.
@@ -90,5 +90,5 @@ trait RewritingEvaluator extends Evaluator {
      * The strategy to use to perform the evaluation.
      */
     val s : Strategy
-    
+
 }
