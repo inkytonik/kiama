@@ -29,8 +29,6 @@ object DataflowAST {
 
     type Var = String
 
-    case class Program (body : Stm) extends Attributable
-
     abstract class Stm extends Attributable
 
     case class Assign (left : Var, right : Var) extends Stm
