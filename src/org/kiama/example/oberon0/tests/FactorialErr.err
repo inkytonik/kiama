@@ -1,0 +1,5 @@
+[13.31] failure: `THEN' expected but ` ' found
+
+    IF (v < 0) OR (v > limit) THN
+
+                              ^
