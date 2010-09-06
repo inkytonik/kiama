@@ -111,5 +111,6 @@ class DataflowTests extends Driver {
     }
 
     filetests ("Dataflow", "src/org/kiama/example/dataflow/tests", ".data", ".out")
+    filetests ("Dataflow", "src/org/kiama/example/dataflow/tests", ".dataerr", ".err")
 
 }

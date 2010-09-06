@@ -61,28 +61,26 @@ trait Compiler[T] extends FunSuite {
      * argument by building an AST for it and then processing that AST
      * in an arbitrary way.  The AST is built by makeast and processing
      * is performed by process.  Output is produced using the specified
-     * emitter.  True is returned if it all worked, otherwise false.
+     * emitter; this includes errors if there are any.
      */
-    def driver (args : Array[String], console : Console, emitter : Emitter) : Boolean = {
+    def driver (args : Array[String], console : Console, emitter : Emitter) {
         val newargs = checkargs (args)
         newargs.size match {
             case 1 =>
                 try {
                     val reader = new FileReader (newargs (0))
                     makeast (reader, newargs (0)) match {
-                        case Some (ast) =>
+                        case Left (ast) =>
                             process (ast, console, emitter)
-                        case None =>
-                            false
+                        case Right (msg) =>
+                            emitter.emitln (msg)
                     }
                 } catch {
                     case e : FileNotFoundException =>
-                        println (e.getMessage)
-                        false
+                        emitter.emitln (e.getMessage)
                 }
             case _ =>
-                println (usage)
-                false
+                emitter.emitln (usage)
         }
     }
 
@@ -92,31 +90,31 @@ trait Compiler[T] extends FunSuite {
     val usage : String
 
     /**
-     * Make an AST from the file with the given name.  Returns None
-     * if an AST cannot be made.
+     * Make an AST from the file with the given name, returning it wrapped in
+     * Left.  Returns Right with an error message if an AST cannot be made.
      */
-    def makeast (reader : FileReader, filename : String) : Option[T]
+    def makeast (reader : FileReader, filename : String) : Either[T,String]
 
     /**
      * Function to process the input that was parsed.  console should be
      * used to read anything needed by the processing.  emitter should be
      * used for output.  Return true if everything worked, false otherwise.
+     * If false is returned, messages about the problem should be logged
+     * by process using the messaging facility.
      */
     def process (ast : T, console : Console, emitter : Emitter) : Boolean
 
     /**
-     * Run the driver using the given args and return the resulting output
-     * or None if the driver failed.  Read standard input from the specified
-     * console.  Reset the message buffer before calling the driver.
+     * Run the driver using the given args and return the resulting output,
+     * which may be error messages or the result of running the compiled
+     * program, for example. Read standard input from the specified console.
+     * Reset the message buffer before calling the driver.
      */
-    def compile (args : Array[String], console : Console) : Option[String] = {
+    def compile (args : Array[String], console : Console) : String = {
         val emitter = new StringEmitter
         Messaging.resetmessages
-        if (driver (args, console, emitter)) {
-            Some (emitter.result ())
-        } else {
-            None
-        }
+        driver (args, console, emitter)
+        emitter.result ()
     }
 
     /**
@@ -134,7 +132,7 @@ trait Compiler[T] extends FunSuite {
         val title = name + " " + args.mkString(" ") + " processing " + cp +
                     " expecting " + rp + extra
         test (title) {
-            val res =
+            val cc =
                 try {
                     compile (args :+ cp, console)
                 } catch {
@@ -143,17 +141,8 @@ trait Compiler[T] extends FunSuite {
                         throw (e)
                 }
             val rc = Source.fromFile (rp).mkString
-            res match {
-                case Some (cc) =>
-                    if (cc != rc)
-                        fail (title + " generated bad output:\n" + cc +
-                             "expected:\n" + rc)
-                case None =>
-                    val ec = Messaging.toString
-                    if (ec != rc)
-                        fail (cp + " compilation failed with wrong errors:\n" + ec +
-                              "expected:\n" + rc)
-            }
+            if (cc != rc)
+                fail (title + " generated bad output:\n" + cc + "expected:\n" + rc)
         }
     }
 
@@ -239,17 +228,15 @@ trait RegexCompiler[T] extends Compiler[T] {
     val parser : Parser[T]
 
     /**
-     * Make an AST from the file with the given name.  Actually calls
-     * parser to do the real work and checks its output.  Return None
-     * and print errors if the parse fails.
+     * Make an AST from the file with the given name by parsing it with
+     * the parser.
      */
-    def makeast (reader : FileReader, filename : String) : Option[T] = {
+    def makeast (reader : FileReader, filename : String) : Either[T,String] = {
         parseAll (parser, reader) match {
             case Success (ast, _) =>
-                Some (ast)
+                Left (ast)
             case f =>
-                println (f)
-                None
+                Right (f.toString)
         }
     }
 

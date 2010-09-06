@@ -27,13 +27,14 @@ import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
+import org.kiama.example.oberon0.Driver
 import org.kiama.example.oberon0.compiler.Parser
 
 /**
  * Oberon0 parsing test cases.
  */
 @RunWith(classOf[JUnitRunner])
-class ParserTests extends FunSuite with Checkers with Parser {
+class ParserTests extends Driver with FunSuite with Checkers {
 
     import org.kiama.example.oberon0.compiler.AST._
 
@@ -153,5 +154,7 @@ END Factorial.
                 "Factorial",
                 ModuleType ()))
     }
+
+    filetests ("Oberon0", "src/org/kiama/example/oberon0/tests", ".ob0parseerr", ".err")
 
 }

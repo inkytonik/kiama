@@ -46,6 +46,7 @@ class Driver extends SyntaxAnalyser with RegexCompiler[Stm] {
         emitter.emitln (optast)
         true
     }
+
 }
 
 /**
