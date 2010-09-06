@@ -186,9 +186,9 @@ object SemanticAnalysis {
 
     /**
      * n is a node with an environment of bindings already seen.  Add a
-     * binding of i to e and return the complete set of binings, unless
+     * binding of i to e and return the complete set of bindings, unless
      * i already has a binding at n, in which case define i to be an
-     * unknown entity.
+     * multiply-defined entity.
      */
     def define (n : ObrNode, i : Identifier, e : => Entity) : Environment =
         if (n->env contains i)
