@@ -93,13 +93,13 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
                 emitter.emitln (p)
 	        }
         }
-        
+
         /**
          * Pretty printer for values of type T.
          */
         def pretty (p : PrettyPrinter, t : T) : Unit =
             p.text (t.toString)
-        
+
         /**
          * Pretty printer for the contents of this state object.
          */
@@ -140,9 +140,9 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
 
     /**
      * Implicitly allow a scalar state value of type T to be used as a value
-     * of type T.
+     * of type U where U is a supertype of T.
      */
-    implicit def stateTToT[T] (t : State[T]) : T = t.value
+    implicit def stateTToT[T,U >: T] (t : State[T]) : U = t.value
 
     /**
      * Utility class for updaters for values of parameterised state.
@@ -268,7 +268,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
     /**
      * Allow an updater to be used to access a parameterised state value.
      */
-    implicit def paramUpdaterToU[T,U] (up : ParamUpdater[T,U]) : U =
+    implicit def paramUpdaterToU[T,U,V >: U] (up : ParamUpdater[T,U]) : V =
         up.state.value (up.t)
 
     /**
@@ -280,7 +280,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
          * Perform this update
          */
         def perform
-        
+
         /**
          * Return a key for use when checking consistency of this update
          * with other updates.  Must uniquely determine the state that is
@@ -292,7 +292,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
          * Return the value to which the state is being updated.
          */
         def value : Any
-        
+
     }
 
     /**
@@ -306,7 +306,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
         def perform {
             s.change (t)
         }
-        
+
         /**
          * Return a key for use when checking consistency of this update
          * with other updates.  Must uniquely determine the state that is
@@ -318,13 +318,13 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
          * Return the value to which the state is being updated.
          */
         def value : Any = t
-        
+
         /**
          * Make a printable representation.
          */
         override def toString : String =
             s.sname + " := " + t
-            
+
     }
 
     /**
@@ -425,7 +425,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      * Execute the steps of this machine.  Halt when a step makes no
      * updates.  init should be called before this method.
      */
-    def steps = {
+    def steps {
         var nsteps = 0
         do {
             if (debug) {
@@ -439,7 +439,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      * Run this machine by initialising its state and then executing
      * its steps.
      */
-    def run = {
+    def run {
         init
         performUpdates
         steps
