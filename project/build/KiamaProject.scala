@@ -77,7 +77,11 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
                     runTask (Some (args (0)), testClasspath, args drop 1) dependsOn (testCompile, copyResources)
                 else
                     task { Some ("usage: main foo.bar.Main arg...") }
-        } describedAs ("Run a specific main with arguments")
+        } describedAs ("Run a specific main with arguments") completeWith (classes)
+
+    // List for completion of main task, all main and test sources turned into packages
+    lazy val classes =
+        (mainSources +++ testSources).getRelativePaths.toSeq.map (_.replace ("/", ".").replace (".scala", ""))
 
     // Publish to Maven style repo at scala-tools.org
     override def managedStyle = ManagedStyle.Maven
