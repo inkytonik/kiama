@@ -40,7 +40,7 @@ Integer: [0-9]+
 
 <pre>
 ( ) : ; + - * = , := ~ # &lt; &gt; . [ ] .. |
-AND ARRAY BEGIN BOOLEAN CONST DIV DO ELSE ELSIF END EXIT FALSE FOR IF
+AND ARRAY BEGIN BOOLEAN CONST DO ELSE ELSIF END EXIT FALSE FOR IF
 INTEGER LOOP MOD OF OR PROGRAM RETURN THEN TO TRUE VAR WHILE 
 </pre>
 
@@ -350,15 +350,15 @@ AND  Boolean   Boolean   Boolean     conjunction
       <ol>
       <li>Let q and 0 &lt; r &lt; |n| be two integers such that
         m = q * n + r.
-      <li>If r = 0 then the result of m DIV n is q.
+      <li>If r = 0 then the result of m / n is q.
       <li>Otherwise, if m &gt; 0 and n &gt; 0 then the result of 
-        m DIV n is q. 
-      <li>Otherwise, the result of m DIV n is either q or q+1
+        m / n is q. 
+      <li>Otherwise, the result of m / n is either q or q+1
         at the discretion of the implementor.
     </ol>
 
     The result of the remainder operation m MOD n is given by:
-    m - (m DIV n) * n.<p>
+    m - (m / n) * n.<p>
 
       The Boolean operators "OR" and "AND" are evaluated in a ``short
       circuit'' fashion.  That is, when evaluating "OR" if the left
