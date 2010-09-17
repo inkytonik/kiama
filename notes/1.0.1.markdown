@@ -1,9 +1,12 @@
 ### Enhancements
 
   * allow abstract state machine state to be used more flexibly
-  * command-line arguments are now supported by test framework
+  * test framework improvements:
+    * command-line arguments
+    * optional input files
+    * default input text
 
 ### Fixes
 
-  * tests that elicit parse errors are now correctly handled by test framework
+  * test framework: fix bug in tests that elicit parse errors
   * other minor fixes and tidying up
