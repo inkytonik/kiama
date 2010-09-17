@@ -73,9 +73,29 @@ object JLineConsole extends Console {
 }
 
 /**
+ * A console that reads from a given buffered reader.
+ */
+trait ReaderConsole extends Console {
+
+    import java.io.BufferedReader
+
+    /**
+     * The reader from which to read.
+     */
+    val reader : BufferedReader
+
+    /**
+     * Read a line from the file.  The prompt is ignored.
+     */
+    override def readLine (prompt : String) : String =
+        reader.readLine ()
+
+}
+
+/**
  * A console that reads from the given file.
  */
-class FileConsole (filename : String) extends Console {
+class FileConsole (filename : String) extends ReaderConsole {
 
     import java.io.BufferedReader
     import java.io.FileReader
@@ -85,10 +105,19 @@ class FileConsole (filename : String) extends Console {
      */
     lazy val reader = new BufferedReader (new FileReader (filename))
 
+}
+
+/**
+ * A console that returns from a specified string.
+ */
+class StringConsole (string : String) extends ReaderConsole {
+
+    import java.io.BufferedReader
+    import java.io.StringReader
+
     /**
-     * Read a line from the file.  The prompt is ignored.
+     * A reader for the given string.
      */
-    override def readLine (prompt : String) : String =
-        reader.readLine ()
+    lazy val reader = new BufferedReader (new StringReader (string))
 
 }

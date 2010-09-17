@@ -129,7 +129,7 @@ trait Compiler[T] extends FunSuite {
                           console : Console,
                           extra : String = "",
                           args : Array[String] = Array()) {
-        val title = name + " " + args.mkString(" ") + " processing " + cp +
+        val title = name + " " + args.mkString(" ") + "processing " + cp +
                     " expecting " + rp + extra
         test (title) {
             val cc =
@@ -153,32 +153,45 @@ trait Compiler[T] extends FunSuite {
      * return either Some (s) where s is the output or None if processing
      * failed.  If srcext is .x and resext is .y, then the expected result
      * for foo.x is found in file foo.y.  If optinext is Some (z), then
-     * foo.z is used for standard input.  A test fails if either the
-     * processing fails or it succeeds with the wrong result.  argslist
-     * is used to specify the sets of command-line arguments that you want
-     * to use.  Each test is run with each set of arguments.  The default
-     * is an empty argument list.
+     * foo.z is used for standard input, if it exists, otherwise the string
+     * indefault is used.  A test fails if either the processing fails or
+     * it succeeds with the wrong result.  argslist is used to specify the
+     * sets of command-line arguments that you want to use.  Each test is
+     * run with each set of arguments.  The default is an empty argument list.
      */
-    def filetests (name : String, path : String, srcext : String,
-                   resext : String, optinext : Option[String] = None,
+    def filetests (name : String, path : String, srcext : String, resext : String,
+                   optinext : Option[String] = None, indefault : String = "",
                    argslist : List[Array[String]] = List (Array ())) {
 
         import java.io.FilenameFilter
 
         /**
-         * Make a set of file tests from using inputs from dir with inputs
-         * selected by infilter with extensions inext.  If there are no
-         * such input files, then no tests are created.  name is an identifying
-         * string used in messages.
+         * Make a set of file tests to produce the result files in dir.  For
+         * each such result file found, we create a test.  That test takes as
+         * input the corresponding input file (with extension inext), if it
+         * exists, otherwise the input is the string indefault.  name is an
+         * identifying string used in messages.  args is the array of extra
+         * command line args to use.
          */
-        def infiletests (name : String, cp : String, dir : File,
-                         infilter : FilenameFilter, inext : String,
+        def infiletests (c : String, dir : File, inext : String,
                          args : Array[String]) {
-            for (i <- dir.list (infilter)) {
-                val ip = path + "/" + i
-                val console = new FileConsole (ip)
-                val rp = ip.replace (inext, resext)
-                filetest (name, cp, rp, console, " from input " + ip, args)
+            val resfilter =
+                new FilenameFilter {
+                    def accept (dir : File, name : String) : Boolean = {
+                        name.startsWith (c) && name.endsWith (resext)
+                    }
+                }
+            val cp = path + "/" + c
+            for (r <- dir.list (resfilter)) {
+                val rp = path + "/" + r
+                val ip = rp.replace (resext, inext)
+                val inf = new File (ip)
+                val (console, msg) =
+                    if (inf.exists)
+                        (new FileConsole (ip), " from input " + ip)
+                    else
+                        (new StringConsole (indefault), " from string \"" + indefault + "\"")
+                filetest (name, cp, rp, console, msg, args)
             }
         }
 
@@ -192,17 +205,11 @@ trait Compiler[T] extends FunSuite {
             for (args <- argslist) {
                 for (c <- children) {
                     if (c.endsWith (srcext)) {
-                        val cp = path + "/" + c
                         optinext match {
                             case Some (inext) =>
-                                val infilter =
-                                    new FilenameFilter {
-                                        def accept (dir : File, name : String) : Boolean = {
-                                            name.startsWith (c) && name.endsWith (inext)
-                                        }
-                                    }
-                                infiletests (name, cp, dir, infilter, inext, args)
+                                infiletests (c, dir, inext, args)
                             case None =>
+                                val cp = path + "/" + c
                                 val rp = cp.replace (srcext, resext)
                                 filetest (name, cp, rp, null, "", args)
                         }
