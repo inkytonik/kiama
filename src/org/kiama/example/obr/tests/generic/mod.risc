@@ -1,0 +1,16 @@
+    ! Prologue
+    movi $27, $0, 0
+    ! StW(Local(0),Read())
+    rd $1
+    stw $1, $27, 0
+    ! Write(RemW(IntDatum(15),IntDatum(4)))
+    movi $1, $0, 15
+    movi $2, $0, 4
+    mod $1, $1, $2
+    wrd $1
+    wrl
+    ! Ret
+    br label1
+    ! Epilogue
+label1:
+    ret $0

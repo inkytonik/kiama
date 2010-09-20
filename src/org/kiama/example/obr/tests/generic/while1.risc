@@ -1,0 +1,46 @@
+    ! Prologue
+    movi $27, $0, 0
+    ! StW(Local(0),Read())
+    rd $1
+    stw $1, $27, 0
+    ! StW(Local(4),IntDatum(1))
+    movi $1, $0, 1
+    stw $1, $27, 4
+    ! StW(Local(8),IntDatum(0))
+    movi $1, $0, 0
+    stw $1, $27, 8
+    ! Jmp(Label(1))
+    br label1
+    ! LabelDef(Label(2))
+label2:
+    ! StW(Local(8),AddW(LdW(Local(8)),LdW(Local(4))))
+    ldw $1, $27, 8
+    ldw $2, $27, 4
+    add $1, $1, $2
+    stw $1, $27, 8
+    ! StW(Local(4),AddW(LdW(Local(4)),IntDatum(1)))
+    ldw $1, $27, 4
+    movi $2, $0, 1
+    add $1, $1, $2
+    stw $1, $27, 4
+    ! LabelDef(Label(1))
+label1:
+    ! Bne(CmpltW(LdW(Local(4)),IntDatum(10)),Label(2))
+    ldw $1, $27, 4
+    movi $2, $0, 10
+    cmp $1, $2
+    movi $1, $0, 1
+    blt label4
+    movi $1, $0, 0
+label4:
+    cmpi $1, 0
+    bne label2
+    ! Write(LdW(Local(8)))
+    ldw $1, $27, 8
+    wrd $1
+    wrl
+    ! Ret
+    br label3
+    ! Epilogue
+label3:
+    ret $0

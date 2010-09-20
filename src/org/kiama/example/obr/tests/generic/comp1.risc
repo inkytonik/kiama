@@ -1,0 +1,35 @@
+    ! Prologue
+    movi $27, $0, 0
+    ! StW(Local(0),Read())
+    rd $1
+    stw $1, $27, 0
+    ! Beq(Not(IntDatum(1)),Label(1))
+    movi $1, $0, 1
+    cmpi $1, 0
+    movi $1, $0, 0
+    bne label4
+    movi $1, $0, 1
+label4:
+    cmpi $1, 0
+    beq label1
+    ! Write(IntDatum(0))
+    movi $1, $0, 0
+    wrd $1
+    wrl
+    ! Ret
+    br label3
+    ! Jmp(Label(2))
+    br label2
+    ! LabelDef(Label(1))
+label1:
+    ! Write(IntDatum(1))
+    movi $1, $0, 1
+    wrd $1
+    wrl
+    ! Ret
+    br label3
+    ! LabelDef(Label(2))
+label2:
+    ! Epilogue
+label3:
+    ret $0
