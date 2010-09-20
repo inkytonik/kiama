@@ -242,5 +242,5 @@ object AST {
     case object StatementType extends Type {
         override def toString = "statement"
     }
-    
+
 }

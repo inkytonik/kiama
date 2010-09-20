@@ -35,23 +35,33 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
     import SemanticAnalysis._
-    import Transformation._
+    import RISCEncoder.{code => _, _}
+    import RISCTransformation._
+    import org.kiama.example.RISC.RISCISA
+    import org.kiama.example.RISC.RISC
 
     /**
      * The usage message for an erroneous invocation.
      */
-    val usage = "usage: scala org.kiama.example.obr.Main file.obr"
+    val usage = "usage: scala org.kiama.example.org.obr.Main file.obr"
 
     /**
-     * Function to process the input that was parsed.  emitter is
-     * used for output.  Return true if everything worked, false
+     * Override this flag and set it to true if you want to execute the
+     * generated code, in preference to the default behaviour which is to
+     * spill that code to the standard output.
+     */
+    val execFlag : Boolean = false
+
+    /**
+     * Function to process the input that was parsed.  console and emitter
+     * are used for input and output.  Return true if everything worked, false
      * otherwise.
      */
     def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
         // Initialise compiler state
         SymbolTable.reset ()
-        SPARCTree.reset ()
+        RISCTree.reset ()
 
         // Conduct semantic analysis and report any errors
         ast->errors
@@ -65,9 +75,15 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
             // Print out the target tree for debugging
             // println (targettree)
 
-            // Encode the target tree and emit the assembler
-            val e = new Encoder (emitter)
-            e.encode (targettree)
+            // Encode the target tree and emit the assembler or run if requested
+            encode (targettree)
+            if (execFlag) {
+                val code = getcode
+                val machine = new RISC (code, console, emitter)
+                machine.run
+            } else {
+                RISCISA.prettyprint (emitter, getassem)
+            }
             true
         }
 

@@ -38,16 +38,16 @@ class Driver extends Parser with RegexCompiler[ModuleDecl] {
     import compiler.ErrorCheck.collectErrors
     import compiler.Encoder.EncodeModule
     import java.io.FileReader
-    import machine.RISC
+    import org.kiama.example.RISC.RISC
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
-    
+
     /**
      * The usage message for an erroneous invocation.
      */
     val usage = "usage: scala org.kiama.example.oberon0.Main file.ob0"
-        
+
     /**
      * Function to process the input that was parsed.  emitter is
      * used for output.  Return true if everything worked, false
@@ -74,7 +74,7 @@ class Driver extends Parser with RegexCompiler[ModuleDecl] {
             report (emitter)
             false
         }
-        
+
     }
 
 }

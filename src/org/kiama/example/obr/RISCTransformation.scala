@@ -1,9 +1,10 @@
 /**
- * Transformation of Obr language programs into SPARC machine code.
+ * Transformation of Obr language programs into   machine code.
  *
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010 Dominic Verity, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -23,29 +24,29 @@
 package org.kiama.example.obr
 
 /**
- * Module implementing transformation from Obr to SPARC assembler.
+ * Module implementing transformation from Obr to RISC tree code.
  */
-object Transformation {
+object RISCTransformation {
 
     import ObrTree._
     import SemanticAnalysis._
-    import SPARCTree._
+    import RISCTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
 
     /**
-     * The SPARC machine program that is the translation of the given
+     * The RISC machine program that is the translation of the given
      * Obr language program, comprising the translation of the program's
      * declarations and statements.  The bodies need to be computed first
      * so that the memory size is fully computed before we generate the
-     * SPARC node.
+     * RISC node.
      */
-    val code : ObrInt ==> SPARC =
+    val code : ObrInt ==> RISCProg =
         attr {
             case ObrInt (_, decls, stmts, _) =>
                 val dbody = decls.flatMap (ditems)
                 val sbody = stmts.flatMap (sitems)
-                SPARC (dbody ++ sbody, prevloc)
+                RISCProg (dbody ++ sbody, prevloc)
         }
 
     /**
@@ -70,7 +71,7 @@ object Transformation {
     private var exitlab : Label = _
 
     /**
-     * The SPARC machine items that are the translation of the given
+     * The RISC machine items that are the translation of the given
      * Obr language declaration.
      */
     private val ditems : Declaration ==> List[Item] =
@@ -81,7 +82,7 @@ object Transformation {
              * the location of the parameter.
              */
             case d @ IntParam (_) =>
-                 List (Read (location (d)))
+                 List (StW (location (d), Read ()))
 
             /**
              * All other kinds of declaration generate no code.
@@ -92,7 +93,7 @@ object Transformation {
         }
 
     /**
-     * The SPARC machine items that are the translation of the given
+     * The RISC machine items that are the translation of the given
      * Obr language statement.
      */
     private val sitems : Statement ==> List[Item] =
@@ -194,7 +195,7 @@ object Transformation {
         }
 
     /**
-     * The SPARC machine datum that is the translation of the given
+     * The RISC machine datum that is the translation of the given
      * Obr language expression.
      */
     private val datum : Expression ==> Datum =

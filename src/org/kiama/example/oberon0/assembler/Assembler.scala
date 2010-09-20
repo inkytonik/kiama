@@ -26,7 +26,7 @@ package org.kiama.example.oberon0.assembler
  */
 object Assembler {
 
-    import org.kiama.example.oberon0.machine.RISCISA._
+    import org.kiama.example.RISC.RISCISA._
     import scala.collection.mutable.ArrayBuffer
     import scala.collection.mutable.HashMap
 
@@ -88,7 +88,7 @@ object Assembler {
         }
         code
     }
-    
+
     /**
      * Reset the code sequence to be empty.
      */

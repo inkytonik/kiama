@@ -31,7 +31,7 @@ import org.kiama.util.Emitter
  * facilities including input, output and some arithmetic operations. The
  * parameter is the emitter to use to actually output code.
  */
-class Encoder (emitter : Emitter) {
+class SPARCEncoder (emitter : Emitter) {
 
     import SPARCTree._
     import org.kiama.attribution.Attribution._

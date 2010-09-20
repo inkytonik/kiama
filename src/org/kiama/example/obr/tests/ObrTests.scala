@@ -20,17 +20,30 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.obr
+package org.kiama.example.obr.tests
 
+import org.kiama.example.obr.Driver
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 /**
- * Obr compiler tests.
+ * Obr tests: compilation to assembly.
  */
 @RunWith(classOf[JUnitRunner])
-class ObrTests extends Driver {
+class ObrRegressionTests extends Driver {
 
-    filetests ("Obr", "src/org/kiama/example/obr/tests", ".obr", ".s")
+    filetests ("ObrRegression", "src/org/kiama/example/obr/tests/generic", ".obr", ".risc")
+
+}
+
+/**
+ * Obr tests: compilation and execution.
+ */
+@RunWith(classOf[JUnitRunner])
+class ObrExecTests extends Driver {
+
+    override val execFlag : Boolean = true
+
+    filetests ("ObrExec", "src/org/kiama/example/obr/tests/generic", ".obr", ".out", Some (".in"), "0")
 
 }

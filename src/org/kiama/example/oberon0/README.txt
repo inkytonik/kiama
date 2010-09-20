@@ -19,10 +19,10 @@ assembler:
 The assembler for the simple RISC architecture. Given an assembly
 language program, the assembler produces object code.
 
-machine:
+RISC machine
 
-An implementation of the simple RISC architecture. This program runs
-object produced by the assembler.
+The RISC machine targeted here is implemented in the RISC Kiama
+example.
 
 TODO:
 
@@ -39,7 +39,7 @@ TODO:
 
 - some aspects of encoding could perhaps be done more cleanly using
   attributes, eg computation of memory offsets or the memory sizes
-  
+
 - a proper test suite
 
 

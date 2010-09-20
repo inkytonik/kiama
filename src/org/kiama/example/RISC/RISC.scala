@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.machine
+package org.kiama.example.RISC
 
 import RISCISA._
 import org.kiama.machine.Machine
@@ -108,14 +108,23 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     }
 
     /**
+     * Shifter
+     */
+    def shifter (num : Word, b : RegNo) : Word =
+        if (R (b) >= 0)
+            num << R (b)
+        else
+            num >> - (R (b))
+
+    /**
      * Execute arithmetic instructions.
      */
     def arithmetic (instr : Instr) {
         instr match {
-            case MOV (a, b, c)   => R (a) := R (c) << b
-            case MOVI (a, b, im) => R (a) := im << b
-            case MVN (a, b, c)   => R (a) := - (R (c) << b)
-            case MVNI (a, b, im) => R (a) := - (im << b)
+            case MOV (a, b, c)   => R (a) := shifter (R (c), b)
+            case MOVI (a, b, im) => R (a) := shifter (im, b)
+            case MVN (a, b, c)   => R (a) := -shifter (R (c), b)
+            case MVNI (a, b, im) => R (a) := -shifter (im, b)
             case ADD (a, b, c)   => R (a) := R (b) + R (c)
             case ADDI (a, b, im) => R (a) := R (b) + im
             case SUB (a, b, c)   => R (a) := R (b) - R (c)
@@ -126,6 +135,12 @@ class RISC (code : Code, console : Console, emitter : Emitter)
             case DIVI (a, b, im) => R (a) := R (b) / im
             case MOD (a, b, c)   => R (a) := R (b) % R (c)
             case MODI (a, b, im) => R (a) := R (b) % im
+            case AND (a, b, c)   => R (a) := R (b) & R (c)
+            case ANDI (a, b, im) => R (a) := R (b) & im
+            case OR (a, b, c)   => R (a) := R (b) | R (c)
+            case ORI (a, b, im) => R (a) := R (b) | im
+            case XOR (a, b, c)   => R (a) := R (b) ^ R (c)
+            case XORI (a, b, im) => R (a) := R (b) ^ im
             case CMP (b, c)      => Z := R (b) =:= R (c)
                                     N := R (b) < R (c)
             case CMPI (b, im)    => Z := R (b) =:= im
