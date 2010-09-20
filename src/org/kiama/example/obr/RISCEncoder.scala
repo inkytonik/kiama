@@ -166,18 +166,17 @@ object RISCEncoder {
      */
      private val reg : RISCNode ==> RegNo =
         childAttr {
-            case d  => {
+            case d => {
+                case _ : RISCProg                   => firsttemp
                 case p : Cond                       => p->reg
-                case p : NeedsRegister if d.isFirst => p->reg
-                case _ if d.isFirst                 => firsttemp
+                case p : RISCNode if d.isFirst      => p->reg
                 case _                              =>
                     d.prev[RISCNode] match {
                         case s : NeedsRegister  =>
                             if (s->reg >= lasttemp)
                                 error ("out of local registers")
                             (s->reg) + 1
-
-                        case s                  => s->reg
+                        case s          => s->reg
                     }
             }
         }
@@ -390,6 +389,12 @@ object RISCEncoder {
             case Read () =>
                 emit (RD (d->reg))
 
+            /**
+             * Encode a compound sequence datum.
+             */
+            case SequenceDatum (insns, d) =>
+                insns map encode
+                encode (d)
         }
 
 }

@@ -71,7 +71,7 @@ object RISCTransformation {
     private var exitlab : Label = _
 
     /**
-     * The RISC machine items that are the translation of the given
+     * The RISC tree items that are the translation of the given
      * Obr language declaration.
      */
     private val ditems : Declaration ==> List[Item] =
@@ -93,7 +93,7 @@ object RISCTransformation {
         }
 
     /**
-     * The RISC machine items that are the translation of the given
+     * The RISC tree items that are the translation of the given
      * Obr language statement.
      */
     private val sitems : Statement ==> List[Item] =

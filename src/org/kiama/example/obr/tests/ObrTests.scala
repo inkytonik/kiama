@@ -54,7 +54,8 @@ class ObrExecTests extends Driver {
 @RunWith(classOf[JUnitRunner])
 class ObrParserTests extends ParserDriver {
 
-    filetests ("ObrParser", "src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
+    filetests ("ObrParserEnum", "src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
+    filetests ("ObrParserException", "src/org/kiama/example/obr/tests/exceptions/parser", ".obr", ".out")
 
 }
 
@@ -64,6 +65,7 @@ class ObrParserTests extends ParserDriver {
 @RunWith(classOf[JUnitRunner])
 class ObrSemanticTests extends SemanticDriver {
 
-    filetests ("ObrSemantic", "src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
+    filetests ("ObrSemanticEnum", "src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
+    filetests ("ObrSemanticException", "src/org/kiama/example/obr/tests/exceptions/semantic", ".obr", ".out")
 
 }

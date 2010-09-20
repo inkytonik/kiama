@@ -186,6 +186,14 @@ object SymbolTable {
     }
 
     /**
+     * The exception type.
+     */
+    case object ExnType extends Type {
+        override def toString = "exception"
+    }
+
+
+    /**
      * A type that we don't know anything about.
      */
     case object UnknownType extends Type {

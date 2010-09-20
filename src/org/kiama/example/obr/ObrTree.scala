@@ -98,6 +98,11 @@ object ObrTree {
     case class IntConst (idn: Identifier, value : Int) extends Declaration
 
     /**
+     * A declaration of a new exception value
+     */
+    case class ExnConst (idn : Identifier) extends Declaration
+
+    /**
     * Superclass of all statement classes.
     */
     sealed abstract class Statement extends ObrNode
@@ -142,6 +147,18 @@ object ObrTree {
      * A statement that executes its body while its expression is true.
      */
     case class WhileStmt (cond : Expression, body : List[Statement]) extends Statement
+
+    /**
+     * A statement that raises a specified exception.
+     */
+    case class RaiseStmt (idn : Identifier) extends Statement with EntityNode
+
+    /**
+     * A statement that is used to catch exception
+     */
+    case class TryStmt (body : TryBody, catches : List[Catch]) extends Statement
+    case class TryBody (stmts : List[Statement]) extends ObrNode
+    case class Catch (idn : Identifier, stmts : List[Statement]) extends ObrNode with EntityNode
 
     /**
     * Superclass of all expression classes.

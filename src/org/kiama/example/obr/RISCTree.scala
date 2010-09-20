@@ -181,6 +181,12 @@ object RISCTree {
     case class SubW (l : Datum, r : Datum) extends Datum
 
     /**
+     * A compound datum, consisting of a sequence of items to execute
+     * followed by a datum whose value is evaluated and returned.
+     */
+    case class SequenceDatum (insns : List[Item], d : Datum) extends Datum
+
+    /**
      * Memory addresses that can be stored to or loaded from.
      */
     sealed abstract class Address extends RISCNode

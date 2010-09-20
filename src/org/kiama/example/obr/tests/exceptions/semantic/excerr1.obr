@@ -1,0 +1,17 @@
+(* Exception-related errors in declarations *)
+
+PROGRAM ExcErr1 (i : INTEGER) : INTEGER;
+
+CONST
+    (* Two exception vars with same name *)
+    FallOverALot : EXCEPTION;
+    FallOverALot : EXCEPTION;
+
+    (* Exception var with same name as ordinary var *)
+    Bob : EXCEPTION;
+
+VAR
+    Bob : INTEGER;
+
+BEGIN
+END ExcErr1.

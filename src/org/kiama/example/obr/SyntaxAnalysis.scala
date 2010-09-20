@@ -36,13 +36,14 @@ trait SyntaxAnalysis extends RegexParsers with PackratParsers {
 
     override val whiteSpace = """(\s|\(\*(?:.|[\n\r])*?\*\))+""".r
 
-    val reservedWords = HashSet (
+    val reservedWords = HashSet(
           "PROGRAM", "INTEGER", "BEGIN", "END", "INTEGER", "CONST", "VAR"
         , "BOOLEAN", "ARRAY", "OF", "RECORD", "EXIT", "RETURN", "IF", "THEN"
-        , "LOOP", "WHILE", "DO", "FOR", "TO", "OR", "MOD", "AND", "TRUE", "FALSE"
+        , "LOOP", "WHILE", "DO", "FOR", "TO", "OR", "MOD", "AND", "TRUE"
+        , "FALSE", "EXCEPTION", "RAISE", "TRY", "CATCH"
         )
 
-    case class Pos (s : String) extends Positional {
+    case class Pos(s : String) extends Positional {
         override def toString : String = s
     }
 
@@ -81,7 +82,8 @@ trait SyntaxAnalysis extends RegexParsers with PackratParsers {
             }
 
     lazy val constantdecl : Parser[Declaration] = positioned (
-        ident ~ ("=" ~> integer) ^^ { case i ~ e => IntConst (i, e) } )
+        ident ~ ("=" ~> signed) ^^ { case i ~ e => IntConst (i, e) } |
+        ident <~ ":" <~ "EXCEPTION" ^^ ExnConst )
 
     lazy val variabledecl : Parser[Declaration] = positioned (
         ident <~ ":" <~ "BOOLEAN" ^^ BoolVar |
@@ -105,8 +107,10 @@ trait SyntaxAnalysis extends RegexParsers with PackratParsers {
             { case l ~ p ~ e => AssignStmt (l, e) setPos p.pos } |
         conditional |
         iteration |
+        trycatch |
         positioned ("EXIT" ~ ";" ^^^ ExitStmt ()) |
-        positioned ("RETURN" ~> expression <~ ";" ^^ ReturnStmt)
+        positioned ("RETURN" ~> expression <~ ";" ^^ ReturnStmt) |
+        positioned ("RAISE" ~> ident <~ ";" ^^ RaiseStmt)
 
     lazy val conditional : Parser[IfStmt] = positioned (
         "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^
@@ -123,6 +127,16 @@ trait SyntaxAnalysis extends RegexParsers with PackratParsers {
         "FOR" ~> ident ~ (":=" ~> expression) ~ ("TO" ~> expression) ~
              ("DO" ~> statementseq <~ "END") ^^
                  { case i ~ e1 ~ e2 ~ ss => ForStmt (i, e1, e2, ss) } )
+
+    lazy val trycatch : Parser[TryStmt] = positioned (
+        withPos ("TRY") ~ statementseq ~ ((catchclause*) <~ "END") ^^
+            { case p ~ ss ~ cs =>
+                val body = TryBody (ss) setPos p.pos
+                TryStmt (body, cs) } )
+
+    lazy val catchclause : Parser[Catch] = positioned (
+        ("CATCH" ~> ident <~ "DO") ~ statementseq ^^
+            { case i ~ ss => Catch (i, ss) })
 
     lazy val expression : PackratParser[Expression] =
         expression ~ withPos ("=") ~ simplexp ^^
@@ -173,6 +187,9 @@ trait SyntaxAnalysis extends RegexParsers with PackratParsers {
 
     lazy val integer : PackratParser[Int] =
         "[0-9]+".r ^^ (s => s.toInt)
+
+    lazy val signed : PackratParser[Int] =
+        "-?[0-9]+".r ^^ (s => s.toInt)
 
     lazy val ident : PackratParser[Identifier] =
         "[a-zA-Z][a-zA-Z0-9]*".r into (s => {

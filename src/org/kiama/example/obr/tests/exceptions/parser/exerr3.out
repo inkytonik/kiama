@@ -1,0 +1,6 @@
+[11.7] failure: `DO' expected but `
+' found
+
+      Result := 0;
+
+      ^
