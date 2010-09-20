@@ -1,0 +1,9 @@
+(* Integer as enumeration constant identifier (not first) *)
+
+PROGRAM Err802 (i : INTEGER) : INTEGER;
+
+VAR
+    x : ( harold, 802 );
+
+BEGIN
+END Err802.

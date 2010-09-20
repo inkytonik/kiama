@@ -1,0 +1,49 @@
+PROGRAM EnumTest (c : INTEGER) : INTEGER;
+
+VAR
+  size : (Small, Medium, Large);
+  res : BOOLEAN;
+
+BEGIN
+  size := Medium;
+  size := size;
+
+  IF c = 0 THEN
+    res := (Small < size);  (* expect TRUE *)
+  END
+  
+  IF c = 1 THEN
+    res := (size < Large);  (* expect TRUE *)
+  END
+  
+  IF c = 2 THEN
+    res := (Small # size);  (* expect TRUE *)
+  END
+  
+  IF c = 3 THEN
+    res := (size = Medium); (* expect TRUE *)
+  END
+  
+  IF c = 4 THEN
+    res := (size = Large);  (* expect FALSE *)
+  END
+  
+  IF c = 5 THEN
+     res := (size > size);  (* expect FALSE *)
+  END
+  
+  IF c = 6 THEN
+    res := (Small > Large); (* expect FALSE *)
+  END
+    
+  IF (c < 0) OR (c > 6) THEN             
+    res := (Medium > size); (* expect FALSE *)
+  END
+
+  IF res THEN
+     RETURN -1;
+  ELSE
+     RETURN 0;
+  END
+
+END EnumTest.

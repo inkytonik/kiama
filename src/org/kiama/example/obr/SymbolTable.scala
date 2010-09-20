@@ -65,7 +65,8 @@ object SymbolTable {
      */
     case class Variable (override val tipe : Type) extends Entity {
         override val isconst = false
-        override val isassignable = (tipe == IntType) || (tipe == BoolType)
+        override val isassignable =
+            (tipe == IntType) || (tipe == BoolType) || (tipe.isInstanceOf[EnumType])
         override val locn = {
             val loc = prevloc
             prevloc = prevloc + tipe.storage
@@ -74,12 +75,12 @@ object SymbolTable {
     }
 
     /**
-     * A constant integer entity with the given value
+     * A constant integer entity with the given value.
+     * Can represent an integer or an enumeration constant.
      */
-    case class Constant (val value : Int) extends Entity {
+    case class Constant (override val tipe : Type, val value : Int) extends Entity {
         override val isconst = true
         override val isassignable = false
-        override val tipe = IntType
     }
 
     /**
@@ -96,16 +97,29 @@ object SymbolTable {
     case object Multiple extends Entity
 
     /**
-     * The size im bytes of a word used to store both integer and Boolean
+     * The size in bytes of a word used to store both integer and Boolean
      * values.
      */
     val WORDSIZE = 4
 
     /**
-     * Superclass of all type representations.  All types know how much
-     * storage in bytes is needed to store a value of their type.
+     * Superclasses of all type representations.
+     *
+     * TypeBase provides a method which is used to determine if two types
+     * are compatible. If either type is unknown then we assume an error
+     * has already been raised elsewhere so we say that such an unknown type
+     * is compatible with everything.
      */
-    abstract class Type {
+    abstract class TypeBase {
+        def iscompatible (other : TypeBase) : Boolean =
+            (other == UnknownType) || (other == this)
+    }
+
+    /**
+     * All genuine types know how much storage in bytes is needed to store a
+     * value of their type.
+     */
+    abstract class Type extends TypeBase {
         val storage = 0
     }
 
@@ -142,8 +156,40 @@ object SymbolTable {
     }
 
     /**
+     * The following is not an actual type, but it is compatible with
+     * every record type - and so is useful when type checking constructs
+     * which must take a value of an arbitrary record type.
+     */
+    case object RecordTypes extends TypeBase {
+        override def toString = "any record"
+        override def iscompatible (other : TypeBase) : Boolean =
+            (other.isInstanceOf[RecordType]) || (super.iscompatible (other))
+    }
+
+    /**
+     * A named enumeration type.
+     */
+    case class EnumType (ident : Identifier) extends Type {
+        override val storage = WORDSIZE
+        override def toString = "enumeration " + ident
+    }
+
+    /**
+     * The following is not an actual type, but it is compatible with
+     * every enumeration type - and so is useful when type checking constructs
+     * which must take a value of an arbitrary enumeration type.
+     */
+    case object EnumTypes extends TypeBase {
+        override def toString = "any enumeration"
+        override def iscompatible (other : TypeBase) : Boolean =
+            (other.isInstanceOf[EnumType]) || (super.iscompatible (other))
+    }
+
+    /**
      * A type that we don't know anything about.
      */
-    case object UnknownType extends Type
+    case object UnknownType extends Type {
+        override def iscompatible (other : TypeBase) : Boolean = true
+    }
 
 }

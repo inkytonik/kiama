@@ -83,6 +83,16 @@ object ObrTree {
     case class RecordVar (idn: Identifier, fields : List[Identifier]) extends Declaration
 
     /**
+     * A declaration of an enumeration variable with given enumeration constants.
+     */
+    case class EnumVar (idn : Identifier, consts : List[EnumConst]) extends Declaration
+
+    /**
+     * A declaration of an enumeration constant
+     */
+    case class EnumConst (idn : Identifier) extends ObrNode with EntityNode
+
+    /**
      * A declaration of an integer constant with the given value.
      */
     case class IntConst (idn: Identifier, value : Int) extends Declaration

@@ -244,8 +244,8 @@ object SPARCTransformation {
              */
             case e @ IdnExp (_) =>
                 (e->entity) match {
-                    case Constant (v) => IntDatum (v)
-                    case _            => LdW (location (e))
+                    case Constant (_, v) => IntDatum (v)
+                    case _               => LdW (location (e))
                 }
 
             /**

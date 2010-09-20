@@ -95,3 +95,74 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
  * Obr language implementation main program.
  */
 object Main extends Driver
+
+/**
+ * The next driver simply spills the abstract syntax tree to the console.
+ */
+class ParserDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
+
+    import java.io.FileReader
+    import org.kiama.util.Console
+    import org.kiama.util.Emitter
+    import org.kiama.util.Messaging._
+
+    /**
+     * The usage message for an erroneous invocation.
+     */
+    val usage = "usage: scala org.kiama.example.org.obr.Main file.obr"
+
+    /**
+     * Function to process the input that was parsed.  console and emitter
+     * are used for input and output.  Return true if everything worked, false
+     * otherwise.
+     */
+    def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+
+        // Print ast to the emitter
+        emitter.emitln (ast.toString)
+        true
+
+    }
+
+}
+
+/**
+ * Finally a driver which parses a program file and runs the semantic analyser.
+ */
+class SemanticDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
+
+    import java.io.FileReader
+    import org.kiama.util.Console
+    import org.kiama.util.Emitter
+    import org.kiama.util.Messaging._
+    import SemanticAnalysis._
+    import RISCTransformation._
+
+    /**
+     * The usage message for an erroneous invocation.
+     */
+    val usage = "usage: scala org.kiama.example.org.obr.Main file.obr"
+
+    /**
+     * Function to process the input that was parsed.  console and emitter
+     * are used for input and output.  Return true if everything worked, false
+     * otherwise.
+     */
+    def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+
+        // Initialise compiler state
+        SymbolTable.reset ()
+
+        // Conduct semantic analysis and report any errors
+
+        ast->errors
+        if (messagecount > 0) {
+            report (emitter)
+            false
+        } else
+            true
+
+    }
+
+}
+

@@ -22,7 +22,7 @@
 
 package org.kiama.example.obr.tests
 
-import org.kiama.example.obr.Driver
+import org.kiama.example.obr.{Driver,ParserDriver,SemanticDriver}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
@@ -45,5 +45,25 @@ class ObrExecTests extends Driver {
     override val execFlag : Boolean = true
 
     filetests ("ObrExec", "src/org/kiama/example/obr/tests/generic", ".obr", ".out", Some (".in"), "0")
+
+}
+
+/**
+ * Obr parser tests.
+ */
+@RunWith(classOf[JUnitRunner])
+class ObrParserTests extends ParserDriver {
+
+    filetests ("ObrParser", "src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
+
+}
+
+/**
+ * Obr semantic analysis tests.
+ */
+@RunWith(classOf[JUnitRunner])
+class ObrSemanticTests extends SemanticDriver {
+
+    filetests ("ObrSemantic", "src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
 
 }

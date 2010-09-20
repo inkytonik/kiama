@@ -103,6 +103,15 @@ object SemanticAnalysis {
             case n @ IntConst (i, v) if (n->entity == Multiple) =>
                 message (n, i + " is declared more than once")
 
+            // Extra clauses to report errors from enumeration variable declarations
+            case n @ EnumVar (i, cs)                            =>
+                if (n->entity == Multiple)
+                    message (n, i + " is declared more than once")
+                cs map (errors)
+
+            case n @ EnumConst (i) if (n->entity == Multiple)   =>
+                message (n, i + " is declared more than once")
+
             case e : Expression =>
                 e match {
                     case v @ IdnExp (i) if (v->entity == Unknown) =>
@@ -140,21 +149,22 @@ object SemanticAnalysis {
                     case StarExp (l, r)     => l->errors; r->errors
                     case _                  =>
                 }
-                if (!iscompatible (e->tipe, e->exptipe))
-                    message (e, "type error: expected " + (e->exptipe) + " got " + (e->tipe))
+                if (!(e->exptipe exists ((_ : TypeBase) iscompatible e->tipe)))
+                    message (e, "type error: expected " + (e->exptipe).mkString(" or ") +
+                             " got " + (e->tipe))
 
             case _ =>
 
         }
 
     /**
-     * Are two types compatible?  If either of them are unknown then we
-     * assume an error has already been raised elsewhere so we say they
-     * are compatible with anything.  Otherwise the two types have to be
-     * the same.
+     * Attribute to consecutively number enumeration constants
      */
-    def iscompatible (t1 : Type, t2 : Type) : Boolean =
-        (t1 == UnknownType) || (t2 == UnknownType) || (t1 == t2)
+    val enumconstnum : EnumConst ==> Int =
+        attr {
+            case c if (c.isFirst)   => 0
+            case c                  => (c.prev[EnumConst]->enumconstnum) + 1
+        }
 
     /**
      * The environment containing all bindings visible at a particular
@@ -165,6 +175,7 @@ object SemanticAnalysis {
             case ObrInt (_, ds, ss, _)          => (ds.last)->envout
             case d : Declaration if (d.isFirst) => Map ()
             case d : Declaration                => (d.prev[Declaration])->envout
+            case d : EnumConst if (!d.isFirst)  => (d.prev[EnumConst])->envout
             case n                              => (n.parent[ObrNode])->env
         }
 
@@ -175,12 +186,19 @@ object SemanticAnalysis {
      */
     val envout : ObrNode ==> Environment =
         attr {
-            case n @ IntParam (i)      => define (n, i, Variable (IntType))
-            case n @ IntVar (i)        => define (n, i, Variable (IntType))
-            case n @ BoolVar (i)       => define (n, i, Variable (BoolType))
-            case n @ ArrayVar (i, v)   => define (n, i, Variable (ArrayType (v)))
-            case n @ RecordVar (i, fs) => define (n, i, Variable (RecordType (fs)))
-            case n @ IntConst (i, v)   => define (n, i, Constant (v))
+            case n @ IntParam (i)      => define (n->env, i, Variable (IntType))
+            case n @ IntVar (i)        => define (n->env, i, Variable (IntType))
+            case n @ BoolVar (i)       => define (n->env, i, Variable (BoolType))
+            case n @ ArrayVar (i, v)   => define (n->env, i, Variable (ArrayType (v)))
+            case n @ RecordVar (i, fs) => define (n->env, i, Variable (RecordType (fs)))
+            // Extra clauses for the defining instance of an enumeration variable...
+            case n @ EnumVar (i, _)    =>
+                define (n.lastChild[EnumConst]->envout, i, Variable (EnumType (i)))
+            // ... and its constants
+            case n @ EnumConst (i)     =>
+                val EnumVar (pi, _) = n.parent[EnumVar]
+                define (n->env, i, Constant (EnumType (pi), n->enumconstnum))
+            case n @ IntConst (i, v)   => define (n->env, i, Constant (IntType, v))
             case n                     => n->env
         }
 
@@ -188,13 +206,13 @@ object SemanticAnalysis {
      * n is a node with an environment of bindings already seen.  Add a
      * binding of i to e and return the complete set of bindings, unless
      * i already has a binding at n, in which case define i to be an
-     * multiply-defined entity.
+     * unknown entity.
      */
-    def define (n : ObrNode, i : Identifier, e : => Entity) : Environment =
-        if (n->env contains i)
-            (n->env) + ((i, Multiple))
+    def define (envin : Environment, i : Identifier, e : => Entity) : Environment =
+        if (envin contains i)
+            envin + ((i, Multiple))
         else
-            (n->env) + ((i, e))
+            envin + ((i, e))
 
     /**
      * The entity referred to by a declaration or a variable expression.
@@ -208,6 +226,8 @@ object SemanticAnalysis {
             case n @ BoolVar (i)      => (n->envout) (i)
             case n @ ArrayVar (i, v)  => (n->envout) (i)
             case n @ RecordVar (i, _) => (n->envout) (i)
+            case n @ EnumVar (i, _)   => (n->envout) (i)
+            case n @ EnumConst (i)    => (n->envout) (i)
             case n @ IntConst (i, v)  => (n->envout) (i)
 
             case n @ ForStmt (i, e1, e2, ss) =>
@@ -221,11 +241,13 @@ object SemanticAnalysis {
                      case Some (e) => e
                      case None     => Unknown
                 }
+
             case n @ IndexExp (i, _) =>
                 (n->env).get (i) match {
                      case Some (e) => e
                      case None     => Unknown
                 }
+
             case n @ FieldExp (i, _) =>
                 (n->env).get (i) match {
                      case Some (e) => e
@@ -262,35 +284,45 @@ object SemanticAnalysis {
      * What is the expected type of an expression?  I.e., what type does
      * the context impose on it.  Returns UnknownType if any type will do.
      */
-    val exptipe : Expression ==> Type =
+    val exptipe : Expression ==> Set[TypeBase] =
         attr {
             case e =>
                 (e.parent) match {
-                    case AssignStmt (IndexExp (_, _), `e`) => IntType
-                    case AssignStmt (FieldExp (_, _), `e`) => IntType
-                    case AssignStmt (v : IdnExp, `e`)      => (v->entity).tipe
+                    case AssignStmt (IndexExp (_, _), e1) if (e eq e1)  => Set (IntType)
+                    case AssignStmt (FieldExp (_, _), e1) if (e eq e1)  => Set (IntType)
+                    case AssignStmt (v : IdnExp, e1) if (e eq e1)       => Set ((v->entity).tipe)
 
-                    case ForStmt (_, _, _, _) => IntType
-                    case IfStmt (_, _, _)     => BoolType
-                    case ReturnStmt (_)       => IntType
-                    case WhileStmt (_, _)     => BoolType
+                    case ForStmt (_, _, _, _)                           => Set (IntType)
+                    case IfStmt (_, _, _)                               => Set (BoolType)
+                    case ReturnStmt (_)                                 => Set (IntType)
+                    case WhileStmt (_, _)                               => Set (BoolType)
 
-                    case AndExp (_, _)        => BoolType
-                    case EqualExp (l, `e`)    => l->tipe
-                    case GreaterExp (_, _)    => IntType
-                    case IndexExp (_, `e`)    => IntType
-                    case LessExp (_, _)       => IntType
-                    case MinusExp (_, _)      => IntType
-                    case ModExp (_, _)        => IntType
-                    case NegExp (_)           => IntType
-                    case NotEqualExp (l, `e`) => l->tipe
-                    case NotExp (_)           => BoolType
-                    case OrExp (_, _)         => BoolType
-                    case PlusExp (_, _)       => IntType
-                    case SlashExp (_, _)      => IntType
-                    case StarExp (_, _)       => IntType
+                    case AndExp (_, _)                                  => Set (BoolType)
+                    case EqualExp (l, e1) if (e eq e1)                  => Set (l->tipe)
 
-                    case _                    => UnknownType
+                    // The left operand of a GreaterExp must be an integer or an enumeration value
+                    case GreaterExp (e1, _) if (e eq e1)                => Set (IntType, EnumTypes)
+                    // The left and right operands of a GreaterExp must have the same type
+                    case GreaterExp (l, e1) if (e eq e1)                => Set (l->tipe)
+
+                    case IndexExp (_, e1) if (e eq e1)                  => Set (IntType)
+
+                    // The left operand of a LessExp must be an integer or an enumeration value
+                    case LessExp (e1, _) if (e eq e1)                   => Set (IntType, EnumTypes)
+                    // The left and right operands of a LessExp must have the same type
+                    case LessExp (l, e1) if (e eq e1)                   => Set (l->tipe)
+
+                    case MinusExp (_, _)                                => Set (IntType)
+                    case ModExp (_, _)                                  => Set (IntType)
+                    case NegExp (_)                                     => Set (IntType)
+                    case NotEqualExp (l, e1) if (e eq e1)               => Set (l->tipe)
+                    case NotExp (_)                                     => Set (BoolType)
+                    case OrExp (_, _)                                   => Set (BoolType)
+                    case PlusExp (_, _)                                 => Set (IntType)
+                    case SlashExp (_, _)                                => Set (IntType)
+                    case StarExp (_, _)                                 => Set (IntType)
+
+                    case _                                              => Set (UnknownType)
                 }
         }
 

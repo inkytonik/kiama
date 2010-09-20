@@ -1,0 +1,39 @@
+(* Enumeration-related errors in statements *)
+
+PROGRAM EnumErr2 (i : INTEGER) : INTEGER;
+
+VAR
+    CarColour : (Red, Blue, Green);
+    WeekDays: (Monday, Tuesday, Wednesday, Thursday, Friday);
+
+BEGIN
+    (* Type incompatibility between enum var and enum constant in
+       assignment statement *)
+    CarColour := Wednesday;
+
+    (* Type incompatibility between enum var and enum constant
+       in expression *)
+    IF Blue < Tuesday THEN
+        i := 0;
+    END
+    
+    (* Double check that we can't compare Boolean values with < *)
+    IF FALSE < TRUE THEN
+        i := 1;
+    END
+
+    (* Non enumeration constant used with enumeration variable *)
+    CarColour := 0;
+
+    (* Enumeration constant used with non enumeration variable *)
+    i := Red;
+
+    (* Enumeration value used with enumeration value of same type *)
+    CarColour := Red + Green;
+
+    (* Enumeration value used with enumeration value of other type *)
+    CarColour := Red + Monday;
+
+    (* Enumeration value used with non-enumeration value *)
+    i := Red + 1;
+END EnumErr2.
