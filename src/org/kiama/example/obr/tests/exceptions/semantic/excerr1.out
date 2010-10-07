@@ -1,2 +1,3 @@
 8.5: FallOverALot is declared more than once
-14.5: Bob is declared more than once
+14.5: DivideByZero is declared more than once
+17.5: Bob is declared more than once

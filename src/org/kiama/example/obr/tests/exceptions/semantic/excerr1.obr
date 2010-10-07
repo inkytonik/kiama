@@ -10,6 +10,9 @@ CONST
     (* Exception var with same name as ordinary var *)
     Bob : EXCEPTION;
 
+    (* Can't declare a pre-defined exception *)
+    DivideByZero : EXCEPTION;
+
 VAR
     Bob : INTEGER;
 
