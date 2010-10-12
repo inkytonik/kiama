@@ -11,12 +11,15 @@ BEGIN
        assignment statement *)
     CarColour := Wednesday;
 
+    (* Enumeration constant is not assignable *)
+    Red := Blue;
+
     (* Type incompatibility between enum var and enum constant
        in expression *)
     IF Blue < Tuesday THEN
         i := 0;
     END
-    
+
     (* Double check that we can't compare Boolean values with < *)
     IF FALSE < TRUE THEN
         i := 1;

@@ -178,7 +178,7 @@ object SemanticAnalysis {
                     case StarExp (l, r)     => l->errors; r->errors
                     case _                  =>
                 }
-                if (!(e->exptipe exists ((_ : TypeBase) iscompatible e->tipe)))
+                if (!(e->exptipe exists (_ iscompatible e->tipe)))
                     message (e, "type error: expected " + (e->exptipe).mkString(" or ") +
                              " got " + (e->tipe))
 
@@ -257,10 +257,9 @@ object SemanticAnalysis {
         }
 
     /**
-     * n is a node with an environment of bindings already seen.  Add a
-     * binding of i to e and return the complete set of bindings, unless
-     * i already has a binding at n, in which case define i to be an
-     * unknown entity.
+     * envin is an environment of bindings already seen.  Add a binding of i
+     * to e and return the complete set of bindings, unless i already has a
+     * binding at n, in which case define i to be a multiply-defined entity.
      */
     def define (envin : Environment, i : Identifier, e : => Entity) : Environment =
         if (envin contains i)
