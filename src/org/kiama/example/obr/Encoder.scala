@@ -94,8 +94,8 @@ class Encoder (emitter : Emitter) {
             case CmpgtW (_, r)     => r->reg
             case CmpltW (_, r)     => r->reg
             case DivW (_, r)       => r->reg
-            case d @ IntDatum (_)  => selectreg ()
-            case d @ LdW (_)       => selectreg ()
+            case IntDatum (_)      => selectreg ()
+            case LdW (_)           => selectreg ()
             case MulW (_, r)       => r->reg
             case NegW (d)          => d->reg
             case Not (d)           => d->reg
