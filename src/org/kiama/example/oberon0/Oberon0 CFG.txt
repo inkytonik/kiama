@@ -1,0 +1,113 @@
+parse  : Parser[ModuleDecl] = phrase (moduledecl)
+
+// Declarations
+
+moduledecl : Parser[ModuleDecl] = "MODULE" ident ";" declarations ("BEGIN" statementSequence)? "END" ident "."
+
+declarations : Parser[List[Declaration]] = constdecls? typedecls? vardecls? procdecls
+
+constdecl : Parser[ConstDecl] = ident "=" expression ";"
+
+constdecls : Parser[List[ConstDecl]] = "CONST" constdecl*
+
+typedecl : Parser[TypeDecl] = ident "=" type1 ";"
+
+typedecls : Parser[List[TypeDecl]] = "TYPE" typedecl*
+
+vardeclspertype : Parser[List[VarDecl]] = identList ":" type1
+
+vardecls : Parser[List[VarDecl]] = "VAR" (vardeclspertype ";")*
+
+fpSection : Parser[List[Declaration]] = "VAR"? identList ":" type1
+
+formalParameters : Parser[List[Declaration]] = "(" repsep(fpSection, ";") ")"
+
+procdecls : Parser[List[ProcDecl]] =  (procdecl ";")*
+
+procdecl : Parser[ProcDecl] = "PROCEDURE" ident formalParameters? ";" declarations ("BEGIN" statementSequence)? "END" ident
+
+// Types
+
+type1 : Parser[Type] = "INTEGER" |
+                       ident |
+                       arrayType |
+                       recordType
+
+identList : Parser[List[Ident]] = repsep (ident, ",")
+
+arrayType : Parser[ArrayType] = "ARRAY" expression "OF" type1
+
+fieldList : Parser[List[FieldDecl]] = identList ":" type1
+
+recordType : Parser[RecordType] = "RECORD" repsep(fieldList, ";") "END"
+
+// Statements
+
+statementSequence : Parser[List[Statement]] = repsep (statement, ";")
+
+statement : Parser[Statement] = assignment |
+                                procedureCall |
+                                ifStatement |
+                                whileStatement
+
+assignment : Parser[Assignment] = desig ":=" expression
+
+actualParameters : Parser[List[Exp]] = "(" repsep(expression, ",") ")"
+
+procedureCall : Parser[Statement] = desig actualParameters |
+                                    desig
+
+ifStatement : Parser[IfStatement] = "IF" expression "THEN" statementSequence "END" |
+                                    "IF" expression "THEN" statementSequence ifTail
+
+ifTail : Parser[List[Statement]] = "ELSIF" expression "THEN" statementSequence ifTail |
+                                   "ELSIF" expression "THEN" statementSequence "END" |
+                                   "ELSE" statementSequence "END"
+
+whileStatement : Parser[WhileStatement] = "WHILE" expression "DO" statementSequence "END"
+
+// Expressions
+
+expression : MemoParser[Exp] = simpleExpression "=" simpleExpression |
+                               simpleExpression "#" simpleExpression |
+                               simpleExpression "<" simpleExpression |
+                               simpleExpression "<=" simpleExpression |
+                               simpleExpression ">" simpleExpression |
+                               simpleExpression ">=" simpleExpression |
+                               simpleExpression
+
+simpleExpression : MemoParser[Exp] = simpleExpression "+" term |
+                                     simpleExpression "-" term |
+                                     simpleExpression "OR" term |
+                                     term
+
+term : MemoParser[Exp] = term "*" factor |
+                         term "DIV" factor |
+                         term "MOD" factor |
+                         term "&" factor |
+                         factor
+
+factor : MemoParser[Exp] = desig |
+                           number |
+                           "(" expression ")" |
+                           "~" factor |
+                           "+" factor |
+                           "-" factor
+
+desig : MemoParser[Exp] = desig "[" expression "]" |
+                          desig "." ident |
+                          ident
+
+number : Parser[Literal] = integer
+
+keyword : Parser[String] = "ARRAY" | "BEGIN" | "CONST" | "ELSIF" | "ELSE" | "END" | "IF" |
+                           "MODULE" | "OF" | "PROCEDURE" | "RECORD" | "THEN" | "TYPE" | "VAR" |
+                           "WHILE"
+
+ident : MemoParser[Ident] = !keyword token(letter letterOrDigit*)
+
+integer : Parser[IntegerLiteral] = token(digit+)
+
+comment = "(*" (not ("*)") any)* "*)"
+
+layout = (whitespace | comment)*

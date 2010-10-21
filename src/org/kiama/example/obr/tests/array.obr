@@ -1,0 +1,17 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+
+VAR
+    i : INTEGER;
+    v : INTEGER;
+    a : ARRAY 10 OF INTEGER;
+
+BEGIN
+    v := 0;
+    FOR i := 1 TO 10 DO
+        a[i] := i;
+    END
+    FOR i := 1 TO 10 DO
+        v := v + a[i];
+    END        
+    RETURN v;
+END X.

@@ -1,0 +1,11 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+VAR
+    i : INTEGER;
+    sum : INTEGER;
+BEGIN
+    sum := 42;
+    FOR i := 20 TO 10 DO
+        sum := sum + i;
+    END
+    RETURN sum;
+END X.

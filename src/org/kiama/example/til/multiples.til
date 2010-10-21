@@ -1,0 +1,9 @@
+// Test of declaring for loop in TIL
+// Output first 10 multiples of numbers 1 through 9
+// http://www.program-transformation.org/Sts/TILTrainingSet
+for i := 1 to 9 do
+    for j := 1 to 10 do
+        write i*j;
+    end
+end
+
