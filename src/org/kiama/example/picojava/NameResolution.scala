@@ -105,8 +105,8 @@ object NameResolution {
                     }
                 case i : IdUse =>
                     i.parent match {
-                        case Dot (a, `i`) => a->decl->tipe->remoteLookup (name)
-                        case p            => p->lookup (name)
+                        case Dot (a, i2) if i eq i2 => a->decl->tipe->remoteLookup (name)
+                        case p                      => p->lookup (name)
                     }
                 case t =>
                     t.parent->lookup (name)
