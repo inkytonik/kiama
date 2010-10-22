@@ -34,7 +34,7 @@ object Messaging {
      * A message record.
      */
     case class Record (pos : Position, message : String) {
-        override def toString = pos.line + "." + pos.column + ": " + message
+        override def toString () = pos.line + "." + pos.column + ": " + message
     }
 
     /**
@@ -63,7 +63,7 @@ object Messaging {
     /**
      * Output the messages to standard output in order of position.
      */
-    def report =
+    def report () =
         for (m <- sortedmessages)
             println (m)
 
@@ -77,7 +77,7 @@ object Messaging {
     /**
      * Return the sorted messages as a single string.
      */
-    override def toString = {
+    override def toString () = {
         val b = new StringBuilder
         for (m <- sortedmessages) {
             b.append (m)
@@ -89,7 +89,7 @@ object Messaging {
     /**
      * Reset the message buffer to empty.
      */
-    def resetmessages =
+    def resetmessages () =
         messages.clear
 
 }

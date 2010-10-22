@@ -43,7 +43,7 @@ class Encoder (emitter : Emitter) {
     def encode (p : SPARC) {
         prologue (p.memsize)
         (p.insns) map encode
-        epilogue ()
+        epilogue
     }
 
     /**
@@ -94,8 +94,8 @@ class Encoder (emitter : Emitter) {
             case CmpgtW (_, r)     => r->reg
             case CmpltW (_, r)     => r->reg
             case DivW (_, r)       => r->reg
-            case IntDatum (_)      => selectreg ()
-            case LdW (_)           => selectreg ()
+            case IntDatum (_)      => selectreg
+            case LdW (_)           => selectreg
             case MulW (_, r)       => r->reg
             case NegW (d)          => d->reg
             case Not (d)           => d->reg
@@ -184,7 +184,7 @@ class Encoder (emitter : Emitter) {
      * no values are passed between items via registers.
      */
     private def encode (i : Item) : Unit = {
-        resetavailregs ()
+        resetavailregs
         emit ("! " + i)
         i match {
 
@@ -257,7 +257,7 @@ class Encoder (emitter : Emitter) {
      * to use.
      */
     private def compare (br : String, l : Datum, r : Datum, d : Datum) {
-        val lab = genlabel ()
+        val lab = genlabel
         encode (l)
         encode (r)
         emit ("cmp " + opnd (l) + ", " + opnd (r))
@@ -335,8 +335,8 @@ class Encoder (emitter : Emitter) {
              * other Datums.
              */
             case Cond (cond, t, f) =>
-                val lab1 = genlabel ()
-                val lab2 = genlabel ()
+                val lab1 = genlabel
+                val lab2 = genlabel
                 encode (cond)
                 emit ("tst " + opnd (cond))
                 emit ("be " + lab1)

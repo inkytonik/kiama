@@ -77,7 +77,7 @@ class SECDTests extends FunSuite {
         /**
         * Initialise the machine.
         */
-        override def init = {
+        override def init () = {
             stack := Nil
             envir := Map()
             dump := EmptyCont

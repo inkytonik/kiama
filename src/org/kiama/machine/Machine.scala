@@ -37,7 +37,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      * Debug flag. Set this to true in sub-classes or objects to obtain
      * tracing information during execution of the machine.
      */
-    def debug = false
+    def debug () = false
 
     /**
      * A scalar item of abstract state machine state holding a value of
@@ -58,7 +58,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
         /**
          * Make this state item undefined.
          */
-        def undefine =
+        def undefine () =
             _value = None
 
         /**
@@ -373,18 +373,18 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      * state updates will be performed after this routine returns.
      * Default: do nothing.
      */
-    def init = { }
+    def init () = { }
 
     /**
      * The rule to execute to run one step of this machine.
      */
-    def main
+    def main ()
 
     /**
      * Clean up after this machine.  This routine is called after the
      * machine terminates.  Default: do nothing.
      */
-    def finit = { }
+    def finit () = { }
 
     /**
      * Perform any pending updates, returning true if updates were
@@ -393,7 +393,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
      * than once, it must be updated to the same value by all updates.
      * If updates are not consistent, the machine is aborted.
      */
-    def performUpdates =
+    def performUpdates () =
         if (updates isEmpty)
             false
         else {

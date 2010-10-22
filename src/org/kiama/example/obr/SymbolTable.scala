@@ -114,7 +114,7 @@ object SymbolTable {
      */
     case object IntType extends Type {
         override val storage = WORDSIZE
-        override def toString = "integer"
+        override def toString () = "integer"
     }
 
     /**
@@ -122,7 +122,7 @@ object SymbolTable {
      */
     case object BoolType extends Type {
         override val storage = WORDSIZE
-        override def toString = "boolean"
+        override def toString () = "boolean"
     }
 
     /**
@@ -130,7 +130,7 @@ object SymbolTable {
      */
     case class ArrayType (size : Int) extends Type {
         override val storage = WORDSIZE * size
-        override def toString = "array"
+        override def toString () = "array"
     }
 
     /**
@@ -138,7 +138,7 @@ object SymbolTable {
      */
     case class RecordType (fields : List[Identifier]) extends Type {
         override val storage = WORDSIZE * fields.length
-        override def toString = "record"
+        override def toString () = "record"
     }
 
     /**

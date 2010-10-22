@@ -81,7 +81,7 @@ object AST {
     case class IntegerLiteral (num: Int) extends Literal
 
     abstract class UnaryNumExp (e : Exp) extends Exp {
-        def getExp = e
+        def getExp () = e
         val op : Int => Int
     }
 
@@ -94,8 +94,8 @@ object AST {
     }
 
     abstract class BinaryNumExp (l : Exp, r : Exp) extends Exp {
-        def getLeft = l
-        def getRight = r
+        def getLeft () = l
+        def getRight () = r
         val op : (Int, Int) => Int
     }
 
@@ -123,8 +123,8 @@ object AST {
 
     abstract class BinaryBoolExp (l : Exp, r : Exp) extends Exp
     {
-        def getLeft = l
-        def getRight = r
+        def getLeft () = l
+        def getRight () = r
     }
 
     case class And (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
@@ -172,7 +172,7 @@ object AST {
             o.append("\n")
         }
 
-        def getName = name
+        def getName () = name
     }
 
     case class ConstDecl (name : String, constval : Exp) extends Declaration (name)
@@ -215,32 +215,32 @@ object AST {
     abstract class Type extends Attributable with PrettyPrintable
 
     case class NamedType (id : Ident) extends Type {
-        override def toString = id.name
+        override def toString () = id.name
     }
     case class ArrayType (size : Exp, tp : Type) extends Type {
-        override def toString = "ARRAY"
+        override def toString () = "ARRAY"
     }
     case class RecordType (fldlst : List[FieldDecl]) extends Type {
-        override def toString = "RECORD"
+        override def toString () = "RECORD"
     }
     case class ProcType (fps : List[Declaration]) extends Type {
-        override def toString = "PROCEDURE"
+        override def toString () = "PROCEDURE"
     }
     case class ModuleType () extends Type {
-        override def toString = "MODULE"
+        override def toString () = "MODULE"
     }
 
     case object IntegerType extends Type {
-        override def toString = "INTEGER"
+        override def toString () = "INTEGER"
     }
     case object BooleanType extends Type {
-        override def toString = "BOOLEAN"
+        override def toString () = "BOOLEAN"
     }
     case object InvalidType extends Type {
-        override def toString = "unknown type"
+        override def toString () = "unknown type"
     }
     case object StatementType extends Type {
-        override def toString = "statement"
+        override def toString () = "statement"
     }
-    
+
 }

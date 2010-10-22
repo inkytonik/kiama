@@ -124,9 +124,9 @@ object Transformation {
              * is the biggest integer that can be stored.
              */
             case e @ ForStmt (idn, min, max, body) =>
-                val lab1 = genlabel ()
-                val lab2 = genlabel ()
-                val lab3 = genlabel ()
+                val lab1 = genlabel
+                val lab2 = genlabel
+                val lab3 = genlabel
                 val eloc = location (e)
                 val maxloc = Local (Variable (IntType).locn)
                 List (StW (eloc, min->datum),
@@ -146,8 +146,8 @@ object Transformation {
              * then and else parts.
              */
             case IfStmt (cond, thens, elses) =>
-                val lab1 = genlabel ()
-                val lab2 = genlabel ()
+                val lab1 = genlabel
+                val lab2 = genlabel
                 List (Beq (cond->datum, lab1)) ++
                     thens.flatMap (sitems) ++
                     List (Jmp (lab2), LabelDef (lab1)) ++
@@ -162,8 +162,8 @@ object Transformation {
              * inside another one.
              */
             case LoopStmt (body) =>
-                val lab1 = genlabel ()
-                val lab2 = genlabel ()
+                val lab1 = genlabel
+                val lab2 = genlabel
                 val savelab = exitlab
                 exitlab = lab2
                 val res = List (LabelDef (lab1)) ++
@@ -185,8 +185,8 @@ object Transformation {
              * of the condition and branching to the body.
              */
             case WhileStmt (cond, body) =>
-                val lab1 = genlabel ()
-                val lab2 = genlabel ()
+                val lab1 = genlabel
+                val lab2 = genlabel
                 List (Jmp (lab1), LabelDef (lab2)) ++
                     body.flatMap (sitems) ++
                     List (LabelDef (lab1), Bne (cond->datum, lab2))

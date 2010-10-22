@@ -100,7 +100,7 @@ trait ReduceSubst extends Reduce {
 }
 
 class ReduceSubstEvaluator extends ReduceSubst {
-    override def reducesinlambdas = true
+    override def reducesinlambdas () = true
 }
 
 

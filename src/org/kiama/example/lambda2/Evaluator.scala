@@ -37,7 +37,7 @@ trait Evaluator {
      * Whether this mechanism evaluates inside lambdas.  Used for
      * testing.  Default: false.
      */
-    def reducesinlambdas = false
+    def reducesinlambdas () = false
 
     /**
      * Generate a fresh variable name.  Prefix the name with an underscore

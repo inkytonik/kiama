@@ -32,7 +32,7 @@ object HeapOps {
 
 	/**
 	 * Extra bytecode instructions for this extension
-     * Allocate, access and update values in the heap 
+     * Allocate, access and update values in the heap
      */
     case class Alloc() extends Instruction
     case class Get() extends Instruction
@@ -59,11 +59,11 @@ trait HeapOps extends SECDBase {
      * Reference values
      */
     case class RefValue() extends Value {
-        override def hashCode = super.hashCode
+        override def hashCode () = super.hashCode
         override def equals(that : Any) = super.equals(that)
-        override def toString = "RefValue@" ++ hashCode.toHexString
+        override def toString () = "RefValue@" ++ hashCode.toHexString
     	lazy val content = new State[Value]("heap chunk id @" + hashCode.toHexString) {
-    	    override def pretty(p : PrettyPrinter, v : Value) = v.pretty(p) 
+    	    override def pretty(p : PrettyPrinter, v : Value) = v.pretty(p)
     	}
     	def getType : TypeValue = RefTypeValue
     }
@@ -74,7 +74,7 @@ trait HeapOps extends SECDBase {
      */
 	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
 		// Instructions for manipulating heap allocated mutable values.
-        case Alloc() :: next => 
+        case Alloc() :: next =>
             val r = RefValue()
             r.content := EmptyValue
             stack := r :: stack
@@ -82,16 +82,16 @@ trait HeapOps extends SECDBase {
         case Get() :: next => (stack : Stack) match {
             case (r @ RefValue()) :: tail =>
                 stack := r.content :: tail
-                control := next 
-            case _ :: _ => raiseException(TypeError) 
-            case _ => raiseException(StackUnderflow) 
+                control := next
+            case _ :: _ => raiseException(TypeError)
+            case _ => raiseException(StackUnderflow)
         }
         case Put() :: next => (stack : Stack) match {
             case v :: (r @ RefValue()) :: tail =>
                 r.content := v
                 stack := tail
-                control := next 
-            case _ :: _ :: _ => raiseException(TypeError) 
+                control := next
+            case _ :: _ :: _ => raiseException(TypeError)
             case _ => raiseException(StackUnderflow)
         }
 	}

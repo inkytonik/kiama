@@ -42,21 +42,21 @@ object AST {
      * Numeric expressions.
      */
     case class Num (n : Int) extends Exp {
-        override def toString = n.toString
+        override def toString () = n.toString
     }
 
     /**
      * Variable expressions.
      */
     case class Var (i : Idn) extends Exp {
-        override def toString = i
+        override def toString () = i
     }
 
     /**
      * Lambda expressions binding name of type tipe within body.
      */
     case class Lam (i : Idn, t : Type, e : Exp) extends Exp {
-        override def toString =
+        override def toString () =
             "(\\" + i + (if (t == null) "" else " : " + t) + " . " + e + ")"
     }
 
@@ -64,28 +64,28 @@ object AST {
      * Application of l to r.
      */
     case class App (e1 : Exp, e2 : Exp) extends Exp {
-        override def toString = "(" + e1 + " " + e2 + ")"
+        override def toString () = "(" + e1 + " " + e2 + ")"
     }
 
     /**
      * An application of a primitive binary operation.
      */
     case class Opn (o : Op, e1 : Exp, e2 : Exp) extends Exp {
-        override def toString = "(" + e1 + " " + o + " " + e2 + ")"
+        override def toString () = "(" + e1 + " " + o + " " + e2 + ")"
     }
 
     /**
      * Bind name of type tipe to the value of exp in body.
      */
     case class Let (i : Idn, t : Type, e1 : Exp, e2 : Exp) extends Exp {
-        override def toString = "(let " + i + " : " + t + " = " + e1 + " in " + e2 + ")"
+        override def toString () = "(let " + i + " : " + t + " = " + e1 + " in " + e2 + ")"
     }
 
     /**
      * Parallel bindings in body.
      */
     case class Letp (bs : List[Bind], e : Exp) extends Exp {
-        override def toString = "(letp " + bs.mkString ("; ") + " in " + e + ")"
+        override def toString () = "(letp " + bs.mkString ("; ") + " in " + e + ")"
     }
 
     /**
@@ -94,7 +94,7 @@ object AST {
      * evaluation mechanisms.
      */
     case class Bind (i : Idn, e : Exp) {
-        override def toString = i + " = " + e
+        override def toString () = i + " = " + e
     }
 
     /**
@@ -106,14 +106,14 @@ object AST {
      * Primitive integer type.
      */
     case object IntType extends Type {
-        override def toString = "Int"
+        override def toString () = "Int"
     }
 
     /**
      * Function type from an argument type arg to a result type res.
      */
     case class FunType (t1 : Type, t2 : Type) extends Type {
-        override def toString = "" + t1 + " -> " + t2
+        override def toString () = "" + t1 + " -> " + t2
     }
 
     /**
@@ -131,7 +131,7 @@ object AST {
      */
     case object AddOp extends Op {
         def eval (l : Int, r : Int) = l + r
-        override def toString = "+"
+        override def toString () = "+"
     }
 
     /**
@@ -139,7 +139,7 @@ object AST {
      */
     case object SubOp extends Op {
         def eval (l : Int, r : Int) = l - r
-        override def toString = "-"
+        override def toString () = "-"
     }
 
     // Congruences

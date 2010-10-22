@@ -41,7 +41,7 @@ object DynamicAttribution extends AttributionBase {
     /**
      * Lazily resets all memoisation tables.
      */
-    def resetMemo = equationsVersion += 1
+    def resetMemo () = equationsVersion += 1
 
     /**
      * Define an attribute of T nodes of type U by the function f.

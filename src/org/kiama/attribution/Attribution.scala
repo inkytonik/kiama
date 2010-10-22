@@ -186,7 +186,7 @@ object Attribution extends AttributionBase {
     /**
      * Lazily reset all memoisation tables.
      */
-    def resetMemo = MemoState.MEMO_VERSION += 1
+    def resetMemo () = MemoState.MEMO_VERSION += 1
 
     /**
      * An attribute of a node type T with value of type U, supported by a memo

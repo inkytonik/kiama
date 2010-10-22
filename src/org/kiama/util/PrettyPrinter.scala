@@ -24,10 +24,10 @@ package org.kiama.util
  * Simple class for pretty-printing capabilities.
  */
 class PrettyPrinter (
-        summaryFlag : Boolean = false, 
+        summaryFlag : Boolean = false,
         val truncate : Int = 3,
         val tabWidth : Int = 4) {
-        
+
     require(truncate >= 0)
     require(tabWidth >= 0)
 
@@ -35,7 +35,7 @@ class PrettyPrinter (
      * Pretty print buffer
      */
     private val buffer : StringBuilder = new StringBuilder
-    
+
     /**
      * Current tabStop
      */
@@ -47,30 +47,30 @@ class PrettyPrinter (
     def indent (by : Int) (printer : => Unit) {
         val oldTabStop = tabStop
         tabStop += by
-        try 
+        try
             printer
         finally
             tabStop = oldTabStop
     }
-    
+
     def indent : (=> Unit) => Unit = indent (tabWidth : Int) _
-        
+
     /**
      * Primitive pretty printers
      */
     def newline { buffer.append("\n") }
-    def text (t : String) { 
+    def text (t : String) {
         val l : Int = buffer.length - buffer.lastIndexOf('\n') - 1
         buffer.append("".padTo(tabStop - l, ' '))
-        buffer.append(t) 
+        buffer.append(t)
     }
     def untabbedText (t : String) { buffer.append(t) }
-    
+
     /**
      * Pretty print a list in column format
      */
     def printList[T](
-        heading : String = "List", lst : List[T], 
+        heading : String = "List", lst : List[T],
         elemPrinter : T => Unit = (v : PrettyPrintable) => v.pretty(this)
     ) {
         text(heading)
@@ -98,11 +98,11 @@ class PrettyPrinter (
             }
         }
     }
-    
+
     /**
      * Convert to a string.
      */
-    override def toString = buffer.toString
+    override def toString () = buffer.toString
 
 }
 
@@ -112,5 +112,5 @@ class PrettyPrinter (
 trait PrettyPrintable {
     def pretty (p : PrettyPrinter) : Unit = p.text(this.toString)
 }
- 
+
 

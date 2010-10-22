@@ -58,7 +58,7 @@ trait REPL {
     /**
      * Define the prompt (default: "> ").
      */
-    def prompt = "> "
+    def prompt () = "> "
 
     /**
      * Process a user input line.
@@ -119,7 +119,7 @@ trait GeneratingREPL[T] extends REPL {
     /**
      * Display a prompt.
      */
-    override def prompt = "Hit ENTER to generate an instance: "
+    override def prompt () = "Hit ENTER to generate an instance: "
 
     /**
      * The generator to use to make values of type T.

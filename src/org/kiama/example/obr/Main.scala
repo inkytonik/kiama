@@ -50,8 +50,8 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
     def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
         // Initialise compiler state
-        SymbolTable.reset ()
-        SPARCTree.reset ()
+        SymbolTable.reset
+        SPARCTree.reset
 
         // Conduct semantic analysis and report any errors
         ast->errors

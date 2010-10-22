@@ -57,6 +57,6 @@ class StringEmitter extends Emitter {
     val b = new StringBuilder
     override def emit (any : Any) = b.append (any.toString)
     override def emitln (any : Any) = b.append (any.toString).append ('\n')
-    override def emitln = b.append ('\n')
-    def result () = b.result ()
+    override def emitln () = b.append ('\n')
+    def result () = b.result
 }

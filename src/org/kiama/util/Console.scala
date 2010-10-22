@@ -65,7 +65,7 @@ object JLineConsole extends Console {
             try {
                 reader.readLine (prompt)
             } finally {
-                terminal.enableEcho ()
+                terminal.enableEcho
             }
         }
     }
@@ -88,7 +88,7 @@ trait ReaderConsole extends Console {
      * Read a line from the file.  The prompt is ignored.
      */
     override def readLine (prompt : String) : String =
-        reader.readLine ()
+        reader.readLine
 
 }
 

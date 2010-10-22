@@ -77,7 +77,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
                 Gen.frequency ((1, genDivByZero (sz)), (1, super.genDiv (sz)))
             def genDivByZero (sz : Int) =
                 for { l <- genExp (sz/2) } yield Div (l, Num (0))
-            def divsbyzero = count { case Div (_, Num (0)) => 1 }
+            val divsbyzero = count { case Div (_, Num (0)) => 1 }
             expect (0) (divsbyzero (numexp))
             expect (0) (divsbyzero (varexp))
             check ((e : Exp) => (e.divsbyzero != 0) ==> (divsbyzero (e) == e.divsbyzero))
@@ -150,7 +150,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
 
     test ("calculate expression depth") {
         def maximum (l : Seq[Int]) : Int = l.drop (1).foldLeft (l.head)(_.max(_))
-        def depth = para ((t : Any, cs : Seq[Int]) => 1 + maximum (List (0) ++ cs))
+        val depth = para ((t : Any, cs : Seq[Int]) => 1 + maximum (List (0) ++ cs))
         expect (2) (depth (numexp))
         expect (4) (depth (varexp))
         check ((e : Exp) => depth (e) == e.depth)

@@ -8,7 +8,7 @@ object PicoJavaBenchmark extends Application {
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 
-    def basicAst = ClassDecl ("AA", None, Block (List (VarDecl ("x", Use ("int")))))
+    def basicAst () = ClassDecl ("AA", None, Block (List (VarDecl ("x", Use ("int")))))
 
     def createAst (subtree : ClassDecl) =
         ClassDecl ("AA", None, Block (

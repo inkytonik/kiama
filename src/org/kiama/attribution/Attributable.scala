@@ -78,7 +78,7 @@ trait Attributable extends Product with Positional {
     def isFirst : Boolean = prev == null
 
     /**
-     * Is this node the last child of its parent? 
+     * Is this node the last child of its parent?
      */
     def isLast : Boolean = next == null
 
@@ -97,21 +97,21 @@ trait Attributable extends Product with Positional {
      */
     def children : Iterator[Attributable] =
         _children.iterator
-    
+
     /**
      * If this node has some attributable children then return true, else return false.
      */
     def hasChildren : Boolean = !_children.isEmpty
-    
+
     /**
      * This node's first attributable child.
-     * Raises an IndexOutOfBounds exception if this node has no children 
+     * Raises an IndexOutOfBounds exception if this node has no children
      */
     def firstChild[T] : T = _children(0).asInstanceOf[T]
-    
+
     /**
      * This node's last attributable child.
-     * Raises an IndexOutOfBounds exception if this node has no children 
+     * Raises an IndexOutOfBounds exception if this node has no children
      */
     def lastChild[T] : T = _children(_children.length - 1).asInstanceOf[T]
 
@@ -149,7 +149,7 @@ trait Attributable extends Product with Positional {
      * As a side-effect, this method remembers the attributable children
      * so that they can be accessed easily via the children iterator.
      */
-    private def setChildConnections = {
+    private def setChildConnections () = {
 
         var i : Int = 0
         var prev : Attributable = null
@@ -162,7 +162,7 @@ trait Attributable extends Product with Positional {
            if (prev != null) prev._next = c
            prev = c
         }
-        
+
         for (i <- 0 until productArity) {
             productElement (i) match {
                 case c : Attributable => setConnections(c)

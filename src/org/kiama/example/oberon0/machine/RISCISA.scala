@@ -214,7 +214,7 @@ object RISCISA {
     abstract class Branch extends Instr {
         val label : Int
         var disp : Int = _
-        // override def toString = super.toString + " (" + disp + ")"
+        // override def toString () = super.toString + " (" + disp + ")"
     }
 
     /**

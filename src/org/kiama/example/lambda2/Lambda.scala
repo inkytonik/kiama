@@ -41,7 +41,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
         true
     }
 
-    override def prompt = "lambda2> "
+    override def prompt () = "lambda2> "
 
     /**
      * Are we currently type-checking or not?  Default: true.
@@ -68,7 +68,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
         line match {
             case Command (Array (":help")) =>
                 help
-            
+
             case Command (Array (":eval")) =>
                 println ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
@@ -78,18 +78,18 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                     else
                         println
                 }
-            
+
             case Command (Array (":eval", mech)) =>
                 if (!setEvaluator (mech))
                     println ("unknown evaluation mechanism: " + mech)
-            
+
             case Command (Array (":type")) =>
                 println ("Typing is " + (if (typecheck) "on" else "off"))
-            
+
             case Command (Array (":type", "on")) =>
                 typecheck = true
                 println ("Typing is on")
-            
+
             case Command (Array (":type", "off")) =>
                 typecheck = false
                 println ("Typing is off")

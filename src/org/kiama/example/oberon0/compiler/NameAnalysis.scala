@@ -74,7 +74,7 @@ class Environment (parent: Environment) {
             false
     }
 
-    override def toString = decls.toString
+    override def toString () = decls.toString
 }
 
 /**

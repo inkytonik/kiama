@@ -200,7 +200,7 @@ object Rewriter {
          strategyf (_ => Some (t))
 
     /**
-     * (Implicitly) construct a strategy from an option value.  The 
+     * (Implicitly) construct a strategy from an option value.  The
      * strategy succeeds or fails depending on whether the option is
      * a Some or None, respectively.
      */
@@ -559,7 +559,7 @@ object Rewriter {
 
     /**
      * Return a strategy that behaves as s does, but memoises its arguments and
-     * results.  In other words, if memo (s) is called on a term t twice, the 
+     * results.  In other words, if memo (s) is called on a term t twice, the
      * second time will return the same result as the first, without having to
      * invoke s.  For best results, it is important that s should have no side
      * effects.
@@ -580,7 +580,7 @@ object Rewriter {
     def collects[T] (f : PartialFunction[Term,T]) : Term => Set[T] =
         (t : Term) => {
             var collection = Set[T]()
-            def collect = (v : T) => collection += v
+            val collect = (v : T) => collection += v
             (everywheretd (query (f andThen collect))) (t)
             collection
         }
@@ -593,7 +593,7 @@ object Rewriter {
     def collectl[T] (f : PartialFunction[Term,T]) : Term => List[T] =
         (t : Term) => {
             var collection = List[T]()
-            def collect = (v : T) => collection = collection ::: List (v)
+            val collect = (v : T) => collection = collection ::: List (v)
             (everywheretd (query (f andThen collect))) (t)
             collection
         }
@@ -606,7 +606,7 @@ object Rewriter {
     def count (f : PartialFunction[Term,Int]) : Term => Int =
         (t : Term) => {
             var total = 0
-            def count = (v : Int) => total += v
+            val count = (v : Int) => total += v
             (everywheretd (query (f andThen count))) (t)
             total
         }

@@ -55,36 +55,36 @@ object AST {
         /**
          * The numeric value of the expression.
          */
-        def value : Double
+        def value () : Double
 
         /**
          * The set of all variable references in the expression.
          */
-        def vars : Set[Idn] = Set ()
+        def vars () : Set[Idn] = Set ()
 
         /**
          * The number of divisions by the constant zero in the expression.
          */
-        def divsbyzero : Int = 0
+        def divsbyzero () : Int = 0
 
         /**
          * The depth of the expression, i.e., the number of levels from the
          * root to the leaf values.
          */
-        def depth : Int = 0
+        def depth () : Int = 0
 
         /**
          * The number of additions of integer constants in the expression.
          */
-        def intadds : Int = 0
+        def intadds () : Int = 0
     }
 
     /**
      * Numeric expressions.
      */
     case class Num (d : Double) extends Exp {
-        override def value = d
-        override def depth = 2
+        override def value () = d
+        override def depth () = 2
         def pretty (o : StringBuilder) = o.append (d)
     }
 
@@ -93,10 +93,10 @@ object AST {
      */
     case class Var (s : Idn) extends Exp {
         // Hack to make tests more interesting
-        override def value = 3
-        override def vars = Set (s)
-        override def depth = 2
-        override def toString = "Var(\"" + s + "\")"
+        override def value () = 3
+        override def vars () = Set (s)
+        override def depth () = 2
+        override def toString () = "Var(\"" + s + "\")"
         def pretty (o : StringBuilder) = o.append (s)
     }
 
@@ -104,11 +104,11 @@ object AST {
      * Unary negation expressions.
      */
     case class Neg (e : Exp) extends Exp {
-        override def value = - e.value
-        override def vars = e.vars
-        override def divsbyzero = e.divsbyzero
-        override def depth = 1 + e.depth
-        override def intadds = e.intadds
+        override def value () = - e.value
+        override def vars () = e.vars
+        override def divsbyzero () = e.divsbyzero
+        override def depth () = 1 + e.depth
+        override def intadds () = e.intadds
         def pretty (o : StringBuilder) = {
             o.append ("(-"); e.pretty (o); o.append (')')
         }
@@ -118,18 +118,18 @@ object AST {
      * Binary expressions.
      */
     abstract class Binary (l : Exp, r : Exp) extends Exp {
-        override def vars = l.vars ++ r.vars
-        override def divsbyzero = l.divsbyzero + r.divsbyzero
-        override def depth = 1 + (l.depth).max (r.depth)
-        override def intadds = l.intadds + r.intadds
+        override def vars () = l.vars ++ r.vars
+        override def divsbyzero () = l.divsbyzero + r.divsbyzero
+        override def depth () = 1 + (l.depth).max (r.depth)
+        override def intadds () = l.intadds + r.intadds
     }
 
     /**
      * Addition expressions.
      */
     case class Add (l : Exp, r : Exp) extends Binary (l, r) {
-        override def value = l.value + r.value
-        override def intadds =
+        override def value () = l.value + r.value
+        override def intadds () =
             (l, r) match {
                 case (Num (_), Num (_)) => 1
                 case _                  => super.intadds
@@ -143,7 +143,7 @@ object AST {
      * Subtraction expressions.
      */
     case class Sub (l : Exp, r : Exp) extends Binary (l, r) {
-        override def value = l.value - r.value
+        override def value () = l.value - r.value
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" - "); r.pretty (o); o.append (')')
         }
@@ -153,7 +153,7 @@ object AST {
      * Multiplication expressions.
      */
     case class Mul (l : Exp, r : Exp) extends Binary (l, r) {
-        override def value = l.value * r.value
+        override def value () = l.value * r.value
         def pretty (o : StringBuilder) = {
             o.append ('('); l.pretty (o); o.append (" * "); r.pretty (o); o.append (')')
         }
@@ -164,8 +164,8 @@ object AST {
      */
     case class Div (l : Exp, r : Exp) extends Binary (l, r) {
         // Hack: no errors, so return zero for divide by zero
-        override def value = if (r.value == 0) 0 else l.value / r.value
-        override def divsbyzero =
+        override def value () = if (r.value == 0) 0 else l.value / r.value
+        override def divsbyzero () =
             l.divsbyzero + (r match {
                                 case Num (0) => 1
                                 case _       => r.divsbyzero
@@ -183,7 +183,7 @@ object AST {
         /**
          * The set of all variable references in the statement.
          */
-        def vars : Set[Idn] = Set ()
+        def vars () : Set[Idn] = Set ()
 
     }
 
@@ -198,7 +198,7 @@ object AST {
      * Statement sequences.
      */
     case class Seqn (ss : Seq[Stmt]) extends Stmt {
-        override def vars = Set (ss flatMap (_ vars) : _*)
+        override def vars () = Set (ss flatMap (_ vars) : _*)
         def pretty (o : StringBuilder) = {
             o.append ("{\n"); ss.foreach (_.pretty (o)); o.append ("}\n")
         }
@@ -208,8 +208,8 @@ object AST {
      * Assignment statements.
      */
     case class Asgn (s : Idn, e : Exp) extends Stmt {
-        override def vars = Set (s)
-        override def toString = "Asgn(\"" + s + "\"," + e + ")"
+        override def vars () = Set (s)
+        override def toString () = "Asgn(\"" + s + "\"," + e + ")"
         def pretty (o : StringBuilder) = {
             o.append (s); o.append (" = "); e.pretty (o); o.append (";\n")
         }
@@ -219,7 +219,7 @@ object AST {
      * While loops.
      */
     case class While (e : Exp, b : Stmt) extends Stmt {
-        override def vars = e.vars ++ b.vars
+        override def vars () = e.vars ++ b.vars
         def pretty (o : StringBuilder) = {
             o.append ("while ("); e.pretty (o); o.append (")\n");
             b.pretty (o);
@@ -398,7 +398,7 @@ object Imperative extends ParsingREPL[AST.Stmt] with Parser {
         true
     }
 
-    override def prompt = "imperative> "
+    override def prompt () = "imperative> "
 
     def process (s : AST.Stmt) {
         println (s)
@@ -411,7 +411,7 @@ object Imperative extends ParsingREPL[AST.Stmt] with Parser {
  */
 object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
 
-    def generator = arbStmt
+    def generator () = arbStmt
 
     override def process (s : AST.Stmt) {
         println (s)

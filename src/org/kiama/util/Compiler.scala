@@ -114,7 +114,7 @@ trait Compiler[T] extends FunSuite {
         val emitter = new StringEmitter
         Messaging.resetmessages
         driver (args, console, emitter)
-        emitter.result ()
+        emitter.result
     }
 
     /**
@@ -196,7 +196,7 @@ trait Compiler[T] extends FunSuite {
         }
 
         val dir = new File (path)
-        val children = dir.list ()
+        val children = dir.list
         if (children == null) {
             test ("Run file tests at " + path) {
                 fail ("bad test file path " + path)

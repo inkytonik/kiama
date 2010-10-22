@@ -44,19 +44,19 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     import ConversionOps._
     import RecordOps._
     import ExceptionHandler._
-    
+
     /**
      * Table of builtin primitives for this machine.
      * These named values may be loaded into the environment
      * using the BindPrims(nms) bytecode.
      */
-     
+
     def primTable : Map[Name,Value] = Map(
         // Type Values
         "EmptyTypeValue" -> EmptyTypeValue
     ,   "TypeTypeValue" -> TypeTypeValue
     ,   "ClosureTypeValue" -> ClosureTypeValue
-    ,   "ContTypeValue" -> ContTypeValue 
+    ,   "ContTypeValue" -> ContTypeValue
     ,   "ExceptionTypeValue" -> ExceptionTypeValue
     ,   "StringTypeValue" -> StringTypeValue
     ,   "IntTypeValue" -> IntTypeValue
@@ -77,7 +77,7 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     ,   "ConversionError" -> ConversionError
     ,   "NonExistentPrimitive" -> NonExistentPrimitive
         // Builtin Functions
-    ,   "write" -> PrimValue(List(Write(),PushEmpty()))     
+    ,   "write" -> PrimValue(List(Write(),PushEmpty()))
                                                     // write a value to the terminal
     ,   "read" -> PrimValue(List(Pop(1),Read()))    // read a string from the terminal
     ,   "type" -> PrimValue(List(GetType()))        // get the type of a value
@@ -107,14 +107,14 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     /**
      * Wrap supplied code in a preamble / postamble
      * This wrapper ensures that the exception handler
-     * register is initialised to contain a global 
+     * register is initialised to contain a global
      * "abort" exception handler.
      */
     private val program : CodeSegment = CodeSegment(
         MkClosures(List(
       	    FunctionSpec(
       	        None
-      	    ,   "@globalExnHandler" 
+      	    ,   "@globalExnHandler"
       	    ,   CodeTree(
       	            Lookup("@globalExnHandler")
       	        ,   SetHandler()
@@ -127,7 +127,7 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     /**
      * Initialise the machine.
      */
-    override def init = {
+    override def init () = {
         stack := Nil
         envir := Map()
         dump := EmptyCont
