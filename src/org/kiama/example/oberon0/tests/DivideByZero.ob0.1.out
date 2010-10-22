@@ -1,0 +1,5 @@
+Exception java.lang.ArithmeticException: / by zero at DIV(1,1,2)
+RISC.R = 
+    Map(2 -> 0, 30 -> 8, 28 -> 6, 1 -> 24, 29 -> 0, 0 -> 0)
+RISC.Mem = 
+    Map(1 -> 0)

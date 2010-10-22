@@ -56,7 +56,7 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
         // Conduct semantic analysis and report any errors
         ast->errors
         if (messagecount > 0) {
-            report
+            report (emitter)
             false
         } else {
             // Compile the source tree to a target tree

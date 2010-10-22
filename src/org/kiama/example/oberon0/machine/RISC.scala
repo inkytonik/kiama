@@ -101,10 +101,19 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     def execute (instr : Instr) {
         if (debug)
             emitter.emitln (name + " exec: " + instr)
-        arithmetic (instr)
-        memory (instr)
-        control (instr)
-        inputoutput (instr)
+        try {
+            arithmetic (instr)
+            memory (instr)
+            control (instr)
+            inputoutput (instr)
+        }
+        catch {
+            case e =>
+                emitter.emitln ("Exception " + e + " at " + instr)
+                emitter.emitln (R)
+                emitter.emitln (Mem)
+                halt := true
+        }
     }
 
     /**
@@ -140,25 +149,16 @@ class RISC (code : Code, console : Console, emitter : Emitter)
      * Execute memory instructions.
      */
     def memory (instr : Instr) {
-        try {
-            instr match {
-                case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
-                case LDB (a, b, im) => halt := true // not implemented
-                case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
-                                       R (b) := R (b) - im
-                case STW (a, b, im) => Mem ((R (b) + im) / 4) := R (a)
-                case STB (a, b, im) => halt := true // not implemented
-                case PSH (a, b, im) => Mem (R (b) / 4) := R (a)
-                                       R (b) := R (b) + im
-                case _              =>
-            }
-        }
-        catch {
-            case e =>
-                println ("Exception at " + instr)
-                e.printStackTrace
-                println (Mem)
-                halt := true
+        instr match {
+            case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
+            case LDB (a, b, im) => halt := true // not implemented
+            case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
+                                   R (b) := R (b) - im
+            case STW (a, b, im) => Mem ((R (b) + im) / 4) := R (a)
+            case STB (a, b, im) => halt := true // not implemented
+            case PSH (a, b, im) => Mem (R (b) / 4) := R (a)
+                                   R (b) := R (b) + im
+            case _              =>
         }
     }
 

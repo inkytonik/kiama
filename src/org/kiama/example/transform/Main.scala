@@ -52,8 +52,7 @@ class Driver extends Parser with RegexCompiler[Program] {
         emitter.emitln (ast)
         val exp = Analysis.process (ast)
         emitter.emitln (exp)
-        for (m <- sortedmessages)
-            emitter.emitln (m)
+        report (emitter)
         true
     }
 
