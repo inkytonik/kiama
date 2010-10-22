@@ -255,6 +255,8 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter) {
         override def toString : String = {
             val p : PrettyPrinter = new PrettyPrinter
             p.text (name)
+            p.text (".")
+            p.text (psname)
             p.text (" = ")
             p.indent {
                 p.newline
