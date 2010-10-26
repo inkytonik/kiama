@@ -37,7 +37,7 @@ trait SyntaxAnalysis extends RegexParsers with PackratParsers {
     override val whiteSpace = """(\s|\(\*(?:.|[\n\r])*?\*\))+""".r
 
     val reservedWords = HashSet(
-          "PROGRAM", "INTEGER", "BEGIN", "END", "INTEGER", "CONST", "VAR"
+          "PROGRAM", "INTEGER", "BEGIN", "END", "ELSE", "CONST", "VAR"
         , "BOOLEAN", "ARRAY", "OF", "RECORD", "EXIT", "RETURN", "IF", "THEN"
         , "LOOP", "WHILE", "DO", "FOR", "TO", "OR", "MOD", "AND", "TRUE"
         , "FALSE", "EXCEPTION", "RAISE", "TRY", "CATCH"
