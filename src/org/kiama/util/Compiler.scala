@@ -118,6 +118,16 @@ trait Compiler[T] extends FunSuite {
     }
 
     /**
+     * Sanitise the output.  At the moment this means make any Windows line
+     * endings appear in Unix style instead.  This allows for either program
+     * or test output to be use either line ending style, but tests will still
+     * pass.  This will clearly break any tests where the actual line endings
+     * matter.
+     */
+    def sanitise (s : String) : String =
+        s.replaceAll ("\r", "\n")
+
+    /**
      * Make a single file test processing the file cp with comamnd-line
      * arguments args, expecting output as in the file rp.  Use the given
      * console for input.  The extra string is used is appended to the
@@ -141,7 +151,7 @@ trait Compiler[T] extends FunSuite {
                         throw (e)
                 }
             val rc = Source.fromFile (rp).mkString
-            if (cc != rc)
+            if (sanitise (cc) != sanitise (rc))
                 fail (title + " generated bad output:\n" + cc + "expected:\n" + rc)
         }
     }
