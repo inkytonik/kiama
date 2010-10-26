@@ -118,14 +118,25 @@ trait Compiler[T] extends FunSuite {
     }
 
     /**
+     * Flag to decide whether to sanitise the output before comparison
+     * of test results with expected results (see sanitise method).
+     * Default is true; override with false if you want actual results
+     * compared.
+     */
+    def dosanitisation = true
+
+    /**
      * Sanitise the output.  At the moment this means make any Windows line
      * endings appear in Unix style instead.  This allows for either program
-     * or test output to be use either line ending style, but tests will still
+     * or test output to use either line ending style, but tests will still
      * pass.  This will clearly break any tests where the actual line endings
-     * matter.
+     * matter.  See
      */
     def sanitise (s : String) : String =
-        s.replaceAll ("\r", "\n")
+        if (dosanitisation)
+            s.replaceAll ("\r", "\n")
+        else
+            s
 
     /**
      * Make a single file test processing the file cp with comamnd-line
