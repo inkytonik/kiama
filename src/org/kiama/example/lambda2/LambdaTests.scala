@@ -182,35 +182,73 @@ class LambdaTests extends FunSuite with Checkers with Parser {
         }
     }
 
-    test ("a number evaluates to itself") {
+    test ("a single digit number evaluates to itself") {
         assertEvalAll ("4", Num (4))
+    }
+
+    test ("a two digit number evaluates to itself") {
         assertEvalAll ("25", Num (25))
+    }
+
+    test ("a four digit number evaluates to itself") {
         assertEvalAll ("9876", Num (9876))
     }
 
-    test ("a variable evaluates to itself") {
+    test ("a single character variable evaluates to itself") {
         assertEvalAll ("v", Var ("v"))
+    }
+
+    test ("a two character variable evaluates to itself") {
         assertEvalAll ("var", Var ("var"))
+    }
+
+    test ("a variable whose name contains digits evaluates to itself") {
         assertEvalAll ("v45", Var ("v45"))
     }
 
-    test ("primitives evaluate correctly") {
+    test ("primitives evaluate correctly: addition") {
         assertEvalAll ("4 + 1", Num (5))
+    }
+
+    test ("primitives evaluate correctly: subtraction") {
         assertEvalAll ("20 - 12", Num (8))
-        assertEvalAll ("12 + 7 - 19", Num (0))
-        assertEvalAll ("2 - 3 - 4", Num (-5))
+    }
+
+    test ("primitives evaluate correctly: addition and subtraction") {
         assertEvalAll ("12 + 7 - 19", Num (0))
     }
 
-    test ("lambda expressions evaluate to themselves") {
+    test ("primitives evaluate correctly: addition and subtraction with parens") {
+        assertEvalAll ("12 + (7 - 19)", Num (0))
+    }
+
+    test ("primitives evaluate correctly: addition twice") {
+        assertEvalAll ("2 + 3 + 4", Num (9))
+    }
+
+    test ("primitives evaluate correctly: subtraction twice") {
+        assertEvalAll ("2 - 3 - 4", Num (-5))
+    }
+
+    test ("primitives evaluate correctly: subtraction twice with parens") {
+        assertEvalAll ("2 - (3 - 4)", Num (3))
+    }
+
+    test ("lambda expressions evaluate to themselves: constant body") {
         assertEvalAll ("""\x:Int.4""",
                        Lam ("x", IntType, Num (4)))
+    }
+
+    test ("lambda expressions evaluate to themselves: non-constant body") {
         assertEvalAll ("""\x : Int . x - 1""",
                        Lam ("x", IntType, Opn (SubOp, Var ("x"), Num (1))))
     }
 
-    test ("parameters are correctly substituted") {
+    test ("parameters are correctly substituted: integer param") {
         assertEvalAll ("""(\x : Int . x) 42""", Num (42))
+    }
+
+    test ("parameters are correctly substituted: function param") {
         assertEvalAll ("""(\x : Int -> Int . x) (\y : Int . y)""",
                        Lam ("y", IntType, Var ("y")))
     }
@@ -219,9 +257,15 @@ class LambdaTests extends FunSuite with Checkers with Parser {
         assertEvalAll ("""(\x : Int . x + 1) 4""", Num (5))
     }
 
-    test ("an unused parameter is ignored") {
+    test ("an unused parameter is ignored: integer param") {
         assertEvalAll ("""(\x:Int.99)42""", Num (99))
+    }
+
+    test ("an unused parameter is ignored: integer param with whitespace") {
         assertEvalAll ("""(\x : Int . 4 + 3) 8""", Num (7))
+    }
+
+    test ("an unused parameter is ignored: function param") {
         assertEvalAll ("""(\x:Int->Int.99) (\y:Int.y)""", Num (99))
     }
 

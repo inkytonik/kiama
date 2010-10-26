@@ -61,11 +61,23 @@ class ParserTests extends FunSuite {
         }
     }
 
-    test ("parse identifiers") {
+    test ("parse identifier: single letter") {
         assertParseOk ("a", IDENTIFIER, "a")
+    }
+
+    test ("parse identifier: multiple letter") {
         assertParseOk ("ab", IDENTIFIER, "ab")
+    }
+
+    test ("parse identifier: letter and digit") {
         assertParseOk ("a1", IDENTIFIER, "a1")
+    }
+
+    test ("parse identifier: mixed letter and digit") {
         assertParseOk ("a1b", IDENTIFIER, "a1b")
+    }
+
+    test ("parse identifier: multiple mixed letter and digit") {
         assertParseOk ("a1b1", IDENTIFIER, "a1b1")
     }
 
@@ -73,10 +85,19 @@ class ParserTests extends FunSuite {
         expect (whiteSpace.replaceFirstIn ("// !@#$%^&*abc\n", "")) ("")
     }
 
-    test ("generate errors for invalid tokens") {
+    test ("generate errors for invalid tokens: leading underscore") {
         assertParseError ("_a", IDENTIFIER);
+    }
+
+    test ("generate errors for invalid tokens: digit") {
         assertParseError ("1", IDENTIFIER);
+    }
+
+    test ("generate errors for invalid tokens: leading digit") {
         assertParseError ("1a", IDENTIFIER);
+    }
+
+    test ("generate errors for invalid tokens: C-style comment") {
         assertParseError ("/* abc */", whiteSpace);
     }
 
@@ -86,6 +107,9 @@ class ParserTests extends FunSuite {
 
     test ("generate a parse error for an empty program") {
         assertParseError ("", program)
+    }
+
+    test ("generate a parse error for a semi-colon only program") {
         assertParseError (";", program)
     }
 

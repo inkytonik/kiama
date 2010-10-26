@@ -48,7 +48,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
      */
     val varexp = Div (Mul (Var ("var1"), Var ("var2")), Var ("var1"))
 
-    test ("collection of variable references") {
+    test ("collection of variable references: direct style") {
         /**
          *  Direct style: local management of the collection.
          */
@@ -58,17 +58,24 @@ class UniplateTests extends FunSuite with Checkers with Generator {
             vars
         }
         check ((e : Exp) => variables (e) == e.vars)
+    }
 
-        // Indirect: using the collects combinator to manage the set
+    {
         val variabless = collects { case Var (s) => s }
-        check ((e : Exp) => variabless (e) == e.vars)
 
-        // Simple check of set and list versions of collect
-        val variablesl = collectl { case Var (s) => s }
-        expect (Set ()) (variabless (numexp))
-        expect (List ()) (variablesl (numexp))
-        expect (Set ("var1", "var2")) (variabless (varexp))
-        expect (List ("var1", "var2", "var1")) (variablesl (varexp))
+        test ("collection of variable references: indirect style") {
+            // Indirect: using the collects combinator to manage the set
+            check ((e : Exp) => variabless (e) == e.vars)
+        }
+
+        test ("collection of variable references: indirect style on sets and lists") {
+            // Simple check of set and list versions of collect
+            val variablesl = collectl { case Var (s) => s }
+            expect (Set ()) (variabless (numexp))
+            expect (List ()) (variablesl (numexp))
+            expect (Set ("var1", "var2")) (variabless (varexp))
+            expect (List ("var1", "var2", "var1")) (variablesl (varexp))
+        }
     }
 
     test ("search for division by zero") {
