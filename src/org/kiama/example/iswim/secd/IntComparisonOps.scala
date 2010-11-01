@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add stack manipulation operations to a SECD machine
@@ -48,7 +49,7 @@ trait IntComparisonOps extends SECDBase with IntegerOps with BooleanOps {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
         case LessThan() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
                 stack := (if (m < n) TrueValue else FalseValue) :: tail

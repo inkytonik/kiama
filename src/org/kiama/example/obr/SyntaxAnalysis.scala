@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.obr
+package org.kiama
+package example.obr
 
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers

@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.obr
+package org.kiama
+package example.obr
 
 /**
  * Module containing structures for representing Obr programs.

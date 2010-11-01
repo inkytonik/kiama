@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0
+package org.kiama
+package example.oberon0
 
 import org.kiama.util.RegexCompiler
 import compiler.AST._
@@ -42,12 +43,12 @@ class Driver extends Parser with RegexCompiler[ModuleDecl] {
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
-    
+
     /**
      * The usage message for an erroneous invocation.
      */
     val usage = "usage: scala org.kiama.example.oberon0.Main file.ob0"
-        
+
     /**
      * Function to process the input that was parsed.  emitter is
      * used for output.  Return true if everything worked, false
@@ -74,7 +75,7 @@ class Driver extends Parser with RegexCompiler[ModuleDecl] {
             report (emitter)
             false
         }
-        
+
     }
 
 }

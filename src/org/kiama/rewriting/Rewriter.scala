@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.rewriting
+package org.kiama
+package rewriting
 
 /**
  * Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).
@@ -139,7 +140,7 @@ object Rewriter {
      * succeeds or fails.  If the function is not defined at the current
      * term, the strategy fails.
      */
-    def strategy (f : PartialFunction[Term,Option[Term]]) : Strategy =
+    def strategy (f : Term ==> Option[Term]) : Strategy =
         new Strategy {
             def apply (t : Term) = {
                 if (f isDefinedAt t) {
@@ -163,7 +164,7 @@ object Rewriter {
      * value of the function applied to the current term.  Otherwise the
      * strategy fails.
      */
-    def rule (f : PartialFunction[Term,Term]) : Strategy =
+    def rule (f : Term ==> Term) : Strategy =
         new Strategy {
             def apply (t : Term) = {
                 if (f isDefinedAt t) {
@@ -181,7 +182,7 @@ object Rewriter {
      * is only used for side-effects such as pattern matching.  The whole thing
      * also fails if f is not defined at the term in the first place.
      */
-    def rulefs (f : PartialFunction[Term,Strategy]) : Strategy =
+    def rulefs (f : Term ==> Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) = {
                 if (f isDefinedAt t) {
@@ -226,7 +227,7 @@ object Rewriter {
      * effect on the subject term but applies a given partial function f to the
      * subject term.  In other words, the strategy runs f for its side-effects.
      */
-    def query[T] (f : PartialFunction[Term,T]) : Strategy =
+    def query[T] (f : Term ==> T) : Strategy =
         new Strategy {
             def apply (t : Term) = {
                 if (f isDefinedAt t) {
@@ -577,7 +578,7 @@ object Rewriter {
      * query on the subject term.  Accumulate the values produced by the
      * function in a set and return the final value of the set.
      */
-    def collects[T] (f : PartialFunction[Term,T]) : Term => Set[T] =
+    def collects[T] (f : Term ==> T) : Term => Set[T] =
         (t : Term) => {
             var collection = Set[T]()
             val collect = (v : T) => collection += v
@@ -590,7 +591,7 @@ object Rewriter {
      * query on the subject term.  Accumulate the values produced by the
      * function in a list and return the final value of the list.
      */
-    def collectl[T] (f : PartialFunction[Term,T]) : Term => List[T] =
+    def collectl[T] (f : Term ==> T) : Term => List[T] =
         (t : Term) => {
             var collection = List[T]()
             val collect = (v : T) => collection = collection ::: List (v)
@@ -603,7 +604,7 @@ object Rewriter {
      * the subject term.  Sum the integer values returned by f from all
      * applications.
      */
-    def count (f : PartialFunction[Term,Int]) : Term => Int =
+    def count (f : Term ==> Int) : Term => Int =
         (t : Term) => {
             var total = 0
             val count = (v : Int) => total += v

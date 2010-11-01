@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.compiler
+package org.kiama
+package example.iswim.compiler
 
 /**
  * Abstract syntax for a variant of ISWIM.
@@ -28,7 +29,7 @@ import scala.util.parsing.input.Positional
 import org.kiama.attribution.Attributable
 
 object Syntax {
-	
+
 	/**
 	 * In essence, all program clauses in ISWIM are expressions.
 	 * In this variant, however, we treat top level let expressions
@@ -37,22 +38,22 @@ object Syntax {
 	abstract class Iswim extends Attributable
 	abstract class Expr extends Iswim
 	abstract class Stmt extends Iswim
-	
+
 	/**
 	 * A complete ISWIM program
 	 */
 	case class IswimProg(bds : List[Stmt]) extends Iswim
-	
+
 	/**
 	 * A simple statement which simply computes a value
 	 */
 	case class ExprStmt(e : Expr) extends Stmt
-	
+
 	/**
 	 * Variable Identifiers
 	 */
 	case class Variable(s : String) extends Expr
-	
+
 	/**
 	 * Integer Expressions
 	 */
@@ -63,7 +64,7 @@ object Syntax {
 	case class Times(l : Expr, r : Expr) extends Expr
 	case class Divide(l : Expr, r : Expr) extends Expr
 	case class Remainder(l : Expr, r : Expr) extends Expr
-	
+
 	/**
 	 * Integer Comparisons
 	 */
@@ -73,7 +74,7 @@ object Syntax {
 	case class LessEq(l : Expr, r : Expr) extends Expr
 	case class Greater(l : Expr, r : Expr) extends Expr
 	case class GreaterEq(l : Expr, r : Expr) extends Expr
-	
+
 	/**
 	 * Boolean Expressions
 	 */
@@ -81,45 +82,45 @@ object Syntax {
 	case class Not(e : Expr) extends Expr
 	case class And(l : Expr, r : Expr) extends Expr
 	case class Or(l : Expr, r : Expr) extends Expr
-	
+
 	/**
 	 * String literals.
 	 */
 	case class StringVal(s : String) extends Expr
-	
+
 	/**
 	 * Binding Constructs
 	 */
 	case class Binding(v : Variable, e : Expr) extends Iswim
 	case class Let(bind : List[Binding], body : Expr) extends Expr
 	case class LetRec(bind : List[Binding], body : Expr) extends Expr
-	
+
 	case class LetStmt(bind : List[Binding]) extends Stmt
 	case class LetRecStmt(bind : List[Binding]) extends Stmt
-	
+
 	/**
 	 * Import statement (not used at the moment)
 	 */
 	case class Import(fn : String) extends Stmt
-	
+
 	/**
 	 * Function Definition and Application
 	 */
 	case class Lambda(par : Variable, body : Expr) extends Expr
 	case class Return(res : Expr) extends Expr
 	case class Apply(f : Expr, e : Expr) extends Expr
-	
+
 	/**
 	 * Conditionals and Loops
 	 */
 	case class If(e : Expr, thn : Expr, els : Expr) extends Expr
 	case class While(ctrl : Expr, body : Expr) extends Expr
-	
+
 	/**
 	 * Blocks
 	 */
 	case class Block(es : List[Expr]) extends Expr
-	
+
 	/**
 	 * Records / Tuples
 	 */
@@ -128,20 +129,20 @@ object Syntax {
 	case class Pattern(ns : List[Variable]) extends Iswim
 	case class MatchClause(p : Pattern, e : Expr) extends Iswim
 	case class Match(ctrl : Expr, clauses : List[MatchClause]) extends Expr
-	                 
+
 	/**
 	 * Continuations
 	 */
 	case class CallCC(e : Expr) extends Expr
 	case class ThrowTo(e : Expr, c : Expr) extends Expr
-	
+
 	/**
 	 * References
 	 */
 	case class MkRef(e : Expr) extends Expr
 	case class Val(e : Expr) extends Expr
 	case class Assign(r : Expr, e : Expr) extends Expr
-	
+
 	/**
 	 * In my original Haskell implementation of ISWIM the following were
 	 * implemented as builtin primitives:
@@ -152,8 +153,8 @@ object Syntax {
 	 * numfields (expr)     return the number of fields in a record
 	 *
 	 * In this implementation, we instead intoduce a mechanism for declaring the names
-	 * of values which we assume will be constructed and pre-loaded into the environment 
-	 * by the the startup pre-amble. 
+	 * of values which we assume will be constructed and pre-loaded into the environment
+	 * by the the startup pre-amble.
 	 */
     case class Primitives(nms : List[Variable]) extends Stmt
 }

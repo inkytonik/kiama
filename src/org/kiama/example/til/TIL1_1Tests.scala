@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.til
+package org.kiama
+package example.til
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

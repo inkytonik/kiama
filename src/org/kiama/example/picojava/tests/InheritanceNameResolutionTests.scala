@@ -26,7 +26,8 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package org.kiama.example.picojava.tests
+package org.kiama
+package example.picojava.tests
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

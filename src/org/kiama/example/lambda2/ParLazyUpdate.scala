@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.lambda2
+package org.kiama
+package example.lambda2
 
 /**
  * Lazy evaluation of lambda calculus with parallel term-level substitution
@@ -40,7 +41,7 @@ trait ParLazyUpdate extends ParLazy {
                      letLetRen <* e)
         letLift <* e <* letDrop
     }
-    
+
     /**
      * Update variable bindings using a given evaluation strategy.
      */

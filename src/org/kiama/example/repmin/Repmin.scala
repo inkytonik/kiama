@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.repmin
+package org.kiama
+package example.repmin
 
 import org.kiama.attribution.Attributable
 import org.kiama.attribution.Attribution._

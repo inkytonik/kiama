@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.dataflow
+package org.kiama
+package example.dataflow
 
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers
@@ -43,14 +44,14 @@ trait SyntaxAnalyser extends RegexParsers with PackratParsers {
     lazy val whileStm : PackratParser[While] =
         ("while" ~> "(" ~> exp <~ ")") ~ stm ^^
             { case e ~ b => While (e, b) }
-        
+
     lazy val ifStm : PackratParser[If] =
         ("if" ~> "(" ~> exp <~ ")") ~ stm ~ ("else" ~> stm) ^^
             { case e ~ t ~ f => If (e, t, f) }
 
     lazy val blockStm : PackratParser[Block] =
         "{" ~> (stm*) <~ "}" ^^ Block
-        
+
     lazy val returnStm : PackratParser[Return] =
         "return" ~> exp ^^ Return
 

@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add facilities to easily implement try...catch exception
@@ -103,7 +104,7 @@ trait ExceptionHandler extends SECDBase {
      * Note this partial function is orElse'd in front of the superclass
      * evaluator, so these new evaluators will replace those in SECDBase.
      */
-	override def evalInst : PartialFunction[Code,Unit] = ({
+	override def evalInst : Code ==> Unit = ({
         // Empty control sequence - so either return from a function
         // call or stop execution of the machine.
         case Nil => (dump : Dump) match {
@@ -207,7 +208,7 @@ trait ExceptionHandler extends SECDBase {
 		    case _ :: _ => raiseException(TypeError)
 		    case _ => raiseException(StackUnderflow)
 		}
-	} : PartialFunction[Code,Unit]) orElse super.evalInst
+	} : Code ==> Unit) orElse super.evalInst
 
     /**
      * Raise a machine exception

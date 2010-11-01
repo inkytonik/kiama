@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.compiler
+package org.kiama
+package example.oberon0.compiler
 
 /**
  * Drive the semantic analysis of a program by checking error conditions.
@@ -104,7 +105,7 @@ object ErrorCheck {
                                 if (exp->intValue >= sz->intValue)
                                     message (ad, "out-of-bounds array index expression")
                             }
-                            case _ => 
+                            case _ =>
                                 error ("non-array found in ArrayDesig")
                         }
 

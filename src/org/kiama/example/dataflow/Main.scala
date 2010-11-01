@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.dataflow
+package org.kiama
+package example.dataflow
 
 import DataflowAST._
 import org.kiama.util.RegexCompiler

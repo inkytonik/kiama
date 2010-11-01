@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.til
+package org.kiama
+package example.til
 
 /**
  * Move all declarations to the start of the program.

@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Operations to convert values from one type to another
@@ -37,7 +38,7 @@ object ConversionOps {
     case class ToString() extends Instruction
     case class ToInt() extends Instruction
     case class ToBoolean() extends Instruction
-    
+
     /**
      * Regular expressions for preprocessing string before conversion
      */
@@ -56,7 +57,7 @@ object ConversionOps {
 /**
  * Trait implementing this SECD machine extension
  */
-trait ConversionOps extends SECDBase with StringOps 
+trait ConversionOps extends SECDBase with StringOps
                     with IntegerOps with BooleanOps {
 
     import ConversionOps._
@@ -66,7 +67,7 @@ trait ConversionOps extends SECDBase with StringOps
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
         // Convert any value to a string
         case ToString() :: next => (stack : Stack) match {
             case v :: tail =>
@@ -78,10 +79,10 @@ trait ConversionOps extends SECDBase with StringOps
         case ToInt() :: next => (stack : Stack) match {
             case IntValue(n) :: tail =>
                 control := next
-            case TrueValue :: tail => 
+            case TrueValue :: tail =>
                 stack := IntValue(1) :: tail
                 control := next
-            case FalseValue :: tail => 
+            case FalseValue :: tail =>
                 stack := IntValue(0) :: tail
                 control := next
             case StringValue(s) :: tail =>
@@ -90,7 +91,7 @@ trait ConversionOps extends SECDBase with StringOps
                         stack := IntValue(m.group(1).toInt) :: tail
                         control := next
                     } catch {
-                        case ex : NumberFormatException => 
+                        case ex : NumberFormatException =>
                             raiseException(ConversionError)
                     }
                     case None => raiseException(ConversionError)
@@ -100,17 +101,17 @@ trait ConversionOps extends SECDBase with StringOps
         }
         // Convert strings and integers to booleans
         case ToBoolean() :: next => (stack : Stack) match {
-            case IntValue(n) :: tail => 
+            case IntValue(n) :: tail =>
                 stack := (if (n == 0) FalseValue else TrueValue) :: tail
-                control := next 
-            case (_ : BooleanValue) :: tail => 
+                control := next
+            case (_ : BooleanValue) :: tail =>
                 control := next
             case StringValue(s) :: tail =>
                 processBoolean.findFirstMatchIn(s) match {
-                    case Some(m) => 
-                        stack := (if (m.group(1).toBoolean) 
-                                    TrueValue 
-                                  else 
+                    case Some(m) =>
+                        stack := (if (m.group(1).toBoolean)
+                                    TrueValue
+                                  else
                                     FalseValue) :: tail
                         control := next
                     case None => raiseException(ConversionError)

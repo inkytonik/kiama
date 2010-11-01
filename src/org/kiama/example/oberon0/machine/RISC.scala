@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.machine
+package org.kiama
+package example.oberon0.machine
 
 import RISCISA._
 import org.kiama.machine.Machine

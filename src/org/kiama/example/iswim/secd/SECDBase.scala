@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Bytecode and value types for the basic SECD machine
@@ -447,7 +448,7 @@ abstract class SECDBase
      * overridden in traits in order to compose on handlers
      * for new bytecode instructions (using orElse composition).
      */
-    def evalInst : PartialFunction[Code,Unit] = {
+    def evalInst : Code ==> Unit = {
         // Empty control sequence - so either return from a function
         // call or stop execution of the machine.
         case Nil => (dump : Dump) match {

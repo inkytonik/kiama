@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.attribution
+package org.kiama
+package attribution
 
 /**
  * Support for dynamic attribution of syntax trees.
@@ -55,7 +56,7 @@ object DynamicAttribution extends AttributionBase {
      * T must be Attributable so that parents can be accessed.
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U = {
-        val childF = new PartialFunction[T,U] {
+        val childF = new (T ==> U) {
             def apply (t : T) = f (t) (t.parent)
             def isDefinedAt (t : T) = f (t) isDefinedAt t.parent
         }
@@ -150,7 +151,7 @@ object DynamicAttribution extends AttributionBase {
         def composedF : ComposedPartialFunction[T,U] =
             f match {
                 case _ : ComposedPartialFunction[_,_] => f.asInstanceOf[ComposedPartialFunction[T,U]]
-                case _ : PartialFunction[_,_]         => val g = new ComposedPartialFunction(f); f = g; g
+                case _ : ==>[_,_]                     => val g = new ComposedPartialFunction(f); f = g; g
             }
 
         def += (g : T ==> U) {

@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.compiler
+package org.kiama
+package example.iswim.compiler
 
 /**
  * Simple semantic analysis of untyped ISWIM programs
@@ -33,14 +34,14 @@ trait SemanticAnalysis {
     import org.kiama.util.Messaging._
 
     import Syntax._
-    
+
     /**
      * Simple name analysis - using an environment
      * All we need to do here is check that at use sites
-     * all variables have been bound by an enclosing 
+     * all variables have been bound by an enclosing
      * let, letrec or function parameter.
      */
-    val envir : Iswim ==> Map[Variable,Iswim] = 
+    val envir : Iswim ==> Map[Variable,Iswim] =
         attr {
             case e if e isRoot => Map()
             case e => e.parent[Iswim] match {
@@ -51,10 +52,10 @@ trait SemanticAnalysis {
                     case LetRecStmt(bds) => (bds.last)->envirOut
                 }
                 case n@Lambda(v,_) => (n->envir) + (v->n)
-                case n if e isFirst => n->envir 
+                case n if e isFirst => n->envir
                 case _ => (e.prev[Iswim])->envirOut
             }
-        }       
+        }
 
     val envirOut : Iswim ==> Map[Variable,Iswim] =
         attr {
@@ -69,7 +70,7 @@ trait SemanticAnalysis {
     /**
      * Check for match clauses which are unreachable because they are
      * preceeded by a clauses which match any value.
-     */ 
+     */
     val unreachable : MatchClause ==> Boolean =
         attr {
             case m : MatchClause => m.prev[Iswim] match {
@@ -81,7 +82,7 @@ trait SemanticAnalysis {
 
     val isSemanticallyCorrect : Iswim ==> Boolean =
         attr {
-            case v@Variable(s) => 
+            case v@Variable(s) =>
                 val bound : Boolean = (v->envir).contains(v)
                 if (!bound) message(v,"unbound variable '" ++ s ++ "'")
                 bound
@@ -92,7 +93,7 @@ trait SemanticAnalysis {
                 !(m->unreachable) & e->isSemanticallyCorrect
             case e =>
                 var result : Boolean = true
-                for ( n <- e.children ) 
+                for ( n <- e.children )
                     result = result & (n.asInstanceOf[Iswim])->isSemanticallyCorrect
                 result
         }

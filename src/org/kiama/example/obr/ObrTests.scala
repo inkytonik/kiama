@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.obr
+package org.kiama
+package example.obr
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

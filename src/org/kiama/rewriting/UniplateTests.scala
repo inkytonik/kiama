@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.rewriting
+package org.kiama
+package rewriting
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

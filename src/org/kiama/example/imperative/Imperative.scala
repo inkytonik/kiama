@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.imperative
+package org.kiama
+package example.imperative
 
 import org.kiama.util.GeneratingREPL
 import org.kiama.util.ParsingREPL

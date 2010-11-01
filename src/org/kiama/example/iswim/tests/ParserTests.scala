@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.tests
+package org.kiama
+package example.iswim.tests
 
 /*
  * Tests of the ISWIM parser combinators.

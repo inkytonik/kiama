@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.assembler
+package org.kiama
+package example.oberon0.assembler
 
 /**
  * Simple assembler for RISC machine programs.  Basically adds code
@@ -88,7 +89,7 @@ object Assembler {
         }
         code
     }
-    
+
     /**
      * Reset the code sequence to be empty.
      */

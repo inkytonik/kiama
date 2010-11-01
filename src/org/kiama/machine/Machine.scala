@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.machine
+package org.kiama
+package machine
 
 import java.lang.Exception
 import scala.collection.mutable.HashMap

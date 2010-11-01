@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.util
+package org.kiama
+package util
 
 /**
  * A console using which input data can be read from standard input.

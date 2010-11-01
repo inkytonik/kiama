@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.repmin
+package org.kiama
+package example.repmin
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.driver
+package org.kiama
+package example.iswim.driver
 
 /**
  * The main driver for compiling and executing ISWIM programs from the

@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.compiler
+package org.kiama
+package example.iswim.compiler
 
 /**
  * ISWIM to SECD bytecode code generator
@@ -30,7 +31,7 @@ import org.kiama.attribution.Attributable
 import org.kiama.example.iswim.secd._
 
 trait CodeGenerator {
-    
+
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Messaging._
 
@@ -46,10 +47,10 @@ trait CodeGenerator {
     import RecordOps._
 
     /**
-     * The following attribute contains the SECD bytecode generated from the ISWIM 
+     * The following attribute contains the SECD bytecode generated from the ISWIM
      * syntax node it is attached to.
      */
-    val code : Iswim ==> CodeTree = attr { 
+    val code : Iswim ==> CodeTree = attr {
         case n : Iswim => positionBlock(n.pos) { n match {
     	    /**
     	     * Variable Identifiers
@@ -72,9 +73,9 @@ trait CodeGenerator {
             case Plus(l,r) => CodeTree(l->code, r->code, Add())
         	case Minus(l,r) => CodeTree(l->code, r->code, Sub())
         	case Times(l,r) => CodeTree(l->code, r->code, Mult())
-        	case Divide(l,r) => CodeTree(l->code, r->code, Div()) 
+        	case Divide(l,r) => CodeTree(l->code, r->code, Div())
         	case Remainder(l,r) => CodeTree(l->code, r->code, Rem())
-        	
+
         	/**
         	 * Integer Comparisons
         	 */
@@ -84,7 +85,7 @@ trait CodeGenerator {
         	case LessEq(l,r) => CodeTree(l->code, r->code, LessThanOrEqual())
         	case Greater(l,r) => CodeTree(l->code, r->code, Swap(1,1), LessThan())
         	case GreaterEq(l,r) => CodeTree(l->code, r->code, Swap(1,1), LessThanOrEqual())
-        	
+
         	/**
         	 * Boolean Expressions
         	 */
@@ -94,14 +95,14 @@ trait CodeGenerator {
     	    // Evaluation of & and | is implemented using Test() and is shortcircuited.
         	case And(l,r) => CodeTree(l->code, Test(code(r),PushFalse()))
         	case Or(l,r) => CodeTree(l->code, Test(PushTrue(),r->code : CodeTree))
-        	
-        	// Notice here that the attribute syntax r->code does not play well with our 
+
+        	// Notice here that the attribute syntax r->code does not play well with our
         	// implicit conversion to CodeSegments. The problem appears to be a clash with
         	// the -> syntax for pairs (cf Map) which confuses the implicits mechanism.
         	// So we must use the applicative syntax code(r) or an explicitly types expression
         	// (r->code : CodeTree) in places where we want to convert an attribute expression
         	// implicitly to a CodeSegment.
-            
+
             /**
              * String literals.
              */
@@ -117,7 +118,7 @@ trait CodeGenerator {
                 Exit()
             )
             case LetRec(binds,body) => CodeTree(
-                MkClosures(binds.map({ 
+                MkClosures(binds.map({
                     case Binding(Variable(fn),Lambda(Variable(pn),bdy)) =>
                         FunctionSpec(Some(fn),pn,code(bdy))
                 })),
@@ -125,13 +126,13 @@ trait CodeGenerator {
                 body->code,
                 Exit()
             )
-                
+
             /**
              * Code generation for top level statements
              */
          	case IswimProg(Nil) => PushEmpty()
          	case IswimProg(e :: _) => e->code
-         	
+
          	case s@Primitives(vs) => CodeTree(
          	    BindPrims(vs.map({ case Variable(nm) => nm })),
          	    if ((s isLast) || (s isRoot))
@@ -142,7 +143,7 @@ trait CodeGenerator {
      	    )
 
          	case s@ExprStmt(e) => CodeTree(
-         	    e->code, 
+         	    e->code,
          	    if ((s isLast) || (s isRoot))
          	        CodeTree()
          	    else CodeTree(
@@ -162,7 +163,7 @@ trait CodeGenerator {
             )
 
             case s@LetRecStmt(binds) => CodeTree(
-                MkClosures(binds.map({ 
+                MkClosures(binds.map({
                     case Binding(Variable(fn),Lambda(Variable(pn),bdy)) =>
                         FunctionSpec(Some(fn),pn,code(bdy))
                 })),
@@ -173,15 +174,15 @@ trait CodeGenerator {
      	            s.next[Iswim]->code,
                 Exit()
             )
-        	
-            
+
+
         	/**
         	 * Function Definition and Application
         	 */
-            case Lambda(Variable(pn),bdy) => 
+            case Lambda(Variable(pn),bdy) =>
                 MkClosures(List(FunctionSpec(None,pn,code(bdy))))
             case Return(e) => CodeTree(e->code, ResumeFromDump())
-            case Apply(f,e) => CodeTree(e->code, f->code, App()) 
+            case Apply(f,e) => CodeTree(e->code, f->code, App())
 
             /**
         	 * Conditionals and Loops
@@ -191,7 +192,7 @@ trait CodeGenerator {
         	case While(ctrl,body) => CodeTree(
         	    MkClosures(List(
         	        FunctionSpec(None,"@loop",CodeTree(
-        	            ctrl->code, 
+        	            ctrl->code,
         	            Test(
         	                CodeTree(body->code, Lookup("@loop"), Dup(1), TailApp()),
         	                PushEmpty()
@@ -201,13 +202,13 @@ trait CodeGenerator {
         	    Dup(1),
         	    App()
         	)
-        	
+
         	/**
         	 * Implementation note:
         	 *
         	 * To avoid clashes with variable names used in user programs, any new
         	 * variables introduced by the code generator are prepended with an '@'
-        	 * symbol. These are not legal parts of 
+        	 * symbol. These are not legal parts of
         	 *
         	 * This is also why the name @exceptionHandler was chosen as the default
         	 * name for the binding which contains the current exception handler.
@@ -217,9 +218,9 @@ trait CodeGenerator {
         	 * Blocks
         	 */
         	case Block(Nil) => PushEmpty()
-        	case Block(e :: es) => 
+        	case Block(e :: es) =>
         	    ((e->code) /: es) { case (t : CodeTree, e : Expr) => CodeTree(t,Pop(1),e->code) }
-        	    
+
             /**
          	 * References
          	 */
@@ -233,7 +234,7 @@ trait CodeGenerator {
              * Records / Tuples
              */
             case Tuple(fs) => CodeTree(CodeTree(fs.map(code)),MkRecord(fs.length))
-            
+
             case MatchClause(Pattern(List(Variable(s))),e) =>
                 CodeTree(Pop(1), Enter(List(s)), e->code, Exit())
             case m@MatchClause(Pattern(pat),e) =>
@@ -264,7 +265,7 @@ trait CodeGenerator {
                             code(m.next[Iswim])
                     )
                 )
-             
+
             case Match(ctrl, Nil) => ctrl->code
             case Match(ctrl, cl::_) =>
                 CodeTree(
@@ -292,7 +293,7 @@ trait CodeGenerator {
                     ),        // Stack now contains <record size> :: <value> :: Nil
                     cl->code  // Code for match clauses is attached to first clause in list
                 )
-                 
+
          	/**
         	 * Continuations
         	 */

@@ -18,36 +18,13 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama
-package example.dataflow
+package org
 
-import org.kiama.rewriting.Rewriter._
+package object kiama {
 
-/**
- * Optimise a dataflow program.  Currently: a) eliminate assignments to
- * variables that are not live out of the assignment and b) remove empty
- * statements from sequences.
- */
-object Optimise {
-
-    import Dataflow._
-    import DataflowAST._
-
-    def run (t : Stm) : Stm =
-        rewrite (rules) (t)
-
-    lazy val rules = elimDeadAssign <* elimEmpties
-
-    lazy val elimDeadAssign =
-        alltd (rule {
-            case s @ Assign (v, _) if (! (s->out contains v)) =>
-                Empty ()
-        })
-
-    lazy val elimEmpties =
-        bottomup (attempt (rule {
-            case Empty () :: ss => ss
-            case Block (Nil)    => Empty ()
-        }))
+    /**
+     * Convenient type constructor for partial functions.
+     */
+    type ==>[T,U] = PartialFunction[T,U]
 
 }

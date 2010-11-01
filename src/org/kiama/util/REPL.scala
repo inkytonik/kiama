@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.util
+package org.kiama
+package util
 
 import scala.util.parsing.combinator.RegexParsers
 

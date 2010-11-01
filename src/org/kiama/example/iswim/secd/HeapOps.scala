@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add mutable, heap allocated values to a SECD machine
@@ -72,7 +73,7 @@ trait HeapOps extends SECDBase {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
 		// Instructions for manipulating heap allocated mutable values.
         case Alloc() :: next =>
             val r = RefValue()

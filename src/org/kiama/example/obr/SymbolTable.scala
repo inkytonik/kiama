@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.obr
+package org.kiama
+package example.obr
 
 /**
  * Symbol table module containing facilities for creating and

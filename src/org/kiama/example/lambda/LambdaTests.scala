@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.lambda
+package org.kiama
+package example.lambda
 
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite

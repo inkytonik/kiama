@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add stack manipulation operations to a SECD machine
@@ -49,10 +50,10 @@ trait StackOps extends SECDBase {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
 		// Instructions for manipulating the stack.
 		// Pop pop a block of values from the top of the stack and discard.
-        case Pop(n) :: next => 
+        case Pop(n) :: next =>
             if (n < 1)
                 raiseException(MalformedInstruction)
             else if (stack.length < n)
@@ -61,8 +62,8 @@ trait StackOps extends SECDBase {
                 stack := stack.drop(n)
                 control := next
             }
-        // Duplicate a block of values on the top of the stack. 
-        case Dup(n) :: next => 
+        // Duplicate a block of values on the top of the stack.
+        case Dup(n) :: next =>
             if (n < 1)
                 raiseException(MalformedInstruction)
             else if (stack.length < n)
@@ -72,7 +73,7 @@ trait StackOps extends SECDBase {
                 control := next
             }
         // swap two blocks of values at the top of the stack
-        case Swap(n,m) :: next => 
+        case Swap(n,m) :: next =>
             if (n < 1 || m < 1)
                 raiseException(MalformedInstruction)
             else if (stack.length < n + m)

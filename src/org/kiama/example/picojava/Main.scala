@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.picojava
+package org.kiama
+package example.picojava
 
 object Main {
 

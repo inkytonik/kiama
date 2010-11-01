@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.lambda2
+package org.kiama
+package example.lambda2
 
 /**
  * Common rules for parallel evaluation methods.
@@ -55,7 +56,7 @@ trait Par extends ReduceSubst {
 
     /**
      * Lookup a binding for a name in a list of bindings.
-     */    
+     */
     def lookupb (x : Idn, ds : List[Bind]) : Option[Exp] = {
         for (Bind (y, e) <- ds if x == y)
             return Some (e)

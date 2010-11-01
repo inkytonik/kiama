@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.util
+package org.kiama
+package util
 
 /**
  * Class of objects that can emit code.  By default, code is output to the

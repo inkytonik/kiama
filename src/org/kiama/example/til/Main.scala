@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.til
+package org.kiama
+package example.til
 
 import java.io.Reader
 import org.scalatest.Assertions
@@ -98,7 +99,7 @@ trait ParsingMain extends Main with RegexParsers with PackratParsers {
  * Standard main program for TIL chairmarks that parse and transform.
  */
 trait TransformingMain extends ParsingMain {
-    
+
     import org.kiama.rewriting.Rewriter._
 
     /**

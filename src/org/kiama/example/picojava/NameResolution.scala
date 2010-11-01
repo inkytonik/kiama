@@ -26,7 +26,8 @@
  * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
  */
 
-package org.kiama.example.picojava
+package org.kiama
+package example.picojava
 
 object NameResolution {
 

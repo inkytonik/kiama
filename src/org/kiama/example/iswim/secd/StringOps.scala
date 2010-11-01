@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add string values and associated operations to a SECD machine
@@ -40,7 +41,7 @@ object StringOps {
      * New type values for this extension
      */
     case object StringTypeValue extends TypeValue
-    
+
 }
 
 /**
@@ -61,11 +62,11 @@ trait StringOps extends SECDBase {
         def getType : TypeValue = StringTypeValue
     }
     case class UserExceptionValue(m : String) extends ExceptionValue {
-        override def toString : String = 
+        override def toString : String =
             "userExceptionValue@" ++ hashCode.toHexString ++ ": " ++
-            m ++ " at " ++ this.pos.toString 
-    }   
-    
+            m ++ " at " ++ this.pos.toString
+    }
+
     /**
      * Unescape the most obvious escape sequences.  Replaces only \t,
      * \n, \" and \\.  \c where c is some other character is turned into c.
@@ -90,16 +91,16 @@ trait StringOps extends SECDBase {
                 b += c
             }
         }
-        b.toString 
+        b.toString
     }
 
     /**
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
 		// Push a string onto the stack
-        case PushString(s) :: next => 
+        case PushString(s) :: next =>
             stack := StringValue(unescape(s)) :: stack
             control := next
     	// Make a new user exception value from string on the top of the stack

@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.compiler
+package org.kiama
+package example.oberon0.compiler
 
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers

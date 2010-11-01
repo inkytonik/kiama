@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add terminal input/output operations to a SECD machine
@@ -48,17 +49,17 @@ trait IOOps extends SECDBase with StringOps {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
         // Write a value to the terminal
         case Write() :: next => (stack : Stack) match {
-            case v :: tail => 
+            case v :: tail =>
                 print(v.toString)
                 stack := tail
                 control := next
             case _ => raiseException(StackUnderflow)
         }
         // Read a string value from the terminal
-        case Read() :: next => 
+        case Read() :: next =>
             var line = readLine
             stack := StringValue(line) :: stack
             control := next

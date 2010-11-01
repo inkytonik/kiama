@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.lambda2
+package org.kiama
+package example.lambda2
 
 /**
  * Eager evaluation of lambda calculus with term-level substitution and

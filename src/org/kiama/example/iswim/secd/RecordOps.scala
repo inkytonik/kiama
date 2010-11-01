@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add string values and associated operations to a SECD machine
@@ -41,7 +42,7 @@ object RecordOps {
      * New type values for this extension
      */
     case object RecordTypeValue extends TypeValue
-    
+
     /**
      * New machine error types
      */
@@ -69,27 +70,27 @@ trait RecordOps extends SECDBase with IntegerOps {
         override def toString : String = flds.reverse.mkString("(",",",")")
         def getType : TypeValue = RecordTypeValue
     }
-    
+
     /**
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
 		// Make a new record from entries on the stack
-        case MkRecord(n) :: next => 
+        case MkRecord(n) :: next =>
             if (n < 0)
                 raiseException(MalformedInstruction)
             else if (stack.length < n)
                 raiseException(StackUnderflow)
-            else 
+            else
                 stack.splitAt(n) match {
-                    case (flds, tail) => 
+                    case (flds, tail) =>
                         stack := RecordValue(flds) :: tail
                         control := next
                 }
         // Return the number of fields in a record.
         case Fields() :: next => (stack : Stack) match {
-            case RecordValue(flds) :: tail => 
+            case RecordValue(flds) :: tail =>
                 stack := IntValue(flds.length) :: tail
                 control := next
             case _ :: _ => raiseException(TypeError)

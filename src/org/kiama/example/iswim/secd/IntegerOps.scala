@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.secd
+package org.kiama
+package example.iswim.secd
 
 /**
  * Add integer values and associated operations to a SECD machine
@@ -38,7 +39,7 @@ object IntegerOps {
     case class Mult() extends Instruction
     case class Div() extends Instruction
     case class Rem() extends Instruction
-    
+
     /**
      * New type values for this extension
      */
@@ -74,9 +75,9 @@ trait IntegerOps extends SECDBase {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+	override def evalInst : Code ==> Unit = super.evalInst orElse {
 		// Arithmetic operations on integers.
-        case PushInt(n) :: next => 
+        case PushInt(n) :: next =>
             stack := IntValue(n) :: stack
             control := next
         case Add() :: next => (stack : Stack) match {

@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.iswim.compiler
+package org.kiama
+package example.iswim.compiler
 
 // TODO fix chronically bad parse error reporting.
 

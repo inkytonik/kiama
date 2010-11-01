@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.attribution
+package org.kiama
+package attribution
 
 import scala.util.parsing.input.Positional
 

@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.attribution
+package org.kiama
+package attribution
 
 import java.util.IdentityHashMap
 
@@ -28,11 +29,6 @@ import java.util.IdentityHashMap
  * and parameterised attributes.
  */
 trait AttributionBase {
-
-    /**
-     * Convenient type constructor for partial functions.
-     */
-    type ==>[T,U] = PartialFunction[T,U]
 
     /**
      * Global state for the circular attribute evaluation algorithm

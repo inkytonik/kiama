@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.transform
+package org.kiama
+package example.transform
 
 /**
  * Operator priority resolution and name analysis for transformation compiler.

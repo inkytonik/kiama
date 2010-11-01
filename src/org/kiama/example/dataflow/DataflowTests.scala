@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.dataflow
+package org.kiama
+package example.dataflow
 
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

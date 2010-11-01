@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.compiler
+package org.kiama
+package example.oberon0.compiler
 
 /**
  * Build the assembly/RISC code for the program
@@ -545,7 +546,7 @@ object Encoder {
         thenstmts.foreach (stmt => EncodeStatement (stmt, procOrModDecl))
 
         Assembler.mark (exitlbl)
-        
+
     }
 
     /**
@@ -565,7 +566,7 @@ object Encoder {
         // Loop test
         Assembler.mark (testlbl)
         processBoolExp (condexp, looplbl, false, procOrModDecl)
-        
+
     }
 
     /**
@@ -580,7 +581,7 @@ object Encoder {
         Assembler.emit (WRD (reg))
 
         Assembler.freeReg (reg)
-        
+
     }
 
     /**
@@ -593,7 +594,7 @@ object Encoder {
 
         // Call WRL
         Assembler.emit (WRL)
-        
+
     }
 
     /**
@@ -758,7 +759,7 @@ object Encoder {
 
                 Assembler.emit (BSR (pd.label))
             }
-            
+
             case _ => ()
         }
     }

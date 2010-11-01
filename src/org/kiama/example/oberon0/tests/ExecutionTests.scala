@@ -20,7 +20,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.oberon0.tests
+package org.kiama
+package example.oberon0.tests
 
 import org.kiama.example.oberon0.Driver
 import org.junit.runner.RunWith

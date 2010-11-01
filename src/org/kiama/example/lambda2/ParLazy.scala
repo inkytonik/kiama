@@ -18,7 +18,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.lambda2
+package org.kiama
+package example.lambda2
 
 /**
  * Lazy evaluation of lambda calculus with parallel term-level substitution
@@ -45,7 +46,7 @@ trait ParLazy extends Par {
         rule {
             case Letp (_, e) => e
         }
-    
+
     /**
      * Substitute a variable and maintain the bindings.
      */
@@ -54,7 +55,7 @@ trait ParLazy extends Par {
             case Letp (ds, Var (x)) =>
                 lookupb (x, ds) <* rule { case e : Exp => Letp (ds, e) }
         }
-     
+
     /**
      * Apply substitutions lazily in an application, maintaining the
      * environment.
@@ -67,7 +68,7 @@ trait ParLazy extends Par {
                         Letp (ds2, App (e3, e2))
                 }
         }
-        
+
     /**
      * Apply substitutions strictly in an operator evaluation, maintaining the
      * environment.
@@ -76,7 +77,7 @@ trait ParLazy extends Par {
         rulefs {
             case Letp (ds1, Opn (op, e1, e2)) =>
                 eval (Letp (ds1, e1)) <* rulefs {
-                    case Letp (ds2, e3) => 
+                    case Letp (ds2, e3) =>
                         eval (Letp (ds2, e2)) <* rule {
                             case Letp (ds3, e4) =>
                                 Letp (ds3, Opn (op, e3, e4))
@@ -98,12 +99,12 @@ trait ParLazy extends Par {
             rule {
                 case i : Idn => env.getOrElse (i, i)
             }
-        lazy val r : Strategy = 
+        lazy val r : Strategy =
             attempt (Var (chgname) + App (r, r) + Lam (newname, id, r) +
                 Opn (id, r, r) + Letp (map (r), r) + Bind (newname, r))
         r
     }
-    
+
     /**
      * Rename variables bound in an inner let (corresponds to heap allocation
      * for these values).
@@ -113,7 +114,7 @@ trait ParLazy extends Par {
             case Letp (ds1, Letp (ds2, e1)) =>
                 rename (Letp (ds2, e1)) <* rule {
                     case Letp (ds3, e2) =>
-                        val ds4 = ds3 ++ ds1                       
+                        val ds4 = ds3 ++ ds1
                         Letp (ds4, e2)
                 }
         }
