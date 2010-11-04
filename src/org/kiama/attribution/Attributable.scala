@@ -152,13 +152,13 @@ trait Attributable extends Product with Positional {
      */
     private def setChildConnections () = {
 
-        var i : Int = 0
+        var ind : Int = 0
         var prev : Attributable = null
         def setConnections(c : Attributable) {
            c.parent = this
            _children += c
-           c.index = i
-           i += 1
+           c.index = ind
+           ind += 1
            c._prev = prev
            if (prev != null) prev._next = c
            prev = c
