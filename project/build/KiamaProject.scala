@@ -56,11 +56,10 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     val scalaToolsSnapshots = ScalaToolsSnapshots
 
     // Declare dependencies on other libraries
-    override def libraryDependencies =
-        Set ("org.scala-tools.testing" %% "scalacheck" % "1.8",
-             "org.scalatest" % "scalatest" % "1.2",
-             "junit" % "junit" % "4.8.1",
-             "jline" % "jline" % "0.9.94")
+    val scalacheck = "org.scala-tools.testing" %% "scalacheck" % "1.8"
+    val scalatest = "org.scalatest" % "scalatest" % "1.2"
+    val junit = "junit" % "junit" % "4.8.1"
+    val jline = "jline" % "jline" % "0.9.94"
 
     // Add extra files to included resources
     def extraResources = "COPYING" +++ "COPYING.LESSER" +++ "README.txt"
