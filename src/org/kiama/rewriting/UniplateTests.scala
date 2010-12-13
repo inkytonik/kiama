@@ -157,8 +157,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
     }
 
     test ("calculate expression depth") {
-        def maximum (l : Seq[Int]) : Int = l.drop (1).foldLeft (l.head)(_.max(_))
-        val depth = para ((t : Any, cs : Seq[Int]) => 1 + maximum (List (0) ++ cs))
+        val depth = para[Int] { case (t, cs) => 1 + (cs :+ 0).max }
         expect (2) (depth (numexp))
         expect (4) (depth (varexp))
         check ((e : Exp) => depth (e) == e.depth)
