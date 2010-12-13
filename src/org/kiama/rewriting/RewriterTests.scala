@@ -226,23 +226,56 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         // Single step passing
         val twotothree = rule { case Num (2) => Num (3) }
         val pass = rulefs { case Num (2) => twotothree }
-        val passtd = everywheretd (pass)
+        val passtd = everywhere (pass)
         expect (Mul (Num (3), (Num (5)))) (rewrite (passtd) (e1))
         expect (Add (Num (4), (Num (5)))) (rewrite (passtd) (e2))
     }
 
     {
         val e = Mul (Num (1), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
+        
+        test ("counting all terms using count") {
+            val countall = count { case _ => 1 }
+            expect (11) (countall (e))
+        }
+        
+        test ("counting all terms using a para") {
+            val countfold = 
+                para[Int] {
+                    case (t, cs) => 1 + cs.sum
+                }
+            expect (11) (countfold (e))
+        }
 
+        test ("counting all Num terms twice") {
+            val countnum = count { case Num (_) => 2 }
+            expect (4) (countnum (e))
+        }
+
+        test ("counting all Div terms") {
+            val countdiv = count { case Div (_, _) => 1 }
+            expect (0) (countdiv (e))
+        }
+
+        test ("counting all binary operator terms, with Muls twice") {
+            val countbin = count {
+                case Add (_, _) => 1
+                case Sub (_, _) => 1
+                case Mul (_, _) => 2
+                case Div (_, _) => 1
+            }
+            expect (4) (countbin (e))
+        }
+        
         test ("rewriting leaf types: increment doubles") {
             val e = Mul (Num (1), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
-            val incint = everywheretd (rule { case d : Double => d + 1 })
+            val incint = everywhere (rule { case d : Double => d + 1 })
             val r1 = Mul (Num (2), Add (Sub (Var ("hello"), Num (3)), Var ("harold")))
             expect (r1) (rewrite (incint) (e))
         }
 
         test ("rewriting leaf types: reverse identifiers") {
-            val revidn = everywheretd (rule { case s : String => s.reverse })
+            val revidn = everywhere (rule { case s : String => s.reverse })
             val r2 = Mul (Num (1), Add (Sub (Var ("olleh"), Num (2)), Var ("dlorah")))
             expect (r2) (rewrite (revidn) (e))
         }
@@ -257,9 +290,19 @@ class RewriterTests extends FunSuite with Checkers with Generator {
             expect (r3) (rewrite (incintrevidn) (e))
         }
     }
+    
+    test ("rewrite to increment an integer") {
+        val inc = rule { case i : Int => i + 1 }
+        expect (4) (rewrite (inc) (3))
+    }
 
+    test ("rewrite failing to increment an integer with a double increment") {
+        val inc = rule { case d : Double => d + 1 }
+        expect (3) (rewrite (inc) (3))
+    }
+    
     {
-        val incall = everywheretd (rule { case i : Int => i + 1 })
+        val incall = everywhere (rule { case i : Int => i + 1 })
         val incfirst = oncetd (rule { case i : Int => i + 1 })
         val incodd = sometd (rule { case i : Int if i % 2 == 1 => i + 1 })
 
@@ -293,7 +336,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
     test ("rewriting lists: doubles to zero in non-primitive list") {
         val ll = List (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
         val rr = List (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
-        val numtozero = everywheretd (rule { case _ : Double => 0 })
+        val numtozero = everywhere (rule { case _ : Double => 0 })
         expect (rr) (rewrite (numtozero) (ll))
     }
 

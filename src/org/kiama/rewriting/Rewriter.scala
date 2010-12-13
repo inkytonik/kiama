@@ -30,6 +30,8 @@ package rewriting
  * Boilerplate and Uniplate libraries for Haskell.
  */
 object Rewriter {
+    
+    import scala.collection.generic.CanBuildFrom
 
     /**
      * The type of terms that can be rewritten.  Any type of value is acceptable
@@ -574,30 +576,37 @@ object Rewriter {
         }
 
     /**
-     * Collect query results in a set.  Run the function f as a top-down
-     * query on the subject term.  Accumulate the values produced by the
-     * function in a set and return the final value of the set.
+     * Collect query results in a traversable collection.  Run the function
+     * f as a top-down left-to-right query on the subject term.  Accumulate
+     * the values produced by the function in the collection and return the
+     * final value of the list.
      */
-    def collects[T] (f : Term ==> T) : Term => Set[T] =
+    def collect[CC[U] <: Traversable[U],T] (f : Term ==> T)
+            (implicit cbf: CanBuildFrom[CC[T],T,CC[T]]) : Term => CC[T] =
         (t : Term) => {
-            var collection = Set[T]()
-            val collect = (v : T) => collection += v
-            (everywheretd (query (f andThen collect))) (t)
-            collection
+            val b = cbf ()
+            val add = (v : T) => b += v
+            (everywhere (query (f andThen add))) (t)
+            b.result ()
         }
-
+        
     /**
      * Collect query results in a list.  Run the function f as a top-down
-     * query on the subject term.  Accumulate the values produced by the
-     * function in a list and return the final value of the list.
+     * left-to-right query on the subject term.  Accumulate the values
+     * produced by the function in a list and return the final value of
+     * the list.
      */
     def collectl[T] (f : Term ==> T) : Term => List[T] =
-        (t : Term) => {
-            var collection = List[T]()
-            val collect = (v : T) => collection = collection ::: List (v)
-            (everywheretd (query (f andThen collect))) (t)
-            collection
-        }
+        collect[List,T] (f)
+
+    /**
+     * Collect query results in a set.  Run the function f as a top-down
+     * left-to-right query on the subject term.  Accumulate the values
+     * produced by the function in a set and return the final value of
+     * the set.
+     */
+    def collects[T] (f : Term ==> T) : Term => Set[T] =
+        collect[Set,T] (f)
 
     /**
      * Count function results.  Run the function f as a top-down query on
@@ -605,12 +614,7 @@ object Rewriter {
      * applications.
      */
     def count (f : Term ==> Int) : Term => Int =
-        (t : Term) => {
-            var total = 0
-            val count = (v : Int) => total += v
-            (everywheretd (query (f andThen count))) (t)
-            total
-        }
+        everything (0) (_ + _) (f)
 
     /**
      * Construct a strategy that applies s to each element of a list,
@@ -887,7 +891,7 @@ object Rewriter {
 
    /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
-     * stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     * stopping at a frontier where s1 succeeds.  s2 is applied in a bottom-up,
      * postfix fashion to the result.
      */
     def alldownup2 (s1 : => Strategy, s2 : => Strategy) : Strategy =
@@ -895,7 +899,7 @@ object Rewriter {
 
     /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
-     * stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     * stopping at a frontier where s1 succeeds.  s2 is applied in a bottom-up,
      * postfix fashion to the results of the recursive calls.
      */
     def alltdfold (s1 : => Strategy, s2 : => Strategy) : Strategy =
@@ -1015,6 +1019,22 @@ object Rewriter {
      */
     def everywheretd (s : => Strategy) : Strategy =
         topdown (attempt (s))
+
+    /**
+     * Construct a strategy that applies s at every term in a top-down fashion
+     * regardless of failure.  (Sub-)terms for which the strategy fails are left
+     * unchanged.
+     */
+    def everywhere (s : => Strategy) : Strategy =
+        everywheretd (s)
+    
+    /**
+     * Apply the function at every term in t in a top-down, left-to-right order.
+     * Collect the resulting T values by accumulating them using f with initial
+     * left value v.  Return the final value of the accumulation.
+     */
+    def everything[T] (v : T) (f : (T, T) => T) (g : Term ==> T) (t : Term) : T =
+        (collectl (g) (t)).foldLeft (v) (f)
 
    /**
     * Apply restoring action 'rest' if s fails, and then fail.

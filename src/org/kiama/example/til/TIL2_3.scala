@@ -32,7 +32,7 @@ trait TIL2_3 extends TIL1_1 with TransformingMain {
     override def transform (ast : Root) : Root = {
         var decls = new scala.collection.mutable.ListBuffer[Decl] ()
         val getandremovedecls =
-            everywheretd (rule {
+            everywhere (rule {
                 case (d : Decl) :: ss =>
                     decls += d
                     ss

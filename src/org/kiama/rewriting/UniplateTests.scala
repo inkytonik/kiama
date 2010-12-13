@@ -55,7 +55,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
          */
         def variables (e : Exp) : Set[String] = {
             var vars = Set[String]()
-            everywheretd (query { case Var (s) => vars += s }) (e)
+            everywhere (query { case Var (s) => vars += s }) (e)
             vars
         }
         check ((e : Exp) => variables (e) == e.vars)
@@ -95,7 +95,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
 
     test ("arithmetic simplification") {
         def simplify : Exp => Exp =
-            rewrite (everywheretd (rule {
+            rewrite (everywhere (rule {
                 case Sub (x, y)           => simplify (Add (x, Neg (y)))
                 case Add (x, y) if x == y => Mul (Num (2), x)
             }))
@@ -147,7 +147,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
         def uniquevars : Exp => Exp =
             rewrite ({
                 var count = 0
-                everywheretd (rule { case Var (s) => count = count + 1; Var ("x" + count) })
+                everywhere (rule { case Var (s) => count = count + 1; Var ("x" + count) })
             })
         expect (numexp) (uniquevars (numexp))
         // Run this twice to make sure that count is not shared
@@ -165,7 +165,7 @@ class UniplateTests extends FunSuite with Checkers with Generator {
 
     test ("variable renaming") {
         def rename : Exp => Exp =
-            rewrite (everywheretd (rule { case Var (s) => Var ("_" + s) }))
+            rewrite (everywhere (rule { case Var (s) => Var ("_" + s) }))
         check ((e : Exp) => rename (e).vars == e.vars.map ("_" + _))
     }
 
