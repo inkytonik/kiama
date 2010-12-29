@@ -58,37 +58,30 @@ trait Compiler[T] extends FunSuite {
         args
 
     /**
-     * Process the program in the file given as the first command-line
-     * argument by building an AST for it and then processing that AST
-     * in an arbitrary way.  The AST is built by makeast and processing
-     * is performed by process.  Output is produced using the specified
-     * emitter; this includes errors if there are any.
+     * Process the arguments, using the given console for input and the
+     * given emitter for output.  The arguments are first processed by
+     * checkargs.  Any remaining arguments are interpreted as file names
+     * which are processed in turn by using makeast to turn their contents
+     * into abstract syntax trees (ASTs) and then by process which conducts 
+     * arbitrary processing on the ASTs.
      */
     def driver (args : Array[String], console : Console, emitter : Emitter) {
         val newargs = checkargs (args)
-        newargs.size match {
-            case 1 =>
-                try {
-                    val reader = new FileReader (newargs (0))
-                    makeast (reader, newargs (0)) match {
-                        case Left (ast) =>
-                            process (ast, console, emitter)
-                        case Right (msg) =>
-                            emitter.emitln (msg)
-                    }
-                } catch {
-                    case e : FileNotFoundException =>
-                        emitter.emitln (e.getMessage)
+        for (arg <- newargs) {
+            try {
+                val reader = new FileReader (newargs (0))
+                makeast (reader, newargs (0)) match {
+                    case Left (ast) =>
+                        process (ast, console, emitter)
+                    case Right (msg) =>
+                        emitter.emitln (msg)
                 }
-            case _ =>
-                emitter.emitln (usage)
+            } catch {
+                case e : FileNotFoundException =>
+                    emitter.emitln (e.getMessage)
+            }
         }
     }
-
-    /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage : String
 
     /**
      * Make an AST from the file with the given name, returning it wrapped in

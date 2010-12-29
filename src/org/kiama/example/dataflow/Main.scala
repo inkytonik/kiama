@@ -35,11 +35,6 @@ class Driver extends SyntaxAnalyser with RegexCompiler[Stm] {
     import org.kiama.util.Emitter
 
     /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = "usage: scala org.kiama.example.dataflow.Main file.data"
-
-    /**
      * Process the AST by optimising it, then print optimised AST.
      */
     def process (ast : Stm, console : Console, emitter : Emitter) : Boolean = {

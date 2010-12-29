@@ -31,17 +31,11 @@ import org.kiama.util.RegexCompiler
  */
 class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
 
-    import java.io.FileReader
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
     import SemanticAnalysis._
     import Transformation._
-
-    /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = "usage: scala org.kiama.example.obr.Main file.obr"
 
     /**
      * Function to process the input that was parsed.  emitter is

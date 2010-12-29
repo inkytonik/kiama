@@ -45,11 +45,6 @@ class Driver extends Parser with RegexCompiler[ModuleDecl] {
     import org.kiama.util.Messaging._
 
     /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = "usage: scala org.kiama.example.oberon0.Main file.ob0"
-
-    /**
      * Function to process the input that was parsed.  emitter is
      * used for output.  Return true if everything worked, false
      * otherwise.

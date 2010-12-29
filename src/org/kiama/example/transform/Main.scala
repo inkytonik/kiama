@@ -37,11 +37,6 @@ class Driver extends Parser with RegexCompiler[Program] {
     import org.kiama.util.Messaging._
 
     /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = "usage: scala org.kiama.transform.Main file.exp"
-
-    /**
      * Function to process the input that was parsed.  emitter is
      * used for output.  Return true if everything worked, false
      * otherwise.  Here we process the first AST to compute the second
