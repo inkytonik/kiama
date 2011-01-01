@@ -140,10 +140,9 @@ trait Compiler[T] extends FunSuite {
      * If the compilation fails, rp is assumed to contain the expected
      * messages.
      */
-    private def filetest (name : String, cp : String, rp : String,
-                          console : Console,
-                          extra : String = "",
-                          args : Array[String] = Array()) {
+    def filetest (name : String, cp : String, rp : String,
+                  console : Console, extra : String = "",
+                  args : Array[String] = Array()) {
         val title = name + " " + args.mkString(" ") + "processing " + cp +
                     " expecting " + rp + extra
         test (title) {
