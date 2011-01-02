@@ -25,7 +25,6 @@ package example.iswim.compiler
  * Abstract syntax for a variant of ISWIM.
  */
 
-import scala.util.parsing.input.Positional
 import org.kiama.attribution.Attributable
 
 object Syntax {

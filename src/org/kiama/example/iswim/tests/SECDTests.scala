@@ -28,7 +28,6 @@ package example.iswim.tests
 // TODO: much more exhaustive tests of the SECD machine.
 
 import org.kiama.example.iswim.secd._
-import org.kiama.util.PrettyPrinter
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -42,7 +41,6 @@ class SECDTests extends FunSuite {
     import StackOps._
     import BooleanOps._
     import HeapOps._
-    import IOOps._
     import StringOps._
     import RecordOps._
 

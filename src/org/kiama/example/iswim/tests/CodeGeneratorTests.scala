@@ -35,10 +35,6 @@ import org.kiama.example.iswim.secd._
 @RunWith(classOf[JUnitRunner])
 class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalysis with Parser {
 
-    import Syntax._
-
-    import org.kiama.util.Messaging._
-
     import SECDBase._
     import IntegerOps._
     import BooleanOps._

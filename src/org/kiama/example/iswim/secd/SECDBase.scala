@@ -331,7 +331,7 @@ abstract class SECDBase
     /**
      * Continuation values
      */
-    abstract trait Continuation extends PrettyPrintable
+    trait Continuation extends PrettyPrintable
     case class ContValue(
        	    s : Stack,
        	    e : Environment,
@@ -415,7 +415,7 @@ abstract class SECDBase
                 p.text("** empty **")
             else
                 p.printList("Environment", e.toList,
-                    (kv : Tuple2[Name,Value]) =>
+                    (kv : (Name,Value)) =>
                         kv match {
                             case (nm, v) => {
                                 p.text(nm)

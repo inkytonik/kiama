@@ -27,7 +27,6 @@ package example.lambda2
  */
 trait InnermostSubst extends ReduceSubst {
 
-    import AST._
     import org.kiama.rewriting.Rewriter._
 
     /**

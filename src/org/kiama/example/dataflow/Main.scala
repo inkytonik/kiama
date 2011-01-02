@@ -28,9 +28,8 @@ import org.kiama.util.RegexCompiler
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
-class Driver extends SyntaxAnalyser with RegexCompiler[Stm] {
+class Driver extends Parser with RegexCompiler[Stm] {
 
-    import java.io.FileReader
     import org.kiama.util.Console
     import org.kiama.util.Emitter
 

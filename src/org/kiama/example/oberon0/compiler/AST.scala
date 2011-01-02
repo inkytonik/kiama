@@ -28,7 +28,6 @@ package example.oberon0.compiler
  */
 object AST {
 
-    import TypeAnalysis._
     import org.kiama.attribution.Attributable
 
     /**

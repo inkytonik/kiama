@@ -23,7 +23,6 @@
 package org.kiama
 package example.oberon0.tests
 
-import org.scalacheck.Prop._
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner

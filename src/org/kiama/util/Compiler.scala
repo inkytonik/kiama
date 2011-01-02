@@ -36,9 +36,7 @@ trait Compiler[T] extends FunSuite {
     import org.kiama.util.Console
     import org.kiama.util.JLineConsole
     import org.kiama.util.Emitter
-    import org.kiama.util.Messaging._
     import org.kiama.util.StringEmitter
-    import org.scalatest.TestFailedException
     import scala.io.Source
 
     /**

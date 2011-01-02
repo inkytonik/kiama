@@ -33,7 +33,6 @@ import org.kiama.example.iswim.compiler._
 @RunWith(classOf[JUnitRunner])
 class SemanticAnalysisTests extends FunSuite with SemanticAnalysis with Parser {
 
-    import Syntax._
     import org.kiama.util.Messaging._
 
     /**

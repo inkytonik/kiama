@@ -27,7 +27,7 @@ import scala.util.parsing.combinator.RegexParsers
 /**
  * Syntax analyser for simple imperative dataflow language.
  */
-trait SyntaxAnalyser extends RegexParsers with PackratParsers {
+trait Parser extends RegexParsers with PackratParsers {
 
     import DataflowAST._
 

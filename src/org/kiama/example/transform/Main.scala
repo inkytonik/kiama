@@ -31,7 +31,6 @@ import org.kiama.util.RegexCompiler
  */
 class Driver extends Parser with RegexCompiler[Program] {
 
-    import java.io.FileReader
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._

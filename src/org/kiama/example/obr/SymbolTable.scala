@@ -77,7 +77,7 @@ object SymbolTable {
     /**
      * A constant integer entity with the given value
      */
-    case class Constant (val value : Int) extends Entity {
+    case class Constant (value : Int) extends Entity {
         override val isconst = true
         override val isassignable = false
         override val tipe = IntType

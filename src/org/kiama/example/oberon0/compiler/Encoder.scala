@@ -34,7 +34,6 @@ object Encoder {
     import ConstantAnalysis._
     import ValueAnalysis._
     import org.kiama.attribution.Attributable
-    import org.kiama.attribution.Attribution._
     import org.kiama.example.oberon0.assembler._
     import org.kiama.example.oberon0.machine.RISCISA._
 

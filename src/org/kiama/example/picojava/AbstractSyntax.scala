@@ -35,7 +35,6 @@ package example.picojava
 object AbstractSyntax {
 
     import org.kiama.attribution.Attributable
-    import org.kiama.attribution.Attribution._
 
     // Created by parser
     case class Program (Block : Block) extends Attributable

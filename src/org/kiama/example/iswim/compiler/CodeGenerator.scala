@@ -25,9 +25,6 @@ package example.iswim.compiler
  * ISWIM to SECD bytecode code generator
  */
 
-import scala.util.parsing.input.Positional
-import org.kiama.attribution.Attributable
-
 import org.kiama.example.iswim.secd._
 
 trait CodeGenerator {

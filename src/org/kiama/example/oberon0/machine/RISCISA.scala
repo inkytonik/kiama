@@ -222,48 +222,48 @@ object RISCISA {
      * If the Z condition code is set, set the program counter to its
      * value plus four times disp.
      */
-    case class BEQ (val label : Int) extends Branch
+    case class BEQ (label : Int) extends Branch
 
     /**
      * If the Z condition code is clear, set the program counter to its
      * value plus four times disp.
      */
-    case class BNE (val label : Int) extends Branch
+    case class BNE (label : Int) extends Branch
 
     /**
      * If the N condition code is set, set the program counter to its
      * value plus four times disp.
      */
-    case class BLT (val label : Int) extends Branch
+    case class BLT (label : Int) extends Branch
 
     /**
      * If the N condition code is clear, set the program counter to its
      * value plus four times disp.
      */
-    case class BGE (val label : Int) extends Branch
+    case class BGE (label : Int) extends Branch
 
     /**
      * If either of the Z or N condition codes is set, set the program
      * counter to its value plus four times disp.
      */
-    case class BLE (val label : Int) extends Branch
+    case class BLE (label : Int) extends Branch
 
     /**
      * If both of the Z and N condition codes are clear, set the program
      * counter to its value plus four times disp.
      */
-    case class BGT (val label : Int) extends Branch
+    case class BGT (label : Int) extends Branch
 
     /**
      * Set the program counter to its value plus disp.
      */
-    case class BR (val label : Int) extends Branch
+    case class BR (label : Int) extends Branch
 
     /**
      * Set R31 to the value of the program counter plus one. Set the
      * program counter to its value plus disp.
      */
-    case class BSR (val label : Int) extends Branch
+    case class BSR (label : Int) extends Branch
 
     /**
      * Set the program counter to the value in register c.  If that

@@ -36,10 +36,8 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     with HeapOps with IOOps with StringOps {
 
     import IntegerOps._
-    import IntComparisonOps._
     import StackOps._
     import BooleanOps._
-    import HeapOps._
     import IOOps._
     import StringOps._
     import ConversionOps._

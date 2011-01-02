@@ -38,7 +38,6 @@ class InheritanceNameResolutionTests extends FunSuite {
 
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
-    import org.kiama.example.picojava.TypeAnalysis._
 
     // For the actual program text, see InheritanceNameResolutionTests.pj
 

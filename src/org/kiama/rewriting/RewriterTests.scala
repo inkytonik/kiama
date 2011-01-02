@@ -35,8 +35,6 @@ class RewriterTests extends FunSuite with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._
     import org.kiama.rewriting.Rewriter.{fail => rwfail, _}
-    import org.scalacheck._
-    import org.scalacheck.Prop._
 
     test ("basic arithmetic evaluation") {
         val eval =
@@ -72,7 +70,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
                 }
             }
             val children = for (i <- 0 until t.productArity) yield t.productElement (i)
-            var childterms = children.filter (isterm)
+            val childterms = children.filter (isterm)
             if (childterms.length == 0)
                 // No term children, just use t itself
                 t

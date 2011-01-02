@@ -35,12 +35,9 @@ class LambdaTests extends FunSuite with Checkers with Parser {
     import AST._
     import Analysis._
     import Evaluators._
-    import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter._
     import org.kiama.util.Messaging._
-    import org.scalacheck._
     import org.scalacheck.Prop.{all => _, _}
-    import scala.collection.mutable.HashMap
 
     /**
      * Compute the type of e using the specified attribute and check to make
