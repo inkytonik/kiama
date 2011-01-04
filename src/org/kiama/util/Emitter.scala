@@ -22,8 +22,9 @@ package org.kiama
 package util
 
 /**
- * Class of objects that can emit code.  By default, code is output to the
- * standard output.  Subclass this if you need it to go somewhere else.
+ * Class of objects that can emit arbitrary output.  By default, the output
+ * is sent to the standard output.  Subclass this if you need it to go
+ * somewhere else.
  */
 class Emitter {
 
@@ -51,13 +52,27 @@ class Emitter {
 }
 
 /**
-* An emitter that records the code in a string that can be accessed
-* via the result method.
-*/
+ * An emitter that records the output in a string that can be accessed
+ * via the result method.
+ */
 class StringEmitter extends Emitter {
     val b = new StringBuilder
     override def emit (any : Any) = b.append (any.toString)
     override def emitln (any : Any) = b.append (any.toString).append ('\n')
     override def emitln () = b.append ('\n')
     def result () = b.result
+}
+
+/**
+ * A string emitter that also provides an output method to send the 
+ * result to the named file.
+ */
+class FileEmitter (filename : String) extends StringEmitter {
+    import java.io.FileWriter
+        
+    def close () {
+        val out = new FileWriter (filename)
+        out.write (result ())
+        out.close ()
+    }
 }
