@@ -4,6 +4,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2011 Dominic Verity, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -46,7 +47,7 @@ object RISCTree {
     /**
      * A stack program consisting of the given statements.
      */
-    case class RISCProg (insns : List[Item], memsize : Int) extends RISCNode
+    case class RISCProg (insns : List[Item]) extends RISCNode
 
     /**
      * Superclass of all item constructs, ie. target constructs that do
@@ -79,7 +80,7 @@ object RISCTree {
     /**
      * Cause the program to terminate.
      */
-    case object Ret extends Item
+    case class Ret () extends Item
 
     /**
      * Evaluate d and store its value in the memory location given by mem.

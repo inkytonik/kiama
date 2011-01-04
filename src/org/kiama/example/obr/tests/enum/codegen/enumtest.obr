@@ -41,7 +41,7 @@ BEGIN
   END
 
   IF res THEN
-     RETURN -1;
+     RETURN 1;
   ELSE
      RETURN 0;
   END

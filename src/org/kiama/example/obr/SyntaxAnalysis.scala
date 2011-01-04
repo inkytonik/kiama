@@ -4,6 +4,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2011 Dominic Verity, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -26,9 +27,9 @@ import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers
 
 /**
- * Module containing parsers for the expression language.
+ * Module containing parsers for the Obr language.
  */
-trait SyntaxAnalysis extends RegexParsers with PackratParsers {
+class SyntaxAnalysis extends RegexParsers with PackratParsers {
 
     import ObrTree._
     import scala.collection.immutable.HashSet

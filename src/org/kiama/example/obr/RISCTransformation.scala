@@ -1,10 +1,10 @@
 /**
- * Transformation of Obr language programs into   machine code.
+ * Transformation of Obr language programs into RISC code.
  *
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.
- * Copyright (C) 2010 Dominic Verity, Macquarie University.
+ * Copyright (C) 2010-2011 Dominic Verity, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -43,10 +43,19 @@ object RISCTransformation {
      */
     val code : ObrInt ==> RISCProg =
         attr {
-            case ObrInt (_, decls, stmts, _) =>
+            case p @ ObrInt (_, decls, stmts, _) =>
+                tempintloc = Local(Variable(IntType).locn)
+                exnlab = genlabel ()
+                exnloc = Local(Variable(ExnType).locn)
                 val dbody = decls.flatMap (ditems)
                 val sbody = stmts.flatMap (sitems)
-                RISCProg (dbody ++ sbody, prevloc)
+                val sepilogue = List (
+                        Write (IntDatum (0))
+                    ,   Ret ()
+                    ,   LabelDef (exnlab)
+                    ,   Write (IntDatum (-1))
+                    )
+                RISCProg (dbody ++ sbody ++ sepilogue)
         }
 
     /**
@@ -56,19 +65,60 @@ object RISCTransformation {
     private def location (n : EntityNode) : Address =
         n match {
             case IndexExp (_, i) =>
-                Indexed (Local ((n->entity).locn), MulW (i->datum, IntDatum (WORDSIZE)))
+				val lab1 = genlabel ()
+				val lab2 = genlabel ()
+                Indexed (
+					Local ((n->entity).locn), 
+					MulW (
+						SequenceDatum(
+							List(
+								StW (tempintloc, SubW (i->datum, IntDatum(1))),
+								Bne (CmpltW (LdW (tempintloc), IntDatum (0)), lab1),
+								Beq (CmpltW ( 
+									(n->entity) match {
+										case Variable (ArrayType (size)) => IntDatum (size-1)
+									}, LdW (tempintloc)), lab2),
+								LabelDef (lab1),
+								StW (exnloc, IntDatum (indexOutOfBoundsExn)),
+								Jmp (exnlab),
+								LabelDef (lab2)),
+							LdW (tempintloc)),
+						IntDatum (WORDSIZE)))
             case FieldExp (_, f) =>
                 val e @ Variable (RecordType (fs)) = n->entity
                 Local (e.locn + fs.indexOf (f) * WORDSIZE)
             case _ =>
                 Local ((n->entity).locn)
         }
-
+        
     /**
-     * The current label to which an EXIT statement should jump.  Undefined
-     * to start with since there is no LOOP for an EXIT to appear inside.
+     * The current label to which an EXIT statement should jump.
+     * Undefined outside of all LOOP statements where no 
+     * EXIT statement should appear.
      */
     private var exitlab : Label = _
+    
+    /**
+     * The label marking the entry point to the currently active error handler 
+     * (CATCH block). Defaults to a global handler outside of all TRY...CATCH blocks
+     *
+     * Notice that since this version of Obr has no procedures, the currently 
+     * active exception handler can be determined completely statically.
+     */
+    private var exnlab : Label = _
+
+    /**
+     * A location reserved for storing temporary integer values while
+     * they are checked for possible division by zero or index out of
+     * bounds errors.
+     */
+    private var tempintloc : Address = _
+    
+    /**
+     * A location reserved for storing the exception value associated with
+     * a raised exception.
+     */
+    private var exnloc : Address = _
 
     /**
      * The RISC tree items that are the translation of the given
@@ -110,7 +160,7 @@ object RISCTransformation {
              * An EXIT statement translates into a jump to the exit label
              * of the current LOOP statement.
              */
-            case ExitStmt () =>
+            case s @ ExitStmt () =>
                 List (Jmp (exitlab))
 
             /**
@@ -129,17 +179,28 @@ object RISCTransformation {
                 val lab2 = genlabel ()
                 val lab3 = genlabel ()
                 val eloc = location (e)
+                // store current value of first unallocated location
+                val origprevloc = prevloc
+                // allocate a temporary location to store the calculated 
+                // maximum index value for this for loop.
                 val maxloc = Local (Variable (IntType).locn)
-                List (StW (eloc, min->datum),
-                      StW (maxloc, max->datum),
-                      Bne (CmpgtW (LdW (eloc), LdW (maxloc)), lab2),
-                      Jmp (lab1),
-                      LabelDef (lab3),
-                      StW (eloc, AddW (LdW (eloc), IntDatum (1))),
-                      LabelDef (lab1)) ++
-                     body.flatMap (sitems) ++
-                     List (Bne (CmpltW (LdW (eloc), LdW (maxloc)), lab3),
-                           LabelDef (lab2))
+                // generate RISCTree code
+                val result = 
+                    List (StW (eloc, min->datum),
+                          StW (maxloc, max->datum),
+                          Bne (CmpgtW (LdW (eloc), LdW (maxloc)), lab2),
+                          Jmp (lab1),
+                          LabelDef (lab3),
+                          StW (eloc, AddW (LdW (eloc), IntDatum (1))),
+                          LabelDef (lab1)) ++
+                    body.flatMap (sitems) ++
+                    List (Bne (CmpltW (LdW (eloc), LdW (maxloc)), lab3),
+                          LabelDef (lab2))
+                // restore value of first unallocated location
+                // thereby deallocating our temporary.
+                prevloc = origprevloc
+                // ... and return our generated RISCTree code
+                result
 
             /**
              * A conditional statement translates into an evaluation of
@@ -162,16 +223,23 @@ object RISCTransformation {
              * on entry and restore it on exit in case this LOOP occurs
              * inside another one.
              */
-            case LoopStmt (body) =>
+            case s @ LoopStmt (body) =>
+                // Generate label for top of loop body
                 val lab1 = genlabel ()
+                // Generate label for exit point of loop
                 val lab2 = genlabel ()
-                val savelab = exitlab
+                // Store current exit label
+                val origexitlab = exitlab
+                // Set exit label to exit point of this loop
                 exitlab = lab2
-                val res = List (LabelDef (lab1)) ++
-                    body.flatMap (sitems) ++
-                    List (Jmp (lab1), LabelDef (lab2))
-                exitlab = savelab
-                res
+                // Construct loop code
+                val result = List (LabelDef (lab1)) ++
+                                body.flatMap (sitems) ++
+                                List (Jmp (lab1), LabelDef (lab2))
+                // Restore exit label
+                exitlab = origexitlab
+                // Return loop code
+                result
 
             /**
              * A return statement translates into a Write instruction to
@@ -179,7 +247,7 @@ object RISCTransformation {
              * terminate the program.
              */
             case ReturnStmt (exp) =>
-                List (Write (exp->datum), Ret)
+                List (Write (exp->datum), Ret ())
 
             /**
              * A while statement translates into the standard evaluation
@@ -191,7 +259,80 @@ object RISCTransformation {
                 List (Jmp (lab1), LabelDef (lab2)) ++
                     body.flatMap (sitems) ++
                     List (LabelDef (lab1), Bne (cond->datum, lab2))
+            
+            /**
+             * A TRY statement translates to the code generated from its body followed by
+             * the code generated from each of its catch blocks. Between these we must also
+             * provide a jump instruction to jump around the catch blocks, avoiding drop
+             * through, should execution of the body complete without raising an exception.         
+             *
+             * The label stored in exnlab is used to translate any RAISE statements, which
+             * are essentially just jumps to that label. But we need to be careful, because
+             * this label should be set to point to the entry point of the CATCH block of
+             * the current TRY statement within its body and to the exception handler which 
+             * is associated with the enclosing scope within the bodies of its CATCH blocks.
+             */
+            case TryStmt (TryBody (body), cblocks) =>
+                // A label for the entry point of the exception handler code
+                val lab1 = genlabel ()
+                // A label for the exit point of the exception handler code
+                val lab2 = genlabel ()
+                // Store away the label of the current exception handler
+                val origexnlab = exnlab
+                // Make the label marking the entry point to the catch block of this
+                // try statement the current exception handler label.
+                exnlab = lab1
+                // Construct the translated RISC code for the body of this try statement
+                val tbody = body.flatMap (sitems)
+                // Re-establish the exception handler label from the enclosing scope
+                exnlab = origexnlab
+                // Translate the catch clauses, append the resulting RISC code to that for
+                // the body and return
+                tbody ++ List (Jmp (lab2), LabelDef (lab1)) ++
+                    cblocks.flatMap (cblock (_, lab2)) ++ 
+                    List (Jmp (exnlab), LabelDef (lab2))
+                    
+            /**
+             * A RAISE statement stores the integer associated with the specified
+             * exception into a memory location reserved for the current exception
+             * value and jumps to the exception handler (CATCH blocks) for the 
+             * current scope.
+             */
+            case n @ RaiseStmt (_) =>
+                // Get hold of the integer constant associated with the exception
+                // kind specified in this RAISE statement
+                val exnconst = (n->entity) match {
+                    case Constant (_, v) => IntDatum (v)
+                }
+                // Generate code to store that vale as the current exception number
+                // and then to jump to the entry point of the exception handler currently
+                // in scope.
+                List (StW (exnloc, exnconst), Jmp (exnlab))
 
+        }
+    
+    /**
+     * Translate a catch block into RISC machine code. Each one simply translates
+     * to a test of the value of the current exception followed by code which 
+     * executed if that test succeeds.
+     */
+    private def cblock (clause : Catch, exitlab : Label) : List[Item] =
+        clause match {
+
+            case n @ Catch(idn, stmts) =>
+                // Generate a label for the exit point of this catch block.
+                val lab1 = genlabel ()
+                // Get hold of the integer constant associated with the exception
+                // identifier of this catch block from the entity of this node.
+                val exnconst = (n->entity) match {
+                    case Constant (_, v) => IntDatum (v)
+                }
+                // Generate code for statements in the catch body, guarded by a
+                // conditional branch to test the exception value thrown.
+                List (Beq (CmpeqW (LdW (exnloc), exnconst), lab1)) ++
+                    stmts.flatMap (sitems) ++
+                    List(Jmp (exitlab), LabelDef (lab1))
+                    
         }
 
     /**
@@ -277,9 +418,20 @@ object RISCTransformation {
 
             /**
              * A modulus expression turns into a remainder operation.
+             * See the translation of SlashExps for more information. 
              */
             case ModExp (l, r) =>
-                RemW (l->datum, r->datum)
+                val lab1 = genlabel ()
+                SequenceDatum (
+                    List (
+                            StW (tempintloc, r->datum)
+                        ,   Bne (LdW (tempintloc), lab1)
+                        ,   StW (exnloc, IntDatum (divideByZeroExn))
+                        ,   Jmp (exnlab)
+                        ,   LabelDef (lab1)
+                        )
+                ,   RemW (l->datum, LdW (tempintloc))
+                )
 
             /**
              * A negation expression turns into a negation operation.
@@ -315,9 +467,31 @@ object RISCTransformation {
 
             /**
              * A slash expression turns into a division operation.
+             * However, we also need to check the second operand to
+             * see if it is 0 and if it is we raise a DivideByZero
+             * exception.
              */
             case SlashExp (l, r) =>
-                DivW (l->datum, r->datum)
+                val lab1 = genlabel ()
+                SequenceDatum (
+                        List (
+                                // Calculate value of right operand and store result
+                                // in the memory location reserved for temporaries.
+                                StW (tempintloc, r->datum)
+                                // If this value is non-zero then branch to the code
+                                // which actually calculates this division operation. 
+                            ,   Bne (LdW (tempintloc), lab1)
+                                // Store the integer associated with DivideByZero exceptions
+                                // into the location reserved for the current exn number.
+                            ,   StW (exnloc, IntDatum (divideByZeroExn))
+                                // Raise this exception by jumping to the current
+                                // (nearest enclosing) exception handler.
+                            ,   Jmp (exnlab)
+                            ,   LabelDef (lab1)
+                            )
+                        // Finally execute the division operation.
+                    ,   DivW (l->datum, LdW (tempintloc))
+                    )
 
             /**
              * A star expression turns into a multiplication operation.

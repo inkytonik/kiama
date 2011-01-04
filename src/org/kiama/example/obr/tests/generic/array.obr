@@ -8,7 +8,7 @@ VAR
 BEGIN
     v := 0;
     FOR i := 1 TO 10 DO
-        a[i] := i;
+        a[i] := 2 * i;
     END
     FOR i := 1 TO 10 DO
         v := v + a[i];

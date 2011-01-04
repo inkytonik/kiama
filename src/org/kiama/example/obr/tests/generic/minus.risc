@@ -9,8 +9,20 @@
     sub $1, $1, $2
     wrd $1
     wrl
-    ! Ret
-    br label1
-    ! Epilogue
+    ! Ret()
+    br label2
+    ! Write(IntDatum(0))
+    movi $1, $0, 0
+    wrd $1
+    wrl
+    ! Ret()
+    br label2
+    ! LabelDef(Label(1))
 label1:
+    ! Write(IntDatum(-1))
+    movi $1, $0, -1
+    wrd $1
+    wrl
+    ! Epilogue
+label2:
     ret $0

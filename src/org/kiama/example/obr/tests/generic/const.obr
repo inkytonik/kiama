@@ -1,4 +1,8 @@
 PROGRAM X (x : INTEGER) : INTEGER;
+
+CONST
+    Test = -12341234;
+
 BEGIN
-    RETURN -12341234;
+    RETURN Test;
 END X.

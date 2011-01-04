@@ -136,11 +136,11 @@ class RISC (code : Code, console : Console, emitter : Emitter)
             case MOD (a, b, c)   => R (a) := R (b) % R (c)
             case MODI (a, b, im) => R (a) := R (b) % im
             case AND (a, b, c)   => R (a) := R (b) & R (c)
-            case ANDI (a, b, im) => R (a) := R (b) & im
+            case ANDI (a, b, im) => R (a) := R (b) & (im.toInt & 0xFFFF)
             case OR (a, b, c)   => R (a) := R (b) | R (c)
-            case ORI (a, b, im) => R (a) := R (b) | im
+            case ORI (a, b, im) => R (a) := R (b) | (im.toInt & 0xFFFF)
             case XOR (a, b, c)   => R (a) := R (b) ^ R (c)
-            case XORI (a, b, im) => R (a) := R (b) ^ im
+            case XORI (a, b, im) => R (a) := R (b) ^ (im.toInt & 0xFFFF)
             case CMP (b, c)      => Z := R (b) =:= R (c)
                                     N := R (b) < R (c)
             case CMPI (b, im)    => Z := R (b) =:= im

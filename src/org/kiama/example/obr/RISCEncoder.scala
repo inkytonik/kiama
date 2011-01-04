@@ -4,7 +4,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.
- * Copyright (C) 2010 Dominic Verity, Macquarie University.
+ * Copyright (C) 2010-2011 Dominic Verity, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -106,34 +106,11 @@ object RISCEncoder {
     def getassem : AssemCode = code
 
     /**
-     * The next label to use.
-     */
-    private var lasttarget = 0
-
-    /**
-     * Initialise nexttarget.
-     * We set it to the number of the last label used in a RISCTree
-     * to avoid label numbering clashes with labels generated here.
-     */
-    private def resetlasttarget (p : RISCProg) {
-        lasttarget = 0
-        for (item <- p.insns) {
-            item match {
-                case Beq(_,Label(num))      => lasttarget = max(num,lasttarget)
-                case Bne(_,Label(num))      => lasttarget = max(num,lasttarget)
-                case Jmp(Label(num))        => lasttarget = max(num,lasttarget)
-                case LabelDef(Label(num))   => lasttarget = max(num,lasttarget)
-                case _                      =>
-            }
-        }
-    }
-
-    /**
-     * Generate a brand new label.
+     * Generate a brand new target label.
      */
     private def gentarget () : Int = {
-        lasttarget += 1
-        lasttarget
+        val Label (label) = genlabel ()
+        label
     }
 
     /**
@@ -167,8 +144,13 @@ object RISCEncoder {
      private val reg : RISCNode ==> RegNo =
         childAttr {
             case d => {
+                // Base case
                 case _ : RISCProg                   => firsttemp
+                
+                // Special cases for specific constructs
                 case p : Cond                       => p->reg
+                
+                // Default allocation algorithm for all other nodes
                 case p : RISCNode if d.isFirst      => p->reg
                 case _                              =>
                     d.prev[RISCNode] match {
@@ -176,7 +158,8 @@ object RISCEncoder {
                             if (s->reg >= lasttemp)
                                 error ("out of local registers")
                             (s->reg) + 1
-                        case s          => s->reg
+                        case s =>
+                            s->reg
                     }
             }
         }
@@ -193,10 +176,9 @@ object RISCEncoder {
 
     def encode (p : RISCProg) {
         resetcode ()
-        resetlasttarget (p)
 
         emitcomment("Prologue")
-        emit(MOVI(memreg,0,0))
+        emit (MOVI (memreg, 0, 0))
 
         exitlab = gentarget ()
         (p.insns) map encode
@@ -230,7 +212,7 @@ object RISCEncoder {
             case LabelDef (lab) =>
                 emit (Target (lab.num))
 
-            case Ret =>
+            case Ret () =>
                 emit (BR (exitlab))
 
             // TODO check offsets are 16 bit (see toShort casts)

@@ -4,6 +4,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2011 Dominic Verity, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -178,7 +179,7 @@ object SemanticAnalysis {
                     case StarExp (l, r)     => l->errors; r->errors
                     case _                  =>
                 }
-                if (!(e->exptipe exists (_ iscompatible e->tipe)))
+                if (!(e->exptipe exists ((_ : TypeBase) iscompatible e->tipe)))
                     message (e, "type error: expected " + (e->exptipe).mkString(" or ") +
                              " got " + (e->tipe))
 
@@ -188,21 +189,26 @@ object SemanticAnalysis {
 
     /**
      * Attribute to consecutively number enumeration constants.
-     * The predefined exception DivideByZero is given number 0, so
-     * for user defined ones we start counting at 1.
      */
     val enumconstnum : EnumConst ==> Int =
         attr {
-            case c if (c.isFirst)   => 1
+            case c if (c.isFirst)   => 0
             case c                  => (c.prev[EnumConst]->enumconstnum) + 1
         }
 
+    /**
+     * Pre-defined exception numbers
+     */
+    val divideByZeroExn : Int = 0
+	val indexOutOfBoundsExn : Int = 1
+    val userExn : Int = 2
+        
     /**
      * Attribute to consecutively number exception constants
      */
     val exnconstnum : Declaration ==> Int =
         attr {
-            case c if (c.isFirst)   => 0
+            case c if (c.isFirst)   => userExn
             case c                  =>
                 c.prev[Declaration] match {
                     case d : ExnConst   => (d->exnconstnum) + 1
@@ -215,7 +221,8 @@ object SemanticAnalysis {
      * like DivideByZero
      */
     val initEnv = Map (
-            "DivideByZero" -> Constant (ExnType, 0)
+            "DivideByZero" -> Constant (ExnType, divideByZeroExn)
+        ,   "IndexOutOfBounds" -> Constant (ExnType, indexOutOfBoundsExn)
         )
 
     /**
@@ -259,7 +266,7 @@ object SemanticAnalysis {
     /**
      * envin is an environment of bindings already seen.  Add a binding of i
      * to e and return the complete set of bindings, unless i already has a
-     * binding at n, in which case define i to be a multiply-defined entity.
+     * binding in envin, in which case define i to be a multiply-defined entity.
      */
     def define (envin : Environment, i : Identifier, e : => Entity) : Environment =
         if (envin contains i)
