@@ -23,14 +23,20 @@ package example.oneohonecompanies
 
 object Precedence {
 
-    import Company._
+    import Company.{Company,Dept,Employee,Node,Salary}
     import org.kiama.attribution.Decorators.down
     import org.kiama.rewriting.Rewriter.everything
 
+    /**
+     * Return the salary of the boss of a particular part of a company,
+     * or Float.MaxValue if there is no such boss.
+     */
     private def bosssalary : Node ==> Salary =
         down {
-            case n if n isRoot                   => Float.MaxValue
-            case Dept (_, Employee (_, _, s), _) => s
+            case n if n isRoot =>
+                Float.MaxValue
+            case Dept (_, Employee (_, _, s), _) =>
+                s
             case e : Employee =>
                 e.parent[Node] match {
                     case p @ Dept (_, m, _) if m eq e =>
@@ -40,7 +46,11 @@ object Precedence {
                         p->bosssalary
                 }
         }
-        
+      
+    /**
+     * Return true iff every employee has a salary no greater than
+     * their boss.
+     */
     def precedence (c : Company) : Boolean =
         everything (true) (_ && _) {
             case e @ Employee (_, _, s) =>

@@ -23,9 +23,12 @@ package example.oneohonecompanies
 
 object Cut {
 
-    import Company._
+    import Company.{Company,Salary}
     import org.kiama.rewriting.Rewriter.{everywhere,rewrite,rule}
     
+    /**
+     * Reduce all salaries by half.
+     */
     def cut (c : Company) : Company =
         rewrite (everywhere (rule { case s : Salary => s / 2 })) (c)
 

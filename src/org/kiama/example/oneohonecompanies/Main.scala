@@ -24,16 +24,12 @@ package example.oneohonecompanies
 object Main {
     
     import SampleCompany.company
-    import Total.total
-    import Cut.cut
-    import Depth.depth
-    import Precedence.precedence
 
     def main (args : Array[String]) {
-        println (total (company))
-        println (total (cut (company)))
-        println (depth (company))
-        println (precedence (company))
+        println (Total.total (company))
+        println (Total.total (Cut.cut (company)))
+        println (Depth.depth (company))
+        println (Precedence.precedence (company))
     }
 
 }

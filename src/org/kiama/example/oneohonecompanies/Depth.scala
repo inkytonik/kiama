@@ -23,9 +23,12 @@ package example.oneohonecompanies
 
 object Depth {
 
-    import Company._
+    import Company.{Company,Dept}
     import org.kiama.rewriting.Rewriter.para
     
+    /**
+     * Return the nesting depth of departments.
+     */
     def depth (c : Company) : Int =
         para[Int] {
             case (t, cs) =>
