@@ -8,7 +8,7 @@
  *              curried form, as single argument functions whose return
  *              results are themselves function closures. 
  *
- * Copyright:   (c) 2010 Dominic Verity, Macquarie University
+ * Copyright:   (C) 2010-2011 Dominic Verity, Macquarie University
  */ 
 
 primitives write;

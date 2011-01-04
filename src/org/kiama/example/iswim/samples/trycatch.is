@@ -2,7 +2,7 @@
  * Title:     An implementation of try...catch exception
  *            handling using continuations
  * Author:    Dominic Verity
- * Copyright: Macquarie University (c) 2007-2010
+ * Copyright: Macquarie University (C) 2007-2011
  *
  * A try..catch block is implemented using 2 continuations:
  *        The first marks the exit point for normal exits.

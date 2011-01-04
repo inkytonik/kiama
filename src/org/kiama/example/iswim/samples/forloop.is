@@ -1,7 +1,7 @@
 /**
  * Title:     Code Sample - for loop with continue and break
  * Author:    Dominic Verity
- * Copyright: Macquarie University (c) 2007-2010
+ * Copyright: Macquarie University (C) 2007-2011
  *
  * The following functions implement a for() loop and associated continue()
  * and break() operations.

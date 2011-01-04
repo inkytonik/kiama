@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2009-2011 Anthony M Sloane, Macquarie University.
  *
  * Contributed by Ben Mockler.
  *

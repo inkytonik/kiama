@@ -1,7 +1,7 @@
 /**
  * Title:     Code Sample - echo input from terminal
  * Author:    Dominic Verity
- * Copyright: Macquarie University (c) 2007-2010
+ * Copyright: Macquarie University (C) 2007-2011
  *
  * A very simple example of the use of the imperative features of
  * our ISWIM like language. Uses a tail recursive function to emulate
