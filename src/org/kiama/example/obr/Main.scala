@@ -225,6 +225,7 @@ class TreeTestDriver extends Driver {
             // Initialise compiler state
             SymbolTable.reset ()
             RISCTree.reset ()
+            resetmessages ()
         
             try {
                 val reader = new FileReader (dirname + obrfile)
