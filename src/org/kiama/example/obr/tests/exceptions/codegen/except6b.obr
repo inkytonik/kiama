@@ -1,0 +1,70 @@
+(* Localisation test                       *)
+(* Checks to see if exceptions are         *)
+(* caught by the handlers of the closest   *)
+(* enclosing TRY statement.                *)
+(* Also checks that exceptions in CATCH    *)
+(* blocks are passed outward to the next   *)
+(* TRY...CATCH statement.                  *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+CONST
+  Limit = 100;
+  TestException : EXCEPTION;
+  TestException1 : EXCEPTION;
+  TestException2 : EXCEPTION;
+  TestException3 : EXCEPTION;
+
+VAR
+  result : INTEGER;
+
+BEGIN
+  result := 0;
+  IF i = 0 THEN
+    RAISE TestException;
+  END 
+
+  TRY
+    IF (i = 1) OR (i = 4) THEN
+      RAISE TestException1;
+    END 
+
+    TRY
+      IF (i = 2) OR (i = 5) THEN
+        RAISE TestException2;
+      END 
+
+      TRY
+
+        IF (i = 3) OR (i = 6) THEN
+          RAISE TestException3;
+        END 
+
+      CATCH TestException3 DO
+        IF i = 6 THEN
+          RAISE TestException2;
+        END 
+        result := -2;
+      END
+
+    CATCH TestException2 DO
+      IF i = 5 THEN
+        RAISE TestException1;
+      END 
+      result := -3;
+    END
+
+  CATCH TestException1 DO
+    IF i = 4 THEN
+      RAISE TestException;
+    END 
+    result := -4;
+  END
+
+  IF i = 7 THEN
+    RAISE TestException;
+  END 
+
+  RETURN result;
+END Except.
+

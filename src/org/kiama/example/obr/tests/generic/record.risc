@@ -1,0 +1,35 @@
+    ! Prologue
+    movi $27, $0, 0
+    ! StW(Local(0),Read())
+    rd $1
+    stw $1, $27, 0
+    ! StW(Local(4),IntDatum(9))
+    movi $1, $0, 9
+    stw $1, $27, 4
+    ! StW(Local(8),IntDatum(11))
+    movi $1, $0, 11
+    stw $1, $27, 8
+    ! StW(Local(12),IntDatum(2009))
+    movi $1, $0, 2009
+    stw $1, $27, 12
+    ! Write(LdW(Local(8)))
+    ldw $1, $27, 8
+    wrd $1
+    wrl
+    ! Ret()
+    br label2
+    ! Write(IntDatum(0))
+    movi $1, $0, 0
+    wrd $1
+    wrl
+    ! Ret()
+    br label2
+    ! LabelDef(Label(1))
+label1:
+    ! Write(IntDatum(-1))
+    movi $1, $0, -1
+    wrd $1
+    wrl
+    ! Epilogue
+label2:
+    ret $0

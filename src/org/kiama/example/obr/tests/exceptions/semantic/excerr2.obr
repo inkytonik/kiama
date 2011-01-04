@@ -1,0 +1,43 @@
+(* Exception-related errors in statements *)
+
+PROGRAM ExcErr2 (i : INTEGER) : INTEGER;
+
+CONST
+    FallOverALot : EXCEPTION;
+
+VAR
+    j : INTEGER;
+
+BEGIN
+
+    (* Exceptions used in assignment *)
+    FallOverALot := 1;
+    DivideByZero := 10;
+
+    (* Exception used in expressions *)
+    IF FallOverALot > 10 THEN
+        i := DivideByZero + 1;
+    END
+
+    (* RAISE a non-exception *)
+    RAISE i;
+
+    (* CATCH a non-exception *)
+    TRY
+        i := 0;
+    CATCH j DO
+        i := 10;
+    CATCH i DO
+        i := 10;
+    END
+    
+    (* Find type errors in TRY body and CATCH clause bodies *)
+    TRY
+        i := true;
+    CATCH DivideByZero DO
+        FallOverALot := 1;
+    CATCH FallOverALot DO
+        i := j + DivideByZero;
+    END
+    
+END ExcErr2.

@@ -4,6 +4,7 @@
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2011 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2011 Dominic Verity, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -84,9 +85,24 @@ object ObrTree {
     case class RecordVar (idn: Identifier, fields : List[Identifier]) extends Declaration
 
     /**
+     * A declaration of an enumeration variable with given enumeration constants.
+     */
+    case class EnumVar (idn : Identifier, consts : List[EnumConst]) extends Declaration
+
+    /**
+     * A declaration of an enumeration constant
+     */
+    case class EnumConst (idn : Identifier) extends ObrNode with EntityNode
+
+    /**
      * A declaration of an integer constant with the given value.
      */
     case class IntConst (idn: Identifier, value : Int) extends Declaration
+
+    /**
+     * A declaration of a new exception value
+     */
+    case class ExnConst (idn : Identifier) extends Declaration
 
     /**
     * Superclass of all statement classes.
@@ -133,6 +149,18 @@ object ObrTree {
      * A statement that executes its body while its expression is true.
      */
     case class WhileStmt (cond : Expression, body : List[Statement]) extends Statement
+
+    /**
+     * A statement that raises a specified exception.
+     */
+    case class RaiseStmt (idn : Identifier) extends Statement with EntityNode
+
+    /**
+     * A statement that is used to catch exception
+     */
+    case class TryStmt (body : TryBody, catches : List[Catch]) extends Statement
+    case class TryBody (stmts : List[Statement]) extends ObrNode
+    case class Catch (idn : Identifier, stmts : List[Statement]) extends ObrNode with EntityNode
 
     /**
     * Superclass of all expression classes.

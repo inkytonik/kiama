@@ -38,7 +38,7 @@ class Driver extends Parser with RegexCompiler[ModuleDecl] {
     import assembler.Assembler
     import compiler.ErrorCheck.collectErrors
     import compiler.Encoder.EncodeModule
-    import machine.RISC
+    import org.kiama.example.RISC.RISC
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._

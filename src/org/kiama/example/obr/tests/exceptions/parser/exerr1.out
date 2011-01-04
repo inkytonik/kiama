@@ -1,0 +1,5 @@
+[10.17] failure: `:=' expected but `D' found
+
+   DivideByZero DO
+
+                ^

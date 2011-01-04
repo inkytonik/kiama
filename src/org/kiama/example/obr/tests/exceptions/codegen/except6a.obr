@@ -1,0 +1,50 @@
+(* Nested TRY                               *)
+(* This checks to see that exceptions are   *)
+(* correctly re-raised if they are not      *)
+(* handled by the current exception handler *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+CONST
+  Limit = 100;
+  TestException1 : EXCEPTION;
+  TestException2 : EXCEPTION;
+  TestException3 : EXCEPTION;
+  TestException4 : EXCEPTION;
+
+VAR
+  result : INTEGER;
+
+BEGIN
+   result := 0;
+   TRY
+     TRY
+       TRY
+         IF i = 1 THEN
+            RAISE TestException1;
+         END
+         IF i = 2 THEN
+            RAISE TestException2;
+         END
+         IF i = 3 THEN
+            RAISE TestException3;
+         END
+         IF i = 4 THEN
+            RAISE TestException4;
+         END
+         result := i * Limit;
+         IF i = 0 THEN
+            RAISE DivideByZero;
+         END
+       CATCH TestException1 DO
+         result := 10;
+       END
+     CATCH TestException2 DO
+       result := 20;
+     END
+   CATCH TestException3 DO
+     result := 30;
+   END
+   RETURN result;
+END Except.
+

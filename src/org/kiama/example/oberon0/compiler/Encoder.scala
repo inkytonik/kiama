@@ -35,7 +35,7 @@ object Encoder {
     import ValueAnalysis._
     import org.kiama.attribution.Attributable
     import org.kiama.example.oberon0.assembler._
-    import org.kiama.example.oberon0.machine.RISCISA._
+    import org.kiama.example.RISC.RISCISA._
 
     /**
      * For objects which require memory (VarDecls, RefVarDecls and FieldDecls), set byteOffset
@@ -140,7 +140,7 @@ object Encoder {
         Assembler.emit (ADDI (29, 0, 0))
 
         // Set the stack pointer
-        Assembler.emit (ADDI (30, 0, md.byteSize))
+        Assembler.emit (ADDI (30, 0, md.byteSize.toShort))
 
         // Encode each statement
         md.stmts.foreach (stmt => EncodeStatement(stmt, md))
@@ -172,7 +172,7 @@ object Encoder {
         Assembler.emit (ADDI (29, 30, 0))
 
         // Set the SP to the current SP + the frame size
-        Assembler.emit (ADDI (30, 30, pd.byteSize))
+        Assembler.emit (ADDI (30, 30, pd.byteSize.toShort))
 
         // Encode each statement
         pd.stmts.foreach (stmt => EncodeStatement (stmt, pd))
@@ -251,7 +251,7 @@ object Encoder {
                     reg = baseAddrReg
 
                 // Load the address
-                Assembler.emit (LDW (reg, baseAddrReg, rvd.byteOffset))
+                Assembler.emit (LDW (reg, baseAddrReg, rvd.byteOffset.toShort))
 
                 desigResult (reg, 0)
             }
@@ -280,7 +280,7 @@ object Encoder {
             val tempReg = processNumExp (exp, procOrModDecl)
 
             // Multiply by array item size
-            Assembler.emit ( MULI (tempReg, tempReg, (ad->objType->byteSize)))
+            Assembler.emit ( MULI (tempReg, tempReg, (ad->objType->byteSize).toShort))
 
             var dstReg : Byte = 0
 
@@ -340,9 +340,9 @@ object Encoder {
             reg = Assembler.getFreeReg
 
             if (exp->objType == IntegerType)
-                Assembler.emit ( ADDI (reg, 0, exp->intValue))
+                Assembler.emit ( ADDI (reg, 0, (exp->intValue).toShort))
             else if (exp->objType == BooleanType)
-                Assembler.emit ( ADDI (reg, 0, (exp->boolValue).asInstanceOf[Int]))
+                Assembler.emit ( ADDI (reg, 0, (exp->boolValue).asInstanceOf[Short]))
 
             return reg
         }
@@ -362,7 +362,7 @@ object Encoder {
                     reg = desResult.regno
 
                 // Load the item from memory
-                Assembler.emit ( LDW (reg, desResult.regno, desResult.offset))
+                Assembler.emit ( LDW (reg, desResult.regno, desResult.offset.toShort))
 
                 reg
             }
@@ -497,8 +497,8 @@ object Encoder {
                 var i : Int = 0
                 while (i < targetdes->objType->byteSize)
                 {
-                    Assembler.emit (LDW (tempreg, srcDesResult.regno, srcDesResult.offset + i))
-                    Assembler.emit (STW (tempreg, tgtDesResult.regno, tgtDesResult.offset + i))
+                    Assembler.emit (LDW (tempreg, srcDesResult.regno, (srcDesResult.offset + i).toShort))
+                    Assembler.emit (STW (tempreg, tgtDesResult.regno, (tgtDesResult.offset + i).toShort))
                     i = i + 4
                 }
 
@@ -510,7 +510,7 @@ object Encoder {
                 val srcReg = processNumExp (exp, procOrModDecl)
 
                 // Make assignment
-                Assembler.emit (STW (srcReg, tgtDesResult.regno, tgtDesResult.offset))
+                Assembler.emit (STW (srcReg, tgtDesResult.regno, tgtDesResult.offset.toShort))
 
                 Assembler.freeReg (srcReg)
             }
@@ -614,7 +614,7 @@ object Encoder {
                 val desResult = processDesig (des, procOrModDecl)
 
                 // Make assignment
-                Assembler.emit (STW (reg, desResult.regno, desResult.offset))
+                Assembler.emit (STW (reg, desResult.regno, desResult.offset.toShort))
 
                 // Free registers
                 if (desResult.regno != 0 && desResult.regno != 29)
@@ -658,10 +658,10 @@ object Encoder {
                                 reg = desResult.regno
                             }
 
-                            Assembler.emit ( ADDI (reg, desResult.regno, desResult.offset))
+                            Assembler.emit ( ADDI (reg, desResult.regno, desResult.offset.toShort))
 
                             // The +8 here is to skip over the backups of LNK and the old FP
-                            Assembler.emit ( STW (reg, 30, fp.byteOffset + 8))
+                            Assembler.emit ( STW (reg, 30, (fp.byteOffset + 8).toShort))
 
                             // Free registers
                             Assembler.freeReg (reg)
@@ -687,10 +687,10 @@ object Encoder {
                             var i : Int = 0
                             while (i < fp->objType->byteSize)
                             {
-                                Assembler.emit (LDW (tempreg, srcDesResult.regno, srcDesResult.offset + i))
+                                Assembler.emit (LDW (tempreg, srcDesResult.regno, (srcDesResult.offset + i).toShort))
 
                                 // The +8 is as above
-                                Assembler.emit (STW (tempreg, 30, fp.byteOffset + 8 + i))
+                                Assembler.emit (STW (tempreg, 30, (fp.byteOffset + 8 + i).toShort))
                                 i = i + 4
                             }
 
@@ -703,7 +703,7 @@ object Encoder {
                             val srcReg = processNumExp (ap, procOrModDecl)
 
                             // The +8 is as above
-                            Assembler.emit (STW (srcReg, 30, fp.byteOffset + 8))
+                            Assembler.emit (STW (srcReg, 30, (fp.byteOffset + 8).toShort))
 
                             Assembler.freeReg (srcReg)
                         }
