@@ -665,40 +665,36 @@ object Rewriter {
      * term is the same as that of the original term and the children
      * are the results of the strategies.  If the length of ss is not
      * the same as the number of children, then congruence (ss) fails.
-     * This operation works on instances of Product or finite Traversable
-     * values.
+     * This operation works on instances of Product values.
      */
     def congruence (ss : Strategy*) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product => congruenceProduct (p, ss : _*)
-                    case a           => Some (a)
+                    case p : Product        => congruence[Product] (p, ss : _*)
+                    case _                  => Some (t)
                 }
-        }
-
-    /**
-     * Implement a congruence generic traversal for a product.
-     */
-    private def congruenceProduct (p : Product, ss : Strategy*) : Option[Term] = {
-        val numchildren = p.productArity
-        if (numchildren == ss.length) {
-            val children = new Array[AnyRef](numchildren)
-            for (i <- 0 until numchildren) {
-                val ct = p.productElement (i)
-                (ss (i)) (ct) match {
-                    case Some (ti) =>
-                        children (i) = makechild (ti)
-                    case None      =>
-                        return None
-                }
+                
+            private def congruence[T <: Product] (p : T, ss : Strategy*) : Option[T] = {
+               val numchildren = p.productArity
+               if (numchildren == ss.length) {
+                   val children = new Array[AnyRef](numchildren)
+                   for (i <- 0 until numchildren) {
+                       val ct = p.productElement (i)
+                       (ss (i)) (ct) match {
+                           case Some (ti) =>
+                               children (i) = makechild (ti)
+                           case None      =>
+                               return None
+                       }
+                   }
+                   val ret = dup (p, children)
+                   Some (ret)
+               } else {
+                   None
+               }
             }
-            val ret = dup (p, children)
-            Some (ret)
-        } else {
-            None
         }
-    }
 
     /**
      * Rewrite a term.  Apply the strategy s to a term returning the result term

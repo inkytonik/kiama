@@ -723,6 +723,45 @@ class RewriterTests extends FunSuite with Checkers with Generator {
             )
         }
     }
+    
+    {
+        // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
+        val p = 
+            Seqn (List (
+                Asgn ("i", Num (10)),
+                Asgn ("count", Num (0)),
+                While (Var ("i"),
+                    Seqn (List (
+                        Asgn ("count", Add (Var ("count"), Num (1))),
+                        Asgn ("i", Add (Num (1), Var ("i"))))))))
+                        
+        // { i = 0; count = 0; while (i) { count = bob + 1; i = 0 + i; } }
+        val q = 
+            Seqn (List (
+                Asgn ("i", Num (0)),
+                Asgn ("count", Num (0)),
+                While (Var ("i"),
+                    Seqn (List (
+                        Asgn ("count", Add (Var ("bob"), Num (1))),
+                        Asgn ("i", Add (Num (0), Var ("i"))))))))
+
+        val incint = rule { case i : Int => i + 1 }
+        val clearlist = rule { case _ => Nil }
+        val zeronumsbreakadds =
+            alltd (Num (rule { case _ => 0}) +
+                   Add (rule { case Var (_) => Var ("bob")}, id))
+
+        test ("rewrite by congruence: top-level wrong congruence") {
+            expect (None) (Num (incint) (p))
+        }
+        
+        test ("rewrite by congruence: top-level correct congruence") {
+            expect (Some (Seqn (Nil))) (Seqn (clearlist) (p))
+        }
+        
+        test ("rewrite by congruence: multi-level") {
+            expect (Some (q)) (zeronumsbreakadds (p))
+        }
+    }
 
 }
-

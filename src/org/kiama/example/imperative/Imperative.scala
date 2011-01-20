@@ -30,6 +30,8 @@ import scala.util.parsing.combinator.RegexParsers
  * A simple imperative language abstract syntax designed for testing.
  */
 object AST {
+    
+    import org.kiama.rewriting.Rewriter._
 
     /**
      * Identifiers are represented as strings.
@@ -226,6 +228,68 @@ object AST {
             b.pretty (o);
         }
     }
+
+    // Congruences
+
+    def Num (s1 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Num =>
+                congruence (s1)
+        }
+
+    def Var (s1 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Var =>
+                congruence (s1)
+        }
+
+    def Neg (s1 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Var =>
+                congruence (s1)
+        }
+
+    def Add (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Add =>
+                congruence (s1, s2)
+        }
+
+    def Sub (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Sub =>
+                congruence (s1, s2)
+        }
+
+    def Mul (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Mul =>
+                congruence (s1, s2)
+        }
+
+    def Div (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Div =>
+                congruence (s1, s2)
+        }
+
+    def Seqn (s1 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Seqn =>
+                congruence (s1)
+        }
+
+    def Asgn (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case _ : Asgn =>
+                congruence (s1, s2)
+        }
+
+    def While (s1 : => Strategy, s2 : => Strategy) : Strategy =
+        rulefs {
+            case _ : While =>
+                congruence (s1, s2)
+        }
 
 }
 
