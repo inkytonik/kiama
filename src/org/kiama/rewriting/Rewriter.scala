@@ -31,7 +31,11 @@ package rewriting
  */
 object Rewriter {
     
+    import scala.collection.MapLike
+    import scala.collection.SeqLike
+    import scala.collection.TraversableLike
     import scala.collection.generic.CanBuildFrom
+    import scala.collection.mutable.Builder
 
     /**
      * The type of terms that can be rewritten.  Any type of value is acceptable
@@ -312,10 +316,10 @@ object Rewriter {
      * instead of t's children.  Fails if a constructor cannot be found or
      * if one of the children is not of the appropriate type.
      */
-    private def dup (t : Product, children : Array[AnyRef]) : Product = {
+    private def dup[T <: Product] (t : T, children : Array[AnyRef]) : T = {
         val ctor = (t.getClass.getConstructors())(0)
         try {
-            ctor.newInstance (children : _*).asInstanceOf[Product]
+            ctor.newInstance (children : _*).asInstanceOf[T]
         } catch {
             case e : java.lang.ClassCastException =>
                 error ("dup cast failed: " + t)
@@ -345,78 +349,133 @@ object Rewriter {
      * the ith child producing t, then succeed, forming a new term that is the
      * same as the original term except that the ith child is now t.  If s fails
      * on the ith child or the subject term does not have an ith child, then fail.
-     * child (i, s) is equivalent to Stratego's i(s) operator.
+     * child (i, s) is equivalent to Stratego's i(s) operator.  This operation
+     * works on instances of Product or finite Seq values.
      */
     def child (i : Int, s : Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product => childProduct (p, i, s)
-                    case a           => None
+                    case p : Product => child[Product] (p)
+                    case t : Seq[_]  => child[Seq] (t)
+                    case _           => None
                 }
-        }
-
-    /**
-     * Implement a specific child traversal for a product.
-     */
-    private def childProduct (p : Product, i : Int, s : => Strategy) : Option[Term] = {
-        val numchildren = p.productArity
-        if ((i < 1) || (i > numchildren)) {
-            None
-        } else {
-            val ct = p.productElement (i-1)
-            val children = new Array[AnyRef](numchildren)
-            for (j <- 0 until numchildren)
-                children (j) = makechild (p.productElement (j))
-            s (ct) match {
-                case Some (ti) =>
-                    children (i-1) = makechild (ti)
-                case None      =>
-                    return None
+                
+            private def child[T <: Product] (p : T) : Option[T] = {
+                val numchildren = p.productArity
+                if ((i < 1) || (i > numchildren)) {
+                    None
+                } else {
+                    val ct = p.productElement (i-1)
+                    val children = new Array[AnyRef](numchildren)
+                    for (j <- 0 until numchildren)
+                        children (j) = makechild (p.productElement (j))
+                    s (ct) match {
+                        case Some (ti) =>
+                            children (i-1) = makechild (ti)
+                        case None      =>
+                            return None
+                    }
+                    val ret = dup (p, children)
+                    Some (ret)
+                }
             }
-            val ret = dup (p, children)
-            Some (ret)
+            
+            private def child[CC[U] <: Seq[U] with SeqLike[U,CC[U]]] (t : CC[Term])
+                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] = {
+                val numchildren = t.size
+                if ((i < 1) || (i > numchildren)) {
+                    None
+                } else {
+                    val b = cbf (t.repr)
+                    b.sizeHint (t)
+                    for (j <- 0 until i - 1)
+                        b += t (j)
+                    s (t (i - 1)) match {
+                        case Some (ti) =>
+                             b += ti
+                        case None      =>
+                            return None
+                    }
+                    for (j <- i until numchildren)
+                        b += t (j)
+                    Some (b.result)
+                }
+            }
         }
-    }
 
     /**
      * Traversal to all children.  Construct a strategy that applies s to all
      * term children of the subject term in left-to-right order.  If s succeeds
      * on all of the children, then succeed, forming a new term from the constructor
      * of the original term and the result of s for each child.  If s fails on any
-     * child, fail.
+     * child, fail. If there are no children, succeed.  This operation works on
+     * instances of Product or finite Traversable values.
      */
     def all (s : => Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product => allProduct (p, s)
-                    case a           => Some (a)
+                    case p : Product        => all[Product] (p)
+                    case m : Map[_,_]       => all[Map] (m.asInstanceOf[Map[Term,Term]])
+                    case t : Traversable[_] => all[Traversable] (t)
+                    case _                  => Some (t)
                 }
-        }
 
-    /**
-     * Implement an all children generic traversal for a product.
-     */
-    private def allProduct (p : Product, s : => Strategy) : Option[Term] = {
-        val numchildren = p.productArity
-        if (numchildren == 0) {
-            Some (p)
-        } else {
-            val children = new Array[AnyRef](numchildren)
-            for (i <- 0 until numchildren) {
-                val ct = p.productElement (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        children (i) = makechild (ti)
-                    case None      =>
-                        return None
+            private def all[T <: Product] (p : T) : Option[T] = {
+                val numchildren = p.productArity
+                if (numchildren == 0) {
+                    Some (p)
+                } else {
+                    val children = new Array[AnyRef](numchildren)
+                    for (i <- 0 until numchildren) {
+                        val ct = p.productElement (i)
+                        s (ct) match {
+                            case Some (ti) =>
+                                children (i) = makechild (ti)
+                            case None      =>
+                                return None
+                        }
+                    }
+                    val ret = dup (p, children)
+                    Some (ret)
                 }
             }
-            val ret = dup (p, children)
-            Some (ret)
+
+            private def all[CC[U] <: Traversable[U] with TraversableLike[U,CC[U]]] (t : CC[Term])
+                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] =
+                if (t.size == 0)
+                    Some (t)
+                else {
+                    val b = cbf (t.repr)
+                    b.sizeHint (t)
+                    for (ct <- t)
+                        s (ct) match {
+                            case Some (ti) =>
+                                b += ti
+                            case None =>
+                                return None
+                        }
+                    Some (b.result)
+                }
+
+            private def all[CC[V,W] <: Map[V,W] with MapLike[V,W,CC[V,W]]] (t : CC[Term,Term])
+                    (implicit cbf: CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]]) : Option[CC[Term,Term]] =
+                if (t.size == 0)
+                    Some (t)
+                else {
+                    val b = cbf (t.repr)
+                    b.sizeHint (t)
+                    for (ct <- t)
+                        s (ct) match {
+                            case Some ((tix, tiy)) =>
+                                b += ((tix, tiy))
+                            case None =>
+                                return None
+                        }
+                    Some (b.result)
+                }
         }
-    }
 
     /**
      * Traversal to one child.  Construct a strategy that applies s to the term
@@ -425,40 +484,86 @@ object Rewriter {
      * succeed, forming a new term from the constructor of the original term and
      * the original children, except that c is replaced by the result of applying
      * s to c.  In the event that the strategy fails on all children, then fail.
+     * If there are no children, fail.  This operation works on instances of
+     * Product or finite Traversable values.
      */
     def one (s : => Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product => oneProduct (p, s)
-                    case _           => None
+                    case p : Product        => one[Product] (p)
+                    case m : Map[_,_]       => one[Map] (m.asInstanceOf[Map[Term,Term]])
+                    case t : Traversable[_] => one[Traversable] (t)
+                    case _                  => None
                 }
-        }
 
-    /**
-     * Implement a one child generic traversal for a product.
-     */
-    private def oneProduct (p : Product, s : => Strategy) : Option[Term] = {
-        val numchildren = p.productArity
-        for (i <- 0 until numchildren) {
-            val ct = p.productElement (i)
-            s (ct) match {
-                case Some (nct) => {
-                    val children = new Array[AnyRef] (numchildren)
-                    for (j <- 0 until i)
-                        children (j) = makechild (p.productElement (j))
-                    children (i) = makechild (nct)
-                    for (j <- i + 1 until numchildren)
-                        children (j) = makechild (p.productElement (j))
-                    val ret = dup (p, children)
-                    return Some (ret)
+            private def one[T <: Product] (p : T) : Option[T] = {
+                val numchildren = p.productArity
+                for (i <- 0 until numchildren) {
+                    val ct = p.productElement (i)
+                    s (ct) match {
+                        case Some (ti) => {
+                            val children = new Array[AnyRef] (numchildren)
+                            for (j <- 0 until i)
+                                children (j) = makechild (p.productElement (j))
+                            children (i) = makechild (ti)
+                            for (j <- i + 1 until numchildren)
+                                children (j) = makechild (p.productElement (j))
+                            val ret = dup (p, children)
+                            return Some (ret)
+                        }
+                        case None =>
+                            // Do nothing
+                    }
                 }
-                case None =>
-                    // Transformation failed, this child stays unchanged
+                None
             }
+            
+            private def one[CC[U] <: Traversable[U] with TraversableLike[U,CC[U]]] (t : CC[Term])
+                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] = {
+                val b = cbf (t.repr)
+                b.sizeHint (t)
+                var add = true
+                for (ct <- t)
+                    if (add)
+                        s (ct) match {
+                            case Some (ti) =>
+                                b += ti
+                                add = false
+                            case None =>
+                                b += ct
+                        }
+                    else
+                        b += ct
+                if (add)
+                    None
+                else
+                    Some (b.result)
+            }
+
+            private def one[CC[V,W] <: Map[V,W] with MapLike[V,W,CC[V,W]]] (t : CC[Term,Term])
+                    (implicit cbf: CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]]) : Option[CC[Term,Term]] = {
+                val b = cbf (t.repr)
+                b.sizeHint (t)
+                var add = true
+                for (ct <- t)
+                    if (add)
+                        s (ct) match {
+                            case Some ((tix, tiy)) =>
+                                b += ((tix, tiy))
+                                add = false
+                            case None =>
+                                b += ct
+                        }
+                    else
+                        b += ct
+                if (add)
+                    None
+                else
+                    Some (b.result)
+            }
+
         }
-        None
-    }
 
     /**
      * Traversal to as many children as possible, but at least one.  Construct a
@@ -466,46 +571,92 @@ object Rewriter {
      * left-to-right order.  If s succeeds on any of the children, then succeed,
      * forming a new term from the constructor of the original term and the result
      * of s for each succeeding child, with other children unchanged.  In the event
-     * that the strategy fails on all children, then fail.
+     * that the strategy fails on all children, then fail. If there are no 
+     * children, fail.  This operation works on instances of Product or finite
+     * Traversable values.
      */
     def some (s : => Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product => someProduct (p, s)
-                    case _           => None
+                    case p : Product        => some[Product] (p)
+                    case m : Map[_,_]       => some[Map] (m.asInstanceOf[Map[Term,Term]])
+                    case t : Traversable[_] => some[Traversable] (t)
+                    case _                  => None
                 }
-        }
 
-    /**
-     * Implement a some children generic traversal for a product.
-     */
-    private def someProduct (p : Product, s : => Strategy) : Option[Term] = {
-        val numchildren = p.productArity
-        if (numchildren == 0) {
-            None
-        } else {
-            val children = new Array[AnyRef](numchildren)
-            var success = false
-            for (i <- 0 until numchildren) {
-                val ct = p.productElement (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        children (i) = makechild (ti)
-                        success = true
-                    case None      =>
-                        // Child failed, don't transform it
-                        children (i) = makechild (ct)
+            private def some[T <: Product] (p : T) : Option[T] = {
+                val numchildren = p.productArity
+                if (numchildren == 0) {
+                    None
+                } else {
+                    val children = new Array[AnyRef](numchildren)
+                    var success = false
+                    for (i <- 0 until numchildren) {
+                        val ct = p.productElement (i)
+                        s (ct) match {
+                            case Some (ti) =>
+                                children (i) = makechild (ti)
+                                success = true
+                            case None      =>
+                                children (i) = makechild (ct)
+                        }
+                    }
+                    if (success) {
+                        val ret = dup (p, children)
+                        Some (ret)
+                    } else {
+                        None
+                    }
                 }
             }
-            if (success) {
-                val ret = dup (p, children)
-                Some (ret)
-            } else {
-                None
-            }
+
+            private def some[CC[U] <: Traversable[U] with TraversableLike[U,CC[U]]] (t : CC[Term])
+                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] =
+                if (t.size == 0)
+                    None
+                else {
+                    val b = cbf (t.repr)
+                    var success = false
+                    b.sizeHint (t)
+                    for (ct <- t)
+                        s (ct) match {
+                            case Some (ti) =>
+                                b += ti
+                                success = true
+                            case None =>
+                                b += ct
+                        }
+                    if (success) {
+                        Some (b.result)
+                    } else {
+                        None
+                    }
+                }
+
+            private def some[CC[V,W] <: Map[V,W] with MapLike[V,W,CC[V,W]]] (t : CC[Term,Term])
+                    (implicit cbf: CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]]) : Option[CC[Term,Term]] =
+                if (t.size == 0)
+                    None
+                else {
+                    val b = cbf (t.repr)
+                    var success = false
+                    b.sizeHint (t)
+                    for (ct <- t)
+                        s (ct) match {
+                            case Some ((tix, tiy)) =>
+                                b += ((tix, tiy))
+                                success = true
+                            case None =>
+                                b += ct
+                        }
+                    if (success) {
+                        Some (b.result)
+                    } else {
+                        None
+                    }
+                }
         }
-    }
 
     /**
      * Make a strategy that applies the elements of ss pairwise to the
@@ -514,6 +665,8 @@ object Rewriter {
      * term is the same as that of the original term and the children
      * are the results of the strategies.  If the length of ss is not
      * the same as the number of children, then congruence (ss) fails.
+     * This operation works on instances of Product or finite Traversable
+     * values.
      */
     def congruence (ss : Strategy*) : Strategy =
         new Strategy {
@@ -889,6 +1042,13 @@ object Rewriter {
     def alltd (s : => Strategy) : Strategy =
         s <+ all (alltd (s))
 
+    /**
+     * Construct a strategy that applies s in a bottom-up fashion to all
+     * subterms at each level, stopping at a frontier where s succeeds.
+     */
+    def allbu (s : => Strategy) : Strategy =
+        all (allbu (s)) <+ s
+
    /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
      * stopping at a frontier where s1 succeeds.  s2 is applied in a bottom-up,
@@ -1005,7 +1165,7 @@ object Rewriter {
         one (id)
 
     /**
-     * Construct a strategy that applies s at every term in a bottom-up fashion
+     * Construct a strategy that applies s at all terms in a bottom-up fashion
      * regardless of failure.  (Sub-)terms for which the strategy fails are left
      * unchanged.
      */
@@ -1013,7 +1173,7 @@ object Rewriter {
         bottomup (attempt (s))
 
     /**
-     * Construct a strategy that applies s at every term in a top-down fashion
+     * Construct a strategy that applies s at all terms in a top-down fashion
      * regardless of failure.  (Sub-)terms for which the strategy fails are left
      * unchanged.
      */
@@ -1021,13 +1181,55 @@ object Rewriter {
         topdown (attempt (s))
 
     /**
-     * Construct a strategy that applies s at every term in a top-down fashion
-     * regardless of failure.  (Sub-)terms for which the strategy fails are left
-     * unchanged.
+     * Same as everywheretd.
      */
     def everywhere (s : => Strategy) : Strategy =
         everywheretd (s)
     
+    /**
+     * Construct a strategy that applies s at one term at each level in a
+     * bottom-up fashion regardless of failure.  (Sub-)terms for which the
+     * strategy fails are left unchanged.
+     */
+    def oncewherebu (s : => Strategy) : Strategy =
+        oncebu (attempt (s))
+
+    /**
+     * Construct a strategy that applies s at one term at each level in a
+     * top-down fashion regardless of failure.  (Sub-)terms for which the
+     * strategy fails are left unchanged.
+     */
+    def oncewheretd (s : => Strategy) : Strategy =
+        oncetd (attempt (s))
+
+    /**
+     * Same as oncewheretd.
+     */
+    def oncewhere (s : => Strategy) : Strategy =
+        oncewheretd (s)
+
+    /**
+     * Construct a strategy that applies s at least one term at each level in a
+     * bottom-up fashion regardless of failure.  (Sub-)terms for which the
+     * strategy fails are left unchanged.
+     */
+    def somewherebu (s : => Strategy) : Strategy =
+        somebu (attempt (s))
+
+    /**
+     * Construct a strategy that applies s at least one term at each level in a
+     * top-down fashion regardless of failure.  (Sub-)terms for which the
+     * strategy fails are left unchanged.
+     */
+    def somewheretd (s : => Strategy) : Strategy =
+        sometd (attempt (s))
+
+    /**
+     * Same as somewheretd.
+     */
+    def somewhere (s : => Strategy) : Strategy =
+        somewheretd (s)
+
     /**
      * Apply the function at every term in t in a top-down, left-to-right order.
      * Collect the resulting T values by accumulating them using f with initial
