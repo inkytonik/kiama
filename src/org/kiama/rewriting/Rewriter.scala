@@ -361,22 +361,22 @@ object Rewriter {
                     case _           => None
                 }
                 
-            private def child[T <: Product] (p : T) : Option[T] = {
+            private def child[T <: Product] (p : T) : Option[Term] = {
                 val numchildren = p.productArity
                 if ((i < 1) || (i > numchildren)) {
                     None
                 } else {
                     val ct = p.productElement (i-1)
-                    val children = new Array[AnyRef](numchildren)
+                    val newchildren = new Array[AnyRef](numchildren)
                     for (j <- 0 until numchildren)
-                        children (j) = makechild (p.productElement (j))
+                        newchildren (j) = makechild (p.productElement (j))
                     s (ct) match {
                         case Some (ti) =>
-                            children (i-1) = makechild (ti)
+                            newchildren (i-1) = makechild (ti)
                         case None      =>
                             return None
                     }
-                    val ret = dup (p, children)
+                    val ret = dup (p, newchildren)
                     Some (ret)
                 }
             }
@@ -416,28 +416,50 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product        => all[Product] (p)
+                    case p : Product        => allProduct (p)
                     case m : Map[_,_]       => all[Map] (m.asInstanceOf[Map[Term,Term]])
                     case t : Traversable[_] => all[Traversable] (t)
+                    case r : Rewritable     => allRewritable (r)
                     case _                  => Some (t)
                 }
 
-            private def all[T <: Product] (p : T) : Option[T] = {
+            private def allProduct[T <: Product] (p : T) : Option[Term] = {
                 val numchildren = p.productArity
                 if (numchildren == 0) {
                     Some (p)
                 } else {
-                    val children = new Array[AnyRef](numchildren)
+                    val newchildren = new Array[AnyRef](numchildren)
                     for (i <- 0 until numchildren) {
                         val ct = p.productElement (i)
                         s (ct) match {
                             case Some (ti) =>
-                                children (i) = makechild (ti)
+                                newchildren (i) = makechild (ti)
                             case None      =>
                                 return None
                         }
                     }
-                    val ret = dup (p, children)
+                    val ret = dup (p, newchildren)
+                    Some (ret)
+                }
+            }
+                
+            private def allRewritable[T <: Rewritable] (r : T) : Option[Term] = {
+                val numchildren = r.arity
+                if (numchildren == 0) {
+                    Some (r)
+                } else {
+                    val children = r.deconstruct
+                    val newchildren = new Array[Any](numchildren)
+                    for (i <- 0 until numchildren) {
+                        val ct = children (i)
+                        s (ct) match {
+                            case Some (ti) =>
+                                newchildren (i) = makechild (ti)
+                            case None      =>
+                                return None
+                        }
+                    }
+                    val ret = r.reconstruct (newchildren)
                     Some (ret)
                 }
             }
@@ -491,25 +513,49 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product        => one[Product] (p)
+                    case p : Product        => oneProduct (p)
                     case m : Map[_,_]       => one[Map] (m.asInstanceOf[Map[Term,Term]])
                     case t : Traversable[_] => one[Traversable] (t)
+                    case r : Rewritable     => oneRewritable (r)
                     case _                  => None
                 }
 
-            private def one[T <: Product] (p : T) : Option[T] = {
+            private def oneProduct[T <: Product] (p : T) : Option[Term] = {
                 val numchildren = p.productArity
                 for (i <- 0 until numchildren) {
                     val ct = p.productElement (i)
                     s (ct) match {
                         case Some (ti) => {
-                            val children = new Array[AnyRef] (numchildren)
+                            val newchildren = new Array[AnyRef] (numchildren)
                             for (j <- 0 until i)
-                                children (j) = makechild (p.productElement (j))
-                            children (i) = makechild (ti)
+                                newchildren (j) = makechild (p.productElement (j))
+                            newchildren (i) = makechild (ti)
                             for (j <- i + 1 until numchildren)
-                                children (j) = makechild (p.productElement (j))
-                            val ret = dup (p, children)
+                                newchildren (j) = makechild (p.productElement (j))
+                            val ret = dup (p, newchildren)
+                            return Some (ret)
+                        }
+                        case None =>
+                            // Do nothing
+                    }
+                }
+                None
+            }
+
+            private def oneRewritable[T <: Rewritable] (r : T) : Option[Term] = {
+                val numchildren = r.arity
+                val children = r.deconstruct
+                for (i <- 0 until numchildren) {
+                    val ct = children (i)
+                    s (ct) match {
+                        case Some (ti) => {
+                            val newchildren = new Array[Any] (numchildren)
+                            for (j <- 0 until i)
+                                newchildren (j) = makechild (children (j))
+                            newchildren (i) = makechild (ti)
+                            for (j <- i + 1 until numchildren)
+                                newchildren (j) = makechild (children (j))
+                            val ret = r.reconstruct (newchildren)
                             return Some (ret)
                         }
                         case None =>
@@ -579,31 +625,59 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product        => some[Product] (p)
+                    case p : Product        => someProduct (p)
                     case m : Map[_,_]       => some[Map] (m.asInstanceOf[Map[Term,Term]])
                     case t : Traversable[_] => some[Traversable] (t)
+                    case r : Rewritable     => someRewritable (r)
                     case _                  => None
                 }
 
-            private def some[T <: Product] (p : T) : Option[T] = {
+            private def someProduct[T <: Product] (p : T) : Option[Term] = {
                 val numchildren = p.productArity
                 if (numchildren == 0) {
                     None
                 } else {
-                    val children = new Array[AnyRef](numchildren)
+                    val newchildren = new Array[AnyRef](numchildren)
                     var success = false
                     for (i <- 0 until numchildren) {
                         val ct = p.productElement (i)
                         s (ct) match {
                             case Some (ti) =>
-                                children (i) = makechild (ti)
+                                newchildren (i) = makechild (ti)
                                 success = true
-                            case None      =>
-                                children (i) = makechild (ct)
+                            case None =>
+                                newchildren (i) = makechild (ct)
                         }
                     }
                     if (success) {
-                        val ret = dup (p, children)
+                        val ret = dup (p, newchildren)
+                        Some (ret)
+                    } else {
+                        None
+                    }
+                }
+            }
+
+            private def someRewritable[T <: Rewritable] (r : T) : Option[Term] = {
+                val numchildren = r.arity
+                if (numchildren == 0) {
+                    None
+                } else {
+                    val children = r.deconstruct
+                    val newchildren = new Array[Any](numchildren)
+                    var success = false
+                    for (i <- 0 until numchildren) {
+                        val ct = children (i)
+                        s (ct) match {
+                            case Some (ti) =>
+                                newchildren (i) = makechild (ti)
+                                success = true
+                            case None =>
+                                newchildren (i) = makechild (ct)
+                        }
+                    }
+                    if (success) {
+                        val ret = r.reconstruct (newchildren)
                         Some (ret)
                     } else {
                         None
@@ -675,20 +749,20 @@ object Rewriter {
                     case _                  => Some (t)
                 }
                 
-            private def congruence[T <: Product] (p : T, ss : Strategy*) : Option[T] = {
+            private def congruence[T <: Product] (p : T, ss : Strategy*) : Option[Term] = {
                val numchildren = p.productArity
                if (numchildren == ss.length) {
-                   val children = new Array[AnyRef](numchildren)
+                   val newchildren = new Array[AnyRef](numchildren)
                    for (i <- 0 until numchildren) {
                        val ct = p.productElement (i)
                        (ss (i)) (ct) match {
                            case Some (ti) =>
-                               children (i) = makechild (ti)
+                               newchildren (i) = makechild (ti)
                            case None      =>
                                return None
                        }
                    }
-                   val ret = dup (p, children)
+                   val ret = dup (p, newchildren)
                    Some (ret)
                } else {
                    None
