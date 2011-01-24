@@ -75,6 +75,19 @@ class RewriterNonStandardTests extends FunSuite with Checkers {
                 ((oncetd (s)) (p)).toString
             )
         }
+        
+        test ("rewrite normal classes: counting all terms using count") {
+            val countall = count { case _ => 1 }
+            expect (11) (countall (p))
+        }
+        
+        test ("rewrite normal classes: counting all terms using a para") {
+            val countfold = 
+                para[Int] {
+                    case (t, cs) => 1 + cs.sum
+                }
+            expect (11) (countfold (p))
+        }
     }
     
 }

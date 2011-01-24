@@ -280,16 +280,17 @@ object Rewriter {
 
         /**
          * Generic term deconstruction.  An extractor that decomposes Products
-         * into the product itself and a sequence of its children.  Terms that
-         * are not products are not decomposable (ie the list of children will
-         * be empty).
+         * or Rewritable values into the value itself and a sequence of its
+         * children.  Terms that are not products or Rewritable are not
+         * decomposable (ie the list of children will be empty).
          */
         def unapply (t : Any) : Option[(Any,Seq[Any])] = {
             t match {
-                case p : Product => {
+                case r : Rewritable =>
+                    Some ((r, r.deconstruct))
+                case p : Product =>
                     val cs = for (i <- 0 until p.productArity) yield p.productElement (i)
                     Some ((p, cs))
-                }
                 case _ =>
                     Some ((t, Nil))
             }
