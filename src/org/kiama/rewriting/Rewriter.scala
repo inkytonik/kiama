@@ -416,10 +416,10 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
+                    case r : Rewritable     => allRewritable (r)
                     case p : Product        => allProduct (p)
                     case m : Map[_,_]       => all[Map] (m.asInstanceOf[Map[Term,Term]])
                     case t : Traversable[_] => all[Traversable] (t)
-                    case r : Rewritable     => allRewritable (r)
                     case _                  => Some (t)
                 }
 
@@ -513,10 +513,10 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
+                    case r : Rewritable     => oneRewritable (r)
                     case p : Product        => oneProduct (p)
                     case m : Map[_,_]       => one[Map] (m.asInstanceOf[Map[Term,Term]])
                     case t : Traversable[_] => one[Traversable] (t)
-                    case r : Rewritable     => oneRewritable (r)
                     case _                  => None
                 }
 
@@ -625,10 +625,10 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
+                    case r : Rewritable     => someRewritable (r)
                     case p : Product        => someProduct (p)
                     case m : Map[_,_]       => some[Map] (m.asInstanceOf[Map[Term,Term]])
                     case t : Traversable[_] => some[Traversable] (t)
-                    case r : Rewritable     => someRewritable (r)
                     case _                  => None
                 }
 
