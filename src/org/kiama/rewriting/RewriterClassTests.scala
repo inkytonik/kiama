@@ -27,10 +27,11 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
 /**
- * Rewriting tests.
+ * Rewriting tests that operate on normal class values, i.e., not instances
+ * of products or colleciton class values.
  */
 @RunWith(classOf[JUnitRunner])
-class RewriterNonStandardTests extends FunSuite with Checkers {
+class RewriterClassTests extends FunSuite with Checkers {
 
     import org.kiama.example.imperative.ASTNonCase._
     import org.kiama.rewriting.Rewriter.{fail => rwfail, _}
