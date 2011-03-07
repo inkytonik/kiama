@@ -61,7 +61,7 @@ trait Rewritable {
      * provided.  An IllegalArgumentException containing a description
      * of the problem is thrown.
      */
-    protected def illegalargs (desc : String, argtypes : String, args : Array[Term]) =
+    protected def illegalArgs (desc : String, argtypes : String, args : Array[Term]) =
         throw (new IllegalArgumentException ("making " + desc + ": expecting " +
                     argtypes + ", got " + args))
     
