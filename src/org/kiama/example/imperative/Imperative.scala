@@ -314,7 +314,7 @@ object ASTNonCase {
                 case Array (d : Double) =>
                     new Num (d)
                 case _ =>
-                    illegalargs ("Num", "Double", cs)
+                    illegalArgs ("Num", "Double", cs)
             }
         override def toString () = "Num(" + d + ")"
     }
@@ -327,7 +327,7 @@ object ASTNonCase {
                 case Array (s : Idn) =>
                     new Var (s)
                 case _ =>
-                    illegalargs ("Var", "Idn", cs)
+                    illegalArgs ("Var", "Idn", cs)
             }
         override def toString () = "Var(" + s + ")"
     }
@@ -340,7 +340,7 @@ object ASTNonCase {
                 case Array (e : Exp) =>
                     new Neg (e)
                 case _ =>
-                    illegalargs ("Neg", "Exp", cs)
+                    illegalArgs ("Neg", "Exp", cs)
             }
         override def toString () = "Neg(" + e + ")"
     }
@@ -356,7 +356,7 @@ object ASTNonCase {
                 case Array (l : Exp, r : Exp) =>
                     new Add (l, r)
                 case _ =>
-                    illegalargs ("Add", "Exp, Exp", cs)
+                    illegalArgs ("Add", "Exp, Exp", cs)
             }
         override def toString () = "Add(" + l + "," + r + ")"
     }
@@ -367,7 +367,7 @@ object ASTNonCase {
                 case Array (l : Exp, r : Exp) =>
                     new Sub (l, r)
                 case _ =>
-                    illegalargs ("Sub", "Exp, Exp", cs)
+                    illegalArgs ("Sub", "Exp, Exp", cs)
             }
         override def toString () = "Sub(" + l + "," + r + ")"
     }
@@ -378,7 +378,7 @@ object ASTNonCase {
                 case Array (l : Exp, r : Exp) =>
                     new Mul (l, r)
                 case _ =>
-                    illegalargs ("Mul", "Exp, Exp", cs)
+                    illegalArgs ("Mul", "Exp, Exp", cs)
             }
         override def toString () = "Mul(" + l + "," + r + ")"
     }
@@ -389,7 +389,7 @@ object ASTNonCase {
                 case Array (l : Exp, r : Exp) =>
                     new Div (l, r)
                 case _ =>
-                    illegalargs ("Div", "Exp, Exp", cs)
+                    illegalArgs ("Div", "Exp, Exp", cs)
             }
         override def toString () = "Div(" + l + "," + r + ")"
     }
