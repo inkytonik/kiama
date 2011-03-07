@@ -163,24 +163,24 @@ class AttributionTests extends FunSuite {
 /**
  * Tests of collection attributes.
  */
-@RunWith(classOf[JUnitRunner])
-class CollectionAttributionTests extends FunSuite
-                                 with org.kiama.example.lambda2.Parser {
-
-    import Attribution._
-    import org.kiama.example.lambda2.AST._
-    import org.kiama.example.lambda2.Analysis._
-
-    def process (s : String, r : Set[(Int,Int)]) {
-        parseAll (start, s) match {
-            case Success (e : Lam, in) if in.atEnd =>
-                expect (r, "uses for " + e) (e->uses)
-            case Success (e, _) =>
-                fail ("non-Lam " + e + " parsed in test input '" + s + "'")
-            case _ =>
-                fail ("can't parse test input '" + s + "'")
-        }
-    }
+// @RunWith(classOf[JUnitRunner])
+// class CollectionAttributionTests extends FunSuite
+//                                  with org.kiama.example.lambda2.Parser {
+// 
+//     import Attribution._
+//     import org.kiama.example.lambda2.AST._
+//     import org.kiama.example.lambda2.Analysis._
+// 
+//     def process (s : String, r : Set[(Int,Int)]) {
+//         parseAll (start, s) match {
+//             case Success (e : Lam, in) if in.atEnd =>
+//                 expect (r, "uses for " + e) (e->uses)
+//             case Success (e, _) =>
+//                 fail ("non-Lam " + e + " parsed in test input '" + s + "'")
+//             case _ =>
+//                 fail ("can't parse test input '" + s + "'")
+//         }
+//     }
 
 //    test ("collection attribute: no collected node") {
 //
@@ -195,4 +195,4 @@ class CollectionAttributionTests extends FunSuite
 //        process ("""\\x : Int . x + (\\y : Int . x + y) 5""")
 //    }
 
-}
+// }

@@ -201,12 +201,4 @@ object Analysis {
             case e @ Var (x) => e->lookup (x)
         }
 
-    /**
-     * The set of uses of a defined identifier (given by a lambda expression).
-     */
-    def uses : Lam ==> Set[(Int,Int)] =
-        attr {
-            case Lam (i, _, e) => Set ()
-        }
-
 }
