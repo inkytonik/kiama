@@ -132,7 +132,6 @@ object Main extends Driver
  */
 class ParserDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
 
-    import java.io.FileReader
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
@@ -162,7 +161,6 @@ class ParserDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
  */
 class SemanticDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
 
-    import java.io.FileReader
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._

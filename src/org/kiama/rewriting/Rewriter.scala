@@ -1309,11 +1309,11 @@ object Rewriter {
     def everything[T] (v : T) (f : (T, T) => T) (g : Term ==> T) (t : Term) : T =
         (collectl (g) (t)).foldLeft (v) (f)
 
-   /**
-    * Apply restoring action 'rest' if s fails, and then fail.
-    * Typically useful if s performs side effects that should be
-    * restored/undone in case s fails.
-    */
+    /**
+     * Apply restoring action 'rest' if s fails, and then fail.
+     * Typically useful if s performs side effects that should be
+     * restored/undone in case s fails.
+     */
     def restore (s : => Strategy, rest : => Strategy) : Strategy =
         s <+ (rest <* fail)
 
