@@ -1,0 +1,63 @@
+abstract class Exp
+
+abstract class Desig extends Exp
+case class Ident (name : String) extends Desig
+case class FieldDesig (left : Desig, id : Ident) extends Desig
+case class ArrayDesig (left : Desig, exp : Exp) extends Desig
+
+abstract class Literal extends Exp
+case class IntegerLiteral (num: Int) extends Literal
+
+abstract class UnaryNumExp (e : Exp) extends Exp
+case class Pos (e : Exp) extends UnaryNumExp (e)
+case class Neg (e : Exp) extends UnaryNumExp (e)
+
+abstract class BinaryNumExp (l : Exp, r : Exp) extends Exp
+case class Mult (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Div (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Mod (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Plus (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+case class Minus (l : Exp, r : Exp) extends BinaryNumExp (l, r)
+
+case class Not (e : Exp) extends Exp
+
+abstract class BinaryBoolExp (l : Exp, r : Exp) extends Exp
+case class And (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class Or (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class Equal (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+case class NotEqual (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+case class LessThan (l : Exp, r: Exp) extends BinaryBoolExp (l, r)
+case class LessThanOrEqual (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class GreaterThan (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+case class GreaterThanOrEqual (l : Exp, r : Exp) extends BinaryBoolExp (l, r)
+
+abstract class Statement
+
+case class Assignment (desig : Desig, exp : Exp) extends Statement
+case class ProcedureCall (desig : Exp, aps : List[Exp]) extends Statement
+case class IfStatement (condexp : Exp, thenstmts : List[Statement], elsestmts: List[Statement]) extends Statement
+case class WhileStatement (condexp : Exp, bodystmts : List[Statement]) extends Statement
+
+abstract class Declaration (name : String)
+
+case class ConstDecl (name : String, constval : Exp) extends Declaration (name)
+case class VarDecl (name : String, tp : Type) extends Declaration (name)
+case class RefVarDecl (name : String, tp : Type) extends Declaration (name)
+case class TypeDecl (name : String, tp : Type) extends Declaration (name)
+case class FieldDecl (name : String, tp : Type) extends Declaration (name)
+case class ModuleDecl (name : String, decls : List[Declaration], stmts : List[Statement], name2 : String, tp : ModuleType) extends Declaration (name)case class ProcDecl (name : String, fps : List[Declaration], decls : List[Declaration], stmts : List[Statement], name2 : String, tp: ProcType) extends Declaration (name)
+case class BuiltInProcDecl (name : String, fps : List[Declaration], tp: ProcType) extends Declaration (name)
+case class UnknownDecl (name : String) extends Declaration(name)
+
+abstract class Type
+
+case class NamedType (id : Ident) extends Type
+case class ArrayType (size : Exp, tp : Type) extends Type
+case class RecordType (fldlst : List[FieldDecl]) extends Type
+case class ProcType (fps : List[Declaration]) extends Type
+case class ModuleType () extends Type
+
+case object IntegerType extends Type
+case object BooleanType extends Type
+case object InvalidType extends Type
+case object StatementType extends Type

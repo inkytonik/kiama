@@ -1,0 +1,4 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+BEGIN
+    RETURN 1 + 6;
+END X.
