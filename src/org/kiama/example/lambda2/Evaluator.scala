@@ -56,7 +56,7 @@ trait Evaluator {
     /**
      * Capture-free substitution of free occurrences of x in e1 with e2.
      */
-    def substitute (x : Idn, e2: Exp, e1 : Exp) : Exp =
+    def substitute (x : Idn, e2 : Exp, e1 : Exp) : Exp =
         e1 match {
             case Var (y) if x == y =>
                 e2
