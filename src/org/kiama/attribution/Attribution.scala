@@ -215,7 +215,7 @@ object Attribution extends AttributionBase {
             memo.get (t) match {
                 case None     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
                 case Some (u) => u
-                case null =>
+                case _ =>
                     memo.put (t, None)
                     val u = f (t)
                     memo.put (t, Some (u))
