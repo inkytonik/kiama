@@ -35,20 +35,30 @@ class Driver extends Parser with RegexCompiler[Program] {
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
-    /**
-     * Function to process the input that was parsed.  emitter is
-     * used for output.  Return true if everything worked, false
-     * otherwise.  Here we process the first AST to compute the second
-     * AST and print it, then perform semantic analysis on the second
-     * AST, print it and print any semantic errors.
-     */
-    def process (ast : Program, console : Console, emitter : Emitter) : Boolean = {
+    def process (program : Program, console : Console, emitter : Emitter) : Boolean = {
+        
+        import Analysis._
+
+        // Print original program and obtain "no priority" expression
+        emitter.emitln (program)
+        val expr = program.expr
+        
+        // Check for semantic errors on the original expression.  This
+        // will cause a translation to a priority-correct representation
+        // and error computation on that rep.
         resetmessages
-        emitter.emitln (ast)
-        val exp = Analysis.process (ast)
-        emitter.emitln (exp)
-        report (emitter)
-        true
+        expr->errors
+        
+        // For testing, print the priority-correct representation
+        emitter.emitln (expr->ast)
+        
+        // Report any semantic errors
+        if (messagecount > 0) {
+            report (emitter)
+            false
+        } else
+            true
+
     }
 
 }

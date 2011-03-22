@@ -36,94 +36,95 @@ object Analysis {
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Messaging._
     import scala.collection.immutable.HashMap
+    
+    lazy val prioenv : Program ==> Map[String,Int] =
+        attr {
+            case p => HashMap (p.ops : _*)
+        }
 
-    def process (program : Program) : Exp = {
-
-        lazy val prioenv : Program ==> Map[String,Int] =
-            attr {
-                case p => HashMap (p.ops : _*)
+    lazy val prio : String => ASTNode ==> Int =
+        paramAttr {
+            op => {
+                case p : Program => (p->prioenv) getOrElse (op, 0)
+                case e           => (e.parent[ASTNode])->prio (op)
             }
-
-        def prio (op : String) : Int =
-            (program->prioenv) getOrElse (op, 0)
-
-        lazy val op_tree : ExpR ==> Exp =
-            attr {
-                case BinExpR (_, _, e1) => e1->op_tree
-                case e1 @ Factor (e)    =>
-                    val (optor, opnd) = e1->ops
-                    val (_, es) = eval_top (optor, null, e :: opnd)
-                    es.head
+        }
+    
+    lazy val op_tree : ExpR ==> Exp =
+        attr {
+            case BinExpR (_, _, e1) =>
+                e1->op_tree
+            case e1 @ Factor (e)    =>
+                val (optor, opnd) = e1->ops
+                val (_, es) = e1->eval_top (optor, "", e :: opnd)
+                es.head
+        }
+    
+    type Stacks = (List[String], List[Exp])
+    
+    lazy val ops : ExpR ==> Stacks =
+        childAttr {
+            case e1 => {
+                case _ : Program             =>
+                    (Nil, Nil)
+                case e0 @ BinExpR (e, op, _) =>
+                    val (optor, opnd) = e0->ops
+                    e0->eval_top (optor, op, e :: opnd)
             }
-
-        type Stacks = (List[String], List[Exp])
-
-        lazy val ops : ExpR ==> Stacks =
-            childAttr {
-                case e1 => {
-                    case _ : Program             => (Nil, Nil)
-                    case e0 @ BinExpR (e, op, _) =>
-                        val (optor, opnd) = e0->ops
-                        eval_top (optor, op, e :: opnd)
-                }
+        }
+    
+    lazy val eval_top : ((List[String], String, List[Exp])) => ExpR ==> Stacks =
+        paramAttr[(List[String], String, List[Exp]), ExpR, Stacks] {
+            case (Nil, op, opnd) => {
+                case _ =>
+                    (List (op), opnd)
             }
-
-        def eval_top (optor : List[String], op : String, opnd : List[Exp]) : Stacks =
-            optor match {
-                case Nil                => (List (op), opnd)
-                case top_op :: rest_ops =>
-                    if (prio (top_op) < prio (op))
+            case (top_op :: rest_ops, op, opnd) => {
+                case e =>
+                    if (e->prio (top_op) < e->prio (op))
                         (op :: top_op :: rest_ops, opnd)
                     else {
                         val o1 :: o2 :: rest = opnd
-                        eval_top (rest_ops, op, BinExp (o2, top_op, o1) :: rest)
+                        e->eval_top (rest_ops, op, BinExp (o2, top_op, o1) :: rest)
                     }
             }
+        }
 
-        /**
-         * Report errors in an expression.  Currently only variables that
-         * are used but not declared.  Multiple declarations of the same
-         * variable are ok.
-         */
-        lazy val errors : Exp ==> Unit =
-            attr {
-                case BinExp (l, o, r) =>
-                    l->errors; r->errors
-                case e @ Var (s) if (e->lookup (s) == None) =>
-                    message (e, s + " is not declared")
-                case _ =>
+    /**
+     * Lookup a name at a particular node, returning a Some value
+     * containing the associated declaration or None if there no
+     * such declaration.
+     */
+    lazy val lookup : String => Attributable ==> Option[VarDecl] =
+        paramAttr {
+            s => {
+                case p : Program => p.vars.find (_.name == s)
+                case e           => (e.parent)->lookup (s)
             }
-
-        /**
-         * Lookup a name at a particular node, returning a Some value
-         * containing the associated declaration or None if there no
-         * such declaration.
-         */
-        lazy val lookup : String => Attributable ==> Option[VarDecl] =
-            paramAttr {
-                s => {
-                    case p : Program => p.vars.find (_.name == s)
-                    case e           => (e.parent)->lookup (s)
-                }
-            }
-
-        /**
-         * Version of op_tree that splices the new tree into the old.
-         */
-        implicit val ast : ExpR ==> Exp =
-            tree {
-                case e => e->op_tree
-            }
-
-        // Explicit forward to ast
-        // program.expr->ast->errors
-
-        // Implicit forward to ast
-        program.expr->errors
-
-        // Return the AST for future processing
-        program.expr->ast
-
-    }
+        }
+    
+    /**
+     * Version of op_tree that splices the new tree into the old.
+     * Available as an implicit so that Exp attributes called on
+     * ExpR are forwarded to op_tree.
+     */
+    implicit val ast : ExpR ==> Exp =
+        tree {
+            case e => e->op_tree
+        }
+    
+    /**
+     * Report errors in an expression.  Currently only variables that
+     * are used but not declared.  Multiple declarations of the same
+     * variable are ok.
+     */
+    lazy val errors : Exp ==> Unit =
+        attr {
+            case BinExp (l, o, r) =>
+                l->errors; r->errors
+            case e @ Var (s) if (e->lookup (s) == None) =>
+                message (e, s + " is not declared")
+            case _ =>
+        }
 
 }
