@@ -447,7 +447,7 @@ trait Parser extends RegexParsers with PackratParsers {
         factor
 
     lazy val factor : PackratParser[Exp] =
-        double | integer | variable | "-" ~> exp | "(" ~> exp <~ ")"
+        double | integer | variable | "-" ~> exp ^^ Neg | "(" ~> exp <~ ")"
 
     lazy val double : PackratParser[Num] =
         """[0-9]+\.[0-9]+""" ^^ (s => Num (s.toDouble))
