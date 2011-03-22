@@ -122,7 +122,7 @@ trait Compiler[T] extends FunSuite {
      * endings appear in Unix style instead.  This allows for either program
      * or test output to use either line ending style, but tests will still
      * pass.  This will clearly break any tests where the actual line endings
-     * matter.  See
+     * matter.
      */
     def sanitise (s : String) : String =
         if (dosanitisation)
