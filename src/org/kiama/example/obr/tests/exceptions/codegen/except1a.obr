@@ -1,0 +1,11 @@
+(* Manually raise the DivideByZero exception  *)
+(* Simple test which tests RAISE-ing an       *)
+(* exception without triggering faults in     *)
+(* division code or declaration mapping.      *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+BEGIN
+  RAISE DivideByZero;
+  RETURN 0;
+END Except.

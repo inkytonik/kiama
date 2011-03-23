@@ -1,0 +1,13 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+VAR
+    date : RECORD
+               day : INTEGER;
+               month : INTEGER;
+               year : INTEGER;
+           END;
+BEGIN
+    date.day := 9;
+    date.month := 11;
+    date.year := 2009;
+    RETURN date.month;
+END X.

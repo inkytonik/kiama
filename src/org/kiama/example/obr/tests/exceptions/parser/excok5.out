@@ -1,0 +1,1 @@
+ObrInt(ExcOk5,List(IntParam(i)),List(TryStmt(TryBody(List(AssignStmt(IdnExp(A),SlashExp(IdnExp(B),IdnExp(C))))),List(Catch(DivideByZero,List(AssignStmt(IdnExp(A),IntExp(1)), AssignStmt(IdnExp(B),MinusExp(IdnExp(C),IdnExp(A)))))))),ExcOk5)

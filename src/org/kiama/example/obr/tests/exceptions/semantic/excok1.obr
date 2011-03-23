@@ -1,0 +1,21 @@
+(* Legal TRY statement with DivideByZero *)
+
+PROGRAM ExcOk1 (i : INTEGER) : INTEGER;
+
+VAR
+   Average : INTEGER;
+   Quantity : INTEGER;
+   Count : INTEGER;
+   Result : INTEGER;
+   Frequency : INTEGER;
+
+BEGIN
+
+   TRY
+      Average := Quantity / Count;
+      Result := Average * Frequency;
+   CATCH DivideByZero DO
+      Result := 0;
+   END
+
+END ExcOk1.
