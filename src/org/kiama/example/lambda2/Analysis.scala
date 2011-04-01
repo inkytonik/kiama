@@ -31,6 +31,7 @@ package example.lambda2
 object Analysis {
 
     import AST._
+    import PrettyPrinter._
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Messaging._
 
@@ -105,7 +106,8 @@ object Analysis {
             case App (e1, e2)     => e1->tipe match {
                                          case FunType (t1, t2) if t1 == e2->tipe => t2
                                          case FunType (t1, t2) =>
-                                             message (e2, "expected " + t1 + ", found " + (e2->tipe))
+                                             message (e2, "expected " + pretty (t1) +
+                                                          ", found " + pretty (e2->tipe))
                                              IntType
                                          case _ =>
                                              message (e1, "application of non-function")
@@ -115,9 +117,11 @@ object Analysis {
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (op, e1, e2) => if (e1->tipe != IntType)
-                                         message (e1, "expected Int, found " + (e1->tipe))
+                                         message (e1, "expected Int, found " +
+                                                      pretty (e1->tipe))
                                      if (e2->tipe != IntType)
-                                         message (e2, "expected Int, found " + (e2->tipe))
+                                         message (e2, "expected Int, found " +
+                                                      pretty (e2->tipe))
                                      IntType
         }
 
@@ -176,7 +180,8 @@ object Analysis {
             case App (e1, e2)     => e1->tipe2 match {
                                          case FunType (t1, t2) if t1 == e2->tipe2 => t2
                                          case FunType (t1, t2) =>
-                                             message (e2, "expected " + t1 + ", found " + (e2->tipe2))
+                                             message (e2, "expected " + pretty (t1) +
+                                                        ", found " + pretty (e2->tipe2))
                                              IntType
                                          case _ =>
                                              message (e1, "application of non-function")
@@ -186,9 +191,11 @@ object Analysis {
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (op, e1, e2) => if (e1->tipe2 != IntType)
-                                         message (e1, "expected Int, found " + (e1->tipe2))
+                                         message (e1, "expected Int, found " +
+                                                    pretty (e1->tipe2))
                                      if (e2->tipe2 != IntType)
-                                         message (e2, "expected Int, found " + (e2->tipe2))
+                                         message (e2, "expected Int, found " +
+                                                    pretty (e2->tipe2))
                                      IntType
 
         }

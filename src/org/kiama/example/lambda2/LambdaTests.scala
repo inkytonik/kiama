@@ -35,6 +35,7 @@ class LambdaTests extends FunSuite with Checkers with Parser {
     import AST._
     import Analysis._
     import Evaluators._
+    import PrettyPrinter._
     import org.kiama.rewriting.Rewriter._
     import org.kiama.util.Messaging._
     import org.scalacheck.Prop.{all => _, _}
@@ -292,4 +293,98 @@ class LambdaTests extends FunSuite with Checkers with Parser {
                        Lam ("x", IntType, Opn (AddOp, Num (4), Num (3))))
     }
 
+    /**
+     * Parse and pretty-print resulting term then compare to result.
+     */
+    def assertPrettyS (term : String, result : String) {
+        parseAll (start, term) match {
+            case Success (e, in) if in.atEnd =>
+                val r = pretty (e)
+                if (r != result)
+                    fail ("pretty-print of " + term + " expected " + result +
+                        ", got " + r)
+            case Success (_, in) =>
+                fail ("extraneous input at " + in.pos + ": " + term)
+            case f =>
+                fail ("parse failure: " + f)
+        }
+    }
+
+    /**
+     * Pretty-print term then compare to result.
+     */
+    def assertPrettyE (term : Exp, result : String) {
+        val r = pretty (term)
+        if (r != result)
+            fail ("pretty-print of " + term + " expected " + result +
+                  ", got " + r)
+    }
+    
+    test ("pretty-print lambda expression, simple operation") {
+        assertPrettyS ("""\x:Int.x+1""", """(\x : Int . (x + 1))""")
+    }
+    
+    test ("pretty-print applications, nested operation") {
+        assertPrettyS ("""(\f:Int->Int.f 4)(\x:Int.x+x-5)""",
+            """((\f : Int -> Int . (f 4)) (\x : Int . ((x + x) - 5)))""")
+    }
+    
+    test ("pretty-printed nested lets") {
+        assertPrettyE (
+            Let ("a", IntType,
+                 Let ("b", IntType, Num (1),
+                      Let ("c", IntType, Num (1),
+                           Let ("d", IntType, Num (1),
+                                Let ("e", IntType, Num (1),
+                                     Let ("f", IntType, Num (1),
+                                          Num (1)))))),
+                 Let ("g", IntType, Num (1),
+                      Let ("h", IntType, Num (1),
+                            Let ("i", IntType, Num (1),
+                                 Num (1))))),
+"""(let a : Int =
+    (let b : Int =
+        1 in
+        (let c : Int =
+            1 in
+            (let d : Int =
+                1 in
+                (let e : Int =
+                    1 in
+                    (let f : Int =
+                        1 in
+                        1))))) in
+    (let g : Int =
+        1 in
+        (let h : Int =
+            1 in
+            (let i : Int =
+                1 in
+                1))))""")
+            
+    }
+
+    test ("pretty-printed parallel lets") {
+        assertPrettyE (
+            Letp (List (Bind ("a", Num (1)),
+                        Bind ("b", Num (1)),
+                        Bind ("c", Letp (List (Bind ("d", Num (1)),
+                                            Bind ("e", Num (1))),
+                                        Num (1)))),
+                  Letp (List (Bind ("f", Num (1)),
+                                Bind ("g", Num (1))),
+                        Num (1))),
+"""(letp 
+    a = 1
+    b = 1
+    c = (letp 
+        d = 1
+        e = 1 in
+        1) in
+    (letp 
+        f = 1
+        g = 1 in
+        1))""")
+    }
+    
 }
