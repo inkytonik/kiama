@@ -111,12 +111,16 @@ class RISC (code : Code, console : Console, emitter : Emitter)
         catch {
             case e =>
                 emitter.emitln ("Exception " + e + " at " + instr)
-                emitter.emitln ("RISC.R = ")
-                emitter.emit ("    ")
-                emitter.emitln (R)
-                emitter.emitln ("RISC.Mem = ")
-                emitter.emit ("    ")
-                emitter.emitln (Mem)
+                emitter.emitln ("RISC.R =")
+                emitter.emit ("    Map(")
+                for (r <- R.keys.toList.sorted)
+                    emitter.emit (r + " -> " + R (r) + ", ")
+                emitter.emitln (")")
+                emitter.emitln ("RISC.Mem =")
+                emitter.emit ("    Map(")
+                for (m <- Mem.keys.toList.sorted)
+                    emitter.emit (m + " -> " + Mem (m) + ", ")
+                emitter.emitln (")")
                 halt := true
         }
     }
