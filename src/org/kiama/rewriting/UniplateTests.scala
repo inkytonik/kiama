@@ -82,13 +82,13 @@ class UniplateTests extends FunSuite with Checkers with Generator {
     test ("search for division by zero") {
         object TestDivsByZero extends Generator {
             override def genDiv (sz : Int) =
-                Gen.frequency ((1, genDivByZero (sz)), (1, super.genDiv (sz)))
+                Gen.frequency ((3, genDivByZero (sz)), (1, super.genDiv (sz)))
             def genDivByZero (sz : Int) =
                 for { l <- genExp (sz/2) } yield Div (l, Num (0))
             val divsbyzero = count { case Div (_, Num (0)) => 1 }
             expect (0) (divsbyzero (numexp))
             expect (0) (divsbyzero (varexp))
-            check ((e : Exp) => (e.divsbyzero != 0) ==> (divsbyzero (e) == e.divsbyzero))
+            check ((e : Exp) => divsbyzero (e) == e.divsbyzero)
         }
         TestDivsByZero
     }
