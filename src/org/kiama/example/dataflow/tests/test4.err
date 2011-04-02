@@ -1,5 +1,4 @@
-[2.1] failure: string matching regex `[a-zA-Z]+' expected but `
-' found
+[2.1] failure: string matching regex `[a-zA-Z]+' expected but end of source found
 
 
 ^
