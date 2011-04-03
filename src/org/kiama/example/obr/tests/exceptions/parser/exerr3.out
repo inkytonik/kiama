@@ -1,5 +1,4 @@
-[11.7] failure: `DO' expected but `
-' found
+[11.7] failure: `DO' expected but `R' found
 
       Result := 0;
 

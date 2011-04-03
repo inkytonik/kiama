@@ -1,4 +1,4 @@
-[6.18] failure: `)' expected but ` ' found
+[6.18] failure: `)' expected but `b' found
 
     x : ( harold bob );
 
