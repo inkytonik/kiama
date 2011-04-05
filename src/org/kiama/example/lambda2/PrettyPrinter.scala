@@ -21,9 +21,8 @@
 package org.kiama
 package example.lambda2
 
-import org.kiama.util.PrettyPrinter
-
-object PrettyPrinter extends PrettyPrinter {
+object PrettyPrinter extends org.kiama.util.PrettyPrinter
+ {
     
     import AST._
 
