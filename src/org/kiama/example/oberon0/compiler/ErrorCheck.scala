@@ -106,7 +106,7 @@ object ErrorCheck {
                                     message (ad, "out-of-bounds array index expression")
                             }
                             case _ =>
-                                error ("non-array found in ArrayDesig")
+                                sys.error ("non-array found in ArrayDesig")
                         }
 
                     // Check procedure call is on an actual procedure

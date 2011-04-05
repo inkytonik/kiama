@@ -201,29 +201,29 @@ object SECDBase {
     case class Resume() extends Instruction
     case class ResumeFromDump() extends Instruction
 
-	/**
-	 * Push empty value / machine exception / type value onto the stack.
-	 */
-	case class PushEmpty() extends Instruction
+    /**
+    * Push empty value / machine exception / type value onto the stack.
+    */
+    case class PushEmpty() extends Instruction
     case class PushMachineException(me : MachineExceptionValue) extends Instruction
     case class PushType(ty : TypeValue) extends Instruction
-	
-	/**
-	 * Make a new exception object from a string object and 
-	 * push it on the stack
-	 */
-	case class MkUserException() extends Instruction
-	
-	/**
-	 * Raise the exception on the top of the stack
-	 */
-	case class RaiseException() extends Instruction
-	
-	/**
-	 * Get the type of the value on the top of the stack
-	 * as an integer.
-	 */
-	case class GetType() extends Instruction    
+    
+    /**
+    * Make a new exception object from a string object and 
+    * push it on the stack
+    */
+    case class MkUserException() extends Instruction
+    
+    /**
+    * Raise the exception on the top of the stack
+    */
+    case class RaiseException() extends Instruction
+    
+    /**
+    * Get the type of the value on the top of the stack
+    * as an integer.
+    */
+    case class GetType() extends Instruction    
 
     /**
      * Base class for SECD values.
@@ -316,10 +316,10 @@ abstract class SECDBase
      */
     abstract trait Continuation
     case class ContValue(
-       	    s : Stack,
-       	    e : Environment,
-       	    c : Code,
-       	    d : Dump
+            s : Stack,
+            e : Environment,
+            c : Code,
+            d : Dump
     ) extends Value with Continuation {
         override def hashCode = super.hashCode
         override def equals(that : Any) = super.equals(that)
@@ -335,9 +335,9 @@ abstract class SECDBase
      * implement recursion.
      */
     case class ClosureValue(
-       	    pn : Name, 
-       	    bdy : Code,
-       	    var envir : Environment
+            pn : Name, 
+            bdy : Code,
+            var envir : Environment
     ) extends Value {
         override def hashCode = super.hashCode
         override def equals(that : Any) = super.equals(that)
@@ -457,21 +457,21 @@ abstract class SECDBase
         }
         // Make a mutually recursive group of closures.
         case MkClosures(fss) :: next => {
-			var newEnvir : Environment = envir
-			var newClos : List[ClosureValue] = Nil
+            var newEnvir : Environment = envir
+            var newClos : List[ClosureValue] = Nil
             for {
-				FunctionSpec(fn,pn,CodeSegment(bdy)) <- fss
-				clos = ClosureValue(pn,bdy,envir)
-			} {
-				fn match {
-				    case Some(n) => newEnvir = newEnvir + (n -> clos)
-    				case None => ()
-				}
-				newClos = clos :: newClos
-			}
+                FunctionSpec(fn,pn,CodeSegment(bdy)) <- fss
+                clos = ClosureValue(pn,bdy,envir)
+            } {
+                fn match {
+                    case Some(n) => newEnvir = newEnvir + (n -> clos)
+                    case None => ()
+                }
+                newClos = clos :: newClos
+            }
             for(clos <- newClos) {
-				clos.envir = newEnvir
-			}
+                clos.envir = newEnvir
+            }
             stack := newClos ++ stack
             control := next
         }
@@ -504,93 +504,93 @@ abstract class SECDBase
                 control := b ++ next
             case _ :: _ => raiseException(TypeError) 
             case _ => raiseException(StackUnderflow)
-		}
-		// Enter and exit binding instructions
-		case Enter(nms) :: next => 
-		    if (stack.length < nms.length)
-		        raiseException(StackUnderflow)
-		    else {
-				dump := ContValue(stack.drop(nms.length),envir,Nil,dump)
-				stack := Nil
-				envir := envir ++ (nms.reverse zip stack.take(nms.length))
-				control := next  
-		    }
-		case Exit() :: next => (dump : Dump) match {
-			case ContValue(s,e,Nil,d) => (stack : Stack) match {
-				case List(v) =>
-                	stack := v :: s
-                	envir := e
-                	control := next
-                	dump := d
-				case _ => raiseException(UnexpectedExit)
-			}
-			case _ => raiseException(UnexpectedExit)
-		}
-		// Binding instruction for primitives
-		case BindPrims(nms) :: next => 
-		    if (nms.forall({ nm : String => primTable.contains(nm) })) {
-			    dump := ContValue(stack,envir,Nil,dump)
-			    stack := Nil
-			    envir := (nms :\ (envir : Environment)) 
-			                { case (nm,e) => e + (nm->primTable(nm)) }
-			    control := next 
-			} else raiseException(NonExistentPrimitive) 
-		// Continuation handling
-		case AppCC() :: next => (stack : Stack) match {
-			case ClosureValue(p,b,e) :: tail =>
-				val cc = ContValue(tail,envir,next,dump)
-				dump := cc
-				stack := Nil
-				envir := e + (p -> cc)
-				control := b
+        }
+        // Enter and exit binding instructions
+        case Enter(nms) :: next => 
+            if (stack.length < nms.length)
+                raiseException(StackUnderflow)
+            else {
+                dump := ContValue(stack.drop(nms.length),envir,Nil,dump)
+                stack := Nil
+                envir := envir ++ (nms.reverse zip stack.take(nms.length))
+                control := next  
+            }
+        case Exit() :: next => (dump : Dump) match {
+            case ContValue(s,e,Nil,d) => (stack : Stack) match {
+                case List(v) =>
+                    stack := v :: s
+                    envir := e
+                    control := next
+                    dump := d
+                case _ => raiseException(UnexpectedExit)
+            }
+            case _ => raiseException(UnexpectedExit)
+        }
+        // Binding instruction for primitives
+        case BindPrims(nms) :: next => 
+            if (nms.forall({ nm : String => primTable.contains(nm) })) {
+                dump := ContValue(stack,envir,Nil,dump)
+                stack := Nil
+                envir := (nms :\ (envir : Environment)) 
+                            { case (nm,e) => e + (nm->primTable(nm)) }
+                control := next 
+            } else raiseException(NonExistentPrimitive) 
+        // Continuation handling
+        case AppCC() :: next => (stack : Stack) match {
+            case ClosureValue(p,b,e) :: tail =>
+                val cc = ContValue(tail,envir,next,dump)
+                dump := cc
+                stack := Nil
+                envir := e + (p -> cc)
+                control := b
             case _ :: _ => raiseException(TypeError) 
             case _ => raiseException(StackUnderflow) 
-		}
-		case Resume() :: next => (stack : Stack) match {
-			case ContValue(s,e,c,d) :: v :: tail =>
-				dump := d
-				stack := v :: s
-				envir := e
-				control := c
-			case _ :: _ :: _ => raiseException(TypeError) 
+        }
+        case Resume() :: next => (stack : Stack) match {
+            case ContValue(s,e,c,d) :: v :: tail =>
+                dump := d
+                stack := v :: s
+                envir := e
+                control := c
+            case _ :: _ :: _ => raiseException(TypeError) 
             case _ => raiseException(StackUnderflow)
-		}
-		case ResumeFromDump() :: next => (dump : Dump) match {
-			case ContValue(s,e,c,d) => (stack : Stack) match {
-			    case v :: tail =>
-				    dump := d
-				    stack := v :: s
-				    envir := e
-				    control := c
-		        case _ => raiseException(StackUnderflow)
-	        }
+        }
+        case ResumeFromDump() :: next => (dump : Dump) match {
+            case ContValue(s,e,c,d) => (stack : Stack) match {
+                case v :: tail =>
+                    dump := d
+                    stack := v :: s
+                    envir := e
+                    control := c
+                case _ => raiseException(StackUnderflow)
+            }
             case EmptyCont => raiseException(DumpEmpty)
-		}
-		// Push an empty (null) value on the stack.
-		case PushEmpty() :: next => 
-			stack := EmptyValue :: stack
-			control := next
-		// Push a machine exception value on the stack.
-		case PushMachineException(me : MachineExceptionValue) :: next => 
-		    stack := me :: stack
-		    control := next
-		// Push a type value on the stack.
-		case PushType(ty : TypeValue) :: next => 
-		    stack := ty :: stack
-		    control := next
+        }
+        // Push an empty (null) value on the stack.
+        case PushEmpty() :: next => 
+            stack := EmptyValue :: stack
+            control := next
+        // Push a machine exception value on the stack.
+        case PushMachineException(me : MachineExceptionValue) :: next => 
+            stack := me :: stack
+            control := next
+        // Push a type value on the stack.
+        case PushType(ty : TypeValue) :: next => 
+            stack := ty :: stack
+            control := next
         // Raise the exception on the top of the stack
         case RaiseException() :: next => (stack : Stack) match {
             case (ex : ExceptionValue) :: _ => raiseException(ex)
             case _ :: _ => raiseException(TypeError)
             case _ => raiseException(StackUnderflow)
         }
-		// Get the type of the value on the top of the stack.
-		case GetType() :: next => (stack : Stack) match {
-		    case v :: tail => 
-		        stack := v.getType :: tail
-		        control := next
-	        case _ => raiseException(StackUnderflow)
-		}
+        // Get the type of the value on the top of the stack.
+        case GetType() :: next => (stack : Stack) match {
+            case v :: tail => 
+                stack := v.getType :: tail
+                control := next
+            case _ => raiseException(StackUnderflow)
+        }
     }
 
     /**
@@ -625,7 +625,7 @@ abstract class SECDBase
                 stack := ex :: s
                 envir := e
                 control := c
-            case _ => error("Machine Panic: invalid or non-existent exception handler.") 
+            case _ => sys.error("Machine Panic: invalid or non-existent exception handler.") 
         }
     }
 }

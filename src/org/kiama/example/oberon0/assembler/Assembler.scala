@@ -71,7 +71,7 @@ object Assembler {
      */
     def mark (label : Label) {
         if ((label <= 0) || (label > nextlabel))
-            error ("Assembler.mark: bad label: " + label)
+            sys.error ("Assembler.mark: bad label: " + label)
         labelmap (label) = code.length
     }
 
@@ -103,9 +103,9 @@ object Assembler {
      */
     private def resolve (label : Label, offset : Int) : Int = {
         if ((label <= 0) || (label > nextlabel))
-            error ("Assembler.resolve: bad label: " + label + " at offset " + offset)
+            sys.error ("Assembler.resolve: bad label: " + label + " at offset " + offset)
         if (! (labelmap contains label))
-            error ("Assembler.resolve: unmarked label: " + label)
+            sys.error ("Assembler.resolve: unmarked label: " + label)
         labelmap (label) - offset
     }
 

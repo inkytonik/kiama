@@ -323,9 +323,9 @@ object Rewriter {
             ctor.newInstance (children : _*).asInstanceOf[T]
         } catch {
             case e : java.lang.ClassCastException =>
-                error ("dup cast failed: " + t)
+                sys.error ("dup cast failed: " + t)
             case e : IllegalArgumentException =>
-                error ("dup illegal arguments: " + ctor + " (" +
+                sys.error ("dup illegal arguments: " + ctor + " (" +
                        children.deep.mkString (",") + "), expects " +
                        ctor.getParameterTypes.length)
         }
@@ -340,7 +340,7 @@ object Rewriter {
             return child.asInstanceOf[AnyRef]
         } catch {
             case e : ClassCastException =>
-                error ("makechild: can't cast child: " + child + " " + e)
+                sys.error ("makechild: can't cast child: " + child + " " + e)
         }
     }
 

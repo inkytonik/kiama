@@ -69,7 +69,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         def value : T =
             _value match {
                 case None     =>
-                    error ("State.value: " + name + "." + sname + " is undefined")
+                    sys.error ("State.value: " + name + "." + sname + " is undefined")
                 case Some (t) =>
                     t
             }
@@ -96,10 +96,10 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * then it's not equal to anything.
          */
         def =:= (t : T) : Boolean =
-        	if (isUndefined)
-        		false
-        	else
-        		_value == Some (t)
+            if (isUndefined)
+                false
+            else
+                _value == Some (t)
 
         /**
          * Make a printable representation for the contents of this state
@@ -139,10 +139,10 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * then it is not equal to anything.
          */
         def =:= (u : U) : Boolean =
-        	if (state.isUndefined (t))
-        		false
-        	else
-        		state.value (t) == u
+            if (state.isUndefined (t))
+                false
+            else
+                state.value (t) == u
 
         /**
          * Make a printable representation of the value of the parameterised
@@ -187,13 +187,13 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         def value (t : T) : U =
             _value match {
                 case None =>
-                    error ("ParamState.value: " + name + "." + sname +
-                    	   " is undefined")
+                    sys.error ("ParamState.value: " + name + "." + sname +
+                        " is undefined")
                 case Some (m) if m contains t =>
                     m (t)
                 case _ =>
-                    error ("ParamState.value: " + name + "." + sname + "(" + t +
-                    	   ") is undefined")
+                    sys.error ("ParamState.value: " + name + "." + sname + "(" + t +
+                        ") is undefined")
             }
 
         /**

@@ -75,7 +75,7 @@ class SPARCEncoder (emitter : Emitter) {
      */
     private def selectreg () : Int = {
         if (availregs == 7)
-            error ("out of local registers")
+            sys.error ("out of local registers")
         availregs = availregs + 1
         availregs
     }

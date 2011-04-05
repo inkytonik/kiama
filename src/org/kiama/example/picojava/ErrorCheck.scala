@@ -169,7 +169,7 @@ object ErrorCheck {
         attr {
             i => i.parent match {
                 case Dot (o, _)  => o
-                case _           => error ("Can not compute qualifier for non qualified names")
+                case _           => sys.error ("Can not compute qualifier for non qualified names")
             }
         }
 

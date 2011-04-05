@@ -28,10 +28,10 @@ package example.iswim.secd
 
 object ExceptionHandler {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+    * Extra bytecode instructions for this extension
      * Instruction to set the exception handler register.
      */
     case class SetHandler() extends Instruction
@@ -79,11 +79,11 @@ trait ExceptionHandler extends SECDBase {
      */
 
      case class ExnContValue(
-        	    s : Stack,
-        	    e : Environment,
-        	    c : Code,
-        	    d : Dump,
-        	    h : Handler
+                s : Stack,
+                e : Environment,
+                c : Code,
+                d : Dump,
+                h : Handler
      ) extends Value with Continuation {
          override def hashCode () = super.hashCode
          override def equals(that : Any) = super.equals(that)
@@ -104,7 +104,7 @@ trait ExceptionHandler extends SECDBase {
      * Note this partial function is orElse'd in front of the superclass
      * evaluator, so these new evaluators will replace those in SECDBase.
      */
-	override def evalInst : Code ==> Unit = ({
+    override def evalInst : Code ==> Unit = ({
         // Empty control sequence - so either return from a function
         // call or stop execution of the machine.
         case Nil => (dump : Dump) match {
@@ -134,81 +134,81 @@ trait ExceptionHandler extends SECDBase {
             case _ :: _ :: _ => raiseException(TypeError)
             case _ => raiseException(StackUnderflow)
         }
-		// Enter and exit binding instructions
-		case Enter(nms) :: next =>
-		    if (stack.length < nms.length)
-		        raiseException(StackUnderflow)
-		    else {
-				dump := ExnContValue(stack.drop(nms.length),envir,Nil,dump,handler)
-				stack := Nil
-				envir := envir ++ (nms.reverse zip stack.take(nms.length))
-				control := next
-		    }
-		case Exit() :: next => (dump : Dump) match {
-			case ExnContValue(s,e,Nil,d,h) => (stack : Stack) match {
-				case List(v) =>
-            	    dump := d
-            	    handler := h
-                	stack := v :: s
-                	envir := e
-                	control := next
-				case _ => raiseException(UnexpectedExit)
-			}
-			case _ => raiseException(UnexpectedExit)
-		}
-		// Binding instruction for primitives
-		case BindPrims(nms) :: next =>
-		    if (nms.forall({ nm : String => primTable.contains(nm) })) {
-			    dump := ExnContValue(stack,envir,Nil,dump,handler)
-			    stack := Nil
-			    envir := (nms :\ (envir : Environment))
-			                { case (nm,e) => e + (nm->primTable(nm)) }
-			    control := next
-			} else raiseException(NonExistentPrimitive)
-		// Continuation handling
-		case AppCC() :: next => (stack : Stack) match {
-			case ClosureValue(p,b,e) :: tail =>
-				val cc = ExnContValue(tail,envir,next,dump,handler)
-				dump := cc
-				stack := Nil
-				envir := e + (p -> cc)
-				control := b
+        // Enter and exit binding instructions
+        case Enter(nms) :: next =>
+            if (stack.length < nms.length)
+                raiseException(StackUnderflow)
+            else {
+                dump := ExnContValue(stack.drop(nms.length),envir,Nil,dump,handler)
+                stack := Nil
+                envir := envir ++ (nms.reverse zip stack.take(nms.length))
+                control := next
+            }
+        case Exit() :: next => (dump : Dump) match {
+            case ExnContValue(s,e,Nil,d,h) => (stack : Stack) match {
+                case List(v) =>
+                    dump := d
+                    handler := h
+                    stack := v :: s
+                    envir := e
+                    control := next
+                case _ => raiseException(UnexpectedExit)
+            }
+            case _ => raiseException(UnexpectedExit)
+        }
+        // Binding instruction for primitives
+        case BindPrims(nms) :: next =>
+            if (nms.forall({ nm : String => primTable.contains(nm) })) {
+                dump := ExnContValue(stack,envir,Nil,dump,handler)
+                stack := Nil
+                envir := (nms :\ (envir : Environment))
+                            { case (nm,e) => e + (nm->primTable(nm)) }
+                control := next
+            } else raiseException(NonExistentPrimitive)
+        // Continuation handling
+        case AppCC() :: next => (stack : Stack) match {
+            case ClosureValue(p,b,e) :: tail =>
+                val cc = ExnContValue(tail,envir,next,dump,handler)
+                dump := cc
+                stack := Nil
+                envir := e + (p -> cc)
+                control := b
             case _ :: _ => raiseException(TypeError)
             case _ => raiseException(StackUnderflow)
-		}
-		case Resume() :: next => (stack : Stack) match {
-			case ExnContValue(s,e,c,d,h) :: v :: tail =>
-				dump := d
-				handler := h
-				stack := v :: s
-				envir := e
-				control := c
-			case _ :: _ :: _ => raiseException(TypeError)
+        }
+        case Resume() :: next => (stack : Stack) match {
+            case ExnContValue(s,e,c,d,h) :: v :: tail =>
+                dump := d
+                handler := h
+                stack := v :: s
+                envir := e
+                control := c
+            case _ :: _ :: _ => raiseException(TypeError)
             case _ => raiseException(StackUnderflow)
-		}
-		case ResumeFromDump() :: next => (dump : Dump) match {
-			case ExnContValue(s,e,c,d,h) => (stack : Stack) match {
-			    case v :: tail =>
-				    dump := d
-				    handler := h
-				    stack := v :: s
-				    envir := e
-				    control := c
-		        case _ => raiseException(StackUnderflow)
-	        }
+        }
+        case ResumeFromDump() :: next => (dump : Dump) match {
+            case ExnContValue(s,e,c,d,h) => (stack : Stack) match {
+                case v :: tail =>
+                    dump := d
+                    handler := h
+                    stack := v :: s
+                    envir := e
+                    control := c
+                case _ => raiseException(StackUnderflow)
+            }
             case EmptyCont => raiseException(DumpEmpty)
-		}
-		// Set the exception handler register to contain the continuation
-		// on the top of the stack.
-		case SetHandler() :: next => (stack : Stack) match {
-		    case (h : ExnContValue) :: tail =>
-		        handler := h
-		        stack := tail
-		        control := next
-		    case _ :: _ => raiseException(TypeError)
-		    case _ => raiseException(StackUnderflow)
-		}
-	} : Code ==> Unit) orElse super.evalInst
+        }
+        // Set the exception handler register to contain the continuation
+        // on the top of the stack.
+        case SetHandler() :: next => (stack : Stack) match {
+            case (h : ExnContValue) :: tail =>
+                handler := h
+                stack := tail
+                control := next
+            case _ :: _ => raiseException(TypeError)
+            case _ => raiseException(StackUnderflow)
+        }
+    } : Code ==> Unit) orElse super.evalInst
 
     /**
      * Raise a machine exception
@@ -226,7 +226,7 @@ trait ExceptionHandler extends SECDBase {
                 stack := ex :: s
                 envir := e
                 control := c
-            case _ => error("Machine Panic: invalid or non-existent exception handler.")
+            case _ => sys.error("Machine Panic: invalid or non-existent exception handler.")
         }
     }
 }

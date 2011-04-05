@@ -42,7 +42,7 @@ object Parser extends RegexParsers with PackratParsers {
     def run (in : java.io.Reader) : Program =
         parseAll (program, in) match {
             case Success (r, _) => r
-            case f              => error (f.toString)
+            case f              => sys.error (f.toString)
         }
 
     lazy val program : PackratParser[Program] =

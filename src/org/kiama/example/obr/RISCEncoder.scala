@@ -90,7 +90,7 @@ object RISCEncoder {
             val newinst = (inst.asInstanceOf[Instr]) match {
                 case b : Branch =>
                     if (! (labels contains b.label))
-                        error ("Assembler.resolve: unmarked label:" + b.label)
+                        sys.error ("Assembler.resolve: unmarked label:" + b.label)
                     val newb = b.copy ()
                     newb.disp = labels (b.label) - currloc
                     newb
@@ -157,7 +157,7 @@ object RISCEncoder {
                     d.prev[RISCNode] match {
                         case s : NeedsRegister  =>
                             if (s->reg >= lasttemp)
-                                error ("out of local registers")
+                                sys.error ("out of local registers")
                             (s->reg) + 1
                         case s =>
                             s->reg

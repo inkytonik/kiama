@@ -21,7 +21,7 @@
 package org.kiama
 package example.picojava.benchmark
 
-object PicoJavaBenchmark extends Application {
+object PicoJavaBenchmark extends App {
 
     import org.kiama.attribution._
     import org.kiama.example.picojava.AbstractSyntax._
