@@ -235,26 +235,35 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that pretty-prints a list in Scala notation,
-     * grouping the elements and separating using ssep. The prefix string
-     * can be changed from the default "List".  The elemToDoc argument
-     * can be used to alter the way each element is converted to a document
-     * (default: call the element's toDoc method).  esep is the element
-     * separator (default: comma).
+     * inserting line breaks between elements as necessary.
+     * The prefix string can be changed from the default "List".
+     * The elemToDoc argument can be used to alter the way each element
+     * is converted to a document (default: call the element's toDoc
+     * method).
+     * sep defaults to a comma.
      */
     def list[T] (l : List[T], prefix : String = "List", 
                  elemToDoc : T => Doc = (x : T) => x.toDoc,
-                 esep : Doc = comma) : Doc =
-        text (prefix) <> parens (group (ssep (l map elemToDoc, esep)))
-        
+                 sep : Doc = comma) : Doc =
+        text (prefix) <> parens (group (nest (lsep (l map elemToDoc, sep))))
+
     /**
-     * Return a document that pretty-prints a list in Scala notation.
-     * Each element is printed on a separate line indented from the
-     * list header. The parameters have the same meaning as for list.
-     */
-    def nestlist[T] (l : List[T], prefix : String = "List", 
-                     elemToDoc : T => Doc = (x : T) => x.toDoc,
-                     esep : Doc = comma) : Doc =
-        list (l, prefix, (t : T) => nest (linebreak <> elemToDoc (t)), esep)
+    * Return a pretty-printer document for p.  If p is a Product, print it in
+    * standard prefix list form, otherwise use p's toDoc method.  As a special
+    * case, print lists as List (...) and Nil instead of using ::.  Also, 
+    * strings are printed with surrounding double quotes.
+    */
+    def product (p : Any) : Doc = {
+        p match {
+            case Nil         => text ("Nil")
+            case l : List[_] => list (l, "List ", product)
+            case p : Product => list (p.productIterator.toList,
+                                      p.productPrefix + " ",
+                                      product)
+            case s : String  => dquotes (text (s))
+            case a           => a.toDoc
+        }
+    }
 
     // Extended combinator set
 
@@ -299,10 +308,23 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that concatenates the documents in the given sequence
-     * and separates adjacent documents with sep.
+     * and separates adjacent documents with sep with no space around the
+     * separator.
      */
     def ssep (ds : Seq[Doc], sep : Doc) : Doc =
         fold (ds, (_ <> sep <> _))
+
+    /**
+     * Return a pretty-printer document for a separated sequence.
+     * sep is the separator.  Line breaks are allowed before the sequence
+     * and between the elements of the sequence.  The before one turns into
+     * nothing if omitted.  The internal ones turn into spaces if omitted.
+     */
+    def lsep (ds : Seq[Doc], sep : Doc) : Doc =
+        ds match {
+            case Nil => empty
+            case ds  => linebreak <> fold (ds, _ <> sep <@> _)
+        }
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -348,25 +370,32 @@ trait PrettyPrinterBase {
         text (v.toString)
 
     /**
-     * Return a document that encloses a given document between left
-     * and right documents.
+     * Return a document that encloses a given document d between two
+     * occurrences of another document b.
      */
-    def enclose (l : Doc, d : Doc, r : Doc) : Doc =
-        l <> d <> r
+    def surround (d : Doc, b : Doc) : Doc =
+        b <> d <> b
 
     /**
      * Return a document that encloses a given document between single
      * quotes.
      */
     def squotes (d : Doc) : Doc =
-        enclose (squote, d, squote)
+        surround (d, squote)
 
     /**
      * Return a document that encloses a given document between double
      * quotes.
      */
     def dquotes (d : Doc) : Doc =
-        enclose (dquote, d, dquote)
+        surround (d, dquote)
+
+    /**
+     * Return a document that encloses a given document between left
+     * and right documents.
+     */
+    def enclose (l : Doc, d : Doc, r : Doc) : Doc =
+        l <> d <> r
 
     /**
      * Return a document that encloses a given document between left

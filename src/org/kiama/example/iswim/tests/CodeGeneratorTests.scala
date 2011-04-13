@@ -289,10 +289,10 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
     10: PushType(EmptyTypeValue),
     11: Equals(),
     12: Test(
-        CodeSegment(13: Pop(1),14: PushInt(0)),
+        CodeSegment(13: Pop(1), 14: PushInt(0)),
         CodeSegment(
             15: Test(
-                CodeSegment(16: Dup(1),17: Fields()),
+                CodeSegment(16: Dup(1), 17: Fields()),
                 CodeSegment(18: PushInt(1))))),
     19: Dup(1),
     20: PushInt(3),
@@ -313,7 +313,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
             33: PushInt(0),
             34: Equals(),
             35: Test(
-                CodeSegment(36: Pop(2),37: PushInt(20)),
+                CodeSegment(36: Pop(2), 37: PushInt(20)),
                 CodeSegment(
                     38: PushMachineException(MachineExceptionValue: match error, value not matched at <undefined position>),
                     39: RaiseException())))))""")
@@ -386,7 +386,7 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
                             20: PushInt(0),
                             21: Equals(),
                             22: Test(
-                                CodeSegment(23: Lookup(r1),24: Get()),
+                                CodeSegment(23: Lookup(r1), 24: Get()),
                                 CodeSegment(
                                     25: Lookup(r3),
                                     26: Lookup(r1),
@@ -438,4 +438,3 @@ class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalys
    }
     
 }
-

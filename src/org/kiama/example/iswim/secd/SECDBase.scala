@@ -131,10 +131,10 @@ object SECDBase {
 
     case class CodeSegment(code : Code) extends ByteCode {
         override def toDoc : Doc =
-            nestlist (code, "CodeSegment",
-                      (e : Instruction) =>
-                           text((e->instNumber).toString) <>
-                                char (':') <+> e.toDoc)
+            list (code, "CodeSegment",
+                  (e : Instruction) =>
+                       text((e->instNumber).toString) <>
+                            char (':') <+> e.toDoc)
 
         override def toString : String = code.mkString("CodeSegment(",",",")")
     }
@@ -175,7 +175,7 @@ object SECDBase {
     
     case class MkClosures(fss : List[FunctionSpec]) extends Instruction {
         override def toDoc : Doc =
-            list(fss, "MkClosures", (fs : FunctionSpec) => nest (line <> fs.toDoc))
+            list(fss, "MkClosures", (fs : FunctionSpec) => fs.toDoc)
     }
     
     case class App() extends Instruction
@@ -389,7 +389,7 @@ abstract class SECDBase
             if (value.isEmpty)
                 text("** empty **")
             else
-                nestlist(value, "Stack")
+                list(value, "Stack")
         override def toString : String =
             pretty(toDoc)
     }
@@ -399,13 +399,13 @@ abstract class SECDBase
             if (value.isEmpty)
                 text("** empty **")
             else
-                nestlist(value.toList, "Environment",
-                         (kv : (Name,Value)) => 
-                             kv match {
-                                 case (nm, v) => {
-                                     text (nm) <+> char ('=') <+> v.toDoc
-                                 }
-                             })
+                list(value.toList, "Environment",
+                     (kv : (Name,Value)) => 
+                         kv match {
+                             case (nm, v) => {
+                                 text (nm) <+> char ('=') <+> v.toDoc
+                             }
+                         })
         override def toString : String =
             pretty(toDoc)
     }
