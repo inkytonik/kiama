@@ -21,7 +21,15 @@
 import sbt._
 
 class Plugins (info : ProjectInfo) extends PluginDefinition (info) {
+    
+    // posterous-sbt
     val posterous = "net.databinder" % "posterous-sbt" % "0.1.7"
     val scctRepo = "scct-repo" at "http://mtkopone.github.com/scct/maven-repo/"
+    
+    // scct
     lazy val scctPlugin = "reaktor" % "sbt-scct-for-2.8" % "0.1-SNAPSHOT"
+    
+    // findbugs4sbt
+    val findbugs4sbt = "de.johoop" % "findbugs4sbt" % "1.0.0"
+
 }

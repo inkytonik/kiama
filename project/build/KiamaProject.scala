@@ -19,13 +19,16 @@
  */
 
 import sbt._
+
+import de.johoop.findbugs4sbt.FindBugs
+import de.johoop.findbugs4sbt.FindBugsReportType._
 import reaktor.scct.ScctProject
 
 /**
  * sbt project configuration for kiama
  */
 class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
-    with posterous.Publish with ScctProject
+    with posterous.Publish with ScctProject with FindBugs
 {
     // Configure basic paths
     override def mainScalaSourcePath = "src"
@@ -100,4 +103,14 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     override def packageToPublishActions =
         super.packageToPublishActions ++
             Seq (packageDocs, packageSrc, packageTest, packageTestSrc)
+
+    // FindBugs configuration
+    override lazy val findbugsReportType = FancyHtml
+    override lazy val findbugsReportName = "findbugsReport.html"
+    override lazy val findbugsExcludeFilters =
+        Some (<FindBugsFilter>
+                  <!-- don't care for performance -->
+                  <Match><Bug category="PERFORMANCE" /></Match>
+              </FindBugsFilter>)
+
 }
