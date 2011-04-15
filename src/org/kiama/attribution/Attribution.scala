@@ -74,11 +74,13 @@ trait AttributionBase {
          * Return the value of the attribute for tree t, or the initial value if
          * no value for t has been computed.
          */
-        private def value (t : T) : U =
-            memo.get (t) match {
-                case null => init
-                case u    => u
-            }
+        private def value (t : T) : U = {
+            val v = memo.get (t)
+            if (v == null)
+                init
+            else
+                v
+        }
 
         /**
          * Return the value of this attribute for node t.  Essentially Figure 6
@@ -131,7 +133,7 @@ trait AttributionBase {
     /**
      * Support for parameterised attributes: argument, node pair comparison.
      */
-    protected class ParamAttributeKey (val arg : Any, val node : AnyRef) {
+    class ParamAttributeKey (val arg : Any, val node : AnyRef) {
         override def equals(o : Any) =
             o match {
                 case o : ParamAttributeKey =>
@@ -215,7 +217,7 @@ object Attribution extends AttributionBase {
             memo.get (t) match {
                 case None     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
                 case Some (u) => u
-                case _ =>
+                case _ => // null
                     memo.put (t, None)
                     val u = f (t)
                     memo.put (t, Some (u))

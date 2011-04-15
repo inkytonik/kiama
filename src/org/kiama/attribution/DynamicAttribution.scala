@@ -96,26 +96,23 @@ object DynamicAttribution extends AttributionBase {
         val prevRecordedChanges = currentRecordedChanges
         try {
             currentRecordedChanges = new ArrayBuffer
-            val recordedChanges = currentRecordedChanges
-
             val initialized = attributeInitializer // import initializer
+            allRecordedChanges.put (initialized, currentRecordedChanges)
             currentRecordedChanges = null
-
-            if (allRecordedChanges containsKey initialized) reuse (initialized)
         } finally {
            currentRecordedChanges = prevRecordedChanges
         }
     }
 
-    private def reuse (attributeInitializer : AnyRef) {
-        val changes = allRecordedChanges.get (attributeInitializer)
-        if (changes != null)
-            for ((attr, function) <- changes)
-                attr += function
-    }
+    // private def reuse (attributeInitializer : AnyRef) {
+    //     val changes = allRecordedChanges.get (attributeInitializer)
+    //     if (changes != null)
+    //         for ((attr, function) <- changes)
+    //             attr += function
+    // }
 
     /**
-     * Dectivates a module that defines dynamic attributes,
+     * Deactivates a module that defines dynamic attributes,
      * activated using {@link #use}.
      */
     def endUse (attributeInitializer : AnyRef) {
@@ -138,7 +135,7 @@ object DynamicAttribution extends AttributionBase {
             memo.get (t) match {
                 case Some (u) => u
                 case None    => throw new IllegalStateException("Cycle detected in attribute evaluation")
-                case null =>
+                case _ => // null
                     memo.put (t, None)
                     val result = f (t)
                     memo.put (t, Some (result))
@@ -146,7 +143,7 @@ object DynamicAttribution extends AttributionBase {
             }
         }
 
-        def isDefinedAt (t : T) = f isDefinedAt t
+        def isDefinedAt (t : T) = composedF isDefinedAt t
 
         def composedF : ComposedPartialFunction[T,U] =
             f match {
@@ -155,10 +152,11 @@ object DynamicAttribution extends AttributionBase {
             }
 
         def += (g : T ==> U) {
-            val uncached : T ==> U = g match {
-                case g : DynamicAttribute[_, _] => g.f
-                case _                          => g
-            }
+            val uncached : T ==> U =
+                g match {
+                    case g : DynamicAttribute[_, _] => g.f
+                    case _                          => g
+                }
 
             if (currentRecordedChanges != null) currentRecordedChanges += ((this, uncached))
             composedF += uncached
@@ -166,7 +164,13 @@ object DynamicAttribution extends AttributionBase {
         }
 
         def -= (g : T ==> U) {
-            composedF -= g
+            val uncached : T ==> U =
+                g match {
+                    case g : DynamicAttribute[_, _] => g.f
+                    case _                          => g
+                }
+            
+            composedF -= uncached
             resetMemo
         }
     }
@@ -192,8 +196,9 @@ object DynamicAttribution extends AttributionBase {
         }
 
         def -= (g : T ==> U) {
-            val removed = functions.lastIndexOf(f)
-            functions.remove(removed)
+            val removed = functions.lastIndexOf(g)
+            if (removed != -1)
+                functions.remove(removed)
         }
 
         this += f

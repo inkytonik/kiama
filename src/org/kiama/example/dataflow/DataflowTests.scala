@@ -111,6 +111,11 @@ class DataflowTests extends Driver {
         expect (Set ()) (out (s5))
     }
 
+    test ("in is defined") {
+        expect (true, "in definedAt s1") (in.isDefinedAt (s1))
+        expect (true, "in definedAt s411") (in.isDefinedAt (s411))
+    }
+
     filetests ("Dataflow", "src/org/kiama/example/dataflow/tests", ".data", ".out")
     filetests ("Dataflow", "src/org/kiama/example/dataflow/tests", ".dataerr", ".err")
 
