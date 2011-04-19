@@ -24,7 +24,6 @@ package example.imperative
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.prop.Checkers
 
 /**
  * Imperative language tests pretty-printer tests.

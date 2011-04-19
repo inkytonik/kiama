@@ -24,7 +24,6 @@ package util
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.prop.Checkers
 
 /**
  * Basic tests of compiler module.  Normal usage is tested by many of
