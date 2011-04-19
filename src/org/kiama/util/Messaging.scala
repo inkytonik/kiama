@@ -62,30 +62,11 @@ object Messaging {
         messages.size
 
     /**
-     * Output the messages to standard output in order of position.
-     */
-    def report () =
-        for (m <- sortedmessages)
-            println (m)
-
-    /**
      * Output the messages in order of position using the given emitter.
      */
     def report (emitter : Emitter) =
         for (m <- sortedmessages)
             emitter.emitln (m)
-
-    /**
-     * Return the sorted messages as a single string.
-     */
-    override def toString () = {
-        val b = new StringBuilder
-        for (m <- sortedmessages) {
-            b.append (m)
-            b.append ('\n')
-        }
-        b.result
-    }
 
     /**
      * Reset the message buffer to empty.
