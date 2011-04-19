@@ -687,7 +687,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
     // Obtaining output
 
     def pretty (d : Doc, w : Width = defaultWidth) : Layout = {
-        val c = (p : PPosition, dq : Dq) => (r : Remaining) => "x"
+        val c = (p : PPosition, dq : Dq) => (r : Remaining) => ""
         d (0, w) (c) (0, emptyDq) (w)
     }
 
