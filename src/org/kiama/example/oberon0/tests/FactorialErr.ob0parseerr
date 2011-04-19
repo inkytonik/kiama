@@ -1,0 +1,24 @@
+MODULE Factorial;
+
+CONST
+    limit = 10;
+
+VAR
+    v : INTEGER;
+    c : INTEGER;
+    fact : INTEGER;
+
+BEGIN
+    Read (v);
+    IF (v < 0) OR (v > limit) THN
+        WriteLn (-1)
+    ELSE
+        c := 0;
+        fact := 1;
+        WHILE c < v DO
+            c := c + 1;
+            fact := fact * c
+        END;
+        WriteLn (fact)
+    END
+END Factorial.

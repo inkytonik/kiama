@@ -1,0 +1,12 @@
+(* Incur a divide by zero exception *)
+
+MODULE DivideByZero;
+
+    VAR i, j : INTEGER;
+
+BEGIN
+
+    j := 0;
+    i := 24 DIV j
+
+END DivideByZero.

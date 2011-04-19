@@ -1,0 +1,14 @@
+(* Missing CATCH keyword *)
+
+PROGRAM ExErr1 (i : INTEGER) : INTEGER;
+
+BEGIN
+
+   TRY
+      Average := Quantity / Count;
+      Result := Average * Frequency;
+   DivideByZero DO
+      Result := 0;
+   END
+
+END ExErr1.

@@ -1,0 +1,25 @@
+(* Test TRY in CATCH block                        *)
+(* Simple test which tests RAISE-ing and          *)
+(* CATCH-ing exceptions without triggering        *)
+(* faults in division code or declaration         *)
+(* mapping.                                       *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+VAR
+  result : INTEGER;
+
+BEGIN
+  result := -2;
+  TRY
+    RAISE DivideByZero;
+  CATCH DivideByZero DO
+    result := i;
+    TRY
+      RAISE DivideByZero;
+    CATCH DivideByZero DO
+      result := result + 100;
+    END
+  END
+  RETURN result;
+END Except.

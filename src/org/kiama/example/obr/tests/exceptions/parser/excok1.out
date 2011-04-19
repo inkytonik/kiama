@@ -1,0 +1,1 @@
+ObrInt(ExcOk1,List(IntParam(i), ExnConst(CountException)),List(),ExcOk1)

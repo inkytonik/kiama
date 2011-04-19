@@ -1,0 +1,9 @@
+(* Legal RAISE statement *)
+
+PROGRAM ExcOk2 (i : INTEGER) : INTEGER;
+
+BEGIN
+
+   RAISE CountException;
+
+END ExcOk2.

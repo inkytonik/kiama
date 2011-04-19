@@ -1,0 +1,5 @@
+[10.5] failure: `END' expected but `W' found
+
+    WHILE x # y DO
+
+    ^

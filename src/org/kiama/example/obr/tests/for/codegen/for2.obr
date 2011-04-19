@@ -1,0 +1,13 @@
+PROGRAM For2 (x : INTEGER) : INTEGER;
+
+VAR
+    a : INTEGER;
+    b : INTEGER;
+
+BEGIN
+    b := 1;
+    FOR a := 2 TO x DO
+		b := b * a;
+    END
+    RETURN b;
+END For2.

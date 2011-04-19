@@ -1,0 +1,22 @@
+(* Enumeration-related errors in declarations *)
+
+PROGRAM EnumErr1 (i : INTEGER) : INTEGER;
+
+VAR
+    (* Two enum vars with same name *)
+    CarColour : (Red, Blue, Green);
+    CarColour: (Monday, Tuesday, Wednesday, Thursday, Friday);
+
+    (* Enum var with same name as ordinary var *)
+    Bob : INTEGER;
+    Bob : (Harold, Eugene);
+    
+    (* Multiply defined enumeration constant in one declaration *)
+    Months : (January, February, March, January, April);
+
+    (* Multiply defined enumeration constant in separate declarations *)
+    AusssieBrands : (Mazda, Toyota, Ford, Holden);
+    CoolBrands : (Mercedes, Ford, Volkswagen);
+
+BEGIN
+END EnumErr1.
