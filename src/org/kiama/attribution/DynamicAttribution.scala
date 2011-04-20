@@ -69,7 +69,7 @@ object DynamicAttribution extends AttributionBase {
     implicit def internalToDynamicAttribute[T <: AnyRef,U] (f : Function[T,U]) : DynamicAttribute[T,U] =
         f match {
             case f : DynamicAttribute[_, _] => f.asInstanceOf[DynamicAttribute[T,U]]
-            case f => throw new UnsupportedOperationException("Cannot only add partial functions to existing attributes")
+            case f => throw new UnsupportedOperationException("Can only add partial functions to existing attributes")
         }
 
     /**
@@ -188,7 +188,7 @@ object DynamicAttribution extends AttributionBase {
             for (i <- (functions.size - 1) until (-1, -1)) {
                 if (functions(i) isDefinedAt t) return functions(i)(t)
             }
-            throw new MatchError("Function not defined for " + t)
+            throw new MatchError(t.toString)
         }
 
         def += (g : T ==> U) {

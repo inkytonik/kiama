@@ -50,9 +50,10 @@ class MachineTests extends FunSuite {
 
     test ("asking for the value of undefined state gives an error") {
         val s = new M.State[Int] ("s")
-        intercept[RuntimeException] {
-            s.value
-        }
+        val i = intercept[RuntimeException] {
+                    s.value
+                }
+        expect ("State.value: M.s is undefined") (i.getMessage)
     }
     
     test ("state can be made undefined") {
@@ -137,9 +138,10 @@ class MachineTests extends FunSuite {
         M.reset
         s := 0
         s := 1
-        intercept[InconsistentUpdateException[Int]] {
-            M.performUpdates
-        }
+        val i = intercept[InconsistentUpdateException[Int]] {
+                    M.performUpdates
+                }
+        expect ("Machine = M, update = M.s := 0, other value = 1") (i.getMessage)
     }
     
     // Parameterised state
@@ -153,9 +155,10 @@ class MachineTests extends FunSuite {
 
     test ("asking for the value of undefined parameterised state gives an error") {
         val p = new M.ParamState[Int,Int] ("p")
-        intercept[RuntimeException] {
-            p.value (0)
-        }
+        val i = intercept[RuntimeException] {
+                    p.value (0)
+                }
+        expect ("ParamState.value: M.p is undefined") (i.getMessage)
     }
 
     test ("asking for the value of parameterised state at an undefined value gives an error") {
@@ -163,9 +166,10 @@ class MachineTests extends FunSuite {
         M.reset
         p (0) := 42
         M.performUpdates
-        intercept[RuntimeException] {
-            p.value (12)
-        }
+        val i = intercept[RuntimeException] {
+                    p.value (12)
+                }
+        expect ("ParamState.value: M.p(12) is undefined") (i.getMessage)
     }
     
     test ("parameterised state can be made undefined") {
@@ -256,9 +260,10 @@ class MachineTests extends FunSuite {
         M.reset
         p ("one") := 0
         p ("one") := 1
-        intercept[InconsistentUpdateException[Int]] {
-            M.performUpdates
-        }
+        val i = intercept[InconsistentUpdateException[Int]] {
+                    M.performUpdates
+                }
+        expect ("Machine = M, update = M.p(one) := 0, other value = 1") (i.getMessage)
     }
     
     // Tests of step debugging trace

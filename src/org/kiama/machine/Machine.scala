@@ -275,6 +275,13 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = t
+        
+        /**
+         * Convert to string representation.  Really only used when
+         * printing inconsistent state exceptions.
+         */
+        override def toString : String =
+            name + "." + s.sname + " := " + t
 
     }
 
@@ -308,6 +315,13 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = u
+        
+        /**
+         * Convert to string representation.  Really only used when
+         * printing inconsistent state exceptions.
+         */
+        override def toString : String =
+            name + "." + s.sname + "(" + t + ") := " + u
 
     }
 

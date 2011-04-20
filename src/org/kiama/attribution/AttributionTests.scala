@@ -279,13 +279,15 @@ class AttributionTests extends FunSuite {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        intercept[IllegalStateException] {
-            t->direct
-        }
+        val i1 = intercept[IllegalStateException] {
+                    t->direct
+                }
+        expect ("Cycle detected in attribute evaluation") (i1.getMessage)
 
-        intercept[IllegalStateException] {
-            t->indirect
-        }
+        val i2 = intercept[IllegalStateException] {
+                     t->indirect
+                 }
+        expect ("Cycle detected in attribute evaluation") (i2.getMessage)
     }
 
     test ("circularities are detected for uncached attributes") {
@@ -306,13 +308,15 @@ class AttributionTests extends FunSuite {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        intercept[IllegalStateException] {
-            t->direct
-        }
+        val i1 = intercept[IllegalStateException] {
+                    t->direct
+                }
+        expect ("Cycle detected in attribute evaluation") (i1.getMessage)
 
-        intercept[IllegalStateException] {
-            t->indirect
-        }
+        val i2 = intercept[IllegalStateException] {
+                     t->indirect
+                 }
+        expect ("Cycle detected in attribute evaluation") (i2.getMessage)
     }
 
     test ("parameterised attribute keys compare correctly") {
