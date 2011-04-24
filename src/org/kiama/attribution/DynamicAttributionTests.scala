@@ -194,7 +194,9 @@ class DynamicAttributionTests extends FunSuite {
         val i = intercept[MatchError] {
                     sumleaf (Pair (Leaf (1), Leaf (2)))
                 }
-        expect ("Pair(Leaf(1),Leaf(2))") (i.getMessage)
+        expect ("Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+            i.getMessage
+        )
         
         object Extension {
             sumleaf += 
@@ -208,7 +210,9 @@ class DynamicAttributionTests extends FunSuite {
             val i = intercept[MatchError] {
                         sumleaf (Pair (Leaf (3), Leaf (1)))
                     }
-            expect ("Pair(Leaf(3),Leaf(1))") (i.getMessage)
+            expect ("Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+                i.getMessage
+            )
         }
 
     }

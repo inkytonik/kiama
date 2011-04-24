@@ -188,7 +188,7 @@ object DynamicAttribution extends AttributionBase {
             for (i <- (functions.size - 1) until (-1, -1)) {
                 if (functions(i) isDefinedAt t) return functions(i)(t)
             }
-            throw new MatchError(t.toString)
+            throw new MatchError(t)
         }
 
         def += (g : T ==> U) {
