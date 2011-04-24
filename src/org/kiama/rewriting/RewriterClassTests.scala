@@ -89,6 +89,17 @@ class RewriterClassTests extends FunSuite with Checkers {
                 }
             expect (11) (countfold (p))
         }
+        
+        test ("constructing a Rewritable with wrong args throws exception") {
+            val t =  new Add (new Num (1), new Num (2))
+            val i = intercept[IllegalArgumentException] {
+                t.reconstruct (Array (new Num (3), new Num (4), new Num (5)))
+            }
+            expect ("making Add: expecting Exp, Exp, got Num(3.0), Num(4.0), Num(5.0)") (
+                i.getMessage
+            )
+        }
+        
     }
     
 }

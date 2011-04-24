@@ -63,6 +63,6 @@ trait Rewritable {
      */
     protected def illegalArgs (desc : String, argtypes : String, args : Array[Term]) =
         throw (new IllegalArgumentException ("making " + desc + ": expecting " +
-                    argtypes + ", got " + args))
+                    argtypes + ", got " + args.mkString (", ")))
     
 }
