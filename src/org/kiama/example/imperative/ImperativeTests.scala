@@ -24,34 +24,18 @@ package example.imperative
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import org.scalatest.prop.Checkers
 
 /**
- * Imperative language tests.  Quite a few of the tests of other modules
- * also use the imperative language.
+ * Imperative language tests pretty-printer tests.
+ * Quite a few of the tests of other modules also use the imperative
+ * language.
  */
 @RunWith(classOf[JUnitRunner])
 class ImperativeTests extends FunSuite {
 
     import AST._
     import PrettyPrinter._
-
-    test ("pretty-print imperative identifier") {
-        expect ("hello") (pretty ("hello"))
-    }
-
-    test ("pretty-print imperative identifier (product)") {
-        expect ("\"hello\"") (pretty (product ("hello")))
-    }
-
-    test ("pretty-print imperative integer") {
-        expect ("1234") (pretty (1234))
-    }
-
-    test ("pretty-print imperative integer (product)") {
-        expect ("1234") (pretty (product (1234)))
-    }
-
+    
     test ("pretty-print imperative variable") {
         expect ("xyz123") (pretty (Var ("xyz123")))
     }

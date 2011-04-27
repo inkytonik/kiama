@@ -193,7 +193,7 @@ trait PrettyPrinterBase {
     def string (s : String) : Doc =
         if (s == "") {
             empty
-        } else if (s(0) == '\n') {
+        } else if (s (0) == '\n') {
             line <> string (s.tail)
         } else {
             val (xs, ys) = s.span (_ != '\n')
@@ -279,10 +279,10 @@ trait PrettyPrinterBase {
      * Helper fold.
      */
     private def fold (ds : Seq[Doc], f : (Doc, Doc) => Doc) =
-        ds match {
-            case Nil => empty
-            case _   => ds.init.foldRight (ds.last) (f)
-        }
+        if (ds isEmpty)
+            empty
+        else
+            ds.tail.foldLeft (ds.head) (f)
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -321,10 +321,10 @@ trait PrettyPrinterBase {
      * nothing if omitted.  The internal ones turn into spaces if omitted.
      */
     def lsep (ds : Seq[Doc], sep : Doc) : Doc =
-        ds match {
-            case Nil => empty
-            case ds  => linebreak <> fold (ds, _ <> sep <@> _)
-        }
+        if (ds isEmpty)
+            empty
+        else
+            linebreak <> fold (ds, _ <> sep <@> _)
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -530,9 +530,9 @@ trait PrettyPrinterBase {
         char ('/')
 
     /**
-     * An equals document.
+     * An equal sign document.
      */
-    def equals : Doc =
+    def equal : Doc =
         char ('=')
 
 }
@@ -616,9 +616,6 @@ trait PrettyPrinter extends PrettyPrinterBase {
         
         def apply (iw : IW) : TreeCont => TreeCont =
             f (iw)
-
-        override def toString : String =
-            f.toString
         
         // Basic operations
 
@@ -652,11 +649,11 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 val outLine =
                     (h : Horizontal) => (c : Out) => (r : Remaining) =>
                         if (h) {
-                            gap + c (r - 1)
+                            gap + c (r - gap.length)
                         } else {
                             '\n' + (" " * i) + c (w - i)
                         }
-                    scan (1, outLine)
+                scan (1, outLine)
         })
     
     def line : Doc =

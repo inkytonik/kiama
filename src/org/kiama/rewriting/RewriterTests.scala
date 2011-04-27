@@ -34,7 +34,7 @@ import org.scalatest.prop.Checkers
 class RewriterTests extends FunSuite with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._
-    import org.kiama.rewriting.Rewriter.{fail => rwfail, _}
+    import org.kiama.rewriting.Rewriter.{fail => rwfail, test => rwtest, _}
 
     /**
      * Compare two optional terms.  Use reference equality for references
@@ -67,7 +67,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
             fail ("Expected not same object as " + expected + ", but got " + actual)
         }
     }
-
+    
     test ("basic arithmetic evaluation") {
         val eval =
             rule {
@@ -216,6 +216,28 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         check ((t : Exp) => same (Some (t), where (id) (t)))
     }
     
+    test ("where restores the original term after succcess") {
+        val r = rule { case Num (i) => Num (i + 1) }
+        val s = where (r)
+        val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("test: failure") {
+        check ((t : Exp) => rwtest (rwfail) (t) == None)
+    }
+    
+    test ("test: identity") {
+        check ((t : Exp) => same (Some (t), rwtest (id) (t)))
+    }
+     
+    test ("test restores the original term after succcess") {
+        val r = rule { case Num (i) => Num (i + 1) }
+        val s = rwtest (r)
+        val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+       
     test ("leaf detection") {
         check ((t : Exp) =>
             same (if (t.productArity == 0) Some (t) else None, isleaf (t)))
@@ -301,6 +323,13 @@ class RewriterTests extends FunSuite with Checkers with Generator {
             val countall = count { case _ => 1 }
             expect (11) (countall (e))
         }
+    
+        test ("counting all terms using queryf") {
+            var count = 0
+            val countall = everywhere (queryf (_ => count = count + 1))
+            expectsame (Some (e)) (countall (e))
+            expect (11) (count)
+        }
         
         test ("counting all terms using a para") {
             val countfold = 
@@ -309,17 +338,17 @@ class RewriterTests extends FunSuite with Checkers with Generator {
                 }
             expect (11) (countfold (e))
         }
-            
+
         test ("counting all Num terms twice") {
             val countnum = count { case Num (_) => 2 }
             expect (4) (countnum (e))
         }
-            
+
         test ("counting all Div terms") {
             val countdiv = count { case Div (_, _) => 1 }
             expect (0) (countdiv (e))
         }
-            
+
         test ("counting all binary operator terms, with Muls twice") {
             val countbin = count {
                 case Add (_, _) => 1
@@ -333,9 +362,9 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         {
             val r = Mul (Num (2), Add (Sub (Var ("hello"), Num (3)), Var ("harold")))
             val s = Mul (Num (2), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
-        
+
             val double = rule { case d : Double => d + 1 }
-        
+
             test ("rewriting leaf types: increment doubles (all, topdown)") {
                 expect (Some (r)) ((alltd (double)) (e))
             }
@@ -351,15 +380,15 @@ class RewriterTests extends FunSuite with Checkers with Generator {
             test ("rewriting leaf types: increment doubles (some, topdown)") {
                 expect (Some (r)) ((sometd (double)) (e))
             }
-        
+
             test ("rewriting leaf types: increment doubles (some, bottomup)") {
                 expect (Some (r)) ((somebu (double)) (e))
             }
-        
+
             test ("rewriting leaf types: increment doubles (one, topdown)") {
                 expect (Some (s)) ((oncetd (double)) (e))
             }
-        
+
             test ("rewriting leaf types: increment doubles (one, bottomup)") {
                 expect (Some (s)) ((oncebu (double)) (e))
             }
@@ -409,7 +438,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
                     case i : Double if i < 2 => i + 1
                     case s : String => s.reverse
                 }
-        
+
             test ("rewriting leaf types: increment even doubles and reverse idn (all, topdown)") {
                 expect (Some (r)) ((alltd (evendoubleincrev)) (e))
             }
@@ -425,15 +454,15 @@ class RewriterTests extends FunSuite with Checkers with Generator {
             test ("rewriting leaf types: increment even doubles and reverse idn (some, topdown)") {
                 expect (Some (r)) ((sometd (evendoubleincrev)) (e))
             }
-        
+
             test ("rewriting leaf types: increment even doubles and reverse idn (some, bottomup)") {
                 expect (Some (r)) ((somebu (evendoubleincrev)) (e))
             }
-        
+
             test ("rewriting leaf types: increment even doubles and reverse idn (one, topdown)") {
                 expect (Some (s)) ((oncetd (evendoubleincrev)) (e))
             }
-        
+
             test ("rewriting leaf types: increment even doubles and reverse idn (one, bottomup)") {
                 expect (Some (s)) ((oncebu (evendoubleincrev)) (e))
             }
@@ -443,6 +472,11 @@ class RewriterTests extends FunSuite with Checkers with Generator {
     test ("rewrite to increment an integer") {
         val inc = rule { case i : Int => i + 1 }
         expect (Some (4)) ((inc) (3))
+    }
+    
+    test ("rewrite to a constant value") {
+        val const = rulef (_ => 88)
+        expect (Some (88)) ((const) (3))
     }
     
     test ("rewrite failing to increment an integer with a double increment") {
@@ -734,24 +768,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         val incsecondchild = child (2, incnum)
         val incthirdchild = child (3, incnum)
         val incallsecondchild = alltd (incsecondchild)
-        val addtomul = rule { case Add (l, r) => Mul (l, r) }
-        
-        test ("rewrite by child index: index too low is failure") {
-            expect (None) ((child (-3, addtomul)) (t))
-        }
-            
-        test ("rewrite by child index: index too high is failure") {
-            expect (None) ((child (3, addtomul)) (t))
-        }
-            
-        test ("rewrite by child index: only rewritten child is replaced") {
-            val u = Sub (Add (Num (1), Num (2)), Mul (Num (3), Num (4)))
-            val v = (child (2, addtomul)) (t)
-            expect (Some (u)) (v)
-            val Some (w) = v
-            expectsame (Some (l)) (Some (w.asInstanceOf[Sub].l))
-        }
-        
+    
         test ("rewrite by child index: inc zeroth child (fail)") {
             expect (None) (inczerothchild (Add (Num (2), Num (3))))
         }
@@ -847,7 +864,7 @@ class RewriterTests extends FunSuite with Checkers with Generator {
                     Seqn (List (
                         Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                         Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
-                        
+
         // { i = 0; count = 0; while (i) { count = bob + 1; i = 0 + i; } }
         val q = 
             Seqn (List (
@@ -875,6 +892,839 @@ class RewriterTests extends FunSuite with Checkers with Generator {
         test ("rewrite by congruence: multi-level") {
             expect (Some (q)) (zeronumsbreakadds (p))
         }
+    }
+    
+    test ("debug strategy produces the expected message and result") {
+        import org.kiama.util.StringEmitter
+        val e = new StringEmitter
+        val s = debug ("hello there: ", e)
+        val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
+        expectsame (Some (t)) (s (t))
+        expect ("hello there: " + t + "\n") (e.result)
+    }
+    
+    test ("rewrite returns the original term when the strategy fails") {
+        val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
+        expectsame (Some (t)) (Some (rewrite (rwfail) (t)))
+    }
+    
+    test ("rewrite returns the strategy result when the strategy succeeds") {
+        val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
+        val s = everywhere (rule { case Var (_) => Var ("hello") })
+        expect (s (t)) (Some (rewrite (s) (t)))
+    }
+    
+    test ("a memo strategy returns the previous result") {
+        val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
+        var count = 0
+        val s = memo (everywhere (rule {
+                    case Var (_) => count = count + 1;
+                                    Var ("i" + count)
+                }))
+        val r = Some (Asgn (Var ("i1"), Add (Num (1), Var ("i2"))))
+        expect (r) (s (t))
+        expect (r) (s (t))
+    }
+    
+    test ("an illegal dup throws an appropriate exception") {
+        val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
+        val s = everywhere (rule { case Var (_) => 42 })
+        val i = intercept[RuntimeException] { s (t) }
+        expect ("dup illegal arguments: public org.kiama.example.imperative.AST$Add(org.kiama.example.imperative.AST$Exp,org.kiama.example.imperative.AST$Exp) (Num(1.0),42), expects 2") (i.getMessage)
+    }
+    
+    test ("repeat on failure succeeds") {
+        val s = repeat (rwfail)
+        val t = Num (10)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("repeat of non-failure works") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val s = repeat (r)
+        expect (Some (Num (10))) (s (Num (1)))
+    }
+    
+    test ("repeat with a final strategy on failure applies the final strategy") {
+        val f = rule {
+                    case Num (10) => Num (20)
+                }
+        val s = repeat (rwfail, f)
+        expect (Some (Num (20))) (s (Num (10)))
+    }
+    
+    test ("repeat with a final strategy works") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val f = rule {
+                    case Num (10) => Num (20)
+                }
+        val s = repeat (r, f)
+        expect (Some (Num (20))) (s (Num (1)))
+    }
+    
+    test ("repeat with a final failure fails") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val s = repeat (r, rwfail)
+        expect (None) (s (Num (1)))
+    }
+    
+    test ("repeat1 on failure fails") {
+        val s = repeat1 (rwfail)
+        expect (None) (s (Num (10)))
+    }
+    
+    test ("repeat1 of non-failure works") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val s = repeat1 (r)
+        expect (Some (Num (10))) (s (Num (1)))
+    }
+    
+    test ("repeat1 with a final strategy on failure doesn't apply the final strategy") {
+        val f = rule {
+                    case Num (10) => Num (20)
+                }
+        val s = repeat1 (rwfail, f)
+        expect (None) (s (Num (10)))
+    }
+    
+    test ("repeat1 with a final strategy works") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val f = rule {
+                    case Num (10) => Num (20)
+                }
+        val s = repeat1 (r, f)
+        expect (Some (Num (20))) (s (Num (1)))
+    }
+    
+    test ("repeat1 with a final failure fails") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val s = repeat1 (r, rwfail)
+        expect (None) (s (Num (1)))
+    }
+    
+    test ("zero repeat of failure is identity") {
+        val s = repeat (rwfail, 0)
+        val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("non-zero repeat of failure fails") {
+        val s = repeat (rwfail, 4)
+        expect (None) (s (Num (1)))
+    }
+    
+    test ("zero repeat of non-failure is identity") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val s = repeat (r, 0)
+        val t = Num (1)
+        expect (Some (t)) (s (t))
+    }
+    
+    test ("non-zero repeat of non-failure is repeated correct number of times") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val s = repeat (r, 4)
+        expect (Some (Num (5))) (s (Num (1)))
+    }
+    
+    test ("repeatuntil on failure fails") {
+        val f = rule {
+                    case Num (10) => Num (20)
+                }
+        val s = repeatuntil (rwfail, f)
+        expect (None) (s (Num (1)))
+    }
+    
+    test ("repeatuntil on non-failure works") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i + 1)
+                }
+        val f = rule {
+                    case Num (10) => Num (20)
+                }
+        val s = repeatuntil (r, f)
+        expect (Some (Num (20))) (s (Num (1)))
+    }
+    
+    test ("loop on failure is identity") {
+        val f = rule {
+                    case Num (1) => Num (2)
+                }
+        val s = loop (rwfail, f)
+		val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("loop on non-failure with initially false condition is identity") {
+        val r = rule {
+                    case Num (i) if i > 10 => Num (i)
+                }
+        val f = rule {
+                    case Num (1) => Num (2)
+                }
+        val s = loop (r, f)
+		val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("loop on failure with initially true condition is identity") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i)
+                }
+        val s = loop (r, rwfail)
+        val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("loop on non-failure with initially true condition works") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i)
+                }
+        val f = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val s = loop (r, f)
+        expect (Some (Num (10))) (s (Num (1)))
+    }
+    
+    test ("loopnot on succeess is identity") {
+        val f = rule {
+                    case Num (1) => Num (2)
+                }
+        val s = loopnot (id, f)
+		val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("loopnot on non-failure with initially true condition is identity") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i)
+                }
+        val f = rule {
+                    case Num (1) => Num (2)
+                }
+        val s = loopnot (r, f)
+        val t = Num (1)
+        expect (Some (t)) (s (t))
+    }
+    
+    test ("loopnot on failure with initially false condition fails") {
+        val r = rule {
+                    case Num (i) if i >= 10 => Num (i + 1)
+                }
+        val s = loopnot (r, rwfail)
+        expect (None) (s (Num (1)))
+    }
+    
+    test ("loopnot on non-failure with initially false condition works") {
+        val r = rule {
+                    case Num (i) if i >= 10 => Num (i)
+                }
+        val f = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val s = loopnot (r, f)
+        expect (Some (Num (10))) (s (Num (1)))
+    }
+    
+    test ("doloop on failure applies once") {
+        val f = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val s = doloop (f, rwfail)
+        expect (Some (Num (2))) (s (Num (1)))
+    }
+    
+    test ("doloop on non-failure with initially false condition applies once") {
+        val r = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val f = rule {
+                    case Num (i) if i >= 10 => Num (i)
+                }
+        val s = doloop (r, f)
+        expect (Some (Num (2))) (s (Num (1)))
+    }
+    
+    test ("doloop on failure with initially true condition is failure") {
+        val f = rule {
+                    case Num (i) if i < 10 => Num (i)
+                }
+        val s = doloop (rwfail, f)
+        expect (None) (s (Num (1)))
+    }
+    
+    test ("doloop on non-failure with initially true condition works") {
+        val r = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val f = rule {
+                    case Num (i) if i < 10 => Num (i)
+                }
+        val s = doloop (r, f)
+        expect (Some (Num (10))) (s (Num (1)))
+    }
+    
+    test ("loopiter with failure init fails") {
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i)
+                }
+        val f = rule {
+                    case Num (1) => Num (2)
+                }
+        val s = loopiter (rwfail, r, f)
+        expect (None) (s (Num (1)))
+    }
+    
+    test ("loopiter with succeeding init and initially true condition works") {
+        val i = rule {
+                    case Num (100) => Num (1)
+                }
+        val r = rule {
+                    case Num (i) if i < 10 => Num (i)
+                }
+        val f = rule {
+                    case Num (1) => Num (2)
+                }
+        val s = loopiter (i, r, f)
+        expect (Some (Num (1))) (s (Num (100)))
+    }
+    
+    test ("loopiter with succeeding init and initially false condition works") {
+        val i = rule {
+                    case Num (100) => Num (1)
+                }
+        val r = rule {
+                    case Num (i) if i >= 10 => Num (i)
+                }
+        val f = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val s = loopiter (i, r, f)
+        expect (Some (Num (10))) (s (Num (100)))
+    }
+    
+    test ("counting loopiter is identity if there is nothing to count") {
+        val r = (i : Int) => 
+                    rule {
+                        case Num (j) => Num (i + j)
+                    }
+        val s = loopiter (r, 10, 1)
+        val t = Num (1)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("counting loopiter counts correctly") {
+        var count = 0
+        val r = (i : Int) => 
+                    rule {
+                        case Num (j) => count = count + i
+                                        Num (j + 1)
+                    }
+        val s = loopiter (r, 1, 10)
+        expect (Some (Num (11))) (s (Num (1)))
+        expect (55) (count)
+    }
+    
+    test ("breadthfirst traverses in correct order") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        var l : List[Double] = Nil
+        val r = rule {
+                    case n @ Num (i) => l = l :+ i
+                                        n
+                    case n           => n
+                }
+        val s = breadthfirst (r)
+        expectsame (Some (t)) (s (t))
+        expect (List (3, 1, 2, 4, 5)) (l)
+    }
+    
+    test ("leaves with a failing leaf detector succeeds but doesn't collect anything") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        var sum = 0.0
+        val r = rule {
+                    case Num (i) => sum = sum + i
+                }
+        val s = leaves (r, rwfail)
+        expect (Some (t)) (s (t))
+        expect (0) (sum)
+    }
+    
+    test ("leaves with a non-failing leaf detector succeeds and collects correctly") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        var sum = 0.0
+        val r = rule {
+                    case Num (i) => sum = sum + i
+                                    Num (i)
+                }
+        val l = rule {
+                    case Num (i) if (i % 2 == 0) => Num (i)
+                }
+        val s = leaves (r, l)
+        expect (Some (t)) (s (t))
+        expect (6) (sum)
+    }    
+    
+    test ("skipping leaves with a non-failing leaf detector succeeds and collects correctly") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        var sum = 0.0
+        val r = rule {
+                    case Num (i) => sum = sum + i
+                                    Num (i)
+                }
+        val l = rule {
+                    case Num (i) if (i % 2 == 1) => Num (i)
+                }
+        val x = (y : Strategy) =>
+                    rule {
+                        case n @ Sub (_, _) => n
+                    }
+        val s = leaves (r, l, x)
+        expect (Some (t)) (s (t))
+        expect (4) (sum)
+    }    
+    
+    def innermosttest (imost : (=> Strategy) => Strategy) = {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Add (Var ("1.0"), Var ("2.0")), Var ("3.0")), Sub (Var ("4.0"), Var ("5.0")))
+        var l : List[Double] = Nil
+        val r = rule {
+                    case Num (i) => l = l :+ i
+                                    Var (i.toString)
+                }
+        val s = imost (r)
+        expect (Some (u)) (s (t))
+        expect (List (1, 2, 3, 4, 5)) (l)
+    }
+    
+    test ("innermost visits the correct nodes in the correct order") {
+        innermosttest (innermost)
+    }
+    
+    test ("innermost2 visits the correct node") {
+        innermosttest (innermost2)
+    }
+    
+    test ("downup (one arg version) visits the correct frontier") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (4), Num (5)))
+        val d = rule {
+                    case Add (l, r @ Num (3)) => Add (r, l)
+                    case Sub (l, r)           => Sub (r, l)
+                    case n                    => n
+                }
+        val s = downup (d)
+        expect (Some (u)) (s (t))
+    }
+    
+    
+    test ("downup (two arg version) visits the correct frontier") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (8), Num (9)))
+        val d = rule {
+                    case Add (l, r @ Num (3)) => Add (r, l)
+                    case Sub (l, r)           => Sub (r, l)
+                    case n                    => n
+                }
+        val e = rule {
+                    case Sub (l, r)           => Sub (Num (8), Num (9))
+                    case n                    => n
+                }
+        val s = downup (d, e)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("somedownup visits the correct frontier") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Add (Num (3), Num (4)), Num (3)), Sub (Num (2), Num (3)))
+        val d = rule {
+                    case Add (Num (l), Num (r)) => Add (Num (l + 1), Num (r + 1))
+                    case Sub (Num (l), Num (r)) => Sub (Num (l - 1), Num (r - 1))
+                    case n : Mul                => n
+                }
+        val s = somedownup (d)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("downupS (two arg version) visits the correct frontier") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (4), Num (5)))
+        val d = rule {
+                    case Add (l, r @ Num (3)) => Add (r, l)
+                    case Sub (l, r)           => Sub (r, l)
+                    case n                    => n
+                }
+        def f (y : => Strategy) =
+            rule {
+                case n @ Add (_, Num (3)) => n
+            }
+        val s = downupS (d, f)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("downupS (three arg version) visits the correct frontier") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (8), Num (9)))
+        val d = rule {
+                    case Add (l, r @ Num (3)) => Add (r, l)
+                    case Sub (l, r)           => Sub (r, l)
+                    case n                    => n
+                }
+        val e = rule {
+                    case Sub (l, r)           => Sub (Num (8), Num (9))
+                    case n                    => n
+                }
+        def f (y : => Strategy) =
+            rule {
+                case n @ Add (_, Num (3)) => n
+            }
+        val s = downupS (d, e, f)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("alldownup2 visits the correct frontier") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Mul (Num (3), Add (Num (1), Num (2))), Sub (Num (5), Num (4)))
+        val d = rule {
+                    case Add (l, r @ Num (3)) => Add (r, l)
+                    case Sub (l, r)           => Sub (r, l)
+                }
+        val e = rule {
+                    case Add (l, r) => Mul (l, r)
+                    case n          => n
+                }
+        val s = alldownup2 (d, e)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("topdownS stops at the right spots") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (5), Num (4)))
+        val d = rule {
+                    case Add (l, r) => Add (r, l)
+                    case Sub (l, r) => Sub (r, l)
+                    case n          => n
+                }
+        def f (y : => Strategy) =
+            rule {
+                case n @ Add (Num (3), _) => n
+            }
+        val s = topdownS (d, f)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("topdownS with no stopping doesn't stop") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (2), Num (1))), Sub (Num (5), Num (4)))
+        val d = rule {
+                    case Add (l, r) => Add (r, l)
+                    case Sub (l, r) => Sub (r, l)
+                    case n          => n
+                }
+        val s = topdownS (d, dontstop)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("bottomupS stops at the right spots") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (5), Num (4)))
+        val d = rule {
+                    case Add (l, r) => Add (r, l)
+                    case Sub (l, r) => Sub (r, l)
+                    case n          => n
+                }
+        def f (y : => Strategy) =
+            rule {
+                case n @ Add (_, Num (3)) => n
+            }
+        val s = bottomupS (d, f)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("bottomupS with no stopping doesn't stop") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (3), Add (Num (2), Num (1))), Sub (Num (5), Num (4)))
+        val d = rule {
+                    case Add (l, r) => Add (r, l)
+                    case Sub (l, r) => Sub (r, l)
+                    case n          => n
+                }
+        val s = bottomupS (d, dontstop)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("manybu applies the strategy in the right order and right number of times") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Add (Num (12), Num (11)), Num (10)), Sub (Num (4), Num (5)))
+        var count = 13
+        val d = rule {
+                    case Num (i) if (count > 10) => count = count - 1
+                                                    Num (count)
+                }
+        val s = manybu (d)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("manytd applies the strategy in the right order and right number of times") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Num (11), Add (Num (2), Num (1))), Sub (Num (4), Num (5)))
+        var count = 13
+        val d = rule {
+                    case Num (i) if (count > 10) =>
+                        count = count - 1
+                        Num (count)
+                    case Add (l, r) if (count > 10) =>
+                        count = count - 1
+                        Add (r, l)
+                }
+        val s = manytd (d)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("alltdfold can be used to evaluate an expression") {
+        // ((1 + 2) + 3) * (4 - 5) = -6
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val d = rule {
+                    case n : Num => n
+                }
+        val e = rule {
+                    case Add (Num (i), Num (j)) => Num (i + j)
+                    case Sub (Num (i), Num (j)) => Num (i - j)
+                    case Mul (Num (i), Num (j)) => Num (i * j)
+                }
+        val s = alltdfold (d, e)
+        expect (Some (Num (-6))) (s (t))
+    }
+    
+    test ("restore restores when the strategy fails") {
+        val t = Add (Num (1), Num (2))
+        var count = 0
+        val d = rule {
+                    case n => count = count + 1; n
+                } <* rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val e = rule {
+                    case n => count = count - 1; n
+                }
+        val s = restore (d, e)
+        expect (None) (s (t))
+        expect (0) (count)
+    }
+    
+    test ("restore doesn't restore when the strategy suceeds") {
+        val t = Add (Num (1), Num (2))
+        var count = 0
+        val d = rule {
+                    case n => count = count + 1; n
+                }
+        val e = rule {
+                    case n => count = count - 1; n
+                }
+        val s = restore (d, e)
+        expectsame (Some (t)) (s (t))
+        expect (1) (count)
+    }
+    
+    test ("restorealways restores when the strategy fails") {
+        val t = Add (Num (1), Num (2))
+        var count = 0
+        val d = rule {
+                    case n => count = count + 1; n
+                } <* rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val e = rule {
+                    case n => count = count - 1; n
+                }
+        val s = restorealways (d, e)
+        expect (None) (s (t))
+        expect (0) (count)
+    }
+    
+    test ("restorealways restores when the strategy suceeds") {
+        val t = Add (Num (1), Num (2))
+        var count = 0
+        val d = rule {
+                    case n => count = count + 1; n
+                }
+        val e = rule {
+                    case n => count = count - 1; n
+                }
+        val s = restorealways (d, e)
+        expectsame (Some (t)) (s (t))
+        expect (0) (count)
+    }
+    
+    test ("lastly applies the second strategy when the first strategy fails") {
+        val t = Add (Num (1), Num (2))
+        var count = 0
+        val d = rule {
+                    case n => count = count + 1; n
+                } <* rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val e = rule {
+                    case n => count = count - 1; n
+                }
+        val s = lastly (d, e)
+        expect (None) (s (t))
+        expect (0) (count)
+    }
+    
+    test ("lastly applies the second strategy when the first strategy succeeds") {
+        val t = Add (Num (1), Num (2))
+        var count = 0
+        val d = rule {
+                    case n => count = count + 1; n
+                }
+        val e = rule {
+                    case n => count = count - 1; n
+                }
+        val s = lastly (d, e)
+        expectsame (Some (t)) (s (t))
+        expect (0) (count)
+    }
+    
+    test ("ior applies second strategy if first strategy fails") {
+        val t = Add (Num (1), Num (2))
+        val u = Add (Num (2), Num (1))
+        val d = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val e = rule {
+                    case Add (l, r) => Add (r, l)
+                }
+        val s = ior (d, e)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("ior applies second strategy if first strategy succeeds") {
+        val t = Add (Num (1), Num (2))
+        val u = Add (Num (9), Num (8))
+        val d = rule {
+                    case Add (l, r) => Add (Num (8), Num (9))
+                }
+        val e = rule {
+                    case Add (l, r) => Add (r, l)
+                }
+        val s = ior (d, e)
+        expect (Some (u)) (s (t))
+    }
+    
+    test ("or applies second strategy and restores term if first strategy fails") {
+        val t = Add (Num (1), Num (2))
+        val d = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val e = rule {
+                    case Add (l, r) => Add (r, l)
+                }
+        val s = or (d, e)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("or applies second strategy and restores term if first strategy succeeds") {
+        val t = Add (Num (1), Num (2))
+        val d = rule {
+                    case Add (l, r) => Add (Num (8), Num (9))
+                }
+        val e = rule {
+                    case Add (l, r) => Add (r, l)
+                }
+        val s = or (d, e)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    test ("and fails if the first strategy fails") {
+        val t = Add (Num (1), Num (2))
+        val d = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val e = rule {
+                    case Add (l, r) => Add (r, l)
+                }
+        val s = and (d, e)
+        expect (None) (s (t))
+    }
+    
+    test ("and fails if the first strategy succeeds but the second strategy fails") {
+        val t = Add (Num (1), Num (2))
+        val d = rule {
+                    case Add (l, r) => Add (r, l)
+                }
+        val e = rule {
+                    case Num (i) => Num (i + 1)
+                }
+        val s = and (d, e)
+        expect (None) (s (t))
+    }
+    
+    test ("and succeeds and restores term if both strategies succeed") {
+        val t = Add (Num (1), Num (2))
+        val d = rule {
+                    case Add (l, r) => Add (Num (8), Num (9))
+                }
+        val e = rule {
+                    case Add (l, r) => Add (r, l)
+                }
+        val s = and (d, e)
+        expectsame (Some (t)) (s (t))
+    }
+    
+    def everywheretdtest (everys : (=> Strategy) => Strategy) = {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Add (Num (12), Num (13)), Num (14)), Sub (Num (16), Num (17)))
+        var l : List[Double] = Nil
+        var count = 9
+        val r = rule {
+                    case Num (i) => l = l :+ i
+                                    Num (count)
+                    case n       => count = count + 1
+                                    n
+                }
+        val s = everys (r)
+        expect (Some (u)) (s (t))
+        expect (List (1, 2, 3, 4, 5)) (l)
+    }
+    
+    test ("everywhere traverses in expected order") {
+        everywheretdtest (everywhere)
+    }
+    
+    test ("everywheretd traverses in expected order") {
+        everywheretdtest (everywheretd)
+    }
+    
+    test ("everywherebu traverses in expected order") {
+        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
+        val u = Mul (Add (Add (Num (10), Num (11)), Num (13)), Sub (Num (15), Num (16)))
+        var l : List[Double] = Nil
+        var count = 9
+        val r = rule {
+                    case Num (i) => l = l :+ i
+                                    Num (count)
+                    case n       => count = count + 1
+                                    n
+                }
+        val s = everywherebu (r)
+        expect (Some (u)) (s (t))
+        expect (List (1, 2, 3, 4, 5)) (l)
     }
 
 }

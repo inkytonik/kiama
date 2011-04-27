@@ -36,6 +36,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     import Analysis._
     import Evaluators._
     import PrettyPrinter._
+    import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
     override def setup (args : Array[String]) : Boolean = {
@@ -123,7 +124,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                 println (pretty (evaluator.eval (e)))
             } else {
                 // Otherwise report the errors and reset for next expression
-                report
+                report (new Emitter)
                 resetmessages
             }
         } else {

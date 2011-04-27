@@ -34,6 +34,7 @@ import java.io.FileReader
 object Main extends Parser with SemanticAnalysis with CodeGenerator {
 
     import org.kiama.example.iswim.driver.PrettyPrinter._
+    import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
     import SECDBase._
 
@@ -96,7 +97,7 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator {
                             println("Returned value:")
                             println(machine.returnedValue)
                         }
-                    } else report
+                    } else report (new Emitter)
                 case f => println(f)
             }
         } else println(usageMessage)

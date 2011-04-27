@@ -134,9 +134,10 @@ class DynamicAttributionTests extends FunSuite {
                 case Pair (l, r) => 99
             }
 
-        intercept[UnsupportedOperationException] {
-            func += sumleaf
-        }
+        val i = intercept[UnsupportedOperationException] {
+                    func += sumleaf
+                }
+        expect ("Can only add partial functions to existing attributes") (i.getMessage)
 
     }
 
@@ -190,9 +191,12 @@ class DynamicAttributionTests extends FunSuite {
                 case Leaf (v) => v
             }
 
-        intercept[MatchError] {
-            sumleaf (Pair (Leaf (1), Leaf (2)))
-        }
+        val i = intercept[MatchError] {
+                    sumleaf (Pair (Leaf (1), Leaf (2)))
+                }
+        expect ("Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+            i.getMessage
+        )
         
         object Extension {
             sumleaf += 
@@ -203,9 +207,12 @@ class DynamicAttributionTests extends FunSuite {
 
         using (Extension) {
             expect (100) (sumleaf (Pair (Leaf (1), Leaf (2))))
-            intercept[MatchError] {
-                sumleaf (Pair (Leaf (3), Leaf (1)))
-            }
+            val i = intercept[MatchError] {
+                        sumleaf (Pair (Leaf (3), Leaf (1)))
+                    }
+            expect ("Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+                i.getMessage
+            )
         }
 
     }
@@ -226,13 +233,15 @@ class DynamicAttributionTests extends FunSuite {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        intercept[IllegalStateException] {
-            t->direct
-        }
+        val i1 = intercept[IllegalStateException] {
+                    t->direct
+                }
+        expect ("Cycle detected in attribute evaluation") (i1.getMessage)
 
-        intercept[IllegalStateException] {
-            t->indirect
-        }
+        val i2 = intercept[IllegalStateException] {
+                     t->indirect
+                 }
+        expect ("Cycle detected in attribute evaluation") (i2.getMessage)
     }
 
 }

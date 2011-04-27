@@ -31,6 +31,7 @@ package rewriting
  */
 object Rewriter {
     
+    import org.kiama.util.Emitter
     import scala.collection.MapLike
     import scala.collection.SeqLike
     import scala.collection.TraversableLike
@@ -259,10 +260,11 @@ object Rewriter {
     /**
      * A strategy that always succeeds with the subject term unchanged (i.e.,
      * this is the identity strategy) with the side-effect that the subject
-     * term is printed to standard output, prefixed by the string s.
+     * term is printed to the given emitter, prefixed by the string s.  The
+     * emitter defaults to one that writes to standard output.
      */
-    def debug (s : String) : Strategy =
-        strategyf (t => { Console.println (s + t); Some (t) })
+    def debug (s : String, emitter : Emitter = new Emitter) : Strategy =
+        strategyf (t => { emitter.emitln (s + t); Some (t) })
 
     /**
      * Construct a strategy that succeeds only if the subject term matches
@@ -322,8 +324,6 @@ object Rewriter {
         try {
             ctor.newInstance (children : _*).asInstanceOf[T]
         } catch {
-            case e : java.lang.ClassCastException =>
-                sys.error ("dup cast failed: " + t)
             case e : IllegalArgumentException =>
                 sys.error ("dup illegal arguments: " + ctor + " (" +
                        children.deep.mkString (",") + "), expects " +
@@ -1068,9 +1068,10 @@ object Rewriter {
 
     /**
      * Construct a strategy that applies s in a top-down, prefix fashion
-     * to the subject term but stops when stop succeeds.
+     * to the subject term but stops when the strategy produced by stop
+     * succeeds. stop is given the whole strategy itself as its argument.
      */
-    def topdownS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
+    def topdownS (s : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
         s <* (stop (topdownS (s, stop)) <+ all (topdownS (s, stop)))
 
     /**
@@ -1082,10 +1083,11 @@ object Rewriter {
 
     /**
      * Construct a strategy that applies s in a bottom-up, postfix fashion
-     * to the subject term but stops when stop succeeds.
+     * to the subject term but stops when the strategy produced by stop
+     * succeeds. stop is given the whole strategy itself as its argument.
      */
-    def bottomupS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
-        (stop (bottomupS (s, stop)) <+ all (bottomupS (s, stop))) <* s
+    def bottomupS (s : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        (stop (bottomupS (s, stop)) <+ (all (bottomupS (s, stop))) <* s)
 
     /**
      * Construct a strategy that applies s in a combined top-down and
@@ -1105,17 +1107,19 @@ object Rewriter {
     /**
      * Construct a strategy that applies s in a combined top-down and
      * bottom-up fashion (i.e., both prefix and postfix) to the subject
-     * term but stops when stop succeeds.
+     * but stops when the strategy produced by stop succeeds. stop is
+     * given the whole strategy itself as its argument.
      */
-    def downupS (s : => Strategy, stop : Strategy => Strategy) : Strategy =
+    def downupS (s : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
         s <* (stop (downupS (s, stop)) <+ all (downupS (s, stop))) <* s
 
     /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
      * and s2 in a bottom-up, postfix fashion to the subject term but stops
-     * when stop succeeds.
+     * when the strategy produced by stop succeeds. stop is given the whole
+     * strategy itself as its argument.
      */
-    def downupS (s1 : => Strategy, s2 : => Strategy, stop : Strategy => Strategy) : Strategy =
+    def downupS (s1 : => Strategy, s2 : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
         s1 <* (stop (downupS (s1, s2, stop)) <+ all (downupS (s1, s2, stop))) <* s2
 
     /**
@@ -1202,7 +1206,7 @@ object Rewriter {
     def allbu (s : => Strategy) : Strategy =
         all (allbu (s)) <+ s
 
-   /**
+    /**
      * Construct a strategy that applies s1 in a top-down, prefix fashion
      * stopping at a frontier where s1 succeeds.  s2 is applied in a bottom-up,
      * postfix fashion to the result.
@@ -1231,7 +1235,7 @@ object Rewriter {
      * at least once, in bottom up order.
      */
     def manybu (s : Strategy) : Strategy =
-        some (manybu (s)) <* (attempt (s) <+ s)
+        some (manybu (s)) <* attempt (s) <+ s
 
     /**
      * Construct a strategy that applies s as many times as possible, but
@@ -1305,10 +1309,10 @@ object Rewriter {
     /**
      * Construct a strategy that applies to all of the leaves of the
      * current term, using isleaf as the leaf predicate, skipping
-     * subterms for which skip succeeds.
+     * subterms for which skip when applied to the result succeeds.
      */
     def leaves (s : => Strategy, isleaf : => Strategy, skip : Strategy => Strategy) : Strategy =
-        (isleaf <* s) <+ skip (leaves (s, isleaf)) <+ all (leaves (s, isleaf))
+        (isleaf <* s) <+ skip (leaves (s, isleaf, skip)) <+ all (leaves (s, isleaf, skip))
 
     /**
      * Construct a strategy that succeeds if the current term has at
@@ -1338,50 +1342,6 @@ object Rewriter {
      */
     def everywhere (s : => Strategy) : Strategy =
         everywheretd (s)
-    
-    /**
-     * Construct a strategy that applies s at one term at each level in a
-     * bottom-up fashion regardless of failure.  (Sub-)terms for which the
-     * strategy fails are left unchanged.
-     */
-    def oncewherebu (s : => Strategy) : Strategy =
-        oncebu (attempt (s))
-
-    /**
-     * Construct a strategy that applies s at one term at each level in a
-     * top-down fashion regardless of failure.  (Sub-)terms for which the
-     * strategy fails are left unchanged.
-     */
-    def oncewheretd (s : => Strategy) : Strategy =
-        oncetd (attempt (s))
-
-    /**
-     * Same as oncewheretd.
-     */
-    def oncewhere (s : => Strategy) : Strategy =
-        oncewheretd (s)
-
-    /**
-     * Construct a strategy that applies s at least one term at each level in a
-     * bottom-up fashion regardless of failure.  (Sub-)terms for which the
-     * strategy fails are left unchanged.
-     */
-    def somewherebu (s : => Strategy) : Strategy =
-        somebu (attempt (s))
-
-    /**
-     * Construct a strategy that applies s at least one term at each level in a
-     * top-down fashion regardless of failure.  (Sub-)terms for which the
-     * strategy fails are left unchanged.
-     */
-    def somewheretd (s : => Strategy) : Strategy =
-        sometd (attempt (s))
-
-    /**
-     * Same as somewheretd.
-     */
-    def somewhere (s : => Strategy) : Strategy =
-        somewheretd (s)
 
     /**
      * Apply the function at every term in t in a top-down, left-to-right order.

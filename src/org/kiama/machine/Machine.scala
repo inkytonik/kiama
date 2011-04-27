@@ -170,6 +170,15 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             }
 
         /**
+         * Make this state item undefined at t.
+         */
+        def undefine (t : T) =
+            _value match {
+                case None     => // Nothing to undefine
+                case Some (m) => _value = Some (m - t)
+            }
+
+        /**
          * Return an updater for the value at parameter t.  Used as s (t)
          * this will return the value in the state s at parameter t.  Used
          * as s (t) := u this will update the value to u at parameter t.
@@ -266,6 +275,13 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = t
+        
+        /**
+         * Convert to string representation.  Really only used when
+         * printing inconsistent state exceptions.
+         */
+        override def toString : String =
+            name + "." + s.sname + " := " + t
 
     }
 
@@ -283,7 +299,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             if (debug) {
                 val d = text (name) <> char ('.') <> text (s.sname) <>
                             char ('(') <> t.toDoc <> char (')') <+>
-                            text (":=") </> nest (s.toDoc)
+                            text (":=") </> nest (u.toDoc)
                 emitter.emitln (pretty (d))
             }
         }
@@ -299,6 +315,13 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = u
+        
+        /**
+         * Convert to string representation.  Really only used when
+         * printing inconsistent state exceptions.
+         */
+        override def toString : String =
+            name + "." + s.sname + "(" + t + ") := " + u
 
     }
 
@@ -354,11 +377,18 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         }
 
     /**
+     * Reset the machine to begin a step.
+     */
+    def reset = {
+        updates = Nil
+    }
+
+    /**
      * Perform a step of this machine.  Return true if some updates were
      * made or false if none.
      */
     def step : Boolean = {
-        updates = Nil
+        reset
         main
         performUpdates
     }
