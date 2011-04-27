@@ -37,7 +37,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp extends Product with Attributable
+    abstract class Exp extends Attributable
 
     /**
      * Numeric expressions.
@@ -84,7 +84,7 @@ object AST {
     /**
      * Types.
      */
-    abstract class Type extends Product with Attributable
+    abstract class Type extends Attributable
 
     /**
      * Primitive integer type.
