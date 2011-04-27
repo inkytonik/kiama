@@ -1,0 +1,17 @@
+(* Test the raising of division by 0 errors           *)
+(* Returns 100 / i unless i = 0 in which case it      *)
+(* should return -1 (error)                           *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+CONST
+  Limit = 100;
+
+VAR
+   result : INTEGER;
+
+BEGIN
+   result :=  Limit / i;
+   RETURN result;
+END Except.
+

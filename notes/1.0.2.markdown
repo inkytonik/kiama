@@ -1,0 +1,23 @@
+### Enhancements
+
+  * rewriting:
+    * new `collect` strategy combinator that uses 2.8 collection framework to build any `Traversable`
+    * `collectl` and `collects` versions of `collect` for `List` and `Set`, respectively
+    * new `everything` combinator to fold across a whole structure
+    * `everywhere` combinator is alias for `everywheretd` (top-down version)
+  * general:
+    * `==>` as an alias for `PartialFunction` is now in `org.kiama` package object
+    * Scala 2.8.1 is default version
+  * examples:
+    * new [101companies](http://sourceforge.net/apps/mediawiki/developers/index.php?title=101companies) example
+
+### Fixes
+
+  * command-line framework:
+    * all argument files are now processed, not just one
+    * no requirement for a usage message
+  * test framework:
+    * make `filetest` public again
+  * general:
+    * remove `sbt` launcher and invocation scripts from distribution
+  * other minor fixes and tidying up

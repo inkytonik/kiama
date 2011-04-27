@@ -1,0 +1,11 @@
+{
+    y = v
+    z = y
+    x = v
+    while (x)
+    {
+        x = w
+        x = v
+    }
+    return x
+}

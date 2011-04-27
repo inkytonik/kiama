@@ -1,0 +1,23 @@
+(* Test to see that index out of bounds exceptions are  *)
+(* correctly raised.                                    *)
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+VAR
+    result: INTEGER;
+    j : INTEGER;
+    a : ARRAY 10 OF INTEGER;
+  
+BEGIN
+    FOR j := 1 TO 10 DO
+        a[j] := (j - 1) * j;
+    END
+    TRY
+        result := 10000 / a[i];
+    CATCH DivideByZero DO
+        result := -200;
+    CATCH IndexOutOfBounds DO
+        result := -400;
+        a[i+1] := a[i+1] + 1;
+    END
+    RETURN result;
+END Except.

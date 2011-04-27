@@ -1,0 +1,5 @@
+[10.12] failure: keyword "DO" found where variable name expected
+
+   CATCH DO
+
+           ^
