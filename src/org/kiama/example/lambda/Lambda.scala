@@ -39,7 +39,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp extends Product
+    abstract class Exp
 
     /**
      * Numeric expressions.

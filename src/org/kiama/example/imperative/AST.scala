@@ -27,7 +27,6 @@ package example.imperative
 object AST {
     
     import org.kiama.rewriting.Rewriter.{Strategy, rulefs, congruence}
-    import scala.util.parsing.input.Positional
 
     /**
      * Identifiers are represented as strings.
@@ -35,9 +34,12 @@ object AST {
     type Idn = String
 
     /**
-     * Superclass of all imperative language tree node types.
+     * Superclass of all imperative language tree node types.  The Product
+     * supertype is used here to enable generic access to the children of 
+     * an ImperativeNode; this capability is only used in the Kiama tests
+     * and is not usually needed for normal use of the library.
      */
-    trait ImperativeNode extends Product with Positional
+    trait ImperativeNode extends Product
 
     /**
      * Expressions.
