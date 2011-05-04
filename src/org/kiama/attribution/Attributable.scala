@@ -168,7 +168,7 @@ trait Attributable extends Product with Positional {
             productElement (i) match {
                 case c : Attributable => setConnections(c)
                 case Some(c : Attributable) => setConnections(c)
-                case s : Seq[_] => {
+                case s : Traversable[_] => {
                     for (v <- s) {
                         v match {
                             case c : Attributable => setConnections(c)

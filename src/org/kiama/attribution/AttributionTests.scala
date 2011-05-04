@@ -31,10 +31,32 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class AttributionTests extends FunSuite {
 
+    /**
+     * Compare two values.  Use reference equality for references
+     * and value equality for non-reference values.
+     */
+    def same (v1 : Any, v2 : Any) : Boolean =
+        (v1, v2) match  {
+            case (r1 : AnyRef, r2 : AnyRef) => r1 eq r2
+            case _                          => v1 == v2
+        }
+        
+    /**
+     * Analogous to ScalaTest's expect but it uses same to compare
+     * the two values instead of equality.
+     */
+    def expectsame (expected : Any) (actual : Any) {
+        if (!same (expected, actual)) {
+            fail ("Expected same object as " + expected + ", but got " + actual)
+        }
+    }
+
     abstract class Tree extends Attributable
     case class Pair (left : Tree, right : Tree) extends Tree
     case class Leaf (value : Int) extends Tree
     case class Unused (b : Boolean) extends Tree
+    case class ListTree (l : List[Tree]) extends Tree
+    case class SetTree (l : Set[Tree]) extends Tree
 
     test ("first child can be accessed") {
         val n = Pair (Leaf (1), Leaf (2))
@@ -357,6 +379,45 @@ class AttributionTests extends FunSuite {
 
     }
     
+    test ("a normal child's parent property is set correctly") {
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = Pair (c2, c3)
+        val t = Pair (c1, c4)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c4.parent)
+        expectsame (c4) (c2.parent)
+        expectsame (c4) (c3.parent)
+    }
+    
+    test ("a list child's parent property is set correctly") {
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = ListTree (List (c2, c3))
+        val t = Pair (c1, c4)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c4.parent)
+        expectsame (c4) (c2.parent)
+        expectsame (c4) (c3.parent)
+    }
+        
+    test ("a set child's parent property is set correctly") {
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = SetTree (Set (c2, c3))
+        val t = Pair (c1, c4)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c4.parent)
+        expectsame (c4) (c2.parent)
+        expectsame (c4) (c3.parent)
+    }
+
 }
 
 /**
