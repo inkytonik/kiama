@@ -22,34 +22,14 @@ package org.kiama
 package attribution
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests of basic attribution.
  */
 @RunWith(classOf[JUnitRunner])
-class AttributionTests extends FunSuite {
-
-    /**
-     * Compare two values.  Use reference equality for references
-     * and value equality for non-reference values.
-     */
-    def same (v1 : Any, v2 : Any) : Boolean =
-        (v1, v2) match  {
-            case (r1 : AnyRef, r2 : AnyRef) => r1 eq r2
-            case _                          => v1 == v2
-        }
-        
-    /**
-     * Analogous to ScalaTest's expect but it uses same to compare
-     * the two values instead of equality.
-     */
-    def expectsame (expected : Any) (actual : Any) {
-        if (!same (expected, actual)) {
-            fail ("Expected same object as " + expected + ", but got " + actual)
-        }
-    }
+class AttributionTests extends Tests {
 
     abstract class Tree extends Attributable
     case class Pair (left : Tree, right : Tree) extends Tree
@@ -424,7 +404,7 @@ class AttributionTests extends FunSuite {
  * Tests of collection attributes.
  */
 // @RunWith(classOf[JUnitRunner])
-// class CollectionAttributionTests extends FunSuite
+// class CollectionAttributionTests extends Tests
 //                                  with org.kiama.example.lambda2.Parser {
 // 
 //     import Attribution._

@@ -35,15 +35,9 @@ import scala.util.parsing.combinator.RegexParsers
 /**
  * PicoJava parser
  */
-object Parser extends RegexParsers with PackratParsers {
+trait Parser extends RegexParsers with PackratParsers {
 
     import AbstractSyntax._
-
-    def run (in : java.io.Reader) : Program =
-        parseAll (program, in) match {
-            case Success (r, _) => r
-            case f              => sys.error (f.toString)
-        }
 
     lazy val program : PackratParser[Program] =
         block ^^ Program

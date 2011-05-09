@@ -22,7 +22,6 @@ package org.kiama
 package util
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
 /**
@@ -30,7 +29,7 @@ import org.scalatest.junit.JUnitRunner
  * the examples.
  */
 @RunWith(classOf[JUnitRunner])
-class CompilerTests extends FunSuite with PrettyPrinter {
+class CompilerTests extends Tests with PrettyPrinter {
 
     test ("compiler driver produces an appropriate message if a file is not found") {
         import java.io.FileReader

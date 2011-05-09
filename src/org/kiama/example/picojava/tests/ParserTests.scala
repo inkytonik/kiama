@@ -30,37 +30,14 @@ package org.kiama
 package example.picojava.tests
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.example.picojava.Parser
+import org.kiama.util.RegexParserTests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class ParserTests extends FunSuite {
+class ParserTests extends Parser with RegexParserTests {
 
     import org.kiama.example.picojava.AbstractSyntax._
-    import org.kiama.example.picojava.Parser._
-
-    /**
-     * Try to parse str as a T, which is expected to work.  Assert a
-     * failure if it doesn't.
-     */
-    def assertParseOk[T] (str : String, p : Parser[T], value : T) {
-        parseAll (p, str) match {
-            case Success (`value`, _) => // do nothing
-            case Success (v, _)       => fail ("succeeded wrongly with '" + v + "'")
-            case f                    => fail (f.toString)
-        }
-    }
-
-    /**
-     * Try to parse str as a T, which is expected to fail.  Assert a
-     * failure if it doesn't.
-     */
-    def assertParseError[T] (str : String, p : Parser[T]) {
-        parseAll (p, str) match {
-            case Success (_, _) => fail ("expected to find parse error in " + str)
-            case f              => // do nothing
-        }
-    }
 
     test ("parse identifier: single letter") {
         assertParseOk ("a", IDENTIFIER, "a")
@@ -87,19 +64,23 @@ class ParserTests extends FunSuite {
     }
 
     test ("generate errors for invalid tokens: leading underscore") {
-        assertParseError ("_a", IDENTIFIER);
+        assertParseError ("_a", IDENTIFIER, 1, 1,
+            "string matching regex `[a-zA-Z][a-zA-Z0-9]*' expected but `_' found");
     }
 
     test ("generate errors for invalid tokens: digit") {
-        assertParseError ("1", IDENTIFIER);
+        assertParseError ("1", IDENTIFIER, 1, 1,
+            "string matching regex `[a-zA-Z][a-zA-Z0-9]*' expected but `1' found");
     }
 
     test ("generate errors for invalid tokens: leading digit") {
-        assertParseError ("1a", IDENTIFIER);
+        assertParseError ("1a", IDENTIFIER, 1, 1,
+            "string matching regex `[a-zA-Z][a-zA-Z0-9]*' expected but `1' found");
     }
 
     test ("generate errors for invalid tokens: C-style comment") {
-        assertParseError ("/* abc */", whiteSpace);
+        assertParseError ("/* abc */", whiteSpace, 1, 1,
+            """string matching regex `(\s|(//.*\n))+' expected but `/' found""");
     }
 
     test ("parse an empty block") {
@@ -107,11 +88,11 @@ class ParserTests extends FunSuite {
     }
 
     test ("generate a parse error for an empty program") {
-        assertParseError ("", program)
+        assertParseError ("", program, 1, 1, "`{' expected but end of source found")
     }
 
     test ("generate a parse error for a semi-colon only program") {
-        assertParseError (";", program)
+        assertParseError (";", program, 1, 1, "`{' expected but `;' found")
     }
 
     test ("parse an empty class declaration") {
@@ -125,7 +106,8 @@ class ParserTests extends FunSuite {
     }
 
     test ("generate a parse error for a class declaration with a qualified extends clause") {
-        assertParseError ("{ class A extends A.B { } }", program)
+        assertParseError ("{ class A extends A.B { } }", program, 1, 20,
+            "`{' expected but `.' found")
     }
 
     test ("parse a nested class") {
@@ -144,7 +126,8 @@ class ParserTests extends FunSuite {
     }
 
     test ("generate an error for a qualified variable declaration") {
-        assertParseError ("{ A.B.C a.b; }", program)
+        assertParseError ("{ A.B.C a.b; }", program, 1, 10,
+            "`;' expected but `.' found")
     }
 
     test ("parse a simple assignment statement") {
@@ -168,7 +151,8 @@ class ParserTests extends FunSuite {
     }
 
     test ("generate an error for a while statement with a block body") {
-        assertParseError ("{ while ( a ) { a = b; } }", program)
+        assertParseError ("{ while ( a ) { a = b; } }", program, 1, 15,
+            "`while' expected but `{' found")
     }
 
 }

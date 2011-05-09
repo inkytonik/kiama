@@ -30,14 +30,14 @@ package org.kiama
 package example.picojava.tests
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.example.picojava.Parser
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class ErrorTests extends FunSuite {
+class ErrorTests extends Tests with Parser {
 
-    import org.kiama.example.picojava.ErrorCheck._
-    import org.kiama.example.picojava.Parser._
+    import org.kiama.example.picojava.ErrorCheck.errors
 
     /**
      * Parse the illegal program and make sure that the errors and their

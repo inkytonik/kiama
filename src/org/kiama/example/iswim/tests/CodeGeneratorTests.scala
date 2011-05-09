@@ -27,13 +27,13 @@ package example.iswim.tests
  */
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
 
 @RunWith(classOf[JUnitRunner])
-class CodeGeneratorTests extends FunSuite with CodeGenerator with SemanticAnalysis with Parser {
+class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis with Parser {
 
     import Syntax._
 

@@ -26,24 +26,14 @@ package example.iswim.tests
  */
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
-import org.scalatest.junit.JUnitRunner
 import org.kiama.example.iswim.compiler._
+import org.kiama.util.Tests
+import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class SemanticAnalysisTests extends FunSuite with SemanticAnalysis with Parser {
+class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
 
     import org.kiama.util.Messaging._
-
-    /**
-     * Assert that a message was produced at a given position.
-     */
-    def assertMessage (index : Int, line : Int, column : Int, msg : String) {
-        val m = messages (index)
-        expect (line, "wrong line number in message " + index) (m.pos.line)
-        expect (column, "wrong column number in message " + index) (m.pos.column)
-        expect (msg, "wrong text in message " + index) (m.message)
-    }
 
     test("simple test of use of a correctly bound variable") {
         val prog = parseAll(expr, "let x = 1 in x + x")

@@ -24,7 +24,7 @@ package org.kiama
 package example.oberon0.tests
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.RegexParserTests 
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 import org.kiama.example.oberon0.Driver
@@ -34,102 +34,78 @@ import org.kiama.example.oberon0.compiler.Parser
  * Oberon0 parsing test cases.
  */
 @RunWith(classOf[JUnitRunner])
-class ParserTests extends Driver with FunSuite with Checkers {
+class ParserTests extends Driver with RegexParserTests with Checkers {
 
     import org.kiama.example.oberon0.compiler.AST._
 
-    /**
-     * Return true if the given parser result is a failure regardless of the
-     * message or position.  Otherwise return false.
-     */
-    def isFail[T] (r : ParseResult[T]) : Boolean =
-        r match {
-            case Failure (_, _) => true
-            case _              => false
-        }
-
-    /**
-     * Try to parse a string and expect a given result.  Also check that
-     * there is no more input left.
-     */
-    def expect[T] (parser : Parser[T], str : String, result : T) {
-        parseAll (parser, str) match {
-            case Success (r, in) =>
-                if (r != result) fail ("found " + r + " not " + result)
-                if (!in.atEnd) fail ("input remaining at " + in.pos)
-            case f =>
-                fail ("parse failure: " + f)
-        }
-    }
-
     test ("parse single letter identifiers") {
-        expect (ident, "a", Ident ("a"))
+        assertParseOk ("a", ident, Ident ("a"))
     }
 
     test ("parse mutliple letter identifiers") {
-        expect (ident, "total", Ident ("total"))
+        assertParseOk ("total", ident, Ident ("total"))
     }
 
     test ("parse identifier with digits in it") {
-        expect (ident, "var786", Ident ("var786"))
+        assertParseOk ("var786", ident, Ident ("var786"))
     }
 
     test ("parse integer literal: single digit") {
-        expect (number, "5", IntegerLiteral (5))
+        assertParseOk ("5", number, IntegerLiteral (5))
     }
 
     test ("parse integer literal: multiple digits") {
-        expect (number, "123", IntegerLiteral (123))
+        assertParseOk ("123", number, IntegerLiteral (123))
     }
 
     test ("fail to parse an identifier as a number") {
-        assert (isFail (parseAll (number, "x")))
+        assertParseError ("x", number, 1, 1, "string matching regex `[0-9]+' expected but `x' found")
     }
 
     test ("parse expressions: number") {
-        expect (expression, "1", IntegerLiteral (1))
+        assertParseOk ("1", expression, IntegerLiteral (1))
     }
 
     test ("parse expressions: one operator") {
-        expect (expression, "1+2", Plus (IntegerLiteral (1), IntegerLiteral (2)))
+        assertParseOk ("1+2", expression, Plus (IntegerLiteral (1), IntegerLiteral (2)))
     }
 
     test ("parse expressions: two operators, same precedence") {
-        expect (expression, "1+2+3", Plus (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
+        assertParseOk ("1+2+3", expression, Plus (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
     }
 
     test ("parse expressions: two operators, different  precedence") {
-        expect (expression, "1+2*3", Plus (IntegerLiteral(1), Mult (IntegerLiteral (2), IntegerLiteral (3))))
+        assertParseOk ("1+2*3", expression, Plus (IntegerLiteral(1), Mult (IntegerLiteral (2), IntegerLiteral (3))))
     }
 
     test ("parse expressions: two operators, override  precedence") {
-        expect (expression, "(1+2)*3", Mult (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
+        assertParseOk ("(1+2)*3", expression, Mult (Plus (IntegerLiteral (1), IntegerLiteral (2)), IntegerLiteral (3)))
     }
 
     test ("keywords are rejected as identifiers") {
-        assert (isFail (parseAll (assignment, "WHILE := 3")))
+        assertParseError ("WHILE := 3", assignment, 1, 1, "Expected failure")
     }
 
     test ("parse assignment statements: number right-hand side") {
-        expect (assignment, "a := 5", Assignment (Ident ("a"), IntegerLiteral (5)))
+        assertParseOk ("a := 5", assignment, Assignment (Ident ("a"), IntegerLiteral (5)))
     }
 
     test ("parse assignment statements: identifier right-hand side") {
-        expect (assignment, "a := b", Assignment (Ident ("a"), Ident ("b")))
+        assertParseOk ("a := b", assignment, Assignment (Ident ("a"), Ident ("b")))
     }
 
     test ("parse statement sequences: empty") {
-        expect(statementSequence, "", Nil)
+        assertParseOk ("", statementSequence, Nil)
     }
 
     test ("parse statement sequences: non-empty") {
-        expect(statementSequence, "v := 1; v := 2",
+        assertParseOk ("v := 1; v := 2", statementSequence,
             List (Assignment (Ident ("v"), IntegerLiteral (1)),
                   Assignment (Ident ("v"), IntegerLiteral (2))))
     }
 
     test ("parse while statement") {
-        expect (whileStatement, "WHILE x DO x:= 1 END",
+        assertParseOk ("WHILE x DO x:= 1 END", whileStatement,
                 WhileStatement (Ident ("x"),
                     List (Assignment (Ident ("x"), IntegerLiteral (1)))))
     }
@@ -166,7 +142,7 @@ BEGIN
     END
 END Factorial.
 """
-        expect (parser, program,
+        assertParseOk (program, parser,
             ModuleDecl ("Factorial",
                 List (ConstDecl ("limit", IntegerLiteral (10)),
                       VarDecl ("v", IntegerType),

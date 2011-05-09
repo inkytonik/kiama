@@ -22,7 +22,7 @@ package org.kiama
 package rewriting
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
@@ -31,7 +31,7 @@ import org.scalatest.prop.Checkers
  * of products or colleciton class values.
  */
 @RunWith(classOf[JUnitRunner])
-class RewriterClassTests extends FunSuite with Checkers {
+class RewriterClassTests extends Tests with Checkers {
 
     import org.kiama.example.imperative.ASTNonCase._
     import org.kiama.rewriting.Rewriter.{fail => rwfail, _}

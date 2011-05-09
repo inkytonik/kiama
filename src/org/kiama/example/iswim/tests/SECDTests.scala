@@ -28,13 +28,13 @@ package example.iswim.tests
 
 // TODO: much more exhaustive tests of the SECD machine.
 
-import org.kiama.example.iswim.secd._
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.example.iswim.secd._
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class SECDTests extends FunSuite {
+class SECDTests extends Tests {
 
     import SECDBase._
     import IntegerOps._

@@ -22,7 +22,7 @@ package org.kiama
 package example.lambda2
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
@@ -30,7 +30,7 @@ import org.scalatest.prop.Checkers
  * Lambda calculus tests.
  */
 @RunWith(classOf[JUnitRunner])
-class LambdaTests extends FunSuite with Checkers with Parser {
+class LambdaTests extends Tests with Checkers with Parser {
 
     import AST._
     import Analysis._

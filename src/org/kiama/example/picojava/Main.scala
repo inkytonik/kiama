@@ -21,18 +21,25 @@
 package org.kiama
 package example.picojava
 
-object Main {
+object Main extends Parser {
 
+    import AbstractSyntax.Program
     import java.io.FileReader
     import ErrorCheck._
 
     def main (args : Array[String]) : Unit = {
         for (filename <- args) {
-            val program = Parser.run (new FileReader (filename))
+            val program = run (new FileReader (filename))
             val messages = program->errors
             for (msg <- messages)
                 println (filename + ":" + msg)
         }
     }
+
+    def run (in : FileReader) : Program =
+        parseAll (program, in) match {
+            case Success (r, _) => r
+            case f              => sys.error (f.toString)
+        }
 
 }

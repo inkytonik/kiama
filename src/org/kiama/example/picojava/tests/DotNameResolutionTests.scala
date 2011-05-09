@@ -30,11 +30,11 @@ package org.kiama
 package example.picojava.tests
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class DotNameResolutionTests extends FunSuite {
+class DotNameResolutionTests extends Tests {
 
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._

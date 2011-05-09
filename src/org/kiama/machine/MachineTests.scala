@@ -22,7 +22,7 @@ package org.kiama
 package machine
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 /**
@@ -30,7 +30,7 @@ import org.scalatest.junit.JUnitRunner
  * within particular examples.
  */
 @RunWith(classOf[JUnitRunner])
-class MachineTests extends FunSuite {
+class MachineTests extends Tests {
     
     import org.kiama.util.StringEmitter
     

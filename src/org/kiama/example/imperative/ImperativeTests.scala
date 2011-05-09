@@ -22,7 +22,7 @@ package org.kiama
 package example.imperative
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 /**
@@ -31,7 +31,7 @@ import org.scalatest.junit.JUnitRunner
  * language.
  */
 @RunWith(classOf[JUnitRunner])
-class ImperativeTests extends FunSuite {
+class ImperativeTests extends Tests {
 
     import AST._
     import PrettyPrinter._

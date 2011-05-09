@@ -22,7 +22,7 @@ package org.kiama
 package rewriting
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 import org.kiama.example.imperative.Generator
@@ -32,7 +32,7 @@ import org.kiama.example.imperative.Generator
  * processing" by Mitchell and Runciman, from Haskell Workshop 2007.
  */
 @RunWith(classOf[JUnitRunner])
-class UniplateTests extends FunSuite with Checkers with Generator {
+class UniplateTests extends Tests with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._
     import org.kiama.rewriting.Rewriter._

@@ -22,11 +22,11 @@ package org.kiama
 package example.til
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class TIL2_3Tests extends FunSuite {
+class TIL2_3Tests extends Tests {
 
     import AST._
     import TIL2_3Main._

@@ -22,10 +22,10 @@ package org.kiama
 package example.repmin
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
-trait RepminTestsBase extends FunSuite {
+trait RepminTestsBase extends Tests {
 
     self : RepminImpl =>
 

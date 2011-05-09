@@ -22,7 +22,6 @@ package org.kiama
 package util
 
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
 /**
@@ -30,7 +29,7 @@ import org.scalatest.junit.JUnitRunner
  * combinators are tested within particular examples.
  */
 @RunWith(classOf[JUnitRunner])
-class PrettyPrinterTests extends FunSuite with PrettyPrinter {
+class PrettyPrinterTests extends Tests with PrettyPrinter {
 
     test ("pretty-print empty document") {
         expect ("") (pretty (empty))

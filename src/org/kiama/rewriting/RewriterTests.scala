@@ -22,8 +22,8 @@ package org.kiama
 package rewriting
 
 import org.kiama.example.imperative.Generator
+import org.kiama.util.Tests
 import org.junit.runner.RunWith
-import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
@@ -31,42 +31,10 @@ import org.scalatest.prop.Checkers
  * Rewriting tests.
  */
 @RunWith(classOf[JUnitRunner])
-class RewriterTests extends FunSuite with Checkers with Generator {
+class RewriterTests extends Tests with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._
     import org.kiama.rewriting.Rewriter.{fail => rwfail, test => rwtest, _}
-
-    /**
-     * Compare two optional terms.  Use reference equality for references
-     * and value equality for non-reference values.
-     */
-    def same (v : Option[Term], optv : Option[Term]) : Boolean =
-        (v, optv) match  {
-            case (Some (v1 : AnyRef), Some (v2 : AnyRef)) => v1 eq v2
-            case (Some (v1), Some (v2))                   => v1 == v2
-            case (None, None)                             => true
-            case _                                        => false
-        }
-        
-    /**
-     * Analogous to ScalaTest's expect but it uses same to compare
-     * the two values instead of equality.
-     */
-    def expectsame (expected : Option[Term]) (actual : Option[Term]) {
-        if (!same (expected, actual)) {
-            fail ("Expected same object as " + expected + ", but got " + actual)
-        }
-    }
-
-    /**
-     * Analogous to ScalaTest's expect but it uses same to compare
-     * the two values instead of equality.
-     */
-    def expectnotsame (expected : Option[Term]) (actual : Option[Term]) {
-        if (same (expected, actual)) {
-            fail ("Expected not same object as " + expected + ", but got " + actual)
-        }
-    }
     
     test ("basic arithmetic evaluation") {
         val eval =
