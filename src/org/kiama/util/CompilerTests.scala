@@ -42,7 +42,12 @@ class CompilerTests extends Tests with PrettyPrinter {
         val c = new DummyCompiler
         val e = new StringEmitter
         c.driver (Array ("IDoNotExist.txt"), new StringConsole (""), e)
-        expect ("IDoNotExist.txt (No such file or directory)\n") (e.result)
+        val msg =
+            if (System.getProperty("os.name").startsWith ("Windows"))
+                "The system cannot find the file specified"
+            else
+                "No such file or directory"
+        expect ("IDoNotExist.txt (" + msg + ")\n") (e.result)
     }
 
 }
