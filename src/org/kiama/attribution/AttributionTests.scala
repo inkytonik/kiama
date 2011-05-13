@@ -30,13 +30,16 @@ import org.scalatest.junit.JUnitRunner
  */
 @RunWith(classOf[JUnitRunner])
 class AttributionTests extends Tests {
+    
+    import scala.collection.GenSeq
 
     abstract class Tree extends Attributable
     case class Pair (left : Tree, right : Tree) extends Tree
     case class Leaf (value : Int) extends Tree
     case class Unused (b : Boolean) extends Tree
     case class ListTree (l : List[Tree]) extends Tree
-    case class SetTree (l : Set[Tree]) extends Tree
+    case class SetTree (s : Set[Tree]) extends Tree
+    case class GenSeqTree (v : GenSeq[Tree]) extends Tree
 
     test ("first child can be accessed") {
         val n = Pair (Leaf (1), Leaf (2))
@@ -390,6 +393,32 @@ class AttributionTests extends Tests {
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = SetTree (Set (c2, c3))
+        val t = Pair (c1, c4)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c4.parent)
+        expectsame (c4) (c2.parent)
+        expectsame (c4) (c3.parent)
+    }
+        
+    test ("a sequential vector child's parent property is set correctly") {
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = GenSeqTree (Vector (c2, c3))
+        val t = Pair (c1, c4)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c4.parent)
+        expectsame (c4) (c2.parent)
+        expectsame (c4) (c3.parent)
+    }
+        
+    test ("a parallel vector child's parent property is set correctly") {
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = GenSeqTree (Vector (c2, c3).par)
         val t = Pair (c1, c4)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
