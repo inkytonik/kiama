@@ -83,7 +83,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         /**
          * Pick a random descendant of t (including possibly t).
          */
-        def pickdesc (t : Term) : Term = {
+        def pickdesc (t : Term) : Term =
             t match {
                 case p : Product =>
                     if (random.nextBoolean) {
@@ -98,7 +98,6 @@ class RewriterTests extends Tests with Checkers with Generator {
                 case _ =>
                     t
             }
-        }
     
         check ((t : Stmt) => same (Some (t), issubterm (pickdesc (t), t)))
         check ((t : Exp) => same (Some (t), issubterm (pickdesc (t), t)))
@@ -610,7 +609,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val s = Map ("eno" -> 1, "two" -> 2, "three" -> 3)
     
         val strat = rule { case s : String => s.reverse }
-        val basemsg = "rewrite set: reverse keys"
+        val basemsg = "rewrite map: reverse keys"
         
         travtest (basemsg, "all, topdown", alltd, strat, m, Some (r))
         travtest (basemsg, "all, bottomup", allbu, strat, m, Some (m), Same)
@@ -628,7 +627,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val s = Map ("one" -> 2, "two" -> 2, "three" -> 3)
     
         val strat = rule { case i : Int => i + 1 }
-        val basemsg = "rewrite set: increment values"
+        val basemsg = "rewrite map: increment values"
         
         travtest (basemsg, "all, topdown", alltd, strat, m, Some (r))
         travtest (basemsg, "all, bottomup", allbu, strat, m, Some (m), Same)
@@ -645,7 +644,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val r = Map ("eno" -> 2, "owt" -> 3, "eerht" -> 4)
         val s = Map ("eno" -> 1, "two" -> 2, "three" -> 3)
         
-        val basemsg = "rewrite set: reverse keys and increment values"
+        val basemsg = "rewrite map: reverse keys and increment values"
         val strat = rule {
                         case s : String => s.reverse
                         case i : Int    => i + 1
@@ -666,7 +665,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val r = Map (2 -> 4, 4 -> 8, 6 -> 12)
         val s = Map (2 -> 4, 3 -> 4, 5 -> 6)
         
-        val basemsg = "rewrite set: increment key and double value"
+        val basemsg = "rewrite map: increment key and double value"
         val strat = rule { case (k : Int, v : Int) => (k + 1, v * 2) }
         
         travtest (basemsg, "all, topdown", alltd, strat, m, Some (r))
@@ -713,7 +712,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                           Map (Set (12, 16) -> 0, Set (23) -> 0))
             
             val basemsg = "rewrite set: heterogeneous collection: set to size"
-            val strat = rule { case (s : Set[_], m) => (s, s.size) }
+            val strat = rule { case (s : Set[_], _) => (s, s.size) }
             
             travtest (basemsg, "all, topdown", alltd, strat, l, Some (r))
             travtest (basemsg, "all, bottomup", allbu, strat, l, Some (l), Same)
