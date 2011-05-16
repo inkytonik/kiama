@@ -32,9 +32,6 @@ package rewriting
 object Rewriter {
     
     import org.kiama.util.Emitter
-    import scala.collection.MapLike
-    import scala.collection.SeqLike
-    import scala.collection.TraversableLike
     import scala.collection.generic.CanBuildFrom
     import scala.collection.mutable.Builder
 
@@ -353,12 +350,12 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product => child[Product] (p)
-                    case t : Seq[_]  => child[Seq] (t)
+                    case p : Product => childProduct (p)
+                    case t : Seq[_]  => childSeq (t.asInstanceOf[Seq[Term]])
                     case _           => None
                 }
                 
-            private def child[T <: Product] (p : T) : Option[Term] = {
+            private def childProduct (p : Product) : Option[Term] = {
                 val numchildren = p.productArity
                 if ((i < 1) || (i > numchildren)) {
                     None
@@ -380,8 +377,9 @@ object Rewriter {
                 }
             }
             
-            private def child[CC[U] <: Seq[U] with SeqLike[U,CC[U]]] (t : CC[Term])
-                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] = {
+            private def childSeq[CC[U] <: Seq[U]] (t : CC[Term])
+                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
+                                : Option[CC[Term]] = {
                 val numchildren = t.size
                 if ((i < 1) || (i > numchildren)) {
                     None
@@ -391,8 +389,8 @@ object Rewriter {
                         case Some (ti) if (same (ct, ti)) =>
                             Some (t)
                         case Some (ti) =>
-                            val b = cbf (t.repr)
-                            b.sizeHint (t)
+                            val b = cbf (t)
+                            b.sizeHint (t.size)
                             for (j <- 0 until i - 1)
                                 b += t (j)
                             b += ti
@@ -420,14 +418,17 @@ object Rewriter {
 
     /**
      * Traversal to all children.  Construct a strategy that applies s to all
-     * term children of the subject term in left-to-right order.  If s succeeds
+     * term children of the subject term.  If s succeeds
      * on all of the children, then succeed, forming a new term from the constructor
      * of the original term and the result of s for each child.  If s fails on any
      * child, fail. If there are no children, succeed.  If s succeeds on all
      * children producing the same terms (by eq for references and by == for
      * other values), then the overall strategy returns the subject term.
      * This operation works on finite Rewritable, Product, Map and Traversable
-     * values, in that order.
+     * values, checked for in that order.
+     * Children of a Rewritable (resp. Product, collection) value are processed
+     * in the order returned by the value's deconstruct (resp. productElement,
+     * foreach) method.
      */
     def all (s : => Strategy) : Strategy =
         new Strategy {
@@ -435,12 +436,12 @@ object Rewriter {
                 t match {
                     case r : Rewritable     => allRewritable (r)
                     case p : Product        => allProduct (p)
-                    case m : Map[_,_]       => all[Map] (m.asInstanceOf[Map[Term,Term]])
-                    case t : Traversable[_] => all[Traversable] (t)
+                    case m : Map[_,_]       => allMap (m.asInstanceOf[Map[Term,Term]])
+                    case t : Traversable[_] => allTraversable (t.asInstanceOf[Traversable[Term]])
                     case _                  => Some (t)
                 }
 
-            private def allProduct[T <: Product] (p : T) : Option[Term] = {
+            private def allProduct (p : Product) : Option[Term] = {
                 val numchildren = p.productArity
                 if (numchildren == 0) {
                     Some (p)
@@ -466,7 +467,7 @@ object Rewriter {
                 }
             }
                 
-            private def allRewritable[T <: Rewritable] (r : T) : Option[Term] = {
+            private def allRewritable (r : Rewritable) : Option[Term] = {
                 val numchildren = r.arity
                 if (numchildren == 0) {
                     Some (r)
@@ -493,14 +494,15 @@ object Rewriter {
                 }
             }
 
-            private def all[CC[U] <: Traversable[U] with TraversableLike[U,CC[U]]] (t : CC[Term])
-                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] =
+            private def allTraversable[CC[_] <: Traversable[Term]] (t : CC[Term])
+                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
+                                : Option[CC[Term]] =
                 if (t.size == 0)
                     Some (t)
                 else {
-                    val b = cbf (t.repr)
-                    var changed = false
-                    b.sizeHint (t)
+                    val b = cbf (t)
+                    b.sizeHint (t.size)
+                    var changed = false                    
                     for (ct <- t)
                         s (ct) match {
                             case Some (ti) =>
@@ -516,14 +518,15 @@ object Rewriter {
                         Some (t)
                 }
 
-            private def all[CC[V,W] <: Map[V,W] with MapLike[V,W,CC[V,W]]] (t : CC[Term,Term])
-                    (implicit cbf: CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]]) : Option[CC[Term,Term]] =
+            private def allMap[CC[V,W] <: Map[V,W]] (t : CC[Term,Term])
+                            (implicit cbf : CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]])
+                                : Option[CC[Term,Term]] =
                 if (t.size == 0)
                     Some (t)
                 else {
-                    val b = cbf (t.repr)
+                    val b = cbf (t)
+                    b.sizeHint (t.size)
                     var changed = false
-                    b.sizeHint (t)
                     for (ct <- t)
                         s (ct) match {
                             case Some (ti @ (tix,tiy)) =>
@@ -542,7 +545,7 @@ object Rewriter {
 
     /**
      * Traversal to one child.  Construct a strategy that applies s to the term
-     * children of the subject term in left-to-right order.  Assume that c is the
+     * children of the subject term.  Assume that c is the
      * first child on which s succeeds.  Then stop applying s to the children and
      * succeed, forming a new term from the constructor of the original term and
      * the original children, except that c is replaced by the result of applying
@@ -551,7 +554,10 @@ object Rewriter {
      * the same term (by eq for references and by == for other values), then
      * the overall strategy returns the subject term.
      * This operation works on instances of finite Rewritable, Product, Map and
-     * Traversable values, in that order.
+     * Traversable values, checked for in that order.
+     * Children of a Rewritable (resp. Product, collection) value are processed
+     * in the order returned by the value's deconstruct (resp. productElement,
+     * foreach) method.
      */
     def one (s : => Strategy) : Strategy =
         new Strategy {
@@ -559,12 +565,12 @@ object Rewriter {
                 t match {
                     case r : Rewritable     => oneRewritable (r)
                     case p : Product        => oneProduct (p)
-                    case m : Map[_,_]       => one[Map] (m.asInstanceOf[Map[Term,Term]])
-                    case t : Traversable[_] => one[Traversable] (t)
+                    case m : Map[_,_]       => oneMap (m.asInstanceOf[Map[Term,Term]])
+                    case t : Traversable[_] => oneTraversable (t.asInstanceOf[Traversable[Term]])
                     case _                  => None
                 }
 
-            private def oneProduct[T <: Product] (p : T) : Option[Term] = {
+            private def oneProduct (p : Product) : Option[Term] = {
                 val numchildren = p.productArity
                 for (i <- 0 until numchildren) {
                     val ct = p.productElement (i)
@@ -587,7 +593,7 @@ object Rewriter {
                 None
             }
 
-            private def oneRewritable[T <: Rewritable] (r : T) : Option[Term] = {
+            private def oneRewritable (r : Rewritable) : Option[Term] = {
                 val numchildren = r.arity
                 val children = r.deconstruct
                 for (i <- 0 until numchildren) {
@@ -611,10 +617,11 @@ object Rewriter {
                 None
             }
             
-            private def one[CC[U] <: Traversable[U] with TraversableLike[U,CC[U]]] (t : CC[Term])
-                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] = {
-                val b = cbf (t.repr)
-                b.sizeHint (t)
+            private def oneTraversable [CC[U] <: Traversable[U]] (t : CC[Term])
+                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
+                                : Option[CC[Term]] = {
+                val b = cbf (t)
+                b.sizeHint (t.size)
                 var add = true
                 for (ct <- t)
                     if (add)
@@ -635,10 +642,11 @@ object Rewriter {
                     Some (b.result)
             }
 
-            private def one[CC[V,W] <: Map[V,W] with MapLike[V,W,CC[V,W]]] (t : CC[Term,Term])
-                    (implicit cbf: CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]]) : Option[CC[Term,Term]] = {
-                val b = cbf (t.repr)
-                b.sizeHint (t)
+            private def oneMap[CC[V,W] <: Map[V,W]] (t : CC[Term,Term])
+                            (implicit cbf : CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]])
+                                : Option[CC[Term,Term]] = {
+                val b = cbf (t)
+                b.sizeHint (t.size)
                 var add = true
                 for (ct <- t)
                     if (add)
@@ -663,8 +671,8 @@ object Rewriter {
 
     /**
      * Traversal to as many children as possible, but at least one.  Construct a
-     * strategy that applies s to the term children of the subject term in
-     * left-to-right order.  If s succeeds on any of the children, then succeed,
+     * strategy that applies s to the term children of the subject term.
+     * If s succeeds on any of the children, then succeed,
      * forming a new term from the constructor of the original term and the result
      * of s for each succeeding child, with other children unchanged.  In the event
      * that the strategy fails on all children, then fail. If there are no 
@@ -672,7 +680,10 @@ object Rewriter {
      * for references and by == for other values), then the overall strategy
      * returns the subject term.
      * This operation works on instances of finite Rewritable, Product, Map and
-     * Traversable values, in that order.
+     * Traversable values, checked for in that order.
+     * Children of a Rewritable (resp. Product, collection) value are processed
+     * in the order returned by the value's deconstruct (resp. productElement,
+     * foreach) method.
      */
     def some (s : => Strategy) : Strategy =
         new Strategy {
@@ -680,12 +691,12 @@ object Rewriter {
                 t match {
                     case r : Rewritable     => someRewritable (r)
                     case p : Product        => someProduct (p)
-                    case m : Map[_,_]       => some[Map] (m.asInstanceOf[Map[Term,Term]])
-                    case t : Traversable[_] => some[Traversable] (t)
+                    case m : Map[_,_]       => someMap (m.asInstanceOf[Map[Term,Term]])
+                    case t : Traversable[_] => someTraversable (t.asInstanceOf[Traversable[Term]])
                     case _                  => None
                 }
 
-            private def someProduct[T <: Product] (p : T) : Option[Term] = {
+            private def someProduct (p : Product) : Option[Term] = {
                 val numchildren = p.productArity
                 if (numchildren == 0) {
                     None
@@ -717,7 +728,7 @@ object Rewriter {
                 }
             }
 
-            private def someRewritable[T <: Rewritable] (r : T) : Option[Term] = {
+            private def someRewritable (r : Rewritable) : Option[Term] = {
                 val numchildren = r.arity
                 if (numchildren == 0) {
                     None
@@ -750,15 +761,16 @@ object Rewriter {
                 }
             }
 
-            private def some[CC[U] <: Traversable[U] with TraversableLike[U,CC[U]]] (t : CC[Term])
-                    (implicit cbf: CanBuildFrom[CC[Term], Term, CC[Term]]) : Option[CC[Term]] =
+            private def someTraversable[CC[U] <: Traversable[U]] (t : CC[Term])
+                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
+                                : Option[CC[Term]] =
                 if (t.size == 0)
                     None
                 else {
-                    val b = cbf (t.repr)
+                    val b = cbf (t)
+                    b.sizeHint (t.size)
                     var success = false
                     var changed = false
-                    b.sizeHint (t)
                     for (ct <- t)
                         s (ct) match {
                             case Some (ti) =>
@@ -778,15 +790,16 @@ object Rewriter {
                         None
                 }
 
-            private def some[CC[V,W] <: Map[V,W] with MapLike[V,W,CC[V,W]]] (t : CC[Term,Term])
-                    (implicit cbf: CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]]) : Option[CC[Term,Term]] =
+            private def someMap[CC[V,W] <: Map[V,W]] (t : CC[Term,Term])
+                            (implicit cbf : CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]])
+                                : Option[CC[Term,Term]] =
                 if (t.size == 0)
                     None
                 else {
-                    val b = cbf (t.repr)
+                    val b = cbf (t)
+                    b.sizeHint (t.size)
                     var success = false
                     var changed = false
-                    b.sizeHint (t)
                     for (ct <- t)
                         s (ct) match {
                             case Some (ti @ (tix, tiy)) =>
@@ -823,11 +836,11 @@ object Rewriter {
         new Strategy {
             def apply (t : Term) : Option[Term] =
                 t match {
-                    case p : Product        => congruence[Product] (p, ss : _*)
+                    case p : Product        => congruenceProduct (p, ss : _*)
                     case _                  => Some (t)
                 }
                 
-            private def congruence[T <: Product] (p : T, ss : Strategy*) : Option[Term] = {
+            private def congruenceProduct (p : Product, ss : Strategy*) : Option[Term] = {
                val numchildren = p.productArity
                if (numchildren == ss.length) {
                    val newchildren = new Array[AnyRef](numchildren)
@@ -888,7 +901,7 @@ object Rewriter {
      * final value of the list.
      */
     def collect[CC[U] <: Traversable[U],T] (f : Term ==> T)
-            (implicit cbf: CanBuildFrom[CC[T],T,CC[T]]) : Term => CC[T] =
+            (implicit cbf : CanBuildFrom[CC[T],T,CC[T]]) : Term => CC[T] =
         (t : Term) => {
             val b = cbf ()
             val add = (v : T) => b += v
