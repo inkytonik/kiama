@@ -5,7 +5,7 @@
   * machine:
     * new reset method
   * pretty printing:
-    * new pretty printing combinator library based on Swierstra and Chitil, _Linear, bounded, functional pretty-printing_, Journal of Functional Programming, 19 (1), 2008. See FIXME for documentation.
+    * new pretty printing combinator library based on Swierstra and Chitil, _Linear, bounded, functional pretty-printing_, Journal of Functional Programming, 19 (1), 2008. See http://implicit.ly/kiama-110 for documentation.
     * use pretty printer in many examples
   * rewriting:
     * generic traversals now work on Rewritable, Product, Traversable and Map values
