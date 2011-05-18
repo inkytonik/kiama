@@ -128,19 +128,19 @@ trait PrettyPrinterBase {
 
     /**
      * Interface for pretty-printable values.  The default toDoc implementation
-     * just returns a text document containing the toString of the receiver.
+     * just uses the value combinator on the receiver.
      */
     trait PrettyPrintable {
-        def toDoc : Doc = text (toString)
+        def toDoc : Doc = value (this)
     }
 
     /**
      * Convert any value into a pretty-printable value.  The value will
-     * pretty-print as its toString result.
+     * be pretty-print using the value combinator.
      */
     implicit def anyToPrettyPrintable (a : Any) : PrettyPrintable =
         new PrettyPrintable {
-            override def toDoc = text (a.toString)
+            override def toDoc = value (a)
         }
 
     // Basic combinators.  Thse need to be implemented for a specific
@@ -244,8 +244,9 @@ trait PrettyPrinterBase {
      */
     def list[T] (l : List[T], prefix : String = "List", 
                  elemToDoc : T => Doc = (x : T) => x.toDoc,
-                 sep : Doc = comma) : Doc =
-        text (prefix) <> parens (group (nest (lsep (l map elemToDoc, sep))))
+                 sep : Doc = comma,
+                 sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+        text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
     * Return a pretty-printer document for p.  If p is a Product, print it in
@@ -317,14 +318,28 @@ trait PrettyPrinterBase {
     /**
      * Return a pretty-printer document for a separated sequence.
      * sep is the separator.  Line breaks are allowed before the sequence
-     * and between the elements of the sequence.  The before one turns into
-     * nothing if omitted.  The internal ones turn into spaces if omitted.
+     * and after the separators between the elements of the sequence.  The
+     * before line break turns into nothing if omitted.  The internal line
+     * breaks turn into a space if omitted.
      */
     def lsep (ds : Seq[Doc], sep : Doc) : Doc =
         if (ds isEmpty)
             empty
         else
             linebreak <> fold (ds, _ <> sep <@> _)
+
+    /**
+     * Return a pretty-printer document for a separated sequence.
+     * sep is the separator.  Line breaks are allowed before the separators
+     * between the elements of the sequence and at the end.  A space is 
+     * inserted after each separator.  The internal line breaks turn into
+     * a space if omitted.  The end line break turns into nothing if omitted.  
+     */
+    def lsep2 (ds : Seq[Doc], sep : Doc) : Doc =
+        if (ds isEmpty)
+            empty
+        else
+            fold (ds, _ <@@> sep <+> _) <> linebreak
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -364,10 +379,11 @@ trait PrettyPrinterBase {
         cat (ds map (_ <> term))
 
     /**
-     * Return a document representing a value formatted using toString.
+     * Return a document representing a value formatted using toString and 
+     * the string combinator.
      */
     def value (v : Any) : Doc =
-        text (v.toString)
+        string (v.toString)
 
     /**
      * Return a document that encloses a given document d between two
