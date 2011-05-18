@@ -1,0 +1,27 @@
+### Enhancements
+  * attribution:
+    * parent-child connections in Attributable now work for any GenTraversable, not just Seqs
+    * parent-child connection setting is now protected rather than private so it can be customised
+  * machine:
+    * new reset method
+  * pretty printing:
+    * new pretty printing combinator library based on Swierstra and Chitil, _Linear, bounded, functional pretty-printing_, Journal of Functional Programming, 19 (1), 2008. See FIXME for documentation.
+    * use pretty printer in many examples
+  * rewriting:
+    * generic traversals now work on Rewritable, Product, Traversable and Map values
+    * generic traversals now return the subject term if no changes are made to its children
+    * new Rewritable trait for custom rewriting of any structure
+  * general:
+    * move to Scala 2.9.0, ScalaTest 1.4.1, ScalaCheck 1.9 and sbt 0.7.7
+    * use org.scala-lang version of JLine
+
+### Fixes
+  * examples:
+    * imperative: fix bug in unary minus tree construction
+  * rewriting:
+    * make more strategy parameters call-by-name
+    * fix bugs in manybu and leaves combinators
+    * remove unnecessary _where_ strategies based on one and some
+  * testing:
+    * many new tests to significantly improve code coverage
+    * uniplate: constrain division by zero test to avoid heap exhaustion
