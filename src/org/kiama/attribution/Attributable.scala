@@ -35,7 +35,7 @@ trait Attributable extends Product with Positional {
      * A link to the parent Attributable node of this node or null if this
      * node has no parent.  Note that this link will skip intervening
      * non-Attributable ancestors, such as <code>Option</code> or
-     * <code>Seq</code> nodes.
+     * <code>GenTraversable</code> nodes.
      */
     var parent : Attributable = null
 
@@ -91,10 +91,10 @@ trait Attributable extends Product with Positional {
 
     /**
      * This node's attributable children in left-to-right order.  Children
-     * that are not Attributable are ignored, except for sequences (<code>Seq[_]</code>)
-     * and optional children (<code>Option[_]</code>).  In the case of sequences and
-     * options, their contents are processed and any immediate Attributable
-     * contents are included in the sequence.
+     * that are not Attributable are ignored, except for traversables
+     * (<code>GenTraversable[_]</code>) and optional children (<code>Option[_]</code>).
+     * In the case of traversables and options, their contents are processed and
+     * any immediate Attributable contents are included in the sequence.
      */
     def children : Iterator[Attributable] =
         _children.iterator
@@ -144,9 +144,9 @@ trait Attributable extends Product with Positional {
 
     /**
      * House-keeping method to connect my children to me and their siblings.
-     * If a node is a direct child of a <code>Seq</code> or <code>Some</code>,
+     * If a node is a direct child of a <code>GenTraversable</code> or <code>Some</code>,
      * then the parent link "bypasses" that parent to go to the <code>Attributable</code>
-     * parent above.  It is assumed at that sequences and options are not directly nested.
+     * parent above.  It is assumed that traversables and options are not directly nested.
      * As a side-effect, this method remembers the attributable children
      * so that they can be accessed easily via the children iterator.
      */
