@@ -61,7 +61,7 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
     /**
      * Scan command line arguments to handle any compiler switches.
      */
-    override def checkargs (args : Array[String]) : Array[String] = {
+    override def checkargs (args : Array[String], emitter : Emitter) : Array[String] = {
         def checkFlag (arg : String) : Boolean =
             arg match {
                 case "-t" => { spillTargetTreeFlag = true; false }

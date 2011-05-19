@@ -50,9 +50,10 @@ trait Compiler[T] extends FunSuite {
 
     /**
      * Process the command-line arguments.  Returns the arguments that
-     * have not been processed.  Default: do no processing.
+     * have not been processed.  Output should be emitted using the
+     * provided Emitter.  Default: do no processing.
      */
-    def checkargs (args : Array[String]) : Array[String] =
+    def checkargs (args : Array[String], emitter : Emitter) : Array[String] =
         args
 
     /**
@@ -64,7 +65,7 @@ trait Compiler[T] extends FunSuite {
      * arbitrary processing on the ASTs.
      */
     def driver (args : Array[String], console : Console, emitter : Emitter) {
-        val newargs = checkargs (args)
+        val newargs = checkargs (args, emitter)
         for (arg <- newargs) {
             try {
                 val reader = new FileReader (newargs (0))
