@@ -144,19 +144,25 @@ trait Attributable extends Product with Positional {
 
     /**
      * House-keeping method to connect my children to me and their siblings.
-     * If a node is a direct child of a <code>GenTraversable</code> or <code>Some</code>,
-     * then the parent link "bypasses" that parent to go to the <code>Attributable</code>
-     * parent above.  It is assumed that traversables and options are not directly nested.
-     * As a side-effect, this method remembers the attributable children
-     * so that they can be accessed easily via the children iterator.
+     * The easy case is Attributable children that are direct descendants.
+     * Also connected are Attributable descendants that are reachable via
+     * a path of descendants that only passes through GenTraversable or
+     * Some nodes.  Thus, descendants of these kinds are regarded as children
+     * for the purposes of attribution.  As a side-effect, this method
+     * remembers the children so that they can be accessed easily via the
+     * children iterator.
      */
     protected def setChildConnections () = {
-        
+
         import scala.collection.GenTraversable
 
         var ind : Int = 0
         var prev : Attributable = null
-        def setConnections(c : Attributable) {
+
+        /**
+         * Set the node connections and index of c.
+         */
+        def setConnections (c : Attributable) {
            c.parent = this
            _children += c
            c.index = ind
@@ -166,23 +172,29 @@ trait Attributable extends Product with Positional {
            prev = c
         }
 
-        for (i <- 0 until productArity) {
-            productElement (i) match {
-                case c : Attributable => setConnections(c)
-                case Some(c : Attributable) => setConnections(c)
-                case s : GenTraversable[_] => {
-                    for (v <- s) {
-                        v match {
-                            case c : Attributable => setConnections(c)
-                            case _ =>
-                                // Ignore elements that are non-Attributables
-                        }
-                    }
-                }
+        /**
+         * Recursively set the child connections of node and its
+         * Attributable children, skipping any number of Some or
+         * Seq nodes on the way.
+         */
+        def setNodeChildConnections (node : Any) : Unit =
+            node match {
+                case c : Attributable =>
+                    setConnections (c)
+                case Some (c : Attributable) =>
+                    setConnections (c)
+                case Some (o) =>
+                    setNodeChildConnections (o)
+                case s : GenTraversable[_] =>
+                    for (v <- s)
+                        setNodeChildConnections (v)
                 case _ =>
-                    // Ignore children that are not Attributable, options or sequences
+                    // Ignore other kinds of nodes
             }
-        }
+
+        // Start by setting the connections of the fields of this.
+        for (c <- productIterator)
+            setNodeChildConnections (c)
 
     }
 
