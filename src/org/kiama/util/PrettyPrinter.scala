@@ -249,11 +249,11 @@ trait PrettyPrinterBase {
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
-    * Return a pretty-printer document for p.  If p is a Product, print it in
-    * standard prefix list form, otherwise use p's toDoc method.  As a special
-    * case, print lists as List (...) and Nil instead of using ::.  Also, 
-    * strings are printed with surrounding double quotes.
-    */
+     * Return a pretty-printer document for p.  If p is a Product, print it in
+     * standard prefix list form, otherwise use p's toDoc method.  As a special
+     * case, print lists as List (...) and Nil instead of using ::.  Also, 
+     * strings are printed with surrounding double quotes.
+     */
     def product (p : Any) : Doc = {
         p match {
             case Nil         => text ("Nil")
