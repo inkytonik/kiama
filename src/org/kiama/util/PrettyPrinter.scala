@@ -136,7 +136,7 @@ trait PrettyPrinterBase {
 
     /**
      * Convert any value into a pretty-printable value.  The value will
-     * be pretty-print using the value combinator.
+     * be pretty-printed using the value combinator.
      */
     implicit def anyToPrettyPrintable (a : Any) : PrettyPrintable =
         new PrettyPrintable {
@@ -238,12 +238,26 @@ trait PrettyPrinterBase {
      * inserting line breaks between elements as necessary.
      * The prefix string can be changed from the default "List".
      * The elemToDoc argument can be used to alter the way each element
+     * is converted to a document (default: use the value combinator).
+     * sep defaults to a comma.
+     */
+    def list[T] (l : List[T], prefix : String = "List", 
+                 elemToDoc : T => Doc = (x : T) => value (x),
+                 sep : Doc = comma,
+                 sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+        text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
+
+    /**
+     * Return a document that pretty-prints a list of pretty-printables
+     * in Scala notation, inserting line breaks between elements as necessary.
+     * The prefix string can be changed from the default "List".
+     * The elemToDoc argument can be used to alter the way each element
      * is converted to a document (default: call the element's toDoc
      * method).
      * sep defaults to a comma.
      */
-    def list[T] (l : List[T], prefix : String = "List", 
-                 elemToDoc : T => Doc = (x : T) => x.toDoc,
+    def plist (l : List[PrettyPrintable], prefix : String = "List", 
+                 elemToDoc : PrettyPrintable => Doc = _.toDoc,
                  sep : Doc = comma,
                  sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))

@@ -234,5 +234,39 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     test ("pretty-print non-empty sterm sequence (wrap)") {
         expect ("[:\n.:\n=:\n]:") (pretty ((sterm (l, colon)), 3))
     }
+    
+    val l1 = List (1, 2, 3)
+
+    test ("pretty-print lists of simple values (non-wrap)") {
+        expect ("List(1, 2, 3)") (pretty (list (l1)))
+    }
+    
+    test ("pretty-print lists of simple values (wrap)") {
+        expect ("List(\n    1,\n    2,\n    3)") (pretty (list (l1), 3))
+    }
+    
+    case class Val (i : Int)
+    val l2 = List (Val (1), Val (2), Val (3))
+
+    test ("pretty-print lists of structured values (non-wrap)") {
+        expect ("List(Val(1), Val(2), Val(3))") (pretty (list (l2)))
+    }
+
+    test ("pretty-print lists of structured values (wrap)") {
+        expect ("List(\n    Val(1),\n    Val(2),\n    Val(3))") (pretty (list (l2), 3))
+    }
+
+     class PVal (i : Int) extends PrettyPrintable {
+         override def toDoc : Doc = value (i) <> text ("!")
+     }
+     val l3 = List (new PVal (1), new PVal (2), new PVal (3))
+     
+     test ("pretty-print lists of structured prettyy-printable values (non-wrap)") {
+         expect ("List(1!, 2!, 3!)") (pretty (plist (l3)))
+     }
+     
+     test ("pretty-print lists of structured prettyy-printable values (wrap)") {
+         expect ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
+     }
 
 }
