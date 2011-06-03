@@ -55,15 +55,15 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("\none\ntwo\nthree") (pretty (string ("\none\ntwo\nthree")))
     }
     
-    test ("pretty-print string starting with newline (grouped)") {
+    test ("pretty-print string starting with newline - grouped") {
         expect (" three") (pretty (group (string ("\nthree"))))
     }
     
-    test ("pretty-print string including newlines (grouped)") {
+    test ("pretty-print string including newlines - grouped") {
         expect ("one two three") (pretty (group (string ("one\ntwo\nthree"))))
     }
     
-    test ("pretty-print string starting with and including newlines (grouped)") {
+    test ("pretty-print string starting with and including newlines - grouped") {
         expect (" one two three") (pretty (group (string ("\none\ntwo\nthree"))))
     }
     
@@ -71,7 +71,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("\n") (pretty (char ('\n')))
     }
     
-    test ("pretty-print newline char (grouped))") {
+    test ("pretty-print newline char - grouped") {
         expect (" ") (pretty (group (char ('\n'))))
     }
     
@@ -83,7 +83,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("   ") (pretty (spaces (3)))
     }
     
-    test ("pretty-print empty string (product)") {
+    test ("pretty-print empty string - product") {
         expect ("\"\"") (pretty (product ("")))
     }
     
@@ -91,7 +91,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("List()") (pretty (Nil))
     }
     
-    test ("pretty-print empty list (product)") {
+    test ("pretty-print empty list product") {
         expect ("Nil") (pretty (product (Nil)))
     }
     
@@ -99,7 +99,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("hello") (pretty ("hello"))
     }
     
-    test ("pretty-print identifier (product)") {
+    test ("pretty-print identifier - product") {
         expect ("\"hello\"") (pretty (product ("hello")))
     }
     
@@ -107,7 +107,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("1234") (pretty (1234))
     }
     
-    test ("pretty-print integer (product)") {
+    test ("pretty-print integer - product") {
         expect ("1234") (pretty (product (1234)))
     }
     
@@ -127,11 +127,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (sep (List ())))
     }
     
-    test ("pretty-print non-empty sep sequence (non-wrap)") {
+    test ("pretty-print non-empty sep sequence - non-wrap") {
         expect ("< : >") (pretty (sep (List (langle, colon, rangle))))
     }
     
-    test ("pretty-print non-empty sep sequence (wrap)") {
+    test ("pretty-print non-empty sep sequence - wrap") {
         expect ("<\n:\n>") (pretty (group (sep (List (langle, colon, rangle))), 2))
     }
     
@@ -139,11 +139,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (hsep (List ())))
     }
     
-    test ("pretty-print non-empty hsep sequence (non-wrap)") {
+    test ("pretty-print non-empty hsep sequence - non-wrap") {
         expect ("< : >") (pretty (hsep (List (langle, colon, rangle))))
     }
     
-    test ("pretty-print non-empty hsep sequence (wrap)") {
+    test ("pretty-print non-empty hsep sequence - wrap") {
         expect ("< : >") (pretty (group (hsep (List (langle, colon, rangle))), 2))
     }
     
@@ -151,11 +151,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (fillsep (List ())))
     }
         
-    test ("pretty-print non-empty fillsep sequence (non-wrap)") {
+    test ("pretty-print non-empty fillsep sequence - non-wrap") {
         expect ("< : >") (pretty (fillsep (List (langle, colon, rangle))))
     }
     
-    test ("pretty-print non-empty fillsep sequence (wrap)") {
+    test ("pretty-print non-empty fillsep sequence - wrap") {
         expect ("< :\n>") (pretty (group (fillsep (List (langle, colon, rangle))), 3))
     }
     
@@ -163,13 +163,13 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (lsep (List (), comma)))
     }
         
-    test ("pretty-print non-empty lsep sequence (non-wrap)") {
+    test ("pretty-print non-empty lsep sequence - non-wrap") {
         expect ("', ., '") (pretty (group (lsep (List (squote, dot, squote), comma))))
     }
     
     val l = List (lbracket, dot, equal, rbracket)
     
-    test ("pretty-print non-empty lsep sequence (wrap)") {
+    test ("pretty-print non-empty lsep sequence - wrap") {
         expect ("\n[,\n.,\n=,\n]") (pretty (group (lsep (l, comma)), 3))
     }
     
@@ -177,11 +177,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (cat (List ())))
     }
         
-    test ("pretty-print non-empty cat sequence (non-wrap)") {
+    test ("pretty-print non-empty cat sequence - non-wrap") {
         expect ("[.=]") (pretty (cat (l)))
     }
     
-    test ("pretty-print non-empty cat sequence (wrap)") {
+    test ("pretty-print non-empty cat sequence - wrap") {
         expect ("[\n.\n=\n]") (pretty (group (cat (l)), 3))
     }
     
@@ -189,11 +189,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (hcat (List ())))
     }
         
-    test ("pretty-print non-empty hcat sequence (non-wrap)") {
+    test ("pretty-print non-empty hcat sequence - non-wrap") {
         expect ("[.=]") (pretty (hcat (l)))
     }
     
-    test ("pretty-print non-empty hcat sequence (wrap)") {
+    test ("pretty-print non-empty hcat sequence - wrap") {
         expect ("[.=]") (pretty (group (hcat (l)), 3))
     }
     
@@ -201,11 +201,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (vcat (List ())))
     }
         
-    test ("pretty-print non-empty vcat sequence (non-wrap)") {
+    test ("pretty-print non-empty vcat sequence - non-wrap") {
         expect ("[\n.\n=\n]") (pretty (vcat (l)))
     }
     
-    test ("pretty-print non-empty vcat sequence (wrap)") {
+    test ("pretty-print non-empty vcat sequence - wrap") {
         expect ("[\n.\n=\n]") (pretty (group (vcat (l)), 3))
     }
     
@@ -215,11 +215,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     
     val m = List (lbracket, dot, equal, dot, equal, dot, equal, rbracket)
         
-    test ("pretty-print non-empty fillcat sequence (non-wrap)") {
+    test ("pretty-print non-empty fillcat sequence - non-wrap") {
         expect ("[.=.=.=]") (pretty (fillcat (m)))
     }
     
-    test ("pretty-print non-empty fillcat sequence (wrap)") {
+    test ("pretty-print non-empty fillcat sequence - wrap") {
         expect ("[.=\n.=.\n=]") (pretty (fillcat (m), 3))
     }
     
@@ -227,32 +227,32 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("") (pretty (sterm (List (), colon)))
     }
         
-    test ("pretty-print non-empty sterm sequence (non-wrap)") {
+    test ("pretty-print non-empty sterm sequence - non-wrap") {
         expect ("[:.:=:]:") (pretty (sterm (l, colon)))
     }
     
-    test ("pretty-print non-empty sterm sequence (wrap)") {
+    test ("pretty-print non-empty sterm sequence - wrap") {
         expect ("[:\n.:\n=:\n]:") (pretty ((sterm (l, colon)), 3))
     }
     
     val l1 = List (1, 2, 3)
 
-    test ("pretty-print lists of simple values (non-wrap)") {
+    test ("pretty-print lists of simple values - non-wrap") {
         expect ("List(1, 2, 3)") (pretty (list (l1)))
     }
     
-    test ("pretty-print lists of simple values (wrap)") {
+    test ("pretty-print lists of simple values - wrap") {
         expect ("List(\n    1,\n    2,\n    3)") (pretty (list (l1), 3))
     }
     
     case class Val (i : Int)
     val l2 = List (Val (1), Val (2), Val (3))
 
-    test ("pretty-print lists of structured values (non-wrap)") {
+    test ("pretty-print lists of structured values - non-wrap") {
         expect ("List(Val(1), Val(2), Val(3))") (pretty (list (l2)))
     }
 
-    test ("pretty-print lists of structured values (wrap)") {
+    test ("pretty-print lists of structured values - wrap") {
         expect ("List(\n    Val(1),\n    Val(2),\n    Val(3))") (pretty (list (l2), 3))
     }
 
@@ -261,11 +261,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
      }
      val l3 = List (new PVal (1), new PVal (2), new PVal (3))
      
-     test ("pretty-print lists of structured prettyy-printable values (non-wrap)") {
+     test ("pretty-print lists of structured prettyy-printable values - non-wrap") {
          expect ("List(1!, 2!, 3!)") (pretty (plist (l3)))
      }
      
-     test ("pretty-print lists of structured prettyy-printable values (wrap)") {
+     test ("pretty-print lists of structured prettyy-printable values - wrap") {
          expect ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
      }
 

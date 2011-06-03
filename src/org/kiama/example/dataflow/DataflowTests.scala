@@ -55,59 +55,59 @@ class DataflowTests extends Driver {
     val s5 = Return ("x")
     val prog = Block (List (s1, s2, s3, s4, s5))
 
-    test ("in (s1)") {
+    test ("in - s1") {
         expect (Set ("w", "v")) (in (s1))
     }
 
-    test ("in (s2)") {
+    test ("in - s2") {
         expect (Set ("y", "w", "v")) (in (s2))
     }
 
-    test ("in (s3)") {
+    test ("in - s3") {
         expect (Set ("w", "v")) (in (s3))
     }
 
-    test ("in (s4)") {
+    test ("in - s4") {
         expect (Set ("x", "w", "v")) (in (s4))
     }
 
-    test ("in (s411)") {
+    test ("in - s411") {
         expect (Set ("w", "v")) (in (s411))
     }
 
-    test ("in (s412)") {
+    test ("in - s412") {
         expect (Set ("w", "v")) (in (s412))
     }
 
-    test ("in (s5)") {
+    test ("in - s5") {
         expect (Set ("x")) (in (s5))
     }
 
-    test ("out (s1)") {
+    test ("out - s1") {
         expect (Set ("y", "w", "v")) (out (s1))
     }
 
-    test ("out (s2)") {
+    test ("out - s2") {
         expect (Set ("w", "v")) (out (s2))
     }
 
-    test ("out (s3)") {
+    test ("out - s3") {
         expect (Set ("x", "w", "v")) (out (s3))
     }
 
-    test ("out (s4)") {
+    test ("out - s4") {
         expect (Set ("x", "w", "v")) (out (s4))
     }
 
-    test ("out (s411)") {
+    test ("out - s411") {
         expect (Set ("w", "v")) (out (s411))
     }
 
-    test ("out (s412)") {
+    test ("out - s412") {
         expect (Set ("x", "w", "v")) (out (s412))
     }
 
-    test ("out (s5)") {
+    test ("out - s5") {
         expect (Set ()) (out (s5))
     }
 

@@ -40,7 +40,7 @@ class ImperativeTests extends Tests {
         expect ("xyz123") (pretty (Var ("xyz123")))
     }
 
-    test ("pretty-print imperative variable (product)") {
+    test ("pretty-print imperative variable - product") {
         expect ("""Var ("xyz123")""") (pretty (product (Var ("xyz123"))))
     }
 
@@ -50,7 +50,7 @@ class ImperativeTests extends Tests {
         )
     }
 
-    test ("pretty-print imperative assignment (product)") {
+    test ("pretty-print imperative assignment - product") {
         expect ("""Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))""") (
             pretty (product (Asgn (Var ("i"), Mul (Num (0), Var ("j")))))
         )

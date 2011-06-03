@@ -106,51 +106,51 @@ class RewriterTests extends Tests with Checkers with Generator {
     {
         val t = Add (Num (1), Num (2))
     
-        test ("issubterm: selected subterms (fail)") {
+        test ("issubterm: selected subterms - fail") {
             expect (None) (issubterm (Num (42), t))
         }
         
-        test ("issubterm: selected subterms (succeed sub)") {
+        test ("issubterm: selected subterms - succeed sub") {
             expectsame (Some (t)) (issubterm (Num (1), t))
         }
         
-        test ("issubterm: selected subterms (succeed self)") {
+        test ("issubterm: selected subterms - succeed self") {
             expectsame (Some (t)) (issubterm (t, t))
         }
     
-        test ("issubterm: selected proper subterms (fail)") {
+        test ("issubterm: selected proper subterms - fail") {
             expect (None) (ispropersubterm (Num (42), t))
         }
         
-        test ("issubterm: selected proper subterms (succeed sub)") {
+        test ("issubterm: selected proper subterms - succeed sub") {
             expectsame (Some (t)) (ispropersubterm (Num (1), t))
         }
         
-        test ("issubterm: selected proper subterms (fail self)") {
+        test ("issubterm: selected proper subterms - fail self") {
             expect (None) (ispropersubterm (t, t))
         }
     
-        test ("issuperterm: selected superterms (fail)") {
+        test ("issuperterm: selected superterms - fail") {
             expect (None) (issuperterm (t, Num (42)))
         }
     
-        test ("issuperterm: selected superterms (succeed sub)") {
+        test ("issuperterm: selected superterms - succeed sub") {
             expectsame (Some (t)) (issuperterm (t, Num (1)))
         }
     
-        test ("issuperterm: selected superterms (succeed self)") {
+        test ("issuperterm: selected superterms - succeed self") {
             expectsame (Some (t)) (issuperterm (t, t))
         }
     
-        test ("issuperterm: selected proper superterms (fail)") {
+        test ("issuperterm: selected proper superterms - fail") {
             expect (None) (ispropersuperterm (t, Num (42)))
         }
         
-        test ("issuperterm: selected proper superterms (succeed sub)") {
+        test ("issuperterm: selected proper superterms - succeed sub") {
             expectsame (Some (t)) (ispropersuperterm (t, Num (1)))
         }
         
-        test ("issuperterm: selected proper superterms (fail self)") {
+        test ("issuperterm: selected proper superterms - fail self") {
             expect (None) (ispropersuperterm (t, t))
         }
     }
@@ -332,31 +332,31 @@ class RewriterTests extends Tests with Checkers with Generator {
 
             val double = rule { case d : Double => d + 1 }
 
-            test ("rewriting leaf types: increment doubles (all, topdown)") {
+            test ("rewriting leaf types: increment doubles - all, topdown") {
                 expect (Some (r)) ((alltd (double)) (e))
             }
         
-            test ("rewriting leaf types: increment doubles (all, bottomup) same") {
+            test ("rewriting leaf types: increment doubles - all, bottomup, same") {
                 expectsame (Some (e)) ((allbu (double)) (e))
             }
         
-            test ("rewriting leaf types: increment doubles (all, bottomup) not same") {
+            test ("rewriting leaf types: increment doubles - all, bottomup, not same") {
                 expectnotsame (Some (ee)) ((allbu (double)) (e))
             }
         
-            test ("rewriting leaf types: increment doubles (some, topdown)") {
+            test ("rewriting leaf types: increment doubles - some, topdown") {
                 expect (Some (r)) ((sometd (double)) (e))
             }
 
-            test ("rewriting leaf types: increment doubles (some, bottomup)") {
+            test ("rewriting leaf types: increment doubles - some, bottomup") {
                 expect (Some (r)) ((somebu (double)) (e))
             }
 
-            test ("rewriting leaf types: increment doubles (one, topdown)") {
+            test ("rewriting leaf types: increment doubles - one, topdown") {
                 expect (Some (s)) ((oncetd (double)) (e))
             }
 
-            test ("rewriting leaf types: increment doubles (one, bottomup)") {
+            test ("rewriting leaf types: increment doubles - one, bottomup") {
                 expect (Some (s)) ((oncebu (double)) (e))
             }
         }
@@ -367,31 +367,31 @@ class RewriterTests extends Tests with Checkers with Generator {
             
             val rev = rule { case s : String => s.reverse }
             
-            test ("rewriting leaf types: reverse identifiers (all, topdown)") {
+            test ("rewriting leaf types: reverse identifiers - all, topdown") {
                 expect (Some (r)) ((alltd (rev)) (e))
             }
             
-            test ("rewriting leaf types: reverse identifiers (all, bottomup) same") {
+            test ("rewriting leaf types: reverse identifiers - all, bottomup, same") {
                 expectsame (Some (e)) ((allbu (rev)) (e))
             }
             
-            test ("rewriting leaf types: reverse identifiers (all, bottomup) not same") {
+            test ("rewriting leaf types: reverse identifiers - all, bottomup, not same") {
                 expectnotsame (Some (ee)) ((allbu (rev)) (e))
             }
             
-            test ("rewriting leaf types: reverse identifiers (some, topdown)") {
+            test ("rewriting leaf types: reverse identifiers - some, topdown") {
                 expect (Some (r)) ((sometd (rev)) (e))
             }
             
-            test ("rewriting leaf types: reverse identifiers (some, bottomup)") {
+            test ("rewriting leaf types: reverse identifiers - some, bottomup") {
                 expect (Some (r)) ((somebu (rev)) (e))
             }
             
-            test ("rewriting leaf types: reverse identifiers (one, topdown)") {
+            test ("rewriting leaf types: reverse identifiers - one, topdown") {
                 expect (Some (s)) ((oncetd (rev)) (e))
             }
             
-            test ("rewriting leaf types: reverse identifiers (one, bottomup)") {
+            test ("rewriting leaf types: reverse identifiers - one, bottomup") {
                 expect (Some (s)) ((oncebu (rev)) (e))
             }
         }
@@ -406,31 +406,31 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case s : String => s.reverse
                 }
 
-            test ("rewriting leaf types: increment even doubles and reverse idn (all, topdown)") {
+            test ("rewriting leaf types: increment even doubles and reverse idn - all, topdown") {
                 expect (Some (r)) ((alltd (evendoubleincrev)) (e))
             }
         
-            test ("rewriting leaf types: increment even doubles and reverse idn (all, bottomup) same") {
+            test ("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, same") {
                 expectsame (Some (e)) ((allbu (evendoubleincrev)) (e))
             }
         
-            test ("rewriting leaf types: increment even doubles and reverse idn (all, bottomup) not same") {
+            test ("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, not same") {
                 expectnotsame (Some (ee)) ((allbu (evendoubleincrev)) (e))
             }
         
-            test ("rewriting leaf types: increment even doubles and reverse idn (some, topdown)") {
+            test ("rewriting leaf types: increment even doubles and reverse idn - some, topdown") {
                 expect (Some (r)) ((sometd (evendoubleincrev)) (e))
             }
 
-            test ("rewriting leaf types: increment even doubles and reverse idn (some, bottomup)") {
+            test ("rewriting leaf types: increment even doubles and reverse idn - some, bottomup") {
                 expect (Some (r)) ((somebu (evendoubleincrev)) (e))
             }
 
-            test ("rewriting leaf types: increment even doubles and reverse idn (one, topdown)") {
+            test ("rewriting leaf types: increment even doubles and reverse idn - one, topdown") {
                 expect (Some (s)) ((oncetd (evendoubleincrev)) (e))
             }
 
-            test ("rewriting leaf types: increment even doubles and reverse idn (one, bottomup)") {
+            test ("rewriting leaf types: increment even doubles and reverse idn - one, bottomup") {
                 expect (Some (s)) ((oncebu (evendoubleincrev)) (e))
             }
         }
@@ -456,27 +456,27 @@ class RewriterTests extends Tests with Checkers with Generator {
         val incfirst = oncetd (rule { case i : Int => i + 1 })
         val incodd = sometd (rule { case i : Int if i % 2 == 1 => i + 1 })
     
-        test ("rewrite list: increment all numbers (non-empty)") {
+        test ("rewrite list: increment all numbers - non-empty") {
             expect (Some (List (2, 3, 4))) ((incall) (List (1, 2, 3)))
         }
         
-        test ("rewrite list: increment all numbers (empty)") {
+        test ("rewrite list: increment all numbers - empty") {
             expect (Some (Nil)) ((incall) (Nil))
         }
         
-        test ("rewrite list: increment first number (non-empty)") {
+        test ("rewrite list: increment first number - non-empty") {
             expect (Some (List (2, 2, 3))) ((incfirst) (List (1, 2, 3)))
         }
         
-        test ("rewrite list: increment first number (empty)") {
+        test ("rewrite list: increment first number - empty") {
             expect (None) ((incfirst) (Nil))
         }
         
-        test ("rewrite list: increment odd numbers (succeed") {
+        test ("rewrite list: increment odd numbers - succeed") {
             expect (Some (List (2, 2, 4))) ((incodd) (List (1, 2, 3)))
         }
         
-        test ("rewrite list: increment odd numbers (fail)") {
+        test ("rewrite list: increment odd numbers - fail") {
             expect (None) ((incodd) (List (2, 4, 6)))
         }
         
@@ -490,11 +490,11 @@ class RewriterTests extends Tests with Checkers with Generator {
             expect (Some (List (List (2, 2), List (3), List (4, 5, 6)))) ((incfirst) (l))
         }
         
-        test ("rewrite list: nested increment odd numbers (succeed)") {
+        test ("rewrite list: nested increment odd numbers - succeed") {
             expect (Some (List (List (2, 2), List (4), List (4, 6, 6)))) ((incodd) (l))
         }
         
-        test ("rewrite list: nested increment odd numbers (fail)") {
+        test ("rewrite list: nested increment odd numbers - fail") {
             expect (None) ((incodd) (List (List (2, 2), List (4), List (4, 6, 6))))
         }
     }
@@ -512,7 +512,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     def travtest (basemsg : String, testmsg : String, trav : (=> Strategy) => Strategy,
                   rewl : Strategy, term : Term, result : Option[Term],
                   expecting : Expecting = Equal) = {
-        val msg = basemsg + " (" + testmsg + ") " + expecting
+        val msg = basemsg + " - " + testmsg + ", " + expecting
         test (msg) {
             expecting match {
                 case Equal   => expect (result) (trav (rewl) (term))
@@ -736,35 +736,35 @@ class RewriterTests extends Tests with Checkers with Generator {
         val incthirdchild = child (3, incnum)
         val incallsecondchild = alltd (incsecondchild)
     
-        test ("rewrite by child index: inc zeroth child (fail)") {
+        test ("rewrite by child index: inc zeroth child - fail") {
             expect (None) (inczerothchild (Add (Num (2), Num (3))))
         }
     
-        test ("rewrite by child index: inc first child (fail)") {
+        test ("rewrite by child index: inc first child - fail") {
             expect (None) (incfirstchild (Num (2)))
         }
     
-        test ("rewrite by child index: inc first child (succeed, one child, one level)") {
+        test ("rewrite by child index: inc first child - succeed, one child, one level") {
             expect (Some (Neg (Num (3)))) (incfirstchild (Neg (Num (2))))
         }
     
-        test ("rewrite by child index: inc first child (succeed, two children, one level)") {
+        test ("rewrite by child index: inc first child - succeed, two children, one level") {
             expect (Some (Add (Num (3), Num (3)))) (incfirstchild (Add (Num (2), Num (3))))
         }
     
-        test ("rewrite by child index: inc second child (fail)") {
+        test ("rewrite by child index: inc second child - fail") {
             expect (None) (incsecondchild (Num (2)))
         }
     
-        test ("rewrite by child index: inc second child (succeed, one level)") {
+        test ("rewrite by child index: inc second child - succeed, one level") {
             expect (Some (Add (Num (2), Num (4)))) (incsecondchild (Add (Num (2), Num (3))))
         }
     
-        test ("rewrite by child index: inc third child (fail, one level)") {
+        test ("rewrite by child index: inc third child - fail, one level") {
             expect (None) (incthirdchild (Add (Num (2), Num (3))))
         }
     
-        test ("rewrite by child index: inc second child (succeed, multi-level)") {
+        test ("rewrite by child index: inc second child - succeed, multi-level") {
             expect (Some (Sub (Add (Num (2), Num (4)), Mul (Num (4), Num (6))))) (
                 incallsecondchild (Sub (Add (Num (2), Num (3)), Mul (Num (4), Num (5))))
             )
@@ -786,35 +786,35 @@ class RewriterTests extends Tests with Checkers with Generator {
         val l2 = LinkedList (1)
         val l3 = LinkedList (1, 2, 3, 4)
         
-        test ("rewrite linkedlist by child index: inc zeroth child (fail, empty)") {
+        test ("rewrite linkedlist by child index: inc zeroth child - fail, empty") {
             expect (None) (inczerothchild (l1))
         }
     
-        test ("rewrite linkedlist by child index: inc first child (fail, empty)") {
+        test ("rewrite linkedlist by child index: inc first child - fail, empty") {
             expect (None) (incfirstchild (l1))
         }
     
-        test ("rewrite linkedlist by child index: inc first child (succeed, singleton)") {
+        test ("rewrite linkedlist by child index: inc first child - succeed, singleton") {
             expect (Some (LinkedList (2))) (incfirstchild (l2))
         }        
                 
-        test ("rewrite linkedlist by child index: inc second child (fail, singleton)") {
+        test ("rewrite linkedlist by child index: inc second child - fail, singleton") {
             expect (None) (incsecondchild (l2))
         }        
         
-        test ("rewrite linkedlist by child index: inc zeroth child (fail, multiple)") {
+        test ("rewrite linkedlist by child index: inc zeroth child - fail, multiple") {
             expect (None) (inczerothchild (l3))
         }        
         
-        test ("rewrite linkedlist by child index: inc first child (succeed, multiple)") {
+        test ("rewrite linkedlist by child index: inc first child - succeed, multiple") {
             expect (Some (LinkedList (2, 2, 3, 4))) (incfirstchild (l3))
         }        
                 
-        test ("rewrite linkedlist by child index: inc second child (succeed, one level)") {
+        test ("rewrite linkedlist by child index: inc second child - succeed, one level") {
             expect (Some (LinkedList (1, 3, 3, 4))) (incsecondchild (l3))
         }        
     
-        test ("rewrite linkedlist by child index: inc second child (succeed, multi-level)") {
+        test ("rewrite linkedlist by child index: inc second child - succeed, multi-level") {
             expect (Some (LinkedList (LinkedList (1), LinkedList (3, 5, 5), LinkedList (6, 8)))) (
                 incallsecondchild (LinkedList (LinkedList (1), LinkedList (3, 4, 5), LinkedList (6, 7)))
             )
@@ -1494,7 +1494,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         expect (0) (count)
     }
     
-    test ("restore doesn't restore when the strategy suceeds") {
+    test ("restore doesn't restore when the strategy succeeds") {
         val t = Add (Num (1), Num (2))
         var count = 0
         val d = rule {
@@ -1524,7 +1524,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         expect (0) (count)
     }
     
-    test ("restorealways restores when the strategy suceeds") {
+    test ("restorealways restores when the strategy succeeds") {
         val t = Add (Num (1), Num (2))
         var count = 0
         val d = rule {

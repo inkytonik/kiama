@@ -40,61 +40,61 @@ class OneOhOneTests extends Tests {
     val empty = Company (Nil)
     val onlymanager = Company (List (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
     
-    test ("total of all salaries (company)") {
+    test ("total of all salaries - company") {
         expect (399747.0) (total (company))
     }
     
-    test ("total of all salaries (empty)") {
+    test ("total of all salaries - empty") {
         expect (0.0) (total (empty))
     }
     
-    test ("total of all salaries (onlymanager)") {
+    test ("total of all salaries - onlymanager") {
         expect (100.0) (total (onlymanager))
     }
     
-    test ("total of all cut salaries (company)") {
+    test ("total of all cut salaries - company") {
         expect (199873.5) (total (cut (company)))
     }
     
-    test ("total of all cut salaries (empty)") {
+    test ("total of all cut salaries - empty") {
         expect (0.0) (total (cut (empty)))
     }
     
-    test ("total of all cut salaries (onlymanager)") {
+    test ("total of all cut salaries - onlymanager") {
         expect (50.0) (total (cut (onlymanager)))
     }
     
-    test ("department depth (company)") {
+    test ("department depth - company") {
         expect (3) (depth (company))
     }
     
-    test ("department depth (empty)") {
+    test ("department depth - empty") {
         expect (0) (depth (empty))
     }
     
-    test ("department depth (onlymanager)") {
+    test ("department depth - onlymanager") {
         expect (1) (depth (onlymanager))
     }    
     
-    test ("salaries ordered (company)") {
+    test ("salaries ordered - company") {
         expect (true) (precedence (company))
     }
     
-    test ("salaries ordered (empty)") {
+    test ("salaries ordered - empty") {
         expect (true) (precedence (empty))
     }
     
-    test ("salaries ordered (onlymanager)") {
+    test ("salaries ordered - onlymanager") {
         expect (true) (precedence (onlymanager))
     }
 
-    test ("salaries not ordered (employee)") {
+    test ("salaries not ordered - employee") {
         val d = Company (List (Dept ("D1", Employee ("An", "Emp", 100),
                                List (PU (Employee ("Another", "Emp", 500))))))
         expect (false) (precedence (d))
     }
 
-    test ("salaries not ordered (manager)") {
+    test ("salaries not ordered - manager") {
         val d1 = Dept ("D2", Employee ("The", "Emp", 100),
                        List (PU (Employee ("That", "Emp", 50))))
         val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25), 
