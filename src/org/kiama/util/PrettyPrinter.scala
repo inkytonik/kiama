@@ -308,10 +308,26 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that concatenates the documents in the given sequence
+     * horizontally with <+>.  Separates documents with the given separator
+     * before the <+>.
+     */
+    def hsep (ds : Seq[Doc], sep : Doc) : Doc =
+        fold (ds, (_ <> sep <+> _))
+
+    /**
+     * Return a document that concatenates the documents in the given sequence
      * vertically with <@>.
      */
     def vsep (ds : Seq[Doc]) : Doc =
         fold (ds, (_ <@> _))
+
+    /**
+     * Return a document that concatenates the documents in the given sequence
+     * vertically with <@>.  Separates documents with the given separator
+     * before the <@>.
+     */
+    def vsep (ds : Seq[Doc], sep : Doc) : Doc =
+        fold (ds, (_ <> sep <@> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -320,6 +336,15 @@ trait PrettyPrinterBase {
      */
     def fillsep (ds : Seq[Doc]) : Doc =
         fold (ds, (_ </> _))
+
+    /**
+     * Return a document that concatenates the documents in the given sequence
+     * horizontally with <+> as long as they fit the output width, then
+     * inserts a line and continues with the rest of the sequence.  Separates
+     * documents with the given separator before the <+>.
+     */
+    def fillsep (ds : Seq[Doc], sep : Doc) : Doc =
+        fold (ds, (_ <> sep </> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
