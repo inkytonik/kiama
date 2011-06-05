@@ -498,7 +498,30 @@ class RewriterTests extends Tests with Checkers with Generator {
             expect (None) ((incodd) (List (List (2, 2), List (4), List (4, 6, 6))))
         }
     }
+
+    test ("same comparison of equal references yields true") {
+        case class Num (i : Int) 
+        val r = Num (42)
+        expect (true) (same (r, r))
+    }
     
+
+    test ("same comparison of unequalt references yields false") {
+        case class Num (i : Int) 
+        val r1 = Num (42)
+        val r2 = Num (42)
+        expect (false) (same (r1, r2))
+    }
+
+    test ("same comparison of equal non-references yields true") {
+        expect (true) (same (42, 42))
+    }
+    
+
+    test ("same comparison of unequalt non-references yields false") {
+        expect (false) (same (42, 43))
+    }
+
     /**
      * The kind of comparison that is expected to be true for a test.  Equal
      * means use ==.  Same means the result must be the same reference or, if

@@ -27,7 +27,7 @@ class Plugins (info : ProjectInfo) extends PluginDefinition (info) {
     
     // scct
     val scctRepo = "scct-repo" at "http://mtkopone.github.com/scct/maven-repo/"
-    lazy val scctPlugin = "reaktor" % "sbt-scct-for-2.8" % "0.1-SNAPSHOT"
+    lazy val scctPlugin = "reaktor" % "scct-sbt-for-2.9" % "0.1-SNAPSHOT"
     
     // findbugs4sbt
     val findbugs4sbt = "de.johoop" % "findbugs4sbt" % "1.0.0"

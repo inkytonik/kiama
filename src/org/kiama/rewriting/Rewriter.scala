@@ -413,7 +413,7 @@ object Rewriter {
             case (r1 : AnyRef, r2: AnyRef) =>
                 r1 eq r2
             case _ =>
-                v1 == v2
+                sys.error ("Rewriter.same: comparison of non-AnyRefs, should not be reached")
         }
 
     /**

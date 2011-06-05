@@ -211,9 +211,7 @@ trait Compiler[T] extends FunSuite {
         val dir = new File (path)
         val children = dir.list
         if (children == null) {
-            test ("Run file tests at " + path) {
-                fail ("bad test file path " + path)
-            }
+            throw (new IllegalArgumentException ("bad test file path " + path))
         } else {
             for (args <- argslist) {
                 for (c <- children) {

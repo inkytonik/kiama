@@ -29,25 +29,33 @@ import org.scalatest.junit.JUnitRunner
  * the examples.
  */
 @RunWith(classOf[JUnitRunner])
-class CompilerTests extends Tests with PrettyPrinter {
+class CompilerTests extends Compiler[Any] with Tests {
+
+    import java.io.FileReader
+    import org.scalatest.TestFailedException
+
+    def makeast (reader : FileReader, filename : String) : Either[Any,String] =
+         Right ("Dummy")
+
+    def process (ast : Any, console : Console, emitter : Emitter) : Boolean =
+         false
 
     test ("compiler driver produces an appropriate message if a file is not found") {
-        import java.io.FileReader
-        class DummyCompiler extends Compiler[Any] {
-            def makeast (reader : FileReader, filename : String) : Either[Any,String] =
-                Right ("Dummy")
-            def process (ast : Any, console : Console, emitter : Emitter) : Boolean =
-                false
-        }
-        val c = new DummyCompiler
         val e = new StringEmitter
-        c.driver (Array ("IDoNotExist.txt"), new StringConsole (""), e)
+        driver (Array ("IDoNotExist.txt"), new StringConsole (""), e)
         val msg =
             if (System.getProperty("os.name").startsWith ("Windows"))
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
         expect ("IDoNotExist.txt (" + msg + ")\n") (e.result)
+    }
+    
+    test ("filetests using a directory that doesn't exist fails") {
+        val i = intercept[IllegalArgumentException] {
+                    filetests ("Compiler", "src/org/kiama/util/IDoNotExist", ".src", ".out")
+                }
+        expect ("bad test file path src/org/kiama/util/IDoNotExist") (i.getMessage)
     }
 
 }
