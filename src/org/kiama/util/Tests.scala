@@ -59,7 +59,7 @@ trait Tests extends FunSuite {
      * Analogous to ScalaTest's expect but it uses same to compare
      * the two values instead of equality.
      */
-    def expectnotsame (expected : Option[Any]) (actual : Option[Any]) {
+    def expectnotsame (expected : Any) (actual : Any) {
         if (same (expected, actual)) {
             fail ("Expected not same object as " + expected + ", but got " + actual)
         }

@@ -39,7 +39,9 @@ object AST {
      * an ImperativeNode; this capability is only used in the Kiama tests
      * and is not usually needed for normal use of the library.
      */
-    trait ImperativeNode extends Product
+    trait ImperativeNode extends Product with Cloneable {
+        override def clone () = super.clone ().asInstanceOf[ImperativeNode]
+    }
 
     /**
      * Expressions.

@@ -1321,8 +1321,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val s = downup (d)
         expect (Some (u)) (s (t))
     }
-    
-    
+  
     test ("downup (two arg version) visits the correct frontier") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (8), Num (9)))
@@ -1717,4 +1716,47 @@ class RewriterTests extends Tests with Checkers with Generator {
         expect (List (1, 2, 3, 4, 5)) (l)
     }
 
+    test ("cloning a term with sharing gives an equal but not eq term") {
+        val c = Add (Num (1), Num (2))
+        val d = Add (Num (1), Num (2))
+        val e = Add (Num (3), Num (4)) 
+        val t = Add (Mul (c,
+                          Sub (c,
+                               d)),
+                     Add (Add (e,
+                               Num (5)),
+                          e))
+        val u = Add (Mul (Add (Num (1), Num (2)),
+                          Sub (Add (Num (1), Num (2)),
+                               d)),
+                     Add (Add (Add (Num (3), Num (4)),
+                               Num (5)),
+                          Add (Num (3), Num (4))))
+
+        val clone = everywherebu (rule { case n : ImperativeNode => n.clone () })
+        val ct = clone (t)
+        
+        // Must get the right answer (==)
+        expect (Some (u)) (ct)
+        
+        // Must not get the original term (eq)
+        expectnotsame (Some (t)) (ct)
+        
+        // Check the terms at the positions of the two c occurrences
+        // against each other, since they are eq to start but should
+        // not be after
+        val mul = ct.get.asInstanceOf[Add].l.asInstanceOf[Mul]
+        val c1 = mul.l
+        val mulsub = mul.r.asInstanceOf[Sub]
+        val c2 = mulsub.l
+        expectnotsame (c1) (c2)
+
+        // Check the terms at the positions of the two c ocurrences
+        // against the one at the position of the d occurrence (which
+        // is == but not eq to the two original c's)
+        val d1 = mulsub.r
+        expectnotsame (c1) (d1)
+        expectnotsame (c2) (d1)
+    }
+    
 }
