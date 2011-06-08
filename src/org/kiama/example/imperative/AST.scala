@@ -26,6 +26,7 @@ package example.imperative
  */
 object AST {
     
+    import org.kiama.attribution.Attributable
     import org.kiama.rewriting.Rewriter.{Strategy, rulefs, congruence}
 
     /**
@@ -39,7 +40,7 @@ object AST {
      * an ImperativeNode; this capability is only used in the Kiama tests
      * and is not usually needed for normal use of the library.
      */
-    trait ImperativeNode extends Product with Cloneable {
+    trait ImperativeNode extends Attributable with Cloneable {
         override def clone () = super.clone ().asInstanceOf[ImperativeNode]
     }
 

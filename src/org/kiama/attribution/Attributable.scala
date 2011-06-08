@@ -152,7 +152,7 @@ trait Attributable extends Product with Positional {
      * remembers the children so that they can be accessed easily via the
      * children iterator.
      */
-    protected def setChildConnections () = {
+    def setChildConnections () = {
 
         import scala.collection.GenTraversable
 

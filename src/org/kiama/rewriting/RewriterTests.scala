@@ -1717,6 +1717,8 @@ class RewriterTests extends Tests with Checkers with Generator {
     }
 
     test ("cloning a term with sharing gives an equal but not eq term") {
+        import org.kiama.attribution.Attributable
+
         val c = Add (Num (1), Num (2))
         val d = Add (Num (1), Num (2))
         val e = Add (Num (3), Num (4)) 
@@ -1733,7 +1735,14 @@ class RewriterTests extends Tests with Checkers with Generator {
                                Num (5)),
                           Add (Num (3), Num (4))))
 
-        val clone = everywherebu (rule { case n : ImperativeNode => n.clone () })
+        val clone = everywherebu (rule {
+                        case n : ImperativeNode => 
+                            if (n.hasChildren) {
+                                n.setChildConnections
+                                n
+                            } else
+                                n.clone ()
+                    })
         val ct = clone (t)
         
         // Must get the right answer (==)
@@ -1741,6 +1750,13 @@ class RewriterTests extends Tests with Checkers with Generator {
         
         // Must not get the original term (eq)
         expectnotsame (Some (t)) (ct)
+        
+        // Make sure that the parents proerpties are set correctly
+        // (for the top level)
+        def isTree (ast : Attributable) : Boolean =
+            ast.children.forall(c => (c.parent eq ast) && isTree(c))
+        assert (isTree (ct.get.asInstanceOf[Attributable]),
+                "cloned tree has invalid parent properties")
         
         // Check the terms at the positions of the two c occurrences
         // against each other, since they are eq to start but should
@@ -1758,5 +1774,5 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectnotsame (c1) (d1)
         expectnotsame (c2) (d1)
     }
-    
+        
 }
