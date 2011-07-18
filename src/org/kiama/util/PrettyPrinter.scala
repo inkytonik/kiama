@@ -182,7 +182,7 @@ trait PrettyPrinterBase {
      */
     def nest (d : Doc, j : Indent = defaultIndent) : Doc
     
-    // Extended comabinators that are implemented in terms of the basic 
+    // Extended combinators that are implemented in terms of the basic 
     // combinators and the representation-independent document operations.
 
     /**
