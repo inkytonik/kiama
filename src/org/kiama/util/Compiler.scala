@@ -132,30 +132,27 @@ trait Compiler[T] extends FunSuite {
             s
 
     /**
-     * Make a single file test processing the file cp with comamnd-line
-     * arguments args, expecting output as in the file rp.  Use the given
-     * console for input.  The extra string is used is appended to the
-     * normal test title. name is an identifying string used in messages.
-     * If the compilation fails, rp is assumed to contain the expected
-     * messages.
+     * Make a single file test processing using the command-line cmd,
+     * expecting output as in the file rp.  Use the given console for
+     * input.  The extra string is appended to the normal test title.
+     * name is an identifying string used in messages. If the compilation
+     * fails, rp is assumed to contain the expected messages.
      */
-    def filetest (name : String, cp : String, rp : String,
-                  console : Console, extra : String = "",
-                  args : Array[String] = Array()) {
-        val title = name + " " + args.mkString ("(", " ", ")") + " processing " + cp +
-                    " expecting " + rp + extra
+    def filetest (name : String, rp : String, console : Console,
+                  extra : String = "", cmd : Array[String]) {
+        val title = name + ": " + cmd.mkString (" ") + ", expecting " +
+                        rp + extra
         test (title) {
             val cc =
                 try {
-                    compile (args :+ cp, console)
+                    compile (cmd, console)
                 } catch {
                     case e : Exception =>
                         info ("failed with an exception ")
                         throw (e)
                 }
             val rc = Source.fromFile (rp).mkString
-            if (sanitise (cc) != sanitise (rc))
-                fail (title + " generated bad output:\n" + cc + "expected:\n" + rc)
+            assert (sanitise (cc) === sanitise (rc), title + " generated bad output")
         }
     }
 
@@ -204,7 +201,7 @@ trait Compiler[T] extends FunSuite {
                         (new FileConsole (ip), " from input " + ip)
                     else
                         (new StringConsole (indefault), " from string \"" + indefault + "\"")
-                filetest (name, cp, rp, console, msg, args)
+                filetest (name, rp, console, msg, args :+ cp)
             }
         }
 
@@ -222,7 +219,7 @@ trait Compiler[T] extends FunSuite {
                             case None =>
                                 val cp = path + "/" + c
                                 val rp = cp.replace (srcext, resext)
-                                filetest (name, cp, rp, null, "", args)
+                                filetest (name, rp, null, "", args :+ cp)
                         }
                     }
                 }
