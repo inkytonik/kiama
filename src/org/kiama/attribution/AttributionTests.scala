@@ -40,6 +40,8 @@ class AttributionTests extends Tests {
     case class ListTree (l : List[Tree]) extends Tree
     case class SetTree (s : Set[Tree]) extends Tree
     case class GenSeqTree (v : GenSeq[Tree]) extends Tree
+    case class MapTree (m : Map[Tree,Tree]) extends Tree
+    case class PairTree (p : (Tree,Tree)) extends Tree
 
     test ("first child can be accessed") {
         val n = Pair (Leaf (1), Leaf (2))
@@ -287,12 +289,12 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
                     t->direct
                 }
-        expect ("Cycle detected in attribute evaluation") (i1.getMessage)
+        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
                      t->indirect
                  }
-        expect ("Cycle detected in attribute evaluation") (i2.getMessage)
+        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
     }
 
     test ("circularities are detected for uncached attributes") {
@@ -426,6 +428,36 @@ class AttributionTests extends Tests {
         expectsame (c4) (c2.parent)
         expectsame (c4) (c3.parent)
     }
+
+    test ("a map's tuple parent properties are set correctly") {
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = Leaf (11)
+        val c5 = Leaf (12)
+        val c6 = MapTree (Map (c4 -> c5))
+        val t = MapTree (Map (c1 -> c2, c3 -> c6))
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c2.parent)
+        expectsame (t) (c3.parent)
+        expectsame (t) (c6.parent)
+        expectsame (c6) (c4.parent)
+        expectsame (c6) (c5.parent)
+    }    
+
+    test ("a pair's component parent properties are set correctly") {
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = PairTree (c2, c3)
+        val t = PairTree (c1, c4)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c4.parent)
+        expectsame (c4) (c2.parent)
+        expectsame (c4) (c3.parent)
+    }    
 
 }
 

@@ -236,12 +236,12 @@ class DynamicAttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
                     t->direct
                 }
-        expect ("Cycle detected in attribute evaluation") (i1.getMessage)
+        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
                      t->indirect
                  }
-        expect ("Cycle detected in attribute evaluation") (i2.getMessage)
+        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
     }
 
 }

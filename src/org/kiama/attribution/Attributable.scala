@@ -162,14 +162,14 @@ trait Attributable extends Product with Positional {
         /**
          * Set the node connections and index of c.
          */
-        def setConnections (c : Attributable) {
-           c.parent = this
-           _children += c
-           c.index = ind
-           ind += 1
-           c._prev = prev
-           if (prev != null) prev._next = c
-           prev = c
+       def setConnections (c : Attributable) {
+            c.parent = this
+            _children += c
+            c.index = ind
+            ind += 1
+            c._prev = prev
+            if (prev != null) prev._next = c
+            prev = c
         }
 
         /**
@@ -181,10 +181,20 @@ trait Attributable extends Product with Positional {
             node match {
                 case c : Attributable =>
                     setConnections (c)
-                case Some (c : Attributable) =>
-                    setConnections (c)
                 case Some (o) =>
                     setNodeChildConnections (o)
+                case (a, b) =>
+                    setNodeChildConnections (a)
+                    setNodeChildConnections (b)
+                case (a, b, c) =>
+                    setNodeChildConnections (a)
+                    setNodeChildConnections (b)
+                    setNodeChildConnections (c)
+                case (a, b, c, d) =>
+                    setNodeChildConnections (a)
+                    setNodeChildConnections (b)
+                    setNodeChildConnections (c)
+                    setNodeChildConnections (d)
                 case s : GenTraversable[_] =>
                     for (v <- s)
                         setNodeChildConnections (v)

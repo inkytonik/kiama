@@ -133,9 +133,10 @@ object DynamicAttribution extends AttributionBase {
             }
 
             memo.get (t) match {
-                case Some (u) => u
-                case None    => throw new IllegalStateException("Cycle detected in attribute evaluation")
-                case _ => // null
+                 case None =>
+                     throw new IllegalStateException ("Cycle detected in attribute evaluation at " + t)
+                 case Some (u) => u
+                 case _ => // null
                     memo.put (t, None)
                     val result = f (t)
                     memo.put (t, Some (result))
