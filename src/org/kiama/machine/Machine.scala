@@ -258,8 +258,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         def perform {
             s.change (t)
             if (debug) {
-                val d = text (name) <> char ('.') <> text (s.sname) <+>
-                        text (":=") </> nest (s.toDoc)
+                val d = name <> '.' <> s.sname <+> ":=" </> nest (s.toDoc)
                 emitter.emitln (pretty (d))
             }
         }
@@ -297,9 +296,8 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         def perform {
             s.change (t, u)
             if (debug) {
-                val d = text (name) <> char ('.') <> text (s.sname) <>
-                            char ('(') <> t.toDoc <> char (')') <+>
-                            text (":=") </> nest (u.toDoc)
+                val d = name <> '.' <> s.sname <> '(' <> t.toDoc <> ')' <+>
+                            ":=" </> nest (u.toDoc)
                 emitter.emitln (pretty (d))
             }
         }

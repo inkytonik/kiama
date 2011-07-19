@@ -387,7 +387,7 @@ abstract class SECDBase
     lazy val stack = new State[Stack]("stack") {
         def toDoc : Doc =
             if (value.isEmpty)
-                text("** empty **")
+                "** empty **"
             else
                 list(value, "Stack")
         override def toString : String =
@@ -397,7 +397,7 @@ abstract class SECDBase
     lazy val envir = new State[Environment]("environment") {
         def toDoc : Doc =
             if (value.isEmpty)
-                text("** empty **")
+                "** empty **"
             else
                 list(value.toList, "Environment",
                      (kv : (Name,Value)) => 
@@ -414,9 +414,9 @@ abstract class SECDBase
         def toDoc : Doc = {
             value match {
                 case i :: _ =>
-                    text("instruction ") <> text((i->instNumber).toString)
+                    "instruction " <> (i->instNumber).toString
                 case Nil =>
-                    text{"** empty **"}
+                    "** empty **"
             }
         }
         override def toString : String =
