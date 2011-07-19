@@ -41,22 +41,22 @@ object PrettyPrinter extends org.kiama.util.PrettyPrinter {
     def show (t : ImperativeNode) : Doc =
         t match {
             case Num (d)      => value (d)
-            case Var (s)      => text (s)
-            case Neg (e)      => parens (text ("-") <> show (e))
+            case Var (s)      => s
+            case Neg (e)      => parens ("-" <> show (e))
             case Add (l, r)   => showbin (l, "+", r)
             case Sub (l, r)   => showbin (l, "-", r)
             case Mul (l, r)   => showbin (l, "*", r)
             case Div (l, r)   => showbin (l, "/", r)
             case Null ()      => semi
             case Seqn (ss)    => braces (nest (line <> ssep (ss map show, line)) <> line)
-            case Asgn (v, e)  => show (v) <+> text ("=") <+> show (e) <> semi
-            case While (e, b) => text ("while") <+> parens (show (e)) <> nest (line <> show (b))
+            case Asgn (v, e)  => show (v) <+> "=" <+> show (e) <> semi
+            case While (e, b) => "while" <+> parens (show (e)) <> nest (line <> show (b))
         }
 
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
     def showbin (l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
-        parens (show (l) <+> text (op) <+> show (r))
+        parens (show (l) <+> op <+> show (r))
 
 }

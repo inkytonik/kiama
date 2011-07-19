@@ -45,9 +45,9 @@ object PrettyPrinter extends org.kiama.util.PrettyPrinter
     private def show (t : Exp) : Doc =
         t match {
             case Num (d)       => value (d)
-            case Var (i)       => text (i)
-            case Lam (i, t, e) => parens (char ('\\') <> text (i) <>
-                                          showtypedecl (t) <+> char ('.') <+>
+            case Var (i)       => i
+            case Lam (i, t, e) => parens ('\\' <> i <>
+                                          showtypedecl (t) <+> '.' <+>
                                           group (nest (show (e))))
             case App (e1, e2)  => parens (show (e1) <+> show (e2))
             
@@ -55,13 +55,13 @@ object PrettyPrinter extends org.kiama.util.PrettyPrinter
             case Opn (SubOp, l, r) => showbin (l, "-", r)
 
             case Let (i, t, e1, e2) =>
-                parens (text ("let") <+> text (i) <> showtypedecl (t) <+> char ('=') <>
-                        nest (line <> show (e1)) <+> text ("in") <>
+                parens ("let" <+> i <> showtypedecl (t) <+> '=' <>
+                        nest (line <> show (e1)) <+> "in" <>
                         nest (line <> show (e2)))
             case Letp (bs, e) =>
-                parens (text ("letp") <+>                         
-                        nest (line <> vsep (bs.map (b => text (b.i) <+> char ('=') <+> show (b.e)))) <+> 
-                        text ("in") <>
+                parens ("letp" <+>                         
+                        nest (line <> vsep (bs.map (b => b.i <+> '=' <+> show (b.e)))) <+> 
+                        "in" <>
                         nest (line <> show (e)))
         }
 
@@ -72,21 +72,21 @@ object PrettyPrinter extends org.kiama.util.PrettyPrinter
         if (t == null)
             empty
         else
-            space <> char (':') <+> showtype (t)
+            space <> ':' <+> showtype (t)
             
     /**
      * Return a pretty-printing document for an instance of a type.
      */
     private def showtype (t : Type) : Doc =
         t match {
-            case IntType          => text ("Int")
-            case FunType (t1, t2) => showtype (t1) <+> text ("->") <+> showtype (t2)
+            case IntType          => "Int"
+            case FunType (t1, t2) => showtype (t1) <+> "->" <+> showtype (t2)
         }
         
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
     private def showbin (l : Exp, op : String, r : Exp) : Doc =
-        parens (show (l) <+> text (op) <+> show (r))
+        parens (show (l) <+> op <+> show (r))
     
 }

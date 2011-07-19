@@ -151,6 +151,12 @@ trait PrettyPrinterBase {
      * newline characters.  Use line instead.
      */
     def text (t : String) : Doc
+
+    /**
+     * An implicit conversion from strings to Doc using text.
+     */
+    implicit def stringToDoc (s : String) : Doc =
+        text (s)
     
     /**
      * A document representing a potential line break.  Behaves like space
@@ -208,6 +214,12 @@ trait PrettyPrinterBase {
             line
         else
             text (c.toString)
+            
+    /**
+     * An implicit conversion from characters to Doc using char
+     */
+    implicit def charToDoc (c : Char) : Doc =
+        char (c)
 
     /**
      * Return a document that behaves like space if the resulting output

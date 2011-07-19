@@ -133,8 +133,8 @@ object SECDBase {
         override def toDoc : Doc =
             list (code, "CodeSegment",
                   (e : Instruction) =>
-                       text((e->instNumber).toString) <>
-                            char (':') <+> e.toDoc)
+                       (e->instNumber).toString <>
+                            ':' <+> e.toDoc)
 
         override def toString : String = code.mkString("CodeSegment(",",",")")
     }
@@ -162,13 +162,13 @@ object SECDBase {
          bdy : CodeSegment       // bytecode of body
     ) extends ByteCode {
         override def toDoc : Doc = {
-            val name = fn match {
-                           case Some(n) => text(n)
-                           case None    => text("** unnamed **")
-                       }
-            text("FunctionSpec") <>
-                parens(nest(line <> name <> char(',') <>
-                            line <> text(pn) <> char(',') <>
+            val name : Doc = fn match {
+                                 case Some(n) => n
+                                 case None    => "** unnamed **"
+                             }
+            "FunctionSpec" <>
+                parens(nest(line <> name <> ',' <>
+                            line <> pn <> ',' <>
                             line <> bdy.toDoc))
         }
     }
@@ -403,7 +403,7 @@ abstract class SECDBase
                      (kv : (Name,Value)) => 
                          kv match {
                              case (nm, v) => {
-                                 text (nm) <+> char ('=') <+> v.toDoc
+                                 nm <+> '=' <+> v.toDoc
                              }
                          })
         override def toString : String =

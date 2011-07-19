@@ -41,8 +41,8 @@ object BooleanOps {
     case class PushFalse() extends Instruction
     case class Test(ct : CodeSegment, ce : CodeSegment) extends Instruction {
         override def toDoc : Doc =
-            text("Test") <>
-                parens(nest(line <> ct.toDoc <> char(',') <>
+            "Test" <>
+                parens(nest(line <> ct.toDoc <> ',' <>
                             line <> ce.toDoc))
     }
     case class Equals() extends Instruction
