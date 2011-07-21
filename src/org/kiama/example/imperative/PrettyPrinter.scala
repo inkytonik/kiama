@@ -48,9 +48,9 @@ object PrettyPrinter extends org.kiama.util.PrettyPrinter {
             case Mul (l, r)   => showbin (l, "*", r)
             case Div (l, r)   => showbin (l, "/", r)
             case Null ()      => semi
-            case Seqn (ss)    => braces (nest (line <> ssep (ss map show, line)) <> line)
+            case Seqn (ss)    => group (braces (nest (line <> ssep (ss map show, line)) <> line))
             case Asgn (v, e)  => show (v) <+> "=" <+> show (e) <> semi
-            case While (e, b) => "while" <+> parens (show (e)) <> nest (line <> show (b))
+            case While (e, b) => "while" <+> parens (show (e)) <> group (nest (line <> show (b)))
         }
 
     /**
