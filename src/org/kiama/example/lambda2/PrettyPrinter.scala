@@ -42,7 +42,7 @@ object PrettyPrinter extends org.kiama.util.PrettyPrinter
      * Convert an expression node to a pretty-printing document in
      * fully-parenthesised style.
      */
-    private def show (t : Exp) : Doc =
+    def show (t : Exp) : Doc =
         t match {
             case Num (d)       => value (d)
             case Var (i)       => i
