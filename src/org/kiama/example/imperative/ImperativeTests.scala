@@ -66,7 +66,14 @@ class ImperativeTests extends Tests {
                     Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                     Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
     
-    val pp =
+    val pp1 = 
+        """{
+          |    i = 10.0;
+          |    count = 0.0;
+          |    while (i) { count = (count + 1.0); i = (1.0 + i); }
+          |}""".stripMargin
+
+    val pp2 =
         """{
           |    i = 10.0;
           |    count = 0.0;
@@ -91,8 +98,12 @@ class ImperativeTests extends Tests {
           |                        Add (Var ("count"), Num (1.0))),
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
-    test ("pretty-print non-trivial imperative program") {
-        expect (pp) (pretty (p)) 
+    test ("pretty-print non-trivial imperative program (default width)") {
+        expect (pp1) (pretty (p)) 
+    }
+
+    test ("pretty-print non-trivial imperative program (narrow)") {
+        expect (pp2) (pretty (group (show (p)), 40))
     }
 
     test ("pretty-print non-trivial imperative program (product)") {
