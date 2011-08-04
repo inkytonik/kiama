@@ -35,7 +35,6 @@ object TypeAnalysis {
     import NameResolution._
     import NullObjects._
     import PredefinedTypes._
-    import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
 
     /**
@@ -61,7 +60,7 @@ object TypeAnalysis {
      * eq Dot.type() = getIdUse().type();
      * eq BooleanLiteral.type() = booleanType();
      */
-    val tipe : Attributable ==> TypeDecl =
+    val tipe : ASTNode ==> TypeDecl =
         attr {
             case t : TypeDecl       => t
             case v : VarDecl        => v.Type->decl->tipe

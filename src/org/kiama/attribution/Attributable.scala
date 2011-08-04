@@ -21,15 +21,13 @@
 package org.kiama
 package attribution
 
-import scala.util.parsing.input.Positional
-
 /**
  * Common functionality for all classes that are to be attributed.  This
  * trait must be extended by all classes for which the node properties
  * such as parent and the attribute shorthand notation <code>-></code>
  * are desired.
  */
-trait Attributable extends Product with Positional {
+trait Attributable extends Product {
 
     /**
      * A link to the parent Attributable node of this node or null if this

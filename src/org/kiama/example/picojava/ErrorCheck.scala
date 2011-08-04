@@ -132,7 +132,7 @@ object ErrorCheck {
      *    c.add(s);
      * }
      */
-    val record : (Buffer[String],String) => Attributable => Unit =
+    val record : (Buffer[String],String) => ASTNode => Unit =
         (b,s) => a => b += ((a.pos) + ": " + s)
 
     /**

@@ -42,6 +42,7 @@ object SECDBase {
     
     import org.kiama.attribution.Attribution._
     import org.kiama.example.iswim.driver.PrettyPrinter._
+    import scala.util.parsing.input.Positional
 
     /**
      * Base class for SECD bytecode instructions
@@ -56,7 +57,7 @@ object SECDBase {
     }
      
     abstract class ByteCodeBase extends PrettyPrintable
-    abstract class ByteCode extends ByteCodeBase with Attributable {
+    abstract class ByteCode extends ByteCodeBase with Attributable with Positional {
         setPos(currPos)
     }
     abstract class Instruction extends ByteCode

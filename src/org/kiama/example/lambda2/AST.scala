@@ -28,6 +28,7 @@ object AST {
 
     import org.kiama.attribution.Attributable
     import org.kiama.rewriting.Rewriter._
+    import scala.util.parsing.input.Positional
 
     /**
      * Identifiers are represented as strings.
@@ -37,7 +38,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp extends Attributable
+    abstract class Exp extends Attributable with Positional
 
     /**
      * Numeric expressions.

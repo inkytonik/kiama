@@ -29,11 +29,12 @@ package example.transform
 object AST {
 
     import org.kiama.attribution.Attributable
+    import scala.util.parsing.input.Positional
 
     /**
      * All AST nodes.
      */
-    sealed abstract class ASTNode extends Attributable
+    sealed abstract class ASTNode extends Attributable with Positional
 
     /**
      * Nodes that have entities associated with them.

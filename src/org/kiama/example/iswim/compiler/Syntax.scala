@@ -29,12 +29,14 @@ import org.kiama.attribution.Attributable
 
 object Syntax {
 
+    import scala.util.parsing.input.Positional
+    
 	/**
 	 * In essence, all program clauses in ISWIM are expressions.
 	 * In this variant, however, we treat top level let expressions
 	 * as statements.
 	 */
-	abstract class Iswim extends Attributable
+	abstract class Iswim extends Attributable with Positional
 	abstract class Expr extends Iswim
 	abstract class Stmt extends Iswim
 

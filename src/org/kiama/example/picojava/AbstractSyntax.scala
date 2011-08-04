@@ -35,12 +35,15 @@ package example.picojava
 object AbstractSyntax {
 
     import org.kiama.attribution.Attributable
+    import scala.util.parsing.input.Positional
 
     // Created by parser
-    case class Program (Block : Block) extends Attributable
+    trait ASTNode extends Attributable with Positional
 
-    case class Block (BlockStmts : Seq[BlockStmt]) extends Attributable
-    abstract class BlockStmt extends Attributable
+    case class Program (Block : Block) extends ASTNode
+
+    case class Block (BlockStmts : Seq[BlockStmt]) extends ASTNode
+    abstract class BlockStmt extends ASTNode
 
     abstract class Decl (val Name : String) extends BlockStmt
     abstract class TypeDecl (Name : String) extends Decl (Name)
@@ -51,7 +54,7 @@ object AbstractSyntax {
     case class AssignStmt (Variable : Access, Value : Exp) extends Stmt
     case class WhileStmt (Condition : Exp, Body : Stmt) extends Stmt
 
-    abstract class Exp extends Attributable
+    abstract class Exp extends ASTNode
     abstract class Access extends Exp
     abstract class IdUse (val Name : String) extends Access
 
