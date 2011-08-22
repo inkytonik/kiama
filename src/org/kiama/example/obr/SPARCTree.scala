@@ -176,7 +176,7 @@ object SPARCTree {
     case class SubW (l : Datum, r : Datum) extends Datum
 
     /**
-     * Memory addresses that can be stored to or laoded from.
+     * Memory addresses that can be stored to or loaded from.
      */
     abstract class Address
 
