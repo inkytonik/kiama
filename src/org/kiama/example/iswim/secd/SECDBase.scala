@@ -315,7 +315,7 @@ abstract class SECDBase
     /**
      * Continuation values
      */
-    abstract trait Continuation
+    trait Continuation
     case class ContValue(
             s : Stack,
             e : Environment,
