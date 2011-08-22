@@ -56,16 +56,16 @@ object TypeAnalysis {
      * syn lazy TypeDecl Exp.type();
      * eq TypeDecl.type() = this;
      * eq VarDecl.type() = getType().decl().type();
-     * eq IdUse.type() = decl().type();
-     * eq Dot.type() = getIdUse().type();
+     * eq IdnUse.type() = decl().type();
+     * eq Dot.type() = getIdnUse().type();
      * eq BooleanLiteral.type() = booleanType();
      */
     val tipe : ASTNode ==> TypeDecl =
         attr {
             case t : TypeDecl       => t
             case v : VarDecl        => v.Type->decl->tipe
-            case i : IdUse          => i->decl->tipe
-            case d : Dot            => d.IdUse->tipe
+            case i : IdnUse          => i->decl->tipe
+            case d : Dot            => d.IdnUse->tipe
             case b : BooleanLiteral => b->booleanType
             case t                  => t->unknownDecl
         }
@@ -171,19 +171,19 @@ object TypeAnalysis {
      *
      * syn boolean Exp.isValue();
      * eq Exp.isValue() = true;
-     * eq Dot.isValue() = getIdUse().isValue();
+     * eq Dot.isValue() = getIdnUse().isValue();
      * eq TypeUse.isValue() = false;
      * Note! If we did not have the rewrites below, the above equation would have to instead be written as:
-     * eq IdUse.isValue() = !(decl() instanceof TypeDecl)
+     * eq IdnUse.isValue() = !(decl() instanceof TypeDecl)
      *
      * FIXME: currently using the "without rewrites" version
      */
     val isValue : Exp ==> Boolean =
         attr {
-            case i : IdUse => ! (i->decl).isInstanceOf[TypeDecl] // replace this one
+            case i : IdnUse => ! (i->decl).isInstanceOf[TypeDecl] // replace this one
             // with this one, when the rewrites are in:
             // case t : TypeUse => false
-            case d : Dot   => isValue (d.IdUse)
+            case d : Dot   => isValue (d.IdnUse)
             case _         => true
         }
 

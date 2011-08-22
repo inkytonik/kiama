@@ -47,7 +47,7 @@ object AbstractSyntax {
 
     abstract class Decl (val Name : String) extends BlockStmt
     abstract class TypeDecl (Name : String) extends Decl (Name)
-    case class ClassDecl (override val Name : String, Superclass : Option[IdUse], Body : Block) extends TypeDecl (Name)
+    case class ClassDecl (override val Name : String, Superclass : Option[IdnUse], Body : Block) extends TypeDecl (Name)
     case class VarDecl (override val Name : String, Type : Access) extends Decl (Name)
 
     abstract class Stmt extends BlockStmt
@@ -56,10 +56,10 @@ object AbstractSyntax {
 
     abstract class Exp extends ASTNode
     abstract class Access extends Exp
-    abstract class IdUse (val Name : String) extends Access
+    abstract class IdnUse (val Name : String) extends Access
 
-    case class Use (override val Name : String) extends IdUse (Name)
-    case class Dot (ObjectReference : Access, IdUse : IdUse) extends Access
+    case class Use (override val Name : String) extends IdnUse (Name)
+    case class Dot (ObjectReference : Access, IdnUse : IdnUse) extends Access
     case class BooleanLiteral (Value : String) extends Exp
 
     // Created by NTA equations

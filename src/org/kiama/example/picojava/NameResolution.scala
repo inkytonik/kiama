@@ -43,19 +43,19 @@ object NameResolution {
      * or to unknownDecl if the declaration is missing.
      *
      * syn lazy Decl Access.decl();
-     * eq IdUse.decl() = lookup(getName());
-     * eq Dot.decl() = getIdUse().decl();
+     * eq IdnUse.decl() = lookup(getName());
+     * eq Dot.decl() = getIdnUse().decl();
      */
     val decl : Access ==> Decl =
         attr {
             case Dot (_, n) => n->decl
-            case u : IdUse  => u->lookup (u.Name)
+            case u : IdnUse  => u->lookup (u.Name)
         }
 
     /**
      * Lookup a name.
      *
-     * inh Decl IdUse.lookup(String name);
+     * inh Decl IdnUse.lookup(String name);
      * inh Decl Block.lookup(String name);
      * inh Decl TypeDecl.lookup(String name);
      *
@@ -80,7 +80,7 @@ object NameResolution {
      *    return lookup(name);
      * }
      *
-     * eq Dot.getIdUse().lookup(String name) =
+     * eq Dot.getIdnUse().lookup(String name) =
      *    // Do a remote lookup on the object's type.
      *    getObjectReference().decl().type().remoteLookup(name);
      */
@@ -104,7 +104,7 @@ object NameResolution {
                         }
                         case p => p->lookup (name)
                     }
-                case i : IdUse =>
+                case i : IdnUse =>
                     i.parent match {
                         case Dot (a, i2) if i eq i2 => a->decl->tipe->remoteLookup (name)
                         case p                      => p->lookup (name)

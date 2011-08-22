@@ -86,7 +86,7 @@ object ErrorCheck {
      *         error(c, "Condition must be a value");
      * }
      *
-     * public void IdUse.collectErrors(Collection c) {
+     * public void IdnUse.collectErrors(Collection c) {
      *     super.collectErrors(c);
      *     if(decl().isUnknown() && (!isQualified() || !qualifier().type().isUnknown()))
      *         error(c, "Unknown identifier " + getName());
@@ -116,7 +116,7 @@ object ErrorCheck {
                             s->record (c, "Condition must be a boolean expression")
                         if (!isValue (s.Condition))
                             s->record (c, "Condition must be a value")
-                    case i : IdUse =>
+                    case i : IdnUse =>
                         if (isUnknown (i->decl) &&
                             (!isQualified (i) || !isUnknown (i->qualifier->tipe)))
                         i->record (c, "Unknown identifier " + i.Name)
@@ -140,11 +140,11 @@ object ErrorCheck {
      *
      * eq Program.getBlock().isQualified() = false;
      * eq Program.getPredefinedType(int i).isQualified() = false;
-     * eq Dot.getIdUse().isQualified() = true;
-     * inh boolean IdUse.isQualified();
+     * eq Dot.getIdnUse().isQualified() = true;
+     * inh boolean IdnUse.isQualified();
      * inh boolean TypeDecl.isQualified();
      */
-    val isQualified : IdUse ==> Boolean =
+    val isQualified : IdnUse ==> Boolean =
         attr {
             i => i.parent match {
                 case Dot (_, _)  => true
@@ -161,11 +161,11 @@ object ErrorCheck {
      * eq Program.getPredefinedType(int i).qualifier() {
      *    throw new Error("Can not compute qualifier for non qualified names");
      * }
-     * eq Dot.getIdUse().qualifier() = getObjectReference();
-     * inh Access IdUse.qualifier();
+     * eq Dot.getIdnUse().qualifier() = getObjectReference();
+     * inh Access IdnUse.qualifier();
      * inh Access TypeDecl.qualifier();
      */
-    val qualifier : IdUse ==> Access =
+    val qualifier : IdnUse ==> Access =
         attr {
             i => i.parent match {
                 case Dot (o, _)  => o
