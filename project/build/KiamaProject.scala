@@ -60,7 +60,7 @@ class KiamaProject (info: ProjectInfo) extends DefaultProject (info)
     val scalaToolsSnapshots = ScalaToolsSnapshots
 
     // Declare dependencies on other libraries
-    val scalacheck = "org.scala-tools.testing" % "scalacheck_2.9.0-1" % "1.9"
+    val scalacheck = "org.scala-tools.testing" %% "scalacheck" % "1.10-SNAPSHOT"
     val scalatest = "org.scalatest" % "scalatest_2.9.0-1" % "1.6.1"
     val junit = "junit" % "junit" % "4.8.1"
     val jline = "org.scala-lang" %% "jline"
