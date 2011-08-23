@@ -38,4 +38,45 @@ object Decorators {
                     (down (a)) (t.parent[T])
         }
 
+    /**
+     * A decorator that propagates an attribute value in left-to-right postorder
+     * through a tree.  init is a partial function that provides initial values
+     * for the chain at selected nodes.  update is a function that transforms
+     * a default partial function for the chain value into a partial function 
+     * that provides an updated value at selected nodes.
+     * 
+     * chain returns a pair of attributes that can be used to access the value
+     * of the chain as it enters (resp. leaves) any node.
+     */
+    def chain[T <: Attributable,U] (init : T ==> U) (update : (T ==> U) => T ==> U) : (T ==> U, T ==> U) = {
+         
+        lazy val indflt : T ==> U =
+            attr {
+                case t if t.isFirst =>
+                    (t.parent[T])->inattr
+                case t =>
+                    (t.prev[T])->outattr
+            }
+
+        lazy val inattr : T ==> U =
+            attr (init orElse indflt)
+            
+        lazy val outdflt : T ==> U =
+            attr {
+                case t if t.hasChildren =>
+                    (t.lastChild[T])->outattr
+                case t =>
+                    t->inattr
+            }
+
+        lazy val outattr : T ==> U =
+            attr {
+                case t =>
+                    ((update (outdflt)) orElse outdflt) (t)
+            }
+                  
+        (inattr, outattr)
+
+    }
+
 }
