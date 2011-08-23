@@ -39,10 +39,11 @@ trait Tests extends FunSuite {
     def same (v1 : Any, v2 : Any) : Boolean =
         (v1, v2) match  {
             case (Some (r1 : AnyRef), Some (r2 : AnyRef)) => r1 eq r2
-            case (Some (v1), Some (v2))                   => v1 == v2
             case (None, None)                             => true
+            case (null, null)                             => true
             case (r1 : AnyRef, r2 : AnyRef)               => r1 eq r2
-            case _                                        => v1 == v2
+            case _ => 
+                sys.error ("Tests.same: unexpected case: " + v1 + ", " + v2)
         }
         
     /**
