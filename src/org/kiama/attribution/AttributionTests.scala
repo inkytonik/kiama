@@ -66,6 +66,27 @@ class AttributionTests extends Tests {
         expect (2, "evaluation count") (count)
     }
 
+    test ("cached attributes are re-evaluated after a reset") {
+        import Attribution._
+
+        var count = 0
+
+        lazy val maximum : Tree ==> Int =
+            attr {
+                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
+                case Leaf (v)   => v
+            }
+
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+
+        expect (10, "first value") (t->maximum)
+        expect (10, "first value") (t->maximum)
+        expect (2, "evaluation count") (count)
+        maximum.asInstanceOf[CachedAttribute[Tree,Int]].reset ()
+        expect (10, "second value") (t->maximum)
+        expect (4, "evaluation count") (count)
+    }
+
     test ("cached attributes are distinct for nodes that are equal") {
         import Attribution._
 
@@ -241,6 +262,33 @@ class AttributionTests extends Tests {
         )
         expect (1, "cached paramAttr Leaf hello") (pattr ("hello") (Leaf (1)))
         expect (3, "cached paramAttr Leaf goodbye") (pattr ("goodbye") (Leaf (1)))
+    }
+    
+    test ("cached parameterised attributes are re-evaluated after reset") {
+        import Attribution._
+
+        var count = 0
+
+        lazy val pattr : String => Tree ==> Int =
+            paramAttr {
+                case "hello" => {
+                    case Pair (l, r) => count = count + 1; 0
+                    case Leaf (v)    => 1
+                    case _           => 2
+                }
+                case "goodbye" => {
+                    case _ => 3
+                }
+            }
+   
+        val t = Pair (Leaf (1), Leaf (2))
+
+        expect (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expect (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expect (1, "evaluation count") (count)
+        pattr.asInstanceOf[CachedParamAttribute[String,Tree,Int]].reset ()
+        expect (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expect (2, "evaluation count") (count)
     }
 
     test ("uncached parameterised attributes work") {

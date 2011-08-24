@@ -233,6 +233,13 @@ object Attribution extends AttributionBase {
         def isDefinedAt (t : T) =
             f isDefinedAt t
 
+        /**
+         * Immediately reset this attribute's memoisation cache.
+         */
+        def reset () {
+            memo.clear ()
+        }
+
     }
 
     /**
@@ -274,6 +281,13 @@ object Attribution extends AttributionBase {
                     f (arg) isDefinedAt t
 
             }
+
+        /**
+         * Immediately reset this attribute's memoisation cache.
+         */
+        def reset () {
+            memo.clear ()
+        }
 
     }
 

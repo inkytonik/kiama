@@ -174,6 +174,14 @@ object DynamicAttribution extends AttributionBase {
             composedF -= uncached
             resetMemo
         }
+
+        /**
+         * Immediately reset this attribute's memoisation cache.
+         */
+        def reset () {
+            memo.clear ()
+        }
+
     }
 
     /**

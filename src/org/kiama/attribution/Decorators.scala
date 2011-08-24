@@ -27,7 +27,7 @@ object Decorators {
     import org.kiama.attribution.Attributable
 
     /**
-     * A decorator that propogates an attribute value down the tree.
+     * A decorator that propagates an attribute value down the tree.
      */
     def down[T <: Attributable,U] (a : T ==> U) : T ==> U =
         attr {
@@ -48,7 +48,8 @@ object Decorators {
      * chain returns a pair of attributes that can be used to access the value
      * of the chain as it enters (resp. leaves) any node.
      */
-    def chain[T <: Attributable,U] (init : T ==> U) (update : (T ==> U) => T ==> U) : (T ==> U, T ==> U) = {
+    def chain[T <: Attributable,U] (init : T ==> U) (update : (T ==> U) => T ==> U) :
+            (T ==> U, T ==> U) = {
          
         lazy val indflt : T ==> U =
             attr {

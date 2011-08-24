@@ -64,6 +64,27 @@ class DynamicAttributionTests extends Tests {
         expect (false, "isDefinedAt Unused") (maximum.isDefinedAt (Unused (false)))
     }
 
+    test ("dynamic attribute are re-evaluated when reset") {
+
+        var count = 0
+
+        val sumleaf : Tree ==> Int =
+            attr {
+                case Leaf (v) => count = count + 1; v
+                case _        => -1
+            }
+
+        val t = Leaf (2)
+            
+        expect (2) (sumleaf (t))
+        expect (2) (sumleaf (t))
+        expect (1, "evaluation count") (count)
+        sumleaf.asInstanceOf[DynamicAttribute[Tree,Int]].reset ()
+        expect (2) (sumleaf (Leaf (2)))
+        expect (2, "evaluation count") (count)
+
+    }
+
     test ("dynamic attribute can be extended and reduced manually") {
 
         val sumleaf : Tree ==> Int =
