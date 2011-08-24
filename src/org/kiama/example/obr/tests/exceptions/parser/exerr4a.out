@@ -1,5 +1,5 @@
-[12.6] failure: keyword "DO" found where variable name expected
+[14.1] failure: keyword "DO" found where variable name expected
 
-   DO
+END ExErr4a.
 
-     ^
+^

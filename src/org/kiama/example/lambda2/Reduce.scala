@@ -50,7 +50,7 @@ trait Reduce extends RewritingEvaluator {
      */
     lazy val arithop =
         rule {
-            case Opn (op, Num (l), Num (r)) => Num (op.eval (l, r))
+            case Opn (Num (l), op, Num (r)) => Num (op.eval (l, r))
         }
 
 }

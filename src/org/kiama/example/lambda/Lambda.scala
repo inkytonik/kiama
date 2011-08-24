@@ -23,8 +23,6 @@ package example.lambda
 
 import org.kiama.util.GeneratingREPL
 import org.kiama.util.ParsingREPL
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
 
 /**
  * A simple lambda calculus.
@@ -79,7 +77,7 @@ object AST {
 /**
  * Parser to AST.
  */
- trait Parser extends RegexParsers with PackratParsers {
+ trait Parser extends org.kiama.util.Parser {
 
     import AST._
 
@@ -87,8 +85,8 @@ object AST {
         phrase (exp)
 
     lazy val exp : PackratParser[Exp] =
-        exp ~ factor ^^ { case l ~ r => App (l, r) } |
-        ("\\" ~> idn) ~ ("." ~> exp) ^^ { case i ~ b => Lam (i, b) } |
+        exp ~ factor ^^ App |
+        ("\\" ~> idn) ~ ("." ~> exp) ^^ Lam |
         factor |
         failure ("expression expected")
 

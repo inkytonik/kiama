@@ -96,8 +96,8 @@ trait Par extends ReduceSubst {
      */
     override lazy val subsOpn =
         rule {
-            case Letp (ds, Opn (op, e1, e2)) =>
-                Opn (op, Letp (ds, e1), Letp (ds, e2))
+            case Letp (ds, Opn (e1, op, e2)) =>
+                Opn (Letp (ds, e1), op, Letp (ds, e2))
         }
 
     /**

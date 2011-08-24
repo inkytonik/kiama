@@ -35,7 +35,7 @@ trait ParLazySubst extends Par {
      * expression itself, repeating until no change.
      */
     override lazy val s : Strategy =
-        attempt (App (s, id) + Opn (id, s, s)) <* attempt (lambda <* s)
+        attempt (App (s, id) + Opn (s, id, s)) <* attempt (lambda <* s)
 
 }
 

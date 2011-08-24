@@ -75,12 +75,12 @@ trait ParLazy extends Par {
      */
     def letOpn (eval : => Strategy) =
         rulefs {
-            case Letp (ds1, Opn (op, e1, e2)) =>
+            case Letp (ds1, Opn (e1, op, e2)) =>
                 eval (Letp (ds1, e1)) <* rulefs {
                     case Letp (ds2, e3) =>
                         eval (Letp (ds2, e2)) <* rule {
                             case Letp (ds3, e4) =>
-                                Letp (ds3, Opn (op, e3, e4))
+                                Letp (ds3, Opn (e3, op, e4))
                         }
                 }
         }
@@ -101,7 +101,7 @@ trait ParLazy extends Par {
             }
         lazy val r : Strategy =
             attempt (Var (chgname) + App (r, r) + Lam (newname, id, r) +
-                Opn (id, r, r) + Letp (map (r), r) + Bind (newname, r))
+                Opn (r, id, r) + Letp (map (r), r) + Bind (newname, r))
         r
     }
 

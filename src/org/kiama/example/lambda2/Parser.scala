@@ -21,13 +21,10 @@
 package org.kiama
 package example.lambda2
 
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
-
 /**
  * Parser to AST.
  */
-trait Parser extends RegexParsers with PackratParsers {
+trait Parser extends org.kiama.util.Parser {
 
     import AST._
     import Lambda.typecheck
@@ -36,19 +33,18 @@ trait Parser extends RegexParsers with PackratParsers {
         exp
 
     lazy val exp : PackratParser[Exp] =
-        "\\" ~> idn ~ itype ~ ("." ~> exp) ^^
-            { case i ~ t ~ e => Lam (i, t, e) } |
+        "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam |
         exp2
 
     def itype : PackratParser[Type] =
         if (typecheck) (":" ~> ttype) else ("" ^^^ null)
 
     lazy val exp2 : PackratParser[Exp] =
-        exp2 ~ op ~ exp1 ^^ { case l ~ o ~ r => Opn (o, l, r) } |
+        exp2 ~ op ~ exp1 ^^ Opn |
         exp1
 
     lazy val exp1 : PackratParser[Exp] =
-        exp1 ~ exp0 ^^ { case l ~ r => App (l, r) } |
+        exp1 ~ exp0 ^^ App |
         exp0
 
     lazy val exp0 : PackratParser[Exp] =
@@ -56,7 +52,7 @@ trait Parser extends RegexParsers with PackratParsers {
         "(" ~> positioned (exp) <~ ")"
 
     lazy val ttype : PackratParser[Type] =
-        ttype0 ~ ("->" ~> ttype) ^^ { case l ~ r => FunType (l, r) } |
+        ttype0 ~ ("->" ~> ttype) ^^ FunType |
         ttype0
 
     lazy val ttype0 : PackratParser[Type] =

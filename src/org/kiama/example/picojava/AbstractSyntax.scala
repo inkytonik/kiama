@@ -48,7 +48,7 @@ object AbstractSyntax {
     abstract class Decl (val Name : String) extends BlockStmt
     abstract class TypeDecl (Name : String) extends Decl (Name)
     case class ClassDecl (override val Name : String, Superclass : Option[IdnUse], Body : Block) extends TypeDecl (Name)
-    case class VarDecl (override val Name : String, Type : Access) extends Decl (Name)
+    case class VarDecl (Type : Access, override val Name : String) extends Decl (Name)
 
     abstract class Stmt extends BlockStmt
     case class AssignStmt (Variable : Access, Value : Exp) extends Stmt

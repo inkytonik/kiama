@@ -21,13 +21,10 @@
 package org.kiama
 package example.dataflow
 
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
-
 /**
  * Syntax analyser for simple imperative dataflow language.
  */
-trait Parser extends RegexParsers with PackratParsers {
+trait Parser extends org.kiama.util.Parser {
 
     import DataflowAST._
 
@@ -38,16 +35,13 @@ trait Parser extends RegexParsers with PackratParsers {
         asgnStm | whileStm | ifStm | blockStm | returnStm
 
     lazy val asgnStm : PackratParser[Assign] =
-        idn ~ ("=" ~> exp) ^^
-            { case l ~ r => Assign (l, r) }
+        idn ~ ("=" ~> exp) ^^ Assign
 
     lazy val whileStm : PackratParser[While] =
-        ("while" ~> "(" ~> exp <~ ")") ~ stm ^^
-            { case e ~ b => While (e, b) }
+        ("while" ~> "(" ~> exp <~ ")") ~ stm ^^ While
 
     lazy val ifStm : PackratParser[If] =
-        ("if" ~> "(" ~> exp <~ ")") ~ stm ~ ("else" ~> stm) ^^
-            { case e ~ t ~ f => If (e, t, f) }
+        ("if" ~> "(" ~> exp <~ ")") ~ stm ~ ("else" ~> stm) ^^ If
 
     lazy val blockStm : PackratParser[Block] =
         "{" ~> (stm*) <~ "}" ^^ Block

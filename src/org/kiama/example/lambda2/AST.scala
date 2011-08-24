@@ -63,7 +63,7 @@ object AST {
     /**
      * An application of a primitive binary operation.
      */
-    case class Opn (o : Op, e1 : Exp, e2 : Exp) extends Exp
+    case class Opn (e1 : Exp, o : Op, e2 : Exp) extends Exp
 
     /**
      * Bind name of type tipe to the value of exp in body.

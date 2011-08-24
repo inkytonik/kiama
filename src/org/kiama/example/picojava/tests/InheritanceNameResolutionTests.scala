@@ -41,31 +41,31 @@ class InheritanceNameResolutionTests extends Tests {
 
     // For the actual program text, see InheritanceNameResolutionTests.pj
 
-    private val declAa  = VarDecl ("a", Use ("int"))
+    private val declAa  = VarDecl (Use ("int"), "a")
     private val aInAA   = Use ("a")
-    private val declAAb = VarDecl ("b", Use ("int"))
+    private val declAAb = VarDecl (Use ("int"), "b")
     private val bInAA   = Use ("b")
     private val AinB    = Use ("A")
     private val aInB    = Use ("a")
-    private val declBc  = VarDecl ("c", Use ("int"))
+    private val declBc  = VarDecl (Use ("int"), "c")
     private val cInB    = Use ("c")
     private val AAinBB  = Use ("AA")
     private val aInBB   = Use ("a")
-    private val declAAe = VarDecl ("e", Use ("int"))
+    private val declAAe = VarDecl (Use ("int"), "e")
     private val eInBB   = Use ("e")
     private val fInBB   = Use ("f")
-    private val declBf  = VarDecl ("f", Use ("int"))
+    private val declBf  = VarDecl (Use ("int"), "f")
 
     private val declAA = ClassDecl ("AA", None, Block(
                              List (declAAb,
-                                   VarDecl ("d", Use ("int")),
+                                   VarDecl (Use ("int"), "d"),
                                    declAAe,
                                    AssignStmt (aInAA, bInAA))))
 
     private val declA = ClassDecl ("A", None, Block(
                             List (declAa,
-                                  VarDecl ("b", Use ("int")),
-                                  VarDecl ("c", Use ("int")),
+                                  VarDecl (Use ("int"), "b"),
+                                  VarDecl (Use ("int"), "c"),
                                   declAA)))
 
     val ast =
@@ -73,11 +73,11 @@ class InheritanceNameResolutionTests extends Tests {
             List (declA,
                   ClassDecl ("B", Some (AinB), Block (
                       List (declBc,
-                            VarDecl ("e", Use ("int")),
+                            VarDecl (Use ("int"), "e"),
                             declBf,
                             AssignStmt (aInB, cInB),
                             ClassDecl ("BB", Some (AAinBB), Block (
-                                List (VarDecl ("d", Use ("int")),
+                                List (VarDecl (Use ("int"), "d"),
                                       AssignStmt (aInBB, Use ("d")),
                                       AssignStmt (eInBB, fInBB))))))))))
 

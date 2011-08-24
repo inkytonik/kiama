@@ -29,17 +29,17 @@ object PicoJavaBenchmark extends App {
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 
-    def basicAst () = ClassDecl ("AA", None, Block (List (VarDecl ("x", Use ("int")))))
+    def basicAst () = ClassDecl ("AA", None, Block (List (VarDecl (Use ("int"), "x"))))
 
     def createAst (subtree : ClassDecl) =
         ClassDecl ("AA", None, Block (
-              List (VarDecl ("y", Use ("int")),
-                    VarDecl ("a", Use ("AA")),
+              List (VarDecl (Use ("int"), "y"),
+                    VarDecl (Use ("AA"), "a"),
                     AssignStmt (Use ("x"),
                                 Dot (Use ("a"), Use ("x"))),
                     subtree,
                     ClassDecl ("BB", Some (Use ("AA")), Block (
-                        List (VarDecl ("b", Use ("BB")),
+                        List (VarDecl (Use ("BB"), "b"),
                               AssignStmt (Dot (Use ("b"), Use("y")),
                                           Dot (Use ("b"), Use("x")))))))))
 

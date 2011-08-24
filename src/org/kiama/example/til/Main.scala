@@ -23,8 +23,6 @@ package example.til
 
 import java.io.Reader
 import org.scalatest.Assertions
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Standard main program for TIL chairmarks.  Also includes a simple
@@ -71,7 +69,7 @@ trait Main extends Assertions {
 /**
  * Standard main program for TIL chairmarks that parse.
  */
-trait ParsingMain extends Main with RegexParsers with PackratParsers {
+trait ParsingMain extends Main with org.kiama.util.Parser {
 
     /**
       * Process the file given by the argument reader by parsing it

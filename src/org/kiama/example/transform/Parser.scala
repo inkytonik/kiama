@@ -23,13 +23,10 @@
 package org.kiama
 package example.transform
 
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
-
 /**
  * Parse the input.
  */
-trait Parser extends RegexParsers with PackratParsers {
+trait Parser extends org.kiama.util.Parser {
 
     import AST._
 
@@ -37,14 +34,10 @@ trait Parser extends RegexParsers with PackratParsers {
         phrase (program)
 
     lazy val program : PackratParser[Program] =
-        rep (opdecl) ~ rep (vardecl) ~ exp ^^ {
-            case ops ~ vars ~ e => Program (ops, vars, e)
-        }
+        rep (opdecl) ~ rep (vardecl) ~ exp ^^ Program
 
     lazy val opdecl : PackratParser[(String,Int)] =
-        ("op" ~> op) ~ integer ^^ {
-            case n ~ i => (n, i)
-        }
+        ("op" ~> op) ~ integer
 
     lazy val op : PackratParser[String] =
         regex ("[-!@#$%^&*+_=:;<>,.?]+".r)
@@ -53,9 +46,7 @@ trait Parser extends RegexParsers with PackratParsers {
         "var" ~> ident ^^ VarDecl
 
     lazy val exp : PackratParser[ExpR] =
-        factor ~ op ~ exp ^^ {
-            case l ~ o ~ r => BinExpR (l, o, r)
-        } |
+        factor ~ op ~ exp ^^ BinExpR |
         factor ^^ Factor
 
     lazy val factor : PackratParser[PrimExp] =

@@ -21,13 +21,10 @@
 package org.kiama
 package example.imperative
 
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
-
 /**
  * Parser to AST.
  */
-trait Parser extends RegexParsers with PackratParsers {
+trait Parser extends org.kiama.util.Parser {
 
     import AST._
 
@@ -38,22 +35,22 @@ trait Parser extends RegexParsers with PackratParsers {
         ";" ^^^ Null () | sequence | asgnStmt | whileStmt
 
     lazy val asgnStmt : PackratParser[Asgn] =
-        variable ~ ("=" ~> exp) <~ ";" ^^ { case v ~ e => Asgn (v, e) }
+        variable ~ ("=" ~> exp) <~ ";" ^^ Asgn
 
     lazy val whileStmt : PackratParser[While] =
-        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ b => While (e, b) }
+        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ While
 
     lazy val sequence : PackratParser[Seqn] =
         "{" ~> (stmt*) <~ "}" ^^ Seqn
 
     lazy val exp : PackratParser[Exp] =
-        exp ~ ("+" ~> term) ^^ { case l ~ r => Add (l, r) } |
-        exp ~ ("-" ~> term) ^^ { case l ~ r => Sub (l, r) } |
+        exp ~ ("+" ~> term) ^^ Add |
+        exp ~ ("-" ~> term) ^^ Sub |
         term
 
     lazy val term : PackratParser[Exp] =
-        term ~ ("*" ~> factor) ^^ { case l ~ r => Mul (l, r) } |
-        term ~ ("/" ~> factor) ^^ { case l ~ r => Div (l, r) } |
+        term ~ ("*" ~> factor) ^^ Mul |
+        term ~ ("/" ~> factor) ^^ Div |
         factor
 
     lazy val factor : PackratParser[Exp] =

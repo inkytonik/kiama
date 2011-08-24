@@ -42,14 +42,14 @@ class BasicNameResolutionTests extends Tests {
 
     // For the actual program text, see BasicNameResolutionTests.pj
 
-    private val declRx = VarDecl ("x", Use ("int"))
+    private val declRx = VarDecl (Use ("int"), "x")
     private val xInR   = Use ("x")
-    private val declRz = VarDecl ("z", Use ("int"))
+    private val declRz = VarDecl (Use ("int"), "z")
     private val zInR   = Use ("z")
     private val yInR   = Use ("y")
     private val yInA   = Use("y")
     private val xInA   = Use ("x")
-    private val declAz = VarDecl ("z", Use ("int"))
+    private val declAz = VarDecl (Use ("int"), "z")
     private val zInA   = Use ("z")
 
     val ast =

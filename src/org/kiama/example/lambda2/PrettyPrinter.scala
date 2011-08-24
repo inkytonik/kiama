@@ -51,8 +51,8 @@ object PrettyPrinter extends org.kiama.util.PrettyPrinter
                                           group (nest (show (e))))
             case App (e1, e2)  => parens (show (e1) <+> show (e2))
             
-            case Opn (AddOp, l, r) => showbin (l, "+", r)
-            case Opn (SubOp, l, r) => showbin (l, "-", r)
+            case Opn (l, AddOp, r) => showbin (l, "+", r)
+            case Opn (l, SubOp, r) => showbin (l, "-", r)
 
             case Let (i, t, e1, e2) =>
                 parens ("let" <+> i <> showtypedecl (t) <+> '=' <>

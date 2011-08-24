@@ -117,12 +117,12 @@ class ParserTests extends Parser with RegexParserTests {
 
     test ("parse a variable declaration with a simple type") {
         assertParseOk ("{ A a; }", program,
-            Program (Block (List (VarDecl ("a", Use ("A"))))))
+            Program (Block (List (VarDecl (Use ("A"), "a")))))
     }
 
     test ("parse a variable declaration with a qualified type") {
         assertParseOk ("{ A.B.C a; }", program,
-            Program (Block (List (VarDecl ("a", Dot (Dot (Use ("A"), Use ("B")), Use ("C")))))))
+            Program (Block (List (VarDecl (Dot (Dot (Use ("A"), Use ("B")), Use ("C")), "a")))))
     }
 
     test ("generate an error for a qualified variable declaration") {

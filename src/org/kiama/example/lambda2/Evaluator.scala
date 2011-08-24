@@ -65,8 +65,8 @@ trait Evaluator {
                 Lam (z, t, substitute (x, e2, substitute (y, Var (z), e3)))
             case App (l, r) =>
                 App (substitute (x, e2, l), substitute (x, e2, r))
-            case Opn (op, l, r) =>
-                Opn (op, substitute (x, e2, l), substitute (x, e2, r))
+            case Opn (l, op, r) =>
+                Opn (substitute (x, e2, l), op, substitute (x, e2, r))
             case e =>
                 e
         }

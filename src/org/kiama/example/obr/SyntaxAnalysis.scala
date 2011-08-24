@@ -24,13 +24,10 @@
 package org.kiama
 package example.obr
 
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
-
 /**
  * Module containing parsers for the Obr language.
  */
-class SyntaxAnalysis extends RegexParsers with PackratParsers {
+class SyntaxAnalysis extends org.kiama.util.Parser {
 
     import ObrTree._
     import scala.collection.immutable.HashSet
@@ -84,16 +81,15 @@ class SyntaxAnalysis extends RegexParsers with PackratParsers {
             }
 
     lazy val constantdecl : Parser[Declaration] = positioned (
-        ident ~ ("=" ~> signed) ^^ { case i ~ e => IntConst (i, e) } |
-        ident <~ ":" <~ "EXCEPTION" ^^ ExnConst )
+        ident ~ ("=" ~> signed) ^^ IntConst |
+        ident <~ ":" <~ "EXCEPTION" ^^ ExnConst
+    )
 
     lazy val variabledecl : Parser[Declaration] = positioned (
         ident <~ ":" <~ "BOOLEAN" ^^ BoolVar |
         ident <~ ":" <~ "INTEGER" ^^ IntVar |
-        ident ~ (":" ~> "ARRAY" ~> integer <~ "OF" <~ "INTEGER") ^^
-        	{ case i ~ v => ArrayVar (i, v) } |
-        ident ~ (":" ~> "RECORD" ~> (fielddecl+) <~ "END") ^^
-            { case i ~ fs => RecordVar (i, fs) } |
+        ident ~ (":" ~> "ARRAY" ~> integer <~ "OF" <~ "INTEGER") ^^ ArrayVar |
+        ident ~ (":" ~> "RECORD" ~> (fielddecl+) <~ "END") ^^ RecordVar |
         // Extra clause to handle parsing the declaration of an enumeration variable
         ident ~ (":" ~> "(" ~> rep1sep (withPos (ident), ",") <~ ")") ^^
             { case i ~ cs => EnumVar (i, cs map { case p @ Pos (s) => EnumConst (s) setPos p.pos }) })
@@ -115,8 +111,8 @@ class SyntaxAnalysis extends RegexParsers with PackratParsers {
         positioned ("RAISE" ~> ident <~ ";" ^^ RaiseStmt)
 
     lazy val conditional : Parser[IfStmt] = positioned (
-        "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^
-             { case e ~ ss ~ oee => IfStmt (e, ss, oee)} )
+        "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt 
+    )
 
     lazy val optelseend : Parser[List[Statement]] =
     	"ELSE" ~> statementseq <~ "END" |
@@ -124,11 +120,10 @@ class SyntaxAnalysis extends RegexParsers with PackratParsers {
 
     lazy val iteration : Parser[Statement] = positioned (
         "LOOP" ~> statementseq <~ "END" ^^ LoopStmt |
-        "WHILE" ~> expression ~ ("DO" ~> statementseq <~ "END") ^^
-             { case e ~ ss => WhileStmt (e, ss) } |
+        "WHILE" ~> expression ~ ("DO" ~> statementseq <~ "END") ^^ WhileStmt |
         "FOR" ~> ident ~ (":=" ~> expression) ~ ("TO" ~> expression) ~
-             ("DO" ~> statementseq <~ "END") ^^
-                 { case i ~ e1 ~ e2 ~ ss => ForStmt (i, e1, e2, ss) } )
+             ("DO" ~> statementseq <~ "END") ^^ ForStmt
+    )
 
     lazy val trycatch : Parser[TryStmt] = positioned (
         withPos ("TRY") ~ statementseq ~ ((catchclause*) <~ "END") ^^
@@ -137,8 +132,8 @@ class SyntaxAnalysis extends RegexParsers with PackratParsers {
                 TryStmt (body, cs) } )
 
     lazy val catchclause : Parser[Catch] = positioned (
-        ("CATCH" ~> ident <~ "DO") ~ statementseq ^^
-            { case i ~ ss => Catch (i, ss) })
+        ("CATCH" ~> ident <~ "DO") ~ statementseq ^^ Catch
+    )
 
     lazy val expression : PackratParser[Expression] =
         expression ~ withPos ("=") ~ simplexp ^^
@@ -181,8 +176,7 @@ class SyntaxAnalysis extends RegexParsers with PackratParsers {
         positioned ("-" ~> factor ^^ NegExp)
 
     lazy val lvalue : PackratParser[AssignNode] =
-        positioned (ident ~ ("[" ~> expression <~ "]") ^^
-            { case a ~ e => IndexExp (a, e) }) |
+        positioned (ident ~ ("[" ~> expression <~ "]") ^^ IndexExp) |
         ident ~ withPos (".") ~ ident ^^
             { case r ~ p ~ f => FieldExp (r, f) setPos p.pos } |
         positioned (ident ^^ IdnExp)

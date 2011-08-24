@@ -29,13 +29,10 @@
 package org.kiama
 package example.picojava
 
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
-
 /**
  * PicoJava parser
  */
-trait Parser extends RegexParsers with PackratParsers {
+trait Parser extends org.kiama.util.Parser {
 
     import AbstractSyntax._
 
@@ -43,28 +40,27 @@ trait Parser extends RegexParsers with PackratParsers {
         block ^^ Program
 
     lazy val block : PackratParser[Block] =
-        "{" ~> (block_stmt*) <~ "}" ^^ { case bs => Block (bs) }
+        "{" ~> (block_stmt*) <~ "}" ^^ Block
     lazy val block_stmt =
         class_decl | var_decl | stmt
 
     lazy val class_decl =
         positioned (
-            "class" ~> IDENTIFIER ~ (xtends?) ~ block ^^
-                { case i ~ e ~ b => ClassDecl (i, e, b) }
+            "class" ~> IDENTIFIER ~ (xtends?) ~ block ^^ ClassDecl
         )
     lazy val xtends =
         "extends" ~> IDENTIFIER ^^ Use
     lazy val var_decl =
-        name ~ IDENTIFIER <~ ";" ^^ { case n ~ i => VarDecl (i, n) }
+        name ~ IDENTIFIER <~ ";" ^^ VarDecl
 
     lazy val stmt : Parser[Stmt] =
         assign_stmt | while_stmt
     lazy val assign_stmt =
         positioned (
-            name ~ ("=" ~> exp <~ ";") ^^ { case n ~ e => AssignStmt (n, e) }
+            name ~ ("=" ~> exp <~ ";") ^^ AssignStmt
         )
     lazy val while_stmt =
-        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ { case e ~ s => WhileStmt (e, s) }
+        ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ WhileStmt
 
     lazy val exp =
         boolean_literal | posname

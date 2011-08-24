@@ -85,40 +85,35 @@ trait TIL1_1 extends ParsingMain {
     lazy val declaration = "var" ~> identifier <~ ";" ^^ Decl
 
     lazy val assignment_statement =
-        identifier ~ (":=" ~> expression <~ ";") ^^
-            { case i ~ e => Assign (i, e) }
+        identifier ~ (":=" ~> expression <~ ";") ^^ Assign
 
     lazy val if_statement =
-        ("if" ~> expression) ~ ("then" ~> (statement*)) ~ ("else" ~> (statement*) <~ "end") ^^
-            { case c ~ t ~ e => IfElse (c, t, e) } |
-        "if" ~> expression ~ ("then" ~> (statement*) <~ "end") ^^
-            { case c ~ t => IfThen (c, t) }
+        ("if" ~> expression) ~ ("then" ~> (statement*)) ~ ("else" ~> (statement*) <~ "end") ^^ IfElse |
+        "if" ~> expression ~ ("then" ~> (statement*) <~ "end") ^^ IfThen
 
     lazy val while_statement =
-        ("while" ~> expression <~ "do") ~ (statement*) <~ "end" ^^
-            { case e ~ b => While (e, b) }
+        ("while" ~> expression <~ "do") ~ (statement*) <~ "end" ^^ While
 
     lazy val for_statement =
-        ("for" ~> identifier) ~ (":=" ~> expression) ~ ("to" ~> expression) ~ ("do" ~> (statement*) <~ "end") ^^
-            { case i ~ f ~ t ~ b => For (i, f, t, b) }
+        ("for" ~> identifier) ~ (":=" ~> expression) ~ ("to" ~> expression) ~ ("do" ~> (statement*) <~ "end") ^^ For
 
     lazy val read_statement = "read" ~> identifier <~ ";" ^^ Read
 
     lazy val write_statement = "write" ~> expression <~ ";" ^^ Write
 
     lazy val expression : PackratParser[Exp] =
-        expression ~ ("=" ~> term) ^^ { case e ~ t => Eq (e, t) } |
-        expression ~ ("!=" ~> term) ^^ { case e ~ t => Ne (e, t) } |
+        expression ~ ("=" ~> term) ^^ Eq |
+        expression ~ ("!=" ~> term) ^^ Ne |
         term
 
     lazy val term : PackratParser[Exp] =
-        term ~ ("+" ~> factor) ^^ { case t ~ f => Add (t, f) } |
-        term ~ ("-" ~> factor) ^^ { case t ~ f => Sub (t, f) } |
+        term ~ ("+" ~> factor) ^^ Add |
+        term ~ ("-" ~> factor) ^^ Sub |
         factor
 
     lazy val factor : PackratParser[Exp] =
-        factor ~ ("*" ~> primary) ^^ { case f ~ p => Mul (f, p) } |
-        factor ~ ("/" ~> primary) ^^ { case f ~ p => Div (f, p) } |
+        factor ~ ("*" ~> primary) ^^ Mul |
+        factor ~ ("/" ~> primary) ^^ Div |
         primary
 
     lazy val primary : PackratParser[Exp] =

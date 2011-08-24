@@ -44,7 +44,7 @@ object Analysis {
             case Var (v)         => Set (v)
             case Lam (v, _, e)   => fv (e) -- Set (v)
             case App (e1, e2)    => fv (e1) ++ fv (e2)
-            case Opn (_, e1, e2) => fv (e1) ++ fv (e2)
+            case Opn (e1, _, e2) => fv (e1) ++ fv (e2)
         }
 
     /**
@@ -116,7 +116,7 @@ object Analysis {
 
             // An operation must be applied to two integers and returns an
             // integer.
-            case Opn (op, e1, e2) => if (e1->tipe != IntType)
+            case Opn (e1, op, e2) => if (e1->tipe != IntType)
                                          message (e1, "expected Int, found " +
                                                       pretty (e1->tipe))
                                      if (e2->tipe != IntType)
@@ -190,7 +190,7 @@ object Analysis {
 
             // An operation must be applied to two integers and returns an
             // integer.
-            case Opn (op, e1, e2) => if (e1->tipe2 != IntType)
+            case Opn (e1, op, e2) => if (e1->tipe2 != IntType)
                                          message (e1, "expected Int, found " +
                                                     pretty (e1->tipe2))
                                      if (e2->tipe2 != IntType)

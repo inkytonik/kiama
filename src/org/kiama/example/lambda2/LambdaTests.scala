@@ -240,7 +240,7 @@ class LambdaTests extends Tests with Checkers with Parser {
 
     test ("lambda expressions evaluate to themselves: non-constant body") {
         assertEvalAll ("""\x : Int . x - 1""",
-                       Lam ("x", IntType, Opn (SubOp, Var ("x"), Num (1))))
+                       Lam ("x", IntType, Opn (Var ("x"), SubOp, Num (1))))
     }
 
     test ("parameters are correctly substituted: integer param") {
@@ -290,7 +290,7 @@ class LambdaTests extends Tests with Checkers with Parser {
 
     test ("redexes inside lambdas are evaluated or ignored as appropriate") {
         assertEvalAll ("""\x:Int.4+3""", Lam ("x", IntType, Num (7)),
-                       Lam ("x", IntType, Opn (AddOp, Num (4), Num (3))))
+                       Lam ("x", IntType, Opn (Num (4), AddOp, Num (3))))
     }
 
     /**
