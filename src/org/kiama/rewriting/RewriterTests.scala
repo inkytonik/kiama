@@ -892,7 +892,49 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectsame (Some (t)) (s (t))
         expect ("hello there: " + t + "\n") (e.result)
     }
-    
+
+    test ("log strategy produces the expected message and result on success") {
+        import org.kiama.util.StringEmitter
+        val e = new StringEmitter
+        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val s = log (r, "test log ", e)
+        val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
+        val u = Asgn (Var ("i"), Num (42))
+        expect (Some (u)) (s (t))
+        expect ("test log " + t + " succeeded with " + u + "\n") (e.result)
+    }
+
+    test ("log strategy produces the expected message and result on failure") {
+        import org.kiama.util.StringEmitter
+        val e = new StringEmitter
+        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val s = log (r, "test log ", e)
+        val t = Add (Num (1), Var ("i"))
+        expect (None) (s (t))
+        expect ("test log " + t + " failed\n") (e.result)
+    }
+
+    test ("logfail strategy produces no message but the right result on success") {
+        import org.kiama.util.StringEmitter
+        val e = new StringEmitter
+        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val s = logfail (r, "test log ", e)
+        val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
+        val u = Asgn (Var ("i"), Num (42))
+        expect (Some (u)) (s (t))
+        expect ("") (e.result)
+    }
+
+    test ("logfail strategy produces the expected message and result on failure") {
+        import org.kiama.util.StringEmitter
+        val e = new StringEmitter
+        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val s = logfail (r, "test log ", e)
+        val t = Add (Num (1), Var ("i"))
+        expect (None) (s (t))
+        expect ("test log " + t + " failed\n") (e.result)
+    }
+
     test ("rewrite returns the original term when the strategy fails") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         expectsame (Some (t)) (Some (rewrite (rwfail) (t)))

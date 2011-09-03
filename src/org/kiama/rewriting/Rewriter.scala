@@ -261,8 +261,48 @@ object Rewriter {
      * term is printed to the given emitter, prefixed by the string s.  The
      * emitter defaults to one that writes to standard output.
      */
-    def debug (s : String, emitter : Emitter = new Emitter) : Strategy =
-        strategyf (t => { emitter.emitln (s + t); Some (t) })
+    def debug (msg : String, emitter : Emitter = new Emitter) : Strategy =
+        strategyf (t => { emitter.emitln (msg + t); Some (t) })
+
+    /**
+     * Create a logging strategy for s.  The returned strategy succeeds or fails
+     * exactly as s does, but also prints the provided message, the subject term,
+     * the success or failure status, and on success, the result term, to the
+     * provided emitter (default: standard output).
+     */
+    def log[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy = 
+        new Strategy {
+            def apply (t1 : Term) = {
+                emitter.emit (msg + t1)
+                val r = s (t1)
+                r match {
+                    case Some (t2) =>
+                        emitter.emitln (" succeeded with " + t2)
+                    case None =>
+                        emitter.emitln (" failed")
+                }
+                r
+            }
+        }
+
+    /**
+     * Create a logging strategy for s.  The returned strategy succeeds or fails
+     * exactly as s does, but if s fails, also prints the provided message and
+     * the subject term to the provided emitter (default: standard output).
+     */
+    def logfail[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy = 
+        new Strategy {
+            def apply (t1 : Term) = {
+                val r = s (t1)
+                r match {
+                    case Some (t2) =>
+                        // Do nothing
+                    case None =>
+                        emitter.emitln (msg + t1 + " failed")
+                }
+                r
+            }
+        }
 
     /**
      * Construct a strategy that succeeds only if the subject term matches
