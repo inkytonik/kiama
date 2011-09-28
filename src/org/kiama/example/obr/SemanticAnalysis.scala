@@ -36,7 +36,7 @@ object SemanticAnalysis {
      * Visit all nodes to check for semantic errors.  Errors will be recorded
      * using the Messaging module so that they can be reported to the user later.
      */
-    val errors : Attributable ==> Unit =
+    val errors : Attributable => Unit =
         attr {
             case node =>
                 // Process the errors of the children of node
@@ -150,7 +150,7 @@ object SemanticAnalysis {
     /**
      * Attribute to consecutively number enumeration constants.
      */
-    val enumconstnum : EnumConst ==> Int =
+    val enumconstnum : EnumConst => Int =
         attr {
             case c if (c.isFirst)   => 0
             case c                  => (c.prev[EnumConst]->enumconstnum) + 1
@@ -166,7 +166,7 @@ object SemanticAnalysis {
     /**
      * Attribute to consecutively number exception constants
      */
-    val exnconstnum : Declaration ==> Int =
+    val exnconstnum : Declaration => Int =
         attr {
             case c if (c.isFirst)   => userExn
             case c                  =>
@@ -189,7 +189,7 @@ object SemanticAnalysis {
      * The environment containing all bindings visible at a particular
      * node in the tree, not including any that are defined at that node.
      */
-    val env : ObrNode ==> Environment =
+    val env : ObrNode => Environment =
         attr {
             case ObrInt (_, ds, ss, _)          => (ds.last)->envout
             case d : Declaration if (d.isFirst) => initEnv
@@ -203,7 +203,7 @@ object SemanticAnalysis {
      * particular node in the tree.  I.e., its the environment at the
      * node plus any new bindings introduced by the node.
      */
-    val envout : ObrNode ==> Environment =
+    val envout : ObrNode => Environment =
         attr {
             case n @ IntParam (i)      => define (n->env, i, Variable (IntType))
             case n @ IntVar (i)        => define (n->env, i, Variable (IntType))
@@ -239,7 +239,7 @@ object SemanticAnalysis {
      * If a name has been used previously in a declaration then return an
      * unknown entity which will trigger an error.
      */
-    val entity : EntityNode ==> Entity =
+    val entity : EntityNode => Entity =
         attr {
             case n @ IntParam (i)     => (n->envout) (i)
             case n @ IntVar (i)       => (n->envout) (i)
@@ -296,7 +296,7 @@ object SemanticAnalysis {
     /**
      * What is the type of an expression?
      */
-    val tipe : Expression ==> Type =
+    val tipe : Expression => Type =
         attr {
             case AndExp (l, r)      => BoolType
             case BoolExp (b)        => BoolType
@@ -322,7 +322,7 @@ object SemanticAnalysis {
      * What is the expected type of an expression?  I.e., what type does
      * the context impose on it.  Returns UnknownType if any type will do.
      */
-    val exptipe : Expression ==> Set[TypeBase] =
+    val exptipe : Expression => Set[TypeBase] =
         attr {
             case e =>
                 (e.parent) match {
@@ -375,7 +375,7 @@ object SemanticAnalysis {
     /**
      * Is the expression something that can be assigned to?
      */
-    val assignable : Expression ==> Boolean =
+    val assignable : Expression => Boolean =
         attr {
             case n @ IdnExp (_)  => (n->entity).isassignable
             case IndexExp (_, _) => true
@@ -387,7 +387,7 @@ object SemanticAnalysis {
      * Is this statement inside a LOOP statement?  Used to
      * check that EXIT statements are placed appropriately.
      */
-    val isinloop : Statement ==> Boolean =
+    val isinloop : Statement => Boolean =
         attr {
             case s => (s.parent) match {
                 case _ : ObrInt    => false

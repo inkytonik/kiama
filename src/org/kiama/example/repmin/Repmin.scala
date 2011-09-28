@@ -27,7 +27,7 @@ import org.kiama.attribution.Attribution._
 /**
  * AST for Repmin examples.
  */
-abstract class Tree extends Attributable
+sealed abstract class Tree extends Attributable
 case class Fork (left : Tree, right : Tree) extends Tree
 case class Leaf (value : Int) extends Tree
 
@@ -35,7 +35,7 @@ case class Leaf (value : Int) extends Tree
  * Repmin implementations must provide a repmin attribute.
  */
 trait RepminImpl {
-    val repmin : Tree ==> Tree
+    val repmin : Tree => Tree
 }
 
 /**
@@ -43,19 +43,19 @@ trait RepminImpl {
  */
 trait RepminBase extends RepminImpl {
 
-    val locmin : Tree ==> Int =
+    val locmin : Tree => Int =
         attr {
             case Fork (l, r) => (l->locmin) min (r->locmin)
             case Leaf (v)    => v
         }
 
-    val repmin : Tree ==> Tree =
+    val repmin : Tree => Tree =
         attr {
             case Fork (l, r) => Fork (l->repmin, r->repmin)
             case t : Leaf    => Leaf (t->globmin)
         }
 
-    val globmin : Tree ==> Int
+    val globmin : Tree => Int
 
 }
 
@@ -67,7 +67,7 @@ trait RepminBase extends RepminImpl {
  */
 trait Repmin extends RepminBase {
 
-    val globmin : Tree ==> Int =
+    val globmin : Tree => Int =
         attr {
             case t if t isRoot => t->locmin
             case t             => t.parent[Tree]->globmin
@@ -82,8 +82,8 @@ trait RepminDec extends RepminBase {
 
     import org.kiama.attribution.Decorators._
 
-    val globmin : Tree ==> Int =
-        down {
+    val globmin : Tree => Int =
+        down[Tree,Int] {
             case t if t isRoot => t->locmin
         }
 

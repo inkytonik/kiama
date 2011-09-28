@@ -38,20 +38,24 @@ object Analysis {
     /**
      * The variables that are free in the given expression.
      */
-    val fv : Exp ==> Set[Idn] =
+    val fv : Exp => Set[Idn] =
         attr {
-            case Num (_)         => Set ()
-            case Var (v)         => Set (v)
-            case Lam (v, _, e)   => fv (e) -- Set (v)
-            case App (e1, e2)    => fv (e1) ++ fv (e2)
-            case Opn (e1, _, e2) => fv (e1) ++ fv (e2)
+            case Num (_)            => Set ()
+            case Var (v)            => Set (v)
+            case Lam (v, _, e)      => fv (e) -- Set (v)
+            case App (e1, e2)       => fv (e1) ++ fv (e2)
+            case Opn (e1, _, e2)    => fv (e1) ++ fv (e2)
+            case Let (i, t, e1, e2) => fv (e1) ++ fv (e2) -- Set (i)
+            case Letp (bs, e)       => val fbv = bs.map (_.e).map (fv).flatten.toSet
+                                       val bvars = bs.map (_.i).toSet
+                                       fbv ++ (fv (e) -- bvars)
         }
 
     /**
      * The environment of an expression is the list of variable names that
      * are visible in that expression and their types.
      */
-    val env : Exp ==> List[(Idn,Type)] =
+    val env : Exp => List[(Idn,Type)] =
         childAttr {
             case _ => {
 
@@ -77,7 +81,7 @@ object Analysis {
      * The type of an expression.  Checks constituent names and types.  Uses
      * the env attribute to get the bound variables and their types.
      */
-    val tipe : Exp ==> Type =
+    val tipe : Exp => Type =
         attr {
 
             // A number is always of integer type
@@ -123,13 +127,19 @@ object Analysis {
                                          message (e2, "expected Int, found " +
                                                       pretty (e2->tipe))
                                      IntType
+
+            // A let returns the type of the body expression
+            case Let (i, t, e1, e2) => e2->tipe
+
+            // A parallel returns the type of the body expression
+            case Letp (bs, e)       => e->tipe
         }
 
     /**
      * For a given variable reference, return the lambda node that binds it if
      * there is one, otherwise return None.
      */
-    def lookup (name : Idn) : Exp ==> Option[Lam] =
+    def lookup (name : Idn) : Exp => Option[Lam] =
         attr {
             // Inside a lambda expression the bound variable is now visible
             // in addition to everything that is visible from above.  If
@@ -151,7 +161,7 @@ object Analysis {
      * the lookup attribute to get the lambda node that binds a name. For
      * other cases it behaves like tipe.
      */
-    val tipe2 : Exp ==> Type =
+    val tipe2 : Exp => Type =
         attr {
 
             // A number is always of integer type
@@ -198,12 +208,17 @@ object Analysis {
                                                     pretty (e2->tipe2))
                                      IntType
 
+            // A let returns the type of the body expression
+            case Let (i, t, e1, e2) => e2->tipe
+
+            // A parallel returns the type of the body expression
+            case Letp (bs, e)       => e->tipe
         }
 
     /**
      * The declaration (if any) of an identifier use.
      */
-    def decl : Var ==> Option[Lam] =
+    def decl : Var => Option[Lam] =
         attr {
             case e @ Var (x) => e->lookup (x)
         }

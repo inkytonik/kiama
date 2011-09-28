@@ -47,7 +47,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp extends ImperativeNode {
+    sealed abstract class Exp extends ImperativeNode {
 
         /**
          * The numeric value of the expression.
@@ -158,7 +158,7 @@ object AST {
     /**
      * Statements.
      */
-    abstract class Stmt extends ImperativeNode {
+    sealed abstract class Stmt extends ImperativeNode {
 
         /**
          * The set of all variable references in the statement.

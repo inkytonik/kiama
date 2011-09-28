@@ -25,7 +25,7 @@ object Company {
     
     import org.kiama.attribution.Attributable
     
-    trait Node extends Attributable
+    sealed trait Node extends Attributable
     
     case class Company (depts : List[Dept]) extends Node
     case class Dept (n : Name, m : Manager, su : List[SubUnit]) extends Node
@@ -33,7 +33,7 @@ object Company {
     type Manager = Employee
     case class Employee (n : Name, a : Address, s : Salary) extends Node
 
-    abstract class SubUnit extends Node
+    sealed abstract class SubUnit extends Node
     case class PU (e : Employee) extends SubUnit
     case class DU (d : Dept) extends SubUnit
     

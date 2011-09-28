@@ -39,7 +39,7 @@ object AST {
     /**
      * Nodes that have entities associated with them.
      */
-    trait EntityNode extends ASTNode
+    sealed trait EntityNode extends ASTNode
 
     /**
      * A program is a map from operator names to priorities, a right recursive
@@ -57,7 +57,7 @@ object AST {
     /**
      * Right recursive expression syntax class.
      */
-    abstract class ExpR extends ASTNode
+    sealed abstract class ExpR extends ASTNode
 
     /**
      * Right recursive binary operator expression.
@@ -72,7 +72,7 @@ object AST {
     /**
      * Unrestricted expression syntax class.
      */
-    abstract class Exp extends ASTNode
+    sealed abstract class Exp extends ASTNode
 
     /**
      * Binary operator expression with arbitrary expression children.
@@ -82,7 +82,7 @@ object AST {
     /**
      * Primitive expression abstract class.
      */
-    abstract class PrimExp extends Exp
+   sealed abstract class PrimExp extends Exp
 
     /**
      * Integer literal expression.

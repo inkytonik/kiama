@@ -87,7 +87,7 @@ class SPARCEncoder (emitter : Emitter) {
      * as the right operand since the latter will not be needed again.
      * Leaves actually allocate a register from the available registers.
      */
-    val reg : Datum ==> Int =
+    val reg : Datum => Int =
         attr {
             case AddW (_, r)       => r->reg
             case Cond (cond, t, f) => cond->reg

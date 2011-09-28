@@ -38,25 +38,25 @@ object AbstractSyntax {
     import scala.util.parsing.input.Positional
 
     // Created by parser
-    trait ASTNode extends Attributable with Positional
+    sealed trait ASTNode extends Attributable with Positional
 
     case class Program (Block : Block) extends ASTNode
 
     case class Block (BlockStmts : Seq[BlockStmt]) extends ASTNode
-    abstract class BlockStmt extends ASTNode
+    sealed abstract class BlockStmt extends ASTNode
 
-    abstract class Decl (val Name : String) extends BlockStmt
-    abstract class TypeDecl (Name : String) extends Decl (Name)
+    sealed abstract class Decl (val Name : String) extends BlockStmt
+    sealed abstract class TypeDecl (Name : String) extends Decl (Name)
     case class ClassDecl (override val Name : String, Superclass : Option[IdnUse], Body : Block) extends TypeDecl (Name)
     case class VarDecl (Type : Access, override val Name : String) extends Decl (Name)
 
-    abstract class Stmt extends BlockStmt
+    sealed abstract class Stmt extends BlockStmt
     case class AssignStmt (Variable : Access, Value : Exp) extends Stmt
     case class WhileStmt (Condition : Exp, Body : Stmt) extends Stmt
 
-    abstract class Exp extends ASTNode
-    abstract class Access extends Exp
-    abstract class IdnUse (val Name : String) extends Access
+    sealed abstract class Exp extends ASTNode
+    sealed abstract class Access extends Exp
+    sealed abstract class IdnUse (val Name : String) extends Access
 
     case class Use (override val Name : String) extends IdnUse (Name)
     case class Dot (ObjectReference : Access, IdnUse : IdnUse) extends Access

@@ -38,7 +38,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp extends Attributable with Positional
+    sealed abstract class Exp extends Attributable with Positional
 
     /**
      * Numeric expressions.
@@ -85,7 +85,7 @@ object AST {
     /**
      * Types.
      */
-    abstract class Type extends Attributable
+    sealed abstract class Type extends Attributable
 
     /**
      * Primitive integer type.
@@ -100,7 +100,7 @@ object AST {
     /**
      * Primitive binary operators.
      */
-    abstract class Op {
+    sealed abstract class Op {
         /**
          * Evaluate the oeprator on the given integer operands.
          */

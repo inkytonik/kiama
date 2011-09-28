@@ -31,8 +31,8 @@ object Precedence {
      * Return the salary of the boss of a particular part of a company,
      * or Float.MaxValue if there is no such boss.
      */
-    private def bosssalary : Node ==> Salary =
-        down {
+    private def bosssalary : Node => Salary =
+        down[Node,Salary] {
             case n if n isRoot =>
                 Float.MaxValue
             case Dept (_, Employee (_, _, s), _) =>

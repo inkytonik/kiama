@@ -37,7 +37,7 @@ object AST {
     /**
      * Expressions.
      */
-    abstract class Exp
+    sealed abstract class Exp
 
     /**
      * Numeric expressions.

@@ -65,7 +65,7 @@ object SECDBase {
     /**
      * Attribute mechanism for automatically numbering bytecode instructions
      */
-    val instNumber : ByteCode ==> Int =
+    val instNumber : ByteCode => Int =
         attr {
             case t if t isRoot => 1
             case t if t isFirst => t.parent match {
@@ -75,7 +75,7 @@ object SECDBase {
             case t => t.prev[ByteCode]->nextInstNumber
         }
     
-    val nextInstNumber : ByteCode ==> Int =
+    val nextInstNumber : ByteCode => Int =
         attr {
             case t if t hasChildren => t.lastChild[ByteCode]->nextInstNumber
             case t => t->instNumber + 1

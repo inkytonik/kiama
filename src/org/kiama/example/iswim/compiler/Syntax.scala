@@ -37,8 +37,8 @@ object Syntax {
 	 * as statements.
 	 */
 	abstract class Iswim extends Attributable with Positional
-	abstract class Expr extends Iswim
-	abstract class Stmt extends Iswim
+	sealed abstract class Expr extends Iswim
+	sealed abstract class Stmt extends Iswim
 
 	/**
 	 * A complete ISWIM program

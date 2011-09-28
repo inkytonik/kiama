@@ -32,13 +32,13 @@ trait ControlFlow {
     /**
      * Control flow successor relation.
      */
-    val succ : Stm ==> Set[Stm]
+    val succ : Stm => Set[Stm]
 
 
     /**
      * Control flow default successor relation.
      */
-    val following : Stm ==> Set[Stm]
+    val following : Stm => Set[Stm]
 
 }
 
@@ -77,12 +77,12 @@ trait Variables {
     /**
      * Variable uses.
      */
-    val uses : Stm ==> Set[Var]
+    val uses : Stm => Set[Var]
 
     /**
      * Variable definitions.
      */
-    val defines : Stm ==> Set[Var]
+    val defines : Stm => Set[Var]
 
 }
 
@@ -116,12 +116,12 @@ trait Liveness {
     /**
      * Variables "live" into a statement.
      */
-    val in : Stm ==> Set[Var]
+    val in : Stm => Set[Var]
 
     /**
      * Variables "live" out of a statement.
      */
-    val out : Stm ==> Set[Var]
+    val out : Stm => Set[Var]
 
 }
 
@@ -136,7 +136,7 @@ trait LivenessImpl extends Liveness {
     var icount = 0
     var ocount = 0
 
-    val in : Stm ==> Set[Var] =
+    val in : Stm => Set[Var] =
         circular (Set[Var]()) {
             // Optimisation to not include vars used to calculate v
             // if v is not live in the following.
@@ -147,7 +147,7 @@ trait LivenessImpl extends Liveness {
                 uses (s) ++ (out (s) -- defines (s))
         }
 
-    val out : Stm ==> Set[Var] =
+    val out : Stm => Set[Var] =
         circular (Set[Var]()) {
             case s =>
                 ocount = ocount + 1

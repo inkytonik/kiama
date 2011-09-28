@@ -42,7 +42,7 @@ object SPARCTransformation {
      * so that the memory size is fully computed before we generate the
      * SPARC node.
      */
-    val code : ObrInt ==> SPARC =
+    val code : ObrInt => SPARC =
         attr {
             case ObrInt (_, decls, stmts, _) =>
                 val dbody = decls.flatMap (ditems)
@@ -75,7 +75,7 @@ object SPARCTransformation {
      * The SPARC machine items that are the translation of the given
      * Obr language declaration.
      */
-    private val ditems : Declaration ==> List[Item] =
+    private val ditems : Declaration => List[Item] =
         attr {
 
             /**
@@ -97,7 +97,7 @@ object SPARCTransformation {
      * The SPARC machine items that are the translation of the given
      * Obr language statement.
      */
-    private val sitems : Statement ==> List[Item] =
+    private val sitems : Statement => List[Item] =
         attr {
 
             /**
@@ -193,13 +193,21 @@ object SPARCTransformation {
                     body.flatMap (sitems) ++
                     List (LabelDef (lab1), Bne (cond->datum, lab2))
 
+            /**
+             * FIXME: Haven't implemented exceptions on this platform yet...
+             */
+            case _ : RaiseStmt =>
+                sys.error ("sitems: don't know how to generate SPARC for RaiseStmt")
+
+            case _ : TryStmt =>
+                sys.error ("sitems: don't know how to generate SPARC for TryStmt")
         }
 
     /**
      * The SPARC machine datum that is the translation of the given
      * Obr language expression.
      */
-    private val datum : Expression ==> Datum =
+    private val datum : Expression => Datum =
         attr {
 
             /**

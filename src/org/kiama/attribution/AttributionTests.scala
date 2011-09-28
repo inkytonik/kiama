@@ -53,7 +53,7 @@ class AttributionTests extends Tests {
 
         var count = 0
 
-        lazy val maximum : Tree ==> Int =
+        lazy val maximum : Tree => Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -71,7 +71,7 @@ class AttributionTests extends Tests {
 
         var count = 0
 
-        lazy val maximum : Tree ==> Int =
+        lazy val maximum : Tree => Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -92,7 +92,7 @@ class AttributionTests extends Tests {
 
         var count = 0
 
-        lazy val maximum : Tree ==> Int =
+        lazy val maximum : Tree => Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -105,28 +105,13 @@ class AttributionTests extends Tests {
         expect (10, "second value") (s->maximum)
         expect (4, "evaluation count") (count)
     }
-    
-    test ("cached attributes are defined where they should be") {
-        import Attribution._
-
-        lazy val maximum : Tree ==> Int =
-            attr {
-                case Pair (l,r) => 0
-                case Leaf (v)   => 0
-            }
-            
-        expect (true, "isDefinedAt Leaf") (maximum.isDefinedAt (Leaf (1)))
-        expect (true, "isDefinedAt Pair") (maximum.isDefinedAt (Pair (Leaf (1), Leaf (2))))
-        expect (false, "isDefinedAt Unused") (maximum.isDefinedAt (Unused (false)))
-        
-    }
 
     test ("cached attributes can be reset") {
         import Attribution._
 
         var count = 0
 
-        lazy val maximum : Tree ==> Int =
+        lazy val maximum : Tree => Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -145,7 +130,7 @@ class AttributionTests extends Tests {
 
         var count = 0
 
-        lazy val maximum : Tree ==> Int =
+        lazy val maximum : Tree => Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -158,25 +143,10 @@ class AttributionTests extends Tests {
         expect (4, "evaluation count") (count)
     }
 
-    test ("uncached attributes are defined where they should be") {
-        import UncachedAttribution._
-
-        lazy val maximum : Tree ==> Int =
-            attr {
-                case Pair (l,r) => 0
-                case Leaf (v)   => 0
-            }
-            
-        expect (true, "isDefinedAt Leaf") (maximum.isDefinedAt (Leaf (1)))
-        expect (true, "isDefinedAt Pair") (maximum.isDefinedAt (Pair (Leaf (1), Leaf (2))))
-        expect (false, "isDefinedAt Unused") (maximum.isDefinedAt (Unused (false)))
-        
-    }
-
     test ("cached child attributes work") {
         import Attribution._
 
-        lazy val cattr : Tree ==> Int =
+        lazy val cattr : Tree => Int =
             childAttr {
                 case Pair (l, r) => {
                     case Pair (l, r) => 0
@@ -209,7 +179,7 @@ class AttributionTests extends Tests {
     test ("uncached child attributes work") {
         import UncachedAttribution._
 
-        lazy val cattr : Tree ==> Int =
+        lazy val cattr : Tree => Int =
             childAttr {
                 case Pair (l, r) => {
                     case Pair (l, r) => 0
@@ -242,7 +212,7 @@ class AttributionTests extends Tests {
     test ("cached parameterised attributes work") {
         import Attribution._
 
-        lazy val pattr : String => Tree ==> Int =
+        lazy val pattr : String => Tree => Int =
             paramAttr {
                 case "hello" => {
                     case Pair (l, r) => 0
@@ -269,7 +239,7 @@ class AttributionTests extends Tests {
 
         var count = 0
 
-        lazy val pattr : String => Tree ==> Int =
+        lazy val pattr : String => Tree => Int =
             paramAttr {
                 case "hello" => {
                     case Pair (l, r) => count = count + 1; 0
@@ -294,7 +264,7 @@ class AttributionTests extends Tests {
     test ("uncached parameterised attributes work") {
         import UncachedAttribution._
 
-        lazy val pattr : String => Tree ==> Int =
+        lazy val pattr : String => Tree => Int =
             paramAttr {
                 case "hello" => {
                     case Pair (l, r) => 0
@@ -319,15 +289,15 @@ class AttributionTests extends Tests {
     test ("circularities are detected for cached attributes") {
         import Attribution._
 
-        lazy val direct : Tree ==> Int =
+        lazy val direct : Tree => Int =
             attr {
                 case t => t->direct
             }
-        lazy val indirect : Tree ==> Int =
+        lazy val indirect : Tree => Int =
             attr {
                 case t => t->indirect2
             }
-        lazy val indirect2 : Tree ==> Int =
+        lazy val indirect2 : Tree => Int =
             attr {
                 case t => t->indirect
             }
@@ -348,15 +318,15 @@ class AttributionTests extends Tests {
     test ("circularities are detected for uncached attributes") {
         import UncachedAttribution._
 
-        lazy val direct : Tree ==> Int =
+        lazy val direct : Tree => Int =
             attr {
                 case t => t->direct
             }
-        lazy val indirect : Tree ==> Int =
+        lazy val indirect : Tree => Int =
             attr {
                 case t => t->indirect2
             }
-        lazy val indirect2 : Tree ==> Int =
+        lazy val indirect2 : Tree => Int =
             attr {
                 case t => t->indirect
             }

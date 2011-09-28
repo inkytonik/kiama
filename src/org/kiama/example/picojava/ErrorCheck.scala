@@ -144,7 +144,7 @@ object ErrorCheck {
      * inh boolean IdnUse.isQualified();
      * inh boolean TypeDecl.isQualified();
      */
-    val isQualified : IdnUse ==> Boolean =
+    val isQualified : IdnUse => Boolean =
         attr {
             i => i.parent match {
                 case Dot (_, _)  => true
@@ -165,7 +165,7 @@ object ErrorCheck {
      * inh Access IdnUse.qualifier();
      * inh Access TypeDecl.qualifier();
      */
-    val qualifier : IdnUse ==> Access =
+    val qualifier : IdnUse => Access =
         attr {
             i => i.parent match {
                 case Dot (o, _)  => o

@@ -55,8 +55,8 @@ object RISCISA {
     /**
      * Machine instructions.
      */
-    abstract class Assembler
-    abstract class Instr extends Assembler
+    sealed abstract class Assembler
+    sealed abstract class Instr extends Assembler
 
     /**
      * Shift the value in register c by b and store the result in register a.
@@ -360,7 +360,7 @@ object RISCISA {
      * created using symbolic labels. The assembler sets the disp
      * field once the symbolic label has been resolved to an offset.
      */
-    abstract class Branch extends Instr {
+    sealed abstract class Branch extends Instr {
         val label : Int
         var disp : Disp = -1
         override def toString : String = 
@@ -454,7 +454,7 @@ object RISCISA {
      * Pseudo instructions. These aren't really RISC machine instructions but
      * are used to insert comments and labels into a RISC assembly code program
      */
-    abstract class Pseudo extends Assembler
+    sealed abstract class Pseudo extends Assembler
      
     /**
      * Branch target label

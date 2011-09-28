@@ -44,7 +44,7 @@ class LambdaTests extends Tests with Checkers with Parser {
      * Compute the type of e using the specified attribute and check to make
      * sure the relevant message is reported.
      */
-    def assertType (e : Exp, aname : String, a : Exp ==> Type, line : Int, col : Int, msg : String) {
+    def assertType (e : Exp, aname : String, a : Exp => Type, line : Int, col : Int, msg : String) {
         a (e)
         if (messagecount == 0)
             fail (aname + ": no messages produced, expected (" + line + "," + col + ") " + msg)
