@@ -1,0 +1,7 @@
+* get escape sequences working properly
+
+** parser doesn't recognise them
+** need to convert to actual characters
+** pretty-printing needs to convert back
+
+* check that toDouble supports conversion of all JSON format numbers
