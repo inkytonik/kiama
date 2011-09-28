@@ -275,20 +275,25 @@ trait PrettyPrinterBase {
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
-     * Return a pretty-printer document for p.  If p is a Product, print it in
-     * standard prefix list form, otherwise use p's toDoc method.  As a special
-     * case, print lists as List (...) and Nil instead of using ::.  Also, 
-     * strings are printed with surrounding double quotes.
+     * Return a pretty-printer document for p. If p is a Product, print it in
+     * standard prefix list form, otherwise use p's toDoc method. As special
+     * cases, pretty-print lists with indentation as List (...) and Nil instead
+     * of using ::, vectors as Vector (...), and maps as Map (...) and tuples
+     * using arrow notation. Also, strings are printed with surrounding double
+     * quotes.
      */
     def product (p : Any) : Doc = {
         p match {
-            case Nil         => text ("Nil")
-            case l : List[_] => list (l, "List ", product)
-            case p : Product => list (p.productIterator.toList,
-                                      p.productPrefix + " ",
-                                      product)
-            case s : String  => dquotes (text (s))
-            case a           => a.toDoc
+            case Nil           => text ("Nil")
+            case l : List[_]   => list (l, "List ", product)
+            case v : Vector[_] => list (v.toList, "Vector ", product)
+            case m : Map[_,_]  => list (m.toList, "Map ", product)
+            case (l, r)        => product (l) <+> "->" <+> product (r)
+            case p : Product   => list (p.productIterator.toList,
+                                        p.productPrefix + " ",
+                                        product)
+            case s : String    => dquotes (text (s))
+            case a             => a.toDoc
         }
     }
 
@@ -487,7 +492,7 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that encloses a given document between left
-     * and right parentheses.
+     * and right square brackets.
      */
     def brackets (d : Doc) : Doc =
         enclose (lbracket, d, rbracket)
