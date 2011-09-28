@@ -43,7 +43,7 @@ object TypeAnalysis {
      * syn boolean Decl.isUnknown() = false;
      * eq UnknownDecl.isUnknown() = true;
      */
-    val isUnknown : Decl ==> Boolean =
+    val isUnknown : Decl => Boolean =
         attr {
             case UnknownDecl (_) => true
             case _               => false
@@ -60,7 +60,7 @@ object TypeAnalysis {
      * eq Dot.type() = getIdnUse().type();
      * eq BooleanLiteral.type() = booleanType();
      */
-    val tipe : ASTNode ==> TypeDecl =
+    val tipe : ASTNode => TypeDecl =
         attr {
             case t : TypeDecl       => t
             case v : VarDecl        => v.Type->decl->tipe
@@ -79,7 +79,7 @@ object TypeAnalysis {
      * eq ClassDecl.isSubtypeOf(TypeDecl typeDecl) = typeDecl.isSuperTypeOfClassDecl(this);
      * eq UnknownDecl.isSubtypeOf(TypeDecl typeDecl) = true;
      */
-    val isSubtypeOf : TypeDecl => TypeDecl ==> Boolean =
+    val isSubtypeOf : TypeDecl => TypeDecl => Boolean =
         paramAttr {
              typedecl => {
                  case UnknownDecl (_) => true
@@ -95,11 +95,11 @@ object TypeAnalysis {
      * syn lazy boolean TypeDecl.isSuperTypeOf(TypeDecl typeDecl) = this == typeDecl;
      * eq UnknownDecl.isSuperTypeOf(TypeDecl typeDecl) = true;
      */
-    private val isSuperTypeOf : TypeDecl => Decl ==> Boolean =
+    private val isSuperTypeOf : TypeDecl => TypeDecl => Boolean =
         paramAttr {
             typedecl => {
                 case UnknownDecl (_) => true
-                case t : TypeDecl    => t == typedecl
+                case t               => t == typedecl
             }
         }
 
@@ -112,7 +112,7 @@ object TypeAnalysis {
      *    this == typeDecl || typeDecl.superClass() != null && typeDecl.superClass().isSubtypeOf(this);
      * eq UnknownDecl.isSuperTypeOfClassDecl(ClassDecl typeDecl) = true;
      */
-    private val isSuperTypeOfClassDecl : ClassDecl => TypeDecl ==> Boolean =
+    private val isSuperTypeOfClassDecl : ClassDecl => TypeDecl => Boolean =
         paramAttr {
             typedecl => {
                 case UnknownDecl (_) => true
@@ -132,7 +132,7 @@ object TypeAnalysis {
      *         return null;
      * }
      */
-    val superClass : ClassDecl ==> ClassDecl =
+    val superClass : ClassDecl => ClassDecl =
         attr {
             case c => c.Superclass match {
                      case Some (i) =>
@@ -154,7 +154,7 @@ object TypeAnalysis {
      *    else
      *        return false;
      */
-    val hasCycleOnSuperclassChain : ClassDecl ==> Boolean =
+    val hasCycleOnSuperclassChain : ClassDecl => Boolean =
         circular (true) {
             case c => c.Superclass match {
                      case Some (i) =>
@@ -178,7 +178,7 @@ object TypeAnalysis {
      *
      * FIXME: currently using the "without rewrites" version
      */
-    val isValue : Exp ==> Boolean =
+    val isValue : Exp => Boolean =
         attr {
             case i : IdnUse => ! (i->decl).isInstanceOf[TypeDecl] // replace this one
             // with this one, when the rewrites are in:

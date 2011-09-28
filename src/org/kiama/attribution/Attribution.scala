@@ -52,7 +52,7 @@ trait AttributionBase {
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T <: AnyRef,U] (init : U, f : T ==> U) extends (T ==> U) {
+    class CircularAttribute[T <: AnyRef,U] (init : U, f : T => U) extends (T => U) {
 
         /**
          * Has the value of this attribute for a given tree already been computed?
@@ -121,13 +121,6 @@ trait AttributionBase {
                 value (t)
         }
 
-        /**
-         * A circular attribute is defined at the same places as its
-         * defining function.
-         */
-        def isDefinedAt (t : T) =
-            f isDefinedAt t
-
     }
 
     /**
@@ -152,15 +145,15 @@ trait AttributionBase {
      * fixed point is reached (in conjunction with other circular attributes
      * on which it depends).  The final value is cached.
      */
-    def circular[T <: AnyRef,U] (init : U) (f : T ==> U) : T ==> U =
+    def circular[T <: AnyRef,U] (init : U) (f : T => U) : T => U =
         new CircularAttribute (init, f)
 
     /**
      * Define an attribute of T nodes of type U given by the constant value u.
      * u is evaluated at most once.
      */
-    def constant[T <: AnyRef,U] (u : => U) : T ==> U =
-        new (T ==> U) {
+    def constant[T <: AnyRef,U] (u : => U) : T => U =
+        new (T => U) {
             lazy val result = u
             def apply (t : T) = result
             def isDefinedAt (t : T) = true
@@ -193,7 +186,7 @@ object Attribution extends AttributionBase {
      * f should not itself require the value of this attribute. If it does, a
      * circularity error is reported.
      */
-    class CachedAttribute[T <: AnyRef,U] (f : T ==> U) extends (T ==> U) {
+    class CachedAttribute[T <: AnyRef,U] (f : T => U) extends (T => U) {
 
         /**
          * The memo table for this attribute, with <code>memo(t) == Some(v)</code>
@@ -227,13 +220,6 @@ object Attribution extends AttributionBase {
         }
 
         /**
-         * A cached attribute is defined at the same places as its
-         * defining function.
-         */
-        def isDefinedAt (t : T) =
-            f isDefinedAt t
-
-        /**
          * Immediately reset this attribute's memoisation cache.
          */
         def reset () {
@@ -245,8 +231,8 @@ object Attribution extends AttributionBase {
     /**
      * A variation of the CachedAttribute class for parameterised attributes.
      */
-    class CachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T ==> U)
-            extends (TArg => T ==> U) {
+    class CachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T => U)
+            extends (TArg => T => U) {
 
         import scala.collection.mutable.HashMap
 
@@ -257,8 +243,8 @@ object Attribution extends AttributionBase {
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
-        def apply (arg : TArg) : T ==> U =
-            new (T ==> U) {
+        def apply (arg : TArg) : T => U =
+            new (T => U) {
 
                 def apply (t : T) : U = {
                     if (memoVersion != MemoState.MEMO_VERSION) {
@@ -277,9 +263,6 @@ object Attribution extends AttributionBase {
                     }
                 }
 
-                def isDefinedAt (t : T) =
-                    f (arg) isDefinedAt t
-
             }
 
         /**
@@ -296,7 +279,7 @@ object Attribution extends AttributionBase {
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: AnyRef,U] (f : T ==> U) : T ==> U =
+    def attr[T <: AnyRef,U] (f : T => U) : T => U =
         new CachedAttribute (f)
 
     /**
@@ -304,7 +287,7 @@ object Attribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */
-    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T ==> U) : TArg => T ==> U =
+    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : TArg => T => U =
         new CachedParamAttribute (f)
 
     /**
@@ -312,7 +295,7 @@ object Attribution extends AttributionBase {
      * which takes the current node and its parent as its arguments.
      * T must be Attributable so that parents can be accessed.
      */
-    def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U =
+    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
         attr { case t => f (t) (t.parent) }
 
     /**
@@ -322,7 +305,7 @@ object Attribution extends AttributionBase {
      * attribute is used to generate new trees that must share context
      * with the node on which they are defined.
      */
-    def tree[T <: Attributable,U <: Attributable] (f : T ==> U) : T ==> U =
+    def tree[T <: Attributable,U <: Attributable] (f : T => U) : T => U =
         attr {
             case t => val u = f (t)
                       u.parent = t.parent
@@ -343,7 +326,7 @@ object UncachedAttribution extends AttributionBase {
      * called each time the value of the attribute is accessed.  f should not itself
      * require the value of this attribute. If it does, a circularity error is reported.
      */
-    class UncachedAttribute[T <: AnyRef,U] (f : T ==> U) extends (T ==> U) {
+    class UncachedAttribute[T <: AnyRef,U] (f : T => U) extends (T => U) {
 
         /**
          * Are we currently evaluating this attribute for a given tree?
@@ -365,19 +348,12 @@ object UncachedAttribution extends AttributionBase {
             }
         }
 
-        /**
-         * An uncached attribute is defined at the same places as its
-         * defining function.
-         */
-        def isDefinedAt (t : T) =
-            f isDefinedAt t
-
     }
 
     /**
      * A variation of the UncachedAttribute class for parameterised attributes.
      */
-    class UncachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T ==> U) extends (TArg => T ==> U) {
+    class UncachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T => U) extends (TArg => T => U) {
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
@@ -388,8 +364,8 @@ object UncachedAttribution extends AttributionBase {
          * Return the value of this attribute for node t, raising an error if
          * it depends on itself.
          */
-        def apply (arg : TArg) : T ==> U =
-            new (T ==> U) {
+        def apply (arg : TArg) : T => U =
+            new (T => U) {
 
                 def apply (t : T) : U = {
                     val key = new ParamAttributeKey (arg, t)
@@ -403,9 +379,6 @@ object UncachedAttribution extends AttributionBase {
                     }
                 }
 
-                def isDefinedAt (t : T) =
-                    f (arg) isDefinedAt t
-
             }
     }
 
@@ -414,7 +387,7 @@ object UncachedAttribution extends AttributionBase {
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: AnyRef,U] (f : T ==> U) : T ==> U =
+    def attr[T <: AnyRef,U] (f : T => U) : T => U =
         new UncachedAttribute (f)
 
     /**
@@ -422,7 +395,7 @@ object UncachedAttribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */
-    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T ==> U) : TArg => T ==> U =
+    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : TArg => T => U =
         new UncachedParamAttribute (f)
 
     /**
@@ -430,7 +403,7 @@ object UncachedAttribution extends AttributionBase {
      * which takes the current node and its parent as its arguments.
      * T must be Attributable so that parents can be accessed.
      */
-    def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U =
+    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
         attr { case t => f (t) (t.parent) }
 
 }

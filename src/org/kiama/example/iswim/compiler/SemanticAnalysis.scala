@@ -41,7 +41,7 @@ trait SemanticAnalysis {
      * all variables have been bound by an enclosing
      * let, letrec or function parameter.
      */
-    val envir : Iswim ==> Map[Variable,Iswim] =
+    val envir : Iswim => Map[Variable,Iswim] =
         attr {
             case e if e isRoot => Map()
             case e => e.parent[Iswim] match {
@@ -57,7 +57,7 @@ trait SemanticAnalysis {
             }
         }
 
-    val envirOut : Iswim ==> Map[Variable,Iswim] =
+    val envirOut : Iswim => Map[Variable,Iswim] =
         attr {
             case n@Binding(v,_) => (n->envir) + (v->n)
             case n@Pattern(ns) => (n->envir) ++ ns.map({ case v : Variable => v->n })
@@ -71,7 +71,7 @@ trait SemanticAnalysis {
      * Check for match clauses which are unreachable because they are
      * preceeded by a clauses which match any value.
      */
-    val unreachable : MatchClause ==> Boolean =
+    val unreachable : MatchClause => Boolean =
         attr {
             case m : MatchClause => m.prev[Iswim] match {
                 case n@MatchClause(Pattern(ns),_) =>
@@ -80,7 +80,7 @@ trait SemanticAnalysis {
             }
         }
 
-    val isSemanticallyCorrect : Iswim ==> Boolean =
+    val isSemanticallyCorrect : Iswim => Boolean =
         attr {
             case v@Variable(s) =>
                 val bound : Boolean = (v->envir).contains(v)

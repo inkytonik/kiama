@@ -45,7 +45,7 @@ object PredefinedTypes {
      *        add(new PrimitiveDecl("boolean"));
      * }
      */
-    val getPredefinedTypeList : Program ==> Seq[TypeDecl] =
+    val getPredefinedTypeList : Program => Seq[TypeDecl] =
         constant {
             List (UnknownDecl ("$unknown"),
                   PrimitiveDecl ("boolean"))
@@ -61,7 +61,7 @@ object PredefinedTypes {
      * eq Program.getBlock().booleanType() = booleanType();
      * eq Program.getPredefinedType().booleanType() = booleanType();
      */
-    val booleanType : Attributable ==> PrimitiveDecl =
+    val booleanType : Attributable => PrimitiveDecl =
         attr {
             case p : Program => (p->localLookup ("boolean")).asInstanceOf[PrimitiveDecl]
             // FIXME don't have NTA case, needed?

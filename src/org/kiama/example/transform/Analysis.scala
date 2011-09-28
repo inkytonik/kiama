@@ -37,12 +37,12 @@ object Analysis {
     import org.kiama.util.Messaging._
     import scala.collection.immutable.HashMap
     
-    lazy val prioenv : Program ==> Map[String,Int] =
+    lazy val prioenv : Program => Map[String,Int] =
         attr {
             case p => HashMap (p.ops : _*)
         }
 
-    lazy val prio : String => ASTNode ==> Int =
+    lazy val prio : String => ASTNode => Int =
         paramAttr {
             op => {
                 case p : Program => (p->prioenv) getOrElse (op, 0)
@@ -50,7 +50,7 @@ object Analysis {
             }
         }
     
-    lazy val op_tree : ExpR ==> Exp =
+    lazy val op_tree : ExpR => Exp =
         attr {
             case BinExpR (_, _, e1) =>
                 e1->op_tree
@@ -62,7 +62,7 @@ object Analysis {
     
     type Stacks = (List[String], List[Exp])
     
-    lazy val ops : ExpR ==> Stacks =
+    lazy val ops : ExpR => Stacks =
         childAttr {
             case e1 => {
                 case _ : Program             =>
@@ -73,7 +73,7 @@ object Analysis {
             }
         }
     
-    lazy val eval_top : ((List[String], String, List[Exp])) => ExpR ==> Stacks =
+    lazy val eval_top : ((List[String], String, List[Exp])) => ExpR => Stacks =
         paramAttr[(List[String], String, List[Exp]), ExpR, Stacks] {
             case (Nil, op, opnd) => {
                 case _ =>
@@ -95,7 +95,7 @@ object Analysis {
      * containing the associated declaration or None if there no
      * such declaration.
      */
-    lazy val lookup : String => Attributable ==> Option[VarDecl] =
+    lazy val lookup : String => Attributable => Option[VarDecl] =
         paramAttr {
             s => {
                 case p : Program => p.vars.find (_.name == s)
@@ -108,7 +108,7 @@ object Analysis {
      * Available as an implicit so that Exp attributes called on
      * ExpR are forwarded to op_tree.
      */
-    implicit val ast : ExpR ==> Exp =
+    implicit val ast : ExpR => Exp =
         tree {
             case e => e->op_tree
         }
@@ -118,7 +118,7 @@ object Analysis {
      * are used but not declared.  Multiple declarations of the same
      * variable are ok.
      */
-    lazy val errors : Exp ==> Unit =
+    lazy val errors : Exp => Unit =
         attr {
             case BinExp (l, o, r) =>
                 l->errors; r->errors

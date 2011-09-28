@@ -32,7 +32,7 @@ object ASTNonCase {
 
     type Idn = String
 
-    abstract class Exp extends Rewritable
+    sealed abstract class Exp extends Rewritable
 
     class Num (val d : Double) extends Exp {
         def arity = 1

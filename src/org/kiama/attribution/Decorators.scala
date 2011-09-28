@@ -29,8 +29,8 @@ object Decorators {
     /**
      * A decorator that propagates an attribute value down the tree.
      */
-    def down[T <: Attributable,U] (a : T ==> U) : T ==> U =
-        attr {
+    def down[T <: Attributable,U] (a : T ==> U) : T => U =
+        attr[T,U] {
             case t =>
                 if (a.isDefinedAt (t))
                     a (t)
@@ -42,16 +42,16 @@ object Decorators {
      * A decorator that propagates an attribute value in left-to-right postorder
      * through a tree.  init is a partial function that provides initial values
      * for the chain at selected nodes.  update is a function that transforms
-     * a default partial function for the chain value into a partial function 
-     * that provides an updated value at selected nodes.
+     * a default function for the chain value into a partial function that
+     * provides an updated value at selected nodes.
      * 
      * chain returns a pair of attributes that can be used to access the value
      * of the chain as it enters (resp. leaves) any node.
      */
-    def chain[T <: Attributable,U] (init : T ==> U) (update : (T ==> U) => T ==> U) :
-            (T ==> U, T ==> U) = {
-         
-        lazy val indflt : T ==> U =
+    def chain[T <: Attributable,U] (init : T ==> U) (update : (T => U) => (T ==> U)) :
+            (T => U, T => U) = {
+
+        lazy val indflt : T => U =
             attr {
                 case t if t.isFirst =>
                     (t.parent[T])->inattr
@@ -59,10 +59,16 @@ object Decorators {
                     (t.prev[T])->outattr
             }
 
-        lazy val inattr : T ==> U =
-            attr (init orElse indflt)
+        lazy val inattr : T => U =
+            attr {
+                case t =>
+                    if (init.isDefinedAt (t))
+                        init (t)
+                    else
+                        indflt (t)
+            }
             
-        lazy val outdflt : T ==> U =
+        lazy val outdflt : T => U =
             attr {
                 case t if t.hasChildren =>
                     (t.lastChild[T])->outattr
@@ -70,10 +76,15 @@ object Decorators {
                     t->inattr
             }
 
-        lazy val outattr : T ==> U =
+        lazy val out = update (outdflt)
+
+        lazy val outattr : T => U =
             attr {
                 case t =>
-                    ((update (outdflt)) orElse outdflt) (t)
+                    if (out.isDefinedAt (t))
+                        out (t)
+                    else
+                        outdflt (t)
             }
                   
         (inattr, outattr)

@@ -42,7 +42,7 @@ object RISCTransformation {
      * so that the memory size is fully computed before we generate the
      * RISC node.
      */
-    val code : ObrInt ==> RISCProg =
+    val code : ObrInt => RISCProg =
         attr {
             case p @ ObrInt (_, decls, stmts, _) =>
                 tempintloc = Local(Variable(IntType).locn)
@@ -125,7 +125,7 @@ object RISCTransformation {
      * The RISC tree items that are the translation of the given
      * Obr language declaration.
      */
-    private val ditems : Declaration ==> List[Item] =
+    private val ditems : Declaration => List[Item] =
         attr {
 
             /**
@@ -147,7 +147,7 @@ object RISCTransformation {
      * The RISC tree items that are the translation of the given
      * Obr language statement.
      */
-    private val sitems : Statement ==> List[Item] =
+    private val sitems : Statement => List[Item] =
         attr {
 
             /**
@@ -340,7 +340,7 @@ object RISCTransformation {
      * The RISC machine datum that is the translation of the given
      * Obr language expression.
      */
-    private val datum : Expression ==> Datum =
+    private val datum : Expression => Datum =
         attr {
 
             /**

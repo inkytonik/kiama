@@ -47,7 +47,7 @@ trait CodeGenerator {
      * The following attribute contains the SECD bytecode generated from the ISWIM
      * syntax node it is attached to.
      */
-    val code : Iswim ==> CodeTree = attr {
+    val code : Iswim => CodeTree = attr {
         case n : Iswim => positionBlock(n.pos) { n match {
     	    /**
     	     * Variable Identifiers
@@ -115,7 +115,7 @@ trait CodeGenerator {
                 Exit()
             )
             case LetRec(binds,body) => CodeTree(
-                MkClosures(binds.map({
+                MkClosures(binds.collect({
                     case Binding(Variable(fn),Lambda(Variable(pn),bdy)) =>
                         FunctionSpec(Some(fn),pn,code(bdy))
                 })),
@@ -160,7 +160,7 @@ trait CodeGenerator {
             )
 
             case s@LetRecStmt(binds) => CodeTree(
-                MkClosures(binds.map({
+                MkClosures(binds.collect({
                     case Binding(Variable(fn),Lambda(Variable(pn),bdy)) =>
                         FunctionSpec(Some(fn),pn,code(bdy))
                 })),

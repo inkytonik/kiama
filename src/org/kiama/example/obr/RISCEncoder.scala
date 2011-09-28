@@ -142,7 +142,7 @@ object RISCEncoder {
      * is handled by a special case, this attribution assumes that the
      * children of each node will be evaluated in left to right order.
      */
-     private val reg : RISCNode ==> RegNo =
+     private val reg : RISCNode => RegNo =
         childAttr {
             case d => {
                 // Base case

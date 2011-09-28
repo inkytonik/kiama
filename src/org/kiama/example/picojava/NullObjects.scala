@@ -45,7 +45,7 @@ object NullObjects {
      * eq Program.getBlock().unknownDecl() = unknownDecl();
      * eq Program.getPredefinedType().unknownDecl() = unknownDecl();
      */
-    val unknownDecl : Attributable ==> UnknownDecl =
+    val unknownDecl : Attributable => UnknownDecl =
         attr {
             case p : Program => (p->localLookup ("$unknown")).asInstanceOf[UnknownDecl]
             // FIXME: need NTA case?
