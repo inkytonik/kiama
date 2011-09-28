@@ -24,6 +24,7 @@ package example.oneohonecompanies
 object Precedence {
 
     import Company.{Company,Dept,Employee,Node,Salary}
+    import Other.salary
     import org.kiama.attribution.Decorators.down
     import org.kiama.rewriting.Rewriter.everything
 
@@ -31,12 +32,12 @@ object Precedence {
      * Return the salary of the boss of a particular part of a company,
      * or Float.MaxValue if there is no such boss.
      */
-    private def bosssalary : Node => Salary =
+    private val bosssalary : Node => Salary =
         down[Node,Salary] {
             case n if n isRoot =>
                 Float.MaxValue
-            case Dept (_, Employee (_, _, s), _) =>
-                s
+            case Dept (_, m, _) =>
+                m->salary
             case e : Employee =>
                 e.parent[Node] match {
                     case p @ Dept (_, m, _) if m eq e =>
@@ -53,8 +54,7 @@ object Precedence {
      */
     def precedence (c : Company) : Boolean =
         everything (true) (_ && _) {
-            case e @ Employee (_, _, s) =>
-                e->bosssalary >= s
+            case e : Employee => e->bosssalary >= e->salary
         } (c)
 
 }

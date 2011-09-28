@@ -29,39 +29,112 @@ import org.scalatest.junit.JUnitRunner
 class OneOhOneTests extends Tests {
     
     import Company._
-    import SampleCompany.company
-    import Total.total
+    import SampleCompany._
+    import Total._
     import Cut.cut
     import Depth.depth
     import Precedence.precedence
+    import Other._
     
     // Some pathological companies
     
     val empty = Company (Nil)
     val onlymanager = Company (List (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
     
-    test ("total of all salaries - company") {
+    test ("total of all salaries by rewriting - company") {
         expect (399747.0) (total (company))
     }
     
-    test ("total of all salaries - empty") {
+    test ("total of all salaries by rewriting - empty") {
         expect (0.0) (total (empty))
     }
     
-    test ("total of all salaries - onlymanager") {
+    test ("total of all salaries by rewriting - onlymanager") {
         expect (100.0) (total (onlymanager))
     }
     
-    test ("total of all cut salaries - company") {
+    test ("total of all cut salaries by rewriting - company") {
         expect (199873.5) (total (cut (company)))
     }
     
-    test ("total of all cut salaries - empty") {
+    test ("total of all cut salaries by rewriting - empty") {
         expect (0.0) (total (cut (empty)))
     }
     
-    test ("total of all cut salaries - onlymanager") {
+    test ("total of all cut salaries by rewriting - onlymanager") {
         expect (50.0) (total (cut (onlymanager)))
+    }
+    
+    test ("total of all salaries by attribution - company") {
+        expect (399747.0) (company->salary)
+    }
+    
+    test ("total of research salaries by attribution - company") {
+        expect (137035.0) (research->salary)
+    }
+
+    test ("total of dev salaries by attribution - company") {
+        expect (262712.0) (dev->salary)
+    }
+
+    test ("total of dev1 salaries by attribution - company") {
+        expect (28145.0) (dev1->salary)
+    }
+
+    test ("total of dev11 salaries by attribution - company") {
+        expect (4689.0) (dev11->salary)
+    }
+
+    test ("total of all salaries by attribution - empty") {
+        expect (0.0) (empty->salary)
+    }
+    
+    test ("total of all salaries by attribution - onlymanager") {
+        expect (100.0) (onlymanager->salary)
+    }
+    
+    test ("total of all cut salaries by attribution - company") {
+        expect (199873.5) ((cut (company)->salary))
+    }
+    
+    test ("total of all cut salaries by attribution - empty") {
+        expect (0.0) ((cut (empty)->salary))
+    }
+    
+    test ("total of all cut salaries by attribution - onlymanager") {
+        expect (50.0) ((cut (onlymanager)->salary))
+    }
+
+    test ("average salary for company") {
+        expect (57106) ((company->averagesalary).toInt)
+    }
+
+    test ("average salary for research department") {
+        expect (45678) ((research->averagesalary).toInt)
+    }
+
+    test ("average salary for dev department") {
+        expect (65678) ((dev->averagesalary).toInt)
+    }
+
+    test ("average salary for dev1 department") {
+        expect (9381) ((dev1->averagesalary).toInt)
+    }
+
+    test ("average salary for dev11 department") {
+        expect (2344) ((dev11->averagesalary).toInt)
+    }
+    
+    test ("craig is above average") {
+        expect (true) (craig->aboveaverage)
+    }
+
+    test ("klaus is above average") {
+        expect (true) (klaus->aboveaverage)
+    }
+
+    test ("joe is below average") {
+        expect (false) (joe->aboveaverage)
     }
     
     test ("department depth - company") {
@@ -101,5 +174,29 @@ class OneOhOneTests extends Tests {
                                List (DU (d1)))))
         expect (false) (precedence (d2))
     }
+
+    test ("company employee count is correct") {
+        expect (7) (company->numemp)
+    }
+
+    test ("single employee count is correct") {
+        expect (1) (craig->numemp)
+    }
+
+    test ("research department employee count is correct") {
+        expect (3) (research->numemp)
+    }
+
+    test ("dev department employee count is correct") {
+        expect (4) (dev->numemp)
+    }
+
+    test ("dev1 department employee count is correct") {
+        expect (3) (dev1->numemp)
+    }
+
+    test ("dev11 department employee count is correct") {
+        expect (2) (dev11->numemp)
+    }        
 
 }

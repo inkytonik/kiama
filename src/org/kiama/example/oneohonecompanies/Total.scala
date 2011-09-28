@@ -23,11 +23,13 @@ package example.oneohonecompanies
 
 object Total {
 
-    import Company.{Company,Salary}
+    import Company._
+    import org.kiama.==>
+    import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.everything
     
     /**
-     * Return the total salary cost.
+     * Return the total salary cost of a company (by rewriting).
      */
     def total (c : Company) : Double =
         everything (0.0) (_ + _) { case s : Salary => s } (c)
