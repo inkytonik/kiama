@@ -71,9 +71,9 @@ trait Tests extends FunSuite {
      */
     def assertMessage (index : Int, line : Int, column : Int, msg : String) {
         val m = messages (index)
+        expect (msg, "wrong text in message " + index) (m.message)
         expect (line, "wrong line number in message " + index) (m.pos.line)
         expect (column, "wrong column number in message " + index) (m.pos.column)
-        expect (msg, "wrong text in message " + index) (m.message)
     }
 
 }
@@ -102,17 +102,19 @@ trait RegexParserTests extends Tests {
 
     /**
      * Try to parse str as a T, which is expected to fail.  Fail if it
-     * doesn't.
+     * doesn't.  The parse failure is described by the line and column
+     * numbers where it occurs and the message that is produced.  All
+     * of them have to be correct.
      */
     def assertParseError[T] (str : String, p : Parser[T], line : Int, column : Int,
                              msg : String) {
         parseAll (p, str) match {
-            case Success (_, _) =>
-                fail ("expected to find parse error in " + str)
+            case Success (r, _) =>
+                fail ("expected to find parse error in " + str + " but it succeeded with " + r)
             case e : NoSuccess =>
+                expect (msg, "wrong message in error") (e.msg)
                 expect (line, "wrong line number in error") (e.next.pos.line)
                 expect (column, "wrong column number in error") (e.next.pos.column)
-                expect (msg, "wrong message in error") (e.msg)
         }
     }
 
