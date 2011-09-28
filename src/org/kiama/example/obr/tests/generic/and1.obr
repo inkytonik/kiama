@@ -1,0 +1,8 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+BEGIN
+    IF FALSE AND (1 / 0 = 1) THEN
+        RETURN 0;
+    ELSE
+        RETURN 1;
+    END
+END X.

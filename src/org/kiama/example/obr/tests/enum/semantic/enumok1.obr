@@ -1,0 +1,32 @@
+(* Legal usage of enumerations in various contexts *)
+
+PROGRAM EnumOk1 (i : INTEGER) : INTEGER;
+
+VAR
+    Single : (Harold);
+    Binary : (One, TheOther);
+    CarColour : (Red, Blue, Green);
+    WeekDays: (Monday, Tuesday, Wednesday, Thursday, Friday);
+    Flag : BOOLEAN;
+
+BEGIN
+    (* Simple assignment *)
+    Single := Harold;
+    Binary := TheOther;
+    CarColour := Blue;
+    WeekDays := Wednesday;
+
+    (* Use of enumeration values in expressions and statements *)
+    IF CarColour = Red THEN
+        WHILE WeekDays # Friday DO
+            WeekDays := Friday;
+        END
+    END
+    IF Monday < Thursday THEN
+        IF Red > Blue THEN
+            i := 10;
+        END
+        Single := Harold;
+    END
+    Flag := One > Binary;
+END EnumOk1.

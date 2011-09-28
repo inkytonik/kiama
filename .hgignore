@@ -1,0 +1,11 @@
+bin
+dist
+.manager
+.scala_dependencies
+
+boot
+lib_managed
+src_managed
+target
+
+tags

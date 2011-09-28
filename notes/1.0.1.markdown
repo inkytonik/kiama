@@ -1,0 +1,12 @@
+### Enhancements
+
+  * allow abstract state machine state to be used more flexibly
+  * test framework improvements:
+    * command-line arguments
+    * optional input files
+    * default input text
+
+### Fixes
+
+  * test framework: fix bug in tests that elicit parse errors
+  * other minor fixes and tidying up
