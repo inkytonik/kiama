@@ -44,7 +44,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
         true
     }
 
-    override def prompt () = "lambda2> "
+    override def prompt () = mechanism + super.prompt
 
     /**
      * Are we currently type-checking or not?  Default: true.
