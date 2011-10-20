@@ -29,10 +29,11 @@ import scala.util.parsing.combinator.RegexParsers
 trait REPL {
 
     /**
-     * Read lines from the console and pass non-null ones to processline.
-     * Continue until processline returns false. The command-line arguments
-     * are passed to the setup function.  Calls setup before entering the
-     * loop and prompt each time input is about to be read.
+     * Read lines from the console and pass non-null and non-whitespace only
+     * ones to processline. Continue until processline returns false. Calls
+     * setup before entering the loop and calls prompt each time input is
+     * about to be read.  The command-line arguments are passed to the setup
+     * method.
      */
     def main (args : Array[String]) {
 
@@ -43,7 +44,7 @@ trait REPL {
                 if (line == null) {
                     println
                     return
-                } else
+                } else if (line.trim.length != 0)
                     processline (line)
             }
         }
