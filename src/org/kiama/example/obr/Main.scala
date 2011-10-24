@@ -26,6 +26,7 @@ package example.obr
 
 import ObrTree.ObrInt
 import org.kiama.util.RegexCompiler
+import org.kiama.util.TestCompiler
 
 /**
  * Obr language implementation compiler driver.
@@ -199,7 +200,7 @@ class SemanticDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
  * A driver which compiles a file and allows a test to be run on the resulting
  * target tree.
  */
-class TreeTestDriver extends Driver {
+class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
 
     import java.io.FileReader
     import java.io.FileNotFoundException

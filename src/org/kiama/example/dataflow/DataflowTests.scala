@@ -21,14 +21,16 @@
 package org.kiama
 package example.dataflow
 
+import DataflowAST.Stm
 import org.junit.runner.RunWith
+import org.kiama.util.TestCompiler
 import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests of data flow attribution.
  */
 @RunWith(classOf[JUnitRunner])
-class DataflowTests extends Driver {
+class DataflowTests extends Driver with TestCompiler[Stm] {
 
     import DataflowAST._
     import Dataflow._

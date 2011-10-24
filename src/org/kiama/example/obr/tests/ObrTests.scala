@@ -23,7 +23,9 @@
 
 package org.kiama.example.obr.tests
 
-import org.kiama.example.obr.{Driver,ParserDriver,SemanticDriver,TreeTestDriver}
+import org.kiama.example.obr._
+import org.kiama.example.obr.ObrTree.ObrInt
+import org.kiama.util.TestCompiler
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
@@ -31,7 +33,7 @@ import org.scalatest.junit.JUnitRunner
  * Obr regression tests: compilation to assembly.
  */
 @RunWith(classOf[JUnitRunner])
-class ObrRegressionTests extends Driver {
+class ObrRegressionTests extends Driver with TestCompiler[ObrInt] {
 
     filetests ("ObrRegression", "src/org/kiama/example/obr/tests/generic", ".obr", ".risc",
                argslist = List (Array ("-a")))
@@ -42,7 +44,7 @@ class ObrRegressionTests extends Driver {
  * Obr parser tests.
  */
 @RunWith(classOf[JUnitRunner])
-class ObrParserTests extends ParserDriver {
+class ObrParserTests extends ParserDriver with TestCompiler[ObrInt] {
 
     filetests ("ObrParserEnum", "src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
     filetests ("ObrParserException", "src/org/kiama/example/obr/tests/exceptions/parser", ".obr", ".out")
@@ -53,7 +55,7 @@ class ObrParserTests extends ParserDriver {
  * Obr semantic analysis tests.
  */
 @RunWith(classOf[JUnitRunner])
-class ObrSemanticTests extends SemanticDriver {
+class ObrSemanticTests extends SemanticDriver with TestCompiler[ObrInt] {
 
     filetests ("ObrSemanticEnum", "src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
     filetests ("ObrSemanticException", "src/org/kiama/example/obr/tests/exceptions/semantic", ".obr", ".out")
@@ -64,7 +66,7 @@ class ObrSemanticTests extends SemanticDriver {
  * Obr tests: compilation and execution.
  */
 @RunWith(classOf[JUnitRunner])
-class ObrExecTests extends Driver {
+class ObrExecTests extends Driver with TestCompiler[ObrInt] {
     
     import org.kiama.util.StringConsole
 
