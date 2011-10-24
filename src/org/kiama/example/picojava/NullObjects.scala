@@ -39,7 +39,7 @@ object NullObjects {
     /**
      * A declaration object representing an unknown entity.
      *
-     * syn lazy UnknownDecl Program.unknownDecl() = (UnknownDecl) localLookup("$unknown");
+     * syn lazy UnknownDecl Program.unknownDecl() = (UnknownDecl) localLookup("\$unknown");
      * inh Decl TypeDecl.unknownDecl();
      * inh Decl Block.unknownDecl();
      * eq Program.getBlock().unknownDecl() = unknownDecl();
