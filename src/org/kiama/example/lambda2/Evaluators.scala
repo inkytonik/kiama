@@ -28,7 +28,7 @@ package example.lambda2
  */
 object Evaluators {
 
-  /**
+   /**
      * Map of evaluator names to the evaluators themselves.
      * Coments refer to names in Dolstra and Visser paper.
      */
