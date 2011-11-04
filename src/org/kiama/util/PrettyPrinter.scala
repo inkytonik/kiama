@@ -398,6 +398,19 @@ trait PrettyPrinterBase {
             fold (ds, _ <@@> sep <+> _) <> linebreak
 
     /**
+     * Return a pretty-printer document for a sequence where each element
+     * is terminated by term.  Line breaks are allowed before the sequence
+     * and after the terminator between the elements of the sequence.  The
+     * before line break turns into nothing if omitted.  The internal line
+     * breaks turn into a space if omitted.
+     */
+    def lterm (ds : Seq[Doc], term : Doc) : Doc =
+        if (ds isEmpty)
+            empty
+        else
+            linebreak <> fold (ds, _ <> term <@> _) <> term
+
+    /**
      * Return a document that concatenates the documents in the given sequence
      * either horizontally with <> if they fit in the output medium width,
      * or if not, vertically with <@@>.
