@@ -12,7 +12,7 @@ scalacOptions ++= Seq ("-deprecation", "-unchecked")
 
 // Interactive settings
 
-logLevel := Level.Warn
+logLevel := Level.Info
 
 shellPrompt <<= (name, version) { (n, v) => _ => n + " " + v + "> " }
 
