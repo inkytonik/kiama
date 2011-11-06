@@ -1,6 +1,6 @@
 name := "kiama"
 
-version := "1.2.0.pre"
+version := "1.2.0-SNAPSHOT"
 
 organization := "com.googlecode"
 
