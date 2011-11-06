@@ -22,6 +22,7 @@ package org.kiama
 package example.dataflow
 
 import org.kiama.attribution.DynamicAttribution._
+import org.kiama.util.Patterns.HasParent
 import DataflowAST._
 import Dataflow._
 
@@ -41,8 +42,7 @@ object DataflowForeach {
     // Alternatively, using the regular attr notation
     Dataflow.following +=
         attr {
-            case t if t.parent.isInstanceOf[Foreach] =>
-                val parent = t.parent[Foreach]
+            case HasParent (t, parent : Foreach) =>
                 following (parent) + parent.body
         }
 
@@ -57,11 +57,11 @@ object DataflowFor {
 
     Dataflow.following +=
         childAttr {
-            S => {
-                case t @ For (S, c, _, _) => Set (c)
-                case t @ For (_, S, _, b) => following (t) + b
-                case t @ For (_, c, S, _) => Set (c)
-                case t @ For (_, _, i, S) => Set (i)
+            s => {
+                case t @ For (s1, c, _, _) if s eq s1 => Set (c)
+                case t @ For (_, s1, _, b) if s eq s1 => following (t) + b
+                case t @ For (_, c, s1, _) if s eq s1 => Set (c)
+                case t @ For (_, _, i, s1) if s eq s1 => Set (i)
             }
         }
 

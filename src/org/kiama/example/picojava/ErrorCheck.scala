@@ -37,6 +37,7 @@ object ErrorCheck {
     import TypeAnalysis._
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
+    import org.kiama.util.Patterns.HasParent
     import scala.collection.mutable.{Buffer,ListBuffer}
 
     /**
@@ -146,10 +147,8 @@ object ErrorCheck {
      */
     val isQualified : IdnUse => Boolean =
         attr {
-            i => i.parent match {
-                case Dot (_, _)  => true
-                case _           => false
-            }
+            case HasParent (_, _ : Dot) => true
+            case _                      => false
         }
 
     /**
@@ -167,10 +166,10 @@ object ErrorCheck {
      */
     val qualifier : IdnUse => Access =
         attr {
-            i => i.parent match {
-                case Dot (o, _)  => o
-                case _           => sys.error ("Can not compute qualifier for non qualified names")
-            }
+            case HasParent (_, Dot (o, _)) =>
+                o
+            case _ =>
+                sys.error ("Can not compute qualifier for non qualified names")
         }
 
 }
