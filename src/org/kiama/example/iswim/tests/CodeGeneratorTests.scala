@@ -37,6 +37,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
 
     import Syntax._
 
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.iswim.driver.PrettyPrinter._
     import org.kiama.util.Messaging._
 
@@ -52,6 +53,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a simple arithmetic expression") {
         val prog = parseAll(expr, "10 + x * 42")
         assert(prog.successful)
+        initTree (prog.get)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
             PushInt(10),
@@ -65,6 +67,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a simple boolean expression") {
         val prog = parseAll(expr, "true & x | y")
         assert(prog.successful)
+        initTree (prog.get)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
             PushTrue(),
@@ -76,6 +79,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a boolean comparison expression") {
         val prog = parseAll(expr, "(a == 20) | (b != 30) & (a > b)")
         assert(prog.successful)
+        initTree (prog.get)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
             Lookup("a"),
@@ -99,6 +103,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a let expression") {
         val prog = parseAll(expr,"let x = 10 and y = 22 + 11 in x * y")
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
@@ -117,6 +122,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a letrec expression") {
         val prog = parseAll(expr,"letrec f = fun(n) (n + 1) and g = fun(m) (m - 1) in f")
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
@@ -141,6 +147,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a tuple expressio") {
         val prog = parseAll(expr,"(10,20,(),30)")
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
@@ -155,6 +162,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a let binding of a lambda expression") {
         val prog = parseAll(expr,"let f = fun(n) (n + 1) and g = fun(m) (m - 1) in f(g(10))")
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
@@ -185,6 +193,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile some function applications") {
         val prog = parseAll(expr,"f(10 + g(h(k)))")
         assert(prog.successful)
+        initTree (prog.get)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
             PushInt(10),
@@ -202,6 +211,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     test("compile a block expression") {
         val prog = parseAll(expr,"{10;20;\"hello\";();22} + {true}")
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
@@ -227,6 +237,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
         assert(result === CodeSegment(
@@ -273,8 +284,10 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
+        initTree (result)
         val p = pretty(result)
         assert(p === """CodeSegment(
     1: PushInt(1),
@@ -352,8 +365,10 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
         }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         assert((prog.get)->isSemanticallyCorrect)
         val result : CodeSegment = code(prog.get)
+        initTree (result)
         val p = pretty(result)
         assert(p === """CodeSegment(
     1: BindPrims(List(write, read, fields, type)),

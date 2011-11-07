@@ -59,6 +59,7 @@ class DataflowForTests extends Tests {
     val s4 = Foreach ("x", s41)
     val s5 = Return ("x")
     val prog = Block (List (s1, s2, s3, s4, s5))
+    initTree (prog)
 
     test ("in s1") {
         expect (Set ("w", "v")) (in (s1))

@@ -36,6 +36,7 @@ class LambdaTests extends Tests with Checkers with Parser {
     import Analysis._
     import Evaluators._
     import PrettyPrinter._
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.rewriting.Rewriter._
     import org.kiama.util.Messaging._
     import org.scalacheck.Prop.{all => _, _}
@@ -65,6 +66,7 @@ class LambdaTests extends Tests with Checkers with Parser {
         resetmessages
         parseAll (start, term) match {
             case Success (e, in) if in.atEnd =>
+                initTree (e)
                 assertType (e, "tipe", tipe, line, col, msg)
                 assertType (e, "tipe2", tipe2, line, col, msg)
             case Success (_, in) =>

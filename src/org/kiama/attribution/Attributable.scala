@@ -141,26 +141,28 @@ trait Attributable extends Product {
         a (b (this))
 
     /**
-     * House-keeping method to connect my children to me and their siblings.
-     * The easy case is Attributable children that are direct descendants.
+     * House-keeping method to connect this node's children to it and their
+     * siblings (and recursively through the subtree rooted here). The easy
+     * case is Attributable children that are direct descendants.
      * Also connected are Attributable descendants that are reachable via
-     * a path of descendants that only passes through GenTraversable or
-     * Some nodes.  Thus, descendants of these kinds are regarded as children
-     * for the purposes of attribution.  As a side-effect, this method
-     * remembers the children so that they can be accessed easily via the
-     * children iterator.
+     * a path of descendants that only passes through GenTraversable, Some
+     * or tuple nodes (up to size four).  Thus, descendants of these kinds
+     * are regarded as children for the purposes of attribution.  As a
+     * side-effect, this method remembers the children so that they can be
+     * accessed easily via the children iterator.
      */
-    def setChildConnections () = {
+    def initTreeProperties () {
 
         import scala.collection.GenTraversable
 
         var ind : Int = 0
         var prev : Attributable = null
 
+
         /**
          * Set the node connections and index of c.
          */
-       def setConnections (c : Attributable) {
+        def setConnections (c : Attributable) {
             c.parent = this
             _children += c
             c.index = ind
@@ -168,6 +170,9 @@ trait Attributable extends Product {
             c._prev = prev
             if (prev != null) prev._next = c
             prev = c
+            
+            // Recursively set the connections below c
+            c.initTreeProperties
         }
 
         /**
@@ -205,7 +210,5 @@ trait Attributable extends Product {
             setNodeChildConnections (c)
 
     }
-
-    setChildConnections
 
 }

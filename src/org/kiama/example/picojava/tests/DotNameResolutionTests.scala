@@ -36,6 +36,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class DotNameResolutionTests extends Tests {
 
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
     import org.kiama.example.picojava.TypeAnalysis._
@@ -61,6 +62,7 @@ class DotNameResolutionTests extends Tests {
                             AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
                             declAA,
                             declBB))))))
+    initTree (ast)
 
     test ("class members are resolved") {
         expect (declAAx) (axInA->decl)

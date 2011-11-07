@@ -22,19 +22,22 @@ package org.kiama
 package util
 
 import java.io.FileReader
+import org.kiama.attribution.Attributable
 import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Trait to provide basic functionality for a compiler-like program
  * constructed from phases.
  */
-trait Compiler[T] {
+trait CompilerBase[T] {
 
+    import java.io.File
     import java.io.FileNotFoundException
     import org.kiama.util.Console
     import org.kiama.util.JLineConsole
     import org.kiama.util.Emitter
     import org.kiama.util.StringEmitter
+    import scala.io.Source
 
     /**
      * Process the program in the file given as the first command-line
@@ -66,7 +69,7 @@ trait Compiler[T] {
         for (arg <- newargs) {
             try {
                 val reader = new FileReader (newargs (0))
-                makeast (reader, newargs (0)) match {
+                makeast (reader, newargs (0), emitter) match {
                     case Left (ast) =>
                         process (ast, console, emitter)
                     case Right (msg) =>
@@ -83,7 +86,7 @@ trait Compiler[T] {
      * Make an AST from the file with the given name, returning it wrapped in
      * Left.  Returns Right with an error message if an AST cannot be made.
      */
-    def makeast (reader : FileReader, filename : String) : Either[T,String]
+    def makeast (reader : FileReader, filename : String, emitter : Emitter) : Either[T,String]
 
     /**
      * Function to process the input that was parsed.  console should be
@@ -112,7 +115,7 @@ trait Compiler[T] {
 /**
  * A compiler that uses a Scala combinator character-level parser.
  */
-trait RegexCompiler[T] extends Compiler[T] {
+trait RegexCompiler[T] extends CompilerBase[T] {
 
     this : RegexParsers =>
 
@@ -123,15 +126,36 @@ trait RegexCompiler[T] extends Compiler[T] {
 
     /**
      * Make an AST from the file with the given name by parsing it with
-     * the parser.
+     * the parser.  If everything is ok, return the AST wrapped in Left,
+     * otherwise return the error message wrapped in Right.
      */
-    def makeast (reader : FileReader, filename : String) : Either[T,String] = {
+    def makeast (reader : FileReader, filename : String, emitter : Emitter) : Either[T,String] =
         parseAll (parser, reader) match {
             case Success (ast, _) =>
                 Left (ast)
             case f =>
                 Right (f.toString)
         }
+
+}
+
+/**
+ * A compiler that uses RegexParser to produce Attributable ASTs.
+ */
+trait Compiler[T <: Attributable] extends RegexCompiler[T] {
+ 
+    this : RegexParsers =>
+
+    import org.kiama.attribution.Attribution.initTree
+
+    /**
+     * Function to process the input that was parsed.  By default, just set the
+     * connections for the AST.  Implementations should call this method before
+     * further processing the AST if they wish to use the connections.
+     */
+    def process (ast : T, console : Console, emitter : Emitter) : Boolean = {
+        initTree (ast)
+        true
     }
 
 }

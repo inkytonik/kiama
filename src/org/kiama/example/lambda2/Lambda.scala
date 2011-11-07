@@ -36,6 +36,8 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     import Analysis._
     import Evaluators._
     import PrettyPrinter._
+
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
@@ -115,6 +117,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
      * Process an expression.
      */
     def process (e : AST.Exp) {
+        initTree (e)
         if (typecheck) {
             // First conduct a semantic analysis check: compute the expression's
             // type and see if any errors occurred

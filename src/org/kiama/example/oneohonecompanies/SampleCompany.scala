@@ -24,6 +24,7 @@ package example.oneohonecompanies
 object SampleCompany {
 
     import Company._
+    import org.kiama.attribution.Attribution.initTree
 
     val craig = Employee ("Craig", "Redmond", 123456)
     val erik  = Employee ("Erik", "Utrecht", 12345)
@@ -38,6 +39,10 @@ object SampleCompany {
     val dev1  = Dept ("Dev1", klaus, List (DU (dev11)))
     val dev   = Dept ("Development", ray, List (DU (dev1)))
 
-    val company = Company (List (research, dev))
+    val company = {
+        val c = Company (List (research, dev))
+        initTree (c)
+        c
+    }
 
 }

@@ -30,12 +30,12 @@ import org.scalatest.junit.JUnitRunner
  * the examples.
  */
 @RunWith(classOf[JUnitRunner])
-class CompilerTests extends Compiler[Any] with Tests with TestCompiler[Any] {
+class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] {
 
     import java.io.FileReader
     import org.scalatest.TestFailedException
 
-    def makeast (reader : FileReader, filename : String) : Either[Any,String] =
+    def makeast (reader : FileReader, filename : String, emitter : Emitter) : Either[Any,String] =
          Right ("Dummy")
 
     def process (ast : Any, console : Console, emitter : Emitter) : Boolean =
@@ -66,7 +66,7 @@ class CompilerTests extends Compiler[Any] with Tests with TestCompiler[Any] {
  */
 trait TestCompiler[T] extends FunSuite {
 
-    self : Compiler[T] =>
+    self : CompilerBase[T] =>
 
     import java.io.File
     import scala.io.Source

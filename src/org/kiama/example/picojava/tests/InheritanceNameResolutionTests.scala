@@ -36,6 +36,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class InheritanceNameResolutionTests extends Tests {
 
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
 
@@ -80,6 +81,7 @@ class InheritanceNameResolutionTests extends Tests {
                                 List (VarDecl (Use ("int"), "d"),
                                       AssignStmt (aInBB, Use ("d")),
                                       AssignStmt (eInBB, fInBB))))))))))
+    initTree (ast)
 
     test ("members are resolved in nested classes") {
         expect (declAa) (aInAA->decl)

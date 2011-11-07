@@ -159,6 +159,18 @@ trait AttributionBase {
             def isDefinedAt (t : T) = true
         }
 
+    /**
+     * Initialise the tree rooted at t so that it is ready for attribution.
+     * At present, the only initialisation performed is to set node attributes
+     * such as parent and children so that nodes can generically refer to 
+     * their neighbours. If you wish to use any of these properties, you must
+     * call this method before doing so.  Otherwise, the node properties should
+     * not be used and there is no need to call this method.
+     */
+    def initTree[T <: Attributable] (t : T) {
+        t.initTreeProperties
+    }
+
 }
 
 /**

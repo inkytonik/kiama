@@ -44,7 +44,9 @@ class AttributionTests extends Tests {
     case class PairTree (p : (Tree,Tree)) extends Tree
 
     test ("first child can be accessed") {
+        import Attribution.initTree
         val n = Pair (Leaf (1), Leaf (2))
+        initTree (n)
         assert (n.left eq n.firstChild, "first child of pair")
     }
 
@@ -169,6 +171,7 @@ class AttributionTests extends Tests {
         val c = Leaf (1)
         val b = Pair (d, e)
         val a = Pair (b, c)
+        initTree (a)
         
         expect (0, "cached childAttr Pair Pair") (cattr (b))
         expect (2, "cached childAttr Pair top") (cattr (a))
@@ -202,6 +205,7 @@ class AttributionTests extends Tests {
         val c = Leaf (1)
         val b = Pair (d, e)
         val a = Pair (b, c)
+        initTree (a)
         
         expect (0, "uncached childAttr Pair Pair") (cattr (b))
         expect (2, "uncached childAttr Pair top") (cattr (a))
@@ -383,11 +387,13 @@ class AttributionTests extends Tests {
     }
     
     test ("a normal child's parent property is set correctly") {
+        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = Pair (c2, c3)
         val t = Pair (c1, c4)
+        initTree (t)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
         expectsame (t) (c4.parent)
@@ -396,11 +402,13 @@ class AttributionTests extends Tests {
     }
     
     test ("a list child's parent property is set correctly") {
+        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = ListTree (List (c2, c3))
         val t = Pair (c1, c4)
+        initTree (t)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
         expectsame (t) (c4.parent)
@@ -409,11 +417,13 @@ class AttributionTests extends Tests {
     }
         
     test ("a set child's parent property is set correctly") {
+        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = SetTree (Set (c2, c3))
         val t = Pair (c1, c4)
+        initTree (t)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
         expectsame (t) (c4.parent)
@@ -422,11 +432,13 @@ class AttributionTests extends Tests {
     }
         
     test ("a sequential vector child's parent property is set correctly") {
+        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = GenSeqTree (Vector (c2, c3))
         val t = Pair (c1, c4)
+        initTree (t)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
         expectsame (t) (c4.parent)
@@ -435,11 +447,13 @@ class AttributionTests extends Tests {
     }
         
     test ("a parallel vector child's parent property is set correctly") {
+        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = GenSeqTree (Vector (c2, c3).par)
         val t = Pair (c1, c4)
+        initTree (t)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
         expectsame (t) (c4.parent)
@@ -448,6 +462,7 @@ class AttributionTests extends Tests {
     }
 
     test ("a map's tuple parent properties are set correctly") {
+        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -455,6 +470,7 @@ class AttributionTests extends Tests {
         val c5 = Leaf (12)
         val c6 = MapTree (Map (c4 -> c5))
         val t = MapTree (Map (c1 -> c2, c3 -> c6))
+        initTree (t)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
         expectsame (t) (c2.parent)
@@ -465,11 +481,13 @@ class AttributionTests extends Tests {
     }    
 
     test ("a pair's component parent properties are set correctly") {
+        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = PairTree (c2, c3)
         val t = PairTree (c1, c4)
+        initTree (t)
         expectsame (null) (t.parent)
         expectsame (t) (c1.parent)
         expectsame (t) (c4.parent)

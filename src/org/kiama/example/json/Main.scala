@@ -24,11 +24,11 @@ package org.kiama
 package example.json
 
 import JSONTree.JValue
-import org.kiama.util.RegexCompiler
+import org.kiama.util.Compiler
 
 object Main extends Driver
 
-class Driver extends SyntaxAnalysis with RegexCompiler[JValue]
+class Driver extends SyntaxAnalysis with Compiler[JValue]
         with PrettyPrinter {
 
     import java.io.FileReader
@@ -43,7 +43,9 @@ class Driver extends SyntaxAnalysis with RegexCompiler[JValue]
     /**
      * Process the tree (currently just print it).
      */
-    def process (ast : JValue, console : Console, emitter : Emitter) : Boolean = {
+    override def process (ast : JValue, console : Console, emitter : Emitter) : Boolean = {
+
+        super.process (ast, console, emitter)
 
         // Pretty-print AST as a product value
         println (pretty (product (ast)))

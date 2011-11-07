@@ -24,20 +24,22 @@ package org.kiama
 package example.transform
 
 import AST.Program
-import org.kiama.util.RegexCompiler
+import org.kiama.util.Compiler
 
 /**
  * Main program for transformation compiler.
  */
-class Driver extends Parser with RegexCompiler[Program] {
+class Driver extends Parser with Compiler[Program] {
 
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
-    def process (program : Program, console : Console, emitter : Emitter) : Boolean = {
-        
+    override def process (program : Program, console : Console, emitter : Emitter) : Boolean = {
+
         import Analysis._
+
+        super.process (program, console, emitter)
 
         // Print original program and obtain "no priority" expression
         emitter.emitln (program)

@@ -29,8 +29,11 @@ trait RepminTestsBase extends Tests {
 
     self : RepminImpl =>
 
+    import org.kiama.attribution.Attribution.initTree
+
     test ("repmin actually reps and mins") {
         val t = Fork (Leaf (3), Fork (Leaf (1), Leaf (10)))
+        initTree (t)
         expect (Fork (Leaf (1), Fork (Leaf (1), Leaf (1)))) (t->repmin)
     }
 

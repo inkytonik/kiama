@@ -33,6 +33,7 @@ import java.io.FileReader
 
 object Main extends Parser with SemanticAnalysis with CodeGenerator {
 
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.iswim.driver.PrettyPrinter._
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
@@ -76,6 +77,7 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator {
             val reader = new FileReader(iswimFileName)
             parseAll(start, reader) match {
                 case Success(iswimcode,_) =>
+                    initTree (iswimcode)
                     resetmessages
                     if (iswimcode->isSemanticallyCorrect) {
                         val bytecode = iswimcode->code

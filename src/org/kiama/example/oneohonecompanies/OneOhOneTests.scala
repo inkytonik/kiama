@@ -35,6 +35,7 @@ class OneOhOneTests extends Tests {
     import Depth.depth
     import Precedence.precedence
     import Other._
+    import org.kiama.attribution.Attribution.initTree
     
     // Some pathological companies
     
@@ -164,6 +165,7 @@ class OneOhOneTests extends Tests {
     test ("salaries not ordered - employee") {
         val d = Company (List (Dept ("D1", Employee ("An", "Emp", 100),
                                List (PU (Employee ("Another", "Emp", 500))))))
+        initTree (d)
         expect (false) (precedence (d))
     }
 
@@ -172,6 +174,7 @@ class OneOhOneTests extends Tests {
                        List (PU (Employee ("That", "Emp", 50))))
         val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25), 
                                List (DU (d1)))))
+        initTree (d2)
         expect (false) (precedence (d2))
     }
 

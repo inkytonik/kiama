@@ -1760,6 +1760,7 @@ class RewriterTests extends Tests with Checkers with Generator {
 
     test ("cloning a term with sharing gives an equal but not eq term") {
         import org.kiama.attribution.Attributable
+        import org.kiama.attribution.Attribution.initTree
 
         val c = Add (Num (1), Num (2))
         val d = Add (Num (1), Num (2))
@@ -1779,12 +1780,12 @@ class RewriterTests extends Tests with Checkers with Generator {
 
         val clone = everywherebu (rule {
                         case n : ImperativeNode => 
-                            if (n.hasChildren) {
-                                n.setChildConnections
+                            if (n.hasChildren)
                                 n
-                            } else
+                            else
                                 n.clone ()
                     })
+        initTree (t)
         val ct = clone (t)
         
         // Must get the right answer (==)

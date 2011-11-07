@@ -26,6 +26,7 @@ package example.iswim.tests
  */
 
 import org.junit.runner.RunWith
+import org.kiama.attribution.Attribution.initTree
 import org.kiama.example.iswim.compiler._
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
@@ -38,6 +39,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     test("simple test of use of a correctly bound variable") {
         val prog = parseAll(expr, "let x = 1 in x + x")
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === true)
@@ -47,6 +49,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     test("simple test of a recursive binding") {
         val prog = parseAll(expr, "letrec f = fun(x){ g x } and g = fun(y){ f y } in f 1")
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === true)
@@ -66,6 +69,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === true)
@@ -75,6 +79,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     test("simple test of use of an unbound variable in body of let") {
         val prog = parseAll(expr, "let x = 1 in x + y")
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === false)
@@ -85,6 +90,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     test("use of an unbound variable in an expression being bound to a variable in a let") {
         val prog = parseAll(expr, "let x = y and z = x in z + x")
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === false)
@@ -109,6 +115,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === false)
@@ -130,6 +137,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === true)
     }
@@ -143,6 +151,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === false)
@@ -162,6 +171,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     }
 """)
         assert(prog.successful)
+        initTree (prog.get)
         resetmessages
         val result = (prog.get)->isSemanticallyCorrect
         assert(result === false)

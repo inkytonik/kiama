@@ -22,13 +22,13 @@ package org.kiama
 package example.dataflow
 
 import DataflowAST._
-import org.kiama.util.RegexCompiler
+import org.kiama.util.Compiler
 
 /**
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
-class Driver extends Parser with RegexCompiler[Stm] {
+class Driver extends Parser with Compiler[Stm] {
 
     import org.kiama.util.Console
     import org.kiama.util.Emitter
@@ -36,7 +36,8 @@ class Driver extends Parser with RegexCompiler[Stm] {
     /**
      * Process the AST by optimising it, then print optimised AST.
      */
-    def process (ast : Stm, console : Console, emitter : Emitter) : Boolean = {
+    override def process (ast : Stm, console : Console, emitter : Emitter) : Boolean = {
+        super.process (ast, console, emitter)
         val optast = Optimise.run (ast)
         emitter.emitln (optast)
         true

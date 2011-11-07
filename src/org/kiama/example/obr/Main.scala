@@ -25,13 +25,14 @@ package org.kiama
 package example.obr
 
 import ObrTree.ObrInt
-import org.kiama.util.RegexCompiler
 import org.kiama.util.TestCompiler
+import org.kiama.attribution.Attribution.initTree
+import org.kiama.util.Compiler
 
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
+class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
 
     import org.kiama.util.Console
     import org.kiama.util.Emitter
@@ -79,7 +80,9 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
      * are used for input and output.  Return true if everything worked, false
      * otherwise.
      */
-    def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+    override def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+
+        super.process (ast, console, emitter)
 
         // Initialise compiler state
         SymbolTable.reset ()
@@ -98,6 +101,7 @@ class Driver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
             
             // Compile the source tree to a target tree
             val targettree = ast->code
+            initTree (targettree)
 
             // Print out the target tree for debugging
             if (spillTargetTreeFlag) {
@@ -131,7 +135,7 @@ object Main extends Driver
 /**
  * The next driver simply spills the abstract syntax tree to the console.
  */
-class ParserDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
+class ParserDriver extends SyntaxAnalysis with Compiler[ObrInt] {
 
     import org.kiama.util.Console
     import org.kiama.util.Emitter
@@ -147,7 +151,7 @@ class ParserDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
      * are used for input and output.  Return true if everything worked, false
      * otherwise.
      */
-    def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+    override def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
         // Print ast to the emitter
         emitter.emitln (ast.toString)
@@ -160,7 +164,7 @@ class ParserDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
 /**
  * A driver which parses a program file and runs the semantic analyser.
  */
-class SemanticDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
+class SemanticDriver extends SyntaxAnalysis with Compiler[ObrInt] {
 
     import org.kiama.util.Console
     import org.kiama.util.Emitter
@@ -178,13 +182,13 @@ class SemanticDriver extends SyntaxAnalysis with RegexCompiler[ObrInt] {
      * are used for input and output.  Return true if everything worked, false
      * otherwise.
      */
-    def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+    override def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
         // Initialise compiler state
         SymbolTable.reset ()
 
         // Conduct semantic analysis and report any errors
-
+        initTree (ast)
         ast->errors
         if (messagecount > 0) {
             report (emitter)
@@ -228,8 +232,9 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
         
             try {
                 val reader = new FileReader (dirname + obrfile)
-                makeast (reader, dirname + obrfile) match {
+                makeast (reader, dirname + obrfile, emitter) match {
                     case Left (ast) =>
+                        initTree (ast)
                         ast->errors
                         if (messagecount > 0) {
                             report(emitter)

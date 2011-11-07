@@ -37,6 +37,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class ErrorTests extends Tests with Parser {
 
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.ErrorCheck.errors
 
     /**
@@ -65,6 +66,7 @@ class ErrorTests extends Tests with Parser {
 """;
         parseAll (program, text) match {
             case Success (ast, _) => {
+                initTree (ast)
                 val messages = ast->errors
                 expect ("5.9: Unknown identifier b") (messages (0))
                 expect ("7.5: Can not assign a variable of type boolean to a value of type A") (messages (1))

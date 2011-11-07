@@ -36,6 +36,7 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class BasicNameResolutionTests extends Tests {
 
+    import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
     import org.kiama.example.picojava.TypeAnalysis._
@@ -62,6 +63,7 @@ class BasicNameResolutionTests extends Tests {
                       List (declAz,
                             AssignStmt (xInA, zInA),
                             AssignStmt (yInA, Use ("z"))))))))
+    initTree (ast)
 
     test ("bindings at the same nesting level are resolved") {
         expect (declRx) (xInR->decl)

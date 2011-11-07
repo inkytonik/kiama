@@ -34,6 +34,7 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
 
     import DataflowAST._
     import Dataflow._
+    import org.kiama.attribution.Attribution.initTree
 
     /*
      * {                     (prog)
@@ -56,6 +57,7 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
     val s4 = While ("x", s41)
     val s5 = Return ("x")
     val prog = Block (List (s1, s2, s3, s4, s5))
+    initTree (prog)
 
     test ("in - s1") {
         expect (Set ("w", "v")) (in (s1))
