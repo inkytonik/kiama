@@ -65,6 +65,8 @@ unmanagedResources in Test <<= scalaSource map { s => {
 
 // Publishing
 
+publishArtifact in Test := true
+
 publishTo <<= version { v =>
     val nexus = "http://nexus.scala-tools.org/content/repositories/"
     if (v.trim.endsWith ("SNAPSHOT"))
