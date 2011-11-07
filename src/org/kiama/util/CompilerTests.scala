@@ -68,6 +68,7 @@ trait TestCompiler[T] extends FunSuite {
 
     self : CompilerBase[T] =>
 
+    import org.kiama.attribution.Attribution.resetMemo
     import java.io.File
     import scala.io.Source
 
@@ -93,32 +94,6 @@ trait TestCompiler[T] extends FunSuite {
             s
 
     /**
-     * Make a single file test processing using the command-line cmd,
-     * expecting output as in the file rp.  Use the given console for
-     * input.  The extra string is appended to the normal test title.
-     * name is an identifying string used in messages. If the compilation
-     * fails, rp is assumed to contain the expected messages.
-     */
-    def filetest (name : String, rp : String, console : Console,
-                  extra : String = "", cmd : Array[String]) {
-        val title = name + ": " + cmd.mkString (" ") + ", expecting " +
-                        rp + extra
-        test (title) {
-            val cc =
-                try {
-                    org.kiama.attribution.Attribution.resetMemo
-                    compile (cmd, console)
-                } catch {
-                    case e : Exception =>
-                        info ("failed with an exception ")
-                        throw (e)
-                }
-            val rc = Source.fromFile (rp).mkString
-            assert (sanitise (cc) === sanitise (rc), title + " generated bad output")
-        }
-    }
-
-    /**
      * Make tests that process the files in path.  name is an identifying
      * name for this set of tests.  All files whose names end in srcext are
      * processed.  Processing is done by the function compile which must
@@ -136,6 +111,36 @@ trait TestCompiler[T] extends FunSuite {
                    argslist : List[Array[String]] = List (Array ())) {
 
         import java.io.FilenameFilter
+
+        /**
+         * Make a single file test processing using the command-line cmd,
+         * expecting output as in the file rp.  Use the given console for
+         * input.  The extra string is appended to the normal test title.
+         * name is an identifying string used in messages. If the compilation
+         * fails, rp is assumed to contain the expected messages. rt is a
+         * version of rp to use in the test title.
+         */
+        def filetest (name : String, rp : String, console : Console,
+                      extra : String = "", cmd : Array[String],
+                      rt : String) {
+                          
+             val ct = cmd.mkString (" ").replaceAllLiterally ("src/org/kiama/", "")
+             val title = name + ": " + ct + ", expecting " + rt + extra
+        
+             test (title) {
+                 val cc =
+                     try {
+                         resetMemo
+                         compile (cmd, console)
+                     } catch {
+                         case e : Exception =>
+                             info ("failed with an exception ")
+                             throw (e)
+                     }
+                 val rc = Source.fromFile (rp).mkString
+                 assert (sanitise (cc) === sanitise (rc), title + " generated bad output")
+             }
+         }
 
         /**
          * Make a set of file tests to produce the result files in dir.  For
@@ -156,14 +161,15 @@ trait TestCompiler[T] extends FunSuite {
             val cp = path + "/" + c
             for (r <- dir.list (resfilter)) {
                 val rp = path + "/" + r
-                val ip = rp.replace (resext, inext)
+                val it = r.replace (resext, inext)
+                val ip = path + "/" + it
                 val inf = new File (ip)
                 val (console, msg) =
                     if (inf.exists)
-                        (new FileConsole (ip), " from input " + ip)
+                        (new FileConsole (ip), " from input " + it)
                     else
                         (new StringConsole (indefault), " from string \"" + indefault + "\"")
-                filetest (name, rp, console, msg, args :+ cp)
+                filetest (name, rp, console, msg, args :+ cp, r)
             }
         }
 
@@ -180,8 +186,9 @@ trait TestCompiler[T] extends FunSuite {
                                 infiletests (c, dir, inext, args)
                             case None =>
                                 val cp = path + "/" + c
-                                val rp = cp.replace (srcext, resext)
-                                filetest (name, rp, null, "", args :+ cp)
+                                val rt = c.replace (srcext, resext)
+                                val rp = path + "/" + rt
+                                filetest (name, rp, null, "", args :+ cp, rt)
                         }
                     }
                 }
