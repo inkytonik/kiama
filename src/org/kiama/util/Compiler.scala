@@ -149,9 +149,8 @@ trait Compiler[T <: Attributable] extends RegexCompiler[T] {
     import org.kiama.attribution.Attribution.initTree
 
     /**
-     * Function to process the input that was parsed.  By default, just set the
-     * connections for the AST.  Implementations should call this method before
-     * further processing the AST if they wish to use the connections.
+     * Function to process the input that was parsed.  By default, just
+     * initialise the tree to get things like node properties.
      */
     def process (ast : T, console : Console, emitter : Emitter) : Boolean = {
         initTree (ast)
