@@ -30,7 +30,8 @@ import scala.util.parsing.combinator.RegexParsers
 trait Tests extends FunSuite {
 
     import org.kiama.util.Messaging._
-    
+    import org.scalatest.Tag
+
     /**
      * Compare two values.  Use reference equality for references
      * and value equality for non-references.  If the values are
@@ -75,6 +76,15 @@ trait Tests extends FunSuite {
         expect (line, "wrong line number in message " + index) (m.pos.line)
         expect (column, "wrong column number in message " + index) (m.pos.column)
     }
+
+    /**
+     * A ScalaTest tag that enables us to focus attention on particular tests
+     * rather than running all of them each time. Add this as an argument to
+     * the particular test methods that you want to focus on. Then you can
+     * use an sbt command such as "test-only *RewriterTests -- -n FocusTest"
+     * to run just the tests in that suite with this tag.
+     */
+    object FocusTest extends Tag ("FocusTest")
 
 }
 
