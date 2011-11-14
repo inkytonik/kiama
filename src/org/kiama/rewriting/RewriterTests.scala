@@ -1857,11 +1857,8 @@ class RewriterTests extends Tests with Checkers with Generator {
                           Add (Num (3), Num (4))))
 
         val clone = everywherebu (rule {
-                        case n : ImperativeNode => 
-                            if (n.hasChildren)
-                                n
-                            else
-                                n.clone ()
+                        case n : ImperativeNode if !n.hasChildren => 
+                            n.clone ()
                     })
         initTree (t)
         val ct = clone (t)
