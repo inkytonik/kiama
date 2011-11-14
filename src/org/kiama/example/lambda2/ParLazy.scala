@@ -53,7 +53,7 @@ trait ParLazy extends Par {
     override lazy val subsVar =
         rulefs {
             case Letp (ds, Var (x)) =>
-                lookupb (x, ds) <* rule { case e : Exp => Letp (ds, e) }
+                option (lookupb (x, ds)) <* rule { case e : Exp => Letp (ds, e) }
         }
 
     /**
@@ -63,7 +63,7 @@ trait ParLazy extends Par {
     def letAppL (eval : => Strategy) =
         rulefs {
             case Letp (ds1, App (e1, e2)) =>
-                eval (Letp (ds1, e1)) <* rule {
+                option (eval (Letp (ds1, e1))) <* rule {
                     case Letp (ds2, e3) =>
                         Letp (ds2, App (e3, e2))
                 }
@@ -76,9 +76,9 @@ trait ParLazy extends Par {
     def letOpn (eval : => Strategy) =
         rulefs {
             case Letp (ds1, Opn (e1, op, e2)) =>
-                eval (Letp (ds1, e1)) <* rulefs {
+                option (eval (Letp (ds1, e1))) <* rulefs {
                     case Letp (ds2, e3) =>
-                        eval (Letp (ds2, e2)) <* rule {
+                        option (eval (Letp (ds2, e2))) <* rule {
                             case Letp (ds3, e4) =>
                                 Letp (ds3, Opn (e3, op, e4))
                         }
@@ -112,7 +112,7 @@ trait ParLazy extends Par {
     lazy val letLetRen =
         rulefs {
             case Letp (ds1, Letp (ds2, e1)) =>
-                rename (Letp (ds2, e1)) <* rule {
+                option (rename (Letp (ds2, e1))) <* rule {
                     case Letp (ds3, e2) =>
                         val ds4 = ds3 ++ ds1
                         Letp (ds4, e2)

@@ -216,12 +216,17 @@ class RewriterTests extends Tests with Checkers with Generator {
     }
     
     test ("terms as strategies") {
-        check ((t : Stmt, u : Exp) => same (Some (t), t (u)))
-        check ((t : Exp, u : Exp) => same (Some (t), t (u)))
-        check ((t : Stmt, u : Stmt) => same (Some (t), t (u)))
-        check ((t : Exp, u : Stmt) => same (Some (t), t (u)))
+        check ((t : Stmt, u : Exp) => same (Some (t), (build (t)) (u)))
+        check ((t : Exp, u : Exp) => same (Some (t), (build (t)) (u)))
+        check ((t : Stmt, u : Stmt) => same (Some (t), (build (t)) (u)))
+        check ((t : Exp, u : Stmt) => same (Some (t), (build (t)) (u)))
     }
     
+    test ("options as strategies") {
+        check ((t : Stmt, u : Exp) => same (Some (t), option (Some (t)) (u)))
+        check ((u : Exp) => same (None, option (None) (u)))
+    }
+
     test ("term combinator") {
         check ((t : Stmt) => (term (t)) (t) == Some (t))
         check ((t : Exp) => (term (t)) (t) == Some (t))
@@ -236,17 +241,17 @@ class RewriterTests extends Tests with Checkers with Generator {
         val e2 = Add (Num (2), Num (3))
     
         test ("conditional choice operator: identity") {
-            expect (Some (Num (1))) ((id < (Num (1) : Strategy) + Num (2)) (e1))
+            expect (Some (Num (1))) ((id < build (Num (1)) + build (Num (2))) (e1))
         }
     
         test ("conditional choice operator: failure") {
-            expect (Some (Num (2))) ((rwfail < (Num (1) : Strategy) + Num (2)) (e1))
+            expect (Some (Num (2))) ((rwfail < build (Num (1)) + build (Num (2))) (e1))
         }
     
         test ("conditional choice operator: condition for just success or failure") {
             val ismulbytwo = rule { case t @ Mul (Num (2), _) => t }
             val multoadd = rule { case Mul (Num (2), x) => Add (x, x) }
-            val error : Strategy = Num (99)
+            val error : Strategy = build (Num (99))
             val trans1 = ismulbytwo < multoadd + error
             expect (Some (Add (Num (3), Num (3)))) ((trans1) (e1))
             expect (Some (Num (99))) ((trans1) (e2))
@@ -325,7 +330,80 @@ class RewriterTests extends Tests with Checkers with Generator {
             }
             expect (4) (countbin (e))
         }
-        
+
+        {
+            val l1 = List (Num (1), Num (2), Num (3))
+            val r1 = List (Num (2), Num (3), Num (4))
+            val l2 = List (Num (1), Var ("i"), Num (3))
+            val l3 = List (Num (1))
+
+            test ("map fail over a nil list gives nil") {
+                expect (Some (Nil)) (map (rwfail) (Nil))
+            }
+
+            test ("map fail over a non-nil list fails") {
+                expect (None) (map (rwfail) (l1))
+            }
+
+            test ("map id over a nil list gives nil") {
+                expect (Some (Nil)) (map (id) (Nil))
+            }
+
+            test ("map id over a non-nil list gives that list") {
+                expectsame (Some (l1)) (map (id) (l1))
+            }
+
+            {
+                val inc = rule { case d : Double => d + 1 }
+
+                test ("map double inc over a nil list gives nil") {
+                    expect (Some (Nil)) (map (inc) (Nil))
+                }
+
+                test ("map double inc over a non-nil Num list fails") {
+                    expect (None) (map (inc) (l1))
+                }
+            }
+
+            {
+                val isnum = rule { case n : Num => n }
+
+                test ("map isnum over a nil list gives nil") {
+                    expect (Some (Nil)) (map (isnum) (Nil))
+                }
+
+                test ("map isnum over a list with one num succeeds with same list") {
+                    expectsame (Some (l3)) (map (isnum) (l3))
+                }
+
+                test ("map isnum over a list with more than one num succeeds with same list") {
+                    expectsame (Some (l1)) (map (isnum) (l1))
+                }
+
+                test ("map isnum over a list with non-num fails") {
+                    expect (None) (map (isnum) (l2))
+                }
+
+            }
+
+            {
+                val isnuminc = rule { case Num (i) => Num (i + 1) }
+
+                test ("map isnuminc over a nil list gives nil") {
+                    expect (Some (Nil)) (map (isnuminc) (Nil))
+                }
+
+                test ("map isnuminc over a list with only nums succeeds with incremented list") {
+                    expect (Some (r1)) (map (isnuminc) (l1))
+                }
+
+                test ("map isnuminc over a list with non-num fails") {
+                    expect (None) (map (isnuminc) (l2))
+                }
+
+            }
+        }
+
         {
             val r = Mul (Num (2), Add (Sub (Var ("hello"), Num (3)), Var ("harold")))
             val s = Mul (Num (2), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))

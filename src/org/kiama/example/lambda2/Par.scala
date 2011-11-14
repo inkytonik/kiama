@@ -69,7 +69,7 @@ trait Par extends ReduceSubst {
     override lazy val subsVar =
         rulefs {
             case Letp (ds, e @ Var (x)) =>
-                lookupb (x, ds) <+ e
+                option (lookupb (x, ds)) <+ build (e)
         }
 
     /**

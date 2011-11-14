@@ -48,7 +48,7 @@ trait ParLazyUpdate extends ParLazy {
     def update (eval : Strategy) : Strategy =
         rulefs {
             case Letp (ds1, v @ Var (x)) =>
-                eval (Letp (ds1, v)) <* rule {
+                option (eval (Letp (ds1, v))) <* rule {
                     case Letp (ds2, e) => Letp (Bind (x, e) :: ds2, e)
                 }
         }

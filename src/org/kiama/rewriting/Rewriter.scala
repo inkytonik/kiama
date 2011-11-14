@@ -199,19 +199,20 @@ object Rewriter {
         }
 
     /**
-     * (Implicitly) construct a strategy that always succeeds, changing
-     * the subject term to a given term.
+     * Construct a strategy that always succeeds, changing the subject term to
+     * the given term.
      */
-    implicit def termToStrategy (t : Term) : Strategy =
-         strategyf (_ => Some (t))
+    def build (t : => Term) : Strategy =
+        rulef (_ => t)
 
     /**
-     * (Implicitly) construct a strategy from an option value.  The
-     * strategy succeeds or fails depending on whether the option is
-     * a Some or None, respectively.
+     * Construct a strategy from an option value.  The strategy succeeds
+     * or fails depending on whether the option is a Some or None, respectively.
+     * If the option is a Some, then the subject term is changed to the
+     * term that is wrapped by the Some.
      */
-    implicit def optionToStrategy (o : Option[Term]) : Strategy =
-         strategyf (_ => o)
+    def option (o : => Option[Term]) : Strategy =
+        strategyf (_ => o)
 
     /**
      * Define a term query.  Construct a strategy that always succeeds with no
@@ -246,7 +247,7 @@ object Rewriter {
      * A strategy that always fails.
      */
     val fail : Strategy =
-        strategyf (_ => None)
+        option (None)
 
     /**
      * A strategy that always succeeds with the subject term unchanged (i.e.,
@@ -1021,20 +1022,25 @@ object Rewriter {
     /**
      * Construct a strategy that applies s to each element of a list,
      * returning a new list of the results if all of the applications
-     * succeed, otherwise fail.
+     * succeed, otherwise fail.  If all of the applications succeed
+     * without change, return the input list.
      */
     def map (s : => Strategy) : Strategy =
         rulefs {
-            case Nil              =>
-                id
-            case (x : Term) :: xs =>
-                s (x) <* rulefs {
-                    case y =>
-                        (map (s)) (xs) <* rule {
-                            case ys : List[_] =>
-                                y :: ys
-                        }
-                }
+            case Nil           => id
+            case l @ (x :: xs) =>
+                option (s (x)) <*
+                    rulefs {
+                        case y =>
+                            option (map (s) (xs)) <* 
+                                rule {
+                                    case ys : List[_] =>
+                                        if (same (x, y) && same (xs, ys))
+                                            l
+                                        else
+                                            y :: ys
+                                }
+                    }
         }
 
     /**
@@ -1140,7 +1146,7 @@ object Rewriter {
      * bindings are not visible outside s.
      */
     def where (s : => Strategy) : Strategy =
-        strategyf (t => (s <* t) (t))
+        strategyf (t => (s <* build (t)) (t))
 
     /**
      * Construct a strategy that tests whether strategy s succeeds,
