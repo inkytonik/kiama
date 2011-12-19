@@ -26,10 +26,12 @@ object Main extends Parser {
     import AbstractSyntax.Program
     import java.io.FileReader
     import ErrorCheck._
+    import org.kiama.attribution.Attribution.initTree
 
     def main (args : Array[String]) : Unit = {
         for (filename <- args) {
             val program = run (new FileReader (filename))
+            initTree (program)
             val messages = program->errors
             for (msg <- messages)
                 println (filename + ":" + msg)
