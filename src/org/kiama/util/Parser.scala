@@ -32,10 +32,16 @@ trait Parser extends RegexParsers with PackratParsers {
     import scala.util.matching.Regex
 
     /**
-     * A parser that matches any element.
+     * A parser that matches any element, failing if the end of input
+     * is reached.
      */
     def any : PackratParser[Char] =
-        elem ("any character", _ => true)
+        Parser { in =>
+            if (in.atEnd)
+                Failure ("any character expected but end of source found", in)
+            else
+            	elem ("any character", _ => true) (in)           
+    	}
     
     /**
      * Return an error after skipping white space.
@@ -208,88 +214,103 @@ trait Parser extends RegexParsers with PackratParsers {
  * the form of comments requires more power than a regular expression can 
  * provide (e.g., for nested comments).  
  */
-trait WhitespaceParser {
-    
-    self : RegexParsers with PackratParsers =>
+trait WhitespaceParser extends RegexParsers with PackratParsers {
 
     import scala.util.matching.Regex
+    import scala.util.parsing.input.Positional
+
+    /*
+     * Turn off whitespace processing based on the whiteSpace regular
+     * expression from RegexParsers.
+     */
+    override def skipWhitespace = false
 
     /**
-     * A parser that recognises whitespace.  Whitespace handling is turned
-     * off while this parser is applied, since we need to avoid an infinite
-     * recursion if the form of whitespace is defined using literal or
-     * regex. 
+     * A parser that recognises whitespace.  Normal whitespace handling is
+     * turned off while this parser is applied, since we need to avoid an
+     * infinite recursion if the form of whitespace is defined using
+     * literal or regex. 
      */
     protected val whitespaceParser : PackratParser[Any]
     
     /**
-     * Are we currently handling whitespace?
+     * Are we currently parsing whitespace?
      */
-    var handlingWhitespace = false
+    protected var parsingWhitespace = false
     
     /**
-     * If we are handling whitespace already, succeed with no progress.
-     * Otherwise, apply the whitespace parser.  Any errors recorded
-     * when parsing whitespace are ignored.
+     * If we are parsing whitespace already, fail if we are the end
+     * of the input, otherwise succeed with no progress.  If we are
+     * not already parsing whitespace, then apply the whitespace
+     * parser, swallowing any errors from it unless they occur at 
+     * the end of the input. In other words, an error not at the end
+     * is treated as the absence of whitespace.
      */
-    protected def handleWhitespace(in: Input): ParseResult[Any] =
-        if (handlingWhitespace)
-            Success("", in)
-        else {
-            val lastNoSuccessSave = lastNoSuccess
-            handlingWhitespace = true
-            val result = whitespaceParser(in)
-            handlingWhitespace = false
-            lastNoSuccess = lastNoSuccessSave
+    protected def parseWhitespace (in: Input) : ParseResult[Any] =
+        if (parsingWhitespace) {
+            if (in.atEnd)
+                Failure ("end of source while parsing whitespace", in)
+            else
+            	Success ("", in)
+        } else {
+            parsingWhitespace = true
+            val result =
+                whitespaceParser (in) match {
+                	case f @ NoSuccess (_, next) =>
+                	    if (next.atEnd)
+                	        f
+                	    else
+                	    	Success ("", in)
+       	    	    case s =>
+       	    	        s
+            	}
+            parsingWhitespace = false
             result
         }
+    
+    /**
+     * A parser that matches a literal string after skipping any 
+     * whitespace that is parsed by whitespaceParser.
+     */
+    override implicit def literal (s : String) : Parser[String] =
+        Parser { in =>
+      		parseWhitespace (in) match {
+               	case Success (_, next) =>
+                   	WhitespaceParser.super.literal (s) (next)
+               	case NoSuccess (msg, next) =>
+                   	Failure (msg, next)
+       		}
+    	}
 
-    /** A parser that matches a literal string */
-    override implicit def literal(s: String): Parser[String] = new Parser[String] {
-        def apply(in: Input) = {
-            val source = in.source
-            val offset = in.offset
-            handleWhitespace(in) match {
-                case Success(_, next) =>
-                    val start = next.offset
-                    var i = 0
-                    var j = start
-                    while (i < s.length && j < source.length && s.charAt(i) == source.charAt(j)) {
-                        i += 1
-                        j += 1
-                    }
-                    if (i == s.length)
-                        Success(source.subSequence(start, j).toString, in.drop(j - offset))
-                    else  {
-                        val found = if (start == source.length()) "end of source" else "`"+source.charAt(start)+"'" 
-                        Failure("`"+s+"' expected but "+found+" found", in.drop(start - offset))
-                    }
-                case f : NoSuccess =>
-                    Failure(f.msg, f.next)
-            }
-        }
-    }
+    /**
+     * A parser that matches a regex string after skipping any 
+     * whitespace that is parsed by whitespaceParser.
+     */
+    override implicit def regex (r : Regex) : Parser[String] =
+        Parser { in =>
+   			parseWhitespace (in) match {
+               	case Success (_, next) =>
+               		val res = WhitespaceParser.super.regex (r) (next)
+               		res
+               	case NoSuccess (msg, next) =>
+               		Failure (msg, next)
+    		}
+    	}
 
-    /** A parser that matches a regex string */
-    override implicit def regex(r: Regex): Parser[String] = new Parser[String] {
-        def apply(in: Input) = {
-            val source = in.source
-            val offset = in.offset
-            handleWhitespace(in) match {
-                case Success(_,next) =>
-                    val start = next.offset
-                    (r findPrefixMatchOf (source.subSequence(start, source.length))) match {
-                        case Some(matched) =>
-                            Success(source.subSequence(start, start + matched.end).toString, 
-                                    in.drop(start + matched.end - offset))
-                        case None =>
-                            val found = if (start == source.length()) "end of source" else "`"+source.charAt(start)+"'" 
-                            Failure("string matching regex `"+r+"' expected but "+found+" found", in.drop(start - offset))
-                    }
-                case f : NoSuccess =>
-                    Failure(f.msg, f.next)
-            }
+    /**
+     * As for positioned in RegexParsers, but uses parseWhitespace
+     * to skip whitespace.
+     */
+    override def positioned[T <: Positional](p : => Parser[T]) : Parser[T] = {
+        val pp = super.positioned(p)
+        Parser { in =>
+        	parseWhitespace (in) match {
+        	    case Success (_, next) =>
+        	        pp (next)
+        	    case NoSuccess (msg, next) =>
+        	        Failure (msg, next)
+        	}
         }
-    }
-        
+    }    
+    
 }
