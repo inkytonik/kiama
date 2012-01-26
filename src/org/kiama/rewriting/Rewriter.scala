@@ -29,7 +29,7 @@ package rewriting
  * based on the Stratego library, but also on combinators found in the Scrap Your
  * Boilerplate and Uniplate libraries for Haskell.
  */
-object Rewriter {
+class Rewriter {
     
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
@@ -364,7 +364,7 @@ object Rewriter {
      * instead of t's children.  Fails if a constructor cannot be found or
      * if one of the children is not of the appropriate type.
      */
-    private def dup[T <: Product] (t : T, children : Array[AnyRef]) : T = {
+    protected def dup[T <: Product] (t : T, children : Array[AnyRef]) : T = {
         val clazz = t.getClass
         val ctor = constrcache.getOrElseUpdate (clazz, (clazz.getConstructors())(0))
         try {
@@ -372,8 +372,8 @@ object Rewriter {
         } catch {
             case e : IllegalArgumentException =>
                 sys.error ("dup illegal arguments: " + ctor + " (" +
-                       children.deep.mkString (",") + "), expects " +
-                       ctor.getParameterTypes.length)
+                           children.deep.mkString (",") + "), expects " +
+                           ctor.getParameterTypes.length)
         }
     }
 
@@ -1502,5 +1502,37 @@ object Rewriter {
      */
     def and (s1 : => Strategy, s2 : => Strategy) : Strategy =
         where (s1) < test (s2) + (test (s2) <* fail)
+
+}
+
+/**
+ * Strategy-based term rewriting for arbitrary terms.
+ */
+object Rewriter extends Rewriter
+
+/**
+ * Strategy-based term rewriting for terms that may include positions.
+ * Specifically, generic rewrites will preserve positions for terms 
+ * that are instances of scala.util.parsing.input.Positional.  Positions
+ * of terms created in specific rewrite rules must be set manually.
+ */
+object PositionalRewriter extends Rewriter {
+
+    import scala.util.parsing.input.Positional
+
+    /**
+     * Duplicate the t product and also set the duplicate's position 
+     * to t's position if T extends scala.util.parsing.input.Positional.
+     */    
+    protected override def dup[T <: Product] (t : T, children : Array[AnyRef]) : T = {
+        val nt = super.dup (t, children)
+        nt match {
+            case p : Positional =>
+                p.setPos (t.asInstanceOf[Positional].pos)
+            case _ =>
+                // Do nothing
+        }
+        nt
+    }
 
 }

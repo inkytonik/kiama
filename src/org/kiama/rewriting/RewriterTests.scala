@@ -1892,5 +1892,98 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectnotsame (c1) (d1)
         expectnotsame (c2) (d1)
     }
-        
+
+}
+
+/**
+ * Support for PositionalRewriterTests.  These need to be here rather
+ * than in the PositionalRewriterTests class since the latter would
+ * require them to be instantiated with an instance of that class.
+ */
+object SupportPositionalRewriterTests {
+
+    import scala.util.parsing.input.{Positional, Position}
+
+    trait Node extends Positional
+    case class One (a : Node) extends Node
+    case class Two (l : Node, r : Node) extends Node
+    case class Leaf (i : Int) extends Node
+
+    trait TestPosition extends Position {
+        def lineContents = ""
+    }
+
+}
+
+/**
+ * Positional rewriting tests.
+ */
+@RunWith(classOf[JUnitRunner])
+class PositionalRewriterTests extends Tests with Checkers with Generator {
+
+    import SupportPositionalRewriterTests._
+    import org.kiama.rewriting.PositionalRewriter.{fail => rwfail, test => rwtest, _}
+    import scala.util.parsing.input.NoPosition
+
+    val pl1 = new TestPosition { def line = 1; def column = 2 }
+    val l1 = Leaf (42).setPos (pl1)
+    val pl2 = new TestPosition { def line = 3; def column = 4 }
+    val l2 = Leaf (99).setPos (pl2)
+
+    val pt = new TestPosition { def line = 9; def column = 10 }
+    val t = Two (l1, l2).setPos (pt)
+
+    val po = new TestPosition { def line = 7; def column = 8 }
+    val o = One (t).setPos (po)
+
+    val r = everywhere (rule {
+                case n @ Leaf (i) =>
+                    Leaf (i + 1).setPos (n.pos)
+            })
+
+    val no = rewrite (r) (o)
+
+    test ("positional rewriting gives correct value") {
+        expect (One (Two (Leaf (43), Leaf (100)))) (no)
+    }
+
+    test ("positional rewriting preserves root position") {
+        expectsame (po) (no.pos)
+    }
+
+    test ("positional rewriting preserves root child position") {
+        expectsame (pt) (no.a.pos)
+    }
+
+    test ("positional rewriting preserves root child left position") {
+        expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
+    }
+
+    test ("positional rewriting preserves root child right position") {
+        expectsame (pl2) (no.a.asInstanceOf[Two].r.pos)
+    }
+
+    val oo = One (Two (Leaf (42), Leaf (99)))
+    val noo = rewrite (r) (oo)
+
+    test ("positional rewriting with no positions gives correct value") {
+        expect (One (Two (Leaf (43), Leaf (100)))) (noo)
+    }
+
+    test ("positional rewriting with no positions leaves root position undefined") {
+        expectsame (NoPosition) (noo.pos)
+    }
+
+    test ("positional rewriting leaves root child position undefined") {
+        expectsame (NoPosition) (noo.a.pos)
+    }
+
+    test ("positional rewriting leaves root child left position undefined") {
+        expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.pos)
+    }
+
+    test ("positional rewriting leaves root child right position undefined") {
+        expectsame (NoPosition) (noo.a.asInstanceOf[Two].r.pos)
+    }
+
 }
