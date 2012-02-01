@@ -94,17 +94,16 @@ trait ReaderConsole extends Console {
 }
 
 /**
- * A console that reads from the given file.
+ * A console that reads from the given UTF-8 encoded file.
  */
 class FileConsole (filename : String) extends ReaderConsole {
 
-    import java.io.BufferedReader
-    import java.io.FileReader
+    import org.kiama.util.IO.filereader
 
     /**
      * A reader for the underlying file.
      */
-    lazy val reader = new BufferedReader (new FileReader (filename))
+    lazy val reader = filereader (filename)
 
 }
 
@@ -113,12 +112,11 @@ class FileConsole (filename : String) extends ReaderConsole {
  */
 class StringConsole (string : String) extends ReaderConsole {
 
-    import java.io.BufferedReader
-    import java.io.StringReader
+    import org.kiama.util.IO.stringreader
 
     /**
      * A reader for the given string.
      */
-    lazy val reader = new BufferedReader (new StringReader (string))
+    lazy val reader = stringreader (string)
 
 }

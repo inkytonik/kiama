@@ -31,7 +31,6 @@ object Main extends Driver
 class Driver extends SyntaxAnalysis with Compiler[JValue]
         with PrettyPrinter {
 
-    import java.io.FileReader
     import org.kiama.util.Console
     import org.kiama.util.Emitter
 

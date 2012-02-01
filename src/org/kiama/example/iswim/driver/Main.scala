@@ -29,13 +29,13 @@ package example.iswim.driver
 
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
-import java.io.FileReader
 
 object Main extends Parser with SemanticAnalysis with CodeGenerator {
 
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.iswim.driver.PrettyPrinter._
     import org.kiama.util.Emitter
+    import org.kiama.util.IO.filereader
     import org.kiama.util.Messaging._
     import SECDBase._
 
@@ -74,7 +74,7 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator {
         }
 
         if (processArgs(args.toList)) {
-            val reader = new FileReader(iswimFileName)
+            val reader = filereader (iswimFileName)
             parseAll(start, reader) match {
                 case Success(iswimcode,_) =>
                     initTree (iswimcode)

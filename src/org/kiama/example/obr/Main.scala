@@ -206,10 +206,9 @@ class SemanticDriver extends SyntaxAnalysis with Compiler[ObrInt] {
  */
 class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
 
-    import java.io.FileReader
-    import java.io.FileNotFoundException
     import org.kiama.util.Console
     import org.kiama.util.Emitter
+    import org.kiama.util.IO._
     import org.kiama.util.Messaging._
     import org.kiama.rewriting.Rewriter._
     import SemanticAnalysis._
@@ -231,7 +230,7 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
             resetmessages ()
         
             try {
-                val reader = new FileReader (dirname + obrfile)
+                val reader = filereader (dirname + obrfile)
                 makeast (reader, dirname + obrfile, emitter) match {
                     case Left (ast) =>
                         initTree (ast)

@@ -21,7 +21,7 @@
 package org.kiama
 package util
 
-import java.io.FileReader
+import java.io.Reader
 import org.kiama.attribution.Attributable
 import scala.util.parsing.combinator.RegexParsers
 
@@ -31,11 +31,11 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait CompilerBase[T] {
 
-    import java.io.File
-    import java.io.FileNotFoundException
+    import java.io.Reader
     import org.kiama.util.Console
     import org.kiama.util.JLineConsole
     import org.kiama.util.Emitter
+    import org.kiama.util.IO._
     import org.kiama.util.StringEmitter
     import scala.io.Source
 
@@ -59,16 +59,16 @@ trait CompilerBase[T] {
     /**
      * Process the arguments, using the given console for input and the
      * given emitter for output.  The arguments are first processed by
-     * checkargs.  Any remaining arguments are interpreted as file names
-     * which are processed in turn by using makeast to turn their contents
-     * into abstract syntax trees (ASTs) and then by process which conducts 
-     * arbitrary processing on the ASTs.
+     * checkargs.  Any remaining arguments are interpreted as names of
+     * UTF-8 encoded files which are processed in turn by using makeast to
+     * turn their contents into abstract syntax trees (ASTs) and then by
+     * process which conducts arbitrary processing on the ASTs.
      */
     def driver (args : Array[String], console : Console, emitter : Emitter) {
         val newargs = checkargs (args, emitter)
         for (arg <- newargs) {
             try {
-                val reader = new FileReader (newargs (0))
+                val reader = filereader (newargs (0))
                 makeast (reader, newargs (0), emitter) match {
                     case Left (ast) =>
                         process (ast, console, emitter)
@@ -86,7 +86,7 @@ trait CompilerBase[T] {
      * Make an AST from the file with the given name, returning it wrapped in
      * Left.  Returns Right with an error message if an AST cannot be made.
      */
-    def makeast (reader : FileReader, filename : String, emitter : Emitter) : Either[T,String]
+    def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[T,String]
 
     /**
      * Function to process the input that was parsed.  console should be
@@ -129,7 +129,7 @@ trait RegexCompiler[T] extends CompilerBase[T] {
      * the parser.  If everything is ok, return the AST wrapped in Left,
      * otherwise return the error message wrapped in Right.
      */
-    def makeast (reader : FileReader, filename : String, emitter : Emitter) : Either[T,String] =
+    def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[T,String] =
         parseAll (parser, reader) match {
             case Success (ast, _) =>
                 Left (ast)

@@ -66,13 +66,13 @@ class StringEmitter extends Emitter {
 
 /**
  * A string emitter that also provides an output method to send the 
- * result to the named file.
+ * result to the named UTF-8 encoded file.
  */
 class FileEmitter (filename : String) extends StringEmitter {
-    import java.io.FileWriter
+    import org.kiama.util.IO.filewriter
         
     def close () {
-        val out = new FileWriter (filename)
+        val out = filewriter (filename)
         out.write (result ())
         out.close ()
     }

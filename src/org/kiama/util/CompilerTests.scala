@@ -32,10 +32,10 @@ import org.scalatest.junit.JUnitRunner
 @RunWith(classOf[JUnitRunner])
 class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] {
 
-    import java.io.FileReader
+    import java.io.Reader
     import org.scalatest.TestFailedException
 
-    def makeast (reader : FileReader, filename : String, emitter : Emitter) : Either[Any,String] =
+    def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[Any,String] =
          Right ("Dummy")
 
     def process (ast : Any, console : Console, emitter : Emitter) : Boolean =

@@ -30,7 +30,8 @@ import org.scalatest.Assertions
  */
 trait Main extends Assertions {
 
-    import java.io.{CharArrayReader,FileNotFoundException,FileReader}
+    import java.io.CharArrayReader
+    import org.kiama.util.IO._
 
     /**
      * Accept file name arguments and process them one-by-one by
@@ -40,7 +41,7 @@ trait Main extends Assertions {
     def main (args : Array[String]) {
         for (arg <- args) {
             try {
-                val reader = new FileReader (arg)
+                val reader = filereader (arg)
                 val result = process (reader)
                 println (result)
             } catch {
