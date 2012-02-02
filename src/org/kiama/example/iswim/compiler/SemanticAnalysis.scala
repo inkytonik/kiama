@@ -89,12 +89,17 @@ trait SemanticAnalysis {
             case Binding(_,e) => e->isSemanticallyCorrect
             case Primitives(_) => true
             case m@MatchClause(_,e) =>
-                if (m->unreachable) message(m,"unreachable match clause")
-                !(m->unreachable) & e->isSemanticallyCorrect
+                if (m->unreachable) {
+                    message(m,"unreachable match clause")
+                    false
+                } else
+                    e->isSemanticallyCorrect
             case e =>
                 var result : Boolean = true
-                for ( n <- e.children )
-                    result = result & (n.asInstanceOf[Iswim])->isSemanticallyCorrect
+                for ( n <- e.children ) {
+                    val ncorrect = (n.asInstanceOf[Iswim])->isSemanticallyCorrect
+                    result = result && ncorrect
+                }
                 result
         }
 

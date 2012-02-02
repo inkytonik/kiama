@@ -27,7 +27,7 @@ import scala.util.parsing.combinator.RegexParsers
 /**
  * Useful utilities for defining regular expression packrat parsers.
  */
-trait Parser extends RegexParsers with PackratParsers {
+trait ParserUtilities extends RegexParsers with PackratParsers {
     
     import scala.util.matching.Regex
 

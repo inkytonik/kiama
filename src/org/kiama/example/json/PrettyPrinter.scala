@@ -24,7 +24,7 @@ package example.json
 /**
  * AST pretty-printing.
  */
-trait PrettyPrinter extends org.kiama.util.PrettyPrinter {
+object PrettyPrinter extends org.kiama.util.PrettyPrinter {
 
     import JSONTree._
 

@@ -70,7 +70,7 @@ trait Main extends Assertions {
 /**
  * Standard main program for TIL chairmarks that parse.
  */
-trait ParsingMain extends Main with org.kiama.util.Parser {
+trait ParsingMain extends Main with org.kiama.util.ParserUtilities {
 
     /**
       * Process the file given by the argument reader by parsing it

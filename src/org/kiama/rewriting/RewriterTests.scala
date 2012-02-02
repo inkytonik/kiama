@@ -532,7 +532,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     {
         val incall = alltd (rule { case i : Int => i + 1 })
         val incfirst = oncetd (rule { case i : Int => i + 1 })
-        val incodd = sometd (rule { case i : Int if i % 2 == 1 => i + 1 })
+        val incodd = sometd (rule { case i : Int if i % 2 != 0 => i + 1 })
     
         test ("rewrite list: increment all numbers - non-empty") {
             expect (Some (List (2, 3, 4))) ((incall) (List (1, 2, 3)))
@@ -577,17 +577,16 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
     }
 
-    test ("same comparison of equal references yields true") {
-        case class Num (i : Int) 
-        val r = Num (42)
+    test ("same comparison of equal references yields true xxxx") {
+        class Num (i : Int) 
+        val r = new Num (42)
         expect (true) (same (r, r))
     }
     
-
     test ("same comparison of unequalt references yields false") {
-        case class Num (i : Int) 
-        val r1 = Num (42)
-        val r2 = Num (42)
+        class Num (i : Int) 
+        val r1 = new Num (42)
+        val r2 = new Num (42)
         expect (false) (same (r1, r2))
     }
 
@@ -1383,7 +1382,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                                     Num (i)
                 }
         val l = rule {
-                    case Num (i) if (i % 2 == 0) => Num (i)
+                    case Num (i) if (i % 2 != 1) => Num (i)
                 }
         val s = leaves (r, l)
         expect (Some (t)) (s (t))
@@ -1398,7 +1397,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                                     Num (i)
                 }
         val l = rule {
-                    case Num (i) if (i % 2 == 1) => Num (i)
+                    case Num (i) if (i % 2 != 0) => Num (i)
                 }
         val x = (y : Strategy) =>
                     rule {

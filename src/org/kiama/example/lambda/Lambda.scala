@@ -77,7 +77,7 @@ object AST {
 /**
  * Parser to AST.
  */
- trait Parser extends org.kiama.util.Parser {
+ trait Parser extends org.kiama.util.ParserUtilities {
 
     import AST._
 

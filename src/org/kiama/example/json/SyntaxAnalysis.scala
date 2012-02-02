@@ -26,7 +26,7 @@ package example.json
 /**
  * Module containing parsers for the JSON language.
  */
-trait SyntaxAnalysis extends org.kiama.util.Parser {
+trait SyntaxAnalysis extends org.kiama.util.ParserUtilities {
 
     import JSONTree._
 

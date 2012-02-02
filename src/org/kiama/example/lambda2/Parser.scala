@@ -24,7 +24,7 @@ package example.lambda2
 /**
  * Parser to AST.
  */
-trait Parser extends org.kiama.util.Parser {
+trait Parser extends org.kiama.util.ParserUtilities {
 
     import AST._
     import Lambda.typecheck

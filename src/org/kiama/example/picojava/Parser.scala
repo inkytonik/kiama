@@ -32,7 +32,7 @@ package example.picojava
 /**
  * PicoJava parser
  */
-trait Parser extends org.kiama.util.Parser {
+trait Parser extends org.kiama.util.ParserUtilities {
 
     import AbstractSyntax._
 

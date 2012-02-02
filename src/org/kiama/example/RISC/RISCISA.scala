@@ -462,7 +462,7 @@ object RISCISA {
      * clash with the Label class in RISCTree
      */
     case class Target (label : Int) extends Pseudo {
-        override def toString : String = "label" + label +":"
+        override def toString : String = "label" + label + ":"
     }
     
     /**
@@ -479,8 +479,8 @@ object RISCISA {
      def prettyprint (emitter : Emitter, code : AssemCode) {
          for (line <- code) {
              line match {
-                 case _ : Target    => emitter.emitln(line)
-                 case _             => emitter.emitln("    " + line)
+                 case _ : Target => emitter.emitln (line)
+                 case _          => emitter.emitln ("    " + line)
              }
          } 
      }

@@ -374,8 +374,6 @@ class AttributionTests extends Tests {
             expect (false) (k7 equals k1)
             expect (false) (k1 equals k8)
             expect (false) (k8 equals k1)
-            expect (false) (k1 equals Leaf (1))
-            expect (false) (Leaf (1) equals k1)
             expect (true) (k6 equals k7)
             expect (true) (k7 equals k6)
             expect (false) (k6 equals k8)

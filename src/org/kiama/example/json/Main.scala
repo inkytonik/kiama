@@ -28,9 +28,9 @@ import org.kiama.util.Compiler
 
 object Main extends Driver
 
-class Driver extends SyntaxAnalysis with Compiler[JValue]
-        with PrettyPrinter {
+class Driver extends SyntaxAnalysis with Compiler[JValue] {
 
+    import PrettyPrinter.{pretty, product}
     import org.kiama.util.Console
     import org.kiama.util.Emitter
 

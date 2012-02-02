@@ -46,7 +46,7 @@ class SECDTests extends Tests {
     import StringOps._
     import RecordOps._
 
-    private class SECD(code : Code) extends SECDBase
+    private abstract class SECD(code : Code) extends SECDBase
         with IntegerOps with BooleanOps
         with IntComparisonOps with StackOps
         with HeapOps with IOOps with StringOps
@@ -84,6 +84,12 @@ class SECDTests extends Tests {
             dump := EmptyCont
             control := program.code
         }
+
+        /**
+         * Verify that the machine has run properly.
+         */
+        def verify : Unit
+
     }
 
     test("just run the machine with no code") {

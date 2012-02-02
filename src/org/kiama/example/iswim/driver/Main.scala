@@ -89,15 +89,14 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator {
                         if (executeFlag) {
                             val machine = new SECD(bytecode) {
                                 override def debug = debugFlag
-                                def returnedValue : String = (stack : Stack) match {
-                                    case List(v) => v.toString
-                                    case _ => "** stack corrupted **"
-                                }
                             }
                             if (debugFlag) println("Execution trace:")
                             machine.run
                             println("Returned value:")
-                            println(machine.returnedValue)
+                            machine.stack.value match {
+                                case List(v) => println(v.toString)
+                                case _ => println("** stack corrupted **")
+                            }
                         }
                     } else report (new Emitter)
                 case f => println(f)

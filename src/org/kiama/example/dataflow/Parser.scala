@@ -24,7 +24,7 @@ package example.dataflow
 /**
  * Syntax analyser for simple imperative dataflow language.
  */
-trait Parser extends org.kiama.util.Parser {
+trait Parser extends org.kiama.util.ParserUtilities {
 
     import DataflowAST._
 
