@@ -1,7 +1,7 @@
 /**
  * Title:       Fibonacci fun
  * Description: A very simple imperative Fibonacci function with driver.
- * Copyright:   (C) 2010-2011 Dominic Verity, Macquarie University
+ * Copyright:   (C) 2010-2012 Dominic Verity, Macquarie University
  */ 
 
 // declare preloaded primitives
