@@ -36,7 +36,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
 
     import AbstractSyntax._
 
-    lazy val program : PackratParser[Program] =
+    lazy val program =
         block ^^ Program
 
     lazy val block : PackratParser[Block] =
@@ -53,7 +53,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
     lazy val var_decl =
         name ~ IDENTIFIER <~ ";" ^^ VarDecl
 
-    lazy val stmt : Parser[Stmt] =
+    lazy val stmt : PackratParser[Stmt] =
         assign_stmt | while_stmt
     lazy val assign_stmt =
         positioned (
@@ -65,7 +65,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
     lazy val exp =
         boolean_literal | posname
 
-    lazy val posname : PackratParser[Access] =
+    lazy val posname =
         positioned (name)
 
     lazy val name : PackratParser[Access] =
@@ -75,7 +75,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
     lazy val boolean_literal =
         ("true" | "false") ^^ BooleanLiteral
 
-    lazy val IDENTIFIER : Parser[String] =
+    lazy val IDENTIFIER =
         "[a-zA-Z][a-zA-Z0-9]*".r
 
     override val whiteSpace =

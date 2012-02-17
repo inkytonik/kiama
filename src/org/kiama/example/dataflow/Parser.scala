@@ -28,34 +28,34 @@ trait Parser extends org.kiama.util.ParserUtilities {
 
     import DataflowAST._
 
-    lazy val parser : PackratParser[Stm] =
+    lazy val parser =
         phrase (stm)
 
     lazy val stm : PackratParser[Stm] =
         asgnStm | whileStm | ifStm | blockStm | returnStm
 
-    lazy val asgnStm : PackratParser[Assign] =
+    lazy val asgnStm =
         idn ~ ("=" ~> exp) ^^ Assign
 
-    lazy val whileStm : PackratParser[While] =
+    lazy val whileStm =
         ("while" ~> "(" ~> exp <~ ")") ~ stm ^^ While
 
-    lazy val ifStm : PackratParser[If] =
+    lazy val ifStm =
         ("if" ~> "(" ~> exp <~ ")") ~ stm ~ ("else" ~> stm) ^^ If
 
-    lazy val blockStm : PackratParser[Block] =
+    lazy val blockStm =
         "{" ~> (stm*) <~ "}" ^^ Block
 
-    lazy val returnStm : PackratParser[Return] =
+    lazy val returnStm =
         "return" ~> exp ^^ Return
 
-    lazy val exp : PackratParser[Var] =
+    lazy val exp =
         idn
 
-    lazy val idn : PackratParser[Var] =
+    lazy val idn =
         not (keyword) ~> "[a-zA-Z]+".r
 
-    lazy val keyword : PackratParser[String] =
+    lazy val keyword =
         "if" | "return" | "while"
 
 }

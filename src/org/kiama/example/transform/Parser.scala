@@ -30,35 +30,35 @@ trait Parser extends org.kiama.util.ParserUtilities {
 
     import AST._
 
-    lazy val parser : PackratParser[Program] =
+    lazy val parser =
         phrase (program)
 
-    lazy val program : PackratParser[Program] =
+    lazy val program =
         rep (opdecl) ~ rep (vardecl) ~ exp ^^ Program
 
     lazy val opdecl : PackratParser[(String,Int)] =
         ("op" ~> op) ~ integer
 
-    lazy val op : PackratParser[String] =
+    lazy val op =
         regex ("[-!@#$%^&*+_=:;<>,.?]+".r)
 
-    lazy val vardecl : PackratParser[VarDecl] =
+    lazy val vardecl =
         "var" ~> ident ^^ VarDecl
 
     lazy val exp : PackratParser[ExpR] =
         factor ~ op ~ exp ^^ BinExpR |
         factor ^^ Factor
 
-    lazy val factor : PackratParser[PrimExp] =
+    lazy val factor =
         positioned (
             integer ^^ Num |
             ident ^^ Var
         )
 
-    lazy val integer : PackratParser[Int] =
+    lazy val integer =
         "[0-9]+".r ^^ (s => s.toInt)
 
-    lazy val ident : PackratParser[String] =
+    lazy val ident =
         regex ("[a-zA-Z]+".r)
 
     override protected val whiteSpace =

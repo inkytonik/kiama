@@ -81,7 +81,7 @@ object AST {
 
     import AST._
 
-    lazy val start : PackratParser[Exp] =
+    lazy val start =
         phrase (exp)
 
     lazy val exp : PackratParser[Exp] =
@@ -93,13 +93,13 @@ object AST {
     lazy val factor : PackratParser[Exp] =
         integer | variable | "(" ~> exp <~ ")"
 
-    lazy val integer : PackratParser[Num] =
+    lazy val integer =
         "[0-9]+".r ^^ (s => Num (s.toInt))
 
-    lazy val variable : PackratParser[Var] =
+    lazy val variable =
         idn ^^ Var
 
-    lazy val idn : Parser[String] =
+    lazy val idn =
         "[a-zA-Z][a-zA-Z0-9]*".r
 
 }

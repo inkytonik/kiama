@@ -30,53 +30,45 @@ trait SyntaxAnalysis extends org.kiama.util.ParserUtilities {
 
     import JSONTree._
 
-    lazy val parser : PackratParser[JValue] =
+    lazy val parser =
         phrase (jvalue)
 
     lazy val jvalue : PackratParser[JValue] =
         jobject | jarray | jstring | jnumber | jtrue | jfalse | jnull
 
-    lazy val jobject : PackratParser[JObject] =
-        "{" ~> repsep (jpair, ",") <~ "}" ^^ {
-            case l => JObject (l)
-        }
+    lazy val jobject =
+        "{" ~> repsep (jpair, ",") <~ "}" ^^ JObject
 
-    lazy val jpair : PackratParser[(JName,JValue)] =
+    lazy val jpair =
         string ~ (":" ~> jvalue) ^^ {
             case s ~ v => (JName (s), v)
         }
 
-    lazy val jarray : PackratParser[JArray] =
+    lazy val jarray =
         "[" ~> repsep (jvalue, ",") <~ "]" ^^ {
             case l => JArray (Vector (l : _*))
         }
 
-    lazy val jstring : PackratParser[JString] =
+    lazy val jstring =
         string ^^ JString
 
-    lazy val string : PackratParser[String] =
+    lazy val string =
         regex ("\"[^\"]*\"".r) ^^ {
             case s => s.substring (1, s.length - 1)
         }
 
-    // FIXME
-    // lazy val string : PackratParser[String] =
-    //     regex (""""([^"\\]|\\(["\\/bfnrt]|u[0-9a-fA-F]{4}))*"""".r) ^^ {
-    //         case s => s.substring (1, s.length - 1)
-    //     }
-
-    lazy val jnumber : PackratParser[JNumber] =
+    lazy val jnumber =
         regex ("""-?(0|[1-9]\d*)(\.\d+)?([eE][-+]?\d+)?""".r) ^^ {
             case s => JNumber (s.toDouble)
         }
 
-    lazy val jtrue : PackratParser[JTrue] =
+    lazy val jtrue =
         "true" ^^^ JTrue ()
 
-    lazy val jfalse : PackratParser[JFalse] =
+    lazy val jfalse =
         "false" ^^^ JFalse ()
 
-    lazy val jnull : PackratParser[JNull] =
+    lazy val jnull =
         "null" ^^^ JNull ()
 
 }

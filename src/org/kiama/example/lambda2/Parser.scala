@@ -29,14 +29,14 @@ trait Parser extends org.kiama.util.ParserUtilities {
     import AST._
     import Lambda.typecheck
 
-    lazy val start : PackratParser[Exp] =
+    lazy val start =
         exp
 
     lazy val exp : PackratParser[Exp] =
         "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam |
         exp2
 
-    def itype : PackratParser[Type] =
+    def itype =
         if (typecheck) (":" ~> ttype) else ("" ^^^ null)
 
     lazy val exp2 : PackratParser[Exp] =
@@ -59,14 +59,14 @@ trait Parser extends org.kiama.util.ParserUtilities {
         "Int" ^^^ IntType |
         "(" ~> ttype <~ ")"
 
-    lazy val op : PackratParser[Op] =
+    lazy val op =
         "+" ^^^ AddOp |
         "-" ^^^ SubOp
 
-    lazy val idn : Parser[Idn] =
+    lazy val idn =
         "[a-zA-Z][a-zA-Z0-9]*".r
 
-    lazy val number : PackratParser[Num] =
+    lazy val number =
         "[0-9]+".r ^^ (s => Num (s.toInt))
 
 }

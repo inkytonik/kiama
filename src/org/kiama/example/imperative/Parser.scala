@@ -28,19 +28,19 @@ trait Parser extends org.kiama.util.ParserUtilities {
 
     import AST._
 
-    lazy val start : PackratParser[Stmt] =
+    lazy val start =
         phrase (stmt)
 
     lazy val stmt : PackratParser[Stmt] =
         ";" ^^^ Null () | sequence | asgnStmt | whileStmt
 
-    lazy val asgnStmt : PackratParser[Asgn] =
+    lazy val asgnStmt =
         variable ~ ("=" ~> exp) <~ ";" ^^ Asgn
 
-    lazy val whileStmt : PackratParser[While] =
+    lazy val whileStmt =
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ While
 
-    lazy val sequence : PackratParser[Seqn] =
+    lazy val sequence =
         "{" ~> (stmt*) <~ "}" ^^ Seqn
 
     lazy val exp : PackratParser[Exp] =
@@ -56,19 +56,19 @@ trait Parser extends org.kiama.util.ParserUtilities {
     lazy val factor : PackratParser[Exp] =
         double | integer | variable | "-" ~> exp ^^ Neg | "(" ~> exp <~ ")"
 
-    lazy val double : PackratParser[Num] =
+    lazy val double =
         """[0-9]+\.[0-9]+""" ^^ (s => Num (s.toDouble))
 
-    lazy val integer : PackratParser[Num] =
+    lazy val integer =
         "[0-9]+".r ^^ (s => Num (s.toInt))
 
-    lazy val variable : PackratParser[Var] =
+    lazy val variable =
         idn ^^ Var
 
-    lazy val idn : PackratParser[String] =
+    lazy val idn =
         not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r
 
-    lazy val keyword : Parser[String] =
+    lazy val keyword =
         "while"
 
 }
