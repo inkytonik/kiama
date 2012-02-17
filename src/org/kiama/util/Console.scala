@@ -83,7 +83,7 @@ trait ReaderConsole extends Console {
     /**
      * The reader from which to read.
      */
-    val reader : BufferedReader
+    def reader : BufferedReader
 
     /**
      * Read a line from the file.  The prompt is ignored.

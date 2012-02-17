@@ -361,7 +361,7 @@ object RISCISA {
      * field once the symbolic label has been resolved to an offset.
      */
     sealed abstract class Branch extends Instr {
-        val label : Int
+        def label : Int
         var disp : Disp = -1
         override def toString : String = 
             if (disp != -1)

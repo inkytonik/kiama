@@ -122,7 +122,7 @@ trait RegexCompiler[T] extends CompilerBase[T] {
     /**
      * The actual parser used to produce the AST.
      */
-    val parser : Parser[T]
+    def parser : Parser[T]
 
     /**
      * Make an AST from the file with the given name by parsing it with

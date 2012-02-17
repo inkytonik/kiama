@@ -90,6 +90,6 @@ trait RewritingEvaluator extends Evaluator {
     /**
      * The strategy to use to perform the evaluation.
      */
-    val s : Strategy
+    def s : Strategy
 
 }
