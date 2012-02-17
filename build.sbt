@@ -5,7 +5,7 @@ name := "kiama"
 
 version := "1.2.0-SNAPSHOT"
 
-organization := "com.googlecode"
+organization := "com.googlecode.kiama"
 
 // Scala compiler settings
 
@@ -68,17 +68,41 @@ unmanagedResources in Test <<= scalaSource map { s => {
 
 // Publishing
 
-publishArtifact in Test := true
-
 publishTo <<= version { v =>
-    val nexus = "http://nexus.scala-tools.org/content/repositories/"
+    val nexus = "https://oss.sonatype.org/"
     if (v.trim.endsWith ("SNAPSHOT"))
-        Some ("snapshots" at nexus + "snapshots/") 
+        Some ("snapshots" at nexus + "content/repositories/snapshots") 
     else
-        Some ("releases" at nexus + "releases/")
+        Some ("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 
-credentials += Credentials (Path.userHome / ".ivy2" / ".credentials")
+publishMavenStyle := true
+
+publishArtifact in Test := true
+
+pomIncludeRepository := { x => false }
+
+pomExtra := (
+    <url>http://kiama.googlecode.com</url>
+    <licenses>
+        <license>
+            <name>LGPL 3.0 license</name>
+            <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>        
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://kiama.googlecode.com/hg</url>
+        <connection>scm:hg:https://kiama.googlecode.com/hg</connection>
+    </scm>
+    <developers>
+        <developer>
+           <id>inkytonik</id>
+           <name>Tony Sloane</name>
+           <url>http://hootenannylas.blogspot.com/</url>
+        </developer>
+    </developers>
+)
 
 // findbugs4sbt
 
