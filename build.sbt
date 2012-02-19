@@ -35,6 +35,9 @@ libraryDependencies ++=
         "junit" % "junit" % "4.10" % "test"
     )
 
+resolvers += "Sonatype OSS Snapshots Repository" at
+    "https://oss.sonatype.org/content/repositories/snapshots"    
+
 // Source code locations
 
 // Specyify how to find source and test files.  Main sources are
