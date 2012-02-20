@@ -62,9 +62,10 @@ object Messaging {
         messages.size
 
     /**
-     * Output the messages in order of position using the given emitter.
+     * Output the messages in order of position using the given emitter, which
+     * defaults to standard output.
      */
-    def report (emitter : Emitter) =
+    def report (emitter : Emitter = new Emitter) =
         for (m <- sortedmessages)
             emitter.emitln (m)
 
