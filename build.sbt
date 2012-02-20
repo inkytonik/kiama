@@ -102,7 +102,7 @@ pomExtra := (
         <developer>
            <id>inkytonik</id>
            <name>Tony Sloane</name>
-           <url>http://hootenannylas.blogspot.com/</url>
+           <url>https://code.google.com/u/inkytonik</url>
         </developer>
     </developers>
 )
