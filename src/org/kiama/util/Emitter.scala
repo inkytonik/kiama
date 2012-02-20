@@ -65,7 +65,7 @@ class StringEmitter extends Emitter {
 }
 
 /**
- * A string emitter that also provides an output method to send the 
+ * A string emitter that also provides a close method to send the 
  * result to the named UTF-8 encoded file.
  */
 class FileEmitter (filename : String) extends StringEmitter {
