@@ -1,0 +1,13 @@
+* _pp.ob
+MODULE badcond;
+
+    VAR
+        avar : INTEGER;
+
+BEGIN
+    IF avar THEN
+        avar := 42
+    END
+END badcond.
+[3]* errors
+[3]7.8: type error: got INTEGER, but expected BOOLEAN

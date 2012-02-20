@@ -29,12 +29,13 @@ parallelExecution in Test := false
 
 libraryDependencies ++= 
     Seq (
+        "junit" % "junit" % "4.10" % "test",
+        "org.clapper" %% "argot" % "0.3.5",
         "org.scala-lang" % "jline" % "2.9.1",
         "org.scala-tools.testing" %% "scalacheck" % "1.9" % "test",
-        "org.scalatest" %% "scalatest" % "1.7.1" % "test",
-        "junit" % "junit" % "4.10" % "test"
+        "org.scalatest" %% "scalatest" % "1.7.1" % "test"
     )
-
+ 
 resolvers += "Sonatype OSS Snapshots Repository" at
     "https://oss.sonatype.org/content/repositories/snapshots"    
 

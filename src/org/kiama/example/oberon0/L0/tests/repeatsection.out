@@ -1,0 +1,6 @@
+* errors
+[6.1] failure: `END' expected but `C' found
+
+CONST
+
+^

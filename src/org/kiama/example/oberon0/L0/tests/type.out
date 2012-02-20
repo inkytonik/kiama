@@ -1,0 +1,48 @@
+* _pp.ob
+MODULE type;
+
+    CONST
+        aconst1 = 10;
+        aconst2 = 20;
+
+    TYPE
+        atype1 = INTEGER;
+        atype3 = BOOLEAN;
+        aconst1 = INTEGER;
+        atype4 = aconst2;
+        atype2 = atype1;
+        atype2 = atype1;
+        atype3 = INTEGER;
+        atype5 = INTEGER;
+        atype6 = atype5;
+
+    VAR
+        avar1 : atype1;
+        atype3 : INTEGER;
+        avar2 : aconst2;
+        avar3 : INTEGER;
+        avar4 : BOOLEAN;
+        avar5 : atype6;
+
+BEGIN
+    avar1 := 1;
+    atype1 := 2;
+    avar1 := avar1 + atype1;
+    avar1 := avar1 * avar3;
+    avar1 := avar1 DIV avar4;
+    avar4 := avar1 # avar3;
+    avar4 := avar1 = avar4;
+    avar5 := 10
+END type.
+[2]* errors
+[2]10.5: aconst1 is already declared
+[2]11.14: aconst2 is not a type name
+[2]13.5: atype2 is already declared
+[2]14.5: atype3 is already declared
+[2]20.5: atype3 is already declared
+[2]21.13: aconst2 is not a type name
+[2]28.5: illegal assignment
+[2]28.5: atype1 cannot be used in an expression
+[2]29.22: atype1 cannot be used in an expression
+[3]31.24: type error: got BOOLEAN, but expected INTEGER
+[3]33.22: type error: got BOOLEAN, but expected INTEGER

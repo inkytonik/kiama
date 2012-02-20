@@ -1,0 +1,116 @@
+* _pp.ob
+MODULE condname;
+
+BEGIN
+    IF bvar THEN
+        
+    END;
+    IF bvar THEN
+        avar := 0
+    ELSE
+        
+    END;
+    IF bvar THEN
+        avar := 0;
+        
+    ELSIF bvar THEN
+        
+    END;
+    IF ~bvar THEN
+        avar := 2
+    END;
+    IF bvar & ~bvar THEN
+        avar := 3;
+        avar := 4
+    ELSE
+        avar := 5;
+        avar := 6
+    END;
+    IF bvar THEN
+        avar := 7
+    ELSIF bvar THEN
+        avar := 8
+    END;
+    IF bvar THEN
+        avar := 9
+    ELSIF bvar THEN
+        avar := 10
+    ELSE
+        avar := 11
+    END;
+    IF bvar THEN
+        avar := 12
+    ELSIF bvar THEN
+        avar := 13;
+        avar := 14
+    ELSIF bvar THEN
+        avar := 15
+    ELSIF bvar THEN
+        avar := 16;
+        avar := 17
+    ELSE
+        avar := 18
+    END;
+    IF bvar THEN
+        IF bvar THEN
+            avar := 19
+        ELSE
+            avar := 20
+        END
+    END;
+    IF bvar THEN
+        IF bvar THEN
+            avar := 21
+        ELSIF bvar THEN
+            avar := 22
+        END
+    ELSIF bvar THEN
+        avar := 23
+    END
+END condname.
+* errors
+4.8: bvar is not declared
+7.8: bvar is not declared
+8.9: avar is not declared
+12.8: bvar is not declared
+13.9: avar is not declared
+14.11: bvar is not declared
+17.9: bvar is not declared
+18.9: avar is not declared
+21.8: bvar is not declared
+21.16: bvar is not declared
+22.9: avar is not declared
+23.9: avar is not declared
+25.9: avar is not declared
+26.9: avar is not declared
+29.8: bvar is not declared
+30.9: avar is not declared
+31.11: bvar is not declared
+32.9: avar is not declared
+35.8: bvar is not declared
+36.9: avar is not declared
+37.11: bvar is not declared
+38.9: avar is not declared
+40.9: avar is not declared
+43.8: bvar is not declared
+44.9: avar is not declared
+45.11: bvar is not declared
+46.9: avar is not declared
+47.9: avar is not declared
+48.11: bvar is not declared
+49.9: avar is not declared
+50.11: bvar is not declared
+51.9: avar is not declared
+52.9: avar is not declared
+54.9: avar is not declared
+57.8: bvar is not declared
+58.12: bvar is not declared
+59.13: avar is not declared
+61.13: avar is not declared
+65.8: bvar is not declared
+66.12: bvar is not declared
+67.13: avar is not declared
+68.15: bvar is not declared
+69.13: avar is not declared
+71.11: bvar is not declared
+72.9: avar is not declared

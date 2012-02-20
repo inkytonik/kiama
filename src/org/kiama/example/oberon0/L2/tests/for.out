@@ -1,0 +1,104 @@
+* _pp.ob
+MODULE for;
+
+    VAR
+        avar1, avar2, avar3, avar4, avar5 : INTEGER;
+
+BEGIN
+    FOR avar1 := 1 TO 2 DO
+        
+    END;
+    FOR avar1 := 5 TO 6 DO
+        avar2 := 7
+    END;
+    FOR avar1 := avar2 * 3 TO 5 - 9 DO
+        avar2 := avar1 MOD 8;
+        avar3 := avar2 DIV 9
+    END;
+    FOR avar1 := avar2 TO avar2 + 3 BY 2 DO
+        avar2 := avar2 + 1
+    END;
+    FOR avar1 := avar2 TO avar2 DIV 2 BY -5 DO
+        avar2 := avar2 * 10
+    END;
+    avar5 := 0;
+    FOR avar1 := avar2 TO avar3 BY 5 DO
+        FOR avar4 := avar2 TO avar3 BY 10 DO
+            avar5 := avar5 + 1
+        END
+    END
+END for.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_limit7;
+[6]int ob_limit8;
+[6]int ob_limit9;
+[6]int ob_limit10;
+[6]int ob_limit11;
+[6]int ob_limit13;
+[6]int ob_limit12;
+[6]int ob_avar12;
+[6]int ob_avar23;
+[6]int ob_avar34;
+[6]int ob_avar45;
+[6]int ob_avar56;
+[6]int main (int argc, char *argv[0]) {
+[6]    {
+[6]        ob_avar12 = 1;
+[6]        ob_limit7 = 2;
+[6]        while (ob_avar12 <= ob_limit7) {
+[6]            ;
+[6]            ob_avar12 = ob_avar12 + 1;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_avar12 = 5;
+[6]        ob_limit8 = 6;
+[6]        while (ob_avar12 <= ob_limit8) {
+[6]            ob_avar23 = 7;
+[6]            ob_avar12 = ob_avar12 + 1;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_avar12 = ob_avar23 * 3;
+[6]        ob_limit9 = 5 - 9;
+[6]        while (ob_avar12 <= ob_limit9) {
+[6]            ob_avar23 = ob_avar12 % 8;
+[6]            ob_avar34 = ob_avar23 / 9;
+[6]            ob_avar12 = ob_avar12 + 1;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_avar12 = ob_avar23;
+[6]        ob_limit10 = ob_avar23 + 3;
+[6]        while (ob_avar12 <= ob_limit10) {
+[6]            ob_avar23 = ob_avar23 + 1;
+[6]            ob_avar12 = ob_avar12 + 2;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_avar12 = ob_avar23;
+[6]        ob_limit11 = ob_avar23 / 2;
+[6]        while (ob_avar12 >= ob_limit11) {
+[6]            ob_avar23 = ob_avar23 * 10;
+[6]            ob_avar12 = ob_avar12 + -5;
+[6]        }
+[6]    }
+[6]    ob_avar56 = 0;
+[6]    {
+[6]        ob_avar12 = ob_avar23;
+[6]        ob_limit12 = ob_avar34;
+[6]        while (ob_avar12 <= ob_limit12) {
+[6]            {
+[6]                ob_avar45 = ob_avar23;
+[6]                ob_limit13 = ob_avar34;
+[6]                while (ob_avar45 <= ob_limit13) {
+[6]                    ob_avar56 = ob_avar56 + 1;
+[6]                    ob_avar45 = ob_avar45 + 10;
+[6]                }
+[6]            }
+[6]            ob_avar12 = ob_avar12 + 5;
+[6]        }
+[6]    }
+[6]    return 0;
+[6]}

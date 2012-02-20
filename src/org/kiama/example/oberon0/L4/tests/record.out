@@ -1,0 +1,70 @@
+* _pp.ob
+MODULE record;
+
+    TYPE
+        atype1 = RECORD END;
+        atype2 = RECORD END;
+        atype3 = INTEGER;
+        atype4 = RECORD x : INTEGER; y : INTEGER END;
+
+    VAR
+        avar0 : RECORD x : INTEGER END;
+        avar1 : atype4;
+        avar2 : RECORD one : INTEGER; two : RECORD a : BOOLEAN END END;
+        avar3 : RECORD tag : BOOLEAN; rec : atype3 END;
+
+BEGIN
+    avar1.x := 0;
+    avar1.y := 10 * avar1.x;
+    avar2.one := 1;
+    avar2.two.a := TRUE;
+    avar3.tag := FALSE;
+    avar3.rec := 42;
+    CASE avar0.x OF
+        1 : avar0.x := 2
+      | 2, 3 : avar0.x := 3
+    END
+END record.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_caseval10;
+[6]typedef struct {
+[6]} ob_atype12;
+[6]typedef struct {
+[6]} ob_atype23;
+[6]typedef int ob_atype34;
+[6]typedef struct {
+[6]    int x;
+[6]    int y;
+[6]} ob_atype45;
+[6]struct {
+[6]    int x;
+[6]} ob_avar06;
+[6]ob_atype45 ob_avar17;
+[6]struct {
+[6]    int one;
+[6]    struct {
+[6]        int a;
+[6]    } two;
+[6]} ob_avar28;
+[6]struct {
+[6]    int tag;
+[6]    ob_atype34 rec;
+[6]} ob_avar39;
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_avar17.x = 0;
+[6]    ob_avar17.y = 10 * ob_avar17.x;
+[6]    ob_avar28.one = 1;
+[6]    ob_avar28.two.a = 1;
+[6]    ob_avar39.tag = 0;
+[6]    ob_avar39.rec = 42;
+[6]    {
+[6]        ob_caseval10 = ob_avar06.x;
+[6]        if (ob_caseval10 == 1) {
+[6]            ob_avar06.x = 2;
+[6]        } else if (ob_caseval10 == 2 || ob_caseval10 == 3) {
+[6]            ob_avar06.x = 3;
+[6]        }
+[6]    }
+[6]    return 0;
+[6]}

@@ -1,0 +1,11 @@
+* _pp.ob
+MODULE recordname;
+
+    TYPE
+        arecord1 = RECORD x : INTEGER; x : INTEGER END;
+        arecord3 = RECORD x, x : INTEGER END;
+
+END recordname.
+[2]* errors
+[2]4.16: record contains duplicate field names
+[2]5.16: record contains duplicate field names

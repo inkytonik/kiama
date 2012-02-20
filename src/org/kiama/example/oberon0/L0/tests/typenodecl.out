@@ -1,0 +1,9 @@
+* _pp.ob
+MODULE typenodecl;
+
+    VAR
+        avar : NOTYPE;
+
+END typenodecl.
+* errors
+4.12: NOTYPE is not declared

@@ -1,0 +1,53 @@
+* _pp.ob
+MODULE array;
+
+    CONST
+        aconst = 3;
+
+    TYPE
+        atype1 = ARRAY 10 OF BOOLEAN;
+        atype2 = INTEGER;
+        atype3 = ARRAY aconst DIV 4 OF BOOLEAN;
+
+    VAR
+        avar1 : atype1;
+        avar2 : ARRAY aconst * 2 OF ARRAY 3 OF INTEGER;
+        avar3 : ARRAY 12 OF atype2;
+        avar4 : INTEGER;
+
+BEGIN
+    avar1[5] := TRUE;
+    avar1[avar4 * 3] := FALSE;
+    avar2[3][2] := 2;
+    avar3[avar3[0]] := avar3[1] * avar3[2];
+    CASE avar3[1] OF
+        1 : avar3[2] := avar3[2] + 1
+      | 2 .. 4 : avar3[1] := 1
+    END
+END array.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_caseval10;
+[6]int ob_aconst2 = 3;
+[6]typedef int ob_atype13[10];
+[6]typedef int ob_atype24;
+[6]typedef int ob_atype35[0];
+[6]ob_atype13 ob_avar16;
+[6]int ob_avar27[6][3];
+[6]ob_atype24 ob_avar38[12];
+[6]int ob_avar49;
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_avar16[5] = 1;
+[6]    ob_avar16[ob_avar49 * 3] = 0;
+[6]    ob_avar27[3][2] = 2;
+[6]    ob_avar38[ob_avar38[0]] = ob_avar38[1] * ob_avar38[2];
+[6]    {
+[6]        ob_caseval10 = ob_avar38[1];
+[6]        if (ob_caseval10 == 1) {
+[6]            ob_avar38[2] = ob_avar38[2] + 1;
+[6]        } else if (ob_caseval10 >= 2 && ob_caseval10 <= 4) {
+[6]            ob_avar38[1] = 1;
+[6]        }
+[6]    }
+[6]    return 0;
+[6]}

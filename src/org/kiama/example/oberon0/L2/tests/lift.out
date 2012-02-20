@@ -1,0 +1,91 @@
+* _pp.ob
+MODULE lift;
+
+    VAR
+        avar1, avar2 : INTEGER;
+        avar3 : INTEGER;
+
+BEGIN
+    avar3 := 100;
+    FOR avar1 := 80 TO 81 DO
+        avar3 := 101;
+        FOR avar2 := 82 TO 83 DO
+            avar3 := 102
+        END;
+        avar3 := 103
+    END;
+    IF avar1 = 84 THEN
+        FOR avar2 := 85 TO 86 DO
+            avar3 := 104
+        END
+    ELSIF avar1 = 87 THEN
+        FOR avar2 := 88 TO 89 DO
+            avar3 := 105
+        END
+    ELSE
+        FOR avar2 := 90 TO 91 DO
+            avar3 := 106
+        END
+    END;
+    avar3 := 107
+END lift.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_limit6;
+[6]int ob_limit5;
+[6]int ob_limit7;
+[6]int ob_limit8;
+[6]int ob_limit9;
+[6]int ob_avar12;
+[6]int ob_avar23;
+[6]int ob_avar34;
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_avar34 = 100;
+[6]    {
+[6]        ob_avar12 = 80;
+[6]        ob_limit5 = 81;
+[6]        while (ob_avar12 <= ob_limit5) {
+[6]            ob_avar34 = 101;
+[6]            {
+[6]                ob_avar23 = 82;
+[6]                ob_limit6 = 83;
+[6]                while (ob_avar23 <= ob_limit6) {
+[6]                    ob_avar34 = 102;
+[6]                    ob_avar23 = ob_avar23 + 1;
+[6]                }
+[6]            }
+[6]            ob_avar34 = 103;
+[6]            ob_avar12 = ob_avar12 + 1;
+[6]        }
+[6]    }
+[6]    if (ob_avar12 == 84) {
+[6]        {
+[6]            ob_avar23 = 85;
+[6]            ob_limit7 = 86;
+[6]            while (ob_avar23 <= ob_limit7) {
+[6]                ob_avar34 = 104;
+[6]                ob_avar23 = ob_avar23 + 1;
+[6]            }
+[6]        }
+[6]    } else if (ob_avar12 == 87) {
+[6]        {
+[6]            ob_avar23 = 88;
+[6]            ob_limit8 = 89;
+[6]            while (ob_avar23 <= ob_limit8) {
+[6]                ob_avar34 = 105;
+[6]                ob_avar23 = ob_avar23 + 1;
+[6]            }
+[6]        }
+[6]    } else {
+[6]        {
+[6]            ob_avar23 = 90;
+[6]            ob_limit9 = 91;
+[6]            while (ob_avar23 <= ob_limit9) {
+[6]                ob_avar34 = 106;
+[6]                ob_avar23 = ob_avar23 + 1;
+[6]            }
+[6]        }
+[6]    }
+[6]    ob_avar34 = 107;
+[6]    return 0;
+[6]}

@@ -1,0 +1,16 @@
+* _pp.ob
+MODULE selfref;
+
+    CONST
+        aconst1 = aconst1;
+        aconst2 = aconst1 + aconst2;
+
+    TYPE
+        atype1 = atype1;
+        atype2 = atype1;
+
+END selfref.
+[2]* errors
+[2]4.15: aconst1 is not declared
+[2]5.25: aconst2 is not declared
+[2]8.14: atype1 is not declared

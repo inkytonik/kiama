@@ -1,0 +1,11 @@
+* _pp.ob
+MODULE arrayname;
+
+    TYPE
+        atype1 = ARRAY 10 OF atype0;
+        atype2 = ARRAY 3 * aconst OF INTEGER;
+
+END arrayname.
+* errors
+4.26: atype0 is not declared
+5.24: aconst is not declared

@@ -1,0 +1,49 @@
+* _pp.ob
+MODULE nominalarg;
+
+    TYPE
+        arr1 = ARRAY 10 OF INTEGER;
+        rec1 = RECORD x : INTEGER END;
+
+    VAR
+        a : arr1;
+        b : rec1;
+
+    PROCEDURE proc (VAR c : arr1; VAR d : rec1);
+    
+    BEGIN
+        c[1] := 99;
+        d.x := 100
+    END proc;
+
+BEGIN
+    a[1] := 42;
+    b.x := 43;
+    proc (a, b);
+    Write (a[1]);
+    WriteLn;
+    Write (b.x);
+    WriteLn
+END nominalarg.
+[6]* c
+[6]#include <stdio.h>
+[6]typedef int ob_arr12[10];
+[6]typedef struct {
+[6]    int x;
+[6]} ob_rec13;
+[6]ob_arr12 ob_a4;
+[6]ob_rec13 ob_b5;
+[6]void ob_proc6 (ob_arr12 ob_c8, ob_rec13 *ob_d10) {
+[6]    ob_c8[1] = 99;
+[6]    (*ob_d10).x = 100;
+[6]};
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_a4[1] = 42;
+[6]    ob_b5.x = 43;
+[6]    ob_proc6 (ob_a4, &ob_b5);
+[6]    printf (" %d", ob_a4[1]);
+[6]    puts ("");
+[6]    printf (" %d", ob_b5.x);
+[6]    puts ("");
+[6]    return 0;
+[6]}

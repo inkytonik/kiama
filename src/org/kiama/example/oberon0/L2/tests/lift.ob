@@ -1,0 +1,30 @@
+MODULE lift;
+
+VAR
+    avar1, avar2 : INTEGER;
+    avar3 : INTEGER;
+
+BEGIN
+    avar3 := 100;
+    FOR avar1 := 80 TO 81 DO
+        avar3 := 101;
+        FOR avar2 := 82 TO 83 DO
+            avar3 := 102
+        END;
+        avar3 := 103
+    END;
+    IF avar1 = 84 THEN
+        FOR avar2 := 85 TO 86 DO
+            avar3 := 104
+        END
+    ELSIF avar1 = 87 THEN
+        FOR avar2 := 88 TO 89 DO
+            avar3 := 105
+        END
+    ELSE
+        FOR avar2 := 90 TO 91 DO
+            avar3 := 106
+        END
+    END;
+    avar3 := 107
+END lift.

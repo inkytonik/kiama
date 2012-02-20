@@ -1,0 +1,109 @@
+package org.kiama
+package example.oberon0
+package L3
+
+trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
+
+    import base.source.{Block, IdnDef, IdnUse, ModuleDecl, SourceASTNode}
+    import org.kiama.attribution.Attribution.attr
+    import org.kiama.attribution.Decorators.down
+    import org.kiama.util.Messaging.message
+    import org.kiama.util.Patterns.HasParent
+    import source.{Call, FPSection, ProcDecl}
+
+    abstract override def check (n : SourceASTNode) {
+        n match {
+            case HasParent (u @ IdnUse (i1), ProcDecl (IdnDef (i2), _, _, _)) =>
+                if (i1 != i2)
+                    message (u, "end procedure name " + i1 + " should be " + i2)
+
+            case u : IdnUse =>
+                checkNonLocalVarAccess (u)
+
+            case Call (u @ IdnUse (i), cps) =>
+                (u->entity) match {
+                    case _: BuiltinProc | _ : Procedure =>
+                        // Ok
+                    case _ =>
+                        message (n, "call of non-procedure " + i)
+                }
+
+            case _ =>
+                // Do nothing by default
+        }
+
+        super.check (n)
+    }
+
+    /**
+     * Check for non-local variable and procedure accesses.  In the L3 language
+     * non-local variable accesses are disallowed, unless they are to a variable
+     * at the top level.  Non-local procedure accesses are just disallowed.
+     */
+    def checkNonLocalVarAccess (u : IdnUse) {
+        (u->entity) match {
+            case Procedure (i, p) =>
+                if (u->level > p->level)
+                    message (u, "non-local procedure access to " + i + " is not allowed")
+
+            case Variable (i, t) if (t->level != 0) && (u->level > t->level) =>
+                message (u, "non-local variable access to " + i + " is not allowed")
+
+            case Parameter (_, Variable (i, t)) if (t->level != 0) && (u->level > t->level) =>
+                message (u, "non-local parameter access to " + i + " is not allowed")
+
+            case _ =>
+                // Ok
+        }
+    }
+
+    /**
+     * Level of a node considering the module level to be zero and incrementing
+     * each time we enter a nested procedure declaration.
+     */
+    lazy val level : SourceASTNode => Int =
+        down[SourceASTNode, Int] {
+            case _ : ModuleDecl => 0
+            case n : ProcDecl   => (n.parent[SourceASTNode]->level) + 1
+        }
+
+    override def entityFromDecl (n : IdnDef, i : String) : Entity =
+        n.parent match {
+            case p : ProcDecl  => Procedure (i, p)
+            case p : FPSection => Parameter (p.mode, Variable (i, p.tipe))
+            case _             => super.entityFromDecl (n, i)
+        }
+
+    /**
+     * Blocks that are immediately inside procedure decls do not introduce new scopes
+     * since the procedure itself does.  This computation overrides the one earlier 
+     * that pushes a scope for all blocks.  Don't include the procedure name in the
+     * scope of its own body.
+     */
+    def envinl (in : SourceASTNode => Environment) : SourceASTNode ==> Environment = {
+        case HasParent (b : Block, _ : ProcDecl) =>
+            in (b)
+    }
+
+    override def envin (in : SourceASTNode => Environment) : SourceASTNode ==> Environment =
+        (envinl (in)) orElse (super.envin (in))
+
+    /**
+     * Similarly for envin we don't need to leave a scope for a procedure block, since
+     * we didn't enter one.  The IdnDef that is for a ProcDecl needs to be in the outer
+     * scope, but not in the scope of its own body.  All arguments and local declarations
+     * go in the nested scope.
+     */
+    def envoutl (out : SourceASTNode => Environment) : SourceASTNode ==> Environment = {
+        case HasParent (b : Block, _ : ProcDecl) =>
+            out (b)
+        case HasParent (n @ IdnDef (i), p : ProcDecl) =>
+            enter (define (n->out, i, n->entity))
+        case p : ProcDecl =>
+            leave (out (p))
+    }
+
+    override def envout (out : SourceASTNode => Environment) : SourceASTNode ==> Environment =
+        (envoutl (out)) orElse (super.envout (out))
+
+}

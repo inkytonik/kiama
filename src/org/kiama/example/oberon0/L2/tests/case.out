@@ -1,0 +1,113 @@
+* _pp.ob
+MODULE case;
+
+    VAR
+        avar : INTEGER;
+
+BEGIN
+    CASE avar OF
+        1 : avar := 2
+    END;
+    CASE avar OF
+        1 : avar := 2
+      | 3 : avar := 4
+    ELSE
+        avar := 5
+    END;
+    CASE 6 * avar OF
+        7 : avar := 8
+      | 9 : avar := 10; avar := 11
+      | 12 : 
+      | 13 .. 14 : avar := 15
+    END;
+    CASE avar OF
+        16 : avar := 17
+    ELSE
+        
+    END;
+    CASE avar - 1 OF
+        1 : CASE avar * 2 OF
+          3 : avar := 18
+        | 4 : avar := 19
+      ELSE
+          avar := 20
+      END
+    END;
+    CASE avar OF
+        1, 2 .. 4, 5 : avar := 21
+      | 6, 7 : avar := 22
+    END
+END case.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_caseval3;
+[6]int ob_caseval4;
+[6]int ob_caseval5;
+[6]int ob_caseval6;
+[6]int ob_caseval8;
+[6]int ob_caseval7;
+[6]int ob_caseval9;
+[6]int ob_avar2;
+[6]int main (int argc, char *argv[0]) {
+[6]    {
+[6]        ob_caseval3 = ob_avar2;
+[6]        if (ob_caseval3 == 1) {
+[6]            ob_avar2 = 2;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_caseval4 = ob_avar2;
+[6]        if (ob_caseval4 == 1) {
+[6]            ob_avar2 = 2;
+[6]        } else if (ob_caseval4 == 3) {
+[6]            ob_avar2 = 4;
+[6]        } else {
+[6]            ob_avar2 = 5;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_caseval5 = 6 * ob_avar2;
+[6]        if (ob_caseval5 == 7) {
+[6]            ob_avar2 = 8;
+[6]        } else if (ob_caseval5 == 9) {
+[6]            ob_avar2 = 10;
+[6]            ob_avar2 = 11;
+[6]        } else if (ob_caseval5 == 12) {
+[6]            ;
+[6]        } else if (ob_caseval5 >= 13 && ob_caseval5 <= 14) {
+[6]            ob_avar2 = 15;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_caseval6 = ob_avar2;
+[6]        if (ob_caseval6 == 16) {
+[6]            ob_avar2 = 17;
+[6]        } else {
+[6]            ;
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_caseval7 = ob_avar2 - 1;
+[6]        if (ob_caseval7 == 1) {
+[6]            {
+[6]                ob_caseval8 = ob_avar2 * 2;
+[6]                if (ob_caseval8 == 3) {
+[6]                    ob_avar2 = 18;
+[6]                } else if (ob_caseval8 == 4) {
+[6]                    ob_avar2 = 19;
+[6]                } else {
+[6]                    ob_avar2 = 20;
+[6]                }
+[6]            }
+[6]        }
+[6]    }
+[6]    {
+[6]        ob_caseval9 = ob_avar2;
+[6]        if (ob_caseval9 == 1 || ob_caseval9 >= 2 && ob_caseval9 <= 4 || ob_caseval9 == 5) {
+[6]            ob_avar2 = 21;
+[6]        } else if (ob_caseval9 == 6 || ob_caseval9 == 7) {
+[6]            ob_avar2 = 22;
+[6]        }
+[6]    }
+[6]    return 0;
+[6]}
