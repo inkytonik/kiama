@@ -40,8 +40,8 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
             if (in.atEnd)
                 Failure ("any character expected but end of source found", in)
             else
-            	elem ("any character", _ => true) (in)           
-    	}
+                elem ("any character", _ => true) (in)           
+        }
     
     /**
      * Return an error after skipping white space.
@@ -251,19 +251,19 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
             if (in.atEnd)
                 Failure ("end of source while parsing whitespace", in)
             else
-            	Success ("", in)
+                Success ("", in)
         } else {
             parsingWhitespace = true
             val result =
                 whitespaceParser (in) match {
-                	case f @ NoSuccess (_, next) =>
-                	    if (next.atEnd)
-                	        f
-                	    else
-                	    	Success ("", in)
-       	    	    case s =>
-       	    	        s
-            	}
+                    case f @ NoSuccess (_, next) =>
+                        if (next.atEnd)
+                            f
+                        else
+                            Success ("", in)
+                    case s =>
+                        s
+                }
             parsingWhitespace = false
             result
         }
@@ -274,13 +274,13 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
      */
     override implicit def literal (s : String) : Parser[String] =
         Parser { in =>
-      		parseWhitespace (in) match {
-               	case Success (_, next) =>
-                   	WhitespaceParser.super.literal (s) (next)
-               	case NoSuccess (msg, next) =>
-                   	Failure (msg, next)
-       		}
-    	}
+            parseWhitespace (in) match {
+                case Success (_, next) =>
+                    WhitespaceParser.super.literal (s) (next)
+                case NoSuccess (msg, next) =>
+                    Failure (msg, next)
+            }
+        }
 
     /**
      * A parser that matches a regex string after skipping any 
@@ -288,14 +288,14 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
      */
     override implicit def regex (r : Regex) : Parser[String] =
         Parser { in =>
-   			parseWhitespace (in) match {
-               	case Success (_, next) =>
-               		val res = WhitespaceParser.super.regex (r) (next)
-               		res
-               	case NoSuccess (msg, next) =>
-               		Failure (msg, next)
-    		}
-    	}
+            parseWhitespace (in) match {
+                case Success (_, next) =>
+                    val res = WhitespaceParser.super.regex (r) (next)
+                    res
+                case NoSuccess (msg, next) =>
+                    Failure (msg, next)
+            }
+        }
 
     /**
      * As for positioned in RegexParsers, but uses parseWhitespace
@@ -304,12 +304,12 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
     override def positioned[T <: Positional](p : => Parser[T]) : Parser[T] = {
         val pp = super.positioned(p)
         Parser { in =>
-        	parseWhitespace (in) match {
-        	    case Success (_, next) =>
-        	        pp (next)
-        	    case NoSuccess (msg, next) =>
-        	        Failure (msg, next)
-        	}
+            parseWhitespace (in) match {
+                case Success (_, next) =>
+                    pp (next)
+                case NoSuccess (msg, next) =>
+                    Failure (msg, next)
+            }
         }
     }    
     
