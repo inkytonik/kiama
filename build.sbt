@@ -29,9 +29,9 @@ parallelExecution in Test := false
 
 libraryDependencies ++= 
     Seq (
+        "jline" % "jline" % "1.0",
         "junit" % "junit" % "4.10" % "test",
         "org.clapper" %% "argot" % "0.3.5",
-        "org.scala-lang" % "jline" % "2.9.1",
         "org.scala-tools.testing" %% "scalacheck" % "1.9" % "test",
         "org.scalatest" %% "scalatest" % "1.7.1" % "test"
     )

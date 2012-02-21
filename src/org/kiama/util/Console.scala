@@ -46,8 +46,8 @@ class Console {
  */
 object JLineConsole extends Console {
 
-    import scala.tools.jline.console.ConsoleReader
-    import scala.tools.jline.TerminalFactory
+    import jline.ConsoleReader
+    import jline.Terminal.getTerminal
 
     /**
      * The reader to use to access the console.
@@ -60,13 +60,13 @@ object JLineConsole extends Console {
      * with sbt.
      */
     override def readLine (prompt : String) : String = {
-        val terminal = TerminalFactory.get
+        val terminal = getTerminal
         terminal.synchronized {
-            terminal.setEchoEnabled (false)
+            terminal.disableEcho ()
             try {
                 reader.readLine (prompt)
             } finally {
-                terminal.setEchoEnabled (true)
+                terminal.enableEcho ()
             }
         }
     }
