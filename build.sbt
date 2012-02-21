@@ -1,5 +1,5 @@
-import de.johoop.findbugs4sbt.FindBugs.findbugsSettings
-import de.johoop.findbugs4sbt.ReportType.FancyHtml
+// import de.johoop.findbugs4sbt.FindBugs.findbugsSettings
+// import de.johoop.findbugs4sbt.ReportType.FancyHtml
 
 name := "kiama"
 
@@ -122,7 +122,7 @@ pomExtra := (
 )
 
 // findbugs4sbt: commented out by default since it brings in many dependencies
-// and is used rarely
+// and is used rarely. See also imports at top of file.
 
 // seq (findbugsSettings : _*)
 // 
