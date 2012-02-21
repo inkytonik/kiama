@@ -4,4 +4,4 @@ resolvers += Resolver.url ("scalasbt",
  
 addSbtPlugin("com.jsuereth" % "xsbt-gpg-plugin" % "0.5")
 
-addSbtPlugin ("de.johoop" % "findbugs4sbt" % "1.1.2")
+// addSbtPlugin ("de.johoop" % "findbugs4sbt" % "1.1.2")
