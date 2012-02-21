@@ -817,7 +817,10 @@ trait ParenPrettyPrinter {
                         case e =>
                             toParenDoc (e)
                     }
-                text (u.op) <> ed
+                if (u.fixity == Prefix)
+                    text (u.op) <> ed
+                else
+                    ed <> text (u.op)
         }
     
     /**
