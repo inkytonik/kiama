@@ -270,3 +270,406 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
      }
 
 }
+
+/**
+ * Tests of parenthesis optimised pretty-printer module. The examples,
+ * particularly Oberon0, test most cases; we just pick up the remainder
+ * for coverage here.
+ */
+@RunWith(classOf[JUnitRunner])
+class ParenPrettyPrinterTests extends Tests with PrettyPrinter with ParenPrettyPrinter {
+
+    abstract class Exp extends PrettyExpression
+
+    case class InOp (left : Exp, right : Exp, prio : Int, fix : Side) extends Exp with PrettyBinaryExpression {
+        def priority = prio
+        def fixity = Infix (fix)
+        def op = "*"
+    }
+
+    case class PostOp (exp : Exp, prio : Int) extends Exp with PrettyUnaryExpression {
+        def priority = prio
+        def fixity = Postfix
+        def op = "++"
+    }
+
+    case class PreOp (exp : Exp, prio : Int) extends Exp with PrettyUnaryExpression {
+        def priority = prio
+        def fixity = Prefix
+        def op = "--"
+    }
+
+    case class Leaf (i : Int) extends Exp
+
+    override def toParenDoc (e : PrettyExpression) : Doc =
+        e match {
+            case Leaf (i) => value (i)
+            case _        => super.toParenDoc (e)
+        }
+
+    // Postfix and prefix operators
+
+    test ("pretty-printing a lower priority postop on the left of an left assoc infix doesn't use parens") {
+        val e = InOp (PostOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
+        expect ("1++ * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority postop on the left of an infix doesn't use parens") {
+        val e = InOp (PostOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
+        expect ("1++ * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower priority preop on the left of an infix uses parens") {
+        val e = InOp (PreOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
+        expect ("(--1) * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority preop on the left of an infix doesn't use parens") {
+        val e = InOp (PreOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
+        expect ("--1 * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower priority postop on the left of an infix uses parens") {
+        val e = InOp (Leaf (2), PostOp (Leaf (1), 4), 3, LeftAssoc)
+        expect ("2 * (1++)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority postop on the right of an infix doesn't use parens") {
+        val e = InOp (Leaf (2), PostOp (Leaf (1), 2), 3, LeftAssoc)
+        expect ("2 * 1++") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower priority preop on the right of an infix doesn't use parens") {
+        val e = InOp (Leaf (2), PreOp (Leaf (1), 4), 3, LeftAssoc)
+        expect ("2 * --1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority preop on the right of an infix doesn't use parens") {
+        val e = InOp (Leaf (2), PreOp (Leaf (1), 2), 3, LeftAssoc)
+        expect ("2 * --1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower priority postop on the left of an right assoc infix doesn't use parens") {
+        val e = InOp (PostOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
+        expect ("1++ * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority postop on the left of an right assoc infix doesn't use parens") {
+        val e = InOp (PostOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
+        expect ("1++ * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower priority preop on the left of an right assoc infix uses parens") {
+        val e = InOp (PreOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
+        expect ("(--1) * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority preop on the left of an right assoc infix doesn't use parens") {
+        val e = InOp (PreOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
+        expect ("--1 * 2") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower priority postop on the right of an right assoc infix uses parens") {
+        val e = InOp (Leaf (2), PostOp (Leaf (1), 4), 3, RightAssoc)
+        expect ("2 * (1++)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority postop on the right of an right assoc infix doesn't use parens") {
+        val e = InOp (Leaf (2), PostOp (Leaf (1), 2), 3, RightAssoc)
+        expect ("2 * 1++") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower priority preop on the right of an right assoc infix doesn't use parens") {
+        val e = InOp (Leaf (2), PreOp (Leaf (1), 4), 3, RightAssoc)
+        expect ("2 * --1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher priority preop on the right of an right assoc infix doesn't use parens") {
+        val e = InOp (Leaf (2), PreOp (Leaf (1), 2), 3, RightAssoc)
+        expect ("2 * --1") (pretty (toParenDoc (e)))
+    }
+
+    // Right associative infix operator on right of other infix operators
+
+    test ("pretty-printing a lower-priority right assoc infix on the right of a right assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority right assoc infix on the right of a right assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, RightAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority right assoc infix on the right of a right assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, RightAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority right assoc infix on the right of a left assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, LeftAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority right assoc infix on the right of a left assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, LeftAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority right assoc infix on the right of a left assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, LeftAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority right assoc infix on the right of a non assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, NonAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority right assoc infix on the right of a non assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, NonAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority right assoc infix on the right of a non assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, NonAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    // Left associative infix operator on right of other infix operators
+
+    test ("pretty-printing a lower-priority left assoc infix on the right of a right assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority left assoc infix on the right of a right assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, RightAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority left assoc infix on the right of a right assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, RightAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority left assoc infix on the right of a left assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, LeftAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority left assoc infix on the right of a left assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, LeftAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority left assoc infix on the right of a left assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, LeftAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority left assoc infix on the right of a non assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, NonAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority left assoc infix on the right of a non assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, NonAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority left assoc infix on the right of a non assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, NonAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    // Non associative infix operator on right of other infix operators
+
+    test ("pretty-printing a lower-priority non assoc infix on the right of a right assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority non assoc infix on the right of a right assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, RightAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority non assoc infix on the right of a right assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, RightAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority non assoc infix on the right of a left assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, LeftAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority non assoc infix on the right of a left assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, LeftAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority non assoc infix on the right of a left assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, LeftAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority non assoc infix on the right of a non assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, NonAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority non assoc infix on the right of a non assoc infix uses parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, NonAssoc)
+        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority non assoc infix on the right of a non assoc infix doesn't use parens") {
+        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, NonAssoc)
+        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+    }
+
+    // Right associative infix operator on left of other infix operators
+
+    test ("pretty-printing a lower-priority right assoc infix on the left of a right assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority right assoc infix on the left of a right assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, RightAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority right assoc infix on the left of a right assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, RightAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority right assoc infix on the left of a left assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, LeftAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority right assoc infix on the left of a left assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, LeftAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority right assoc infix on the left of a left assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, LeftAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority right assoc infix on the left of a non assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, NonAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority right assoc infix on the left of a non assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, NonAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority right assoc infix on the left of a non assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, NonAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    // Left associative infix operator on left of other infix operators
+
+    test ("pretty-printing a lower-priority left assoc infix on the left of a right assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority left assoc infix on the left of a right assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, RightAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority left assoc infix on the left of a right assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, RightAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority left assoc infix on the left of a left assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, LeftAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority left assoc infix on the left of a left assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, LeftAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority left assoc infix on the left of a left assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, LeftAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority left assoc infix on the left of a non assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, NonAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority left assoc infix on the left of a non assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, NonAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority left assoc infix on the left of a non assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, NonAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    // Non associative infix operator on left of other infix operators
+
+    test ("pretty-printing a lower-priority non assoc infix on the left of a right assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority non assoc infix on the left of a right assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, RightAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority non assoc infix on the left of a right assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, RightAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority non assoc infix on the left of a left assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, LeftAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority non assoc infix on the left of a left assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, LeftAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority non assoc infix on the left of a left assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, LeftAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a lower-priority non assoc infix on the left of a non assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, NonAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing an equal priority non assoc infix on the left of a non assoc infix uses parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, NonAssoc)
+        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+    }
+
+    test ("pretty-printing a higher-priority non assoc infix on the left of a non assoc infix doesn't use parens") {
+        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, NonAssoc)
+        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+    }
+
+}
+
