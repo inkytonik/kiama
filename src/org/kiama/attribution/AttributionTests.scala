@@ -42,6 +42,8 @@ class AttributionTests extends Tests {
     case class GenSeqTree (v : GenSeq[Tree]) extends Tree
     case class MapTree (m : Map[Tree,Tree]) extends Tree
     case class PairTree (p : (Tree,Tree)) extends Tree
+    case class TripleTree (p : (Tree,Tree,Tree)) extends Tree
+    case class QuadTree (p : (Tree,Tree,Tree,Tree)) extends Tree
 
     test ("first child can be accessed") {
         import Attribution.initTree
@@ -360,6 +362,8 @@ class AttributionTests extends Tests {
             val k6 = new ParamAttributeKey ("hello", null)
             val k7 = new ParamAttributeKey ("hello", null)
             val k8 = new ParamAttributeKey ("goodbye", null)
+            expect (false) (n equals k1)
+            expect (false) (k1 equals n)
             expect (true) (k1 equals k2)
             expect (true) (k2 equals k1)
             expect (false) (k1 equals k3)
@@ -492,6 +496,91 @@ class AttributionTests extends Tests {
         expectsame (c4) (c2.parent)
         expectsame (c4) (c3.parent)
     }    
+
+    test ("a triple's component parent properties are set correctly") {
+        import Attribution.initTree
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = Leaf (11)
+        val c5 = TripleTree (c2, c3, c4)
+        val t = PairTree (c5, c1)
+        initTree (t)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c5.parent)
+        expectsame (c5) (c2.parent)
+        expectsame (c5) (c4.parent)
+        expectsame (c5) (c4.parent)
+    }    
+
+    test ("a quad's component parent properties are set correctly") {
+        import Attribution.initTree
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Leaf (10)
+        val c4 = Leaf (11)
+        val c5 = Leaf (12)
+        val c6 = QuadTree (c2, c3, c4, c5)
+        val t = PairTree (c1, c6)
+        initTree (t)
+        expectsame (null) (t.parent)
+        expectsame (t) (c1.parent)
+        expectsame (t) (c6.parent)
+        expectsame (c6) (c2.parent)
+        expectsame (c6) (c3.parent)
+        expectsame (c6) (c4.parent)
+        expectsame (c6) (c5.parent)
+    }    
+
+    test ("a chain that is only defined at the root returns the root value") {
+        import Attribution.initTree
+        import Decorators.{Chain, chain}
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+        initTree (t)
+        def rootupd (in : Tree => Int) : Tree ==> Int = {
+            case n if n isRoot => 42
+        }
+        val rootchain = chain (rootupd)
+        expect (42) (t->(rootchain.in))
+        expect (42) (t->(rootchain.out))
+    }
+
+    test ("a chain with no updates throws appropriate exceptions") {
+        import Attribution.{initTree, resetMemo}
+        import Decorators.{Chain, chain}
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+        initTree (t)
+
+        // A chain with only identiy update functions
+        val idchain = chain[Tree,Int] ()
+        val i1 = intercept[RuntimeException] {
+                    t->(idchain.in)
+                }
+        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+        val i2 = intercept[RuntimeException] {
+                    t->(idchain.out)
+                }
+        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+
+        // A chain with refusing-all-in update function. This exerices a
+        // different path in the 'in' attribute to the previous checks.
+        def refuse (in : Tree => Int) : Tree ==> Int =
+            new (Tree ==> Int) {
+                def apply (t : Tree) = in (t) // Never used
+                def isDefinedAt (t : Tree) = false
+            }
+        val refchain = chain (refuse)
+        val i3 = intercept[RuntimeException] {
+                    t->(refchain.in)
+                }
+        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
+        val i4 = intercept[RuntimeException] {
+                    t->(refchain.out)
+                }
+        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i4.getMessage)
+
+    }
 
 }
 

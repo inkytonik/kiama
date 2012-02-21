@@ -62,45 +62,66 @@ object Decorators {
      * to compute the chain value at the node n, otherwise the default chain
      * attribute is used.  If an update function is omitted, it defaults 
      * to the identity.
+     *
+     * If the root of the tree is reached without a definition being supplied
+     * for the chain, a runtime exception is thrown. Both of the components
+     * of the chain are reset to avoid errors for cyclic if the exception is
+     * caught and they are subsequently evaluated again.
      */
     def chain[T <: Attributable,U] (
-                 inupdate : (T => U) => (T ==> U) = idf,
-                 outupdate : (T => U) => (T ==> U) = idf
+                 inupdate : (T => U) => (T ==> U) = idf[T,U],
+                 outupdate : (T => U) => (T ==> U) = idf[T,U]
              ) : Chain[T,U] = {
 
-        def update (dflt : T => U, upd : (T => U) => (T ==> U)) : T => U =
-            attr {
-                case t =>
-                    val f = upd (dflt)
-                    if (f.isDefinedAt (t))
-                        f (t)
-                    else
-                        dflt (t)
-            }
+        def error (t : T) : Nothing = {
+            in.reset       
+            out.reset
+            sys.error ("chain root of tree reached at " + t)
+        }
 
-        lazy val indflt : T => U =
-            attr {
-                case t if t.isRoot =>
-                    sys.error ("chain indflt: root of tree reached at " + t)
-                case t if t.isFirst =>
-                    (t.parent[T])->in
-                case t =>
-                    (t.prev[T])->out
-            }
+        def indflt (t : T) : U =
+        	if (t.isRoot)
+                error (t)
+            else if (t.isFirst)
+                in (t.parent[T])
+            else
+                out (t.prev[T])
 
-        lazy val in : T => U =
-            update (indflt, inupdate)
+        lazy val infunc = inupdate (indflt)
 
-        lazy val outdflt : T => U =
-            attr {
-                case t if t.hasChildren =>
-                    (t.lastChild[T])->out
-                case t =>
-                    t->in
-            }
+        lazy val in : CachedAttribute[T,U] =
+            attr (t => {
+                if (infunc.isDefinedAt (t))
+                    infunc (t)
+                // inline indflt here to save call, really is
+                // else indflt (t)
+                else if (t.isRoot)
+                	error (t)
+                else if (t.isFirst)
+                	in (t.parent[T])
+                else
+                	out (t.prev[T])
+            })
 
-        lazy val out : T => U =
-            update (outdflt, outupdate)
+        def outdflt (t : T) : U =
+            if (t.hasChildren)
+                out (t.lastChild[T])
+            else  
+                in (t)
+
+        lazy val outfunc = outupdate (outdflt)
+
+        lazy val out : CachedAttribute[T,U] =
+            attr (t => {
+                if (outfunc.isDefinedAt (t))
+                    outfunc (t)
+                // Inline outdflt here to save call, really is
+                // else outdflt (t)
+                else if (t.hasChildren)
+                	out (t.lastChild[T])
+                else  
+                	in (t)
+            })
 
         Chain (in, out)
     }

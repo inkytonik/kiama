@@ -265,7 +265,8 @@ object Attribution extends AttributionBase {
                     }
                     val key = new ParamAttributeKey (arg, t)
                     memo.get (key) match {
-                        case Some (None)     => throw new IllegalStateException ("Cycle detected in attribute evaluation")
+                        case Some (None)     =>
+                            throw new IllegalStateException ("Cycle detected in attribute evaluation")
                         case Some (Some (u)) => u
                         case None =>
                             memo.put (key, None)
@@ -291,7 +292,7 @@ object Attribution extends AttributionBase {
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: AnyRef,U] (f : T => U) : T => U =
+    def attr[T <: AnyRef,U] (f : T => U) : CachedAttribute[T,U] =
         new CachedAttribute (f)
 
     /**
@@ -299,7 +300,7 @@ object Attribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */
-    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : TArg => T => U =
+    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : CachedParamAttribute[TArg,T,U] =
         new CachedParamAttribute (f)
 
     /**
@@ -307,7 +308,7 @@ object Attribution extends AttributionBase {
      * which takes the current node and its parent as its arguments.
      * T must be Attributable so that parents can be accessed.
      */
-    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
+    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : CachedAttribute[T,U] =
         attr { case t => f (t) (t.parent) }
 
     /**
@@ -317,7 +318,7 @@ object Attribution extends AttributionBase {
      * attribute is used to generate new trees that must share context
      * with the node on which they are defined.
      */
-    def tree[T <: Attributable,U <: Attributable] (f : T => U) : T => U =
+    def tree[T <: Attributable,U <: Attributable] (f : T => U) : CachedAttribute[T,U] =
         attr {
             case t => val u = f (t)
                       u.parent = t.parent
@@ -399,7 +400,7 @@ object UncachedAttribution extends AttributionBase {
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: AnyRef,U] (f : T => U) : T => U =
+    def attr[T <: AnyRef,U] (f : T => U) : UncachedAttribute[T,U] =
         new UncachedAttribute (f)
 
     /**
@@ -407,7 +408,7 @@ object UncachedAttribution extends AttributionBase {
      * which takes an argument of type TArg.  The computed attribute value
      * for a given TArg is cached so it will be computed at most once.
      */
-    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : TArg => T => U =
+    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : UncachedParamAttribute[TArg,T,U] =
         new UncachedParamAttribute (f)
 
     /**
@@ -415,7 +416,7 @@ object UncachedAttribution extends AttributionBase {
      * which takes the current node and its parent as its arguments.
      * T must be Attributable so that parents can be accessed.
      */
-    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : T => U =
+    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : UncachedAttribute[T,U] =
         attr { case t => f (t) (t.parent) }
 
 }
