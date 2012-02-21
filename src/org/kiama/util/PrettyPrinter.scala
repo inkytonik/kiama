@@ -882,12 +882,12 @@ trait PrettyExpression
         
 /** 
  * An expression that contains an operator.  Defines a priority to relate
- * the operator to other operators (lower number is higher priority, default
- * zero).  Also defines a fixity to specify the relationship between the 
+ * the operator to other operators (lower number is higher priority, no
+ * default). Also defines a fixity to specify the relationship between the 
  * operator and its operand(s) (no default).
  */
 trait PrettyOperatorExpression extends PrettyExpression {
-    def priority : Int = 0
+    def priority : Int
     def fixity : Fixity
 }
 
