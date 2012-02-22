@@ -105,23 +105,30 @@ trait RegexParserTests extends Tests {
             case Success (r, in) =>
                 if (r != result) fail ("found '" + r + "' not '" + result + "'")
                 if (!in.atEnd) fail ("input remaining at " + in.pos)
-            case f =>
+            case f : Error =>
+                fail ("parse error: " + f)
+            case f : Failure =>
                 fail ("parse failure: " + f)
         }
     }
 
     /**
-     * Try to parse str as a T, which is expected to fail.  Fail if it
-     * doesn't.  The parse failure is described by the line and column
-     * numbers where it occurs and the message that is produced.  All
-     * of them have to be correct.
+     * Try to parse str as a T, which is expected to fail with a fatal error or
+     * failure (given by iserr parameter, which defaults to failure).
+     * Fail the test if the expected NoSuccess doesn't eventuate. The NoSuccess
+     * is described by the line and column numbers where it occurs and the
+     * message that is produced.  All of them have to be correct.
      */
     def assertParseError[T] (str : String, p : Parser[T], line : Int, column : Int,
-                             msg : String) {
+                             msg : String, iserr : Boolean = false) {
         parseAll (p, str) match {
             case Success (r, _) =>
                 fail ("expected to find parse error in " + str + " but it succeeded with " + r)
             case e : NoSuccess =>
+                if (iserr && e.isInstanceOf[Failure])
+                    fail ("got parse failure when expecting parse error")
+                else if (!iserr & e.isInstanceOf[Error])
+                    fail ("got parse error when expecting parse failure")
                 expect (msg, "wrong message in error") (e.msg)
                 expect (line, "wrong line number in error") (e.next.pos.line)
                 expect (column, "wrong column number in error") (e.next.pos.column)

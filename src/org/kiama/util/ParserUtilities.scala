@@ -109,7 +109,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * that return regular 3-tuples. 
      */
     implicit def parseResultToTuple3[A,B,C] (p : Parser[A ~ B ~ C]) : PackratParser[(A,B,C)] =
-        p ^^ { case a ~ b ~ c=> (a,b,c) }
+        p ^^ { case a ~ b ~ c => (a,b,c) }
 
     /**
      * Convenience conversion to lift parsers that return 4-tuples to parsers
