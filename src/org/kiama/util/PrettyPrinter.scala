@@ -269,9 +269,9 @@ trait PrettyPrinterBase {
      * sep defaults to a comma.
      */
     def plist (l : List[PrettyPrintable], prefix : String = "List", 
-                 elemToDoc : PrettyPrintable => Doc = _.toDoc,
-                 sep : Doc = comma,
-                 sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+               elemToDoc : PrettyPrintable => Doc = _.toDoc,
+               sep : Doc = comma,
+               sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
@@ -284,10 +284,10 @@ trait PrettyPrinterBase {
      */
     def product (p : Any) : Doc = {
         p match {
-            case Nil           => text ("Nil")
-            case l : List[_]   => list (l, "List ", product)
             case v : Vector[_] => list (v.toList, "Vector ", product)
             case m : Map[_,_]  => list (m.toList, "Map ", product)
+            case Nil           => "Nil"
+            case l : List[_]   => list (l, "List ", product)
             case (l, r)        => product (l) <+> "->" <+> product (r)
             case p : Product   => list (p.productIterator.toList,
                                         p.productPrefix + " ",

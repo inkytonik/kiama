@@ -94,7 +94,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     test ("pretty-print empty list product") {
         expect ("Nil") (pretty (product (Nil)))
     }
-    
+
     test ("pretty-print identifier") {
         expect ("hello") (pretty ("hello"))
     }
@@ -152,19 +152,41 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
         
     test ("pretty-print non-empty fillsep sequence - non-wrap") {
-        expect ("< : >") (pretty (fillsep (List (langle, colon, rangle))))
+        expect ("< : > : >") (pretty (fillsep (List (langle, colon, rangle, colon, rangle))))
     }
     
     test ("pretty-print non-empty fillsep sequence - wrap") {
-        expect ("< :\n>") (pretty (group (fillsep (List (langle, colon, rangle))), 3))
+        expect ("< :\n> :\n>") (pretty (group (fillsep (List (langle, colon, rangle, colon, rangle))), 3))
+    } 
+    
+    test ("pretty-print empty fillsep sequence with sep") {
+        expect ("") (pretty (fillsep (List (), comma)))
+    }
+        
+    test ("pretty-print non-empty fillsep sequence with sep - non-wrap") {
+        expect ("<, :, >, :, >") (pretty (fillsep (List (langle, colon, rangle, colon, rangle), comma)))
     }
     
+    test ("pretty-print non-empty fillsep sequence with sep - wrap") {
+        expect ("<, :,\n>, :,\n>") (
+            pretty (group (fillsep (List (langle, colon, rangle, colon, rangle), comma)), 3)
+        )
+    }
+
     test ("pretty-print empty lsep sequence") {
         expect ("") (pretty (lsep (List (), comma)))
     }
         
     test ("pretty-print non-empty lsep sequence - non-wrap") {
-        expect ("', ., '") (pretty (group (lsep (List (squote, dot, squote), comma))))
+        expect ("\n',\n.,\n'") (pretty (group (lsep (List (squote, dot, squote), comma)), 3))
+    }
+
+    test ("pretty-print empty lsep2 sequence") {
+        expect ("") (pretty (lsep2 (List (), comma)))
+    }
+        
+    test ("pretty-print non-empty lsep2 sequence - non-wrap") {
+        expect ("'\n, .\n, '\n") (pretty (group (lsep2 (List (squote, dot, squote), comma)), 3))
     }
     
     val l = List (lbracket, dot, equal, rbracket)
@@ -256,18 +278,44 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("List(\n    Val(1),\n    Val(2),\n    Val(3))") (pretty (list (l2), 3))
     }
 
-     class PVal (i : Int) extends PrettyPrintable {
-         override def toDoc : Doc = value (i) <> text ("!")
-     }
-     val l3 = List (new PVal (1), new PVal (2), new PVal (3))
-     
-     test ("pretty-print lists of structured prettyy-printable values - non-wrap") {
-         expect ("List(1!, 2!, 3!)") (pretty (plist (l3)))
-     }
-     
-     test ("pretty-print lists of structured prettyy-printable values - wrap") {
-         expect ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
-     }
+    class PVal (i : Int) extends PrettyPrintable {
+        override def toDoc : Doc = value (i) <> text ("!")
+    }
+    val l3 = List (new PVal (1), new PVal (2), new PVal (3))
+    
+    test ("pretty-print lists of structured prettyy-printable values - non-wrap") {
+        expect ("List(1!, 2!, 3!)") (pretty (plist (l3)))
+    }
+    
+    test ("pretty-print lists of structured prettyy-printable values - wrap") {
+        expect ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
+    }
+
+    test ("product pretty-print empty vector") {
+        expect ("Vector ()") (pretty (product (Vector ())))
+    }
+
+    test ("product pretty-print singleton vector") {
+        expect ("Vector (1)") (pretty (product (Vector (1))))
+    }
+
+    test ("product pretty-print multiple-element vector") {
+        expect ("Vector (1, 2, 3)") (pretty (product (Vector (1, 2, 3))))
+    }        
+
+    test ("product pretty-print empty map") {
+        expect ("Map ()") (pretty (product (Map ())))
+    }
+
+    test ("product pretty-print singleton map") {
+        expect ("Map (1 -> \"One\")") (pretty (product (Map (1 -> "One"))))
+    }
+
+    test ("product pretty-print multiple-element map") {
+        expect ("Map (1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")") (
+            pretty (product (Map (1 -> "One", 2 -> "Two", 3 -> "Three")))
+        )
+    }        
 
 }
 
