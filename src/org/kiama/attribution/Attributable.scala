@@ -32,8 +32,7 @@ trait Attributable extends Product {
     /**
      * A link to the parent Attributable node of this node or null if this
      * node has no parent.  Note that this link will skip intervening
-     * non-Attributable ancestors, such as <code>Option</code> or
-     * <code>GenTraversable</code> nodes.
+     * non-Attributable ancestors.  See initTreeProperties for details.
      */
     var parent : Attributable = null
 
@@ -89,10 +88,9 @@ trait Attributable extends Product {
 
     /**
      * This node's attributable children in left-to-right order.  Children
-     * that are not Attributable are ignored, except for traversables
-     * (<code>GenTraversable[_]</code>) and optional children (<code>Option[_]</code>).
-     * In the case of traversables and options, their contents are processed and
-     * any immediate Attributable contents are included in the sequence.
+     * that are not Attributable are ignored, except for nodes that collect
+     * Attributable children.  (See initTreeProperties for details.)  Those
+     * indirect children are also collected here.
      */
     def children : Iterator[Attributable] =
         _children.iterator
@@ -145,8 +143,8 @@ trait Attributable extends Product {
      * siblings (and recursively through the subtree rooted here). The easy
      * case is Attributable children that are direct descendants.
      * Also connected are Attributable descendants that are reachable via
-     * a path of descendants that only passes through GenTraversable, Some
-     * or tuple nodes (up to size four).  Thus, descendants of these kinds
+     * a path of descendants that only passes through GenTraversable, Some,
+     * or tuple (up to size four) nodes.  Thus, descendants of these kinds
      * are regarded as children for the purposes of attribution.  As a
      * side-effect, this method remembers the children so that they can be
      * accessed easily via the children iterator.
@@ -157,7 +155,6 @@ trait Attributable extends Product {
 
         var ind : Int = 0
         var prev : Attributable = null
-
 
         /**
          * Set the node connections and index of c.
