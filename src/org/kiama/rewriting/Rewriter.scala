@@ -1509,30 +1509,3 @@ class Rewriter {
  * Strategy-based term rewriting for arbitrary terms.
  */
 object Rewriter extends Rewriter
-
-/**
- * Strategy-based term rewriting for terms that may include positions.
- * Specifically, generic rewrites will preserve positions for terms 
- * that are instances of scala.util.parsing.input.Positional.  Positions
- * of terms created in specific rewrite rules must be set manually.
- */
-object PositionalRewriter extends Rewriter {
-
-    import scala.util.parsing.input.Positional
-
-    /**
-     * Duplicate the t product and also set the duplicate's position 
-     * to t's position if T extends scala.util.parsing.input.Positional.
-     */    
-    protected override def dup[T <: Product] (t : T, children : Array[AnyRef]) : T = {
-        val nt = super.dup (t, children)
-        nt match {
-            case p : Positional =>
-                p.setPos (t.asInstanceOf[Positional].pos)
-            case _ =>
-                // Do nothing
-        }
-        nt
-    }
-
-}
