@@ -32,7 +32,8 @@ object Messaging {
     import scala.util.parsing.input.Position
 
     /**
-     * A message record.
+     * A message record consisting of a coordinate position `pos` and
+     * a `message` string.
      */
     case class Record (pos : Position, message : String) {
         override def toString () = pos.line + "." + pos.column + ": " + message
@@ -44,7 +45,7 @@ object Messaging {
     val messages = new ListBuffer[Record] ()
 
     /**
-     * The messages sorted by position.
+     * The messages sorted by increasing position.
      */
     def sortedmessages : Seq[Record] =
         messages.toList.sortWith (_.pos < _.pos)

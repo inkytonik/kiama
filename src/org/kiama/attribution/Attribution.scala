@@ -40,7 +40,7 @@ trait AttributionBase {
     }
 
     /**
-     * An attribute of a node type T with value of type U which has a circular
+     * An attribute of a node type `T` with value of type `U` which has a circular
      * definition.  The value of the attribute is computed by the function f
      * which may itself use the value of the attribute.  init specifies an
      * initial value for the attribute.  The attribute (and any circular attributes
@@ -71,8 +71,8 @@ trait AttributionBase {
         private val memo = new IdentityHashMap[T,U]
 
         /**
-         * Return the value of the attribute for tree t, or the initial value if
-         * no value for t has been computed.
+         * Return the value of the attribute for tree `t`, or the initial value if
+         * no value for `t` has been computed.
          */
         private def value (t : T) : U = {
             val v = memo.get (t)
@@ -83,7 +83,7 @@ trait AttributionBase {
         }
 
         /**
-         * Return the value of this attribute for node t.  Essentially Figure 6
+         * Return the value of this attribute for node `t`.  Essentially Figure 6
          * from the CRAG paper.
          */
         def apply (t : T) : U = {
@@ -139,9 +139,9 @@ trait AttributionBase {
     }
 
     /**
-     * Define a circular attribute of T nodes of type U by the function f.
-     * f is allowed to depend on the value of this attribute, which will be
-     * given by init initially and will be evaluated iteratively until a
+     * Define a circular attribute of `T` nodes of type `U` by the function `f`.
+     * `f` is allowed to depend on the value of this attribute, which will be
+     * given by `init` initially and will be evaluated iteratively until a
      * fixed point is reached (in conjunction with other circular attributes
      * on which it depends).  The final value is cached.
      */
@@ -149,8 +149,8 @@ trait AttributionBase {
         new CircularAttribute (init, f)
 
     /**
-     * Define an attribute of T nodes of type U given by the constant value u.
-     * u is evaluated at most once.
+     * Define an attribute of `T` nodes of type `U` given by the constant value `u`.
+     * `u` is evaluated at most once.
      */
     def constant[T <: AnyRef,U] (u : => U) : T => U =
         new (T => U) {
@@ -160,10 +160,10 @@ trait AttributionBase {
         }
 
     /**
-     * Initialise the tree rooted at t so that it is ready for attribution.
-     * At present, the only initialisation performed is to set node attributes
-     * such as parent and children so that nodes can generically refer to 
-     * their neighbours. If you wish to use any of these properties, you must
+     * Initialise the `Attributable` tree rooted at `t` so that it is ready for
+     * attribution. At present, the only initialisation performed is to set node
+     * attributes such as parent and children so that nodes can generically refer
+     * to their neighbours. If you wish to use any of these properties, you must
      * call this method before doing so.  Otherwise, the node properties should
      * not be used and there is no need to call this method.
      */
@@ -192,26 +192,30 @@ object Attribution extends AttributionBase {
     def resetMemo () = MemoState.MEMO_VERSION += 1
 
     /**
-     * An attribute of a node type T with value of type U, supported by a memo
+     * An attribute of a node type `T` with value of type `U`, supported by a memo
      * table and circularity test.  The value of the attribute is computed by
-     * the function f.  The result is memoised so that it is only evaluated once.
-     * f should not itself require the value of this attribute. If it does, a
-     * circularity error is reported.
+     * the function `f`.  The result is memoised so that it is only evaluated once.
+     * `f` should not itself require the value of this attribute. If it does, a
+     * circularity error is reported by throwing an `IllegalStateException`.
      */
     class CachedAttribute[T <: AnyRef,U] (f : T => U) extends (T => U) {
 
         /**
-         * The memo table for this attribute, with <code>memo(t) == Some(v)</code>
-         * representing the node t having the value v.  <code>memo(t) = None</code>
-         * means that the attribute for t is currently being evaluated.  Note that
-         * this needs to be some form of identity map so that value equal trees are
-         * not treated as equal unless they are actually the same reference.
+         * The memo table for this attribute, with `memo(t) == Some(v)` represents
+         * the node `t` having the value `v` for this attribute.  `memo(t) = None`
+         * means that the attribute for `t` is currently being evaluated.  Note that
+         * the memo table needs to be some form of identity map so that value equal
+         * trees are not treated as equal unless they are actually the same reference.
          */
         private val memo = new IdentityHashMap[T,Option[U]]
+
+        /**
+         * The current version number of the memo table.
+         */
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
-         * Return the value of this attribute for node t, raising an error if
+         * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
         def apply (t : T) : U = {
@@ -241,10 +245,10 @@ object Attribution extends AttributionBase {
     }
 
     /**
-     * A variation of the CachedAttribute class for parameterised attributes.
+     * A variation of the `CachedAttribute` class for parameterised attributes.
      */
-    class CachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T => U)
-            extends (TArg => T => U) {
+    class CachedParamAttribute[A,T <: AnyRef,U] (f : A => T => U)
+            extends (A => T => U) {
 
         import scala.collection.mutable.HashMap
 
@@ -252,10 +256,10 @@ object Attribution extends AttributionBase {
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
-         * Return the value of this attribute for node t, raising an error if
+         * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        def apply (arg : TArg) : T => U =
+        def apply (arg : A) : T => U =
             new (T => U) {
 
                 def apply (t : T) : U = {
@@ -288,7 +292,7 @@ object Attribution extends AttributionBase {
     }
 
     /**
-     * Define an attribute of T nodes of type U by the function f, which
+     * Define an attribute of `T` nodes of type `U` by the function `f`, which
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
@@ -296,23 +300,24 @@ object Attribution extends AttributionBase {
         new CachedAttribute (f)
 
     /**
-     * Define an attribute of T nodes of type U by the function f,
-     * which takes an argument of type TArg.  The computed attribute value
-     * for a given TArg is cached so it will be computed at most once.
+     * Define an attribute of `T` nodes of type `U` by the function `f`,
+     * which takes an argument of type `A`.  The computed attribute value
+     * for a given `T` and `A` pair is cached so it will be computed at most
+     * once.
      */
-    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : CachedParamAttribute[TArg,T,U] =
+    def paramAttr[A,T <: AnyRef,U] (f : A => T => U) : CachedParamAttribute[A,T,U] =
         new CachedParamAttribute (f)
 
     /**
-     * Define an attribute of T nodes of type U by the function f,
+     * Define an attribute of `T` nodes of type `U` by the function `f`,
      * which takes the current node and its parent as its arguments.
-     * T must be Attributable so that parents can be accessed.
+     * `T` must be Attributable so that parents can be accessed generically.
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable => U) : CachedAttribute[T,U] =
         attr { case t => f (t) (t.parent) }
 
     /**
-     * Define an attribute as per attr, except that the attribute must
+     * Define an attribute as per `attr`, except that the attribute must
      * have a tree value and will be spliced into the tree to have the
      * same parent as the node on which it is defined.  This kind of
      * attribute is used to generate new trees that must share context
@@ -334,10 +339,11 @@ object Attribution extends AttributionBase {
 object UncachedAttribution extends AttributionBase {
 
     /**
-     * An attribute of a node type T with value of type U, supported by a circularity
-     * test.  The value of the attribute is computed by the function f.  f will be
-     * called each time the value of the attribute is accessed.  f should not itself
-     * require the value of this attribute. If it does, a circularity error is reported.
+     * An attribute of a node type `T` with value of type `U`, supported by a circularity
+     * test.  The value of the attribute is computed by the function `f`.  `f` will be
+     * called each time the value of the attribute is accessed.  `f` should not itself
+     * require the value of this attribute. If it does, a circularity error is reported
+     * by throwing an `IllegalStateException`.
      */
     class UncachedAttribute[T <: AnyRef,U] (f : T => U) extends (T => U) {
 
@@ -347,7 +353,7 @@ object UncachedAttribution extends AttributionBase {
         private val visited = new IdentityHashMap[T,Unit]
 
         /**
-         * Return the value of this attribute for node t, raising an error if
+         * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
         def apply (t : T) : U = {
@@ -364,9 +370,9 @@ object UncachedAttribution extends AttributionBase {
     }
 
     /**
-     * A variation of the UncachedAttribute class for parameterised attributes.
+     * A variation of the `UncachedAttribute` class for parameterised attributes.
      */
-    class UncachedParamAttribute[TArg,T <: AnyRef,U] (f : TArg => T => U) extends (TArg => T => U) {
+    class UncachedParamAttribute[A,T <: AnyRef,U] (f : A => T => U) extends (A => T => U) {
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
@@ -374,10 +380,10 @@ object UncachedAttribution extends AttributionBase {
         private val visited = new IdentityHashMap[ParamAttributeKey,Unit]
 
         /**
-         * Return the value of this attribute for node t, raising an error if
+         * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        def apply (arg : TArg) : T => U =
+        def apply (arg : A) : T => U =
             new (T => U) {
 
                 def apply (t : T) : U = {
@@ -396,7 +402,7 @@ object UncachedAttribution extends AttributionBase {
     }
 
     /**
-     * Define an attribute of T nodes of type U by the function f, which
+     * Define an attribute of `T` nodes of type `U` by the function `f`, which
      * should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
@@ -404,17 +410,17 @@ object UncachedAttribution extends AttributionBase {
         new UncachedAttribute (f)
 
     /**
-     * Define an attribute of T nodes of type U by the function f,
-     * which takes an argument of type TArg.  The computed attribute value
-     * for a given TArg is cached so it will be computed at most once.
+     * Define an attribute of `T` nodes of type U by the function `f`,
+     * which takes an argument of type `A`.  The computed attribute value
+     * for a given `T` and `A` pair is cached so it will be computed at most once.
      */
-    def paramAttr[TArg,T <: AnyRef,U] (f : TArg => T => U) : UncachedParamAttribute[TArg,T,U] =
+    def paramAttr[A,T <: AnyRef,U] (f : A => T => U) : UncachedParamAttribute[A,T,U] =
         new UncachedParamAttribute (f)
 
     /**
-     * Define an attribute of T nodes of type U by the function f,
+     * Define an attribute of `T` nodes of type `U` by the function `f`,
      * which takes the current node and its parent as its arguments.
-     * T must be Attributable so that parents can be accessed.
+     * `T` must be `Attributable` so that parents can be accessed.
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable => U) : UncachedAttribute[T,U] =
         attr { case t => f (t) (t.parent) }

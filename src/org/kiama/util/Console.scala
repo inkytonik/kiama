@@ -57,7 +57,7 @@ object JLineConsole extends Console {
     /**
      * Read a line under controlled conditions.  Need to do this since
      * console is a shared static resource.  In particular, it's shared
-     * with sbt.
+     * with sbt if run in that context.
      */
     override def readLine (prompt : String) : String = {
         val terminal = getTerminal

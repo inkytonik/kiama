@@ -30,9 +30,9 @@ trait REPL {
 
     /**
      * Read lines from the console and pass non-null and non-whitespace only
-     * ones to processline. Continue until processline returns false. Calls
-     * setup before entering the loop and calls prompt each time input is
-     * about to be read.  The command-line arguments are passed to the setup
+     * ones to `processline`. Continue until `processline` returns false. Call
+     * `setup` before entering the loop and call `prompt` each time input is
+     * about to be read.  The command-line arguments are passed to the `setup`
      * method.
      */
     def main (args : Array[String]) {
@@ -58,7 +58,7 @@ trait REPL {
         true
 
     /**
-     * Define the prompt (default: "> ").
+     * Define the prompt (default: `"> "`).
      */
     def prompt () = "> "
 
@@ -76,8 +76,8 @@ trait REPL {
 trait ParsingREPL[T] extends REPL with RegexParsers {
 
     /**
-     * Process a user input line by parsing it to get a value of type T,
-     * then passing it to the type-specific process.
+     * Process a user input line by parsing it to get a value of type `T`,
+     * then passing it to the `process` method.
      */
     def processline (line : String) {
         parseAll (start, line) match {

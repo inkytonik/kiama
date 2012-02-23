@@ -24,13 +24,15 @@ package rewriting
 /**
  * Strategy-based term rewriting with callbacks. Clients can register
  * functions that are called whenever a rewrite operation has happened.
+ * See the `Rewriter` class documentation for more detail on the methods
+ * defined here.
  */
 abstract class CallbackRewriter extends Rewriter {
 
     /**
      * The method to call when a rewrite operation has happened. It will
-     * be called under two circumstances. First, when a rule (or similar, such
-     * as rulefs, or strategy) is about to return a new term to replace an old
+     * be called under two circumstances. First, when a `rule` (or similar, such
+     * as `rulefs`, or `strategy`) is about to return a new term to replace an old
      * term. (Note that if the rule creates sub-terms in the new term, the
      * results of these operations are not notified, only the root of the
      * new term.) Second, whenever a generic traversal (such as all or one)
@@ -42,7 +44,7 @@ abstract class CallbackRewriter extends Rewriter {
 
     /**
      * Produce a strategy that first runs the strategy s on the current term. 
-     * If s fails, then fail. Otherwise, pass the original and new terms to
+     * If `s` fails, then fail. Otherwise, pass the original and new terms to
      * the rewriting method and succeed with the term that it returns.
      */
     private def dispatch (s : Strategy) : Strategy =
@@ -56,26 +58,25 @@ abstract class CallbackRewriter extends Rewriter {
         }
 
     /**
-     * Make a callback-enabled strategy from a function.
+     * Make a callback-enabled strategy from an option function.
      */
     override def strategyf (f : Term => Option[Term]) : Strategy =
         dispatch (super.strategyf (f))
 
     /**
-     * Make a callback-enabled strategy from a partial function.
+     * Make a callback-enabled strategy from a partial option function.
      */
     override def strategy (f : Term ==> Option[Term]) : Strategy =
         dispatch (super.strategy (f))
 
     /**
-     * Define a callback-enabled rewrite rule using a partial function.
+     * Define a callback-enabled rewrite rule using a partial term function.
      */
     override def rule (f : Term ==> Term) : Strategy =
         dispatch (super.rule (f))
 
     /**
-     * Define a callback-enabled rewrite rule using a function that returns a
-     * strategy.
+     * Define a callback-enabled rewrite rule using a strategy function.
      */
     override def rulefs (f : Term ==> Strategy) : Strategy =
         dispatch (super.rulefs (f))

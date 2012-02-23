@@ -28,6 +28,10 @@ object Patterns {
 
     import org.kiama.attribution.Attributable
 
+    /**
+     * Match if `x` is an `Attributable` value, returning a pair of `x`
+     * and its parent.
+     */
     object HasParent {
         def unapply[T <: Attributable] (x : T) = Some (x, x.parent)
     }

@@ -29,14 +29,14 @@ package util
 class Emitter {
 
     /**
-     * Emit anything.
+     * Emit `any`.
      */
     def emit (any : Any) {
         print (any.toString)
     }
 
     /**
-     * Emit anything and start a new line.
+     * Emit `any` and start a new line.
      */
     def emitln (any : Any) {
         println (any.toString)
@@ -65,7 +65,7 @@ class StringEmitter extends Emitter {
 }
 
 /**
- * A string emitter that also provides a close method to send the 
+ * A string emitter that also provides a `close` method to send the 
  * result to the named UTF-8 encoded file.
  */
 class FileEmitter (filename : String) extends StringEmitter {

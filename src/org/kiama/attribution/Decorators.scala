@@ -21,13 +21,23 @@
 package org.kiama
 package attribution
 
+/**
+ * Decorators are higher-order operations that provide common patterns of
+ * tree attribution based on simple attributes or functions.
+ */
 object Decorators {
 
     import org.kiama.attribution.Attribution._
     import org.kiama.attribution.Attributable
 
     /**
-     * A decorator that propagates an attribute value down the tree.
+     * A decorator that propagates an attribute value down the tree. The
+     * partial function `a` should define the value of the attribute at
+     * nodes where it is known. If `a` does not define a value for the
+     * attribute at a particular node, then the decorator asks the parent
+     * of the node for its value of the attribute and uses that value.
+     * For this reason, `a` should at least provide a value for the root
+     * of the tree.
      */
     def down[T <: Attributable,U] (a : T ==> U) : T => U =
         attr[T,U] {
@@ -40,24 +50,25 @@ object Decorators {
 
     /**
      * A pair of attributes that thread through a tree in a depth-first
-     * left-to-right fashion.  The in (out) attributes provides the value
-     * of the chain as it enters a node from above (leaves a node from 
-     * below).  The chain as a function is the same as the out attribute.
+     * left-to-right fashion.  The `in` (`out`) attributes provides the value
+     * of the chain as it enters a node from above (leaves a node to the 
+     * above).
      */
     case class Chain[T,U] (in : (T => U), out : (T => U)) extends (T => U) {
         def apply (t : T) = out (t)
     }
 
     /**
-     * An identity function for chain updates.
+     * An identity function for chain updates. In other words, pass the value
+     * of the chain through without making any changes.
      */
     private def idf[T,U] : (T => U) => (T ==> U) =
         f => { case t => f (t) }
 
     /**
-     * Create a new attribute chain.  The update functions provide ways to 
+     * Create a new attribute chain.  The `update` functions provide ways to 
      * influence the chain value, by taking the default computation of the
-     * in or out attribute and returning a partial function.  If the domain
+     * `in` or `out` attribute and returning a partial function.  If the domain
      * of the partial function contains a node, then that function is used
      * to compute the chain value at the node n, otherwise the default chain
      * attribute is used.  If an update function is omitted, it defaults 

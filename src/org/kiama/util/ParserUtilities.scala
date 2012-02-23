@@ -56,25 +56,25 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
         "" ~> super.failure (msg)
 
     /**
-     * Construct a parser that always succeeds and returns the given value.  See
-     * also the success combinator in the Scala library that does something 
-     * similar but always returns the same value each time since the value is
-     * not call by name.
+     * Construct a parser that always succeeds and returns value `v`.  See
+     * also the `success` combinator in the Scala library that does something 
+     * similar but always returns the same value each time since the parameter
+     * is not passed by name.
      */
     def result[T] (v : => T) : Parser[T] =
         Parser { in => Success (v, in) }
 
     /**
-     * Wrap a parser p that produces a value of type T to produce a
-     * parser returning values of type U.  Whitespace is skipped (if
-     * we are skipping white space) before p is applied, so that we
+     * Wrap a parser `p` that produces a value of type `T` to produce a
+     * parser returning values of type `U`.  Whitespace is skipped (if
+     * we are skipping white space) before `p` is applied, so that we
      * have access to the first non-whitespace position.
      *  
-     * The function f is responsible for converting the T value into
-     * either a U value or a string that indicates what went wrong.
+     * The function `f` is responsible for converting the `T` value into
+     * either a `U` value or a string that indicates what went wrong.
      * In the latter case, the resulting parser will error at the
      * original position with the message, ignoring any other errors
-     * at that position.  Failures or errors of p will be lifted to
+     * at that position.  Failures or errors of `p` will be lifted to
      * the returned type.
      */
     def wrap[T,U] (p : => Parser[T], f : T => Either[U,String]) : Parser[U] =
@@ -98,43 +98,43 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
         }
         
     /**
-     * Convenience conversion to lift parsers that return 2-tuples to parsers
+     * Convenience conversion to lift parsers that return 2-tilde-tuples to parsers
      * that return regular 2-tuples. 
      */
     implicit def parseResultToTuple2[A,B] (p : Parser[A ~ B]) : PackratParser[(A,B)] =
         p ^^ { case a ~ b => (a,b) }
 
     /**
-     * Convenience conversion to lift parsers that return 3-tuples to parsers
+     * Convenience conversion to lift parsers that return 3-tilde-tuples to parsers
      * that return regular 3-tuples. 
      */
     implicit def parseResultToTuple3[A,B,C] (p : Parser[A ~ B ~ C]) : PackratParser[(A,B,C)] =
         p ^^ { case a ~ b ~ c => (a,b,c) }
 
     /**
-     * Convenience conversion to lift parsers that return 4-tuples to parsers
+     * Convenience conversion to lift parsers that return 4-tilde-tuples to parsers
      * that return regular 4-tuples. 
      */
     implicit def parseResultToTuple4[A,B,C,D] (p : Parser[A ~ B ~ C ~ D]) : PackratParser[(A,B,C,D)] =
         p ^^ { case a ~ b ~ c ~ d => (a,b,c,d) }
 
     /**
-     * Convenience conversion to lift parsers that return 5-tuples to parsers
+     * Convenience conversion to lift parsers that return 5-tilde-tuples to parsers
      * that return regular 5-tuples. 
      */
     implicit def parseResultToTuple5[A,B,C,D,E] (p : Parser[A ~ B ~ C ~ D ~ E]) : PackratParser[(A,B,C,D,E)] =
         p ^^ { case a ~ b ~ c ~ d ~ e => (a,b,c,d,e) }
 
     /**
-     * Convenience conversion to lift parsers that return 6-tuples to parsers
+     * Convenience conversion to lift parsers that return 6-tilde-tuples to parsers
      * that return regular 6-tuples. 
      */
     implicit def parseResultToTuple6[A,B,C,D,E,F] (p : Parser[A ~ B ~ C ~ D ~ E ~ F]) : PackratParser[(A,B,C,D,E,F)] =
         p ^^ { case a ~ b ~ c ~ d ~ e ~ f => (a,b,c,d,e,f) }
 
     /**
-     * Convenience conversion to allow arity two expression constructors to be
-     * used directly in tree construction actions.
+     * Convenience conversion to allow arity two functions to be used directly in
+     * tree construction actions.
      */
     implicit def constToTupleFunction2[A,B,R] (r : (A,B) => R) : 
                      (A ~ B) => R = {
@@ -143,8 +143,8 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
     }
 
     /**
-     * Convenience conversion to allow arity three expression constructors to be
-     * used directly in tree construction actions.
+     * Convenience conversion to allow arity three functions to be used directly in
+     * tree construction actions.
      */
     implicit def constToTupleFunction3[A,B,C,R] (r : (A,B,C) => R) : 
                      (A ~ B ~ C) => R = {
@@ -153,8 +153,8 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
     }
 
     /**
-     * Convenience conversion to allow arity four expression constructors to be
-     * used directly in tree construction actions.
+     * Convenience conversion to allow arity four functions to be used directly in
+     * tree construction actions.
      */
     implicit def constToTupleFunction4[A,B,C,D,R] (r : (A,B,C,D) => R) : 
                      (A ~ B ~ C ~ D) => R = {
@@ -163,8 +163,8 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
     }
 
     /**
-     * Convenience conversion to allow arity five expression constructors to be
-     * used directly in tree construction actions.
+     * Convenience conversion to allow arity five functions to be used directly in
+     * tree construction actions.
      */
     implicit def constToTupleFunction5[A,B,C,D,E,R] (r : (A,B,C,D,E) => R) : 
                      (A ~ B ~ C ~ D ~ E) => R = {
@@ -173,8 +173,8 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
     }
 
     /**
-     * Convenience conversion to allow arity six expression constructors to be
-     * used directly in tree construction actions.
+     * Convenience conversion to allow arity six functions to be used directly in
+     * tree construction actions.
      */
     implicit def constToTupleFunction6[A,B,C,D,E,F,R] (r : (A,B,C,D,E,F) => R) : 
                      (A ~ B ~ C ~ D ~ E ~ F) => R = {
@@ -185,14 +185,14 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
     // Specialist parsers for common situations
     
     /**
-     * Parse digit strings that are constrained to fit into an Int value.
+     * Parse digit strings that are constrained to fit into an `Int` value.
      * If the digit string is too big, a parse error results.
      */
     lazy val constrainedInt : PackratParser[Int] =
         wrap (regex ("[0-9]+".r), stringToInt)
 
     /**
-     * Convert a digit string to an Int if it's in range, but return an
+     * Convert the digit string `s` to an `Int` if it's in range, but return an
      * error message if it's too big.  
      */
     def stringToInt (s : String) : Either[Int,String] = {
@@ -221,7 +221,7 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
 
     /*
      * Turn off whitespace processing based on the whiteSpace regular
-     * expression from RegexParsers.
+     * expression from `RegexParsers`.
      */
     override def skipWhitespace = false
 
@@ -229,7 +229,7 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
      * A parser that recognises whitespace.  Normal whitespace handling is
      * turned off while this parser is applied, since we need to avoid an
      * infinite recursion if the form of whitespace is defined using
-     * literal or regex. 
+     * `literal` or `regex`. 
      */
     protected val whitespaceParser : PackratParser[Any]
     
@@ -270,7 +270,7 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
     
     /**
      * A parser that matches a literal string after skipping any 
-     * whitespace that is parsed by whitespaceParser.
+     * whitespace that is parsed by `whitespaceParser`.
      */
     override implicit def literal (s : String) : Parser[String] =
         Parser { in =>
@@ -284,7 +284,7 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
 
     /**
      * A parser that matches a regex string after skipping any 
-     * whitespace that is parsed by whitespaceParser.
+     * whitespace that is parsed by `whitespaceParser`.
      */
     override implicit def regex (r : Regex) : Parser[String] =
         Parser { in =>
@@ -298,7 +298,7 @@ trait WhitespaceParser extends RegexParsers with PackratParsers {
         }
 
     /**
-     * As for positioned in RegexParsers, but uses parseWhitespace
+     * As for positioned in `RegexParsers`, but uses `parseWhitespace`
      * to skip whitespace.
      */
     override def positioned[T <: Positional](p : => Parser[T]) : Parser[T] = {

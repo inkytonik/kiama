@@ -23,7 +23,8 @@ package attribution
 
 /**
  * Support for dynamic attribution of syntax trees.
- * Dynamic attributes definitions can be extended at runtime.
+ * Dynamic attributes definitions can be extended at runtime by the addition 
+ * of new equations, which can later be removed.
  *
  * @author Lennart Kats <lennart add lclnet.nl>
  * @author Tony Sloane <Anthony.Sloane add mq.edu.au>
@@ -45,15 +46,15 @@ object DynamicAttribution extends AttributionBase {
     def resetMemo () = equationsVersion += 1
 
     /**
-     * Define an attribute of T nodes of type U by the function f.
+     * Define a dynamic attribute of `T` nodes of type `U` by the function `f`.
      */
     def attr[T <: AnyRef,U] (f : T ==> U) : T ==> U =
         new DynamicAttribute (f)
 
     /**
-     * Define an attribute of T nodes of type U by the function f,
+     * Define an attribute of `T` nodes of type `U` by the function `f`,
      * which takes the current node and its parent as its arguments.
-     * T must be Attributable so that parents can be accessed.
+     * `T` must be `Attributable` so that parents can be accessed.
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U = {
         val childF = new (T ==> U) {
@@ -64,7 +65,7 @@ object DynamicAttribution extends AttributionBase {
     }
 
     /**
-     * Implicitly converts partial functions to support the + operator.
+     * Implicitly converts partial functions to support the `+` operator.
      **/
     implicit def internalToDynamicAttribute[T <: AnyRef,U] (f : Function[T,U]) : DynamicAttribute[T,U] =
         f match {
@@ -90,7 +91,7 @@ object DynamicAttribution extends AttributionBase {
 
     /**
      * Activates a module that defines dynamic attributes,
-     * allowing it to be deactivated again using {@link #endUse}.
+     * allowing it to be deactivated again using `endUse`.
      */
     def use[T] (attributeInitializer : => AnyRef) {
         val prevRecordedChanges = currentRecordedChanges
@@ -113,7 +114,7 @@ object DynamicAttribution extends AttributionBase {
 
     /**
      * Deactivates a module that defines dynamic attributes,
-     * activated using {@link #use}.
+     * activated using `use`.
      */
     def endUse (attributeInitializer : AnyRef) {
         val changes = allRecordedChanges.get (attributeInitializer)
@@ -122,10 +123,16 @@ object DynamicAttribution extends AttributionBase {
                 attr -= function
     }
 
+    /**
+     * A dynamic atribute defined initially by the function `f`.
+     */
     class DynamicAttribute[T,U] (private var f : T ==> U) extends (T ==> U) {
         private val memo = new IdentityHashMap[T, Option[U]]
         private var memoVersion = equationsVersion
 
+        /**
+         * Obtain the attribute value.
+         */
         def apply (t : T) = {
             if (memoVersion != equationsVersion) {
                 memoVersion = equationsVersion
@@ -144,14 +151,24 @@ object DynamicAttribution extends AttributionBase {
             }
         }
 
+        /**
+         * Is the attribute defined at the node `t`?
+         */
         def isDefinedAt (t : T) = composedF isDefinedAt t
 
-        def composedF : ComposedPartialFunction[T,U] =
+        /**
+         * Return the function defining this attribute as `ComposedPartialFunction`.
+         */
+        protected def composedF : ComposedPartialFunction[T,U] =
             f match {
                 case _ : ComposedPartialFunction[_,_] => f.asInstanceOf[ComposedPartialFunction[T,U]]
                 case _ : ==>[_,_]                     => val g = new ComposedPartialFunction(f); f = g; g
             }
 
+        /**
+         * Add the equations defined by the function `g` to the definition of this
+         * attribute after the existing definitions.
+         */
         def += (g : T ==> U) {
             val uncached : T ==> U =
                 g match {
@@ -164,6 +181,10 @@ object DynamicAttribution extends AttributionBase {
             resetMemo
         }
 
+        /**
+         * Remove the function `g` from the definitions of this attribute.  If 
+         * `g` was not previously added to the definitions, do nothing.
+         */
         def -= (g : T ==> U) {
             val uncached : T ==> U =
                 g match {
@@ -186,13 +207,23 @@ object DynamicAttribution extends AttributionBase {
 
     /**
      * A partial function composed of an ordered, mutable buffer of
-     * PartialFunction instances.
+     * PartialFunction instances. `f` is the iniital single occupant
+     * of the buffer.
      */
     class ComposedPartialFunction[T,U] (f : T ==> U) extends (T ==> U) {
         val functions = new ArrayBuffer[T ==> U]
 
-        def isDefinedAt (i : T) = functions.exists(_ isDefinedAt i)
+        /**
+         * Is there a function in the buffer that is defined at `t`?
+         */
+        def isDefinedAt (t : T) = functions.exists(_ isDefinedAt t)
 
+        /**
+         * Apply the buffered functions to the value `t` in the order
+         * that they appear in the buffer. Return the value of the first
+         * such function that is defined at `t`. If no function is 
+         * defined at `t`, throw a `MatchError` exception.
+         */
         def apply (t : T) : U = {
             for (i <- (functions.size - 1) until (-1, -1)) {
                 if (functions(i) isDefinedAt t) return functions(i)(t)
@@ -200,16 +231,25 @@ object DynamicAttribution extends AttributionBase {
             throw new MatchError(t)
         }
 
+        /**
+         * Add `g` to the end of the buffer.
+         */
         def += (g : T ==> U) {
             functions += g
         }
 
+        /**
+         * Remove `g` from the buffer if it is there.  Otherwise,
+         * do nothing.
+         */
         def -= (g : T ==> U) {
             val removed = functions.lastIndexOf(g)
             if (removed != -1)
                 functions.remove(removed)
         }
 
+        // Put the constructor argument in the buffer
         this += f
     }
+
 }

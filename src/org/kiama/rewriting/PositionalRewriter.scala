@@ -22,18 +22,27 @@ package org.kiama
 package rewriting
 
 /**
- * Strategy-based term rewriting for terms that may include positions.
- * Specifically, generic rewrites will preserve positions for terms 
- * that are instances of scala.util.parsing.input.Positional.  Positions
- * of terms created in specific rewrite rules must be set manually.
+ * Strategy-based term rewriting for terms with positions.
+ *
+ * Specifically, this kind of rewriter will preserve positions of nodes
+ * that are instances of `scala.util.parsing.input.Positional`, when 
+ * they are (a) rewrittten as part of a generic traversal (e.g., `all`),
+ * or (b) rewritten as part of a `rule` or similar (e.g., `rulefs`).
+ *
+ * In each case the position of the old node is copied across to the
+ * new node into which it is rewritten. In case (b) no attempt is made
+ * to assign positions to nodes that represent sub-terms of the term
+ * that results from a successful application of the rule. Override the
+ * `rewriting` method to add more specific behaviour.
  */
 class PositionalRewriter extends CallbackRewriter {
 
     import scala.util.parsing.input.Positional
 
     /**
-     * If the two terms are instances of scala.util.parsing.input.Positional,
-     * set the position of the new term to be that of the old term.
+     * If the two terms are instances of `scala.util.parsing.input.Positional`,
+     * set the position of the new term to be that of the old term. Always
+     * return the new term.
      */    
     def rewriting[T <: Term] (oldTerm : T, newTerm : T) : T = {
         (oldTerm, newTerm) match {

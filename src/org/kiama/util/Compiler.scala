@@ -60,7 +60,7 @@ trait CompilerBase[T] {
      * Process the arguments, using the given console for input and the
      * given emitter for output.  The arguments are first processed by
      * checkargs.  Any remaining arguments are interpreted as names of
-     * UTF-8 encoded files which are processed in turn by using makeast to
+     * UTF-8 encoded files which are processed in turn by using `makeast` to
      * turn their contents into abstract syntax trees (ASTs) and then by
      * process which conducts arbitrary processing on the ASTs.
      */
@@ -84,16 +84,16 @@ trait CompilerBase[T] {
 
     /**
      * Make an AST from the file with the given name, returning it wrapped in
-     * Left.  Returns Right with an error message if an AST cannot be made.
+     * `Left`.  Returns `Right` with an error message if an AST cannot be made.
      */
     def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[T,String]
 
     /**
-     * Function to process the input that was parsed.  console should be
-     * used to read anything needed by the processing.  emitter should be
+     * Function to process the input that was parsed.  `console` should be
+     * used to read anything needed by the processing.  `emitter` should be
      * used for output.  Return true if everything worked, false otherwise.
      * If false is returned, messages about the problem should be logged
-     * by process using the messaging facility.
+     * by `process` using the messaging facility.
      */
     def process (ast : T, console : Console, emitter : Emitter) : Boolean
 
@@ -113,7 +113,8 @@ trait CompilerBase[T] {
 }
 
 /**
- * A compiler that uses a Scala combinator character-level parser.
+ * A compiler that uses a Scala combinator character-level parser. Define
+ * `parser` to specify the actual parser to be used.
  */
 trait RegexCompiler[T] extends CompilerBase[T] {
 
@@ -124,11 +125,6 @@ trait RegexCompiler[T] extends CompilerBase[T] {
      */
     def parser : Parser[T]
 
-    /**
-     * Make an AST from the file with the given name by parsing it with
-     * the parser.  If everything is ok, return the AST wrapped in Left,
-     * otherwise return the error message wrapped in Right.
-     */
     def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[T,String] =
         parseAll (parser, reader) match {
             case Success (ast, _) =>
@@ -140,7 +136,9 @@ trait RegexCompiler[T] extends CompilerBase[T] {
 }
 
 /**
- * A compiler that uses RegexParser to produce Attributable ASTs.
+ * A compiler that uses RegexParser to produce Attributable ASTs. The AST
+ * is initialised with `initTree` by `process`. Override it and call it before
+ * performing specific attribution.
  */
 trait Compiler[T <: Attributable] extends RegexCompiler[T] {
  
@@ -148,10 +146,6 @@ trait Compiler[T <: Attributable] extends RegexCompiler[T] {
 
     import org.kiama.attribution.Attribution.initTree
 
-    /**
-     * Function to process the input that was parsed.  By default, just
-     * initialise the tree to get things like node properties.
-     */
     def process (ast : T, console : Console, emitter : Emitter) : Boolean = {
         initTree (ast)
         true

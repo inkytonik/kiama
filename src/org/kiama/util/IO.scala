@@ -38,7 +38,7 @@ object IO {
 
     /**
      * Return a new buffered reader on the UTF-8 encoded file with the
-     * given name.  Throw FileNotFoundException if that file cannot be
+     * given name.  Throw `FileNotFoundException` if that file cannot be
      * found.
      */
     def filereader (name : String) : BufferedReader =

@@ -28,7 +28,7 @@ import org.kiama.util.PrettyPrinter
 
 /**
  * A deterministic abstract state machine defined by its main rule and
- * called name.  Tracing messages are output to the given emitter, which
+ * called `name`.  Tracing messages are output to the given emitter, which
  * defaults to standard output.
  */
 abstract class Machine (val name : String, emitter : Emitter = new Emitter) 
@@ -42,12 +42,12 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
 
     /**
      * A scalar item of abstract state machine state holding a value of
-     * type T and called sname.
+     * type `T` and called `sname`.
      */
     class State[T] (val sname : String) {
 
         /**
-         * The value of this item of state.  None means undefined.
+         * The value of this item of state.  `None` means undefined.
          */
         protected var _value : Option[T] = None
 
@@ -75,7 +75,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             }
 
         /**
-         * Update this item of state to the value t.  The update is actually
+         * Update this item of state to the value `t`.  The update is actually
          * delayed until the end of the step when all updates in that
          * step happen simultaneously (along with consistency checking).  The
          * state value only becomes defined when this latter process happens.
@@ -85,7 +85,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         }
 
         /**
-         * Change this item of state to the value t.  The change occurs
+         * Change this item of state to the value `t`.  The change occurs
          * immediately.
          */
         def change (t : T) =
@@ -114,8 +114,8 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     }
 
     /**
-     * Implicitly allow a scalar state value of type T to be used as a value
-     * of type U where U is a supertype of T.
+     * Implicitly allow a scalar state value of type `T` to be used as a value
+     * of type `U` where `U` is a supertype of `T`.
      */
     implicit def stateTToT[T,U >: T] (t : State[T]) : U = t.value
 
@@ -125,7 +125,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     class ParamUpdater[T,U] (val state : ParamState[T,U], val t : T) {
 
         /**
-         * Update this item of state to the value u at parameter t.  The update
+         * Update this item of state to the value `u` at parameter `t`.  The update
          * is actually delayed until the end of the step when all updates in that
          * step happen simultaneously (along with consistency checking).  The
          * state value only becomes defined when this latter process happens.
@@ -156,12 +156,12 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
 
     /**
      * A parameterised item of abstract state machine state holding values
-     * of type U, associated with parameters of type T.
+     * of type `U`, associated with parameters of type `T`.
      */
     class ParamState[T,U] (val psname : String) extends State[HashMap[T,U]] (psname) {
 
         /**
-         * Is this state item undefined at t or not ?
+         * Is this state item undefined at `t` or not ?
          */
         def isUndefined (t : T) : Boolean =
             _value match {
@@ -170,7 +170,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             }
 
         /**
-         * Make this state item undefined at t.
+         * Make this state item undefined at `t`.
          */
         def undefine (t : T) =
             _value match {
@@ -179,9 +179,9 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             }
 
         /**
-         * Return an updater for the value at parameter t.  Used as s (t)
-         * this will return the value in the state s at parameter t.  Used
-         * as s (t) := u this will update the value to u at parameter t.
+         * Return an updater for the value at parameter `t`.  Used as `s(t)`
+         * this will return the value in the state `s` at parameter `t`.  Used
+         * as `s(t) := u` this will update the value to `u` at parameter `t`.
          * The update is actually delayed until the end of the step when all
          * updates in that step happen simultaneously (along with consistency
          * checking).  The state value only becomes defined when this latter
@@ -190,7 +190,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         def apply (t : T) = new ParamUpdater (this, t)
 
         /**
-         * Return the value of this state item if it's defined at parameter t.
+         * Return the value of this state item if it's defined at parameter `t`.
          * Otherwise abort execution.
          */
         def value (t : T) : U =
@@ -206,7 +206,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             }
 
         /**
-         * Change this item of state to the value u at parameter t.  The
+         * Change this item of state to the value u at parameter `t`.  The
          * change occurs immediately.
          */
         def change (t : T, u : U) =
@@ -224,7 +224,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         up.state.value (up.t)
 
     /**
-     * An update of an item of state s to have the value t.
+     * An update of an item of state `s` to have the value `t`.
      */
     abstract class Update {
 
@@ -248,7 +248,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     }
 
     /**
-     * An update of a scalar item of state s to have the value t.
+     * An update of a scalar item of state `s` to have the value `t`.
      */
     class ScalarUpdate[T] (s : State[T], t : T) extends Update {
 
@@ -285,8 +285,8 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     }
 
     /**
-     * An update of a parameterised item of state s to have the value u
-     * at parameter t.
+     * An update of a parameterised item of state `s` to have the value `u`
+     * at parameter `t`.
      */
     class ParamUpdate[T,U] (s : ParamState[T,U], t : T, u : U) extends Update {
 
@@ -393,7 +393,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
 
     /**
      * Execute the steps of this machine.  Halt when a step makes no
-     * updates.  init should be called before this method.
+     * updates.  `init` should be called before this method.
      */
     def steps {
         var nsteps = 0
@@ -419,8 +419,8 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
 
 /**
  * A machine has performed an inconsistent update in the sense that a step
- * has updated an item of state to two different values.  m is the machine
- * that performed the update, u is the update and v is the value used by
+ * has updated an item of state to two different values.  `m` is the machine
+ * that performed the update, `u` is the update, and `v` is the value used by
  * another update of the same state item in that step.
  */
 class InconsistentUpdateException[T] (m : Machine, u : Machine#Update, v : T)
