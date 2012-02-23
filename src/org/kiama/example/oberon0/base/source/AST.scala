@@ -8,9 +8,7 @@ import scala.util.parsing.input.Positional
 /**
  * Root type of all source abstract syntax tree nodes.
  */
-abstract class SourceASTNode extends Attributable with Positional with Cloneable {
-    override def clone () = super.clone ().asInstanceOf[SourceASTNode]
-}
+abstract class SourceASTNode extends Attributable with Positional
 
 /**
  * Non-terminal type for declarations.

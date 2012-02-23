@@ -18,17 +18,4 @@ trait Transformer {
     def transform (m : ModuleDecl) : ModuleDecl =
         m
 
-    /**
-     * Make a deep clone of t.  If you have a node whose structure needs to
-     * appear more than once in a tree, use this to duplicate it so that the
-     * resulting structure is actually a tree, not a graph.
-     */
-    def clone[T <: SourceASTNode] (t : T) : T = {
-        val clone = everywherebu (rule {
-                        case n : SourceASTNode if !n.hasChildren => 
-                            n.clone ()
-                    })
-        rewrite (clone) (t)
-    }
-
 }

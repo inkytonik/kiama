@@ -11,6 +11,7 @@ trait Desugarer extends L0.Desugarer /*with NameAnalyser*/ {
     import L0.source.{AddExp, AndExp, Assignment, EqExp, Expression,
         GeExp, IdnExp, IntExp, LeExp, NamedType, OrExp, VarDecl}
     import L1.source.{IfStatement, WhileStatement}
+    import org.kiama.attribution.Attributable.deepclone
     import org.kiama.rewriting.Rewriter.{everywhere, rewrite, rule}
     import source.{Case, CaseStatement, Condition, ForStatement,
         MinMaxCond, ValCond}
@@ -60,13 +61,13 @@ trait Desugarer extends L0.Desugarer /*with NameAnalyser*/ {
                                        NamedType (IdnUse ("INTEGER")))
                     ),
                     List (
-                        Assignment (clone (idnexp), lower),
-                        Assignment (clone (limexp), upper),
+                        Assignment (deepclone (idnexp), lower),
+                        Assignment (deepclone (limexp), upper),
                         WhileStatement (cond,
                             Block (
                                 Nil,
                                 stmts :+
-                                Assignment (clone (idnexp), AddExp (clone (idnexp), rincval))))
+                                Assignment (deepclone (idnexp), AddExp (deepclone (idnexp), rincval))))
                     )
                 )
         }
@@ -132,9 +133,9 @@ trait Desugarer extends L0.Desugarer /*with NameAnalyser*/ {
          */
         def condToExp (n : Condition) : Expression =
             n match {
-                case ValCond (e)         => EqExp (clone (ce), e)
-                case MinMaxCond (e1, e2) => AndExp (GeExp (clone (ce), e1),
-                                                    LeExp (clone (ce), e2))
+                case ValCond (e)         => EqExp (deepclone (ce), e)
+                case MinMaxCond (e1, e2) => AndExp (GeExp (deepclone (ce), e1),
+                                                    LeExp (deepclone (ce), e2))
             }
 
         /**

@@ -25,9 +25,9 @@ package attribution
  * Common functionality for all classes that are to be attributed.  This
  * trait must be extended by all classes for which the node properties
  * such as parent and the attribute shorthand notation <code>-></code>
- * are desired.
+ * are desired. Also provides deep and shallow cloning support.
  */
-trait Attributable extends Product {
+trait Attributable extends Product with Cloneable {
 
     /**
      * A link to the parent Attributable node of this node or null if this
@@ -205,6 +205,32 @@ trait Attributable extends Product {
         // Start by setting the connections of the fields of this.
         for (c <- productIterator)
             setNodeChildConnections (c)
+
+    }
+
+    /**
+     * Make a shallow clone of this node. See also Attributable.deepclone.
+     */
+    override def clone () = super.clone ().asInstanceOf[Attributable]
+
+}
+
+object Attributable {
+
+    /**
+     * Deep clone the given Attributable tree.
+     */
+    def deepclone[T <: Attributable] (t : T) : T = {
+
+        import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
+
+        val deepcloner = 
+            everywherebu (rule {
+                case n : Attributable if !n.hasChildren =>
+                    n.clone ()
+            })
+
+        rewrite (deepcloner) (t)
 
     }
 

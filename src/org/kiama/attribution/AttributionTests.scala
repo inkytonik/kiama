@@ -582,6 +582,60 @@ class AttributionTests extends Tests {
 
     }
 
+    test ("deep cloning a term with sharing gives an equal but not eq term") {
+        import Attributable.deepclone
+        import Attribution.initTree
+        import org.kiama.example.imperative.AST._
+
+        val c = Add (Num (1), Num (2))
+        val d = Add (Num (1), Num (2))
+        val e = Add (Num (3), Num (4)) 
+        val t = Add (Mul (c,
+                          Sub (c,
+                               d)),
+                     Add (Add (e,
+                               Num (5)),
+                          e))
+        val u = Add (Mul (Add (Num (1), Num (2)),
+                          Sub (Add (Num (1), Num (2)),
+                               d)),
+                     Add (Add (Add (Num (3), Num (4)),
+                               Num (5)),
+                          Add (Num (3), Num (4))))
+
+        initTree (t)
+        val ct = deepclone (t)
+        
+        // Must get the right answer (==)
+        expect (u) (ct)
+        
+        // Must not get the original term (eq)
+        expectnotsame (t) (ct)
+        
+        // Make sure that the parents proerpties are set correctly
+        // (for the top level)
+        def isTree (ast : Attributable) : Boolean =
+            ast.children.forall (c => (c.parent eq ast) && isTree (c))
+        assert (isTree (ct.asInstanceOf[Attributable]),
+                "deep cloned tree has invalid parent properties")
+        
+        // Check the terms at the positions of the two c occurrences
+        // against each other, since they are eq to start but should
+        // not be after
+        val mul = ct.asInstanceOf[Add].l.asInstanceOf[Mul]
+        val c1 = mul.l
+        val mulsub = mul.r.asInstanceOf[Sub]
+        val c2 = mulsub.l
+        expectnotsame (c1) (c2)
+
+        // Check the terms at the positions of the two c ocurrences
+        // against the one at the position of the d occurrence (which
+        // is == but not eq to the two original c's)
+        val d1 = mulsub.r
+        expectnotsame (c1) (d1)
+        expectnotsame (c2) (d1)
+    }
+
 }
 
 /**
