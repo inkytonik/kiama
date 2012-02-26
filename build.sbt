@@ -41,7 +41,7 @@ resolvers += "Sonatype OSS Snapshots Repository" at
 
 // Source code locations
 
-// Specyify how to find source and test files.  Main sources are
+// Specify how to find source and test files.  Main sources are
 //    - in src directory
 //    - all .scala files, except
 // Test sources, which are
