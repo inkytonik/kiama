@@ -1,6 +1,8 @@
 /**
  * Symbol tables for the Obr language.
  *
+ * This file is part of Kiama.
+ *
  * Copyright (C) 2009-2012 Anthony M Sloane, Macquarie University.
  * Copyright (C) 2010-2012 Dominic Verity, Macquarie University.
  *
