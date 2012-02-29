@@ -25,6 +25,16 @@ mainClass := None
 
 parallelExecution in Test := false
 
+// Some useful imports for demos and testing in console
+
+initialCommands in console := """
+    import org.kiama._
+    import attribution.Attribution._
+    import rewriting.Rewriter._
+    object PrettyPrinter extends util.PrettyPrinter
+    import PrettyPrinter._
+""".stripMargin
+
 // Dependencies
 
 libraryDependencies ++= 
