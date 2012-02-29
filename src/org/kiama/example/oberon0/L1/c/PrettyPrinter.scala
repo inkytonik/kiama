@@ -4,7 +4,7 @@ package L1.c
 
 trait PrettyPrinter extends L0.c.PrettyPrinter {
     
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     import base.c.CASTNode
         

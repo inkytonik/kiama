@@ -3,7 +3,7 @@ package example.oberon0
 package L0.source
 
 import base.source.{Declaration, IdnDef, IdnUse, SourceASTNode, Statement}
-import org.kiama.util.{Infix, LeftAssoc, NonAssoc, Prefix,
+import org.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
     PrettyBinaryExpression, PrettyExpression, PrettyUnaryExpression}
 
 /**

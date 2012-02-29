@@ -23,4 +23,4 @@ package org.kiama.example.iswim.driver
 /**
  * Shared pretty printer for all of ISWIM implementation
  */
-object PrettyPrinter extends org.kiama.util.PrettyPrinter
+object PrettyPrinter extends org.kiama.output.PrettyPrinter

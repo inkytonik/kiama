@@ -2,7 +2,7 @@ package org.kiama
 package example.oberon0
 package base.c
 
-import org.kiama.util.PrettyExpression
+import org.kiama.output.PrettyExpression
 
 /**
  * Root type of all C abstract syntax tree nodes.

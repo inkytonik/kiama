@@ -19,9 +19,10 @@
  */
 
 package org.kiama
-package util
+package output
 
 import org.junit.runner.RunWith
+import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 /**

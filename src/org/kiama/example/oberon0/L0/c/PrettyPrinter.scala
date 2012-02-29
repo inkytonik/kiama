@@ -2,14 +2,14 @@ package org.kiama
 package example.oberon0
 package L0.c
 
-import org.kiama.util.ParenPrettyPrinter
+import org.kiama.output.ParenPrettyPrinter
 
 trait PrettyPrinter extends base.c.PrettyPrinter {
 
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     import base.c.{CASTNode, CExpression, CType}
-    import org.kiama.util.PrettyExpression
+    import org.kiama.output.PrettyExpression
 
     override def toDoc (n : CASTNode) : Doc =
         n match {

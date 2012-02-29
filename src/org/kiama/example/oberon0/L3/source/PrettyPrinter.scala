@@ -4,7 +4,7 @@ package L3.source
 
 trait PrettyPrinter extends L2.source.PrettyPrinter {
 
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     import base.source.{IdnDef, IdnUse, SourceASTNode}
 

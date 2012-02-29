@@ -5,9 +5,9 @@ package base.c
 
 trait PrettyPrinter extends CPrettyPrinter {
 
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
-    import org.kiama.util.PrettyExpression
+    import org.kiama.output.PrettyExpression
 
     def toDoc (n : CASTNode) : Doc =
         n match {

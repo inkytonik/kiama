@@ -10,7 +10,7 @@ import org.kiama.attribution.Attribution.initTree
 import org.kiama.attribution.Attribution.resetMemo
 import org.kiama.util.Console
 import org.kiama.util.Emitter
-import org.kiama.util.PrettyPrinter
+import org.kiama.output.PrettyPrinter
 import scala.util.parsing.combinator.RegexParsers
 
 /**

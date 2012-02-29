@@ -3,7 +3,7 @@ package example.oberon0
 package L0.c
 
 import base.c.{CDeclaration, CExpression, CStatement, CType, CVarDecl}
-import org.kiama.util.{Infix, LeftAssoc, Prefix,
+import org.kiama.output.{Infix, LeftAssoc, Prefix,
     PrettyBinaryExpression, PrettyUnaryExpression}
 
 /**

@@ -4,7 +4,7 @@ package base.source
 
 trait PrettyPrinter extends SourcePrettyPrinter {
 
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     def declsection (d : Declaration) : String =
         ""

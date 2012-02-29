@@ -4,7 +4,7 @@ package L2.source
 
 trait PrettyPrinter extends L1.source.PrettyPrinter {
 
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     import base.source.SourceASTNode
 

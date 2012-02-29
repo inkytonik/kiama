@@ -4,11 +4,11 @@ package L0.source
 
 trait PrettyPrinter extends base.source.PrettyPrinter {
 
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     import base.source.{Block, Declaration, Identifier, IdnDef,
         SourceASTNode}
-    import org.kiama.util.PrettyExpression
+    import org.kiama.output.PrettyExpression
 
     /**
      * Pretty-print a block, omitting the BEGIN if there are no statements.

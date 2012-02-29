@@ -4,10 +4,10 @@ package L3.c
 
 trait PrettyPrinter extends L1.c.PrettyPrinter {
     
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     import base.c.{CASTNode, CType}
-    import org.kiama.util.PrettyExpression
+    import org.kiama.output.PrettyExpression
 
     override def toDoc (n : CASTNode) : Doc =
         n match {

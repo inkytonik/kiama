@@ -4,10 +4,10 @@ package L4.source
 
 trait PrettyPrinter extends L3.source.PrettyPrinter {
 
-    this : org.kiama.util.PrettyPrinter =>
+    this : org.kiama.output.PrettyPrinter =>
 
     import base.source.SourceASTNode
-    import org.kiama.util.PrettyExpression
+    import org.kiama.output.PrettyExpression
 
     override def toDoc (n : SourceASTNode) : Doc =
         n match {

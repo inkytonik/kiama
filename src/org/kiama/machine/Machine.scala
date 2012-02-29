@@ -24,7 +24,7 @@ package machine
 import java.lang.Exception
 import scala.collection.mutable.HashMap
 import org.kiama.util.Emitter
-import org.kiama.util.PrettyPrinter
+import org.kiama.output.PrettyPrinter
 
 /**
  * A deterministic abstract state machine defined by its main rule and
