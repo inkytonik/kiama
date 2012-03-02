@@ -5,7 +5,7 @@ package L2
 /**
  * Desugaring transformation for L2.
  */
-trait Desugarer extends L0.Desugarer /*with NameAnalyser*/ {
+trait Desugarer extends L0.Desugarer {
 
     import base.source.{Block, IdnDef, IdnUse, ModuleDecl}
     import L0.source.{AddExp, AndExp, Assignment, EqExp, Expression,
