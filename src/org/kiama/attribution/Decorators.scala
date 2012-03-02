@@ -39,7 +39,7 @@ object Decorators {
      * For this reason, `a` should at least provide a value for the root
      * of the tree.
      */
-    def down[T <: Attributable,U] (a : T ==> U) : T => U =
+    def down[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] =
         attr[T,U] {
             case t =>
                 if (a.isDefinedAt (t))
