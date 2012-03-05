@@ -151,14 +151,8 @@ trait PrettyPrinterBase {
      * Convert a string to a document.  The string should not contain any
      * newline characters.  Use `line` instead.
      */
-    def text (t : String) : Doc
+    implicit def text (t : String) : Doc
 
-    /**
-     * An implicit conversion from strings to `Doc` using `text`.
-     */
-    implicit def stringToDoc (s : String) : Doc =
-        text (s)
-    
     /**
      * A document representing a potential line break.  Behaves like `space`
      * if the break is omitted by a group.
@@ -210,17 +204,11 @@ trait PrettyPrinterBase {
     /**
      * Convert a character to a document.  The character can be a newline.
      */
-    def char (c : Char) : Doc =
+    implicit def char (c : Char) : Doc =
         if (c == '\n')
             line
         else
             text (c.toString)
-            
-    /**
-     * An implicit conversion from characters to `Doc` using `char`.
-     */
-    implicit def charToDoc (c : Char) : Doc =
-        char (c)
 
     /**
      * Return a document that behaves like `space` if the resulting output
@@ -715,7 +703,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
 
     // Basic combinators
     
-    def text (t : String) : Doc =
+    implicit def text (t : String) : Doc =
         if (t == "")
             empty
         else
