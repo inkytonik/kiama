@@ -24,6 +24,8 @@ Languages:
 - L4: arrays and records
 - L5: L4 with arbitrary non-local access to vars (not implemented)
 
+Artefacts:
+
 - A1:  L2, T1, T2
 Core language, with pretty printing and name binding.
 
