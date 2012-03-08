@@ -1,0 +1,62 @@
+### Breaking changes
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.package)
+    * [Basic attributes](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attribution$$CachedAttribute) are now normal functions, not partial functions, so pattern match completion checking works on their definitions. This change may require some fixes to declared types and may reveal incompleteness that was hidden before.
+    * Node properties in [`Attributable`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable) such as `parent` are not automatically set any more. If you want to use them, first call the [`Attribution.initTree`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attribution$) method, passing the root of your tree. This change removes a set of bad behaviours caused by setting these properties at node construction time.
+    * [`Attributable`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable) does not extend `scala.util.parsing.input.Positional` any more, since it didn't use it.
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.package)
+    * Remove [`Rewriter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$) implicit conversions from `Term` and `Option[Term]` to [`Strategy`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$Strategy) because they were too dangerous. Use the new explicit operations `build` and `option` instead.
+* [Output](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.package)
+    * [Pretty printing library](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.PrettyPrinter) moved to new `org.kiama.output` package from `org.kiama.util`.
+  
+### New features
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.package)
+    * Add [`chain`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Decorators$)   decorator for [threading attributes through a tree](http://code.google.com/p/kiama/wiki/Attribution#Decorators).
+    * Non-circular attributes now have a `reset` method which clears their cache.
+    * Add `clone` and `deepclone` support to [`Attributable`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable). Cloning is important if you intend to calculate some attributes on a [structure that would otherwise contain duplicate occurrences of nodes](http://code.google.com/p/kiama/wiki/Rewriting#Cloning).
+    * The current node is now reported in the exception thrown when a cycle is detected during calculation of a non-circular attribute.
+    * Support for node properties of tuple, `Some` and `GenTraversable` children.
+* [Output](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.package)
+    * Add [`ParenPrettyPrinter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.ParenPrettyPrinter) trait for [pretty-printing with minimal parenthesisation](http://code.google.com/p/kiama/wiki/PrettyPrinting#Parenthesisation).
+    * Updates to [`PrettyPrinter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.PrettyPrinter)
+        * Make conversions from `String` and `Char` to pretty-printer `Doc` type implicit.
+        * Split `list` combinator into `list` (for lists of values) and `plist` (for list of pretty printables).
+        * Add `hsep`, `vsep` and `fillsep` variants that allow a separator to be given.
+        * `product` combinator now does something sensible for vectors, maps and tuples.
+        * Add `lterm` combinator for lists with terminated elements.
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.package)
+    * Add `log` and `logfail` combinators to [`Rewriter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$) to improve debugging of rewriting phases.
+    * Add [`CallbackRewriter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.CallbackRewriter) extension of [`Rewriter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$) that [adds callbacks to various rewriting operations](http://code.google.com/p/kiama/wiki/Rewriting#Callbacks). The callback provides both the node that is being rewritten and the node to which it is being rewritten.
+    * Add [`PositionalRewriter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.PositionalRewriter$) extension of [`CallbackRewriter`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.CallbackRewriter) that [automatically copies positions](http://code.google.com/p/kiama/wiki/Rewriting#Callbacks) when rewriting `scala.util.parsing.input.Positional` nodes .
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.package)
+    * Add [`ParserUtilities`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.ParserUtilities) trait containing [helper support for using Scala combinator parsers](http://code.google.com/p/kiama/wiki/ParserCombs#ParserUtilities), most notably implicit conversions so that `case` `class` constructors can take "tilde" tuples, thereby eliminating a lot of the pattern matching that you normally need to do in parser actions.
+    * Add [`WhitespaceParser`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.WhitespaceParser) trait which allows white space to be defined using a parser instead of a regular expression when using `RegexParsers` and `PackratParsers`. This capability is useful when white space contains comments that are nestable.
+    * Add [`Patterns`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.Patterns$) module to contain useful extractors (just `HasParent` for [`Attributable`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable) now).
+* Examples
+    * Add Oberon-0 example including attribution, rewriting and pretty-printing, plus assembly of processors from smaller components in a modular fashion.
+    * Add small JSON example.
+    * 101companies example now includes some attribution.
+* Testing
+    * Add tests to improve code coverage.
+    * Allow tests to capture output during command-line argument processing.
+* General
+    * Move to Scala 2.9.1, ScalaTest 1.7.1, JLine 1.0 and sbt 0.11.
+    * Add console import commands to `build.sbt` so that interactive testing is easier.
+
+### Fixes
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.package)
+    * Use while loops instead of for comprehensions to iterate over children in generic traversal combinators to gain significant speed-up.
+    * The `Product` node duplication operation now caches constructors to reduce reflection overhead.
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.package)
+    * `Messaging.report` now defaults its `Emitter` argument to standard output.    
+* Examples
+    * Ignore lines that only contain white space in REPLs.
+* Testing
+    * Change some test names so that bits don't disappear when run by Eclipse JUnit runner.
+    * Make a better split between basic code and test code so that normal compile doesn't need the test libraries.
+* General
+    * Publish in Sonatype OSS repository (and hence Maven Central) instead of on `www.scala-tools.org`.
+    * [API documentation](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html) on `http://kiama.googlecode.com` now includes links to source.
+    * [Example and test API documentation](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/test-api/index.html) is now published as well.
+    * Add tree-oriented navigation links to the wiki documentation.
+    * Many other small bug fixes, improvements and documentation clarifications.
+
