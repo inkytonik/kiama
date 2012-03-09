@@ -1,4 +1,9 @@
 ### Breaking changes
+* General
+    * Kiama's group ID is now `com.googlecode.kiama` instead of `com.googlecode` to fit with Maven Central policies. In sbt you can use it with the following dependency.
+
+    `"com.googlecode.kiama" %% "kiama" % "1.2.0"`
+
 * [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.package)
     * [Basic attributes](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attribution$$CachedAttribute) are now normal functions, not partial functions, so pattern match completion checking works on their definitions. This change may require some fixes to declared types and may reveal incompleteness that was hidden before.
     * Node properties in [`Attributable`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable) such as `parent` are not automatically set any more. If you want to use them, first call the [`Attribution.initTree`](http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attribution$) method, passing the root of your tree. This change removes a set of bad behaviours caused by setting these properties at node construction time.
