@@ -1,3 +1,9 @@
+The Kiama team are pleased to bring you the next release of the library.
+
+This release includes some breaking changes that improve the reliability and safety of Kiama-based applications. All users should take careful note of these changes.
+
+In addition, there are quite a few new features and bug fixes, most notably a new chain decorator for threading attributes through a tree, support for minimal parenthesisation in pretty printing, and callback support for rewriting. A new version of the Oberon-0 example shows how Kiama can be used in an extensible, modular way.
+
 ### Breaking changes
 * General
     * Kiama's group ID is now `com.googlecode.kiama` instead of `com.googlecode` to fit with Maven Central policies. In sbt you can use it with the following dependency.
