@@ -31,7 +31,7 @@ initialCommands in console := """
     import org.kiama._
     import attribution.Attribution._
     import rewriting.Rewriter._
-    object PrettyPrinter extends util.PrettyPrinter
+    object PrettyPrinter extends output.PrettyPrinter
     import PrettyPrinter._
 """.stripMargin
 
