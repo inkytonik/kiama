@@ -39,7 +39,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Convert a JSON value node to a pretty-printing document.
      */
-    private def show (t : JValue) : Doc =
+    def show (t : JValue) : Doc =
         t match {
             case JNull ()     => "null"
             case JTrue ()     => "true"
@@ -55,7 +55,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printer document for an object pair.
      */
-    private def showPair (p : (JName,JValue)) : Doc =
+    def showPair (p : (JName,JValue)) : Doc =
         dquotes (p._1.s) <+> colon <+> show (p._2)
 
 }
