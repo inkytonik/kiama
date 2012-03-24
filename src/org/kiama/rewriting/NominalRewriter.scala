@@ -52,7 +52,6 @@ object NominalAST {
         private var counter = initcount
 
         def apply (oldname : Name) : Name = {
-            println ("GenName called")
             counter = counter + 1
             Name (oldname.base, Some (counter))
         }
