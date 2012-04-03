@@ -29,7 +29,7 @@ trait TIL2_3 extends TIL1_1 with TransformingMain {
     import AST._
     import org.kiama.rewriting.Rewriter._
 
-    override def transform (ast : Root) : Root = {
+    def transform (ast : Program) : Program = {
         var decls = new scala.collection.mutable.ListBuffer[Decl] ()
         val getandremovedecls =
             everywhere (rule {

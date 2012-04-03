@@ -22,15 +22,13 @@ package org.kiama
 package example.til
 
 import java.io.Reader
-import org.scalatest.Assertions
+import org.kiama.util.ParserUtilities
 
 /**
- * Standard main program for TIL chairmarks.  Also includes a simple
- * testing framework.
+ * Standard main program for TIL chairmarks.
  */
-trait Main extends Assertions {
+trait Main {
 
-    import java.io.CharArrayReader
     import org.kiama.util.IO._
 
     /**
@@ -57,40 +55,30 @@ trait Main extends Assertions {
       */
     def process (reader : Reader) : Any
 
-    /**
-     * Try to process a string and expect a given result.
-     */
-    def runtest[T] (str : String, result : T) {
-        val r = process (new CharArrayReader (str.toArray))
-        expect (result) (r)
-    }
-
 }
 
 /**
- * Standard main program for TIL chairmarks that parse.
- */
-trait ParsingMain extends Main with org.kiama.util.ParserUtilities {
+ * Main program for TIL chairmarks that just parse.
+ */ 
+trait ParsingMain extends Main {
+
+    self : ParserUtilities =>
 
     /**
-      * Process the file given by the argument reader by parsing it
-      * and returning the resulting AST.
+     * The parser to call.
+     */
+    def parser : Parser[AST.Program]
+
+    /**
+      * Process the file given by the argument reader and return
+      * some useful result. This default implementation parses
+      * the input and returns the parser result.
       */
     def process (reader : Reader) : Any =
-        parseAll (start, reader) match {
+        parseAll (parser, reader) match {
             case Success (p, _) => p
             case f              => f
         }
-
-    /**
-     * The root type of the AST being processed.
-     */
-    type Root
-
-    /**
-     * Parse a file, returning an AST.
-     */
-    def start : Parser[Root]
 
 }
 
@@ -99,27 +87,23 @@ trait ParsingMain extends Main with org.kiama.util.ParserUtilities {
  */
 trait TransformingMain extends ParsingMain {
 
+    self : ParserUtilities =>
+
     import org.kiama.rewriting.Rewriter._
 
     /**
-     * The root type of the AST being processed. Needs to be sub-type
-     * of Term so that we can transform it using rewriting.
+     * Transform a single AST.
      */
-    type Root <: Term
+    def transform (ast : AST.Program) : AST.Program
 
     /**
       * Process the file given by the argument reader by parsing it,
       * transforming it and returning the resulting AST.
       */
     override def process (reader : Reader) : Any =
-        parseAll (start, reader) match {
+        parseAll (parser, reader) match {
             case Success (p, _) => transform (p)
             case f              => f
         }
-
-    /**
-     * Transform a single AST.
-     */
-    def transform (ast : Root) : Root
 
 }

@@ -21,6 +21,8 @@
 package org.kiama
 package example.til
 
+import org.kiama.util.ParserUtilities
+
 /**
  * AST the basic Tiny Imperative Language.
  */
@@ -68,13 +70,13 @@ object AST {
 /**
  * Parser for the basic Tiny Imperative Language.
  */
-trait TIL1_1 extends ParsingMain {
+trait TIL1_1 extends ParserUtilities {
 
     import AST._
 
     type Root = Program
 
-    lazy val start = program
+    lazy val parser = program
 
     lazy val program = (statement*) ^^ Program
 
@@ -139,5 +141,5 @@ trait TIL1_1 extends ParsingMain {
 
 }
 
-object TIL1_1Main extends TIL1_1
+object TIL1_1Main extends ParsingMain with TIL1_1
 

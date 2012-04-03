@@ -22,14 +22,13 @@ package org.kiama
 package example.til
 
 import org.junit.runner.RunWith
-import org.kiama.util.Tests
+import org.kiama.util.TransformerTests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class TIL2_2Tests extends Tests {
+class TIL2_2Tests extends TIL2_2 with TransformerTests {
 
     import AST._
-    import TIL2_2Main._
 
     test ("transform a single for loop") {
         val input = "for x := 1 to n do write x; end"
@@ -44,7 +43,7 @@ class TIL2_2Tests extends Tests {
                 While (Sub (Var (x), Var (upperx)), List (
                     Write (Var (x)),
                     Assign (x, Add (Var (x), Num (1)))))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
     test ("transform nested for loops") {
@@ -68,7 +67,7 @@ class TIL2_2Tests extends Tests {
                         Write (Mul (Var (i), Var (j))),
                         Assign (j, Add (Var (j), Num (1))))),
                     Assign (i, Add (Var (i), Num (1)))))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
 }

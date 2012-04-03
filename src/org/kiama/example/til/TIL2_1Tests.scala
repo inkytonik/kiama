@@ -22,14 +22,13 @@ package org.kiama
 package example.til
 
 import org.junit.runner.RunWith
-import org.kiama.util.Tests
+import org.kiama.util.TransformerTests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class TIL2_1Tests extends Tests {
+class TIL2_1Tests extends TIL2_1 with TransformerTests {
 
     import AST._
-    import TIL2_1Main._
 
     private val x = Id ("x")
     private val y = Id ("y")
@@ -42,7 +41,7 @@ class TIL2_1Tests extends Tests {
                 Decl (x),
                 For (x, Num (1), Var (n), List (
                     Write (Var (x))))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
     test ("transform a for loop that occurs first in a sequence") {
@@ -53,7 +52,7 @@ class TIL2_1Tests extends Tests {
                 For (x, Num (1), Var (n), List (
                     Write (Var (x)))),
                 Write (Var (x))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
     test ("transform a for loop that occurs last in a sequence") {
@@ -64,7 +63,7 @@ class TIL2_1Tests extends Tests {
                 Decl (x),
                 For (x, Num (1), Var (n), List (
                     Write (Var (x))))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
     test ("transform a for loop that occurs in the middle of a sequence") {
@@ -76,7 +75,7 @@ class TIL2_1Tests extends Tests {
                 For (x, Num (1), Var (n), List (
                     Write (Var (x)))),
                 Write (Var (x))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
     test ("transform nested for loops") {
@@ -88,7 +87,7 @@ class TIL2_1Tests extends Tests {
                      Decl (y),
                      For (y, Num (0), Var (x), List (
                          Write (Var (y))))))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
 }

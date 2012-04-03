@@ -96,9 +96,10 @@ trait RegexParserTests extends Tests {
     self : RegexParsers =>
 
     /**
-     * Try to parse str as a T, which is expected to work and produce the
-     * given result.  Assert a failure if it doesn't or if it doesn't 
-     * consume all of the input.
+     * Assert that a parsing operation should be performed correctly.
+     * Try to parse `str` as a `T` using the parser `p`, which is expected
+     * to succeed and to produce the given result.  Fail if `p` doesn't
+     * produce the given result or if `p` doesn't consume all of the input.
      */
     def assertParseOk[T] (str : String, p : Parser[T], result : T) {
         parseAll (p, str) match {
@@ -113,11 +114,13 @@ trait RegexParserTests extends Tests {
     }
 
     /**
-     * Try to parse str as a T, which is expected to fail with a fatal error or
-     * failure (given by iserr parameter, which defaults to failure).
-     * Fail the test if the expected NoSuccess doesn't eventuate. The NoSuccess
-     * is described by the line and column numbers where it occurs and the
-     * message that is produced.  All of them have to be correct.
+     * Assert that a parsing operation should not result in success.
+     * Try to parse `str` as a `T` using the parser `p`, which is expected
+     * to not succeed, giving either a fatal error or failure (as specified
+     * by the `iserr` parameter, which defaults to failure). Fail the test
+     * if the parsing operation succeeds. Furthermore, fail the test if it
+     * fails, but the error or failure is not indicated at the given `line`
+     * and `column` location or doesn't contain the given message `msg`.
      */
     def assertParseError[T] (str : String, p : Parser[T], line : Int, column : Int,
                              msg : String, iserr : Boolean = false) {
@@ -136,3 +139,34 @@ trait RegexParserTests extends Tests {
     }
 
 }
+
+/**
+ * Useful test routines for transformers.
+ */
+trait TransformerTests extends RegexParserTests {
+    
+    self : RegexParsers =>
+
+    /**
+     * Assert that a transformation should be performed correctly.
+     * Try to parse `str` as a `T` using the parser `p`, which is expected
+     * to succeed while consuming all of the input. Then pass the resulting
+     * `T` to the `t` transformation function. Fail the test if the value
+     * produced by the transformation is not `result`.
+     */
+    def assertTransformOk[T] (str : String, p : Parser[T], t : T => T, result : T) {
+        parseAll (p, str) match {
+            case Success (r, in) =>
+                if (!in.atEnd) fail ("input remaining at " + in.pos)
+                val newr = t (r)
+                if (newr != result) fail ("found '" + newr + "' not '" + result + "'")
+            case f : Error =>
+                fail ("parse error: " + f)
+            case f : Failure =>
+                fail ("parse failure: " + f)
+        }
+    }
+
+}
+
+

@@ -22,14 +22,13 @@ package org.kiama
 package example.til
 
 import org.junit.runner.RunWith
-import org.kiama.util.Tests
+import org.kiama.util.TransformerTests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class TIL2_3Tests extends Tests {
+class TIL2_3Tests extends TIL2_3 with TransformerTests {
 
     import AST._
-    import TIL2_3Main._
 
     test ("transform a program with many nested declarations") {
         val input = """
@@ -114,7 +113,7 @@ end
                     Assign (n, Mul (Var (r), Var (y))),
                     Write (Var (n)),
                     Assign (y, Sub (Var (y), Num (1)))))))
-        runtest (input, tree)
+        assertTransformOk (input, parser, transform, tree)
     }
 
 }

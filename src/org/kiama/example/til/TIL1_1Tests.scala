@@ -22,14 +22,13 @@ package org.kiama
 package example.til
 
 import org.junit.runner.RunWith
-import org.kiama.util.Tests
+import org.kiama.util.RegexParserTests
 import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class TIL1_1Tests extends Tests {
+class TIL1_1Tests extends TIL1_1 with RegexParserTests {
 
     import AST._
-    import TIL1_1Main._
 
     private val n = Id ("n")
     private val f = Id ("f")
@@ -67,7 +66,7 @@ write "\n";"""
                     Write (Str ("\" is \"")),
                     Write (Var (fact)),
                     Write (Str ("\"\\n\""))))
-        runtest (input, tree)
+        assertParseOk (input, parser, tree)
     }
 
     test ("parse factors program") {
@@ -101,7 +100,7 @@ end"""
                                     Write (Var (f)),
                                     Assign (n, Div (Var (n), Var (f))))),
                             Assign (f, Add (Var (f), Num (1)))))))
-        runtest (input, tree)
+        assertParseOk (input, parser, tree)
     }
 
     test ("parse multiples program") {
@@ -121,7 +120,7 @@ end
                         List (
                             For (j, Num (1), Num (10),
                                 List (Write (Mul (Var (i), Var (j)))))))))
-        runtest (input, tree)
+        assertParseOk (input, parser, tree)
     }
 
 }
