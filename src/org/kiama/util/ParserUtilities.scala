@@ -32,6 +32,19 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
     import scala.util.matching.Regex
 
     /**
+     * Use `parser` to parse the string `str`. If the parse is sucessful and produces
+     * the value `t`, return `Left (t)`. Otherwise, return `Right (msg)` where `msg`
+     * is the mesage produced by the parser.
+     */
+    def parseString[T] (parser : Parser[T], str : String) : Either[T,String] =
+        parseAll (parser, str) match {
+            case Success (ast, _) =>
+                Left (ast)
+            case f =>
+                Right (f.toString)
+        }
+
+    /**
      * A parser that matches any element, failing if the end of input
      * is reached.
      */
