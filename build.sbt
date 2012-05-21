@@ -9,7 +9,7 @@ organization := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion := "2.9.1"
+scalaVersion := "2.9.2"
 
 scalacOptions ++= Seq ("-deprecation", "-unchecked")
 
@@ -19,9 +19,20 @@ logLevel := Level.Info
 
 shellPrompt <<= (name, version) { (n, v) => _ => n + " " + v + "> " }
 
-// Execution
+// No main class since Kiama is a library
 
 mainClass := None
+
+// Fork the runs and connect sbt's input and output to the forked process so
+// that we are immune to version clashes with the JLine library used by sbt
+
+fork in run := true
+
+connectInput in run := true
+
+outputStrategy in run := Some (StdoutOutput)
+
+// Don't run tests in parallel because some bits are not thread safe yet
 
 parallelExecution in Test := false
 
@@ -39,11 +50,11 @@ initialCommands in console := """
 
 libraryDependencies ++= 
     Seq (
-        "jline" % "jline" % "1.0",
+        "jline" % "jline" % "2.6",
         "junit" % "junit" % "4.10" % "test",
-        "org.clapper" %% "argot" % "0.3.5",
-        "org.scala-tools.testing" %% "scalacheck" % "1.9" % "test",
-        "org.scalatest" %% "scalatest" % "1.7.1" % "test"
+        "org.clapper" %% "argot" % "0.4",
+        "org.scalacheck" %% "scalacheck" % "1.9" % "test",
+        "org.scalatest" %% "scalatest" % "1.7.2" % "test"
     )
  
 resolvers += "Sonatype OSS Snapshots Repository" at
