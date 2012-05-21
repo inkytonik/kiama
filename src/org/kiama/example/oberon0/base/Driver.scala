@@ -112,7 +112,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 
         if (printast.value isDefined) {
             section (emitter, "ast")
-            emitter.emitln (pretty (product (ast)))
+            emitter.emitln (pretty_any (ast))
         }
         if (pprintast.value isDefined) {
             section (emitter, "_pp.ob")
@@ -183,7 +183,7 @@ trait TransformingDriver extends Driver {
         val nast = transform (ast)
         if (printiast.value isDefined) {
             section (emitter, "iast")
-            emitter.emitln (pretty (product (nast)))
+            emitter.emitln (pretty_any (nast))
         }
         if (pprintiast.value isDefined)
             section (emitter, "_ipp.ob")
@@ -217,7 +217,7 @@ trait TranslatingDriver extends TransformingDriver {
         val nast = translate (ast)
         if (printcast.value isDefined) {
             section (emitter, "cast")
-            emitter.emitln (pretty (product (nast)))
+            emitter.emitln (pretty_any (nast))
         }
         if ((pprintcast.value isDefined) || (challenge.value isDefined)) {
             section (emitter, "c")

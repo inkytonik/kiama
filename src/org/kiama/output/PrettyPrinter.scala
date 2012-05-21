@@ -128,6 +128,12 @@ trait PrettyPrinterBase {
         pretty (p.toDoc)
 
     /**
+     * Pretty-print any value using the `any` method.
+     */
+    def pretty_any (a : Any) : Layout =
+        pretty (any (a))
+
+    /**
      * Interface for pretty-printable values.  The default `toDoc` implementation
      * just uses the value combinator on the receiver.
      */
@@ -264,27 +270,30 @@ trait PrettyPrinterBase {
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
-     * Return a pretty-printer document for `p`. If `p` is a `Product`, print it in
-     * standard prefix list form, otherwise use `p`'s `toDoc` method. As special
-     * cases, pretty-print lists with indentation as `List (...)` and `Nil` instead
-     * of using `::`, vectors as `Vector (...)`, and maps as `Map (...)` and tuples
-     * using arrow notation. Also, strings are printed with surrounding double
-     * quotes.
+     * Generic pretty-printer document for any type of value. If `a` is a
+     * `Vector`, `Map`, `List` or `Product`, print it in a prefix list style,
+     * with the exception that `Nil` prints as `Nil`. Tuples are pretty-printed
+     * using arrow notation. Strings are pretty-printed surrounded by double
+     * quotes. If none of these cases apply, use the `toDoc` method on `a`.
      */
-    def product (p : Any) : Doc = {
-        p match {
-            case v : Vector[_] => list (v.toList, "Vector ", product)
-            case m : Map[_,_]  => list (m.toList, "Map ", product)
+    def any (a : Any) : Doc = {
+        a match {
+            case v : Vector[_] => list (v.toList, "Vector ", any)
+            case m : Map[_,_]  => list (m.toList, "Map ", any)
             case Nil           => "Nil"
-            case l : List[_]   => list (l, "List ", product)
-            case (l, r)        => product (l) <+> "->" <+> product (r)
+            case l : List[_]   => list (l, "List ", any)
+            case (l, r)        => any (l) <+> "->" <+> any (r)
             case p : Product   => list (p.productIterator.toList,
                                         p.productPrefix + " ",
-                                        product)
+                                        any)
             case s : String    => dquotes (text (s))
-            case a             => a.toDoc
+            case _             => a.toDoc
         }
     }
+
+    @deprecated ("Use PrettyPrinter.any instead.", "1.2.1")
+    def product (p : Any) : Doc =
+        any (p)
 
     // Extended combinator set
 

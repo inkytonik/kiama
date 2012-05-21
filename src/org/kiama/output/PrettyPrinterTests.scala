@@ -85,7 +85,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
     
     test ("pretty-print empty string - product") {
-        expect ("\"\"") (pretty (product ("")))
+        expect ("\"\"") (pretty_any (""))
     }
     
     test ("pretty-print empty list") {
@@ -93,7 +93,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
     
     test ("pretty-print empty list product") {
-        expect ("Nil") (pretty (product (Nil)))
+        expect ("Nil") (pretty_any (Nil))
     }
 
     test ("pretty-print identifier") {
@@ -101,7 +101,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
     
     test ("pretty-print identifier - product") {
-        expect ("\"hello\"") (pretty (product ("hello")))
+        expect ("\"hello\"") (pretty_any ("hello"))
     }
     
     test ("pretty-print integer") {
@@ -109,7 +109,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
     
     test ("pretty-print integer - product") {
-        expect ("1234") (pretty (product (1234)))
+        expect ("1234") (pretty_any (1234))
     }
     
     test ("pretty-print angles") {
@@ -293,28 +293,28 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
 
     test ("product pretty-print empty vector") {
-        expect ("Vector ()") (pretty (product (Vector ())))
+        expect ("Vector ()") (pretty_any (Vector ()))
     }
 
     test ("product pretty-print singleton vector") {
-        expect ("Vector (1)") (pretty (product (Vector (1))))
+        expect ("Vector (1)") (pretty_any (Vector (1)))
     }
 
     test ("product pretty-print multiple-element vector") {
-        expect ("Vector (1, 2, 3)") (pretty (product (Vector (1, 2, 3))))
+        expect ("Vector (1, 2, 3)") (pretty_any (Vector (1, 2, 3)))
     }        
 
     test ("product pretty-print empty map") {
-        expect ("Map ()") (pretty (product (Map ())))
+        expect ("Map ()") (pretty_any (Map ()))
     }
 
     test ("product pretty-print singleton map") {
-        expect ("Map (1 -> \"One\")") (pretty (product (Map (1 -> "One"))))
+        expect ("Map (1 -> \"One\")") (pretty_any (Map (1 -> "One")))
     }
 
     test ("product pretty-print multiple-element map") {
         expect ("Map (1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")") (
-            pretty (product (Map (1 -> "One", 2 -> "Two", 3 -> "Three")))
+            pretty_any (Map (1 -> "One", 2 -> "Two", 3 -> "Three"))
         )
     }        
 

@@ -30,7 +30,7 @@ object Main extends Driver
 
 class Driver extends SyntaxAnalysis with Compiler[JValue] {
 
-    import PrettyPrinter.{pretty, product}
+    import PrettyPrinter.{pretty_any, pretty}
     import org.kiama.util.Console
     import org.kiama.util.Emitter
 
@@ -47,7 +47,7 @@ class Driver extends SyntaxAnalysis with Compiler[JValue] {
         super.process (ast, console, emitter)
 
         // Pretty-print AST as a product value
-        println (pretty (product (ast)))
+        println (pretty_any (ast))
 
         // Pretty-print AST as a JSON value
         println (pretty (ast))

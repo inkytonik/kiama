@@ -24,7 +24,7 @@ package example.json
 /**
  * AST pretty-printing.
  */
-object PrettyPrinter extends org.kiama.output.PrettyPrinter {
+trait PrettyPrinting extends org.kiama.output.PrettyPrinter {
 
     import JSONTree._
 
@@ -59,3 +59,9 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
         dquotes (p._1.s) <+> colon <+> show (p._2)
 
 }
+
+/**
+ * AST pretty-printing.
+ */
+object PrettyPrinter extends PrettyPrinting
+
