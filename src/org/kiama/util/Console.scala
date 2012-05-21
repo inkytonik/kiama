@@ -46,13 +46,17 @@ class Console {
  */
 object JLineConsole extends Console {
 
-    import jline.ConsoleReader
-    import jline.Terminal.getTerminal
+    import jline.console.ConsoleReader
+    import jline.TerminalFactory.create
 
     /**
      * The reader to use to access the console.
      */
-    lazy val reader = new ConsoleReader ()
+    lazy val reader = {
+        val console = new ConsoleReader ()
+        console.setExpandEvents (false)
+        console
+    }
 
     /**
      * Read a line under controlled conditions.  Need to do this since
@@ -60,13 +64,13 @@ object JLineConsole extends Console {
      * with sbt if run in that context.
      */
     override def readLine (prompt : String) : String = {
-        val terminal = getTerminal
+        val terminal = create ()
         terminal.synchronized {
-            terminal.disableEcho ()
+            terminal.setEchoEnabled (false)
             try {
                 reader.readLine (prompt)
             } finally {
-                terminal.enableEcho ()
+                terminal.setEchoEnabled (true)
             }
         }
     }
