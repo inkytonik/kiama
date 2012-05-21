@@ -22,7 +22,7 @@ package org.kiama
 package example.til
 
 import java.io.Reader
-import org.kiama.util.ParserUtilities
+import org.kiama.util.PositionedParserUtilities
 
 /**
  * Standard main program for TIL chairmarks.
@@ -62,7 +62,7 @@ trait Main {
  */ 
 trait ParsingMain extends Main {
 
-    self : ParserUtilities =>
+    self : PositionedParserUtilities =>
 
     /**
      * The parser to call.
@@ -87,7 +87,7 @@ trait ParsingMain extends Main {
  */
 trait TransformingMain extends ParsingMain {
 
-    self : ParserUtilities =>
+    self : PositionedParserUtilities =>
 
     import org.kiama.rewriting.Rewriter._
 

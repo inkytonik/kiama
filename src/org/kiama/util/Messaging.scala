@@ -51,10 +51,17 @@ object Messaging {
         messages.toList.sortWith (_.pos < _.pos)
 
     /**
-     * Buffer a new message associated with the given positioned value.
+     * Buffer a new message associated with the given `Positional` value.
      */
     def message (value : Positional, message : String) =
         messages += Record (value.pos, message)
+
+    /**
+     * Buffer a new message associated with the given `Positioned` value.
+     * The `finish` position is ignored at present.
+     */
+    def message (value : Positioned, message : String) =
+        messages += Record (value.start, message)
 
     /**
      * Return the number of messages that are buffered.

@@ -134,7 +134,7 @@ object ErrorCheck {
      * }
      */
     val record : (Buffer[String],String) => ASTNode => Unit =
-        (b,s) => a => b += ((a.pos) + ": " + s)
+        (b,s) => a => b += ((a.start) + ": " + s)
 
     /**
      * Is this entity qualified?

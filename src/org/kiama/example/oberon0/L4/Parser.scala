@@ -11,7 +11,7 @@ trait Parser extends L3.Parser {
         RecordTypeDef}
 
     override def typedefDef =
-        positioned (ntypedefDef)
+        ntypedefDef
 
     lazy val ntypedefDef =
         ("ARRAY" ~> expression) ~ ("OF" ~> typedef) ^^ ArrayTypeDef |
@@ -36,7 +36,7 @@ trait Parser extends L3.Parser {
         super.lhsDef
 
     lazy val fldidn =
-        positioned (ident ^^ FieldIdn)
+        ident ^^ FieldIdn
 
     override def keywords =
         "ARRAY" :: "OF" :: "RECORD" :: super.keywords

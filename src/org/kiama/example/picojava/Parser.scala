@@ -29,10 +29,12 @@
 package org.kiama
 package example.picojava
 
+import org.kiama.util.PositionedParserUtilities
+
 /**
  * PicoJava parser
  */
-trait Parser extends org.kiama.util.ParserUtilities {
+trait Parser extends PositionedParserUtilities {
 
     import AbstractSyntax._
 
@@ -45,9 +47,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
         class_decl | var_decl | stmt
 
     lazy val class_decl =
-        positioned (
-            "class" ~> IDENTIFIER ~ (xtends?) ~ block ^^ ClassDecl
-        )
+        "class" ~> IDENTIFIER ~ (xtends?) ~ block ^^ ClassDecl
     lazy val xtends =
         "extends" ~> IDENTIFIER ^^ Use
     lazy val var_decl =
@@ -56,9 +56,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
     lazy val stmt : PackratParser[Stmt] =
         assign_stmt | while_stmt
     lazy val assign_stmt =
-        positioned (
-            name ~ ("=" ~> exp <~ ";") ^^ AssignStmt
-        )
+        name ~ ("=" ~> exp <~ ";") ^^ AssignStmt
     lazy val while_stmt =
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ WhileStmt
 
@@ -66,7 +64,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
         boolean_literal | posname
 
     lazy val posname =
-        positioned (name)
+        name
 
     lazy val name : PackratParser[Access] =
         name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |

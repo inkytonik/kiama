@@ -21,7 +21,7 @@
 package org.kiama
 package example.til
 
-import org.kiama.util.ParserUtilities
+import org.kiama.util.{Positioned, PositionedParserUtilities}
 
 /**
  * AST the basic Tiny Imperative Language.
@@ -30,7 +30,7 @@ object AST {
 
     case class Program (ss : Seq[Stat])
 
-    sealed abstract class Stat
+    sealed abstract class Stat extends Positioned
 
     case class Decl (i : Id) extends Stat
 
@@ -70,7 +70,7 @@ object AST {
 /**
  * Parser for the basic Tiny Imperative Language.
  */
-trait TIL1_1 extends ParserUtilities {
+trait TIL1_1 extends PositionedParserUtilities {
 
     import AST._
 

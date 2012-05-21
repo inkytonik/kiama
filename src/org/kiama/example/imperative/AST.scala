@@ -29,6 +29,7 @@ object AST {
     import org.kiama.attribution.Attributable
     import org.kiama.rewriting.Rewriter.{congruence, rulefs,
         Strategy}
+    import org.kiama.util.Positioned
 
     /**
      * Identifiers are represented as strings.
@@ -41,7 +42,7 @@ object AST {
      * an ImperativeNode; this capability is only used in the Kiama tests
      * and is not usually needed for normal use of the library.
      */
-    trait ImperativeNode extends Attributable
+    trait ImperativeNode extends Attributable with Positioned
 
     /**
      * Expressions.

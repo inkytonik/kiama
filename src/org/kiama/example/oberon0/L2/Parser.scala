@@ -20,7 +20,7 @@ trait Parser extends L1.Parser {
              ("DO" ~> statementSequence <~ "END") ^^ ForStatement
  
     lazy val forVar =
-        positioned (idnuse ^^ IdnExp)
+        idnuse ^^ IdnExp
  
     lazy val step =
         "BY" ~> expression ^^ (e => Some (e)) |

@@ -24,10 +24,12 @@
 package org.kiama
 package example.obr
 
+import org.kiama.util.ParserUtilities
+
 /**
  * Module containing parsers for the Obr language.
  */
-class SyntaxAnalysis extends org.kiama.util.ParserUtilities {
+class SyntaxAnalysis extends ParserUtilities {
 
     import ObrTree._
     import scala.collection.immutable.HashSet

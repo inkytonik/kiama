@@ -22,7 +22,7 @@ trait Parser extends L2.Parser {
         result (Nil)
 
     lazy val fpsection =
-        positioned (optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection)
+        optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection
 
     lazy val optvar =
         "VAR" ^^^ VarMode |
@@ -33,7 +33,7 @@ trait Parser extends L2.Parser {
         super.statementDef
 
     lazy val procedureCall =
-        positioned (idnuse ~ optActualParameters ^^ Call)
+        idnuse ~ optActualParameters ^^ Call
 
     lazy val optActualParameters =
         "(" ~> repsep (expression, ",") <~ ")" |

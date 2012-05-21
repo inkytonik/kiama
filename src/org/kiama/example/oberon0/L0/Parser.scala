@@ -53,10 +53,10 @@ trait Parser extends base.Parser {
         super.statementDef
 
     lazy val assignment =
-        positioned (lhs ~ (":=" ~> expression) ^^ Assignment)
+        lhs ~ (":=" ~> expression) ^^ Assignment
 
     lazy val lhs =
-        positioned (lhsNoPos)
+        lhsNoPos
 
     lazy val lhsNoPos =
         lhsDef
@@ -65,16 +65,16 @@ trait Parser extends base.Parser {
         idnuse ^^ IdnExp
 
     lazy val expression =
-        positioned (simpexp ~ ("=" ~> simpexp) ^^ EqExp |
-                    simpexp ~ ("#" ~> simpexp) ^^ NeExp |
-                    simpexp ~ ("<" ~> simpexp) ^^ LtExp |
-                    simpexp ~ ("<=" ~> simpexp) ^^ LeExp |
-                    simpexp ~ (">" ~> simpexp) ^^ GtExp |
-                    simpexp ~ (">=" ~> simpexp) ^^ GeExp |
-                    simpexp)
+        simpexp ~ ("=" ~> simpexp) ^^ EqExp |
+        simpexp ~ ("#" ~> simpexp) ^^ NeExp |
+        simpexp ~ ("<" ~> simpexp) ^^ LtExp |
+        simpexp ~ ("<=" ~> simpexp) ^^ LeExp |
+        simpexp ~ (">" ~> simpexp) ^^ GtExp |
+        simpexp ~ (">=" ~> simpexp) ^^ GeExp |
+        simpexp
 
     lazy val simpexp =
-        positioned (nsimpexp)
+        nsimpexp
 
     lazy val nsimpexp : PackratParser[Expression] =
         nsimpexp ~ ("+" ~> term) ^^ AddExp |
@@ -83,7 +83,7 @@ trait Parser extends base.Parser {
         term
 
     lazy val term =
-        positioned (nterm)
+        nterm
 
     lazy val nterm : PackratParser[Expression] =
         nterm ~ ("*" ~> factor) ^^ MulExp |
@@ -93,12 +93,12 @@ trait Parser extends base.Parser {
         factor
 
     lazy val factor : PackratParser[Expression] =
-        positioned (intexp |
-                    lhs |
-                    "+" ~> factor |
-                    "-" ~> factor ^^ NegExp |
-                    "~" ~> factor ^^ NotExp |
-                    "(" ~> expression <~ ")")
+        intexp |
+        lhs |
+        "+" ~> factor |
+        "-" ~> factor ^^ NegExp |
+        "~" ~> factor ^^ NotExp |
+        "(" ~> expression <~ ")"
 
     lazy val intexp =
         constrainedInt ^^ IntExp

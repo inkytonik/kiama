@@ -21,6 +21,7 @@
 package org.kiama
 package util
 
+import scala.util.matching.Regex
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers
 
@@ -29,7 +30,6 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait ParserUtilities extends RegexParsers with PackratParsers {
     
-    import scala.util.matching.Regex
 
     /**
      * Use `parser` to parse the string `str`. If the parse is sucessful and produces
@@ -78,6 +78,14 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
         Parser { in => Success (v, in) }
 
     /**
+     * Version of `handleWhiteSpace` that accepts an `Input` value rather
+     * than separate source and offset. By default, just delegates to the
+     * `handleWhiteSpace` of `RegexParsers`.
+     */
+    def handleWhiteSpace (in : Input) : Int =
+        handleWhiteSpace (in.source, in.offset)
+
+    /**
      * Wrap a parser `p` that produces a value of type `T` to produce a
      * parser returning values of type `U`.  Whitespace is skipped (if
      * we are skipping white space) before `p` is applied, so that we
@@ -92,9 +100,8 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      */
     def wrap[T,U] (p : => Parser[T], f : T => Either[U,String]) : Parser[U] =
         Parser { in =>
-            val offset = in.offset
-            val start = handleWhiteSpace (in.source, offset)
-            val newin = in.drop (start - offset)
+            val start = handleWhiteSpace (in)
+            val newin = in.drop (start - in.offset)
             p (newin) match {
                 case Success (t, out) =>
                     f (t) match {
@@ -253,7 +260,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
  * the form of comments requires more power than a regular expression can 
  * provide (e.g., for nested comments).  
  */
-trait WhitespaceParser extends RegexParsers with PackratParsers {
+trait WhitespaceParser extends ParserUtilities {
 
     import scala.util.matching.Regex
     import scala.util.parsing.input.Positional

@@ -23,10 +23,12 @@
 package org.kiama
 package example.transform
 
+import org.kiama.util.PositionedParserUtilities
+
 /**
  * Parse the input.
  */
-trait Parser extends org.kiama.util.ParserUtilities {
+trait Parser extends PositionedParserUtilities {
 
     import AST._
 
@@ -50,10 +52,8 @@ trait Parser extends org.kiama.util.ParserUtilities {
         factor ^^ Factor
 
     lazy val factor =
-        positioned (
-            integer ^^ Num |
-            ident ^^ Var
-        )
+        integer ^^ Num |
+        ident ^^ Var
 
     lazy val integer =
         "[0-9]+".r ^^ (s => s.toInt)

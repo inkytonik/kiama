@@ -3,12 +3,12 @@ package example.oberon0
 package base.source
 
 import org.kiama.attribution.Attributable
-import scala.util.parsing.input.Positional
+import org.kiama.util.Positioned
 
 /**
  * Root type of all source abstract syntax tree nodes.
  */
-abstract class SourceASTNode extends Attributable with Positional
+abstract class SourceASTNode extends Attributable with Positioned
 
 /**
  * Non-terminal type for declarations.

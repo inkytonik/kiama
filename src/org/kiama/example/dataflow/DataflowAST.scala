@@ -27,10 +27,11 @@ package example.dataflow
 object DataflowAST {
 
     import org.kiama.attribution.Attributable
+    import org.kiama.util.Positioned
 
     type Var = String
 
-    abstract class Stm extends Attributable
+    abstract class Stm extends Attributable with Positioned
 
     case class Assign (left : Var, right : Var) extends Stm
     case class While (cond : Var, body : Stm) extends Stm

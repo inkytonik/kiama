@@ -28,6 +28,7 @@ package org.kiama
 package example.lambda3
 
 import org.kiama.util.ParsingREPL
+import org.kiama.util.PositionedParserUtilities
 
 /**
  * A simple lambda calculus using abstracted name binding.
@@ -39,11 +40,12 @@ object AST {
     import org.kiama.rewriting.NominalAST.{Bind, Name}
     import org.kiama.rewriting.NominalRewriter.{alphaequiv, fresh, fv,
         subst, swap, Trans}
+    import org.kiama.util.Positioned
 
     /**
      * Lambda calculus expressions.
      */
-    abstract class Exp
+    abstract class Exp extends Positioned
 
     /**
      * Numeric expression.
@@ -137,7 +139,7 @@ object AST {
 /**
  * Parser for simple lambda calculus plus REPL queries.
  */
- trait Parser extends org.kiama.util.ParserUtilities {
+ trait Parser extends PositionedParserUtilities {
 
     import AST._
     import org.kiama.rewriting.NominalAST.{Bind, Name}

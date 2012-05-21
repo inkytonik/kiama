@@ -21,10 +21,12 @@
 package org.kiama
 package example.imperative
 
+import org.kiama.util.PositionedParserUtilities
+
 /**
  * Parser to AST.
  */
-trait Parser extends org.kiama.util.ParserUtilities {
+trait Parser extends PositionedParserUtilities {
 
     import AST._
 

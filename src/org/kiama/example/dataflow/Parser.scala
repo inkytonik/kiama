@@ -21,10 +21,12 @@
 package org.kiama
 package example.dataflow
 
+import org.kiama.util.PositionedParserUtilities
+
 /**
  * Syntax analyser for simple imperative dataflow language.
  */
-trait Parser extends org.kiama.util.ParserUtilities {
+trait Parser extends PositionedParserUtilities {
 
     import DataflowAST._
 

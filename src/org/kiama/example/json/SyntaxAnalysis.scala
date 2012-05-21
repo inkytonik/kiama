@@ -23,10 +23,12 @@
 package org.kiama
 package example.json
 
+import org.kiama.util.PositionedParserUtilities
+
 /**
  * Module containing parsers for the JSON language.
  */
-trait SyntaxAnalysis extends org.kiama.util.ParserUtilities {
+trait SyntaxAnalysis extends PositionedParserUtilities {
 
     import JSONTree._
 

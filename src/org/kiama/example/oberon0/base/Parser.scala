@@ -2,12 +2,12 @@ package org.kiama
 package example.oberon0
 package base
 
-import org.kiama.util.{ParserUtilities, WhitespaceParser}
+import org.kiama.util.WhitespacePositionedParserUtilities
 
 /**
  * Parsers for base language.
  */
-trait Parser extends ParserUtilities with WhitespaceParser {
+trait Parser extends WhitespacePositionedParserUtilities {
   
     import source.{Block, Declaration, EmptyStmt, IdnDef, IdnUse,
         ModuleDecl, Statement}
@@ -16,7 +16,7 @@ trait Parser extends ParserUtilities with WhitespaceParser {
         phrase (moduledecl)
 
     lazy val moduledecl =
-        positioned ("MODULE" ~> (idndef <~ ";") ~ block ~ (idnuse <~ ".") ^^ ModuleDecl)
+        "MODULE" ~> (idndef <~ ";") ~ block ~ (idnuse <~ ".") ^^ ModuleDecl
 
     // Statement sequences produce blocks, which is not strictly necessary
     // for the source language but it makes transformation easier since
@@ -53,10 +53,10 @@ trait Parser extends ParserUtilities with WhitespaceParser {
         result (EmptyStmt ())
 
     lazy val idndef =
-        positioned (ident ^^ IdnDef)
+        ident ^^ IdnDef
 
     lazy val idnuse =
-        positioned (ident ^^ IdnUse)
+        ident ^^ IdnUse
 
     def keywords =
         List ("BEGIN", "END", "MODULE")

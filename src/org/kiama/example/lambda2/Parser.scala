@@ -21,10 +21,12 @@
 package org.kiama
 package example.lambda2
 
+import org.kiama.util.PositionedParserUtilities
+
 /**
  * Parser to AST.
  */
-trait Parser extends org.kiama.util.ParserUtilities {
+trait Parser extends PositionedParserUtilities {
 
     import AST._
     import Lambda.typecheck
@@ -48,8 +50,7 @@ trait Parser extends org.kiama.util.ParserUtilities {
         exp0
 
     lazy val exp0 : PackratParser[Exp] =
-        positioned (number | idn ^^ Var) |
-        "(" ~> positioned (exp) <~ ")"
+        number | idn ^^ Var | "(" ~> exp <~ ")"
 
     lazy val ttype : PackratParser[Type] =
         ttype0 ~ ("->" ~> ttype) ^^ FunType |

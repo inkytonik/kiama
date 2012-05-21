@@ -23,11 +23,14 @@ package example.lambda
 
 import org.kiama.util.GeneratingREPL
 import org.kiama.util.ParsingREPL
+import org.kiama.util.PositionedParserUtilities
 
 /**
  * A simple lambda calculus.
  */
 object AST {
+
+    import org.kiama.util.Positioned
 
     /**
      * Identifiers are represented as strings.
@@ -37,7 +40,7 @@ object AST {
     /**
      * Expressions.
      */
-    sealed abstract class Exp
+    sealed abstract class Exp extends Positioned
 
     /**
      * Numeric expressions.
@@ -77,7 +80,7 @@ object AST {
 /**
  * Parser to AST.
  */
-trait Parser extends org.kiama.util.ParserUtilities {
+trait Parser extends PositionedParserUtilities {
 
     import AST._
 
