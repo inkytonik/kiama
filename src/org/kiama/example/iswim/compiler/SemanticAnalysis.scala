@@ -25,7 +25,6 @@ package example.iswim.compiler
  * Simple semantic analysis of untyped ISWIM programs
  */
 
-import scala.util.parsing.input.Positional
 import org.kiama.attribution.Attributable
 
 trait SemanticAnalysis {
