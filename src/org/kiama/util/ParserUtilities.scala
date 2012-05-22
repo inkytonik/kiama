@@ -30,7 +30,6 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait ParserUtilities extends RegexParsers with PackratParsers {
     
-
     /**
      * Use `parser` to parse the string `str`. If the parse is sucessful and produces
      * the value `t`, return `Left (t)`. Otherwise, return `Right (msg)` where `msg`

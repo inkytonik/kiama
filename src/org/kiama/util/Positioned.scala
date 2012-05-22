@@ -22,8 +22,7 @@ package org.kiama
 package util
 
 import scala.util.matching.Regex
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
+import scala.util.parsing.combinator.{PackratParsers, RegexParsers}
 import scala.util.parsing.input.{NoPosition, Position}
 
 /**
