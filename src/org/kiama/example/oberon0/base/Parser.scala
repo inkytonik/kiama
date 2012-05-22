@@ -69,7 +69,7 @@ trait Parser extends WhitespacePositionedParserUtilities {
         failure ("ident expected")
 
     lazy val whitespaceParser : PackratParser[Any] = 
-        rep1 (whiteSpace | comment)
+        rep (whiteSpace | comment)
         
     lazy val comment : PackratParser[Any] =
         "(*" ~ rep (not ("*)") ~ (comment | any)) ~ "*)"
