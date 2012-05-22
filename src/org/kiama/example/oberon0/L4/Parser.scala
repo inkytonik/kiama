@@ -11,9 +11,6 @@ trait Parser extends L3.Parser {
         RecordTypeDef}
 
     override def typedefDef =
-        ntypedefDef
-
-    lazy val ntypedefDef =
         ("ARRAY" ~> expression) ~ ("OF" ~> typedef) ^^ ArrayTypeDef |
         "RECORD" ~> fieldlists <~ "END" ^^ RecordTypeDef |
         super.typedefDef

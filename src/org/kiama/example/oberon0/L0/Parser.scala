@@ -56,9 +56,6 @@ trait Parser extends base.Parser {
         lhs ~ (":=" ~> expression) ^^ Assignment
 
     lazy val lhs =
-        lhsNoPos
-
-    lazy val lhsNoPos =
         lhsDef
 
     def lhsDef : PackratParser[Expression] =
@@ -73,23 +70,17 @@ trait Parser extends base.Parser {
         simpexp ~ (">=" ~> simpexp) ^^ GeExp |
         simpexp
 
-    lazy val simpexp =
-        nsimpexp
-
-    lazy val nsimpexp : PackratParser[Expression] =
-        nsimpexp ~ ("+" ~> term) ^^ AddExp |
-        nsimpexp ~ ("-" ~> term) ^^ SubExp |
-        nsimpexp ~ ("OR" ~> term) ^^ OrExp |
+    lazy val simpexp : PackratParser[Expression] =
+        simpexp ~ ("+" ~> term) ^^ AddExp |
+        simpexp ~ ("-" ~> term) ^^ SubExp |
+        simpexp ~ ("OR" ~> term) ^^ OrExp |
         term
 
-    lazy val term =
-        nterm
-
-    lazy val nterm : PackratParser[Expression] =
-        nterm ~ ("*" ~> factor) ^^ MulExp |
-        nterm ~ ("DIV" ~> factor) ^^ DivExp |
-        nterm ~ ("MOD" ~> factor) ^^ ModExp |
-        nterm ~ ("&" ~> factor) ^^ AndExp |
+    lazy val term : PackratParser[Expression] =
+        term ~ ("*" ~> factor) ^^ MulExp |
+        term ~ ("DIV" ~> factor) ^^ DivExp |
+        term ~ ("MOD" ~> factor) ^^ ModExp |
+        term ~ ("&" ~> factor) ^^ AndExp |
         factor
 
     lazy val factor : PackratParser[Expression] =

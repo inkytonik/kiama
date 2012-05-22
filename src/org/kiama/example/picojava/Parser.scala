@@ -61,10 +61,7 @@ trait Parser extends PositionedParserUtilities {
         ("while" ~> "(" ~> exp <~ ")") ~ stmt ^^ WhileStmt
 
     lazy val exp =
-        boolean_literal | posname
-
-    lazy val posname =
-        name
+        boolean_literal | name
 
     lazy val name : PackratParser[Access] =
         name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |
