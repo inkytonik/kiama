@@ -65,6 +65,14 @@ trait Positioned {
         this
     }
 
+    /**
+     * Set both the `start` and `finish` positions from the given
+     * `Positioned` value, if they are, individually, `NoPosition`,
+     * otherwise leave them unchanged.
+     */
+    def setPos (p : Positioned) : this.type =
+        setStart (p.start).setFinish (p.finish)
+
 }
 
 /**

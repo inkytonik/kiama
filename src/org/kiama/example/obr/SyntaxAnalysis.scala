@@ -24,16 +24,16 @@
 package org.kiama
 package example.obr
 
-import org.kiama.util.ParserUtilities
+import org.kiama.util.PositionedParserUtilities
 
 /**
  * Module containing parsers for the Obr language.
  */
-class SyntaxAnalysis extends ParserUtilities {
+class SyntaxAnalysis extends PositionedParserUtilities {
 
     import ObrTree._
+    import org.kiama.util.Positioned
     import scala.collection.immutable.HashSet
-    import scala.util.parsing.input.Positional
 
     override val whiteSpace = """(\s|\(\*(?:.|[\n\r])*?\*\))+""".r
 
@@ -44,26 +44,26 @@ class SyntaxAnalysis extends ParserUtilities {
         , "FALSE", "EXCEPTION", "RAISE", "TRY", "CATCH"
         )
 
-    case class Pos(s : String) extends Positional {
+    case class Pos(s : String) extends Positioned {
         override def toString : String = s
     }
 
-    def withPos (op : Parser[String]) : Parser[Pos] = positioned (op ^^ Pos)
+    def withPos (op : Parser[String]) : Parser[Pos] = op ^^ Pos
 
     lazy val parser : Parser[ObrInt] =
         phrase (program)
 
-    lazy val program : Parser[ObrInt] = positioned (
+    lazy val program : Parser[ObrInt] =
         ("PROGRAM" ~> ident) ~
         ("(" ~> rep1sep (parameterdecl, ";") <~ ")" <~ ":" <~ "INTEGER" <~ ";") ~
         declarations ~
         ("BEGIN" ~> statementseq <~ "END") ~
         (ident <~ ".") ^^
             { case i1 ~ ps ~ ds ~ ss ~ i2 =>
-                  ObrInt (i1, ps ++ ds, ss, i2) })
+                  ObrInt (i1, ps ++ ds, ss, i2) }
 
-    lazy val parameterdecl : Parser[Declaration] = positioned(
-        ident <~ ":" <~ "INTEGER" ^^ IntParam )
+    lazy val parameterdecl : Parser[Declaration] =
+        ident <~ ":" <~ "INTEGER" ^^ IntParam
 
     lazy val declarations : Parser[List[Declaration]] =
         constantdecls ~ variabledecls ^^ { case cs ~ vs => cs ++ vs }
@@ -82,19 +82,18 @@ class SyntaxAnalysis extends ParserUtilities {
                 case Some (l) => l
             }
 
-    lazy val constantdecl : Parser[Declaration] = positioned (
+    lazy val constantdecl : Parser[Declaration] =
         ident ~ ("=" ~> signed) ^^ IntConst |
         ident <~ ":" <~ "EXCEPTION" ^^ ExnConst
-    )
 
-    lazy val variabledecl : Parser[Declaration] = positioned (
+    lazy val variabledecl : Parser[Declaration] =
         ident <~ ":" <~ "BOOLEAN" ^^ BoolVar |
         ident <~ ":" <~ "INTEGER" ^^ IntVar |
         ident ~ (":" ~> "ARRAY" ~> integer <~ "OF" <~ "INTEGER") ^^ ArrayVar |
         ident ~ (":" ~> "RECORD" ~> (fielddecl+) <~ "END") ^^ RecordVar |
         // Extra clause to handle parsing the declaration of an enumeration variable
         ident ~ (":" ~> "(" ~> rep1sep (withPos (ident), ",") <~ ")") ^^
-            { case i ~ cs => EnumVar (i, cs map { case p @ Pos (s) => EnumConst (s) setPos p.pos }) })
+            { case i ~ cs => EnumVar (i, cs map { case p @ Pos (s) => EnumConst (s) setPos p }) }
 
     lazy val fielddecl : Parser[Identifier] =
     	ident <~ ":" <~ "INTEGER" <~ ";"
@@ -104,84 +103,81 @@ class SyntaxAnalysis extends ParserUtilities {
 
     lazy val statement : Parser[Statement] =
         lvalue ~ withPos (":=") ~ (expression <~ ";") ^^
-            { case l ~ p ~ e => AssignStmt (l, e) setPos p.pos } |
+            { case l ~ p ~ e => AssignStmt (l, e) setPos p } |
         conditional |
         iteration |
         trycatch |
-        positioned ("EXIT" ~ ";" ^^^ ExitStmt ()) |
-        positioned ("RETURN" ~> expression <~ ";" ^^ ReturnStmt) |
-        positioned ("RAISE" ~> ident <~ ";" ^^ RaiseStmt)
+        "EXIT" ~ ";" ^^ (_ => ExitStmt ()) |
+        "RETURN" ~> expression <~ ";" ^^ ReturnStmt |
+        "RAISE" ~> ident <~ ";" ^^ RaiseStmt
 
-    lazy val conditional : Parser[IfStmt] = positioned (
+    lazy val conditional : Parser[IfStmt] =
         "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt 
-    )
 
     lazy val optelseend : Parser[List[Statement]] =
     	"ELSE" ~> statementseq <~ "END" |
         "END" ^^^ Nil
 
-    lazy val iteration : Parser[Statement] = positioned (
+    lazy val iteration : Parser[Statement] =
         "LOOP" ~> statementseq <~ "END" ^^ LoopStmt |
         "WHILE" ~> expression ~ ("DO" ~> statementseq <~ "END") ^^ WhileStmt |
         "FOR" ~> ident ~ (":=" ~> expression) ~ ("TO" ~> expression) ~
              ("DO" ~> statementseq <~ "END") ^^ ForStmt
-    )
 
-    lazy val trycatch : Parser[TryStmt] = positioned (
+    lazy val trycatch : Parser[TryStmt] =
         withPos ("TRY") ~ statementseq ~ ((catchclause*) <~ "END") ^^
             { case p ~ ss ~ cs =>
-                val body = TryBody (ss) setPos p.pos
-                TryStmt (body, cs) } )
+                val body = TryBody (ss) setPos p
+                TryStmt (body, cs) }
 
-    lazy val catchclause : Parser[Catch] = positioned (
+    lazy val catchclause : Parser[Catch] =
         ("CATCH" ~> ident <~ "DO") ~ statementseq ^^ Catch
-    )
 
     lazy val expression : PackratParser[Expression] =
         expression ~ withPos ("=") ~ simplexp ^^
-            { case e ~ p ~ s => EqualExp (e, s) setPos p.pos } |
+            { case e ~ p ~ s => EqualExp (e, s) setPos p } |
         expression ~ withPos ("#") ~ simplexp ^^
-            { case e ~ p ~ s => NotEqualExp (e, s) setPos p.pos } |
+            { case e ~ p ~ s => NotEqualExp (e, s) setPos p } |
         expression ~ withPos ("<") ~ simplexp ^^
-            { case e ~ p ~ s => LessExp (e, s) setPos p.pos } |
+            { case e ~ p ~ s => LessExp (e, s) setPos p } |
         expression ~ withPos (">") ~ simplexp ^^
-            { case e ~ p ~ s => GreaterExp (e, s) setPos p.pos } |
+            { case e ~ p ~ s => GreaterExp (e, s) setPos p } |
         simplexp
 
     lazy val simplexp : PackratParser[Expression] =
         simplexp ~ withPos ("+") ~ term ^^
-            { case s ~ p ~ t => PlusExp (s, t) setPos p.pos } |
+            { case s ~ p ~ t => PlusExp (s, t) setPos p } |
         simplexp ~ withPos ("-") ~ term ^^
-            { case s ~ p ~ t => MinusExp (s, t) setPos p.pos } |
+            { case s ~ p ~ t => MinusExp (s, t) setPos p } |
         simplexp ~ withPos ("OR") ~ term ^^
-            { case s ~ p ~ t => OrExp (s, t) setPos p.pos } |
+            { case s ~ p ~ t => OrExp (s, t) setPos p } |
         term
 
     lazy val term : PackratParser[Expression] =
         term ~ withPos ("*") ~ factor ^^
-            { case t ~ p ~ f => StarExp (t, f) setPos p.pos } |
+            { case t ~ p ~ f => StarExp (t, f) setPos p } |
         term ~ withPos ("/") ~ factor ^^
-            { case t ~ p ~ f => SlashExp (t, f) setPos p.pos } |
+            { case t ~ p ~ f => SlashExp (t, f) setPos p } |
         term ~ withPos ("MOD") ~ factor ^^
-            { case t ~ p ~ f => ModExp (t, f) setPos p.pos } |
+            { case t ~ p ~ f => ModExp (t, f) setPos p } |
         term ~ withPos ("AND") ~ factor ^^
-            { case t ~ p ~ f => AndExp (t, f) setPos p.pos } |
+            { case t ~ p ~ f => AndExp (t, f) setPos p } |
         factor
 
     lazy val factor : PackratParser[Expression] =
-        positioned ("TRUE" ^^^ BoolExp (true)) |
-        positioned ("FALSE" ^^^ BoolExp (false)) |
+        "TRUE" ^^ (_ => BoolExp (true)) |
+        "FALSE" ^^ (_ => BoolExp (false)) |
         lvalue |
-        positioned (integer ^^ IntExp) |
+        integer ^^ IntExp |
         "(" ~> expression <~ ")" |
-        positioned ("~" ~> factor ^^ NotExp) |
-        positioned ("-" ~> factor ^^ NegExp)
+        "~" ~> factor ^^ NotExp |
+        "-" ~> factor ^^ NegExp
 
     lazy val lvalue : PackratParser[AssignNode] =
-        positioned (ident ~ ("[" ~> expression <~ "]") ^^ IndexExp) |
+        ident ~ ("[" ~> expression <~ "]") ^^ IndexExp |
         ident ~ withPos (".") ~ ident ^^
-            { case r ~ p ~ f => FieldExp (r, f) setPos p.pos } |
-        positioned (ident ^^ IdnExp)
+            { case r ~ p ~ f => FieldExp (r, f) setPos p } |
+        ident ^^ IdnExp
 
     lazy val integer : PackratParser[Int] =
         "[0-9]+".r ^^ (s => s.toInt)

@@ -30,12 +30,12 @@ package example.obr
 object ObrTree {
 
     import org.kiama.attribution.Attributable
-    import scala.util.parsing.input.Positional
+    import org.kiama.util.Positioned
 
     /**
      * Interface for all Obr tree nodes.
      */
-    sealed abstract class ObrNode extends Attributable with Positional
+    sealed abstract class ObrNode extends Attributable with Positioned
 
     /**
      * An Obr program consisting of the given declarations and statements and
