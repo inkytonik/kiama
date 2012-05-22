@@ -120,7 +120,7 @@ class ParserTests extends RegexParserTests with Parser {
     }
     
     test("attempt to parse a letrec which binds a non-lambda expression") {
-        assertParseError ("letrec x = fun(y) (x y) and z = x in (x 10)", expr, 1, 34,
+        assertParseError ("letrec x = fun(y) (x y) and z = x in (x 10)", expr, 1, 35,
             """keyword "fun" expected""")
     }
 
@@ -255,7 +255,7 @@ in      factorial(plusone 5)
 
     test("attempted parse of a letrec with a binding whose rhs is not a lambda clause") {
         assertParseError ("letrec a = fun(n) n + 1 and b = 22 in (a b)", expr, 1, 33,
-            "keyword expected")
+            """keyword "fun" expected""")
     }
 
     test("parse an expression containing a string literal") {

@@ -48,7 +48,7 @@ trait CodeGenerator {
      * syntax node it is attached to.
      */
     val code : Iswim => CodeTree = attr {
-        case n : Iswim => positionBlock(n.pos) { n match {
+        case n : Iswim => positionBlock(n.start) { n match {
     	    /**
     	     * Variable Identifiers
     	     */
