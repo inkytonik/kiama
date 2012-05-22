@@ -50,17 +50,21 @@ class PositionalRewriterTests extends Tests {
                 case Leaf (i) => Leaf (i + 1)
             })
 
+    def check (no : One) {
+        expect (One (Two (Leaf (43), Leaf (100)))) (no)
+        expectsame (po) (no.pos)
+        expectsame (pt) (no.a.pos)
+        expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
+        expectsame (pl2) (no.a.asInstanceOf[Two].r.pos)
+    }
+
     test ("positional rewriting with positions and strategyf works") {
         val r = everywhere (strategyf {
                     case Leaf (i) => Some (Leaf (i + 1))
                     case n        => Some (n)
                 })
         val no = rewrite (r) (o)
-        expect (One (Two (Leaf (43), Leaf (100)))) (no)
-        expectsame (po) (no.pos)
-        expectsame (pt) (no.a.pos)
-        expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
-        expectsame (pl2) (no.a.asInstanceOf[Two].r.pos)
+        check (no)
     }
 
     test ("positional rewriting with positions and strategy works") {
@@ -68,20 +72,12 @@ class PositionalRewriterTests extends Tests {
                     case Leaf (i) => Some (Leaf (i + 1))
                 })
         val no = rewrite (r) (o)
-        expect (One (Two (Leaf (43), Leaf (100)))) (no)
-        expectsame (po) (no.pos)
-        expectsame (pt) (no.a.pos)
-        expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
-        expectsame (pl2) (no.a.asInstanceOf[Two].r.pos)
+        check (no)
     }
 
     test ("positional rewriting with positions and rule works") {
         val no = rewrite (r) (o)
-        expect (One (Two (Leaf (43), Leaf (100)))) (no)
-        expectsame (po) (no.pos)
-        expectsame (pt) (no.a.pos)
-        expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
-        expectsame (pl2) (no.a.asInstanceOf[Two].r.pos)
+        check (no)
     }
 
     test ("positional rewriting with positions and rulefs works") {
@@ -89,11 +85,7 @@ class PositionalRewriterTests extends Tests {
                     case Leaf (i) => build (Leaf (i + 1))
                 })
         val no = rewrite (r) (o)
-        expect (One (Two (Leaf (43), Leaf (100)))) (no)
-        expectsame (po) (no.pos)
-        expectsame (pt) (no.a.pos)
-        expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
-        expectsame (pl2) (no.a.asInstanceOf[Two].r.pos)
+        check (no)
     }
 
     test ("positional rewriting with no positions works") {
@@ -118,6 +110,113 @@ object SupportPositionalRewriterTests {
     import scala.util.parsing.input.{Positional, Position}
 
     trait Node extends Positional
+    case class One (a : Node) extends Node
+    case class Two (l : Node, r : Node) extends Node
+    case class Leaf (i : Int) extends Node
+
+    trait TestPosition extends Position {
+        def lineContents = ""
+    }
+
+}
+
+/**
+ * Positioned rewriting tests.
+ */
+@RunWith(classOf[JUnitRunner])
+class PositionedRewriterTests extends Tests {
+
+    import SupportPositionedRewriterTests._
+    import org.kiama.rewriting.PositionedRewriter.{test => rwtest, _}
+    import scala.util.parsing.input.NoPosition
+
+    val pl1s = new TestPosition { def line = 1; def column = 2 }
+    val pl1f = new TestPosition { def line = 3; def column = 4 }
+    val l1 = Leaf (42).setStart (pl1s).setFinish (pl1f)
+    val pl2s = new TestPosition { def line = 5; def column = 6 }
+    val pl2f = new TestPosition { def line = 7; def column = 8 }
+    val l2 = Leaf (99).setStart (pl2s).setFinish (pl2f)
+
+    val pts = new TestPosition { def line = 9; def column = 10 }
+    val ptf = new TestPosition { def line = 11; def column = 12 }
+    val t = Two (l1, l2).setStart (pts).setFinish (ptf)
+
+    val pos = new TestPosition { def line = 13; def column = 14 }
+    val pof = new TestPosition { def line = 15; def column = 16 }
+    val o = One (t).setStart (pos).setFinish (pof)
+
+    val r = everywhere (rule {
+                case Leaf (i) => Leaf (i + 1)
+            })
+
+    def check (no : One) {
+        expect (One (Two (Leaf (43), Leaf (100)))) (no)
+        expectsame (pos) (no.start)
+        expectsame (pof) (no.finish)
+        expectsame (pts) (no.a.start)
+        expectsame (ptf) (no.a.finish)
+        expectsame (pl1s) (no.a.asInstanceOf[Two].l.start)
+        expectsame (pl1f) (no.a.asInstanceOf[Two].l.finish)
+        expectsame (pl2s) (no.a.asInstanceOf[Two].r.start)
+        expectsame (pl2f) (no.a.asInstanceOf[Two].r.finish)        
+    }
+
+    test ("positioned rewriting with positions and strategyf works") {
+        val r = everywhere (strategyf {
+                    case Leaf (i) => Some (Leaf (i + 1))
+                    case n        => Some (n)
+                })
+        val no = rewrite (r) (o)
+        check (no)
+    }
+
+    test ("positioned rewriting with positions and strategy works") {
+        val r = everywhere (strategy {
+                    case Leaf (i) => Some (Leaf (i + 1))
+                })
+        val no = rewrite (r) (o)
+        check (no)
+    }
+
+    test ("positioned rewriting with positions and rule works") {
+        val no = rewrite (r) (o)
+        check (no)
+    }
+
+    test ("positioned rewriting with positions and rulefs works") {
+        val r = everywhere (rulefs {
+                    case Leaf (i) => build (Leaf (i + 1))
+                })
+        val no = rewrite (r) (o)
+        check (no)
+    }
+
+    test ("positioned rewriting with no positions works") {
+        val oo = One (Two (Leaf (42), Leaf (99)))
+        val noo = rewrite (r) (oo)
+        expectsame (NoPosition) (noo.start)
+        expectsame (NoPosition) (noo.a.start)
+        expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.start)
+        expectsame (NoPosition) (noo.a.asInstanceOf[Two].r.start)
+        expectsame (NoPosition) (noo.finish)
+        expectsame (NoPosition) (noo.a.finish)
+        expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.finish)
+        expectsame (NoPosition) (noo.a.asInstanceOf[Two].r.finish)
+   }
+
+}
+
+/**
+ * Support for PositionedRewriterTests.  These need to be here rather
+ * than in the PositionedRewriterTests class since the latter would
+ * require them to be instantiated with an instance of that class.
+ */
+object SupportPositionedRewriterTests {
+
+    import org.kiama.util.Positioned
+    import scala.util.parsing.input.Position
+
+    trait Node extends Positioned
     case class One (a : Node) extends Node
     case class Two (l : Node, r : Node) extends Node
     case class Leaf (i : Int) extends Node
