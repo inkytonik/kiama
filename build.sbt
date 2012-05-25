@@ -42,9 +42,14 @@ initialCommands in console := """
     import org.kiama._
     import attribution.Attribution._
     import rewriting.Rewriter._
-    object PrettyPrinter extends output.PrettyPrinter
-    import PrettyPrinter._
 """.stripMargin
+
+initialCommands in console in Test <<= (initialCommands in console) { cmds =>
+    cmds + """
+        import example.json.JSONTree._
+        import example.json.PrettyPrinter._
+    """.stripMargin
+}
 
 // Dependencies
 
