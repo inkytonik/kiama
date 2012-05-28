@@ -44,7 +44,7 @@ object JSONTree {
     /**
      * The name of a JSON field.
      */
-    case class JName (s : String) extends Attributable
+    case class JName (s : String) extends Attributable with Positioned
 
     /**
      * A JSON array.

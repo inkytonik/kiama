@@ -42,9 +42,12 @@ trait SyntaxAnalysis extends PositionedParserUtilities {
         "{" ~> repsep (jpair, ",") <~ "}" ^^ JObject
 
     lazy val jpair =
-        string ~ (":" ~> jvalue) ^^ {
-            case s ~ v => (JName (s), v)
+        jname ~ (":" ~> jvalue) ^^ {
+            case n ~ v => (n, v)
         }
+
+    lazy val jname =
+        string ^^ JName
 
     lazy val jarray =
         "[" ~> repsep (jvalue, ",") <~ "]" ^^ {
