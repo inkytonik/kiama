@@ -59,7 +59,7 @@ libraryDependencies ++=
         "junit" % "junit" % "4.10" % "test",
         "org.clapper" %% "argot" % "0.4",
         "org.scalacheck" %% "scalacheck" % "1.9" % "test",
-        "org.scalatest" %% "scalatest" % "1.7.2" % "test"
+        "org.scalatest" %% "scalatest" % "1.8" % "test"
     )
  
 resolvers += "Sonatype OSS Snapshots Repository" at
