@@ -21,29 +21,29 @@
 package org.kiama
 package example.picojava
 
-object Main extends Parser {
+import AbstractSyntax.Program
+import org.kiama.util.Compiler
 
-    import java.io.Reader
-    import AbstractSyntax.Program
-    import ErrorCheck._
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.util.IO.filereader
+object Main extends Compiler[Program] with Parser {
 
-    def main (args : Array[String]) : Unit = {
-        for (filename <- args) {
-            val reader = filereader (filename)
-            val program = run (reader)
-            initTree (program)
-            val messages = program->errors
-            for (msg <- messages)
-                println (filename + ":" + msg)
-        }
+    import ErrorCheck.errors
+    import org.kiama.util.Console
+    import org.kiama.util.Emitter
+    import org.kiama.util.Messaging._
+
+    override def process (program : Program, console : Console, emitter : Emitter) : Boolean = {
+
+        super.process (program, console, emitter)
+
+        resetmessages
+        program->errors
+
+        if (messagecount > 0) {
+            report (emitter)
+            false
+        } else
+            true
+
     }
-
-    def run (in : Reader) : Program =
-        parseAll (program, in) match {
-            case Success (r, _) => r
-            case f              => sys.error (f.toString)
-        }
 
 }
