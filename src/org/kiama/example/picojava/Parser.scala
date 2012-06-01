@@ -38,6 +38,9 @@ trait Parser extends PositionedParserUtilities {
 
     import AbstractSyntax._
 
+    lazy val parser =
+        phrase (program)
+
     lazy val program =
         block ^^ Program
 
