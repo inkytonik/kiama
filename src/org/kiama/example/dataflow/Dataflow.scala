@@ -62,7 +62,7 @@ trait ControlFlowImpl extends ControlFlow {
                 case t @ If (_, _, _)      => t->following
                 case t @ While (_, _)      => Set (t)
                 case b : Block if s isLast => b->following
-                case Block (_)             => Set (s.next)
+                case Block (_)             => Set (s.next[Stm])
                 case _                     => Set ()
             }
         }

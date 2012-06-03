@@ -55,23 +55,27 @@ trait Attributable extends Product with Cloneable {
      * A link to the child of the same `Attributable` parent immediately to the
      * left of this one, or `null` if this is the first child of its parent.
      */
-    def prev[T] : T = _prev.asInstanceOf[T]
+    var prev : Attributable = null
 
     /**
-     * Private field backing prev to make the types work correctly.
+     * A short-hand for `prev.asInstanceOf[T]`, which is useful in cases
+     * a `T`-specific operation is applied to the `prev`, which otherwise
+     * would be of type `Attributable`.
      */
-    private var _prev : Attributable = null
+    def prev[T] : T = prev.asInstanceOf[T]
 
     /**
-     * A link to the child of the same `Attributable` parent immediately to the right
-     * of this one, or `null` if this is the last child of its parent.
+     * A link to the child of the same `Attributable` parent immediately to the
+     * left of this one, or `null` if this is the first child of its parent.
      */
-    def next[T] : T = _next.asInstanceOf[T]
+    var next : Attributable = null
 
     /**
-     * Private field backing next to make the types work correctly.
+     * A short-hand for `next.asInstanceOf[T]`, which is useful in cases
+     * a `T`-specific operation is applied to the `next`, which otherwise
+     * would be of type `Attributable`.
      */
-    private var _next : Attributable = null
+    def next[T] : T = next.asInstanceOf[T]
 
     /**
      * Is this node the first child of its parent?
@@ -169,8 +173,8 @@ trait Attributable extends Product with Cloneable {
             _children += c
             c.index = ind
             ind += 1
-            c._prev = prev
-            if (prev != null) prev._next = c
+            c.prev = prev
+            if (prev != null) prev.next = c
             prev = c
             
             // Recursively set the connections below c
