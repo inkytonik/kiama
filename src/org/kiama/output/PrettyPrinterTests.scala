@@ -84,7 +84,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("   ") (pretty (spaces (3)))
     }
     
-    test ("pretty-print empty string - product") {
+    test ("pretty_any-print empty string") {
         expect ("\"\"") (pretty_any (""))
     }
     
@@ -92,15 +92,31 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("List()") (pretty (Nil))
     }
     
-    test ("pretty-print empty list product") {
+    test ("pretty_any-print empty list") {
         expect ("Nil") (pretty_any (Nil))
+    }
+
+    test ("pretty-print None") {
+        expect ("None") (pretty (None))
+    }
+    
+    test ("pretty_any-print None") {
+        expect ("None") (pretty_any (None))
+    }
+
+    test ("pretty-print Some") {
+        expect ("Some(1)") (pretty (Some (1)))
+    }
+    
+    test ("pretty_any-print Some") {
+        expect ("Some (1)") (pretty_any (Some (1)))
     }
 
     test ("pretty-print identifier") {
         expect ("hello") (pretty ("hello"))
     }
     
-    test ("pretty-print identifier - product") {
+    test ("pretty_any-print identifier") {
         expect ("\"hello\"") (pretty_any ("hello"))
     }
     
@@ -108,7 +124,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("1234") (pretty (1234))
     }
     
-    test ("pretty-print integer - product") {
+    test ("pretty_any-print integer") {
         expect ("1234") (pretty_any (1234))
     }
     
@@ -292,27 +308,27 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
     }
 
-    test ("product pretty-print empty vector") {
+    test ("pretty_-print empty vector") {
         expect ("Vector ()") (pretty_any (Vector ()))
     }
 
-    test ("product pretty-print singleton vector") {
+    test ("pretty_any-print singleton vector") {
         expect ("Vector (1)") (pretty_any (Vector (1)))
     }
 
-    test ("product pretty-print multiple-element vector") {
+    test ("pretty_any-print multiple-element vector") {
         expect ("Vector (1, 2, 3)") (pretty_any (Vector (1, 2, 3)))
     }        
 
-    test ("product pretty-print empty map") {
+    test ("pretty_any-print empty map") {
         expect ("Map ()") (pretty_any (Map ()))
     }
 
-    test ("product pretty-print singleton map") {
+    test ("pretty_any-print singleton map") {
         expect ("Map (1 -> \"One\")") (pretty_any (Map (1 -> "One")))
     }
 
-    test ("product pretty-print multiple-element map") {
+    test ("pretty_any-print multiple-element map") {
         expect ("Map (1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")") (
             pretty_any (Map (1 -> "One", 2 -> "Two", 3 -> "Three"))
         )

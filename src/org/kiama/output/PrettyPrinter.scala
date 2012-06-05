@@ -283,6 +283,7 @@ trait PrettyPrinterBase {
             case Nil           => "Nil"
             case l : List[_]   => list (l, "List ", any)
             case (l, r)        => any (l) <+> "->" <+> any (r)
+            case None          => "None"
             case p : Product   => list (p.productIterator.toList,
                                         p.productPrefix + " ",
                                         any)
