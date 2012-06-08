@@ -2,7 +2,6 @@ package org.kiama
 package example.oberon0
 package base.c
 
-
 trait PrettyPrinter extends CPrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
