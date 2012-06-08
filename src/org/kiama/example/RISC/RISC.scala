@@ -109,7 +109,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
             inputoutput (instr)
         }
         catch {
-            case e =>
+            case e : Exception =>
                 emitter.emitln ("Exception " + e + " at " + instr)
                 emitter.emitln ("RISC.R =")
                 emitter.emit ("    Map(")
