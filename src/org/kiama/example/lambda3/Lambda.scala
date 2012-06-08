@@ -19,12 +19,6 @@
  */
 
 package org.kiama
-
-/**
- * Simple lambda calculus implementation to illustrate Kiama's support for
- * nominal rewriting. This implementation is closely based on the example
- * used in Scrap your Nameplate, James Cheney, ICFP 2005.
- */
 package example.lambda3
 
 import org.kiama.util.ParsingREPL
@@ -214,7 +208,9 @@ object Evaluator {
 }
 
 /**
- * A read-execute-print loop for lambda calculus queries.
+ * Simple lambda calculus implementation to illustrate Kiama's support for
+ * nominal rewriting. This implementation is closely based on the example
+ * used in Scrap your Nameplate, James Cheney, ICFP 2005.
  */
 object Lambda extends ParsingREPL[AST.Query] with Parser {
 
