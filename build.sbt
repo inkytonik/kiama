@@ -1,8 +1,8 @@
 // import de.johoop.findbugs4sbt.FindBugs.findbugsSettings
 // import de.johoop.findbugs4sbt.ReportType.FancyHtml
 
-import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
-import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
+// import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
+// import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
 
 // Main settings
 
@@ -20,11 +20,11 @@ scalacOptions ++= Seq ("-deprecation", "-unchecked")
 
 // Migration manager (mima)
 
-mimaDefaultSettings
+// mimaDefaultSettings// 
 
-previousArtifact <<= (name, organization) { (n, o) =>
-    Some (o % (n + "_2.9.2") % "1.2.0")
-}
+// previousArtifact <<= (name, organization) { (n, o) =>
+//     Some (o % (n + "_2.9.2") % "1.2.0")
+// }
 
 // Interactive settings
 
