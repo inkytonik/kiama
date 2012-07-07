@@ -1,5 +1,24 @@
+/*
+ * This file is part of Kiama.
+ *
+ * Copyright (C) 2012 Anthony M Sloane, Macquarie University.
+ *
+ * Kiama is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * Kiama is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
 package org.kiama
-package example.oberon0
 package util
 
 import scala.collection.immutable.{HashMap, Stack}
@@ -78,6 +97,27 @@ trait Environments {
      * A named entity.
      */
     trait NamedEntity extends Entity with Named
+
+    /**
+     * An entity that represents an error situation.  These entities are
+     * usually accepted in most situations to avoid cascade errors.
+     */
+    trait ErrorEntity extends Entity
+    
+    /**
+     * A entity represented by names for whom we have seen more than one
+     * declaration so we are unsure what is being represented.
+     */
+    case object MultipleEntity extends ErrorEntity {
+        lazy val ident = "multiple"
+    }
+
+    /**
+     * An unknown entity, represented by names whose declarations are missing.
+     */
+    case object UnknownEntity extends ErrorEntity {
+        lazy val ident = "unknown"
+    }
 
     /**
      * A scope maps identifiers to entities.
@@ -178,6 +218,6 @@ trait Environments {
             e
         }
         
-    }
+    }    
 
 }
