@@ -122,7 +122,7 @@ trait PrettyPrinterBase {
     /**
      * Pretty-print a pretty-printable value.  If the value passed is not a
      * pretty-printable document, it will be converted to one using the implicit
-     * conversion anyToPrettyPrintable.
+     * conversion `anyToPrettyPrintable`.
      */
     def pretty (p : PrettyPrintable) : Layout =
         pretty (p.toDoc)
@@ -135,7 +135,7 @@ trait PrettyPrinterBase {
 
     /**
      * Interface for pretty-printable values.  The default `toDoc` implementation
-     * just uses the value combinator on the receiver.
+     * just uses the `value` combinator on the receiver.
      */
     trait PrettyPrintable {
         def toDoc : Doc = value (this)
@@ -151,7 +151,7 @@ trait PrettyPrinterBase {
         }
 
     // Basic combinators.  Thse need to be implemented for a specific
-    // instantiation of Doc.
+    // instantiation of `Doc`.
     
     /**
      * Convert a string to a document.  The string should not contain any
@@ -275,22 +275,25 @@ trait PrettyPrinterBase {
      * with the exception that `Nil` prints as `Nil`. Tuples are pretty-printed
      * using arrow notation. Strings are pretty-printed surrounded by double
      * quotes. If none of these cases apply, use the `toDoc` method on `a`.
+     * `null` prints as `null`.
      */
-    def any (a : Any) : Doc = {
-        a match {
-            case v : Vector[_] => list (v.toList, "Vector ", any)
-            case m : Map[_,_]  => list (m.toList, "Map ", any)
-            case Nil           => "Nil"
-            case l : List[_]   => list (l, "List ", any)
-            case (l, r)        => any (l) <+> "->" <+> any (r)
-            case None          => "None"
-            case p : Product   => list (p.productIterator.toList,
-                                        p.productPrefix + " ",
-                                        any)
-            case s : String    => dquotes (text (s))
-            case _             => a.toDoc
-        }
-    }
+    def any (a : Any) : Doc =
+        if (a == null)
+            "null"
+        else 
+            a match {
+                case v : Vector[_] => list (v.toList, "Vector ", any)
+                case m : Map[_,_]  => list (m.toList, "Map ", any)
+                case Nil           => "Nil"
+                case l : List[_]   => list (l, "List ", any)
+                case (l, r)        => any (l) <+> "->" <+> any (r)
+                case None          => "None"
+                case p : Product   => list (p.productIterator.toList,
+                                            p.productPrefix + " ",
+                                            any)
+                case s : String    => dquotes (text (s))
+                case _             => a.toDoc
+            }
 
     @deprecated ("Use PrettyPrinter.any instead.", "1.2.1")
     def product (p : Any) : Doc =
@@ -448,10 +451,14 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document representing a value formatted using `toString` and 
-     * the `string` combinator.
+     * the `string` combinator. As a special case, if the value is a null
+     * reference it is formatted as `null`.
      */
     def value (v : Any) : Doc =
-        string (v.toString)
+        if (v == null)
+            "null"
+        else
+            string (v.toString)
 
     /**
      * Return a document that encloses a given document `d` between two

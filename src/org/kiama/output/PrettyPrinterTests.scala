@@ -96,6 +96,10 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expect ("Nil") (pretty_any (Nil))
     }
 
+    test ("pretty_any-print null") {
+        expect ("null") (pretty_any (null))
+    }
+
     test ("pretty-print None") {
         expect ("None") (pretty (None))
     }
