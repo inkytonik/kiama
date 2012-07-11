@@ -471,15 +471,22 @@ class Rewriter {
 
     /**
      * Compare two arbitrary values. If they are both references, use 
-     * reference equality, otherwise use value equality.
+     * reference equality, otherwise throw an error since we should be
+     * able to cast anything to reference.
      */
     def same (v1 : Any, v2 : Any) : Boolean =
-        (v1, v2) match {
-            case (r1 : AnyRef, r2: AnyRef) =>
-                r1 eq r2
-            case _ =>
-                sys.error ("Rewriter.same: comparison of non-AnyRefs, should not be reached")
-        }
+        if (v1 == null)
+            v2 == null
+        else if (v2 == null)
+            false
+        else
+            (v1, v2) match {
+                case (r1 : AnyRef, r2: AnyRef) =>
+                    r1 eq r2
+                case _ =>
+                    sys.error ("Rewriter.same: comparison of non-AnyRefs " + v1 + " and " +
+                               v2 + ", should not be reached")
+            }
 
     /**
      * Traversal to all children.  Construct a strategy that applies `s` to all
