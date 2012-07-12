@@ -8,7 +8,7 @@
 
 name := "kiama"
 
-version := "1.3.0"
+version := "1.3.1-SNAPSHOT"
 
 organization := "com.googlecode.kiama"
 
@@ -23,7 +23,7 @@ scalacOptions ++= Seq ("-deprecation", "-unchecked")
 // mimaDefaultSettings// 
 
 // previousArtifact <<= (name, organization) { (n, o) =>
-//     Some (o % (n + "_2.9.2") % "1.2.0")
+//     Some (o % (n + "_2.9.2") % "1.3.0")
 // }
 
 // Interactive settings
