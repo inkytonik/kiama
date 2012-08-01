@@ -185,10 +185,10 @@ trait TransformingDriver extends Driver {
             section (emitter, "iast")
             emitter.emitln (pretty_any (nast))
         }
-        if (pprintiast.value isDefined)
-            section (emitter, "_ipp.ob")
         if (challenge.value isDefined)
             section (emitter, "_lifted.ob")
+        else if (pprintiast.value isDefined)
+            section (emitter, "_ipp.ob")
         if ((pprintiast.value isDefined) || (challenge.value isDefined))
             emitter.emitln (pretty (toDoc (nast)))
         initTree (nast)
