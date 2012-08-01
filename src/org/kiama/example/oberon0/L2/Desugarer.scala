@@ -47,7 +47,7 @@ trait Desugarer extends L0.Desugarer {
     lazy val desugarFor =
         rule {
             case ForStatement (idnexp, lower, upper, optby, Block (Nil, stmts)) =>
-                val limvarname = "limit"
+                val limvarname = "_limit"
                 val limexp = IdnExp (IdnUse (limvarname))
                 val incval = optby.map (_->value).getOrElse (1)
                 val rincval = IntExp (incval)
@@ -93,7 +93,7 @@ trait Desugarer extends L0.Desugarer {
     lazy val desugarCase =
         rule {
             case CaseStatement (exp, cases, optelse) =>
-                val casevarname = "caseval"
+                val casevarname = "_caseval"
                 val caseexp = IdnExp (IdnUse (casevarname))
                 Block (
                     List (

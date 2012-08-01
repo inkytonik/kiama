@@ -27,7 +27,7 @@ BEGIN
 END record.
 [6]* c
 [6]#include <stdio.h>
-[6]int ob_caseval10;
+[6]int ob__caseval10;
 [6]typedef struct {
 [6]} ob_atype12;
 [6]typedef struct {
@@ -59,10 +59,10 @@ END record.
 [6]    ob_avar39.tag = 0;
 [6]    ob_avar39.rec = 42;
 [6]    {
-[6]        ob_caseval10 = ob_avar06.x;
-[6]        if (ob_caseval10 == 1) {
+[6]        ob__caseval10 = ob_avar06.x;
+[6]        if (ob__caseval10 == 1) {
 [6]            ob_avar06.x = 2;
-[6]        } else if (ob_caseval10 == 2 || ob_caseval10 == 3) {
+[6]        } else if (ob__caseval10 == 2 || ob__caseval10 == 3) {
 [6]            ob_avar06.x = 3;
 [6]        }
 [6]    }

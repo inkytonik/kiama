@@ -65,7 +65,7 @@ trait Parser extends WhitespacePositionedParserUtilities {
         regex (keywords.mkString ("|").r)
         
     lazy val ident =
-        not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r |
+        not (keyword) ~> "[a-zA-Z_][a-zA-Z0-9]*".r |
         failure ("ident expected")
 
     lazy val whitespaceParser : PackratParser[Any] = 

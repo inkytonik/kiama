@@ -30,13 +30,13 @@ BEGIN
 END for.
 [6]* c
 [6]#include <stdio.h>
-[6]int ob_limit7;
-[6]int ob_limit8;
-[6]int ob_limit9;
-[6]int ob_limit10;
-[6]int ob_limit11;
-[6]int ob_limit13;
-[6]int ob_limit12;
+[6]int ob__limit7;
+[6]int ob__limit8;
+[6]int ob__limit9;
+[6]int ob__limit10;
+[6]int ob__limit11;
+[6]int ob__limit13;
+[6]int ob__limit12;
 [6]int ob_avar12;
 [6]int ob_avar23;
 [6]int ob_avar34;
@@ -45,24 +45,24 @@ END for.
 [6]int main (int argc, char *argv[0]) {
 [6]    {
 [6]        ob_avar12 = 1;
-[6]        ob_limit7 = 2;
-[6]        while (ob_avar12 <= ob_limit7) {
+[6]        ob__limit7 = 2;
+[6]        while (ob_avar12 <= ob__limit7) {
 [6]            ;
 [6]            ob_avar12 = ob_avar12 + 1;
 [6]        }
 [6]    }
 [6]    {
 [6]        ob_avar12 = 5;
-[6]        ob_limit8 = 6;
-[6]        while (ob_avar12 <= ob_limit8) {
+[6]        ob__limit8 = 6;
+[6]        while (ob_avar12 <= ob__limit8) {
 [6]            ob_avar23 = 7;
 [6]            ob_avar12 = ob_avar12 + 1;
 [6]        }
 [6]    }
 [6]    {
 [6]        ob_avar12 = ob_avar23 * 3;
-[6]        ob_limit9 = 5 - 9;
-[6]        while (ob_avar12 <= ob_limit9) {
+[6]        ob__limit9 = 5 - 9;
+[6]        while (ob_avar12 <= ob__limit9) {
 [6]            ob_avar23 = ob_avar12 % 8;
 [6]            ob_avar34 = ob_avar23 / 9;
 [6]            ob_avar12 = ob_avar12 + 1;
@@ -70,16 +70,16 @@ END for.
 [6]    }
 [6]    {
 [6]        ob_avar12 = ob_avar23;
-[6]        ob_limit10 = ob_avar23 + 3;
-[6]        while (ob_avar12 <= ob_limit10) {
+[6]        ob__limit10 = ob_avar23 + 3;
+[6]        while (ob_avar12 <= ob__limit10) {
 [6]            ob_avar23 = ob_avar23 + 1;
 [6]            ob_avar12 = ob_avar12 + 2;
 [6]        }
 [6]    }
 [6]    {
 [6]        ob_avar12 = ob_avar23;
-[6]        ob_limit11 = ob_avar23 / 2;
-[6]        while (ob_avar12 >= ob_limit11) {
+[6]        ob__limit11 = ob_avar23 / 2;
+[6]        while (ob_avar12 >= ob__limit11) {
 [6]            ob_avar23 = ob_avar23 * 10;
 [6]            ob_avar12 = ob_avar12 + -5;
 [6]        }
@@ -87,12 +87,12 @@ END for.
 [6]    ob_avar56 = 0;
 [6]    {
 [6]        ob_avar12 = ob_avar23;
-[6]        ob_limit12 = ob_avar34;
-[6]        while (ob_avar12 <= ob_limit12) {
+[6]        ob__limit12 = ob_avar34;
+[6]        while (ob_avar12 <= ob__limit12) {
 [6]            {
 [6]                ob_avar45 = ob_avar23;
-[6]                ob_limit13 = ob_avar34;
-[6]                while (ob_avar45 <= ob_limit13) {
+[6]                ob__limit13 = ob_avar34;
+[6]                while (ob_avar45 <= ob__limit13) {
 [6]                    ob_avar56 = ob_avar56 + 1;
 [6]                    ob_avar45 = ob_avar45 + 10;
 [6]                }
