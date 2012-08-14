@@ -1,0 +1,13 @@
+MODULE keywordnowsfollowing;
+
+VAR
+    avar : INTEGER;
+
+BEGIN
+    CASE avar - 1 OF
+        1 : CASE avar * 2 OF
+                1 : avar := 1
+            END|
+        2 : avar := 2
+    END;
+END keywordnowsfollowing.
