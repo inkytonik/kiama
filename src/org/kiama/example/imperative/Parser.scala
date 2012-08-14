@@ -71,6 +71,6 @@ trait Parser extends PositionedParserUtilities {
         not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r
 
     lazy val keyword =
-        "while"
+        keywords ("[^a-zA-Z0-9]".r, List ("while"))
 
 }

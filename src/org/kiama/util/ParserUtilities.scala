@@ -251,6 +251,20 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
         Left (value)
     }
 
+    /**
+     * Parser for keywords. The list of string arguments gives the text
+     * of the keywords in a language. The regular expression gives the
+     * possible extension of the keyword to stop the keyword being seen as
+     * an identifier instead. For example, the keyword list might contain
+     * `"begin"` and `"end"` and the extension regular expression might
+     * be `[^a-zA-Z0-9]`. Thus, `begin` followed by something other than
+     * a letter or digit is a keyword, but `beginfoo8` is an identifier.
+     * This parser succeeds if any of the keywords is present, provided
+     * that it's not immediately followed by something that extends it.
+     */
+    def keywords (ext : Regex, kws : List[String]) : Parser[String] =
+        regex ("(%s)%s".format (kws.mkString ("|"), ext).r)
+
 }
 
 /**

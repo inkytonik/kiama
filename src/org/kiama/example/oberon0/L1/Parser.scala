@@ -34,7 +34,7 @@ trait Parser extends L0.Parser {
         "WHILE" ~> expression ~ ("DO" ~> statementSequence <~ "END") ^^
         WhileStatement
         
-    override def keywords =
-        "DO" :: "ELSE" :: "ELSIF" :: "IF" :: "THEN" :: "WHILE" :: super.keywords
+    override def keywordStrings =
+        "DO" :: "ELSE" :: "ELSIF" :: "IF" :: "THEN" :: "WHILE" :: super.keywordStrings
 
 }

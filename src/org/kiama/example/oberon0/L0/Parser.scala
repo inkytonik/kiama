@@ -94,7 +94,7 @@ trait Parser extends base.Parser {
     lazy val intexp =
         constrainedInt ^^ IntExp
 
-    override def keywords =
-        "CONST" :: "DIV" :: "MOD" :: "OR" :: "TYPE" :: "VAR" :: super.keywords
+    override def keywordStrings =
+        "CONST" :: "DIV" :: "MOD" :: "OR" :: "TYPE" :: "VAR" :: super.keywordStrings
 
 }

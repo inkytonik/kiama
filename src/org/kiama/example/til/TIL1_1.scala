@@ -124,8 +124,10 @@ trait TIL1_1 extends PositionedParserUtilities {
         string |
         "(" ~> expression <~ ")"
 
-    lazy val keyword = "var" | "if" | "then" | "else" | "while" | "do" |
-        "for" | "read" | "write"
+    lazy val keyword = 
+        keywords ("[^a-zA-Z0-9]".r,
+                  List ("var", "if", "then", "else", "while", "do",
+                        "for", "read", "write"))
 
     lazy val identifier =
         not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r ^^ Id

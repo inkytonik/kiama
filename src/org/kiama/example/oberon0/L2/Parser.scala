@@ -43,7 +43,7 @@ trait Parser extends L1.Parser {
         expression ~ (".." ~> expression) ^^ MinMaxCond |
         expression ^^ ValCond
              
-    override def keywords =
-        "BY" :: "CASE" :: "FOR" :: "OF" :: "STEP" :: "TO" :: super.keywords
+    override def keywordStrings =
+        "BY" :: "CASE" :: "FOR" :: "OF" :: "STEP" :: "TO" :: super.keywordStrings
 
 }

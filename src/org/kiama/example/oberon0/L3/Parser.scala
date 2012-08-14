@@ -39,7 +39,7 @@ trait Parser extends L2.Parser {
         "(" ~> repsep (expression, ",") <~ ")" |
         guard (";" | "ELSE" | "END") ^^^ Nil
 
-    override def keywords =
-        "PROCEDURE" :: super.keywords
+    override def keywordStrings =
+        "PROCEDURE" :: super.keywordStrings
 
 }

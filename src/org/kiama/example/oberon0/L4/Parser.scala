@@ -35,7 +35,7 @@ trait Parser extends L3.Parser {
     lazy val fldidn =
         ident ^^ FieldIdn
 
-    override def keywords =
-        "ARRAY" :: "OF" :: "RECORD" :: super.keywords
+    override def keywordStrings =
+        "ARRAY" :: "OF" :: "RECORD" :: super.keywordStrings
 
 }

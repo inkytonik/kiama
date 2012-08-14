@@ -58,11 +58,11 @@ trait Parser extends WhitespacePositionedParserUtilities {
     lazy val idnuse =
         ident ^^ IdnUse
 
-    def keywords =
+    def keywordStrings =
         List ("BEGIN", "END", "MODULE")
 
     lazy val keyword =
-        regex (keywords.mkString ("|").r)
+        keywords ("[^a-zA-Z0-9]".r, keywordStrings)
         
     lazy val ident =
         not (keyword) ~> "[a-zA-Z_][a-zA-Z0-9]*".r |

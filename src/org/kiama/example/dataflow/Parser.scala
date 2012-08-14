@@ -58,6 +58,6 @@ trait Parser extends PositionedParserUtilities {
         not (keyword) ~> "[a-zA-Z]+".r
 
     lazy val keyword =
-        "if" | "return" | "while"
+        keywords ("[^a-zA-Z]".r, List ("if", "return", "while"))
 
 }
