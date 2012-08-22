@@ -278,7 +278,7 @@ class MachineTests extends Tests {
         val p = new ParamState[String,Int] ("p")
 
         def main = {
-            if (s isUndefined) {
+            if (s.isUndefined) {
                 s := 0
                 p ("one") := 42
                 p ("two") := 99

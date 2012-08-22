@@ -1836,7 +1836,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         expect (List (1, 2, 3, 4, 5)) (l)
     }
 
-    test ("rewriting objects with implicit constructor parameters works", FocusTest) {
+    test ("rewriting objects with implicit constructor parameters works") {
 
         val t = A (List (C (1), C (2), C ("3")))
         val r = rule {
@@ -1856,9 +1856,11 @@ class RewriterTests extends Tests with Checkers with Generator {
  */
 object RewriterTests {
 
+    import scala.reflect.ClassTag
+
     case class A (bs : List[B])
     abstract class B
-    case class C[T : Manifest] (v : T) extends B
-    case class D[T : Manifest] (v : T) extends B
+    case class C[T : ClassTag] (v : T) extends B
+    case class D[T : ClassTag] (v : T) extends B
 
 }

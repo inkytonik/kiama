@@ -7,6 +7,7 @@ package L0
  */
 trait Parser extends base.Parser {
 
+    import language.postfixOps
     import source.{AddExp, AndExp, Assignment, ConstDecl, DivExp, EqExp,
         Expression, GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp,
         MulExp, NamedType, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl,

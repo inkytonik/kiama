@@ -28,6 +28,8 @@ import org.kiama.util.PositionedParserUtilities
  */
 class SyntaxAnalysis extends PositionedParserUtilities {
 
+    import language.postfixOps
+
     import PrologTree._
 
     lazy val parser =

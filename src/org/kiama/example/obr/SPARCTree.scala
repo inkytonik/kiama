@@ -178,7 +178,7 @@ object SPARCTree {
     /**
      * Memory addresses that can be stored to or loaded from.
      */
-    abstract class Address
+    sealed abstract class Address
 
     /**
      * An address that is calculated by an known integer offset from

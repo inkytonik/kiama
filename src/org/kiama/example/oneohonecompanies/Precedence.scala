@@ -34,7 +34,7 @@ object Precedence {
      */
     private val bosssalary : Node => Salary =
         down[Node,Salary] {
-            case n if n isRoot =>
+            case n if n.isRoot =>
                 Float.MaxValue
             case Dept (_, m, _) =>
                 m->salary

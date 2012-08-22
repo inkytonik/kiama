@@ -39,7 +39,7 @@ object Interpreter {
     /**
      * Display goal.
      */
-    case class DisplayGoal (ps : Set[(String,Var)]) extends Goal
+    case class DisplayGoal (ps : Set[(String,Term)]) extends Goal
 
     /**
      * Term goal.
@@ -109,7 +109,7 @@ object Interpreter {
          * Find the variables in the query.  These are the ones we want
          * to print.
          */
-        val goalvars : Set[(String,Var)] = 
+        val goalvars : Set[(String,Term)] = 
             for (v <- varsof (query))
                 yield {
                     (v, Var (v))
@@ -122,7 +122,7 @@ object Interpreter {
          * Loop until the interpretation is done, indicated by an empty goal
          * list stack.
          */
-        while (!(glstack isEmpty)) {
+        while (!(glstack.isEmpty)) {
 
             // Print the stack for debugging
             // println (glstack)
@@ -172,7 +172,7 @@ object Interpreter {
                  * just say "yes".
                  */
                 case DisplayGoal (ps) =>
-                    if (ps isEmpty)
+                    if (ps.isEmpty)
                         emitter.emitln ("yes")
                     else {
                         val output = new ListBuffer[String]

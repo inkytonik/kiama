@@ -53,7 +53,7 @@ trait CodeGenerator {
     	     * Variable Identifiers
     	     */
     	    case Variable(s) => n.parent match {
-    	        case Binding(_,_) if n isFirst => CodeTree()
+    	        case Binding(_,_) if n.isFirst => CodeTree()
     	        case _ => Lookup(s)
     	    }
 
@@ -132,7 +132,7 @@ trait CodeGenerator {
 
          	case s@Primitives(vs) => CodeTree(
          	    BindPrims(vs.map({ case Variable(nm) => nm })),
-         	    if ((s isLast) || (s isRoot))
+         	    if ((s.isLast) || (s.isRoot))
          	        PushEmpty()
          	    else
      	            s.next[Iswim]->code,
@@ -141,7 +141,7 @@ trait CodeGenerator {
 
          	case s@ExprStmt(e) => CodeTree(
          	    e->code,
-         	    if ((s isLast) || (s isRoot))
+         	    if ((s.isLast) || (s.isRoot))
          	        CodeTree()
          	    else CodeTree(
          	        Pop(1),
@@ -152,7 +152,7 @@ trait CodeGenerator {
          	case s@LetStmt(binds) => CodeTree(
                 CodeTree(binds.map({ case Binding(_,e) => e->code })),
                 Enter(binds.map({ case Binding(Variable(nm),_) => nm })),
-         	    if ((s isLast) || (s isRoot))
+         	    if ((s.isLast) || (s.isRoot))
          	        PushEmpty()
          	    else
  	                s.next[Iswim]->code,
@@ -165,7 +165,7 @@ trait CodeGenerator {
                         FunctionSpec(Some(fn),pn,code(bdy))
                 })),
                 Enter(binds.map({ case Binding(Variable(nm),_) => nm })),
-         	    if ((s isLast) || (s isRoot))
+         	    if ((s.isLast) || (s.isRoot))
          	        PushEmpty()
          	    else
      	            s.next[Iswim]->code,

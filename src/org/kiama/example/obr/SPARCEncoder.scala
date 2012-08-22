@@ -215,6 +215,9 @@ class SPARCEncoder (emitter : Emitter) {
                 emit ("call scanf")
                 emit ("nop")
 
+            case Read (_ : Indexed) =>
+                sys.error ("SPARCEncoder: Read into Indexed address not implemented")
+
             case Ret =>
                 emit ("ba go")
                 emit ("nop")

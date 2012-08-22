@@ -176,7 +176,7 @@ object AST {
      * Statement sequences.
      */
     case class Seqn (ss : Seq[Stmt]) extends Stmt {
-        override def vars = Set (ss flatMap (_ vars) : _*)
+        override def vars = Set (ss flatMap (_.vars) : _*)
     }
 
     /**

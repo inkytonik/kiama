@@ -173,7 +173,7 @@ object AST {
     lazy val name =
         "[a-zA-Z]+".r ~ regexnows ("[0-9]*".r) ^^ {
             case base ~ index =>
-                Name (base, if (index isEmpty) None else Some (index.toInt))
+                Name (base, if (index.isEmpty) None else Some (index.toInt))
         }
 
 }

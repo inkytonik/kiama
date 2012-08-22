@@ -42,16 +42,16 @@ trait SemanticAnalysis {
      */
     val envir : Iswim => Map[Variable,Iswim] =
         attr {
-            case e if e isRoot => Map()
+            case e if e.isRoot => Map()
             case e => e.parent[Iswim] match {
-                case n@Binding(v,_) if !(n isRoot) => n.parent[Iswim] match {
+                case n@Binding(v,_) if !(n.isRoot) => n.parent[Iswim] match {
                     case l@Let(_,_) => l->envir
                     case LetRec(bds,_) => (bds.last)->envirOut
                     case l@LetStmt(_) => l->envir
                     case LetRecStmt(bds) => (bds.last)->envirOut
                 }
                 case n@Lambda(v,_) => (n->envir) + (v->n)
-                case n if e isFirst => n->envir
+                case n if e.isFirst => n->envir
                 case _ => (e.prev[Iswim])->envirOut
             }
         }

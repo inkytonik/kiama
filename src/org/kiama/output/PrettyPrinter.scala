@@ -21,6 +21,8 @@
 package org.kiama
 package output
 
+import language.implicitConversions    
+
 /**
  * The interface of a pretty printer using combinators from Swierstra and
  * Chitil (Linear, bounded, functional pretty-printing, Journal of Functional
@@ -313,7 +315,7 @@ trait PrettyPrinterBase {
      * Helper fold.
      */
     private def fold (ds : Seq[Doc], f : (Doc, Doc) => Doc) =
-        if (ds isEmpty)
+        if (ds.isEmpty)
             empty
         else
             ds.tail.foldLeft (ds.head) (f)
@@ -381,7 +383,7 @@ trait PrettyPrinterBase {
      * breaks turn into `space` if omitted.
      */
     def lsep (ds : Seq[Doc], sep : Doc) : Doc =
-        if (ds isEmpty)
+        if (ds.isEmpty)
             empty
         else
             linebreak <> fold (ds, _ <> sep <@> _)
@@ -394,7 +396,7 @@ trait PrettyPrinterBase {
      * `space` if omitted.  The end line break turns into nothing if omitted.  
      */
     def lsep2 (ds : Seq[Doc], sep : Doc) : Doc =
-        if (ds isEmpty)
+        if (ds.isEmpty)
             empty
         else
             fold (ds, _ <@@> sep <+> _) <> linebreak
@@ -407,7 +409,7 @@ trait PrettyPrinterBase {
      * breaks turn into `space` if omitted.
      */
     def lterm (ds : Seq[Doc], term : Doc) : Doc =
-        if (ds isEmpty)
+        if (ds.isEmpty)
             empty
         else
             linebreak <> fold (ds, _ <> term <@> _) <> term

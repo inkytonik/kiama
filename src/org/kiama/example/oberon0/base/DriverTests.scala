@@ -107,7 +107,7 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
     }
     
     // Always pretty-print AST
-    pprintast.set
+    override val pprintastFlagDefault = true
     
 }
 
@@ -119,6 +119,6 @@ trait TranslatingTestDriver extends TestDriver {
     this : TranslatingDriver =>
 
     // Always pretty-print C AST
-    pprintcast.set
+    override val pprintcastFlagDefault = true
 
 }

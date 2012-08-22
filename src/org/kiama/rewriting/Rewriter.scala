@@ -31,6 +31,7 @@ package rewriting
  */
 class Rewriter {
     
+    import language.higherKinds
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
     import scala.collection.mutable.Builder
@@ -609,7 +610,7 @@ class Rewriter {
                                 b += ti
                                 if (!same (ct, ti))
                                     changed = true
-                            case None =>
+                            case _ =>
                                 return None
                         }
                     if (changed)
@@ -903,7 +904,7 @@ class Rewriter {
                                 if (!same (ct, ti))
                                     changed = true
                                 success = true
-                            case None =>
+                            case _ =>
                                 b += ct
                         }
                     if (success)

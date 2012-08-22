@@ -148,7 +148,7 @@ object Analysis {
             case e @ Lam (x, t, _) if x == name => Some (e)
 
             // Nothing is visible at the root of the tree
-            case e if e isRoot                  => None
+            case e if e.isRoot                  => None
 
 
             // Other expressions do not bind new identifiers so they just

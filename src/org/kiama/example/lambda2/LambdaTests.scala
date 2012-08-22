@@ -176,7 +176,7 @@ class LambdaTests extends Tests with Checkers with Parser {
         for (mech <- mechanisms) {
             setEvaluator (mech)
             assertEval (mech, term,
-                        if (evaluator reducesinlambdas)
+                        if (evaluator.reducesinlambdas)
                             result1
                         else
                             result2)

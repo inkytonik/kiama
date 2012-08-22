@@ -40,6 +40,7 @@ import org.kiama.machine.Machine
 
 object SECDBase {
     
+    import language.implicitConversions
     import org.kiama.attribution.Attribution._
     import org.kiama.example.iswim.driver.PrettyPrinter._
     import scala.util.parsing.input.Positional
@@ -67,8 +68,8 @@ object SECDBase {
      */
     val instNumber : ByteCode => Int =
         attr {
-            case t if t isRoot => 1
-            case t if t isFirst => t.parent match {
+            case t if t.isRoot => 1
+            case t if t.isFirst => t.parent match {
                 case s : Instruction => (s->instNumber) + 1
                 case s : ByteCode => s->instNumber
             }
@@ -77,7 +78,7 @@ object SECDBase {
     
     val nextInstNumber : ByteCode => Int =
         attr {
-            case t if t hasChildren => t.lastChild[ByteCode]->nextInstNumber
+            case t if t.hasChildren => t.lastChild[ByteCode]->nextInstNumber
             case t => t->instNumber + 1
         }
     

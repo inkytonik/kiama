@@ -144,11 +144,12 @@ class UniplateTests extends Tests with Checkers with Generator {
     }
 
     test ("unique variable renaming") {
-        def uniquevars : Exp => Exp =
+        def uniquevars : Exp => Exp = {
+            var count = 0
             rewrite ({
-                var count = 0
                 everywhere (rule { case Var (s) => count = count + 1; Var ("x" + count) })
             })
+        }
         expect (numexp) (uniquevars (numexp))
         // Run this twice to make sure that count is not shared
         expect (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3"))) (uniquevars (varexp))

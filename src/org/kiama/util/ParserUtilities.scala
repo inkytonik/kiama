@@ -21,6 +21,7 @@
 package org.kiama
 package util
 
+import language.implicitConversions
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers
@@ -29,6 +30,7 @@ import scala.util.parsing.combinator.RegexParsers
  * Useful utilities for defining regular expression packrat parsers.
  */
 trait ParserUtilities extends RegexParsers with PackratParsers {
+
     
     /**
      * Use `parser` to parse the string `str`. If the parse is sucessful and produces

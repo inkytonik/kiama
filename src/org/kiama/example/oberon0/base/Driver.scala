@@ -3,8 +3,6 @@ package example.oberon0
 package base
 
 import base.source.ModuleDecl
-import org.clapper.argot.{ArgotParser, ArgotUsageException}
-import org.clapper.argot.ArgotConverters._
 import org.kiama.util.Compiler
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.attribution.Attribution.resetMemo
@@ -31,35 +29,80 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
      */
     def artefact : String
 
-    // Command-line arguments
+    // Command-line argument handling
 
-    val argparser = new ArgotParser ("oberon0c (" + artefact + ")")
-    val help = argparser.flag[Boolean] (List ("h", "help"), "print this message")
+    def usageMessage =
+        """|Usage: driver <options> <filename>
+           |Options:
+           |   -h   print this help message and stop
+           |   -a   print the abstract syntax tree
+           |   -A   pretty-print the abstract syntax tree
+           |   -x   run in LDTA challenge mode""".stripMargin
 
-    val printast = argparser.flag[Boolean] (List ("a", "ast"), "print the AST")
-    val pprintast = argparser.flag[Boolean] (List ("A", "past"), "pretty-print the AST")
+    var helpFlag : Boolean = _
+    var printastFlag : Boolean = _
+    var pprintastFlag : Boolean = _
+    var challengeFlag : Boolean = _
+    var input : String = _
 
-    val challenge = argparser.flag[Boolean] (List ("x", "challenge"), "run in challenge mode")
+    val helpFlagDefault = false
+    val printastFlagDefault = false
+    val pprintastFlagDefault = false
+    val challengeFlagDefault = false
 
-    val input = argparser.parameter[String] ("input", "Oberon0 file", false)
+    def resetflags () {
+        helpFlag = helpFlagDefault
+        printastFlag = printastFlagDefault
+        pprintastFlag = pprintastFlagDefault
+        challengeFlag = challengeFlagDefault
+        input = null
+    }
+
+    def processargs (args : List[String]) : Boolean =
+        args match {
+            case Nil =>
+                input != null
+            case arg :: rest =>
+                if (input != null)
+                    false
+                else if (arg.startsWith ("-")) {
+                    if (arg == "-h") {
+                        helpFlag = true
+                        processargs (rest)
+                    } else if (arg == "-a") {
+                        printastFlag = true
+                        processargs (rest)
+                    } else if (arg == "-A") {
+                        pprintastFlag = true
+                        processargs (rest)
+                    } else if (arg == "-x") {
+                        challengeFlag = true
+                        processargs (rest)
+                    } else
+                        false
+                } else {
+                    input = arg
+                    processargs (rest)
+                }
+        }
 
     /**
-     * Process the command-line arguments and return Some(filename) of the input
-     * file if processing should continue, None otherwise.
+     * Process the command-line arguments and return an array of the input
+     * file names if processing should continue, None otherwise.
      */
     override def checkargs (args : Array[String], emitter : Emitter) : Array[String] = {
-        try {
-            argparser.parse (args)
-        } catch {
-            case e : ArgotUsageException =>
-                println (e.message)
-                return Array.empty
-        }
-        if (help.value isDefined) {
-            println (argparser.usageString ())
+        resetflags ()
+        if (processargs (args.toList)) {
+            if (helpFlag) {
+                println (usageMessage)
+                Array.empty
+            } else
+                Array (input)
+        } else {
+            println ("Program arguments were " + args.mkString (" "))
+            println (usageMessage)
             Array.empty
-        } else
-            Array (input.value.get)
+        }
     }
 
     /**
@@ -81,7 +124,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
                 case Left (ast) =>
                     process (ast, console, emitter)
                 case Right (msg) =>
-                    if (challenge.value isDefined) {
+                    if (challengeFlag) {
                         section (emitter, "stdout")
                         emitter.emitln ("parse failed")
                     }
@@ -110,11 +153,11 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
         // Perform default processing
         super.process (ast, console, emitter)
 
-        if (printast.value isDefined) {
+        if (printastFlag) {
             section (emitter, "ast")
             emitter.emitln (pretty_any (ast))
         }
-        if (pprintast.value isDefined) {
+        if (pprintastFlag) {
             section (emitter, "_pp.ob")
             emitter.emitln (pretty (toDoc (ast)))
         }
@@ -137,7 +180,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
             // Semantic analysis failed, abort.  If in challenge mode, report
             // line number of first error to standard output.  Make full report
             // to errors file.
-            if (challenge.value isDefined) {
+            if (challengeFlag) {
                 section (emitter, "stdout")
                 emitter.emitln ("line " + sortedmessages (0).pos.line)
             }
@@ -172,8 +215,44 @@ trait TransformingDriver extends Driver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer =>
 
-    val printiast = argparser.flag[Boolean] (List ("i", "iast"), "print the intermediate AST")
-    val pprintiast = argparser.flag[Boolean] (List ("I", "piast"), "pretty-print the intermediate AST")
+    override def usageMessage =
+        super.usageMessage + """
+        |   -i   print the intermediate abstract syntax tree
+        |   -I   pretty-print the intermediate abstract syntax tree""".stripMargin
+
+    var printiastFlag : Boolean = _
+    var pprintiastFlag : Boolean = _
+
+    val printiastFlagDefault = false
+    val pprintiastFlagDefault = false
+
+    override def resetflags () {
+        super.resetflags
+        printiastFlag = printiastFlagDefault
+        pprintiastFlag = pprintiastFlagDefault
+    }
+
+    override def processargs (args : List[String]) : Boolean =
+        args match {
+            case Nil =>
+                input != null
+            case arg :: rest =>
+                if (input != null)
+                    false
+                else if (arg.startsWith ("-")) {
+                    if (arg == "-i") {
+                        printiastFlag = true
+                        processargs (rest)
+                    } else if (arg == "-I") {
+                        pprintiastFlag = true
+                        processargs (rest)
+                    } else
+                        super.processargs (args)
+                } else {
+                    input = arg
+                    processargs (rest)
+                }
+        }
 
     /**
      * Process the AST by transforming it.  Then apply higher-level transformations.
@@ -181,15 +260,15 @@ trait TransformingDriver extends Driver {
     override def processast (ast : ModuleDecl, console : Console, emitter : Emitter) : ModuleDecl = {
         initialiseSemanticAnalysis
         val nast = transform (ast)
-        if (printiast.value isDefined) {
+        if (printiastFlag) {
             section (emitter, "iast")
             emitter.emitln (pretty_any (nast))
         }
-        if (challenge.value isDefined)
+        if (challengeFlag)
             section (emitter, "_lifted.ob")
-        else if (pprintiast.value isDefined)
+        else if (pprintiastFlag)
             section (emitter, "_ipp.ob")
-        if ((pprintiast.value isDefined) || (challenge.value isDefined))
+        if (pprintiastFlag || challengeFlag)
             emitter.emitln (pretty (toDoc (nast)))
         initTree (nast)
         nast
@@ -206,8 +285,44 @@ trait TranslatingDriver extends TransformingDriver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer with Translator with c.CPrettyPrinter =>
 
-    val printcast = argparser.flag[Boolean] (List ("c", "cast"), "print the C AST")
-    val pprintcast = argparser.flag[Boolean] (List ("C", "pcast"), "pretty-print the C AST")
+    override def usageMessage =
+        super.usageMessage + """
+        |   -c   print the C abstract syntax tree
+        |   -C   pretty-print the C abstract syntax tree""".stripMargin
+
+    var printcastFlag : Boolean = _
+    var pprintcastFlag : Boolean = _
+
+    val printcastFlagDefault = false
+    val pprintcastFlagDefault = false
+
+    override def resetflags () {
+        super.resetflags
+        printcastFlag = printcastFlagDefault
+        pprintcastFlag = pprintcastFlagDefault
+    }
+
+    override def processargs (args : List[String]) : Boolean =
+        args match {
+            case Nil =>
+                input != null
+            case arg :: rest =>
+                if (input != null)
+                    false
+                else if (arg.startsWith ("-")) {
+                    if (arg == "-c") {
+                        printcastFlag = true
+                        processargs (rest)
+                    } else if (arg == "-C") {
+                        pprintcastFlag = true
+                        processargs (rest)
+                    } else
+                        super.processargs (args)
+                } else {
+                    input = arg
+                    processargs (rest)
+                }
+        }
 
     /**
      * Consume the AST by translating it to C.
@@ -215,11 +330,11 @@ trait TranslatingDriver extends TransformingDriver {
     override def consumeast (ast : ModuleDecl, console : Console, emitter : Emitter) {
         initialiseSemanticAnalysis
         val nast = translate (ast)
-        if (printcast.value isDefined) {
+        if (printcastFlag) {
             section (emitter, "cast")
             emitter.emitln (pretty_any (nast))
         }
-        if ((pprintcast.value isDefined) || (challenge.value isDefined)) {
+        if (pprintcastFlag || challengeFlag) {
             section (emitter, "c")
             emitter.emitln (pretty (toDoc (nast)))
         }

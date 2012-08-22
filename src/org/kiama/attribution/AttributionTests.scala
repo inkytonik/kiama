@@ -539,7 +539,7 @@ class AttributionTests extends Tests {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         initTree (t)
         def rootupd (in : Tree => Int) : Tree ==> Int = {
-            case n if n isRoot => 42
+            case n if n.isRoot => 42
         }
         val rootchain = chain (rootupd)
         expect (42) (t->(rootchain.in))

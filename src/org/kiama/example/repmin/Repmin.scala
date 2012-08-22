@@ -69,7 +69,7 @@ trait Repmin extends RepminBase {
 
     val globmin : Tree => Int =
         attr {
-            case t if t isRoot => t->locmin
+            case t if t.isRoot => t->locmin
             case t             => t.parent[Tree]->globmin
         }
 
@@ -84,7 +84,7 @@ trait RepminDec extends RepminBase {
 
     val globmin : Tree => Int =
         down[Tree,Int] {
-            case t if t isRoot => t->locmin
+            case t if t.isRoot => t->locmin
         }
 
 }

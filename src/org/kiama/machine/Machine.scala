@@ -34,6 +34,8 @@ import org.kiama.output.PrettyPrinter
 abstract class Machine (val name : String, emitter : Emitter = new Emitter) 
         extends PrettyPrinter {
 
+    import language.implicitConversions            
+
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
      * tracing information during execution of the machine.
@@ -54,7 +56,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Is this state item undefined or not?
          */
-        def isUndefined : Boolean = _value isEmpty
+        def isUndefined : Boolean = _value.isEmpty
 
         /**
          * Make this state item undefined.
@@ -355,7 +357,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * If updates are not consistent, the machine is aborted.
      */
     def performUpdates =
-        if (updates isEmpty)
+        if (updates.isEmpty)
             false
         else {
             // Check updates for consistency

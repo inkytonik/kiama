@@ -8,19 +8,19 @@
 
 name := "kiama"
 
-version := "1.3.1-SNAPSHOT"
+version := "1.4.0-SNAPSHOT"
 
 organization := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.0-M7"
 
-scalacOptions ++= Seq ("-deprecation", "-unchecked")
+scalacOptions ++= Seq ("-deprecation", "-feature", "-unchecked")
 
 // Migration manager (mima)
 
-// mimaDefaultSettings// 
+// mimaDefaultSettings
 
 // previousArtifact <<= (name, organization) { (n, o) =>
 //     Some (o % (n + "_2.9.2") % "1.3.0")
@@ -72,13 +72,14 @@ libraryDependencies ++=
     Seq (
         "jline" % "jline" % "2.7",
         "junit" % "junit" % "4.10" % "test",
-        "org.clapper" %% "argot" % "0.4",
-        "org.scalacheck" %% "scalacheck" % "1.9" % "test",
-        "org.scalatest" %% "scalatest" % "1.8" % "test"
+        "org.scalacheck" % "scalacheck_2.10.0-M7" % "1.10.0" % "test",
+        "org.scalatest" % "scalatest_2.10.0-M7" % "1.9-2.10.0-M7-B1" % "test"
     )
  
-resolvers += "Sonatype OSS Snapshots Repository" at
-    "https://oss.sonatype.org/content/repositories/snapshots"    
+resolvers ++= Seq (
+    Resolver.sonatypeRepo ("releases"),
+    Resolver.sonatypeRepo ("snapshots")
+)
 
 // Source code locations
 

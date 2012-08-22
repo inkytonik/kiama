@@ -147,7 +147,7 @@ trait Environments {
      * the environment is empty.
      */
     def leave (env : Environment) : Environment =
-        if (env isEmpty)
+        if (env.isEmpty)
             sys.error ("leave called on empty environment")
         else
             env.pop
@@ -157,7 +157,7 @@ trait Environments {
      * environment is empty.
      */
     def define (env : Environment, i : String, e : Entity) : Environment = {
-        if (env isEmpty)
+        if (env.isEmpty)
             sys.error ("define called on empty environment")
         else {
             val s = env.top
@@ -169,7 +169,7 @@ trait Environments {
      * Say whether i is defined in the current scope of env.
      */
     def isDefinedInScope (env : Environment, i : String) : Boolean =
-        !(env isEmpty) && ((env.top) contains i)
+        !(env.isEmpty) && ((env.top) contains i)
 
     /**
      * Say whether i is defined in the given scope.
@@ -207,7 +207,7 @@ trait Environments {
         def lookupscope (s : Scope) : Entity =
             s.getOrElse (i, e)
 
-        if (env isEmpty)
+        if (env.isEmpty)
             e
         else if (scope)
             lookupscope (env.top)
