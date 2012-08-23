@@ -16,7 +16,7 @@ organization := "com.googlecode.kiama"
 
 scalaVersion := "2.10.0-M7"
 
-crossVersion := CrossVersion.full
+// crossVersion := CrossVersion.full
 
 scalacOptions ++= Seq ("-deprecation", "-feature", "-unchecked")
 
