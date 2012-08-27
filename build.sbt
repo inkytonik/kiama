@@ -8,15 +8,13 @@
 
 name := "kiama"
 
-version := "1.4.0-B1"
+version := "1.4.0-B2-SNAPSHOT"
 
 organization := "com.googlecode.kiama"
 
 // Scala compiler settings
 
 scalaVersion := "2.10.0-M7"
-
-// crossVersion := CrossVersion.full
 
 scalacOptions ++= Seq ("-deprecation", "-feature", "-unchecked")
 
