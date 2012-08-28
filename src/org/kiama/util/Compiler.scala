@@ -49,9 +49,9 @@ trait CompilerBase[T] {
     }
 
     /**
-     * Process the command-line arguments.  Returns the arguments that
-     * have not been processed.  Output should be emitted using the
-     * provided Emitter.  Default: do no processing.
+     * Entry point for standard compiler framework. All command-line
+     * argumnents, a JLine console for input editing and a new emitter
+     * to standard output are passed to `driver`.
      */
     def checkargs (args : Array[String], emitter : Emitter) : Array[String] =
         args
@@ -116,9 +116,7 @@ trait CompilerBase[T] {
  * A compiler that uses a Scala combinator character-level parser. Define
  * `parser` to specify the actual parser to be used.
  */
-trait RegexCompiler[T] extends CompilerBase[T] {
-
-    this : RegexParsers =>
+trait RegexCompiler[T] extends CompilerBase[T] with RegexParsers {
 
     /**
      * The actual parser used to produce the AST.
@@ -141,8 +139,6 @@ trait RegexCompiler[T] extends CompilerBase[T] {
  * performing specific attribution.
  */
 trait Compiler[T <: Attributable] extends RegexCompiler[T] {
- 
-    this : RegexParsers =>
 
     import org.kiama.attribution.Attribution.initTree
 
