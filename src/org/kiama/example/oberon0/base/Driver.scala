@@ -20,7 +20,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser =>
 
-    import org.kiama.util.IO.filereader
+    import org.kiama.util.IO.{filereader, FileNotFoundException}
     import org.kiama.util.Messaging.{message, messagecount, report,
         resetmessages, sortedmessages}
 
@@ -118,19 +118,24 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
      */
     override def driver (args : Array[String], console : Console, emitter : Emitter) {
         val newargs = checkargs (args, emitter)
-        for (arg <- newargs) {
-            val reader = filereader (newargs (0))
-            makeast (reader, newargs (0), emitter) match {
-                case Left (ast) =>
-                    process (ast, console, emitter)
-                case Right (msg) =>
-                    if (challengeFlag) {
-                        section (emitter, "stdout")
-                        emitter.emitln ("parse failed")
-                    }
-                    section (emitter, "errors")
-                    emitter.emitln (msg)
+        try {
+            for (arg <- newargs) {
+                val reader = filereader (newargs (0))
+                makeast (reader, newargs (0), emitter) match {
+                    case Left (ast) =>
+                        process (ast, console, emitter)
+                    case Right (msg) =>
+                        if (challengeFlag) {
+                            section (emitter, "stdout")
+                            emitter.emitln ("parse failed")
+                        }
+                        section (emitter, "errors")
+                        emitter.emitln (msg)
+                }
             }
+        } catch {
+            case e : FileNotFoundException =>
+                emitter.emitln (e.getMessage)
         }
     }
 
