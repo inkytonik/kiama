@@ -204,7 +204,8 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
         ast
 
     /**
-     * Process the AST, returning the new one.  By default, do nothing.
+     * Consume the AST. For example, translate it to something else. By default, do
+     * nothing.
      */
     def consumeast (ast : ModuleDecl, console : Console, emitter : Emitter) {
     }
