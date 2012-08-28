@@ -39,14 +39,17 @@ object Decorators {
      * For this reason, `a` should at least provide a value for the root
      * of the tree.
      */
-    def down[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] =
-        attr[T,U] {
-            case t =>
-                if (a.isDefinedAt (t))
-                    a (t)
-                else
-                    (down (a)) (t.parent[T])
-        }
+    def down[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] = {
+        lazy val dattr : CachedAttribute[T,U] =
+           attr[T,U] {
+                case t =>
+                    if (a.isDefinedAt (t))
+                        a (t)
+                    else
+                        dattr (t.parent[T])
+            }
+        dattr
+    }
 
     /**
      * A pair of attributes that thread through a tree in a depth-first
