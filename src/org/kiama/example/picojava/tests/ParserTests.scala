@@ -60,7 +60,7 @@ class ParserTests extends Parser with RegexParserTests {
     }
 
     test ("parse comments") {
-        expect (whiteSpace.replaceFirstIn ("// !@#$%^&*abc\n", "")) ("")
+        expectResult (whiteSpace.replaceFirstIn ("// !@#$%^&*abc\n", "")) ("")
     }
 
     test ("generate errors for invalid tokens: leading underscore") {

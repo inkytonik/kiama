@@ -45,11 +45,11 @@ class DynamicAttributionTests extends Tests {
         }
 
     test ("dynamic attribution base works on Leafs") {
-        expect (2) (sumleafbase (Leaf (2)))
+        expectResult (2) (sumleafbase (Leaf (2)))
     }
         
     test ("dynamic attribution base defaults on Pairs") {
-        expect (-1) (sumleafbase (Pair (Leaf (1), Leaf (2))))
+        expectResult (-1) (sumleafbase (Pair (Leaf (1), Leaf (2))))
     }
 
     test ("dynamic attributes are defined where they should be") {
@@ -59,9 +59,9 @@ class DynamicAttributionTests extends Tests {
                 case Leaf (v)   => 0
             }
             
-        expect (true, "isDefinedAt Leaf") (maximum.isDefinedAt (Leaf (1)))
-        expect (true, "isDefinedAt Pair") (maximum.isDefinedAt (Pair (Leaf (1), Leaf (2))))
-        expect (false, "isDefinedAt Unused") (maximum.isDefinedAt (Unused (false)))
+        expectResult (true, "isDefinedAt Leaf") (maximum.isDefinedAt (Leaf (1)))
+        expectResult (true, "isDefinedAt Pair") (maximum.isDefinedAt (Pair (Leaf (1), Leaf (2))))
+        expectResult (false, "isDefinedAt Unused") (maximum.isDefinedAt (Unused (false)))
     }
 
     test ("dynamic attribute are re-evaluated when reset") {
@@ -76,12 +76,12 @@ class DynamicAttributionTests extends Tests {
 
         val t = Leaf (2)
             
-        expect (2) (sumleaf (t))
-        expect (2) (sumleaf (t))
-        expect (1, "evaluation count") (count)
+        expectResult (2) (sumleaf (t))
+        expectResult (2) (sumleaf (t))
+        expectResult (1, "evaluation count") (count)
         sumleaf.asInstanceOf[DynamicAttribute[Tree,Int]].reset ()
-        expect (2) (sumleaf (Leaf (2)))
-        expect (2, "evaluation count") (count)
+        expectResult (2) (sumleaf (Leaf (2)))
+        expectResult (2, "evaluation count") (count)
 
     }
 
@@ -105,40 +105,40 @@ class DynamicAttributionTests extends Tests {
             }
 
         // No modification
-        expect (2) (sumleaf (Leaf (2)))
-        expect (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (2) (sumleaf (Leaf (2)))
+        expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
         
         // Add a dynamic attribute and take away again
         sumleaf += newcase
-        expect (4) (sumleaf (Leaf (4)))
-        expect (8) (sumleaf (Pair (Leaf (3), Leaf (5))))
-        expect (154) (sumleaf (Pair (Leaf (88), Leaf (88))))
+        expectResult (4) (sumleaf (Leaf (4)))
+        expectResult (8) (sumleaf (Pair (Leaf (3), Leaf (5))))
+        expectResult (154) (sumleaf (Pair (Leaf (88), Leaf (88))))
         sumleaf -= newcase
-        expect (6) (sumleaf (Leaf (6)))
-        expect (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (6) (sumleaf (Leaf (6)))
+        expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
         
         // Add a partial function and take away again
         sumleaf += func
-        expect (6) (sumleaf (Leaf (6)))
-        expect (99) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (6) (sumleaf (Leaf (6)))
+        expectResult (99) (sumleaf (Pair (Leaf (1), Leaf (2))))
         sumleaf -= func
-        expect (6) (sumleaf (Leaf (6)))
-        expect (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (6) (sumleaf (Leaf (6)))
+        expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
         
         // Multiple additions and out of order removal
         sumleaf += newcase
         sumleaf += func
-        expect (6) (sumleaf (Leaf (6)))
-        expect (99) (sumleaf (Pair (Leaf (1), Leaf (2))))
-        expect (77) (sumleaf (Leaf (88)))
+        expectResult (6) (sumleaf (Leaf (6)))
+        expectResult (99) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (77) (sumleaf (Leaf (88)))
         sumleaf -= newcase
-        expect (6) (sumleaf (Leaf (6)))
-        expect (99) (sumleaf (Pair (Leaf (1), Leaf (2))))
-        expect (88) (sumleaf (Leaf (88)))
+        expectResult (6) (sumleaf (Leaf (6)))
+        expectResult (99) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (88) (sumleaf (Leaf (88)))
         sumleaf -= func
-        expect (6) (sumleaf (Leaf (6)))
-        expect (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
-        expect (88) (sumleaf (Leaf (88)))
+        expectResult (6) (sumleaf (Leaf (6)))
+        expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (88) (sumleaf (Leaf (88)))
 
     }
     
@@ -158,7 +158,7 @@ class DynamicAttributionTests extends Tests {
         val i = intercept[UnsupportedOperationException] {
                     func += sumleaf
                 }
-        expect ("Can only add partial functions to existing attributes") (i.getMessage)
+        expectResult ("Can only add partial functions to existing attributes") (i.getMessage)
 
     }
 
@@ -184,24 +184,24 @@ class DynamicAttributionTests extends Tests {
                 }
         }
 
-        expect (2) (sumleaf (Leaf (2)))
-        expect (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (2) (sumleaf (Leaf (2)))
+        expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
         
         using (ExtensionOne) {
-            expect (4) (sumleaf (Leaf (4)))
-            expect (8) (sumleaf (Pair (Leaf (3), Leaf (5))))
+            expectResult (4) (sumleaf (Leaf (4)))
+            expectResult (8) (sumleaf (Pair (Leaf (3), Leaf (5))))
             
             using (ExtensionTwo) {
-                expect (4) (sumleaf (Leaf (4)))
-                expect (42) (sumleaf (Pair (Leaf (3), Leaf (5))))
+                expectResult (4) (sumleaf (Leaf (4)))
+                expectResult (42) (sumleaf (Pair (Leaf (3), Leaf (5))))
             }
 
-            expect (4) (sumleaf (Leaf (4)))
-            expect (9) (sumleaf (Pair (Leaf (3), Leaf (6))))
+            expectResult (4) (sumleaf (Leaf (4)))
+            expectResult (9) (sumleaf (Pair (Leaf (3), Leaf (6))))
         }
         
-        expect (6) (sumleaf (Leaf (6)))
-        expect (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
+        expectResult (6) (sumleaf (Leaf (6)))
+        expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
 
     }
     
@@ -215,7 +215,7 @@ class DynamicAttributionTests extends Tests {
         val i = intercept[MatchError] {
                     sumleaf (Pair (Leaf (1), Leaf (2)))
                 }
-        expect ("Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+        expectResult ("Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
             i.getMessage
         )
         
@@ -227,11 +227,11 @@ class DynamicAttributionTests extends Tests {
         }
 
         using (Extension) {
-            expect (100) (sumleaf (Pair (Leaf (1), Leaf (2))))
+            expectResult (100) (sumleaf (Pair (Leaf (1), Leaf (2))))
             val i = intercept[MatchError] {
                         sumleaf (Pair (Leaf (3), Leaf (1)))
                     }
-            expect ("Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+            expectResult ("Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
                 i.getMessage
             )
         }
@@ -257,12 +257,12 @@ class DynamicAttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
                     t->direct
                 }
-        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
                      t->indirect
                  }
-        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
     }
 
 }

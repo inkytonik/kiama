@@ -51,7 +51,7 @@ class PositionalRewriterTests extends Tests {
             })
 
     def check (no : One) {
-        expect (One (Two (Leaf (43), Leaf (100)))) (no)
+        expectResult (One (Two (Leaf (43), Leaf (100)))) (no)
         expectsame (po) (no.pos)
         expectsame (pt) (no.a.pos)
         expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
@@ -91,7 +91,7 @@ class PositionalRewriterTests extends Tests {
     test ("positional rewriting with no positions works") {
         val oo = One (Two (Leaf (42), Leaf (99)))
         val noo = rewrite (r) (oo)
-        expect (One (Two (Leaf (43), Leaf (100)))) (noo)
+        expectResult (One (Two (Leaf (43), Leaf (100)))) (noo)
         expectsame (NoPosition) (noo.pos)
         expectsame (NoPosition) (noo.a.pos)
         expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.pos)
@@ -150,7 +150,7 @@ class PositionedRewriterTests extends Tests {
             })
 
     def check (no : One) {
-        expect (One (Two (Leaf (43), Leaf (100)))) (no)
+        expectResult (One (Two (Leaf (43), Leaf (100)))) (no)
         expectsame (pos) (no.start)
         expectsame (pof) (no.finish)
         expectsame (pts) (no.a.start)

@@ -49,14 +49,14 @@ class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] 
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
-        expect ("IDoNotExist.txt (" + msg + ")\n") (e.result)
+        expectResult ("IDoNotExist.txt (" + msg + ")\n") (e.result)
     }
     
     test ("filetests using a directory that doesn't exist fails") {
         val i = intercept[IllegalArgumentException] {
                     filetests ("Compiler", "src/org/kiama/util/IDoNotExist", ".src", ".out")
                 }
-        expect ("bad test file path src/org/kiama/util/IDoNotExist") (i.getMessage)
+        expectResult ("bad test file path src/org/kiama/util/IDoNotExist") (i.getMessage)
     }
 
 }

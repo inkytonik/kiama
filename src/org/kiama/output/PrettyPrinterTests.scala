@@ -33,270 +33,270 @@ import org.scalatest.junit.JUnitRunner
 class PrettyPrinterTests extends Tests with PrettyPrinter {
 
     test ("pretty-print empty document") {
-        expect ("") (pretty (empty))
+        expectResult ("") (pretty (empty))
     }
     
     test ("pretty-print empty string") {
-        expect ("") (pretty (""))
+        expectResult ("") (pretty (""))
     }
     
     test ("pretty-print empty string via combinator") {
-        expect ("") (pretty (string ("")))
+        expectResult ("") (pretty (string ("")))
     }
     
     test ("pretty-print string starting with newline") {
-        expect ("\nthree") (pretty (string ("\nthree")))
+        expectResult ("\nthree") (pretty (string ("\nthree")))
     }
     
     test ("pretty-print string including newlines") {
-        expect ("one\ntwo\nthree") (pretty (string ("one\ntwo\nthree")))
+        expectResult ("one\ntwo\nthree") (pretty (string ("one\ntwo\nthree")))
     }
     
     test ("pretty-print string starting with and including newlines") {
-        expect ("\none\ntwo\nthree") (pretty (string ("\none\ntwo\nthree")))
+        expectResult ("\none\ntwo\nthree") (pretty (string ("\none\ntwo\nthree")))
     }
     
     test ("pretty-print string starting with newline - grouped") {
-        expect (" three") (pretty (group (string ("\nthree"))))
+        expectResult (" three") (pretty (group (string ("\nthree"))))
     }
     
     test ("pretty-print string including newlines - grouped") {
-        expect ("one two three") (pretty (group (string ("one\ntwo\nthree"))))
+        expectResult ("one two three") (pretty (group (string ("one\ntwo\nthree"))))
     }
     
     test ("pretty-print string starting with and including newlines - grouped") {
-        expect (" one two three") (pretty (group (string ("\none\ntwo\nthree"))))
+        expectResult (" one two three") (pretty (group (string ("\none\ntwo\nthree"))))
     }
     
     test ("pretty-print newline char") {
-        expect ("\n") (pretty (char ('\n')))
+        expectResult ("\n") (pretty (char ('\n')))
     }
     
     test ("pretty-print newline char - grouped") {
-        expect (" ") (pretty (group (char ('\n'))))
+        expectResult (" ") (pretty (group (char ('\n'))))
     }
     
     test ("pretty-print no spaces") {
-        expect ("") (pretty (spaces (0)))
+        expectResult ("") (pretty (spaces (0)))
     }
     
     test ("pretty-print non-zero spaces") {
-        expect ("   ") (pretty (spaces (3)))
+        expectResult ("   ") (pretty (spaces (3)))
     }
     
     test ("pretty_any-print empty string") {
-        expect ("\"\"") (pretty_any (""))
+        expectResult ("\"\"") (pretty_any (""))
     }
     
     test ("pretty-print empty list") {
-        expect ("List()") (pretty (Nil))
+        expectResult ("List()") (pretty (Nil))
     }
     
     test ("pretty_any-print empty list") {
-        expect ("Nil") (pretty_any (Nil))
+        expectResult ("Nil") (pretty_any (Nil))
     }
 
     test ("pretty_any-print null") {
-        expect ("null") (pretty_any (null))
+        expectResult ("null") (pretty_any (null))
     }
 
     test ("pretty-print None") {
-        expect ("None") (pretty (None))
+        expectResult ("None") (pretty (None))
     }
     
     test ("pretty_any-print None") {
-        expect ("None") (pretty_any (None))
+        expectResult ("None") (pretty_any (None))
     }
 
     test ("pretty-print Some") {
-        expect ("Some(1)") (pretty (Some (1)))
+        expectResult ("Some(1)") (pretty (Some (1)))
     }
     
     test ("pretty_any-print Some") {
-        expect ("Some (1)") (pretty_any (Some (1)))
+        expectResult ("Some (1)") (pretty_any (Some (1)))
     }
 
     test ("pretty-print identifier") {
-        expect ("hello") (pretty ("hello"))
+        expectResult ("hello") (pretty ("hello"))
     }
     
     test ("pretty_any-print identifier") {
-        expect ("\"hello\"") (pretty_any ("hello"))
+        expectResult ("\"hello\"") (pretty_any ("hello"))
     }
     
     test ("pretty-print integer") {
-        expect ("1234") (pretty (1234))
+        expectResult ("1234") (pretty (1234))
     }
     
     test ("pretty_any-print integer") {
-        expect ("1234") (pretty_any (1234))
+        expectResult ("1234") (pretty_any (1234))
     }
     
     test ("pretty-print angles") {
-        expect ("</>") (pretty (angles (forwslash)))
+        expectResult ("</>") (pretty (angles (forwslash)))
     }
     
     test ("pretty-print brackets") {
-        expect ("[\\]") (pretty (brackets (backslash)))
+        expectResult ("[\\]") (pretty (brackets (backslash)))
     }
     
     test ("pretty-print squotes") {
-        expect ("'.'") (pretty (squotes (dot)))
+        expectResult ("'.'") (pretty (squotes (dot)))
     }
     
     test ("pretty-print empty sep sequence") {
-        expect ("") (pretty (sep (List ())))
+        expectResult ("") (pretty (sep (List ())))
     }
     
     test ("pretty-print non-empty sep sequence - non-wrap") {
-        expect ("< : >") (pretty (sep (List (langle, colon, rangle))))
+        expectResult ("< : >") (pretty (sep (List (langle, colon, rangle))))
     }
     
     test ("pretty-print non-empty sep sequence - wrap") {
-        expect ("<\n:\n>") (pretty (group (sep (List (langle, colon, rangle))), 2))
+        expectResult ("<\n:\n>") (pretty (group (sep (List (langle, colon, rangle))), 2))
     }
     
     test ("pretty-print empty hsep sequence") {
-        expect ("") (pretty (hsep (List ())))
+        expectResult ("") (pretty (hsep (List ())))
     }
     
     test ("pretty-print non-empty hsep sequence - non-wrap") {
-        expect ("< : >") (pretty (hsep (List (langle, colon, rangle))))
+        expectResult ("< : >") (pretty (hsep (List (langle, colon, rangle))))
     }
     
     test ("pretty-print non-empty hsep sequence - wrap") {
-        expect ("< : >") (pretty (group (hsep (List (langle, colon, rangle))), 2))
+        expectResult ("< : >") (pretty (group (hsep (List (langle, colon, rangle))), 2))
     }
     
     test ("pretty-print empty fillsep sequence") {
-        expect ("") (pretty (fillsep (List ())))
+        expectResult ("") (pretty (fillsep (List ())))
     }
         
     test ("pretty-print non-empty fillsep sequence - non-wrap") {
-        expect ("< : > : >") (pretty (fillsep (List (langle, colon, rangle, colon, rangle))))
+        expectResult ("< : > : >") (pretty (fillsep (List (langle, colon, rangle, colon, rangle))))
     }
     
     test ("pretty-print non-empty fillsep sequence - wrap") {
-        expect ("< :\n> :\n>") (pretty (group (fillsep (List (langle, colon, rangle, colon, rangle))), 3))
+        expectResult ("< :\n> :\n>") (pretty (group (fillsep (List (langle, colon, rangle, colon, rangle))), 3))
     } 
     
     test ("pretty-print empty fillsep sequence with sep") {
-        expect ("") (pretty (fillsep (List (), comma)))
+        expectResult ("") (pretty (fillsep (List (), comma)))
     }
         
     test ("pretty-print non-empty fillsep sequence with sep - non-wrap") {
-        expect ("<, :, >, :, >") (pretty (fillsep (List (langle, colon, rangle, colon, rangle), comma)))
+        expectResult ("<, :, >, :, >") (pretty (fillsep (List (langle, colon, rangle, colon, rangle), comma)))
     }
     
     test ("pretty-print non-empty fillsep sequence with sep - wrap") {
-        expect ("<, :,\n>, :,\n>") (
+        expectResult ("<, :,\n>, :,\n>") (
             pretty (group (fillsep (List (langle, colon, rangle, colon, rangle), comma)), 3)
         )
     }
 
     test ("pretty-print empty lsep sequence") {
-        expect ("") (pretty (lsep (List (), comma)))
+        expectResult ("") (pretty (lsep (List (), comma)))
     }
         
     test ("pretty-print non-empty lsep sequence - non-wrap") {
-        expect ("\n',\n.,\n'") (pretty (group (lsep (List (squote, dot, squote), comma)), 3))
+        expectResult ("\n',\n.,\n'") (pretty (group (lsep (List (squote, dot, squote), comma)), 3))
     }
 
     test ("pretty-print empty lsep2 sequence") {
-        expect ("") (pretty (lsep2 (List (), comma)))
+        expectResult ("") (pretty (lsep2 (List (), comma)))
     }
         
     test ("pretty-print non-empty lsep2 sequence - non-wrap") {
-        expect ("'\n, .\n, '\n") (pretty (group (lsep2 (List (squote, dot, squote), comma)), 3))
+        expectResult ("'\n, .\n, '\n") (pretty (group (lsep2 (List (squote, dot, squote), comma)), 3))
     }
     
     val l = List (lbracket, dot, equal, rbracket)
     
     test ("pretty-print non-empty lsep sequence - wrap") {
-        expect ("\n[,\n.,\n=,\n]") (pretty (group (lsep (l, comma)), 3))
+        expectResult ("\n[,\n.,\n=,\n]") (pretty (group (lsep (l, comma)), 3))
     }
     
     test ("pretty-print empty cat sequence") {
-        expect ("") (pretty (cat (List ())))
+        expectResult ("") (pretty (cat (List ())))
     }
         
     test ("pretty-print non-empty cat sequence - non-wrap") {
-        expect ("[.=]") (pretty (cat (l)))
+        expectResult ("[.=]") (pretty (cat (l)))
     }
     
     test ("pretty-print non-empty cat sequence - wrap") {
-        expect ("[\n.\n=\n]") (pretty (group (cat (l)), 3))
+        expectResult ("[\n.\n=\n]") (pretty (group (cat (l)), 3))
     }
     
     test ("pretty-print empty hcat sequence") {
-        expect ("") (pretty (hcat (List ())))
+        expectResult ("") (pretty (hcat (List ())))
     }
         
     test ("pretty-print non-empty hcat sequence - non-wrap") {
-        expect ("[.=]") (pretty (hcat (l)))
+        expectResult ("[.=]") (pretty (hcat (l)))
     }
     
     test ("pretty-print non-empty hcat sequence - wrap") {
-        expect ("[.=]") (pretty (group (hcat (l)), 3))
+        expectResult ("[.=]") (pretty (group (hcat (l)), 3))
     }
     
     test ("pretty-print empty vcat sequence") {
-        expect ("") (pretty (vcat (List ())))
+        expectResult ("") (pretty (vcat (List ())))
     }
         
     test ("pretty-print non-empty vcat sequence - non-wrap") {
-        expect ("[\n.\n=\n]") (pretty (vcat (l)))
+        expectResult ("[\n.\n=\n]") (pretty (vcat (l)))
     }
     
     test ("pretty-print non-empty vcat sequence - wrap") {
-        expect ("[\n.\n=\n]") (pretty (group (vcat (l)), 3))
+        expectResult ("[\n.\n=\n]") (pretty (group (vcat (l)), 3))
     }
     
     test ("pretty-print empty fillcat sequence") {
-        expect ("") (pretty (fillcat (List ())))
+        expectResult ("") (pretty (fillcat (List ())))
     }
     
     val m = List (lbracket, dot, equal, dot, equal, dot, equal, rbracket)
         
     test ("pretty-print non-empty fillcat sequence - non-wrap") {
-        expect ("[.=.=.=]") (pretty (fillcat (m)))
+        expectResult ("[.=.=.=]") (pretty (fillcat (m)))
     }
     
     test ("pretty-print non-empty fillcat sequence - wrap") {
-        expect ("[.=\n.=.\n=]") (pretty (fillcat (m), 3))
+        expectResult ("[.=\n.=.\n=]") (pretty (fillcat (m), 3))
     }
     
     test ("pretty-print empty sterm sequence") {
-        expect ("") (pretty (sterm (List (), colon)))
+        expectResult ("") (pretty (sterm (List (), colon)))
     }
         
     test ("pretty-print non-empty sterm sequence - non-wrap") {
-        expect ("[:.:=:]:") (pretty (sterm (l, colon)))
+        expectResult ("[:.:=:]:") (pretty (sterm (l, colon)))
     }
     
     test ("pretty-print non-empty sterm sequence - wrap") {
-        expect ("[:\n.:\n=:\n]:") (pretty ((sterm (l, colon)), 3))
+        expectResult ("[:\n.:\n=:\n]:") (pretty ((sterm (l, colon)), 3))
     }
     
     val l1 = List (1, 2, 3)
 
     test ("pretty-print lists of simple values - non-wrap") {
-        expect ("List(1, 2, 3)") (pretty (list (l1)))
+        expectResult ("List(1, 2, 3)") (pretty (list (l1)))
     }
     
     test ("pretty-print lists of simple values - wrap") {
-        expect ("List(\n    1,\n    2,\n    3)") (pretty (list (l1), 3))
+        expectResult ("List(\n    1,\n    2,\n    3)") (pretty (list (l1), 3))
     }
     
     case class Val (i : Int)
     val l2 = List (Val (1), Val (2), Val (3))
 
     test ("pretty-print lists of structured values - non-wrap") {
-        expect ("List(Val(1), Val(2), Val(3))") (pretty (list (l2)))
+        expectResult ("List(Val(1), Val(2), Val(3))") (pretty (list (l2)))
     }
 
     test ("pretty-print lists of structured values - wrap") {
-        expect ("List(\n    Val(1),\n    Val(2),\n    Val(3))") (pretty (list (l2), 3))
+        expectResult ("List(\n    Val(1),\n    Val(2),\n    Val(3))") (pretty (list (l2), 3))
     }
 
     class PVal (i : Int) extends PrettyPrintable {
@@ -305,35 +305,35 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     val l3 = List (new PVal (1), new PVal (2), new PVal (3))
     
     test ("pretty-print lists of structured prettyy-printable values - non-wrap") {
-        expect ("List(1!, 2!, 3!)") (pretty (plist (l3)))
+        expectResult ("List(1!, 2!, 3!)") (pretty (plist (l3)))
     }
     
     test ("pretty-print lists of structured prettyy-printable values - wrap") {
-        expect ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
+        expectResult ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
     }
 
     test ("pretty_-print empty vector") {
-        expect ("Vector ()") (pretty_any (Vector ()))
+        expectResult ("Vector ()") (pretty_any (Vector ()))
     }
 
     test ("pretty_any-print singleton vector") {
-        expect ("Vector (1)") (pretty_any (Vector (1)))
+        expectResult ("Vector (1)") (pretty_any (Vector (1)))
     }
 
     test ("pretty_any-print multiple-element vector") {
-        expect ("Vector (1, 2, 3)") (pretty_any (Vector (1, 2, 3)))
+        expectResult ("Vector (1, 2, 3)") (pretty_any (Vector (1, 2, 3)))
     }        
 
     test ("pretty_any-print empty map") {
-        expect ("Map ()") (pretty_any (Map ()))
+        expectResult ("Map ()") (pretty_any (Map ()))
     }
 
     test ("pretty_any-print singleton map") {
-        expect ("Map (1 -> \"One\")") (pretty_any (Map (1 -> "One")))
+        expectResult ("Map (1 -> \"One\")") (pretty_any (Map (1 -> "One")))
     }
 
     test ("pretty_any-print multiple-element map") {
-        expect ("Map (1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")") (
+        expectResult ("Map (1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")") (
             pretty_any (Map (1 -> "One", 2 -> "Two", 3 -> "Three"))
         )
     }        
@@ -380,364 +380,364 @@ class ParenPrettyPrinterTests extends Tests with PrettyPrinter with ParenPrettyP
 
     test ("pretty-printing a lower priority postop on the left of an left assoc infix doesn't use parens") {
         val e = InOp (PostOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
-        expect ("1++ * 2") (pretty (toParenDoc (e)))
+        expectResult ("1++ * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority postop on the left of an infix doesn't use parens") {
         val e = InOp (PostOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
-        expect ("1++ * 2") (pretty (toParenDoc (e)))
+        expectResult ("1++ * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower priority preop on the left of an infix uses parens") {
         val e = InOp (PreOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
-        expect ("(--1) * 2") (pretty (toParenDoc (e)))
+        expectResult ("(--1) * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority preop on the left of an infix doesn't use parens") {
         val e = InOp (PreOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
-        expect ("--1 * 2") (pretty (toParenDoc (e)))
+        expectResult ("--1 * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower priority postop on the left of an infix uses parens") {
         val e = InOp (Leaf (2), PostOp (Leaf (1), 4), 3, LeftAssoc)
-        expect ("2 * (1++)") (pretty (toParenDoc (e)))
+        expectResult ("2 * (1++)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority postop on the right of an infix doesn't use parens") {
         val e = InOp (Leaf (2), PostOp (Leaf (1), 2), 3, LeftAssoc)
-        expect ("2 * 1++") (pretty (toParenDoc (e)))
+        expectResult ("2 * 1++") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower priority preop on the right of an infix doesn't use parens") {
         val e = InOp (Leaf (2), PreOp (Leaf (1), 4), 3, LeftAssoc)
-        expect ("2 * --1") (pretty (toParenDoc (e)))
+        expectResult ("2 * --1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority preop on the right of an infix doesn't use parens") {
         val e = InOp (Leaf (2), PreOp (Leaf (1), 2), 3, LeftAssoc)
-        expect ("2 * --1") (pretty (toParenDoc (e)))
+        expectResult ("2 * --1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower priority postop on the left of an right assoc infix doesn't use parens") {
         val e = InOp (PostOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
-        expect ("1++ * 2") (pretty (toParenDoc (e)))
+        expectResult ("1++ * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority postop on the left of an right assoc infix doesn't use parens") {
         val e = InOp (PostOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
-        expect ("1++ * 2") (pretty (toParenDoc (e)))
+        expectResult ("1++ * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower priority preop on the left of an right assoc infix uses parens") {
         val e = InOp (PreOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
-        expect ("(--1) * 2") (pretty (toParenDoc (e)))
+        expectResult ("(--1) * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority preop on the left of an right assoc infix doesn't use parens") {
         val e = InOp (PreOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
-        expect ("--1 * 2") (pretty (toParenDoc (e)))
+        expectResult ("--1 * 2") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower priority postop on the right of an right assoc infix uses parens") {
         val e = InOp (Leaf (2), PostOp (Leaf (1), 4), 3, RightAssoc)
-        expect ("2 * (1++)") (pretty (toParenDoc (e)))
+        expectResult ("2 * (1++)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority postop on the right of an right assoc infix doesn't use parens") {
         val e = InOp (Leaf (2), PostOp (Leaf (1), 2), 3, RightAssoc)
-        expect ("2 * 1++") (pretty (toParenDoc (e)))
+        expectResult ("2 * 1++") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower priority preop on the right of an right assoc infix doesn't use parens") {
         val e = InOp (Leaf (2), PreOp (Leaf (1), 4), 3, RightAssoc)
-        expect ("2 * --1") (pretty (toParenDoc (e)))
+        expectResult ("2 * --1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher priority preop on the right of an right assoc infix doesn't use parens") {
         val e = InOp (Leaf (2), PreOp (Leaf (1), 2), 3, RightAssoc)
-        expect ("2 * --1") (pretty (toParenDoc (e)))
+        expectResult ("2 * --1") (pretty (toParenDoc (e)))
     }
 
     // Right associative infix operator on right of other infix operators
 
     test ("pretty-printing a lower-priority right assoc infix on the right of a right assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the right of a right assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, RightAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the right of a right assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, RightAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the right of a left assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, LeftAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the right of a left assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, LeftAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the right of a left assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, LeftAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the right of a non assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, NonAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the right of a non assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, NonAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the right of a non assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, NonAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     // Left associative infix operator on right of other infix operators
 
     test ("pretty-printing a lower-priority left assoc infix on the right of a right assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the right of a right assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, RightAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the right of a right assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, RightAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the right of a left assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, LeftAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the right of a left assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, LeftAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the right of a left assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, LeftAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the right of a non assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, NonAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the right of a non assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, NonAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the right of a non assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, NonAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     // Non associative infix operator on right of other infix operators
 
     test ("pretty-printing a lower-priority non assoc infix on the right of a right assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the right of a right assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, RightAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the right of a right assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, RightAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the right of a left assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, LeftAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the right of a left assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, LeftAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the right of a left assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, LeftAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the right of a non assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, NonAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the right of a non assoc infix uses parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, NonAssoc)
-        expect ("1 * (2 * 3)") (pretty (toParenDoc (e)))
+        expectResult ("1 * (2 * 3)") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the right of a non assoc infix doesn't use parens") {
         val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, NonAssoc)
-        expect ("1 * 2 * 3") (pretty (toParenDoc (e)))
+        expectResult ("1 * 2 * 3") (pretty (toParenDoc (e)))
     }
 
     // Right associative infix operator on left of other infix operators
 
     test ("pretty-printing a lower-priority right assoc infix on the left of a right assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the left of a right assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, RightAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the left of a right assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, RightAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the left of a left assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, LeftAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the left of a left assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, LeftAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the left of a left assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, LeftAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the left of a non assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, NonAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the left of a non assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, NonAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the left of a non assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, NonAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     // Left associative infix operator on left of other infix operators
 
     test ("pretty-printing a lower-priority left assoc infix on the left of a right assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the left of a right assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, RightAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the left of a right assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, RightAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the left of a left assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, LeftAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the left of a left assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, LeftAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the left of a left assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, LeftAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the left of a non assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, NonAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the left of a non assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, NonAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the left of a non assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, NonAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     // Non associative infix operator on left of other infix operators
 
     test ("pretty-printing a lower-priority non assoc infix on the left of a right assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the left of a right assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, RightAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the left of a right assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, RightAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the left of a left assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, LeftAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the left of a left assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, LeftAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the left of a left assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, LeftAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the left of a non assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, NonAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the left of a non assoc infix uses parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, NonAssoc)
-        expect ("(2 * 3) * 1") (pretty (toParenDoc (e)))
+        expectResult ("(2 * 3) * 1") (pretty (toParenDoc (e)))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the left of a non assoc infix doesn't use parens") {
         val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, NonAssoc)
-        expect ("2 * 3 * 1") (pretty (toParenDoc (e)))
+        expectResult ("2 * 3 * 1") (pretty (toParenDoc (e)))
     }
 
 }

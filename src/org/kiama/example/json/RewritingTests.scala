@@ -117,7 +117,7 @@ class RewritingTests extends FunSuite {
                                             JName ("salary") -> JNumber (2344.0)))))))))))))))))))
 
     test ("total salary is correct") {
-        expect (399747.0) (total (company))
+        expectResult (399747.0) (total (company))
     }
 
     test ("halvng salaries in company works") {
@@ -187,7 +187,7 @@ class RewritingTests extends FunSuite {
                                                 JName ("address") -> JString (
                                                   "Wifi City"),
                                                 JName ("salary") -> JNumber (1172.0)))))))))))))))))))        
-        expect (newcompany) (cut (company))
+        expectResult (newcompany) (cut (company))
     }
 
 }

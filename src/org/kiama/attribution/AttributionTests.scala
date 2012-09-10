@@ -65,9 +65,9 @@ class AttributionTests extends Tests {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        expect (10, "first value") (t->maximum)
-        expect (10, "second value") (t->maximum)
-        expect (2, "evaluation count") (count)
+        expectResult (10, "first value") (t->maximum)
+        expectResult (10, "second value") (t->maximum)
+        expectResult (2, "evaluation count") (count)
     }
 
     test ("cached attributes are re-evaluated after a reset") {
@@ -83,12 +83,12 @@ class AttributionTests extends Tests {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        expect (10, "first value") (t->maximum)
-        expect (10, "first value") (t->maximum)
-        expect (2, "evaluation count") (count)
+        expectResult (10, "first value") (t->maximum)
+        expectResult (10, "first value") (t->maximum)
+        expectResult (2, "evaluation count") (count)
         maximum.asInstanceOf[CachedAttribute[Tree,Int]].reset ()
-        expect (10, "second value") (t->maximum)
-        expect (4, "evaluation count") (count)
+        expectResult (10, "second value") (t->maximum)
+        expectResult (4, "evaluation count") (count)
     }
 
     test ("cached attributes are distinct for nodes that are equal") {
@@ -105,9 +105,9 @@ class AttributionTests extends Tests {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        expect (10, "first value") (t->maximum)
-        expect (10, "second value") (s->maximum)
-        expect (4, "evaluation count") (count)
+        expectResult (10, "first value") (t->maximum)
+        expectResult (10, "second value") (s->maximum)
+        expectResult (4, "evaluation count") (count)
     }
 
     test ("cached attributes can be reset") {
@@ -123,10 +123,10 @@ class AttributionTests extends Tests {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        expect (10, "first value") (t->maximum)
+        expectResult (10, "first value") (t->maximum)
         resetMemo
-        expect (10, "second value") (t->maximum)
-        expect (4, "evaluation count") (count)
+        expectResult (10, "second value") (t->maximum)
+        expectResult (4, "evaluation count") (count)
     }
 
     test ("uncached attributes are evaluated each time") {
@@ -142,9 +142,9 @@ class AttributionTests extends Tests {
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
-        expect (10, "first value") (t->maximum)
-        expect (10, "second value") (t->maximum)
-        expect (4, "evaluation count") (count)
+        expectResult (10, "first value") (t->maximum)
+        expectResult (10, "second value") (t->maximum)
+        expectResult (4, "evaluation count") (count)
     }
 
     test ("cached child attributes work") {
@@ -175,10 +175,10 @@ class AttributionTests extends Tests {
         val a = Pair (b, c)
         initTree (a)
         
-        expect (0, "cached childAttr Pair Pair") (cattr (b))
-        expect (2, "cached childAttr Pair top") (cattr (a))
-        expect (3, "cached childAttr Leaf Pair") (cattr (c))
-        expect (5, "cached childAttr Leaf top") (cattr (f))
+        expectResult (0, "cached childAttr Pair Pair") (cattr (b))
+        expectResult (2, "cached childAttr Pair top") (cattr (a))
+        expectResult (3, "cached childAttr Leaf Pair") (cattr (c))
+        expectResult (5, "cached childAttr Leaf top") (cattr (f))
     }
 
     test ("uncached child attributes work") {
@@ -209,10 +209,10 @@ class AttributionTests extends Tests {
         val a = Pair (b, c)
         initTree (a)
         
-        expect (0, "uncached childAttr Pair Pair") (cattr (b))
-        expect (2, "uncached childAttr Pair top") (cattr (a))
-        expect (3, "uncached childAttr Leaf Pair") (cattr (c))
-        expect (5, "uncached childAttr Leaf top") (cattr (f))
+        expectResult (0, "uncached childAttr Pair Pair") (cattr (b))
+        expectResult (2, "uncached childAttr Pair top") (cattr (a))
+        expectResult (3, "uncached childAttr Leaf Pair") (cattr (c))
+        expectResult (5, "uncached childAttr Leaf top") (cattr (f))
     }
 
     test ("cached parameterised attributes work") {
@@ -230,14 +230,14 @@ class AttributionTests extends Tests {
                 }
             }
         
-        expect (0, "cached paramAttr Pair hello") (
+        expectResult (0, "cached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
         )
-        expect (3, "cached paramAttr Pair goodbye") (
+        expectResult (3, "cached paramAttr Pair goodbye") (
             pattr ("goodbye") (Pair (Leaf (1), Leaf (2)))
         )
-        expect (1, "cached paramAttr Leaf hello") (pattr ("hello") (Leaf (1)))
-        expect (3, "cached paramAttr Leaf goodbye") (pattr ("goodbye") (Leaf (1)))
+        expectResult (1, "cached paramAttr Leaf hello") (pattr ("hello") (Leaf (1)))
+        expectResult (3, "cached paramAttr Leaf goodbye") (pattr ("goodbye") (Leaf (1)))
     }
     
     test ("cached parameterised attributes are re-evaluated after reset") {
@@ -259,12 +259,12 @@ class AttributionTests extends Tests {
    
         val t = Pair (Leaf (1), Leaf (2))
 
-        expect (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
-        expect (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
-        expect (1, "evaluation count") (count)
+        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expectResult (1, "evaluation count") (count)
         pattr.asInstanceOf[CachedParamAttribute[String,Tree,Int]].reset ()
-        expect (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
-        expect (2, "evaluation count") (count)
+        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expectResult (2, "evaluation count") (count)
     }
 
     test ("uncached parameterised attributes work") {
@@ -282,14 +282,14 @@ class AttributionTests extends Tests {
                 }
             }
         
-        expect (0, "uncached paramAttr Pair hello") (
+        expectResult (0, "uncached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
         )
-        expect (3, "uncached paramAttr Pair goodbye") (
+        expectResult (3, "uncached paramAttr Pair goodbye") (
             pattr ("goodbye") (Pair (Leaf (1), Leaf (2)))
         )
-        expect (1, "uncached paramAttr Leaf hello") (pattr ("hello") (Leaf (1)))
-        expect (3, "uncached paramAttr Leaf goodbye") (pattr ("goodbye") (Leaf (1)))
+        expectResult (1, "uncached paramAttr Leaf hello") (pattr ("hello") (Leaf (1)))
+        expectResult (3, "uncached paramAttr Leaf goodbye") (pattr ("goodbye") (Leaf (1)))
     }
 
     test ("circularities are detected for cached attributes") {
@@ -313,12 +313,12 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
                     t->direct
                 }
-        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
                      t->indirect
                  }
-        expect ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
     }
 
     test ("circularities are detected for uncached attributes") {
@@ -342,12 +342,12 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
                     t->direct
                 }
-        expect ("Cycle detected in attribute evaluation") (i1.getMessage)
+        expectResult ("Cycle detected in attribute evaluation") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
                      t->indirect
                  }
-        expect ("Cycle detected in attribute evaluation") (i2.getMessage)
+        expectResult ("Cycle detected in attribute evaluation") (i2.getMessage)
     }
 
     test ("parameterised attribute keys compare correctly") {
@@ -362,26 +362,26 @@ class AttributionTests extends Tests {
             val k6 = new ParamAttributeKey ("hello", null)
             val k7 = new ParamAttributeKey ("hello", null)
             val k8 = new ParamAttributeKey ("goodbye", null)
-            expect (false) (n equals k1)
-            expect (false) (k1 equals n)
-            expect (true) (k1 equals k2)
-            expect (true) (k2 equals k1)
-            expect (false) (k1 equals k3)
-            expect (false) (k3 equals k1)
-            expect (false) (k1 equals k4)
-            expect (false) (k4 equals k1)
-            expect (false) (k1 equals k5)
-            expect (false) (k5 equals k1)
-            expect (false) (k1 equals k6)
-            expect (false) (k6 equals k1)
-            expect (false) (k1 equals k7)
-            expect (false) (k7 equals k1)
-            expect (false) (k1 equals k8)
-            expect (false) (k8 equals k1)
-            expect (true) (k6 equals k7)
-            expect (true) (k7 equals k6)
-            expect (false) (k6 equals k8)
-            expect (false) (k8 equals k6)
+            expectResult (false) (n equals k1)
+            expectResult (false) (k1 equals n)
+            expectResult (true) (k1 equals k2)
+            expectResult (true) (k2 equals k1)
+            expectResult (false) (k1 equals k3)
+            expectResult (false) (k3 equals k1)
+            expectResult (false) (k1 equals k4)
+            expectResult (false) (k4 equals k1)
+            expectResult (false) (k1 equals k5)
+            expectResult (false) (k5 equals k1)
+            expectResult (false) (k1 equals k6)
+            expectResult (false) (k6 equals k1)
+            expectResult (false) (k1 equals k7)
+            expectResult (false) (k7 equals k1)
+            expectResult (false) (k1 equals k8)
+            expectResult (false) (k8 equals k1)
+            expectResult (true) (k6 equals k7)
+            expectResult (true) (k7 equals k6)
+            expectResult (false) (k6 equals k8)
+            expectResult (false) (k8 equals k6)
         }
 
         Base
@@ -542,8 +542,8 @@ class AttributionTests extends Tests {
             case n if n.isRoot => 42
         }
         val rootchain = chain (rootupd)
-        expect (42) (t->(rootchain.in))
-        expect (42) (t->(rootchain.out))
+        expectResult (42) (t->(rootchain.in))
+        expectResult (42) (t->(rootchain.out))
     }
 
     test ("a chain with no updates throws appropriate exceptions") {
@@ -557,11 +557,11 @@ class AttributionTests extends Tests {
         val i1 = intercept[RuntimeException] {
                     t->(idchain.in)
                 }
-        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+        expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
         val i2 = intercept[RuntimeException] {
                     t->(idchain.out)
                 }
-        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+        expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         // A chain with refusing-all-in update function. This exerices a
         // different path in the 'in' attribute to the previous checks.
@@ -574,11 +574,11 @@ class AttributionTests extends Tests {
         val i3 = intercept[RuntimeException] {
                     t->(refchain.in)
                 }
-        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
+        expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
         val i4 = intercept[RuntimeException] {
                     t->(refchain.out)
                 }
-        expect ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i4.getMessage)
+        expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i4.getMessage)
 
     }
 
@@ -607,7 +607,7 @@ class AttributionTests extends Tests {
         val ct = deepclone (t)
         
         // Must get the right answer (==)
-        expect (u) (ct)
+        expectResult (u) (ct)
         
         // Must not get the original term (eq)
         expectnotsame (t) (ct)

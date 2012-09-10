@@ -72,10 +72,10 @@ class UniplateTests extends Tests with Checkers with Generator {
         test ("collection of variable references: indirect style on sets and lists") {
             // Simple check of set and list versions of collect
             val variablesl = collectl { case Var (s) => s }
-            expect (Set ()) (variabless (numexp))
-            expect (List ()) (variablesl (numexp))
-            expect (Set ("var1", "var2")) (variabless (varexp))
-            expect (List ("var1", "var2", "var1")) (variablesl (varexp))
+            expectResult (Set ()) (variabless (numexp))
+            expectResult (List ()) (variablesl (numexp))
+            expectResult (Set ("var1", "var2")) (variabless (varexp))
+            expectResult (List ("var1", "var2", "var1")) (variablesl (varexp))
         }
     }
 
@@ -86,8 +86,8 @@ class UniplateTests extends Tests with Checkers with Generator {
             def genDivByZero (sz : Int) =
                 for { l <- genExp (sz/2) } yield Div (l, Num (0))
             val divsbyzero = count { case Div (_, Num (0)) => 1 }
-            expect (0) (divsbyzero (numexp))
-            expect (0) (divsbyzero (varexp))
+            expectResult (0) (divsbyzero (numexp))
+            expectResult (0) (divsbyzero (varexp))
             check ((e : Exp) => divsbyzero (e) == e.divsbyzero)
         }
         TestDivsByZero
@@ -99,18 +99,18 @@ class UniplateTests extends Tests with Checkers with Generator {
                 case Sub (x, y)           => simplify (Add (x, Neg (y)))
                 case Add (x, y) if x == y => Mul (Num (2), x)
             }))
-        expect (numexp) (simplify (numexp))
-        expect (varexp) (simplify (varexp))
+        expectResult (numexp) (simplify (numexp))
+        expectResult (varexp) (simplify (varexp))
 
         val e = Sub (Add (Var ("a"), Var ("a")),
                      Add (Sub (Var ("b"), Num (1)), Sub (Var ("b"), Num (1))))
         val simpe = Add (Mul (Num (2), Var ("a")),
                          Neg (Mul (Num (2), Add (Var ("b"), Neg (Num (1))))))
-        expect (simpe) (simplify (e))
+        expectResult (simpe) (simplify (e))
 
         val f = Sub (Neg (Num (1)), Num (1))
         val simpf = Mul (Num (2), Neg (Num (1)))
-        expect (simpf) (simplify (f))
+        expectResult (simpf) (simplify (f))
 
         check ((e : Exp) => simplify (e).value == e.value)
     }
@@ -123,8 +123,8 @@ class UniplateTests extends Tests with Checkers with Generator {
                 for { e <- super.genNeg (sz) } yield Neg (e)
             def doubleneg : Exp => Exp =
                 rewrite (everywherebu ( rule { case Neg (Neg (x)) => x }))
-            expect (numexp) (doubleneg (numexp))
-            expect (varexp) (doubleneg (varexp))
+            expectResult (numexp) (doubleneg (numexp))
+            expectResult (varexp) (doubleneg (varexp))
             check ((e : Exp) => doubleneg (e).value == e.value)
         }
         TestDoubleNegSimplification
@@ -137,10 +137,10 @@ class UniplateTests extends Tests with Checkers with Generator {
             }))
 
         val e1 = Div (Num (1), Num (2))
-        expect (0.5) (reciprocal (e1).value)
+        expectResult (0.5) (reciprocal (e1).value)
 
         val e2 = Mul (Num (2), Div (Num (3), Num (4)))
-        expect (1.5) (reciprocal (e2).value)
+        expectResult (1.5) (reciprocal (e2).value)
     }
 
     test ("unique variable renaming") {
@@ -150,17 +150,17 @@ class UniplateTests extends Tests with Checkers with Generator {
                 everywhere (rule { case Var (s) => count = count + 1; Var ("x" + count) })
             })
         }
-        expect (numexp) (uniquevars (numexp))
+        expectResult (numexp) (uniquevars (numexp))
         // Run this twice to make sure that count is not shared
-        expect (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3"))) (uniquevars (varexp))
-        expect (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3"))) (uniquevars (varexp))
+        expectResult (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3"))) (uniquevars (varexp))
+        expectResult (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3"))) (uniquevars (varexp))
         check ((e : Exp) => uniquevars (e).value == e.value)
     }
 
     test ("calculate expression depth") {
         val depth = para[Int] { case (t, cs) => 1 + (cs :+ 0).max }
-        expect (2) (depth (numexp))
-        expect (4) (depth (varexp))
+        expectResult (2) (depth (numexp))
+        expectResult (4) (depth (varexp))
         check ((e : Exp) => depth (e) == e.depth)
     }
 

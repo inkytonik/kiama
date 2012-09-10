@@ -43,130 +43,130 @@ class OneOhOneTests extends Tests {
     val onlymanager = Company (List (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
     
     test ("total of all salaries by rewriting - company") {
-        expect (399747.0) (total (company))
+        expectResult (399747.0) (total (company))
     }
     
     test ("total of all salaries by rewriting - empty") {
-        expect (0.0) (total (empty))
+        expectResult (0.0) (total (empty))
     }
     
     test ("total of all salaries by rewriting - onlymanager") {
-        expect (100.0) (total (onlymanager))
+        expectResult (100.0) (total (onlymanager))
     }
     
     test ("total of all cut salaries by rewriting - company") {
-        expect (199873.5) (total (cut (company)))
+        expectResult (199873.5) (total (cut (company)))
     }
     
     test ("total of all cut salaries by rewriting - empty") {
-        expect (0.0) (total (cut (empty)))
+        expectResult (0.0) (total (cut (empty)))
     }
     
     test ("total of all cut salaries by rewriting - onlymanager") {
-        expect (50.0) (total (cut (onlymanager)))
+        expectResult (50.0) (total (cut (onlymanager)))
     }
     
     test ("total of all salaries by attribution - company") {
-        expect (399747.0) (company->salary)
+        expectResult (399747.0) (company->salary)
     }
     
     test ("total of research salaries by attribution - company") {
-        expect (137035.0) (research->salary)
+        expectResult (137035.0) (research->salary)
     }
 
     test ("total of dev salaries by attribution - company") {
-        expect (262712.0) (dev->salary)
+        expectResult (262712.0) (dev->salary)
     }
 
     test ("total of dev1 salaries by attribution - company") {
-        expect (28145.0) (dev1->salary)
+        expectResult (28145.0) (dev1->salary)
     }
 
     test ("total of dev11 salaries by attribution - company") {
-        expect (4689.0) (dev11->salary)
+        expectResult (4689.0) (dev11->salary)
     }
 
     test ("total of all salaries by attribution - empty") {
-        expect (0.0) (empty->salary)
+        expectResult (0.0) (empty->salary)
     }
     
     test ("total of all salaries by attribution - onlymanager") {
-        expect (100.0) (onlymanager->salary)
+        expectResult (100.0) (onlymanager->salary)
     }
     
     test ("total of all cut salaries by attribution - company") {
-        expect (199873.5) ((cut (company)->salary))
+        expectResult (199873.5) ((cut (company)->salary))
     }
     
     test ("total of all cut salaries by attribution - empty") {
-        expect (0.0) ((cut (empty)->salary))
+        expectResult (0.0) ((cut (empty)->salary))
     }
     
     test ("total of all cut salaries by attribution - onlymanager") {
-        expect (50.0) ((cut (onlymanager)->salary))
+        expectResult (50.0) ((cut (onlymanager)->salary))
     }
 
     test ("average salary for company") {
-        expect (57106) ((company->averagesalary).toInt)
+        expectResult (57106) ((company->averagesalary).toInt)
     }
 
     test ("average salary for research department") {
-        expect (45678) ((research->averagesalary).toInt)
+        expectResult (45678) ((research->averagesalary).toInt)
     }
 
     test ("average salary for dev department") {
-        expect (65678) ((dev->averagesalary).toInt)
+        expectResult (65678) ((dev->averagesalary).toInt)
     }
 
     test ("average salary for dev1 department") {
-        expect (9381) ((dev1->averagesalary).toInt)
+        expectResult (9381) ((dev1->averagesalary).toInt)
     }
 
     test ("average salary for dev11 department") {
-        expect (2344) ((dev11->averagesalary).toInt)
+        expectResult (2344) ((dev11->averagesalary).toInt)
     }
     
     test ("craig is above average") {
-        expect (true) (craig->aboveaverage)
+        expectResult (true) (craig->aboveaverage)
     }
 
     test ("klaus is above average") {
-        expect (true) (klaus->aboveaverage)
+        expectResult (true) (klaus->aboveaverage)
     }
 
     test ("joe is below average") {
-        expect (false) (joe->aboveaverage)
+        expectResult (false) (joe->aboveaverage)
     }
     
     test ("department depth - company") {
-        expect (3) (depth (company))
+        expectResult (3) (depth (company))
     }
     
     test ("department depth - empty") {
-        expect (0) (depth (empty))
+        expectResult (0) (depth (empty))
     }
     
     test ("department depth - onlymanager") {
-        expect (1) (depth (onlymanager))
+        expectResult (1) (depth (onlymanager))
     }    
     
     test ("salaries ordered - company") {
-        expect (true) (precedence (company))
+        expectResult (true) (precedence (company))
     }
     
     test ("salaries ordered - empty") {
-        expect (true) (precedence (empty))
+        expectResult (true) (precedence (empty))
     }
     
     test ("salaries ordered - onlymanager") {
-        expect (true) (precedence (onlymanager))
+        expectResult (true) (precedence (onlymanager))
     }
 
     test ("salaries not ordered - employee") {
         val d = Company (List (Dept ("D1", Employee ("An", "Emp", 100),
                                List (PU (Employee ("Another", "Emp", 500))))))
         initTree (d)
-        expect (false) (precedence (d))
+        expectResult (false) (precedence (d))
     }
 
     test ("salaries not ordered - manager") {
@@ -175,31 +175,31 @@ class OneOhOneTests extends Tests {
         val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25), 
                                List (DU (d1)))))
         initTree (d2)
-        expect (false) (precedence (d2))
+        expectResult (false) (precedence (d2))
     }
 
     test ("company employee count is correct") {
-        expect (7) (company->numemp)
+        expectResult (7) (company->numemp)
     }
 
     test ("single employee count is correct") {
-        expect (1) (craig->numemp)
+        expectResult (1) (craig->numemp)
     }
 
     test ("research department employee count is correct") {
-        expect (3) (research->numemp)
+        expectResult (3) (research->numemp)
     }
 
     test ("dev department employee count is correct") {
-        expect (4) (dev->numemp)
+        expectResult (4) (dev->numemp)
     }
 
     test ("dev1 department employee count is correct") {
-        expect (3) (dev1->numemp)
+        expectResult (3) (dev1->numemp)
     }
 
     test ("dev11 department employee count is correct") {
-        expect (2) (dev11->numemp)
+        expectResult (2) (dev11->numemp)
     }        
 
 }
