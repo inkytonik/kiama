@@ -368,8 +368,9 @@ class Rewriter {
     /**
      * General product duplication function.  Returns a product that applies
      * the same constructor as the product `t`, but with the given children
-     * instead of `t`'s children.  Fails if a constructor cannot be found or
-     * if one of the children is not of the appropriate type.
+     * instead of `t`'s children.  Fails if a constructor cannot be found,
+     * there are the wrong number of new children, or if one of the new
+     * children is not of the appropriate type.
      */
     protected def dup[T <: Product] (t : T, children : Array[AnyRef]) : T = {
         val clazz = t.getClass
