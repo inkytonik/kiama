@@ -8,13 +8,15 @@
 
 name := "kiama"
 
-version := "1.4.0-B2-SNAPSHOT"
+version := "1.4.0-B2"
 
 organization := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion := "2.10.0-M7"
+scalaVersion := "2.10.0-RC1"
+
+scalaBinaryVersion := "2.10.0-RC1"
 
 scalacOptions ++= Seq ("-deprecation", "-feature", "-unchecked")
 
@@ -72,10 +74,10 @@ libraryDependencies ++=
     Seq (
         "jline" % "jline" % "2.7",
         "junit" % "junit" % "4.10" % "test",
-        "org.scalacheck" % "scalacheck_2.10.0-M7" % "1.10.0" % "test",
-        "org.scalatest" % "scalatest_2.10.0-M7" % "2.0.M4-2.10.0-M7-B1" % "test"
+        "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
+        "org.scalatest" %% "scalatest" % "2.0.M4-2.10.0-RC1-B1" % "test"
     )
- 
+
 resolvers ++= Seq (
     Resolver.sonatypeRepo ("releases"),
     Resolver.sonatypeRepo ("snapshots")
