@@ -16,7 +16,7 @@ organization := "com.googlecode.kiama"
 
 scalaVersion := "2.10.0-RC1"
 
-// scalaBinaryVersion := "2.10.0-RC1"
+scalaBinaryVersion := "2.10.0-RC1"
 
 scalacOptions ++= Seq ("-deprecation", "-feature", "-unchecked")
 
