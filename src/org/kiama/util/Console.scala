@@ -42,21 +42,28 @@ class Console {
 }
 
 /**
- * A console that provides line editing using JLine.
+ * A console that provides line editing using JLine. This code follows sbt's
+ * equivalent code to try to ensure that there are no incompatibilities.
  */
 object JLineConsole extends Console {
 
-    import jline.console.ConsoleReader
-    import jline.TerminalFactory.create
+    import jline.ConsoleReader
+    import jline.Terminal.getTerminal
+
+    /**
+     * Return a handle for the current terminal.
+     */
+    def terminal = jline.Terminal.getTerminal
 
     /**
      * The reader to use to access the console.
      */
-    lazy val reader = {
-        val console = new ConsoleReader ()
-        console.setExpandEvents (false)
-        console
-    }
+    lazy val reader =
+        terminal.synchronized {
+            val consoleReader = new ConsoleReader ()
+            consoleReader.setBellEnabled (false)
+            consoleReader
+        }
 
     /**
      * Read a line under controlled conditions.  Need to do this since
@@ -64,13 +71,13 @@ object JLineConsole extends Console {
      * with sbt if run in that context.
      */
     override def readLine (prompt : String) : String = {
-        val terminal = create ()
-        terminal.synchronized {
-            terminal.setEchoEnabled (false)
+        val t = terminal
+        t.synchronized {
+            t.disableEcho ()
             try {
                 reader.readLine (prompt)
             } finally {
-                terminal.setEchoEnabled (true)
+                t.enableEcho ()
             }
         }
     }
