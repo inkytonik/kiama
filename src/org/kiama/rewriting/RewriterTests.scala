@@ -35,7 +35,6 @@ class RewriterTests extends Tests with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._
     import org.kiama.rewriting.Rewriter.{fail => rwfail, test => rwtest, _}
-    import org.kiama.rewriting.RewriterTests._
     
     test ("basic arithmetic evaluation") {
         val eval =
@@ -1836,31 +1835,5 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectResult (List (1, 2, 3, 4, 5)) (l)
     }
 
-    test ("rewriting objects with implicit constructor parameters works") {
-
-        val t = A (List (C (1), C (2), C ("3")))
-        val r = rule {
-                    case C (v) =>  D (v)
-                }
-        val s = everywheretd (r)
-        expectResult (Some (A (List (D (1), D (2), D ("3"))))) (s (t))
-
-    }
-
 }
 
-/**
- * Declarations that are used by the rewriter tests. They need to be located here
- * so that the class constructors don't get an additional outer parameter, which
- * would happen if they were declared in the test class.
- */
-object RewriterTests {
-
-    import scala.reflect.ClassTag
-
-    case class A (bs : List[B])
-    abstract class B
-    case class C[T : ClassTag] (v : T) extends B
-    case class D[T : ClassTag] (v : T) extends B
-
-}
