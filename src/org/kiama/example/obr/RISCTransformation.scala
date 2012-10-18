@@ -45,9 +45,9 @@ object RISCTransformation {
     val code : ObrInt => RISCProg =
         attr {
             case p @ ObrInt (_, decls, stmts, _) =>
-                tempintloc = Local(Variable(IntType).locn)
+                tempintloc = Local (Variable (IntType ()).locn)
                 exnlab = genlabel ()
-                exnloc = Local(Variable(ExnType).locn)
+                exnloc = Local (Variable (ExnType ()).locn)
                 val dbody = decls.flatMap (ditems)
                 val sbody = stmts.flatMap (sitems)
                 val sepilogue = List (
@@ -184,7 +184,7 @@ object RISCTransformation {
                 val origprevloc = prevloc
                 // allocate a temporary location to store the calculated 
                 // maximum index value for this for loop.
-                val maxloc = Local (Variable (IntType).locn)
+                val maxloc = Local (Variable (IntType ()).locn)
                 // generate RISCTree code
                 val result = 
                     List (StW (eloc, min->datum),

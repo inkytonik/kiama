@@ -52,17 +52,17 @@ trait IntComparisonOps extends SECDBase with IntegerOps with BooleanOps {
 	override def evalInst : Code ==> Unit = super.evalInst orElse {
         case LessThan() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
-                stack := (if (m < n) TrueValue else FalseValue) :: tail
+                stack := (if (m < n) TrueValue() else FalseValue()) :: tail
                 control := next
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case LessThanOrEqual() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
-                stack := (if (m <= n) TrueValue else FalseValue) :: tail
+                stack := (if (m <= n) TrueValue() else FalseValue()) :: tail
                 control := next
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
 	}
 }

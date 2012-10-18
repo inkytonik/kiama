@@ -255,7 +255,7 @@ trait CodeGenerator {
                             ),
                         if (m.isLast)
                             CodeTree(
-                                PushMachineException(MatchError),
+                                PushMachineException(MatchError()),
                                 RaiseException()
                             )
                         else
@@ -270,10 +270,10 @@ trait CodeGenerator {
                     Dup(1),
                     GetType(),
                     Dup(1),
-                    PushType(RecordTypeValue),
+                    PushType(RecordTypeValue()),
                     Equals(),
                     Swap(1,1),
-                    PushType(EmptyTypeValue),
+                    PushType(EmptyTypeValue()),
                     Equals(),
                     Test(
                         CodeTree(

@@ -39,13 +39,13 @@ trait SymbolTable extends L0.SymbolTable {
      * The built-in Read procedure.
      */
     lazy val readProc =
-        BuiltinProc ("Read", List (ParamInfo (VarMode, "ReadParam", integerType)))
+        BuiltinProc ("Read", List (ParamInfo (VarMode (), "ReadParam", integerType)))
 
     /**
      * The built-in Write procedure.
      */
     lazy val writeProc =
-        BuiltinProc ("Write", List (ParamInfo (ValMode, "WriteParam", integerType)))
+        BuiltinProc ("Write", List (ParamInfo (ValMode (), "WriteParam", integerType)))
 
     /**
      * The built-in WriteLn procedure.

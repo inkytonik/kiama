@@ -15,7 +15,7 @@ trait PrettyPrinter extends L2.source.PrettyPrinter {
                 blockToDoc (b, true) <+> i2 <> semi
 
             case FPSection (m, ids, t) =>
-                val mode : Doc = if (m == VarMode) "VAR " else empty
+                val mode : Doc = if (m == VarMode ()) "VAR " else empty
                 mode <> idlistToDoc (ids) <+> colon <+> toDoc (t)
 
             case Call (IdnUse (i), ps) =>

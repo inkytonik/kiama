@@ -199,7 +199,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
             case RD (a)  => R (a) := console.readInt ("Enter integer: ")
             case WRD (c) => emitter.emit (R (c))
             case WRH (c) => emitter.emit ((R (c) : Int).toHexString)
-            case WRL     => emitter.emitln
+            case WRL ()  => emitter.emitln
             case _       =>
         }
     }

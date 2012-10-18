@@ -90,7 +90,7 @@ object AST {
     /**
      * Primitive integer type.
      */
-    case object IntType extends Type
+    case class IntType () extends Type
 
     /**
      * Function type from an argument type arg to a result type res.
@@ -110,14 +110,14 @@ object AST {
     /**
      * Primitive integer addition.
      */
-    case object AddOp extends Op {
+    case class AddOp () extends Op {
         def eval (l : Int, r : Int) = l + r
     }
 
     /**
      * Primitive integer subtraction.
      */
-    case object SubOp extends Op {
+    case class SubOp () extends Op {
         def eval (l : Int, r : Int) = l - r
     }
 

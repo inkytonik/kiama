@@ -20,12 +20,12 @@ sealed abstract class Mode
 /**
  * Pass by variable (reference) mode.
  */
-case object VarMode extends Mode
+case class VarMode () extends Mode
 
 /**
  * Pass by value mode.
  */
-case object ValMode extends Mode
+case class ValMode () extends Mode
 
 /**
  * Formal parameter sections.

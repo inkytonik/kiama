@@ -48,7 +48,7 @@ object ConversionOps {
     /**
      * New machine error types
      */
-    case object ConversionError extends MachineExceptionValue {
+    case class ConversionError() extends MachineExceptionValue {
         def message : String = "type conversion error"
     }
 
@@ -73,16 +73,16 @@ trait ConversionOps extends SECDBase with StringOps
             case v :: tail =>
                 stack := StringValue(v.toString) :: tail
                 control := next
-            case _ => raiseException(StackUnderflow)
+            case _ => raiseException(StackUnderflow())
         }
         // Convert strings, booleans and types to integers
         case ToInt() :: next => (stack : Stack) match {
             case IntValue(n) :: tail =>
                 control := next
-            case TrueValue :: tail =>
+            case TrueValue() :: tail =>
                 stack := IntValue(1) :: tail
                 control := next
-            case FalseValue :: tail =>
+            case FalseValue() :: tail =>
                 stack := IntValue(0) :: tail
                 control := next
             case StringValue(s) :: tail =>
@@ -92,17 +92,17 @@ trait ConversionOps extends SECDBase with StringOps
                         control := next
                     } catch {
                         case ex : NumberFormatException =>
-                            raiseException(ConversionError)
+                            raiseException(ConversionError())
                     }
-                    case None => raiseException(ConversionError)
+                    case None => raiseException(ConversionError())
                 }
-            case _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         // Convert strings and integers to booleans
         case ToBoolean() :: next => (stack : Stack) match {
             case IntValue(n) :: tail =>
-                stack := (if (n == 0) FalseValue else TrueValue) :: tail
+                stack := (if (n == 0) FalseValue() else TrueValue()) :: tail
                 control := next
             case (_ : BooleanValue) :: tail =>
                 control := next
@@ -110,14 +110,14 @@ trait ConversionOps extends SECDBase with StringOps
                 processBoolean.findFirstMatchIn(s) match {
                     case Some(m) =>
                         stack := (if (m.group(1).toBoolean)
-                                    TrueValue
+                                    TrueValue()
                                   else
-                                    FalseValue) :: tail
+                                    FalseValue()) :: tail
                         control := next
-                    case None => raiseException(ConversionError)
+                    case None => raiseException(ConversionError())
                 }
-            case _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
 	}
 }

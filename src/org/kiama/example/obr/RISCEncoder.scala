@@ -230,7 +230,7 @@ object RISCEncoder {
             case Write (d) =>
                 encode (d)
                 emit (WRD (d->reg))
-                emit (WRL)
+                emit (WRL ())
         }
     }
 

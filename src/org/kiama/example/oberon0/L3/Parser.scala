@@ -25,8 +25,8 @@ trait Parser extends L2.Parser {
         optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection
 
     lazy val optvar =
-        "VAR" ^^^ VarMode |
-        result (ValMode)
+        "VAR" ^^^ VarMode () |
+        result (ValMode ())
 
     override def statementDef =
         procedureCall |

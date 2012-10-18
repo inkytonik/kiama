@@ -351,7 +351,7 @@ object RISCISA {
     /**
      * Write a newline to standard output.
      */
-    case object WRL extends Instr {
+    case class WRL () extends Instr {
         override def toString : String = "wrl"
     }
 

@@ -41,7 +41,7 @@ object HeapOps {
     /**
      * New type values for this extension
      */
-    case object RefTypeValue extends TypeValue
+    case class RefTypeValue() extends TypeValue
 
 }
 
@@ -66,7 +66,7 @@ trait HeapOps extends SECDBase {
     	lazy val content = new State[Value]("heap chunk id @" + hashCode.toHexString) {
     	    def toDoc = value.toDoc
     	}
-    	def getType : TypeValue = RefTypeValue
+    	def getType : TypeValue = RefTypeValue()
     }
 
     /**
@@ -77,23 +77,23 @@ trait HeapOps extends SECDBase {
 		// Instructions for manipulating heap allocated mutable values.
         case Alloc() :: next => 
             val r = RefValue()
-            r.content := EmptyValue
+            r.content := EmptyValue()
             stack := r :: stack
             control := next
         case Get() :: next => (stack : Stack) match {
             case (r @ RefValue()) :: tail =>
                 stack := r.content :: tail
                 control := next 
-            case _ :: _ => raiseException(TypeError) 
-            case _ => raiseException(StackUnderflow) 
+            case _ :: _ => raiseException(TypeError()) 
+            case _ => raiseException(StackUnderflow()) 
         }
         case Put() :: next => (stack : Stack) match {
             case v :: (r @ RefValue()) :: tail =>
                 r.content := v
                 stack := tail
                 control := next 
-            case _ :: _ :: _ => raiseException(TypeError) 
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError()) 
+            case _ => raiseException(StackUnderflow())
         }
 	}
 }

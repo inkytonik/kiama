@@ -237,12 +237,12 @@ class LambdaTests extends Tests with Checkers with Parser {
 
     test ("lambda expressions evaluate to themselves: constant body") {
         assertEvalAll ("""\x:Int.4""",
-                       Lam ("x", IntType, Num (4)))
+                       Lam ("x", IntType (), Num (4)))
     }
 
     test ("lambda expressions evaluate to themselves: non-constant body") {
         assertEvalAll ("""\x : Int . x - 1""",
-                       Lam ("x", IntType, Opn (Var ("x"), SubOp, Num (1))))
+                       Lam ("x", IntType (), Opn (Var ("x"), SubOp (), Num (1))))
     }
 
     test ("parameters are correctly substituted: integer param") {
@@ -251,7 +251,7 @@ class LambdaTests extends Tests with Checkers with Parser {
 
     test ("parameters are correctly substituted: function param") {
         assertEvalAll ("""(\x : Int -> Int . x) (\y : Int . y)""",
-                       Lam ("y", IntType, Var ("y")))
+                       Lam ("y", IntType (), Var ("y")))
     }
 
     test ("a beta reduction and an operator evaluation works") {
@@ -291,8 +291,8 @@ class LambdaTests extends Tests with Checkers with Parser {
     }
 
     test ("redexes inside lambdas are evaluated or ignored as appropriate") {
-        assertEvalAll ("""\x:Int.4+3""", Lam ("x", IntType, Num (7)),
-                       Lam ("x", IntType, Opn (Num (4), AddOp, Num (3))))
+        assertEvalAll ("""\x:Int.4+3""", Lam ("x", IntType (), Num (7)),
+                       Lam ("x", IntType (), Opn (Num (4), AddOp (), Num (3))))
     }
 
     /**
@@ -333,16 +333,16 @@ class LambdaTests extends Tests with Checkers with Parser {
     
     test ("pretty-printed nested lets") {
         assertPrettyE (
-            Let ("a", IntType,
-                 Let ("b", IntType, Num (1),
-                      Let ("c", IntType, Num (1),
-                           Let ("d", IntType, Num (1),
-                                Let ("e", IntType, Num (1),
-                                     Let ("f", IntType, Num (1),
+            Let ("a", IntType (),
+                 Let ("b", IntType (), Num (1),
+                      Let ("c", IntType (), Num (1),
+                           Let ("d", IntType (), Num (1),
+                                Let ("e", IntType (), Num (1),
+                                     Let ("f", IntType (), Num (1),
                                           Num (1)))))),
-                 Let ("g", IntType, Num (1),
-                      Let ("h", IntType, Num (1),
-                            Let ("i", IntType, Num (1),
+                 Let ("g", IntType (), Num (1),
+                      Let ("h", IntType (), Num (1),
+                            Let ("i", IntType (), Num (1),
                                  Num (1))))),
 """(let a : Int =
     (let b : Int =

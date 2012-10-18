@@ -55,9 +55,9 @@ trait StackOps extends SECDBase {
 		// Pop pop a block of values from the top of the stack and discard.
         case Pop(n) :: next =>
             if (n < 1)
-                raiseException(MalformedInstruction)
+                raiseException(MalformedInstruction())
             else if (stack.length < n)
-                raiseException(StackUnderflow)
+                raiseException(StackUnderflow())
             else {
                 stack := stack.drop(n)
                 control := next
@@ -65,9 +65,9 @@ trait StackOps extends SECDBase {
         // Duplicate a block of values on the top of the stack.
         case Dup(n) :: next =>
             if (n < 1)
-                raiseException(MalformedInstruction)
+                raiseException(MalformedInstruction())
             else if (stack.length < n)
-                raiseException(StackUnderflow)
+                raiseException(StackUnderflow())
             else {
                 stack := stack.take(n) ++ stack
                 control := next
@@ -75,9 +75,9 @@ trait StackOps extends SECDBase {
         // swap two blocks of values at the top of the stack
         case Swap(n,m) :: next =>
             if (n < 1 || m < 1)
-                raiseException(MalformedInstruction)
+                raiseException(MalformedInstruction())
             else if (stack.length < n + m)
-                raiseException(StackUnderflow)
+                raiseException(StackUnderflow())
             else
                 stack.splitAt(n) match {
                     case (block1, rest) =>

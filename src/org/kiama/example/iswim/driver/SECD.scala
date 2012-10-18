@@ -52,29 +52,29 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
 
     def primTable : Map[Name,Value] = Map(
         // Type Values
-        "EmptyTypeValue" -> EmptyTypeValue
-    ,   "TypeTypeValue" -> TypeTypeValue
-    ,   "ClosureTypeValue" -> ClosureTypeValue
-    ,   "ContTypeValue" -> ContTypeValue
-    ,   "ExceptionTypeValue" -> ExceptionTypeValue
-    ,   "StringTypeValue" -> StringTypeValue
-    ,   "IntTypeValue" -> IntTypeValue
-    ,   "RecordTypeValue" -> RecordTypeValue
-    ,   "BooleanTypeValue" -> BooleanTypeValue
-    ,   "PrimTypeValue" -> PrimTypeValue
+        "EmptyTypeValue" -> EmptyTypeValue()
+    ,   "TypeTypeValue" -> TypeTypeValue()
+    ,   "ClosureTypeValue" -> ClosureTypeValue()
+    ,   "ContTypeValue" -> ContTypeValue()
+    ,   "ExceptionTypeValue" -> ExceptionTypeValue()
+    ,   "StringTypeValue" -> StringTypeValue()
+    ,   "IntTypeValue" -> IntTypeValue()
+    ,   "RecordTypeValue" -> RecordTypeValue()
+    ,   "BooleanTypeValue" -> BooleanTypeValue()
+    ,   "PrimTypeValue" -> PrimTypeValue()
         // Machine Exception Values
-    ,   "UnboundVariable" -> UnboundVariable
-    ,   "StackUnderflow" -> StackUnderflow
-    ,   "TypeError" -> TypeError
-    ,   "UnexpectedTermination" -> UnexpectedTermination
-    ,   "UnexpectedExit" -> UnexpectedExit
-    ,   "DumpEmpty" -> DumpEmpty
-    ,   "MalformedInstruction" -> MalformedInstruction
-    ,   "MatchError" -> MatchError
-    ,   "FieldOutOfBounds" -> FieldOutOfBounds
-    ,   "DivisionByZero" -> DivisionByZero
-    ,   "ConversionError" -> ConversionError
-    ,   "NonExistentPrimitive" -> NonExistentPrimitive
+    ,   "UnboundVariable" -> UnboundVariable()
+    ,   "StackUnderflow" -> StackUnderflow()
+    ,   "TypeError" -> TypeError()
+    ,   "UnexpectedTermination" -> UnexpectedTermination()
+    ,   "UnexpectedExit" -> UnexpectedExit()
+    ,   "DumpEmpty" -> DumpEmpty()
+    ,   "MalformedInstruction" -> MalformedInstruction()
+    ,   "MatchError" -> MatchError()
+    ,   "FieldOutOfBounds" -> FieldOutOfBounds()
+    ,   "DivisionByZero" -> DivisionByZero()
+    ,   "ConversionError" -> ConversionError()
+    ,   "NonExistentPrimitive" -> NonExistentPrimitive()
         // Builtin Functions
     ,   "write" -> PrimValue(List(Write(),PushEmpty()))
                                                     // write a value to the terminal
@@ -82,9 +82,9 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     ,   "type" -> PrimValue(List(GetType()))        // get the type of a value
     ,   "fields" -> PrimValue(List(                 // get the number of fields in a value
             Dup(1), GetType(), Dup(1),
-            PushType(RecordTypeValue),
+            PushType(RecordTypeValue()),
             Equals(), Swap(1,1),
-            PushType(EmptyTypeValue),
+            PushType(EmptyTypeValue()),
             Equals(),
             Test(
                 CodeSegment(Pop(2),PushInt(0)),
@@ -129,8 +129,8 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     override def init () = {
         stack := Nil
         envir := Map()
-        dump := EmptyCont
-        handler := EmptyCont
+        dump := EmptyCont()
+        handler := EmptyCont()
         control := program.code
     }
 }

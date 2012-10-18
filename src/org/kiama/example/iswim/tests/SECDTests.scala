@@ -81,7 +81,7 @@ class SECDTests extends Tests {
         override def init = {
             stack := Nil
             envir := Map()
-            dump := EmptyCont
+            dump := EmptyCont()
             control := program.code
         }
 
@@ -95,10 +95,10 @@ class SECDTests extends Tests {
     test("just run the machine with no code") {
         val machine = new SECD(List()) {
             def verify {
-                assert(stack.value === List(UnexpectedTermination))
+                assert(stack.value === List(UnexpectedTermination()))
                 assert(envir.value.isEmpty)
                 assert(control.value.isEmpty)
-                assert(dump.value === EmptyCont)
+                assert(dump.value === EmptyCont())
             }
         }
         machine.run
@@ -115,7 +115,7 @@ class SECDTests extends Tests {
                     List(IntValue(3),IntValue(7),IntValue(3),IntValue(5)))))
                 assert(envir.value.isEmpty)
                 assert(control.value.isEmpty)
-                assert(dump.value === EmptyCont)
+                assert(dump.value === EmptyCont())
             }
         }
         machine.run
@@ -133,7 +133,7 @@ class SECDTests extends Tests {
                     List(IntValue(5),IntValue(11),IntValue(3),IntValue(7)))))
                 assert(envir.value.isEmpty)
                 assert(control.value.isEmpty)
-                assert(dump.value === EmptyCont)
+                assert(dump.value === EmptyCont())
             }
         }
         machine.run
@@ -145,10 +145,10 @@ class SECDTests extends Tests {
             BindPrims(List("one")), Lookup("one"), Exit()
         )) {
             def verify {
-                assert(stack.value === List(NonExistentPrimitive))
+                assert(stack.value === List(NonExistentPrimitive()))
                 assert(envir.value.isEmpty)
                 assert(control.value.isEmpty)
-                assert(dump.value === EmptyCont)
+                assert(dump.value === EmptyCont())
             }
         }
         machine.run
@@ -158,10 +158,10 @@ class SECDTests extends Tests {
     test("the simplest possible correct program - simply return ()") {
         val machine = new SECD(List(PushEmpty())) {
             def verify {
-                assert(stack.value === List(EmptyValue))
+                assert(stack.value === List(EmptyValue()))
                 assert(envir.value.isEmpty)
                 assert(control.value.isEmpty)
-                assert(dump.value === EmptyCont)
+                assert(dump.value === EmptyCont())
             }
         }
         machine.run
@@ -220,7 +220,7 @@ class SECDTests extends Tests {
                 assert(stack.value === List(IntValue(210)))
                 assert(envir.value.isEmpty)
                 assert(control.value.isEmpty)
-                assert(dump.value === EmptyCont)
+                assert(dump.value === EmptyCont())
             }
         }
         machine.run
@@ -261,7 +261,7 @@ class SECDTests extends Tests {
                 assert(stack.value === List(IntValue(3628800)))
                 assert(envir.value.isEmpty)
                 assert(control.value.isEmpty)
-                assert(dump.value === EmptyCont)
+                assert(dump.value === EmptyCont())
             }
         }
         machine.run
@@ -274,7 +274,7 @@ class SECDTests extends Tests {
                     assert(stack.value === List(StringValue("\"hello\t\\there\"\n")))
                     assert(envir.value.isEmpty)
                     assert(control.value.isEmpty)
-                    assert(dump.value === EmptyCont)
+                    assert(dump.value === EmptyCont())
                 }
             }
         machine.run

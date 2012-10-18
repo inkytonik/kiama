@@ -18,10 +18,10 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
             case FPSection (_, _, t) if !t.isInstanceOf[NamedType] =>
                 message (t, "parameter type must be identifier")
             
-            case FPSection (ValMode, _, t) if !(isNotArray (typebasetype (t->deftype))) =>
+            case FPSection (ValMode (), _, t) if !(isNotArray (typebasetype (t->deftype))) =>
                 message (n, "array parameter must be VAR")
             
-            case FPSection (ValMode, _, t) if !(isNotRecord (typebasetype (t->deftype))) =>
+            case FPSection (ValMode (), _, t) if !(isNotRecord (typebasetype (t->deftype))) =>
                 message (n, "record parameter must be VAR")
             
             case ArrayTypeDef (s, t) =>

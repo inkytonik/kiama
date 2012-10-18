@@ -85,7 +85,7 @@ object Analysis {
         attr {
 
             // A number is always of integer type
-            case Num (_)          => IntType
+            case Num (_)          => IntType ()
 
             // An identifier is looked up in the environement of the current
             // expression.  If we find it, then we use the type that we find.
@@ -94,7 +94,7 @@ object Analysis {
                                          case Some ((_, t)) => t
                                          case None =>
                                             message (e, "'" + x + "' unknown")
-                                            IntType
+                                            IntType ()
                                      }
 
             // A lambda expression is a function from the type of its argument
@@ -112,21 +112,21 @@ object Analysis {
                                          case FunType (t1, t2) =>
                                              message (e2, "expected " + pretty (t1) +
                                                           ", found " + pretty (e2->tipe))
-                                             IntType
+                                             IntType ()
                                          case _ =>
                                              message (e1, "application of non-function")
-                                             IntType
+                                             IntType ()
                                      }
 
             // An operation must be applied to two integers and returns an
             // integer.
-            case Opn (e1, op, e2) => if (e1->tipe != IntType)
+            case Opn (e1, op, e2) => if (e1->tipe != IntType ())
                                          message (e1, "expected Int, found " +
                                                       pretty (e1->tipe))
-                                     if (e2->tipe != IntType)
+                                     if (e2->tipe != IntType ())
                                          message (e2, "expected Int, found " +
                                                       pretty (e2->tipe))
-                                     IntType
+                                     IntType ()
 
             // A let returns the type of the body expression
             case Let (i, t, e1, e2) => e2->tipe
@@ -165,7 +165,7 @@ object Analysis {
         attr {
 
             // A number is always of integer type
-            case Num (_)          => IntType
+            case Num (_)          => IntType ()
 
             // An identifier is looked up in the environement of the current
             // expression.  If we find it, then we use the type that we find.
@@ -174,7 +174,7 @@ object Analysis {
                                     case Some (Lam (_, t, _)) => t
                                     case None =>
                                         message (e, "'" + x + "' unknown")
-                                        IntType
+                                        IntType ()
                                 }
 
             // A lambda expression is a function from the type of its argument
@@ -192,21 +192,21 @@ object Analysis {
                                          case FunType (t1, t2) =>
                                              message (e2, "expected " + pretty (t1) +
                                                         ", found " + pretty (e2->tipe2))
-                                             IntType
+                                             IntType ()
                                          case _ =>
                                              message (e1, "application of non-function")
-                                             IntType
+                                             IntType ()
                                      }
 
             // An operation must be applied to two integers and returns an
             // integer.
-            case Opn (e1, op, e2) => if (e1->tipe2 != IntType)
+            case Opn (e1, op, e2) => if (e1->tipe2 != IntType ())
                                          message (e1, "expected Int, found " +
                                                     pretty (e1->tipe2))
-                                     if (e2->tipe2 != IntType)
+                                     if (e2->tipe2 != IntType ())
                                          message (e2, "expected Int, found " +
                                                     pretty (e2->tipe2))
-                                     IntType
+                                     IntType ()
 
             // A let returns the type of the body expression
             case Let (i, t, e1, e2) => e2->tipe

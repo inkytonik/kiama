@@ -43,12 +43,12 @@ object IntegerOps {
     /**
      * New type values for this extension
      */
-    case object IntTypeValue extends TypeValue
+    case class IntTypeValue() extends TypeValue
 
     /**
      * New machine error types
      */
-    case object DivisionByZero extends MachineExceptionValue {
+    case class DivisionByZero() extends MachineExceptionValue {
          def message : String = "division by zero"
      }
 }
@@ -68,7 +68,7 @@ trait IntegerOps extends SECDBase {
      */
     case class IntValue(n : Int) extends Value {
         override def toString : String = n.toString
-        def getType : TypeValue = IntTypeValue
+        def getType : TypeValue = IntTypeValue()
     }
 
     /**
@@ -84,44 +84,44 @@ trait IntegerOps extends SECDBase {
             case IntValue(n) :: IntValue(m) :: tail =>
                 stack := IntValue(m + n) :: tail
                 control := next
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case Sub() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
                 stack := IntValue(m - n) :: tail
                 control := next
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case Mult() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
                 stack := IntValue(m * n) :: tail
                 control := next
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case Div() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
                 if (n == 0)
-                    raiseException(DivisionByZero)
+                    raiseException(DivisionByZero())
                 else {
                     stack := IntValue(m / n) :: tail
                     control := next
                 }
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case Rem() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
                 if (n == 0)
-                    raiseException(DivisionByZero)
+                    raiseException(DivisionByZero())
                 else {
                     stack := IntValue(m % n) :: tail
                     control := next
                 }
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
 	}
 }

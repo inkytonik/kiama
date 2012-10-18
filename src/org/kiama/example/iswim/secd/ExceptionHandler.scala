@@ -88,7 +88,7 @@ trait ExceptionHandler extends SECDBase {
          override def hashCode () = super.hashCode
          override def equals(that : Any) = super.equals(that)
          override def toString () = "ExnContValue@" ++ hashCode.toHexString
-         def getType : TypeValue = ContTypeValue
+         def getType : TypeValue = ContTypeValue()
      }
 
 
@@ -115,11 +115,11 @@ trait ExceptionHandler extends SECDBase {
                     stack := v :: s
                     envir := e
                     control := c
-                case _ =>  raiseException(UnexpectedTermination)
+                case _ =>  raiseException(UnexpectedTermination())
             }
-            case EmptyCont =>
+            case EmptyCont() =>
                 if (stack.length != 1 || !envir.isEmpty ||
-                    !control.isEmpty) raiseException(UnexpectedTermination)
+                    !control.isEmpty) raiseException(UnexpectedTermination())
         }
         // Closure application
         case App() :: next => (stack : Stack) match {
@@ -131,13 +131,13 @@ trait ExceptionHandler extends SECDBase {
             case PrimValue(b) :: tail =>
                 stack := tail
                 control := b ++ next
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         // Enter and exit binding instructions
         case Enter(nms) :: next =>
             if (stack.length < nms.length)
-                raiseException(StackUnderflow)
+                raiseException(StackUnderflow())
             else {
                 dump := ExnContValue(stack.drop(nms.length),envir,Nil,dump,handler)
                 stack := Nil
@@ -152,9 +152,9 @@ trait ExceptionHandler extends SECDBase {
                     stack := v :: s
                     envir := e
                     control := next
-                case _ => raiseException(UnexpectedExit)
+                case _ => raiseException(UnexpectedExit())
             }
-            case _ => raiseException(UnexpectedExit)
+            case _ => raiseException(UnexpectedExit())
         }
         // Binding instruction for primitives
         case BindPrims(nms) :: next =>
@@ -164,7 +164,7 @@ trait ExceptionHandler extends SECDBase {
                 envir := (nms :\ (envir : Environment))
                             { case (nm,e) => e + (nm->primTable(nm)) }
                 control := next
-            } else raiseException(NonExistentPrimitive)
+            } else raiseException(NonExistentPrimitive())
         // Continuation handling
         case AppCC() :: next => (stack : Stack) match {
             case ClosureValue(p,b,e) :: tail =>
@@ -173,8 +173,8 @@ trait ExceptionHandler extends SECDBase {
                 stack := Nil
                 envir := e + (p -> cc)
                 control := b
-            case _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case Resume() :: next => (stack : Stack) match {
             case ExnContValue(s,e,c,d,h) :: v :: tail =>
@@ -183,8 +183,8 @@ trait ExceptionHandler extends SECDBase {
                 stack := v :: s
                 envir := e
                 control := c
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case ResumeFromDump() :: next => (dump : Dump) match {
             case ExnContValue(s,e,c,d,h) => (stack : Stack) match {
@@ -194,9 +194,9 @@ trait ExceptionHandler extends SECDBase {
                     stack := v :: s
                     envir := e
                     control := c
-                case _ => raiseException(StackUnderflow)
+                case _ => raiseException(StackUnderflow())
             }
-            case EmptyCont => raiseException(DumpEmpty)
+            case EmptyCont() => raiseException(DumpEmpty())
         }
         // Set the exception handler register to contain the continuation
         // on the top of the stack.
@@ -205,8 +205,8 @@ trait ExceptionHandler extends SECDBase {
                 handler := h
                 stack := tail
                 control := next
-            case _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
     } : Code ==> Unit) orElse super.evalInst
 

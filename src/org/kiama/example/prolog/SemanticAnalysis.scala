@@ -43,7 +43,7 @@ object SemanticAnalysis {
                         val arity = argtypes.length
                         if (ts.length != arity)
                             message (n, s + " should have " + arity + " arguments but has " + ts.length)
-                    case UnknownEntity =>
+                    case UnknownEntity () =>
                         message (n, s + " is not declared")
                 }
                 checktype (n)
@@ -54,7 +54,7 @@ object SemanticAnalysis {
                         val arity = argtypes.length
                         if (arity != 0)
                             message (n, s + " should have " + arity + " arguments but has 0")
-                    case UnknownEntity =>
+                    case UnknownEntity () =>
                         message (n, s + " is not declared")
                 }
                 checktype (n)
@@ -76,7 +76,7 @@ object SemanticAnalysis {
      * expected type.  The unknown type is compatible with any other type.
      */
     def checktype (n : Term) =
-        if ((n->tipe != UnknownType) && (n->exptipe != UnknownType) && 
+        if ((n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) && 
                 (n->tipe != n->exptipe))
             message (n, "argument " + (n->tipe) + " found, " + (n->exptipe) + " expected")
 
@@ -86,7 +86,7 @@ object SemanticAnalysis {
      */
     val defenv : Environment =
         rootenv ("nil" -> Predicate (List ()),
-                 "cons" -> Predicate (List (UnknownType, ListType)))
+                 "cons" -> Predicate (List (UnknownType (), ListType ())))
 
     /**
      * The environment containing all bindings visible at a particular
@@ -121,11 +121,11 @@ object SemanticAnalysis {
         attr {
             case n @ Pred (s, ts) =>
                 val argtypes = ts map tipe
-                lookup (n->envin, s, UnknownEntity, true) match {
+                lookup (n->envin, s, UnknownEntity (), true) match {
                     case Predicate (oldargtypes) =>
                         val newargtypes = oldargtypes.toArray
                         for (i <- 0 until newargtypes.length)
-                            if ((newargtypes (i) == UnknownType) &&
+                            if ((newargtypes (i) == UnknownType ()) &&
                                     (i < argtypes.length))
                                 newargtypes (i) = argtypes (i)
                         define (n->envin, s, Predicate (newargtypes.toList))
@@ -149,9 +149,9 @@ object SemanticAnalysis {
     val entity : SourceNode => Entity =
         attr {
             case n @ Pred (s, ts) =>
-                lookup (n->env, s, UnknownEntity, true)
+                lookup (n->env, s, UnknownEntity (), true)
             case n @ Atom (s) =>
-                lookup (n->env, s, UnknownEntity, true)
+                lookup (n->env, s, UnknownEntity (), true)
             case n =>
                 sys.error ("n->entity called on " + n)
         }
@@ -165,9 +165,9 @@ object SemanticAnalysis {
     val entityin : SourceNode => Entity =
         attr {
             case n @ Pred (s, ts) =>
-                lookup (n->envin, s, UnknownEntity, true)
+                lookup (n->envin, s, UnknownEntity (), true)
             case n @ Atom (s) =>
-                lookup (n->envin, s, UnknownEntity, true)
+                lookup (n->envin, s, UnknownEntity (), true)
             case n =>
                 sys.error ("n->entityin called on " + n)
         }
@@ -196,12 +196,12 @@ object SemanticAnalysis {
     val vars : SourceNode => Environment =
         attr {
             case n @ Var (s) =>
-                lookup (n->varsin, s, UnknownEntity, true) match {
-                    case Variable (UnknownType) =>
+                lookup (n->varsin, s, UnknownEntity (), true) match {
+                    case Variable (UnknownType ()) =>
                         define (n->varsin, s, Variable (n->exptipe))
                     case Variable (_) =>
                         n->varsin
-                    case UnknownEntity =>
+                    case UnknownEntity () =>
                         define (n->varsin, s, Variable (n->exptipe))
                 }
             case n if (n.hasChildren) =>
@@ -217,7 +217,7 @@ object SemanticAnalysis {
     val varentity : Var => Entity =
         attr {
             case n @ Var (s) =>
-                lookup (n->varsin, s, UnknownEntity, true)
+                lookup (n->varsin, s, UnknownEntity (), true)
         }
 
     /**
@@ -225,16 +225,16 @@ object SemanticAnalysis {
      */
     val tipe : Term => Type =
         attr {
-            case Atom (_)         => AtomType
-            case Integer (_)      => IntegerType                
-            case Pred ("cons", _) => ListType
-            case Pred ("nil", _)  => ListType            
+            case Atom (_)         => AtomType ()
+            case Integer (_)      => IntegerType ()
+            case Pred ("cons", _) => ListType ()
+            case Pred ("nil", _)  => ListType ()         
             case n @ Var (s) =>
                 (n->varentity) match {
                     case Variable (t) => t
-                    case _            => UnknownType
+                    case _            => UnknownType ()
                 }
-            case _                => UnknownType
+            case _                => UnknownType ()
         }
 
     /**
@@ -255,12 +255,12 @@ object SemanticAnalysis {
                                 if (n.index < argtypes.length)
                                     argtypes (n.index)
                                 else
-                                    UnknownType
+                                    UnknownType ()
                             case _ =>
-                                UnknownType
+                                UnknownType ()
                         }
                     case _ =>
-                        UnknownType
+                        UnknownType ()
                 }
         }
 

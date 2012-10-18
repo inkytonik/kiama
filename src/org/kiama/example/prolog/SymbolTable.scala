@@ -50,27 +50,27 @@ object SymbolTable extends Environments {
     /**
      * The atom type.
      */
-    case object AtomType extends Type {
+    case class AtomType () extends Type {
         override def toString = "atom"
     }
 
     /**
      * The integer type.
      */
-    case object IntegerType extends Type {
+    case class IntegerType () extends Type {
         override def toString = "integer"
     }
 
     /**
      * The list type.
      */
-    case object ListType extends Type {
+    case class ListType () extends Type {
         override def toString = "list"
     }
 
     /**
      * A type that is unknown.
      */
-    case object UnknownType extends Type
+    case class UnknownType () extends Type
     
 }

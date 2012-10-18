@@ -40,7 +40,7 @@ object StringOps {
     /**
      * New type values for this extension
      */
-    case object StringTypeValue extends TypeValue
+    case class StringTypeValue() extends TypeValue
 
 }
 
@@ -59,7 +59,7 @@ trait StringOps extends SECDBase {
      */
     case class StringValue(s : String) extends Value {
         override def toString : String = s
-        def getType : TypeValue = StringTypeValue
+        def getType : TypeValue = StringTypeValue()
     }
     case class UserExceptionValue(m : String) extends ExceptionValue {
         override def toString : String =
@@ -109,8 +109,8 @@ trait StringOps extends SECDBase {
 		    case StringValue(s) :: tail =>
 		        stack := UserExceptionValue(s) :: tail
 		        control := next
-		    case _ :: _ => raiseException(TypeError)
-		    case _ => raiseException(StackUnderflow)
+		    case _ :: _ => raiseException(TypeError())
+		    case _ => raiseException(StackUnderflow())
 		}
 	}
 }

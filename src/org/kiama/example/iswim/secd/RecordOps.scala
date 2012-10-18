@@ -41,12 +41,12 @@ object RecordOps {
     /**
      * New type values for this extension
      */
-    case object RecordTypeValue extends TypeValue
+    case class RecordTypeValue() extends TypeValue
 
     /**
      * New machine error types
      */
-    case object FieldOutOfBounds extends MachineExceptionValue {
+    case class FieldOutOfBounds() extends MachineExceptionValue {
          def message : String = "reference to field beyond the bounds of the current record"
      }
 
@@ -68,7 +68,7 @@ trait RecordOps extends SECDBase with IntegerOps {
      */
     case class RecordValue(flds : List[Value]) extends Value {
         override def toString : String = flds.reverse.mkString("(",",",")")
-        def getType : TypeValue = RecordTypeValue
+        def getType : TypeValue = RecordTypeValue()
     }
 
     /**
@@ -79,9 +79,9 @@ trait RecordOps extends SECDBase with IntegerOps {
 		// Make a new record from entries on the stack
         case MkRecord(n) :: next =>
             if (n < 0)
-                raiseException(MalformedInstruction)
+                raiseException(MalformedInstruction())
             else if (stack.length < n)
-                raiseException(StackUnderflow)
+                raiseException(StackUnderflow())
             else
                 stack.splitAt(n) match {
                     case (flds, tail) =>
@@ -93,28 +93,28 @@ trait RecordOps extends SECDBase with IntegerOps {
             case RecordValue(flds) :: tail =>
                 stack := IntValue(flds.length) :: tail
                 control := next
-            case _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         // Field access
         case GetField() :: next => (stack : Stack) match {
             case IntValue(n) :: RecordValue(flds) :: tail =>
                 if (n < 0 || n >= flds.length)
-                    raiseException(FieldOutOfBounds)
+                    raiseException(FieldOutOfBounds())
                 else {
                     stack := flds(flds.length - n) :: tail
                     control := next
                 }
-            case _ :: _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         // Unpack a record onto the stack
         case UnpackRecord() :: next => (stack : Stack) match {
             case RecordValue(flds) :: tail =>
                 stack := flds ++ tail
                 control := next
-            case _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
 	}
 }

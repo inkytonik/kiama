@@ -52,7 +52,7 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
      */
     def translateFormalParam (m : Mode, i : String, t  : Type) : CDeclaration = {
         val tt = translate (t)
-        CVarDecl (mangle (i), if (m == VarMode) CAddrType (tt) else tt)
+        CVarDecl (mangle (i), if (m == VarMode ()) CAddrType (tt) else tt)
     }
 
     /**
@@ -96,12 +96,12 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
     def translateActualParam (p : Expression, mode : Mode) : CExpression = {
         val cpsi = translate (p)
         mode match {
-            case VarMode =>
+            case VarMode () =>
                 cpsi match {
                     case CDerefExp (dcpsi) => dcpsi
                     case _                 => CAddrExp (cpsi)
                 }
-            case ValMode =>
+            case ValMode () =>
                 cpsi
         }
     }
@@ -115,8 +115,8 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
             case IdnExp (u @ IdnUse (s)) =>
                 val te = super.translate (e)
                 (u->entity) match {
-                    case Parameter (VarMode, v) => CDerefExp (te)
-                    case _                      => te
+                    case Parameter (VarMode (), v) => CDerefExp (te)
+                    case _                         => te
                 }
             case _ =>
                 super.translate (e)

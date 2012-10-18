@@ -79,7 +79,7 @@ object SPARCTree {
     /**
      * Cause the program to terminate.
      */
-    case object Ret extends Item
+    case class Ret () extends Item
 
     /**
      * Evaluate d and store its value in the memory location given by mem.

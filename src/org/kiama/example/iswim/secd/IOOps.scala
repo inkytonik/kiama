@@ -56,7 +56,7 @@ trait IOOps extends SECDBase with StringOps {
                 print(v.toString)
                 stack := tail
                 control := next
-            case _ => raiseException(StackUnderflow)
+            case _ => raiseException(StackUnderflow())
         }
         // Read a string value from the terminal
         case Read() :: next =>

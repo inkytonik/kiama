@@ -130,7 +130,7 @@ object SPARCTransformation {
                 val lab2 = genlabel
                 val lab3 = genlabel
                 val eloc = location (e)
-                val maxloc = Local (Variable (IntType).locn)
+                val maxloc = Local (Variable (IntType ()).locn)
                 List (StW (eloc, min->datum),
                       StW (maxloc, max->datum),
                       Bne (CmpgtW (LdW (eloc), LdW (maxloc)), lab2),
@@ -180,7 +180,7 @@ object SPARCTransformation {
              * terminate the program.
              */
             case ReturnStmt (exp) =>
-                List (Write (exp->datum), Ret)
+                List (Write (exp->datum), Ret ())
 
             /**
              * A while statement translates into the standard evaluation

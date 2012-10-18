@@ -59,7 +59,7 @@ object SymbolTable {
     abstract class Entity {
         val isconst = false
         val isassignable = true
-        val tipe : Type = UnknownType
+        val tipe : Type = UnknownType ()
         val locn = 0
     }
 
@@ -70,7 +70,7 @@ object SymbolTable {
     case class Variable (override val tipe : Type) extends Entity {
         override val isconst = false
         override val isassignable =
-            (tipe == IntType) || (tipe == BoolType) || (tipe.isInstanceOf[EnumType])
+            (tipe == IntType ()) || (tipe == BoolType ()) || (tipe.isInstanceOf[EnumType])
         override val locn = {
             val loc = prevloc
             prevloc = prevloc + tipe.storage
@@ -91,14 +91,14 @@ object SymbolTable {
      * A singleton entity about which we know nothing.  Used as the
      * entity referred to by names that aren't declared.
      */
-    case object Unknown extends Entity
+    case class Unknown () extends Entity
 
     /**
      * A singleton entity about which we know too much.  Used as the
      * entity referred to by names that are declared more than once
      * in the same scope.
      */
-    case object Multiple extends Entity
+    case class Multiple () extends Entity
 
     /**
      * The size in bytes of a word used to store both integer and Boolean
@@ -116,7 +116,7 @@ object SymbolTable {
      */
     abstract class TypeBase {
         def iscompatible (other : TypeBase) : Boolean =
-            (other == UnknownType) || (other == this)
+            (other == UnknownType ()) || (other == this)
     }
 
     /**
@@ -130,7 +130,7 @@ object SymbolTable {
     /**
      * The integer type.
      */
-    case object IntType extends Type {
+    case class IntType () extends Type {
         override val storage = WORDSIZE
         override def toString () = "integer"
     }
@@ -138,7 +138,7 @@ object SymbolTable {
     /**
      * The Boolean type.
      */
-    case object BoolType extends Type {
+    case class BoolType () extends Type {
         override val storage = WORDSIZE
         override def toString () = "boolean"
     }
@@ -164,7 +164,7 @@ object SymbolTable {
      * every record type - and so is useful when type checking constructs
      * which must take a value of an arbitrary record type.
      */
-    case object RecordTypes extends TypeBase {
+    case class RecordTypes () extends TypeBase {
         override def toString = "any record"
         override def iscompatible (other : TypeBase) : Boolean =
             (other.isInstanceOf[RecordType]) || (super.iscompatible (other))
@@ -183,7 +183,7 @@ object SymbolTable {
      * every enumeration type - and so is useful when type checking constructs
      * which must take a value of an arbitrary enumeration type.
      */
-    case object EnumTypes extends TypeBase {
+    case class EnumTypes () extends TypeBase {
         override def toString = "any enumeration"
         override def iscompatible (other : TypeBase) : Boolean =
             (other.isInstanceOf[EnumType]) || (super.iscompatible (other))
@@ -192,7 +192,7 @@ object SymbolTable {
     /**
      * The exception type.
      */
-    case object ExnType extends Type {
+    case class ExnType () extends Type {
         override val storage = WORDSIZE
         override def toString = "exception"
     }
@@ -201,7 +201,7 @@ object SymbolTable {
     /**
      * A type that we don't know anything about.
      */
-    case object UnknownType extends Type {
+    case class UnknownType () extends Type {
         override def iscompatible (other : TypeBase) : Boolean = true
     }
 

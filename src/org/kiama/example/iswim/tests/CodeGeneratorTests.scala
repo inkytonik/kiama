@@ -296,10 +296,10 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     4: Dup(1),
     5: GetType(),
     6: Dup(1),
-    7: PushType(RecordTypeValue),
+    7: PushType(RecordTypeValue()),
     8: Equals(),
     9: Swap(1,1),
-    10: PushType(EmptyTypeValue),
+    10: PushType(EmptyTypeValue()),
     11: Equals(),
     12: Test(
         CodeSegment(13: Pop(1), 14: PushInt(0)),

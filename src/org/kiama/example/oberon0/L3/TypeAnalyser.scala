@@ -22,7 +22,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
             case HasParent (e : Expression, Call (u, _)) =>
                 parammode (u, e.index) match {
-                    case VarMode if !isLvalue (e) =>
+                    case VarMode () if !isLvalue (e) =>
                         message (e, "illegal VAR parameter")
                     case _ =>
                         // Ok
@@ -100,7 +100,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
             case Some (ps) if i <= ps.length =>
                 ps (i - 1).mode
             case _ =>
-                ValMode
+                ValMode ()
         }
 
     /**

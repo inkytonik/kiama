@@ -238,20 +238,20 @@ object SECDBase {
      * Type values
      */
     abstract class TypeValue extends Value {
-        def getType : TypeValue = TypeTypeValue
+        def getType : TypeValue = TypeTypeValue()
     }
-    case object EmptyTypeValue extends TypeValue 
-    case object TypeTypeValue extends TypeValue
-    case object ClosureTypeValue extends TypeValue
-    case object ContTypeValue extends TypeValue 
-    case object ExceptionTypeValue extends TypeValue
-    case object PrimTypeValue extends TypeValue
+    case class EmptyTypeValue() extends TypeValue 
+    case class TypeTypeValue() extends TypeValue
+    case class ClosureTypeValue() extends TypeValue
+    case class ContTypeValue() extends TypeValue 
+    case class ExceptionTypeValue() extends TypeValue
+    case class PrimTypeValue() extends TypeValue
 
     /**
      * Exception types
      */
     abstract class ExceptionValue extends Value with Positional {
-        def getType : TypeValue = ExceptionTypeValue
+        def getType : TypeValue = ExceptionTypeValue()
     } 
     
     abstract class MachineExceptionValue extends ExceptionValue {
@@ -261,31 +261,31 @@ object SECDBase {
             this.pos.toString 
     }
 
-    case object UnboundVariable extends MachineExceptionValue {
+    case class UnboundVariable() extends MachineExceptionValue {
         def message : String = "unbound variable"
     }
-    case object StackUnderflow extends MachineExceptionValue {
+    case class StackUnderflow() extends MachineExceptionValue {
         def message : String = "stack underflow"
     }
-    case object TypeError extends MachineExceptionValue {
+    case class TypeError() extends MachineExceptionValue {
         def message : String = "type error"
     }
-    case object UnexpectedTermination extends MachineExceptionValue {
+    case class UnexpectedTermination() extends MachineExceptionValue {
         def message : String = "unexpected termination of code sequence"
     }
-    case object UnexpectedExit extends MachineExceptionValue {
+    case class UnexpectedExit() extends MachineExceptionValue {
         def message : String = "unexpected Exit instruction"
     }
-    case object DumpEmpty extends MachineExceptionValue {
+    case class DumpEmpty() extends MachineExceptionValue {
         def message : String = "resume failed since machine dump is empty"
     }
-    case object MalformedInstruction extends MachineExceptionValue {
+    case class MalformedInstruction() extends MachineExceptionValue {
         def message : String = "malformed instruction"
     }
-    case object MatchError extends MachineExceptionValue {
+    case class MatchError() extends MachineExceptionValue {
         def message : String = "match error, value not matched"
     }
-    case object NonExistentPrimitive extends MachineExceptionValue {
+    case class NonExistentPrimitive() extends MachineExceptionValue {
         def message : String = "attempt to bind non-existent primitive"
     }
 }
@@ -308,9 +308,9 @@ abstract class SECDBase
      * Base machine value types
      * Null value
      */
-    case object EmptyValue extends Value {
+    case class EmptyValue() extends Value {
         override def toString : String = "()"
-        def getType : TypeValue = EmptyTypeValue
+        def getType : TypeValue = EmptyTypeValue()
     }
 
     /**
@@ -326,7 +326,7 @@ abstract class SECDBase
         override def hashCode = super.hashCode
         override def equals(that : Any) = super.equals(that)
         override def toString = "ContValue@" ++ hashCode.toHexString
-        def getType : TypeValue = ContTypeValue
+        def getType : TypeValue = ContTypeValue()
     } 
     
     /**
@@ -344,7 +344,7 @@ abstract class SECDBase
         override def hashCode = super.hashCode
         override def equals(that : Any) = super.equals(that)
         override def toString = "ClosureValue@" ++ hashCode.toHexString
-        def getType : TypeValue = ClosureTypeValue
+        def getType : TypeValue = ClosureTypeValue()
     }
     
     /**
@@ -356,7 +356,7 @@ abstract class SECDBase
         override def hashCode = super.hashCode
         override def equals(that : Any) = super.equals(that)
         override def toString = "PrimValue@" ++ hashCode.toHexString
-        def getType : TypeValue = PrimTypeValue
+        def getType : TypeValue = PrimTypeValue()
     }
 
     /**
@@ -366,7 +366,7 @@ abstract class SECDBase
     type Stack = List[Value]
     type Dump = Continuation
     
-    case object EmptyCont extends Continuation {
+    case class EmptyCont() extends Continuation {
         override def toString : String = "** empty **"
     }
 
@@ -444,18 +444,18 @@ abstract class SECDBase
                     envir := e
                     control := c
                     dump := d
-                case _ =>  raiseException(UnexpectedTermination)
+                case _ =>  raiseException(UnexpectedTermination())
             }
-            case EmptyCont =>
+            case EmptyCont() =>
                 if (stack.length != 1 || !envir.isEmpty || 
-                    !control.isEmpty) raiseException(UnexpectedTermination)
+                    !control.isEmpty) raiseException(UnexpectedTermination())
         } 
         // Lookup the value of a variable in the environment.
         case Lookup(nm) :: next => envir.get(nm) match {
             case Some(v) => 
                 stack := v :: stack
                 control := next
-            case None => raiseException(UnboundVariable) 
+            case None => raiseException(UnboundVariable()) 
         }
         // Make a mutually recursive group of closures.
         case MkClosures(fss) :: next => {
@@ -485,13 +485,13 @@ abstract class SECDBase
                     stack := Nil
                     envir := e + (p -> v)
                     control := b
-                case _ => raiseException(StackUnderflow)
+                case _ => raiseException(StackUnderflow())
             }
             case PrimValue(b) :: tail =>
                 stack := tail
                 control := b ++ next
-            case _ :: _ => raiseException(TypeError) 
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError()) 
+            case _ => raiseException(StackUnderflow())
         }
         case TailApp() :: next => (stack : Stack) match {
             case ClosureValue(p,b,e) :: rest => rest match {
@@ -499,18 +499,18 @@ abstract class SECDBase
                     stack := Nil
                     envir := e + (p -> v)
                     control := b
-                case _ => raiseException(StackUnderflow)
+                case _ => raiseException(StackUnderflow())
             }
             case PrimValue(b) :: tail =>
                 stack := tail
                 control := b ++ next
-            case _ :: _ => raiseException(TypeError) 
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError()) 
+            case _ => raiseException(StackUnderflow())
         }
         // Enter and exit binding instructions
         case Enter(nms) :: next => 
             if (stack.length < nms.length)
-                raiseException(StackUnderflow)
+                raiseException(StackUnderflow())
             else {
                 dump := ContValue(stack.drop(nms.length),envir,Nil,dump)
                 stack := Nil
@@ -524,9 +524,9 @@ abstract class SECDBase
                     envir := e
                     control := next
                     dump := d
-                case _ => raiseException(UnexpectedExit)
+                case _ => raiseException(UnexpectedExit())
             }
-            case _ => raiseException(UnexpectedExit)
+            case _ => raiseException(UnexpectedExit())
         }
         // Binding instruction for primitives
         case BindPrims(nms) :: next => 
@@ -536,7 +536,7 @@ abstract class SECDBase
                 envir := (nms :\ (envir : Environment)) 
                             { case (nm,e) => e + (nm->primTable(nm)) }
                 control := next 
-            } else raiseException(NonExistentPrimitive) 
+            } else raiseException(NonExistentPrimitive()) 
         // Continuation handling
         case AppCC() :: next => (stack : Stack) match {
             case ClosureValue(p,b,e) :: tail =>
@@ -545,8 +545,8 @@ abstract class SECDBase
                 stack := Nil
                 envir := e + (p -> cc)
                 control := b
-            case _ :: _ => raiseException(TypeError) 
-            case _ => raiseException(StackUnderflow) 
+            case _ :: _ => raiseException(TypeError()) 
+            case _ => raiseException(StackUnderflow()) 
         }
         case Resume() :: next => (stack : Stack) match {
             case ContValue(s,e,c,d) :: v :: tail =>
@@ -554,8 +554,8 @@ abstract class SECDBase
                 stack := v :: s
                 envir := e
                 control := c
-            case _ :: _ :: _ => raiseException(TypeError) 
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ :: _ => raiseException(TypeError()) 
+            case _ => raiseException(StackUnderflow())
         }
         case ResumeFromDump() :: next => (dump : Dump) match {
             case ContValue(s,e,c,d) => (stack : Stack) match {
@@ -564,13 +564,13 @@ abstract class SECDBase
                     stack := v :: s
                     envir := e
                     control := c
-                case _ => raiseException(StackUnderflow)
+                case _ => raiseException(StackUnderflow())
             }
-            case EmptyCont => raiseException(DumpEmpty)
+            case EmptyCont() => raiseException(DumpEmpty())
         }
         // Push an empty (null) value on the stack.
         case PushEmpty() :: next => 
-            stack := EmptyValue :: stack
+            stack := EmptyValue() :: stack
             control := next
         // Push a machine exception value on the stack.
         case PushMachineException(me : MachineExceptionValue) :: next => 
@@ -583,15 +583,15 @@ abstract class SECDBase
         // Raise the exception on the top of the stack
         case RaiseException() :: next => (stack : Stack) match {
             case (ex : ExceptionValue) :: _ => raiseException(ex)
-            case _ :: _ => raiseException(TypeError)
-            case _ => raiseException(StackUnderflow)
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         // Get the type of the value on the top of the stack.
         case GetType() :: next => (stack : Stack) match {
             case v :: tail => 
                 stack := v.getType :: tail
                 control := next
-            case _ => raiseException(StackUnderflow)
+            case _ => raiseException(StackUnderflow())
         }
     }
 

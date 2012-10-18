@@ -19,13 +19,13 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
             case ModuleDecl (_, _, u @ IdnUse (i)) if !isModule (u->entity) =>
                 message (u, i + " is not a module")
 
-            case d @ IdnDef (i) if d->entity == MultipleEntity =>
+            case d @ IdnDef (i) if d->entity == MultipleEntity () =>
                 message (d, i + " is already declared")
 
             case HasParent (u @ IdnUse (i2), ModuleDecl (IdnDef (i1), _, _)) if i1 != i2 =>
                 message (u, "end module name '" + i2 + "' should be '" + i1 + "'")
 
-            case u @ IdnUse (i) if u->entity == UnknownEntity =>
+            case u @ IdnUse (i) if u->entity == UnknownEntity () =>
                 message (u, i + " is not declared")
 
             case NamedType (u @ IdnUse (i)) if !isType (u->entity) =>
@@ -105,11 +105,11 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
         attr {
             case n @ IdnDef (i) =>
                 if (isDefinedInScope (n->(env.in), i))
-                    MultipleEntity
+                    MultipleEntity ()
                 else
                     entityFromDecl (n, i)
             case n @ IdnUse (i) =>
-                lookup (n->(env.in), i, UnknownEntity)
+                lookup (n->(env.in), i, UnknownEntity ())
         }
 
     /**

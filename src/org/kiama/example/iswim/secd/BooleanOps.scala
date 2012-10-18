@@ -50,7 +50,7 @@ object BooleanOps {
     /**
      * New type values for this extension
      */
-    case object BooleanTypeValue extends TypeValue
+    case class BooleanTypeValue() extends TypeValue
 
 }
 
@@ -68,12 +68,12 @@ trait BooleanOps extends SECDBase {
      * Boolean values
      */
     abstract class BooleanValue extends Value {
-        def getType : TypeValue = BooleanTypeValue
+        def getType : TypeValue = BooleanTypeValue()
     }
-    case object TrueValue extends BooleanValue {
+    case class TrueValue() extends BooleanValue {
         override def toString : String = "true"
     }
-    case object FalseValue extends BooleanValue {
+    case class FalseValue() extends BooleanValue {
         override def toString : String = "false"
     }
 
@@ -84,32 +84,32 @@ trait BooleanOps extends SECDBase {
 	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
 		// Push constant boolean values on the stack.
         case PushTrue() :: next =>
-            stack := TrueValue :: stack
+            stack := TrueValue() :: stack
             control := next
         case PushFalse() :: next => 
-            stack := FalseValue :: stack
+            stack := FalseValue() :: stack
             control := next
         // Conditional branch.
         case Test(CodeSegment(ct), CodeSegment(ce)) :: next => 
             (stack : Stack) match {
-                case TrueValue :: tail => 
+                case TrueValue() :: tail => 
                     stack := tail
                     control := ct ++ next
-                case FalseValue :: tail => 
+                case FalseValue() :: tail => 
                     stack := tail
                     control := ce ++ next
-                case _ :: _ => raiseException(TypeError)
-                case _ => raiseException(StackUnderflow)
+                case _ :: _ => raiseException(TypeError())
+                case _ => raiseException(StackUnderflow())
             }
         // Equality test on values.
         case Equals() :: next => (stack : Stack) match {
             case val1 :: val2 :: tail => 
                 if (val1 == val2)
-                    stack := TrueValue :: tail
+                    stack := TrueValue() :: tail
                 else 
-                    stack := FalseValue :: tail
+                    stack := FalseValue() :: tail
                 control := next 
-            case _ => raiseException(StackUnderflow)
+            case _ => raiseException(StackUnderflow())
         }
 	}
 }

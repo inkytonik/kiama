@@ -57,12 +57,12 @@ trait Parser extends PositionedParserUtilities {
         ttype0
 
     lazy val ttype0 : PackratParser[Type] =
-        "Int" ^^^ IntType |
+        "Int" ^^^ IntType () |
         "(" ~> ttype <~ ")"
 
     lazy val op =
-        "+" ^^^ AddOp |
-        "-" ^^^ SubOp
+        "+" ^^^ AddOp () |
+        "-" ^^^ SubOp ()
 
     lazy val idn =
         "[a-zA-Z][a-zA-Z0-9]*".r
