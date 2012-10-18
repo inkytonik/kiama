@@ -18,7 +18,6 @@ Anthony.Sloane@mq.edu.au
 inkytonik@gmail.com
 
 http://plrg.science.mq.edu.au/
-http://www.comp.mq.edu.au/~asloane
 
 2. The Kiama project site at Google code
 
@@ -61,11 +60,12 @@ The Kiama Project team is:
 
 Tony Sloane
 Dominic Verity
+Matthew Roberts
 
 Other contributors have been:
 
 Lennart Kats (particularly in attribution)
-Ben Mockler (the Oberon-0 example)
+Ben Mockler (the first version of the Oberon-0 example)
 
 Kiama is currently concentrating on incorporating existing language processing
 formalisms, so credit goes to the original developers of those formalisms.  See
