@@ -447,8 +447,8 @@ abstract class SECDBase
                 case _ =>  raiseException(UnexpectedTermination())
             }
             case EmptyCont() =>
-                if (stack.length != 1 || !envir.isEmpty || 
-                    !control.isEmpty) raiseException(UnexpectedTermination())
+                if (stack.length != 1 || envir.nonEmpty || 
+                    control.nonEmpty) raiseException(UnexpectedTermination())
         } 
         // Lookup the value of a variable in the environment.
         case Lookup(nm) :: next => envir.get(nm) match {

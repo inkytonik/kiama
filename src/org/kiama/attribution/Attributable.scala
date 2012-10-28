@@ -107,7 +107,7 @@ trait Attributable extends Product with Cloneable {
     /**
      * Does this node have some `Attributable` children?
      */
-    def hasChildren : Boolean = !_children.isEmpty
+    def hasChildren : Boolean = _children.nonEmpty
 
     /**
      * This node's first `Attributable` child.

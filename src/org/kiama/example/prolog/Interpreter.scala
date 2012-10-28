@@ -122,7 +122,7 @@ object Interpreter {
          * Loop until the interpretation is done, indicated by an empty goal
          * list stack.
          */
-        while (!(glstack.isEmpty)) {
+        while (glstack.nonEmpty) {
 
             // Print the stack for debugging
             // println (glstack)

@@ -118,8 +118,8 @@ trait ExceptionHandler extends SECDBase {
                 case _ =>  raiseException(UnexpectedTermination())
             }
             case EmptyCont() =>
-                if (stack.length != 1 || !envir.isEmpty ||
-                    !control.isEmpty) raiseException(UnexpectedTermination())
+                if (stack.length != 1 || envir.nonEmpty ||
+                    control.nonEmpty) raiseException(UnexpectedTermination())
         }
         // Closure application
         case App() :: next => (stack : Stack) match {

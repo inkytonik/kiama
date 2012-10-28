@@ -169,7 +169,7 @@ trait Environments {
      * Say whether i is defined in the current scope of env.
      */
     def isDefinedInScope (env : Environment, i : String) : Boolean =
-        !(env.isEmpty) && ((env.top) contains i)
+        env.nonEmpty && ((env.top) contains i)
 
     /**
      * Say whether i is defined in the given scope.
