@@ -520,6 +520,62 @@ trait PrettyPrinterBase {
 
     // Character shorthands
 
+    // Top row of keyboard
+
+    /**
+     * A tilde document.
+     */
+    def tilde : Doc =
+        char ('~')
+
+    /**
+     * An exclamation mark document.
+     */
+    def exclamation : Doc =
+        char ('!')
+
+    /**
+     * An at-sign document.
+     */
+    def atsign : Doc =
+        char ('@')
+  
+    /**
+     * A hash mark document.
+     */
+    def hash : Doc =
+        char ('#')
+
+    /**
+     * A dollar sign document.
+     */
+    def dollar : Doc =
+        char ('$')
+
+    /**
+     * A percent sign document.
+     */
+    def percent : Doc =
+        char ('%')
+
+    /**
+     * A caret document.
+     */
+    def caret : Doc =
+        char ('^')
+
+    /**
+     * An ampersand document.
+     */
+    def ampersand : Doc =
+        char ('&')
+
+    /**
+     * An asterisk document.
+     */
+    def asterisk : Doc =
+        char ('*')
+
     /**
      * A left parenthesis document.
      */
@@ -533,16 +589,38 @@ trait PrettyPrinterBase {
         char (')')
 
     /**
-     * A left angle bracket document.
+     * An underscore document.
      */
-    def langle : Doc =
-        char ('<')
+    def underscore : Doc =
+        char ('_')
 
     /**
-     * A right angle bracket document.
+     * An plus sign document.
      */
-    def rangle : Doc =
-        char ('>')
+    def plus : Doc =
+        char ('+')
+
+    // Second top row
+
+    /**
+     * A backquote document.
+     */
+    def backquote : Doc =
+        char ('`')
+
+    /**
+     * An minus sign document.
+     */
+    def minus : Doc =
+        char ('-')
+
+    /**
+     * An equal sign document.
+     */
+    def equal : Doc =
+        char ('=')
+
+    // Third top row
 
     /**
      * A left brace document.
@@ -557,6 +635,14 @@ trait PrettyPrinterBase {
         char ('}')
 
     /**
+     * A vertical bar document.
+     */
+    def verticalbar : Doc =
+        char ('|')
+
+    // Fourth top row
+
+    /**
      * A left square bracket document.
      */
     def lbracket : Doc =
@@ -569,22 +655,12 @@ trait PrettyPrinterBase {
         char (']')
 
     /**
-     * A single quote document.
+     * A backslash document.
      */
-    def squote : Doc =
-        char ('\'')
+    def backslash : Doc =
+        char ('\\')
 
-    /**
-     * A double quote document.
-     */
-    def dquote : Doc =
-        char ('"')
-
-    /**
-     * A semicolon document.
-     */
-    def semi : Doc =
-        char (';')
+    // Fifth top row
 
     /**
      * A colon document.
@@ -593,16 +669,52 @@ trait PrettyPrinterBase {
         char (':')
 
     /**
+     * A double quote document.
+     */
+    def dquote : Doc =
+        char ('"')
+
+    // Sixth top row
+
+    /**
+     * A semicolon document.
+     */
+    def semi : Doc =
+        char (';')
+
+    /**
+     * A single quote document.
+     */
+    def squote : Doc =
+        char ('\'')
+
+    // Seventh top row
+
+    /**
+     * A left angle bracket document.
+     */
+    def langle : Doc =
+        char ('<')
+
+    /**
+     * A right angle bracket document.
+     */
+    def rangle : Doc =
+        char ('>')
+
+    /**
+     * A question mark document.
+     */
+    def question : Doc =
+        char ('?')
+
+    // Eighth top row
+
+    /**
      * A comma document.
      */
     def comma : Doc =
         char (',')
-
-    /**
-     * A space document.
-     */
-    def space : Doc =
-        char (' ')
 
     /**
      * A dot (period) document.
@@ -611,22 +723,18 @@ trait PrettyPrinterBase {
         char ('.')
 
     /**
-     * A backslash document.
-     */
-    def backslash : Doc =
-        char ('\\')
-
-    /**
      * A forward slash document.
      */
     def forwslash : Doc =
         char ('/')
 
+    // Bottom row 
+
     /**
-     * An equal sign document.
+     * A space document.
      */
-    def equal : Doc =
-        char ('=')
+    def space : Doc =
+        char (' ')
 
 }
 
