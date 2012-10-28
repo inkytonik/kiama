@@ -57,18 +57,27 @@ trait CompilerBase[T] {
         args
 
     /**
+     * The character encoding of input files read by this compiler.
+     * Defaults to UTF-8.
+     */
+    def encoding : String =
+        "UTF-8"
+
+    /**
      * Process the arguments, using the given console for input and the
      * given emitter for output.  The arguments are first processed by
      * checkargs.  Any remaining arguments are interpreted as names of
-     * UTF-8 encoded files which are processed in turn by using `makeast` to
-     * turn their contents into abstract syntax trees (ASTs) and then by
-     * process which conducts arbitrary processing on the ASTs.
+     * files which are processed in turn by using `makeast` to turn
+     * their contents into abstract syntax trees (ASTs) and then by
+     * process which conducts arbitrary processing on the ASTs. The
+     * character encoding of the files is given by the `encoding` 
+     * method.
      */
     def driver (args : Array[String], console : Console, emitter : Emitter) {
         val newargs = checkargs (args, emitter)
         for (arg <- newargs) {
             try {
-                val reader = filereader (newargs (0))
+                val reader = filereader (newargs (0), encoding)
                 makeast (reader, newargs (0), emitter) match {
                     case Left (ast) =>
                         process (ast, console, emitter)

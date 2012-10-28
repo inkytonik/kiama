@@ -27,9 +27,9 @@ package util
  */
 object IO {
 
-    import java.io.{BufferedReader, FileInputStream, FileOutputStream,
-                    InputStreamReader, OutputStreamWriter, Reader,
-                    StringReader, Writer}
+    import java.io.{BufferedReader, BufferedWriter, FileInputStream,
+                    FileOutputStream, InputStreamReader, OutputStreamWriter,
+                    Reader, StringReader, Writer}
 
     /**
      * Exception thrown when a requested file cannot be found.
@@ -37,26 +37,32 @@ object IO {
     case class FileNotFoundException (message : String) extends java.lang.Exception (message)
 
     /**
-     * Return a new buffered reader on the UTF-8 encoded file with the
-     * given name.  Throw `FileNotFoundException` if that file cannot be
-     * found.
+     * Return a new buffered reader on the file with the given name.
+     * The `encoding` argument gives the character encoding of the
+     * file (default: UTF-8). Throw `FileNotFoundException` if the
+     * file cannot be found.
      */
-    def filereader (name : String) : BufferedReader =
+    def filereader (name : String, encoding : String = "UTF-8") : BufferedReader =
         try {
             new BufferedReader (
                 new InputStreamReader (
-                    new FileInputStream (name), "UTF-8"))
+                    new FileInputStream (name),
+                    encoding))
         } catch {
             case e : java.io.FileNotFoundException =>
                 throw FileNotFoundException (e.getMessage)
         }
 
     /**
-     * Return a new writer reader on the UTF-8 encoded file with the
-     * given name.
+     * Return a new writer reader on the file with the given name.
+     * The `encoding` argument gives the character encoding of the
+     * file (default: UTF-8).
      */
-    def filewriter (name : String) : Writer =
-        new OutputStreamWriter (new FileOutputStream (name), "UTF-8")
+    def filewriter (name : String, encoding : String = "UTF-8") : BufferedWriter =
+        new BufferedWriter (
+            new OutputStreamWriter (
+                new FileOutputStream (name),
+                encoding))
 
     /**
      * Return a new buffered reader on the given string.
