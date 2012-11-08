@@ -8,7 +8,7 @@
 
 name := "kiama"
 
-version := "1.4.0-B3"
+version := "1.4.0-B4.SNAPSHOT"
 
 organization := "com.googlecode.kiama"
 
