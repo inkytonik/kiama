@@ -21,14 +21,7 @@
 package org.kiama
 package example.imperative
 
-import org.kiama.util.GeneratingREPL
 import org.kiama.util.ParsingREPL
-
-/**
- * Basis for tests using the imperative language.  Includes support for generating
- * random AST instances plus convenient access to the parser and pretty-printer.
- */
-trait TestBase extends Generator with Parser
 
 /**
  * A read-eval-print loop for parsing imperative programs and printing thei
@@ -50,16 +43,3 @@ object Imperative extends ParsingREPL[AST.Stmt] with Parser {
 
 }
 
-/**
- * A read-eval-print loop for generating random imperative statements.
- */
-object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
-
-    def generator () = arbStmt
-
-    override def process (s : AST.Stmt) {
-        println (s)
-        println (PrettyPrinter.pretty (s))
-    }
-
-}

@@ -21,7 +21,6 @@
 package org.kiama
 package example.lambda
 
-import org.kiama.util.GeneratingREPL
 import org.kiama.util.ParsingREPL
 import org.kiama.util.PositionedParserUtilities
 
@@ -108,45 +107,6 @@ trait Parser extends PositionedParserUtilities {
 }
 
 /**
- * ScalaCheck generators for programs in the lambda language.
- */
-trait Generator {
-
-    import org.scalacheck._
-    import AST._
-
-    val genNum = for (i <- Gen.choose (1, 100)) yield Num (i)
-    val genIdn : Gen[String] = for (s <- Gen.identifier) yield (s.take (5))
-    val genVar = for (v <- genIdn) yield Var (v)
-
-    implicit def arbVar : Arbitrary[Var] = Arbitrary (genVar)
-
-    val genLeafExp = Gen.oneOf (genNum, genVar)
-
-    def genLamExp (sz : Int) =
-        for { i <- genIdn; b <- genExp (sz/2) } yield Lam (i, b)
-
-    def genAppExp (sz : Int) =
-        for { l <- genExp (sz/2); r <- genExp (sz/2) } yield App (l, r)
-
-    def genExp (sz : Int) : Gen[Exp] =
-        if (sz <= 0)
-            genLeafExp
-        else
-            Gen.frequency ((1, genLeafExp), (1, genLamExp (sz)), (3, genAppExp (sz)))
-
-    implicit def arbExp : Arbitrary[Exp] =
-        Arbitrary { Gen.sized (sz => genExp (sz)) }
-
-}
-
-/**
- * Basis for tests using the lambda calculus language.  Includes access to the
- * parser, generator and evaluator.
- */
-trait TestBase extends Parser with Generator with Evaluator
-
-/**
  * Lambda calculus evaluator following Rose's \xgc, ie with explicit
  * substitutions and garbage collection.  See "Explicit Substitution
  * - Tutorial and Survey, Kristoffer H. Rose, BRICS LS-96-3, October
@@ -219,9 +179,3 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
 
 }
 
-/**
- * A read-eval-print loop for generating random expressions.
- */
-object LambdaGen extends GeneratingREPL[AST.Exp] with Generator {
-    def generator () = arbExp
-}
