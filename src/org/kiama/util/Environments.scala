@@ -108,14 +108,14 @@ trait Environments {
      * A entity represented by names for whom we have seen more than one
      * declaration so we are unsure what is being represented.
      */
-    case class MultipleEntity() extends ErrorEntity {
+    case class MultipleEntity () extends ErrorEntity {
         lazy val ident = "multiple"
     }
 
     /**
      * An unknown entity, represented by names whose declarations are missing.
      */
-    case class UnknownEntity() extends ErrorEntity {
+    case class UnknownEntity () extends ErrorEntity {
         lazy val ident = "unknown"
     }
 
