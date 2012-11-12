@@ -41,7 +41,7 @@ object Decorators {
      */
     def down[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] = {
         lazy val dattr : CachedAttribute[T,U] =
-           attr[T,U] {
+            attr[T,U] {
                 case t =>
                     if (a.isDefinedAt (t))
                         a (t)
