@@ -37,6 +37,7 @@ class AttributionTests extends Tests {
     case class Pair (left : Tree, right : Tree) extends Tree
     case class Leaf (value : Int) extends Tree
     case class Unused (b : Boolean) extends Tree
+    case class EitherTree (e : Either[Pair,Leaf]) extends Tree
     case class ListTree (l : List[Tree]) extends Tree
     case class SetTree (s : Set[Tree]) extends Tree
     case class GenSeqTree (v : GenSeq[Tree]) extends Tree
@@ -403,6 +404,24 @@ class AttributionTests extends Tests {
         expectsame (c4) (c3.parent)
     }
     
+    test ("an either child's parent property is set correctly") {
+        import Attribution.initTree
+        val c1 = Leaf (3)
+        val c2 = Leaf (1)
+        val c3 = Pair (c1, c2)
+        val t1 = EitherTree (Left (c3))
+        val c4 = Leaf (6)
+        val t2 = EitherTree (Right (c4))
+        initTree (t1)
+        expectsame (null) (t1.parent)
+        expectsame (t1) (c3.parent)
+        expectsame (c3) (c1.parent)
+        expectsame (c3) (c2.parent)
+        initTree (t2)
+        expectsame (null) (t2.parent)
+        expectsame (t2) (c4.parent)
+    }
+
     test ("a list child's parent property is set correctly") {
         import Attribution.initTree
         val c1 = Leaf (3)

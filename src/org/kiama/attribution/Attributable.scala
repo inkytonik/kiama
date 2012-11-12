@@ -183,8 +183,9 @@ trait Attributable extends Product with Cloneable {
 
         /**
          * Recursively set the child connections of `node` and its
-         * `Attributable` children, skipping any number of `Some`, tuple,
-         * or `GenTraversable` nodes on the way.
+         * `Attributable` children, skipping any number of `Some` options,
+         * `Left` or `Right` eithers, tuples, or `GenTraversable` nodes
+         * on the way.
          */
         def setNodeChildConnections (node : Any) : Unit =
             node match {
@@ -192,6 +193,10 @@ trait Attributable extends Product with Cloneable {
                     setConnections (c)
                 case Some (o) =>
                     setNodeChildConnections (o)
+                case Left (l) =>
+                    setNodeChildConnections (l)
+                case Right (r) =>
+                    setNodeChildConnections (r)
                 case (a, b) =>
                     setNodeChildConnections (a)
                     setNodeChildConnections (b)
