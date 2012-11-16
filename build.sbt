@@ -75,7 +75,7 @@ libraryDependencies ++=
         "jline" % "jline" % "1.0",
         "junit" % "junit" % "4.10" % "test",
         "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
-        "org.scalatest" %% "scalatest" % "2.0.M4-B2" % "test"
+        "org.scalatest" %% "scalatest" % "2.0.M5" % "test"
     )
 
 resolvers ++= Seq (
