@@ -389,19 +389,81 @@ class AttributionTests extends Tests {
 
     }
     
-    test ("a normal child's parent property is set correctly") {
+    test ("a normal child's properties are set correctly") {
         import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
         val c4 = Pair (c2, c3)
         val t = Pair (c1, c4)
-        initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c4.parent)
-        expectsame (c4) (c2.parent)
-        expectsame (c4) (c3.parent)
+        for (i <- 1 to 2) {
+
+            initTree (t)
+
+            val tchildren = t.children.toArray
+            expectResult (2) (tchildren.length)
+            expectsame (c1) (tchildren (0))
+            expectsame (c4) (tchildren (1))
+            expectsame (c1) (t.firstChild)
+            expectResult (true) (t.hasChildren)
+            expectResult (-1) (t.index)
+            expectResult (true) (t.isFirst)
+            expectResult (true) (t.isLast)
+            expectResult (true) (t.isRoot)
+            expectsame (c4) (t.lastChild)
+            expectResult (null) (t.next)
+            expectResult (null) (t.parent)
+            expectResult (null) (t.prev)
+
+            val c1children = c1.children.toArray
+            expectResult (0) (c1children.length)
+            expectResult (false) (c1.hasChildren)
+            expectResult (0) (c1.index)
+            expectResult (true) (c1.isFirst)
+            expectResult (false) (c1.isLast)
+            expectResult (false) (c1.isRoot)
+            expectsame (c4) (c1.next)
+            expectsame (t) (c1.parent)
+            expectResult (null) (c1.prev)
+
+            val c2children = c2.children.toArray
+            expectResult (0) (c2children.length)
+            expectResult (false) (c2.hasChildren)
+            expectResult (0) (c2.index)
+            expectResult (true) (c2.isFirst)
+            expectResult (false) (c2.isLast)
+            expectResult (false) (c2.isRoot)
+            expectsame (c3) (c2.next)
+            expectsame (c4) (c2.parent)
+            expectResult (null) (c2.prev)
+
+            val c3children = c3.children.toArray
+            expectResult (0) (c3children.length)
+            expectResult (false) (c3.hasChildren)
+            expectResult (1) (c3.index)
+            expectResult (false) (c3.isFirst)
+            expectResult (true) (c3.isLast)
+            expectResult (false) (c3.isRoot)
+            expectResult (null) (c3.next)
+            expectsame (c4) (c3.parent)
+            expectsame (c2) (c3.prev)
+
+            val c4children = c4.children.toArray
+            expectResult (2) (c4children.length)
+            expectsame (c2) (c4children (0))
+            expectsame (c3) (c4children (1))
+            expectsame (c2) (c4.firstChild)
+            expectResult (true) (c4.hasChildren)
+            expectResult (1) (c4.index)
+            expectResult (false) (c4.isFirst)
+            expectResult (true) (c4.isLast)
+            expectResult (false) (c4.isRoot)
+            expectsame (c3) (c4.lastChild)
+            expectResult (null) (c4.next)
+            expectsame (t) (c4.parent)
+            expectsame (c1) (c4.prev)
+
+        }
     }
     
     test ("an either child's parent property is set correctly") {

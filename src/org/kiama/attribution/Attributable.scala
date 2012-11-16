@@ -174,6 +174,7 @@ trait Attributable extends Product with Cloneable {
             c.index = ind
             ind += 1
             c.prev = prev
+            c.next = null
             if (prev != null) prev.next = c
             prev = c
             
@@ -217,6 +218,7 @@ trait Attributable extends Product with Cloneable {
             }
 
         // Start by setting the connections of the fields of this.
+        _children.clear ()
         for (c <- productIterator)
             setNodeChildConnections (c)
 
