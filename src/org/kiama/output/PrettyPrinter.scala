@@ -21,8 +21,6 @@
 package org.kiama
 package output
 
-import language.implicitConversions    
-
 /**
  * The interface of a pretty printer using combinators from Swierstra and
  * Chitil (Linear, bounded, functional pretty-printing, Journal of Functional

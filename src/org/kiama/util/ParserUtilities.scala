@@ -21,7 +21,6 @@
 package org.kiama
 package util
 
-import language.implicitConversions
 import scala.util.matching.Regex
 import scala.util.parsing.combinator.PackratParsers
 import scala.util.parsing.combinator.RegexParsers

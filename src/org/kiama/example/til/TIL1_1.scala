@@ -73,7 +73,6 @@ object AST {
 trait TIL1_1 extends PositionedParserUtilities {
 
     import AST._
-    import language.postfixOps
 
     type Root = Program
 

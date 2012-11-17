@@ -16,9 +16,22 @@ organization := "com.googlecode.kiama"
 
 scalaVersion := "2.10.0-RC2"
 
-scalaBinaryVersion := "2.10.0-RC2"
+scalaBinaryVersion <<= scalaVersion
 
-scalacOptions ++= Seq ("-deprecation", "-feature", "-unchecked")
+crossScalaVersions := Seq ("2.9.2", "2.10.0-RC2")
+
+scalacOptions <<= (scalaVersion, scalacOptions) map { 
+    (version, options) =>
+        val commonOptions = Seq ("-deprecation", "-unchecked")
+        val newOptions =
+            if (version.startsWith ("2.10"))
+                commonOptions :+
+                    "-feature" :+
+                    "-language:higherKinds,implicitConversions,postfixOps"
+            else
+                commonOptions
+        options ++ newOptions
+}
 
 // Migration manager (mima)
 

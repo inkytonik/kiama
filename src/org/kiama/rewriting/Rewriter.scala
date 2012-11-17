@@ -31,7 +31,6 @@ package rewriting
  */
 class Rewriter {
     
-    import language.higherKinds
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
     import scala.collection.mutable.Builder

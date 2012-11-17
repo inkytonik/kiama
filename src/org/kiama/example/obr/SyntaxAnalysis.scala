@@ -31,7 +31,6 @@ import org.kiama.util.PositionedParserUtilities
  */
 class SyntaxAnalysis extends PositionedParserUtilities {
 
-    import language.postfixOps
     import ObrTree._
     import org.kiama.util.Positioned
     import scala.collection.immutable.HashSet

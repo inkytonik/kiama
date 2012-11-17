@@ -40,7 +40,6 @@ import org.kiama.machine.Machine
 
 object SECDBase {
     
-    import language.implicitConversions
     import org.kiama.attribution.Attribution._
     import org.kiama.example.iswim.driver.PrettyPrinter._
     import scala.util.parsing.input.Positional

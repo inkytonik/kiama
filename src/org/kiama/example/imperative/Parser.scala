@@ -29,7 +29,6 @@ import org.kiama.util.PositionedParserUtilities
 trait Parser extends PositionedParserUtilities {
 
     import AST._
-    import language.postfixOps
 
     lazy val start =
         phrase (stmt)

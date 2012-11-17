@@ -34,8 +34,6 @@ import org.kiama.output.PrettyPrinter
 abstract class Machine (val name : String, emitter : Emitter = new Emitter) 
         extends PrettyPrinter {
 
-    import language.implicitConversions            
-
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
      * tracing information during execution of the machine.

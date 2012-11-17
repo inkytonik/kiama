@@ -32,7 +32,6 @@ package attribution
 object DynamicAttribution extends AttributionBase {
 
     import java.util.IdentityHashMap
-    import language.implicitConversions
     import scala.collection.mutable._
 
     type ChangeBuffer = ArrayBuffer[(DynamicAttribute[_, _], _ ==> _)]
