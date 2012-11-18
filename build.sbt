@@ -20,17 +20,32 @@ scalaBinaryVersion <<= scalaVersion
 
 crossScalaVersions := Seq ("2.9.2", "2.10.0-RC2")
 
-scalacOptions <<= (scalaVersion, scalacOptions) map { 
+scalacOptions := Seq ("-deprecation", "-unchecked")
+
+scalacOptions in Compile <<= (scalaVersion, scalacOptions) map { 
     (version, options) =>
-        val commonOptions = Seq ("-deprecation", "-unchecked")
-        val newOptions =
-            if (version.startsWith ("2.10"))
-                commonOptions :+
-                    "-feature" :+
-                    "-language:higherKinds,implicitConversions,postfixOps"
-            else
-                commonOptions
-        options ++ newOptions
+        val versionOptions =
+            version match {
+                case "2.9.2" =>
+                    Seq ()
+                case _ =>
+                    Seq ("-feature",
+                         "-language:higherKinds,implicitConversions")
+            }
+        options ++ versionOptions
+}
+
+scalacOptions in Test <<= (scalaVersion, scalacOptions) map { 
+    (version, options) =>
+        val versionOptions =
+            version match {
+                case "2.9.2" =>
+                    Seq ()
+                case _ =>
+                    Seq ("-feature",
+                         "-language:implicitConversions,postfixOps")
+            }
+        options ++ versionOptions
 }
 
 // Migration manager (mima)
