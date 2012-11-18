@@ -21,7 +21,6 @@
 package org.kiama
 package example.lambda3
 
-import org.junit.runner.RunWith
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
@@ -29,7 +28,6 @@ import org.scalatest.prop.Checkers
 /**
  * Simple lambda calculus query tests.
  */
-@RunWith(classOf[JUnitRunner])
 class LambdaTests extends Tests with Parser {
 
     import AST._

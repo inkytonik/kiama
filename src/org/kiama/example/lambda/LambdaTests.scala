@@ -21,7 +21,6 @@
 package org.kiama
 package example.lambda
 
-import org.junit.runner.RunWith
 import org.kiama.util.GeneratingREPL
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
@@ -30,7 +29,6 @@ import org.scalatest.prop.Checkers
 /**
  * Lambda calculus tests.
  */
-@RunWith(classOf[JUnitRunner])
 class LambdaTests extends Tests with Checkers with Parser with Evaluator
         with Generator {
 

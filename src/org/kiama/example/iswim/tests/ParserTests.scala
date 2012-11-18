@@ -25,12 +25,10 @@ package example.iswim.tests
  * Tests of the ISWIM parser combinators.
  */
 
-import org.junit.runner.RunWith
 import org.kiama.util.RegexParserTests
 import org.scalatest.junit.JUnitRunner
 import org.kiama.example.iswim.compiler._
 
-@RunWith(classOf[JUnitRunner])
 class ParserTests extends RegexParserTests with Parser {
 
     import Syntax._

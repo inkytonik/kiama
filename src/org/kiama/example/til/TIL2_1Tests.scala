@@ -21,11 +21,9 @@
 package org.kiama
 package example.til
 
-import org.junit.runner.RunWith
 import org.kiama.util.TransformerTests
 import org.scalatest.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class TIL2_1Tests extends TIL2_1 with TransformerTests {
 
     import AST._

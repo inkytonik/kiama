@@ -29,12 +29,10 @@
 package org.kiama
 package example.picojava.tests
 
-import org.junit.runner.RunWith
 import org.kiama.example.picojava.Parser
 import org.kiama.util.RegexParserTests
 import org.scalatest.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class ParserTests extends Parser with RegexParserTests {
 
     import org.kiama.example.picojava.AbstractSyntax._

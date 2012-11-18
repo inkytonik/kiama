@@ -21,7 +21,6 @@
 package org.kiama
 package util
 
-import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
 
@@ -29,7 +28,6 @@ import org.scalatest.junit.JUnitRunner
  * Basic tests of compiler module.  Normal usage is tested by many of
  * the examples.
  */
-@RunWith(classOf[JUnitRunner])
 class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] {
 
     import java.io.Reader

@@ -101,7 +101,6 @@ initialCommands in console in Test <<= (initialCommands in console) { cmds =>
 libraryDependencies ++= 
     Seq (
         "jline" % "jline" % "1.0",
-        "junit" % "junit" % "4.10" % "test",
         "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
         "org.scalatest" %% "scalatest" % "2.0.M5" % "test"
     )

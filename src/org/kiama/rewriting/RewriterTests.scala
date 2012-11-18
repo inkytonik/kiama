@@ -23,14 +23,12 @@ package rewriting
 
 import org.kiama.example.imperative.Generator
 import org.kiama.util.Tests
-import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
 /**
  * Rewriting tests.
  */
-@RunWith(classOf[JUnitRunner])
 class RewriterTests extends Tests with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._

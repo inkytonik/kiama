@@ -21,11 +21,9 @@
 package org.kiama
 package example.til
 
-import org.junit.runner.RunWith
 import org.kiama.util.RegexParserTests
 import org.scalatest.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class TIL1_1Tests extends TIL1_1 with RegexParserTests {
 
     import AST._

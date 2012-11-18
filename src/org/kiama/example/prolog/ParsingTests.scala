@@ -21,7 +21,6 @@
 package org.kiama
 package example.prolog
 
-import org.junit.runner.RunWith
 import org.kiama.util.RegexParserTests
 import org.scalatest.junit.JUnitRunner
 
@@ -29,7 +28,6 @@ import org.scalatest.junit.JUnitRunner
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-@RunWith(classOf[JUnitRunner])
 class ParsingTests extends SyntaxAnalysis with RegexParserTests {
 
     import PrologTree._

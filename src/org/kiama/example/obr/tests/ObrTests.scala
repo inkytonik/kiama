@@ -26,13 +26,11 @@ package org.kiama.example.obr.tests
 import org.kiama.example.obr._
 import org.kiama.example.obr.ObrTree.ObrInt
 import org.kiama.util.TestCompiler
-import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 /**
  * Obr regression tests: compilation to assembly.
  */
-@RunWith(classOf[JUnitRunner])
 class ObrRegressionTests extends Driver with TestCompiler[ObrInt] {
 
     filetests ("ObrRegression", "src/org/kiama/example/obr/tests/generic", ".obr", ".risc",
@@ -43,7 +41,6 @@ class ObrRegressionTests extends Driver with TestCompiler[ObrInt] {
 /**
  * Obr parser tests.
  */
-@RunWith(classOf[JUnitRunner])
 class ObrParserTests extends ParserDriver with TestCompiler[ObrInt] {
 
     filetests ("ObrParserEnum", "src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
@@ -54,7 +51,6 @@ class ObrParserTests extends ParserDriver with TestCompiler[ObrInt] {
 /**
  * Obr semantic analysis tests.
  */
-@RunWith(classOf[JUnitRunner])
 class ObrSemanticTests extends SemanticDriver with TestCompiler[ObrInt] {
 
     filetests ("ObrSemanticEnum", "src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
@@ -65,7 +61,6 @@ class ObrSemanticTests extends SemanticDriver with TestCompiler[ObrInt] {
 /**
  * Obr tests: compilation and execution.
  */
-@RunWith(classOf[JUnitRunner])
 class ObrExecTests extends Driver with TestCompiler[ObrInt] {
     
     import org.kiama.util.StringConsole
@@ -237,7 +232,6 @@ class ObrExecTests extends Driver with TestCompiler[ObrInt] {
  * to applied uses of each constant of the original source file occur 
  * in an appropriate order.
  */
-@RunWith(classOf[JUnitRunner])
 class ObrNumberingTest extends TreeTestDriver {
 
     targettreetest("ObrNumbering", "src/org/kiama/example/obr/tests/exceptions/codegen/", 

@@ -25,13 +25,11 @@ package example.iswim.tests
  * Tests of semantic analysis attribution.
  */
 
-import org.junit.runner.RunWith
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.example.iswim.compiler._
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
 
     import org.kiama.util.Messaging._

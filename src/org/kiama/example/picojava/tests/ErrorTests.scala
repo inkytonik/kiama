@@ -29,12 +29,10 @@
 package org.kiama
 package example.picojava.tests
 
-import org.junit.runner.RunWith
 import org.kiama.example.picojava.Parser
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class ErrorTests extends Tests with Parser {
 
     import org.kiama.attribution.Attribution.initTree

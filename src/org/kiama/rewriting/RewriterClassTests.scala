@@ -21,7 +21,6 @@
 package org.kiama
 package rewriting
 
-import org.junit.runner.RunWith
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
@@ -30,7 +29,6 @@ import org.scalatest.prop.Checkers
  * Rewriting tests that operate on normal class values, i.e., not instances
  * of products or colleciton class values.
  */
-@RunWith(classOf[JUnitRunner])
 class RewriterClassTests extends Tests with Checkers {
 
     import org.kiama.example.imperative.ASTNonCase._

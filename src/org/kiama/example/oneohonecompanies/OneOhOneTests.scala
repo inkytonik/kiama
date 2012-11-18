@@ -21,11 +21,9 @@
 package org.kiama
 package example.oneohonecompanies
 
-import org.junit.runner.RunWith
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
-@RunWith(classOf[JUnitRunner])
 class OneOhOneTests extends Tests {
     
     import Company._

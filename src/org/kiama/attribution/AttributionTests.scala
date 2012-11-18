@@ -21,14 +21,12 @@
 package org.kiama
 package attribution
 
-import org.junit.runner.RunWith
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests of basic attribution.
  */
-@RunWith(classOf[JUnitRunner])
 class AttributionTests extends Tests {
     
     import scala.collection.GenSeq

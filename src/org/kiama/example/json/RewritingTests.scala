@@ -23,7 +23,6 @@
 package org.kiama
 package example.json
 
-import org.junit.runner.RunWith
 import org.kiama.util.RegexParserTests
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
@@ -31,7 +30,6 @@ import org.scalatest.junit.JUnitRunner
 /**
  * Tests that check that the rewriting and decoration works correctly.
  */
-@RunWith(classOf[JUnitRunner])
 class RewritingTests extends FunSuite {
 
     import JSONTree._

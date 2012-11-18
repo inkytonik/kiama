@@ -21,7 +21,6 @@
 package org.kiama
 package example.repmin
 
-import org.junit.runner.RunWith
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
@@ -39,8 +38,6 @@ trait RepminTestsBase extends Tests {
 
 }
 
-@RunWith(classOf[JUnitRunner])
 class RepminTests extends Repmin with RepminTestsBase
 
-@RunWith(classOf[JUnitRunner])
 class RepminDecTests extends RepminDec with RepminTestsBase

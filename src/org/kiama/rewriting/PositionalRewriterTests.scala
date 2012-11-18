@@ -22,13 +22,11 @@ package org.kiama
 package rewriting
 
 import org.kiama.util.Tests
-import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 /**
  * Positional rewriting tests.
  */
-@RunWith(classOf[JUnitRunner])
 class PositionalRewriterTests extends Tests {
 
     import SupportPositionalRewriterTests._
@@ -123,7 +121,6 @@ object SupportPositionalRewriterTests {
 /**
  * Positioned rewriting tests.
  */
-@RunWith(classOf[JUnitRunner])
 class PositionedRewriterTests extends Tests {
 
     import SupportPositionedRewriterTests._

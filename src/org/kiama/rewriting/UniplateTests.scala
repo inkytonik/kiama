@@ -21,7 +21,6 @@
 package org.kiama
 package rewriting
 
-import org.junit.runner.RunWith
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
@@ -31,7 +30,6 @@ import org.kiama.example.imperative.Generator
  * Tests based on examples from the paper "Uniform boilerplate and list
  * processing" by Mitchell and Runciman, from Haskell Workshop 2007.
  */
-@RunWith(classOf[JUnitRunner])
 class UniplateTests extends Tests with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._

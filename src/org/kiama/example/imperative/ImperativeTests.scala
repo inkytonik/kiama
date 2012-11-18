@@ -21,7 +21,6 @@
 package org.kiama
 package example.imperative
 
-import org.junit.runner.RunWith
 import org.kiama.util.GeneratingREPL
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
@@ -31,7 +30,6 @@ import org.scalatest.junit.JUnitRunner
  * Quite a few of the tests of other modules also use the imperative
  * language.
  */
-@RunWith(classOf[JUnitRunner])
 class ImperativeTests extends Tests {
 
     import AST._

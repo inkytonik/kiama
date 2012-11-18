@@ -26,13 +26,11 @@ package example.iswim.tests
  * Tests of code generation attribution.
  */
 
-import org.junit.runner.RunWith
 import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
 
-@RunWith(classOf[JUnitRunner])
 class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis with Parser {
 
     import Syntax._

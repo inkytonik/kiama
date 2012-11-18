@@ -21,14 +21,12 @@
 package org.kiama
 package util
 
-import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 /**
  * Basic tests of parser utilities module.  Many cases are already tested
  * in the examples, so we only test for coverage here.
  */
-@RunWith(classOf[JUnitRunner])
 class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
 
     case class Node (i : Int)
