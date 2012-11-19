@@ -475,7 +475,7 @@ class Rewriter {
      * reference equality, otherwise throw an error since we should be
      * able to cast anything to reference.
      */
-    def same (v1 : Any, v2 : Any) : Boolean =
+    private def same (v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
             v2 == null
         else if (v2 == null)
