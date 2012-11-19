@@ -32,7 +32,7 @@ import org.scalatest.prop.Checkers
 class RewriterClassTests extends Tests with Checkers {
 
     import org.kiama.example.imperative.ASTNonCase._
-    import org.kiama.rewriting.Rewriter.{fail => rwfail, _}
+    import org.kiama.rewriting.Rewriter._
 
     {
         // (abc + 1) * (xyz - 3)
