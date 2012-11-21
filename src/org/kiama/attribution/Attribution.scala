@@ -174,10 +174,10 @@ trait AttributionBase {
 }
 
 /**
- * Attribution of syntax trees in a functional style with attribute values
- * cached so that each value is computed at most once.
+ * Reusable implementation of attribution of syntax trees in a functional style
+ * with attribute values cached so that each value is computed at most once.
  */
-object Attribution extends AttributionBase {
+trait Attribution extends AttributionBase {
 
     /**
      * Global state for the memoisation tables.
@@ -333,10 +333,15 @@ object Attribution extends AttributionBase {
 }
 
 /**
- * Attribution of syntax trees in a functional style with attribute values
- * computed each time they are accessed.
+ * Module for cached attributes.
  */
-object UncachedAttribution extends AttributionBase {
+object Attribution extends Attribution
+
+/**
+ * Reusable implementation of attribution of syntax trees in a functional style
+ * with attribute values computed each time they are accessed.
+ */
+trait UncachedAttribution extends AttributionBase {
 
     /**
      * An attribute of a node type `T` with value of type `U`, supported by a circularity
@@ -426,3 +431,8 @@ object UncachedAttribution extends AttributionBase {
         attr { case t => f (t) (t.parent) }
 
 }
+
+/**
+ * Module for uncached attributes.
+ */
+object UncachedAttribution extends UncachedAttribution

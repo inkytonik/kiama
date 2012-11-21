@@ -22,14 +22,14 @@ package org.kiama
 package attribution
 
 /**
- * Support for dynamic attribution of syntax trees.
- * Dynamic attributes definitions can be extended at runtime by the addition 
- * of new equations, which can later be removed.
+ * Reusable implementation of dynamic attributes where definitions can be
+ * extended at runtime by the addition of new equations, which can later
+ * be removed.
  *
  * @author Lennart Kats <lennart add lclnet.nl>
  * @author Tony Sloane <Anthony.Sloane add mq.edu.au>
  */
-object DynamicAttribution extends AttributionBase {
+trait DynamicAttribution extends AttributionBase {
 
     import java.util.IdentityHashMap
     import scala.collection.mutable._
@@ -253,3 +253,8 @@ object DynamicAttribution extends AttributionBase {
     }
 
 }
+
+/**
+ * Module for dynamic attributes.
+ */
+object DynamicAttribution extends DynamicAttribution
