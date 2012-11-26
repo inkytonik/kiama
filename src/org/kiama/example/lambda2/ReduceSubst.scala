@@ -85,7 +85,7 @@ trait ReduceSubst extends Reduce {
             case Let (x, t1, e1, Lam (y, t2, e2)) if x == y =>
                 Lam (y, t2, e2)
             case Let (x, t1, e1, Lam (y, t2, e2)) =>
-                val z = freshvar ()
+                val z = FreshVar ()
                 Lam (z, t2, Let (x, t1, e1, Let (y, t2, Var (z), e2)))
         }
 
