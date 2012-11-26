@@ -43,17 +43,25 @@ trait Tests extends FunSuite {
             case (None, None)                             => true
             case (null, null)                             => true
             case (r1 : AnyRef, r2 : AnyRef)               => r1 eq r2
-            case _ => 
-                sys.error ("Tests.same: unexpected case: " + v1 + ", " + v2)
+            case _ =>
+                sys.error ("Tests.same: unexpected case: %s, %s".format (v1, v2))
         }
-        
+
+    /**
+     * Fail a test with a message about finding something and expecting
+     * something else.
+     */
+    def failExpectedTest[T] (expected : T, found : T, description : String = "") {
+        fail ("expected %s'%s', not '%s'".format (description, expected, found))
+    }
+
     /**
      * Analogous to ScalaTest's expect but it uses same to compare
      * the two values instead of equality.
      */
     def expectsame (expected : Any) (actual : Any) {
         if (!same (expected, actual)) {
-            fail ("Expected same object as " + expected + ", but got " + actual)
+            failExpectedTest (expected, actual, "same object as ")
         }
     }
 
@@ -63,7 +71,7 @@ trait Tests extends FunSuite {
      */
     def expectnotsame (expected : Any) (actual : Any) {
         if (same (expected, actual)) {
-            fail ("Expected not same object as " + expected + ", but got " + actual)
+            failExpectedTest (expected, actual, "not same object as ")
         }
     }
 
@@ -92,8 +100,29 @@ trait Tests extends FunSuite {
  * Useful test routines for RegexParsers.
  */
 trait RegexParserTests extends Tests {
-    
+
     self : RegexParsers =>
+
+    /**
+     * Fail a test with a message about reaching the end of the input.
+     */
+    def failInputEnd (in : Input) {
+        fail ("input remaining at " + in.pos)
+    }
+
+    /**
+     * Fail a test with a message detailing a parse error.
+     */
+    def failParseError (f : Error) {
+        fail ("parse error: " + f)
+    }
+
+    /**
+     * Fail a test with a message detailing a parse failure.
+     */
+    def failParseFailure (f : Failure) {
+        fail ("parse faiure: " + f)
+    }
 
     /**
      * Assert that a parsing operation should be performed correctly.
@@ -104,12 +133,12 @@ trait RegexParserTests extends Tests {
     def assertParseOk[T] (str : String, p : Parser[T], result : T) {
         parseAll (p, str) match {
             case Success (r, in) =>
-                if (r != result) fail ("found '" + r + "' not '" + result + "'")
-                if (!in.atEnd) fail ("input remaining at " + in.pos)
+                if (r != result) failExpectedTest (result, r)
+                if (!in.atEnd) failInputEnd (in)
             case f : Error =>
-                fail ("parse error: " + f)
+                failParseError (f)
             case f : Failure =>
-                fail ("parse failure: " + f)
+                failParseFailure (f)
         }
     }
 
@@ -126,7 +155,7 @@ trait RegexParserTests extends Tests {
                              msg : String, iserr : Boolean = false) {
         parseAll (p, str) match {
             case Success (r, _) =>
-                fail ("expected to find parse error in " + str + " but it succeeded with " + r)
+                fail ("expected to find parse error in %s but it succeeded with %s".format (str, r))
             case e : NoSuccess =>
                 if (iserr && e.isInstanceOf[Failure])
                     fail ("got parse failure when expecting parse error")
@@ -144,7 +173,7 @@ trait RegexParserTests extends Tests {
  * Useful test routines for transformers.
  */
 trait TransformerTests extends RegexParserTests {
-    
+
     self : RegexParsers =>
 
     /**
@@ -157,13 +186,13 @@ trait TransformerTests extends RegexParserTests {
     def assertTransformOk[T] (str : String, p : Parser[T], t : T => T, result : T) {
         parseAll (p, str) match {
             case Success (r, in) =>
-                if (!in.atEnd) fail ("input remaining at " + in.pos)
+                if (!in.atEnd) failInputEnd (in)
                 val newr = t (r)
-                if (newr != result) fail ("found '" + newr + "' not '" + result + "'")
+                if (newr != result) failExpectedTest (result, newr)
             case f : Error =>
-                fail ("parse error: " + f)
+                failParseError (f)
             case f : Failure =>
-                fail ("parse failure: " + f)
+                failParseFailure (f)
         }
     }
 
