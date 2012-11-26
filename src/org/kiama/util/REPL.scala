@@ -75,7 +75,7 @@ trait REPLBase {
     /**
      * Define the prompt (default: `"> "`).
      */
-    def prompt () : String =
+    def prompt : String =
         "> "
 
     /**

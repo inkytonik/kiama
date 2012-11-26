@@ -37,7 +37,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
      * Debug flag. Set this to true in sub-classes or objects to obtain
      * tracing information during execution of the machine.
      */
-    override def debug () : Boolean =
+    override def debug : Boolean =
         false
 
     /**

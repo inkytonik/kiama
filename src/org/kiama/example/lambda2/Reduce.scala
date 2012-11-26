@@ -56,6 +56,5 @@ trait Reduce extends RewritingEvaluator {
 }
 
 class ReduceEvaluator extends Reduce {
-    override def reducesinlambdas () : Boolean =
-        true
+    override val reducesinlambdas = true
 }

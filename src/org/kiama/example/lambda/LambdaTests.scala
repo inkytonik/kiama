@@ -149,7 +149,7 @@ object LambdaGen extends GeneratingREPL[AST.Exp] with Generator {
 
     import org.scalacheck.Arbitrary
 
-    def generator () : Arbitrary[AST.Exp] =
+    def generator : Arbitrary[AST.Exp] =
         arbExp
 
 }

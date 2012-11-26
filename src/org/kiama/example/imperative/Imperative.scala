@@ -34,8 +34,7 @@ object Imperative extends ParsingREPL[AST.Stmt] with Parser {
         true
     }
 
-    override def prompt () : String =
-        "imperative> "
+    override val prompt = "imperative> "
 
     def process (s : AST.Stmt) {
         emitter.emitln (s)

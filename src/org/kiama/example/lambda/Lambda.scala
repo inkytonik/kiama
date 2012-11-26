@@ -168,8 +168,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
         true
     }
 
-    override def prompt () : String =
-        "lambda> "
+    override val prompt = "lambda> "
 
     def process (e : Exp) {
         normal (e) match {

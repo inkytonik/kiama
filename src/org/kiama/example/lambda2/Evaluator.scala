@@ -38,7 +38,7 @@ trait Evaluator {
      * Whether this mechanism evaluates inside lambdas.  Used for
      * testing.  Default: false.
      */
-    def reducesinlambdas () : Boolean =
+    def reducesinlambdas : Boolean =
         false
 
     /**

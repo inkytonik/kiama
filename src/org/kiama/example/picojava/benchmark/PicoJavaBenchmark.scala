@@ -31,7 +31,7 @@ object PicoJavaBenchmark extends App with StdoutEmitter {
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 
-    def basicAst () : ClassDecl =
+    def basicAst : ClassDecl =
         ClassDecl ("AA", None, Block (List (VarDecl (Use ("int"), "x"))))
 
     def createAst (subtree : ClassDecl) : ClassDecl =

@@ -46,8 +46,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
         true
     }
 
-    override def prompt () : String =
-        mechanism + super.prompt
+    override val prompt = mechanism + super.prompt
 
     /**
      * Are we currently type-checking or not?  Default: true.

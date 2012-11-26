@@ -76,7 +76,7 @@ object AST {
      */
     abstract class Query {
         type T
-        def execute () : T
+        def execute : T
     }
 
     /**
@@ -84,7 +84,7 @@ object AST {
      */
     case class EquivQuery (e1 : Exp, e2 : Exp) extends Query {
         type T = Boolean
-        def execute () : T = alphaequiv (e1, e2)
+        def execute : T = alphaequiv (e1, e2)
     }
 
     /**
@@ -92,7 +92,7 @@ object AST {
      */
     case class EvalQuery (e : Exp) extends Query {
         type T = Exp
-        def execute () : T = cbn_eval (e)
+        def execute : T = cbn_eval (e)
     }
 
     /**
@@ -100,15 +100,15 @@ object AST {
      */
     case class FreeNamesQuery (e : Exp) extends Query {
         type T = Set[Name]
-        def execute () : T = fv (e)
+        def execute : T = fv (e)
     }
-    
+
     /**
      * A query that determines whether a name is not free in an expression.
      */
     case class FreshQuery (n : Name, e : Exp) extends Query {
         type T = Boolean
-        def execute () : T = fresh (n) (e)
+        def execute : T = fresh (n) (e)
     }
 
     /**
@@ -117,7 +117,7 @@ object AST {
      */
     case class SubstQuery (n : Name, e1 : Exp, e2 : Exp) extends Query {
         type T = Exp
-        def execute () : T = subst (n, e1) (e2)
+        def execute : T = subst (n, e1) (e2)
     }
 
     /**
@@ -125,7 +125,7 @@ object AST {
      */
     case class SwapQuery (tr : Trans, e : Exp) extends Query {
         type T = Exp
-        def execute () : T = swap (tr) (e)
+        def execute : T = swap (tr) (e)
     }
 
 }
@@ -230,11 +230,10 @@ object Lambda extends ParsingREPL[AST.Query] with Parser {
         true
     }
 
-    override def prompt () : String =
-        "query> "
+    override val prompt = "query> "
 
     def process (q : AST.Query) {
-        emitter.emitln (q.execute ())
+        emitter.emitln (q.execute)
     }
 
 }

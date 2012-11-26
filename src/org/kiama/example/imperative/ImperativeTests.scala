@@ -201,7 +201,7 @@ object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
 
     import org.scalacheck.Arbitrary
 
-    def generator () : Arbitrary[AST.Stmt] =
+    def generator : Arbitrary[AST.Stmt] =
         arbStmt
 
     override def process (s : AST.Stmt) {

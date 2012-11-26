@@ -46,8 +46,7 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Display a prompt.
      */
-    override def prompt () : String =
-        "Hit ENTER to generate an instance: "
+    override val prompt = "Hit ENTER to generate an instance: "
 
     /**
      * The generator to use to make values of type T.

@@ -29,7 +29,7 @@ import PrologTree.Literal
 /**
  * Conduct semantic analysis on the Prolog program in the file given as
  * the first command-line argument.  If the program is correct, enter an
- * interactive read-eval-print loop (REPL) to read queries.  For each 
+ * interactive read-eval-print loop (REPL) to read queries.  For each
  * query, call the interpreter to evaluate it.
  */
 object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter {
@@ -86,11 +86,11 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
      * Needed so that the process method can access it.
      */
     var programtree : Program = _
-    
+
     /**
      * Process the program by analysing it to check for semantic
-     * errors.  If any messages are produced, print them and 
-     * return false.  Otherwise, save the tree for the interpreter 
+     * errors.  If any messages are produced, print them and
+     * return false.  Otherwise, save the tree for the interpreter
      * and return true.
      */
     def processprogram (tree : Program) : Boolean = {
@@ -115,8 +115,7 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
     /**
      * The prompt to print before each line of input is read.
      */
-    override def prompt () : String =
-        "?- "
+    override val prompt = "?- "
 
     /**
      * Process a query by passing it and the program to the interpreter.
