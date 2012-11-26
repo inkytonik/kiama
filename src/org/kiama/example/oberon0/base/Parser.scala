@@ -8,7 +8,7 @@ import org.kiama.util.WhitespacePositionedParserUtilities
  * Parsers for base language.
  */
 trait Parser extends WhitespacePositionedParserUtilities {
-  
+
     import source.{Block, Declaration, EmptyStmt, IdnDef, IdnUse,
         ModuleDecl, Statement}
 
@@ -48,7 +48,7 @@ trait Parser extends WhitespacePositionedParserUtilities {
 
     lazy val statement =
         statementDef
-        
+
     def statementDef : PackratParser[Statement] =
         result (EmptyStmt ())
 
@@ -63,14 +63,14 @@ trait Parser extends WhitespacePositionedParserUtilities {
 
     lazy val keyword =
         keywords ("[^a-zA-Z0-9]".r, keywordStrings)
-        
+
     lazy val ident =
         not (keyword) ~> "[a-zA-Z_][a-zA-Z0-9]*".r |
         failure ("ident expected")
 
-    lazy val whitespaceParser : PackratParser[Any] = 
+    lazy val whitespaceParser : PackratParser[Any] =
         rep (whiteSpace | comment)
-        
+
     lazy val comment : PackratParser[Any] =
         "(*" ~ rep (not ("*)") ~ (comment | any)) ~ "*)"
 

@@ -70,7 +70,7 @@ trait CompilerBase[T] {
      * files which are processed in turn by using `makeast` to turn
      * their contents into abstract syntax trees (ASTs) and then by
      * process which conducts arbitrary processing on the ASTs. The
-     * character encoding of the files is given by the `encoding` 
+     * character encoding of the files is given by the `encoding`
      * method.
      */
     def driver (args : Array[String], console : Console, emitter : Emitter) {

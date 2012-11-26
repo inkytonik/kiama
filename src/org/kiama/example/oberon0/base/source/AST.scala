@@ -22,7 +22,7 @@ case class ModuleDecl (idndef : IdnDef, block : Block, idnuse : IdnUse) extends 
 
 /**
  * Non-terminal type for statements.
- */                       
+ */
 abstract class Statement extends SourceASTNode
 
 /**

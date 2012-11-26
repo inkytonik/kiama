@@ -103,7 +103,7 @@ trait Environments {
      * usually accepted in most situations to avoid cascade errors.
      */
     trait ErrorEntity extends Entity
-    
+
     /**
      * A entity represented by names for whom we have seen more than one
      * declaration so we are unsure what is being represented.
@@ -128,14 +128,14 @@ trait Environments {
      * An environment is a stack of scopes with the innermost scope on the top.
      */
     type Environment = Stack[Scope]
-    
+
     /**
      * Create a root environment, i.e., one that has a single scope containing
      * the given bindings.
      */
     def rootenv (bindings : (String,Entity)*) : Environment =
         Stack (HashMap (bindings : _*))
-    
+
     /**
      * Enter a new empty scope nested within the given environment.
      */
@@ -184,14 +184,14 @@ trait Environments {
         env.exists (s => isDefinedInScope (s, i))
 
     /**
-     * Say whether i is defined in an innermost scope of env (i.e., in the 
+     * Say whether i is defined in an innermost scope of env (i.e., in the
      * current scope).
      */
     def isDefinedInInner (env : Environment, i : String) : Boolean =
         isDefinedInScope (env.top, i)
 
     /**
-     * Say whether i is defined in an outer scope of env (i.e., not in the 
+     * Say whether i is defined in an outer scope of env (i.e., not in the
      * current scope).
      */
     def isDefinedInOuter (env : Environment, i : String) : Boolean =
@@ -217,7 +217,7 @@ trait Environments {
                     return s (i)
             e
         }
-        
-    }    
+
+    }
 
 }

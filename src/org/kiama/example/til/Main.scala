@@ -60,7 +60,7 @@ trait Main extends StdoutEmitter {
 
 /**
  * Main program for TIL chairmarks that just parse.
- */ 
+ */
 trait ParsingMain extends Main {
 
     self : PositionedParserUtilities =>

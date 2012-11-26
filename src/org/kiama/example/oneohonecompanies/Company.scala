@@ -22,11 +22,11 @@ package org.kiama
 package example.oneohonecompanies
 
 object Company {
-    
+
     import org.kiama.attribution.Attributable
-    
+
     trait Node extends Attributable
-    
+
     case class Company (depts : List[Dept]) extends Node
     case class Dept (n : Name, m : Manager, su : List[SubUnit]) extends Node
 
@@ -36,7 +36,7 @@ object Company {
     abstract class SubUnit extends Node
     case class PU (e : Employee) extends SubUnit
     case class DU (d : Dept) extends SubUnit
-    
+
     type Name = String
     type Address = String
     type Salary = Double

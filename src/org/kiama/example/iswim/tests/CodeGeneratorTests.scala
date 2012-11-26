@@ -449,5 +449,5 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     70: Exit(),
     71: Exit())""")
    }
-    
+
 }

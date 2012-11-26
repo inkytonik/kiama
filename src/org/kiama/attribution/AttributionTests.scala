@@ -28,7 +28,7 @@ import org.scalatest.junit.JUnitRunner
  * Tests of basic attribution.
  */
 class AttributionTests extends Tests {
-    
+
     import scala.collection.GenSeq
 
     abstract class Tree extends Attributable
@@ -173,7 +173,7 @@ class AttributionTests extends Tests {
         val b = Pair (d, e)
         val a = Pair (b, c)
         initTree (a)
-        
+
         expectResult (0, "cached childAttr Pair Pair") (cattr (b))
         expectResult (2, "cached childAttr Pair top") (cattr (a))
         expectResult (3, "cached childAttr Leaf Pair") (cattr (c))
@@ -207,7 +207,7 @@ class AttributionTests extends Tests {
         val b = Pair (d, e)
         val a = Pair (b, c)
         initTree (a)
-        
+
         expectResult (0, "uncached childAttr Pair Pair") (cattr (b))
         expectResult (2, "uncached childAttr Pair top") (cattr (a))
         expectResult (3, "uncached childAttr Leaf Pair") (cattr (c))
@@ -228,7 +228,7 @@ class AttributionTests extends Tests {
                     case _ => 3
                 }
             }
-        
+
         expectResult (0, "cached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
         )
@@ -238,7 +238,7 @@ class AttributionTests extends Tests {
         expectResult (1, "cached paramAttr Leaf hello") (pattr ("hello") (Leaf (1)))
         expectResult (3, "cached paramAttr Leaf goodbye") (pattr ("goodbye") (Leaf (1)))
     }
-    
+
     test ("cached parameterised attributes are re-evaluated after reset") {
         import Attribution._
 
@@ -255,7 +255,7 @@ class AttributionTests extends Tests {
                     case _ => 3
                 }
             }
-   
+
         val t = Pair (Leaf (1), Leaf (2))
 
         expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
@@ -280,7 +280,7 @@ class AttributionTests extends Tests {
                     case _ => 3
                 }
             }
-        
+
         expectResult (0, "uncached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
         )
@@ -386,7 +386,7 @@ class AttributionTests extends Tests {
         Base
 
     }
-    
+
     test ("a normal child's properties are set correctly") {
         import Attribution.initTree
         val c1 = Leaf (3)
@@ -463,7 +463,7 @@ class AttributionTests extends Tests {
 
         }
     }
-    
+
     test ("an either child's parent property is set correctly") {
         import Attribution.initTree
         val c1 = Leaf (3)
@@ -496,7 +496,7 @@ class AttributionTests extends Tests {
         expectsame (c4) (c2.parent)
         expectsame (c4) (c3.parent)
     }
-        
+
     test ("a set child's parent property is set correctly") {
         import Attribution.initTree
         val c1 = Leaf (3)
@@ -511,7 +511,7 @@ class AttributionTests extends Tests {
         expectsame (c4) (c2.parent)
         expectsame (c4) (c3.parent)
     }
-        
+
     test ("a sequential vector child's parent property is set correctly") {
         import Attribution.initTree
         val c1 = Leaf (3)
@@ -526,7 +526,7 @@ class AttributionTests extends Tests {
         expectsame (c4) (c2.parent)
         expectsame (c4) (c3.parent)
     }
-        
+
     test ("a parallel vector child's parent property is set correctly") {
         import Attribution.initTree
         val c1 = Leaf (3)
@@ -559,7 +559,7 @@ class AttributionTests extends Tests {
         expectsame (t) (c6.parent)
         expectsame (c6) (c4.parent)
         expectsame (c6) (c5.parent)
-    }    
+    }
 
     test ("a pair's component parent properties are set correctly") {
         import Attribution.initTree
@@ -574,7 +574,7 @@ class AttributionTests extends Tests {
         expectsame (t) (c4.parent)
         expectsame (c4) (c2.parent)
         expectsame (c4) (c3.parent)
-    }    
+    }
 
     test ("a triple's component parent properties are set correctly") {
         import Attribution.initTree
@@ -591,7 +591,7 @@ class AttributionTests extends Tests {
         expectsame (c5) (c2.parent)
         expectsame (c5) (c4.parent)
         expectsame (c5) (c4.parent)
-    }    
+    }
 
     test ("a quad's component parent properties are set correctly") {
         import Attribution.initTree
@@ -610,7 +610,7 @@ class AttributionTests extends Tests {
         expectsame (c6) (c3.parent)
         expectsame (c6) (c4.parent)
         expectsame (c6) (c5.parent)
-    }    
+    }
 
     test ("a chain that is only defined at the root returns the root value") {
         import Attribution.initTree
@@ -668,7 +668,7 @@ class AttributionTests extends Tests {
 
         val c = Add (Num (1), Num (2))
         val d = Add (Num (1), Num (2))
-        val e = Add (Num (3), Num (4)) 
+        val e = Add (Num (3), Num (4))
         val t = Add (Mul (c,
                           Sub (c,
                                d)),
@@ -684,20 +684,20 @@ class AttributionTests extends Tests {
 
         initTree (t)
         val ct = deepclone (t)
-        
+
         // Must get the right answer (==)
         expectResult (u) (ct)
-        
+
         // Must not get the original term (eq)
         expectnotsame (t) (ct)
-        
+
         // Make sure that the parents proerpties are set correctly
         // (for the top level)
         def isTree (ast : Attributable) : Boolean =
             ast.children.forall (c => (c.parent eq ast) && isTree (c))
         assert (isTree (ct.asInstanceOf[Attributable]),
                 "deep cloned tree has invalid parent properties")
-        
+
         // Check the terms at the positions of the two c occurrences
         // against each other, since they are eq to start but should
         // not be after

@@ -31,7 +31,7 @@ import org.kiama.output.PrettyPrinter
  * called `name`.  Tracing messages are output to the given emitter, which
  * defaults to standard output.
  */
-abstract class Machine (val name : String, emitter : Emitter = new Emitter) 
+abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         extends PrettyPrinter {
 
     /**
@@ -279,7 +279,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = t
-        
+
         /**
          * Convert to string representation.  Really only used when
          * printing inconsistent state exceptions.
@@ -318,7 +318,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = u
-        
+
         /**
          * Convert to string representation.  Really only used when
          * printing inconsistent state exceptions.
@@ -344,7 +344,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     /**
      * The rule to execute to run one step of this machine.
      */
-    def main : Unit 
+    def main : Unit
 
     /**
      * Clean up after this machine.  This routine is called after the

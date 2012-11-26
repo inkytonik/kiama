@@ -28,11 +28,11 @@ package example.iswim.secd
 
 object HeapOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
-     * Allocate, access and update values in the heap 
+    /**
+     * Extra bytecode instructions for this extension
+     * Allocate, access and update values in the heap
      */
     case class Alloc() extends Instruction
     case class Get() extends Instruction
@@ -54,28 +54,28 @@ trait HeapOps extends SECDBase {
     import SECDBase._
     import org.kiama.example.iswim.driver.PrettyPrinter._
 
- 	/**
- 	 * Extra value types which come with this extension.
- 	 *
+    /**
+     * Extra value types which come with this extension.
+     *
      * Reference values
      */
     case class RefValue() extends Value {
         override def hashCode : Int = super.hashCode
         override def equals(that : Any) : Boolean = super.equals(that)
         override def toString : String = "RefValue@" ++ hashCode.toHexString
-    	lazy val content = new State[Value]("heap chunk id @" + hashCode.toHexString) {
-    	    def toDoc : Doc = value.toDoc
-    	}
-    	def getType : TypeValue = RefTypeValue()
+        lazy val content = new State[Value]("heap chunk id @" + hashCode.toHexString) {
+            def toDoc : Doc = value.toDoc
+        }
+        def getType : TypeValue = RefTypeValue()
     }
 
     /**
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
-		// Instructions for manipulating heap allocated mutable values.
-        case Alloc() :: next => 
+    override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+        // Instructions for manipulating heap allocated mutable values.
+        case Alloc() :: next =>
             val r = RefValue()
             r.content := EmptyValue()
             stack := r :: stack
@@ -83,17 +83,17 @@ trait HeapOps extends SECDBase {
         case Get() :: next => (stack : Stack) match {
             case (r @ RefValue()) :: tail =>
                 stack := r.content :: tail
-                control := next 
-            case _ :: _ => raiseException(TypeError()) 
-            case _ => raiseException(StackUnderflow()) 
+                control := next
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
         }
         case Put() :: next => (stack : Stack) match {
             case v :: (r @ RefValue()) :: tail =>
                 r.content := v
                 stack := tail
-                control := next 
-            case _ :: _ :: _ => raiseException(TypeError()) 
+                control := next
+            case _ :: _ :: _ => raiseException(TypeError())
             case _ => raiseException(StackUnderflow())
         }
-	}
+    }
 }

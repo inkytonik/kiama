@@ -54,7 +54,7 @@ trait TypeAnalyser extends NameAnalyser {
      */
     lazy val tipe : Expression => Type =
         attr (tipeDef)
-    
+
     def tipeDef : Expression => Type =
         {
             case _ : RelationalExpression | _ : OrExp | _ : AndExp | _ : NotExp =>
@@ -62,7 +62,7 @@ trait TypeAnalyser extends NameAnalyser {
 
             case _ : SumExpression | _ : ProdExpression | _ : IntExp | _ : NegExp =>
                 integerType
-            
+
             case IdnExp (u : IdnUse) =>
                 u->idntype
 
@@ -75,7 +75,7 @@ trait TypeAnalyser extends NameAnalyser {
      */
     lazy val idntype : IdnUse => Type =
         attr (idntypeDef)
-            
+
     def idntypeDef : IdnUse => Type =
         {
             case u =>
@@ -88,7 +88,7 @@ trait TypeAnalyser extends NameAnalyser {
         }
 
     /**
-     * The type given by a type definition.  
+     * The type given by a type definition.
      */
     lazy val deftype : TypeDef => Type =
         attr (deftypeDef)
@@ -107,7 +107,7 @@ trait TypeAnalyser extends NameAnalyser {
      */
     lazy val decltype : TypeDecl => Type =
         attr {
-            case TypeDecl (_, t) => t->deftype 
+            case TypeDecl (_, t) => t->deftype
         }
 
     /**
@@ -122,10 +122,10 @@ trait TypeAnalyser extends NameAnalyser {
                 n.parent match {
                     case _ : OrExp | _ : AndExp | _ : NotExp =>
                         booleanType
-                        
+
                     case Assignment (d, _) =>
                         d->tipe
-                        
+
                     case _ =>
                         integerType
                 }

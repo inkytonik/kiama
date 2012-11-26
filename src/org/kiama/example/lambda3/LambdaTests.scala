@@ -36,7 +36,7 @@ class LambdaTests extends Tests with Parser {
     /**
      * Parse and evaluate str as a query then evaluate the query and compare
      * the outcome to result. Fail if any of the parsing or the comparison
-     * fail. `T` is the result type of the query. Generated name counting 
+     * fail. `T` is the result type of the query. Generated name counting
      * is reset before the test is run.
      */
     def expectQuery[T] (str : String, result : T) {

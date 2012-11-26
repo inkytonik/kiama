@@ -25,7 +25,7 @@ package rewriting
  * Strategy-based term rewriting for terms with Scala parsing positions.
  *
  * Specifically, this kind of rewriter will preserve positions of nodes
- * that are instances of `scala.util.parsing.input.Positional`, when 
+ * that are instances of `scala.util.parsing.input.Positional`, when
  * they are (a) rewrittten as part of a generic traversal (e.g., `all`),
  * or (b) rewritten as part of a `rule` or similar (e.g., `rulefs`).
  *
@@ -43,7 +43,7 @@ class PositionalRewriter extends CallbackRewriter {
      * If the two terms are instances of `scala.util.parsing.input.Positional`,
      * set the position of the new term to be that of the old term.
      * Always return the new term.
-     */    
+     */
     def rewriting[T <: Term] (oldTerm : T, newTerm : T) : T = {
         (oldTerm, newTerm) match {
             case (o : Positional, n : Positional) =>
@@ -65,7 +65,7 @@ object PositionalRewriter extends PositionalRewriter
  * Strategy-based term rewriting for Kiama `Positioned` terms.
  *
  * Specifically, this kind of rewriter will preserve positions of nodes
- * that are instances of `org.kiama.util.Positioned`, when 
+ * that are instances of `org.kiama.util.Positioned`, when
  * they are (a) rewrittten as part of a generic traversal (e.g., `all`),
  * or (b) rewritten as part of a `rule` or similar (e.g., `rulefs`).
  *
@@ -83,7 +83,7 @@ class PositionedRewriter extends CallbackRewriter {
      * If the two terms are instances of `org.kiama.util.Positioned`,
      * set the start and finish positions of the new term to be those of
      * the old term. Always return the new term.
-     */    
+     */
     def rewriting[T <: Term] (oldTerm : T, newTerm : T) : T = {
         (oldTerm, newTerm) match {
             case (o : Positioned, n : Positioned) =>

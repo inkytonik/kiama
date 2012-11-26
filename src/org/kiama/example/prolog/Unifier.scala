@@ -27,7 +27,7 @@ import org.kiama.rewriting.Rewriter.{ Term => _, _ }
 import scala.collection.immutable.Map
 
 /**
- * A substitution that records how variables (given by their names) are to 
+ * A substitution that records how variables (given by their names) are to
  * be replaced by Prolog terms.
  */
 abstract class Subst {

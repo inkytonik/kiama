@@ -34,7 +34,7 @@ class ImperativeTests extends Tests {
 
     import AST._
     import PrettyPrinter._
-    
+
     test ("pretty-print imperative variable") {
         expectResult ("xyz123") (pretty (Var ("xyz123")))
     }
@@ -56,7 +56,7 @@ class ImperativeTests extends Tests {
     }
 
     // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
-    val p = 
+    val p =
         Seqn (List (
             Asgn (Var ("i"), Num (10)),
             Asgn (Var ("count"), Num (0)),
@@ -64,8 +64,8 @@ class ImperativeTests extends Tests {
                 Seqn (List (
                     Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                     Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
-    
-    val pp1 = 
+
+    val pp1 =
         """{
           |    i = 10.0;
           |    count = 0.0;
@@ -82,7 +82,7 @@ class ImperativeTests extends Tests {
           |            i = (1.0 + i);
           |        }
           |}""".stripMargin
-    
+
     val ppp =
         """Seqn (
           |    List (
@@ -98,7 +98,7 @@ class ImperativeTests extends Tests {
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
     test ("pretty-print non-trivial imperative program (default width)") {
-        expectResult (pp1) (pretty (p)) 
+        expectResult (pp1) (pretty (p))
     }
 
     test ("pretty-print non-trivial imperative program (narrow)") {
@@ -108,7 +108,7 @@ class ImperativeTests extends Tests {
     test ("pretty-print non-trivial imperative program (product)") {
         expectResult (ppp) (pretty_any (p))
     }
-    
+
 }
 
 /**

@@ -101,7 +101,7 @@ trait PositionedParserUtilities extends ParserUtilities {
         }
 
     /**
-     * Make a new parser that processes input according to `f`. If the 
+     * Make a new parser that processes input according to `f`. If the
      * result produced by `f` is `Positioned`, set its start and finish
      * positions. If the parser is ignoring whitespace then the start
      * position will be the first non-white character that was accepted.

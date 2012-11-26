@@ -27,10 +27,10 @@ package example.iswim.secd
 
 object StackOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Stack manipulation operations like pop and rotate
      */
     case class Pop(n : Int) extends Instruction
@@ -50,9 +50,9 @@ trait StackOps extends SECDBase {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : Code ==> Unit = super.evalInst orElse {
-		// Instructions for manipulating the stack.
-		// Pop pop a block of values from the top of the stack and discard.
+    override def evalInst : Code ==> Unit = super.evalInst orElse {
+        // Instructions for manipulating the stack.
+        // Pop pop a block of values from the top of the stack and discard.
         case Pop(n) :: next =>
             if (n < 1)
                 raiseException(MalformedInstruction())
@@ -87,5 +87,5 @@ trait StackOps extends SECDBase {
                                 control := next
                         }
                 }
-	}
+    }
 }

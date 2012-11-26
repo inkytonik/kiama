@@ -36,7 +36,7 @@ object Analysis {
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Messaging._
     import scala.collection.immutable.HashMap
-    
+
     lazy val prioenv : Program => Map[String,Int] =
         attr {
             case p => HashMap (p.ops : _*)
@@ -49,7 +49,7 @@ object Analysis {
                 case e           => (e.parent[ASTNode])->prio (op)
             }
         }
-    
+
     lazy val op_tree : ExpR => Exp =
         attr {
             case BinExpR (_, _, e1) =>
@@ -59,9 +59,9 @@ object Analysis {
                 val (_, es) = e1->eval_top (optor, "", e :: opnd)
                 es.head
         }
-    
+
     type Stacks = (List[String], List[Exp])
-    
+
     lazy val ops : ExpR => Stacks =
         childAttr {
             case e1 => {
@@ -72,7 +72,7 @@ object Analysis {
                     e0->eval_top (optor, op, e :: opnd)
             }
         }
-    
+
     lazy val eval_top : ((List[String], String, List[Exp])) => ExpR => Stacks =
         paramAttr[(List[String], String, List[Exp]), ExpR, Stacks] {
             case (Nil, op, opnd) => {
@@ -102,7 +102,7 @@ object Analysis {
                 case e           => (e.parent)->lookup (s)
             }
         }
-    
+
     /**
      * Version of op_tree that splices the new tree into the old.
      * Available as an implicit so that Exp attributes called on
@@ -112,7 +112,7 @@ object Analysis {
         tree {
             case e => e->op_tree
         }
-    
+
     /**
      * Report errors in an expression.  Currently only variables that
      * are used but not declared.  Multiple declarations of the same

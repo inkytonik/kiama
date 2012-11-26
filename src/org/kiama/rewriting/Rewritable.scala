@@ -23,7 +23,7 @@ package rewriting
 
 /**
  * Types that implement this interface can be rewritten using the methods
- * of Kiama's Rewriter library.  Implementing this interface is not 
+ * of Kiama's Rewriter library.  Implementing this interface is not
  * necessary if the type implements Product (which automatically includes
  * all case class instances and case objects).
  */
@@ -32,22 +32,22 @@ trait Rewritable {
     import Rewriter.Term
 
     /**
-     * Return the number of components that this value has.  Should be 
+     * Return the number of components that this value has.  Should be
      * greater than or equal to zero.
      */
     def arity : Int
-    
+
     /**
      * Return a sequence containing the components of this value.
      */
     def deconstruct : Seq[Term]
-    
-    /** 
+
+    /**
      * Return a new value constructed from the given original value and
      * the given new components.  In most cases, the new value should be
      * of the same type as the original with the new components, but
-     * this is not required.  This method should throw an 
-     * IllegalArgumentException if any of the components are not 
+     * this is not required.  This method should throw an
+     * IllegalArgumentException if any of the components are not
      * appropriate (e.g., there is the wrong number of them or they are
      * of the wrong type).
      */
@@ -64,5 +64,5 @@ trait Rewritable {
     protected def illegalArgs (desc : String, argtypes : String, args : Array[Term]) =
         throw (new IllegalArgumentException ("making " + desc + ": expecting " +
                     argtypes + ", got " + args.mkString (", ")))
-    
+
 }

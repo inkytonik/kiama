@@ -66,12 +66,12 @@ trait SymbolTable extends base.SymbolTable {
 
     /**
      * A built-in value of some type that is represented by a particular integer
-     * value. The type does not have to be INTEGER. In other words, this value 
-     * cannot be defined using a constant declaration so the compiler has to 
+     * value. The type does not have to be INTEGER. In other words, this value
+     * cannot be defined using a constant declaration so the compiler has to
      * have special knowledge of them.
      */
     case class IntegerValue (ident : String, tipe : Type, value : Int) extends NamedEntity with Builtin
-    
+
     /**
      * Built-in true constant.
      */
@@ -127,13 +127,13 @@ trait SymbolTable extends base.SymbolTable {
         isError (e) || e.isInstanceOf[Variable]
 
     /**
-     * Return true if the given type is integer or an unknown type. 
+     * Return true if the given type is integer or an unknown type.
      */
     def isInteger (e : Type) : Boolean =
         (e == integerType) || (e == unknownType)
 
     /**
-     * Return true if the given type is Boolean or an unknown type. 
+     * Return true if the given type is Boolean or an unknown type.
      */
     def isBoolean (e : Type) : Boolean =
         (e == booleanType) || (e == unknownType)

@@ -23,8 +23,8 @@ trait Lifter extends base.Transformer with NameAnalyser {
         val decls = ListBuffer[Declaration] ()
 
         /**
-         * Lift declarations from inner blocks to the top level by adding 
-         * them to the declarations buffer in a bottom-up fashion and 
+         * Lift declarations from inner blocks to the top level by adding
+         * them to the declarations buffer in a bottom-up fashion and
          * removing them from their blocks.
          */
         lazy val liftBlocks =

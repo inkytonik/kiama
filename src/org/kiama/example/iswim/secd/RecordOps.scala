@@ -27,10 +27,10 @@ package example.iswim.secd
 
 object RecordOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Basic operations on records (tuples).
      */
     case class MkRecord(n : Int) extends Instruction
@@ -75,8 +75,8 @@ trait RecordOps extends SECDBase with IntegerOps {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : Code ==> Unit = super.evalInst orElse {
-		// Make a new record from entries on the stack
+    override def evalInst : Code ==> Unit = super.evalInst orElse {
+        // Make a new record from entries on the stack
         case MkRecord(n) :: next =>
             if (n < 0)
                 raiseException(MalformedInstruction())
@@ -116,5 +116,5 @@ trait RecordOps extends SECDBase with IntegerOps {
             case _ :: _ => raiseException(TypeError())
             case _ => raiseException(StackUnderflow())
         }
-	}
+    }
 }

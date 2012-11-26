@@ -184,7 +184,7 @@ trait DynamicAttribution extends AttributionBase {
         }
 
         /**
-         * Remove the function `g` from the definitions of this attribute.  If 
+         * Remove the function `g` from the definitions of this attribute.  If
          * `g` was not previously added to the definitions, do nothing.
          */
         def -= (g : T ==> U) {
@@ -193,7 +193,7 @@ trait DynamicAttribution extends AttributionBase {
                     case g : DynamicAttribute[_, _] => g.f
                     case _                          => g
                 }
-            
+
             composedF -= uncached
             resetMemo
         }
@@ -224,7 +224,7 @@ trait DynamicAttribution extends AttributionBase {
         /**
          * Apply the buffered functions to the value `t` in the order
          * that they appear in the buffer. Return the value of the first
-         * such function that is defined at `t`. If no function is 
+         * such function that is defined at `t`. If no function is
          * defined at `t`, throw a `MatchError` exception.
          */
         def apply (t : T) : U = {

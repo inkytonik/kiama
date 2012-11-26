@@ -38,7 +38,7 @@ class RewriterClassTests extends Tests with Checkers {
         // (abc + 1) * (xyz - 3)
         val p = new Mul (new Add (new Var ("abc"), new Num (1.0)),
                          new Sub (new Var ("xyz"), new Num (3.0)))
-        
+
         // Incr Nums, reverse Vars, turn Adds into Sub, swap Add args
         val r = rule {
                     case n : Num => new Num (n.d + 1)
@@ -48,46 +48,46 @@ class RewriterClassTests extends Tests with Checkers {
         // Canonicalise variables
         val s = rule {
                     case v : Var => new Var ("varname")
-                }        
-        
+                }
+
         test ("rewrite normal classes: top-level fail") {
             expectResult (None) (r (p))
         }
-        
+
         test ("rewrite normal classes: all") {
             // (1 - abc) * (zyx - 4)
             expectResult ("Some(Mul(Sub(Num(1.0),Var(abc)),Sub(Var(zyx),Num(4.0))))") (
                 ((alltd (r)) (p)).toString
             )
         }
-        
+
         test ("rewrite normal classes: some") {
             // (varname + 1) * (varname - 3)
             expectResult ("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(varname),Num(3.0))))") (
                 ((sometd (s)) (p)).toString
             )
         }
-        
+
         test ("rewrite normal classes: one") {
             // (varname + 1) * (xyz - 3)
             expectResult ("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(xyz),Num(3.0))))") (
                 ((oncetd (s)) (p)).toString
             )
         }
-        
+
         test ("rewrite normal classes: counting all terms using count") {
             val countall = count { case _ => 1 }
             expectResult (11) (countall (p))
         }
-        
+
         test ("rewrite normal classes: counting all terms using a para") {
-            val countfold = 
+            val countfold =
                 para[Int] {
                     case (t, cs) => 1 + cs.sum
                 }
             expectResult (11) (countfold (p))
         }
-        
+
         test ("constructing a Rewritable with wrong args throws exception") {
             val t =  new Add (new Num (1), new Num (2))
             val i = intercept[IllegalArgumentException] {
@@ -97,8 +97,8 @@ class RewriterClassTests extends Tests with Checkers {
                 i.getMessage
             )
         }
-        
+
     }
-    
+
 }
 

@@ -65,7 +65,7 @@ object SemanticAnalysis {
             case _ =>
                 // Do nothing by default
         }
-        
+
         // Check the children of this node
         for (child <- n.children)
             check (child.asInstanceOf[SourceNode])
@@ -76,7 +76,7 @@ object SemanticAnalysis {
      * expected type.  The unknown type is compatible with any other type.
      */
     def checktype (n : Term) {
-        if ((n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) && 
+        if ((n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) &&
                 (n->tipe != n->exptipe))
             message (n, "argument " + (n->tipe) + " found, " + (n->exptipe) + " expected")
     }
@@ -92,7 +92,7 @@ object SemanticAnalysis {
     /**
      * The environment containing all bindings visible at a particular
      * node in the tree, not including any that are defined at that node.
-     * If we are at the top of the tree, initialise the environment to 
+     * If we are at the top of the tree, initialise the environment to
      * be empty.  Otherwise, if we are in a sequence, ask the previous
      * node for its environment, including any definitions there.  If
      * we are the first in a sequence or not in a sequence, ask the parent.
@@ -111,11 +111,11 @@ object SemanticAnalysis {
      * nodes just pass the environment through: a node with children
      * gets the env coming out of its last child; a node with no
      * children just passes its own envin.
-     * 
+     *
      * For type checking we record the types of predicate arguments.
      * If this is the defining occurrence of a predicate, we obtain
      * the types of the actual arguments and use those.  Otherwise,
-     * we use only those argument types for which we don't know 
+     * we use only those argument types for which we don't know
      * anything already.
      */
     val env : SourceNode => Environment =
@@ -229,7 +229,7 @@ object SemanticAnalysis {
             case Atom (_)         => AtomType ()
             case Integer (_)      => IntegerType ()
             case Pred ("cons", _) => ListType ()
-            case Pred ("nil", _)  => ListType ()         
+            case Pred ("nil", _)  => ListType ()
             case n @ Var (s) =>
                 (n->varentity) match {
                     case Variable (t) => t

@@ -50,14 +50,14 @@ class ParsingTests extends SyntaxAnalysis with RegexParserTests {
     }
 
     // Additional tests:
-    
+
     // More atom tests
-    
+
     test ("parsing a single letter atom as an atom works") {
         assertParseOk ("x", atom, "x")
     }
-    
-    // Variable tests 
+
+    // Variable tests
 
     test ("parsing an atom as an var gives an error") {
         assertParseError ("albert", varr, 1, 1, "string matching regex `[A-Z][a-zA-Z]*' expected but `a' found")
@@ -76,7 +76,7 @@ class ParsingTests extends SyntaxAnalysis with RegexParserTests {
     }
 
     // Program tests
-    
+
     test ("parsing an empty program gives an error") {
         assertParseError ("", program, 1, 1, "string matching regex `[a-z][a-zA-Z]*' expected but end of source found")
     }
@@ -94,14 +94,14 @@ class ParsingTests extends SyntaxAnalysis with RegexParserTests {
     }
 
     // Clause tests
-    
+
     test ("parsing a rule works") {
         assertParseOk ("likes(john,X) :- likes(X,wine), likes(X,food).", clause,
             Rule (Pred ("likes", List (Atom ("john"), Var ("X"))),
                   List (Pred ("likes", List (Var ("X"), Atom ("wine"))),
                         Pred ("likes", List (Var ("X"), Atom ("food"))))))
     }
-    
+
     test ("parsing a fact works") {
         assertParseOk ("bodgie (boo).", clause,
             Fact (Pred ("bodgie", List (Atom ("boo")))))
@@ -137,18 +137,18 @@ class ParsingTests extends SyntaxAnalysis with RegexParserTests {
                                  Pred ("likes", List (Var ("Y"), Var ("Z"))),
                                  Var ("W"))))
     }
-        
+
     test ("parsing a cut works") {
         assertParseOk ("!", cut, Cut ())
     }
-    
+
     test ("parsing a literal list containg a cut works") {
         assertParseOk ("likes (X), !, male (Y)", literals,
             List (Pred ("likes", List (Var ("X"))),
-                  Cut (), 
+                  Cut (),
                   Pred ("male", List (Var ("Y")))))
     }
-    
+
     test ("parsing a nested cut fails") {
         assertParseError ("likes (!)", literal, 1, 8, "`[' expected but `!' found")
     }
@@ -180,13 +180,13 @@ class ParsingTests extends SyntaxAnalysis with RegexParserTests {
         assertParseOk ("7", integer, Integer (7))
         assertParseOk ("9", integer, Integer (9))
     }
-    
+
     test ("parsing a non-trivial integer works") {
         assertParseOk ("78", integer, Integer (78))
         assertParseOk ("123", integer, Integer (123))
         assertParseOk ("793223", integer, Integer (793223))
     }
-    
+
     test ("parsing non-integers as integers fails") {
         assertParseError ("x", integer, 1, 1,
             "string matching regex `[0-9]+' expected but `x' found")
@@ -197,15 +197,15 @@ class ParsingTests extends SyntaxAnalysis with RegexParserTests {
     }
 
     // List terms
-    
+
     test ("parsing an empty list works") {
         assertParseOk ("[]", list, Pred ("nil", Nil))
     }
-    
+
     test ("parsing a singleton list works") {
         assertParseOk ("[a]", list, Pred ("cons", List (Atom ("a"), Pred ("nil", Nil))))
     }
-    
+
     test ("parsing a muliple-element list works") {
         assertParseOk ("[a,b,c]", list,
             Pred ("cons", List (Atom ("a"),

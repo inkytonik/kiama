@@ -47,20 +47,20 @@ class ParsingTests extends RegexParserTests with SyntaxAnalysis {
     }
 
     // Number tests
-    
+
     test ("parsing a single digit integer works") {
         assertParseOk ("0", jnumber, JNumber (0.0))
         assertParseOk ("4", jnumber, JNumber (4.0))
         assertParseOk ("-7", jnumber, JNumber (-7.0))
         assertParseOk ("-9", jnumber, JNumber (-9.0))
     }
-    
+
     test ("parsing a non-trivial integer works") {
         assertParseOk ("78", jnumber, JNumber (78.0))
         assertParseOk ("-123", jnumber, JNumber (-123.0))
         assertParseOk ("793223", jnumber, JNumber (793223.0))
     }
-    
+
     test ("parsing non-numbers as numbers fails") {
         assertParseError ("x", jnumber, 1, 1,
             """string matching regex `-?(0|[1-9]\d*)(\.\d+)?([eE][-+]?\d+)?' expected but `x' found""")
@@ -111,7 +111,7 @@ class ParsingTests extends RegexParserTests with SyntaxAnalysis {
         assertParseOk ("\"hello there\"", jstring,
             JString ("hello there"))
     }
-    
+
     // The Unicode escape in the next test is split into two strings so that
     // Scala doesn't convert it.  Surprisingly, it will do this in """..."""
     // strings, even though it doesn't for other escapes.
@@ -128,17 +128,17 @@ class ParsingTests extends RegexParserTests with SyntaxAnalysis {
         assertParseOk ("[]", jarray,
             JArray (Vector.empty))
     }
-    
+
     test ("single element array parses") {
         assertParseOk ("[ 1 ]", jarray,
             JArray (Vector (JNumber (1))))
-    }    
+    }
 
     test ("multiple element array parses") {
         assertParseOk ("[ \"a\", null, true ]", jarray,
             JArray (Vector (JString ("a"), JNull (), JTrue ())))
     }
-    
+
     test ("nested array parses") {
         assertParseOk ("[ false, [ 10, 20 ], 30 ]", jarray,
             JArray (Vector (JFalse (),
@@ -155,16 +155,16 @@ class ParsingTests extends RegexParserTests with SyntaxAnalysis {
     }
 
     // Object
-    
+
     test ("empty object parses") {
         assertParseOk ("{}", jobject,
             JObject (Nil))
     }
-    
+
     test ("single pair object parses") {
         assertParseOk ("{ \"one\" : 1 }", jobject,
             JObject (List (JName ("one") -> JNumber (1))))
-    }    
+    }
 
     test ("multiple pair object parses") {
         assertParseOk ("{ \"a\" : \"a\", \"b\" : null, \"c\" : true }", jobject,
@@ -172,7 +172,7 @@ class ParsingTests extends RegexParserTests with SyntaxAnalysis {
                            JName ("b") -> JNull (),
                            JName ("c") -> JTrue ())))
     }
-    
+
     test ("nested object parses") {
         assertParseOk ("{ \"e\" : false, \"f\" : { \"g\" : 10, \"h\" : 20 }, \"i\" : 30 }", jobject,
             JObject (List (JName ("e") -> JFalse (),

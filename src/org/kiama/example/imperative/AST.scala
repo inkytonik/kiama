@@ -25,7 +25,7 @@ package example.imperative
  * A simple imperative language abstract syntax designed for testing.
  */
 object AST {
-    
+
     import org.kiama.attribution.Attributable
     import org.kiama.rewriting.Rewriter.{congruence, rulefs,
         Strategy}
@@ -38,7 +38,7 @@ object AST {
 
     /**
      * Superclass of all imperative language tree node types.  The Product
-     * supertype is used here to enable generic access to the children of 
+     * supertype is used here to enable generic access to the children of
      * an ImperativeNode; this capability is only used in the Kiama tests
      * and is not usually needed for normal use of the library.
      */

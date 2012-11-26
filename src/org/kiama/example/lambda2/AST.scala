@@ -48,7 +48,7 @@ object AST {
     /**
      * Variable expressions.
      */
-    case class Var (i : Idn) extends Exp 
+    case class Var (i : Idn) extends Exp
 
     /**
      * Lambda expressions binding name of type tipe within body.

@@ -6,7 +6,7 @@ package base
  * Interface for all translaters to C.
  */
 trait Translator {
-    
+
     import c.{CDeclaration, CProgram, CStatement}
     import source.{Declaration, ModuleDecl, Statement}
 

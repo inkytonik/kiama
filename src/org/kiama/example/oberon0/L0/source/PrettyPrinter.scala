@@ -61,7 +61,7 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
 
             case NamedType (d) =>
                 toDoc (d)
-                
+
             case Assignment (d, e) =>
                 toDoc (d) <+> ":=" <+> toDoc (e)
 
@@ -70,9 +70,9 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
 
             case i : Identifier =>
                 text (i.ident)
-        
+
             case _ =>
-                super.toDoc (n)           
+                super.toDoc (n)
         }
 
     def idlistToDoc (ids : List[IdnDef]) : Doc =

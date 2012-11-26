@@ -6,7 +6,7 @@ package L0
  * C Code generator for the L0 language.
  */
 trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
-    
+
     import base.c.{CDeclaration, CExpression, CIntExp, CIntType,
         CStatement, CType, CVarDecl}
     import base.source.{Declaration, IdnDef, IdnUse, Statement}
@@ -80,7 +80,7 @@ trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
             case AndExp (l, r) => CAndExp (translate (l), translate (r))
             case NegExp (e)    => CNegExp (translate (e))
             case NotExp (e)    => CNotExp (translate (e))
-            case IntExp (i)    => CIntExp (i) 
+            case IntExp (i)    => CIntExp (i)
             case IdnExp (u @ IdnUse (s)) =>
                 (u->entity) match {
                     case IntegerValue (_, _, v) => CIntExp (v)

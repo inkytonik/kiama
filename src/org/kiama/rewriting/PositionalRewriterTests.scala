@@ -155,7 +155,7 @@ class PositionedRewriterTests extends Tests {
         expectsame (pl1s) (no.a.asInstanceOf[Two].l.start)
         expectsame (pl1f) (no.a.asInstanceOf[Two].l.finish)
         expectsame (pl2s) (no.a.asInstanceOf[Two].r.start)
-        expectsame (pl2f) (no.a.asInstanceOf[Two].r.finish)        
+        expectsame (pl2f) (no.a.asInstanceOf[Two].r.finish)
     }
 
     test ("positioned rewriting with positions and strategyf works") {

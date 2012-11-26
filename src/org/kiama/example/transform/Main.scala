@@ -44,16 +44,16 @@ class Driver extends Parser with Compiler[Program] {
         // Print original program and obtain "no priority" expression
         emitter.emitln (program)
         val expr = program.expr
-        
+
         // Check for semantic errors on the original expression.  This
         // will cause a translation to a priority-correct representation
         // and error computation on that rep.
         resetmessages
         expr->errors
-        
+
         // For testing, print the priority-correct representation
         emitter.emitln (expr->ast)
-        
+
         // Report any semantic errors
         if (messagecount > 0) {
             report (emitter)

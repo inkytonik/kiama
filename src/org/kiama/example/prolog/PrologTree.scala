@@ -37,7 +37,7 @@ object PrologTree {
         def hd : Term
         def bdy : List[Term]
     }
-    
+
     case class Fact (hd : Term) extends Clause {
         def bdy : List[Term] = Nil
     }

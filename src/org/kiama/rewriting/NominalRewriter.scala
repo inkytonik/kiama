@@ -41,7 +41,7 @@ object NominalAST {
      * A generic abstract binding of a name in a term.
      */
     case class Bind (name : Name, term : Any)
- 
+
     /**
      * Generate a fresh name based on a old name. The fresh name will have
      * the same base as the old one and will have a unique index.
@@ -67,7 +67,7 @@ object NominalAST {
 /**
  * An extension of strategy-based term rewriting with special support for
  * nominal rewriting along the lines of FreshML and the FreshLib library
- * for Haskell. See Scrap your Nameplate, James Cheney, ICFP 2005 for a 
+ * for Haskell. See Scrap your Nameplate, James Cheney, ICFP 2005 for a
  * description of the ideas and the FreshLib library.
  */
 class NominalRewriter extends Rewriter {
@@ -98,7 +98,7 @@ class NominalRewriter extends Rewriter {
         t match {
             case n : Name    => a != n
             case Bind (b, t) => (a == b) || fresh (a) (t)
-            case p : Product => p.productIterator.forall (c => fresh (a) (c)) 
+            case p : Product => p.productIterator.forall (c => fresh (a) (c))
             case _           => true
         }
 
@@ -146,7 +146,7 @@ class NominalRewriter extends Rewriter {
         }
     }
 
-   
+
     /**
      * Substitution of `t1` for free occurrences of `n` in a term.
      */
@@ -164,13 +164,13 @@ class NominalRewriter extends Rewriter {
                     Some (Bind (a, y))
                 case _ =>
                     None
-            }   
+            }
         ))
 
     /**
      * Free variables in an term.
      */
-    def fv (t : Term) : Set[Name] = 
+    def fv (t : Term) : Set[Name] =
         t match {
             case n : Name    => Set (n)
             case Bind (b, t) => fv (t) - b

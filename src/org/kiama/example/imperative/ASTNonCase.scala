@@ -26,7 +26,7 @@ package example.imperative
  * using case classes.  Used for testing on non-case class data structures.
  */
 object ASTNonCase {
-    
+
     import org.kiama.rewriting.Rewritable
     import org.kiama.rewriting.Rewriter.Term
 
@@ -37,7 +37,7 @@ object ASTNonCase {
     class Num (val d : Double) extends Exp {
         def arity : Int = 1
         def deconstruct : List[Double] = List (d)
-        def reconstruct (cs : Array[Term]) : Exp = 
+        def reconstruct (cs : Array[Term]) : Exp =
             cs match {
                 case Array (d : Double) =>
                     new Num (d)
@@ -50,7 +50,7 @@ object ASTNonCase {
     class Var (val s : Idn) extends Exp {
         def arity : Int = 1
         def deconstruct : List[Idn] = List (s)
-        def reconstruct (cs : Array[Term]) : Exp = 
+        def reconstruct (cs : Array[Term]) : Exp =
             cs match {
                 case Array (s : Idn) =>
                     new Var (s)
@@ -63,7 +63,7 @@ object ASTNonCase {
     class Neg (val e : Exp) extends Exp {
         def arity : Int = 1
         def deconstruct : List[Exp] = List (e)
-        def reconstruct (cs : Array[Term]) : Exp = 
+        def reconstruct (cs : Array[Term]) : Exp =
             cs match {
                 case Array (e : Exp) =>
                     new Neg (e)
@@ -79,7 +79,7 @@ object ASTNonCase {
     }
 
     class Add (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) : Exp = 
+        def reconstruct (cs : Array[Term]) : Exp =
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Add (l, r)
@@ -88,9 +88,9 @@ object ASTNonCase {
             }
         override def toString : String = "Add(" + l + "," + r + ")"
     }
-    
+
     class Sub (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) : Exp = 
+        def reconstruct (cs : Array[Term]) : Exp =
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Sub (l, r)
@@ -99,9 +99,9 @@ object ASTNonCase {
             }
         override def toString : String = "Sub(" + l + "," + r + ")"
     }
-    
+
     class Mul (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) : Exp = 
+        def reconstruct (cs : Array[Term]) : Exp =
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Mul (l, r)
@@ -110,9 +110,9 @@ object ASTNonCase {
             }
         override def toString : String = "Mul(" + l + "," + r + ")"
     }
-    
+
     class Div (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) : Exp = 
+        def reconstruct (cs : Array[Term]) : Exp =
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Div (l, r)

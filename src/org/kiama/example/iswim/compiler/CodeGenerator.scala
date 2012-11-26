@@ -49,56 +49,56 @@ trait CodeGenerator {
      */
     val code : Iswim => CodeTree = attr {
         case n : Iswim => positionBlock(n.start) { n match {
-    	    /**
-    	     * Variable Identifiers
-    	     */
-    	    case Variable(s) => n.parent match {
-    	        case Binding(_,_) if n.isFirst => CodeTree()
-    	        case _ => Lookup(s)
-    	    }
+            /**
+             * Variable Identifiers
+             */
+            case Variable(s) => n.parent match {
+                case Binding(_,_) if n.isFirst => CodeTree()
+                case _ => Lookup(s)
+            }
 
             /**
              * The empty tuple
              */
             case Empty() => PushEmpty()
 
-    	    /**
-    	     * Integer Expressions
-    	     */
-    	    case NumVal(i) => PushInt(i)
-    	    case Negate(e) => CodeTree(PushInt(0), e->code, Sub())
+            /**
+             * Integer Expressions
+             */
+            case NumVal(i) => PushInt(i)
+            case Negate(e) => CodeTree(PushInt(0), e->code, Sub())
             case Plus(l,r) => CodeTree(l->code, r->code, Add())
-        	case Minus(l,r) => CodeTree(l->code, r->code, Sub())
-        	case Times(l,r) => CodeTree(l->code, r->code, Mult())
-        	case Divide(l,r) => CodeTree(l->code, r->code, Div())
-        	case Remainder(l,r) => CodeTree(l->code, r->code, Rem())
+            case Minus(l,r) => CodeTree(l->code, r->code, Sub())
+            case Times(l,r) => CodeTree(l->code, r->code, Mult())
+            case Divide(l,r) => CodeTree(l->code, r->code, Div())
+            case Remainder(l,r) => CodeTree(l->code, r->code, Rem())
 
-        	/**
-        	 * Integer Comparisons
-        	 */
-        	case Equal(l,r) => CodeTree(l->code, r->code, Equals())
-        	case NotEqual(l,r) => CodeTree(l->code, r->code, Equals(), Test(PushFalse(),PushTrue()))
-        	case Less(l,r) => CodeTree(l->code, r->code, LessThan())
-        	case LessEq(l,r) => CodeTree(l->code, r->code, LessThanOrEqual())
-        	case Greater(l,r) => CodeTree(l->code, r->code, Swap(1,1), LessThan())
-        	case GreaterEq(l,r) => CodeTree(l->code, r->code, Swap(1,1), LessThanOrEqual())
+            /**
+             * Integer Comparisons
+             */
+            case Equal(l,r) => CodeTree(l->code, r->code, Equals())
+            case NotEqual(l,r) => CodeTree(l->code, r->code, Equals(), Test(PushFalse(),PushTrue()))
+            case Less(l,r) => CodeTree(l->code, r->code, LessThan())
+            case LessEq(l,r) => CodeTree(l->code, r->code, LessThanOrEqual())
+            case Greater(l,r) => CodeTree(l->code, r->code, Swap(1,1), LessThan())
+            case GreaterEq(l,r) => CodeTree(l->code, r->code, Swap(1,1), LessThanOrEqual())
 
-        	/**
-        	 * Boolean Expressions
-        	 */
-        	case BoolVal(b) => if (b) PushTrue() else PushFalse()
-        	// Evaluation of not implemented using Test()
-        	case Not(e) => CodeTree(e->code, Test(PushFalse(),PushTrue()))
-    	    // Evaluation of & and | is implemented using Test() and is shortcircuited.
-        	case And(l,r) => CodeTree(l->code, Test(code(r),PushFalse()))
-        	case Or(l,r) => CodeTree(l->code, Test(PushTrue(),r->code : CodeTree))
+            /**
+             * Boolean Expressions
+             */
+            case BoolVal(b) => if (b) PushTrue() else PushFalse()
+            // Evaluation of not implemented using Test()
+            case Not(e) => CodeTree(e->code, Test(PushFalse(),PushTrue()))
+            // Evaluation of & and | is implemented using Test() and is shortcircuited.
+            case And(l,r) => CodeTree(l->code, Test(code(r),PushFalse()))
+            case Or(l,r) => CodeTree(l->code, Test(PushTrue(),r->code : CodeTree))
 
-        	// Notice here that the attribute syntax r->code does not play well with our
-        	// implicit conversion to CodeSegments. The problem appears to be a clash with
-        	// the -> syntax for pairs (cf Map) which confuses the implicits mechanism.
-        	// So we must use the applicative syntax code(r) or an explicitly types expression
-        	// (r->code : CodeTree) in places where we want to convert an attribute expression
-        	// implicitly to a CodeSegment.
+            // Notice here that the attribute syntax r->code does not play well with our
+            // implicit conversion to CodeSegments. The problem appears to be a clash with
+            // the -> syntax for pairs (cf Map) which confuses the implicits mechanism.
+            // So we must use the applicative syntax code(r) or an explicitly types expression
+            // (r->code : CodeTree) in places where we want to convert an attribute expression
+            // implicitly to a CodeSegment.
 
             /**
              * String literals.
@@ -106,9 +106,9 @@ trait CodeGenerator {
             case StringVal(s) => PushString(s)
 
             /**
-        	 * Binding Constructs (Expressions)
-        	 */
-        	case Let(binds,body) => CodeTree(
+             * Binding Constructs (Expressions)
+             */
+            case Let(binds,body) => CodeTree(
                 CodeTree(binds.map({ case Binding(_,e) => e->code })),
                 Enter(binds.map({ case Binding(Variable(nm),_) => nm })),
                 body->code,
@@ -127,35 +127,35 @@ trait CodeGenerator {
             /**
              * Code generation for top level statements
              */
-         	case IswimProg(Nil) => PushEmpty()
-         	case IswimProg(e :: _) => e->code
+            case IswimProg(Nil) => PushEmpty()
+            case IswimProg(e :: _) => e->code
 
-         	case s@Primitives(vs) => CodeTree(
-         	    BindPrims(vs.map({ case Variable(nm) => nm })),
-         	    if ((s.isLast) || (s.isRoot))
-         	        PushEmpty()
-         	    else
-     	            s.next[Iswim]->code,
-     	        Exit()
-     	    )
+            case s@Primitives(vs) => CodeTree(
+                BindPrims(vs.map({ case Variable(nm) => nm })),
+                if ((s.isLast) || (s.isRoot))
+                    PushEmpty()
+                else
+                    s.next[Iswim]->code,
+                Exit()
+            )
 
-         	case s@ExprStmt(e) => CodeTree(
-         	    e->code,
-         	    if ((s.isLast) || (s.isRoot))
-         	        CodeTree()
-         	    else CodeTree(
-         	        Pop(1),
-     	            s.next[Iswim]->code
-     	        )
-         	)
+            case s@ExprStmt(e) => CodeTree(
+                e->code,
+                if ((s.isLast) || (s.isRoot))
+                    CodeTree()
+                else CodeTree(
+                    Pop(1),
+                    s.next[Iswim]->code
+                )
+            )
 
-         	case s@LetStmt(binds) => CodeTree(
+            case s@LetStmt(binds) => CodeTree(
                 CodeTree(binds.map({ case Binding(_,e) => e->code })),
                 Enter(binds.map({ case Binding(Variable(nm),_) => nm })),
-         	    if ((s.isLast) || (s.isRoot))
-         	        PushEmpty()
-         	    else
- 	                s.next[Iswim]->code,
+                if ((s.isLast) || (s.isRoot))
+                    PushEmpty()
+                else
+                    s.next[Iswim]->code,
                 Exit()
             )
 
@@ -165,67 +165,67 @@ trait CodeGenerator {
                         FunctionSpec(Some(fn),pn,code(bdy))
                 })),
                 Enter(binds.map({ case Binding(Variable(nm),_) => nm })),
-         	    if ((s.isLast) || (s.isRoot))
-         	        PushEmpty()
-         	    else
-     	            s.next[Iswim]->code,
+                if ((s.isLast) || (s.isRoot))
+                    PushEmpty()
+                else
+                    s.next[Iswim]->code,
                 Exit()
             )
 
 
-        	/**
-        	 * Function Definition and Application
-        	 */
+            /**
+             * Function Definition and Application
+             */
             case Lambda(Variable(pn),bdy) =>
                 MkClosures(List(FunctionSpec(None,pn,code(bdy))))
             case Return(e) => CodeTree(e->code, ResumeFromDump())
             case Apply(f,e) => CodeTree(e->code, f->code, App())
 
             /**
-        	 * Conditionals and Loops
-        	 */
-        	case If(e,thn,els) => CodeTree(e->code, Test(code(thn), code(els)))
-        	// We translate "while" into a tail recursion.
-        	case While(ctrl,body) => CodeTree(
-        	    MkClosures(List(
-        	        FunctionSpec(None,"@loop",CodeTree(
-        	            ctrl->code,
-        	            Test(
-        	                CodeTree(body->code, Lookup("@loop"), Dup(1), TailApp()),
-        	                PushEmpty()
-        	            )
-        	        ))
-        	    )),
-        	    Dup(1),
-        	    App()
-        	)
-
-        	/**
-        	 * Implementation note:
-        	 *
-        	 * To avoid clashes with variable names used in user programs, any new
-        	 * variables introduced by the code generator are prepended with an '@'
-        	 * symbol. These are not legal parts of
-        	 *
-        	 * This is also why the name @exceptionHandler was chosen as the default
-        	 * name for the binding which contains the current exception handler.
-        	 */
-
-        	/**
-        	 * Blocks
-        	 */
-        	case Block(Nil) => PushEmpty()
-        	case Block(e :: es) =>
-        	    ((e->code) /: es) { case (t : CodeTree, e : Expr) => CodeTree(t,Pop(1),e->code) }
+             * Conditionals and Loops
+             */
+            case If(e,thn,els) => CodeTree(e->code, Test(code(thn), code(els)))
+            // We translate "while" into a tail recursion.
+            case While(ctrl,body) => CodeTree(
+                MkClosures(List(
+                    FunctionSpec(None,"@loop",CodeTree(
+                        ctrl->code,
+                        Test(
+                            CodeTree(body->code, Lookup("@loop"), Dup(1), TailApp()),
+                            PushEmpty()
+                        )
+                    ))
+                )),
+                Dup(1),
+                App()
+            )
 
             /**
-         	 * References
-         	 */
-         	case MkRef(e) => CodeTree(Alloc(),Dup(1),e->code,Put())
-         	case Val(e) => CodeTree(e->code, Get())
-         	// For assignment we must do a little work to ensure that the value
-         	// left on the stack is the value assigned.
-         	case Assign(r,e) => CodeTree(r->code, e->code, Dup(1), Swap(1,2), Put())
+             * Implementation note:
+             *
+             * To avoid clashes with variable names used in user programs, any new
+             * variables introduced by the code generator are prepended with an '@'
+             * symbol. These are not legal parts of
+             *
+             * This is also why the name @exceptionHandler was chosen as the default
+             * name for the binding which contains the current exception handler.
+             */
+
+            /**
+             * Blocks
+             */
+            case Block(Nil) => PushEmpty()
+            case Block(e :: es) =>
+                ((e->code) /: es) { case (t : CodeTree, e : Expr) => CodeTree(t,Pop(1),e->code) }
+
+            /**
+             * References
+             */
+            case MkRef(e) => CodeTree(Alloc(),Dup(1),e->code,Put())
+            case Val(e) => CodeTree(e->code, Get())
+            // For assignment we must do a little work to ensure that the value
+            // left on the stack is the value assigned.
+            case Assign(r,e) => CodeTree(r->code, e->code, Dup(1), Swap(1,2), Put())
 
             /**
              * Records / Tuples
@@ -291,11 +291,11 @@ trait CodeGenerator {
                     cl->code  // Code for match clauses is attached to first clause in list
                 )
 
-         	/**
-        	 * Continuations
-        	 */
-        	case CallCC(e) => CodeTree(e->code,AppCC())
-        	case ThrowTo(e, c) => CodeTree(e->code,c->code,Resume())
+            /**
+             * Continuations
+             */
+            case CallCC(e) => CodeTree(e->code,AppCC())
+            case ThrowTo(e, c) => CodeTree(e->code,c->code,Resume())
         }}
     }
 }

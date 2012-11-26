@@ -17,7 +17,7 @@ case class ForStatement (idn : IdnExp, lower : Expression,
  */
 case class CaseStatement (exp : Expression, cases : List[Case],
                           optelse : Option[Block]) extends Statement
-                          
+
 /**
  * A single case of a case statement.
  */

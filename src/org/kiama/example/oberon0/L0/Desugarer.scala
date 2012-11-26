@@ -46,7 +46,7 @@ trait Desugarer extends base.Transformer with NameAnalyser {
             everywherebu (
                 rule {
                     case i : IdnDef => nameOf (i, true)
-                    case i @ IdnUse (s) => 
+                    case i @ IdnUse (s) =>
                         (i->entity) match {
                             case b : Builtin => i
                             case _           => nameOf (i, false)

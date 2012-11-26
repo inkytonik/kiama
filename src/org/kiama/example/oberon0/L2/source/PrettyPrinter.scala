@@ -15,9 +15,9 @@ trait PrettyPrinter extends L1.source.PrettyPrinter {
 
             case s : CaseStatement =>
                 caseToDoc (s)
-                
+
             case _ =>
-                super.toDoc (n)           
+                super.toDoc (n)
         }
 
     def forToDoc (s : ForStatement) : Doc =
@@ -50,7 +50,7 @@ trait PrettyPrinter extends L1.source.PrettyPrinter {
             hsep (kase.block.stmts map toDoc, semi)
 
         nest (line <> "  " <> ssep (l map singleCaseToDoc, line <> "| "), 2)
-        
+
     }
-    
+
 }

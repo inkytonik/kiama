@@ -38,8 +38,8 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
                 if ((e->rootconstexp) && !(e->isconst))
                     message (e, "expression is not constant")
                 e match {
-                   	case u @ IdnExp (IdnUse (i)) if !(isRvalue (u)) =>
-                  		message (u, i + " cannot be used in an expression")
+                    case u @ IdnExp (IdnUse (i)) if !(isRvalue (u)) =>
+                        message (u, i + " cannot be used in an expression")
 
                     case DivExp (_, r) if (r->expconst) && (r->isconst) && (r->value == 0) =>
                         message (r, "division by zero in constant expression")
@@ -213,13 +213,13 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
             case AddExp (l, r) => (l->value) + (r->value)
             case MulExp (l, r) => (l->value) * (r->value)
             case DivExp (l, r) => if (r->value == 0)
-                    				  0 // Dummy
-                    			  else
-                    				  (l->value) / (r->value)
+                                      0 // Dummy
+                                  else
+                                      (l->value) / (r->value)
             case ModExp (l, r) => if (r->value == 0)
-            					      0 // Dummy
-          					      else
-                					  (l->value) % (r->value)
+                                      0 // Dummy
+                                  else
+                                      (l->value) % (r->value)
             case _             => 0 // Dummy
         }
 

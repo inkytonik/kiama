@@ -42,7 +42,7 @@ object SymbolTable extends Environments {
      */
     case class Variable (tipe : Type) extends Entity
 
-    /** 
+    /**
      * The type of a predicate argument.
      */
     abstract class Type
@@ -72,5 +72,5 @@ object SymbolTable extends Environments {
      * A type that is unknown.
      */
     case class UnknownType () extends Type
-    
+
 }

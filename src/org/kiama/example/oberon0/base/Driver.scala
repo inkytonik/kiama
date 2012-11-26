@@ -12,7 +12,7 @@ import org.kiama.output.PrettyPrinter
 import scala.util.parsing.combinator.RegexParsers
 
 /**
- * A driver for an artefact that parses, pretty prints and performs semantic 
+ * A driver for an artefact that parses, pretty prints and performs semantic
  * analysis.
  */
 trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
@@ -113,7 +113,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
     }
 
     /**
-     * Custom driver for section tagging and challenge mode for errors.  If 
+     * Custom driver for section tagging and challenge mode for errors.  If
      * a parse error occurs: in challenge mode, just send "parse failed" to
      * standard output, otherwise send the message to the errors file.
      */
@@ -175,10 +175,10 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 
             // No semantic errors, go on to process the AST as appropriate
             val nast = processast (ast, console, emitter)
-            
+
             // Consume the processed AST (e.g., by generating code from it)
             consumeast (nast, console, emitter)
-            
+
             true
 
         } else {
@@ -214,7 +214,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 }
 
 /**
- * A driver for an artefact that parses, pretty prints, performs semantic 
+ * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis and transforms.
  */
 trait TransformingDriver extends Driver {
@@ -284,7 +284,7 @@ trait TransformingDriver extends Driver {
 }
 
 /**
- * A driver for an artefact that parses, pretty prints, performs semantic 
+ * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis, transforms and translates.
  */
 trait TranslatingDriver extends TransformingDriver {

@@ -32,13 +32,13 @@ object RISCISA {
      * A machine code sequence.
      */
     type Code = Seq[Instr]
-    
+
     /**
      * An assembler code sequence.
      * Includes comments and labels.
      */
     type AssemCode = Seq[Assembler]
-    
+
     /**
      * Operand types
      */
@@ -48,7 +48,7 @@ object RISCISA {
     /**
      * Register numbers (0-31).  Program counter is R28.
      */
-    type RegNo = Int   
+    type RegNo = Int
 
     def sayReg (reg : RegNo) : String = "$" + reg
 
@@ -62,7 +62,7 @@ object RISCISA {
      * Shift the value in register c by b and store the result in register a.
      */
     case class MOV (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
                 "mov " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -70,7 +70,7 @@ object RISCISA {
      * Shift the value im by b and store the result in register a.
      */
     case class MOVI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "movi " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -79,7 +79,7 @@ object RISCISA {
      * in register a.
      */
     case class MVN (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "mvn " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -88,7 +88,7 @@ object RISCISA {
      * register a.
      */
     case class MVNI (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "mvni " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -96,7 +96,7 @@ object RISCISA {
      * Add the values in registers b and c, store the result in register a.
      */
     case class ADD (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "add " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -105,7 +105,7 @@ object RISCISA {
      * in register a.
      */
     case class ADDI (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "addi " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -114,7 +114,7 @@ object RISCISA {
      * register a.
      */
     case class SUB (a : RegNo, b : RegNo, c : RegNo) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "sub " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -123,7 +123,7 @@ object RISCISA {
      * in register a.
      */
     case class SUBI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "subi " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -131,7 +131,7 @@ object RISCISA {
      * Muliply the values in registers b and c, store the result in register a.
      */
     case class MUL (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "mul " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -140,7 +140,7 @@ object RISCISA {
      * in register a.
      */
     case class MULI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "muli " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -149,7 +149,7 @@ object RISCISA {
      * register a.
      */
     case class DIV (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "div " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -158,7 +158,7 @@ object RISCISA {
      * result in register a.
      */
     case class DIVI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "divi " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -167,7 +167,7 @@ object RISCISA {
      * in register a.
      */
     case class MOD (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "mod " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -176,7 +176,7 @@ object RISCISA {
      * remainder in register a.
      */
     case class MODI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "modi " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -186,7 +186,7 @@ object RISCISA {
      * b is less than the content of register c.
      */
     case class CMP (b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "cmp " + sayReg (b) + ", " + sayReg (c)
      }
 
@@ -197,7 +197,7 @@ object RISCISA {
      * clear N.
      */
     case class CMPI (b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "cmpi " + sayReg (b) + ", " + im
     }
 
@@ -206,7 +206,7 @@ object RISCISA {
      * or equal to the value im, set register a to zero.
      */
     case class CHKI (b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "chki " + sayReg (b) + ", " + im
     }
 
@@ -215,7 +215,7 @@ object RISCISA {
      * in register a.
      */
     case class AND (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "and " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -224,7 +224,7 @@ object RISCISA {
      * remainder in register a.
      */
     case class ANDI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "andi " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -233,7 +233,7 @@ object RISCISA {
      * in register a.
      */
     case class OR (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "or " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -242,7 +242,7 @@ object RISCISA {
      * remainder in register a.
      */
     case class ORI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "ori " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -251,7 +251,7 @@ object RISCISA {
      * in register a.
      */
     case class XOR (a : RegNo, b : RegNo, c : RegNo) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "xor " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
     }
 
@@ -260,7 +260,7 @@ object RISCISA {
      * remainder in register a.
      */
     case class XORI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
-        override def toString : String = 
+        override def toString : String =
             "xori " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -270,7 +270,7 @@ object RISCISA {
      * The lowest two bits of the address are ignored.
      */
     case class LDW (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "ldw " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -279,7 +279,7 @@ object RISCISA {
      * address given by the contents of register b plus the value im.
      */
     case class LDB (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "ldb " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -289,7 +289,7 @@ object RISCISA {
      * the contents of register b and store the result in register b.
      */
     case class POP (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "pop " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -299,7 +299,7 @@ object RISCISA {
      * bits of the address are ignored.
      */
     case class STW (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "stw " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -309,7 +309,7 @@ object RISCISA {
      * value im.
      */
     case class STB (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "stb " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -320,7 +320,7 @@ object RISCISA {
      * The lowest two bits of the address are ignored.
      */
     case class PSH (a : RegNo, b : RegNo, im : Imm) extends Instr {
-        override def toString : String = 
+        override def toString : String =
             "psh " + sayReg (a) + ", " + sayReg (b) + ", " + im
     }
 
@@ -363,7 +363,7 @@ object RISCISA {
     sealed abstract class Branch extends Instr {
         def label : Int
         var disp : Disp = -1
-        override def toString : String = 
+        override def toString : String =
             if (disp != -1)
                 "(" + disp + ")"
             else
@@ -430,7 +430,7 @@ object RISCISA {
      */
     case class BR (val label : Int) extends Branch {
         override def toString : String = "br " + super.toString
-        def copy(label : Int) : Branch = BR (label)    
+        def copy(label : Int) : Branch = BR (label)
     }
 
     /**
@@ -449,13 +449,13 @@ object RISCISA {
     case class RET (c : RegNo) extends Instr {
         override def toString : String = "ret " + sayReg (c)
     }
-    
+
     /**
      * Pseudo instructions. These aren't really RISC machine instructions but
      * are used to insert comments and labels into a RISC assembly code program
      */
     sealed abstract class Pseudo extends Assembler
-     
+
     /**
      * Branch target label
      * We call this Target rather than Label to avoid a name
@@ -464,14 +464,14 @@ object RISCISA {
     case class Target (label : Int) extends Pseudo {
         override def toString : String = "label" + label + ":"
     }
-    
+
     /**
-     * Comment 
+     * Comment
      */
     case class Comment (text : String) extends Pseudo {
         override def toString : String = "! " + text
     }
-    
+
     /**
      * Pretty-print a list of assembly code instructions
      * to an emitter
@@ -482,6 +482,6 @@ object RISCISA {
                  case _ : Target => emitter.emitln (line)
                  case _          => emitter.emitln ("    " + line)
              }
-         } 
+         }
      }
 }

@@ -25,7 +25,7 @@ object Depth {
 
     import Company.{Company,Dept}
     import org.kiama.rewriting.Rewriter.para
-    
+
     /**
      * Return the nesting depth of departments.
      */

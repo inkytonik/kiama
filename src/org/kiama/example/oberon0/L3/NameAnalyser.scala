@@ -76,7 +76,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
 
     /**
      * Blocks that are immediately inside procedure decls do not introduce new scopes
-     * since the procedure itself does.  This computation overrides the one earlier 
+     * since the procedure itself does.  This computation overrides the one earlier
      * that pushes a scope for all blocks.  Don't include the procedure name in the
      * scope of its own body.
      */

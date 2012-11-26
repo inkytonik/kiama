@@ -47,7 +47,7 @@ object Precedence {
                         p->bosssalary
                 }
         }
-      
+
     /**
      * Return true iff every employee has a salary no greater than
      * their boss.

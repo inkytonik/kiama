@@ -24,12 +24,12 @@ package org
  * Kiama is a library of internal domain-specific languages for software
  * language engineering. It's main components address tree decoration via
  * attribute grammars (package `attribution`), tree transformation via
- * strategic term rewriting (package `rewriting`), and dynamic semantics 
+ * strategic term rewriting (package `rewriting`), and dynamic semantics
  * (package `machine`).
  *
  * The `util` package contains support modules for parsing, pretty printing,
  * input/output, read-eval-print loops (REPLs) and pattern matching.
- * 
+ *
  * The `examples` package (available as part of the Kiama tests) contains
  * many examples of using Kiama to solve small to medium language processing
  * problems.

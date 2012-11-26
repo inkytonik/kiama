@@ -64,7 +64,7 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
 
     /**
      * Sanitise the output from a test.  Remove any output that doesn't
-     * make sense to this program.  I.e., if we are running a program that 
+     * make sense to this program.  I.e., if we are running a program that
      * performs tasks 1-m, then any lines marked with [p], where p > m
      * should be removed before comparison.  Also, there can be three
      * numbers, a'la [p,q,r] where p is as before and q (r) are lower
@@ -90,7 +90,7 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
                 b += line
         }
 
-        // Iterate over all possible output lines, checking them if they are 
+        // Iterate over all possible output lines, checking them if they are
         // marked. Unmarked lines are always included.
         for (t <- s.lines) {
             t match {
@@ -106,10 +106,10 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
         // Return the selected lines
         b.result ().mkString ("\n")
     }
-    
+
     // Always pretty-print AST
     override val pprintastFlagDefault = true
-    
+
 }
 
 /**

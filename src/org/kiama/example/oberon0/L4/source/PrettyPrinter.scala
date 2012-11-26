@@ -24,7 +24,7 @@ trait PrettyPrinter extends L3.source.PrettyPrinter {
                 (hsep (ids map text, comma)) <+> colon <+> toDoc (t)
 
             case _ =>
-                super.toDoc (n)           
+                super.toDoc (n)
         }
 
     override def toParenDoc (e : PrettyExpression) : Doc =

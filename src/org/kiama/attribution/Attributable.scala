@@ -178,7 +178,7 @@ trait Attributable extends Product with Cloneable {
             c.next = null
             if (prev != null) prev.next = c
             prev = c
-            
+
             // Recursively set the connections below c
             c.initTreeProperties
         }
@@ -247,7 +247,7 @@ object Attributable {
 
         import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
 
-        val deepcloner = 
+        val deepcloner =
             everywherebu (rule {
                 case n : Attributable if !n.hasChildren =>
                     n.clone ()

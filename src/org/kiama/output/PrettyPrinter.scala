@@ -34,7 +34,7 @@ trait PrettyPrinterBase {
      * Indentation is expressed as integer space units.
      */
     type Indent = Int
-    
+
     /**
      * Output medium width
      */
@@ -44,17 +44,17 @@ trait PrettyPrinterBase {
      * The final layout of a document
      */
     type Layout = String
-    
+
     /**
      * Default indentation is four spaces.
      */
     val defaultIndent = 4
-    
+
     /**
      * Default layout width is 75 characters.
      */
     val defaultWidth = 75
-    
+
     /**
      * The operations provided by a pretty-printable document that don't
      * depend on the document's representation type.
@@ -65,37 +65,37 @@ trait PrettyPrinterBase {
          * Return the concatenation of this document with the argument.
          */
         def <> (e : Doc) : Doc
-        
+
         // Extended operations, defined in terms of the basic operations.
-            
+
         /**
          * Return the concatenation of this document with the argument
          * using a `space` separator.
          */
         def <+> (e : Doc) : Doc =
             this <> space <> e
-        
+
         /**
          * Return the concatenation of this document with the argument
          * using a `softline` separator.
          */
         def </> (e : Doc) : Doc =
             this <> softline <> e
-        
+
         /**
          * Return the concatenation of this document with the argument
          * using a `softbreak` separator.
          */
         def <\> (e : Doc) : Doc =
             this <> softbreak <> e
-        
+
         /**
          * Return the concatenation of this document with the argument
          * using a `line` separator.
          */
         def <@> (e : Doc) : Doc =
             this <> line <> e
-        
+
         /**
          * Return the concatenation of this document with the argument
          * using a `linebreak` separator.
@@ -104,21 +104,21 @@ trait PrettyPrinterBase {
             this <> linebreak <> e
 
     }
-    
+
     /**
      * The representation type of pretty-printable documents.
      */
     type Doc <: DocOps
-    
+
     // Output functions
-    
+
     /**
      * Pretty print a document assuming a given output medium width.  In the paper
      * the width is the first parameter, but here we put it second so we can provide
      * a default value.
      */
     def pretty (d : Doc, w : Width = defaultWidth) : Layout
-    
+
     /**
      * Pretty-print a pretty-printable value.  If the value passed is not a
      * pretty-printable document, it will be converted to one using the implicit
@@ -152,7 +152,7 @@ trait PrettyPrinterBase {
 
     // Basic combinators.  Thse need to be implemented for a specific
     // instantiation of `Doc`.
-    
+
     /**
      * Convert a string to a document.  The string should not contain any
      * newline characters.  Use `line` instead.
@@ -164,32 +164,32 @@ trait PrettyPrinterBase {
      * if the break is omitted by a group.
      */
     def line : Doc
-    
+
     /**
      * A document representing a potential line break.  Behaves like `empty`
      * if the break is omitted by a group.
      */
     def linebreak : Doc
-    
+
     /**
      * A document representing a choice among different ways to print a structure.
      */
     def group (d : Doc) : Doc
-    
+
     /**
      * An empty document.  This is a left and right unit for the concatenation
      * method.  Called `nil` in the paper.
      */
     def empty : Doc
-    
+
     /**
      * Nest a document by an indentation increment on top of the current nesting.
      * In the paper version, the indentation parameter comes first, but we put it
      * second here so that it can be given a default value.
      */
     def nest (d : Doc, j : Indent = defaultIndent) : Doc
-    
-    // Extended combinators that are implemented in terms of the basic 
+
+    // Extended combinators that are implemented in terms of the basic
     // combinators and the representation-independent document operations.
 
     /**
@@ -248,7 +248,7 @@ trait PrettyPrinterBase {
      * is converted to a document (default: use the `value` combinator).
      * `sep` defaults to `comma`.
      */
-    def list[T] (l : List[T], prefix : String = "List", 
+    def list[T] (l : List[T], prefix : String = "List",
                  elemToDoc : T => Doc = (x : T) => value (x),
                  sep : Doc = comma,
                  sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
@@ -263,7 +263,7 @@ trait PrettyPrinterBase {
      * method).
      * `sep` defaults to a `comma`.
      */
-    def plist (l : List[PrettyPrintable], prefix : String = "List", 
+    def plist (l : List[PrettyPrintable], prefix : String = "List",
                elemToDoc : PrettyPrintable => Doc = _.toDoc,
                sep : Doc = comma,
                sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
@@ -280,7 +280,7 @@ trait PrettyPrinterBase {
     def any (a : Any) : Doc =
         if (a == null)
             "null"
-        else 
+        else
             a match {
                 case v : Vector[_] => list (v.toList, "Vector ", any)
                 case m : Map[_,_]  => list (m.toList, "Map ", any)
@@ -389,9 +389,9 @@ trait PrettyPrinterBase {
     /**
      * Return a pretty-printer document for a separated sequence.
      * `sep` is the separator.  Line breaks are allowed before the separators
-     * between the elements of the sequence and at the end.  A `space` is 
+     * between the elements of the sequence and at the end.  A `space` is
      * inserted after each separator.  The internal line breaks turn into
-     * `space` if omitted.  The end line break turns into nothing if omitted.  
+     * `space` if omitted.  The end line break turns into nothing if omitted.
      */
     def lsep2 (ds : Seq[Doc], sep : Doc) : Doc =
         if (ds.isEmpty)
@@ -450,7 +450,7 @@ trait PrettyPrinterBase {
         cat (ds map (_ <> term))
 
     /**
-     * Return a document representing a value formatted using `toString` and 
+     * Return a document representing a value formatted using `toString` and
      * the `string` combinator. As a special case, if the value is a null
      * reference it is formatted as `null`.
      */
@@ -537,7 +537,7 @@ trait PrettyPrinterBase {
      */
     def atsign : Doc =
         char ('@')
-  
+
     /**
      * A hash mark document.
      */
@@ -726,7 +726,7 @@ trait PrettyPrinterBase {
     def forwslash : Doc =
         char ('/')
 
-    // Bottom row 
+    // Bottom row
 
     /**
      * A space document.
@@ -810,12 +810,12 @@ trait PrettyPrinter extends PrettyPrinterBase {
      * Continuation representation of documents.
      */
     class Doc (f : DocCont) extends DocCont with DocOps {
-        
+
         // Forward function operations to the function
-        
+
         def apply (iw : IW) : TreeCont => TreeCont =
             f (iw)
-        
+
         // Basic operations
 
         def <> (e : Doc) : Doc =
@@ -823,11 +823,11 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 (iw : IW) =>
                     (this (iw)) compose (e (iw))
             )
-    
+
     }
 
     // Basic combinators
-    
+
     implicit def text (t : String) : Doc =
         if (t == "")
             empty
@@ -841,7 +841,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                     scan (l, outText)
                 }
             )
-    
+
     private def line (gap : Layout) : Doc =
         new Doc ({
             case (i, w) =>
@@ -854,13 +854,13 @@ trait PrettyPrinter extends PrettyPrinterBase {
                         }
                 scan (1, outLine)
         })
-    
+
     def line : Doc =
         line (" ")
 
     def linebreak : Doc =
         line ("")
-    
+
     def group (d : Doc) : Doc =
         new Doc (
             (iw : IW) =>
@@ -870,19 +870,19 @@ trait PrettyPrinter extends PrettyPrinterBase {
                         d (iw) (leave (c)) (p, dq :+ (p, n))
                     }
         )
-    
+
     def empty : Doc =
         new Doc (
             (iw : IW) =>
                 (c : TreeCont) => c
         )
-    
+
     def nest (d : Doc, j : Indent = defaultIndent) : Doc =
         new Doc ({
             case (i, w) =>
                 d (i + j, w)
         })
-        
+
     // Obtaining output
 
     def pretty (d : Doc, w : Width = defaultWidth) : Layout = {

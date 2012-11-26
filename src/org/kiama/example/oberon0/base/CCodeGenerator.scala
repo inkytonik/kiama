@@ -6,7 +6,7 @@ package base
  * C Code generator for the base language.
  */
 trait CCodeGenerator extends Translator {
-    
+
     import c.{CArrayType, CBlock, CDeclaration, CEmptyStmt, CFunctionDecl,
         CIntExp, CIntType, CProgram, CReturn, CStatement, CStrType, CVarDecl}
     import source.{Block, Declaration, EmptyStmt, ModuleDecl, Statement}
@@ -16,7 +16,7 @@ trait CCodeGenerator extends Translator {
      */
     def translate (m : ModuleDecl) : CProgram = {
         val ModuleDecl (_, Block (ds, ss), _) = m
-        val main = 
+        val main =
             CFunctionDecl (CVarDecl ("main", CIntType ()),
                            List (CVarDecl ("argc", CIntType ()),
                                  CVarDecl ("argv", CArrayType (0, CStrType ()))),
