@@ -57,11 +57,11 @@ trait Par extends ReduceSubst {
     /**
      * Lookup a binding for a name in a list of bindings.
      */
-    def lookupb (x : Idn, ds : List[Bind]) : Option[Exp] = {
-        for (Bind (y, e) <- ds if x == y)
-            return Some (e)
-        None
-    }
+    def lookupb (x : Idn, ds : List[Bind]) : Option[Exp] =
+        ds.collectFirst {
+            case Bind (y, e) if x == y =>
+                e
+        }
 
     /**
      * Substitution in variable terms.

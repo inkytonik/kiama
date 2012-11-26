@@ -202,22 +202,14 @@ trait Environments {
      * return e.  If scope is true, just search the innermost scope, otherwise
      * search outwards in all scopes, returning the first Entity found, if any.
      */
-    def lookup (env : Environment, i : String, e : Entity, scope : Boolean = false) : Entity = {
-
-        def lookupscope (s : Scope) : Entity =
-            s.getOrElse (i, e)
-
+    def lookup (env : Environment, i : String, e : Entity, scope : Boolean = false) : Entity =
         if (env.isEmpty)
             e
         else if (scope)
-            lookupscope (env.top)
-        else {
-            for (s <- env)
-                if (s contains i)
-                    return s (i)
-            e
-        }
-
-    }
+            env.top.getOrElse (i, e)
+        else if (isDefinedInScope (env, i))
+            env.top (i)
+        else
+            lookup (env.pop, i, e)
 
 }

@@ -241,14 +241,19 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * error message if it's too big.
      */
     def stringToInt (s : String) : Either[Int,String] = {
-        var value = 0
-        for (d <- s) {
-            val dv = d.toInt - '0'.toInt
-            if (value > (Int.MaxValue - dv) / 10)
-                return Right ("integer will not fit into 32 bits")
-            value = value * 10 + dv
-        }
-        Left (value)
+        val value =
+            s.foldLeft (0) {
+                case (i, d) =>
+                    val dv = d.toInt - '0'.toInt
+                    if ((i >= 0) && (i <= (Int.MaxValue - dv) / 10))
+                        i * 10 + dv
+                    else
+                        -1
+            }
+        if (value == -1)
+            Right ("integer will not fit into 32 bits")
+        else
+            Left (value)
     }
 
     /**
