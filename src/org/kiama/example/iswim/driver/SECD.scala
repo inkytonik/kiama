@@ -126,7 +126,7 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
     /**
      * Initialise the machine.
      */
-    override def init () = {
+    override def init () {
         stack := Nil
         envir := Map()
         dump := EmptyCont()

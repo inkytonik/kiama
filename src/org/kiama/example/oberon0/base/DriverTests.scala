@@ -85,9 +85,10 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
         /**
          * Include line in the output if it meets the criteria.
          */
-        def processline (line : String, p : Int, q : Int = 0, r : Int = maxlanglevel) =
+        def processline (line : String, p : Int, q : Int = 0, r : Int = maxlanglevel) {
             if ((p <= tasklevel) && (langlevel >= q) && (langlevel <= r))
                 b += line
+        }
 
         // Iterate over all possible output lines, checking them if they are 
         // marked. Unmarked lines are always included.

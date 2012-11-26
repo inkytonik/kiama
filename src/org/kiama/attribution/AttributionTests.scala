@@ -642,12 +642,12 @@ class AttributionTests extends Tests {
                 }
         expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
-        // A chain with refusing-all-in update function. This exerices a
+        // A chain with refusing-all-in update function. This exercises a
         // different path in the 'in' attribute to the previous checks.
         def refuse (in : Tree => Int) : Tree ==> Int =
             new (Tree ==> Int) {
-                def apply (t : Tree) = in (t) // Never used
-                def isDefinedAt (t : Tree) = false
+                def apply (t : Tree) : Int = in (t) // Never used
+                def isDefinedAt (t : Tree) : Boolean = false
             }
         val refchain = chain (refuse)
         val i3 = intercept[RuntimeException] {

@@ -58,7 +58,7 @@ trait Parser extends WhitespacePositionedParserUtilities {
     lazy val idnuse =
         ident ^^ IdnUse
 
-    def keywordStrings =
+    def keywordStrings : List[String] =
         List ("BEGIN", "END", "MODULE")
 
     lazy val keyword =

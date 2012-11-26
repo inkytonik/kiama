@@ -60,7 +60,7 @@ trait ParLazy extends Par {
      * Apply substitutions lazily in an application, maintaining the
      * environment.
      */
-    def letAppL (eval : => Strategy) =
+    def letAppL (eval : => Strategy) : Strategy =
         rulefs {
             case Letp (ds1, App (e1, e2)) =>
                 option (eval (Letp (ds1, e1))) <* rule {
@@ -73,7 +73,7 @@ trait ParLazy extends Par {
      * Apply substitutions strictly in an operator evaluation, maintaining the
      * environment.
      */
-    def letOpn (eval : => Strategy) =
+    def letOpn (eval : => Strategy) : Strategy =
         rulefs {
             case Letp (ds1, Opn (e1, op, e2)) =>
                 option (eval (Letp (ds1, e1))) <* rulefs {

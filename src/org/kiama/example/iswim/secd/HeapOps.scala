@@ -60,11 +60,11 @@ trait HeapOps extends SECDBase {
      * Reference values
      */
     case class RefValue() extends Value {
-        override def hashCode = super.hashCode
-        override def equals(that : Any) = super.equals(that)
-        override def toString = "RefValue@" ++ hashCode.toHexString
+        override def hashCode : Int = super.hashCode
+        override def equals(that : Any) : Boolean = super.equals(that)
+        override def toString : String = "RefValue@" ++ hashCode.toHexString
     	lazy val content = new State[Value]("heap chunk id @" + hashCode.toHexString) {
-    	    def toDoc = value.toDoc
+    	    def toDoc : Doc = value.toDoc
     	}
     	def getType : TypeValue = RefTypeValue()
     }

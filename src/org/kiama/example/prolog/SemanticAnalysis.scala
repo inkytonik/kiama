@@ -75,10 +75,11 @@ object SemanticAnalysis {
      * Check types: issue a message if n's type is not compatible with its
      * expected type.  The unknown type is compatible with any other type.
      */
-    def checktype (n : Term) =
+    def checktype (n : Term) {
         if ((n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) && 
                 (n->tipe != n->exptipe))
             message (n, "argument " + (n->tipe) + " found, " + (n->exptipe) + " expected")
+    }
 
     /**
      * Default environment.  Contains entities for the pre-defined

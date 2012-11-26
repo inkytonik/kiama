@@ -7,9 +7,10 @@ package L3
  */
 trait Parser extends L2.Parser {
 
+    import base.source.{Declaration, Statement}
     import source.{Call, FPSection, ProcDecl, ValMode, VarMode}
 
-    override def declarationsDef =
+    override def declarationsDef : PackratParser[List[Declaration]] =
         super.declarationsDef ~ rep (procedureDeclaration <~ ";") ^^ {
             case ds ~ pds => ds ++ pds
         }
@@ -28,7 +29,7 @@ trait Parser extends L2.Parser {
         "VAR" ^^^ VarMode () |
         result (ValMode ())
 
-    override def statementDef =
+    override def statementDef : PackratParser[Statement] =
         procedureCall |
         super.statementDef
 
@@ -39,7 +40,7 @@ trait Parser extends L2.Parser {
         "(" ~> repsep (expression, ",") <~ ")" |
         guard (";" | "ELSE" | "END") ^^^ Nil
 
-    override def keywordStrings =
+    override def keywordStrings : List[String] =
         "PROCEDURE" :: super.keywordStrings
 
 }

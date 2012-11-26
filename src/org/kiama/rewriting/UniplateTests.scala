@@ -79,9 +79,9 @@ class UniplateTests extends Tests with Checkers with Generator {
 
     test ("search for division by zero") {
         object TestDivsByZero extends Generator {
-            override def genDiv (sz : Int) =
+            override def genDiv (sz : Int) : Gen[Div] =
                 Gen.frequency ((3, genDivByZero (sz)), (1, super.genDiv (sz)))
-            def genDivByZero (sz : Int) =
+            def genDivByZero (sz : Int) : Gen[Div] =
                 for { l <- genExp (sz/2) } yield Div (l, Num (0))
             val divsbyzero = count { case Div (_, Num (0)) => 1 }
             expectResult (0) (divsbyzero (numexp))
@@ -115,9 +115,9 @@ class UniplateTests extends Tests with Checkers with Generator {
 
     test ("remove double negations") {
         object TestDoubleNegSimplification extends Generator {
-            override def genNeg (sz : Int) =
+            override def genNeg (sz : Int) : Gen[Neg] =
                 Gen.frequency ((1, genDoubleNeg (sz)), (1, super.genNeg (sz)))
-            def genDoubleNeg (sz : Int) =
+            def genDoubleNeg (sz : Int) : Gen[Neg] =
                 for { e <- super.genNeg (sz) } yield Neg (e)
             def doubleneg : Exp => Exp =
                 rewrite (everywherebu ( rule { case Neg (Neg (x)) => x }))
@@ -170,9 +170,9 @@ class UniplateTests extends Tests with Checkers with Generator {
 
     test ("optimisation of integer addition") {
         object OptimiseAdd extends Generator {
-            override def genAdd (sz : Int) =
+            override def genAdd (sz : Int) : Gen[Add] =
                 Gen.frequency ((1, genIntAdd (sz)), (1, super.genAdd (sz)))
-            def genIntAdd (sz : Int) =
+            def genIntAdd (sz : Int) : Gen[Add] =
                 for { l <- genNum; r <- genNum } yield Add (l, r)
             def optimiseadd : Exp => Exp =
                 rewrite (everywherebu (rule {

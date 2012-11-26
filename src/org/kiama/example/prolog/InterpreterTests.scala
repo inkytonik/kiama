@@ -40,7 +40,7 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
      * loaded definitions to obtain some textual output, which is compared
      * against the expected output.
      */
-    def querytest (fn : String, q : String, exp : String) = {
+    def querytest (fn : String, q : String, exp : String) {
         val fullfn = "src/org/kiama/example/prolog/test/" + fn
         test (q + " on " + fullfn) {
             val emitter = new StringEmitter

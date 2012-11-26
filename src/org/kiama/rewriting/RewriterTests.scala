@@ -609,7 +609,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     
     def travtest (basemsg : String, testmsg : String, trav : (=> Strategy) => Strategy,
                   rewl : Strategy, term : Term, result : Option[Term],
-                  expecting : Expecting = Equal) = {
+                  expecting : Expecting = Equal) {
         val msg = basemsg + " - " + testmsg + ", " + expecting
         test (msg) {
             expecting match {
@@ -1406,7 +1406,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectResult (4) (sum)
     }    
     
-    def innermosttest (imost : (=> Strategy) => Strategy) = {
+    def innermosttest (imost : (=> Strategy) => Strategy) {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Var ("1.0"), Var ("2.0")), Var ("3.0")), Sub (Var ("4.0"), Var ("5.0")))
         var l : List[Double] = Nil
@@ -1475,7 +1475,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case Sub (l, r)           => Sub (r, l)
                     case n                    => n
                 }
-        def f (y : => Strategy) =
+        def f (y : => Strategy) : Strategy =
             rule {
                 case n @ Add (_, Num (3)) => n
             }
@@ -1495,7 +1495,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case Sub (l, r)           => Sub (Num (8), Num (9))
                     case n                    => n
                 }
-        def f (y : => Strategy) =
+        def f (y : => Strategy) : Strategy =
             rule {
                 case n @ Add (_, Num (3)) => n
             }
@@ -1526,7 +1526,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case Sub (l, r) => Sub (r, l)
                     case n          => n
                 }
-        def f (y : => Strategy) =
+        def f (y : => Strategy) : Strategy =
             rule {
                 case n @ Add (Num (3), _) => n
             }
@@ -1554,7 +1554,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case Sub (l, r) => Sub (r, l)
                     case n          => n
                 }
-        def f (y : => Strategy) =
+        def f (y : => Strategy) : Strategy =
             rule {
                 case n @ Add (_, Num (3)) => n
             }
@@ -1793,7 +1793,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectsame (Some (t)) (s (t))
     }
     
-    def everywheretdtest (everys : (=> Strategy) => Strategy) = {
+    def everywheretdtest (everys : (=> Strategy) => Strategy) {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Num (12), Num (13)), Num (14)), Sub (Num (16), Num (17)))
         var l : List[Double] = Nil

@@ -58,7 +58,7 @@ object Decorators {
      * above).
      */
     case class Chain[T,U] (in : (T => U), out : (T => U)) extends (T => U) {
-        def apply (t : T) = out (t)
+        def apply (t : T) : U = out (t)
     }
 
     /**

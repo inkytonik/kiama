@@ -38,7 +38,7 @@ trait Parser extends PositionedParserUtilities {
         "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam |
         exp2
 
-    def itype =
+    def itype : PackratParser[Type] =
         if (typecheck) (":" ~> ttype) else ("" ^^^ null)
 
     lazy val exp2 : PackratParser[Exp] =

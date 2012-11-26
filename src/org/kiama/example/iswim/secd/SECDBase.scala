@@ -127,8 +127,10 @@ object SECDBase {
     }
     
     object CodeTree {
-        def apply(bs : ByteCodeBase*) = new CodeTree(bs.toList)
-        def apply(bs : List[ByteCodeBase]) = new CodeTree(bs)
+        def apply(bs : ByteCodeBase*) : CodeTree =
+            new CodeTree(bs.toList)
+        def apply(bs : List[ByteCodeBase]) : CodeTree =
+            new CodeTree(bs)
     }
 
     case class CodeSegment(code : Code) extends ByteCode {
@@ -142,7 +144,8 @@ object SECDBase {
     }
     
     object CodeSegment {
-        def apply(bs : ByteCodeBase*) = new CodeTree(bs.toList).toCodeSegment
+        def apply(bs : ByteCodeBase*) : CodeSegment =
+            new CodeTree(bs.toList).toCodeSegment
     }
     
     @inline
@@ -323,9 +326,9 @@ abstract class SECDBase
             c : Code,
             d : Dump
     ) extends Value with Continuation {
-        override def hashCode = super.hashCode
-        override def equals(that : Any) = super.equals(that)
-        override def toString = "ContValue@" ++ hashCode.toHexString
+        override def hashCode : Int = super.hashCode
+        override def equals(that : Any) : Boolean = super.equals(that)
+        override def toString : String = "ContValue@" ++ hashCode.toHexString
         def getType : TypeValue = ContTypeValue()
     } 
     
@@ -341,9 +344,9 @@ abstract class SECDBase
             bdy : Code,
             var envir : Environment
     ) extends Value {
-        override def hashCode = super.hashCode
-        override def equals(that : Any) = super.equals(that)
-        override def toString = "ClosureValue@" ++ hashCode.toHexString
+        override def hashCode : Int = super.hashCode
+        override def equals(that : Any) : Boolean = super.equals(that)
+        override def toString : String = "ClosureValue@" ++ hashCode.toHexString
         def getType : TypeValue = ClosureTypeValue()
     }
     
@@ -353,9 +356,9 @@ abstract class SECDBase
      * executed from the stack by executing an App() bytecode.
      */
     case class PrimValue(bdy : Code) extends Value {
-        override def hashCode = super.hashCode
-        override def equals(that : Any) = super.equals(that)
-        override def toString = "PrimValue@" ++ hashCode.toHexString
+        override def hashCode : Int = super.hashCode
+        override def equals(that : Any) : Boolean = super.equals(that)
+        override def toString : String = "PrimValue@" ++ hashCode.toHexString
         def getType : TypeValue = PrimTypeValue()
     }
 
@@ -599,7 +602,7 @@ abstract class SECDBase
      * Rule to execute one step of this machine.
      */
     protected var execSrcPos : Position = NoPosition
-    def main () = {
+    def main () {
         (control : Code) match {
             case inst :: _ if (inst.pos != NoPosition) => execSrcPos = inst.pos
             case _ =>

@@ -132,7 +132,7 @@ object SymbolTable {
      */
     case class IntType () extends Type {
         override val storage = WORDSIZE
-        override def toString () = "integer"
+        override def toString : String = "integer"
     }
 
     /**
@@ -140,7 +140,7 @@ object SymbolTable {
      */
     case class BoolType () extends Type {
         override val storage = WORDSIZE
-        override def toString () = "boolean"
+        override def toString : String = "boolean"
     }
 
     /**
@@ -148,7 +148,7 @@ object SymbolTable {
      */
     case class ArrayType (size : Int) extends Type {
         override val storage = WORDSIZE * size
-        override def toString () = "array"
+        override def toString : String = "array"
     }
 
     /**
@@ -156,7 +156,7 @@ object SymbolTable {
      */
     case class RecordType (fields : List[Identifier]) extends Type {
         override val storage = WORDSIZE * fields.length
-        override def toString () = "record"
+        override def toString : String = "record"
     }
 
     /**
@@ -165,7 +165,7 @@ object SymbolTable {
      * which must take a value of an arbitrary record type.
      */
     case class RecordTypes () extends TypeBase {
-        override def toString = "any record"
+        override def toString : String = "any record"
         override def iscompatible (other : TypeBase) : Boolean =
             (other.isInstanceOf[RecordType]) || (super.iscompatible (other))
     }
@@ -175,7 +175,7 @@ object SymbolTable {
      */
     case class EnumType (ident : Identifier) extends Type {
         override val storage = WORDSIZE
-        override def toString = "enumeration " + ident
+        override def toString : String = "enumeration " + ident
     }
 
     /**
@@ -184,7 +184,7 @@ object SymbolTable {
      * which must take a value of an arbitrary enumeration type.
      */
     case class EnumTypes () extends TypeBase {
-        override def toString = "any enumeration"
+        override def toString : String = "any enumeration"
         override def iscompatible (other : TypeBase) : Boolean =
             (other.isInstanceOf[EnumType]) || (super.iscompatible (other))
     }
@@ -194,7 +194,7 @@ object SymbolTable {
      */
     case class ExnType () extends Type {
         override val storage = WORDSIZE
-        override def toString = "exception"
+        override def toString : String = "exception"
     }
 
 

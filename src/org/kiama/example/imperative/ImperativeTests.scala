@@ -131,22 +131,22 @@ trait Generator {
 
     val genLeafExp = Gen.oneOf (genNum, genVar)
 
-    def genNeg (sz : Int) =
+    def genNeg (sz : Int) : Gen[Neg] =
         for { e <- genExp (sz/2) } yield Neg (e)
 
-    def genAdd (sz : Int) =
+    def genAdd (sz : Int) : Gen[Add] =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Add (l, r)
 
-    def genSub (sz : Int) =
+    def genSub (sz : Int) : Gen[Sub] =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Sub (l, r)
 
-    def genMul (sz : Int) =
+    def genMul (sz : Int) : Gen[Mul] =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Mul (l, r)
 
-    def genDiv (sz : Int) =
+    def genDiv (sz : Int) : Gen[Div] =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield Div (l, r)
 
-    def genInternalExp (sz : Int) =
+    def genInternalExp (sz : Int) : Gen[Exp] =
         Gen.oneOf (genAdd (sz), genSub (sz), genMul (sz), genDiv (sz))
 
     def genExp (sz : Int) : Gen[Exp] =
@@ -160,7 +160,7 @@ trait Generator {
 
     val genLeafStmt = Gen.value (Null ())
 
-    def genSeqn (sz : Int) =
+    def genSeqn (sz : Int) : Gen[Seqn] =
         for { len <- Gen.choose (1,sz)
               ss <- Gen.containerOfN[List,Stmt] (len, genStmt (sz / len)) }
             yield Seqn (ss)
@@ -168,13 +168,13 @@ trait Generator {
     implicit def arbSeqn : Arbitrary[Seqn] =
         Arbitrary { Gen.sized (sz => genSeqn (sz)) }
 
-    def genAsgn (sz : Int) =
+    def genAsgn (sz : Int) : Gen[Asgn] =
         for { v <- genVar; e <- genExp (sz-1) } yield Asgn (v, e)
 
     implicit def arbAsgn : Arbitrary[Asgn] =
         Arbitrary { Gen.sized (sz => genAsgn (sz)) }
 
-    def genWhile (sz : Int) =
+    def genWhile (sz : Int) : Gen[While] =
         for { e <- genExp (sz/3); b <- genStmt (sz - 1) } yield While (e, b)
 
     implicit def arbWhile : Arbitrary[While] =
@@ -183,7 +183,7 @@ trait Generator {
     def genInternalStmt (sz : Int) : Gen[Stmt] =
         Gen.frequency ((1, genSeqn (sz)), (5, genAsgn (sz)), (3, genWhile (sz)))
 
-    def genStmt (sz : Int) =
+    def genStmt (sz : Int) : Gen[Stmt] =
         if (sz <= 0)
             genLeafStmt
         else
@@ -199,7 +199,10 @@ trait Generator {
  */
 object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
 
-    def generator () = arbStmt
+    import org.scalacheck.Arbitrary
+
+    def generator () : Arbitrary[AST.Stmt] =
+        arbStmt
 
     override def process (s : AST.Stmt) {
         emitter.emitln (s)

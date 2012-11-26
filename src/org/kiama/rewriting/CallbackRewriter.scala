@@ -49,7 +49,7 @@ abstract class CallbackRewriter extends Rewriter {
      */
     private def dispatch (s : Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 s (t) match {
                     case None     => None
                     case Some (n) => Some (rewriting (t, n))

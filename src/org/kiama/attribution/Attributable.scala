@@ -131,7 +131,8 @@ trait Attributable extends Product with Cloneable {
      * `this->attribute` is equivalent to `attribute(this)`.
      */
     @inline
-    final def ->[U] (a : this.type => U) = a (this)
+    final def ->[U] (a : this.type => U) : U =
+        a (this)
 
     /**
      * Reference an attribute or function that can be applied to this node.
@@ -144,7 +145,7 @@ trait Attributable extends Product with Cloneable {
      * to be implicitly forwarded to some other node.
      */
     @inline
-    final def ->[T,U] (a : T => U) (implicit b : this.type => T) =
+    final def ->[T,U] (a : T => U) (implicit b : this.type => T) : U =
         a (b (this))
 
     /**
@@ -229,7 +230,8 @@ trait Attributable extends Product with Cloneable {
      *
      * @see Attributable.deepclone
      */
-    override def clone () = super.clone ().asInstanceOf[Attributable]
+    override def clone () : Attributable =
+        super.clone ().asInstanceOf[Attributable]
 
 }
 

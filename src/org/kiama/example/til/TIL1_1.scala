@@ -48,13 +48,13 @@ object AST {
     sealed abstract class Exp
 
     case class Id (s : String) {
-        override def toString () = "Id (\"" + s + "\")"
+        override def toString : String = "Id (\"" + s + "\")"
     }
 
     case class Var (i : Id) extends Exp
     case class Num (n : Int) extends Exp
     case class Str (s : String) extends Exp {
-        override def toString () = "Str (\"" + s + "\")"
+        override def toString : String = "Str (\"" + s + "\")"
     }
 
     case class Mul (l : Exp, r : Exp) extends Exp

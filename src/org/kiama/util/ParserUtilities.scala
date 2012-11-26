@@ -283,7 +283,7 @@ trait WhitespaceParser extends ParserUtilities {
      * Turn off whitespace processing based on the whiteSpace regular
      * expression from `RegexParsers`.
      */
-    override def skipWhitespace = false
+    override def skipWhitespace : Boolean = false
 
     /**
      * A parser that recognises whitespace.  Normal whitespace handling is

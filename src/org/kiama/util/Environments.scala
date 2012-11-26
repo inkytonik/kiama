@@ -89,7 +89,7 @@ trait Environments {
         /**
          * Still print named things as their underlying name.
          */
-        override def toString = ident
+        override def toString : String = ident
 
     }
 

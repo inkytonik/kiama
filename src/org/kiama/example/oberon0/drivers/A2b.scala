@@ -8,9 +8,9 @@ trait A2bPhases extends base.Driver
     with L2.NameAnalyser
     with L2.TypeAnalyser {
 
-    def artefact = "A2b"
-    def langlevel = 2
-    def tasklevel = 3
+    def artefact : String = "A2b"
+    def langlevel : Int = 2
+    def tasklevel : Int = 3
 
 }
 

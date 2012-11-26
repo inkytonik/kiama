@@ -12,9 +12,9 @@ trait A4Phases extends base.TranslatingDriver
     with L4.CCodeGenerator
     with L4.c.PrettyPrinter {
 
-    def artefact = "A4"
-    def langlevel = 4
-    def tasklevel = 6
+    def artefact : String = "A4"
+    def langlevel : Int = 4
+    def tasklevel : Int = 6
 
 }
 

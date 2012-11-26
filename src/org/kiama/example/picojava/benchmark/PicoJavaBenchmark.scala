@@ -31,9 +31,10 @@ object PicoJavaBenchmark extends App with StdoutEmitter {
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 
-    def basicAst () = ClassDecl ("AA", None, Block (List (VarDecl (Use ("int"), "x"))))
+    def basicAst () : ClassDecl =
+        ClassDecl ("AA", None, Block (List (VarDecl (Use ("int"), "x"))))
 
-    def createAst (subtree : ClassDecl) =
+    def createAst (subtree : ClassDecl) : ClassDecl =
         ClassDecl ("AA", None, Block (
               List (VarDecl (Use ("int"), "y"),
                     VarDecl (Use ("AA"), "a"),
@@ -45,7 +46,7 @@ object PicoJavaBenchmark extends App with StdoutEmitter {
                               AssignStmt (Dot (Use ("b"), Use("y")),
                                           Dot (Use ("b"), Use("x")))))))))
 
-    def createProgram (subtree : ClassDecl) =
+    def createProgram (subtree : ClassDecl) : Program =
         Program (Block (List (subtree)))
 
     // Warm up the JIT compiler

@@ -10,9 +10,9 @@ trait A3Phases extends base.TransformingDriver
     with L2.Lifter
     with L2.Desugarer {
 
-    def artefact = "A3"
-    def langlevel = 3
-    def tasklevel = 3
+    def artefact : String = "A3"
+    def langlevel : Int = 3
+    def tasklevel : Int = 3
 
 }
 

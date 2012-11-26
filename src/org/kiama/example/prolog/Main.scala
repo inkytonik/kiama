@@ -115,7 +115,8 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
     /**
      * The prompt to print before each line of input is read.
      */
-    override def prompt () = "?- "
+    override def prompt () : String =
+        "?- "
 
     /**
      * Process a query by passing it and the program to the interpreter.

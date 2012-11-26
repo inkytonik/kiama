@@ -36,7 +36,7 @@ class MachineTests extends Tests {
     
     object M extends Machine ("M", memitter) {
         override val debug = true
-        def main = { }
+        def main { }
     }
     
     // Scalar state
@@ -275,7 +275,7 @@ class MachineTests extends Tests {
         val t = new State[String] ("t")
         val p = new ParamState[String,Int] ("p")
 
-        def main = {
+        def main {
             if (s.isUndefined) {
                 s := 0
                 p ("one") := 42

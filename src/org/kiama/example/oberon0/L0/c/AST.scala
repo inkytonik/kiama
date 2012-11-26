@@ -142,7 +142,7 @@ abstract class CUnaryExpression extends CExpression with PrettyUnaryExpression {
  */
 case class CNegExp (exp : CExpression) extends CUnaryExpression {
     override val priority = 2
-    def op = "-"
+    def op : String = "-"
 }
 
 /**
@@ -150,7 +150,7 @@ case class CNegExp (exp : CExpression) extends CUnaryExpression {
  */
 case class CNotExp (exp : CExpression) extends CUnaryExpression {
     override val priority = 2
-    def op = "!"
+    def op : String = "!"
 }
 
 /**

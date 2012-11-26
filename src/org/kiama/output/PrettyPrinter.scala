@@ -147,7 +147,7 @@ trait PrettyPrinterBase {
      */
     implicit def anyToPrettyPrintable (a : Any) : PrettyPrintable =
         new PrettyPrintable {
-            override def toDoc = value (a)
+            override def toDoc : Doc = value (a)
         }
 
     // Basic combinators.  Thse need to be implemented for a specific

@@ -348,21 +348,21 @@ class ParenPrettyPrinterTests extends Tests with PrettyPrinter with ParenPrettyP
     abstract class Exp extends PrettyExpression
 
     case class InOp (left : Exp, right : Exp, prio : Int, fix : Side) extends Exp with PrettyBinaryExpression {
-        def priority = prio
-        def fixity = Infix (fix)
-        def op = "*"
+        def priority : Int = prio
+        def fixity : Fixity = Infix (fix)
+        def op : String = "*"
     }
 
     case class PostOp (exp : Exp, prio : Int) extends Exp with PrettyUnaryExpression {
-        def priority = prio
-        def fixity = Postfix
-        def op = "++"
+        def priority : Int = prio
+        def fixity : Fixity = Postfix
+        def op : String = "++"
     }
 
     case class PreOp (exp : Exp, prio : Int) extends Exp with PrettyUnaryExpression {
-        def priority = prio
-        def fixity = Prefix
-        def op = "--"
+        def priority : Int = prio
+        def fixity : Fixity = Prefix
+        def op : String = "--"
     }
 
     case class Leaf (i : Int) extends Exp

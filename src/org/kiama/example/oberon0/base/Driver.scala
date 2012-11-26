@@ -31,7 +31,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 
     // Command-line argument handling
 
-    def usageMessage =
+    def usageMessage : String =
         """|Usage: driver <options> <filename>
            |Options:
            |   -h   print this help message and stop
@@ -108,8 +108,9 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
     /**
      * Output a section heading so that the output can be split later.
      */
-    def section (emitter : Emitter, name : String) =
+    def section (emitter : Emitter, name : String) {
         emitter.emitln ("* " + name)
+    }
 
     /**
      * Custom driver for section tagging and challenge mode for errors.  If 
@@ -221,7 +222,7 @@ trait TransformingDriver extends Driver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer =>
 
-    override def usageMessage =
+    override def usageMessage : String =
         super.usageMessage + """
         |   -i   print the intermediate abstract syntax tree
         |   -I   pretty-print the intermediate abstract syntax tree""".stripMargin
@@ -291,7 +292,7 @@ trait TranslatingDriver extends TransformingDriver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer with Translator with c.CPrettyPrinter =>
 
-    override def usageMessage =
+    override def usageMessage : String =
         super.usageMessage + """
         |   -c   print the C abstract syntax tree
         |   -C   pretty-print the C abstract syntax tree""".stripMargin

@@ -76,7 +76,8 @@ trait TestCompiler[T] extends FunSuite {
      * Default is true; override with false if you want actual results
      * compared.
      */
-    def dosanitisation = true
+    def dosanitisation : Boolean =
+        true
 
     /**
      * Sanitise the output.  At the moment this means make any Windows line

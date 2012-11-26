@@ -108,7 +108,7 @@ trait PositionedParserUtilities extends ParserUtilities {
      */
     override def Parser[T] (f : Input => ParseResult[T]) : Parser[T] =
         new Parser[T] {
-            def apply (in : Input) =
+            def apply (in : Input) : ParseResult[T] =
                 parseAndPosition (f, in)
         }
 
@@ -117,7 +117,7 @@ trait PositionedParserUtilities extends ParserUtilities {
      */
     override def OnceParser[T](f : Input => ParseResult[T]) : Parser[T] with OnceParser[T] =
        new Parser[T] with OnceParser[T] {
-            def apply (in : Input) =
+            def apply (in : Input) : ParseResult[T] =
                 parseAndPosition (f, in)
        }
 

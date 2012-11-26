@@ -7,9 +7,9 @@ trait A2aPhases extends base.Driver
     with L3.source.PrettyPrinter
     with L3.NameAnalyser {
 
-    def artefact = "A2a"
-    def langlevel = 3
-    def tasklevel = 2
+    def artefact : String = "A2a"
+    def langlevel : Int = 3
+    def tasklevel : Int = 2
 
 }
 

@@ -132,9 +132,10 @@ class LambdaTests extends Tests with Checkers with Parser {
      * Assert true if the two expressions are the same modulo variable
      * renaming, otherwise assert a failure.
      */
-    def assertSame (mech : String, e1 : Exp, e2 : Exp) =
+    def assertSame (mech : String, e1 : Exp, e2 : Exp) {
         if (canon (e1) != canon (e2))
             fail (mech + ": " + e1 + " and " + e2 + " are not equal")
+    }
 
     /**
      * Parse and evaluate term using the specified mechanism

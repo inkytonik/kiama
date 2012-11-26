@@ -7,10 +7,11 @@ package L4
  */
 trait Parser extends L3.Parser {
 
+    import L0.source.{Expression, TypeDef}
     import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
         RecordTypeDef}
 
-    override def typedefDef =
+    override def typedefDef : PackratParser[TypeDef] =
         ("ARRAY" ~> expression) ~ ("OF" ~> typedef) ^^ ArrayTypeDef |
         "RECORD" ~> fieldlists <~ "END" ^^ RecordTypeDef |
         super.typedefDef
@@ -27,7 +28,7 @@ trait Parser extends L3.Parser {
     lazy val idnlist =
         rep1sep (ident, ",")
 
-    override def lhsDef =
+    override def lhsDef : PackratParser[Expression] =
         lhs ~ ("." ~> fldidn) ^^ FieldExp |
         lhs ~ ("[" ~> expression <~ "]") ^^ IndexExp |
         super.lhsDef
@@ -35,7 +36,7 @@ trait Parser extends L3.Parser {
     lazy val fldidn =
         ident ^^ FieldIdn
 
-    override def keywordStrings =
+    override def keywordStrings : List[String] =
         "ARRAY" :: "OF" :: "RECORD" :: super.keywordStrings
 
 }

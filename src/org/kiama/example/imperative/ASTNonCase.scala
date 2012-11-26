@@ -35,91 +35,91 @@ object ASTNonCase {
     sealed abstract class Exp extends Rewritable
 
     class Num (val d : Double) extends Exp {
-        def arity = 1
-        def deconstruct = List (d)
-        def reconstruct (cs : Array[Term]) = 
+        def arity : Int = 1
+        def deconstruct : List[Double] = List (d)
+        def reconstruct (cs : Array[Term]) : Exp = 
             cs match {
                 case Array (d : Double) =>
                     new Num (d)
                 case _ =>
                     illegalArgs ("Num", "Double", cs)
             }
-        override def toString = "Num(" + d + ")"
+        override def toString : String = "Num(" + d + ")"
     }
 
     class Var (val s : Idn) extends Exp {
-        def arity = 1
-        def deconstruct = List (s)
-        def reconstruct (cs : Array[Term]) = 
+        def arity : Int = 1
+        def deconstruct : List[Idn] = List (s)
+        def reconstruct (cs : Array[Term]) : Exp = 
             cs match {
                 case Array (s : Idn) =>
                     new Var (s)
                 case _ =>
                     illegalArgs ("Var", "Idn", cs)
             }
-        override def toString = "Var(" + s + ")"
+        override def toString : String = "Var(" + s + ")"
     }
 
     class Neg (val e : Exp) extends Exp {
-        def arity = 1
-        def deconstruct = List (e)
-        def reconstruct (cs : Array[Term]) = 
+        def arity : Int = 1
+        def deconstruct : List[Exp] = List (e)
+        def reconstruct (cs : Array[Term]) : Exp = 
             cs match {
                 case Array (e : Exp) =>
                     new Neg (e)
                 case _ =>
                     illegalArgs ("Neg", "Exp", cs)
             }
-        override def toString = "Neg(" + e + ")"
+        override def toString : String = "Neg(" + e + ")"
     }
 
     abstract class Binary (val l : Exp, val r : Exp) extends Exp {
-        def arity = 2
-        def deconstruct = List (l, r)
+        def arity : Int = 2
+        def deconstruct : List[Exp] = List (l, r)
     }
 
     class Add (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) = 
+        def reconstruct (cs : Array[Term]) : Exp = 
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Add (l, r)
                 case _ =>
                     illegalArgs ("Add", "Exp, Exp", cs)
             }
-        override def toString = "Add(" + l + "," + r + ")"
+        override def toString : String = "Add(" + l + "," + r + ")"
     }
     
     class Sub (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) = 
+        def reconstruct (cs : Array[Term]) : Exp = 
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Sub (l, r)
                 case _ =>
                     illegalArgs ("Sub", "Exp, Exp", cs)
             }
-        override def toString = "Sub(" + l + "," + r + ")"
+        override def toString : String = "Sub(" + l + "," + r + ")"
     }
     
     class Mul (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) = 
+        def reconstruct (cs : Array[Term]) : Exp = 
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Mul (l, r)
                 case _ =>
                     illegalArgs ("Mul", "Exp, Exp", cs)
             }
-        override def toString = "Mul(" + l + "," + r + ")"
+        override def toString : String = "Mul(" + l + "," + r + ")"
     }
     
     class Div (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Term]) = 
+        def reconstruct (cs : Array[Term]) : Exp = 
             cs match {
                 case Array (l : Exp, r : Exp) =>
                     new Div (l, r)
                 case _ =>
                     illegalArgs ("Div", "Exp, Exp", cs)
             }
-        override def toString = "Div(" + l + "," + r + ")"
+        override def toString : String = "Div(" + l + "," + r + ")"
     }
 
 }

@@ -7,11 +7,11 @@ package L1
  */
 trait Parser extends L0.Parser {
     
-    import base.source.Block
+    import base.source.{Block, Statement}
     import L0.source.Expression
     import source.{IfStatement, WhileStatement}
 
-    override def statementDef =
+    override def statementDef : PackratParser[Statement]=
         ifStatement |
         whileStatement |
         super.statementDef
@@ -34,7 +34,7 @@ trait Parser extends L0.Parser {
         "WHILE" ~> expression ~ ("DO" ~> statementSequence <~ "END") ^^
         WhileStatement
         
-    override def keywordStrings =
+    override def keywordStrings : List[String] =
         "DO" :: "ELSE" :: "ELSIF" :: "IF" :: "THEN" :: "WHILE" :: super.keywordStrings
 
 }

@@ -89,7 +89,7 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator with StdoutE
                         }
                         if (executeFlag) {
                             val machine = new SECD(bytecode) {
-                                override def debug = debugFlag
+                                override def debug : Boolean = debugFlag
                             }
                             if (debugFlag) emitter.emitln("Execution trace:")
                             machine.run

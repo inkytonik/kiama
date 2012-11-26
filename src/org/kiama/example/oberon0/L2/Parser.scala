@@ -7,10 +7,11 @@ package L2
  */
 trait Parser extends L1.Parser {
     
+    import base.source.Statement
     import L0.source.IdnExp
     import source.{Case, CaseStatement, ForStatement, MinMaxCond, ValCond}
 
-    override def statementDef =
+    override def statementDef : PackratParser[Statement] =
         forStatement |
         caseStatement |
         super.statementDef
@@ -43,7 +44,7 @@ trait Parser extends L1.Parser {
         expression ~ (".." ~> expression) ^^ MinMaxCond |
         expression ^^ ValCond
              
-    override def keywordStrings =
+    override def keywordStrings : List[String] =
         "BY" :: "CASE" :: "FOR" :: "OF" :: "STEP" :: "TO" :: super.keywordStrings
 
 }

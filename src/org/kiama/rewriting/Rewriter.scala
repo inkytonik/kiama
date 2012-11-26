@@ -70,7 +70,7 @@ class Rewriter {
          */
         def <* (q : => Strategy) : Strategy =
             new Strategy {
-                def apply (t1 : Term) =
+                def apply (t1 : Term) : Option[Term] =
                     p (t1) match {
                         case Some (t2) => q (t2)
                         case None      => None
@@ -84,7 +84,7 @@ class Rewriter {
          */
         def <+ (q : => Strategy) : Strategy =
             new Strategy {
-                def apply (t1 : Term) =
+                def apply (t1 : Term) : Option[Term] =
                     p (t1) match {
                         case Some (t2) => Some (t2)
                         case None      => q (t1)
@@ -112,7 +112,7 @@ class Rewriter {
          */
         def < (lr : => PlusStrategy) : Strategy =
             new Strategy {
-                def apply (t1 : Term) =
+                def apply (t1 : Term) : Option[Term] =
                     p (t1) match {
                         case Some (t2) => lr.lhs (t2)
                         case None      => lr.rhs (t1)
@@ -129,7 +129,8 @@ class Rewriter {
     class PlusStrategy (p : => Strategy, q : => Strategy) extends Strategy {
         val lhs = p
         val rhs = q
-        def apply (t : Term) = (p <+ q) (t)
+        def apply (t : Term) : Option[Term] =
+            (p <+ q) (t)
     }
 
     /**
@@ -138,7 +139,8 @@ class Rewriter {
      */
     def strategyf (f : Term => Option[Term]) : Strategy =
         new Strategy {
-            def apply (t : Term) = f (t)
+            def apply (t : Term) : Option[Term] =
+                f (t)
         }
 
     /**
@@ -150,7 +152,7 @@ class Rewriter {
      */
     def strategy (f : Term ==> Option[Term]) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     f (t)
                 } else {
@@ -174,7 +176,7 @@ class Rewriter {
      */
     def rule (f : Term ==> Term) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     Some (f (t))
                 } else {
@@ -192,7 +194,7 @@ class Rewriter {
      */
     def rulefs (f : Term ==> Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     (f (t)) (t)
                 } else {
@@ -225,7 +227,7 @@ class Rewriter {
      */
     def queryf[T] (f : Term => T) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 f (t)
                 Some (t)
             }
@@ -239,7 +241,7 @@ class Rewriter {
      */
     def query[T] (f : Term ==> T) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     f (t)
                 }
@@ -277,7 +279,7 @@ class Rewriter {
      */
     def log[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy = 
         new Strategy {
-            def apply (t1 : Term) = {
+            def apply (t1 : Term) : Option[Term] = {
                 emitter.emit (msg + t1)
                 val r = s (t1)
                 r match {
@@ -298,7 +300,7 @@ class Rewriter {
      */
     def logfail[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy = 
         new Strategy {
-            def apply (t1 : Term) = {
+            def apply (t1 : Term) : Option[Term] = {
                 val r = s (t1)
                 r match {
                     case Some (t2) =>

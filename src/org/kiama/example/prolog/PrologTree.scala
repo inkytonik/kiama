@@ -39,29 +39,29 @@ object PrologTree {
     }
     
     case class Fact (hd : Term) extends Clause {
-        def bdy = Nil
+        def bdy : List[Term] = Nil
     }
     case class Rule (hd : Term, bdy : List[Term]) extends Clause
 
     sealed abstract class Term extends SourceNode
 
     case class Var (s : String) extends Term {
-        override def toString = s
+        override def toString : String = s
     }
     case class Integer (v : Int) extends Term {
-        override def toString = v.toString
+        override def toString : String = v.toString
     }
 
     sealed abstract class Literal extends Term
 
     case class Atom (s : String) extends Literal {
-        override def toString = s
+        override def toString : String = s
     }
     case class Pred (s : String, ts : List[Term]) extends Literal {
-        override def toString = s + ts.mkString ("(", ", ", ")")
+        override def toString : String = s + ts.mkString ("(", ", ", ")")
     }
     case class Cut () extends Literal {
-        override def toString = "!"
+        override def toString : String = "!"
     }
 
 }

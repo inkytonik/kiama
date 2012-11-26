@@ -377,7 +377,7 @@ object RISCISA {
      */
     case class BEQ (val label : Int) extends Branch {
         override def toString : String = "beq " + super.toString
-        def copy(label : Int) = BEQ (label)
+        def copy(label : Int) : Branch = BEQ (label)
     }
 
     /**
@@ -386,7 +386,7 @@ object RISCISA {
      */
     case class BNE (val label : Int) extends Branch {
         override def toString : String = "bne " + super.toString
-        def copy(label : Int) = BNE (label)
+        def copy(label : Int) : Branch = BNE (label)
     }
 
     /**
@@ -395,7 +395,7 @@ object RISCISA {
      */
     case class BLT (val label : Int) extends Branch {
         override def toString : String = "blt " + super.toString
-        def copy(label : Int) = BLT (label)
+        def copy(label : Int) : Branch = BLT (label)
     }
 
     /**
@@ -404,7 +404,7 @@ object RISCISA {
      */
     case class BGE (val label : Int) extends Branch {
         override def toString : String = "bge " + super.toString
-        def copy(label : Int) = BGE (label)
+        def copy(label : Int) : Branch = BGE (label)
     }
 
     /**
@@ -413,7 +413,7 @@ object RISCISA {
      */
     case class BLE (val label : Int) extends Branch {
         override def toString : String = "ble " + super.toString
-        def copy(label : Int) = BLE (label)
+        def copy(label : Int) : Branch = BLE (label)
     }
 
     /**
@@ -422,7 +422,7 @@ object RISCISA {
      */
     case class BGT (val label : Int) extends Branch {
         override def toString : String = "bgt " + super.toString
-        def copy(label : Int) = BGT (label)
+        def copy(label : Int) : Branch = BGT (label)
     }
 
     /**
@@ -430,7 +430,7 @@ object RISCISA {
      */
     case class BR (val label : Int) extends Branch {
         override def toString : String = "br " + super.toString
-        def copy(label : Int) = BR (label)    
+        def copy(label : Int) : Branch = BR (label)    
     }
 
     /**
@@ -439,7 +439,7 @@ object RISCISA {
      */
     case class BSR (val label : Int) extends Branch {
         override def toString : String = "bsr " + super.toString
-        def copy(label : Int) = BSR (label)
+        def copy(label : Int) : Branch = BSR (label)
     }
 
     /**

@@ -111,14 +111,16 @@ object AST {
      * Primitive integer addition.
      */
     case class AddOp () extends Op {
-        def eval (l : Int, r : Int) = l + r
+        def eval (l : Int, r : Int) : Int =
+            l + r
     }
 
     /**
      * Primitive integer subtraction.
      */
     case class SubOp () extends Op {
-        def eval (l : Int, r : Int) = l - r
+        def eval (l : Int, r : Int) : Int =
+            l - r
     }
 
     // Congruences

@@ -48,12 +48,14 @@ class Console {
 object JLineConsole extends Console {
 
     import jline.ConsoleReader
+    import jline.Terminal
     import jline.Terminal.getTerminal
 
     /**
      * Return a handle for the current terminal.
      */
-    def terminal = jline.Terminal.getTerminal
+    def terminal : Terminal =
+        jline.Terminal.getTerminal
 
     /**
      * The reader to use to access the console.

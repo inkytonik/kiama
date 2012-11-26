@@ -7,12 +7,13 @@ package L0
  */
 trait Parser extends base.Parser {
 
+    import base.source.{Declaration, Statement}
     import source.{AddExp, AndExp, Assignment, ConstDecl, DivExp, EqExp,
         Expression, GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp,
         MulExp, NamedType, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl,
         TypeDef, VarDecl}
 
-    override def declarationsDef =
+    override def declarationsDef : PackratParser[List[Declaration]] =
         (constdeclsection?) ~ (typedeclsection?) ~ (vardeclsection?) ^^ {
             case oc ~ ot ~ ov =>
                 List (oc, ot, ov).flatten.flatten
@@ -48,7 +49,7 @@ trait Parser extends base.Parser {
     lazy val namedtypedef =
         idnuse ^^ NamedType
 
-    override def statementDef =
+    override def statementDef : PackratParser[Statement] =
         assignment |
         super.statementDef
 
@@ -94,7 +95,7 @@ trait Parser extends base.Parser {
     lazy val intexp =
         constrainedInt ^^ IntExp
 
-    override def keywordStrings =
+    override def keywordStrings : List[String] =
         "CONST" :: "DIV" :: "MOD" :: "OR" :: "TYPE" :: "VAR" :: super.keywordStrings
 
 }

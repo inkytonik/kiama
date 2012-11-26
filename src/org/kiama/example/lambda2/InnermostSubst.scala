@@ -44,6 +44,7 @@ trait InnermostSubst extends ReduceSubst {
 }
 
 class InnermostSubstEvaluator extends ReduceSubst {
-    override def reducesinlambdas () = true
+    override def reducesinlambdas () : Boolean =
+        true
 }
 

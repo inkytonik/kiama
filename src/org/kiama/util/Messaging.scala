@@ -36,7 +36,8 @@ object Messaging {
      * a `message` string.
      */
     case class Record (pos : Position, message : String) {
-        override def toString () = pos.line + "." + pos.column + ": " + message
+        override def toString : String =
+            pos.line + "." + pos.column + ": " + message
     }
 
     /**
@@ -53,15 +54,17 @@ object Messaging {
     /**
      * Buffer a new message associated with the given `Positional` value.
      */
-    def message (value : Positional, message : String) =
+    def message (value : Positional, message : String) {
         messages += Record (value.pos, message)
+    }
 
     /**
      * Buffer a new message associated with the given `Positioned` value.
      * The `finish` position is ignored at present.
      */
-    def message (value : Positioned, message : String) =
+    def message (value : Positioned, message : String) {
         messages += Record (value.start, message)
+    }
 
     /**
      * Return the number of messages that are buffered.
@@ -73,14 +76,16 @@ object Messaging {
      * Output the messages in order of position using the given emitter, which
      * defaults to standard output.
      */
-    def report (emitter : Emitter = new Emitter) =
+    def report (emitter : Emitter = new Emitter) {
         for (m <- sortedmessages)
             emitter.emitln (m)
+    }
 
     /**
      * Reset the message buffer to empty.
      */
-    def resetmessages () =
+    def resetmessages () {
         messages.clear
+    }
 
 }

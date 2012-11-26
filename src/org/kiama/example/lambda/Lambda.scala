@@ -45,28 +45,28 @@ object AST {
      * Numeric expressions.
      */
     case class Num (i : Int) extends Exp {
-        override def toString () = i.toString
+        override def toString : String = i.toString
     }
 
     /**
      * Variable expressions.
      */
     case class Var (x : Idn) extends Exp {
-        override def toString () = x
+        override def toString : String = x
     }
 
     /**
      * Lambda expressions binding x within e.
      */
     case class Lam (x : Idn, e : Exp) extends Exp {
-        override def toString () = "(\\" + x + "." + e + ")"
+        override def toString : String = "(\\" + x + "." + e + ")"
     }
 
     /**
      * Application of l to r.
      */
     case class App (l : Exp, r : Exp) extends Exp {
-        override def toString () = "(" + l + " " + r + ")"
+        override def toString : String = "(" + l + " " + r + ")"
     }
 
     /**
@@ -168,7 +168,8 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
         true
     }
 
-    override def prompt () = "lambda> "
+    override def prompt () : String =
+        "lambda> "
 
     def process (e : Exp) {
         normal (e) match {

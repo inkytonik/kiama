@@ -34,7 +34,7 @@ object NominalAST {
      * index defaults to being omitted.
      */
     case class Name (base : String, opti : Option[Int] = None) {
-        override def toString = base + opti.getOrElse ("")
+        override def toString : String = base + opti.getOrElse ("")
     }
 
     /**
