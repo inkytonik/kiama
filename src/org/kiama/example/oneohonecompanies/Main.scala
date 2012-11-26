@@ -21,15 +21,17 @@
 package org.kiama
 package example.oneohonecompanies
 
-object Main {
-    
+import org.kiama.util.StdoutEmitter
+
+object Main extends StdoutEmitter {
+
     import SampleCompany.company
 
     def main (args : Array[String]) {
-        println (Total.total (company))
-        println (Total.total (Cut.cut (company)))
-        println (Depth.depth (company))
-        println (Precedence.precedence (company))
+        emitter.emitln (Total.total (company))
+        emitter.emitln (Total.total (Cut.cut (company)))
+        emitter.emitln (Depth.depth (company))
+        emitter.emitln (Precedence.precedence (company))
     }
 
 }

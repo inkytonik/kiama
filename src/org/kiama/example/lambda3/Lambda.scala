@@ -215,25 +215,25 @@ object Evaluator {
 object Lambda extends ParsingREPL[AST.Query] with Parser {
 
     override def setup (args : Array[String]) : Boolean = {
-        println
-        println ("Enter lambda calculus queries:")
-        println
-        println (" e               evaluate e")
-        println (" (n1 <-> n2) e   swap n1 and n2 in e")
-        println (" n # e           is n fresh in e?")
-        println (" fv e            free variables of e")
-        println (" e1 === e2       is e1 alpha equivalent to e2?")
-        println (" [n -> e1] e2    substitute e1 for n in e2")
-        println
-        println ("where n = name, e = expression")
-        println
+        emitter.emitln
+        emitter.emitln ("Enter lambda calculus queries:")
+        emitter.emitln
+        emitter.emitln (" e               evaluate e")
+        emitter.emitln (" (n1 <-> n2) e   swap n1 and n2 in e")
+        emitter.emitln (" n # e           is n fresh in e?")
+        emitter.emitln (" fv e            free variables of e")
+        emitter.emitln (" e1 === e2       is e1 alpha equivalent to e2?")
+        emitter.emitln (" [n -> e1] e2    substitute e1 for n in e2")
+        emitter.emitln
+        emitter.emitln ("where n = name, e = expression")
+        emitter.emitln
         true
     }
 
     override def prompt () = "query> "
 
     def process (q : AST.Query) {
-        println (q.execute ())
+        emitter.emitln (q.execute ())
     }
 
 }

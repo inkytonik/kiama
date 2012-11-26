@@ -56,26 +56,26 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
                         // If it worked, we get a source tree
                         case Success (sourcetree, _) =>
                             // Pretty print the source tree
-                            // println (pretty (product (sourcetree)))
+                            // emitter.emitln (pretty (product (sourcetree)))
                             // Process the program tree
                             if (processprogram (sourcetree)) {
                                 // Enter read-eval-print-loop
-                                println
-                                println ("Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix)")
-                                println
+                                emitter.emitln
+                                emitter.emitln ("Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix)")
+                                emitter.emitln
                                 super.main (args)
                             }
                         // Parsing failed, so report it
                         case f =>
-                            println (f)
+                            emitter.emitln (f)
                     }
                 } catch {
                     case e : FileNotFoundException =>
-                        println (e.getMessage)
+                        emitter.emitln (e.getMessage)
                 }
             // Complain otherwise
             case _ =>
-                println ("usage: run file.pl")
+                emitter.emitln ("usage: run file.pl")
 
         }
 

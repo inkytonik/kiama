@@ -202,8 +202,8 @@ object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
     def generator () = arbStmt
 
     override def process (s : AST.Stmt) {
-        println (s)
-        println (PrettyPrinter.pretty (s))
+        emitter.emitln (s)
+        emitter.emitln (PrettyPrinter.pretty (s))
     }
 
 }

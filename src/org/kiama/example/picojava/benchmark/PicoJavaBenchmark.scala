@@ -21,7 +21,9 @@
 package org.kiama
 package example.picojava.benchmark
 
-object PicoJavaBenchmark extends App {
+import org.kiama.util.StdoutEmitter
+
+object PicoJavaBenchmark extends App with StdoutEmitter {
 
     import org.kiama.attribution._
     import org.kiama.example.picojava.AbstractSyntax._
@@ -80,7 +82,7 @@ object PicoJavaBenchmark extends App {
         DynamicAttribution.resetMemo
     }
 
-    println((System.currentTimeMillis - start))
+    emitter.emitln((System.currentTimeMillis - start))
 
   /*
     var time : Long = 0
@@ -99,6 +101,6 @@ object PicoJavaBenchmark extends App {
         DynamicAttribution.resetMemo
     }
 
-    println((time / 1000000))
+    emitter.emitln((time / 1000000))
     */
 }

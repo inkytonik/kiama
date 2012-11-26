@@ -94,13 +94,13 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
         resetflags ()
         if (processargs (args.toList)) {
             if (helpFlag) {
-                println (usageMessage)
+                emitter.emitln (usageMessage)
                 Array.empty
             } else
                 Array (input)
         } else {
-            println ("Program arguments were " + args.mkString (" "))
-            println (usageMessage)
+            emitter.emitln ("Program arguments were " + args.mkString (" "))
+            emitter.emitln (usageMessage)
             Array.empty
         }
     }

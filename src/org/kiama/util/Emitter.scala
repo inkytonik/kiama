@@ -52,6 +52,18 @@ class Emitter {
 }
 
 /**
+ * General support for mixing in an emitter that sends to standard output.
+ */
+trait StdoutEmitter {
+
+    /**
+     * An emitter for standard output.
+     */
+    val emitter = new Emitter
+
+}
+
+/**
  * An emitter that records the output in a string that can be accessed
  * via the result method.
  */

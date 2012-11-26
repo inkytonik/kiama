@@ -53,7 +53,7 @@ trait IOOps extends SECDBase with StringOps {
         // Write a value to the terminal
         case Write() :: next => (stack : Stack) match {
             case v :: tail =>
-                print(v.toString)
+                emitter.emit(v.toString)
                 stack := tail
                 control := next
             case _ => raiseException(StackUnderflow())

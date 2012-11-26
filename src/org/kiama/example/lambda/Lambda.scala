@@ -164,7 +164,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
     import AST._
 
     override def setup (args : Array[String]) : Boolean = {
-        println ("Enter lambda calculus expressions for evaluation.")
+        emitter.emitln ("Enter lambda calculus expressions for evaluation.")
         true
     }
 
@@ -172,8 +172,8 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
 
     def process (e : Exp) {
         normal (e) match {
-            case Some (r) => println (r)
-            case None     => println ("reduction failed")
+            case Some (r) => emitter.emitln (r)
+            case None     => emitter.emitln ("reduction failed")
         }
     }
 

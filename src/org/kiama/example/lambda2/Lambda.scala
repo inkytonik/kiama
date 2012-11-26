@@ -42,7 +42,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     import org.kiama.util.Messaging._
 
     override def setup (args : Array[String]) : Boolean = {
-        println ("Enter lambda calculus expressions for evaluation (:help for help)")
+        emitter.emitln ("Enter lambda calculus expressions for evaluation (:help for help)")
         true
     }
 
@@ -57,7 +57,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
      * Print help about the available commands.
      */
     def help {
-        println ("""exp                  print the result of evaluating exp
+        emitter.emitln ("""exp                  print the result of evaluating exp
             |:eval                list the available evaluation mechanisms
             |:eval <mechanism>    change to using <mechanism> to evaluate
             |:type                print current type setting (default: on)
@@ -75,29 +75,29 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                 help
 
             case Command (Array (":eval")) =>
-                println ("Available evaluation mechanisms:")
+                emitter.emitln ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
-                    print ("  " + mech)
+                    emitter.emit ("  " + mech)
                     if (mech == mechanism)
-                        println (" (current)")
+                        emitter.emitln (" (current)")
                     else
-                        println
+                        emitter.emitln
                 }
 
             case Command (Array (":eval", mech)) =>
                 if (!setEvaluator (mech))
-                    println ("unknown evaluation mechanism: " + mech)
+                    emitter.emitln ("unknown evaluation mechanism: " + mech)
 
             case Command (Array (":type")) =>
-                println ("Typing is " + (if (typecheck) "on" else "off"))
+                emitter.emitln ("Typing is " + (if (typecheck) "on" else "off"))
 
             case Command (Array (":type", "on")) =>
                 typecheck = true
-                println ("Typing is on")
+                emitter.emitln ("Typing is on")
 
             case Command (Array (":type", "off")) =>
                 typecheck = false
-                println ("Typing is off")
+                emitter.emitln ("Typing is off")
 
             // Otherwise it's an expression for evaluation
             case _ => super.processline (line)
@@ -124,14 +124,14 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
             e->tipe
             if (messagecount == 0) {
                 // If everything is OK, evaluate the expression
-                println (pretty (evaluator.eval (e)))
+                emitter.emitln (pretty (evaluator.eval (e)))
             } else {
                 // Otherwise report the errors and reset for next expression
                 report (new Emitter)
                 resetmessages
             }
         } else {
-            println (pretty (evaluator.eval (e)))
+            emitter.emitln (pretty (evaluator.eval (e)))
         }
     }
 

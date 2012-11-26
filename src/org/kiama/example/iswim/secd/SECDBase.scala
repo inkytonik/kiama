@@ -37,6 +37,7 @@ import scala.util.parsing.input.Position
 import scala.collection.mutable.ListBuffer
 import org.kiama.attribution.Attributable
 import org.kiama.machine.Machine
+import org.kiama.util.StdoutEmitter
 
 object SECDBase {
     
@@ -299,7 +300,7 @@ object SECDBase {
  * traits to implement each one in a stackable manner.
  */
 abstract class SECDBase 
-        extends Machine("SECD") {
+        extends Machine("SECD") with StdoutEmitter {
     
     import SECDBase._
     

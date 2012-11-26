@@ -125,8 +125,8 @@ object Interpreter {
         while (glstack.nonEmpty) {
 
             // Print the stack for debugging
-            // println (glstack)
-            // println
+            // emitter.emitln (glstack)
+            // emitter.emitln
 
             // Get the top goal list from the goal list stack
             val gl = glstack.pop ()
