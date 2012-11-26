@@ -135,7 +135,8 @@ trait AttributionBase {
                 case _ => false
             }
 
-        override val hashCode = System.identityHashCode(node) ^ arg.hashCode
+        override def hashCode : Int =
+            System.identityHashCode(node) ^ arg.hashCode
     }
 
     /**
