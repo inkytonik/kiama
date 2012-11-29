@@ -1,0 +1,31 @@
+* _pp.ob
+MODULE nonlocalvar;
+
+    VAR
+        a : INTEGER;
+
+    PROCEDURE proc1 (b : INTEGER);
+    
+        VAR
+            c : INTEGER;
+    
+        PROCEDURE proc2;
+        
+        BEGIN
+            a := 8;
+            b := 9;
+            c := 10
+        END proc2;
+    
+    BEGIN
+        a := 11
+    END proc1;
+
+BEGIN
+    proc1 (a)
+END nonlocalvar.
+[2,0,4]* errors
+[2,0,4]15.5: non-local parameter access to b is not allowed
+[2,0,4]16.5: non-local variable access to c is not allowed
+[6,5,5]#include <stdio.h>
+[6,5,5]need to do lambda lifting

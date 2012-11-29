@@ -1,0 +1,126 @@
+* _pp.ob
+MODULE simpleexps;
+
+    VAR
+        ivar1, ivar2 : INTEGER;
+        bvar1, bvar2 : BOOLEAN;
+
+BEGIN
+    ivar1 := 0;
+    ivar1 := 12;
+    ivar1 := 345;
+    ivar1 := 67890123;
+    ivar1 := -0;
+    ivar1 := -1;
+    ivar2 := -782374;
+    ivar2 := --10;
+    ivar1 := ivar2 + 1;
+    ivar1 := 2 + ivar2;
+    ivar1 := ivar2 - ivar1;
+    ivar1 := 3 - ivar2;
+    ivar1 := ivar2 * 4;
+    ivar1 := 5 * ivar2;
+    ivar1 := ivar2 DIV 6;
+    ivar1 := (-7) DIV (ivar2 + 1);
+    ivar1 := ivar2 MOD ivar1;
+    ivar1 := 8 MOD (ivar2 + 1);
+    ivar1 := 2 + 3 * 4;
+    ivar1 := (2 + 3) * 4;
+    ivar1 := 2 - 3 DIV 4;
+    ivar1 := (2 - 3) DIV 4;
+    ivar1 := 2 + 3 MOD 4;
+    ivar1 := (2 + 3) MOD 4;
+    ivar1 := 2 + 3 + 4;
+    ivar1 := 2 + (3 + 4);
+    ivar1 := 2 - 3 - 4;
+    ivar1 := 2 - (3 - 4);
+    ivar1 := 2 * 3 * 4;
+    ivar1 := 2 * (3 * 4);
+    ivar1 := 2 MOD 3 MOD 4;
+    ivar1 := 2 MOD (3 MOD 4);
+    ivar1 := 2 DIV 3 DIV 4;
+    ivar1 := 2 DIV (4 DIV 4);
+    bvar1 := FALSE;
+    bvar1 := TRUE;
+    bvar1 := bvar1 OR bvar2;
+    bvar1 := bvar1 & bvar2;
+    bvar1 := FALSE OR FALSE & TRUE;
+    bvar1 := bvar1 & ~bvar2;
+    bvar1 := bvar1 OR bvar2 OR FALSE;
+    bvar1 := bvar1 OR bvar2 & FALSE;
+    bvar1 := bvar1 & (TRUE & bvar2);
+    bvar1 := ~TRUE;
+    bvar1 := ~bvar1 & bvar2;
+    bvar1 := ~~bvar1;
+    bvar1 := ivar1 = ivar2;
+    bvar1 := ivar1 # ivar2;
+    bvar1 := ivar1 < ivar2;
+    bvar1 := ivar1 <= ivar2;
+    bvar1 := ivar1 > ivar2;
+    bvar1 := ivar1 >= ivar2;
+    bvar1 := (ivar1 = ivar2) OR bvar2;
+    bvar1 := bvar2 & (ivar1 # ivar2)
+END simpleexps.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_ivar12;
+[6]int ob_ivar23;
+[6]int ob_bvar14;
+[6]int ob_bvar25;
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_ivar12 = 0;
+[6]    ob_ivar12 = 12;
+[6]    ob_ivar12 = 345;
+[6]    ob_ivar12 = 67890123;
+[6]    ob_ivar12 = -0;
+[6]    ob_ivar12 = -1;
+[6]    ob_ivar23 = -782374;
+[6]    ob_ivar23 = -(-10);
+[6]    ob_ivar12 = ob_ivar23 + 1;
+[6]    ob_ivar12 = 2 + ob_ivar23;
+[6]    ob_ivar12 = ob_ivar23 - ob_ivar12;
+[6]    ob_ivar12 = 3 - ob_ivar23;
+[6]    ob_ivar12 = ob_ivar23 * 4;
+[6]    ob_ivar12 = 5 * ob_ivar23;
+[6]    ob_ivar12 = ob_ivar23 / 6;
+[6]    ob_ivar12 = -7 / (ob_ivar23 + 1);
+[6]    ob_ivar12 = ob_ivar23 % ob_ivar12;
+[6]    ob_ivar12 = 8 % (ob_ivar23 + 1);
+[6]    ob_ivar12 = 2 + 3 * 4;
+[6]    ob_ivar12 = (2 + 3) * 4;
+[6]    ob_ivar12 = 2 - 3 / 4;
+[6]    ob_ivar12 = (2 - 3) / 4;
+[6]    ob_ivar12 = 2 + 3 % 4;
+[6]    ob_ivar12 = (2 + 3) % 4;
+[6]    ob_ivar12 = 2 + 3 + 4;
+[6]    ob_ivar12 = 2 + (3 + 4);
+[6]    ob_ivar12 = 2 - 3 - 4;
+[6]    ob_ivar12 = 2 - (3 - 4);
+[6]    ob_ivar12 = 2 * 3 * 4;
+[6]    ob_ivar12 = 2 * (3 * 4);
+[6]    ob_ivar12 = 2 % 3 % 4;
+[6]    ob_ivar12 = 2 % (3 % 4);
+[6]    ob_ivar12 = 2 / 3 / 4;
+[6]    ob_ivar12 = 2 / (4 / 4);
+[6]    ob_bvar14 = 0;
+[6]    ob_bvar14 = 1;
+[6]    ob_bvar14 = ob_bvar14 || ob_bvar25;
+[6]    ob_bvar14 = ob_bvar14 && ob_bvar25;
+[6]    ob_bvar14 = 0 || 0 && 1;
+[6]    ob_bvar14 = ob_bvar14 && !ob_bvar25;
+[6]    ob_bvar14 = ob_bvar14 || ob_bvar25 || 0;
+[6]    ob_bvar14 = ob_bvar14 || ob_bvar25 && 0;
+[6]    ob_bvar14 = ob_bvar14 && (1 && ob_bvar25);
+[6]    ob_bvar14 = !1;
+[6]    ob_bvar14 = !ob_bvar14 && ob_bvar25;
+[6]    ob_bvar14 = !!ob_bvar14;
+[6]    ob_bvar14 = ob_ivar12 == ob_ivar23;
+[6]    ob_bvar14 = ob_ivar12 != ob_ivar23;
+[6]    ob_bvar14 = ob_ivar12 < ob_ivar23;
+[6]    ob_bvar14 = ob_ivar12 <= ob_ivar23;
+[6]    ob_bvar14 = ob_ivar12 > ob_ivar23;
+[6]    ob_bvar14 = ob_ivar12 >= ob_ivar23;
+[6]    ob_bvar14 = ob_ivar12 == ob_ivar23 || ob_bvar25;
+[6]    ob_bvar14 = ob_bvar25 && ob_ivar12 != ob_ivar23;
+[6]    return 0;
+[6]}

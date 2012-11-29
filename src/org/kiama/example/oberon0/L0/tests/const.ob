@@ -1,0 +1,17 @@
+MODULE const;
+
+CONST
+    aconst1 = 1;
+    aconst2 = aconst1 + 100;
+    aconst3 = 400 DIV aconst2;
+    aconst4 = noconst + 1;
+    aconst5 = 1 DIV 0;
+    aconst6 = 2 MOD (3 DIV 4);
+
+VAR
+    avar : INTEGER;
+
+BEGIN
+    avar := aconst1 * aconst2 MOD aconst3 - aconst4;
+    aconst1 := 42
+END const.

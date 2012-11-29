@@ -1,0 +1,9 @@
+* _pp.ob
+MODULE aname;
+
+    VAR
+        i : INTEGER;
+
+END i.
+* errors
+6.5: end module name 'i' should be 'aname'

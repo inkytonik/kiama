@@ -1,0 +1,24 @@
+MODULE badrecord;
+
+TYPE
+    arecord1 = RECORD x : INTEGER; x : INTEGER END;
+    arecord2 = RECORD f : BOOLEAN; x : INTEGER END;
+    arecord3 = RECORD x, x : INTEGER END;
+
+VAR
+    rec1 : arecord2;
+    rec2 : RECORD h : INTEGER; r : RECORD i : INTEGER; j : BOOLEAN END END;
+    anint : INTEGER;
+    abool : BOOLEAN;
+    
+BEGIN
+    rec1 := 10;
+    rec2 := rec1 + rec2;
+    rec2.r := TRUE;
+    rec1.h := 1;
+    rec2.h := rec1.h;
+    rec2.r.k := 10;
+    rec2.h := rec2.r.k;
+    anint := rec1.f;
+    abool := rec2.r.i
+END badrecord.

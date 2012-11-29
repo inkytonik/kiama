@@ -1,0 +1,50 @@
+* _pp.ob
+MODULE Factorial;
+
+    CONST
+        limit = 10;
+
+    VAR
+        v : INTEGER;
+        c : INTEGER;
+        fact : INTEGER;
+
+BEGIN
+    Read (v);
+    IF (v < 0) OR (v > limit) THEN
+        Write (-1);
+        WriteLn
+    ELSE
+        c := 0;
+        fact := 1;
+        WHILE c < v DO
+            c := c + 1;
+            fact := fact * c
+        END;
+        Write (fact);
+        WriteLn
+    END
+END Factorial.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_limit2 = 10;
+[6]int ob_v3;
+[6]int ob_c4;
+[6]int ob_fact5;
+[6]int main (int argc, char *argv[0]) {
+[6]    scanf ("%d", &ob_v3);
+[6]    if (ob_v3 < 0 || ob_v3 > ob_limit2) {
+[6]        printf (" %d", -1);
+[6]        puts ("");
+[6]    } else {
+[6]        ob_c4 = 0;
+[6]        ob_fact5 = 1;
+[6]        while (ob_c4 < ob_v3) {
+[6]            ob_c4 = ob_c4 + 1;
+[6]            ob_fact5 = ob_fact5 * ob_c4;
+[6]        }
+[6]        printf (" %d", ob_fact5);
+[6]        puts ("");
+[6]    }
+[6]    return 0;
+[6]}

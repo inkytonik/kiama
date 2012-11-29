@@ -1,0 +1,74 @@
+MODULE condname;
+
+BEGIN
+    IF bvar THEN
+    END;
+
+    IF bvar THEN
+        avar := 0
+    ELSE
+    END;
+
+    IF bvar THEN
+        avar := 0;
+    ELSIF bvar THEN
+    END;
+
+    IF ~bvar THEN
+        avar := 2
+    END;
+    
+    IF bvar & ~bvar THEN
+        avar := 3;
+        avar := 4
+    ELSE
+        avar := 5;
+        avar := 6
+    END;
+    
+    IF bvar THEN
+        avar := 7
+    ELSIF bvar THEN
+        avar := 8
+    END;
+
+    IF bvar THEN
+        avar := 9
+    ELSIF bvar THEN
+        avar := 10
+    ELSE
+        avar := 11        
+    END;
+    
+    IF bvar THEN
+        avar := 12
+    ELSIF bvar THEN
+        avar := 13;
+        avar := 14
+    ELSIF bvar THEN
+        avar := 15
+    ELSIF bvar THEN
+        avar := 16;
+        avar := 17
+    ELSE
+        avar := 18        
+    END;
+    
+    IF bvar THEN
+        IF bvar THEN
+            avar := 19
+        ELSE
+            avar := 20
+        END
+    END;
+        
+    IF bvar THEN
+        IF bvar THEN
+            avar := 21
+        ELSIF bvar THEN
+            avar := 22
+        END
+    ELSIF bvar THEN
+        avar := 23
+    END
+END condname.

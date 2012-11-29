@@ -1,0 +1,26 @@
+{
+    class A {
+        int a;
+        int b;
+        int c;
+        class AA {
+            int b; // shadows A.b
+            int d;
+            int e;
+            a = b; // A.a = AA.b
+        }
+    }
+
+    class B extends A {
+        int c; // shadows A.c
+        int e;
+        int f;
+        a = c; // A.a = B.c
+        class BB extends AA {
+            int d; // shadows AA.d
+            a = d; // A.a = BB.d
+            e = f; // AA.e = B.f
+        }
+    }
+}
+

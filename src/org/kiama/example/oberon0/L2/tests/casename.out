@@ -1,0 +1,39 @@
+* _pp.ob
+MODULE casename;
+
+BEGIN
+    CASE avar OF
+        1 : avar := 2
+    END;
+    CASE avar OF
+        1 : avar := 2
+      | 3 : avar := 4
+    ELSE
+        avar := 5
+    END;
+    CASE 6 * avar OF
+        7 : avar := 8
+      | 9 : avar := 10; avar := 11
+      | 12 : 
+      | 13 .. 14 : avar := 15
+    END;
+    CASE avar OF
+        16 : avar := 17
+    ELSE
+        
+    END
+END casename.
+* errors
+4.10: avar is not declared
+5.13: avar is not declared
+8.10: avar is not declared
+9.13: avar is not declared
+10.13: avar is not declared
+12.9: avar is not declared
+15.14: avar is not declared
+16.13: avar is not declared
+17.13: avar is not declared
+17.25: avar is not declared
+19.20: avar is not declared
+22.10: avar is not declared
+23.14: avar is not declared

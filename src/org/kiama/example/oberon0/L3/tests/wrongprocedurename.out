@@ -1,0 +1,11 @@
+* _pp.ob
+MODULE aname;
+
+    PROCEDURE aproc;
+    
+    END anotherproc;
+
+END aname.
+* errors
+[2]5.5: end procedure name anotherproc should be aproc
+[2]5.5: anotherproc is not declared

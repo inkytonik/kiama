@@ -1,0 +1,37 @@
+* _pp.ob
+MODULE keywordnowsfollowing;
+
+    VAR
+        avar : INTEGER;
+
+BEGIN
+    CASE avar - 1 OF
+        1 : CASE avar * 2 OF
+          1 : avar := 1
+      END
+      | 2 : avar := 2
+    END;
+    
+END keywordnowsfollowing.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob__caseval4;
+[6]int ob__caseval3;
+[6]int ob_avar2;
+[6]int main (int argc, char *argv[0]) {
+[6]    {
+[6]        ob__caseval3 = ob_avar2 - 1;
+[6]        if (ob__caseval3 == 1) {
+[6]            {
+[6]                ob__caseval4 = ob_avar2 * 2;
+[6]                if (ob__caseval4 == 1) {
+[6]                    ob_avar2 = 1;
+[6]                }
+[6]            }
+[6]        } else if (ob__caseval3 == 2) {
+[6]            ob_avar2 = 2;
+[6]        }
+[6]    }
+[6]    ;
+[6]    return 0;
+[6]}

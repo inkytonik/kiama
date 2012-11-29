@@ -1,0 +1,9 @@
+(* Enumeration with five constants *)
+
+PROGRAM EnumOk4 (i : INTEGER) : INTEGER;
+
+VAR
+   WeekDays: (Monday, Tuesday, Wednesday, Thursday, Friday);
+
+BEGIN
+END EnumOk4.

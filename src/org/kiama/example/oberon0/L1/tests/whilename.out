@@ -1,0 +1,31 @@
+* _pp.ob
+MODULE while;
+
+BEGIN
+    WHILE bvar DO
+        
+    END;
+    WHILE bvar DO
+        avar := 1
+    END;
+    WHILE bvar DO
+        avar := 2;
+        
+    END;
+    WHILE (avar > 1) & (avar > 0) DO
+        avar := avar + 4;
+        bvar := avar < 5
+    END
+END while.
+* errors
+4.11: bvar is not declared
+7.11: bvar is not declared
+8.9: avar is not declared
+11.11: bvar is not declared
+12.9: avar is not declared
+15.12: avar is not declared
+15.25: avar is not declared
+16.9: avar is not declared
+16.17: avar is not declared
+17.9: bvar is not declared
+17.17: avar is not declared

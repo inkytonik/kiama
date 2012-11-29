@@ -1,0 +1,11 @@
+MODULE redefinteger;
+
+TYPE
+    INTEGER = BOOLEAN;
+
+VAR
+    a : INTEGER;
+
+BEGIN
+    a := TRUE
+END redefinteger.

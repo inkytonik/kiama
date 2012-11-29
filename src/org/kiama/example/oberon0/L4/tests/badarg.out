@@ -1,0 +1,45 @@
+* _pp.ob
+MODULE badarg;
+
+    TYPE
+        arr1 = ARRAY 5 OF BOOLEAN;
+        arr2 = ARRAY 5 OF BOOLEAN;
+        rec1 = RECORD x : INTEGER END;
+        rec2 = RECORD x : INTEGER END;
+
+    VAR
+        arr : arr2;
+        rec : rec2;
+
+    PROCEDURE nonidparam (a : ARRAY 10 OF INTEGER; b : RECORD x : INTEGER END);
+    
+    END nonidparam;
+    
+    PROCEDURE nonvararrayparam (a : arr1; b : rec1);
+    
+    END nonvararrayparam;
+    
+    PROCEDURE One (VAR a : arr1; VAR b : rec1);
+    
+        PROCEDURE Two (VAR c : arr2; VAR d : rec2);
+        
+        BEGIN
+            
+        END Two;
+    
+    BEGIN
+        Two (a, b)
+    END One;
+
+BEGIN
+    nonvararrayparam (arr, rec)
+END badarg.
+[3]* errors
+[3]13.27: parameter type must be identifier
+[3]13.52: parameter type must be identifier
+[3]17.29: array parameter must be VAR
+[3]17.39: record parameter must be VAR
+[3]29.10: type error: got arr1, but expected arr2
+[3]29.13: type error: got rec1, but expected rec2
+[3]33.23: type error: got arr2, but expected arr1
+[3]33.28: type error: got rec2, but expected rec1

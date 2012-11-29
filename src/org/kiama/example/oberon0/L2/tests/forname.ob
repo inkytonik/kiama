@@ -1,0 +1,23 @@
+MODULE forname;
+
+BEGIN
+    FOR avar1 := 1 TO 2 DO
+    END;
+    
+    FOR avar1 := 5 TO 6 DO
+        avar2 := 7
+    END;
+
+    FOR avar1 := avar2 * 3 TO 5 - avar2 DO
+        avar2 := avar1 MOD 8;
+        avar3 := avar2 DIV 9
+    END;
+    
+    FOR avar1 := avar2 TO avar2 + 3 BY 2 DO
+        avar2 := avar2 + 1
+    END;
+    
+    FOR avar1 := avar2 TO avar2 DIV 2 BY -avar3 DO
+        avar2 := avar2 * 10
+    END
+END forname.
