@@ -147,10 +147,10 @@ object RISCEncoder {
             case d => {
                 // Base case
                 case _ : RISCProg                   => firsttemp
-                
+
                 // Special cases for specific constructs
                 case p : Cond                       => p->reg
-                
+
                 // Default allocation algorithm for all other nodes
                 case p : RISCNode if d.isFirst      => p->reg
                 case _                              =>

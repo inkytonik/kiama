@@ -111,22 +111,22 @@ class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
      */
     private val program : CodeSegment = CodeSegment(
         MkClosures(List(
-      	    FunctionSpec(
-      	        None
-      	    ,   "@globalExnHandler"
-      	    ,   CodeTree(
-      	            Lookup("@globalExnHandler")
-      	        ,   SetHandler()
-      	        ,   CodeTree(code)
-      	        ))
-      	))
-    ,	AppCC()
+            FunctionSpec(
+                None
+            ,   "@globalExnHandler"
+            ,   CodeTree(
+                    Lookup("@globalExnHandler")
+                ,   SetHandler()
+                ,   CodeTree(code)
+                ))
+        ))
+    ,   AppCC()
     )
 
     /**
      * Initialise the machine.
      */
-    override def init () = {
+    override def init () {
         stack := Nil
         envir := Map()
         dump := EmptyCont()

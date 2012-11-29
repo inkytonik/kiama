@@ -33,15 +33,15 @@ class PositionalRewriterTests extends Tests {
     import org.kiama.rewriting.PositionalRewriter.{test => rwtest, _}
     import scala.util.parsing.input.NoPosition
 
-    val pl1 = new TestPosition { def line = 1; def column = 2 }
+    val pl1 = new TestPosition { val line = 1; val column = 2 }
     val l1 = Leaf (42).setPos (pl1)
-    val pl2 = new TestPosition { def line = 3; def column = 4 }
+    val pl2 = new TestPosition { val line = 3; val column = 4 }
     val l2 = Leaf (99).setPos (pl2)
 
-    val pt = new TestPosition { def line = 9; def column = 10 }
+    val pt = new TestPosition { val line = 9; val column = 10 }
     val t = Two (l1, l2).setPos (pt)
 
-    val po = new TestPosition { def line = 7; def column = 8 }
+    val po = new TestPosition { val line = 7; val column = 8 }
     val o = One (t).setPos (po)
 
     val r = everywhere (rule {
@@ -113,7 +113,7 @@ object SupportPositionalRewriterTests {
     case class Leaf (i : Int) extends Node
 
     trait TestPosition extends Position {
-        def lineContents = ""
+        val lineContents = ""
     }
 
 }
@@ -127,19 +127,19 @@ class PositionedRewriterTests extends Tests {
     import org.kiama.rewriting.PositionedRewriter.{test => rwtest, _}
     import scala.util.parsing.input.NoPosition
 
-    val pl1s = new TestPosition { def line = 1; def column = 2 }
-    val pl1f = new TestPosition { def line = 3; def column = 4 }
+    val pl1s = new TestPosition { val line = 1; val column = 2 }
+    val pl1f = new TestPosition { val line = 3; val column = 4 }
     val l1 = Leaf (42).setStart (pl1s).setFinish (pl1f)
-    val pl2s = new TestPosition { def line = 5; def column = 6 }
-    val pl2f = new TestPosition { def line = 7; def column = 8 }
+    val pl2s = new TestPosition { val line = 5; val column = 6 }
+    val pl2f = new TestPosition { val line = 7; val column = 8 }
     val l2 = Leaf (99).setStart (pl2s).setFinish (pl2f)
 
-    val pts = new TestPosition { def line = 9; def column = 10 }
-    val ptf = new TestPosition { def line = 11; def column = 12 }
+    val pts = new TestPosition { val line = 9; val column = 10 }
+    val ptf = new TestPosition { val line = 11; val column = 12 }
     val t = Two (l1, l2).setStart (pts).setFinish (ptf)
 
-    val pos = new TestPosition { def line = 13; def column = 14 }
-    val pof = new TestPosition { def line = 15; def column = 16 }
+    val pos = new TestPosition { val line = 13; val column = 14 }
+    val pof = new TestPosition { val line = 15; val column = 16 }
     val o = One (t).setStart (pos).setFinish (pof)
 
     val r = everywhere (rule {
@@ -155,7 +155,7 @@ class PositionedRewriterTests extends Tests {
         expectsame (pl1s) (no.a.asInstanceOf[Two].l.start)
         expectsame (pl1f) (no.a.asInstanceOf[Two].l.finish)
         expectsame (pl2s) (no.a.asInstanceOf[Two].r.start)
-        expectsame (pl2f) (no.a.asInstanceOf[Two].r.finish)        
+        expectsame (pl2f) (no.a.asInstanceOf[Two].r.finish)
     }
 
     test ("positioned rewriting with positions and strategyf works") {
@@ -219,7 +219,7 @@ object SupportPositionedRewriterTests {
     case class Leaf (i : Int) extends Node
 
     trait TestPosition extends Position {
-        def lineContents = ""
+        val lineContents = ""
     }
 
 }

@@ -196,7 +196,7 @@ object SPARCTree {
      * Labels represent a code position.
      */
     case class Label (num : Int) {
-        override def toString () = "L" + num
+        override def toString : String = "L" + num
     }
 
     /**

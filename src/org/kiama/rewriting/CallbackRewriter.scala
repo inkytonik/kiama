@@ -43,13 +43,13 @@ abstract class CallbackRewriter extends Rewriter {
     def rewriting[T <: Term] (oldTerm : T, newTerm : T) : T
 
     /**
-     * Produce a strategy that first runs the strategy s on the current term. 
+     * Produce a strategy that first runs the strategy s on the current term.
      * If `s` fails, then fail. Otherwise, pass the original and new terms to
      * the rewriting method and succeed with the term that it returns.
      */
     private def dispatch (s : Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 s (t) match {
                     case None     => None
                     case Some (n) => Some (rewriting (t, n))

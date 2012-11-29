@@ -132,9 +132,10 @@ class LambdaTests extends Tests with Checkers with Parser {
      * Assert true if the two expressions are the same modulo variable
      * renaming, otherwise assert a failure.
      */
-    def assertSame (mech : String, e1 : Exp, e2 : Exp) =
+    def assertSame (mech : String, e1 : Exp, e2 : Exp) {
         if (canon (e1) != canon (e2))
             fail (mech + ": " + e1 + " and " + e2 + " are not equal")
+    }
 
     /**
      * Parse and evaluate term using the specified mechanism
@@ -319,16 +320,16 @@ class LambdaTests extends Tests with Checkers with Parser {
             fail ("pretty-print of " + term + " expected " + result +
                   ", got " + r)
     }
-    
+
     test ("pretty-print lambda expression, simple operation") {
         assertPrettyS ("""\x:Int.x+1""", """(\x : Int . (x + 1))""")
     }
-    
+
     test ("pretty-print applications, nested operation") {
         assertPrettyS ("""(\f:Int->Int.f 4)(\x:Int.x+x-5)""",
             """((\f : Int -> Int . (f 4)) (\x : Int . ((x + x) - 5)))""")
     }
-    
+
     test ("pretty-printed nested lets") {
         assertPrettyE (
             Let ("a", IntType (),
@@ -361,7 +362,7 @@ class LambdaTests extends Tests with Checkers with Parser {
             (let i : Int =
                 1 in
                 1))))""")
-            
+
     }
 
     test ("pretty-printed parallel lets") {
@@ -374,17 +375,17 @@ class LambdaTests extends Tests with Checkers with Parser {
                   Letp (List (Bind ("f", Num (1)),
                                 Bind ("g", Num (1))),
                         Num (1))),
-"""(letp 
+"""(letp
     a = 1
     b = 1
-    c = (letp 
+    c = (letp
         d = 1
         e = 1 in
         1) in
-    (letp 
+    (letp
         f = 1
         g = 1 in
         1))""")
     }
-    
+
 }

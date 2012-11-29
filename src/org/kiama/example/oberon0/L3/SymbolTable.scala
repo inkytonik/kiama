@@ -15,7 +15,7 @@ trait SymbolTable extends L0.SymbolTable {
      * A parameter is a variable augmented with a passing mode.
      */
     case class Parameter (mode : Mode, varr : Variable) extends NamedEntity {
-        def ident = varr.ident
+        def ident : String = varr.ident
     }
 
     /**

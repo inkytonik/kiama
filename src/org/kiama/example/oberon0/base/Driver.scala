@@ -12,7 +12,7 @@ import org.kiama.output.PrettyPrinter
 import scala.util.parsing.combinator.RegexParsers
 
 /**
- * A driver for an artefact that parses, pretty prints and performs semantic 
+ * A driver for an artefact that parses, pretty prints and performs semantic
  * analysis.
  */
 trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
@@ -31,7 +31,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 
     // Command-line argument handling
 
-    def usageMessage =
+    def usageMessage : String =
         """|Usage: driver <options> <filename>
            |Options:
            |   -h   print this help message and stop
@@ -94,13 +94,13 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
         resetflags ()
         if (processargs (args.toList)) {
             if (helpFlag) {
-                println (usageMessage)
+                emitter.emitln (usageMessage)
                 Array.empty
             } else
                 Array (input)
         } else {
-            println ("Program arguments were " + args.mkString (" "))
-            println (usageMessage)
+            emitter.emitln ("Program arguments were " + args.mkString (" "))
+            emitter.emitln (usageMessage)
             Array.empty
         }
     }
@@ -108,11 +108,12 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
     /**
      * Output a section heading so that the output can be split later.
      */
-    def section (emitter : Emitter, name : String) =
+    def section (emitter : Emitter, name : String) {
         emitter.emitln ("* " + name)
+    }
 
     /**
-     * Custom driver for section tagging and challenge mode for errors.  If 
+     * Custom driver for section tagging and challenge mode for errors.  If
      * a parse error occurs: in challenge mode, just send "parse failed" to
      * standard output, otherwise send the message to the errors file.
      */
@@ -174,10 +175,10 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 
             // No semantic errors, go on to process the AST as appropriate
             val nast = processast (ast, console, emitter)
-            
+
             // Consume the processed AST (e.g., by generating code from it)
             consumeast (nast, console, emitter)
-            
+
             true
 
         } else {
@@ -213,7 +214,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 }
 
 /**
- * A driver for an artefact that parses, pretty prints, performs semantic 
+ * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis and transforms.
  */
 trait TransformingDriver extends Driver {
@@ -221,7 +222,7 @@ trait TransformingDriver extends Driver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer =>
 
-    override def usageMessage =
+    override def usageMessage : String =
         super.usageMessage + """
         |   -i   print the intermediate abstract syntax tree
         |   -I   pretty-print the intermediate abstract syntax tree""".stripMargin
@@ -283,7 +284,7 @@ trait TransformingDriver extends Driver {
 }
 
 /**
- * A driver for an artefact that parses, pretty prints, performs semantic 
+ * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis, transforms and translates.
  */
 trait TranslatingDriver extends TransformingDriver {
@@ -291,7 +292,7 @@ trait TranslatingDriver extends TransformingDriver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer with Translator with c.CPrettyPrinter =>
 
-    override def usageMessage =
+    override def usageMessage : String =
         super.usageMessage + """
         |   -c   print the C abstract syntax tree
         |   -C   pretty-print the C abstract syntax tree""".stripMargin

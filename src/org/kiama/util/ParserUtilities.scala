@@ -30,7 +30,6 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait ParserUtilities extends RegexParsers with PackratParsers {
 
-    
     /**
      * Use `parser` to parse the string `str`. If the parse is sucessful and produces
      * the value `t`, return `Left (t)`. Otherwise, return `Right (msg)` where `msg`
@@ -53,9 +52,9 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
             if (in.atEnd)
                 Failure ("any character expected but end of source found", in)
             else
-                elem ("any character", _ => true) (in)           
+                elem ("any character", _ => true) (in)
         }
-    
+
     /**
      * Return an error after skipping white space.
      */
@@ -70,7 +69,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
 
     /**
      * Construct a parser that always succeeds and returns value `v`.  See
-     * also the `success` combinator in the Scala library that does something 
+     * also the `success` combinator in the Scala library that does something
      * similar but always returns the same value each time since the parameter
      * is not passed by name.
      */
@@ -90,7 +89,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * parser returning values of type `U`.  Whitespace is skipped (if
      * we are skipping white space) before `p` is applied, so that we
      * have access to the first non-whitespace position.
-     *  
+     *
      * The function `f` is responsible for converting the `T` value into
      * either a `U` value or a string that indicates what went wrong.
      * In the latter case, the resulting parser will error at the
@@ -120,7 +119,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
     /**
      * Create a parser that matches a regex string, but doesn't skip whitespace
      * first. This operation is useful if you want to recognise parts of a lexical
-     * symbol with different regular expressions so you can use the parts 
+     * symbol with different regular expressions so you can use the parts
      * separately. Otherwise you have to parse with one regex and then split the
      * resulting string to get at its parts. Based on `RegexParser.regex` in the
      * Scala library.
@@ -131,49 +130,49 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
             val start = in.offset
             (r findPrefixMatchOf (source.subSequence (start, source.length))) match {
                 case Some (matched) =>
-                   Success (source.subSequence (start, start + matched.end).toString, 
+                   Success (source.subSequence (start, start + matched.end).toString,
                             in.drop (matched.end))
                 case None =>
                    val found =
                        if (start == source.length ())
                            "end of source"
                        else
-                           "`" + source.charAt (start) + "'" 
+                           "`" + source.charAt (start) + "'"
                    Failure ("string matching regex `" + r + "' expected but " + found + " found", in)
             }
         }
-        
+
     /**
      * Convenience conversion to lift parsers that return 2-tilde-tuples to parsers
-     * that return regular 2-tuples. 
+     * that return regular 2-tuples.
      */
     implicit def parseResultToTuple2[A,B] (p : Parser[A ~ B]) : PackratParser[(A,B)] =
         p ^^ { case a ~ b => (a,b) }
 
     /**
      * Convenience conversion to lift parsers that return 3-tilde-tuples to parsers
-     * that return regular 3-tuples. 
+     * that return regular 3-tuples.
      */
     implicit def parseResultToTuple3[A,B,C] (p : Parser[A ~ B ~ C]) : PackratParser[(A,B,C)] =
         p ^^ { case a ~ b ~ c => (a,b,c) }
 
     /**
      * Convenience conversion to lift parsers that return 4-tilde-tuples to parsers
-     * that return regular 4-tuples. 
+     * that return regular 4-tuples.
      */
     implicit def parseResultToTuple4[A,B,C,D] (p : Parser[A ~ B ~ C ~ D]) : PackratParser[(A,B,C,D)] =
         p ^^ { case a ~ b ~ c ~ d => (a,b,c,d) }
 
     /**
      * Convenience conversion to lift parsers that return 5-tilde-tuples to parsers
-     * that return regular 5-tuples. 
+     * that return regular 5-tuples.
      */
     implicit def parseResultToTuple5[A,B,C,D,E] (p : Parser[A ~ B ~ C ~ D ~ E]) : PackratParser[(A,B,C,D,E)] =
         p ^^ { case a ~ b ~ c ~ d ~ e => (a,b,c,d,e) }
 
     /**
      * Convenience conversion to lift parsers that return 6-tilde-tuples to parsers
-     * that return regular 6-tuples. 
+     * that return regular 6-tuples.
      */
     implicit def parseResultToTuple6[A,B,C,D,E,F] (p : Parser[A ~ B ~ C ~ D ~ E ~ F]) : PackratParser[(A,B,C,D,E,F)] =
         p ^^ { case a ~ b ~ c ~ d ~ e ~ f => (a,b,c,d,e,f) }
@@ -182,7 +181,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * Convenience conversion to allow arity two functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction2[A,B,R] (r : (A,B) => R) : 
+    implicit def constToTupleFunction2[A,B,R] (r : (A,B) => R) :
                      (A ~ B) => R = {
         case a ~ b =>
             r (a, b)
@@ -192,7 +191,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * Convenience conversion to allow arity three functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction3[A,B,C,R] (r : (A,B,C) => R) : 
+    implicit def constToTupleFunction3[A,B,C,R] (r : (A,B,C) => R) :
                      (A ~ B ~ C) => R = {
         case a ~ b ~ c =>
             r (a, b, c)
@@ -202,7 +201,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * Convenience conversion to allow arity four functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction4[A,B,C,D,R] (r : (A,B,C,D) => R) : 
+    implicit def constToTupleFunction4[A,B,C,D,R] (r : (A,B,C,D) => R) :
                      (A ~ B ~ C ~ D) => R = {
         case a ~ b ~ c ~ d =>
             r (a, b, c, d)
@@ -212,7 +211,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * Convenience conversion to allow arity five functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction5[A,B,C,D,E,R] (r : (A,B,C,D,E) => R) : 
+    implicit def constToTupleFunction5[A,B,C,D,E,R] (r : (A,B,C,D,E) => R) :
                      (A ~ B ~ C ~ D ~ E) => R = {
         case a ~ b ~ c ~ d ~ e =>
             r (a, b, c, d, e)
@@ -222,14 +221,14 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * Convenience conversion to allow arity six functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction6[A,B,C,D,E,F,R] (r : (A,B,C,D,E,F) => R) : 
+    implicit def constToTupleFunction6[A,B,C,D,E,F,R] (r : (A,B,C,D,E,F) => R) :
                      (A ~ B ~ C ~ D ~ E ~ F) => R = {
         case a ~ b ~ c ~ d ~ e ~ f =>
             r (a, b, c, d, e, f)
     }
-                     
+
     // Specialist parsers for common situations
-    
+
     /**
      * Parse digit strings that are constrained to fit into an `Int` value.
      * If the digit string is too big, a parse error results.
@@ -239,17 +238,22 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
 
     /**
      * Convert the digit string `s` to an `Int` if it's in range, but return an
-     * error message if it's too big.  
+     * error message if it's too big.
      */
     def stringToInt (s : String) : Either[Int,String] = {
-        var value = 0
-        for (d <- s) {
-            val dv = d.toInt - '0'.toInt
-            if (value > (Int.MaxValue - dv) / 10)
-                return Right ("integer will not fit into 32 bits")
-            value = value * 10 + dv
-        }
-        Left (value)
+        val value =
+            s.foldLeft (0) {
+                case (i, d) =>
+                    val dv = d.toInt - '0'.toInt
+                    if ((i >= 0) && (i <= (Int.MaxValue - dv) / 10))
+                        i * 10 + dv
+                    else
+                        -1
+            }
+        if (value == -1)
+            Right ("integer will not fit into 32 bits")
+        else
+            Left (value)
     }
 
     /**
@@ -269,10 +273,10 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
 }
 
 /**
- * Support for defining the form of whitespace using a parser, rather than a 
+ * Support for defining the form of whitespace using a parser, rather than a
  * regular expression.  This version is useful particularly in cases where
- * the form of comments requires more power than a regular expression can 
- * provide (e.g., for nested comments).  
+ * the form of comments requires more power than a regular expression can
+ * provide (e.g., for nested comments).
  */
 trait WhitespaceParser extends ParserUtilities {
 
@@ -283,26 +287,26 @@ trait WhitespaceParser extends ParserUtilities {
      * Turn off whitespace processing based on the whiteSpace regular
      * expression from `RegexParsers`.
      */
-    override def skipWhitespace = false
+    override def skipWhitespace : Boolean = false
 
     /**
      * A parser that recognises whitespace.  Normal whitespace handling is
      * turned off while this parser is applied, since we need to avoid an
      * infinite recursion if the form of whitespace is defined using
-     * `literal` or `regex`. 
+     * `literal` or `regex`.
      */
     protected val whitespaceParser : PackratParser[Any]
-    
+
     /**
      * Are we currently parsing whitespace?
      */
     protected var parsingWhitespace = false
-    
+
     /**
      * If we are parsing whitespace already, fail if we are the end
      * of the input, otherwise succeed with no progress.  If we are
      * not already parsing whitespace, then apply the whitespace
-     * parser, swallowing any errors from it unless they occur at 
+     * parser, swallowing any errors from it unless they occur at
      * the end of the input. In other words, an error not at the end
      * is treated as the absence of whitespace.
      */
@@ -327,9 +331,9 @@ trait WhitespaceParser extends ParserUtilities {
             parsingWhitespace = false
             result
         }
-    
+
     /**
-     * A parser that matches a literal string after skipping any 
+     * A parser that matches a literal string after skipping any
      * whitespace that is parsed by `whitespaceParser`.
      */
     override implicit def literal (s : String) : Parser[String] =
@@ -343,7 +347,7 @@ trait WhitespaceParser extends ParserUtilities {
         }
 
     /**
-     * A parser that matches a regex string after skipping any 
+     * A parser that matches a regex string after skipping any
      * whitespace that is parsed by `whitespaceParser`.
      */
     override implicit def regex (r : Regex) : Parser[String] =
@@ -371,6 +375,6 @@ trait WhitespaceParser extends ParserUtilities {
                     Failure (msg, next)
             }
         }
-    }    
-    
+    }
+
 }

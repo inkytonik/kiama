@@ -31,14 +31,14 @@ import org.kiama.output.PrettyPrinter
  * called `name`.  Tracing messages are output to the given emitter, which
  * defaults to standard output.
  */
-abstract class Machine (val name : String, emitter : Emitter = new Emitter) 
+abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         extends PrettyPrinter {
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
      * tracing information during execution of the machine.
      */
-    def debug = false
+    def debug : Boolean = false
 
     /**
      * A scalar item of abstract state machine state holding a value of
@@ -59,8 +59,9 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Make this state item undefined.
          */
-        def undefine =
+        def undefine {
             _value = None
+        }
 
         /**
          * Return the value of this state item if it's defined.  Otherwise
@@ -88,8 +89,9 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Change this item of state to the value `t`.  The change occurs
          * immediately.
          */
-        def change (t : T) =
+        def change (t : T) {
             _value = Some (t)
+        }
 
         /**
          * Equality on the underlying value.  If this state item is undefined
@@ -130,7 +132,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * step happen simultaneously (along with consistency checking).  The
          * state value only becomes defined when this latter process happens.
          */
-        def := (u : U) = {
+        def := (u : U) {
             updates = new ParamUpdate (state, t, u) :: updates
         }
 
@@ -172,11 +174,12 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Make this state item undefined at `t`.
          */
-        def undefine (t : T) =
+        def undefine (t : T) {
             _value match {
                 case None     => // Nothing to undefine
                 case Some (m) => _value = Some (m - t)
             }
+        }
 
         /**
          * Return an updater for the value at parameter `t`.  Used as `s(t)`
@@ -187,7 +190,8 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * checking).  The state value only becomes defined when this latter
          * process happens.
          */
-        def apply (t : T) = new ParamUpdater (this, t)
+        def apply (t : T) : ParamUpdater[T,U] =
+            new ParamUpdater (this, t)
 
         /**
          * Return the value of this state item if it's defined at parameter `t`.
@@ -209,11 +213,12 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Change this item of state to the value u at parameter `t`.  The
          * change occurs immediately.
          */
-        def change (t : T, u : U) =
+        def change (t : T, u : U) {
             _value match {
                 case None     => _value = Some (HashMap ((t, u)))
                 case Some (m) => m += ((t, u))
             }
+        }
 
     }
 
@@ -231,7 +236,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Perform this update
          */
-        def perform
+        def perform : Unit
 
         /**
          * Return a key for use when checking consistency of this update
@@ -274,7 +279,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = t
-        
+
         /**
          * Convert to string representation.  Really only used when
          * printing inconsistent state exceptions.
@@ -313,7 +318,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * Return the value to which the state is being updated.
          */
         def value : Any = u
-        
+
         /**
          * Convert to string representation.  Really only used when
          * printing inconsistent state exceptions.
@@ -334,18 +339,18 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * state updates will be performed after this routine returns.
      * Default: do nothing.
      */
-    def init = { }
+    def init { }
 
     /**
      * The rule to execute to run one step of this machine.
      */
-    def main
+    def main : Unit
 
     /**
      * Clean up after this machine.  This routine is called after the
      * machine terminates.  Default: do nothing.
      */
-    def finit = { }
+    def finit { }
 
     /**
      * Perform any pending updates, returning true if updates were
@@ -354,7 +359,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * than once, it must be updated to the same value by all updates.
      * If updates are not consistent, the machine is aborted.
      */
-    def performUpdates =
+    def performUpdates : Boolean = {
         if (updates.isEmpty)
             false
         else {
@@ -373,11 +378,12 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             updates.map (_.perform)
             true
         }
+    }
 
     /**
      * Reset the machine to begin a step.
      */
-    def reset = {
+    def reset {
         updates = Nil
     }
 

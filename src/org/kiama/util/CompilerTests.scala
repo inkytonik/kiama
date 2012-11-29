@@ -49,7 +49,7 @@ class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] 
                 "No such file or directory"
         expectResult ("IDoNotExist.txt (" + msg + ")\n") (e.result)
     }
-    
+
     test ("filetests using a directory that doesn't exist fails") {
         val i = intercept[IllegalArgumentException] {
                     filetests ("Compiler", "src/org/kiama/util/IDoNotExist", ".src", ".out")
@@ -76,7 +76,8 @@ trait TestCompiler[T] extends FunSuite {
      * Default is true; override with false if you want actual results
      * compared.
      */
-    def dosanitisation = true
+    def dosanitisation : Boolean =
+        true
 
     /**
      * Sanitise the output.  At the moment this means make any Windows line
@@ -121,10 +122,10 @@ trait TestCompiler[T] extends FunSuite {
         def filetest (name : String, rp : String, console : Console,
                       extra : String = "", cmd : Array[String],
                       rt : String) {
-                          
+
              val ct = cmd.mkString (" ").replaceAllLiterally ("src/org/kiama/", "")
              val title = name + ": " + ct + ", expecting " + rt + extra
-        
+
              test (title) {
                  val cc =
                      try {

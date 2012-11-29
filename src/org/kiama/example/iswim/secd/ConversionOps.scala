@@ -29,10 +29,10 @@ import scala.util.matching.Regex
 
 object ConversionOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Simple conversion operations between types.
      */
     case class ToString() extends Instruction
@@ -67,7 +67,7 @@ trait ConversionOps extends SECDBase with StringOps
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : Code ==> Unit = super.evalInst orElse {
+    override def evalInst : Code ==> Unit = super.evalInst orElse {
         // Convert any value to a string
         case ToString() :: next => (stack : Stack) match {
             case v :: tail =>
@@ -119,5 +119,5 @@ trait ConversionOps extends SECDBase with StringOps
             case _ :: _ => raiseException(TypeError())
             case _ => raiseException(StackUnderflow())
         }
-	}
+    }
 }

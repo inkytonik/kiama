@@ -58,7 +58,7 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
     var spillRISCAssemFlag = false
     var spillEnvirFlag = false
     var execFlag : Boolean = false
-    
+
     /**
      * Scan command line arguments to handle any compiler switches.
      */
@@ -97,7 +97,7 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
             if (spillEnvirFlag) {
                 emitter.emitln (ast->envout)
             }
-            
+
             // Compile the source tree to a target tree
             val targettree = ast->code
             initTree (targettree)
@@ -109,16 +109,16 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
 
             // Encode the target tree and emit the assembler or run if requested
             encode (targettree)
-            
+
             if (spillRISCAssemFlag) {
                 RISCISA.prettyprint (emitter, getassem)
             }
-            
+
             if (execFlag) {
                 val code = getcode
                 val machine = new RISC (code, console, emitter)
                 machine.run
-            } 
+            }
             true
         }
 

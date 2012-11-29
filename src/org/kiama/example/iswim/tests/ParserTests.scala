@@ -61,7 +61,7 @@ class ParserTests extends RegexParserTests with Parser {
         assertParseError ("true,false)", expr, 1, 5,
             """string matching regex `\z' expected but `,' found""")
     }
-    
+
     test("parse error: tuple missing close bracket") {
         assertParseError ("(true,()", expr, 1, 9,
             """operator ")" expected""")
@@ -102,7 +102,7 @@ class ParserTests extends RegexParserTests with Parser {
     test("attempted parse of non-matching keyword") {
         assertParseError ("else", keyword("if"), 1, 5, """keyword "if" expected""")
     }
-    
+
     test("attempted parse of matching keyword from front of variable name") {
         assertParseError ("elseifvar", keyword("else"), 1, 10, """keyword "else" expected""")
     }
@@ -116,7 +116,7 @@ class ParserTests extends RegexParserTests with Parser {
     test("attempt to parse a match clause with a bad pattern") {
         assertParseError ("(1,x) -> 1", matchclause, 1, 2, "variable name expected")
     }
-    
+
     test("attempt to parse a letrec which binds a non-lambda expression") {
         assertParseError ("letrec x = fun(y) (x y) and z = x in (x 10)", expr, 1, 35,
             """keyword "fun" expected""")

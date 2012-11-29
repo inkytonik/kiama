@@ -25,7 +25,7 @@ object Cut {
 
     import Company.{Company,Salary}
     import org.kiama.rewriting.Rewriter.{everywhere,rewrite,rule}
-    
+
     /**
      * Reduce all salaries by half.
      */

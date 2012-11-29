@@ -38,14 +38,15 @@ trait Evaluator {
      * Whether this mechanism evaluates inside lambdas.  Used for
      * testing.  Default: false.
      */
-    def reducesinlambdas () = false
+    def reducesinlambdas : Boolean =
+        false
 
     /**
      * Generate a fresh variable name.  Prefix the name with an underscore
      * to avoid the potential for clashes with user-level variables (which
      * must start with a letter).
      */
-    object freshvar {
+    object FreshVar {
         private var count = 0
         def apply () : Idn = {
             count = count + 1
@@ -61,7 +62,7 @@ trait Evaluator {
             case Var (y) if x == y =>
                 e2
             case Lam (y, t, e3) =>
-                val z = freshvar ()
+                val z = FreshVar ()
                 Lam (z, t, substitute (x, e2, substitute (y, Var (z), e3)))
             case App (l, r) =>
                 App (substitute (x, e2, l), substitute (x, e2, r))

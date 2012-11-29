@@ -27,10 +27,10 @@ package example.iswim.secd
 
 object IntegerOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Integer arithmetic operations.
      */
     case class PushInt(n : Int) extends Instruction
@@ -75,8 +75,8 @@ trait IntegerOps extends SECDBase {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : Code ==> Unit = super.evalInst orElse {
-		// Arithmetic operations on integers.
+    override def evalInst : Code ==> Unit = super.evalInst orElse {
+        // Arithmetic operations on integers.
         case PushInt(n) :: next =>
             stack := IntValue(n) :: stack
             control := next
@@ -123,5 +123,5 @@ trait IntegerOps extends SECDBase {
             case _ :: _ :: _ => raiseException(TypeError())
             case _ => raiseException(StackUnderflow())
         }
-	}
+    }
 }

@@ -33,7 +33,8 @@ object Patterns {
      * and its parent.
      */
     object HasParent {
-        def unapply[T <: Attributable] (x : T) = Some (x, x.parent)
+        def unapply[T <: Attributable] (x : T) : Option[(T, Attributable)] =
+            Some (x, x.parent)
     }
 
 }

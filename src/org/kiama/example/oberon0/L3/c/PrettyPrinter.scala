@@ -3,7 +3,7 @@ package example.oberon0
 package L3.c
 
 trait PrettyPrinter extends L1.c.PrettyPrinter {
-    
+
     this : org.kiama.output.PrettyPrinter =>
 
     import base.c.{CASTNode, CType}

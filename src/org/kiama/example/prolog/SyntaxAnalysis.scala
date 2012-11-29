@@ -60,7 +60,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
         literal |
         varr ^^ Var |
         integer |
-        list        
+        list
 
     lazy val list =
         "[" ~> "]" ^^ { case _ => Pred ("nil", Nil) } |

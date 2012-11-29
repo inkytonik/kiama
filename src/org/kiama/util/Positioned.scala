@@ -101,14 +101,14 @@ trait PositionedParserUtilities extends ParserUtilities {
         }
 
     /**
-     * Make a new parser that processes input according to `f`. If the 
+     * Make a new parser that processes input according to `f`. If the
      * result produced by `f` is `Positioned`, set its start and finish
      * positions. If the parser is ignoring whitespace then the start
      * position will be the first non-white character that was accepted.
      */
     override def Parser[T] (f : Input => ParseResult[T]) : Parser[T] =
         new Parser[T] {
-            def apply (in : Input) =
+            def apply (in : Input) : ParseResult[T] =
                 parseAndPosition (f, in)
         }
 
@@ -117,7 +117,7 @@ trait PositionedParserUtilities extends ParserUtilities {
      */
     override def OnceParser[T](f : Input => ParseResult[T]) : Parser[T] with OnceParser[T] =
        new Parser[T] with OnceParser[T] {
-            def apply (in : Input) =
+            def apply (in : Input) : ParseResult[T] =
                 parseAndPosition (f, in)
        }
 

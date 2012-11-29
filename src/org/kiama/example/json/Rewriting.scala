@@ -24,7 +24,7 @@ package org.kiama
 package example.json
 
 object Rewriter {
-    
+
     import JSONTree._
     import org.kiama.rewriting.Rewriter._
 

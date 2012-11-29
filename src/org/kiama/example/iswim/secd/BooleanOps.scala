@@ -30,11 +30,11 @@ import org.kiama.output.PrettyPrinter
 
 object BooleanOps {
 
-	import SECDBase._
+    import SECDBase._
     import org.kiama.example.iswim.driver.PrettyPrinter._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Boolean tests and the equality relation.
      */
     case class PushTrue() extends Instruction
@@ -46,7 +46,7 @@ object BooleanOps {
                             line <> ce.toDoc))
     }
     case class Equals() extends Instruction
-    
+
     /**
      * New type values for this extension
      */
@@ -81,21 +81,21 @@ trait BooleanOps extends SECDBase {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
-		// Push constant boolean values on the stack.
+    override def evalInst : PartialFunction[Code,Unit] = super.evalInst orElse {
+        // Push constant boolean values on the stack.
         case PushTrue() :: next =>
             stack := TrueValue() :: stack
             control := next
-        case PushFalse() :: next => 
+        case PushFalse() :: next =>
             stack := FalseValue() :: stack
             control := next
         // Conditional branch.
-        case Test(CodeSegment(ct), CodeSegment(ce)) :: next => 
+        case Test(CodeSegment(ct), CodeSegment(ce)) :: next =>
             (stack : Stack) match {
-                case TrueValue() :: tail => 
+                case TrueValue() :: tail =>
                     stack := tail
                     control := ct ++ next
-                case FalseValue() :: tail => 
+                case FalseValue() :: tail =>
                     stack := tail
                     control := ce ++ next
                 case _ :: _ => raiseException(TypeError())
@@ -103,13 +103,13 @@ trait BooleanOps extends SECDBase {
             }
         // Equality test on values.
         case Equals() :: next => (stack : Stack) match {
-            case val1 :: val2 :: tail => 
+            case val1 :: val2 :: tail =>
                 if (val1 == val2)
                     stack := TrueValue() :: tail
-                else 
+                else
                     stack := FalseValue() :: tail
-                control := next 
+                control := next
             case _ => raiseException(StackUnderflow())
         }
-	}
+    }
 }

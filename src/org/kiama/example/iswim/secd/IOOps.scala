@@ -27,10 +27,10 @@ package example.iswim.secd
 
 object IOOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Simple terminal IO operations
      */
     case class Write() extends Instruction
@@ -49,11 +49,11 @@ trait IOOps extends SECDBase with StringOps {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : Code ==> Unit = super.evalInst orElse {
+    override def evalInst : Code ==> Unit = super.evalInst orElse {
         // Write a value to the terminal
         case Write() :: next => (stack : Stack) match {
             case v :: tail =>
-                print(v.toString)
+                emitter.emit(v.toString)
                 stack := tail
                 control := next
             case _ => raiseException(StackUnderflow())
@@ -63,5 +63,5 @@ trait IOOps extends SECDBase with StringOps {
             var line = readLine
             stack := StringValue(line) :: stack
             control := next
-	}
+    }
 }

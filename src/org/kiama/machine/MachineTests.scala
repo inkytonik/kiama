@@ -29,16 +29,16 @@ import org.scalatest.junit.JUnitRunner
  * within particular examples.
  */
 class MachineTests extends Tests {
-    
+
     import org.kiama.util.StringEmitter
-    
+
     val memitter = new StringEmitter ()
-    
+
     object M extends Machine ("M", memitter) {
         override val debug = true
-        def main = { }
+        def main { }
     }
-    
+
     // Scalar state
 
     test ("new state is undefined") {
@@ -53,7 +53,7 @@ class MachineTests extends Tests {
                 }
         expectResult ("State.value: M.s is undefined") (i.getMessage)
     }
-    
+
     test ("state can be made undefined") {
         val s = new M.State[Int] ("s")
         M.reset
@@ -63,7 +63,7 @@ class MachineTests extends Tests {
         s.undefine
         expectResult (true) (s.isUndefined)
     }
-    
+
     test ("undefined state is not equal to anything") {
         val s = new M.State[Int] ("s")
         expectResult (false) (s =:= 0)
@@ -79,7 +79,7 @@ class MachineTests extends Tests {
         expectResult (false) (s =:= 42)
         expectResult (false) (s =:= 99)
     }
-    
+
     test ("undefined state toStrings to a special message") {
         val s = new M.State[Int] ("s")
         expectResult ("** undefined **") (s.toString)
@@ -92,7 +92,7 @@ class MachineTests extends Tests {
         M.performUpdates
         expectResult ("42") (s.toString)
     }
-    
+
     test ("state updates trigger suitable debug messages") {
         val s = new M.State[Int] ("s")
         val t = new M.State[Int] ("t")
@@ -106,7 +106,7 @@ class MachineTests extends Tests {
         M.performUpdates
         expectResult ("M.t := 99\nM.s := 88\nM.s := 44\n") (memitter.result)
     }
-    
+
     test ("multiple consistent state updates are allowed") {
         val s = new M.State[Int] ("s")
         M.reset
@@ -116,7 +116,7 @@ class MachineTests extends Tests {
         expectResult (true) (s =:= 0)
         expectResult (false) (s =:= 1)
     }
-    
+
     test ("inconsistent state updates in differents steps are allowed") {
         val s = new M.State[Int] ("s")
         M.reset
@@ -141,7 +141,7 @@ class MachineTests extends Tests {
                 }
         expectResult ("Machine = M, update = M.s := 0, other value = 1") (i.getMessage)
     }
-    
+
     // Parameterised state
 
     test ("new parameterised state is undefined") {
@@ -169,7 +169,7 @@ class MachineTests extends Tests {
                 }
         expectResult ("ParamState.value: M.p(12) is undefined") (i.getMessage)
     }
-    
+
     test ("parameterised state can be made undefined") {
         val p = new M.ParamState[Int,Int] ("p")
         M.reset
@@ -179,14 +179,14 @@ class MachineTests extends Tests {
         p.undefine (0)
         expectResult (true) (p.isUndefined (0))
     }
-    
+
     test ("undefined parameterised state is not equal to anything") {
         val p = new M.ParamState[String,Int] ("p")
         expectResult (false) (p ("one") =:= 0)
         expectResult (false) (p ("one") =:= 42)
         expectResult (false) (p ("one") =:= 99)
     }
-    
+
     test ("defined parameterised state is only equal to its value") {
         val p = new M.ParamState[String,Int] ("p")
         M.reset
@@ -228,7 +228,7 @@ class MachineTests extends Tests {
                   |M.p(one) := 3
                   |""".stripMargin) (memitter.result)
     }
-    
+
     test ("multiple consistent parameterised state updates are allowed") {
         val p = new M.ParamState[String,Int] ("p")
         M.reset
@@ -238,7 +238,7 @@ class MachineTests extends Tests {
         expectResult (true) (p ("one") =:= 0)
         expectResult (false) (p ("one") =:= 1)
     }
-    
+
     test ("inconsistent parameterised state updates in differents steps are allowed") {
         val p = new M.ParamState[String,Int] ("p")
         M.reset
@@ -252,7 +252,7 @@ class MachineTests extends Tests {
         expectResult (false) (p ("one") =:= 0)
         expectResult (true) (p ("one") =:= 1)
     }
-    
+
     test ("inconsistent parameterised state updates in one step trigger an exception") {
         val p = new M.ParamState[String,Int] ("p")
         M.reset
@@ -263,19 +263,19 @@ class MachineTests extends Tests {
                 }
         expectResult ("Machine = M, update = M.p(one) := 0, other value = 1") (i.getMessage)
     }
-    
+
     // Tests of step debugging trace
-    
+
     val mmemitter = new StringEmitter
-    
+
     object MM extends Machine ("MM", mmemitter) {
         override val debug = true
-        
+
         val s = new State[Int] ("s")
         val t = new State[String] ("t")
         val p = new ParamState[String,Int] ("p")
 
-        def main = {
+        def main {
             if (s.isUndefined) {
                 s := 0
                 p ("one") := 42
@@ -288,7 +288,7 @@ class MachineTests extends Tests {
             }
         }
     }
-    
+
     test ("running multiple steps produces a suitable trace") {
         MM.run
         expectResult ("""MM step 0

@@ -30,7 +30,7 @@ package rewriting
  * Boilerplate and Uniplate libraries for Haskell.
  */
 class Rewriter {
-    
+
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
     import scala.collection.mutable.Builder
@@ -38,7 +38,7 @@ class Rewriter {
 
     /**
      * The type of terms that can be rewritten.  Any type of value is acceptable
-     * but generic traversals will only work on some specific types.  See the 
+     * but generic traversals will only work on some specific types.  See the
      * documentation of the specific generic traversals (e.g., `all` or `some`)
      * for a detailed description.
      */
@@ -70,7 +70,7 @@ class Rewriter {
          */
         def <* (q : => Strategy) : Strategy =
             new Strategy {
-                def apply (t1 : Term) =
+                def apply (t1 : Term) : Option[Term] =
                     p (t1) match {
                         case Some (t2) => q (t2)
                         case None      => None
@@ -84,7 +84,7 @@ class Rewriter {
          */
         def <+ (q : => Strategy) : Strategy =
             new Strategy {
-                def apply (t1 : Term) =
+                def apply (t1 : Term) : Option[Term] =
                     p (t1) match {
                         case Some (t2) => Some (t2)
                         case None      => q (t1)
@@ -112,7 +112,7 @@ class Rewriter {
          */
         def < (lr : => PlusStrategy) : Strategy =
             new Strategy {
-                def apply (t1 : Term) =
+                def apply (t1 : Term) : Option[Term] =
                     p (t1) match {
                         case Some (t2) => lr.lhs (t2)
                         case None      => lr.rhs (t1)
@@ -129,7 +129,8 @@ class Rewriter {
     class PlusStrategy (p : => Strategy, q : => Strategy) extends Strategy {
         val lhs = p
         val rhs = q
-        def apply (t : Term) = (p <+ q) (t)
+        def apply (t : Term) : Option[Term] =
+            (p <+ q) (t)
     }
 
     /**
@@ -138,7 +139,8 @@ class Rewriter {
      */
     def strategyf (f : Term => Option[Term]) : Strategy =
         new Strategy {
-            def apply (t : Term) = f (t)
+            def apply (t : Term) : Option[Term] =
+                f (t)
         }
 
     /**
@@ -150,7 +152,7 @@ class Rewriter {
      */
     def strategy (f : Term ==> Option[Term]) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     f (t)
                 } else {
@@ -174,7 +176,7 @@ class Rewriter {
      */
     def rule (f : Term ==> Term) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     Some (f (t))
                 } else {
@@ -192,7 +194,7 @@ class Rewriter {
      */
     def rulefs (f : Term ==> Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     (f (t)) (t)
                 } else {
@@ -225,7 +227,7 @@ class Rewriter {
      */
     def queryf[T] (f : Term => T) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 f (t)
                 Some (t)
             }
@@ -239,7 +241,7 @@ class Rewriter {
      */
     def query[T] (f : Term ==> T) : Strategy =
         new Strategy {
-            def apply (t : Term) = {
+            def apply (t : Term) : Option[Term] = {
                 if (f isDefinedAt t) {
                     f (t)
                 }
@@ -275,9 +277,9 @@ class Rewriter {
      * the subject term, the success or failure status, and on success, the result
      * term, to the provided emitter (default: standard output).
      */
-    def log[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy = 
+    def log[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
         new Strategy {
-            def apply (t1 : Term) = {
+            def apply (t1 : Term) : Option[Term] = {
                 emitter.emit (msg + t1)
                 val r = s (t1)
                 r match {
@@ -296,9 +298,9 @@ class Rewriter {
      * provided message and the subject term to the provided emitter (default:
      * standard output).
      */
-    def logfail[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy = 
+    def logfail[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
         new Strategy {
-            def apply (t1 : Term) = {
+            def apply (t1 : Term) : Option[Term] = {
                 val r = s (t1)
                 r match {
                     case Some (t2) =>
@@ -401,7 +403,7 @@ class Rewriter {
      * `child(i, s)` is equivalent to Stratego's `i(s)` operator.  If `s` succeeds on
      * the ''ith'' child producing the same term (by `eq` for references and by `==` for
      * other values), then the overall strategy returns the subject term.
-     * This operation works for instances of `Product` or finite `Seq` values.  
+     * This operation works for instances of `Product` or finite `Seq` values.
      */
     def child (i : Int, s : Strategy) : Strategy =
         new Strategy {
@@ -411,7 +413,7 @@ class Rewriter {
                     case t : Seq[_]  => childSeq (t.asInstanceOf[Seq[Term]])
                     case _           => None
                 }
-                
+
             private def childProduct (p : Product) : Option[Term] = {
                 val numchildren = p.productArity
                 if ((i < 1) || (i > numchildren)) {
@@ -436,7 +438,7 @@ class Rewriter {
                     }
                 }
             }
-            
+
             private def childSeq[CC[U] <: Seq[U]] (t : CC[Term])
                             (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
                                 : Option[CC[Term]] = {
@@ -471,7 +473,7 @@ class Rewriter {
         }
 
     /**
-     * Compare two arbitrary values. If they are both references, use 
+     * Compare two arbitrary values. If they are both references, use
      * reference equality, otherwise throw an error since we should be
      * able to cast anything to reference.
      */
@@ -541,7 +543,7 @@ class Rewriter {
                         Some (p)
                 }
             }
-                
+
             private def allRewritable (r : Rewritable) : Option[Term] = {
                 val numchildren = r.arity
                 if (numchildren == 0) {
@@ -579,7 +581,7 @@ class Rewriter {
                 else {
                     val b = cbf (t)
                     b.sizeHint (t.size)
-                    var changed = false                    
+                    var changed = false
                     for (ct <- t)
                         s (ct) match {
                             case Some (ti) =>
@@ -709,8 +711,8 @@ class Rewriter {
                 }
                 None
             }
-            
-            private def oneTraversable [CC[U] <: Traversable[U]] (t : CC[Term])
+
+            private def oneTraversable[CC[U] <: Traversable[U]] (t : CC[Term])
                             (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
                                 : Option[CC[Term]] = {
                 val b = cbf (t)
@@ -768,7 +770,7 @@ class Rewriter {
      * If `s` succeeds on any of the children, then succeed,
      * forming a new term from the constructor of the original term and the result
      * of `s` for each succeeding child, with other children unchanged.  In the event
-     * that the strategy fails on all children, then fail. If there are no 
+     * that the strategy fails on all children, then fail. If there are no
      * children, fail.  If `s` succeeds on children producing the same terms (by `eq`
      * for references and by `==` for other values), then the overall strategy
      * returns the subject term.
@@ -936,7 +938,7 @@ class Rewriter {
                     case p : Product        => congruenceProduct (p, ss : _*)
                     case _                  => Some (t)
                 }
-                
+
             private def congruenceProduct (p : Product, ss : Strategy*) : Option[Term] = {
                val numchildren = p.productArity
                if (numchildren == ss.length) {
@@ -1007,7 +1009,7 @@ class Rewriter {
             (everywhere (query (f andThen add))) (t)
             b.result ()
         }
-        
+
     /**
      * Collect query results in a list.  Run the function `f` as a top-down
      * left-to-right query on the subject term.  Accumulate the values
@@ -1047,7 +1049,7 @@ class Rewriter {
                 option (s (x)) <*
                     rulefs {
                         case y =>
-                            option (map (s) (xs)) <* 
+                            option (map (s) (xs)) <*
                                 rule {
                                     case ys : List[_] =>
                                         if (same (x, y) && same (xs, ys))

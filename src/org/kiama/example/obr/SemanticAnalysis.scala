@@ -42,27 +42,27 @@ object SemanticAnalysis {
                 // Process the errors of the children of node
                 for (child <- node.children)
                     child->errors
-                    
+
                 node match {
-            
+
                     case p @ ObrInt (i1, ds, ss, i2) =>
                         if (i1 != i2)
                             message (p, "identifier " + i2 + " at end should be " + i1)
-                    
+
                     case n @ AssignStmt (l, r)  =>
                         if (!(l->assignable))
                             message (l, "illegal assignment")
-                    
+
                     case n @ ExitStmt () if (!(n->isinloop)) =>
                         message (n, "an EXIT statement must be inside a LOOP statement")
-                    
+
                     case n @ ForStmt (i, e1, e2, ss) =>
                         if (n->entity == Unknown ())
                             message (n, i + " is not declared")
                         val t = (n->entity).tipe;
                         if ((t != IntType ()) && (t != UnknownType ()))
                             message (n, "for loop variable " + i + " must be integer")
-                    
+
                     // Check a RAISE statement to make sure its parameter is an exception constant.
                     case n @ RaiseStmt (i) =>
                         if (n->entity == Unknown ())
@@ -70,7 +70,7 @@ object SemanticAnalysis {
                         val t = (n->entity).tipe;
                         if ((t != ExnType ()) && (t != UnknownType ()))
                             message (n, "raise parameter " + i + " must be an exception constant")
-                    
+
                     // Check a CATCH clause to make sure its parameter is an exception constant.
                     case n @ Catch (i, ss) =>
                         if (n->entity == Unknown ())
@@ -78,19 +78,19 @@ object SemanticAnalysis {
                         val t = (n->entity).tipe;
                         if ((t != ExnType ()) && (t != UnknownType ()))
                             message (n, "catch clause parameter " + i + " must be an exception constant")
-                                        
+
                     case n @ IntParam (i) if (n->entity == Multiple ()) =>
                         message (n, i + " is declared more than once")
-                    
+
                     case n @ IntVar (i) if (n->entity == Multiple ()) =>
                         message (n, i + " is declared more than once")
-                    
+
                     case n @ BoolVar (i) if (n->entity == Multiple ()) =>
                         message (n, i + " is declared more than once")
-                    
+
                     case n @ ArrayVar (i, v) if (n->entity == Multiple ()) =>
                         message (n, i + " is declared more than once")
-                    
+
                     case n @ RecordVar (i, _) =>
                         (n->entity) match {
                              case Variable (RecordType (fs)) =>
@@ -99,34 +99,34 @@ object SemanticAnalysis {
                              case Multiple () =>
                                  message (n, i + " is declared more than once")
                         }
-                    
+
                     case n @ IntConst (i, v) if (n->entity == Multiple ()) =>
                         message (n, i + " is declared more than once")
-                    
+
                     // Extra clauses to report errors from enumeration variable declarations
                     case n @ EnumVar (i, cs)                            =>
                         if (n->entity == Multiple ())
                             message (n, i + " is declared more than once")
-                    
+
                     case n @ EnumConst (i) if (n->entity == Multiple ())   =>
                         message (n, i + " is declared more than once")
-                    
+
                     // Extra clause to report errors from exception constant declarations
                     case n @ ExnConst (i) if (n->entity == Multiple ())    =>
                         message (n, i + " is declared more than once")
-                    
+
                     case e : Expression =>
                         e match {
                             case v @ IdnExp (i) if (v->entity == Unknown ()) =>
                                 message (v, i + " is not declared")
-                    
+
                             case v @ IndexExp (a, r) =>
                                 (v->entity).tipe match {
                                     case ArrayType (_) =>
                                     case _ =>
                                         message (v, "attempt to index the non-array " + a)
                                 }
-                    
+
                             case v @ FieldExp (r, f) =>
                                 ((v->entity).tipe) match {
                                     case RecordType (fs) =>
@@ -135,13 +135,13 @@ object SemanticAnalysis {
                                     case _ =>
                                         message (v, "attempt to access field of non-record " + r)
                                 }
-                    
+
                             case _                  =>
                         }
                         if (!(e->exptipe exists ((_ : TypeBase) iscompatible e->tipe)))
                             message (e, "type error: expected " + (e->exptipe).mkString(" or ") +
                                      " got " + (e->tipe))
-                    
+
                     case _ =>
 
                 }
@@ -160,9 +160,9 @@ object SemanticAnalysis {
      * Pre-defined exception numbers
      */
     val divideByZeroExn : Int = 0
-	val indexOutOfBoundsExn : Int = 1
+    val indexOutOfBoundsExn : Int = 1
     val userExn : Int = 2
-        
+
     /**
      * Attribute to consecutively number exception constants
      */

@@ -38,7 +38,7 @@ class RewritingTests extends FunSuite {
     /**
      * Some components of company test data to refer to by name.
      */
-    val ralf = 
+    val ralf =
         JObject (
           List (
             JName ("type") -> JString ("employee"),
@@ -184,7 +184,7 @@ class RewritingTests extends FunSuite {
                                                 JName ("name") -> JString ("Joe"),
                                                 JName ("address") -> JString (
                                                   "Wifi City"),
-                                                JName ("salary") -> JNumber (1172.0)))))))))))))))))))        
+                                                JName ("salary") -> JNumber (1172.0)))))))))))))))))))
         expectResult (newcompany) (cut (company))
     }
 

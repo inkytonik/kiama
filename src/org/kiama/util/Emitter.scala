@@ -52,25 +52,37 @@ class Emitter {
 }
 
 /**
+ * General support for mixing in an emitter that sends to standard output.
+ */
+trait StdoutEmitter {
+
+    /**
+     * An emitter for standard output.
+     */
+    val emitter = new Emitter
+
+}
+
+/**
  * An emitter that records the output in a string that can be accessed
  * via the result method.
  */
 class StringEmitter extends Emitter {
     val b = new StringBuilder
-    override def emit (any : Any) = b.append (any.toString)
-    override def emitln (any : Any) = b.append (any.toString).append ('\n')
-    override def emitln () = b.append ('\n')
-    def clear () = b.clear
-    def result () = b.result
+    override def emit (any : Any) { b.append (any.toString) }
+    override def emitln (any : Any) { b.append (any.toString).append ('\n') }
+    override def emitln () { b.append ('\n') }
+    def clear () { b.clear }
+    def result () : String = b.result
 }
 
 /**
- * A string emitter that also provides a `close` method to send the 
+ * A string emitter that also provides a `close` method to send the
  * result to the named UTF-8 encoded file.
  */
 class FileEmitter (filename : String) extends StringEmitter {
     import org.kiama.util.IO.filewriter
-        
+
     def close () {
         val out = filewriter (filename)
         out.write (result ())

@@ -76,7 +76,7 @@ class SECDTests extends Tests {
         /**
         * Initialise the machine.
         */
-        override def init = {
+        override def init {
             stack := Nil
             envir := Map()
             dump := EmptyCont()

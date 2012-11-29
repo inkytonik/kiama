@@ -85,7 +85,7 @@ object Interpreter {
      * Interpret a query against the given program.
      */
     def interpret (query : Term, program : Program, emitter : Emitter) {
-        
+
         // Get the program clauses.  We reverse them so that when we use
         // them we push onto the goal stack in the correct order, so that
         // earlier ones have priority.
@@ -109,7 +109,7 @@ object Interpreter {
          * Find the variables in the query.  These are the ones we want
          * to print.
          */
-        val goalvars : Set[(String,Term)] = 
+        val goalvars : Set[(String,Term)] =
             for (v <- varsof (query))
                 yield {
                     (v, Var (v))
@@ -125,15 +125,15 @@ object Interpreter {
         while (glstack.nonEmpty) {
 
             // Print the stack for debugging
-            // println (glstack)
-            // println
+            // emitter.emitln (glstack)
+            // emitter.emitln
 
             // Get the top goal list from the goal list stack
             val gl = glstack.pop ()
 
             // Decide what to do based on the first goal in the top goal list
             gl (0) match {
-                
+
                 /**
                  * A term that we will try to unify against the heads of each of the
                  * clauses in the program.

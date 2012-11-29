@@ -143,7 +143,7 @@ case class AndExp (left : Expression, right : Expression) extends ProdExpression
  */
 abstract class UnaryExpression extends Expression with PrettyUnaryExpression {
     def exp : Expression
-    val fixity = Prefix   
+    val fixity = Prefix
 }
 
 /**

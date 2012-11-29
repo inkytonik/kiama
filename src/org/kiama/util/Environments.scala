@@ -89,7 +89,7 @@ trait Environments {
         /**
          * Still print named things as their underlying name.
          */
-        override def toString = ident
+        override def toString : String = ident
 
     }
 
@@ -103,7 +103,7 @@ trait Environments {
      * usually accepted in most situations to avoid cascade errors.
      */
     trait ErrorEntity extends Entity
-    
+
     /**
      * A entity represented by names for whom we have seen more than one
      * declaration so we are unsure what is being represented.
@@ -128,14 +128,14 @@ trait Environments {
      * An environment is a stack of scopes with the innermost scope on the top.
      */
     type Environment = Stack[Scope]
-    
+
     /**
      * Create a root environment, i.e., one that has a single scope containing
      * the given bindings.
      */
     def rootenv (bindings : (String,Entity)*) : Environment =
         Stack (HashMap (bindings : _*))
-    
+
     /**
      * Enter a new empty scope nested within the given environment.
      */
@@ -184,14 +184,14 @@ trait Environments {
         env.exists (s => isDefinedInScope (s, i))
 
     /**
-     * Say whether i is defined in an innermost scope of env (i.e., in the 
+     * Say whether i is defined in an innermost scope of env (i.e., in the
      * current scope).
      */
     def isDefinedInInner (env : Environment, i : String) : Boolean =
         isDefinedInScope (env.top, i)
 
     /**
-     * Say whether i is defined in an outer scope of env (i.e., not in the 
+     * Say whether i is defined in an outer scope of env (i.e., not in the
      * current scope).
      */
     def isDefinedInOuter (env : Environment, i : String) : Boolean =
@@ -202,22 +202,14 @@ trait Environments {
      * return e.  If scope is true, just search the innermost scope, otherwise
      * search outwards in all scopes, returning the first Entity found, if any.
      */
-    def lookup (env : Environment, i : String, e : Entity, scope : Boolean = false) : Entity = {
-
-        def lookupscope (s : Scope) : Entity =
-            s.getOrElse (i, e)
-
+    def lookup (env : Environment, i : String, e : Entity, scope : Boolean = false) : Entity =
         if (env.isEmpty)
             e
         else if (scope)
-            lookupscope (env.top)
-        else {
-            for (s <- env)
-                if (s contains i)
-                    return s (i)
-            e
-        }
-        
-    }    
+            env.top.getOrElse (i, e)
+        else if (isDefinedInScope (env, i))
+            env.top (i)
+        else
+            lookup (env.pop, i, e)
 
 }

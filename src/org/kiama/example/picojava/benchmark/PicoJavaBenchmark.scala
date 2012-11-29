@@ -21,7 +21,9 @@
 package org.kiama
 package example.picojava.benchmark
 
-object PicoJavaBenchmark extends App {
+import org.kiama.util.StdoutEmitter
+
+object PicoJavaBenchmark extends App with StdoutEmitter {
 
     import org.kiama.attribution._
     import org.kiama.example.picojava.AbstractSyntax._
@@ -29,9 +31,10 @@ object PicoJavaBenchmark extends App {
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 
-    def basicAst () = ClassDecl ("AA", None, Block (List (VarDecl (Use ("int"), "x"))))
+    def basicAst : ClassDecl =
+        ClassDecl ("AA", None, Block (List (VarDecl (Use ("int"), "x"))))
 
-    def createAst (subtree : ClassDecl) =
+    def createAst (subtree : ClassDecl) : ClassDecl =
         ClassDecl ("AA", None, Block (
               List (VarDecl (Use ("int"), "y"),
                     VarDecl (Use ("AA"), "a"),
@@ -43,7 +46,7 @@ object PicoJavaBenchmark extends App {
                               AssignStmt (Dot (Use ("b"), Use("y")),
                                           Dot (Use ("b"), Use("x")))))))))
 
-    def createProgram (subtree : ClassDecl) =
+    def createProgram (subtree : ClassDecl) : Program =
         Program (Block (List (subtree)))
 
     // Warm up the JIT compiler
@@ -80,7 +83,7 @@ object PicoJavaBenchmark extends App {
         DynamicAttribution.resetMemo
     }
 
-    println((System.currentTimeMillis - start))
+    emitter.emitln((System.currentTimeMillis - start))
 
   /*
     var time : Long = 0
@@ -99,6 +102,6 @@ object PicoJavaBenchmark extends App {
         DynamicAttribution.resetMemo
     }
 
-    println((time / 1000000))
+    emitter.emitln((time / 1000000))
     */
 }

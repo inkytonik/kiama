@@ -27,7 +27,7 @@ import org.kiama.rewriting.Rewriter.{ Term => _, _ }
 import scala.collection.immutable.Map
 
 /**
- * A substitution that records how variables (given by their names) are to 
+ * A substitution that records how variables (given by their names) are to
  * be replaced by Prolog terms.
  */
 abstract class Subst {
@@ -60,7 +60,7 @@ abstract class Subst {
     /**
      * Create a string representation for debugging.
      */
-    override def toString =
+    override def toString : String =
         m.mkString ("Subst (", ", ", ")")
 
 }
@@ -73,7 +73,7 @@ object Subst {
     /**
      * Make a substitution from the argument sequence of pairs.
      */
-    def apply (l : (String,Term)*) =
+    def apply (l : (String,Term)*) : Subst =
         new Subst {
             val m = Map (l : _*)
         }

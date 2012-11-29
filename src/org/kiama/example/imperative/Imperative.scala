@@ -30,15 +30,15 @@ import org.kiama.util.ParsingREPL
 object Imperative extends ParsingREPL[AST.Stmt] with Parser {
 
     override def setup (args : Array[String]) : Boolean = {
-        println ("Enter imperative language programs for parsing.")
+        emitter.emitln ("Enter imperative language programs for parsing.")
         true
     }
 
-    override def prompt () = "imperative> "
+    override val prompt = "imperative> "
 
     def process (s : AST.Stmt) {
-        println (s)
-        println (PrettyPrinter.pretty (s))
+        emitter.emitln (s)
+        emitter.emitln (PrettyPrinter.pretty (s))
     }
 
 }

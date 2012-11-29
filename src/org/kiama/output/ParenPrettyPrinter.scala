@@ -66,11 +66,11 @@ case class Infix (side : Side) extends Fixity
  * Super type of all expressions that are to be pretty-printed.
  */
 trait PrettyExpression
-        
-/** 
+
+/**
  * An expression that contains an operator.  Defines `priority` to relate
  * the operator to other operators (lower number is higher priority, no
- * default). Also defines `fixity` to specify the relationship between the 
+ * default). Also defines `fixity` to specify the relationship between the
  * operator and its operand(s) (no default).
  */
 trait PrettyOperatorExpression extends PrettyExpression {
@@ -80,7 +80,7 @@ trait PrettyOperatorExpression extends PrettyExpression {
 
 /**
  * Binary expressions that are to be pretty-printed. `left` and `right`
- * give the two operand expressions and `op` the string that is to be 
+ * give the two operand expressions and `op` the string that is to be
  * used as the output of the operator.
  */
 trait PrettyBinaryExpression extends PrettyOperatorExpression {
@@ -102,26 +102,26 @@ trait PrettyUnaryExpression extends PrettyOperatorExpression {
 /**
  * A pretty-printer with support for pretty-printing expressions with minimal
  * parenthesisation.
- * 
+ *
  * Based on algorithm in "Unparsing expressions with prefix and postfix operators",
  * Ramsey, SP&E, 28 (12), October 1998.  We have not implemented support for
  * arbitrary arity infix operators.
  */
 trait ParenPrettyPrinter {
-    
+
     self : PrettyPrinter =>
 
     def toParenDoc (e : PrettyExpression) : Doc =
         e match {
             case b : PrettyBinaryExpression =>
-                val ld = 
+                val ld =
                     b.left match {
                         case l : PrettyOperatorExpression =>
                             bracket (l, b, LeftAssoc)
                         case l =>
                             toParenDoc (l)
                     }
-                val rd = 
+                val rd =
                     b.right match {
                         case r : PrettyOperatorExpression =>
                             bracket (r, b, RightAssoc)
@@ -129,7 +129,7 @@ trait ParenPrettyPrinter {
                             toParenDoc (r)
                     }
                 ld <+> text (b.op) <+> rd
-                
+
             case u : PrettyUnaryExpression =>
                 val ed =
                     u.exp match {
@@ -143,7 +143,7 @@ trait ParenPrettyPrinter {
                 else
                     ed <> text (u.op)
         }
-    
+
     /**
      * Optionally parenthesise an operator expression based on the precedence relation
      * with an outer expression's operator.
@@ -156,7 +156,7 @@ trait ParenPrettyPrinter {
 
     /**
      * Return true if the inner expression should be parenthesised when appearing
-     * on the given side with the outer expression. 
+     * on the given side with the outer expression.
      */
     def noparens (inner : PrettyOperatorExpression, outer : PrettyOperatorExpression,
                   side : Side) : Boolean = {
@@ -180,5 +180,5 @@ trait ParenPrettyPrinter {
                     false
             })
     }
-    
+
 }

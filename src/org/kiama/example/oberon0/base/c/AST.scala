@@ -39,7 +39,7 @@ case class CFunctionDecl (decl : CVarDecl, args : List[CDeclaration],
  * C blocks.
  */
 case class CBlock (decls : List[CDeclaration], stmts : List[CStatement]) extends CStatement
-                 
+
 /**
  * Non-terminal type for C types.
  */

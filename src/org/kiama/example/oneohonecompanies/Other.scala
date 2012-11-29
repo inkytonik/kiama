@@ -62,7 +62,7 @@ object Other {
 
     lazy val aboveaverage : Employee => Boolean =
         attr {
-            case e @ Employee (_, _, s) => 
+            case e @ Employee (_, _, s) =>
                 s > (e->averagesalary)
         }
 

@@ -27,7 +27,7 @@ object Total {
     import org.kiama.==>
     import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.everything
-    
+
     /**
      * Return the total salary cost of a company (by rewriting).
      */

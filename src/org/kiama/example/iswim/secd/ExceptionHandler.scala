@@ -85,9 +85,9 @@ trait ExceptionHandler extends SECDBase {
                 d : Dump,
                 h : Handler
      ) extends Value with Continuation {
-         override def hashCode () = super.hashCode
-         override def equals(that : Any) = super.equals(that)
-         override def toString () = "ExnContValue@" ++ hashCode.toHexString
+         override def hashCode : Int = super.hashCode
+         override def equals(that : Any) : Boolean = super.equals(that)
+         override def toString : String = "ExnContValue@" ++ hashCode.toHexString
          def getType : TypeValue = ContTypeValue()
      }
 

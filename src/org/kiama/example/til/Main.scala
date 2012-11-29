@@ -23,11 +23,12 @@ package example.til
 
 import java.io.Reader
 import org.kiama.util.PositionedParserUtilities
+import org.kiama.util.StdoutEmitter
 
 /**
  * Standard main program for TIL chairmarks.
  */
-trait Main {
+trait Main extends StdoutEmitter {
 
     import org.kiama.util.IO._
 
@@ -41,10 +42,10 @@ trait Main {
             try {
                 val reader = filereader (arg)
                 val result = process (reader)
-                println (result)
+                emitter.emitln (result)
             } catch {
                 case e : FileNotFoundException =>
-                    println ("can't open " + arg + " for reading")
+                    emitter.emitln ("can't open " + arg + " for reading")
             }
         }
     }
@@ -59,7 +60,7 @@ trait Main {
 
 /**
  * Main program for TIL chairmarks that just parse.
- */ 
+ */
 trait ParsingMain extends Main {
 
     self : PositionedParserUtilities =>

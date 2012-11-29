@@ -127,7 +127,7 @@ trait AttributionBase {
      * Support for parameterised attributes: argument, node pair comparison.
      */
     class ParamAttributeKey (val arg : Any, val node : AnyRef) {
-        override def equals(o : Any) =
+        override def equals(o : Any) : Boolean =
             o match {
                 case o : ParamAttributeKey =>
                   arg == o.arg &&                                        // object equality
@@ -135,7 +135,8 @@ trait AttributionBase {
                 case _ => false
             }
 
-        override val hashCode = System.identityHashCode(node) ^ arg.hashCode
+        override def hashCode : Int =
+            System.identityHashCode(node) ^ arg.hashCode
     }
 
     /**
@@ -155,8 +156,8 @@ trait AttributionBase {
     def constant[T <: AnyRef,U] (u : => U) : T => U =
         new (T => U) {
             lazy val result = u
-            def apply (t : T) = result
-            def isDefinedAt (t : T) = true
+            def apply (t : T) : U = result
+            def isDefinedAt (t : T) : Boolean = true
         }
 
     /**
@@ -189,7 +190,8 @@ trait Attribution extends AttributionBase {
     /**
      * Lazily reset all memoisation tables.
      */
-    def resetMemo () = MemoState.MEMO_VERSION += 1
+    def resetMemo () : Unit =
+        MemoState.MEMO_VERSION += 1
 
     /**
      * An attribute of a node type `T` with value of type `U`, supported by a memo

@@ -45,7 +45,7 @@ class DynamicAttributionTests extends Tests {
     test ("dynamic attribution base works on Leafs") {
         expectResult (2) (sumleafbase (Leaf (2)))
     }
-        
+
     test ("dynamic attribution base defaults on Pairs") {
         expectResult (-1) (sumleafbase (Pair (Leaf (1), Leaf (2))))
     }
@@ -56,7 +56,7 @@ class DynamicAttributionTests extends Tests {
                 case Pair (l,r) => 0
                 case Leaf (v)   => 0
             }
-            
+
         expectResult (true, "isDefinedAt Leaf") (maximum.isDefinedAt (Leaf (1)))
         expectResult (true, "isDefinedAt Pair") (maximum.isDefinedAt (Pair (Leaf (1), Leaf (2))))
         expectResult (false, "isDefinedAt Unused") (maximum.isDefinedAt (Unused (false)))
@@ -73,7 +73,7 @@ class DynamicAttributionTests extends Tests {
             }
 
         val t = Leaf (2)
-            
+
         expectResult (2) (sumleaf (t))
         expectResult (2) (sumleaf (t))
         expectResult (1, "evaluation count") (count)
@@ -96,7 +96,7 @@ class DynamicAttributionTests extends Tests {
                 case Leaf (88)   => 77
                 case Pair (l, r) => (l->sumleaf) + (r->sumleaf)
             }
-            
+
         val func : Tree ==> Int =
             {
                 case Pair (l, r) => 99
@@ -105,7 +105,7 @@ class DynamicAttributionTests extends Tests {
         // No modification
         expectResult (2) (sumleaf (Leaf (2)))
         expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
-        
+
         // Add a dynamic attribute and take away again
         sumleaf += newcase
         expectResult (4) (sumleaf (Leaf (4)))
@@ -114,7 +114,7 @@ class DynamicAttributionTests extends Tests {
         sumleaf -= newcase
         expectResult (6) (sumleaf (Leaf (6)))
         expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
-        
+
         // Add a partial function and take away again
         sumleaf += func
         expectResult (6) (sumleaf (Leaf (6)))
@@ -122,7 +122,7 @@ class DynamicAttributionTests extends Tests {
         sumleaf -= func
         expectResult (6) (sumleaf (Leaf (6)))
         expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
-        
+
         // Multiple additions and out of order removal
         sumleaf += newcase
         sumleaf += func
@@ -139,7 +139,7 @@ class DynamicAttributionTests extends Tests {
         expectResult (88) (sumleaf (Leaf (88)))
 
     }
-    
+
     test ("can't extend partial function as dynamic attribute") {
 
         val sumleaf : Tree ==> Int =
@@ -169,14 +169,14 @@ class DynamicAttributionTests extends Tests {
             }
 
         object ExtensionOne {
-            sumleaf += 
+            sumleaf +=
                 attr {
                     case Pair (l, r) => (l->sumleaf) + (r->sumleaf)
                 }
         }
 
         object ExtensionTwo {
-            sumleaf += 
+            sumleaf +=
                 attr {
                     case Pair (l, r) => 42
                 }
@@ -184,11 +184,11 @@ class DynamicAttributionTests extends Tests {
 
         expectResult (2) (sumleaf (Leaf (2)))
         expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
-        
+
         using (ExtensionOne) {
             expectResult (4) (sumleaf (Leaf (4)))
             expectResult (8) (sumleaf (Pair (Leaf (3), Leaf (5))))
-            
+
             using (ExtensionTwo) {
                 expectResult (4) (sumleaf (Leaf (4)))
                 expectResult (42) (sumleaf (Pair (Leaf (3), Leaf (5))))
@@ -197,12 +197,12 @@ class DynamicAttributionTests extends Tests {
             expectResult (4) (sumleaf (Leaf (4)))
             expectResult (9) (sumleaf (Pair (Leaf (3), Leaf (6))))
         }
-        
+
         expectResult (6) (sumleaf (Leaf (6)))
         expectResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
 
     }
-    
+
     test ("using a dynamic attribute outside its domain raises an exception") {
 
         val sumleaf : Tree ==> Int =
@@ -216,9 +216,9 @@ class DynamicAttributionTests extends Tests {
         expectResult ("Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
             i.getMessage
         )
-        
+
         object Extension {
-            sumleaf += 
+            sumleaf +=
                 attr {
                     case Pair (Leaf (1), Leaf (2)) => 100
                 }

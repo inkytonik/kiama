@@ -22,7 +22,7 @@ package org.kiama
 package example.lambda2
 
 object PrettyPrinter extends org.kiama.output.PrettyPrinter {
-    
+
     import AST._
 
     /**
@@ -49,7 +49,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
                                           showtypedecl (t) <+> '.' <+>
                                           group (nest (show (e))))
             case App (e1, e2)  => parens (show (e1) <+> show (e2))
-            
+
             case Opn (l, AddOp (), r) => showbin (l, "+", r)
             case Opn (l, SubOp (), r) => showbin (l, "-", r)
 
@@ -58,8 +58,8 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
                         nest (line <> show (e1)) <+> "in" <>
                         nest (line <> show (e2)))
             case Letp (bs, e) =>
-                parens ("letp" <+>                         
-                        nest (line <> vsep (bs.map (b => b.i <+> '=' <+> show (b.e)))) <+> 
+                parens ("letp" <>
+                        nest (line <> vsep (bs.map (b => b.i <+> '=' <+> show (b.e)))) <+>
                         "in" <>
                         nest (line <> show (e)))
         }
@@ -72,7 +72,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
             empty
         else
             space <> ':' <+> showtype (t)
-            
+
     /**
      * Return a pretty-printing document for an instance of a type.
      */
@@ -81,11 +81,11 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
             case IntType ()       => "Int"
             case FunType (t1, t2) => showtype (t1) <+> "->" <+> showtype (t2)
         }
-        
+
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
     private def showbin (l : Exp, op : String, r : Exp) : Doc =
         parens (show (l) <+> op <+> show (r))
-    
+
 }

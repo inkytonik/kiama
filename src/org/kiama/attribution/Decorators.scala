@@ -54,11 +54,11 @@ object Decorators {
     /**
      * A pair of attributes that thread through a tree in a depth-first
      * left-to-right fashion.  The `in` (`out`) attributes provides the value
-     * of the chain as it enters a node from above (leaves a node to the 
+     * of the chain as it enters a node from above (leaves a node to the
      * above).
      */
     case class Chain[T,U] (in : (T => U), out : (T => U)) extends (T => U) {
-        def apply (t : T) = out (t)
+        def apply (t : T) : U = out (t)
     }
 
     /**
@@ -69,12 +69,12 @@ object Decorators {
         f => { case t => f (t) }
 
     /**
-     * Create a new attribute chain.  The `update` functions provide ways to 
+     * Create a new attribute chain.  The `update` functions provide ways to
      * influence the chain value, by taking the default computation of the
      * `in` or `out` attribute and returning a partial function.  If the domain
      * of the partial function contains a node, then that function is used
      * to compute the chain value at the node n, otherwise the default chain
-     * attribute is used.  If an update function is omitted, it defaults 
+     * attribute is used.  If an update function is omitted, it defaults
      * to the identity.
      *
      * If the root of the tree is reached without a definition being supplied
@@ -88,13 +88,13 @@ object Decorators {
              ) : Chain[T,U] = {
 
         def error (t : T) : Nothing = {
-            in.reset       
+            in.reset
             out.reset
             sys.error ("chain root of tree reached at " + t)
         }
 
         def indflt (t : T) : U =
-        	if (t.isRoot)
+            if (t.isRoot)
                 error (t)
             else if (t.isFirst)
                 in (t.parent[T])
@@ -110,17 +110,17 @@ object Decorators {
                 // inline indflt here to save call, really is
                 // else indflt (t)
                 else if (t.isRoot)
-                	error (t)
+                    error (t)
                 else if (t.isFirst)
-                	in (t.parent[T])
+                    in (t.parent[T])
                 else
-                	out (t.prev[T])
+                    out (t.prev[T])
             })
 
         def outdflt (t : T) : U =
             if (t.hasChildren)
                 out (t.lastChild[T])
-            else  
+            else
                 in (t)
 
         lazy val outfunc = outupdate (outdflt)
@@ -132,9 +132,9 @@ object Decorators {
                 // Inline outdflt here to save call, really is
                 // else outdflt (t)
                 else if (t.hasChildren)
-                	out (t.lastChild[T])
-                else  
-                	in (t)
+                    out (t.lastChild[T])
+                else
+                    in (t)
             })
 
         Chain (in, out)

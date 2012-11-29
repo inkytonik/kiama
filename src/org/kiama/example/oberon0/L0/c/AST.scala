@@ -38,7 +38,7 @@ abstract class CBinaryExpression (val op : String) extends CExpression with Pret
 // whereas they encode it the other way around. If 1 <= n <= 17 is the precedence
 // from Harbison & Steele, we use 0 <= 17 - n <= 16. We don't use all of the C
 // operators, so not all priorities are represented here.
- 
+
 /**
  * C equality expressions.
  */
@@ -142,7 +142,7 @@ abstract class CUnaryExpression extends CExpression with PrettyUnaryExpression {
  */
 case class CNegExp (exp : CExpression) extends CUnaryExpression {
     override val priority = 2
-    def op = "-"
+    def op : String = "-"
 }
 
 /**
@@ -150,7 +150,7 @@ case class CNegExp (exp : CExpression) extends CUnaryExpression {
  */
 case class CNotExp (exp : CExpression) extends CUnaryExpression {
     override val priority = 2
-    def op = "!"
+    def op : String = "!"
 }
 
 /**

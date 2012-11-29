@@ -47,10 +47,10 @@ class Driver extends SyntaxAnalysis with Compiler[JValue] {
         super.process (ast, console, emitter)
 
         // Pretty-print AST as a product value
-        println (pretty_any (ast))
+        emitter.emitln (pretty_any (ast))
 
         // Pretty-print AST as a JSON value
-        println (pretty (ast))
+        emitter.emitln (pretty (ast))
 
         true
 

@@ -42,7 +42,7 @@ object SymbolTable extends Environments {
      */
     case class Variable (tipe : Type) extends Entity
 
-    /** 
+    /**
      * The type of a predicate argument.
      */
     abstract class Type
@@ -51,26 +51,26 @@ object SymbolTable extends Environments {
      * The atom type.
      */
     case class AtomType () extends Type {
-        override def toString = "atom"
+        override def toString : String = "atom"
     }
 
     /**
      * The integer type.
      */
     case class IntegerType () extends Type {
-        override def toString = "integer"
+        override def toString : String = "integer"
     }
 
     /**
      * The list type.
      */
     case class ListType () extends Type {
-        override def toString = "list"
+        override def toString : String = "list"
     }
 
     /**
      * A type that is unknown.
      */
     case class UnknownType () extends Type
-    
+
 }

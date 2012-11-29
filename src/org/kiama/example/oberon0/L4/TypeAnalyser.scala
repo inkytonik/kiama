@@ -17,13 +17,13 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
         n match {
             case FPSection (_, _, t) if !t.isInstanceOf[NamedType] =>
                 message (t, "parameter type must be identifier")
-            
+
             case FPSection (ValMode (), _, t) if !(isNotArray (typebasetype (t->deftype))) =>
                 message (n, "array parameter must be VAR")
-            
+
             case FPSection (ValMode (), _, t) if !(isNotRecord (typebasetype (t->deftype))) =>
                 message (n, "record parameter must be VAR")
-            
+
             case ArrayTypeDef (s, t) =>
                 if (isInteger (s->tipe) && (s->isconst) && (s->value < 0))
                     message (s, "ARRAY size is " + (s->value) + " but should be >= 0")

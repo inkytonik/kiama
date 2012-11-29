@@ -25,7 +25,7 @@ import org.kiama.util.Tests
 import org.scalatest.junit.JUnitRunner
 
 class OneOhOneTests extends Tests {
-    
+
     import Company._
     import SampleCompany._
     import Total._
@@ -34,40 +34,40 @@ class OneOhOneTests extends Tests {
     import Precedence.precedence
     import Other._
     import org.kiama.attribution.Attribution.initTree
-    
+
     // Some pathological companies
-    
+
     val empty = Company (Nil)
     val onlymanager = Company (List (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
-    
+
     test ("total of all salaries by rewriting - company") {
         expectResult (399747.0) (total (company))
     }
-    
+
     test ("total of all salaries by rewriting - empty") {
         expectResult (0.0) (total (empty))
     }
-    
+
     test ("total of all salaries by rewriting - onlymanager") {
         expectResult (100.0) (total (onlymanager))
     }
-    
+
     test ("total of all cut salaries by rewriting - company") {
         expectResult (199873.5) (total (cut (company)))
     }
-    
+
     test ("total of all cut salaries by rewriting - empty") {
         expectResult (0.0) (total (cut (empty)))
     }
-    
+
     test ("total of all cut salaries by rewriting - onlymanager") {
         expectResult (50.0) (total (cut (onlymanager)))
     }
-    
+
     test ("total of all salaries by attribution - company") {
         expectResult (399747.0) (company->salary)
     }
-    
+
     test ("total of research salaries by attribution - company") {
         expectResult (137035.0) (research->salary)
     }
@@ -87,19 +87,19 @@ class OneOhOneTests extends Tests {
     test ("total of all salaries by attribution - empty") {
         expectResult (0.0) (empty->salary)
     }
-    
+
     test ("total of all salaries by attribution - onlymanager") {
         expectResult (100.0) (onlymanager->salary)
     }
-    
+
     test ("total of all cut salaries by attribution - company") {
         expectResult (199873.5) ((cut (company)->salary))
     }
-    
+
     test ("total of all cut salaries by attribution - empty") {
         expectResult (0.0) ((cut (empty)->salary))
     }
-    
+
     test ("total of all cut salaries by attribution - onlymanager") {
         expectResult (50.0) ((cut (onlymanager)->salary))
     }
@@ -123,7 +123,7 @@ class OneOhOneTests extends Tests {
     test ("average salary for dev11 department") {
         expectResult (2344) ((dev11->averagesalary).toInt)
     }
-    
+
     test ("craig is above average") {
         expectResult (true) (craig->aboveaverage)
     }
@@ -135,27 +135,27 @@ class OneOhOneTests extends Tests {
     test ("joe is below average") {
         expectResult (false) (joe->aboveaverage)
     }
-    
+
     test ("department depth - company") {
         expectResult (3) (depth (company))
     }
-    
+
     test ("department depth - empty") {
         expectResult (0) (depth (empty))
     }
-    
+
     test ("department depth - onlymanager") {
         expectResult (1) (depth (onlymanager))
-    }    
-    
+    }
+
     test ("salaries ordered - company") {
         expectResult (true) (precedence (company))
     }
-    
+
     test ("salaries ordered - empty") {
         expectResult (true) (precedence (empty))
     }
-    
+
     test ("salaries ordered - onlymanager") {
         expectResult (true) (precedence (onlymanager))
     }
@@ -170,7 +170,7 @@ class OneOhOneTests extends Tests {
     test ("salaries not ordered - manager") {
         val d1 = Dept ("D2", Employee ("The", "Emp", 100),
                        List (PU (Employee ("That", "Emp", 50))))
-        val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25), 
+        val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25),
                                List (DU (d1)))))
         initTree (d2)
         expectResult (false) (precedence (d2))
@@ -198,6 +198,6 @@ class OneOhOneTests extends Tests {
 
     test ("dev11 department employee count is correct") {
         expectResult (2) (dev11->numemp)
-    }        
+    }
 
 }

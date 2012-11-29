@@ -29,7 +29,7 @@ import PrologTree.Literal
 /**
  * Conduct semantic analysis on the Prolog program in the file given as
  * the first command-line argument.  If the program is correct, enter an
- * interactive read-eval-print loop (REPL) to read queries.  For each 
+ * interactive read-eval-print loop (REPL) to read queries.  For each
  * query, call the interpreter to evaluate it.
  */
 object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter {
@@ -56,26 +56,26 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
                         // If it worked, we get a source tree
                         case Success (sourcetree, _) =>
                             // Pretty print the source tree
-                            // println (pretty (product (sourcetree)))
+                            // emitter.emitln (pretty (product (sourcetree)))
                             // Process the program tree
                             if (processprogram (sourcetree)) {
                                 // Enter read-eval-print-loop
-                                println
-                                println ("Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix)")
-                                println
+                                emitter.emitln
+                                emitter.emitln ("Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix)")
+                                emitter.emitln
                                 super.main (args)
                             }
                         // Parsing failed, so report it
                         case f =>
-                            println (f)
+                            emitter.emitln (f)
                     }
                 } catch {
                     case e : FileNotFoundException =>
-                        println (e.getMessage)
+                        emitter.emitln (e.getMessage)
                 }
             // Complain otherwise
             case _ =>
-                println ("usage: run file.pl")
+                emitter.emitln ("usage: run file.pl")
 
         }
 
@@ -86,11 +86,11 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
      * Needed so that the process method can access it.
      */
     var programtree : Program = _
-    
+
     /**
      * Process the program by analysing it to check for semantic
-     * errors.  If any messages are produced, print them and 
-     * return false.  Otherwise, save the tree for the interpreter 
+     * errors.  If any messages are produced, print them and
+     * return false.  Otherwise, save the tree for the interpreter
      * and return true.
      */
     def processprogram (tree : Program) : Boolean = {
@@ -115,7 +115,7 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
     /**
      * The prompt to print before each line of input is read.
      */
-    override def prompt () = "?- "
+    override val prompt = "?- "
 
     /**
      * Process a query by passing it and the program to the interpreter.

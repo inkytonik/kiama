@@ -43,7 +43,8 @@ trait DynamicAttribution extends AttributionBase {
     /**
      * Lazily resets all memoisation tables.
      */
-    def resetMemo () = equationsVersion += 1
+    def resetMemo () : Unit =
+        equationsVersion += 1
 
     /**
      * Define a dynamic attribute of `T` nodes of type `U` by the function `f`.
@@ -58,8 +59,8 @@ trait DynamicAttribution extends AttributionBase {
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable ==> U) : T ==> U = {
         val childF = new (T ==> U) {
-            def apply (t : T) = f (t) (t.parent)
-            def isDefinedAt (t : T) = f (t) isDefinedAt t.parent
+            def apply (t : T) : U = f (t) (t.parent)
+            def isDefinedAt (t : T) : Boolean = f (t) isDefinedAt t.parent
         }
         attr (childF)
     }
@@ -80,7 +81,7 @@ trait DynamicAttribution extends AttributionBase {
      * @param attributeInitializer  A module defining dynamic attributes.
      * @param block                 A block to evaluate.
      */
-    def using[T] (attributeInitializer : => AnyRef) (block : => T) = {
+    def using[T] (attributeInitializer : => AnyRef) (block : => T) {
         try {
             use (attributeInitializer)
             block
@@ -133,7 +134,7 @@ trait DynamicAttribution extends AttributionBase {
         /**
          * Obtain the attribute value.
          */
-        def apply (t : T) = {
+        def apply (t : T) : U = {
             if (memoVersion != equationsVersion) {
                 memoVersion = equationsVersion
                 memo.clear
@@ -154,7 +155,8 @@ trait DynamicAttribution extends AttributionBase {
         /**
          * Is the attribute defined at the node `t`?
          */
-        def isDefinedAt (t : T) = composedF isDefinedAt t
+        def isDefinedAt (t : T) : Boolean =
+            composedF isDefinedAt t
 
         /**
          * Return the function defining this attribute as `ComposedPartialFunction`.
@@ -182,7 +184,7 @@ trait DynamicAttribution extends AttributionBase {
         }
 
         /**
-         * Remove the function `g` from the definitions of this attribute.  If 
+         * Remove the function `g` from the definitions of this attribute.  If
          * `g` was not previously added to the definitions, do nothing.
          */
         def -= (g : T ==> U) {
@@ -191,7 +193,7 @@ trait DynamicAttribution extends AttributionBase {
                     case g : DynamicAttribute[_, _] => g.f
                     case _                          => g
                 }
-            
+
             composedF -= uncached
             resetMemo
         }
@@ -216,12 +218,13 @@ trait DynamicAttribution extends AttributionBase {
         /**
          * Is there a function in the buffer that is defined at `t`?
          */
-        def isDefinedAt (t : T) = functions.exists(_ isDefinedAt t)
+        def isDefinedAt (t : T) : Boolean =
+            functions.exists(_ isDefinedAt t)
 
         /**
          * Apply the buffered functions to the value `t` in the order
          * that they appear in the buffer. Return the value of the first
-         * such function that is defined at `t`. If no function is 
+         * such function that is defined at `t`. If no function is
          * defined at `t`, throw a `MatchError` exception.
          */
         def apply (t : T) : U = {

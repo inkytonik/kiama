@@ -20,9 +20,9 @@ trait PrettyPrinter extends L2.source.PrettyPrinter {
 
             case Call (IdnUse (i), ps) =>
                 i <> paramsToDoc (ps map toParenDoc, comma)
-                
+
             case _ =>
-                super.toDoc (n)           
+                super.toDoc (n)
         }
 
     def paramsToDoc (ds : List[Doc], sep : Doc) : Doc =

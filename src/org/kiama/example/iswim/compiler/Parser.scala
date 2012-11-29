@@ -37,11 +37,11 @@ trait Parser extends JavaTokenParsers with WhitespacePositionedParserUtilities {
     import Syntax._
     import scala.math._
 
-    // Define comments using a parser because we are getting stack overflows 
+    // Define comments using a parser because we are getting stack overflows
     // in Java's regex implementation when we use a regex and try to parse a
     // long comment (say 60 lines).
 
-    lazy val whitespaceParser : PackratParser[Any] = 
+    lazy val whitespaceParser : PackratParser[Any] =
         rep (whiteSpace | comment)
 
     lazy val comment : PackratParser[Any] =

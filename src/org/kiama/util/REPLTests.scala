@@ -23,24 +23,30 @@ package util
 
 /**
  * A REPL that uses ScalaCheck to generate random instances of abstract
- * syntax trees of type T and prints them.
+ * syntax trees of type T and prints them using a configurable emitter.
  */
-trait GeneratingREPL[T] extends REPL {
+trait GeneratingREPLBase[T] extends REPL {
 
     import org.scalacheck._
+
+    /**
+     * Don't ignore whitespace lines since we are using them to indicate
+     * the generation command.
+     */
+    override val ignoreWhitespaceLines = false
 
     /**
      * Carry out setup processing for the REPL.
      */
     override def setup (args : Array[String]) : Boolean = {
-        println ("Each time you hit ENTER a new instance is generated and printed.")
+        emitter.emitln ("Each time you hit ENTER a new instance is generated and printed.")
         true
     }
 
     /**
      * Display a prompt.
      */
-    override def prompt () = "Hit ENTER to generate an instance: "
+    override val prompt = "Hit ENTER to generate an instance: "
 
     /**
      * The generator to use to make values of type T.
@@ -53,7 +59,7 @@ trait GeneratingREPL[T] extends REPL {
     def processline (line : String) {
         generator.arbitrary (Gen.Params ()) match {
             case Some (t) => process (t)
-            case None     => println ("can't generate an instance")
+            case None     => emitter.emitln ("can't generate an instance")
         }
     }
 
@@ -61,7 +67,13 @@ trait GeneratingREPL[T] extends REPL {
      * Process a generated value.  Default: print it.
      */
     def process (t : T) {
-        println (t)
+        emitter.emitln (t)
     }
 
 }
+
+/**
+ * A REPL that uses ScalaCheck to generate random instances of abstract
+ * syntax trees of type T and prints them to standard output.
+ */
+trait GeneratingREPL[T] extends GeneratingREPLBase[T] with StdoutEmitter

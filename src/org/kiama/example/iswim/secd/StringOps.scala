@@ -29,10 +29,10 @@ package example.iswim.secd
 
 object StringOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Basic string operations.
      */
     case class PushString(s : String) extends Instruction
@@ -98,19 +98,19 @@ trait StringOps extends SECDBase {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : Code ==> Unit = super.evalInst orElse {
-		// Push a string onto the stack
+    override def evalInst : Code ==> Unit = super.evalInst orElse {
+        // Push a string onto the stack
         case PushString(s) :: next =>
             stack := StringValue(unescape(s)) :: stack
             control := next
-    	// Make a new user exception value from string on the top of the stack
-    	// and push it on the stack.
-		case MkUserException() :: next => (stack : Stack) match {
-		    case StringValue(s) :: tail =>
-		        stack := UserExceptionValue(s) :: tail
-		        control := next
-		    case _ :: _ => raiseException(TypeError())
-		    case _ => raiseException(StackUnderflow())
-		}
-	}
+        // Make a new user exception value from string on the top of the stack
+        // and push it on the stack.
+        case MkUserException() :: next => (stack : Stack) match {
+            case StringValue(s) :: tail =>
+                stack := UserExceptionValue(s) :: tail
+                control := next
+            case _ :: _ => raiseException(TypeError())
+            case _ => raiseException(StackUnderflow())
+        }
+    }
 }

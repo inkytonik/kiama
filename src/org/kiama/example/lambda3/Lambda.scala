@@ -45,28 +45,28 @@ object AST {
      * Numeric expression.
      */
     case class Num (i : Int) extends Exp {
-        override def toString () = i.toString
+        override def toString : String = i.toString
     }
 
     /**
      * Variable expression.
      */
     case class Var (x : Name) extends Exp {
-        override def toString () = x.toString
+        override def toString : String = x.toString
     }
 
     /**
      * Application of l to r.
      */
     case class App (e1 : Exp, e2 : Exp) extends Exp {
-        override def toString () = "(" + e1 + " " + e2 + ")"
+        override def toString : String = "(" + e1 + " " + e2 + ")"
     }
 
     /**
      * Lambda expression containing an abstracted binding.
      */
     case class Lam (b : Bind) extends Exp {
-        override def toString () = "(\\" + b.name + " . " + b.term + ")"
+        override def toString : String = "(\\" + b.name + " . " + b.term + ")"
     }
 
     /**
@@ -76,7 +76,7 @@ object AST {
      */
     abstract class Query {
         type T
-        def execute () : T
+        def execute : T
     }
 
     /**
@@ -84,7 +84,7 @@ object AST {
      */
     case class EquivQuery (e1 : Exp, e2 : Exp) extends Query {
         type T = Boolean
-        def execute () = alphaequiv (e1, e2)
+        def execute : T = alphaequiv (e1, e2)
     }
 
     /**
@@ -92,7 +92,7 @@ object AST {
      */
     case class EvalQuery (e : Exp) extends Query {
         type T = Exp
-        def execute () = cbn_eval (e)
+        def execute : T = cbn_eval (e)
     }
 
     /**
@@ -100,15 +100,15 @@ object AST {
      */
     case class FreeNamesQuery (e : Exp) extends Query {
         type T = Set[Name]
-        def execute () = fv (e)
+        def execute : T = fv (e)
     }
-    
+
     /**
      * A query that determines whether a name is not free in an expression.
      */
     case class FreshQuery (n : Name, e : Exp) extends Query {
         type T = Boolean
-        def execute () = fresh (n) (e)
+        def execute : T = fresh (n) (e)
     }
 
     /**
@@ -117,7 +117,7 @@ object AST {
      */
     case class SubstQuery (n : Name, e1 : Exp, e2 : Exp) extends Query {
         type T = Exp
-        def execute () = subst (n, e1) (e2)
+        def execute : T = subst (n, e1) (e2)
     }
 
     /**
@@ -125,7 +125,7 @@ object AST {
      */
     case class SwapQuery (tr : Trans, e : Exp) extends Query {
         type T = Exp
-        def execute () = swap (tr) (e)
+        def execute : T = swap (tr) (e)
     }
 
 }
@@ -215,25 +215,25 @@ object Evaluator {
 object Lambda extends ParsingREPL[AST.Query] with Parser {
 
     override def setup (args : Array[String]) : Boolean = {
-        println
-        println ("Enter lambda calculus queries:")
-        println
-        println (" e               evaluate e")
-        println (" (n1 <-> n2) e   swap n1 and n2 in e")
-        println (" n # e           is n fresh in e?")
-        println (" fv e            free variables of e")
-        println (" e1 === e2       is e1 alpha equivalent to e2?")
-        println (" [n -> e1] e2    substitute e1 for n in e2")
-        println
-        println ("where n = name, e = expression")
-        println
+        emitter.emitln
+        emitter.emitln ("Enter lambda calculus queries:")
+        emitter.emitln
+        emitter.emitln (" e               evaluate e")
+        emitter.emitln (" (n1 <-> n2) e   swap n1 and n2 in e")
+        emitter.emitln (" n # e           is n fresh in e?")
+        emitter.emitln (" fv e            free variables of e")
+        emitter.emitln (" e1 === e2       is e1 alpha equivalent to e2?")
+        emitter.emitln (" [n -> e1] e2    substitute e1 for n in e2")
+        emitter.emitln
+        emitter.emitln ("where n = name, e = expression")
+        emitter.emitln
         true
     }
 
-    override def prompt () = "query> "
+    override val prompt = "query> "
 
     def process (q : AST.Query) {
-        println (q.execute ())
+        emitter.emitln (q.execute)
     }
 
 }

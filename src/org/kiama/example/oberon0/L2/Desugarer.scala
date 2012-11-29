@@ -159,7 +159,7 @@ trait Desugarer extends L0.Desugarer {
                 case Case (es, b) => (condsToExp (es), b)
             },
             optelse
-        ) 
+        )
 
     }
 

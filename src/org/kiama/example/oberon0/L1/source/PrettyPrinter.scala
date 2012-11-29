@@ -13,12 +13,12 @@ trait PrettyPrinter extends L0.source.PrettyPrinter {
         n match {
             case s : IfStatement =>
                 ifToDoc (s)
-                
+
             case s : WhileStatement =>
                 "WHILE" <+> toDoc (s.cond) <+> "DO" <> semisep (s.block.stmts) <@> "END"
 
             case _ =>
-                super.toDoc (n)           
+                super.toDoc (n)
         }
 
     def ifToDoc (s : IfStatement) : Doc = {
@@ -31,6 +31,6 @@ trait PrettyPrinter extends L0.source.PrettyPrinter {
         hcat (s.elsifs map elsifToDoc) <>
         s.optelse.map (b => line <> "ELSE" <> semisep (b.stmts)).getOrElse (empty) <@>
         "END"
-    }        
+    }
 
 }

@@ -27,10 +27,10 @@ package example.iswim.secd
 
 object IntComparisonOps {
 
-	import SECDBase._
+    import SECDBase._
 
-	/**
-	 * Extra bytecode instructions for this extension
+    /**
+     * Extra bytecode instructions for this extension
      * Compare two integers.
      */
     case class LessThan() extends Instruction
@@ -49,7 +49,7 @@ trait IntComparisonOps extends SECDBase with IntegerOps with BooleanOps {
      * Extend the partial function to evaluate a single instruction
      * to handle our new instructions.
      */
-	override def evalInst : Code ==> Unit = super.evalInst orElse {
+    override def evalInst : Code ==> Unit = super.evalInst orElse {
         case LessThan() :: next => (stack : Stack) match {
             case IntValue(n) :: IntValue(m) :: tail =>
                 stack := (if (m < n) TrueValue() else FalseValue()) :: tail
@@ -64,5 +64,5 @@ trait IntComparisonOps extends SECDBase with IntegerOps with BooleanOps {
             case _ :: _ :: _ => raiseException(TypeError())
             case _ => raiseException(StackUnderflow())
         }
-	}
+    }
 }

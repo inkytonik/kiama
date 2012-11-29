@@ -10,21 +10,21 @@ trait SymbolTable extends L3.SymbolTable {
      * type.
      */
     case class ArrayType (size : Int, elemtype : Type) extends Type {
-        override def toString = "ARRAY " + size + " OF " + elemtype
+        override def toString : String = "ARRAY " + size + " OF " + elemtype
     }
 
     /**
      * A record with the given fields.
      */
     case class RecordType (fields : List[Field]) extends Type {
-        override def toString = "RECORD " + fields.mkString ("; ") + " END"
+        override def toString : String = "RECORD " + fields.mkString ("; ") + " END"
     }
 
     /**
      * A record field.
      */
     case class Field (ident : String, tipe : Type) extends Entity {
-        override def toString = ident + " : " + tipe
+        override def toString : String = ident + " : " + tipe
     }
 
     /**

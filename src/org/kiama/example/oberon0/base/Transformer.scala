@@ -3,7 +3,7 @@ package example.oberon0
 package base
 
 /**
- * Interface for all transformers. Also provides operations that are 
+ * Interface for all transformers. Also provides operations that are
  * useful in transformer implementations.
  */
 trait Transformer {

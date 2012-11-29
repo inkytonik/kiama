@@ -125,10 +125,10 @@ trait Generator {
 
     val genLeafExp = Gen.oneOf (genNum, genVar)
 
-    def genLamExp (sz : Int) =
+    def genLamExp (sz : Int) : Gen[Lam] =
         for { i <- genIdn; b <- genExp (sz/2) } yield Lam (i, b)
 
-    def genAppExp (sz : Int) =
+    def genAppExp (sz : Int) : Gen[App] =
         for { l <- genExp (sz/2); r <- genExp (sz/2) } yield App (l, r)
 
     def genExp (sz : Int) : Gen[Exp] =
@@ -146,5 +146,10 @@ trait Generator {
  * A read-eval-print loop for generating random expressions.
  */
 object LambdaGen extends GeneratingREPL[AST.Exp] with Generator {
-    def generator () = arbExp
+
+    import org.scalacheck.Arbitrary
+
+    def generator : Arbitrary[AST.Exp] =
+        arbExp
+
 }

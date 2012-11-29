@@ -3,11 +3,11 @@ package example.oberon0
 package L1.c
 
 trait PrettyPrinter extends L0.c.PrettyPrinter {
-    
+
     this : org.kiama.output.PrettyPrinter =>
 
     import base.c.CASTNode
-        
+
     override def toDoc (n : CASTNode) : Doc =
         n match {
             case CIfStatement (c, ts) =>

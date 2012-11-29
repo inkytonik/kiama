@@ -6,7 +6,7 @@ package L1
  * C Code generator for the L1 language.
  */
 trait CCodeGenerator extends L0.CCodeGenerator {
-    
+
     import base.c.CStatement
     import base.source.{Statement, Block}
     import c.{CIfElseStatement, CIfStatement, CWhileStatement}
@@ -15,7 +15,7 @@ trait CCodeGenerator extends L0.CCodeGenerator {
 
     /**
      * Add translation of IF and WHILE statements.
-     */    
+     */
     override def translate (s : Statement) : CStatement =
         s match {
             case IfStatement (c, ss, eis, oe) =>
@@ -23,7 +23,7 @@ trait CCodeGenerator extends L0.CCodeGenerator {
 
             case WhileStatement (c, b) =>
                 CWhileStatement (translate (c), translate (b))
-                
+
             case _ =>
                 super.translate (s)
         }
@@ -38,7 +38,7 @@ trait CCodeGenerator extends L0.CCodeGenerator {
         val tss = translate (ss)
         var s = oe.map (b => CIfElseStatement (te, tss, translate (b))).getOrElse (CIfStatement (te, tss))
         for ((e,ss) <- eis.init.reverse) {
-            s = CIfElseStatement (translate (e), translate (ss), s) 
+            s = CIfElseStatement (translate (e), translate (ss), s)
         }
         s
     }

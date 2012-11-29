@@ -70,15 +70,15 @@ class SyntaxAnalysis extends PositionedParserUtilities {
 
     lazy val constantdecls : Parser[List[Declaration]] =
         opt ("CONST" ~> rep1 (constantdecl <~ ";")) ^^
-        	{
-        	    case None     => Nil
+            {
+                case None     => Nil
                 case Some (l) => l
             }
 
     lazy val variabledecls : Parser[List[Declaration]] =
         opt ("VAR" ~> rep1 (variabledecl <~ ";")) ^^
-        	{
-        	    case None     => Nil
+            {
+                case None     => Nil
                 case Some (l) => l
             }
 
@@ -96,7 +96,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
             { case i ~ cs => EnumVar (i, cs map { case p @ Pos (s) => EnumConst (s) setPos p }) }
 
     lazy val fielddecl : Parser[Identifier] =
-    	ident <~ ":" <~ "INTEGER" <~ ";"
+        ident <~ ":" <~ "INTEGER" <~ ";"
 
     lazy val statementseq : Parser[List[Statement]] =
         statement*
@@ -112,10 +112,10 @@ class SyntaxAnalysis extends PositionedParserUtilities {
         "RAISE" ~> ident <~ ";" ^^ RaiseStmt
 
     lazy val conditional : Parser[IfStmt] =
-        "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt 
+        "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt
 
     lazy val optelseend : Parser[List[Statement]] =
-    	"ELSE" ~> statementseq <~ "END" |
+        "ELSE" ~> statementseq <~ "END" |
         "END" ^^^ Nil
 
     lazy val iteration : Parser[Statement] =

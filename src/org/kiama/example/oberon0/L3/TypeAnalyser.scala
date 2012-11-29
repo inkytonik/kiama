@@ -31,7 +31,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
             case _ =>
                 // Do nothing by default
         }
-        
+
         super.check (n)
     }
 
@@ -55,8 +55,8 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
         }
 
     /**
-     * Calculate the parameter information list for a procedure.  If it's 
-     * a built-in we have the information already, otherwise we need to 
+     * Calculate the parameter information list for a procedure.  If it's
+     * a built-in we have the information already, otherwise we need to
      * work it out from the declaration.  Returns None if the entity is
      * not a procedure.
      */
