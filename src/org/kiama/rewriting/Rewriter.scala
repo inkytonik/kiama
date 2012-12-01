@@ -153,11 +153,10 @@ trait Rewriter {
     def strategy (f : Term ==> Option[Term]) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t) {
+                if (f isDefinedAt t)
                     f (t)
-                } else {
+                else
                     None
-                }
             }
         }
 
@@ -177,11 +176,10 @@ trait Rewriter {
     def rule (f : Term ==> Term) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t) {
+                if (f isDefinedAt t)
                     Some (f (t))
-                } else {
+                else
                     None
-                }
             }
         }
 
@@ -195,11 +193,10 @@ trait Rewriter {
     def rulefs (f : Term ==> Strategy) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t) {
+                if (f isDefinedAt t)
                     (f (t)) (t)
-                } else {
+                else
                     None
-                }
             }
         }
 
@@ -242,9 +239,8 @@ trait Rewriter {
     def query[T] (f : Term ==> T) : Strategy =
         new Strategy {
             def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t) {
+                if (f isDefinedAt t)
                     f (t)
-                }
                 Some (t)
             }
         }
@@ -518,9 +514,9 @@ trait Rewriter {
 
             private def allProduct (p : Product) : Option[Term] = {
                 val numchildren = p.productArity
-                if (numchildren == 0) {
+                if (numchildren == 0)
                     Some (p)
-                } else {
+                else {
                     val newchildren = new Array[AnyRef](numchildren)
                     var changed = false
                     var i = 0
@@ -546,9 +542,9 @@ trait Rewriter {
 
             private def allRewritable (r : Rewritable) : Option[Term] = {
                 val numchildren = r.arity
-                if (numchildren == 0) {
+                if (numchildren == 0)
                     Some (r)
-                } else {
+                else {
                     val children = r.deconstruct
                     val newchildren = new Array[Any](numchildren)
                     var changed = false
@@ -793,9 +789,9 @@ trait Rewriter {
 
             private def someProduct (p : Product) : Option[Term] = {
                 val numchildren = p.productArity
-                if (numchildren == 0) {
+                if (numchildren == 0)
                     None
-                } else {
+                else {
                     val newchildren = new Array[AnyRef](numchildren)
                     var success = false
                     var changed = false
@@ -817,9 +813,8 @@ trait Rewriter {
                         if (changed) {
                             val ret = dup (p, newchildren)
                             Some (ret)
-                        } else {
+                        } else
                             Some (p)
-                        }
                     else
                         None
                 }
@@ -827,9 +822,9 @@ trait Rewriter {
 
             private def someRewritable (r : Rewritable) : Option[Term] = {
                 val numchildren = r.arity
-                if (numchildren == 0) {
+                if (numchildren == 0)
                     None
-                } else {
+                else {
                     val children = r.deconstruct
                     val newchildren = new Array[Any](numchildren)
                     var success = false
@@ -852,9 +847,8 @@ trait Rewriter {
                         if (changed) {
                             val ret = r.reconstruct (newchildren)
                             Some (ret)
-                        } else {
+                        } else
                             Some (r)
-                        }
                     else
                         None
                 }
