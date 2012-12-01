@@ -29,7 +29,7 @@ package rewriting
  * based on the Stratego library, but also on combinators found in the Scrap Your
  * Boilerplate and Uniplate libraries for Haskell.
  */
-class Rewriter {
+trait Rewriter {
 
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
@@ -363,7 +363,7 @@ class Rewriter {
     /**
      * Cache of constructors for product duplication.
      */
-    private val constrcache =
+    protected val constrcache =
         new WeakHashMap[java.lang.Class[_], java.lang.reflect.Constructor[_]]
 
     /**
@@ -391,7 +391,7 @@ class Rewriter {
      * properly. Object references will be returned unchanged; other values
      * will be boxed.
      */
-    private def makechild (c : Any) : AnyRef =
+    protected def makechild (c : Any) : AnyRef =
         c.asInstanceOf[AnyRef]
 
     /**
@@ -477,7 +477,7 @@ class Rewriter {
      * reference equality, otherwise throw an error since we should be
      * able to cast anything to reference.
      */
-    private def same (v1 : Any, v2 : Any) : Boolean =
+    protected def same (v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
             v2 == null
         else if (v2 == null)
