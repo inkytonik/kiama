@@ -187,7 +187,7 @@ trait TestCompiler[T] extends FunSuite {
                                 val cp = path + "/" + c
                                 val rt = c.replace (srcext, resext)
                                 val rp = path + "/" + rt
-                                filetest (name, rp, null, "", args :+ cp, rt)
+                                filetest (name, rp, new Console, "", args :+ cp, rt)
                         }
                     }
                 }

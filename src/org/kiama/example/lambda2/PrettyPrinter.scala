@@ -68,7 +68,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
      * Return a pretty-printing document for an instance of a type declaration.
      */
     private def showtypedecl (t : Type) : Doc =
-        if (t == null)
+        if (t == NoType ())
             empty
         else
             space <> ':' <+> showtype (t)
@@ -80,6 +80,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
         t match {
             case IntType ()       => "Int"
             case FunType (t1, t2) => showtype (t1) <+> "->" <+> showtype (t2)
+            case NoType ()        => "empty" // Not used
         }
 
     /**

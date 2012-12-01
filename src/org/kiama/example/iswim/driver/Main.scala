@@ -55,27 +55,27 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator with StdoutE
         var dumpFlag : Boolean = false
         var debugFlag : Boolean = false
         var helpFlag : Boolean = false
-        var iswimFileName : String = null
+        var iswimFileName : Option[String] = None
 
         /**
          * Process command line arguments, setting appropriate
          * compilation flags as we go.
          */
         def processArgs(args : List[String]) : Boolean = args match {
-            case Nil => iswimFileName != null
+            case Nil => iswimFileName != None
             case arg :: rest =>
-                if (iswimFileName != null) false
+                if (iswimFileName != None) false
                 else if (arg.startsWith("-")) {
                     if (arg == "-h") { helpFlag = true; processArgs(rest) }
                     else if (arg == "-b") { dumpFlag = true; processArgs(rest) }
                     else if (arg == "-e") { executeFlag = true; processArgs(rest) }
                     else if (arg == "-d") { executeFlag = true; debugFlag = true; processArgs(rest) }
                     else false }
-                else { iswimFileName = arg; processArgs(rest) }
+                else { iswimFileName = Some (arg); processArgs(rest) }
         }
 
         if (processArgs(args.toList)) {
-            val reader = filereader (iswimFileName)
+            val reader = filereader (iswimFileName.get)
             parseAll(start, reader) match {
                 case Success(iswimcode,_) =>
                     initTree (iswimcode)

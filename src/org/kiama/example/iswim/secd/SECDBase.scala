@@ -95,35 +95,26 @@ object SECDBase {
      * collapse these into a single ListBuffer when they are included into a CodeSegment
      */
 
-    class CodeTree(var bdy : List[ByteCodeBase]) extends ByteCodeBase {
+    class CodeTree(bdy : List[ByteCodeBase]) extends ByteCodeBase {
 
-        /**
-         * Generate and manage flattened version of this code tree.
-         */
-        private var flattened : ListBuffer[Instruction] = null
-
-        def toCodeSegment : CodeSegment = {
-            if (flattened == null) {
-                flattened = new ListBuffer()
-                recursivelyFlatten(bdy)
-                bdy = null
-            }
-            new CodeSegment(flattened.toList)
-        }
-
-        private def recursivelyFlatten(nodes : List[ByteCodeBase]) {
-            for (b <- nodes) {
+        private lazy val flattened : List[Instruction] = {
+            val buffer = new ListBuffer[Instruction] ()
+            for (b <- bdy) {
                 b match {
                     case cs : CodeTree =>
-                        if (cs.flattened == null)
-                            recursivelyFlatten(cs.bdy)
-                        else
-                            flattened ++= cs.flattened
-                    case CodeSegment(code) => flattened ++= code
-                    case i : Instruction => flattened += i
+                        buffer ++= cs.flattened
+                    case CodeSegment(code) =>
+                        buffer ++= code
+                    case i : Instruction =>
+                        buffer += i
                 }
             }
+            buffer.toList
         }
+
+        def toCodeSegment : CodeSegment =
+            new CodeSegment(flattened)
+
     }
 
     object CodeTree {

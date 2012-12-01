@@ -43,7 +43,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
     var printastFlag : Boolean = _
     var pprintastFlag : Boolean = _
     var challengeFlag : Boolean = _
-    var input : String = _
+    var input : Option[String] = None
 
     val helpFlagDefault = false
     val printastFlagDefault = false
@@ -55,15 +55,15 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
         printastFlag = printastFlagDefault
         pprintastFlag = pprintastFlagDefault
         challengeFlag = challengeFlagDefault
-        input = null
+        input = None
     }
 
     def processargs (args : List[String]) : Boolean =
         args match {
             case Nil =>
-                input != null
+                input != None
             case arg :: rest =>
-                if (input != null)
+                if (input != None)
                     false
                 else if (arg.startsWith ("-")) {
                     if (arg == "-h") {
@@ -81,7 +81,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
                     } else
                         false
                 } else {
-                    input = arg
+                    input = Some (arg)
                     processargs (rest)
                 }
         }
@@ -97,7 +97,7 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
                 emitter.emitln (usageMessage)
                 Array.empty
             } else
-                Array (input)
+                Array (input.get)
         } else {
             emitter.emitln ("Program arguments were " + args.mkString (" "))
             emitter.emitln (usageMessage)
@@ -242,9 +242,9 @@ trait TransformingDriver extends Driver {
     override def processargs (args : List[String]) : Boolean =
         args match {
             case Nil =>
-                input != null
+                input != None
             case arg :: rest =>
-                if (input != null)
+                if (input != None)
                     false
                 else if (arg.startsWith ("-")) {
                     if (arg == "-i") {
@@ -256,7 +256,7 @@ trait TransformingDriver extends Driver {
                     } else
                         super.processargs (args)
                 } else {
-                    input = arg
+                    input = Some (arg)
                     processargs (rest)
                 }
         }
@@ -312,9 +312,9 @@ trait TranslatingDriver extends TransformingDriver {
     override def processargs (args : List[String]) : Boolean =
         args match {
             case Nil =>
-                input != null
+                input != None
             case arg :: rest =>
-                if (input != null)
+                if (input != None)
                     false
                 else if (arg.startsWith ("-")) {
                     if (arg == "-c") {
@@ -326,7 +326,7 @@ trait TranslatingDriver extends TransformingDriver {
                     } else
                         super.processargs (args)
                 } else {
-                    input = arg
+                    input = Some (arg)
                     processargs (rest)
                 }
         }

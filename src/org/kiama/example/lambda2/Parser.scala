@@ -39,7 +39,7 @@ trait Parser extends PositionedParserUtilities {
         exp2
 
     def itype : PackratParser[Type] =
-        if (typecheck) (":" ~> ttype) else ("" ^^^ null)
+        if (typecheck) (":" ~> ttype) else ("" ^^^ NoType ())
 
     lazy val exp2 : PackratParser[Exp] =
         exp2 ~ op ~ exp1 ^^ Opn |

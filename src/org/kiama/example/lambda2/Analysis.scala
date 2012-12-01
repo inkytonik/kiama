@@ -56,25 +56,30 @@ object Analysis {
      * are visible in that expression and their types.
      */
     val env : Exp => List[(Idn,Type)] =
-        childAttr {
-            case _ => {
+        attr {
 
-                // Nothing is visible at the root of the tree
-                case null              => List ()
+            // Nothing is visible at the root of the tree
+            case p if p.isRoot =>
+                List ()
 
-                // Inside a lambda expression the bound variable is now visible
-                // in addition to everything that is visible from above. Note
-                // that an inner declaration of a var hides an outer declaration
-                // of the same var since we add inner bindings at the beginning
-                // of the env and we search the env list below in tipe from
-                // beginning to end
-                case p @ Lam (x, t, _) => (x,t) :: p->env
+            // Othrewise, look at the context
+            case n =>
+                (n.parent) match {
 
-                // Other expressions do not bind new identifiers so they just
-                // get their environment from their parent
-                case p : Exp           => p->env
+                    // Inside a lambda expression the bound variable is now visible
+                    // in addition to everything that is visible from above. Note
+                    // that an inner declaration of a var hides an outer declaration
+                    // of the same var since we add inner bindings at the beginning
+                    // of the env and we search the env list below in tipe from
+                    // beginning to end
+                    case p @ Lam (x, t, _) => (x,t) :: p->env
 
-            }
+                    // Other expressions do not bind new identifiers so they just
+                    // get their environment from their parent
+                    case p : Exp           => p->env
+
+                }
+
         }
 
     /**

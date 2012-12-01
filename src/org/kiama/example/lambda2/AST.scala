@@ -98,6 +98,11 @@ object AST {
     case class FunType (t1 : Type, t2 : Type) extends Type
 
     /**
+     * No type has been specified.
+     */
+    case class NoType () extends Type
+
+    /**
      * Primitive binary operators.
      */
     sealed abstract class Op {

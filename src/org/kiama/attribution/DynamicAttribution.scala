@@ -32,7 +32,7 @@ package attribution
 trait DynamicAttribution extends AttributionBase {
 
     import java.util.IdentityHashMap
-    import scala.collection.mutable._
+    import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 
     type ChangeBuffer = ArrayBuffer[(DynamicAttribute[_, _], _ ==> _)]
 
@@ -210,16 +210,22 @@ trait DynamicAttribution extends AttributionBase {
     /**
      * A partial function composed of an ordered, mutable buffer of
      * PartialFunction instances. `f` is the iniital single occupant
-     * of the buffer.
+     * of the buffer. When the function is applied its component
+     * functions are checked in the reverse order of insertion.
      */
     class ComposedPartialFunction[T,U] (f : T ==> U) extends (T ==> U) {
-        val functions = new ArrayBuffer[T ==> U]
+
+        // Buffer to hold functions
+        val functions = new ListBuffer[T ==> U]
+
+        // Initially, just `f` is in the buffer
+        f +=: functions
 
         /**
          * Is there a function in the buffer that is defined at `t`?
          */
         def isDefinedAt (t : T) : Boolean =
-            functions.exists(_ isDefinedAt t)
+            functions.exists (_ isDefinedAt t)
 
         /**
          * Apply the buffered functions to the value `t` in the order
@@ -227,32 +233,31 @@ trait DynamicAttribution extends AttributionBase {
          * such function that is defined at `t`. If no function is
          * defined at `t`, throw a `MatchError` exception.
          */
-        def apply (t : T) : U = {
-            for (i <- (functions.size - 1) until (-1, -1)) {
-                if (functions(i) isDefinedAt t) return functions(i)(t)
-            }
-            throw new MatchError(t)
-        }
+        def apply (t : T) : U =
+            functions.collectFirst {
+                case function if function.isDefinedAt (t) =>
+                    function (t)
+            }.getOrElse (
+                throw new MatchError(t)
+            )
 
         /**
-         * Add `g` to the end of the buffer.
+         * Add `g` to the buffer.
          */
         def += (g : T ==> U) {
-            functions += g
+            g +=: functions
         }
 
         /**
-         * Remove `g` from the buffer if it is there.  Otherwise,
-         * do nothing.
+         * Remove the first occurrence of `g` from the buffer if it is there.
+         * Otherwise, do nothing.
          */
         def -= (g : T ==> U) {
-            val removed = functions.lastIndexOf(g)
+            val removed = functions.indexOf (g)
             if (removed != -1)
-                functions.remove(removed)
+                functions.remove (removed)
         }
 
-        // Put the constructor argument in the buffer
-        this += f
     }
 
 }
