@@ -1,6 +1,4 @@
-/**
- * JSON tree tests.
- *
+/*
  * This file is part of Kiama.
  *
  * Copyright (C) 2011-2012 Anthony M Sloane, Macquarie University.

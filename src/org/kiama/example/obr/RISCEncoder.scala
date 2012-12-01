@@ -1,6 +1,4 @@
-/**
- * Encoder of RISC language programs
- *
+/*
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.

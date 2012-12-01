@@ -1,4 +1,4 @@
-/**
+/*
  * This file is part of Kiama.
  *
  * Copyright (C) 2010-2012 Dominic R B Verity, Anthony Sloane, Macquarie University.

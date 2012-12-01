@@ -1,6 +1,4 @@
-/**
- * Obr language implementation main program.
- *
+/*
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2012 Anthony M Sloane, Macquarie University.

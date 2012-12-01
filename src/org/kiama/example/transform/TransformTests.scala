@@ -1,6 +1,4 @@
-/**
- * Transformation compiler tests.
- *
+/*
  * This file is part of Kiama.
  *
  * Copyright (C) 2010-2012 Anthony M Sloane, Macquarie University.

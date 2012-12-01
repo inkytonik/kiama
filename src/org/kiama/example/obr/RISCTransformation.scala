@@ -1,6 +1,4 @@
-/**
- * Transformation of Obr language programs into RISC code.
- *
+/*
  * This file is part of Kiama.
  *
  * Copyright (C) 2009-2010 Anthony M Sloane, Macquarie University.

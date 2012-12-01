@@ -18,7 +18,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/**
+/*
  * This file is derived from a JastAdd implementation of PicoJava, created
  * in the Department of Computer Science at Lund University.  See the
  * following web site for details:
