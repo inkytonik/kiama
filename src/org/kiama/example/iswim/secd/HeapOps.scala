@@ -52,7 +52,6 @@ trait HeapOps extends SECDBase {
 
     import HeapOps._
     import SECDBase._
-    import org.kiama.example.iswim.driver.PrettyPrinter._
 
     /**
      * Extra value types which come with this extension.
