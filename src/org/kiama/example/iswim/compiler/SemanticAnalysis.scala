@@ -71,13 +71,13 @@ trait SemanticAnalysis {
      * preceeded by a clauses which match any value.
      */
     val unreachable : MatchClause => Boolean =
-        attr {
-            case m : MatchClause => m.prev[Iswim] match {
-                case n@MatchClause(Pattern(ns),_) =>
-                    n->unreachable || (ns.length == 1)
-                case _ => false
-            }
-        }
+        attr (
+            m => m.prev[Iswim] match {
+                     case n@MatchClause(Pattern(ns),_) =>
+                         n->unreachable || (ns.length == 1)
+                     case _ => false
+                 }
+        )
 
     val isSemanticallyCorrect : Iswim => Boolean =
         attr {

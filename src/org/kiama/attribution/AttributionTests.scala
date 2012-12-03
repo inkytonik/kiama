@@ -310,17 +310,11 @@ class AttributionTests extends Tests {
         import Attribution._
 
         lazy val direct : Tree => Int =
-            attr {
-                case t => t->direct
-            }
+            attr (t => t->direct)
         lazy val indirect : Tree => Int =
-            attr ("indirect") {
-                case t => t->indirect2
-            }
+            attr ("indirect") (t => t->indirect2)
         lazy val indirect2 : Tree => Int =
-            attr {
-                case t => t->indirect
-            }
+            attr (t => t->indirect)
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
@@ -344,17 +338,11 @@ class AttributionTests extends Tests {
         import UncachedAttribution._
 
         lazy val direct : Tree => Int =
-            attr ("direct") {
-                case t => t->direct
-            }
+            attr ("direct") (t => t->direct)
         lazy val indirect : Tree => Int =
-            attr {
-                case t => t->indirect2
-            }
+            attr (t => t->indirect2)
         lazy val indirect2 : Tree => Int =
-            attr ("indirect2") {
-                case t => t->indirect
-            }
+            attr ("indirect2") (t => t->indirect)
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
@@ -378,17 +366,11 @@ class AttributionTests extends Tests {
         import Attribution._
 
         lazy val direct : Int => Tree => Int =
-            paramAttr ("direct") (i => {
-                case t => t->direct (i)
-            })
+            paramAttr ("direct") (i => (t => t->direct (i)))
         lazy val indirect : Int => Tree => Int =
-            paramAttr (i => {
-                case t => t->indirect2 (i)
-            })
+            paramAttr (i => (t => t->indirect2 (i)))
         lazy val indirect2 : Int => Tree => Int =
-            paramAttr ("indirect2") (i => {
-                case t => t->indirect (i)
-            })
+            paramAttr ("indirect2") (i => (t => t->indirect (i)))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 

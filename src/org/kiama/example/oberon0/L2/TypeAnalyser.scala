@@ -42,15 +42,13 @@ trait TypeAnalyser extends L1.TypeAnalyser {
     }
 
     override def exptypeDef : Expression => Type =
-        {
-            case n =>
-                n.parent match {
-                    case _ : ForStatement | _ : CaseStatement =>
-                        integerType
+        (n =>
+            n.parent match {
+                case _ : ForStatement | _ : CaseStatement =>
+                    integerType
 
-                    case _ =>
-                        super.exptypeDef (n)
-                }
-        }
+                case _ =>
+                    super.exptypeDef (n)
+            })
 
 }

@@ -133,16 +133,17 @@ object TypeAnalysis {
      * }
      */
     val superClass : ClassDecl => ClassDecl =
-        attr {
-            case c => c.Superclass match {
-                     case Some (i) =>
-                         i->decl match {
-                             case sc : ClassDecl if !hasCycleOnSuperclassChain (c) => sc
-                             case _                                                => null
-                         }
-                     case None     => null
-                 }
-        }
+        attr (
+            c =>
+                c.Superclass match {
+                    case Some (i) =>
+                        i->decl match {
+                            case sc : ClassDecl if !hasCycleOnSuperclassChain (c) => sc
+                            case _                                                => null
+                        }
+                    case None     => null
+                }
+        )
 
     /**
      * True if there is a cycle somewhere on the superclass chain, false otherwise.
@@ -155,16 +156,17 @@ object TypeAnalysis {
      *        return false;
      */
     val hasCycleOnSuperclassChain : ClassDecl => Boolean =
-        circular (true) {
-            case c => c.Superclass match {
-                     case Some (i) =>
-                         i->decl match {
-                             case sc : ClassDecl => hasCycleOnSuperclassChain (sc)
-                             case _              => false
-                         }
-                     case None     => false
-                 }
-        }
+        circular (true) (
+            c =>
+                c.Superclass match {
+                    case Some (i) =>
+                        i->decl match {
+                            case sc : ClassDecl => hasCycleOnSuperclassChain (sc)
+                            case _              => false
+                        }
+                    case None     => false
+                }
+        )
 
     /**
      * Is this expression a value or not?
@@ -201,5 +203,4 @@ object TypeAnalysis {
      *     to TypeUse new TypeUse(getName());
      * }
      */
-
 }

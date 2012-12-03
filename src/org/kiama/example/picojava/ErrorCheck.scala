@@ -50,12 +50,10 @@ object ErrorCheck {
      * }
      */
     val errors : Program => Seq[String] =
-        {
-            p => {
-                val b = new ListBuffer[String] ()
-                p->collectErrors (b)
-                b
-            }
+        p => {
+            val b = new ListBuffer[String] ()
+            p->collectErrors (b)
+            b
         }
 
     /**
@@ -95,8 +93,8 @@ object ErrorCheck {
      */
     val collectErrors : Buffer[String] => Attributable => Unit =
         // NOTE: Not using paramAttr here, since we don't want caching for this
-        c => {
-            case t =>
+        c => (
+            t => {
                 // Process the errors of the children of t
                 for (child <- t.children)
                     child->collectErrors (c)
@@ -123,7 +121,8 @@ object ErrorCheck {
                         i->record (c, "Unknown identifier " + i.Name)
                     case _ =>
                 }
-        }
+            }
+        )
 
     /**
      * Record a new error in the collection.

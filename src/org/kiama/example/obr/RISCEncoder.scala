@@ -141,8 +141,8 @@ object RISCEncoder {
      * children of each node will be evaluated in left to right order.
      */
      private val reg : RISCNode => RegNo =
-        childAttr {
-            case d => {
+        childAttr (
+            d => {
                 // Base case
                 case _ : RISCProg                   => firsttemp
 
@@ -161,7 +161,7 @@ object RISCEncoder {
                             s->reg
                     }
             }
-        }
+        )
 
     /**
      * Label for exit point

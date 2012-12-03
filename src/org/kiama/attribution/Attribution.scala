@@ -614,7 +614,7 @@ trait UncachedAttribution extends AttributionBase {
      * `T` must be `Attributable` so that parents can be accessed.
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable => U) : UncachedAttribute[T,U] =
-        attr { case t => f (t) (t.parent) }
+        attr (t => f (t) (t.parent))
 
 }
 

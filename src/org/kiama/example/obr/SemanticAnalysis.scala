@@ -35,8 +35,8 @@ object SemanticAnalysis {
      * using the Messaging module so that they can be reported to the user later.
      */
     val errors : Attributable => Unit =
-        attr {
-            case node =>
+        attr (
+            node => {
                 // Process the errors of the children of node
                 for (child <- node.children)
                     child->errors
@@ -143,7 +143,8 @@ object SemanticAnalysis {
                     case _ =>
 
                 }
-        }
+            }
+        )
 
     /**
      * Attribute to consecutively number enumeration constants.
@@ -321,8 +322,8 @@ object SemanticAnalysis {
      * the context impose on it.  Returns UnknownType () if any type will do.
      */
     val exptipe : Expression => Set[TypeBase] =
-        attr {
-            case e =>
+        attr (
+            e =>
                 (e.parent) match {
                     case AssignStmt (IndexExp (_, _), e1) if (e eq e1)  => Set (IntType ())
                     case AssignStmt (FieldExp (_, _), e1) if (e eq e1)  => Set (IntType ())
@@ -368,7 +369,7 @@ object SemanticAnalysis {
 
                     case _                                              => Set (UnknownType ())
                 }
-        }
+        )
 
     /**
      * Is the expression something that can be assigned to?
@@ -386,12 +387,12 @@ object SemanticAnalysis {
      * check that EXIT statements are placed appropriately.
      */
     val isinloop : Statement => Boolean =
-        attr {
-            case s => (s.parent) match {
+        attr (
+            s => (s.parent) match {
                 case _ : ObrInt    => false
                 case LoopStmt (_)  => true
                 case p : Statement => p->isinloop
             }
-        }
+        )
 
 }

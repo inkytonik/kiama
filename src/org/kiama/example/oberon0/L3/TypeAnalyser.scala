@@ -60,8 +60,8 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * the identifier use does not denote a procedure.
      */
     lazy val numparams : IdnUse => Option[Int] =
-        attr {
-            case n =>
+        attr (
+            n =>
                 (n->entity) match {
                     case Procedure (_, ps) =>
                         Some (ps.params.foldRight (0) {
@@ -72,7 +72,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
                     case _ =>
                         None
                 }
-        }
+        )
 
     /**
      * Calculate the parameter information list for a procedure.  If it's
@@ -81,8 +81,8 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * not a procedure.
      */
     lazy val parameters : Identifier => Option[List[ParamInfo]] =
-        attr {
-            case n =>
+        attr (
+            n =>
                 (n->entity) match {
                     case b : BuiltinProc =>
                         Some (b.params)
@@ -94,7 +94,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
                     case _ =>
                         None
                 }
-        }
+        )
 
     /**
      * Return the ith parameter type of the procedure denoted by u (counting
@@ -127,27 +127,23 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * The type of a parameter is the type of its underlying variable.
      */
     override def idntypeDef : IdnUse => Type =
-        {
-            case u =>
-                u->entity match {
-                    case Parameter (_, Variable (_, t)) =>
-                        t->deftype
-                    case _ =>
-                        super.idntypeDef (u)
-                }
-        }
+        (u =>
+            u->entity match {
+                case Parameter (_, Variable (_, t)) =>
+                    t->deftype
+                case _ =>
+                    super.idntypeDef (u)
+            })
 
     /**
      * The expected type of a parameter to a call is the type of the parameter
      * at that position.
      */
     override def exptypeDef : Expression => Type =
-        {
-            case e =>
-                e.parent match {
-                    case Call (u, _) => paramtype (u, e.index)
-                    case _           => super.exptypeDef (e)
-                }
-        }
+        (e =>
+            e.parent match {
+                case Call (u, _) => paramtype (u, e.index)
+                case _           => super.exptypeDef (e)
+            })
 
 }

@@ -147,14 +147,12 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
      * expected type.
      */
     override def exptypeDef : Expression => Type =
-        {
-            case n =>
-                n.parent match {
-                    case IndexExp (a, e) if a eq n     => unknownType
-                    case IndexExp (_, e) if e eq n     => integerType
-                    case p @ FieldExp (r, f) if r eq n => unknownType
-                    case _                             => super.exptypeDef (n)
-                }
-        }
+        (n =>
+            n.parent match {
+                case IndexExp (a, e) if a eq n     => unknownType
+                case IndexExp (_, e) if e eq n     => integerType
+                case p @ FieldExp (r, f) if r eq n => unknownType
+                case _                             => super.exptypeDef (n)
+            })
 
 }

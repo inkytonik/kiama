@@ -56,9 +56,9 @@ trait TypeAnalyser extends NameAnalyser {
      * The actual type of an expression following type aliases.
      */
     lazy val basetype : Expression => Type =
-        attr {
-            case e => typebasetype (e->tipe)
-        }
+        attr (
+            e => typebasetype (e->tipe)
+        )
 
     /**
      * The actual type that a user type denotes.
@@ -97,15 +97,13 @@ trait TypeAnalyser extends NameAnalyser {
         attr (idntypeDef)
 
     def idntypeDef : IdnUse => Type =
-        {
-            case u =>
-                u->entity match {
-                    case Constant (_, ConstDecl (_, e)) => e->tipe
-                    case IntegerValue (_, t, _)         => t
-                    case Variable (_, t)                => t->deftype
-                    case _                              => unknownType
-                }
-        }
+        (u =>
+            u->entity match {
+                case Constant (_, ConstDecl (_, e)) => e->tipe
+                case IntegerValue (_, t, _)         => t
+                case Variable (_, t)                => t->deftype
+                case _                              => unknownType
+            })
 
     /**
      * The type given by a type definition.
@@ -137,18 +135,16 @@ trait TypeAnalyser extends NameAnalyser {
         attr (exptypeDef)
 
     def exptypeDef : Expression => Type =
-        {
-            case n =>
-                n.parent match {
-                    case _ : OrExp | _ : AndExp | _ : NotExp =>
-                        booleanType
+        (n =>
+            n.parent match {
+                case _ : OrExp | _ : AndExp | _ : NotExp =>
+                    booleanType
 
-                    case Assignment (d, _) =>
-                        d->tipe
+                case Assignment (d, _) =>
+                    d->tipe
 
-                    case _ =>
-                        integerType
-                }
-        }
+                case _ =>
+                    integerType
+            })
 
 }

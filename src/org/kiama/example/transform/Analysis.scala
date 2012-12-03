@@ -36,17 +36,17 @@ object Analysis {
     import scala.collection.immutable.HashMap
 
     lazy val prioenv : Program => Map[String,Int] =
-        attr {
-            case p => HashMap (p.ops : _*)
-        }
+        attr (
+            p => HashMap (p.ops : _*)
+        )
 
     lazy val prio : String => ASTNode => Int =
-        paramAttr {
+        paramAttr (
             op => {
                 case p : Program => (p->prioenv) getOrElse (op, 0)
                 case e           => (e.parent[ASTNode])->prio (op)
             }
-        }
+        )
 
     lazy val op_tree : ExpR => Exp =
         attr {
@@ -107,9 +107,9 @@ object Analysis {
      * ExpR are forwarded to op_tree.
      */
     implicit val ast : ExpR => Exp =
-        tree {
-            case e => e->op_tree
-        }
+        tree (
+            e => e->op_tree
+        )
 
     /**
      * Report errors in an expression.  Currently only variables that

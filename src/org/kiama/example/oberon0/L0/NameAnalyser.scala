@@ -170,13 +170,11 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
         attr (rootconstexpDef)
 
     def rootconstexpDef : Expression => Boolean =
-        {
-            case e =>
-                (e.parent) match {
-                    case _ : ConstDecl  => true
-                    case _              => false
-                }
-        }
+        (e =>
+            (e.parent) match {
+                case _ : ConstDecl  => true
+                case _              => false
+            })
 
     /**
      * Is an expression expected to be constant or not? Either the expression

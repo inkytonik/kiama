@@ -247,8 +247,8 @@ object SemanticAnalysis {
      * argument list.
      */
     var exptipe : Term => Type =
-        attr {
-            case n =>
+        attr (
+            n =>
                 n.parent match {
                     case p @ Pred (s, _) =>
                         (p->entityin) match {
@@ -263,6 +263,6 @@ object SemanticAnalysis {
                     case _ =>
                         UnknownType ()
                 }
-        }
+        )
 
 }
