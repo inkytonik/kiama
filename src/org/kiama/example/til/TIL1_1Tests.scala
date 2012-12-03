@@ -22,7 +22,6 @@ package org.kiama
 package example.til
 
 import org.kiama.util.RegexParserTests
-import org.scalatest.junit.JUnitRunner
 
 class TIL1_1Tests extends TIL1_1 with RegexParserTests {
 

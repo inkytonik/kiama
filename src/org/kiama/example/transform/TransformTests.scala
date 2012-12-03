@@ -23,7 +23,6 @@ package example.transform
 
 import AST.Program
 import org.kiama.util.TestCompiler
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Transformation compiler tests.

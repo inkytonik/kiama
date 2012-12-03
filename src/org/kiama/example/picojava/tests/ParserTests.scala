@@ -31,7 +31,6 @@ package example.picojava.tests
 
 import org.kiama.example.picojava.Parser
 import org.kiama.util.RegexParserTests
-import org.scalatest.junit.JUnitRunner
 
 class ParserTests extends Parser with RegexParserTests {
 

@@ -30,7 +30,6 @@ package org.kiama
 package example.picojava.tests
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 class DotNameResolutionTests extends Tests {
 

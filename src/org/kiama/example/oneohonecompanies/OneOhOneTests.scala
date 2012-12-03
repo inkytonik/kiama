@@ -22,7 +22,6 @@ package org.kiama
 package example.oneohonecompanies
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 class OneOhOneTests extends Tests {
 

@@ -24,7 +24,6 @@ package org.kiama.example.obr.tests
 import org.kiama.example.obr._
 import org.kiama.example.obr.ObrTree.ObrInt
 import org.kiama.util.TestCompiler
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Obr regression tests: compilation to assembly.

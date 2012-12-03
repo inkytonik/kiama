@@ -26,7 +26,6 @@ package example.iswim.tests
  */
 
 import org.kiama.util.RegexParserTests
-import org.scalatest.junit.JUnitRunner
 import org.kiama.example.iswim.compiler._
 
 class ParserTests extends RegexParserTests with Parser {

@@ -21,8 +21,6 @@
 package org.kiama
 package util
 
-import org.scalatest.junit.JUnitRunner
-
 /**
  * Basic tests of parser utilities module.  Many cases are already tested
  * in the examples, so we only test for coverage here.

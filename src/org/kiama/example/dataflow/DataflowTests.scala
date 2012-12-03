@@ -23,7 +23,6 @@ package example.dataflow
 
 import DataflowAST.Stm
 import org.kiama.util.TestCompiler
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests of data flow attribution.

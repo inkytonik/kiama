@@ -30,7 +30,6 @@ package example.iswim.tests
 
 import org.kiama.example.iswim.secd._
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 class SECDTests extends Tests {
 

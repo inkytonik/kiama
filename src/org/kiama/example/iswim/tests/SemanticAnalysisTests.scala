@@ -28,7 +28,6 @@ package example.iswim.tests
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.example.iswim.compiler._
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
 

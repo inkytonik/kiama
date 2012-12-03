@@ -22,7 +22,6 @@ package org.kiama
 package util
 
 import org.scalatest.FunSuite
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Basic tests of compiler module.  Normal usage is tested by many of

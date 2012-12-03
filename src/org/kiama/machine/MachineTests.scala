@@ -22,7 +22,6 @@ package org.kiama
 package machine
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Basic tests of machine module.  More complex setups are tested

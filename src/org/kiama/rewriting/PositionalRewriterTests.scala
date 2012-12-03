@@ -22,7 +22,6 @@ package org.kiama
 package rewriting
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Positional rewriting tests.

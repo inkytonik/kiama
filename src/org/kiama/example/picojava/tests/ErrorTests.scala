@@ -31,7 +31,6 @@ package example.picojava.tests
 
 import org.kiama.example.picojava.Parser
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 class ErrorTests extends Tests with Parser {
 

@@ -22,7 +22,6 @@ package org.kiama
 package output
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Basic tests of pretty-printer module.  More complex setups and some

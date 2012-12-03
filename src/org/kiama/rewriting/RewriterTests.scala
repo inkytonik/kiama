@@ -23,7 +23,6 @@ package rewriting
 
 import org.kiama.example.imperative.Generator
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
 /**

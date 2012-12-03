@@ -22,7 +22,6 @@ package org.kiama
 package example.til
 
 import org.kiama.util.TransformerTests
-import org.scalatest.junit.JUnitRunner
 
 class TIL2_3Tests extends TIL2_3 with TransformerTests {
 

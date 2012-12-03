@@ -22,7 +22,6 @@ package org.kiama
 package example.dataflow
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests of extended data flow attribution.

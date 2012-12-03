@@ -23,7 +23,6 @@ package example.json
 
 import org.kiama.util.RegexParserTests
 import org.scalatest.FunSuite
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests that check that the rewriting and decoration works correctly.

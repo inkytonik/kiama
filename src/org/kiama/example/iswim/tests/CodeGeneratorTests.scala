@@ -27,7 +27,6 @@ package example.iswim.tests
  */
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
 

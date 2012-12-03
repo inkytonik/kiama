@@ -23,7 +23,6 @@ package example.imperative
 
 import org.kiama.util.GeneratingREPL
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Imperative language tests pretty-printer tests.

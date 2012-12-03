@@ -22,7 +22,6 @@ package org.kiama
 package attribution
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 
 /**
  * Tests of basic attribution.

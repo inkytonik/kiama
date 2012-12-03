@@ -22,7 +22,6 @@ package org.kiama
 package example.lambda3
 
 import org.kiama.util.Tests
-import org.scalatest.junit.JUnitRunner
 import org.scalatest.prop.Checkers
 
 /**
