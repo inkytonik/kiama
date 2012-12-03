@@ -72,20 +72,20 @@ object Analysis {
         }
 
     lazy val eval_top : ((List[String], String, List[Exp])) => ExpR => Stacks =
-        paramAttr[(List[String], String, List[Exp]), ExpR, Stacks] {
-            case (Nil, op, opnd) => {
-                case _ =>
+        paramAttr {
+            case (Nil, op, opnd) => (
+                _ =>
                     (List (op), opnd)
-            }
-            case (top_op :: rest_ops, op, opnd) => {
-                case e =>
+            )
+            case (top_op :: rest_ops, op, opnd) => (
+                e =>
                     if (e->prio (top_op) < e->prio (op))
                         (op :: top_op :: rest_ops, opnd)
                     else {
                         val o1 :: o2 :: rest = opnd
                         e->eval_top (rest_ops, op, BinExp (o2, top_op, o1) :: rest)
                     }
-            }
+            )
         }
 
     /**
