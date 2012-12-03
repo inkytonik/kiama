@@ -21,13 +21,13 @@
 package org.kiama
 package util
 
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfter, FunSuite}
 import scala.util.parsing.combinator.RegexParsers
 
 /**
  * General test support.
  */
-trait Tests extends FunSuite {
+trait Tests extends FunSuite with BeforeAndAfter {
 
     import org.kiama.util.Messaging._
     import org.scalatest.Tag

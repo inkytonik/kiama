@@ -29,6 +29,7 @@ import org.scalatest.junit.JUnitRunner
  */
 class AttributionTests extends Tests {
 
+    import Attribution._
     import scala.collection.GenSeq
 
     abstract class Tree extends Attributable
@@ -44,40 +45,64 @@ class AttributionTests extends Tests {
     case class TripleTree (p : (Tree,Tree,Tree)) extends Tree
     case class QuadTree (p : (Tree,Tree,Tree,Tree)) extends Tree
 
-    test ("first child can be accessed") {
-        import Attribution.initTree
-        val n = Pair (Leaf (1), Leaf (2))
-        initTree (n)
-        assert (n.left eq n.firstChild, "first child of pair")
+    val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+    val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+    val u = Pair (Leaf (1), Leaf (2))
+
+    var count = 0
+
+    lazy val maximumDef : Tree => Int =
+        {
+            case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
+            case Leaf (v)   => v
+        }
+
+    lazy val maximum : CachedAttribute[Tree,Int] =
+        attr (maximumDef)
+
+    lazy val cattrDef : Tree => Attributable => Int =
+        {
+            case Pair (l, r) => {
+                case Pair (l, r) => 0
+                case Leaf (v)    => 1
+                case _           => 2
+            }
+            case Leaf (v) => {
+                case Pair (l, r) => 3
+                case Leaf (v)    => 4
+                case _           => 5
+            }
+            case _ => {
+                case _ => 6
+            }
+        }
+
+    lazy val pattrDef : String => Attributable => Int =
+        {
+            case "hello" => {
+                case Pair (l, r) => count = count + 1; 0
+                case Leaf (v)    => 1
+                case _           => 2
+            }
+            case "goodbye" => {
+                case _ => 3
+            }
+        }
+
+    before {
+        count = 0
+        maximum.reset ()
     }
 
     test ("cached attributes are only evaluated once") {
-        import Attribution._
-
-        var count = 0
-
-        lazy val maximum : Tree => Int =
-            attr {
-                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
-                case Leaf (v)   => v
-            }
-
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-
         expectResult (10, "first value") (t->maximum)
         expectResult (10, "second value") (t->maximum)
         expectResult (2, "evaluation count") (count)
     }
 
     test ("constant attributes are only evaluated once") {
-        import Attribution._
-
-        var count = 0
-
         lazy val answer : Tree => Int =
             constant { count = count + 1; 42 }
-
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         expectResult (42, "first value") (t->answer)
         expectResult (42, "second value") (t->answer)
@@ -85,18 +110,6 @@ class AttributionTests extends Tests {
     }
 
     test ("cached attributes are re-evaluated after a reset") {
-        import Attribution._
-
-        var count = 0
-
-        lazy val maximum : Tree => Int =
-            attr {
-                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
-                case Leaf (v)   => v
-            }
-
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-
         expectResult (10, "first value") (t->maximum)
         expectResult (10, "first value") (t->maximum)
         expectResult (2, "evaluation count") (count)
@@ -106,37 +119,12 @@ class AttributionTests extends Tests {
     }
 
     test ("cached attributes are distinct for nodes that are equal") {
-        import Attribution._
-
-        var count = 0
-
-        lazy val maximum : Tree => Int =
-            attr {
-                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
-                case Leaf (v)   => v
-            }
-
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-        val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-
         expectResult (10, "first value") (t->maximum)
         expectResult (10, "second value") (s->maximum)
         expectResult (4, "evaluation count") (count)
     }
 
     test ("cached attributes can be reset") {
-        import Attribution._
-
-        var count = 0
-
-        lazy val maximum : Tree => Int =
-            attr {
-                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
-                case Leaf (v)   => v
-            }
-
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-
         expectResult (10, "first value") (t->maximum)
         resetMemo
         expectResult (10, "second value") (t->maximum)
@@ -146,40 +134,21 @@ class AttributionTests extends Tests {
     test ("uncached attributes are evaluated each time") {
         import UncachedAttribution._
 
-        var count = 0
-
         lazy val maximum : Tree => Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
             }
 
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-
+        println ("uncached")
         expectResult (10, "first value") (t->maximum)
         expectResult (10, "second value") (t->maximum)
         expectResult (4, "evaluation count") (count)
     }
 
     test ("cached child attributes work") {
-        import Attribution._
-
         lazy val cattr : Tree => Int =
-            childAttr {
-                case Pair (l, r) => {
-                    case Pair (l, r) => 0
-                    case Leaf (v)    => 1
-                    case _           => 2
-                }
-                case Leaf (v) => {
-                    case Pair (l, r) => 3
-                    case Leaf (v)    => 4
-                    case _           => 5
-                }
-                case _ => {
-                    case _ => 6
-                }
-            }
+            childAttr (cattrDef)
 
         val f = Leaf (4)
         val e = Leaf (3)
@@ -199,21 +168,7 @@ class AttributionTests extends Tests {
         import UncachedAttribution._
 
         lazy val cattr : Tree => Int =
-            childAttr {
-                case Pair (l, r) => {
-                    case Pair (l, r) => 0
-                    case Leaf (v)    => 1
-                    case _           => 2
-                }
-                case Leaf (v) => {
-                    case Pair (l, r) => 3
-                    case Leaf (v)    => 4
-                    case _           => 5
-                }
-                case _ => {
-                    case _ => 6
-                }
-            }
+            childAttr (cattrDef)
 
         val f = Leaf (4)
         val e = Leaf (3)
@@ -230,19 +185,8 @@ class AttributionTests extends Tests {
     }
 
     test ("cached parameterised attributes work") {
-        import Attribution._
-
         lazy val pattr : String => Tree => Int =
-            paramAttr {
-                case "hello" => {
-                    case Pair (l, r) => 0
-                    case Leaf (v)    => 1
-                    case _           => 2
-                }
-                case "goodbye" => {
-                    case _ => 3
-                }
-            }
+            paramAttr (pattrDef)
 
         expectResult (0, "cached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
@@ -255,29 +199,16 @@ class AttributionTests extends Tests {
     }
 
     test ("cached parameterised attributes are re-evaluated after reset") {
-        import Attribution._
-
-        var count = 0
+        count = 0
 
         lazy val pattr : String => Tree => Int =
-            paramAttr {
-                case "hello" => {
-                    case Pair (l, r) => count = count + 1; 0
-                    case Leaf (v)    => 1
-                    case _           => 2
-                }
-                case "goodbye" => {
-                    case _ => 3
-                }
-            }
+            paramAttr (pattrDef)
 
-        val t = Pair (Leaf (1), Leaf (2))
-
-        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
-        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
+        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
         expectResult (1, "evaluation count") (count)
         pattr.asInstanceOf[CachedParamAttribute[String,Tree,Int]].reset ()
-        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (t))
+        expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
         expectResult (2, "evaluation count") (count)
     }
 
@@ -285,16 +216,7 @@ class AttributionTests extends Tests {
         import UncachedAttribution._
 
         lazy val pattr : String => Tree => Int =
-            paramAttr {
-                case "hello" => {
-                    case Pair (l, r) => 0
-                    case Leaf (v)    => 1
-                    case _           => 2
-                }
-                case "goodbye" => {
-                    case _ => 3
-                }
-            }
+            paramAttr (pattrDef)
 
         expectResult (0, "uncached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
@@ -307,8 +229,6 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for cached attributes") {
-        import Attribution._
-
         lazy val direct : Tree => Int =
             attr (t => t->direct)
         lazy val indirect : Tree => Int =
@@ -363,8 +283,6 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for parameterised attributes") {
-        import Attribution._
-
         lazy val direct : Int => Tree => Int =
             paramAttr ("direct") (i => (t => t->direct (i)))
         lazy val indirect : Int => Tree => Int =
@@ -429,7 +347,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a normal child's properties are set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -506,7 +423,6 @@ class AttributionTests extends Tests {
     }
 
     test ("an either child's parent property is set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Pair (c1, c2)
@@ -524,7 +440,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a list child's parent property is set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -539,7 +454,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a set child's parent property is set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -554,7 +468,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a sequential vector child's parent property is set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -569,7 +482,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a parallel vector child's parent property is set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -584,7 +496,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a map's tuple parent properties are set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -603,7 +514,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a pair's component parent properties are set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -618,7 +528,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a triple's component parent properties are set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -635,7 +544,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a quad's component parent properties are set correctly") {
-        import Attribution.initTree
         val c1 = Leaf (3)
         val c2 = Leaf (1)
         val c3 = Leaf (10)
@@ -654,7 +562,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a chain that is only defined at the root returns the root value") {
-        import Attribution.initTree
         import Decorators.{Chain, chain}
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         initTree (t)
@@ -667,7 +574,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a chain with no updates throws appropriate exceptions") {
-        import Attribution.{initTree, resetMemo}
         import Decorators.{Chain, chain}
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         initTree (t)
@@ -704,7 +610,6 @@ class AttributionTests extends Tests {
 
     test ("deep cloning a term with sharing gives an equal but not eq term") {
         import Attributable.deepclone
-        import Attribution.initTree
         import org.kiama.example.imperative.AST._
 
         val c = Add (Num (1), Num (2))
