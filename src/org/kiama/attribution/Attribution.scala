@@ -471,18 +471,40 @@ trait Attribution extends AttributionBase {
         childAttr (Some (name)) (f)
 
     /**
-     * Define an attribute as per `attr`, except that the attribute must
-     * have a tree value and will be spliced into the tree to have the
-     * same parent as the node on which it is defined.  This kind of
+     * Define an optionally named attribute as per `attr`, except that the
+     * attribute must have a tree value and will be spliced into the tree to
+     * have the same parent as the node on which it is defined.  This kind of
      * attribute is used to generate new trees that must share context
-     * with the node on which they are defined.
+     * with the node on which they are defined. If `optName` is not `None`,
+     * then `optName.get` is used in debugging output to identify this attribute.
+     */
+    def tree[T <: Attributable,U <: Attributable] (optName : Option[String]) (f : T => U) : CachedAttribute[T,U] =
+        attr (optName) ((t : T) => {
+                            val u = f (t)
+                            u.parent = t.parent
+                            u
+                        })
+
+    /**
+     * Define an anonymous attribute as per `attr`, except that the attribute
+     * must have a tree value and will be spliced into the tree to have the
+     * same parent as the node on which it is defined.  This kind of attribute
+     * is used to generate new trees that must share context with the node on
+     * which they are defined.
      */
     def tree[T <: Attributable,U <: Attributable] (f : T => U) : CachedAttribute[T,U] =
-        attr {
-            case t => val u = f (t)
-                      u.parent = t.parent
-                      u
-        }
+        tree (None) (f)
+
+    /**
+     * Define a named attribute as per `attr`, except that the attribute
+     * must have a tree value and will be spliced into the tree to have the
+     * same parent as the node on which it is defined.  This kind of attribute
+     * is used to generate new trees that must share context with the node on
+     * which they are defined. `name` is used in debugging output to identify
+     * this attribute and its parameter.
+     */
+    def tree[T <: Attributable,U <: Attributable] (name : String) (f : T => U) : CachedAttribute[T,U] =
+        tree (Some (name)) (f)
 
 }
 
