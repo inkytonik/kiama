@@ -555,7 +555,10 @@ trait UncachedAttribution extends AttributionBase {
     /**
      * A variation of the `UncachedAttribute` class for parameterised attributes.
      */
-    class UncachedParamAttribute[A,T <: AnyRef,U] (f : A => T => U) extends (A => T => U) {
+    class UncachedParamAttribute[A,T <: AnyRef,U] (optName : Option[String],
+                                                   f : A => T => U) extends (A => Attribute[T,U]) {
+
+        attr =>
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
@@ -566,8 +569,11 @@ trait UncachedAttribution extends AttributionBase {
          * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        def apply (arg : A) : T => U =
-            new (T => U) {
+        def apply (arg : A) : Attribute[T,U] =
+            new Attribute[T,U] {
+
+                override val optName =
+                    attr.optName.map (_ + " (" + arg + ")")
 
                 def apply (t : T) : U = {
                     val key = new ParamAttributeKey (arg, t)
@@ -586,35 +592,89 @@ trait UncachedAttribution extends AttributionBase {
     }
 
     /**
-     * Define an uncached attribute with no name.
+     * Define an uncached attribute of `T` nodes of type `U` by the function `f`,
+     * which should not depend on the value of this attribute.  The computed
+     * attribute value is cached so it will be computed at most once. If
+     * `optName` is not `None`, then `optName.get` is used in debugging output
+     * to identify this attribute.
      */
-    def attr[T <: AnyRef,U] (f : T => U) : UncachedAttribute[T,U] =
-        new UncachedAttribute (None, f)
+    def attr[T <: AnyRef,U] (optName : Option[String]) (f : T => U) : UncachedAttribute[T,U] =
+        new UncachedAttribute (optName, f)
 
     /**
-     * Define an attribute of `T` nodes of type `U` by the function `f`, which
-     * should not depend on the value of this attribute.  The computed
+     * Define an anonymous uncached attribute of `T` nodes of type `U` by the
+     * function `f`, which should not depend on the value of this attribute.
+     * The computed attribute value is cached so it will be computed at most
+     * once.
+     */
+    def attr[T <: AnyRef,U] (f : T => U) : UncachedAttribute[T,U] =
+        attr (None) (f)
+
+    /**
+     * Define a named uncached attribute of `T` nodes of type `U` by the function
+     * `f`, which should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once. `name`
      * is used in debugging output to identify this attribute.
      */
     def attr[T <: AnyRef,U] (name : String) (f : T => U) : UncachedAttribute[T,U] =
-        new UncachedAttribute (Some (name), f)
+        attr (Some (name)) (f)
 
     /**
-     * Define an attribute of `T` nodes of type U by the function `f`,
-     * which takes an argument of type `A`.  The computed attribute value
-     * for a given `T` and `A` pair is cached so it will be computed at most once.
+     * Define a parameterised uncached attribute of `T` nodes of type `U` by the function
+     * `f`, which takes an argument of type `A`.  The computed attribute value
+     * for a given `T` and `A` pair is cached so it will be computed at most
+     * once.  If `optName` is not `None`, then `optName.get` and the `A` value
+     * are used in debugging output to identify this attribute.
+     */
+    def paramAttr[A,T <: AnyRef,U] (optName : Option[String]) (f : A => T => U) : UncachedParamAttribute[A,T,U] =
+        new UncachedParamAttribute (optName, f)
+
+    /**
+     * Define an anonymous parameterised uncached attribute of `T` nodes of type `U` by the
+     * function `f`, which takes an argument of type `A`.  The computed attribute
+     * value for a given `T` and `A` pair is cached so it will be computed at most
+     * once.
      */
     def paramAttr[A,T <: AnyRef,U] (f : A => T => U) : UncachedParamAttribute[A,T,U] =
-        new UncachedParamAttribute (f)
+        paramAttr (None) (f)
 
     /**
-     * Define an attribute of `T` nodes of type `U` by the function `f`,
-     * which takes the current node and its parent as its arguments.
-     * `T` must be `Attributable` so that parents can be accessed.
+     * Define a named parameterised uncached attribute of `T` nodes of type `U` by the
+     * function `f`, which takes an argument of type `A`.  The computed attribute
+     * value for a given `T` and `A` pair is cached so it will be computed at most
+     * once.  `name` and the `A` value are used in debugging output to identify
+     * this attribute and its parameter.
+     */
+    def paramAttr[A,T <: AnyRef,U] (name : String) (f : A => T => U) : UncachedParamAttribute[A,T,U] =
+        paramAttr (Some (name)) (f)
+
+    /**
+     * Define an uncached attribute of `T` nodes of type `U` by the function `f`, which
+     * takes the current node and its parent as its arguments. `T` must be
+     * a sub-type of `Attributable` so that parents can be accessed generically.
+     * If `optName` is not `None`, then `optName.get` is used in debugging output
+     * to identify this attribute.
+     */
+    def childAttr[T <: Attributable,U] (optName : Option[String]) (f : T => Attributable => U) : UncachedAttribute[T,U] =
+        attr (optName) ((t : T) => f (t) (t.parent))
+
+    /**
+     * Define an anonymous uncached attribute of `T` nodes of type `U` by the function
+     * `f`, which takes the current node and its parent as its arguments. `T`
+     * must be a sub-type of `Attributable` so that parents can be accessed
+     * generically.
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable => U) : UncachedAttribute[T,U] =
-        attr (t => f (t) (t.parent))
+        childAttr (None) (f)
+
+    /**
+     * Define a named uncached attribute of `T` nodes of type `U` by the function `f`,
+     * which takes the current node and its parent as its arguments. `T` must be
+     * a sub-type of `Attributable` so that parents can be accessed generically.
+     * `name` is used in debugging output to identify this attribute and its parameter.
+     */
+    def childAttr[T <: Attributable,U] (name : String) (f : T => Attributable => U) : UncachedAttribute[T,U] =
+        childAttr (Some (name)) (f)
 
 }
 
