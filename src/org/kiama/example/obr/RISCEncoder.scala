@@ -36,7 +36,7 @@ object RISCEncoder {
     import org.kiama.attribution.Attribution._
 
     import scala.collection.mutable.ArrayBuffer
-    import scala.collection.immutable.HashMap
+    import scala.collection.mutable.HashMap
     import scala.math.max
 
     /**
@@ -72,12 +72,12 @@ object RISCEncoder {
      * the code is returned.
      */
     def getcode : Code = {
-        var labels = new HashMap[Int,Int]()
+        val labels = new HashMap[Int,Int]()
 
         var currloc = 0
         for (inst <- code) {
             inst match {
-                case Target (lab)   => labels += (lab -> currloc)
+                case Target (lab)   => labels (lab) = currloc
                 case i : Instr      => currloc += 1
                 case _              =>
             }

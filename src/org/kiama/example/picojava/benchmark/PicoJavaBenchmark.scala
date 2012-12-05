@@ -54,7 +54,6 @@ object PicoJavaBenchmark extends App with StdoutEmitter {
     for (i <- 0 until 15000) {
         val result = createProgram(createAst(createAst(basicAst)))->errors
         Attribution.resetMemo
-        DynamicAttribution.resetMemo
     }
 
     System.gc
@@ -80,7 +79,6 @@ object PicoJavaBenchmark extends App with StdoutEmitter {
         inputs(i) = null
         result = (p->errors).size
         Attribution.resetMemo
-        DynamicAttribution.resetMemo
     }
 
     emitter.emitln((System.currentTimeMillis - start))

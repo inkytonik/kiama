@@ -21,7 +21,7 @@
 package org.kiama
 package example.dataflow
 
-import org.kiama.attribution.DynamicAttribution._
+import org.kiama.attribution.Attribution._
 import org.kiama.util.Patterns.HasParent
 import DataflowAST._
 import Dataflow._
@@ -30,21 +30,21 @@ case class Foreach (cond : Var, body : Stm) extends Stm
 
 object DataflowForeach {
 
-    Dataflow.succ +=
-        attr { case t @ Foreach (_, body) => following (t) + body }
+    def setup () {
 
-    // Using the childAttr notation
-    Dataflow.following +=
-        childAttr {
-            _ => { case t @ Foreach(_, body) => following (t) + body }
-        }
+        Dataflow.succ +=
+            {
+                case t @ Foreach (_, body) =>
+                    following (t) + body
+            }
 
-    // Alternatively, using the regular attr notation
-    Dataflow.following +=
-        attr {
-            case HasParent (t, parent : Foreach) =>
-                following (parent) + parent.body
-        }
+        Dataflow.following +=
+            {
+                case HasParent (t, parent : Foreach) =>
+                    following (parent) + parent.body
+            }
+
+    }
 
 }
 
@@ -52,17 +52,25 @@ case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
 
 object DataflowFor {
 
-    Dataflow.succ +=
-        attr { case For (init, c, inc, body) => Set (init) }
+    def setup () {
 
-    Dataflow.following +=
-        childAttr {
-            s => {
-                case t @ For (s1, c, _, _) if s eq s1 => Set (c)
-                case t @ For (_, s1, _, b) if s eq s1 => following (t) + b
-                case t @ For (_, c, s1, _) if s eq s1 => Set (c)
-                case t @ For (_, _, i, s1) if s eq s1 => Set (i)
+        Dataflow.succ +=
+            {
+                case For (init, c, inc, body) =>
+                    Set (init)
             }
-        }
+
+        Dataflow.following +=
+            {
+                case HasParent (s, parent : For) =>
+                    parent match {
+                        case t @ For (s1, c, _, _) if s eq s1 => Set (c)
+                        case t @ For (_, s1, _, b) if s eq s1 => following (t) + b
+                        case t @ For (_, c, s1, _) if s eq s1 => Set (c)
+                        case t @ For (_, _, i, s1) if s eq s1 => Set (i)
+                    }
+            }
+
+    }
 
 }

@@ -30,10 +30,10 @@ class DataflowForTests extends Tests {
 
     import DataflowAST._
     import Dataflow._
-    import org.kiama.attribution.DynamicAttribution._
+    import org.kiama.attribution.Attribution._
 
-    use (DataflowFor)
-    use (DataflowForeach)
+    DataflowFor.setup ()
+    DataflowForeach.setup ()
 
     /*
      * begin                 (prog)

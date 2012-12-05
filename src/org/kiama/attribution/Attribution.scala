@@ -69,16 +69,13 @@ trait AttributionBase {
      * initial value for the attribute.  The attribute (and any circular attributes
      * on which it depends) are evaluated until no value changes (i.e., a fixed
      * point is reached).  The final result is memoised so that subsequent evaluations
-     * return the same value.  If `optName` is not `None`, then `optName.get` is
-     * used in debugging output to identify this attribute.
-
+     * return the same value.
      *
      * This code implements the basic circular evaluation algorithm from "Circular
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T <: AnyRef,U] (val optName : Option[String],
-                                            init : U, f : T => U) extends Attribute[T,U] {
+    abstract class CircularAttribute[T <: AnyRef,U] (init : U, f : T => U) extends Attribute[T,U] {
 
         /**
          * Has the value of this attribute for a given tree already been computed?
@@ -168,11 +165,8 @@ trait AttributionBase {
     /**
      * A constant attribute of a node type `T` with value of type `U`. The
      * value is given by the computation `u` which is evaluated at most once.
-     * If `optName` is not `None`, then `optName.get` is used in debugging output
-     * to identify this attribute.
      */
-    class ConstantAttribute[T <: AnyRef,U] (val optName : Option[String],
-                                            u : => U) extends Attribute[T,U] {
+    abstract class ConstantAttribute[T <: AnyRef,U] (u : => U) extends Attribute[T,U] {
 
         /**
          * Lazily computed result of evaluating the attribute's computation.
@@ -194,11 +188,13 @@ trait AttributionBase {
      * attribute, which will be given by `init` initially and will be evaluated
      * iteratively until a fixed point is reached (in conjunction with other
      * circular attributes on which it depends).  The final value is cached.
-     * If `optName` is not `None`, then `optName.get` is used in debugging
-     * output to identify this attribute.
+     * If `optNameDef` is not `None`, then `optNameDef.get` is used in
+     * debugging output to identify this attribute.
      */
-    def circular[T <: AnyRef,U] (optName : Option[String]) (init : U) (f : T => U) : T => U =
-        new CircularAttribute (optName, init, f)
+    def circular[T <: AnyRef,U] (optNameDef : Option[String]) (init : U) (f : T => U) : T => U =
+        new CircularAttribute (init, f) {
+            val optName = optNameDef
+        }
 
     /**
      * Define an anonymous circular attribute of `T` nodes of type `U` by the
@@ -223,12 +219,14 @@ trait AttributionBase {
 
     /**
      * Define an optionally named constanat attribute of `T` nodes of type `U`
-     * given by the value `u`. `u` is evaluated at most once. If `optName` is
-     * not `None`, then `optName.get` is used in debugging output to identify
-     * this attribute.
+     * given by the value `u`. `u` is evaluated at most once. If `optNameDef`
+     * is not `None`, then `optNameDef.get` is used in debugging output to
+     * identify this attribute.
      */
-    def constant[T <: AnyRef,U] (optName : Option[String]) (u : => U) : Attribute[T,U] =
-        new ConstantAttribute (optName, u)
+    def constant[T <: AnyRef,U] (optNameDef : Option[String]) (u : => U) : Attribute[T,U] =
+        new ConstantAttribute[T,U] (u) {
+            val optName = optNameDef
+        }
 
     /**
      * Define an anonymous constanat attribute of `T` nodes of type `U`
@@ -265,6 +263,9 @@ trait AttributionBase {
  */
 trait Attribution extends AttributionBase {
 
+    import java.util.IdentityHashMap
+    import scala.collection.mutable.{ArrayBuffer, ListBuffer}
+
     /**
      * Global state for the memoisation tables.
      */
@@ -284,11 +285,8 @@ trait Attribution extends AttributionBase {
      * the function `f`.  The result is memoised so that it is only evaluated once.
      * `f` should not itself require the value of this attribute. If it does, a
      * circularity error is reported by throwing an `IllegalStateException`.
-     * If `optName` is not `None`, then `optName.get` is used in debugging output
-     * to identify this attribute.
      */
-    class CachedAttribute[T <: AnyRef,U] (val optName : Option[String],
-                                          f : T => U) extends Attribute[T,U] {
+    abstract class CachedAttribute[T <: AnyRef,U] (f : T => U) extends Attribute[T,U] {
 
         /**
          * The memo table for this attribute, with `memo(t) == Some(v)` represents
@@ -297,12 +295,12 @@ trait Attribution extends AttributionBase {
          * the memo table needs to be some form of identity map so that value equal
          * trees are not treated as equal unless they are actually the same reference.
          */
-        private val memo = new IdentityHashMap[T,Option[U]]
+        protected val memo = new IdentityHashMap[T,Option[U]]
 
         /**
          * The current version number of the memo table.
          */
-        private var memoVersion = MemoState.MEMO_VERSION
+        protected var memoVersion = MemoState.MEMO_VERSION
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -336,15 +334,26 @@ trait Attribution extends AttributionBase {
     /**
      * A variation of the `CachedAttribute` class for parameterised attributes.
      */
-    class CachedParamAttribute[A,T <: AnyRef,U] (optName : Option[String],
-                                                 f : A => T => U)
-            extends (A => Attribute[T,U]) {
+    abstract class CachedParamAttribute[A,T <: AnyRef,U] (f : A => T => U) extends (A => Attribute[T,U]) {
 
         attr =>
 
         import scala.collection.mutable.HashMap
 
+        /**
+         * An optional name, used in debugging output if present.
+         */
+        def optName : Option[String]
+
+        /**
+         * Memoisation table for pairs of parameters and nodes to attribute
+         * values.
+         */
         private val memo = new HashMap[ParamAttributeKey,Option[U]]
+
+        /**
+         * The current version of the memoised data.
+         */
         private var memoVersion = MemoState.MEMO_VERSION
 
         /**
@@ -386,14 +395,105 @@ trait Attribution extends AttributionBase {
     }
 
     /**
+     * Implicitly converts functions to dynamic attributes. This conversion allows us
+     * to use simpler types for dynamic attributes, but still extend them later.
+     */
+    implicit def internalToDynamicAttribute[T <: AnyRef,U] (f : T => U) : CachedDynamicAttribute[T,U] =
+        f match {
+            case f : CachedDynamicAttribute[_,_] =>
+                f.asInstanceOf[CachedDynamicAttribute[T,U]]
+            case f =>
+                throw new UnsupportedOperationException ("Can only extend the definition of dynamic attributes")
+        }
+
+    /**
+     * A cached dynamic attribute of a node type `T` with value of type `U`, supported
+     * by a memo table and circularity test.  The value of the attribute is initially
+     * computed by the function `f`, but the definition can be augmented dynamically.
+     * The result is memoised so that it is only evaluated once for a given definition.
+     * The attribute definition should not itself require the value of this attribute.
+     * If it does, a circularity error is reported by throwing an `IllegalStateException`.
+     */
+    abstract class CachedDynamicAttribute[T <: AnyRef,U] (f : T => U) extends CachedAttribute[T,U] (f) {
+
+        import scala.collection.mutable.ListBuffer
+
+        /**
+         * List of functions that currently dynamically define this attribute.
+         */
+        val functions = new ListBuffer[T ==> U] ()
+
+        /**
+         * Return the value of this attribute for node `t`, raising an error if
+         * it depends on itself.  IF the value has been memoised, return it.
+         * Otherwise, the functions list is tried in order. The first partial
+         * function on that list that is defined will be used. If no partial
+         * function on this list is defined, then `f` will be used.
+         */
+        override def apply (t : T) : U = {
+            if (memoVersion != MemoState.MEMO_VERSION) {
+                memoVersion = MemoState.MEMO_VERSION
+                memo.clear
+            }
+            memo.get (t) match {
+                case None     => reportCycle (t)
+                case Some (u) => u
+                case _        => // null
+                                 memo.put (t, None)
+                                 val pf = functions.find (_.isDefinedAt (t))
+                                 val func = pf.getOrElse (f)
+                                 val u = func (t)
+                                 memo.put (t, Some (u))
+                                 u
+            }
+        }
+
+        /**
+         * Add a new partial function to the definition of this attribute.
+         * Resets the memo table for this attribute.
+         */
+        def += (g : T ==> U) {
+            g +=: functions
+            // resetMemo
+        }
+
+        /**
+         * Remove a partial function from the definition of this attribute, if it's
+         * there, otherwise have no effect. If `g` appears more than once in the
+         * definition, just remove the first one. Resets the memo table for this
+         * attribute.
+         */
+        def -= (g : T ==> U) {
+            functions -= g
+            // resetMemo
+        }
+
+        /**
+         * Execute a block and restore the state of this dynamic attribute after
+         * the block has executed. The idea is that the block can add to the
+         * definition of the attribute for use within the block. Any definitions
+         * that are added will be automatically removed at the end of the block.
+         */
+        def block (b : => Any) {
+            val savedFunctions = functions.toList
+            b
+            functions.clear ()
+            functions.appendAll (savedFunctions)
+        }
+
+    }
+
+    /**
      * Define a cached attribute of `T` nodes of type `U` by the function `f`,
      * which should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once. If
-     * `optName` is not `None`, then `optName.get` is used in debugging output
-     * to identify this attribute.
+     * `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
+     * output to identify this attribute.
      */
-    def attr[T <: AnyRef,U] (optName : Option[String]) (f : T => U) : CachedAttribute[T,U] =
-        new CachedAttribute (optName, f)
+    def attr[T <: AnyRef,U] (optNameDef : Option[String]) (f : T => U) : CachedAttribute[T,U] =
+        new CachedAttribute (f) {
+            val optName = optNameDef
+        }
 
     /**
      * Define an anonymous cached attribute of `T` nodes of type `U` by the
@@ -414,14 +514,46 @@ trait Attribution extends AttributionBase {
         attr (Some (name)) (f)
 
     /**
+     * Define a cached dynamic attribute of `T` nodes of type `U` by the partial
+     * function `f`, which should not depend on the value of this attribute.
+     * The computed attribute value is cached so it will be computed at most once.
+     * If `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
+     * output to identify this attribute.
+     */
+    def dynAttr[T <: AnyRef,U] (optNameDef : Option[String]) (f : T => U) : CachedDynamicAttribute[T,U] =
+        new CachedDynamicAttribute (f) {
+            val optName = optNameDef
+        }
+
+    /**
+     * Define an anonymous cached dynamic attribute of `T` nodes of type `U` by
+     * the partial function `f`, which should not depend on the value of this
+     * attribute. The computed attribute value is cached so it will be computed
+     * at most once.
+     */
+    def dynAttr[T <: AnyRef,U] (f : T => U) : CachedDynamicAttribute[T,U] =
+        dynAttr (None) (f)
+
+    /**
+     * Define a named cached dynamic attribute of `T` nodes of type `U` by the
+     * partial function`f`, which should not depend on the value of this attribute.
+     * The computed attribute value is cached so it will be computed at most once.
+     * `name` is used in debugging output to identify this attribute.
+     */
+    def dynAttr[T <: AnyRef,U] (name : String) (f : T => U) : CachedDynamicAttribute[T,U] =
+        dynAttr (Some (name)) (f)
+
+    /**
      * Define a parameterised attribute of `T` nodes of type `U` by the function
      * `f`, which takes an argument of type `A`.  The computed attribute value
      * for a given `T` and `A` pair is cached so it will be computed at most
-     * once.  If `optName` is not `None`, then `optName.get` and the `A` value
-     * are used in debugging output to identify this attribute.
+     * once.  If `optNameDef` is not `None`, then `optNameDef.get` and the `A`
+     * value are used in debugging output to identify this attribute.
      */
-    def paramAttr[A,T <: AnyRef,U] (optName : Option[String]) (f : A => T => U) : CachedParamAttribute[A,T,U] =
-        new CachedParamAttribute (optName, f)
+    def paramAttr[A,T <: AnyRef,U] (optNameDef : Option[String]) (f : A => T => U) : CachedParamAttribute[A,T,U] =
+        new CachedParamAttribute (f) {
+            val optName = optNameDef
+        }
 
     /**
      * Define an anonymous parameterised attribute of `T` nodes of type `U` by the
@@ -446,8 +578,8 @@ trait Attribution extends AttributionBase {
      * Define an attribute of `T` nodes of type `U` by the function `f`, which
      * takes the current node and its parent as its arguments. `T` must be
      * a sub-type of `Attributable` so that parents can be accessed generically.
-     * If `optName` is not `None`, then `optName.get` is used in debugging output
-     * to identify this attribute.
+     * If `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
+     * output to identify this attribute.
      */
     def childAttr[T <: Attributable,U] (optName : Option[String]) (f : T => Attributable => U) : CachedAttribute[T,U] =
         attr (optName) ((t : T) => f (t) (t.parent))
@@ -475,8 +607,9 @@ trait Attribution extends AttributionBase {
      * attribute must have a tree value and will be spliced into the tree to
      * have the same parent as the node on which it is defined.  This kind of
      * attribute is used to generate new trees that must share context
-     * with the node on which they are defined. If `optName` is not `None`,
-     * then `optName.get` is used in debugging output to identify this attribute.
+     * with the node on which they are defined. If `optNameDef` is not `None`,
+     * then `optNameDef.get` is used in debugging output to identify this
+     * attribute.
      */
     def tree[T <: Attributable,U <: Attributable] (optName : Option[String]) (f : T => U) : CachedAttribute[T,U] =
         attr (optName) ((t : T) => {
@@ -524,11 +657,9 @@ trait UncachedAttribution extends AttributionBase {
      * test.  The value of the attribute is computed by the function `f`.  `f` will be
      * called each time the value of the attribute is accessed.  `f` should not itself
      * require the value of this attribute. If it does, a circularity error is reported
-     * by throwing an `IllegalStateException`. If `optName` is not `None`, then
-     * `optName.get` is used in debugging output to identify this attribute.
+     * by throwing an `IllegalStateException`.
      */
-    class UncachedAttribute[T <: AnyRef,U] (val optName : Option[String],
-                                            f : T => U) extends Attribute[T,U] {
+    abstract class UncachedAttribute[T <: AnyRef,U] (f : T => U) extends Attribute[T,U] {
 
         /**
          * Are we currently evaluating this attribute for a given tree?
@@ -555,10 +686,14 @@ trait UncachedAttribution extends AttributionBase {
     /**
      * A variation of the `UncachedAttribute` class for parameterised attributes.
      */
-    class UncachedParamAttribute[A,T <: AnyRef,U] (optName : Option[String],
-                                                   f : A => T => U) extends (A => Attribute[T,U]) {
+    abstract class UncachedParamAttribute[A,T <: AnyRef,U] (f : A => T => U) extends (A => Attribute[T,U]) {
 
         attr =>
+
+        /**
+         * An optional name, used in debugging output if present.
+         */
+        def optName : Option[String]
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
@@ -589,17 +724,20 @@ trait UncachedAttribution extends AttributionBase {
                 }
 
             }
+
     }
 
     /**
      * Define an uncached attribute of `T` nodes of type `U` by the function `f`,
      * which should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once. If
-     * `optName` is not `None`, then `optName.get` is used in debugging output
-     * to identify this attribute.
+     * `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
+     * output to identify this attribute.
      */
-    def attr[T <: AnyRef,U] (optName : Option[String]) (f : T => U) : UncachedAttribute[T,U] =
-        new UncachedAttribute (optName, f)
+    def attr[T <: AnyRef,U] (optNameDef : Option[String]) (f : T => U) : UncachedAttribute[T,U] =
+        new UncachedAttribute (f) {
+            val optName = optNameDef
+        }
 
     /**
      * Define an anonymous uncached attribute of `T` nodes of type `U` by the
@@ -620,14 +758,16 @@ trait UncachedAttribution extends AttributionBase {
         attr (Some (name)) (f)
 
     /**
-     * Define a parameterised uncached attribute of `T` nodes of type `U` by the function
-     * `f`, which takes an argument of type `A`.  The computed attribute value
-     * for a given `T` and `A` pair is cached so it will be computed at most
-     * once.  If `optName` is not `None`, then `optName.get` and the `A` value
-     * are used in debugging output to identify this attribute.
+     * Define a parameterised uncached attribute of `T` nodes of type `U` by the
+     * function `f`, which takes an argument of type `A`.  The computed attribute
+     * value for a given `T` and `A` pair is cached so it will be computed at most
+     * once.  If `optNameDef` is not `None`, then `optNameDef.get` and the `A`
+     * value are used in debugging output to identify this attribute.
      */
-    def paramAttr[A,T <: AnyRef,U] (optName : Option[String]) (f : A => T => U) : UncachedParamAttribute[A,T,U] =
-        new UncachedParamAttribute (optName, f)
+    def paramAttr[A,T <: AnyRef,U] (optNameDef : Option[String]) (f : A => T => U) : UncachedParamAttribute[A,T,U] =
+        new UncachedParamAttribute (f) {
+            val optName = optNameDef
+        }
 
     /**
      * Define an anonymous parameterised uncached attribute of `T` nodes of type `U` by the
@@ -649,14 +789,14 @@ trait UncachedAttribution extends AttributionBase {
         paramAttr (Some (name)) (f)
 
     /**
-     * Define an uncached attribute of `T` nodes of type `U` by the function `f`, which
-     * takes the current node and its parent as its arguments. `T` must be
+     * Define an uncached attribute of `T` nodes of type `U` by the function `f`,
+     * which takes the current node and its parent as its arguments. `T` must be
      * a sub-type of `Attributable` so that parents can be accessed generically.
-     * If `optName` is not `None`, then `optName.get` is used in debugging output
-     * to identify this attribute.
+     * If `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
+     * output to identify this attribute.
      */
-    def childAttr[T <: Attributable,U] (optName : Option[String]) (f : T => Attributable => U) : UncachedAttribute[T,U] =
-        attr (optName) ((t : T) => f (t) (t.parent))
+    def childAttr[T <: Attributable,U] (optNameDef : Option[String]) (f : T => Attributable => U) : UncachedAttribute[T,U] =
+        attr (optNameDef) ((t : T) => f (t) (t.parent))
 
     /**
      * Define an anonymous uncached attribute of `T` nodes of type `U` by the function

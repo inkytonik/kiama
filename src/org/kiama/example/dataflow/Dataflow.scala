@@ -21,7 +21,7 @@
 package org.kiama
 package example.dataflow
 
-import org.kiama.attribution.DynamicAttribution._
+import org.kiama.attribution.Attribution._
 import DataflowAST._
 
 /**
@@ -47,8 +47,8 @@ trait ControlFlow {
  */
 trait ControlFlowImpl extends ControlFlow {
 
-    val succ : Stm ==> Set[Stm] =
-        attr {
+    val succ : Stm => Set[Stm] =
+        dynAttr {
             case If (_, s1, s2)   => Set (s1, s2)
             case t @ While (_, s) => t->following + s
             case Return (_)       => Set ()
@@ -56,15 +56,16 @@ trait ControlFlowImpl extends ControlFlow {
             case s                => s->following
         }
 
-    val following : Stm ==> Set[Stm] =
-        childAttr (
-            s => {
-                case t @ If (_, _, _)      => t->following
-                case t @ While (_, _)      => Set (t)
-                case b : Block if s.isLast => b->following
-                case Block (_)             => Set (s.next[Stm])
-                case _                     => Set ()
-            }
+    val following : Stm => Set[Stm] =
+        dynAttr (
+            (s : Stm) =>
+                s.parent match {
+                    case t @ If (_, _, _)      => t->following
+                    case t @ While (_, _)      => Set (t)
+                    case b : Block if s.isLast => b->following
+                    case Block (_)             => Set (s.next[Stm])
+                    case _                     => Set ()
+                }
         )
 
 }
@@ -91,8 +92,8 @@ trait Variables {
  */
 trait VariablesImpl extends Variables {
 
-    val uses : Stm ==> Set[Var] =
-        attr {
+    val uses : Stm => Set[Var] =
+        dynAttr {
             case If (v, _, _)  => Set (v)
             case While (v, _)  => Set (v)
             case Assign (_, v) => Set (v)
@@ -100,8 +101,8 @@ trait VariablesImpl extends Variables {
             case _             => Set ()
         }
 
-    val defines : Stm ==> Set[Var] =
-        attr {
+    val defines : Stm => Set[Var] =
+        dynAttr {
             case Assign (v, _) => Set (v)
             case _             => Set ()
         }

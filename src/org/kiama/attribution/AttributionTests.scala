@@ -56,7 +56,7 @@ class AttributionTests extends Tests {
             case Leaf (v)   => v
         }
 
-    lazy val maximum : CachedAttribute[Tree,Int] =
+    lazy val maximum =
         attr (maximumDef)
 
     lazy val cattrDef : Tree => Attributable => Int =
@@ -139,14 +139,13 @@ class AttributionTests extends Tests {
                 case Leaf (v)   => v
             }
 
-        println ("uncached")
         expectResult (10, "first value") (t->maximum)
         expectResult (10, "second value") (t->maximum)
         expectResult (4, "evaluation count") (count)
     }
 
     test ("cached child attributes work") {
-        lazy val cattr : Tree => Int =
+        lazy val cattr =
             childAttr (cattrDef)
 
         val f = Leaf (4)
