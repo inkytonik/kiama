@@ -94,8 +94,11 @@ class AttributionTests extends Tests {
     }
 
     test ("cached attributes are only evaluated once") {
+        expectResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         expectResult (10, "first value") (t->maximum)
+        expectResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         expectResult (10, "second value") (t->maximum)
+        expectResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         expectResult (2, "evaluation count") (count)
     }
 
@@ -112,7 +115,7 @@ class AttributionTests extends Tests {
         expectResult (10, "first value") (t->maximum)
         expectResult (10, "first value") (t->maximum)
         expectResult (2, "evaluation count") (count)
-        maximum.asInstanceOf[CachedAttribute[Tree,Int]].reset ()
+        maximum.reset ()
         expectResult (10, "second value") (t->maximum)
         expectResult (4, "evaluation count") (count)
     }
@@ -202,12 +205,17 @@ class AttributionTests extends Tests {
         lazy val pattr : String => Tree => Int =
             paramAttr (pattrDef)
 
+        expectResult (false, "hasBeenComputedAt hello u first") (maximum.hasBeenComputedAt ("hello", u))
         expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
+        expectResult (true, "hasBeenComputedAt hello u first") (maximum.hasBeenComputedAt ("hello", u))
         expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
         expectResult (1, "evaluation count") (count)
-        pattr.asInstanceOf[CachedParamAttribute[String,Tree,Int]].reset ()
+        expectResult (true, "hasBeenComputedAt hello u first") (maximum.hasBeenComputedAt ("hello", u))
+        pattr.reset ()
+        expectResult (false, "hasBeenComputedAt hello u second") (maximum.hasBeenComputedAt ("hello", u))
         expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
         expectResult (2, "evaluation count") (count)
+        expectResult (false, "hasBeenComputedAt hello u second") (maximum.hasBeenComputedAt ("hello", u))
     }
 
     test ("uncached parameterised attributes work") {

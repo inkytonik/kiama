@@ -61,11 +61,16 @@ class DynamicAttributionTests extends Tests {
         val sumleaf = dynAttr (sumleafDef)
         val t = Leaf (2)
 
+        expectResult (false, "hasBeenComputedAt t first") (maximum.hasBeenComputedAt (t))
         expectResult (2) (sumleaf (t))
+        expectResult (true, "hasBeenComputedAt t first") (maximum.hasBeenComputedAt (t))
         expectResult (2) (sumleaf (t))
         expectResult (1, "evaluation count") (count)
+        expectResult (true, "hasBeenComputedAt t first") (maximum.hasBeenComputedAt (t))
         sumleaf.reset ()
+        expectResult (false, "hasBeenComputedAt t second") (maximum.hasBeenComputedAt (t))
         expectResult (2) (sumleaf (Leaf (2)))
+        expectResult (true, "hasBeenComputedAt t second") (maximum.hasBeenComputedAt (t))
         expectResult (2, "evaluation count") (count)
     }
 

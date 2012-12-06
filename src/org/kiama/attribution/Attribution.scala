@@ -329,6 +329,12 @@ trait Attribution extends AttributionBase {
             memo.clear ()
         }
 
+        /**
+         * Has the value of this attribute at `t` already been computed or not?
+         */
+        def hasBeenComputedAt (t : T) : Boolean =
+            memo.get (t).isDefined
+
     }
 
     /**
@@ -392,6 +398,15 @@ trait Attribution extends AttributionBase {
             memo.clear ()
         }
 
+        /**
+         * Has the value of this attribute at `t` already been computed for `arg`
+         * or not?
+         */
+        def hasBeenComputedAt (arg : A, t : T) : Boolean = {
+            val key = new ParamAttributeKey (arg, t)
+            memo.get (key).isDefined
+        }
+
     }
 
     /**
@@ -447,6 +462,12 @@ trait Attribution extends AttributionBase {
                                  u
             }
         }
+
+        /**
+         * Has the value of this attribute at `t` already been computed or not?
+         */
+        def hasBeenComputedAt (t : T) : Boolean =
+            memo.get (t).isDefined
 
         /**
          * Add a new partial function to the definition of this attribute.
