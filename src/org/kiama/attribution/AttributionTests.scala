@@ -186,7 +186,7 @@ class AttributionTests extends Tests {
     }
 
     test ("cached parameterised attributes work") {
-        lazy val pattr : String => Tree => Int =
+        lazy val pattr =
             paramAttr (pattrDef)
 
         expectResult (0, "cached paramAttr Pair hello") (
@@ -202,26 +202,26 @@ class AttributionTests extends Tests {
     test ("cached parameterised attributes are re-evaluated after reset") {
         count = 0
 
-        lazy val pattr : String => Tree => Int =
+        lazy val pattr =
             paramAttr (pattrDef)
 
-        expectResult (false, "hasBeenComputedAt hello u first") (maximum.hasBeenComputedAt ("hello", u))
+        expectResult (false, "hasBeenComputedAt") (pattr.hasBeenComputedAt ("hello", u))
         expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
-        expectResult (true, "hasBeenComputedAt hello u first") (maximum.hasBeenComputedAt ("hello", u))
+        expectResult (true, "hasBeenComputedAt") (pattr.hasBeenComputedAt ("hello", u))
         expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
         expectResult (1, "evaluation count") (count)
-        expectResult (true, "hasBeenComputedAt hello u first") (maximum.hasBeenComputedAt ("hello", u))
+        expectResult (true, "hasBeenComputedAt") (pattr.hasBeenComputedAt ("hello", u))
         pattr.reset ()
-        expectResult (false, "hasBeenComputedAt hello u second") (maximum.hasBeenComputedAt ("hello", u))
+        expectResult (false, "hasBeenComputedAt") (pattr.hasBeenComputedAt ("hello", u))
         expectResult (0, "cached paramAttr Pair hello") (pattr ("hello") (u))
         expectResult (2, "evaluation count") (count)
-        expectResult (false, "hasBeenComputedAt hello u second") (maximum.hasBeenComputedAt ("hello", u))
+        expectResult (true, "hasBeenComputedAt") (pattr.hasBeenComputedAt ("hello", u))
     }
 
     test ("uncached parameterised attributes work") {
         import UncachedAttribution._
 
-        lazy val pattr : String => Tree => Int =
+        lazy val pattr =
             paramAttr (pattrDef)
 
         expectResult (0, "uncached paramAttr Pair hello") (

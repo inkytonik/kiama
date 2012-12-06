@@ -333,7 +333,10 @@ trait Attribution extends AttributionBase {
          * Has the value of this attribute at `t` already been computed or not?
          */
         def hasBeenComputedAt (t : T) : Boolean =
-            memo.get (t).isDefined
+            memo.get (t) match {
+                case Some (_) => true
+                case _        => false
+            }
 
     }
 
@@ -381,8 +384,7 @@ trait Attribution extends AttributionBase {
                     memo.get (key) match {
                         case Some (None)     => reportCycle (t)
                         case Some (Some (u)) => u
-                        case None            => // null
-                                                memo.put (key, None)
+                        case None            => memo.put (key, None)
                                                 val u = f (arg) (t)
                                                 memo.put (key, Some (u))
                                                 u
@@ -404,7 +406,10 @@ trait Attribution extends AttributionBase {
          */
         def hasBeenComputedAt (arg : A, t : T) : Boolean = {
             val key = new ParamAttributeKey (arg, t)
-            memo.get (key).isDefined
+            memo.get (key) match {
+                case Some (Some (_)) => true
+                case _               => false
+            }
         }
 
     }
@@ -462,12 +467,6 @@ trait Attribution extends AttributionBase {
                                  u
             }
         }
-
-        /**
-         * Has the value of this attribute at `t` already been computed or not?
-         */
-        def hasBeenComputedAt (t : T) : Boolean =
-            memo.get (t).isDefined
 
         /**
          * Add a new partial function to the definition of this attribute.
