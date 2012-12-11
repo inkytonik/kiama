@@ -22,7 +22,7 @@ package org.kiama
 package machine
 
 import java.lang.Exception
-import scala.collection.mutable.HashMap
+import scala.collection.mutable
 import org.kiama.util.Emitter
 import org.kiama.output.PrettyPrinter
 
@@ -160,7 +160,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * A parameterised item of abstract state machine state holding values
      * of type `U`, associated with parameters of type `T`.
      */
-    class ParamState[T,U] (val psname : String) extends State[HashMap[T,U]] (psname) {
+    class ParamState[T,U] (val psname : String) extends State[mutable.HashMap[T,U]] (psname) {
 
         /**
          * Is this state item undefined at `t` or not ?
@@ -215,7 +215,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          */
         def change (t : T, u : U) {
             _value match {
-                case None     => _value = Some (HashMap ((t, u)))
+                case None     => _value = Some (mutable.HashMap ((t, u)))
                 case Some (m) => m += ((t, u))
             }
         }
@@ -364,7 +364,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             false
         else {
             // Check updates for consistency
-            val m = new HashMap[AnyRef,Any]
+            val m = new mutable.HashMap[AnyRef,Any]
             for (u <- updates) {
                 val k = u.key
                 if (m contains k) {

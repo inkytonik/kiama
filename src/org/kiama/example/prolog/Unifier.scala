@@ -24,7 +24,7 @@ package example.prolog
 import PrologTree._
 import org.kiama.rewriting.Rewriter
 import org.kiama.rewriting.Rewriter.{ Term => _, _ }
-import scala.collection.immutable.Map
+import scala.collection.immutable
 
 /**
  * A substitution that records how variables (given by their names) are to
@@ -37,7 +37,7 @@ abstract class Subst {
     /**
      * A map to hold the actual substitution pairs.
      */
-    val m : Map[String,Term]
+    val m : immutable.Map[String,Term]
 
     /**
      * Apply this substitution to a term, returning the resulting term.
@@ -75,7 +75,7 @@ object Subst {
      */
     def apply (l : (String,Term)*) : Subst =
         new Subst {
-            val m = Map (l : _*)
+            val m = immutable.Map (l : _*)
         }
 
 }

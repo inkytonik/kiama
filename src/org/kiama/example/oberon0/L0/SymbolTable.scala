@@ -25,7 +25,6 @@ package L0
 trait SymbolTable extends base.SymbolTable {
 
     import base.source.ModuleDecl
-    import scala.collection.immutable.HashMap
     import scala.collection.immutable.Stack
     import source.{ConstDecl, TypeDecl, TypeDef}
 

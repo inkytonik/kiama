@@ -983,8 +983,8 @@ trait Rewriter {
      */
     def memo (s : => Strategy) : Strategy =
         new Strategy {
-            import scala.collection.mutable.HashMap
-            private val cache = new HashMap[Term,Option[Term]]
+            private val cache =
+                new scala.collection.mutable.HashMap[Term,Option[Term]]
             def apply (t : Term) : Option[Term] =
                 cache.getOrElseUpdate (t, s (t))
         }

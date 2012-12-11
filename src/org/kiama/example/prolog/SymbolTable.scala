@@ -30,7 +30,6 @@ import org.kiama.util.Environments
 object SymbolTable extends Environments {
 
     import PrologTree._
-    import scala.collection.immutable.Map
 
     /**
      * A predicate entity and its argument type constraints.

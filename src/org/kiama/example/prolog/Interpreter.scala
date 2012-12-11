@@ -27,7 +27,6 @@ object Interpreter {
     import Unifier._
     import org.kiama.rewriting.Rewriter.{ Term => _, _ }
     import org.kiama.util.Emitter
-    import scala.collection.mutable.HashMap
     import scala.collection.mutable.ListBuffer
     import scala.collection.mutable.Stack
 

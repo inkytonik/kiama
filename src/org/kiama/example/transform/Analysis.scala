@@ -33,11 +33,11 @@ object Analysis {
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Messaging._
-    import scala.collection.immutable.HashMap
+    import scala.collection.immutable
 
     lazy val prioenv : Program => Map[String,Int] =
         attr (
-            p => HashMap (p.ops : _*)
+            p => immutable.HashMap (p.ops : _*)
         )
 
     lazy val prio : String => ASTNode => Int =

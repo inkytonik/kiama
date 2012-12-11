@@ -27,15 +27,16 @@ package example.iswim.compiler
  * Parse ISWIM source code to an abstract syntax tree.
  */
 
-import org.kiama.util.{Positioned, WhitespacePositionedParserUtilities}
+import org.kiama.util.WhitespacePositionedParserUtilities
 import scala.util.parsing.combinator.JavaTokenParsers
-import scala.util.matching.Regex
-import scala.collection.immutable.HashSet
 
 trait Parser extends JavaTokenParsers with WhitespacePositionedParserUtilities {
 
+    import org.kiama.util.Positioned
     import Syntax._
+    import scala.collection.immutable.HashSet
     import scala.math._
+    import scala.util.matching.Regex
 
     // Define comments using a parser because we are getting stack overflows
     // in Java's regex implementation when we use a regex and try to parse a

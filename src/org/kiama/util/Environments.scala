@@ -21,7 +21,8 @@
 package org.kiama
 package util
 
-import scala.collection.immutable.{HashMap, Stack}
+import scala.collection.immutable
+import scala.collection.immutable.Stack
 
 /**
  * General implementation of environments as stacked scopes.  The objects
@@ -134,13 +135,13 @@ trait Environments {
      * the given bindings.
      */
     def rootenv (bindings : (String,Entity)*) : Environment =
-        Stack (HashMap (bindings : _*))
+        Stack (immutable.HashMap (bindings : _*))
 
     /**
      * Enter a new empty scope nested within the given environment.
      */
     def enter (env : Environment) : Environment =
-        env.push (new HashMap[String,Entity])
+        env.push (new immutable.HashMap[String,Entity])
 
     /**
      * Leave the outermost scope of the given environment, raising an error if

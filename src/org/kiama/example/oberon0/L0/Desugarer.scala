@@ -30,7 +30,6 @@ trait Desugarer extends base.Transformer with NameAnalyser {
     import base.source.{Identifier, IdnDef, IdnUse, ModuleDecl}
     import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
     import org.kiama.attribution.Attribution.initTree
-    import scala.collection.mutable.HashMap
 
     /**
      * Desugar the provided module to replace identifier uses with uses

@@ -29,7 +29,7 @@ trait ParLazy extends Par {
 
     import AST._
     import org.kiama.rewriting.Rewriter._
-    import scala.collection.mutable.HashMap
+    import scala.collection.mutable
 
     /**
      * Lift an expression to be evaluated to a substitution.
@@ -90,7 +90,7 @@ trait ParLazy extends Par {
      * Assumes that the names are unique to start with.
      */
     def rename : Strategy = {
-        val env = new HashMap[Idn,Idn]()
+        val env = new mutable.HashMap[Idn,Idn]()
         val newname =
             rule {
                 case i : Idn => env.getOrElseUpdate (i, FreshVar ())

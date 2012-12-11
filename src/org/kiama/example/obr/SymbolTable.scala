@@ -29,13 +29,13 @@ package example.obr
 object SymbolTable {
 
     import ObrTree._
-    import scala.collection.immutable.Map
+    import scala.collection.immutable
 
     /**
      * An environment is a map from identifiers to entities.  I.e.
      * the bindings are the entries in the map.
      */
-    type Environment = Map[Identifier,Entity]
+    type Environment = immutable.Map[Identifier,Entity]
 
     /**
      * The most recent memory location allocated to a variable, or
