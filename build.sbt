@@ -8,7 +8,7 @@
 
 name := "kiama"
 
-version := "1.4.0-B5"
+version := "1.4.0-B6.SNAPSHOT"
 
 organization := "com.googlecode.kiama"
 
@@ -25,26 +25,22 @@ scalacOptions := Seq ("-deprecation", "-unchecked")
 scalacOptions in Compile <<= (scalaVersion, scalacOptions) map {
     (version, options) =>
         val versionOptions =
-            version match {
-                case "2.9.2" =>
-                    Seq ()
-                case _ =>
-                    Seq ("-feature",
-                         "-language:higherKinds,implicitConversions")
-            }
+            if (version.startsWith ("2.10"))
+                Seq ("-feature",
+                     "-language:higherKinds,implicitConversions")
+            else
+                Seq ()
         options ++ versionOptions
 }
 
 scalacOptions in Test <<= (scalaVersion, scalacOptions) map {
     (version, options) =>
         val versionOptions =
-            version match {
-                case "2.9.2" =>
-                    Seq ()
-                case _ =>
-                    Seq ("-feature",
-                         "-language:implicitConversions,postfixOps")
-            }
+            if (version.startsWith ("2.10"))
+                Seq ("-feature",
+                     "-language:implicitConversions,postfixOps")
+            else
+                Seq ()
         options ++ versionOptions
 }
 
