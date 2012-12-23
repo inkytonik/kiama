@@ -21,11 +21,14 @@
 package org
 
 /**
- * Kiama is a library of internal domain-specific languages for software
- * language engineering. It's main components address tree decoration via
- * attribute grammars (package `attribution`), tree transformation via
- * strategic term rewriting (package `rewriting`), dynamic semantics
- * (package `machine`) and pretty-printing (package `output`).
+ * Kiama is a Scala library for language processing. It is a project of the
+ * Programming Languages Research Group at Macquarie University. For full
+ * project details see the web site `http://kiama.googlecode.com`.
+ *
+ * Kiama's main components address tree decoration via attribute grammars
+ * (package `attribution`), tree transformation via strategic term rewriting
+ * (package `rewriting`), dynamic semantics (package `machine`) and
+ * pretty-printing (package `output`).
  *
  * The `util` package contains support modules for parsing,  input/output,
  * read-eval-print loops (REPLs) and pattern matching.
