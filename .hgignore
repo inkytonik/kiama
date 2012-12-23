@@ -1,3 +1,5 @@
+syntax: glob
+
 bin
 dist
 .manager
@@ -9,3 +11,5 @@ src_managed
 target
 
 tags
+
+*.docset
