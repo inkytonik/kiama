@@ -8,17 +8,15 @@
 
 name := "kiama"
 
-version := "1.4.0-B6.SNAPSHOT"
+version := "1.4.0"
 
 organization := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion := "2.10.0-RC5"
+scalaVersion := "2.10.0"
 
-scalaBinaryVersion <<= scalaVersion
-
-crossScalaVersions := Seq ("2.9.2", "2.10.0-RC5")
+crossScalaVersions := Seq ("2.9.2", "2.10.0")
 
 scalacOptions := Seq ("-deprecation", "-unchecked")
 
@@ -99,10 +97,7 @@ libraryDependencies <++= scalaVersion {
         Seq (
             "jline" % "jline" % "1.0",
             "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
-            if (version.startsWith ("2.10"))
-                "org.scalatest" %% "scalatest" % "2.0.M5-B1" % "test"
-            else
-                "org.scalatest" %% "scalatest" % "2.0.M6-SNAP1" % "test"
+            "org.scalatest" %% "scalatest" % "1.9.1" % "test"
         )
 }
 
