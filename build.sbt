@@ -8,7 +8,7 @@
 
 name := "kiama"
 
-version := "1.4.0"
+version := "1.4.1-SNAPSHOT"
 
 organization := "com.googlecode.kiama"
 
@@ -47,7 +47,7 @@ scalacOptions in Test <<= (scalaVersion, scalacOptions) map {
 // mimaDefaultSettings
 
 // previousArtifact <<= (name, organization) { (n, o) =>
-//     Some (o % (n + "_2.9.2") % "1.3.0")
+//     Some (o % (n + "_2.10") % "1.4.0")
 // }
 
 // Interactive settings
