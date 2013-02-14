@@ -263,9 +263,6 @@ trait AttributionBase {
  */
 trait Attribution extends AttributionBase {
 
-    import java.util.IdentityHashMap
-    import scala.collection.mutable.{ArrayBuffer, ListBuffer}
-
     /**
      * Global state for the memoisation tables.
      */
@@ -287,6 +284,8 @@ trait Attribution extends AttributionBase {
      * circularity error is reported by throwing an `IllegalStateException`.
      */
     abstract class CachedAttribute[T <: AnyRef,U] (f : T => U) extends Attribute[T,U] {
+
+        import java.util.IdentityHashMap
 
         /**
          * The memo table for this attribute, with `memo(t) == Some(v)` represents
