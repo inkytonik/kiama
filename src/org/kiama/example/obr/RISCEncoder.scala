@@ -48,14 +48,14 @@ object RISCEncoder {
      * Emit a RISC instruction.
      */
     private def emit (instr : Assembler) {
-        code append instr
+        code += instr
     }
 
     /**
      * Emit a comment.
      */
     private def emitcomment (text : String) {
-        code append Comment (text)
+        code += Comment (text)
     }
 
     /**

@@ -176,7 +176,7 @@ object Interpreter {
                     else {
                         val output = new ListBuffer[String]
                         for ((s, v) <- ps) {
-                            output.append (s + " = " + v)
+                            output += (s + " = " + v)
                         }
                         emitter.emitln (output.result.mkString (" "))
                     }
