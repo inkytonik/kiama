@@ -73,6 +73,73 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         expectResult (" ") (pretty (group (char ('\n'))))
     }
 
+    test ("pretty-print potential space line break") {
+        expectResult ("\n") (pretty (line))
+    }
+
+    test ("pretty-print potential space line break - grouped") {
+        expectResult (" ") (pretty (group (line)))
+    }
+
+    test ("pretty-print potential empty line break") {
+        expectResult ("\n") (pretty (linebreak))
+    }
+
+    test ("pretty-print potential empty line break - grouped") {
+        expectResult ("") (pretty (group (linebreak)))
+    }
+
+    {
+        val linesepdoc = "a" <> line <> "b" <> line <> "c"
+
+        test ("pretty-print space line break separators") {
+            expectResult ("a\nb\nc") (pretty (linesepdoc))
+        }
+
+        test ("pretty-print space line break separators - grouped") {
+            expectResult ("a b c") (pretty (group (linesepdoc)))
+        }
+
+        test ("pretty-print space line break separators - grouped, wrap") {
+            expectResult ("a\nb\nc") (pretty (group (linesepdoc), 3))
+        }
+
+    }
+
+    {
+        val linesepdoc = "a" <> linebreak <> "b" <> linebreak <> "c"
+
+        test ("pretty-print empty line break separators") {
+            expectResult ("a\nb\nc") (pretty (linesepdoc))
+        }
+
+        test ("pretty-print empty line break separators - grouped") {
+            expectResult ("abc") (pretty (group (linesepdoc)))
+        }
+
+        test ("pretty-print empty line break separators - grouped, wrap") {
+            expectResult ("a\nb\nc") (pretty (group (linesepdoc), 3))
+        }
+
+    }
+
+    {
+        val linesepdoc = "a" <> line ("; ") <> "b" <> line ("; ") <> "c"
+
+        test ("pretty-print semi line break separators") {
+            expectResult ("a\nb\nc") (pretty (linesepdoc))
+        }
+
+        test ("pretty-print semi line break separators - grouped") {
+            expectResult ("a; b; c") (pretty (group (linesepdoc)))
+        }
+
+        test ("pretty-print semi line break separators - grouped, wrap") {
+            expectResult ("a\nb\nc") (pretty (group (linesepdoc), 3))
+        }
+
+    }
+
     test ("pretty-print no spaces") {
         expectResult ("") (pretty (spaces (0)))
     }

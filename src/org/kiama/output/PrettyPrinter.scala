@@ -41,7 +41,7 @@ trait PrettyPrinterBase {
     type Width = Int
 
     /**
-     * The final layout of a document
+     * The final layout of a document as a string.
      */
     type Layout = String
 
@@ -160,16 +160,22 @@ trait PrettyPrinterBase {
     implicit def text (t : String) : Doc
 
     /**
-     * A document representing a potential line break.  Behaves like `space`
-     * if the break is omitted by a group.
+     * A document representing a potential line break.  Behaves like a space
+     * character if the break is omitted by a group.
      */
     def line : Doc
 
     /**
-     * A document representing a potential line break.  Behaves like `empty`
-     * if the break is omitted by a group.
+     * A document representing a potential line break.  Behaves like an empty
+     * string if the break is omitted by a group.
      */
     def linebreak : Doc
+
+    /**
+     * A document representing a potential line break.  Behaves like the
+     * string `repl` if the break is omitted by a group.
+     */
+    def line (repl : Layout) : Doc
 
     /**
      * A document representing a choice among different ways to print a structure.
@@ -842,13 +848,13 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 }
             )
 
-    private def line (gap : Layout) : Doc =
+    def line (repl : Layout) : Doc =
         new Doc ({
             case (i, w) =>
                 val outLine =
                     (h : Horizontal) => (c : Out) => (r : Remaining) =>
                         if (h) {
-                            gap + c (r - gap.length)
+                            repl + c (r - repl.length)
                         } else {
                             '\n' + (" " * i) + c (w - i)
                         }
