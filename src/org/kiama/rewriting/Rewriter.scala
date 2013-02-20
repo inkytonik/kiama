@@ -1336,13 +1336,13 @@ trait Rewriter {
     def alltdfold (s1 : => Strategy, s2 : => Strategy) : Strategy =
         s1 <+ (all (alltdfold (s1, s2)) <* s2)
 
-   /**
-    * Construct a strategy that applies `s` in a top-down, prefix fashion
-    * stopping at a frontier where `s` succeeds on some children.  `s` is then
-    * applied in a bottom-up, postfix fashion to the result.
-    */
-   def somedownup (s : => Strategy) : Strategy =
-       (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
+    /**
+     * Construct a strategy that applies `s` in a top-down, prefix fashion
+     * stopping at a frontier where `s` succeeds on some children.  `s` is then
+     * applied in a bottom-up, postfix fashion to the result.
+     */
+    def somedownup (s : => Strategy) : Strategy =
+        (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
 
     /**
      * Construct a strategy that applies `s` as many times as possible, but
