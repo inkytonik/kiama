@@ -102,6 +102,14 @@ class AttributionTests extends Tests {
         expectResult (2, "evaluation count") (count)
     }
 
+    test ("resetMemo resets the hasBeenComputedAt state") {
+        expectResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
+        t->maximum
+        expectResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
+        resetMemo ()
+        expectResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
+    }
+
     test ("constant attributes are only evaluated once") {
         lazy val answer : Tree => Int =
             constant { count = count + 1; 42 }

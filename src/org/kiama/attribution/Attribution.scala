@@ -302,14 +302,21 @@ trait Attribution extends AttributionBase {
         protected var memoVersion = MemoState.MEMO_VERSION
 
         /**
+         * Check to see if a reset has been requested, and if so, do it.
+         */
+        private def resetIfRequested () {
+            if (memoVersion != MemoState.MEMO_VERSION) {
+                memoVersion = MemoState.MEMO_VERSION
+                reset ()
+            }
+        }
+
+        /**
          * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
         def apply (t : T) : U = {
-            if (memoVersion != MemoState.MEMO_VERSION) {
-                memoVersion = MemoState.MEMO_VERSION
-                memo.clear
-            }
+            resetIfRequested ()
             memo.get (t) match {
                 case None     => reportCycle (t)
                 case Some (u) => u
@@ -331,11 +338,10 @@ trait Attribution extends AttributionBase {
         /**
          * Has the value of this attribute at `t` already been computed or not?
          */
-        def hasBeenComputedAt (t : T) : Boolean =
-            memo.get (t) match {
-                case Some (_) => true
-                case _        => false
-            }
+        def hasBeenComputedAt (t : T) : Boolean = {
+            resetIfRequested ()
+            memo.get (t) != null
+        }
 
     }
 
