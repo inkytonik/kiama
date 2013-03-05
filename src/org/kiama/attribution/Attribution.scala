@@ -340,7 +340,11 @@ trait Attribution extends AttributionBase {
          */
         def hasBeenComputedAt (t : T) : Boolean = {
             resetIfRequested ()
-            memo.get (t) != null
+            memo.get (t) match {
+                case Some (_) => true
+                case _        => // null, None
+                                 false
+            }
         }
 
     }
@@ -413,7 +417,8 @@ trait Attribution extends AttributionBase {
             val key = new ParamAttributeKey (arg, t)
             memo.get (key) match {
                 case Some (Some (_)) => true
-                case _               => false
+                case _               => // None, Some (None)
+                                        false
             }
         }
 

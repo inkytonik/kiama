@@ -59,6 +59,15 @@ class AttributionTests extends Tests {
     lazy val maximum =
         attr (maximumDef)
 
+    lazy val leafComputedDef : Tree => Boolean =
+        {
+            case t @ Leaf (v) =>
+                leafComputed.hasBeenComputedAt (t)
+        }
+
+    lazy val leafComputed =
+        attr (leafComputedDef)
+
     lazy val cattrDef : Tree => Attributable => Int =
         {
             case Pair (l, r) => {
@@ -108,6 +117,12 @@ class AttributionTests extends Tests {
         expectResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         resetMemo ()
         expectResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
+    }
+
+    test ("hasBeenComputedAt returns false while an attribute is being evaluated") {
+        val l = Leaf (3)
+        expectResult (false, "hasBeenComputedAt during") (l->leafComputed)
+        expectResult (true, "hasBeenComputedAt after") (leafComputed.hasBeenComputedAt (l))
     }
 
     test ("constant attributes are only evaluated once") {
