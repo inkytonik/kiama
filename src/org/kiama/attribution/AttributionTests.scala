@@ -268,8 +268,8 @@ class AttributionTests extends Tests {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                    t->direct
-                }
+                     t->direct
+                 }
         expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
@@ -296,8 +296,8 @@ class AttributionTests extends Tests {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                    t->direct
-                }
+                     t->direct
+                 }
         expectResult ("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
@@ -322,8 +322,8 @@ class AttributionTests extends Tests {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                    t->direct (1)
-                }
+                     t->direct (1)
+                 }
         expectResult ("Cycle detected in attribute evaluation 'direct (1)' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
@@ -610,12 +610,12 @@ class AttributionTests extends Tests {
         // A chain with only identiy update functions
         val idchain = chain[Tree,Int] ()
         val i1 = intercept[RuntimeException] {
-                    t->(idchain.in)
-                }
+                     t->(idchain.in)
+                 }
         expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
         val i2 = intercept[RuntimeException] {
-                    t->(idchain.out)
-                }
+                     t->(idchain.out)
+                 }
         expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         // A chain with refusing-all-in update function. This exercises a
@@ -627,12 +627,12 @@ class AttributionTests extends Tests {
             }
         val refchain = chain (refuse)
         val i3 = intercept[RuntimeException] {
-                    t->(refchain.in)
-                }
+                     t->(refchain.in)
+                 }
         expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
         val i4 = intercept[RuntimeException] {
-                    t->(refchain.out)
-                }
+                     t->(refchain.out)
+                 }
         expectResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i4.getMessage)
 
     }
