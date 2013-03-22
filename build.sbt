@@ -92,14 +92,12 @@ initialCommands in console in Test <<= (initialCommands in console) { cmds =>
 
 // Dependencies
 
-libraryDependencies <++= scalaVersion {
-    version =>
-        Seq (
-            "jline" % "jline" % "1.0",
-            "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
-            "org.scalatest" %% "scalatest" % "1.9.1" % "test"
-        )
-}
+libraryDependencies ++= Seq (
+    "jline" % "jline" % "1.0",
+    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0-SNAPSHOT",
+    "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
+    "org.scalatest" %% "scalatest" % "1.9.1" % "test"
+)
 
 resolvers ++= Seq (
     Resolver.sonatypeRepo ("releases"),
