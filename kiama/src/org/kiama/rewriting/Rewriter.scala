@@ -35,6 +35,7 @@ trait Rewriter {
     import scala.collection.generic.CanBuildFrom
     import scala.collection.mutable.Builder
     import scala.collection.mutable.WeakHashMap
+    import scala.language.higherKinds
 
     /**
      * The type of terms that can be rewritten.  Any type of value is acceptable

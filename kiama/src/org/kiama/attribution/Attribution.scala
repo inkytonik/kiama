@@ -263,6 +263,8 @@ trait AttributionBase {
  */
 trait Attribution extends AttributionBase {
 
+    import scala.language.implicitConversions
+
     /**
      * Global state for the memoisation tables.
      */

@@ -73,6 +73,7 @@ object AST {
 trait TIL1_1 extends PositionedParserUtilities {
 
     import AST._
+    import scala.language.postfixOps
 
     type Root = Program
 

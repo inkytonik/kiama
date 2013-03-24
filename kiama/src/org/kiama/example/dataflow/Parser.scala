@@ -29,6 +29,7 @@ import org.kiama.util.PositionedParserUtilities
 trait Parser extends PositionedParserUtilities {
 
     import DataflowAST._
+    import scala.language.postfixOps
 
     lazy val parser =
         phrase (stm)

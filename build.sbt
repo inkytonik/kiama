@@ -8,7 +8,7 @@ organization in ThisBuild := "com.googlecode.kiama"
 
 scalaVersion in ThisBuild := "2.10.0"
 
-scalacOptions in ThisBuild := Seq ("-deprecation", "-unchecked")
+scalacOptions in ThisBuild := Seq ("-deprecation", "-feature", "-unchecked")
 
 // Dependency resolution
 

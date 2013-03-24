@@ -32,6 +32,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
     import ObrTree._
     import org.kiama.util.Positioned
     import scala.collection.immutable.HashSet
+    import scala.language.postfixOps
 
     override val whiteSpace = """(\s|\(\*(?:.|[\n\r])*?\*\))+""".r
 

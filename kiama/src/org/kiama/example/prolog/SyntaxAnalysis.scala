@@ -29,6 +29,7 @@ import org.kiama.util.PositionedParserUtilities
 class SyntaxAnalysis extends PositionedParserUtilities {
 
     import PrologTree._
+    import scala.language.postfixOps
 
     lazy val parser =
         phrase (program)
