@@ -8,7 +8,7 @@
 
 libraryDependencies ++= Seq (
     "jline" % "jline" % "1.0",
-    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0-SNAPSHOT",
+//    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0-SNAPSHOT",
     "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
     "org.scalatest" %% "scalatest" % "1.9.1" % "test"
 )
