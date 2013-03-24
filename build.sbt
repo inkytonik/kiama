@@ -6,7 +6,7 @@ organization in ThisBuild := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion in ThisBuild := "2.10.0"
+scalaVersion in ThisBuild := "2.10.1"
 
 scalacOptions in ThisBuild := Seq ("-deprecation", "-feature", "-unchecked")
 
