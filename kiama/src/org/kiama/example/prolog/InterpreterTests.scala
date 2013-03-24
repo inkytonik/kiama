@@ -41,7 +41,7 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
      * against the expected output.
      */
     def querytest (fn : String, q : String, exp : String) {
-        val fullfn = "src/org/kiama/example/prolog/test/" + fn
+        val fullfn = "kiama/src/org/kiama/example/prolog/test/" + fn
         test (q + " on " + fullfn) {
             val emitter = new StringEmitter
             parseAll (program, filereader (fullfn)) match {

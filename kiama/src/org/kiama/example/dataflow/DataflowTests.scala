@@ -112,7 +112,7 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
         expectResult (Set ()) (out (s5))
     }
 
-    filetests ("Dataflow", "src/org/kiama/example/dataflow/tests", ".data", ".out")
-    filetests ("Dataflow", "src/org/kiama/example/dataflow/tests", ".dataerr", ".err")
+    filetests ("Dataflow", "kiama/src/org/kiama/example/dataflow/tests", ".data", ".out")
+    filetests ("Dataflow", "kiama/src/org/kiama/example/dataflow/tests", ".dataerr", ".err")
 
 }
