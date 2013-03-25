@@ -68,7 +68,7 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
      */
     def mktests (proglang : String) {
         val name = "Oberon0 testing " + artefact + " on " + proglang + " tests"
-        val path = "kiama/src/org/kiama/example/oberon0/" + proglang + "/tests"
+        val path = "src/org/kiama/example/oberon0/" + proglang + "/tests"
         filetests (name, path, ".ob", ".out")
     }
 

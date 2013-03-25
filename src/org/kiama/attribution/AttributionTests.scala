@@ -638,7 +638,7 @@ class AttributionTests extends Tests {
     }
 
     test ("deep cloning a term with sharing gives an equal but not eq term") {
-        import Attributable.deepclone
+        import AttributableSupport.deepclone
         import org.kiama.example.imperative.AST._
 
         val c = Add (Num (1), Num (2))

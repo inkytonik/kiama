@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2013 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2008-2013 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -18,24 +18,29 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-import sbt._
-import Keys._
+package org.kiama
+package attribution
 
-object KiamaBuild extends Build {
+/**
+ * Support for the `Attributable` class.
+ */
+object AttributableSupport {
 
-    lazy val core =
-        Project (
-            id = "core",
-            base = file ("core")
-        )
+    /**
+     * Deep clone the given `Attributable` tree.
+     */
+    def deepclone[T <: Attributable] (t : T) : T = {
 
-    lazy val kiama =
-        Project (
-            id = "kiama",
-            base = file (".")
-        ) dependsOn (core % "compile-internal, test-internal") settings (
-            mappings in (Compile, packageBin) <++= mappings in (core, Compile, packageBin),
-            mappings in (Compile, packageSrc) <++= mappings in (core, Compile, packageSrc)
-        )
+        import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
+
+        val deepcloner =
+            everywherebu (rule {
+                case n : Attributable if !n.hasChildren =>
+                    n.clone ()
+            })
+
+        rewrite (deepcloner) (t)
+
+    }
 
 }

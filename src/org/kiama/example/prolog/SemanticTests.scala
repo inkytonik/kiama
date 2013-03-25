@@ -30,7 +30,7 @@ import org.kiama.util.{Compiler, TestCompiler}
  */
 class SemanticTests extends SemanticTestDriver {
 
-    filetests ("Prolog", "kiama/src/org/kiama/example/prolog/test", ".pl", ".sem")
+    filetests ("Prolog", "src/org/kiama/example/prolog/test", ".pl", ".sem")
 
 }
 

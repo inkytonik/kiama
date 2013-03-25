@@ -29,8 +29,6 @@ package rewriting
  */
 trait Rewritable {
 
-    import Rewriter.Term
-
     /**
      * Return the number of components that this value has.  Should be
      * greater than or equal to zero.
@@ -40,7 +38,7 @@ trait Rewritable {
     /**
      * Return a sequence containing the components of this value.
      */
-    def deconstruct : Seq[Term]
+    def deconstruct : Seq[Any]
 
     /**
      * Return a new value constructed from the given original value and
@@ -51,7 +49,7 @@ trait Rewritable {
      * appropriate (e.g., there is the wrong number of them or they are
      * of the wrong type).
      */
-    def reconstruct (components : Array[Term]) : Term
+    def reconstruct (components : Array[Any]) : Any
 
     /**
      * Helper function that can be called by implementations of reconstruct
@@ -61,7 +59,7 @@ trait Rewritable {
      * provided.  An IllegalArgumentException containing a description
      * of the problem is thrown.
      */
-    protected def illegalArgs (desc : String, argtypes : String, args : Array[Term]) =
+    protected def illegalArgs (desc : String, argtypes : String, args : Array[Any]) =
         throw (new IllegalArgumentException ("making " + desc + ": expecting " +
                     argtypes + ", got " + args.mkString (", ")))
 

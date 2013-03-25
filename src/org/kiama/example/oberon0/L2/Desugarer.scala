@@ -31,7 +31,7 @@ trait Desugarer extends L0.Desugarer {
     import L0.source.{AddExp, AndExp, Assignment, EqExp, Expression,
         GeExp, IdnExp, IntExp, LeExp, NamedType, OrExp, VarDecl}
     import L1.source.{IfStatement, WhileStatement}
-    import org.kiama.attribution.Attributable.deepclone
+    import org.kiama.attribution.AttributableSupport.deepclone
     import org.kiama.rewriting.Rewriter.{everywhere, rewrite, rule}
     import source.{Case, CaseStatement, Condition, ForStatement,
         MinMaxCond, ValCond}

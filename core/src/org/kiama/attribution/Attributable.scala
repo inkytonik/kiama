@@ -228,33 +228,9 @@ trait Attributable extends Product with Cloneable {
     /**
      * Make a shallow clone of this node.
      *
-     * @see Attributable.deepclone
+     * @see AttributableSupport.deepclone
      */
     override def clone () : Attributable =
         super.clone ().asInstanceOf[Attributable]
-
-}
-
-/**
- * Support for the `Attributable` class.
- */
-object Attributable {
-
-    /**
-     * Deep clone the given `Attributable` tree.
-     */
-    def deepclone[T <: Attributable] (t : T) : T = {
-
-        import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
-
-        val deepcloner =
-            everywherebu (rule {
-                case n : Attributable if !n.hasChildren =>
-                    n.clone ()
-            })
-
-        rewrite (deepcloner) (t)
-
-    }
 
 }

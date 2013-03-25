@@ -29,6 +29,6 @@ import org.kiama.util.TestCompiler
  */
 class TransformTests extends Driver with TestCompiler[Program] {
 
-    filetests ("Transform", "kiama/src/org/kiama/example/transform/tests", ".exp", ".out")
+    filetests ("Transform", "src/org/kiama/example/transform/tests", ".exp", ".out")
 
 }
