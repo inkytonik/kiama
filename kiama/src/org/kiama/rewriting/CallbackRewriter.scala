@@ -48,9 +48,8 @@ trait CallbackRewriter extends Rewriter {
      * and new terms to the rewriting method and succeed with the term that
      * it returns.
      */
-    private def dispatch (n : String, s : Strategy) : Strategy =
-        new Strategy {
-            val name = n
+    private def dispatch (name : String, s : Strategy) : Strategy =
+        new Strategy (name) {
             def apply (t : Any) : Option[Any] = {
                 s (t) match {
                     case None     => None

@@ -24,9 +24,10 @@ package rewriting
 /**
  * Any-rewriting strategies. A strategy is a function that takes a term
  * of any type as input and either succeeds producing a new term (`Some`),
- * or fails (`None`).
+ * or fails (`None`). `name` is used to identify this strategy in debugging
+ * output.
  */
-abstract class Strategy extends (Any => Option[Any]) {
+abstract class Strategy (val name : String) extends (Any => Option[Any]) {
 
     /**
      * Alias this strategy as `p` to make it easier to refer to in the
@@ -35,11 +36,6 @@ abstract class Strategy extends (Any => Option[Any]) {
     p =>
 
     import scala.language.experimental.macros
-
-    /**
-     * The name of this strategy.
-     */
-    def name : String
 
     /**
      * Apply this strategy to a term, producing either a transformed term
@@ -59,9 +55,8 @@ abstract class Strategy extends (Any => Option[Any]) {
      * As for the other `<*` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def <* (n : String, q : => Strategy) : Strategy =
-        new Strategy {
-            val name = n
+    def <* (name : String, q : => Strategy) : Strategy =
+        new Strategy (name) {
             def apply (t1 : Any) : Option[Any] =
                 p (t1) match {
                     case Some (t2) => q (t2)
@@ -82,9 +77,8 @@ abstract class Strategy extends (Any => Option[Any]) {
      * As for the other `<+` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def <+ (n : String, q : => Strategy) : Strategy =
-        new Strategy {
-            val name = n
+    def <+ (name : String, q : => Strategy) : Strategy =
+        new Strategy (name) {
             def apply (t1 : Any) : Option[Any] =
                 p (t1) match {
                     case Some (t2) => Some (t2)
@@ -110,8 +104,8 @@ abstract class Strategy extends (Any => Option[Any]) {
      * As for the other `+` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def + (n : String, q : => Strategy) : PlusStrategy =
-        new PlusStrategy (n, p, q)
+    def + (name : String, q : => Strategy) : PlusStrategy =
+        new PlusStrategy (name, p, q)
 
     /**
      * Conditional choice: `c < l + r`. Construct a strategy that first
@@ -126,9 +120,8 @@ abstract class Strategy extends (Any => Option[Any]) {
      * As for the other `<` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def < (n : String, lr : => PlusStrategy) : Strategy =
-        new Strategy {
-            val name = n
+    def < (name : String, lr : => PlusStrategy) : Strategy =
+        new Strategy (name) {
             def apply (t1 : Any) : Option[Any] =
                 p (t1) match {
                     case Some (t2) => lr.left (t2)
@@ -145,10 +138,9 @@ abstract class Strategy extends (Any => Option[Any]) {
  * specifies a name for the constructed strategy. `p` and `q` are
  * evaluated at most once.
  */
-class PlusStrategy (n : String, p : => Strategy, q : => Strategy) extends Strategy {
-    val name = n
+class PlusStrategy (name : String, p : => Strategy, q : => Strategy) extends Strategy (name) {
     lazy val left = p
     lazy val right = q
-    private lazy val s = left <+ (n, right)
+    private lazy val s = left <+ (name, right)
     def apply (t : Any) : Option[Any] = s (t)
 }

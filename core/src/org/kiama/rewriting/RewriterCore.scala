@@ -78,9 +78,8 @@ trait RewriterCore {
      * As for the other `log` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def log (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
-        new Strategy {
-            val name = n
+    def log (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
+        new Strategy (name) {
             def apply (t1 : Any) : Option[Any] = {
                 emitter.emit (msg + t1)
                 val r = s (t1)
@@ -107,9 +106,8 @@ trait RewriterCore {
      * As for the other `logfail` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def logfail[T] (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
-        new Strategy {
-            val name = n
+    def logfail[T] (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
+        new Strategy (name) {
             def apply (t1 : Any) : Option[Any] = {
                 val r = s (t1)
                 r match {
@@ -136,9 +134,8 @@ trait RewriterCore {
      * As for the other `memo` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def memo (n : String, s : => Strategy) : Strategy =
-        new Strategy {
-            val name = n
+    def memo (name : String, s : => Strategy) : Strategy =
+        new Strategy (name) {
             private val cache =
                 new scala.collection.mutable.HashMap[Any,Option[Any]]
             private lazy val strat = s
@@ -189,9 +186,8 @@ trait RewriterCore {
      * As for the other `query` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def query[T] (n : String, f : Any ==> T) : Strategy =
-        new Strategy {
-            val name = n
+    def query[T] (name : String, f : Any ==> T) : Strategy =
+        new Strategy (name) {
             def apply (t : Any) : Option[Any] = {
                 if (f isDefinedAt t)
                     f (t)
@@ -212,9 +208,8 @@ trait RewriterCore {
      * As for the other `queryf` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def queryf[T] (n : String, f : Any => T) : Strategy =
-        new Strategy {
-            val name = n
+    def queryf[T] (name : String, f : Any => T) : Strategy =
+        new Strategy (name) {
             def apply (t : Any) : Option[Any] = {
                 f (t)
                 Some (t)
@@ -234,9 +229,8 @@ trait RewriterCore {
      * As for the other `rule` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def rule (n : String, f : Any ==> Any) : Strategy =
-        new Strategy {
-            val name = n
+    def rule (name : String, f : Any ==> Any) : Strategy =
+        new Strategy (name) {
             def apply (t : Any) : Option[Any] = {
                 if (f isDefinedAt t)
                     Some (f (t))
@@ -273,9 +267,8 @@ trait RewriterCore {
      * As for the other `rulefs` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def rulefs (n : String, f : Any ==> Strategy) : Strategy =
-        new Strategy {
-            val name = n
+    def rulefs (name : String, f : Any ==> Strategy) : Strategy =
+        new Strategy (name) {
             def apply (t : Any) : Option[Any] = {
                 if (f isDefinedAt t)
                     (f (t)) (t)
@@ -298,9 +291,8 @@ trait RewriterCore {
      * As for the other `strategy` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def strategy (n : String, f : Any ==> Option[Any]) : Strategy =
-        new Strategy {
-            val name = n
+    def strategy (name : String, f : Any ==> Option[Any]) : Strategy =
+        new Strategy (name) {
             def apply (t : Any) : Option[Any] = {
                 if (f isDefinedAt t)
                     f (t)
@@ -320,9 +312,8 @@ trait RewriterCore {
      * As for the other `strategyf` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def strategyf (n : String, f : Any => Option[Any]) : Strategy =
-        new Strategy {
-            val name = n
+    def strategyf (name : String, f : Any => Option[Any]) : Strategy =
+        new Strategy (name) {
             def apply (t : Any) : Option[Any] =
                 f (t)
         }
@@ -400,10 +391,8 @@ trait RewriterCore {
      * As for the other `child` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def child (n : String, i : Int, s : => Strategy) : Strategy =
-        new Strategy {
-
-            val name = n
+    def child (name : String, i : Int, s : => Strategy) : Strategy =
+        new Strategy (name) {
 
             lazy val strat = s
 
@@ -514,10 +503,8 @@ trait RewriterCore {
      * As for the other `all` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def all (n : String, s : => Strategy) : Strategy =
-        new Strategy {
-
-            val name = n
+    def all (name : String, s : => Strategy) : Strategy =
+        new Strategy (name) {
 
             lazy val strat = s
 
@@ -661,10 +648,8 @@ trait RewriterCore {
      * As for the other `one` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def one (n : String, s : => Strategy) : Strategy =
-        new Strategy {
-
-            val name = n
+    def one (name : String, s : => Strategy) : Strategy =
+        new Strategy (name) {
 
             lazy val strat = s
 
@@ -816,10 +801,8 @@ trait RewriterCore {
      * As for the other `some` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def some (n : String, s : => Strategy) : Strategy =
-        new Strategy {
-
-            val name = n
+    def some (name : String, s : => Strategy) : Strategy =
+        new Strategy (name) {
 
             lazy val strat = s
 
@@ -978,10 +961,8 @@ trait RewriterCore {
      * As for the other `congruence` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def congruence (n : String, ss : Strategy*) : Strategy =
-        new Strategy {
-
-            val name = n
+    def congruence (name : String, ss : Strategy*) : Strategy =
+        new Strategy (name) {
 
             def apply (t : Any) : Option[Any] =
                 t match {
