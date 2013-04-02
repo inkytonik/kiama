@@ -42,7 +42,8 @@ trait RewriterCore {
         macro RewriterMacros.buildMacro
 
     /**
-     * Builder for `build`.
+     * As for the other `build` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def build (n : String, t : => Any) : Strategy =
         rulef (n, _ => t)
@@ -57,7 +58,8 @@ trait RewriterCore {
         macro RewriterMacros.debugMacro
 
     /**
-     * Builder for `debug`.
+     * As for the other `debug` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def debug (n : String, msg : String, emitter : Emitter) : Strategy =
         strategyf (n, t => { emitter.emitln (msg + t); Some (t) })
@@ -72,7 +74,8 @@ trait RewriterCore {
         macro RewriterMacros.logMacro
 
     /**
-     * Builder for `log`.
+     * As for the other `log` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def log[T] (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
         new Strategy {
@@ -100,7 +103,8 @@ trait RewriterCore {
         macro RewriterMacros.logfailMacro
 
     /**
-     * Builder for `logfail`.
+     * As for the other `logfail` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def logfail[T] (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
         new Strategy {
@@ -128,7 +132,8 @@ trait RewriterCore {
         macro RewriterMacros.memoMacro
 
     /**
-     * Builder for `memo`.
+     * As for the other `memo` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def memo (n : String, s : => Strategy) : Strategy =
         new Strategy {
@@ -149,7 +154,8 @@ trait RewriterCore {
         macro RewriterMacros.optionMacro
 
     /**
-     * Builder for `option`.
+     * As for the other `option` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def option (n : String, o : => Option[Any]) : Strategy =
         strategyf (n, _ => o)
@@ -178,7 +184,8 @@ trait RewriterCore {
         macro RewriterMacros.queryMacro[T]
 
     /**
-     * Builder for `query`.
+     * As for the other `query` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def query[T] (n : String, f : Any ==> T) : Strategy =
         new Strategy {
@@ -200,7 +207,8 @@ trait RewriterCore {
         macro RewriterMacros.queryfMacro[T]
 
     /**
-     * Builder for `query`.
+     * As for the other `queryf` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def queryf[T] (n : String, f : Any => T) : Strategy =
         new Strategy {
@@ -221,7 +229,8 @@ trait RewriterCore {
         macro RewriterMacros.ruleMacro
 
     /**
-     * Builder for `rule`.
+     * As for the other `rule` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def rule (n : String, f : Any ==> Any) : Strategy =
         new Strategy {
@@ -242,7 +251,8 @@ trait RewriterCore {
         macro RewriterMacros.rulefMacro
 
     /**
-     * Builder for `rulef`.
+     * As for the other `rulef` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def rulef (n : String, f : Any => Any) : Strategy =
         strategyf (n, t => Some (f (t)))
@@ -258,7 +268,8 @@ trait RewriterCore {
         macro RewriterMacros.rulefsMacro
 
     /**
-     * Builder for `rulefs`.
+     * As for the other `rulefs` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def rulefs (n : String, f : Any ==> Strategy) : Strategy =
         new Strategy {
@@ -282,7 +293,8 @@ trait RewriterCore {
         macro RewriterMacros.strategyMacro
 
     /**
-     * Builder for `strategy`.
+     * As for the other `strategy` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def strategy (n : String, f : Any ==> Option[Any]) : Strategy =
         new Strategy {
@@ -303,7 +315,8 @@ trait RewriterCore {
         macro RewriterMacros.strategyfMacro
 
     /**
-     * Builder for `strategyf`.
+     * As for the other `strategyf` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def strategyf (n : String, f : Any => Option[Any]) : Strategy =
         new Strategy {
@@ -320,7 +333,8 @@ trait RewriterCore {
         macro RewriterMacros.termMacro
 
     /**
-     * Builder for `term`.
+     * As for the other `term` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def term (n : String, t : Any) : Strategy =
         rule (n, {
@@ -380,7 +394,8 @@ trait RewriterCore {
         macro RewriterMacros.childMacro
 
     /**
-     * Builder for `child`.
+     * As for the other `child` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def child (n : String, i : Int, s : => Strategy) : Strategy =
         new Strategy {
@@ -487,7 +502,8 @@ trait RewriterCore {
         macro RewriterMacros.allMacro
 
     /**
-     * Builder for `all`.
+     * As for the other `all` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def all (n : String, s : => Strategy) : Strategy =
         new Strategy {
@@ -627,7 +643,8 @@ trait RewriterCore {
         macro RewriterMacros.oneMacro
 
     /**
-     * Builder for `one`.
+     * As for the other `one` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def one (n : String, s : => Strategy) : Strategy =
         new Strategy {
@@ -776,7 +793,8 @@ trait RewriterCore {
         macro RewriterMacros.someMacro
 
     /**
-     * Builder for `some`.
+     * As for the other `some` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def some (n : String, s : => Strategy) : Strategy =
         new Strategy {
@@ -932,7 +950,8 @@ trait RewriterCore {
         macro RewriterMacros.congruenceMacro
 
     /**
-     * Builder for `congruence`.
+     * As for the other `congruence` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def congruence (n : String, ss : Strategy*) : Strategy =
         new Strategy {

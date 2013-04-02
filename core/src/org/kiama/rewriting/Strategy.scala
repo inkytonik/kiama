@@ -56,7 +56,9 @@ abstract class Strategy extends (Any => Option[Any]) {
         macro RewriterMacros.seqMacro
 
     /**
-     * Builder for `<*`.
+     * Sequential composition. Arguments are as for the single argument
+     * version plus the first argument which specifies a name for the
+     * constructed strategy.
      */
     def <* (n : String, q : => Strategy) : Strategy =
         new Strategy {
@@ -77,7 +79,9 @@ abstract class Strategy extends (Any => Option[Any]) {
         macro RewriterMacros.detchoiceMacro
 
     /**
-     * Builder for `<+`.
+     * Deterministic choice.  Arguments are as for the single argument
+     * version plus the first argument which specifies a name for the
+     * constructed strategy.
      */
     def <+ (n : String, q : => Strategy) : Strategy =
         new Strategy {
@@ -103,7 +107,9 @@ abstract class Strategy extends (Any => Option[Any]) {
         macro RewriterMacros.nondetchoiceMacro
 
     /**
-     * Builder for `+`.
+     * Non-deterministic choice. Arguments are as for the single argument
+     * version plus the first argument which specifies a name for the
+     * constructed strategy.
      */
     def + (n : String, q : => Strategy) : PlusStrategy =
         new PlusStrategy (n, p, q)
@@ -118,7 +124,9 @@ abstract class Strategy extends (Any => Option[Any]) {
         macro RewriterMacros.condMacro
 
     /**
-     * Builder for `<`.
+     * Conditional choice:. Arguments are as for the single argument
+     * version plus the first argument which specifies a name for the
+     * constructed strategy.
      */
     def < (n : String, lr : => PlusStrategy) : Strategy =
         new Strategy {
@@ -135,7 +143,8 @@ abstract class Strategy extends (Any => Option[Any]) {
 /**
  * Helper class to contain commonality of choice in non-deterministic
  * choice operator and then-else part of a conditional choice. Only
- * returned by the non-deterministic choice operator.
+ * returned by the non-deterministic choice operator. The first argument
+ * specifies a name for the constructed strategy.
  */
 class PlusStrategy (n : String, p : => Strategy, q : => Strategy) extends Strategy {
     val name = n
