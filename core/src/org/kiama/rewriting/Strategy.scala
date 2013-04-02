@@ -50,15 +50,14 @@ abstract class Strategy extends (Any => Option[Any]) {
     /**
      * Sequential composition. Construct a strategy that first applies
      * this strategy. If it succeeds, then apply `q` to the new subject
-     * term. Otherwise fail.
+     * term. Otherwise fail. `q` is evaluated at most once.
      */
     def <* (q : Strategy) : Strategy =
         macro RewriterMacros.seqMacro
 
     /**
-     * Sequential composition. Arguments are as for the single argument
-     * version plus the first argument which specifies a name for the
-     * constructed strategy.
+     * As for the other `<*` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def <* (n : String, q : => Strategy) : Strategy =
         new Strategy {
@@ -73,15 +72,15 @@ abstract class Strategy extends (Any => Option[Any]) {
     /**
      * Deterministic choice.  Construct a strategy that first applies
      * this strategy. If it succeeds, succeed with the resulting term.
-     * Otherwise, apply `q` to the original subject te`rm.
+     * Otherwise, apply `q` to the original subject term. `q` is
+     * evaluated at most once.
      */
     def <+ (q : Strategy) : Strategy =
         macro RewriterMacros.detchoiceMacro
 
     /**
-     * Deterministic choice.  Arguments are as for the single argument
-     * version plus the first argument which specifies a name for the
-     * constructed strategy.
+     * As for the other `<+` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def <+ (n : String, q : => Strategy) : Strategy =
         new Strategy {
@@ -102,14 +101,14 @@ abstract class Strategy extends (Any => Option[Any]) {
      * When used as the argument to the `<` conditional choice
      * combinator, `+` just serves to hold the two strategies that are
      * chosen between by the conditional choice.
+     * `q` is evaluated at most once.
      */
     def + (q : Strategy) : PlusStrategy =
         macro RewriterMacros.nondetchoiceMacro
 
     /**
-     * Non-deterministic choice. Arguments are as for the single argument
-     * version plus the first argument which specifies a name for the
-     * constructed strategy.
+     * As for the other `+` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def + (n : String, q : => Strategy) : PlusStrategy =
         new PlusStrategy (n, p, q)
@@ -118,15 +117,14 @@ abstract class Strategy extends (Any => Option[Any]) {
      * Conditional choice: `c < l + r`. Construct a strategy that first
      * applies this strategy (`c`). If `c` succeeds, the strategy applies
      * `l` to the resulting term, otherwise it applies `r` to the original
-     * subject term.
+     * subject term. `lr` is evaluated at most once.
      */
     def < (lr : PlusStrategy) : Strategy =
         macro RewriterMacros.condMacro
 
     /**
-     * Conditional choice:. Arguments are as for the single argument
-     * version plus the first argument which specifies a name for the
-     * constructed strategy.
+     * As for the other `<` with the first argument specifying a name for
+     * the constructed strategy.
      */
     def < (n : String, lr : => PlusStrategy) : Strategy =
         new Strategy {
@@ -144,12 +142,13 @@ abstract class Strategy extends (Any => Option[Any]) {
  * Helper class to contain commonality of choice in non-deterministic
  * choice operator and then-else part of a conditional choice. Only
  * returned by the non-deterministic choice operator. The first argument
- * specifies a name for the constructed strategy.
+ * specifies a name for the constructed strategy. `p` and `q` are
+ * evaluated at most once.
  */
 class PlusStrategy (n : String, p : => Strategy, q : => Strategy) extends Strategy {
     val name = n
-    def left = p
-    def right = q
-    def apply (t : Any) : Option[Any] =
-        (p <+ (n, q)) (t)
+    lazy val left = p
+    lazy val right = q
+    private lazy val s = left <+ (n, right)
+    def apply (t : Any) : Option[Any] = s (t)
 }

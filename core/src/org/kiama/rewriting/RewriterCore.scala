@@ -36,9 +36,9 @@ trait RewriterCore {
 
     /**
      * Construct a strategy that always succeeds, changing the subject term to
-     * the given term `t`.
+     * the given term `t`. The term `t` is evaluated at most once.
      */
-    def build (t : => Any) : Strategy =
+    def build (t : Any) : Strategy =
         macro RewriterMacros.buildMacro
 
     /**
@@ -68,16 +68,17 @@ trait RewriterCore {
      * Create a logging strategy based on a strategy `s`. The returned strategy
      * succeeds or fails exactly as `s` does, but also prints the provided message,
      * the subject term, the success or failure status, and on success, the result
-     * term, to the provided emitter (default: standard output).
+     * term, to the provided emitter (default: standard output). `s` is evaluated
+     * at most once.
      */
-    def log[T] (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
+    def log (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
         macro RewriterMacros.logMacro
 
     /**
      * As for the other `log` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def log[T] (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
+    def log (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
         new Strategy {
             val name = n
             def apply (t1 : Any) : Option[Any] = {
@@ -97,7 +98,7 @@ trait RewriterCore {
      * Create a logging strategy based on a strategy `s`.  The returned strategy
      * succeeds or fails exactly as `s` does, but if `s` fails, also prints the
      * provided message and the subject term to the provided emitter (default:
-     * standard output).
+     * standard output). `s` is evaluated at most once.
      */
     def logfail[T] (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
         macro RewriterMacros.logfailMacro
@@ -126,7 +127,7 @@ trait RewriterCore {
      * results.  In other words, if `memo(s)` is called on a term `t` twice, the
      * second time will return the same result as the first, without having to
      * invoke `s`.  For best results, it is important that `s` should have no side
-     * effects.
+     * effects. `s` is evaluated at most once.
      */
     def memo (s : Strategy) : Strategy =
         macro RewriterMacros.memoMacro
@@ -140,15 +141,16 @@ trait RewriterCore {
             val name = n
             private val cache =
                 new scala.collection.mutable.HashMap[Any,Option[Any]]
+            private lazy val strat = s
             def apply (t : Any) : Option[Any] =
-                cache.getOrElseUpdate (t, s (t))
+                cache.getOrElseUpdate (t, strat (t))
         }
 
     /**
      * Construct a strategy from an option value `o`. The strategy succeeds
      * or fails depending on whether `o` is a Some or None, respectively.
      * If `o` is a `Some`, then the subject term is changed to the term that
-     * is wrapped by the `Some`.
+     * is wrapped by the `Some`. `o` is evaluated at most once.
      */
     def option (o : Option[Any]) : Strategy =
         macro RewriterMacros.optionMacro
@@ -389,6 +391,7 @@ trait RewriterCore {
      * the ''ith'' child producing the same term (by `eq` for references and by `==` for
      * other values), then the overall strategy returns the subject term.
      * This operation works for instances of `Product` or finite `Seq` values.
+     * `s` is evaluated at most once.
      */
     def child (i : Int, s : Strategy) : Strategy =
         macro RewriterMacros.childMacro
@@ -399,71 +402,76 @@ trait RewriterCore {
      */
     def child (n : String, i : Int, s : => Strategy) : Strategy =
         new Strategy {
+
             val name = n
+
+            lazy val strat = s
+
             def apply (t : Any) : Option[Any] =
                 t match {
-                    case p : Product => childProduct (p)
-                    case t : Seq[_]  => childSeq (t.asInstanceOf[Seq[Any]])
+                    case p : Product => childProduct (strat, i, p)
+                    case t : Seq[_]  => childSeq (strat, i, t.asInstanceOf[Seq[Any]])
                     case _           => None
                 }
 
-            private def childProduct (p : Product) : Option[Any] = {
-                val numchildren = p.productArity
-                if ((i < 1) || (i > numchildren)) {
-                    None
-                } else {
-                    val ct = p.productElement (i-1)
-                    s (ct) match {
-                        case Some (ti) if (same (ct, ti)) =>
-                            Some (p)
-                        case Some (ti) =>
-                            val newchildren = new Array[AnyRef](numchildren)
-                            var j = 0
-                            while (j < numchildren) {
-                                newchildren (j) = makechild (p.productElement (j))
-                                j = j + 1
-                            }
-                            newchildren (i-1) = makechild (ti)
-                            val ret = dup (p, newchildren)
-                            Some (ret)
-                        case None =>
-                            None
-                    }
-                }
-            }
+        }
 
-            private def childSeq[CC[U] <: Seq[U]] (t : CC[Any])
-                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                                : Option[CC[Any]] = {
-                val numchildren = t.size
-                if ((i < 1) || (i > numchildren)) {
-                    None
-                } else {
-                    val ct = t (i - 1)
-                    s (ct) match {
-                        case Some (ti) if (same (ct, ti)) =>
-                            Some (t)
-                        case Some (ti) =>
-                            val b = cbf (t)
-                            b.sizeHint (t.size)
-                            var j = 0
-                            while (j < i - 1) {
-                                b += t (j)
-                                j = j + 1
-                            }
-                            b += ti
-                            j = j + 1
-                            while (j < numchildren) {
-                                b += t (j)
-                                j = j + 1
-                            }
-                            Some (b.result)
-                        case None =>
-                            None
+    def childProduct (s : Strategy, i : Int, p : Product) : Option[Any] = {
+        val numchildren = p.productArity
+        if ((i < 1) || (i > numchildren)) {
+            None
+        } else {
+            val ct = p.productElement (i-1)
+            s (ct) match {
+                case Some (ti) if (same (ct, ti)) =>
+                    Some (p)
+                case Some (ti) =>
+                    val newchildren = new Array[AnyRef](numchildren)
+                    var j = 0
+                    while (j < numchildren) {
+                        newchildren (j) = makechild (p.productElement (j))
+                        j = j + 1
                     }
-                }
+                    newchildren (i-1) = makechild (ti)
+                    val ret = dup (p, newchildren)
+                    Some (ret)
+                case None =>
+                    None
             }
         }
+    }
+
+    def childSeq[CC[U] <: Seq[U]] (s : Strategy, i : Int, t : CC[Any])
+            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                        : Option[CC[Any]] = {
+        val numchildren = t.size
+        if ((i < 1) || (i > numchildren)) {
+            None
+        } else {
+            val ct = t (i - 1)
+            s (ct) match {
+                case Some (ti) if (same (ct, ti)) =>
+                    Some (t)
+                case Some (ti) =>
+                    val b = cbf (t)
+                    b.sizeHint (t.size)
+                    var j = 0
+                    while (j < i - 1) {
+                        b += t (j)
+                        j = j + 1
+                    }
+                    b += ti
+                    j = j + 1
+                    while (j < numchildren) {
+                        b += t (j)
+                        j = j + 1
+                    }
+                    Some (b.result)
+                case None =>
+                    None
+            }
+        }
+    }
 
     /**
      * Compare two arbitrary values. If they are both references, use
@@ -497,6 +505,7 @@ trait RewriterCore {
      * Children of a `Rewritable` (resp. Product, collection) value are processed
      * in the order returned by the value's deconstruct (resp. `productElement`,
      * `foreach`) method.
+     * `s` is evaluated at most once.
      */
     def all (s : Strategy) : Strategy =
         macro RewriterMacros.allMacro
@@ -507,120 +516,125 @@ trait RewriterCore {
      */
     def all (n : String, s : => Strategy) : Strategy =
         new Strategy {
+
             val name = n
+
+            lazy val strat = s
+
             def apply (t : Any) : Option[Any] =
                 t match {
-                    case r : Rewritable     => allRewritable (r)
-                    case p : Product        => allProduct (p)
-                    case m : Map[_,_]       => allMap (m.asInstanceOf[Map[Any,Any]])
-                    case t : Traversable[_] => allTraversable (t.asInstanceOf[Traversable[Any]])
+                    case r : Rewritable     => allRewritable (strat, r)
+                    case p : Product        => allProduct (strat, p)
+                    case m : Map[_,_]       => allMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => allTraversable (strat, t.asInstanceOf[Traversable[Any]])
                     case _                  => Some (t)
                 }
 
-            private def allProduct (p : Product) : Option[Any] = {
-                val numchildren = p.productArity
-                if (numchildren == 0)
-                    Some (p)
-                else {
-                    val newchildren = new Array[AnyRef](numchildren)
-                    var changed = false
-                    var i = 0
-                    while (i < numchildren) {
-                        val ct = p.productElement (i)
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                if (!same (ct, ti))
-                                    changed = true
-                            case None =>
-                                return None
-                        }
-                        i = i + 1
-                    }
-                    if (changed) {
-                        val ret = dup (p, newchildren)
-                        Some (ret)
-                    } else
-                        Some (p)
+        }
+
+    def allProduct (s : Strategy, p : Product) : Option[Any] = {
+        val numchildren = p.productArity
+        if (numchildren == 0)
+            Some (p)
+        else {
+            val newchildren = new Array[AnyRef](numchildren)
+            var changed = false
+            var i = 0
+            while (i < numchildren) {
+                val ct = p.productElement (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        newchildren (i) = makechild (ti)
+                        if (!same (ct, ti))
+                            changed = true
+                    case None =>
+                        return None
                 }
+                i = i + 1
             }
+            if (changed) {
+                val ret = dup (p, newchildren)
+                Some (ret)
+            } else
+                Some (p)
+        }
+    }
 
-            private def allRewritable (r : Rewritable) : Option[Any] = {
-                val numchildren = r.arity
-                if (numchildren == 0)
-                    Some (r)
-                else {
-                    val children = r.deconstruct
-                    val newchildren = new Array[Any](numchildren)
-                    var changed = false
-                    var i = 0
-                    while (i < numchildren) {
-                        val ct = children (i)
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                if (!same (ct, ti))
-                                    changed = true
-                            case None =>
-                                return None
-                        }
-                        i = i + 1
-                    }
-                    if (changed) {
-                        val ret = r.reconstruct (newchildren)
-                        Some (ret)
-                    } else
-                        Some (r)
+    def allRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
+        val numchildren = r.arity
+        if (numchildren == 0)
+            Some (r)
+        else {
+            val children = r.deconstruct
+            val newchildren = new Array[Any](numchildren)
+            var changed = false
+            var i = 0
+            while (i < numchildren) {
+                val ct = children (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        newchildren (i) = makechild (ti)
+                        if (!same (ct, ti))
+                            changed = true
+                    case None =>
+                        return None
                 }
+                i = i + 1
             }
+            if (changed) {
+                val ret = r.reconstruct (newchildren)
+                Some (ret)
+            } else
+                Some (r)
+        }
+    }
 
-            private def allTraversable[CC[_] <: Traversable[Any]] (t : CC[Any])
-                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                                : Option[CC[Any]] =
-                if (t.size == 0)
-                    Some (t)
-                else {
-                    val b = cbf (t)
-                    b.sizeHint (t.size)
-                    var changed = false
-                    for (ct <- t)
-                        s (ct) match {
-                            case Some (ti) =>
-                                b += ti
-                                if (!same (ct, ti))
-                                    changed = true
-                            case None =>
-                                return None
-                        }
-                    if (changed)
-                        Some (b.result)
-                    else
-                        Some (t)
+    def allTraversable[CC[_] <: Traversable[Any]] (s : Strategy, t : CC[Any])
+            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                        : Option[CC[Any]] =
+        if (t.size == 0)
+            Some (t)
+        else {
+            val b = cbf (t)
+            b.sizeHint (t.size)
+            var changed = false
+            for (ct <- t)
+                s (ct) match {
+                    case Some (ti) =>
+                        b += ti
+                        if (!same (ct, ti))
+                            changed = true
+                    case None =>
+                        return None
                 }
+            if (changed)
+                Some (b.result)
+            else
+                Some (t)
+        }
 
-            private def allMap[CC[V,W] <: Map[V,W]] (t : CC[Any,Any])
-                            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
-                                : Option[CC[Any,Any]] =
-                if (t.size == 0)
-                    Some (t)
-                else {
-                    val b = cbf (t)
-                    b.sizeHint (t.size)
-                    var changed = false
-                    for (ct <- t)
-                        s (ct) match {
-                            case Some (ti @ (tix,tiy)) =>
-                                b += ti
-                                if (!same (ct, ti))
-                                    changed = true
-                            case _ =>
-                                return None
-                        }
-                    if (changed)
-                        Some (b.result)
-                    else
-                        Some (t)
+    def allMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
+            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
+                        : Option[CC[Any,Any]] =
+        if (t.size == 0)
+            Some (t)
+        else {
+            val b = cbf (t)
+            b.sizeHint (t.size)
+            var changed = false
+            for (ct <- t)
+                s (ct) match {
+                    case Some (ti @ (tix,tiy)) =>
+                        b += ti
+                        if (!same (ct, ti))
+                            changed = true
+                    case _ =>
+                        return None
                 }
+            if (changed)
+                Some (b.result)
+            else
+                Some (t)
         }
 
     /**
@@ -638,6 +652,7 @@ trait RewriterCore {
      * Children of a `Rewritable` (resp. `Product`, collection) value are processed
      * in the order returned by the value's `deconstruct` (resp. `productElement`,
      * `foreach`) method.
+     * `s` is evaluated at most once.
      */
     def one (s : Strategy) : Strategy =
         macro RewriterMacros.oneMacro
@@ -648,130 +663,134 @@ trait RewriterCore {
      */
     def one (n : String, s : => Strategy) : Strategy =
         new Strategy {
+
             val name = n
+
+            lazy val strat = s
+
             def apply (t : Any) : Option[Any] =
                 t match {
-                    case r : Rewritable     => oneRewritable (r)
-                    case p : Product        => oneProduct (p)
-                    case m : Map[_,_]       => oneMap (m.asInstanceOf[Map[Any,Any]])
-                    case t : Traversable[_] => oneTraversable (t.asInstanceOf[Traversable[Any]])
+                    case r : Rewritable     => oneRewritable (strat, r)
+                    case p : Product        => oneProduct (strat, p)
+                    case m : Map[_,_]       => oneMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => oneTraversable (strat, t.asInstanceOf[Traversable[Any]])
                     case _                  => None
                 }
 
-            private def oneProduct (p : Product) : Option[Any] = {
-                val numchildren = p.productArity
-                var i = 0
-                while (i < numchildren) {
-                    val ct = p.productElement (i)
-                    s (ct) match {
-                        case Some (ti) if (same (ct, ti)) =>
-                            return Some (p)
-                        case Some (ti) =>
-                            val newchildren = new Array[AnyRef] (numchildren)
-                            var j = 0
-                            while (j < i) {
-                                newchildren (j) = makechild (p.productElement (j))
-                                j = j + 1
-                            }
-                            newchildren (i) = makechild (ti)
-                            j = j + 1
-                            while (j < numchildren) {
-                                newchildren (j) = makechild (p.productElement (j))
-                                j = j + 1
-                            }
-                            val ret = dup (p, newchildren)
-                            return Some (ret)
-                        case None =>
-                            // Do nothing
-                    }
-                    i = i + 1
-                }
-                None
-            }
-
-            private def oneRewritable (r : Rewritable) : Option[Any] = {
-                val numchildren = r.arity
-                val children = r.deconstruct
-                var i = 0
-                while (i < numchildren) {
-                    val ct = children (i)
-                    s (ct) match {
-                        case Some (ti) if (same (ct, ti)) =>
-                            return Some (r)
-                        case Some (ti) =>
-                            val newchildren = new Array[Any] (numchildren)
-                            var j = 0
-                            while (j < i) {
-                                newchildren (j) = makechild (children (j))
-                                j = j + 1
-                            }
-                            newchildren (i) = makechild (ti)
-                            j = j + 1
-                            while (j < numchildren) {
-                                newchildren (j) = makechild (children (j))
-                                j = j + 1
-                            }
-                            val ret = r.reconstruct (newchildren)
-                            return Some (ret)
-                        case None =>
-                            // Do nothing
-                    }
-                    i = i + 1
-                }
-                None
-            }
-
-            private def oneTraversable[CC[U] <: Traversable[U]] (t : CC[Any])
-                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                                : Option[CC[Any]] = {
-                val b = cbf (t)
-                b.sizeHint (t.size)
-                var add = true
-                for (ct <- t)
-                    if (add)
-                        s (ct) match {
-                            case Some (ti) if same (ct, ti) =>
-                                return Some (t)
-                            case Some (ti) =>
-                                b += ti
-                                add = false
-                            case None =>
-                                b += ct
-                        }
-                    else
-                        b += ct
-                if (add)
-                    None
-                else
-                    Some (b.result)
-            }
-
-            private def oneMap[CC[V,W] <: Map[V,W]] (t : CC[Any,Any])
-                            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
-                                : Option[CC[Any,Any]] = {
-                val b = cbf (t)
-                b.sizeHint (t.size)
-                var add = true
-                for (ct <- t)
-                    if (add)
-                        s (ct) match {
-                            case Some (ti @ (tix,tiy)) if (same (ct, ti)) =>
-                                return Some (t)
-                            case Some (ti @ (tix, tiy)) =>
-                                b += ti
-                                add = false
-                            case None =>
-                                b += ct
-                        }
-                    else
-                        b += ct
-                if (add)
-                    None
-                else
-                    Some (b.result)
-            }
-
         }
+
+    def oneProduct (s : Strategy, p : Product) : Option[Any] = {
+        val numchildren = p.productArity
+        var i = 0
+        while (i < numchildren) {
+            val ct = p.productElement (i)
+            s (ct) match {
+                case Some (ti) if (same (ct, ti)) =>
+                    return Some (p)
+                case Some (ti) =>
+                    val newchildren = new Array[AnyRef] (numchildren)
+                    var j = 0
+                    while (j < i) {
+                        newchildren (j) = makechild (p.productElement (j))
+                        j = j + 1
+                    }
+                    newchildren (i) = makechild (ti)
+                    j = j + 1
+                    while (j < numchildren) {
+                        newchildren (j) = makechild (p.productElement (j))
+                        j = j + 1
+                    }
+                    val ret = dup (p, newchildren)
+                    return Some (ret)
+                case None =>
+                    // Do nothing
+            }
+            i = i + 1
+        }
+        None
+    }
+
+    def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
+        val numchildren = r.arity
+        val children = r.deconstruct
+        var i = 0
+        while (i < numchildren) {
+            val ct = children (i)
+            s (ct) match {
+                case Some (ti) if (same (ct, ti)) =>
+                    return Some (r)
+                case Some (ti) =>
+                    val newchildren = new Array[Any] (numchildren)
+                    var j = 0
+                    while (j < i) {
+                        newchildren (j) = makechild (children (j))
+                        j = j + 1
+                    }
+                    newchildren (i) = makechild (ti)
+                    j = j + 1
+                    while (j < numchildren) {
+                        newchildren (j) = makechild (children (j))
+                        j = j + 1
+                    }
+                    val ret = r.reconstruct (newchildren)
+                    return Some (ret)
+                case None =>
+                    // Do nothing
+            }
+            i = i + 1
+        }
+        None
+    }
+
+    def oneTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
+                (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                        : Option[CC[Any]] = {
+        val b = cbf (t)
+        b.sizeHint (t.size)
+        var add = true
+        for (ct <- t)
+            if (add)
+                s (ct) match {
+                    case Some (ti) if same (ct, ti) =>
+                        return Some (t)
+                    case Some (ti) =>
+                        b += ti
+                        add = false
+                    case None =>
+                        b += ct
+                }
+            else
+                b += ct
+        if (add)
+            None
+        else
+            Some (b.result)
+    }
+
+    def oneMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
+                (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
+                        : Option[CC[Any,Any]] = {
+        val b = cbf (t)
+        b.sizeHint (t.size)
+        var add = true
+        for (ct <- t)
+            if (add)
+                s (ct) match {
+                    case Some (ti @ (tix,tiy)) if (same (ct, ti)) =>
+                        return Some (t)
+                    case Some (ti @ (tix, tiy)) =>
+                        b += ti
+                        add = false
+                    case None =>
+                        b += ct
+                }
+            else
+                b += ct
+        if (add)
+            None
+        else
+            Some (b.result)
+    }
 
     /**
      * Traversal to as many children as possible, but at least one.  Construct a
@@ -788,6 +807,7 @@ trait RewriterCore {
      * Children of a `Rewritable` (resp. `Product`, collection) value are processed
      * in the order returned by the value's `deconstruct` (resp. `productElement`,
      * `foreach`) method.
+     * `s` is evaluated at most once.
      */
     def some (s : Strategy) : Strategy =
         macro RewriterMacros.someMacro
@@ -798,140 +818,145 @@ trait RewriterCore {
      */
     def some (n : String, s : => Strategy) : Strategy =
         new Strategy {
+
             val name = n
+
+            lazy val strat = s
+
             def apply (t : Any) : Option[Any] =
                 t match {
-                    case r : Rewritable     => someRewritable (r)
-                    case p : Product        => someProduct (p)
-                    case m : Map[_,_]       => someMap (m.asInstanceOf[Map[Any,Any]])
-                    case t : Traversable[_] => someTraversable (t.asInstanceOf[Traversable[Any]])
+                    case r : Rewritable     => someRewritable (strat, r)
+                    case p : Product        => someProduct (strat, p)
+                    case m : Map[_,_]       => someMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => someTraversable (strat, t.asInstanceOf[Traversable[Any]])
                     case _                  => None
                 }
 
-            private def someProduct (p : Product) : Option[Any] = {
-                val numchildren = p.productArity
-                if (numchildren == 0)
-                    None
-                else {
-                    val newchildren = new Array[AnyRef](numchildren)
-                    var success = false
-                    var changed = false
-                    var i = 0
-                    while (i < numchildren) {
-                        val ct = p.productElement (i)
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                if (!same (ct, ti))
-                                    changed = true
-                                success = true
-                            case None =>
-                                newchildren (i) = makechild (ct)
-                        }
-                        i = i + 1
-                    }
-                    if (success)
-                        if (changed) {
-                            val ret = dup (p, newchildren)
-                            Some (ret)
-                        } else
-                            Some (p)
-                    else
-                        None
+        }
+
+    def someProduct (s : Strategy, p : Product) : Option[Any] = {
+        val numchildren = p.productArity
+        if (numchildren == 0)
+            None
+        else {
+            val newchildren = new Array[AnyRef](numchildren)
+            var success = false
+            var changed = false
+            var i = 0
+            while (i < numchildren) {
+                val ct = p.productElement (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        newchildren (i) = makechild (ti)
+                        if (!same (ct, ti))
+                            changed = true
+                        success = true
+                    case None =>
+                        newchildren (i) = makechild (ct)
                 }
+                i = i + 1
             }
+            if (success)
+                if (changed) {
+                    val ret = dup (p, newchildren)
+                    Some (ret)
+                } else
+                    Some (p)
+            else
+                None
+        }
+    }
 
-            private def someRewritable (r : Rewritable) : Option[Any] = {
-                val numchildren = r.arity
-                if (numchildren == 0)
-                    None
-                else {
-                    val children = r.deconstruct
-                    val newchildren = new Array[Any](numchildren)
-                    var success = false
-                    var changed = false
-                    var i = 0
-                    while (i < numchildren) {
-                        val ct = children (i)
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                if (!same (ct, ti))
-                                    changed = true
-                                success = true
-                            case None =>
-                                newchildren (i) = makechild (ct)
-                        }
-                        i = i + 1
-                    }
-                    if (success)
-                        if (changed) {
-                            val ret = r.reconstruct (newchildren)
-                            Some (ret)
-                        } else
-                            Some (r)
-                    else
-                        None
+    def someRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
+        val numchildren = r.arity
+        if (numchildren == 0)
+            None
+        else {
+            val children = r.deconstruct
+            val newchildren = new Array[Any](numchildren)
+            var success = false
+            var changed = false
+            var i = 0
+            while (i < numchildren) {
+                val ct = children (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        newchildren (i) = makechild (ti)
+                        if (!same (ct, ti))
+                            changed = true
+                        success = true
+                    case None =>
+                        newchildren (i) = makechild (ct)
                 }
+                i = i + 1
             }
+            if (success)
+                if (changed) {
+                    val ret = r.reconstruct (newchildren)
+                    Some (ret)
+                } else
+                    Some (r)
+            else
+                None
+        }
+    }
 
-            private def someTraversable[CC[U] <: Traversable[U]] (t : CC[Any])
-                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                                : Option[CC[Any]] =
-                if (t.size == 0)
-                    None
-                else {
-                    val b = cbf (t)
-                    b.sizeHint (t.size)
-                    var success = false
-                    var changed = false
-                    for (ct <- t)
-                        s (ct) match {
-                            case Some (ti) =>
-                                b += ti
-                                if (!same (ct, ti))
-                                    changed = true
-                                success = true
-                            case None =>
-                                b += ct
-                        }
-                    if (success)
-                        if (changed)
-                            Some (b.result)
-                        else
-                            Some (t)
-                    else
-                        None
+    def someTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
+                (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                        : Option[CC[Any]] =
+        if (t.size == 0)
+            None
+        else {
+            val b = cbf (t)
+            b.sizeHint (t.size)
+            var success = false
+            var changed = false
+            for (ct <- t)
+                s (ct) match {
+                    case Some (ti) =>
+                        b += ti
+                        if (!same (ct, ti))
+                            changed = true
+                        success = true
+                    case None =>
+                        b += ct
                 }
+            if (success)
+                if (changed)
+                    Some (b.result)
+                else
+                    Some (t)
+            else
+                None
+        }
 
-            private def someMap[CC[V,W] <: Map[V,W]] (t : CC[Any,Any])
-                            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
-                                : Option[CC[Any,Any]] =
-                if (t.size == 0)
-                    None
-                else {
-                    val b = cbf (t)
-                    b.sizeHint (t.size)
-                    var success = false
-                    var changed = false
-                    for (ct <- t)
-                        s (ct) match {
-                            case Some (ti @ (tix, tiy)) =>
-                                b += ti
-                                if (!same (ct, ti))
-                                    changed = true
-                                success = true
-                            case _ =>
-                                b += ct
-                        }
-                    if (success)
-                        if (changed)
-                            Some (b.result)
-                        else
-                            Some (t)
-                    else
-                        None
+    def someMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
+                (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
+                        : Option[CC[Any,Any]] =
+        if (t.size == 0)
+            None
+        else {
+            val b = cbf (t)
+            b.sizeHint (t.size)
+            var success = false
+            var changed = false
+            for (ct <- t)
+                s (ct) match {
+                    case Some (ti @ (tix, tiy)) =>
+                        b += ti
+                        if (!same (ct, ti))
+                            changed = true
+                        success = true
+                    case _ =>
+                        b += ct
                 }
+            if (success)
+                if (changed)
+                    Some (b.result)
+                else
+                    Some (t)
+            else
+                None
         }
 
     /**
@@ -955,40 +980,43 @@ trait RewriterCore {
      */
     def congruence (n : String, ss : Strategy*) : Strategy =
         new Strategy {
+
             val name = n
+
             def apply (t : Any) : Option[Any] =
                 t match {
-                    case p : Product        => congruenceProduct (p, ss : _*)
-                    case _                  => Some (t)
+                    case p : Product => congruenceProduct (p, ss : _*)
+                    case _           => Some (t)
                 }
 
-            private def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
-               val numchildren = p.productArity
-               if (numchildren == ss.length) {
-                   val newchildren = new Array[AnyRef](numchildren)
-                   var changed = false
-                   var i = 0
-                   while (i < numchildren) {
-                       val ct = p.productElement (i)
-                       (ss (i)) (ct) match {
-                           case Some (ti) =>
-                               newchildren (i) = makechild (ti)
-                               if (!same (ct, ti))
-                                   changed = true
-                           case None =>
-                               return None
-                       }
-                       i = i + 1
-                   }
-                   if (changed) {
-                       val ret = dup (p, newchildren)
-                       Some (ret)
-                   } else
-                       Some (p)
-               } else
-                   None
-            }
         }
+
+    def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
+       val numchildren = p.productArity
+       if (numchildren == ss.length) {
+           val newchildren = new Array[AnyRef](numchildren)
+           var changed = false
+           var i = 0
+           while (i < numchildren) {
+               val ct = p.productElement (i)
+               (ss (i)) (ct) match {
+                   case Some (ti) =>
+                       newchildren (i) = makechild (ti)
+                       if (!same (ct, ti))
+                           changed = true
+                   case None =>
+                       return None
+               }
+               i = i + 1
+           }
+           if (changed) {
+               val ret = dup (p, newchildren)
+               Some (ret)
+           } else
+               Some (p)
+       } else
+           None
+    }
 
     // Extractors
 
