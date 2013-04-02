@@ -32,228 +32,20 @@ trait RewriterCore {
     import scala.collection.mutable.Builder
     import scala.collection.mutable.WeakHashMap
     import scala.language.higherKinds
-
-    /**
-     * The type of terms that can be rewritten.  Any type of value is acceptable
-     * but generic traversals will only work on some specific types.  See the
-     * documentation of the specific generic traversals (e.g., `all` or `some`)
-     * for a detailed description.
-     */
-    type Term = Any
-
-    /**
-     * Term-rewriting strategies. A strategy is a function that takes a term
-     * as input and either succeeds producing a new term (`Some`), or fails
-     * (`None`).
-     */
-    abstract class Strategy extends (Term => Option[Term]) {
-
-        /**
-         * Alias this strategy as `p` to make it easier to refer to in the
-         * combinator definitions.
-         */
-        p =>
-
-        /**
-         * Apply this strategy to a term, producing either a transformed term
-         * wrapped in `Some`, or `None`, representing a rewriting failure.
-         */
-        def apply (r : Term) : Option[Term]
-
-        /**
-         * Sequential composition. Construct a strategy that first applies
-         * this strategy. If it succeeds, then apply `q` to the new subject
-         * term. Otherwise fail.
-         */
-        def <* (q : => Strategy) : Strategy =
-            new Strategy {
-                def apply (t1 : Term) : Option[Term] =
-                    p (t1) match {
-                        case Some (t2) => q (t2)
-                        case None      => None
-                    }
-            }
-
-        /**
-         * Deterministic choice.  Construct a strategy that first applies
-         * this strategy. If it succeeds, succeed with the resulting term.
-         * Otherwise, apply `q` to the original subject term.
-         */
-        def <+ (q : => Strategy) : Strategy =
-            new Strategy {
-                def apply (t1 : Term) : Option[Term] =
-                    p (t1) match {
-                        case Some (t2) => Some (t2)
-                        case None      => q (t1)
-                    }
-            }
-
-        /**
-         * Non-deterministic choice. Normally, construct a strategy that
-         * first applies either this strategy or the given strategy. If it
-         * succeeds, succeed with the resulting term. Otherwise, apply `q`.
-         * Currently implemented as deterministic choice, but this behaviour
-         * should not be relied upon.
-         * When used as the argument to the `<` conditional choice
-         * combinator, `+` just serves to hold the two strategies that are
-         * chosen between by the conditional choice.
-         */
-        def + (q : => Strategy) : PlusStrategy =
-            new PlusStrategy (p, q)
-
-        /**
-         * Conditional choice: `c < l + r`. Construct a strategy that first
-         * applies this strategy (`c`). If `c` succeeds, the strategy applies
-         * `l` to the resulting term, otherwise it applies `r` to the original
-         * subject term.
-         */
-        def < (lr : => PlusStrategy) : Strategy =
-            new Strategy {
-                def apply (t1 : Term) : Option[Term] =
-                    p (t1) match {
-                        case Some (t2) => lr.lhs (t2)
-                        case None      => lr.rhs (t1)
-                    }
-            }
-
-    }
-
-    /**
-     * Helper class to contain commonality of choice in non-deterministic
-     * choice operator and then-else part of a conditional choice. Only
-     * returned by the non-deterministic choice operator.
-     */
-    class PlusStrategy (p : => Strategy, q : => Strategy) extends Strategy {
-        val lhs = p
-        val rhs = q
-        def apply (t : Term) : Option[Term] =
-            (p <+ q) (t)
-    }
-
-    /**
-     * Make a strategy from a function `f`. The function return value
-     * determines whether the strategy succeeds or fails.
-     */
-    def strategyf (f : Term => Option[Term]) : Strategy =
-        new Strategy {
-            def apply (t : Term) : Option[Term] =
-                f (t)
-        }
-
-    /**
-     * Make a strategy from a partial function `f`. If the function is
-     * defined at the current term, then the function return value
-     * when applied to the current term determines whether the strategy
-     * succeeds or fails. If the function is not defined at the current
-     * term, the strategy fails.
-     */
-    def strategy (f : Term ==> Option[Term]) : Strategy =
-        new Strategy {
-            def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t)
-                    f (t)
-                else
-                    None
-            }
-        }
-
-    /**
-     * Define a rewrite rule using a function `f` that returns a term.
-     * The rule always succeeds with the return value of the function.
-     */
-    def rulef (f : Term => Term) : Strategy =
-        strategyf (t => Some (f (t)))
-
-    /**
-     * Define a rewrite rule using a partial function `f`. If the function is
-     * defined at the current term, then the strategy succeeds with the return
-     * value of the function applied to the current term. Otherwise the
-     * strategy fails.
-     */
-    def rule (f : Term ==> Term) : Strategy =
-        new Strategy {
-            def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t)
-                    Some (f (t))
-                else
-                    None
-            }
-        }
-
-    /**
-     * Define a rewrite rule using a function `f` that returns a strategy.  The
-     * rule applies the function to the subject term to get a strategy which
-     * is then applied again to the subject term. In other words, the function
-     * is only used for side-effects such as pattern matching.  The whole thing
-     * also fails if `f` is not defined at the term in the first place.
-     */
-    def rulefs (f : Term ==> Strategy) : Strategy =
-        new Strategy {
-            def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t)
-                    (f (t)) (t)
-                else
-                    None
-            }
-        }
+    import scala.language.experimental.macros
 
     /**
      * Construct a strategy that always succeeds, changing the subject term to
      * the given term `t`.
      */
-    def build (t : => Term) : Strategy =
-        rulef (_ => t)
+    def build (t : => Any) : Strategy =
+        macro RewriterMacros.buildMacro
 
     /**
-     * Construct a strategy from an option value `o`. The strategy succeeds
-     * or fails depending on whether `o` is a Some or None, respectively.
-     * If `o` is a `Some`, then the subject term is changed to the term that
-     * is wrapped by the `Some`.
+     * Builder for `build`.
      */
-    def option (o : => Option[Term]) : Strategy =
-        strategyf (_ => o)
-
-    /**
-     * Define a term query by a function `f`. The query always succeeds with
-     * no effect on the subject term but applies the given (possibly partial)
-     * function `f` to the subject term.  In other words, the strategy runs
-     * `f` for its side-effects.
-     */
-    def queryf[T] (f : Term => T) : Strategy =
-        new Strategy {
-            def apply (t : Term) : Option[Term] = {
-                f (t)
-                Some (t)
-            }
-        }
-
-    /**
-     * Define a term query by a partial function `f`. The query always succeeds
-     * with no effect on the subject term but applies the given partial function
-     * `f` to the subject term.  In other words, the strategy runs `f` for its
-     * side-effects.
-     */
-    def query[T] (f : Term ==> T) : Strategy =
-        new Strategy {
-            def apply (t : Term) : Option[Term] = {
-                if (f isDefinedAt t)
-                    f (t)
-                Some (t)
-            }
-        }
-
-    /**
-     * A strategy that always fails.
-     */
-    val fail : Strategy =
-        option (None)
-
-    /**
-     * A strategy that always succeeds with the subject term unchanged (i.e.,
-     * this is the identity strategy).
-     */
-    val id : Strategy =
-        strategyf (t => Some (t))
+    def build (n : String, t : => Any) : Strategy =
+        rulef (n, _ => t)
 
     /**
      * A strategy that always succeeds with the subject term unchanged (i.e.,
@@ -262,7 +54,13 @@ trait RewriterCore {
      * emitter defaults to one that writes to standard output.
      */
     def debug (msg : String, emitter : Emitter = new Emitter) : Strategy =
-        strategyf (t => { emitter.emitln (msg + t); Some (t) })
+        macro RewriterMacros.debugMacro
+
+    /**
+     * Builder for `debug`.
+     */
+    def debug (n : String, msg : String, emitter : Emitter) : Strategy =
+        strategyf (n, t => { emitter.emitln (msg + t); Some (t) })
 
     /**
      * Create a logging strategy based on a strategy `s`. The returned strategy
@@ -270,9 +68,16 @@ trait RewriterCore {
      * the subject term, the success or failure status, and on success, the result
      * term, to the provided emitter (default: standard output).
      */
-    def log[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
+    def log[T] (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
+        macro RewriterMacros.logMacro
+
+    /**
+     * Builder for `log`.
+     */
+    def log[T] (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
         new Strategy {
-            def apply (t1 : Term) : Option[Term] = {
+            val name = n
+            def apply (t1 : Any) : Option[Any] = {
                 emitter.emit (msg + t1)
                 val r = s (t1)
                 r match {
@@ -291,9 +96,16 @@ trait RewriterCore {
      * provided message and the subject term to the provided emitter (default:
      * standard output).
      */
-    def logfail[T] (s : => Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
+    def logfail[T] (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
+        macro RewriterMacros.logfailMacro
+
+    /**
+     * Builder for `logfail`.
+     */
+    def logfail[T] (n : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
         new Strategy {
-            def apply (t1 : Term) : Option[Term] = {
+            val name = n
+            def apply (t1 : Any) : Option[Any] = {
                 val r = s (t1)
                 r match {
                     case Some (t2) =>
@@ -306,38 +118,41 @@ trait RewriterCore {
         }
 
     /**
-     * Construct a strategy that succeeds only if the subject term matches
-     * the given term `t`.
+     * Return a strategy that behaves as `s` does, but memoises its arguments and
+     * results.  In other words, if `memo(s)` is called on a term `t` twice, the
+     * second time will return the same result as the first, without having to
+     * invoke `s`.  For best results, it is important that `s` should have no side
+     * effects.
      */
-    def term (t : Term) : Strategy =
-        rule {
-            case `t` => t
+    def memo (s : Strategy) : Strategy =
+        macro RewriterMacros.memoMacro
+
+    /**
+     * Builder for `memo`.
+     */
+    def memo (n : String, s : => Strategy) : Strategy =
+        new Strategy {
+            val name = n
+            private val cache =
+                new scala.collection.mutable.HashMap[Any,Option[Any]]
+            def apply (t : Any) : Option[Any] =
+                cache.getOrElseUpdate (t, s (t))
         }
 
     /**
-     * Generic term deconstruction.
+     * Construct a strategy from an option value `o`. The strategy succeeds
+     * or fails depending on whether `o` is a Some or None, respectively.
+     * If `o` is a `Some`, then the subject term is changed to the term that
+     * is wrapped by the `Some`.
      */
-    object Term {
+    def option (o : Option[Any]) : Strategy =
+        macro RewriterMacros.optionMacro
 
-        /**
-         * Generic term deconstruction. An extractor that decomposes `Product`
-         * or `Rewritable` values into the value itself and a sequence of its
-         * children.  Terms that are not `Product` or `Rewritable` are not
-         * decomposable (i.e., the list of children will be empty).
-         */
-        def unapply (t : Any) : Option[(Any,Seq[Any])] = {
-            t match {
-                case r : Rewritable =>
-                    Some ((r, r.deconstruct))
-                case p : Product =>
-                    val cs = for (i <- 0 until p.productArity) yield p.productElement (i)
-                    Some ((p, cs))
-                case _ =>
-                    Some ((t, Nil))
-            }
-        }
-
-    }
+    /**
+     * Builder for `option`.
+     */
+    def option (n : String, o : => Option[Any]) : Strategy =
+        strategyf (n, _ => o)
 
     /**
      * Perform a paramorphism over a value. This is a fold in which the
@@ -352,6 +167,167 @@ trait RewriterCore {
     def para[T] (f : (Any, Seq[T]) => T) : Any => T = {
         case Term (t, ts) => f (t, ts.map (para (f)))
     }
+
+    /**
+     * Define a term query by a partial function `f`. The query always succeeds
+     * with no effect on the subject term but applies the given partial function
+     * `f` to the subject term.  In other words, the strategy runs `f` for its
+     * side-effects.
+     */
+    def query[T] (f : Any ==> T) : Strategy =
+        macro RewriterMacros.queryMacro[T]
+
+    /**
+     * Builder for `query`.
+     */
+    def query[T] (n : String, f : Any ==> T) : Strategy =
+        new Strategy {
+            val name = n
+            def apply (t : Any) : Option[Any] = {
+                if (f isDefinedAt t)
+                    f (t)
+                Some (t)
+            }
+        }
+
+    /**
+     * Define a term query by a function `f`. The query always succeeds with
+     * no effect on the subject term but applies the given (possibly partial)
+     * function `f` to the subject term.  In other words, the strategy runs
+     * `f` for its side-effects.
+     */
+    def queryf[T] (f : Any => T) : Strategy =
+        macro RewriterMacros.queryfMacro[T]
+
+    /**
+     * Builder for `query`.
+     */
+    def queryf[T] (n : String, f : Any => T) : Strategy =
+        new Strategy {
+            val name = n
+            def apply (t : Any) : Option[Any] = {
+                f (t)
+                Some (t)
+            }
+        }
+
+    /**
+     * Define a rewrite rule using a partial function `f`. If the function is
+     * defined at the current term, then the strategy succeeds with the return
+     * value of the function applied to the current term. Otherwise the
+     * strategy fails.
+     */
+    def rule (f : Any ==> Any) : Strategy =
+        macro RewriterMacros.ruleMacro
+
+    /**
+     * Builder for `rule`.
+     */
+    def rule (n : String, f : Any ==> Any) : Strategy =
+        new Strategy {
+            val name = n
+            def apply (t : Any) : Option[Any] = {
+                if (f isDefinedAt t)
+                    Some (f (t))
+                else
+                    None
+            }
+        }
+
+    /**
+     * Define a rewrite rule using a function `f` that returns a term.
+     * The rule always succeeds with the return value of the function.
+     */
+    def rulef (f : Any => Any) : Strategy =
+        macro RewriterMacros.rulefMacro
+
+    /**
+     * Builder for `rulef`.
+     */
+    def rulef (n : String, f : Any => Any) : Strategy =
+        strategyf (n, t => Some (f (t)))
+
+    /**
+     * Define a rewrite rule using a function `f` that returns a strategy.  The
+     * rule applies the function to the subject term to get a strategy which
+     * is then applied again to the subject term. In other words, the function
+     * is only used for effects such as pattern matching.  The whole thing also
+     * fails if `f` is not defined at the term in the first place.
+     */
+    def rulefs (f : Any ==> Strategy) : Strategy =
+        macro RewriterMacros.rulefsMacro
+
+    /**
+     * Builder for `rulefs`.
+     */
+    def rulefs (n : String, f : Any ==> Strategy) : Strategy =
+        new Strategy {
+            val name = n
+            def apply (t : Any) : Option[Any] = {
+                if (f isDefinedAt t)
+                    (f (t)) (t)
+                else
+                    None
+            }
+        }
+
+    /**
+     * Make a strategy from a partial function `f`. If the function is
+     * defined at the current term, then the function return value
+     * when applied to the current term determines whether the strategy
+     * succeeds or fails. If the function is not defined at the current
+     * term, the strategy fails.
+     */
+    def strategy (f : Any ==> Option[Any]) : Strategy =
+        macro RewriterMacros.strategyMacro
+
+    /**
+     * Builder for `strategy`.
+     */
+    def strategy (n : String, f : Any ==> Option[Any]) : Strategy =
+        new Strategy {
+            val name = n
+            def apply (t : Any) : Option[Any] = {
+                if (f isDefinedAt t)
+                    f (t)
+                else
+                    None
+            }
+        }
+
+    /**
+     * Make a strategy from a function `f`. The function return value
+     * determines whether the strategy succeeds or fails.
+     */
+    def strategyf (f : Any => Option[Any]) : Strategy =
+        macro RewriterMacros.strategyfMacro
+
+    /**
+     * Builder for `strategyf`.
+     */
+    def strategyf (n : String, f : Any => Option[Any]) : Strategy =
+        new Strategy {
+            val name = n
+            def apply (t : Any) : Option[Any] =
+                f (t)
+        }
+
+    /**
+     * Construct a strategy that succeeds only if the subject term matches
+     * the given term `t`.
+     */
+    def term (t : Any) : Strategy =
+        macro RewriterMacros.termMacro
+
+    /**
+     * Builder for `term`.
+     */
+    def term (n : String, t : Any) : Strategy =
+        rule (n, {
+            case `t` => t
+        })
+
+    // Product duplication support
 
     /**
      * Cache of constructors for product duplication.
@@ -387,6 +363,8 @@ trait RewriterCore {
     protected def makechild (c : Any) : AnyRef =
         c.asInstanceOf[AnyRef]
 
+    // Generic traversals
+
     /**
      * Traversal to a single child.  Construct a strategy that applies `s` to
      * the ''ith'' child of the subject term (counting from one).  If `s` succeeds on
@@ -399,15 +377,22 @@ trait RewriterCore {
      * This operation works for instances of `Product` or finite `Seq` values.
      */
     def child (i : Int, s : Strategy) : Strategy =
+        macro RewriterMacros.childMacro
+
+    /**
+     * Builder for `child`.
+     */
+    def child (n : String, i : Int, s : => Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] =
+            val name = n
+            def apply (t : Any) : Option[Any] =
                 t match {
                     case p : Product => childProduct (p)
-                    case t : Seq[_]  => childSeq (t.asInstanceOf[Seq[Term]])
+                    case t : Seq[_]  => childSeq (t.asInstanceOf[Seq[Any]])
                     case _           => None
                 }
 
-            private def childProduct (p : Product) : Option[Term] = {
+            private def childProduct (p : Product) : Option[Any] = {
                 val numchildren = p.productArity
                 if ((i < 1) || (i > numchildren)) {
                     None
@@ -432,9 +417,9 @@ trait RewriterCore {
                 }
             }
 
-            private def childSeq[CC[U] <: Seq[U]] (t : CC[Term])
-                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
-                                : Option[CC[Term]] = {
+            private def childSeq[CC[U] <: Seq[U]] (t : CC[Any])
+                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                                : Option[CC[Any]] = {
                 val numchildren = t.size
                 if ((i < 1) || (i > numchildren)) {
                     None
@@ -498,18 +483,25 @@ trait RewriterCore {
      * in the order returned by the value's deconstruct (resp. `productElement`,
      * `foreach`) method.
      */
-    def all (s : => Strategy) : Strategy =
+    def all (s : Strategy) : Strategy =
+        macro RewriterMacros.allMacro
+
+    /**
+     * Builder for `all`.
+     */
+    def all (n : String, s : => Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] =
+            val name = n
+            def apply (t : Any) : Option[Any] =
                 t match {
                     case r : Rewritable     => allRewritable (r)
                     case p : Product        => allProduct (p)
-                    case m : Map[_,_]       => allMap (m.asInstanceOf[Map[Term,Term]])
-                    case t : Traversable[_] => allTraversable (t.asInstanceOf[Traversable[Term]])
+                    case m : Map[_,_]       => allMap (m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => allTraversable (t.asInstanceOf[Traversable[Any]])
                     case _                  => Some (t)
                 }
 
-            private def allProduct (p : Product) : Option[Term] = {
+            private def allProduct (p : Product) : Option[Any] = {
                 val numchildren = p.productArity
                 if (numchildren == 0)
                     Some (p)
@@ -537,7 +529,7 @@ trait RewriterCore {
                 }
             }
 
-            private def allRewritable (r : Rewritable) : Option[Term] = {
+            private def allRewritable (r : Rewritable) : Option[Any] = {
                 val numchildren = r.arity
                 if (numchildren == 0)
                     Some (r)
@@ -566,9 +558,9 @@ trait RewriterCore {
                 }
             }
 
-            private def allTraversable[CC[_] <: Traversable[Term]] (t : CC[Term])
-                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
-                                : Option[CC[Term]] =
+            private def allTraversable[CC[_] <: Traversable[Any]] (t : CC[Any])
+                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                                : Option[CC[Any]] =
                 if (t.size == 0)
                     Some (t)
                 else {
@@ -590,9 +582,9 @@ trait RewriterCore {
                         Some (t)
                 }
 
-            private def allMap[CC[V,W] <: Map[V,W]] (t : CC[Term,Term])
-                            (implicit cbf : CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]])
-                                : Option[CC[Term,Term]] =
+            private def allMap[CC[V,W] <: Map[V,W]] (t : CC[Any,Any])
+                            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
+                                : Option[CC[Any,Any]] =
                 if (t.size == 0)
                     Some (t)
                 else {
@@ -631,18 +623,25 @@ trait RewriterCore {
      * in the order returned by the value's `deconstruct` (resp. `productElement`,
      * `foreach`) method.
      */
-    def one (s : => Strategy) : Strategy =
+    def one (s : Strategy) : Strategy =
+        macro RewriterMacros.oneMacro
+
+    /**
+     * Builder for `one`.
+     */
+    def one (n : String, s : => Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] =
+            val name = n
+            def apply (t : Any) : Option[Any] =
                 t match {
                     case r : Rewritable     => oneRewritable (r)
                     case p : Product        => oneProduct (p)
-                    case m : Map[_,_]       => oneMap (m.asInstanceOf[Map[Term,Term]])
-                    case t : Traversable[_] => oneTraversable (t.asInstanceOf[Traversable[Term]])
+                    case m : Map[_,_]       => oneMap (m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => oneTraversable (t.asInstanceOf[Traversable[Any]])
                     case _                  => None
                 }
 
-            private def oneProduct (p : Product) : Option[Term] = {
+            private def oneProduct (p : Product) : Option[Any] = {
                 val numchildren = p.productArity
                 var i = 0
                 while (i < numchildren) {
@@ -673,7 +672,7 @@ trait RewriterCore {
                 None
             }
 
-            private def oneRewritable (r : Rewritable) : Option[Term] = {
+            private def oneRewritable (r : Rewritable) : Option[Any] = {
                 val numchildren = r.arity
                 val children = r.deconstruct
                 var i = 0
@@ -705,9 +704,9 @@ trait RewriterCore {
                 None
             }
 
-            private def oneTraversable[CC[U] <: Traversable[U]] (t : CC[Term])
-                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
-                                : Option[CC[Term]] = {
+            private def oneTraversable[CC[U] <: Traversable[U]] (t : CC[Any])
+                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                                : Option[CC[Any]] = {
                 val b = cbf (t)
                 b.sizeHint (t.size)
                 var add = true
@@ -730,9 +729,9 @@ trait RewriterCore {
                     Some (b.result)
             }
 
-            private def oneMap[CC[V,W] <: Map[V,W]] (t : CC[Term,Term])
-                            (implicit cbf : CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]])
-                                : Option[CC[Term,Term]] = {
+            private def oneMap[CC[V,W] <: Map[V,W]] (t : CC[Any,Any])
+                            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
+                                : Option[CC[Any,Any]] = {
                 val b = cbf (t)
                 b.sizeHint (t.size)
                 var add = true
@@ -773,18 +772,25 @@ trait RewriterCore {
      * in the order returned by the value's `deconstruct` (resp. `productElement`,
      * `foreach`) method.
      */
-    def some (s : => Strategy) : Strategy =
+    def some (s : Strategy) : Strategy =
+        macro RewriterMacros.someMacro
+
+    /**
+     * Builder for `some`.
+     */
+    def some (n : String, s : => Strategy) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] =
+            val name = n
+            def apply (t : Any) : Option[Any] =
                 t match {
                     case r : Rewritable     => someRewritable (r)
                     case p : Product        => someProduct (p)
-                    case m : Map[_,_]       => someMap (m.asInstanceOf[Map[Term,Term]])
-                    case t : Traversable[_] => someTraversable (t.asInstanceOf[Traversable[Term]])
+                    case m : Map[_,_]       => someMap (m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => someTraversable (t.asInstanceOf[Traversable[Any]])
                     case _                  => None
                 }
 
-            private def someProduct (p : Product) : Option[Term] = {
+            private def someProduct (p : Product) : Option[Any] = {
                 val numchildren = p.productArity
                 if (numchildren == 0)
                     None
@@ -817,7 +823,7 @@ trait RewriterCore {
                 }
             }
 
-            private def someRewritable (r : Rewritable) : Option[Term] = {
+            private def someRewritable (r : Rewritable) : Option[Any] = {
                 val numchildren = r.arity
                 if (numchildren == 0)
                     None
@@ -851,9 +857,9 @@ trait RewriterCore {
                 }
             }
 
-            private def someTraversable[CC[U] <: Traversable[U]] (t : CC[Term])
-                            (implicit cbf : CanBuildFrom[CC[Term], Term, CC[Term]])
-                                : Option[CC[Term]] =
+            private def someTraversable[CC[U] <: Traversable[U]] (t : CC[Any])
+                            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
+                                : Option[CC[Any]] =
                 if (t.size == 0)
                     None
                 else {
@@ -880,9 +886,9 @@ trait RewriterCore {
                         None
                 }
 
-            private def someMap[CC[V,W] <: Map[V,W]] (t : CC[Term,Term])
-                            (implicit cbf : CanBuildFrom[CC[Term,Term], (Term, Term), CC[Term,Term]])
-                                : Option[CC[Term,Term]] =
+            private def someMap[CC[V,W] <: Map[V,W]] (t : CC[Any,Any])
+                            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
+                                : Option[CC[Any,Any]] =
                 if (t.size == 0)
                     None
                 else {
@@ -923,14 +929,21 @@ trait RewriterCore {
      * This operation works on instances of `Product` values.
      */
     def congruence (ss : Strategy*) : Strategy =
+        macro RewriterMacros.congruenceMacro
+
+    /**
+     * Builder for `congruence`.
+     */
+    def congruence (n : String, ss : Strategy*) : Strategy =
         new Strategy {
-            def apply (t : Term) : Option[Term] =
+            val name = n
+            def apply (t : Any) : Option[Any] =
                 t match {
                     case p : Product        => congruenceProduct (p, ss : _*)
                     case _                  => Some (t)
                 }
 
-            private def congruenceProduct (p : Product, ss : Strategy*) : Option[Term] = {
+            private def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
                val numchildren = p.productArity
                if (numchildren == ss.length) {
                    val newchildren = new Array[AnyRef](numchildren)
@@ -958,19 +971,31 @@ trait RewriterCore {
             }
         }
 
+    // Extractors
+
     /**
-     * Return a strategy that behaves as `s` does, but memoises its arguments and
-     * results.  In other words, if `memo(s)` is called on a term `t` twice, the
-     * second time will return the same result as the first, without having to
-     * invoke `s`.  For best results, it is important that `s` should have no side
-     * effects.
+     * Generic term deconstruction.
      */
-    def memo (s : => Strategy) : Strategy =
-        new Strategy {
-            private val cache =
-                new scala.collection.mutable.HashMap[Term,Option[Term]]
-            def apply (t : Term) : Option[Term] =
-                cache.getOrElseUpdate (t, s (t))
+    object Term {
+
+        /**
+         * Generic term deconstruction. An extractor that decomposes `Product`
+         * or `Rewritable` values into the value itself and a sequence of its
+         * children.  Terms that are not `Product` or `Rewritable` are not
+         * decomposable (i.e., the list of children will be empty).
+         */
+        def unapply (t : Any) : Option[(Any,Seq[Any])] = {
+            t match {
+                case r : Rewritable =>
+                    Some ((r, r.deconstruct))
+                case p : Product =>
+                    val cs = for (i <- 0 until p.productArity) yield p.productElement (i)
+                    Some ((p, cs))
+                case _ =>
+                    Some ((t, Nil))
+            }
         }
+
+    }
 
 }

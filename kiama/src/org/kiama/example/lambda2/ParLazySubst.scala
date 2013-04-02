@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2013 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2009-2013 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -18,30 +18,26 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-import sbt._
-import Keys._
+package org.kiama
+package example.lambda2
 
-object KiamaBuild extends Build {
+/**
+ * Lazy evaluation of lambda calculus with parallel term-level substitution
+ * and arithmetic operations.
+ */
+trait ParLazySubst extends Par {
 
-    lazy val root =
-        Project (
-            id = "root",
-            base = file (".")
-        ) aggregate (core, kiama)
+    import AST._
+    import org.kiama.rewriting.Rewriter._
+    import org.kiama.rewriting.Strategy
 
-    lazy val core =
-        Project (
-            id = "core",
-            base = file ("core")
-        )
-
-    lazy val kiama =
-        Project (
-            id = "kiama",
-            base = file ("kiama")
-        ) dependsOn (core % "compile-internal, test-internal") settings (
-            mappings in (Compile, packageBin) <++= mappings in (core, Compile, packageBin),
-            mappings in (Compile, packageSrc) <++= mappings in (core, Compile, packageSrc)
-        )
+    /**
+     * Lazily evaluate within the expression then try to reduce the
+     * expression itself, repeating until no change.
+     */
+    override lazy val s : Strategy =
+        attempt (App (s, id) + Opn (s, id, s)) <* attempt (lambda <* s)
 
 }
+
+class ParLazySubstEvaluator extends ParLazySubst

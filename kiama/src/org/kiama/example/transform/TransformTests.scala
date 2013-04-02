@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2013 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2013 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -18,30 +18,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-import sbt._
-import Keys._
+package org.kiama
+package example.transform
 
-object KiamaBuild extends Build {
+import AST.Program
+import org.kiama.util.TestCompiler
 
-    lazy val root =
-        Project (
-            id = "root",
-            base = file (".")
-        ) aggregate (core, kiama)
+/**
+ * Transformation compiler tests.
+ */
+class TransformTests extends Driver with TestCompiler[Program] {
 
-    lazy val core =
-        Project (
-            id = "core",
-            base = file ("core")
-        )
-
-    lazy val kiama =
-        Project (
-            id = "kiama",
-            base = file ("kiama")
-        ) dependsOn (core % "compile-internal, test-internal") settings (
-            mappings in (Compile, packageBin) <++= mappings in (core, Compile, packageBin),
-            mappings in (Compile, packageSrc) <++= mappings in (core, Compile, packageSrc)
-        )
+    filetests ("Transform", "kiama/src/org/kiama/example/transform/tests", ".exp", ".out")
 
 }
