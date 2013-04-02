@@ -49,7 +49,6 @@ class PositionalRewriterTests extends Tests {
 
     def check (no : One) {
         expectResult (One (Two (Leaf (43), Leaf (100)))) (no)
-        println (s"no = ${System.identityHashCode (no)}")
         expectsame (po) (no.pos)
         expectsame (pt) (no.a.pos)
         expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
@@ -57,19 +56,15 @@ class PositionalRewriterTests extends Tests {
     }
 
     test ("positional rewriting with positions and strategyf works") {
-        println ("test 1")
         val r = everywhere (strategyf {
                     case Leaf (i) => Some (Leaf (i + 1))
                     case n        => Some (n)
                 })
-        println (s"o = ${System.identityHashCode (o)}")
         val no = rewrite (r) (o)
         check (no)
     }
 
-/*
     test ("positional rewriting with positions and strategy works") {
-        println ("test 2")
         val r = everywhere (strategy {
                     case Leaf (i) => Some (Leaf (i + 1))
                 })
@@ -78,13 +73,11 @@ class PositionalRewriterTests extends Tests {
     }
 
     test ("positional rewriting with positions and rule works") {
-        println ("test 3")
         val no = rewrite (r) (o)
         check (no)
     }
 
     test ("positional rewriting with positions and rulefs works") {
-        println ("test 4")
         val r = everywhere (rulefs {
                     case Leaf (i) => build (Leaf (i + 1))
                 })
@@ -93,7 +86,6 @@ class PositionalRewriterTests extends Tests {
     }
 
     test ("positional rewriting with no positions works") {
-        println ("test 5")
         val oo = One (Two (Leaf (42), Leaf (99)))
         val noo = rewrite (r) (oo)
         expectResult (One (Two (Leaf (43), Leaf (100)))) (noo)
@@ -102,7 +94,6 @@ class PositionalRewriterTests extends Tests {
         expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.pos)
         expectsame (NoPosition) (noo.a.asInstanceOf[Two].r.pos)
     }
-*/
 
 }
 

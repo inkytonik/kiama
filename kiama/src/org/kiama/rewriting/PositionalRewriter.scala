@@ -47,7 +47,6 @@ trait PositionalRewriter extends CallbackRewriter {
     def rewriting[T] (oldTerm : T, newTerm : T) : T = {
         (oldTerm, newTerm) match {
             case (o : Positional, n : Positional) =>
-                println ("setting position of " + n + " " + System.identityHashCode (n) + " to " + o.pos + " from " + o + " " + System.identityHashCode (o) )
                 n.setPos (o.pos)
             case _ =>
                 // Do nothing
