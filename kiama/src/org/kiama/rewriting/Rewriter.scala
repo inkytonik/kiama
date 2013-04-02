@@ -60,7 +60,7 @@ trait Rewriter extends RewriterCore {
      * this is the identity strategy).
      */
     val id : Strategy =
-        strategyf (t => Some (t))
+        strategyf (Some (_))
 
     /**
      * Collect query results in a traversable collection.  Run the function
