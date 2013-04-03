@@ -599,7 +599,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     case object Same extends Expecting
     case object NotSame extends Expecting
 
-    def travtest (basemsg : String, testmsg : String, trav : (=> Strategy) => Strategy,
+    def travtest (basemsg : String, testmsg : String, trav : Strategy => Strategy,
                   rewl : Strategy, term : Any, result : Option[Any],
                   expecting : Expecting = Equal) {
         val msg = basemsg + " - " + testmsg + ", " + expecting
@@ -1403,7 +1403,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectResult (4) (sum)
     }
 
-    def innermosttest (imost : (=> Strategy) => Strategy) {
+    def innermosttest (imost : Strategy => Strategy) {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Var ("1.0"), Var ("2.0")), Var ("3.0")), Sub (Var ("4.0"), Var ("5.0")))
         var l : List[Double] = Nil
@@ -1790,7 +1790,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectsame (Some (t)) (s (t))
     }
 
-    def everywheretdtest (everys : (=> Strategy) => Strategy) {
+    def everywheretdtest (everys : Strategy => Strategy) {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Num (12), Num (13)), Num (14)), Sub (Num (16), Num (17)))
         var l : List[Double] = Nil

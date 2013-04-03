@@ -38,7 +38,7 @@ trait Rewriter extends RewriterCore {
      * Rewrite a term.  Apply the strategy `s` to a term returning the result term
      * if `s` succeeds, otherwise return the original term.
      */
-    def rewrite[T] (s : => Strategy) (t : T) : T = {
+    def rewrite[T] (s : Strategy) (t : T) : T = {
         s (t) match {
             case Some (t1) =>
                 t1.asInstanceOf[T]
@@ -109,7 +109,7 @@ trait Rewriter extends RewriterCore {
      * succeed, otherwise fail.  If all of the applications succeed
      * without change, return the input list.
      */
-    def map (s : => Strategy) : Strategy =
+    def map (s : Strategy) : Strategy =
         rulefs {
             case Nil           => id
             case l @ (x :: xs) =>
@@ -132,7 +132,7 @@ trait Rewriter extends RewriterCore {
      * succeeds, otherwise leave the original subject term unchanged.  In
      * Stratego library this strategy is called `try`.
      */
-    def attempt (s : => Strategy) : Strategy =
+    def attempt (s : Strategy) : Strategy =
         s <+ id
 
     /**
@@ -161,33 +161,33 @@ trait Rewriter extends RewriterCore {
      * Construct a strategy that repeatedly applies `s` (at least once) and
      * terminates with application of `c`.
      */
-    def repeat1 (s : => Strategy, c : => Strategy) : Strategy =
+    def repeat1 (s : Strategy, c : Strategy) : Strategy =
         s <* (repeat1 (s, c) <+ c)
 
     /**
      * Construct a strategy that repeatedly applies `s` (at least once).
      */
-    def repeat1 (s : => Strategy) : Strategy =
+    def repeat1 (s : Strategy) : Strategy =
         repeat1 (s, id)
 
     /**
      * Construct a strategy that repeatedly applies `s` until `c` succeeds.
      */
-    def repeatuntil (s : => Strategy, c : => Strategy) : Strategy =
+    def repeatuntil (s : Strategy, c : Strategy) : Strategy =
         s <* (c <+ repeatuntil (s, c))
 
     /**
      * Construct a strategy that while c succeeds applies `s`.  This operator
      * is called `while` in the Stratego library.
      */
-    def loop (c : => Strategy, s : => Strategy) : Strategy =
+    def loop (c : Strategy, s : Strategy) : Strategy =
         attempt (c <* s <* loop (c, s))
 
     /**
      * Construct a strategy that while `c` does not succeed applies `s`.  This
      * operator is called `while-not` in the Stratego library.
      */
-    def loopnot (c : => Strategy, s : => Strategy) : Strategy =
+    def loopnot (c : Strategy, s : Strategy) : Strategy =
         c <+ (s <* loopnot (c, s))
 
     /**
@@ -195,15 +195,15 @@ trait Rewriter extends RewriterCore {
      * while `c` succeeds.  This operator is called `do-while` in the Stratego
      * library.
      */
-    def doloop (s : => Strategy, c : => Strategy) : Strategy =
-       s <* loop (c, s)
+    def doloop (s : Strategy, c : Strategy) : Strategy =
+        s <* loop (c, s)
 
     /**
      * Construct a strategy that repeats application of `s` while `c` fails, after
      * initialization with `i`.  This operator is called `for` in the Stratego
      * library.
      */
-    def loopiter (i : => Strategy, c : => Strategy, s : => Strategy) : Strategy =
+    def loopiter (i : Strategy, c : Strategy, s : Strategy) : Strategy =
         i <* loopnot (c, s)
 
     /**
@@ -221,7 +221,7 @@ trait Rewriter extends RewriterCore {
      * failed, succeeds with the subject term unchanged,  I.e., it tests if
      * `s` applies, but has no effect on the subject term.
      */
-    def not (s : => Strategy) : Strategy =
+    def not (s : Strategy) : Strategy =
         s < fail + id
 
     /**
@@ -230,27 +230,27 @@ trait Rewriter extends RewriterCore {
      * to Stratego's `where`, except that in this version any effects on
      * bindings are not visible outside `s`.
      */
-    def where (s : => Strategy) : Strategy =
+    def where (s : Strategy) : Strategy =
         strategyf (t => (s <* build (t)) (t))
 
     /**
      * Construct a strategy that tests whether strategy `s` succeeds,
      * restoring the original term on success.  A synonym for `where`.
      */
-    def test (s : => Strategy) : Strategy =
+    def test (s : Strategy) : Strategy =
         where (s)
 
     /**
      * Construct a strategy that applies `s` in breadth first order.
      */
-    def breadthfirst (s : => Strategy) : Strategy =
+    def breadthfirst (s : Strategy) : Strategy =
         all (s) <* all (breadthfirst (s))
 
     /**
      * Construct a strategy that applies `s` in a top-down, prefix fashion
      * to the subject term.
      */
-    def topdown (s : => Strategy) : Strategy =
+    def topdown (s : Strategy) : Strategy =
         s <* all (topdown (s))
 
     /**
@@ -258,14 +258,14 @@ trait Rewriter extends RewriterCore {
      * to the subject term but stops when the strategy produced by `stop`
      * succeeds. `stop` is given the whole strategy itself as its argument.
      */
-    def topdownS (s : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+    def topdownS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
         s <* (stop (topdownS (s, stop)) <+ all (topdownS (s, stop)))
 
     /**
      * Construct a strategy that applies `s` in a bottom-up, postfix fashion
      * to the subject term.
      */
-    def bottomup (s : => Strategy) : Strategy =
+    def bottomup (s : Strategy) : Strategy =
         all (bottomup (s)) <* s
 
     /**
@@ -273,7 +273,7 @@ trait Rewriter extends RewriterCore {
      * to the subject term but stops when the strategy produced by `stop`
      * succeeds. `stop` is given the whole strategy itself as its argument.
      */
-    def bottomupS (s : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+    def bottomupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
         (stop (bottomupS (s, stop)) <+ (all (bottomupS (s, stop))) <* s)
 
     /**
@@ -281,14 +281,14 @@ trait Rewriter extends RewriterCore {
      * bottom-up fashion (i.e., both prefix and postfix) to the subject
      * term.
      */
-    def downup (s : => Strategy) : Strategy =
+    def downup (s : Strategy) : Strategy =
         s <* all (downup (s)) <* s
 
     /**
      * Construct a strategy that applies `s1` in a top-down, prefix fashion
      * and `s2` in a bottom-up, postfix fashion to the subject term.
      */
-    def downup (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def downup (s1 : Strategy, s2 : Strategy) : Strategy =
         s1 <* all (downup (s1, s2)) <* s2
 
     /**
@@ -297,7 +297,7 @@ trait Rewriter extends RewriterCore {
      * but stops when the strategy produced by `stop` succeeds. `stop` is
      * given the whole strategy itself as its argument.
      */
-    def downupS (s : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+    def downupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
         s <* (stop (downupS (s, stop)) <+ all (downupS (s, stop))) <* s
 
     /**
@@ -306,7 +306,7 @@ trait Rewriter extends RewriterCore {
      * when the strategy produced by `stop` succeeds. `stop` is given the whole
      * strategy itself as its argument.
      */
-    def downupS (s1 : => Strategy, s2 : => Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+    def downupS (s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
         s1 <* (stop (downupS (s1, s2, stop)) <+ all (downupS (s1, s2, stop))) <* s2
 
     /**
@@ -321,7 +321,7 @@ trait Rewriter extends RewriterCore {
      * subterm at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def oncetd (s : => Strategy) : Strategy =
+    def oncetd (s : Strategy) : Strategy =
         s <+ one (oncetd (s))
 
     /**
@@ -329,7 +329,7 @@ trait Rewriter extends RewriterCore {
      * subterm at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def oncebu (s : => Strategy) : Strategy =
+    def oncebu (s : Strategy) : Strategy =
         one (oncebu (s)) <+ s
 
     /**
@@ -337,7 +337,7 @@ trait Rewriter extends RewriterCore {
      * subterms at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def sometd (s : => Strategy) : Strategy =
+    def sometd (s : Strategy) : Strategy =
         s <+ some (sometd (s))
 
     /**
@@ -345,7 +345,7 @@ trait Rewriter extends RewriterCore {
      * subterms at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def somebu (s : => Strategy) : Strategy =
+    def somebu (s : Strategy) : Strategy =
         some (somebu (s)) <+ s
 
     /**
@@ -353,7 +353,7 @@ trait Rewriter extends RewriterCore {
      * stopping each time as soon as it succeeds once (at any level). The
      * outermost fails when `s` fails to apply to any (sub-)term.
      */
-    def outermost (s : => Strategy) : Strategy =
+    def outermost (s : Strategy) : Strategy =
         repeat (oncetd (s))
 
     /**
@@ -361,20 +361,20 @@ trait Rewriter extends RewriterCore {
      * (i.e., lowest and left-most) (sub-)term to which it applies.
      * Stop with the current term if `s` doesn't apply anywhere.
      */
-    def innermost (s : => Strategy) : Strategy =
+    def innermost (s : Strategy) : Strategy =
         bottomup (attempt (s <* innermost (s)))
 
     /**
      * An alternative version of `innermost`.
      */
-    def innermost2 (s : => Strategy) : Strategy =
+    def innermost2 (s : Strategy) : Strategy =
         repeat (oncebu (s))
 
     /**
      * Construct a strategy that applies `s` repeatedly to subterms
      * until it fails on all of them.
      */
-    def reduce (s : => Strategy) : Strategy = {
+    def reduce (s : Strategy) : Strategy = {
         def x : Strategy = some (x) + s
         repeat (x)
     }
@@ -383,14 +383,14 @@ trait Rewriter extends RewriterCore {
      * Construct a strategy that applies `s` in a top-down fashion, stopping
      * at a frontier where s succeeds.
      */
-    def alltd (s : => Strategy) : Strategy =
+    def alltd (s : Strategy) : Strategy =
         s <+ all (alltd (s))
 
     /**
      * Construct a strategy that applies `s` in a bottom-up fashion to all
      * subterms at each level, stopping at a frontier where s succeeds.
      */
-    def allbu (s : => Strategy) : Strategy =
+    def allbu (s : Strategy) : Strategy =
         all (allbu (s)) <+ s
 
     /**
@@ -398,7 +398,7 @@ trait Rewriter extends RewriterCore {
      * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
      * postfix fashion to the result.
      */
-    def alldownup2 (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def alldownup2 (s1 : Strategy, s2 : Strategy) : Strategy =
         (s1 <+ all (alldownup2 (s1, s2))) <* s2
 
     /**
@@ -406,7 +406,7 @@ trait Rewriter extends RewriterCore {
      * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
      * postfix fashion to the results of the recursive calls.
      */
-    def alltdfold (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def alltdfold (s1 : Strategy, s2 : Strategy) : Strategy =
         s1 <+ (all (alltdfold (s1, s2)) <* s2)
 
     /**
@@ -414,7 +414,7 @@ trait Rewriter extends RewriterCore {
      * stopping at a frontier where `s` succeeds on some children.  `s` is then
      * applied in a bottom-up, postfix fashion to the result.
      */
-    def somedownup (s : => Strategy) : Strategy =
+    def somedownup (s : Strategy) : Strategy =
         (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
 
     /**
@@ -490,7 +490,7 @@ trait Rewriter extends RewriterCore {
      * Construct a strategy that applies to all of the leaves of the
      * current term, using `isleaf` as the leaf predicate.
      */
-    def leaves (s : => Strategy, isleaf : => Strategy) : Strategy =
+    def leaves (s : Strategy, isleaf : Strategy) : Strategy =
         (isleaf <* s) <+ all (leaves (s, isleaf))
 
     /**
@@ -498,8 +498,9 @@ trait Rewriter extends RewriterCore {
      * current term, using `isleaf` as the leaf predicate, skipping
      * subterms for which `skip` when applied to the result succeeds.
      */
-    def leaves (s : => Strategy, isleaf : => Strategy, skip : Strategy => Strategy) : Strategy =
+    def leaves (s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy = {
         (isleaf <* s) <+ skip (leaves (s, isleaf, skip)) <+ all (leaves (s, isleaf, skip))
+    }
 
     /**
      * Construct a strategy that succeeds if the current term has at
@@ -513,7 +514,7 @@ trait Rewriter extends RewriterCore {
      * regardless of failure.  Terms for which the strategy fails are left
      * unchanged.
      */
-    def everywherebu (s : => Strategy) : Strategy =
+    def everywherebu (s : Strategy) : Strategy =
         bottomup (attempt (s))
 
     /**
@@ -521,13 +522,13 @@ trait Rewriter extends RewriterCore {
      * regardless of failure.  Terms for which the strategy fails are left
      * unchanged.
      */
-    def everywheretd (s : => Strategy) : Strategy =
+    def everywheretd (s : Strategy) : Strategy =
         topdown (attempt (s))
 
     /**
      * Same as `everywheretd`.
      */
-    def everywhere (s : => Strategy) : Strategy =
+    def everywhere (s : Strategy) : Strategy =
         everywheretd (s)
 
     /**
@@ -544,7 +545,7 @@ trait Rewriter extends RewriterCore {
      * Typically useful if `s` performs side effects that should be restored or
      * undone when `s` fails.
      */
-    def restore (s : => Strategy, rest : => Strategy) : Strategy =
+    def restore (s : Strategy, rest : Strategy) : Strategy =
         s <+ (rest <* fail)
 
     /**
@@ -554,14 +555,14 @@ trait Rewriter extends RewriterCore {
      * side effects that should be restored always, e.g., when maintaining scope
      * information.
      */
-    def restorealways (s : => Strategy, rest : => Strategy) : Strategy =
+    def restorealways (s : Strategy, rest : Strategy) : Strategy =
         s < rest + (rest <* fail)
 
     /**
      * Applies `s` followed by `f` whether `s` failed or not.
      * This operator is called `finally` in the Stratego library.
      */
-    def lastly (s : => Strategy, f : => Strategy) : Strategy =
+    def lastly (s : Strategy, f : Strategy) : Strategy =
         s < where (f) + (where (f) <* fail)
 
     /**
@@ -570,14 +571,14 @@ trait Rewriter extends RewriterCore {
      * that fails it applies `s2` (just like `s1 <+ s2`). However,
      * when `s1` succeeds it also tries to apply `s2`.
      */
-    def ior (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def ior (s1 : Strategy, s2 : Strategy) : Strategy =
         (s1 <* attempt (s2)) <+ s2
 
     /**
      * `or(s1, s2)` is similar to `ior(s1, s2)`, but the application
      * of the strategies is only tested.
      */
-    def or (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def or (s1 : Strategy, s2 : Strategy) : Strategy =
         where (s1) < attempt (test (s2)) + test (s2)
 
     /**
@@ -586,7 +587,7 @@ trait Rewriter extends RewriterCore {
      * be applied, i.e., and is ''not'' a short-circuit
      * operator
      */
-    def and (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def and (s1 : Strategy, s2 : Strategy) : Strategy =
         where (s1) < test (s2) + (test (s2) <* fail)
 
 }
