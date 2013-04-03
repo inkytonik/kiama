@@ -78,11 +78,12 @@ trait RewriterCore {
      * As for the other `log` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def log (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
+    def log (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
+        lazy val strat = s
         new Strategy (name) {
             def apply (t1 : Any) : Option[Any] = {
                 emitter.emit (msg + t1)
-                val r = s (t1)
+                val r = strat (t1)
                 r match {
                     case Some (t2) =>
                         emitter.emitln (" succeeded with " + t2)
@@ -92,6 +93,7 @@ trait RewriterCore {
                 r
             }
         }
+    }
 
     /**
      * Create a logging strategy based on a strategy `s`.  The returned strategy
@@ -106,10 +108,11 @@ trait RewriterCore {
      * As for the other `logfail` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def logfail[T] (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy =
+    def logfail[T] (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
+        lazy val strat = s
         new Strategy (name) {
             def apply (t1 : Any) : Option[Any] = {
-                val r = s (t1)
+                val r = strat (t1)
                 r match {
                     case Some (t2) =>
                         // Do nothing
@@ -119,6 +122,7 @@ trait RewriterCore {
                 r
             }
         }
+    }
 
     /**
      * Return a strategy that behaves as `s` does, but memoises its arguments and
@@ -134,14 +138,15 @@ trait RewriterCore {
      * As for the other `memo` with the first argument specifying a name for
      * the constructed strategy.
      */
-    def memo (name : String, s : => Strategy) : Strategy =
+    def memo (name : String, s : => Strategy) : Strategy = {
+        lazy val strat = s
         new Strategy (name) {
             private val cache =
                 new scala.collection.mutable.HashMap[Any,Option[Any]]
-            private lazy val strat = s
             def apply (t : Any) : Option[Any] =
                 cache.getOrElseUpdate (t, strat (t))
         }
+    }
 
     /**
      * Construct a strategy from an option value `o`. The strategy succeeds
