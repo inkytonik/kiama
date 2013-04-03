@@ -39,7 +39,7 @@ trait RewriterCore {
      * the given term `t`. The term `t` is evaluated at most once.
      */
     def build (t : Any) : Strategy =
-        macro RewriterMacros.buildMacro
+        macro RewriterCoreMacros.buildMacro
 
     /**
      * As for the other `build` with the first argument specifying a name for
@@ -55,7 +55,7 @@ trait RewriterCore {
      * emitter defaults to one that writes to standard output.
      */
     def debug (msg : String, emitter : Emitter = new Emitter) : Strategy =
-        macro RewriterMacros.debugMacro
+        macro RewriterCoreMacros.debugMacro
 
     /**
      * As for the other `debug` with the first argument specifying a name for
@@ -72,7 +72,7 @@ trait RewriterCore {
      * at most once.
      */
     def log (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
-        macro RewriterMacros.logMacro
+        macro RewriterCoreMacros.logMacro
 
     /**
      * As for the other `log` with the first argument specifying a name for
@@ -102,7 +102,7 @@ trait RewriterCore {
      * standard output). `s` is evaluated at most once.
      */
     def logfail[T] (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
-        macro RewriterMacros.logfailMacro
+        macro RewriterCoreMacros.logfailMacro
 
     /**
      * As for the other `logfail` with the first argument specifying a name for
@@ -132,7 +132,7 @@ trait RewriterCore {
      * effects. `s` is evaluated at most once.
      */
     def memo (s : Strategy) : Strategy =
-        macro RewriterMacros.memoMacro
+        macro RewriterCoreMacros.memoMacro
 
     /**
      * As for the other `memo` with the first argument specifying a name for
@@ -155,7 +155,7 @@ trait RewriterCore {
      * is wrapped by the `Some`. `o` is evaluated at most once.
      */
     def option (o : Option[Any]) : Strategy =
-        macro RewriterMacros.optionMacro
+        macro RewriterCoreMacros.optionMacro
 
     /**
      * As for the other `option` with the first argument specifying a name for
@@ -185,7 +185,7 @@ trait RewriterCore {
      * side-effects.
      */
     def query[T] (f : Any ==> T) : Strategy =
-        macro RewriterMacros.queryMacro[T]
+        macro RewriterCoreMacros.queryMacro[T]
 
     /**
      * As for the other `query` with the first argument specifying a name for
@@ -207,7 +207,7 @@ trait RewriterCore {
      * `f` for its side-effects.
      */
     def queryf[T] (f : Any => T) : Strategy =
-        macro RewriterMacros.queryfMacro[T]
+        macro RewriterCoreMacros.queryfMacro[T]
 
     /**
      * As for the other `queryf` with the first argument specifying a name for
@@ -228,7 +228,7 @@ trait RewriterCore {
      * strategy fails.
      */
     def rule (f : Any ==> Any) : Strategy =
-        macro RewriterMacros.ruleMacro
+        macro RewriterCoreMacros.ruleMacro
 
     /**
      * As for the other `rule` with the first argument specifying a name for
@@ -249,7 +249,7 @@ trait RewriterCore {
      * The rule always succeeds with the return value of the function.
      */
     def rulef (f : Any => Any) : Strategy =
-        macro RewriterMacros.rulefMacro
+        macro RewriterCoreMacros.rulefMacro
 
     /**
      * As for the other `rulef` with the first argument specifying a name for
@@ -266,7 +266,7 @@ trait RewriterCore {
      * fails if `f` is not defined at the term in the first place.
      */
     def rulefs (f : Any ==> Strategy) : Strategy =
-        macro RewriterMacros.rulefsMacro
+        macro RewriterCoreMacros.rulefsMacro
 
     /**
      * As for the other `rulefs` with the first argument specifying a name for
@@ -290,7 +290,7 @@ trait RewriterCore {
      * term, the strategy fails.
      */
     def strategy (f : Any ==> Option[Any]) : Strategy =
-        macro RewriterMacros.strategyMacro
+        macro RewriterCoreMacros.strategyMacro
 
     /**
      * As for the other `strategy` with the first argument specifying a name for
@@ -311,7 +311,7 @@ trait RewriterCore {
      * determines whether the strategy succeeds or fails.
      */
     def strategyf (f : Any => Option[Any]) : Strategy =
-        macro RewriterMacros.strategyfMacro
+        macro RewriterCoreMacros.strategyfMacro
 
     /**
      * As for the other `strategyf` with the first argument specifying a name for
@@ -328,7 +328,7 @@ trait RewriterCore {
      * the given term `t`.
      */
     def term (t : Any) : Strategy =
-        macro RewriterMacros.termMacro
+        macro RewriterCoreMacros.termMacro
 
     /**
      * As for the other `term` with the first argument specifying a name for
@@ -390,7 +390,7 @@ trait RewriterCore {
      * `s` is evaluated at most once.
      */
     def child (i : Int, s : Strategy) : Strategy =
-        macro RewriterMacros.childMacro
+        macro RewriterCoreMacros.childMacro
 
     /**
      * As for the other `child` with the first argument specifying a name for
@@ -502,7 +502,7 @@ trait RewriterCore {
      * `s` is evaluated at most once.
      */
     def all (s : Strategy) : Strategy =
-        macro RewriterMacros.allMacro
+        macro RewriterCoreMacros.allMacro
 
     /**
      * As for the other `all` with the first argument specifying a name for
@@ -647,7 +647,7 @@ trait RewriterCore {
      * `s` is evaluated at most once.
      */
     def one (s : Strategy) : Strategy =
-        macro RewriterMacros.oneMacro
+        macro RewriterCoreMacros.oneMacro
 
     /**
      * As for the other `one` with the first argument specifying a name for
@@ -800,7 +800,7 @@ trait RewriterCore {
      * `s` is evaluated at most once.
      */
     def some (s : Strategy) : Strategy =
-        macro RewriterMacros.someMacro
+        macro RewriterCoreMacros.someMacro
 
     /**
      * As for the other `some` with the first argument specifying a name for
@@ -960,7 +960,7 @@ trait RewriterCore {
      * This operation works on instances of `Product` values.
      */
     def congruence (ss : Strategy*) : Strategy =
-        macro RewriterMacros.congruenceMacro
+        macro RewriterCoreMacros.congruenceMacro
 
     /**
      * As for the other `congruence` with the first argument specifying a name for

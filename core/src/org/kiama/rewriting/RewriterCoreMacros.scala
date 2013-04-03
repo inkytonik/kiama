@@ -21,7 +21,7 @@
 package org.kiama
 package rewriting
 
-object RewriterMacros {
+object RewriterCoreMacros {
 
     import org.bitbucket.inkytonik.dsname.DSName.makeCallWithName
     import org.kiama.util.Emitter

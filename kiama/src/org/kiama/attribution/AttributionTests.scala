@@ -261,37 +261,9 @@ class AttributionTests extends Tests {
         lazy val direct : Tree => Int =
             attr (t => t->direct)
         lazy val indirect : Tree => Int =
-            attr ("indirect") (t => t->indirect2)
-        lazy val indirect2 : Tree => Int =
-            attr (t => t->indirect)
-
-        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-
-        val i1 = intercept[IllegalStateException] {
-                     t->direct
-                 }
-        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
-
-        val i2 = intercept[IllegalStateException] {
-                     t->indirect
-                 }
-        expectResult ("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
-
-        val i3 = intercept[IllegalStateException] {
-                     t->indirect2
-                 }
-        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
-    }
-
-    test ("circularities are detected for uncached attributes") {
-        import UncachedAttribution._
-
-        lazy val direct : Tree => Int =
-            attr ("direct") (t => t->direct)
-        lazy val indirect : Tree => Int =
             attr (t => t->indirect2)
         lazy val indirect2 : Tree => Int =
-            attr ("indirect2") (t => t->indirect)
+            attr (t => t->indirect)
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
@@ -303,7 +275,35 @@ class AttributionTests extends Tests {
         val i2 = intercept[IllegalStateException] {
                      t->indirect
                  }
-        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+        expectResult ("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+
+        val i3 = intercept[IllegalStateException] {
+                     t->indirect2
+                 }
+        expectResult ("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
+    }
+
+    test ("circularities are detected for uncached attributes") {
+        import UncachedAttribution._
+
+        lazy val direct : Tree => Int =
+            attr (t => t->direct)
+        lazy val indirect : Tree => Int =
+            attr (t => t->indirect2)
+        lazy val indirect2 : Tree => Int =
+            attr (t => t->indirect)
+
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+
+        val i1 = intercept[IllegalStateException] {
+                     t->direct
+                 }
+        expectResult ("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+
+        val i2 = intercept[IllegalStateException] {
+                     t->indirect
+                 }
+        expectResult ("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
                      t->indirect2
@@ -313,11 +313,11 @@ class AttributionTests extends Tests {
 
     test ("circularities are detected for parameterised attributes") {
         lazy val direct : Int => Tree => Int =
-            paramAttr ("direct") (i => (t => t->direct (i)))
+            paramAttr (i => (t => t->direct (i)))
         lazy val indirect : Int => Tree => Int =
             paramAttr (i => (t => t->indirect2 (i)))
         lazy val indirect2 : Int => Tree => Int =
-            paramAttr ("indirect2") (i => (t => t->indirect (i)))
+            paramAttr (i => (t => t->indirect (i)))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
@@ -329,7 +329,7 @@ class AttributionTests extends Tests {
         val i2 = intercept[IllegalStateException] {
                      t->indirect (8)
                  }
-        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+        expectResult ("Cycle detected in attribute evaluation 'indirect (8)' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
                      t->indirect2 (9)
@@ -338,41 +338,35 @@ class AttributionTests extends Tests {
     }
 
     test ("parameterised attribute keys compare correctly") {
-
-        object Base extends AttributionBase {
-            val n = Leaf (1)
-            val k1 = new ParamAttributeKey ("hello", n)
-            val k2 = new ParamAttributeKey ("hello", n)
-            val k3 = new ParamAttributeKey ("hello", Leaf (1))
-            val k4 = new ParamAttributeKey ("goodbye", n)
-            val k5 = new ParamAttributeKey ("goodbye", Leaf (1))
-            val k6 = new ParamAttributeKey ("hello", null)
-            val k7 = new ParamAttributeKey ("hello", null)
-            val k8 = new ParamAttributeKey ("goodbye", null)
-            expectResult (false) (n equals k1)
-            expectResult (false) (k1 equals n)
-            expectResult (true) (k1 equals k2)
-            expectResult (true) (k2 equals k1)
-            expectResult (false) (k1 equals k3)
-            expectResult (false) (k3 equals k1)
-            expectResult (false) (k1 equals k4)
-            expectResult (false) (k4 equals k1)
-            expectResult (false) (k1 equals k5)
-            expectResult (false) (k5 equals k1)
-            expectResult (false) (k1 equals k6)
-            expectResult (false) (k6 equals k1)
-            expectResult (false) (k1 equals k7)
-            expectResult (false) (k7 equals k1)
-            expectResult (false) (k1 equals k8)
-            expectResult (false) (k8 equals k1)
-            expectResult (true) (k6 equals k7)
-            expectResult (true) (k7 equals k6)
-            expectResult (false) (k6 equals k8)
-            expectResult (false) (k8 equals k6)
-        }
-
-        Base
-
+        val n = Leaf (1)
+        val k1 = new ParamAttributeKey ("hello", n)
+        val k2 = new ParamAttributeKey ("hello", n)
+        val k3 = new ParamAttributeKey ("hello", Leaf (1))
+        val k4 = new ParamAttributeKey ("goodbye", n)
+        val k5 = new ParamAttributeKey ("goodbye", Leaf (1))
+        val k6 = new ParamAttributeKey ("hello", null)
+        val k7 = new ParamAttributeKey ("hello", null)
+        val k8 = new ParamAttributeKey ("goodbye", null)
+        expectResult (false) (n equals k1)
+        expectResult (false) (k1 equals n)
+        expectResult (true) (k1 equals k2)
+        expectResult (true) (k2 equals k1)
+        expectResult (false) (k1 equals k3)
+        expectResult (false) (k3 equals k1)
+        expectResult (false) (k1 equals k4)
+        expectResult (false) (k4 equals k1)
+        expectResult (false) (k1 equals k5)
+        expectResult (false) (k5 equals k1)
+        expectResult (false) (k1 equals k6)
+        expectResult (false) (k6 equals k1)
+        expectResult (false) (k1 equals k7)
+        expectResult (false) (k7 equals k1)
+        expectResult (false) (k1 equals k8)
+        expectResult (false) (k8 equals k1)
+        expectResult (true) (k6 equals k7)
+        expectResult (true) (k7 equals k6)
+        expectResult (false) (k6 equals k8)
+        expectResult (false) (k8 equals k6)
     }
 
     test ("a normal child's properties are set correctly") {

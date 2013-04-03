@@ -196,7 +196,7 @@ class DynamicAttributionTests extends Tests {
         lazy val direct : Tree => Int =
             dynAttr (t => t->direct)
         lazy val indirect : Tree => Int =
-            dynAttr ("indirect") (t => t->indirect2)
+            dynAttr (t => t->indirect2)
         lazy val indirect2 : Tree => Int =
             dynAttr (t => t->indirect)
 
@@ -205,7 +205,7 @@ class DynamicAttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
                     t->direct
                 }
-        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+        expectResult ("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
                      t->indirect
@@ -215,7 +215,7 @@ class DynamicAttributionTests extends Tests {
         val i3 = intercept[IllegalStateException] {
                      t->indirect2
                  }
-        expectResult ("Cycle detected in attribute evaluation at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
+        expectResult ("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }
 
 }

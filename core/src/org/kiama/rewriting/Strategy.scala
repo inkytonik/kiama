@@ -49,7 +49,7 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * term. Otherwise fail. `q` is evaluated at most once.
      */
     def <* (q : Strategy) : Strategy =
-        macro RewriterMacros.seqMacro
+        macro RewriterCoreMacros.seqMacro
 
     /**
      * As for the other `<*` with the first argument specifying a name for
@@ -71,7 +71,7 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * evaluated at most once.
      */
     def <+ (q : Strategy) : Strategy =
-        macro RewriterMacros.detchoiceMacro
+        macro RewriterCoreMacros.detchoiceMacro
 
     /**
      * As for the other `<+` with the first argument specifying a name for
@@ -98,7 +98,7 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * `q` is evaluated at most once.
      */
     def + (q : Strategy) : PlusStrategy =
-        macro RewriterMacros.nondetchoiceMacro
+        macro RewriterCoreMacros.nondetchoiceMacro
 
     /**
      * As for the other `+` with the first argument specifying a name for
@@ -114,7 +114,7 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * subject term. `lr` is evaluated at most once.
      */
     def < (lr : PlusStrategy) : Strategy =
-        macro RewriterMacros.condMacro
+        macro RewriterCoreMacros.condMacro
 
     /**
      * As for the other `<` with the first argument specifying a name for
