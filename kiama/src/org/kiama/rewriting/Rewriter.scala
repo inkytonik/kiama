@@ -56,8 +56,8 @@ trait Rewriter extends RewriterCore {
         option (None)
 
     /**
-     * A strategy that always succeeds with the subject term unchanged (i.e.,
-     * this is the identity strategy).
+     * A strategy that always succeeds with the subject term unchanged. I.e.,
+     * this is the identity strategy.
      */
     val id : Strategy =
         strategyf (Some (_))
