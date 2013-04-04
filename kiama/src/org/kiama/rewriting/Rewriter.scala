@@ -138,14 +138,14 @@ trait Rewriter extends RewriterCore {
     /**
      * Construct a strategy that applies `s` repeatedly until it fails.
      */
-    def repeat (s : => Strategy) : Strategy =
+    def repeat (s : Strategy) : Strategy =
         attempt (s <* repeat (s))
 
     /**
      * Construct a strategy that repeatedly applies `s` until it fails and
      * then terminates with application of `c`.
      */
-    def repeat (s : => Strategy, c : => Strategy) : Strategy =
+    def repeat (s : Strategy, c : Strategy) : Strategy =
         (s <* repeat (s, c)) <+ c
 
     /**
@@ -154,7 +154,7 @@ trait Rewriter extends RewriterCore {
      * fails. The result of the strategy is that of the ''nth'' application of
      * `s`.
      */
-    def repeat (s : => Strategy, n : Int) : Strategy =
+    def repeat (s : Strategy, n : Int) : Strategy =
         if (n == 0) id else s <* repeat (s, n - 1)
 
     /**
