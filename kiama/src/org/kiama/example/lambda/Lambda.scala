@@ -21,6 +21,7 @@
 package org.kiama
 package example.lambda
 
+import org.bitbucket.inkytonik.dsprofile.Profiler
 import org.kiama.util.ParsingREPL
 import org.kiama.util.PositionedParserUtilities
 
@@ -159,23 +160,34 @@ trait Evaluator {
 /**
  * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator {
+object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator with Profiler {
 
     import AST._
 
+    var profiling = false
+    var dimensions = Seq[String] ()
+
     override def setup (args : Array[String]) : Boolean = {
         emitter.emitln ("Enter lambda calculus expressions for evaluation.")
+        profiling = args (0) startsWith "-p"
+        if (profiling)
+            dimensions = parseProfileOption (args (0).drop (2))
         true
     }
 
     override val prompt = "lambda> "
 
     def process (e : Exp) {
-        normal (e) match {
+        println (s"normal.name = ${normal.name}")
+        val result =
+            if (profiling)
+                profile (normal (e), dimensions : _*)
+            else
+                normal (e)
+        result match {
             case Some (r) => emitter.emitln (r)
             case None     => emitter.emitln ("reduction failed")
         }
     }
 
 }
-

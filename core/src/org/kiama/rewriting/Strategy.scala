@@ -21,6 +21,8 @@
 package org.kiama
 package rewriting
 
+import org.bitbucket.inkytonik.dsprofile.Events.wrap
+
 /**
  * Any-rewriting strategies. A strategy is a function that takes a term
  * of any type as input and either succeeds producing a new term (`Some`),
@@ -58,9 +60,11 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
     def <* (name : String, q : => Strategy) : Strategy =
         new Strategy (name) {
             def apply (t1 : Any) : Option[Any] =
-                p (t1) match {
-                    case Some (t2) => q (t2)
-                    case None      => None
+                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+                    p (t1) match {
+                        case Some (t2) => q (t2)
+                        case None      => None
+                    }
                 }
         }
 
@@ -80,9 +84,11 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
     def <+ (name : String, q : => Strategy) : Strategy =
         new Strategy (name) {
             def apply (t1 : Any) : Option[Any] =
-                p (t1) match {
-                    case Some (t2) => Some (t2)
-                    case None      => q (t1)
+                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+                    p (t1) match {
+                        case Some (t2) => Some (t2)
+                        case None      => q (t1)
+                    }
                 }
         }
 
@@ -123,11 +129,19 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
     def < (name : String, lr : => PlusStrategy) : Strategy =
         new Strategy (name) {
             def apply (t1 : Any) : Option[Any] =
-                p (t1) match {
-                    case Some (t2) => lr.left (t2)
-                    case None      => lr.right (t1)
+                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+                    p (t1) match {
+                        case Some (t2) => lr.left (t2)
+                        case None      => lr.right (t1)
+                    }
                 }
         }
+
+    /**
+     * Identify this strategy by its name.
+     */
+    override def toString : String =
+        name
 
 }
 
@@ -142,5 +156,8 @@ class PlusStrategy (name : String, p : => Strategy, q : => Strategy) extends Str
     lazy val left = p
     lazy val right = q
     private lazy val s = left <+ (name, right)
-    def apply (t : Any) : Option[Any] = s (t)
+    def apply (t : Any) : Option[Any] =
+        wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            s (t)
+        }
 }
