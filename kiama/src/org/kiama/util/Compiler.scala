@@ -76,8 +76,8 @@ trait CompilerBase[T] {
         val newargs = checkargs (args, emitter)
         for (arg <- newargs) {
             try {
-                val reader = filereader (newargs (0), encoding)
-                makeast (reader, newargs (0), emitter) match {
+                val reader = filereader (arg, encoding)
+                makeast (reader, arg, emitter) match {
                     case Left (ast) =>
                         process (ast, console, emitter)
                     case Right (msg) =>
