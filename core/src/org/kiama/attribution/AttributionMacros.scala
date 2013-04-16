@@ -29,18 +29,18 @@ object AttributionMacros {
     // Macros for the builder methods
 
     def attrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
-        makeCallWithName (c, s"attr")
+        makeCallWithName (c)
 
     def childAttrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => Attributable => U]): c.Expr[A] =
-        makeCallWithName (c, s"childAttr")
+        makeCallWithName (c)
 
     def dynAttrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
-        makeCallWithName (c, s"dynAttr")
+        makeCallWithName (c)
 
     def paramAttrMacro[V,T <: AnyRef,U,P] (c : Context) (f : c.Expr[V => T => U]): c.Expr[P] =
-        makeCallWithName (c, s"paramAttr")
+        makeCallWithName (c)
 
     def treeMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
-        makeCallWithName (c, s"tree")
+        makeCallWithName (c)
 
 }

@@ -29,9 +29,9 @@ object AttributionCommonMacros {
     // Macros for the builder methods
 
     def circularMacro[T <: AnyRef,U] (c : Context) (init : c.Expr[U]) (f : c.Expr[T => U]): c.Expr[T => U] =
-        makeCallWithName (c, s"circular")
+        makeCallWithName (c)
 
     def constantMacro[T <: AnyRef,U] (c : Context) (u : c.Expr[U]): c.Expr[Attribute[T,U]] =
-        makeCallWithName (c, s"constant")
+        makeCallWithName (c)
 
 }
