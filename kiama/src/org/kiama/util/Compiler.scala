@@ -48,11 +48,10 @@ trait CompilerBase[T] {
         driver (args, JLineConsole, new Emitter)
     }
 
-    /**
-     * Entry point for standard compiler framework. All command-line
-     * argumnents, a JLine console for input editing and a new emitter
-     * to standard output are passed to `driver`.
-     */
+     /**
+      * Check the supplied arguments, returning any arguments that are to be
+      * processed elsewhere. Default: return the arguments unchanged.
+      */
     def checkargs (args : Array[String], emitter : Emitter) : Array[String] =
         args
 
@@ -154,6 +153,38 @@ trait Compiler[T <: Attributable] extends RegexCompiler[T] {
     def process (ast : T, console : Console, emitter : Emitter) : Boolean = {
         initTree (ast)
         true
+    }
+
+}
+
+/**
+ * A compiler that is capable of producing profiling reports. This trait
+ * augments the argument processing to allow a leading `-p` option to
+ * specify the profiling dimensions.
+ */
+trait ProfilingCompiler[T <: Attributable] extends Compiler[T] with Profiler {
+
+    /**
+     * Wrap the normal compiler driver in a `profile` call, if we are profiling
+     * (indicated by a `-p` option with dimensions). Before calling the driver,
+     * extract the comma-separated profiling dimensions if they are there. If
+     * dimensions are present, print reports along those dimensions, otherwise
+     * enter an interactive shell to allow reports to be produced.
+     *
+     * If not profiling, check for a `-t` option and, if present, run the compiler
+     * driver to collect timings.
+     *
+     * If neither `-p` nor `-t` are the first option, just run the compiler driver
+     * as normal.
+     */
+    override def driver (args : Array[String], console : Console, emitter : Emitter) {
+        if ((args.size > 0) && (args (0).startsWith ("-p"))) {
+            val dimensions = parseProfileOption (args (0).drop (2))
+            profile (super.driver (args.tail, console, emitter), dimensions : _*)
+        } else if ((args.size > 0) && (args (0) == "-t"))
+            time (super.driver (args.tail, console, emitter))
+        else
+            super.driver (args, console, emitter)
     }
 
 }
