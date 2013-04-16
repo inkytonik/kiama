@@ -98,10 +98,9 @@ object NameResolution {
                     }
                 case s : BlockStmt =>
                     s.parent match {
-                        case b : Block => {
+                        case b : Block =>
                             val d = b->localLookup (name)
                             if (isUnknown (d)) b->lookup (name) else d
-                        }
                         case p => p->lookup (name)
                     }
                 case i : IdnUse =>
