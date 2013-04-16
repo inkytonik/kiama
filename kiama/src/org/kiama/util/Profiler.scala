@@ -42,17 +42,23 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
              * in that order.
              */
             case "name" =>
-                checkFor (record, dim, "StratEval", "strategy") {
-                    case s : Strategy =>
-                        s.name
-                    case _ =>
-                        checkFor (record, dim, "AttrEval", "attribute") {
-                            case a : Attribute[_,_] =>
-                                a.name
-                            case _ =>
-                                "unknown name"
-                        }
-                }
+                val dimensions = record.dimensions
+                if (dimensions contains "strategy")
+                    dimensions ("strategy") match {
+                        case s : Strategy =>
+                            s.name
+                        case _ =>
+                            "strategy dimension that is not a Strategy"
+                    }
+                else if (record.dimensions contains "attribute")
+                    dimensions ("attribute") match {
+                        case a : Attribute[_,_] =>
+                            a.name
+                        case _ =>
+                            "attribute dimension that is not an Attribute"
+                    }
+                else
+                    "no strategy or attribute dimension, so no name"
 
             case _ =>
                 super.dimValue (record, dim)
