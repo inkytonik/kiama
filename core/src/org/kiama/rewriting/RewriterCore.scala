@@ -23,7 +23,7 @@ package rewriting
 
 /**
  * Core implementation of strategy-based rewriting. Implement and construct
- * basic strategies and rewrite rules.
+ * basic strategies and rewrite rules, plus basic library combinators.
  */
 trait RewriterCore {
 
@@ -35,6 +35,8 @@ trait RewriterCore {
     import scala.language.higherKinds
     import scala.language.experimental.macros
 
+    // Builder combinators.
+
     /**
      * Construct a strategy that always succeeds, changing the subject term to
      * the given term `t`. The term `t` is evaluated at most once.
@@ -43,11 +45,11 @@ trait RewriterCore {
         macro RewriterCoreMacros.buildMacro
 
     /**
-     * As for the other `build` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def build (n : String, t : => Any) : Strategy =
-        rulef (n, _ => t)
+    def build (name : String, t : => Any) : Strategy =
+        rulef (name, _ => t)
 
     /**
      * A strategy that always succeeds with the subject term unchanged (i.e.,
@@ -59,11 +61,29 @@ trait RewriterCore {
         macro RewriterCoreMacros.debugMacro
 
     /**
-     * As for the other `debug` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def debug (n : String, msg : String, emitter : Emitter) : Strategy =
-        strategyf (n, t => { emitter.emitln (msg + t); Some (t) })
+    def debug (name : String, msg : String, emitter : Emitter) : Strategy =
+        strategyf (name, t => { emitter.emitln (msg + t); Some (t) })
+
+    /**
+     * A strategy that always fails.
+     */
+    val fail : Strategy =
+        new Strategy ("fail") {
+            def apply (r : Any) : Option[Any] =
+                None
+        }
+
+    /**
+     * A strategy that always succeeds.
+     */
+    val id : Strategy =
+        new Strategy ("id") {
+            def apply (r : Any) : Option[Any] =
+                Some (r)
+        }
 
     /**
      * Create a logging strategy based on a strategy `s`. The returned strategy
@@ -76,7 +96,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.logMacro
 
     /**
-     * As for the other `log` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def log (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
@@ -107,7 +127,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.logfailMacro
 
     /**
-     * As for the other `logfail` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def logfail[T] (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
@@ -139,7 +159,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.memoMacro
 
     /**
-     * As for the other `memo` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def memo (name : String, s : => Strategy) : Strategy = {
@@ -164,11 +184,11 @@ trait RewriterCore {
         macro RewriterCoreMacros.optionMacro
 
     /**
-     * As for the other `option` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def option (n : String, o : => Option[Any]) : Strategy =
-        strategyf (n, _ => o)
+    def option (name : String, o : => Option[Any]) : Strategy =
+        strategyf (name, _ => o)
 
     /**
      * Perform a paramorphism over a value. This is a fold in which the
@@ -194,7 +214,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.queryMacro[T]
 
     /**
-     * As for the other `query` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def query[T] (name : String, f : Any ==> T) : Strategy =
@@ -217,7 +237,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.queryfMacro[T]
 
     /**
-     * As for the other `queryf` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def queryf[T] (name : String, f : Any => T) : Strategy =
@@ -239,7 +259,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.ruleMacro
 
     /**
-     * As for the other `rule` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def rule (name : String, f : Any ==> Any) : Strategy =
@@ -261,11 +281,11 @@ trait RewriterCore {
         macro RewriterCoreMacros.rulefMacro
 
     /**
-     * As for the other `rulef` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def rulef (n : String, f : Any => Any) : Strategy =
-        strategyf (n, t => Some (f (t)))
+    def rulef (name : String, f : Any => Any) : Strategy =
+        strategyf (name, t => Some (f (t)))
 
     /**
      * Define a rewrite rule using a function `f` that returns a strategy.  The
@@ -278,7 +298,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.rulefsMacro
 
     /**
-     * As for the other `rulefs` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def rulefs (name : String, f : Any ==> Strategy) : Strategy =
@@ -303,7 +323,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.strategyMacro
 
     /**
-     * As for the other `strategy` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def strategy (name : String, f : Any ==> Option[Any]) : Strategy =
@@ -325,7 +345,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.strategyfMacro
 
     /**
-     * As for the other `strategyf` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def strategyf (name : String, f : Any => Option[Any]) : Strategy =
@@ -344,11 +364,11 @@ trait RewriterCore {
         macro RewriterCoreMacros.termMacro
 
     /**
-     * As for the other `term` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def term (n : String, t : Any) : Strategy =
-        rule (n, {
+    def term (name : String, t : Any) : Strategy =
+        rule (name, {
             case `t` => t
         })
 
@@ -406,7 +426,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.childMacro
 
     /**
-     * As for the other `child` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def child (name : String, i : Int, s : => Strategy) : Strategy =
@@ -520,7 +540,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.allMacro
 
     /**
-     * As for the other `all` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def all (name : String, s : => Strategy) : Strategy =
@@ -540,34 +560,6 @@ trait RewriterCore {
                 }
 
         }
-
-    def allProduct (s : Strategy, p : Product) : Option[Any] = {
-        val numchildren = p.productArity
-        if (numchildren == 0)
-            Some (p)
-        else {
-            val newchildren = new Array[AnyRef](numchildren)
-            var changed = false
-            var i = 0
-            while (i < numchildren) {
-                val ct = p.productElement (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        newchildren (i) = makechild (ti)
-                        if (!same (ct, ti))
-                            changed = true
-                    case None =>
-                        return None
-                }
-                i = i + 1
-            }
-            if (changed) {
-                val ret = dup (p, newchildren)
-                Some (ret)
-            } else
-                Some (p)
-        }
-    }
 
     def allRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
@@ -595,6 +587,34 @@ trait RewriterCore {
                 Some (ret)
             } else
                 Some (r)
+        }
+    }
+
+    def allProduct (s : Strategy, p : Product) : Option[Any] = {
+        val numchildren = p.productArity
+        if (numchildren == 0)
+            Some (p)
+        else {
+            val newchildren = new Array[AnyRef](numchildren)
+            var changed = false
+            var i = 0
+            while (i < numchildren) {
+                val ct = p.productElement (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        newchildren (i) = makechild (ti)
+                        if (!same (ct, ti))
+                            changed = true
+                    case None =>
+                        return None
+                }
+                i = i + 1
+            }
+            if (changed) {
+                val ret = dup (p, newchildren)
+                Some (ret)
+            } else
+                Some (p)
         }
     }
 
@@ -667,7 +687,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.oneMacro
 
     /**
-     * As for the other `one` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def one (name : String, s : => Strategy) : Strategy =
@@ -687,37 +707,6 @@ trait RewriterCore {
                 }
 
         }
-
-    def oneProduct (s : Strategy, p : Product) : Option[Any] = {
-        val numchildren = p.productArity
-        var i = 0
-        while (i < numchildren) {
-            val ct = p.productElement (i)
-            s (ct) match {
-                case Some (ti) if (same (ct, ti)) =>
-                    return Some (p)
-                case Some (ti) =>
-                    val newchildren = new Array[AnyRef] (numchildren)
-                    var j = 0
-                    while (j < i) {
-                        newchildren (j) = makechild (p.productElement (j))
-                        j = j + 1
-                    }
-                    newchildren (i) = makechild (ti)
-                    j = j + 1
-                    while (j < numchildren) {
-                        newchildren (j) = makechild (p.productElement (j))
-                        j = j + 1
-                    }
-                    val ret = dup (p, newchildren)
-                    return Some (ret)
-                case None =>
-                    // Do nothing
-            }
-            i = i + 1
-        }
-        None
-    }
 
     def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
@@ -742,6 +731,37 @@ trait RewriterCore {
                         j = j + 1
                     }
                     val ret = r.reconstruct (newchildren)
+                    return Some (ret)
+                case None =>
+                    // Do nothing
+            }
+            i = i + 1
+        }
+        None
+    }
+
+    def oneProduct (s : Strategy, p : Product) : Option[Any] = {
+        val numchildren = p.productArity
+        var i = 0
+        while (i < numchildren) {
+            val ct = p.productElement (i)
+            s (ct) match {
+                case Some (ti) if (same (ct, ti)) =>
+                    return Some (p)
+                case Some (ti) =>
+                    val newchildren = new Array[AnyRef] (numchildren)
+                    var j = 0
+                    while (j < i) {
+                        newchildren (j) = makechild (p.productElement (j))
+                        j = j + 1
+                    }
+                    newchildren (i) = makechild (ti)
+                    j = j + 1
+                    while (j < numchildren) {
+                        newchildren (j) = makechild (p.productElement (j))
+                        j = j + 1
+                    }
+                    val ret = dup (p, newchildren)
                     return Some (ret)
                 case None =>
                     // Do nothing
@@ -822,7 +842,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.someMacro
 
     /**
-     * As for the other `some` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def some (name : String, s : => Strategy) : Strategy =
@@ -842,39 +862,6 @@ trait RewriterCore {
                 }
 
         }
-
-    def someProduct (s : Strategy, p : Product) : Option[Any] = {
-        val numchildren = p.productArity
-        if (numchildren == 0)
-            None
-        else {
-            val newchildren = new Array[AnyRef](numchildren)
-            var success = false
-            var changed = false
-            var i = 0
-            while (i < numchildren) {
-                val ct = p.productElement (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        newchildren (i) = makechild (ti)
-                        if (!same (ct, ti))
-                            changed = true
-                        success = true
-                    case None =>
-                        newchildren (i) = makechild (ct)
-                }
-                i = i + 1
-            }
-            if (success)
-                if (changed) {
-                    val ret = dup (p, newchildren)
-                    Some (ret)
-                } else
-                    Some (p)
-            else
-                None
-        }
-    }
 
     def someRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
@@ -905,6 +892,39 @@ trait RewriterCore {
                     Some (ret)
                 } else
                     Some (r)
+            else
+                None
+        }
+    }
+
+    def someProduct (s : Strategy, p : Product) : Option[Any] = {
+        val numchildren = p.productArity
+        if (numchildren == 0)
+            None
+        else {
+            val newchildren = new Array[AnyRef](numchildren)
+            var success = false
+            var changed = false
+            var i = 0
+            while (i < numchildren) {
+                val ct = p.productElement (i)
+                s (ct) match {
+                    case Some (ti) =>
+                        newchildren (i) = makechild (ti)
+                        if (!same (ct, ti))
+                            changed = true
+                        success = true
+                    case None =>
+                        newchildren (i) = makechild (ct)
+                }
+                i = i + 1
+            }
+            if (success)
+                if (changed) {
+                    val ret = dup (p, newchildren)
+                    Some (ret)
+                } else
+                    Some (p)
             else
                 None
         }
@@ -984,7 +1004,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.congruenceMacro
 
     /**
-     * As for the other `congruence` with the first argument specifying a name for
+     * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
     def congruence (name : String, ss : Strategy*) : Strategy =
@@ -1053,5 +1073,395 @@ trait RewriterCore {
         }
 
     }
+
+    // Library combinators
+
+    /**
+     * Construct a strategy that applies `s` in a bottom-up fashion to all
+     * subterms at each level, stopping at a frontier where s succeeds.
+     */
+    def allbu (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.allbuMacro
+
+    /**
+     * Construct a strategy that applies `s` in a top-down fashion, stopping
+     * at a frontier where s succeeds.
+     */
+    def alltd (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.alltdMacro
+
+    /**
+     * Construct a strategy that applies `s1` in a top-down, prefix fashion
+     * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
+     * postfix fashion to the result.
+     */
+    def alldownup2 (s1 : Strategy, s2 : Strategy) : Strategy =
+        macro RewriterCoreMacros.alldownup2Macro
+
+    /**
+     * Construct a strategy that applies `s1` in a top-down, prefix fashion
+     * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
+     * postfix fashion to the results of the recursive calls.
+     */
+    def alltdfold (s1 : Strategy, s2 : Strategy) : Strategy =
+        macro RewriterCoreMacros.alltdfoldMacro
+
+    /**
+     * `and(s1, s2)` applies `s1` and `s2` to the current
+     * term and succeeds if both succeed. `s2` will always
+     * be applied, i.e., and is ''not'' a short-circuit
+     * operator
+     */
+    def and (s1 : Strategy, s2 : Strategy) : Strategy =
+        macro RewriterCoreMacros.andMacro
+
+    /**
+     * Construct a strategy that applies `s`, yielding the result of `s` if it
+     * succeeds, otherwise leave the original subject term unchanged.  In
+     * Stratego library this strategy is called `try`.
+     */
+    def attempt (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.attemptMacro
+
+    /**
+     * Construct a strategy that applies `s` in a bottom-up, postfix fashion
+     * to the subject term.
+     */
+    def bottomup (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.bottomupMacro
+
+    /**
+     * Construct a strategy that applies `s` in a bottom-up, postfix fashion
+     * to the subject term but stops when the strategy produced by `stop`
+     * succeeds. `stop` is given the whole strategy itself as its argument.
+     */
+    def bottomupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        macro RewriterCoreMacros.bottomupSMacro
+
+    /**
+     * Construct a strategy that applies `s` in breadth first order.
+     */
+    def breadthfirst (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.breadthfirstMacro
+
+    /**
+     * Construct a strategy that applies `s` at least once and then repeats `s`
+     * while `r` succeeds.  This operator is called `do-while` in the Stratego
+     * library.
+     */
+    def doloop (s : Strategy, r : Strategy) : Strategy =
+        macro RewriterCoreMacros.doloopMacro
+
+    /**
+     * Construct a strategy that applies `s` in a combined top-down and
+     * bottom-up fashion (i.e., both prefix and postfix) to the subject
+     * term.
+     */
+    def downup (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.downupMacro1
+
+    /**
+     * Construct a strategy that applies `s1` in a top-down, prefix fashion
+     * and `s2` in a bottom-up, postfix fashion to the subject term.
+     */
+    def downup (s1 : Strategy, s2 : Strategy) : Strategy =
+        macro RewriterCoreMacros.downupMacro2
+
+    /**
+     * Construct a strategy that applies `s` in a combined top-down and
+     * bottom-up fashion (i.e., both prefix and postfix) to the subject
+     * but stops when the strategy produced by `stop` succeeds. `stop` is
+     * given the whole strategy itself as its argument.
+     */
+    def downupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        macro RewriterCoreMacros.downupSMacro1
+
+    /**
+     * Construct a strategy that applies `s1` in a top-down, prefix fashion
+     * and `s2` in a bottom-up, postfix fashion to the subject term but stops
+     * when the strategy produced by `stop` succeeds. `stop` is given the whole
+     * strategy itself as its argument.
+     */
+    def downupS (s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        macro RewriterCoreMacros.downupSMacro2
+
+    /**
+     * Same as `everywheretd`.
+     */
+    def everywhere (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.everywhereMacro
+
+    /**
+     * Construct a strategy that applies `s` at all terms in a bottom-up fashion
+     * regardless of failure.  Terms for which the strategy fails are left
+     * unchanged.
+     */
+    def everywherebu (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.everywherebuMacro
+
+    /**
+     * Construct a strategy that applies `s` at all terms in a top-down fashion
+     * regardless of failure.  Terms for which the strategy fails are left
+     * unchanged.
+     */
+    def everywheretd (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.everywheretdMacro
+
+    /**
+     * Construct a strategy that applies `s` repeatedly to the innermost
+     * (i.e., lowest and left-most) (sub-)term to which it applies.
+     * Stop with the current term if `s` doesn't apply anywhere.
+     */
+    def innermost (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.innermostMacro
+
+    /**
+     * An alternative version of `innermost`.
+     */
+    def innermost2 (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.innermost2Macro
+
+    /**
+     * `ior(s1, s2)` implements inclusive OR, that is, the
+     * inclusive choice of `s1` and `s2`. It first tries `s1`. If
+     * that fails it applies `s2` (just like `s1 <+ s2`). However,
+     * when `s1` succeeds it also tries to apply `s2`.
+     */
+    def ior (s1 : Strategy, s2 : Strategy) : Strategy =
+        macro RewriterCoreMacros.iorMacro
+
+    /**
+     * Applies `s` followed by `f` whether `s` failed or not.
+     * This operator is called `finally` in the Stratego library.
+     */
+    def lastly (s : Strategy, f : Strategy) : Strategy =
+        macro RewriterCoreMacros.lastlyMacro
+
+    /**
+     * Construct a strategy that applies to all of the leaves of the
+     * current term, using `isleaf` as the leaf predicate.
+     */
+    def leaves (s : Strategy, isleaf : Strategy) : Strategy =
+        macro RewriterCoreMacros.leavesMacro1
+
+    /**
+     * Construct a strategy that applies to all of the leaves of the
+     * current term, using `isleaf` as the leaf predicate, skipping
+     * subterms for which `skip` when applied to the result succeeds.
+     */
+    def leaves (s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy =
+        macro RewriterCoreMacros.leavesMacro2
+
+    /**
+     * Construct a strategy that while `r` succeeds applies `s`.  This operator
+     * is called `while` in the Stratego library.
+     */
+    def loop (r : Strategy, s : Strategy) : Strategy =
+        macro RewriterCoreMacros.loopMacro
+
+    /**
+     * Construct a strategy that repeats application of `s` while `r` fails, after
+     * initialization with `i`.  This operator is called `for` in the Stratego
+     * library.
+     */
+    def loopiter (i : Strategy, r : Strategy, s : Strategy) : Strategy =
+        macro RewriterCoreMacros.loopiterMacro1
+
+    /**
+     * Construct a strategy that applies `s(i)` for each integer `i` from `low` to
+     * `high` (inclusive).  This operator is called `for` in the Stratego library.
+     */
+    def loopiter (s : Int => Strategy, low : Int, high : Int) : Strategy =
+        macro RewriterCoreMacros.loopiterMacro2
+
+    /**
+     * Construct a strategy that while `r` does not succeed applies `s`.  This
+     * operator is called `while-not` in the Stratego library.
+     */
+    def loopnot (r : Strategy, s : Strategy) : Strategy =
+        macro RewriterCoreMacros.loopnotMacro
+    /**
+     * Construct a strategy that applies `s` to each element of a list,
+     * returning a new list of the results if all of the applications
+     * succeed, otherwise fail.  If all of the applications succeed
+     * without change, return the input list.
+     */
+    def map (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.mapMacro
+
+    /**
+     * Construct a strategy that applies `s` as many times as possible, but
+     * at least once, in bottom up order.
+     */
+    def manybu (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.manybuMacro
+
+    /**
+     * Construct a strategy that applies `s` as many times as possible, but
+     * at least once, in top down order.
+     */
+    def manytd (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.manytdMacro
+
+    /**
+     * Construct a strategy that applies `s`, then fails if `s` succeeded or, if `s`
+     * failed, succeeds with the subject term unchanged,  I.e., it tests if
+     * `s` applies, but has no effect on the subject term.
+     */
+    def not (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.notMacro
+
+    /**
+     * Construct a strategy that applies `s` in a bottom-up fashion to one
+     * subterm at each level, stopping as soon as it succeeds once (at
+     * any level).
+     */
+    def oncebu (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.oncebuMacro
+
+    /**
+     * Construct a strategy that applies `s` in a top-down fashion to one
+     * subterm at each level, stopping as soon as it succeeds once (at
+     * any level).
+     */
+    def oncetd (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.oncetdMacro
+
+    /**
+     * `or(s1, s2)` is similar to `ior(s1, s2)`, but the application
+     * of the strategies is only tested.
+     */
+    def or (s1 : Strategy, s2 : Strategy) : Strategy =
+        macro RewriterCoreMacros.orMacro
+
+    /**
+     * Construct a strategy that applies `s` repeatedly in a top-down fashion
+     * stopping each time as soon as it succeeds once (at any level). The
+     * outermost fails when `s` fails to apply to any (sub-)term.
+     */
+    def outermost (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.outermostMacro
+
+    /**
+     * Construct a strategy that applies `s` repeatedly to subterms
+     * until it fails on all of them.
+     */
+    def reduce (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.reduceMacro
+
+    /**
+     * Construct a strategy that applies `s` repeatedly until it fails.
+     */
+    def repeat (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.repeatMacro1
+
+    /**
+     * Construct a strategy that repeatedly applies `s` until it fails and
+     * then terminates with application of `r`.
+     */
+    def repeat (s : Strategy, r : Strategy) : Strategy =
+        macro RewriterCoreMacros.repeatMacro2
+
+    /**
+     * Construct a strategy that applies `s` repeatedly exactly `n` times. If
+     * `s` fails at some point during the n applications, the entire strategy
+     * fails. The result of the strategy is that of the ''nth'' application of
+     * `s`.
+     */
+    def repeat (s : Strategy, n : Int) : Strategy =
+        macro RewriterCoreMacros.repeatMacro3
+
+    /**
+     * Construct a strategy that repeatedly applies `s` (at least once).
+     */
+    def repeat1 (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.repeat1Macro1
+
+    /**
+     * Construct a strategy that repeatedly applies `s` (at least once) and
+     * terminates with application of `c`.
+     */
+    def repeat1 (s : Strategy, r : Strategy) : Strategy =
+        macro RewriterCoreMacros.repeat1Macro2
+
+    /**
+     * Construct a strategy that repeatedly applies `s` until `c` succeeds.
+     */
+    def repeatuntil (s : Strategy, r : Strategy) : Strategy =
+        macro RewriterCoreMacros.repeatuntilMacro
+
+    /**
+     * Construct a strategy that applies `s`, then applies the restoring action
+     * `rest` if `s` fails (and then fail). Otherwise, let the result of `s` stand.
+     * Typically useful if `s` performs side effects that should be restored or
+     * undone when `s` fails.
+     */
+    def restore (s : Strategy, rest : Strategy) : Strategy =
+        macro RewriterCoreMacros.restoreMacro
+
+    /**
+     * Construct a strategy that applies `s`, then applies the restoring action
+     * `rest` regardless of the success or failure of `s`. The whole strategy
+     * preserves the success or failure of `s`. Typically useful if `s` performs
+     * side effects that should be restored always, e.g., when maintaining scope
+     * information.
+     */
+    def restorealways (s : Strategy, rest : Strategy) : Strategy =
+        macro RewriterCoreMacros.restoreAlwaysMacro
+
+    /**
+     * Construct a strategy that applies `s` in a bottom-up fashion to some
+     * subterms at each level, stopping as soon as it succeeds once (at
+     * any level).
+     */
+    def somebu (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.somebuMacro
+
+    /**
+     * Construct a strategy that applies `s` in a top-down, prefix fashion
+     * stopping at a frontier where `s` succeeds on some children.  `s` is then
+     * applied in a bottom-up, postfix fashion to the result.
+     */
+    def somedownup (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.somedownupMacro
+
+    /**
+     * Construct a strategy that applies `s` in a top-down fashion to some
+     * subterms at each level, stopping as soon as it succeeds once (at
+     * any level).
+     */
+    def sometd (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.sometdMacro
+
+    /**
+     * Construct a strategy that tests whether strategy `s` succeeds,
+     * restoring the original term on success.  A synonym for `where`.
+     */
+    def test (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.testMacro
+
+    /**
+     * Construct a strategy that applies `s` in a top-down, prefix fashion
+     * to the subject term.
+     */
+    def topdown (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.topdownMacro
+
+    /**
+     * Construct a strategy that applies `s` in a top-down, prefix fashion
+     * to the subject term but stops when the strategy produced by `stop`
+     * succeeds. `stop` is given the whole strategy itself as its argument.
+     */
+    def topdownS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        macro RewriterCoreMacros.topdownSMacro
+
+    /**
+     * Construct a strategy that tests whether strategy `s` succeeds,
+     * restoring the original term on success.  This is similar
+     * to Stratego's `where`, except that in this version any effects on
+     * bindings are not visible outside `s`.
+     */
+    def where (s : Strategy) : Strategy =
+        macro RewriterCoreMacros.whereMacro
 
 }

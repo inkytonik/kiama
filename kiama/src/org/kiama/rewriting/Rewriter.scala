@@ -50,17 +50,490 @@ trait Rewriter extends RewriterCore {
     // Library combinators
 
     /**
-     * A strategy that always fails.
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.allbu
      */
-    val fail : Strategy =
-        option (None)
+    def allbu (name : String, s : Strategy) : Strategy =
+        all (allbu (s)) <+ (name, s)
 
     /**
-     * A strategy that always succeeds with the subject term unchanged. I.e.,
-     * this is the identity strategy.
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.alltd
      */
-    val id : Strategy =
-        strategyf (Some (_))
+    def alltd (name : String, s : Strategy) : Strategy =
+        s <+ (name, all (alltd (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.alldownup2
+     */
+    def alldownup2 (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
+        (s1 <+ all (alldownup2 (s1, s2))) <* (name, s2)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.alltdfold
+     */
+    def alltdfold (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
+        s1 <+ (name, all (alltdfold (s1, s2)) <* s2)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.and
+     */
+    def and (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
+        where (s1) < (name, test (s2) + (test (s2) <* fail))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.attempt
+     */
+    def attempt (name : String, s : Strategy) : Strategy =
+        s <+ (name, id)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.bottomup
+     */
+    def bottomup (name : String, s : Strategy) : Strategy =
+        all (bottomup (s)) <* (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.bottomupS
+     */
+    def bottomupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        (stop (bottomupS (s, stop)) <+ all (bottomupS (s, stop))) <* (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.breadthfirst
+     */
+    def breadthfirst (name : String, s : Strategy) : Strategy =
+        all (s) <* (name, all (breadthfirst (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.doloop
+     */
+    def doloop (name : String, s : Strategy, r : Strategy) : Strategy =
+        s <* (name, loop (r, s))
+
+    /**
+     * A unit for `topdownS`, `bottomupS` and `downupS`.  For example, `topdown(s)`
+     * is equivalent to `topdownS(s, dontstop)`.
+     */
+    def dontstop (s : => Strategy) : Strategy =
+        fail
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.downup
+     */
+    def downup (name : String, s : Strategy) : Strategy =
+        s <* all (downup (s)) <* (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.downup
+     */
+    def downup (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
+        s1 <* all (downup (s1, s2)) <* (name, s2)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.downupS
+     */
+    def downupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        s <* (name, stop (downupS (s, stop)) <+ all (downupS (s, stop)) <* s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.downupS
+     */
+    def downupS (name : String, s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        s1 <* (name, stop (downupS (s1, s2, stop)) <+ all (downupS (s1, s2, stop)) <* s2)
+
+    /**
+     * A strategy that tests whether the two sub-terms of a pair of terms are equal.
+     */
+    val eq : Strategy =
+       rule {
+           case t @ (x, y) if x == y => t
+       }
+
+    /**
+     * Construct a strategy that tests whether the two sub-terms of a
+     * pair of terms are equal. Synonym for `eq`.
+     */
+    val equal : Strategy =
+        eq
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.everywhere
+     */
+    def everywhere (name : String, s : Strategy) : Strategy =
+        everywheretd (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.everywherebu
+     */
+    def everywherebu (name : String, s : Strategy) : Strategy =
+        bottomup (name, attempt (s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.everywheretd
+     */
+    def everywheretd (name : String, s : Strategy) : Strategy =
+        topdown (name, attempt (s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.innermost
+     */
+    def innermost (name : String, s : Strategy) : Strategy =
+        bottomup (name, attempt (s <* innermost (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.innermost2
+     */
+    def innermost2 (name : String, s : Strategy) : Strategy =
+        repeat (name, oncebu (s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.ior
+     */
+    def ior (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
+        (s1 <* attempt (s2)) <+ (name, s2)
+
+    /**
+     * Construct a strategy that succeeds if the current term has at
+     * least one direct subterm.
+     */
+    val isinnernode : Strategy =
+        one (id)
+
+    /**
+     * Construct a strategy that succeeds if the current term has no
+     * direct subterms.
+     */
+    val isleaf : Strategy =
+      all (fail)
+
+    /**
+     * Construct a strategy that succeeds when applied to a pair `(x,y)`
+     * if `x` is a sub-term of `y` but is not equal to `y`.
+     */
+    val ispropersubterm : Strategy =
+        not (eq) <* issubterm
+
+    /**
+     * Construct a strategy that succeeds when applied to a pair `(x,y)`
+     * if `x` is a sub-term of `y`.
+     */
+    val issubterm : Strategy =
+        strategy {
+            case (x : Any, y : Any) => where (oncetd (term (x))) (y)
+        }
+
+    /**
+     * Construct a strategy that succeeds when applied to a pair `(x,y)`
+     * if `x` is a superterm of `y`.
+     */
+    val issuperterm : Strategy =
+        strategy {
+            case (x, y) => issubterm (y, x)
+        }
+
+    /**
+     * Construct a strategy that succeeds when applied to a pair `(x,y)`
+     * if `x` is a super-term of `y` but is not equal to `y`.
+     */
+    val ispropersuperterm : Strategy =
+        not (eq) <* issuperterm
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.lastly
+     */
+    def lastly (name : String, s : Strategy, f : Strategy) : Strategy =
+        s < (name, where (f) + (where (f) <* fail))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.leaves
+     */
+    def leaves (name : String, s : Strategy, isleaf : Strategy) : Strategy =
+        (isleaf <* s) <+ (name, all (leaves (s, isleaf)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.leaves
+     */
+    def leaves (name : String, s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy =
+        (isleaf <* s) <+ (name, skip (leaves (s, isleaf, skip)) <+ all (leaves (s, isleaf, skip)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.loop
+     */
+    def loop (name : String, c : Strategy, s : Strategy) : Strategy =
+        attempt (name, c <* s <* loop (c, s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.loopiter
+     */
+    def loopiter (name : String, i : Strategy, r : Strategy, s : Strategy) : Strategy =
+        i <* (name, loopnot (r, s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.loopiter
+     */
+    def loopiter (name : String, s : Int => Strategy, low : Int, high : Int) : Strategy =
+        if (low <= high)
+            s (low) <* (name, loopiter (s, low + 1, high))
+        else
+            id
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.loopnot
+     */
+    def loopnot (name : String, r : Strategy, s : Strategy) : Strategy =
+        r <+ (name, s <* loopnot (r, s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.map
+     */
+    def map (name : String, s : Strategy) : Strategy =
+        strategy (name, {
+            case l : List[_] =>
+                allTraversable[List] (s, l)
+        })
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.manybu
+     */
+    def manybu (name : String, s : Strategy) : Strategy =
+        some (manybu (s)) <* attempt (s) <+ (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.manytd
+     */
+    def manytd (name : String, s : Strategy) : Strategy =
+        s <* all (attempt (manytd (s))) <+ (name, some (manytd (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.not
+     */
+    def not (name : String, s : Strategy) : Strategy =
+        s < (name, fail + id)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.oncebu
+     */
+    def oncebu (name : String, s : Strategy) : Strategy =
+        one (oncebu (s)) <+ (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.oncetd
+     */
+    def oncetd (name : String, s : Strategy) : Strategy =
+        s <+ (name, one (oncetd (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.or
+     */
+    def or (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
+        where (s1) < (name, attempt (test (s2)) + test (s2))
+
+    /*
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.outermost
+     */
+    def outermost (name : String, s : Strategy) : Strategy =
+        repeat (name, oncetd (s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.reduce
+     */
+    def reduce (name : String, s : Strategy) : Strategy = {
+        def x : Strategy = some (x) + s
+        repeat (name, x)
+    }
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.repeat
+     */
+    def repeat (name : String, s : Strategy) : Strategy =
+        attempt (name, s <* (repeat (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.repeat
+     */
+    def repeat (name : String, s : Strategy, r : Strategy) : Strategy =
+        (s <* (repeat (s, r))) <+ (name, r)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.repeat
+     */
+    def repeat (name : String, s : Strategy, n : Int) : Strategy =
+        if (n == 0) id else s <* (name, repeat (s, n - 1))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.repeat1
+     */
+    def repeat1 (name : String, s : Strategy) : Strategy =
+        repeat1 (name, s, id)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.repeat1
+     */
+    def repeat1 (name : String, s : Strategy, r : Strategy) : Strategy =
+        s <* (name, repeat1 (s, r) <+ (r))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.repeatuntil
+     */
+    def repeatuntil (name : String, s : Strategy, r : Strategy) : Strategy =
+        s <* (name, r <+ repeatuntil (s, r))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.restore
+     */
+    def restore (name : String, s : Strategy, rest : Strategy) : Strategy =
+        s <+ (name, rest <* fail)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.restorealways
+     */
+    def restorealways (name : String, s : Strategy, rest : Strategy) : Strategy =
+        s < (name, rest + (rest <* fail))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.somebu
+     */
+    def somebu (name : String, s : Strategy) : Strategy =
+        some (somebu (s)) <+ (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.somedownup
+     */
+    def somedownup (name : String, s : Strategy) : Strategy =
+        (s <* all (somedownup (s)) <* (attempt (s))) <+ (name, some (somedownup (s)) <+ attempt (s))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.sometd
+     */
+    def sometd (name : String, s : Strategy) : Strategy =
+        s <+ (name, some (sometd (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.test
+     */
+    def test (name : String, s : Strategy) : Strategy =
+        where (name, s)
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.topdown
+     */
+    def topdown (name : String, s : Strategy) : Strategy =
+        s <* (name, all (topdown (s)))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.topdownS
+     */
+    def topdownS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
+        s <* (stop (topdownS (s, stop)) <+ (name, all (topdownS (s, stop))))
+
+    /**
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.where
+     */
+    def where (name : String, s : Strategy) : Strategy =
+        strategyf (name, t => (s <* build (t)) (t))
+
+    // Older stuff below here
 
     /**
      * Collect query results in a traversable collection.  Run the function
@@ -104,491 +577,12 @@ trait Rewriter extends RewriterCore {
         everything (0) (_ + _) (f)
 
     /**
-     * Construct a strategy that applies `s` to each element of a list,
-     * returning a new list of the results if all of the applications
-     * succeed, otherwise fail.  If all of the applications succeed
-     * without change, return the input list.
-     */
-    def map (s : Strategy) : Strategy =
-        rulefs {
-            case Nil           => id
-            case l @ (x :: xs) =>
-                option (s (x)) <*
-                    rulefs {
-                        case y =>
-                            option (map (s) (xs)) <*
-                                rule {
-                                    case ys : List[_] =>
-                                        if (same (x, y) && same (xs, ys))
-                                            l
-                                        else
-                                            y :: ys
-                                }
-                    }
-        }
-
-    /**
-     * Construct a strategy that applies `s`, yielding the result of `s` if it
-     * succeeds, otherwise leave the original subject term unchanged.  In
-     * Stratego library this strategy is called `try`.
-     */
-    def attempt (s : Strategy) : Strategy =
-        s <+ id
-
-    /**
-     * Construct a strategy that applies `s` repeatedly until it fails.
-     */
-    def repeat (s : Strategy) : Strategy =
-        attempt (s <* repeat (s))
-
-    /**
-     * Construct a strategy that repeatedly applies `s` until it fails and
-     * then terminates with application of `c`.
-     */
-    def repeat (s : Strategy, c : Strategy) : Strategy =
-        (s <* repeat (s, c)) <+ c
-
-    /**
-     * Construct a strategy that applies `s` repeatedly exactly `n` times. If
-     * `s` fails at some point during the n applications, the entire strategy
-     * fails. The result of the strategy is that of the ''nth'' application of
-     * `s`.
-     */
-    def repeat (s : Strategy, n : Int) : Strategy =
-        if (n == 0) id else s <* repeat (s, n - 1)
-
-    /**
-     * Construct a strategy that repeatedly applies `s` (at least once) and
-     * terminates with application of `c`.
-     */
-    def repeat1 (s : Strategy, c : Strategy) : Strategy =
-        s <* (repeat1 (s, c) <+ c)
-
-    /**
-     * Construct a strategy that repeatedly applies `s` (at least once).
-     */
-    def repeat1 (s : Strategy) : Strategy =
-        repeat1 (s, id)
-
-    /**
-     * Construct a strategy that repeatedly applies `s` until `c` succeeds.
-     */
-    def repeatuntil (s : Strategy, c : Strategy) : Strategy =
-        s <* (c <+ repeatuntil (s, c))
-
-    /**
-     * Construct a strategy that while c succeeds applies `s`.  This operator
-     * is called `while` in the Stratego library.
-     */
-    def loop (c : Strategy, s : Strategy) : Strategy =
-        attempt (c <* s <* loop (c, s))
-
-    /**
-     * Construct a strategy that while `c` does not succeed applies `s`.  This
-     * operator is called `while-not` in the Stratego library.
-     */
-    def loopnot (c : Strategy, s : Strategy) : Strategy =
-        c <+ (s <* loopnot (c, s))
-
-    /**
-     * Construct a strategy that applies `s` at least once and then repeats `s`
-     * while `c` succeeds.  This operator is called `do-while` in the Stratego
-     * library.
-     */
-    def doloop (s : Strategy, c : Strategy) : Strategy =
-        s <* loop (c, s)
-
-    /**
-     * Construct a strategy that repeats application of `s` while `c` fails, after
-     * initialization with `i`.  This operator is called `for` in the Stratego
-     * library.
-     */
-    def loopiter (i : Strategy, c : Strategy, s : Strategy) : Strategy =
-        i <* loopnot (c, s)
-
-    /**
-     * Construct a strategy that applies `s(i)` for each integer `i` from `low` to
-     * `high` (inclusive).  This operator is called `for` in the Stratego library.
-     */
-    def loopiter (s : Int => Strategy, low : Int, high : Int) : Strategy =
-        if (low <= high)
-            s (low) <* loopiter (s, low + 1, high)
-        else
-            id
-
-    /**
-     * Construct a strategy that applies `s`, then fails if `s` succeeded or, if `s`
-     * failed, succeeds with the subject term unchanged,  I.e., it tests if
-     * `s` applies, but has no effect on the subject term.
-     */
-    def not (s : Strategy) : Strategy =
-        s < fail + id
-
-    /**
-     * Construct a strategy that tests whether strategy `s` succeeds,
-     * restoring the original term on success.  This is similar
-     * to Stratego's `where`, except that in this version any effects on
-     * bindings are not visible outside `s`.
-     */
-    def where (s : Strategy) : Strategy =
-        strategyf (t => (s <* build (t)) (t))
-
-    /**
-     * Construct a strategy that tests whether strategy `s` succeeds,
-     * restoring the original term on success.  A synonym for `where`.
-     */
-    def test (s : Strategy) : Strategy =
-        where (s)
-
-    /**
-     * Construct a strategy that applies `s` in breadth first order.
-     */
-    def breadthfirst (s : Strategy) : Strategy =
-        all (s) <* all (breadthfirst (s))
-
-    /**
-     * Construct a strategy that applies `s` in a top-down, prefix fashion
-     * to the subject term.
-     */
-    def topdown (s : Strategy) : Strategy =
-        s <* all (topdown (s))
-
-    /**
-     * Construct a strategy that applies `s` in a top-down, prefix fashion
-     * to the subject term but stops when the strategy produced by `stop`
-     * succeeds. `stop` is given the whole strategy itself as its argument.
-     */
-    def topdownS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        s <* (stop (topdownS (s, stop)) <+ all (topdownS (s, stop)))
-
-    /**
-     * Construct a strategy that applies `s` in a bottom-up, postfix fashion
-     * to the subject term.
-     */
-    def bottomup (s : Strategy) : Strategy =
-        all (bottomup (s)) <* s
-
-    /**
-     * Construct a strategy that applies `s` in a bottom-up, postfix fashion
-     * to the subject term but stops when the strategy produced by `stop`
-     * succeeds. `stop` is given the whole strategy itself as its argument.
-     */
-    def bottomupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        (stop (bottomupS (s, stop)) <+ (all (bottomupS (s, stop))) <* s)
-
-    /**
-     * Construct a strategy that applies `s` in a combined top-down and
-     * bottom-up fashion (i.e., both prefix and postfix) to the subject
-     * term.
-     */
-    def downup (s : Strategy) : Strategy =
-        s <* all (downup (s)) <* s
-
-    /**
-     * Construct a strategy that applies `s1` in a top-down, prefix fashion
-     * and `s2` in a bottom-up, postfix fashion to the subject term.
-     */
-    def downup (s1 : Strategy, s2 : Strategy) : Strategy =
-        s1 <* all (downup (s1, s2)) <* s2
-
-    /**
-     * Construct a strategy that applies `s` in a combined top-down and
-     * bottom-up fashion (i.e., both prefix and postfix) to the subject
-     * but stops when the strategy produced by `stop` succeeds. `stop` is
-     * given the whole strategy itself as its argument.
-     */
-    def downupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        s <* (stop (downupS (s, stop)) <+ all (downupS (s, stop))) <* s
-
-    /**
-     * Construct a strategy that applies `s1` in a top-down, prefix fashion
-     * and `s2` in a bottom-up, postfix fashion to the subject term but stops
-     * when the strategy produced by `stop` succeeds. `stop` is given the whole
-     * strategy itself as its argument.
-     */
-    def downupS (s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        s1 <* (stop (downupS (s1, s2, stop)) <+ all (downupS (s1, s2, stop))) <* s2
-
-    /**
-     * A unit for `topdownS`, `bottomupS` and `downupS`.  For example, `topdown(s)`
-     * is equivalent to `topdownS(s, dontstop)`.
-     */
-    def dontstop (s : => Strategy) : Strategy =
-        fail
-
-    /**
-     * Construct a strategy that applies `s` in a top-down fashion to one
-     * subterm at each level, stopping as soon as it succeeds once (at
-     * any level).
-     */
-    def oncetd (s : Strategy) : Strategy =
-        s <+ one (oncetd (s))
-
-    /**
-     * Construct a strategy that applies `s` in a bottom-up fashion to one
-     * subterm at each level, stopping as soon as it succeeds once (at
-     * any level).
-     */
-    def oncebu (s : Strategy) : Strategy =
-        one (oncebu (s)) <+ s
-
-    /**
-     * Construct a strategy that applies `s` in a top-down fashion to some
-     * subterms at each level, stopping as soon as it succeeds once (at
-     * any level).
-     */
-    def sometd (s : Strategy) : Strategy =
-        s <+ some (sometd (s))
-
-    /**
-     * Construct a strategy that applies `s` in a bottom-up fashion to some
-     * subterms at each level, stopping as soon as it succeeds once (at
-     * any level).
-     */
-    def somebu (s : Strategy) : Strategy =
-        some (somebu (s)) <+ s
-
-    /**
-     * Construct a strategy that applies `s` repeatedly in a top-down fashion
-     * stopping each time as soon as it succeeds once (at any level). The
-     * outermost fails when `s` fails to apply to any (sub-)term.
-     */
-    def outermost (s : Strategy) : Strategy =
-        repeat (oncetd (s))
-
-    /**
-     * Construct a strategy that applies `s` repeatedly to the innermost
-     * (i.e., lowest and left-most) (sub-)term to which it applies.
-     * Stop with the current term if `s` doesn't apply anywhere.
-     */
-    def innermost (s : Strategy) : Strategy =
-        bottomup (attempt (s <* innermost (s)))
-
-    /**
-     * An alternative version of `innermost`.
-     */
-    def innermost2 (s : Strategy) : Strategy =
-        repeat (oncebu (s))
-
-    /**
-     * Construct a strategy that applies `s` repeatedly to subterms
-     * until it fails on all of them.
-     */
-    def reduce (s : Strategy) : Strategy = {
-        def x : Strategy = some (x) + s
-        repeat (x)
-    }
-
-    /**
-     * Construct a strategy that applies `s` in a top-down fashion, stopping
-     * at a frontier where s succeeds.
-     */
-    def alltd (s : Strategy) : Strategy =
-        s <+ all (alltd (s))
-
-    /**
-     * Construct a strategy that applies `s` in a bottom-up fashion to all
-     * subterms at each level, stopping at a frontier where s succeeds.
-     */
-    def allbu (s : Strategy) : Strategy =
-        all (allbu (s)) <+ s
-
-    /**
-     * Construct a strategy that applies `s1` in a top-down, prefix fashion
-     * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
-     * postfix fashion to the result.
-     */
-    def alldownup2 (s1 : Strategy, s2 : Strategy) : Strategy =
-        (s1 <+ all (alldownup2 (s1, s2))) <* s2
-
-    /**
-     * Construct a strategy that applies `s1` in a top-down, prefix fashion
-     * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
-     * postfix fashion to the results of the recursive calls.
-     */
-    def alltdfold (s1 : Strategy, s2 : Strategy) : Strategy =
-        s1 <+ (all (alltdfold (s1, s2)) <* s2)
-
-    /**
-     * Construct a strategy that applies `s` in a top-down, prefix fashion
-     * stopping at a frontier where `s` succeeds on some children.  `s` is then
-     * applied in a bottom-up, postfix fashion to the result.
-     */
-    def somedownup (s : Strategy) : Strategy =
-        (s <* all (somedownup (s)) <* (attempt (s))) <+ (some (somedownup (s)) <+ attempt (s))
-
-    /**
-     * Construct a strategy that applies `s` as many times as possible, but
-     * at least once, in bottom up order.
-     */
-    def manybu (s : Strategy) : Strategy =
-        some (manybu (s)) <* attempt (s) <+ s
-
-    /**
-     * Construct a strategy that applies `s` as many times as possible, but
-     * at least once, in top down order.
-     */
-    def manytd (s : Strategy) : Strategy =
-        s <* all (attempt (manytd (s))) <+ some (manytd (s))
-
-    /**
-     * Construct a strategy that tests whether the two sub-terms of a
-     * pair of terms are equal.
-     */
-    val eq : Strategy =
-       rule {
-           case t @ (x, y) if x == y => t
-       }
-
-    /**
-     * Construct a strategy that tests whether the two sub-terms of a
-     * pair of terms are equal. Synonym for `eq`.
-     */
-    val equal : Strategy =
-        eq
-
-    /**
-     * Construct a strategy that succeeds when applied to a pair `(x,y)`
-     * if `x` is a sub-term of `y`.
-     */
-    val issubterm : Strategy =
-        strategy {
-            case (x : Any, y : Any) => where (oncetd (term (x))) (y)
-        }
-
-    /**
-     * Construct a strategy that succeeds when applied to a pair `(x,y)`
-     * if `x` is a sub-term of `y` but is not equal to `y`.
-     */
-    val ispropersubterm : Strategy =
-        not (eq) <* issubterm
-
-    /**
-     * Construct a strategy that succeeds when applied to a pair `(x,y)`
-     * if `x` is a superterm of `y`.
-     */
-    val issuperterm : Strategy =
-        strategy {
-            case (x, y) => issubterm (y, x)
-        }
-
-    /**
-     * Construct a strategy that succeeds when applied to a pair `(x,y)`
-     * if `x` is a super-term of `y` but is not equal to `y`.
-     */
-    val ispropersuperterm : Strategy =
-        not (eq) <* issuperterm
-
-    /**
-     * Construct a strategy that succeeds if the current term has no
-     * direct subterms.
-     */
-    val isleaf : Strategy =
-      all (fail)
-
-    /**
-     * Construct a strategy that applies to all of the leaves of the
-     * current term, using `isleaf` as the leaf predicate.
-     */
-    def leaves (s : Strategy, isleaf : Strategy) : Strategy =
-        (isleaf <* s) <+ all (leaves (s, isleaf))
-
-    /**
-     * Construct a strategy that applies to all of the leaves of the
-     * current term, using `isleaf` as the leaf predicate, skipping
-     * subterms for which `skip` when applied to the result succeeds.
-     */
-    def leaves (s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy = {
-        (isleaf <* s) <+ skip (leaves (s, isleaf, skip)) <+ all (leaves (s, isleaf, skip))
-    }
-
-    /**
-     * Construct a strategy that succeeds if the current term has at
-     * least one direct subterm.
-     */
-    val isinnernode : Strategy =
-        one (id)
-
-    /**
-     * Construct a strategy that applies `s` at all terms in a bottom-up fashion
-     * regardless of failure.  Terms for which the strategy fails are left
-     * unchanged.
-     */
-    def everywherebu (s : Strategy) : Strategy =
-        bottomup (attempt (s))
-
-    /**
-     * Construct a strategy that applies `s` at all terms in a top-down fashion
-     * regardless of failure.  Terms for which the strategy fails are left
-     * unchanged.
-     */
-    def everywheretd (s : Strategy) : Strategy =
-        topdown (attempt (s))
-
-    /**
-     * Same as `everywheretd`.
-     */
-    def everywhere (s : Strategy) : Strategy =
-        everywheretd (s)
-
-    /**
      * Apply the function at every term in `t` in a top-down, left-to-right order.
      * Collect the resulting `T` values by accumulating them using `f` with initial
      * left value `v`.  Return the final value of the accumulation.
      */
     def everything[T] (v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T =
         (collectl (g) (t)).foldLeft (v) (f)
-
-    /**
-     * Construct a strategy that applies `s`, then applies the restoring action
-     * `rest` if `s` fails (and then fail). Otherwise, let the result of `s` stand.
-     * Typically useful if `s` performs side effects that should be restored or
-     * undone when `s` fails.
-     */
-    def restore (s : Strategy, rest : Strategy) : Strategy =
-        s <+ (rest <* fail)
-
-    /**
-     * Construct a strategy that applies `s`, then applies the restoring action
-     * `rest` regardless of the success or failure of `s`. The whole strategy
-     * preserves the success or failure of `s`. Typically useful if `s` performs
-     * side effects that should be restored always, e.g., when maintaining scope
-     * information.
-     */
-    def restorealways (s : Strategy, rest : Strategy) : Strategy =
-        s < rest + (rest <* fail)
-
-    /**
-     * Applies `s` followed by `f` whether `s` failed or not.
-     * This operator is called `finally` in the Stratego library.
-     */
-    def lastly (s : Strategy, f : Strategy) : Strategy =
-        s < where (f) + (where (f) <* fail)
-
-    /**
-     * `ior(s1, s2)` implements inclusive OR, that is, the
-     * inclusive choice of `s1` and `s2`. It first tries `s1`. If
-     * that fails it applies `s2` (just like `s1 <+ s2`). However,
-     * when `s1` succeeds it also tries to apply `s2`.
-     */
-    def ior (s1 : Strategy, s2 : Strategy) : Strategy =
-        (s1 <* attempt (s2)) <+ s2
-
-    /**
-     * `or(s1, s2)` is similar to `ior(s1, s2)`, but the application
-     * of the strategies is only tested.
-     */
-    def or (s1 : Strategy, s2 : Strategy) : Strategy =
-        where (s1) < attempt (test (s2)) + test (s2)
-
-    /**
-     * `and(s1, s2)` applies `s1` and `s2` to the current
-     * term and succeeds if both succeed. `s2` will always
-     * be applied, i.e., and is ''not'' a short-circuit
-     * operator
-     */
-    def and (s1 : Strategy, s2 : Strategy) : Strategy =
-        where (s1) < test (s2) + (test (s2) <* fail)
 
 }
 

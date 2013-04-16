@@ -29,7 +29,7 @@ import org.kiama.util.Tests
 class PositionalRewriterTests extends Tests {
 
     import SupportPositionalRewriterTests._
-    import org.kiama.rewriting.PositionalRewriter.{test => rwtest, _}
+    import org.kiama.rewriting.PositionalRewriter._
     import scala.util.parsing.input.NoPosition
 
     val pl1 = new TestPosition { val line = 1; val column = 2 }
@@ -123,7 +123,7 @@ object SupportPositionalRewriterTests {
 class PositionedRewriterTests extends Tests {
 
     import SupportPositionedRewriterTests._
-    import org.kiama.rewriting.PositionedRewriter.{test => rwtest, _}
+    import org.kiama.rewriting.PositionedRewriter._
     import scala.util.parsing.input.NoPosition
 
     val pl1s = new TestPosition { val line = 1; val column = 2 }

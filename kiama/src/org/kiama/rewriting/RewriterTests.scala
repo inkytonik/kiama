@@ -599,15 +599,15 @@ class RewriterTests extends Tests with Checkers with Generator {
     case object Same extends Expecting
     case object NotSame extends Expecting
 
-    def travtest (basemsg : String, testmsg : String, trav : Strategy => Strategy,
-                  rewl : Strategy, term : Any, result : Option[Any],
+    def travtest (basemsg : String, testmsg : String,
+                  eval : Option[Any], result : Option[Any],
                   expecting : Expecting = Equal) {
         val msg = basemsg + " - " + testmsg + ", " + expecting
         test (msg) {
             expecting match {
-                case Equal   => expectResult (result) (trav (rewl) (term))
-                case Same    => expectsame (result) (trav (rewl) (term))
-                case NotSame => expectnotsame (result) (trav (rewl) (term))
+                case Equal   => expectResult (result) (eval)
+                case Same    => expectsame (result) (eval)
+                case NotSame => expectnotsame (result) (eval)
             }
         }
     }
@@ -621,13 +621,13 @@ class RewriterTests extends Tests with Checkers with Generator {
         val strat = rule { case _ : Double => 0 }
         val basemsg = "rewrite list: doubles to zero in non-primitive list"
 
-        travtest (basemsg, "all, topdown", alltd, strat, l, Some (r))
-        travtest (basemsg, "all, bottomup", allbu, strat, l, Some (l), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, l, Some (ll), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, l, Some (r))
-        travtest (basemsg, "some, bottomup", somebu, strat, l, Some (r))
-        travtest (basemsg, "one, topdown", oncetd, strat, l, Some (s))
-        travtest (basemsg, "one, bottomup", oncebu, strat, l, Some (s))
+        travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
+        travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (l), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (ll), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (l), Some (r))
+        travtest (basemsg, "some, bottomup", somebu (strat) (l), Some (r))
+        travtest (basemsg, "one, topdown", oncetd (strat) (l), Some (s))
+        travtest (basemsg, "one, bottomup", oncebu (strat) (l), Some (s))
     }
 
     {
@@ -637,19 +637,19 @@ class RewriterTests extends Tests with Checkers with Generator {
         val strat = rule { case i : Int => i }
         val basemsg = "rewrite set: no change"
 
-        travtest (basemsg, "all, topdown", alltd, strat, v, Some (v), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, v, Some (v), Same)
-        travtest (basemsg, "some, topdown", sometd, strat, v, Some (v), Same)
-        travtest (basemsg, "some, bottomup", somebu, strat, v, Some (v), Same)
-        travtest (basemsg, "one, topdown", oncetd, strat, v, Some (v), Same)
-        travtest (basemsg, "one, bottomup", oncebu, strat, v, Some (v), Same)
+        travtest (basemsg, "all, topdown", alltd (strat) (v), Some (v), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (v), Some (v), Same)
+        travtest (basemsg, "some, topdown", sometd (strat) (v), Some (v), Same)
+        travtest (basemsg, "some, bottomup", somebu (strat) (v), Some (v), Same)
+        travtest (basemsg, "one, topdown", oncetd (strat) (v), Some (v), Same)
+        travtest (basemsg, "one, bottomup", oncebu (strat) (v), Some (v), Same)
 
-        travtest (basemsg, "all, topdown", alltd, strat, v, Some (vv), NotSame)
-        travtest (basemsg, "all, bottomup", allbu, strat, v, Some (vv), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, v, Some (vv), NotSame)
-        travtest (basemsg, "some, bottomup", somebu, strat, v, Some (vv), NotSame)
-        travtest (basemsg, "one, topdown", oncetd, strat, v, Some (vv), NotSame)
-        travtest (basemsg, "one, bottomup", oncebu, strat, v, Some (vv), NotSame)
+        travtest (basemsg, "all, topdown", alltd (strat) (v), Some (vv), NotSame)
+        travtest (basemsg, "all, bottomup", allbu (strat) (v), Some (vv), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (v), Some (vv), NotSame)
+        travtest (basemsg, "some, bottomup", somebu (strat) (v), Some (vv), NotSame)
+        travtest (basemsg, "one, topdown", oncetd (strat) (v), Some (vv), NotSame)
+        travtest (basemsg, "one, bottomup", oncebu (strat) (v), Some (vv), NotSame)
     }
 
     {
@@ -661,13 +661,13 @@ class RewriterTests extends Tests with Checkers with Generator {
         val strat = rule { case i : Int => i * 2 }
         val basemsg = "rewrite set: double value"
 
-        travtest (basemsg, "all, topdown", alltd, strat, r, Some (s))
-        travtest (basemsg, "all, bottomup", allbu, strat, r, Some (r), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, r, Some (rr), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, r, Some (s))
-        travtest (basemsg, "some, bottomup", somebu, strat, r, Some (s))
-        travtest (basemsg, "one, topdown", oncetd, strat, r, Some (t))
-        travtest (basemsg, "one, bottomup", oncebu, strat, r, Some (t))
+        travtest (basemsg, "all, topdown", alltd (strat) (r), Some (s))
+        travtest (basemsg, "all, bottomup", allbu (strat) (r), Some (r), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (r), Some (rr), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (r), Some (s))
+        travtest (basemsg, "some, bottomup", somebu (strat) (r), Some (s))
+        travtest (basemsg, "one, topdown", oncetd (strat) (r), Some (t))
+        travtest (basemsg, "one, bottomup", oncebu (strat) (r), Some (t))
     }
 
     {
@@ -677,19 +677,19 @@ class RewriterTests extends Tests with Checkers with Generator {
         val strat = rule { case s : String => s }
         val basemsg = "rewrite map: no change"
 
-        travtest (basemsg, "all, topdown", alltd, strat, m, Some (m), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (m), Same)
-        travtest (basemsg, "some, topdown", sometd, strat, m, Some (m), Same)
-        travtest (basemsg, "some, bottomup", somebu, strat, m, Some (m), Same)
-        travtest (basemsg, "one, topdown", oncetd, strat, m, Some (m), Same)
-        travtest (basemsg, "one, bottomup", oncebu, strat, m, Some (m), Same)
+        travtest (basemsg, "all, topdown", alltd (strat) (m), Some (m), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (m), Same)
+        travtest (basemsg, "some, topdown", sometd (strat) (m), Some (m), Same)
+        travtest (basemsg, "some, bottomup", somebu (strat) (m), Some (m), Same)
+        travtest (basemsg, "one, topdown", oncetd (strat) (m), Some (m), Same)
+        travtest (basemsg, "one, bottomup", oncebu (strat) (m), Some (m), Same)
 
-        travtest (basemsg, "all, topdown", alltd, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, m, Some (mm), NotSame)
-        travtest (basemsg,"some, bottomup", somebu, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "one, topdown", oncetd, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "one, bottomup", oncebu, strat, m, Some (mm), NotSame)
+        travtest (basemsg, "all, topdown", alltd (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (m), Some (mm), NotSame)
+        travtest (basemsg,"some, bottomup", somebu (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "one, topdown", oncetd (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "one, bottomup", oncebu (strat) (m), Some (mm), NotSame)
     }
 
     {
@@ -701,13 +701,13 @@ class RewriterTests extends Tests with Checkers with Generator {
         val strat = rule { case s : String => s.reverse }
         val basemsg = "rewrite map: reverse keys"
 
-        travtest (basemsg, "all, topdown", alltd, strat, m, Some (r))
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (m), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, m, Some (r))
-        travtest (basemsg, "some, bottomup", somebu, strat, m, Some (r))
-        travtest (basemsg, "one, topdown", oncetd, strat, m, Some (s))
-        travtest (basemsg, "one, bottomup", oncebu, strat, m, Some (s))
+        travtest (basemsg, "all, topdown", alltd (strat) (m), Some (r))
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (m), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (m), Some (r))
+        travtest (basemsg, "some, bottomup", somebu (strat) (m), Some (r))
+        travtest (basemsg, "one, topdown", oncetd (strat) (m), Some (s))
+        travtest (basemsg, "one, bottomup", oncebu (strat) (m), Some (s))
     }
 
     {
@@ -719,13 +719,13 @@ class RewriterTests extends Tests with Checkers with Generator {
         val strat = rule { case i : Int => i + 1 }
         val basemsg = "rewrite map: increment values"
 
-        travtest (basemsg, "all, topdown", alltd, strat, m, Some (r))
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (m), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, m, Some (r))
-        travtest (basemsg, "some, bottomup", somebu, strat, m, Some (r))
-        travtest (basemsg, "one, topdown", oncetd, strat, m, Some (s))
-        travtest (basemsg, "one, bottomup", oncebu, strat, m, Some (s))
+        travtest (basemsg, "all, topdown", alltd (strat) (m), Some (r))
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (m), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (m), Some (r))
+        travtest (basemsg, "some, bottomup", somebu (strat) (m), Some (r))
+        travtest (basemsg, "one, topdown", oncetd (strat) (m), Some (s))
+        travtest (basemsg, "one, bottomup", oncebu (strat) (m), Some (s))
     }
 
     {
@@ -740,13 +740,13 @@ class RewriterTests extends Tests with Checkers with Generator {
                         case i : Int    => i + 1
                     }
 
-        travtest (basemsg, "all, topdown", alltd, strat, m, Some (r))
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (m), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, m, Some (r))
-        travtest (basemsg, "some, bottomup", somebu, strat, m, Some (r))
-        travtest (basemsg, "one, topdown", oncetd, strat, m, Some (s))
-        travtest (basemsg, "one, bottomup", oncebu, strat, m, Some (s))
+        travtest (basemsg, "all, topdown", alltd (strat) (m), Some (r))
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (m), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (m), Some (r))
+        travtest (basemsg, "some, bottomup", somebu (strat) (m), Some (r))
+        travtest (basemsg, "one, topdown", oncetd (strat) (m), Some (s))
+        travtest (basemsg, "one, bottomup", oncebu (strat) (m), Some (s))
     }
 
     {
@@ -758,13 +758,13 @@ class RewriterTests extends Tests with Checkers with Generator {
         val basemsg = "rewrite map: increment key and double value"
         val strat = rule { case (k : Int, v : Int) => (k + 1, v * 2) }
 
-        travtest (basemsg, "all, topdown", alltd, strat, m, Some (r))
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (m), Same)
-        travtest (basemsg, "all, bottomup", allbu, strat, m, Some (mm), NotSame)
-        travtest (basemsg, "some, topdown", sometd, strat, m, Some (r))
-        travtest (basemsg, "some, bottomup", somebu, strat, m, Some (r))
-        travtest (basemsg, "one, topdown", oncetd, strat, m, Some (s))
-        travtest (basemsg, "one, bottomup", oncebu, strat, m, Some (s))
+        travtest (basemsg, "all, topdown", alltd (strat) (m), Some (r))
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (m), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (mm), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (m), Some (r))
+        travtest (basemsg, "some, bottomup", somebu (strat) (m), Some (r))
+        travtest (basemsg, "one, topdown", oncetd (strat) (m), Some (s))
+        travtest (basemsg, "one, bottomup", oncebu (strat) (m), Some (s))
     }
 
     {
@@ -786,13 +786,13 @@ class RewriterTests extends Tests with Checkers with Generator {
             val basemsg = "rewrite set: heterogeneous collection: inc integers"
             val strat = rule { case i : Int => i + 1 }
 
-            travtest (basemsg, "all, topdown", alltd, strat, l, Some (r))
-            travtest (basemsg, "all, bottomup", allbu, strat, l, Some (l), Same)
-            travtest (basemsg, "all, bottomup", allbu, strat, l, Some (ll), NotSame)
-            travtest (basemsg, "some, topdown", sometd, strat, l, Some (r))
-            travtest (basemsg, "some, bottomup", somebu, strat, l, Some (r))
-            travtest (basemsg, "one, topdown", oncetd, strat, l, Some (s))
-            travtest (basemsg, "one, bottomup", oncebu, strat, l, Some (s))
+            travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
+            travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (l), Same)
+            travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (ll), NotSame)
+            travtest (basemsg, "some, topdown", sometd (strat) (l), Some (r))
+            travtest (basemsg, "some, bottomup", somebu (strat) (l), Some (r))
+            travtest (basemsg, "one, topdown", oncetd (strat) (l), Some (s))
+            travtest (basemsg, "one, bottomup", oncebu (strat) (l), Some (s))
         }
 
         {
@@ -804,13 +804,13 @@ class RewriterTests extends Tests with Checkers with Generator {
             val basemsg = "rewrite set: heterogeneous collection: set to size"
             val strat = rule { case (s : Set[_], _) => (s, s.size) }
 
-            travtest (basemsg, "all, topdown", alltd, strat, l, Some (r))
-            travtest (basemsg, "all, bottomup", allbu, strat, l, Some (l), Same)
-            travtest (basemsg, "all, bottomup", allbu, strat, l, Some (ll), NotSame)
-            travtest (basemsg, "some, topdown", sometd, strat, l, Some (r))
-            travtest (basemsg, "some, bottomup", somebu, strat, l, Some (r))
-            travtest (basemsg, "one, topdown", oncetd, strat, l, Some (s))
-            travtest (basemsg, "one, bottomup", oncebu, strat, l, Some (s))
+            travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
+            travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (l), Same)
+            travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (ll), NotSame)
+            travtest (basemsg, "some, topdown", sometd (strat) (l), Some (r))
+            travtest (basemsg, "some, bottomup", somebu (strat) (l), Some (r))
+            travtest (basemsg, "one, topdown", oncetd (strat) (l), Some (s))
+            travtest (basemsg, "one, bottomup", oncebu (strat) (l), Some (s))
         }
     }
 
@@ -1403,25 +1403,31 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectResult (4) (sum)
     }
 
-    def innermosttest (imost : Strategy => Strategy) {
+    {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Var ("1.0"), Var ("2.0")), Var ("3.0")), Sub (Var ("4.0"), Var ("5.0")))
+
         var l : List[Double] = Nil
+
         val r = rule {
                     case Num (i) => l = l :+ i
                                     Var (i.toString)
                 }
-        val s = imost (r)
-        expectResult (Some (u)) (s (t))
-        expectResult (List (1, 2, 3, 4, 5)) (l)
-    }
 
-    test ("innermost visits the correct nodes in the correct order") {
-        innermosttest (innermost)
-    }
+        test ("innermost visits the correct nodes in the correct order") {
+            val s = innermost (r)
+            l = Nil
+            expectResult (Some (u)) (s (t))
+            expectResult (List (1, 2, 3, 4, 5)) (l)
+        }
 
-    test ("innermost2 visits the correct node") {
-        innermosttest (innermost2)
+        test ("innermost2 visits the correct node") {
+            val s = innermost2 (r)
+            l = Nil
+            expectResult (Some (u)) (s (t))
+            expectResult (List (1, 2, 3, 4, 5)) (l)
+        }
+
     }
 
     test ("downup (one arg version) visits the correct frontier") {
@@ -1496,7 +1502,7 @@ class RewriterTests extends Tests with Checkers with Generator {
             rule {
                 case n @ Add (_, Num (3)) => n
             }
-        val s = downupS (d, e, f)
+        val s = downupS (d, e, f _)
         expectResult (Some (u)) (s (t))
     }
 
@@ -1790,44 +1796,71 @@ class RewriterTests extends Tests with Checkers with Generator {
         expectsame (Some (t)) (s (t))
     }
 
-    def everywheretdtest (everys : Strategy => Strategy) {
+    {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Num (12), Num (13)), Num (14)), Sub (Num (16), Num (17)))
+
         var l : List[Double] = Nil
         var count = 9
+
         val r = rule {
                     case Num (i) => l = l :+ i
                                     Num (count)
                     case n       => count = count + 1
                                     n
                 }
-        val s = everys (r)
-        expectResult (Some (u)) (s (t))
-        expectResult (List (1, 2, 3, 4, 5)) (l)
+
+        test ("everywhere traverses in expected order") {
+            val s = everywhere (r)
+            count = 9
+            l = Nil
+            expectResult (Some (u)) (s (t))
+            expectResult (List (1, 2, 3, 4, 5)) (l)
+        }
+
+        test ("everywheretd traverses in expected order") {
+            val s = everywheretd (r)
+            count = 9
+            l = Nil
+            expectResult (Some (u)) (s (t))
+            expectResult (List (1, 2, 3, 4, 5)) (l)
+        }
+
+        test ("everywherebu traverses in expected order") {
+            val s = everywheretd (r)
+            count = 9
+            l = Nil
+            expectResult (Some (u)) (s (t))
+            expectResult (List (1, 2, 3, 4, 5)) (l)
+        }
     }
 
-    test ("everywhere traverses in expected order") {
-        everywheretdtest (everywhere)
+    // Strategy naming tests. Just a couple since dsname has more comprehensive ones.
+
+    val myrule1 = rule {
+        case Num (i) => Num (i + 1)
     }
 
-    test ("everywheretd traverses in expected order") {
-        everywheretdtest (everywheretd)
+    test ("class-level rule has the correct name") {
+        expectResult ("myrule1") (myrule1.name)
     }
 
-    test ("everywherebu traverses in expected order") {
-        val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
-        val u = Mul (Add (Add (Num (10), Num (11)), Num (13)), Sub (Num (15), Num (16)))
-        var l : List[Double] = Nil
-        var count = 9
-        val r = rule {
-                    case Num (i) => l = l :+ i
-                                    Num (count)
-                    case n       => count = count + 1
-                                    n
-                }
-        val s = everywherebu (r)
-        expectResult (Some (u)) (s (t))
-        expectResult (List (1, 2, 3, 4, 5)) (l)
+    test ("rule in closure has the correct name") {
+        val myrule2 = rule {
+            case Num (i) => Num (i + 1)
+        }
+        expectResult ("myrule2") (myrule2.name)
+    }
+
+    val mystrategy1 = outermost (id)
+
+    test ("class-level strategy has the correct name") {
+        expectResult ("mystrategy1") (mystrategy1.name)
+    }
+
+    test ("strategy in closure has the correct name") {
+        val mystrategy2 = outermost (id)
+        expectResult ("mystrategy2") (mystrategy2.name)
     }
 
 }

@@ -23,79 +23,234 @@ package rewriting
 
 object RewriterCoreMacros {
 
-    import org.bitbucket.inkytonik.dsname.DSName.makeCallWithName
+    import org.bitbucket.inkytonik.dsname.DSName.{makeCallWithName, makeThisCallWithName}
     import org.kiama.util.Emitter
     import scala.reflect.macros.Context
 
     // Macros for the builder methods
 
     def allMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"all")
+        makeCallWithName (c)
 
     def buildMacro (c : Context) (t : c.Expr[Any]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"build")
+        makeCallWithName (c)
 
     def childMacro (c : Context) (i : c.Expr[Int], s : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"child")
+        makeCallWithName (c)
 
     def condMacro (c : Context) (lr : c.Expr[PlusStrategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"this.<")
+        makeThisCallWithName (c)
 
     def congruenceMacro (c : Context) (ss : c.Expr[Strategy]*) : c.Expr[Strategy] =
-        makeCallWithName (c, s"congruence")
+        makeCallWithName (c)
 
     def debugMacro (c : Context) (msg : c.Expr[String], emitter : c.Expr[Emitter]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"debug")
+        makeCallWithName (c)
 
     def detchoiceMacro (c : Context) (q : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"this.<+")
+        makeThisCallWithName (c)
 
     def logMacro (c : Context) (s : c.Expr[Strategy], msg : c.Expr[String], emitter : c.Expr[Emitter]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"log")
+        makeCallWithName (c)
 
     def logfailMacro (c : Context) (s : c.Expr[Strategy], msg : c.Expr[String], emitter : c.Expr[Emitter]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"logfail")
+        makeCallWithName (c)
+
+    def mapMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
 
     def memoMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"memo")
+        makeCallWithName (c)
 
     def nondetchoiceMacro (c : Context) (q : c.Expr[Strategy]) : c.Expr[PlusStrategy] =
-        makeCallWithName (c, s"this.+")
+        makeThisCallWithName (c)
 
     def oneMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"one")
+        makeCallWithName (c)
 
     def optionMacro (c : Context) (o : c.Expr[Option[Any]]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"option")
+        makeCallWithName (c)
 
     def queryMacro[T] (c : Context) (f : c.Expr[Any ==> T]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"query")
+        makeCallWithName (c)
 
     def queryfMacro[T] (c : Context) (f : c.Expr[Any => T]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"queryf")
+        makeCallWithName (c)
 
     def ruleMacro (c : Context) (f : c.Expr[Any ==> Any]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"rule")
+        makeCallWithName (c)
 
     def rulefMacro (c : Context) (f : c.Expr[Any => Any]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"rulef")
+        makeCallWithName (c)
 
     def rulefsMacro (c : Context) (f : c.Expr[Any ==> Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"rulefs")
+        makeCallWithName (c)
 
     def seqMacro (c : Context) (q : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"this.<*")
+        makeThisCallWithName (c)
 
     def someMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"some")
+        makeCallWithName (c)
 
     def strategyMacro (c : Context) (f : c.Expr[Any ==> Option[Any]]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"strategy")
+        makeCallWithName (c)
 
     def strategyfMacro (c : Context) (f : c.Expr[Any => Option[Any]]) : c.Expr[Strategy] =
-        makeCallWithName (c, s"strategyf")
+        makeCallWithName (c)
 
     def termMacro (c : Context) (t : Any) : c.Expr[Strategy] =
-        makeCallWithName (c, s"term")
+        makeCallWithName (c)
+
+    // Macros for the library combinators
+
+    def allbuMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def alltdMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def alldownup2Macro (c : Context) (s1 : c.Expr[Strategy], s2 : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def alltdfoldMacro (c : Context) (s1 : c.Expr[Strategy], s2 : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def andMacro (c : Context) (s1 : c.Expr[Strategy], s2 : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def attemptMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def bottomupMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def bottomupSMacro (c : Context) (s : c.Expr[Strategy], stop : c.Expr[(=> Strategy) => Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def breadthfirstMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def doloopMacro (c : Context) (s : c.Expr[Strategy], r : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def downupMacro1 (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def downupMacro2 (c : Context) (s1 : c.Expr[Strategy], s2 : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def downupSMacro1 (c : Context) (s : c.Expr[Strategy], stop : c.Expr[(=> Strategy) => Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def downupSMacro2 (c : Context) (s1 : c.Expr[Strategy], s2 : c.Expr[Strategy], stop : c.Expr[(=> Strategy) => Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def everywhereMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def everywherebuMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def everywheretdMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def innermostMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def innermost2Macro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def iorMacro (c : Context) (s1 : c.Expr[Strategy], s2 : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def lastlyMacro (c : Context) (s : c.Expr[Strategy], f : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def leavesMacro1 (c : Context) (s : c.Expr[Strategy], isleaf : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def leavesMacro2 (c : Context) (s : c.Expr[Strategy], isleaf : c.Expr[Strategy], skip : c.Expr[Strategy => Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def loopMacro (c : Context) (r : c.Expr[Strategy], s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def loopiterMacro1 (c : Context) (i : c.Expr[Strategy], r : c.Expr[Strategy], s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def loopiterMacro2 (c : Context) (s : c.Expr[Int => Strategy], low : c.Expr[Int], high : c.Expr[Int]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def loopnotMacro (c : Context) (r : c.Expr[Strategy], s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def manybuMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def manytdMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def notMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def oncebuMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def oncetdMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def orMacro (c : Context) (s1 : c.Expr[Strategy], s2 : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def outermostMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def reduceMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def repeatMacro1 (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def repeatMacro2 (c : Context) (s : c.Expr[Strategy], r : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def repeatMacro3 (c : Context) (s : c.Expr[Strategy], n : c.Expr[Int]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def repeat1Macro1 (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def repeat1Macro2 (c : Context) (s : c.Expr[Strategy], r : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def repeatuntilMacro (c : Context) (s : c.Expr[Strategy], r : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def restoreMacro (c : Context) (s : c.Expr[Strategy], rest : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def restoreAlwaysMacro (c : Context) (s : c.Expr[Strategy], rest : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def somebuMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def somedownupMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def sometdMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def testMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def topdownMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def topdownSMacro (c : Context) (s : c.Expr[Strategy], stop : c.Expr[(=> Strategy) => Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
+
+    def whereMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c)
 
 }
