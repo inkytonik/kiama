@@ -23,7 +23,7 @@ package example.oberon0
 package base
 
 import base.source.ModuleDecl
-import org.kiama.util.Compiler
+import org.kiama.util.{Compiler, ProfilingCompiler}
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.attribution.Attribution.resetMemo
 import org.kiama.util.Console
@@ -32,10 +32,28 @@ import org.kiama.output.PrettyPrinter
 import scala.util.parsing.combinator.RegexParsers
 
 /**
+ * The entry point Oberon0 compiler driver with profiling support.
+ */
+trait Driver extends CompilerDriver with ProfilingCompiler[ModuleDecl] {
+    this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
+        with Analyser =>
+
+    override def baseUsageMessage : String =
+        super.baseUsageMessage +
+        """|
+           |Profile options:
+           |   -pdims print attribution profile using given dimensions
+           |   -t     sample runs and print timing information""".stripMargin
+
+    override def usageMessage : String =
+        "Usage: driver <profileopt>? <options>? <filename>\n" + baseUsageMessage
+}
+
+/**
  * A driver for an artefact that parses, pretty prints and performs semantic
  * analysis.
  */
-trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
+trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
 
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser =>
@@ -51,13 +69,15 @@ trait Driver extends Compiler[ModuleDecl] with PrettyPrinter {
 
     // Command-line argument handling
 
-    def usageMessage : String =
-        """|Usage: driver <options> <filename>
-           |Options:
+    def baseUsageMessage : String =
+        """|Options:
            |   -h   print this help message and stop
            |   -a   print the abstract syntax tree
            |   -A   pretty-print the abstract syntax tree
            |   -x   run in LDTA challenge mode""".stripMargin
+
+    def usageMessage : String =
+        "Usage: driver <options>? <filename>\n" + baseUsageMessage
 
     var helpFlag : Boolean = _
     var printastFlag : Boolean = _
