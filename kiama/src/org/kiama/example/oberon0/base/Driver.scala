@@ -158,25 +158,27 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
      * standard output, otherwise send the message to the errors file.
      */
     override def driver (args : Array[String], console : Console, emitter : Emitter) {
-        val newargs = checkargs (args, emitter)
-        try {
-            for (arg <- newargs) {
-                val reader = filereader (newargs (0))
-                makeast (reader, newargs (0), emitter) match {
-                    case Left (ast) =>
-                        process (ast, console, emitter)
-                    case Right (msg) =>
-                        if (challengeFlag) {
-                            section (emitter, "stdout")
-                            emitter.emitln ("parse failed")
-                        }
-                        section (emitter, "errors")
-                        emitter.emitln (msg)
+        checkargs (args, emitter) match {
+            case Array (arg) =>
+                try {
+                    val reader = filereader (arg)
+                    makeast (reader, arg, emitter) match {
+                        case Left (ast) =>
+                            process (ast, console, emitter)
+                        case Right (msg) =>
+                            if (challengeFlag) {
+                                section (emitter, "stdout")
+                                emitter.emitln ("parse failed")
+                            }
+                            section (emitter, "errors")
+                            emitter.emitln (msg)
+                    }
+                } catch {
+                    case e : FileNotFoundException =>
+                        emitter.emitln (e.getMessage)
                 }
-            }
-        } catch {
-            case e : FileNotFoundException =>
-                emitter.emitln (e.getMessage)
+            case _ =>
+                // Do nothing, bad args
         }
     }
 
