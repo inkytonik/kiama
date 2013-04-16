@@ -21,9 +21,9 @@
 package org.kiama
 package example.lambda
 
-import org.bitbucket.inkytonik.dsprofile.Profiler
 import org.kiama.util.ParsingREPL
 import org.kiama.util.PositionedParserUtilities
+import org.kiama.util.Profiler
 
 /**
  * A simple lambda calculus.
@@ -178,7 +178,6 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator with Profi
     override val prompt = "lambda> "
 
     def process (e : Exp) {
-        println (s"normal.name = ${normal.name}")
         val result =
             if (profiling)
                 profile (normal (e), dimensions : _*)
