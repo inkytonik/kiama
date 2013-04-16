@@ -48,7 +48,8 @@ object PredefinedTypes {
     val getPredefinedTypeList : Program => Seq[TypeDecl] =
         constant {
             List (UnknownDecl ("$unknown"),
-                  PrimitiveDecl ("boolean"))
+                  PrimitiveDecl ("boolean"),
+                  PrimitiveDecl ("int"))
         }
 
     /**

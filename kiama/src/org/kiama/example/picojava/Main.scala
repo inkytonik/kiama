@@ -22,21 +22,47 @@ package org.kiama
 package example.picojava
 
 import AbstractSyntax.Program
-import org.kiama.util.Compiler
+import org.kiama.util.ProfilingCompiler
 
-object Main extends Compiler[Program] with Parser {
+object Main extends ProfilingCompiler[Program] with Parser {
 
+    import Obfuscate.obfuscate
     import ErrorCheck.errors
+    import PrettyPrinter.pretty
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
+    /**
+     * Whether or not to perform program obfuscation.
+     */
+    var doObfuscation = false
+
+    /**
+     * Check for `-o` which means print out the program and its obfuscated form.
+     */
+    override def checkargs (args : Array[String], emitter : Emitter) : Array[String] =
+        if (args.size > 0 && args (0) == "-o") {
+            doObfuscation = true
+            args.drop (1)
+        } else
+            args
+
+    /**
+     * Process a picoJava program by checking for errors, optionally obfuscating and
+     * then printing any errors that were found.
+     */
     override def process (program : Program, console : Console, emitter : Emitter) : Boolean = {
 
         super.process (program, console, emitter)
 
         resetmessages
         program->errors
+
+        if (doObfuscation) {
+            emitter.emitln (pretty (program))
+            emitter.emitln (pretty (obfuscate (program)))
+        }
 
         if (messagecount > 0) {
             report (emitter)
