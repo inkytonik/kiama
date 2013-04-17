@@ -324,17 +324,17 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
                      t->direct (1)
                  }
-        expectResult ("Cycle detected in attribute evaluation 'direct (1)' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+        expectResult ("Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
                      t->indirect (8)
                  }
-        expectResult ("Cycle detected in attribute evaluation 'indirect (8)' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+        expectResult ("Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
                      t->indirect2 (9)
                  }
-        expectResult ("Cycle detected in attribute evaluation 'indirect2 (9)' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
+        expectResult ("Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }
 
     test ("parameterised attribute keys compare correctly") {

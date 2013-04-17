@@ -170,6 +170,9 @@ trait AttributionCore extends AttributionCommon {
                     }
                 }
 
+                override def reportCycle (t : T) : U =
+                    throw new IllegalStateException (s"Cycle detected in attribute evaluation '$name' ($arg) at $t")
+
             }
 
         /**
