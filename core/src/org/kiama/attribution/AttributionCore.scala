@@ -32,17 +32,12 @@ trait AttributionCore extends AttributionCommon {
     import scala.language.implicitConversions
 
     /**
-     * Global state for the memoisation tables.
+     * Lazily reset all memoisation tables. The actual resets will only happen
+     * the next time the value of each attribute is accessed.
      */
-    private object MemoState {
-        var MEMO_VERSION = 0
+    def resetMemo () {
+        MemoState.resetMemo
     }
-
-    /**
-     * Lazily reset all memoisation tables.
-     */
-    def resetMemo () : Unit =
-        MemoState.MEMO_VERSION += 1
 
     /**
      * An attribute of a node type `T` with value of type `U`, supported by a memo
@@ -67,14 +62,14 @@ trait AttributionCore extends AttributionCommon {
         /**
          * The current version number of the memo table.
          */
-        protected var memoVersion = MemoState.MEMO_VERSION
+        protected var memoVersion = MemoState.getMemoVersion
 
         /**
          * Check to see if a reset has been requested, and if so, do it.
          */
         private def resetIfRequested () {
-            if (memoVersion != MemoState.MEMO_VERSION) {
-                memoVersion = MemoState.MEMO_VERSION
+            if (memoVersion != MemoState.getMemoVersion) {
+                memoVersion = MemoState.getMemoVersion
                 reset ()
             }
         }
@@ -140,7 +135,7 @@ trait AttributionCore extends AttributionCommon {
         /**
          * The current version of the memoised data.
          */
-        private var memoVersion = MemoState.MEMO_VERSION
+        private var memoVersion = MemoState.getMemoVersion
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -153,9 +148,9 @@ trait AttributionCore extends AttributionCommon {
                     val i = start ("event" -> "AttrEval", "subject" -> t,
                                    "attribute" -> this, "parameter" -> Some (arg),
                                    "circular" -> false)
-                    if (memoVersion != MemoState.MEMO_VERSION) {
-                        memoVersion = MemoState.MEMO_VERSION
-                        memo.clear
+                    if (memoVersion != MemoState.getMemoVersion) {
+                        memoVersion = MemoState.getMemoVersion
+                        attr.reset ()
                     }
                     val key = new ParamAttributeKey (arg, t)
                     memo.get (key) match {
@@ -222,9 +217,9 @@ trait AttributionCore extends AttributionCommon {
          * function on this list is defined, then `f` will be used.
          */
         override def apply (t : T) : U = {
-            if (memoVersion != MemoState.MEMO_VERSION) {
-                memoVersion = MemoState.MEMO_VERSION
-                memo.clear
+            if (memoVersion != MemoState.getMemoVersion) {
+                memoVersion = MemoState.getMemoVersion
+                reset ()
             }
             memo.get (t) match {
                 case None     => reportCycle (t)

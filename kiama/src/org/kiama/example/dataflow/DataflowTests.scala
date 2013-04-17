@@ -32,6 +32,7 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
     import DataflowAST._
     import Dataflow._
     import org.kiama.attribution.Attribution.initTree
+    import org.kiama.attribution.CircularAttribute
 
     /*
      * {                     (prog)
@@ -55,6 +56,8 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
     val s5 = Return ("x")
     val prog = Block (List (s1, s2, s3, s4, s5))
     initTree (prog)
+
+    val outAttr = out.asInstanceOf[CircularAttribute[Stm,Set[Var]]]
 
     test ("in - s1") {
         expectResult (Set ("w", "v")) (in (s1))
@@ -106,6 +109,15 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
 
     test ("out - s412") {
         expectResult (Set ("x", "w", "v")) (out (s412))
+    }
+
+    test ("out - s412 (reset)") {
+        outAttr.reset ()
+        expectResult (false) (outAttr.hasBeenComputedAt (s412))
+        expectResult (Set ("x", "w", "v")) (outAttr (s412))
+        expectResult (true) (outAttr.hasBeenComputedAt (s412))
+        outAttr.reset ()
+        expectResult (false) (outAttr.hasBeenComputedAt (s412))
     }
 
     test ("out - s5") {

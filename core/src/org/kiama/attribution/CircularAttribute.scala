@@ -66,6 +66,21 @@ class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) ext
     private val memo = new IdentityHashMap[T,U]
 
     /**
+     * The current version number of the memo table.
+     */
+    protected var memoVersion = MemoState.getMemoVersion
+
+    /**
+     * Check to see if a reset has been requested, and if so, do it.
+     */
+    private def resetIfRequested () {
+        if (memoVersion != MemoState.getMemoVersion) {
+            memoVersion = MemoState.getMemoVersion
+            reset ()
+        }
+    }
+
+    /**
      * Return the value of the attribute for tree `t`, or the initial value if
      * no value for `t` has been computed.
      */
@@ -84,6 +99,7 @@ class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) ext
     def apply (t : T) : U = {
         val i = start ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
                        "parameter" -> None, "circular" -> true)
+        resetIfRequested ()
         if (computed containsKey t) {
             val u = value (t)
             finish (i, "value" -> u, "cached" -> true, "phase" -> "computed")
@@ -126,6 +142,23 @@ class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) ext
             finish (i, "value" -> init, "cached" -> false, "phase" -> "initial")
             init
         }
+    }
+
+    /**
+     * Immediately reset this attribute's memoisation cache.
+     */
+    def reset () {
+        computed.clear ()
+        visited.clear ()
+        memo.clear ()
+    }
+
+    /**
+     * Has the value of this attribute at `t` already been computed or not?
+     */
+    def hasBeenComputedAt (t : T) : Boolean = {
+        resetIfRequested ()
+        memo.get (t) != null
     }
 
 }

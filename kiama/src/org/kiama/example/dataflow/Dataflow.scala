@@ -133,6 +133,8 @@ trait LivenessImpl extends Liveness {
 
     self : Liveness with Variables with ControlFlow =>
 
+    import org.kiama.attribution.CircularAttribute
+
     // For tests
     var icount = 0
     var ocount = 0
