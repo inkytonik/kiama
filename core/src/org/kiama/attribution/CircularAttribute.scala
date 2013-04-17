@@ -47,6 +47,7 @@ class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) ext
 
     import CircularAttribute._
     import java.util.IdentityHashMap
+    import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
     /**
      * Has the value of this attribute for a given tree already been computed?
@@ -81,15 +82,24 @@ class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) ext
      * from the CRAG paper.
      */
     def apply (t : T) : U = {
+        val i = start ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
+                       "parameter" -> None, "circular" -> true)
         if (computed containsKey t) {
-            value (t)
+            val u = value (t)
+            finish (i, "value" -> u, "cached" -> true, "phase" -> "computed")
+            u
         } else if (!IN_CIRCLE) {
             IN_CIRCLE = true
             visited.put (t, ())
             var u = init
+            finish (i, "value" -> u, "cached" -> false, "phase" -> "circle")
             do {
                 CHANGE = false
+                val i = start ("event" -> "AttrEval", "subject" -> t,
+                               "attribute" -> this, "parameter" -> None,
+                               "circular" -> true, "iter" -> true)
                 val newu = f (t)
+                finish (i, "value" -> newu, "cached" -> false, "phase" -> "iterate")
                 if (u != newu) {
                     CHANGE = true
                     u = newu
@@ -110,9 +120,12 @@ class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) ext
                 memo.put (t, u)
             }
             visited.remove (t)
+            finish (i, "value" -> u, "cached" -> false, "phase" -> "notvisited")
             u
-        } else
-            value (t)
+        } else {
+            finish (i, "value" -> init, "cached" -> false, "phase" -> "initial")
+            init
+        }
     }
 
 }

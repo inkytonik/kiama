@@ -29,6 +29,7 @@ class UncachedParamAttribute[A,T <: AnyRef,U] (name : String, f : A => T => U) e
     attr =>
 
     import java.util.IdentityHashMap
+    import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
     /**
      * Are we currently evaluating this attribute for a given argument and tree?
@@ -40,9 +41,12 @@ class UncachedParamAttribute[A,T <: AnyRef,U] (name : String, f : A => T => U) e
      * it depends on itself.
      */
     def apply (arg : A) : Attribute[T,U] =
-        new Attribute[T,U] (name + " (" + arg + ")") {
+        new Attribute[T,U] (name) {
 
             def apply (t : T) : U = {
+                val i = start ("event" -> "AttrEval", "subject" -> t,
+                               "attribute" -> this, "parameter" -> Some (arg),
+                               "circular" -> false)
                 val key = new ParamAttributeKey (arg, t)
                 if (visited containsKey key) {
 
@@ -51,6 +55,7 @@ class UncachedParamAttribute[A,T <: AnyRef,U] (name : String, f : A => T => U) e
                     visited.put (key, ())
                     val u = f (arg) (t)
                     visited.remove (key)
+                    finish (i, "value" -> u, "cached" -> false)
                     u
                 }
             }

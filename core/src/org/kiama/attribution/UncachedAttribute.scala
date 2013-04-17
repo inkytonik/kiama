@@ -31,6 +31,7 @@ package attribution
 class UncachedAttribute[T <: AnyRef,U] (name : String, f : T => U) extends Attribute[T,U] (name) {
 
     import java.util.IdentityHashMap
+    import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
     /**
      * Are we currently evaluating this attribute for a given tree?
@@ -42,12 +43,16 @@ class UncachedAttribute[T <: AnyRef,U] (name : String, f : T => U) extends Attri
      * it depends on itself.
      */
     def apply (t : T) : U = {
+        val i = start ("event" -> "AttrEval", "subject" -> t,
+                       "attribute" -> this, "parameter" -> None,
+                       "circular" -> false)
         if (visited containsKey t)
             reportCycle (t)
         else {
             visited.put (t, ())
             val u = f (t)
             visited.remove (t)
+            finish (i, "value" -> u, "cached" -> false)
             u
         }
     }

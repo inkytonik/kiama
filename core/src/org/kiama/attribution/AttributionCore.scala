@@ -27,6 +27,7 @@ package attribution
  */
 trait AttributionCore extends AttributionCommon {
 
+    import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
     import scala.language.experimental.macros
     import scala.language.implicitConversions
 
@@ -83,14 +84,19 @@ trait AttributionCore extends AttributionCommon {
          * it depends on itself.
          */
         def apply (t : T) : U = {
+            val i = start ("event" -> "AttrEval", "subject" -> t,
+                           "attribute" -> this, "parameter" -> None,
+                           "circular" -> false)
             resetIfRequested ()
             memo.get (t) match {
                 case None     => reportCycle (t)
-                case Some (u) => u
+                case Some (u) => finish (i, "value" -> u, "cached" -> true)
+                                 u
                 case _        => // null
                                  memo.put (t, None)
                                  val u = f (t)
                                  memo.put (t, Some (u))
+                                 finish (i, "value" -> u, "cached" -> false)
                                  u
             }
         }
@@ -141,9 +147,12 @@ trait AttributionCore extends AttributionCommon {
          * it depends on itself.
          */
         def apply (arg : A) : Attribute[T,U] =
-            new Attribute[T,U] (name + " (" + arg + ")") {
+            new Attribute[T,U] (name) {
 
                 def apply (t : T) : U = {
+                    val i = start ("event" -> "AttrEval", "subject" -> t,
+                                   "attribute" -> this, "parameter" -> Some (arg),
+                                   "circular" -> false)
                     if (memoVersion != MemoState.MEMO_VERSION) {
                         memoVersion = MemoState.MEMO_VERSION
                         memo.clear
@@ -151,10 +160,12 @@ trait AttributionCore extends AttributionCommon {
                     val key = new ParamAttributeKey (arg, t)
                     memo.get (key) match {
                         case Some (None)     => reportCycle (t)
-                        case Some (Some (u)) => u
+                        case Some (Some (u)) => finish (i, "value" -> u, "cached" -> true)
+                                                u
                         case None            => memo.put (key, None)
                                                 val u = f (arg) (t)
                                                 memo.put (key, Some (u))
+                                                finish (i, "value" -> u, "cached" -> false)
                                                 u
                     }
                 }
