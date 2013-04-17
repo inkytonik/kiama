@@ -27,8 +27,17 @@ package util
 trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{Dimension, Value}
+    import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribute
     import org.kiama.rewriting.Strategy
+
+    /**
+     * Take any actions that need to be done at the start of reporting.
+     */
+    override def startReport (dimensionNames : Seq[Dimension]) {
+        if (dimensionNames contains "dependencies")
+            printTables = false
+    }
 
     /**
      * Support Kiama-specific profiling dimensions.
@@ -62,9 +71,227 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
                 } else
                     "no strategy or attribute dimension, so no name"
 
+
+            /**
+             * `location` dimension is the location of the evaluation's subject
+             * in the tree: root, inner node or leaf. Relies on the node being
+             * an Attributable.
+             */
+            case "location" =>
+                checkFor (record, dim, "", "subject") {
+                    case a : Attributable =>
+                        if (a.isRoot)
+                            "Root"
+                        else if (a.hasChildren)
+                            "Inner"
+                        else
+                            "Leaf"
+                    case _ =>
+                        "unknown location"
+                }
+
+            /**
+             * `depends-on` dimension is a summary of the direct dependencies
+             * of an evaluation. Each dependence is summarised by the type of
+             * the node where it was evaluated, the attribute that was evaluated
+             * there and the step from the current node to that node.
+             */
+            case "depends-on" =>
+                checkFor (record, dim, "AttrEval", "subject") {
+                    case srcsubj =>
+                        record.dirDescs.map (dst =>
+                            checkFor (dst, dim, "AttrEval", "subject") {
+                                case dstsubj =>
+                                    val step = subjectsToStep (srcsubj, dstsubj)
+                                    Dep (step, dimValue (dst, "type"),
+                                         dimValue (dst, "name"))
+                        }).toSet.mkString (", ")
+                }
+
+            /**
+             * Output dot file for the dependencies involved in this attribute
+             * evaluation.
+             */
+            case "dependencies" if isEventType (record, "AttrEval") =>
+                printDependencyGraph (record, dim)
+                ""
+
             case _ =>
                 super.dimValue (record, dim)
 
         }
+
+    /**
+     * Print the dependency graph for the attribute evaluation represented
+     * by `record`. The output is in dot form.
+     */
+    def printDependencyGraph (record : Record, dim : Dimension) {
+
+        import scala.collection.mutable.{HashMap, Set, Stack}
+
+        // Set of subject nodes involved in this attribution evaluation.
+        val subjects = Set[Value] ()
+
+        // Map from subject to set of attributes
+        val attributes = new HashMap[Value,Set[Value]] ()
+
+        // A link from an attribute of one node to an attribute of another
+        case class Link (srcNum : Int, srcAttrName : Value,
+                         dstNum : Int, dstAttrName : Value)
+
+        // Collection of links representing direct dependencies
+        val links = Set[Link] ()
+
+        // Map from subjects to unique node numbers
+        val nodeNums = new HashMap[Value,Int]
+
+        // Next node number to be used
+        var nodeNum = 0
+
+        def attributeOf (record : Record) : Value =
+            checkFor (record, dim, "AttrEval", "attribute") (_.toString)
+
+        def subjectOf (record : Record) : Value =
+            dimValue (record, "subject")
+
+        def addAtrrName (subject : Value, attribute : Value) {
+            if (! attributes.contains (subject))
+                attributes (subject) = Set[Value] ()
+            attributes (subject).add (attribute)
+        }
+
+        // Set the node number of subject if it doesn't already have one
+        def setNodeNum (subject : Value) {
+            if (!nodeNums.contains (subject)) {
+                nodeNums (subject) = nodeNum
+                nodeNum += 1
+            }
+        }
+
+        // Traverse dependencies collecting information
+        val pending = new Stack[Record] ()
+        pending.push (record)
+        while (!pending.isEmpty) {
+            val curr = pending.pop ()
+            val currAttr = attributeOf (curr)
+            val currSubj = subjectOf (curr)
+            setNodeNum (currSubj)
+            subjects.add (currSubj)
+            addAtrrName (currSubj, currAttr)
+            for (desc <- curr.dirDescs) {
+                val descAttr = attributeOf (desc)
+                val descSubj = subjectOf (desc)
+                setNodeNum (descSubj)
+                links.add (Link (nodeNums (currSubj), currAttr,
+                                 nodeNums (descSubj), descAttr))
+                pending.push (desc)
+            }
+        }
+
+        // Output the graph
+        outputln ("digraph dependencies {")
+        outputln ("    center = 1;")
+        outputln ("    node [shape = record, height = .1];")
+        for (subject <- subjects) {
+            val tipe =
+                subject match {
+                    case p : Product => p.productPrefix
+                    case _           => "unknown"
+                }
+            output ("    node%d [label = \"%1$d %s".format (nodeNums (subject), tipe))
+            for (attribute <- attributes (subject))
+                output (" | <%s> %1$s".format (attribute.toString))
+            outputln ("\"];")
+        }
+        for (link <- links)
+            outputln ("    \"node%d\":\"%s\" -> \"node%d\":\"%s\";".format (
+                          link.srcNum, link.srcAttrName,
+                          link.dstNum, link.dstAttrName))
+        outputln ("}")
+    }
+
+    /**
+     * Dependence record saying that the source attribute depends on
+     * `attribute` of a node with type `type` that is the given step away.
+     */
+    case class Dep (step : Step, tipe : Value, attribute : Value) {
+        override def toString = "%s(%s).%s".format (tipe, step, attribute)
+    }
+
+    /**
+     * A single step in the evaluation of an attribute.
+     */
+    abstract class Step
+
+    /**
+     * A step to the parent of the current node.
+     */
+    case object Parent extends Step {
+        override def toString = "^"
+    }
+
+    /**
+     * A step to child `i` of the current node, counting from zero.
+     */
+    case class Child (i : Int) extends Step {
+        override def toString = i.toString
+    }
+
+    /**
+     * A step to the previous node in a sequence.
+     */
+    case object Prev extends Step {
+        override def toString = "<"
+    }
+
+    /**
+     * A step to the previous node in a sequence.
+     */
+    case object Next extends Step {
+        override def toString = ">"
+    }
+
+    /**
+     * A step nowhere. I.e., the dependent attribute is evaluated at the
+     * current node.
+     */
+    case object Self extends Step {
+        override def toString = "@"
+    }
+
+    /**
+     * A step to a node that doesn't fit into any of the other categories.
+     * This category will be used for nodes that were obtained as the
+     * result of reference attributes or as values that sit outside the
+     * main tree.
+     */
+    case object Other extends Step  {
+        override def toString = "?"
+    }
+
+    /**
+     * Summarise the single step between two nodes at which attributes
+     * have been evaluated.
+     */
+    def subjectsToStep (src : Any, dst : Any) : Step =
+        if (src == dst)
+            Self
+        else
+            (src, dst) match {
+                case (srca : Attributable, dsta : Attributable) =>
+                    if (srca.parent eq dsta)
+                        Parent
+                    else if (srca.prev[Attributable] eq dsta)
+                        Prev
+                    else if (srca.next[Attributable] eq dsta)
+                        Next
+                    else
+                        srca.children.indexWhere (_ eq dsta) match {
+                            case -1 => Other
+                            case c  => Child (c)
+                        }
+                case _ =>
+                    Other
+            }
 
 }
