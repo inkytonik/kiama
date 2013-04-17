@@ -31,7 +31,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
     import org.kiama.rewriting.Strategy
 
     /**
-     * Support Kiama-specific profilnig dimensions.
+     * Support Kiama-specific profiling dimensions.
      */
     override def dimValue (record : Record, dim : Dimension) : Value =
         dim match {
@@ -43,21 +43,23 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
              */
             case "name" =>
                 val dimensions = record.dimensions
-                if (dimensions contains "strategy")
-                    dimensions ("strategy") match {
+                if (dimensions contains "strategy") {
+                    val strategy = dimensions ("strategy")
+                    strategy match {
                         case s : Strategy =>
                             s.name
                         case _ =>
-                            "strategy dimension that is not a Strategy"
+                            s"strategy dimension that is not a Strategy: $strategy"
                     }
-                else if (record.dimensions contains "attribute")
-                    dimensions ("attribute") match {
+                } else if (record.dimensions contains "attribute") {
+                    val attribute = dimensions ("attribute")
+                    attribute match {
                         case a : Attribute[_,_] =>
                             a.name
                         case _ =>
-                            "attribute dimension that is not an Attribute"
+                            s"attribute dimension that is not an Attribute: $attribute"
                     }
-                else
+                } else
                     "no strategy or attribute dimension, so no name"
 
             case _ =>
