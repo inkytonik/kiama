@@ -2,7 +2,7 @@
 
 libraryDependencies ++= Seq (
     "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.1.0-SNAPSHOT",
-    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0-SNAPSHOT"
+    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0"
 )
 
 // Interactive settings
