@@ -51,7 +51,7 @@ trait AttributionCore extends AttributionCommon {
         import java.util.IdentityHashMap
 
         /**
-         * The memo table for this attribute, with `memo(t) == Some(v)` represents
+         * The memo table for this attribute, where `memo(t) == Some(v)` represents
          * the node `t` having the value `v` for this attribute.  `memo(t) = None`
          * means that the attribute for `t` is currently being evaluated.  Note that
          * the memo table needs to be some form of identity map so that value equal
