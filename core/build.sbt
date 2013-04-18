@@ -47,16 +47,3 @@ unmanagedResources in Test <<= (scalaSource in Test) map { s => {
     (s ** (-"*.scala" && -HiddenFileFilter)).get
 }}
 
-// Documentation
-
-// Link the documentation to the source in the main repository
-
-scalacOptions in (Compile, doc) <++= baseDirectory map {
-    bd => Seq (
-        "-sourcepath",
-            bd.getAbsolutePath,
-        "-doc-source-url",
-            "https://code.google.com/p/kiama/source/browse€{FILE_PATH}.scala"
-    )
-}
-

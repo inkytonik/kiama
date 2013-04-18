@@ -66,14 +66,13 @@ parallelExecution in Test := false
 
 // Link the documentation to the source in the main repository
 
-scalacOptions in (Compile, doc) <++= baseDirectory map {
-    bd => Seq (
-        "-sourcepath",
-            bd.getAbsolutePath,
+scalacOptions in (Compile, doc) ++=
+    Seq (
         "-doc-source-url",
             "https://code.google.com/p/kiama/source/browse€{FILE_PATH}.scala"
     )
-}
+
+scalacOptions in (Test, doc) <<= scalacOptions in (Compile, doc)
 
 // Publishing
 

@@ -14,7 +14,14 @@ organization in ThisBuild := "com.googlecode.kiama"
 
 scalaVersion in ThisBuild := "2.10.1"
 
-scalacOptions in ThisBuild := Seq ("-deprecation", "-feature", "-unchecked")
+scalacOptions in ThisBuild <<= baseDirectory map {
+    bd => Seq (
+        "-deprecation",
+        "-feature",
+        "-sourcepath", bd.getAbsolutePath,
+        "-unchecked"
+    )
+}
 
 // Dependency resolution
 
