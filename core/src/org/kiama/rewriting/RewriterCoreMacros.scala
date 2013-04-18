@@ -23,7 +23,7 @@ package rewriting
 
 object RewriterCoreMacros {
 
-    import org.bitbucket.inkytonik.dsname.DSName.{makeCallWithName, makeThisCallWithName}
+    import org.bitbucket.inkytonik.dsinfo.DSInfo.{makeCallWithName, makeThisCallWithName}
     import org.kiama.util.Emitter
     import scala.reflect.macros.Context
 

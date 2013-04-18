@@ -1835,7 +1835,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
     }
 
-    // Strategy naming tests. Just a couple since dsname has more comprehensive ones.
+    // Strategy naming tests
 
     val myrule1 = rule {
         case Num (i) => Num (i + 1)

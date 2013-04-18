@@ -23,7 +23,7 @@ package attribution
 
 object AttributionCommonMacros {
 
-    import org.bitbucket.inkytonik.dsname.DSName.makeCallWithName
+    import org.bitbucket.inkytonik.dsinfo.DSInfo.makeCallWithName
     import scala.reflect.macros.Context
 
     // Macros for the builder methods
