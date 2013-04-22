@@ -72,8 +72,9 @@ trait RewriterCore {
      */
     val fail : Strategy =
         new Strategy ("fail") {
-            def apply (r : Any) : Option[Any] =
-                None
+            val body =
+                (r : Any) =>
+                    None
         }
 
     /**
@@ -81,8 +82,9 @@ trait RewriterCore {
      */
     val id : Strategy =
         new Strategy ("id") {
-            def apply (r : Any) : Option[Any] =
-                Some (r)
+            val body =
+                (r : Any) =>
+                    Some (r)
         }
 
     /**
@@ -102,8 +104,8 @@ trait RewriterCore {
     def log (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
         lazy val strat = s
         new Strategy (name) {
-            def apply (t1 : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+            val body =
+                (t1 : Any) => {
                     emitter.emit (msg + t1)
                     val r = strat (t1)
                     r match {
@@ -133,8 +135,8 @@ trait RewriterCore {
     def logfail[T] (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
         lazy val strat = s
         new Strategy (name) {
-            def apply (t1 : Any) : Option[Any] = {
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+            val body =
+                (t1 : Any) => {
                     val r = strat (t1)
                     r match {
                         case Some (t2) =>
@@ -144,7 +146,6 @@ trait RewriterCore {
                     }
                     r
                 }
-            }
         }
     }
 
@@ -167,10 +168,9 @@ trait RewriterCore {
         new Strategy (name) {
             private val cache =
                 new scala.collection.mutable.HashMap[Any,Option[Any]]
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     cache.getOrElseUpdate (t, strat (t))
-                }
         }
     }
 
@@ -219,8 +219,8 @@ trait RewriterCore {
      */
     def query[T] (name : String, f : Any ==> T) : Strategy =
         new Strategy (name) {
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) => {
                     if (f isDefinedAt t)
                         f (t)
                     Some (t)
@@ -242,8 +242,8 @@ trait RewriterCore {
      */
     def queryf[T] (name : String, f : Any => T) : Strategy =
         new Strategy (name) {
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) => {
                     f (t)
                     Some (t)
                 }
@@ -264,13 +264,12 @@ trait RewriterCore {
      */
     def rule (name : String, f : Any ==> Any) : Strategy =
         new Strategy (name) {
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     if (f isDefinedAt t)
                         Some (f (t))
                     else
                         None
-                }
         }
 
     /**
@@ -303,13 +302,12 @@ trait RewriterCore {
      */
     def rulefs (name : String, f : Any ==> Strategy) : Strategy =
         new Strategy (name) {
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     if (f isDefinedAt t)
                         (f (t)) (t)
                     else
                         None
-                }
         }
 
     /**
@@ -328,13 +326,12 @@ trait RewriterCore {
      */
     def strategy (name : String, f : Any ==> Option[Any]) : Strategy =
         new Strategy (name) {
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     if (f isDefinedAt t)
                         f (t)
                     else
                         None
-                }
         }
 
     /**
@@ -350,10 +347,7 @@ trait RewriterCore {
      */
     def strategyf (name : String, f : Any => Option[Any]) : Strategy =
         new Strategy (name) {
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
-                    f (t)
-                }
+            val body = f
         }
 
     /**
@@ -434,14 +428,13 @@ trait RewriterCore {
 
             lazy val strat = s
 
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     t match {
                         case p : Product => childProduct (strat, i, p)
                         case t : Seq[_]  => childSeq (strat, i, t.asInstanceOf[Seq[Any]])
                         case _           => None
                     }
-                }
 
         }
 
@@ -548,8 +541,8 @@ trait RewriterCore {
 
             lazy val strat = s
 
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     t match {
                         case r : Rewritable     => allRewritable (strat, r)
                         case p : Product        => allProduct (strat, p)
@@ -557,7 +550,6 @@ trait RewriterCore {
                         case t : Traversable[_] => allTraversable (strat, t.asInstanceOf[Traversable[Any]])
                         case _                  => Some (t)
                     }
-                }
 
         }
 
@@ -695,8 +687,8 @@ trait RewriterCore {
 
             lazy val strat = s
 
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     t match {
                         case r : Rewritable     => oneRewritable (strat, r)
                         case p : Product        => oneProduct (strat, p)
@@ -704,7 +696,6 @@ trait RewriterCore {
                         case t : Traversable[_] => oneTraversable (strat, t.asInstanceOf[Traversable[Any]])
                         case _                  => None
                     }
-                }
 
         }
 
@@ -850,8 +841,8 @@ trait RewriterCore {
 
             lazy val strat = s
 
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     t match {
                         case r : Rewritable     => someRewritable (strat, r)
                         case p : Product        => someProduct (strat, p)
@@ -859,7 +850,6 @@ trait RewriterCore {
                         case t : Traversable[_] => someTraversable (strat, t.asInstanceOf[Traversable[Any]])
                         case _                  => None
                     }
-                }
 
         }
 
@@ -1010,13 +1000,12 @@ trait RewriterCore {
     def congruence (name : String, ss : Strategy*) : Strategy =
         new Strategy (name) {
 
-            def apply (t : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+            val body =
+                (t : Any) =>
                     t match {
                         case p : Product => congruenceProduct (p, ss : _*)
                         case _           => Some (t)
                     }
-                }
 
         }
 

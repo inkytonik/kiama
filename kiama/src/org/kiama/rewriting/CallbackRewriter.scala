@@ -50,12 +50,12 @@ trait CallbackRewriter extends Rewriter {
      */
     private def dispatch (name : String, s : Strategy) : Strategy =
         new Strategy (name) {
-            def apply (t : Any) : Option[Any] = {
-                s (t) match {
-                    case None     => None
-                    case Some (u) => Some (rewriting (t, u))
-                }
-            }
+            val body =
+                (t : Any) =>
+                    s (t) match {
+                        case None     => None
+                        case Some (u) => Some (rewriting (t, u))
+                    }
         }
 
     override def rule (n : String, f : Any ==> Any) : Strategy =

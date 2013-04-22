@@ -40,10 +40,20 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
     import scala.language.experimental.macros
 
     /**
-     * Apply this strategy to a term, producing either a transformed term
-     * wrapped in `Some`, or `None`, representing a rewriting failure.
+     * Implementation of this strategy. When applied to a term produce either
+     * a transformed term wrapped in `Some`, or `None`, representing a
+     * rewriting failure.
      */
-    def apply (r : Any) : Option[Any]
+    val body : Any => Option[Any]
+
+    /**
+     * Apply this strategy to a term. By default, just run the implementation
+     * body wrapped in profiling
+     */
+    def apply (r : Any) : Option[Any] =
+        wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> r) {
+            body (r)
+        }
 
     /**
      * Sequential composition. Construct a strategy that first applies
@@ -59,13 +69,12 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      */
     def <* (name : String, q : => Strategy) : Strategy =
         new Strategy (name) {
-            def apply (t1 : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+            val body =
+                (t1 : Any) =>
                     p (t1) match {
                         case Some (t2) => q (t2)
                         case None      => None
                     }
-                }
         }
 
     /**
@@ -83,13 +92,12 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      */
     def <+ (name : String, q : => Strategy) : Strategy =
         new Strategy (name) {
-            def apply (t1 : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+            val body =
+                (t1 : Any) =>
                     p (t1) match {
                         case Some (t2) => Some (t2)
                         case None      => q (t1)
                     }
-                }
         }
 
     /**
@@ -128,13 +136,12 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      */
     def < (name : String, lr : => PlusStrategy) : Strategy =
         new Strategy (name) {
-            def apply (t1 : Any) : Option[Any] =
-                wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t1) {
+            val body =
+                (t1 : Any) =>
                     p (t1) match {
                         case Some (t2) => lr.left (t2)
                         case None      => lr.right (t1)
                     }
-                }
         }
 
     /**
@@ -153,11 +160,27 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
  * evaluated at most once.
  */
 class PlusStrategy (name : String, p : => Strategy, q : => Strategy) extends Strategy (name) {
+
+    /**
+     * The left alternative of the choice.
+     */
     lazy val left = p
+
+    /**
+     * The right alternative of the choice.
+     */
     lazy val right = q
+
+    /**
+     * The strategy itself (lazily computed).
+     */
     private lazy val s = left <+ (name, right)
-    def apply (t : Any) : Option[Any] =
-        wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> t) {
+
+    /**
+     * Implementation of this strategy. Just apply `s`.
+     */
+    val body =
+        (t : Any) =>
             s (t)
-        }
+
 }
