@@ -48,7 +48,7 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
 
     /**
      * Apply this strategy to a term. By default, just run the implementation
-     * body wrapped in profiling
+     * body wrapped in profiling.
      */
     def apply (r : Any) : Option[Any] =
         wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> r) {
