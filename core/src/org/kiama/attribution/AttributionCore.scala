@@ -21,23 +21,17 @@
 package org.kiama
 package attribution
 
+import org.kiama.util.Memoiser
+
 /**
  * Reusable implementation of attribution of syntax trees in a functional style
  * with attribute values cached so that each value is computed at most once.
  */
-trait AttributionCore extends AttributionCommon {
+trait AttributionCore extends AttributionCommon with Memoiser {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
     import scala.language.experimental.macros
     import scala.language.implicitConversions
-
-    /**
-     * Lazily reset all memoisation tables. The actual resets will only happen
-     * the next time the value of each attribute is accessed.
-     */
-    def resetMemo () {
-        MemoState.resetMemo
-    }
 
     /**
      * An attribute of a node type `T` with value of type `U`, supported by a memo
@@ -46,33 +40,8 @@ trait AttributionCore extends AttributionCommon {
      * `f` should not itself require the value of this attribute. If it does, a
      * circularity error is reported by throwing an `IllegalStateException`.
      */
-    class CachedAttribute[T <: AnyRef,U] (name : String, f : T => U) extends Attribute[T,U] (name) {
-
-        import java.util.IdentityHashMap
-
-        /**
-         * The memo table for this attribute, where `memo(t) == Some(v)` represents
-         * the node `t` having the value `v` for this attribute.  `memo(t) = None`
-         * means that the attribute for `t` is currently being evaluated.  Note that
-         * the memo table needs to be some form of identity map so that value equal
-         * trees are not treated as equal unless they are actually the same reference.
-         */
-        protected val memo = new IdentityHashMap[T,Option[U]]
-
-        /**
-         * The current version number of the memo table.
-         */
-        protected var memoVersion = MemoState.getMemoVersion
-
-        /**
-         * Check to see if a reset has been requested, and if so, do it.
-         */
-        private def resetIfRequested () {
-            if (memoVersion != MemoState.getMemoVersion) {
-                memoVersion = MemoState.getMemoVersion
-                reset ()
-            }
-        }
+    class CachedAttribute[T <: AnyRef,U] (name : String, f : T => U) extends
+            Attribute[T,U] (name) with IdMemoised[T,Option[U]] {
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -97,16 +66,12 @@ trait AttributionCore extends AttributionCommon {
         }
 
         /**
-         * Immediately reset this attribute's memoisation cache.
-         */
-        def reset () {
-            memo.clear ()
-        }
-
-        /**
          * Has the value of this attribute at `t` already been computed or not?
+         * If the table contains `Some (u)` then we've compute it and the value
+         * was `u`. If the memo table contains `None` we are in the middle of
+         * computing it. Otherwise the memo table contains no entry for `t`.
          */
-        def hasBeenComputedAt (t : T) : Boolean = {
+        override def hasBeenComputedAt (t : T) : Boolean = {
             resetIfRequested ()
             memo.get (t) match {
                 case Some (_) => true
@@ -120,22 +85,10 @@ trait AttributionCore extends AttributionCommon {
     /**
      * A variation of the `CachedAttribute` class for parameterised attributes.
      */
-    class CachedParamAttribute[A,T <: AnyRef,U] (name : String, f : A => T => U) extends (A => Attribute[T,U]) {
+    class CachedParamAttribute[A,T <: AnyRef,U] (name : String, f : A => T => U) extends
+            (A => Attribute[T,U]) with Memoised[ParamAttributeKey,Option[U]] {
 
         attr =>
-
-        import scala.collection.mutable.HashMap
-
-        /**
-         * Memoisation table for pairs of parameters and nodes to attribute
-         * values.
-         */
-        private val memo = new HashMap[ParamAttributeKey,Option[U]]
-
-        /**
-         * The current version of the memoised data.
-         */
-        private var memoVersion = MemoState.getMemoVersion
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -148,10 +101,7 @@ trait AttributionCore extends AttributionCommon {
                     val i = start ("event" -> "AttrEval", "subject" -> t,
                                    "attribute" -> this, "parameter" -> Some (arg),
                                    "circular" -> false)
-                    if (memoVersion != MemoState.getMemoVersion) {
-                        memoVersion = MemoState.getMemoVersion
-                        attr.reset ()
-                    }
+                    resetIfRequested ()
                     val key = new ParamAttributeKey (arg, t)
                     memo.get (key) match {
                         case Some (None)     => reportCycle (t)
@@ -169,13 +119,6 @@ trait AttributionCore extends AttributionCommon {
                     throw new IllegalStateException (s"Cycle detected in attribute evaluation '$name' ($arg) at $t")
 
             }
-
-        /**
-         * Immediately reset this attribute's memoisation cache.
-         */
-        def reset () {
-            memo.clear ()
-        }
 
         /**
          * Has the value of this attribute at `t` already been computed for `arg`
@@ -217,10 +160,7 @@ trait AttributionCore extends AttributionCommon {
          * function on this list is defined, then `f` will be used.
          */
         override def apply (t : T) : U = {
-            if (memoVersion != MemoState.getMemoVersion) {
-                memoVersion = MemoState.getMemoVersion
-                reset ()
-            }
+            resetIfRequested ()
             memo.get (t) match {
                 case None     => reportCycle (t)
                 case Some (u) => u
@@ -265,6 +205,121 @@ trait AttributionCore extends AttributionCommon {
             b
             functions.clear ()
             functions.appendAll (savedFunctions)
+        }
+
+    }
+
+    /**
+     * Global state for the circular attribute evaluation algorithm
+     * and the memoisation tables.
+     */
+    private object CircularAttribute {
+        var IN_CIRCLE = false
+        var CHANGE = false
+    }
+
+    /**
+     * An attribute of a node type `T` with value of type `U` which has a circular
+     * definition.  The value of the attribute is computed by the function f
+     * which may itself use the value of the attribute.  init specifies an
+     * initial value for the attribute.  The attribute (and any circular attributes
+     * on which it depends) are evaluated until no value changes (i.e., a fixed
+     * point is reached).  The final result is memoised so that subsequent evaluations
+     * return the same value.
+     *
+     * This code implements the basic circular evaluation algorithm from "Circular
+     * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
+     * and Hedin from LDTA 2003.
+     */
+    class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) extends
+            Attribute[T,U] (name) with IdMemoised[T,U] {
+
+        import CircularAttribute._
+        import java.util.IdentityHashMap
+        import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+
+        /**
+         * Has the value of this attribute for a given tree already been computed?
+         */
+        private val computed = new IdentityHashMap[T,Unit]
+
+        /**
+         * Has the attribute for given tree been computed on this iteration of the
+         * circular evaluation?
+         */
+        private val visited = new IdentityHashMap[T,Unit]
+
+        /**
+         * Return the value of the attribute for tree `t`, or the initial value if
+         * no value for `t` has been computed.
+         */
+        private def value (t : T) : U = {
+            val v = memo.get (t)
+            if (v == null)
+                init
+            else
+                v
+        }
+
+        /**
+         * Return the value of this attribute for node `t`.  Essentially Figure 6
+         * from the CRAG paper.
+         */
+        def apply (t : T) : U = {
+            val i = start ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
+                           "parameter" -> None, "circular" -> true)
+            resetIfRequested ()
+            if (computed containsKey t) {
+                val u = value (t)
+                finish (i, "value" -> u, "cached" -> true, "phase" -> "computed")
+                u
+            } else if (!IN_CIRCLE) {
+                IN_CIRCLE = true
+                visited.put (t, ())
+                var u = init
+                finish (i, "value" -> u, "cached" -> false, "phase" -> "circle")
+                do {
+                    CHANGE = false
+                    val i = start ("event" -> "AttrEval", "subject" -> t,
+                                   "attribute" -> this, "parameter" -> None,
+                                   "circular" -> true, "iter" -> true)
+                    val newu = f (t)
+                    finish (i, "value" -> newu, "cached" -> false, "phase" -> "iterate")
+                    if (u != newu) {
+                        CHANGE = true
+                        u = newu
+                    }
+                } while (CHANGE)
+                visited.remove (t)
+                computed.put (t, ())
+                memo.put (t, u)
+                IN_CIRCLE = false
+                u
+            } else if (! (visited containsKey t)) {
+                visited.put (t, ())
+                var u = value (t)
+                val newu = f (t)
+                if (u != newu) {
+                    CHANGE = true
+                    u = newu
+                    memo.put (t, u)
+                }
+                visited.remove (t)
+                finish (i, "value" -> u, "cached" -> false, "phase" -> "notvisited")
+                u
+            } else {
+                finish (i, "value" -> init, "cached" -> false, "phase" -> "initial")
+                init
+            }
+        }
+
+        /**
+         * Immediately reset this attribute's memoisation cache.
+         */
+        override def reset () {
+            super.reset ()
+            computed.clear ()
+            visited.clear ()
         }
 
     }
@@ -371,5 +426,24 @@ trait AttributionCore extends AttributionCommon {
             case f =>
                 throw new UnsupportedOperationException ("Can only extend the definition of dynamic attributes")
         }
+
+    /**
+     * Define an optionally named circular attribute of `T` nodes of type `U`
+     * by the function `f`. `f` is allowed to depend on the value of this
+     * attribute, which will be given by `init` initially and will be evaluated
+     * iteratively until a fixed point is reached (in conjunction with other
+     * circular attributes on which it depends).  The final value is cached.
+     * If `optNameDef` is not `None`, then `optNameDef.get` is used in
+     * debugging output to identify this attribute.
+     */
+    def circular[T <: AnyRef,U] (init : U) (f : T => U) : T => U =
+        macro AttributionCommonMacros.circularMacro[T,U]
+
+    /**
+     * As for the other `circular` with the first argument specifying a name for
+     * the constructed attribute.
+     */
+    def circular[T <: AnyRef,U] (name : String, init : U) (f : T => U) : T => U =
+        new CircularAttribute (name, init, f)
 
 }

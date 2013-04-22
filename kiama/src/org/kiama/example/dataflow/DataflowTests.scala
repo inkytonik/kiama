@@ -31,8 +31,7 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
 
     import DataflowAST._
     import Dataflow._
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.attribution.CircularAttribute
+    import org.kiama.attribution.Attribution._
 
     /*
      * {                     (prog)

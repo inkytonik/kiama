@@ -31,25 +31,6 @@ trait AttributionCommon {
     import scala.language.experimental.macros
 
     /**
-     * Define an optionally named circular attribute of `T` nodes of type `U`
-     * by the function `f`. `f` is allowed to depend on the value of this
-     * attribute, which will be given by `init` initially and will be evaluated
-     * iteratively until a fixed point is reached (in conjunction with other
-     * circular attributes on which it depends).  The final value is cached.
-     * If `optNameDef` is not `None`, then `optNameDef.get` is used in
-     * debugging output to identify this attribute.
-     */
-    def circular[T <: AnyRef,U] (init : U) (f : T => U) : T => U =
-        macro AttributionCommonMacros.circularMacro[T,U]
-
-    /**
-     * As for the other `circular` with the first argument specifying a name for
-     * the constructed attribute.
-     */
-    def circular[T <: AnyRef,U] (name : String, init : U) (f : T => U) : T => U =
-        new CircularAttribute (name, init, f)
-
-    /**
      * Define an optionally named constanat attribute of `T` nodes of type `U`
      * given by the value `u`. `u` is evaluated at most once. If `optNameDef`
      * is not `None`, then `optNameDef.get` is used in debugging output to
