@@ -180,7 +180,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          */
         def += (g : T ==> U) {
             g +=: functions
-            // resetMemo
+            reset ()
         }
 
         /**
@@ -191,7 +191,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          */
         def -= (g : T ==> U) {
             functions -= g
-            // resetMemo
+            reset ()
         }
 
         /**
