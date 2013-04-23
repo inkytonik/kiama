@@ -160,7 +160,8 @@ trait Compiler[T <: Attributable] extends RegexCompiler[T] {
 /**
  * A compiler that is capable of producing profiling reports. This trait
  * augments the argument processing to allow a leading `-p` option to
- * specify the profiling dimensions.
+ * specify the profiling dimensions, or a leding `-t` option to specify
+ * that timings should be collected.
  */
 trait ProfilingCompiler[T <: Attributable] extends Compiler[T] with Profiler {
 
