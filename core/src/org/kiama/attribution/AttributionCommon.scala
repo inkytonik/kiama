@@ -31,10 +31,28 @@ trait AttributionCommon {
     import scala.language.experimental.macros
 
     /**
-     * Define an optionally named constanat attribute of `T` nodes of type `U`
-     * given by the value `u`. `u` is evaluated at most once. If `optNameDef`
-     * is not `None`, then `optNameDef.get` is used in debugging output to
-     * identify this attribute.
+     * A constant attribute of a node type `T` with value of type `U`. The
+     * value is given by the computation `u` which is evaluated at most once.
+     */
+    class ConstantAttribute[T <: AnyRef,U] (name : String, u : => U) extends Attribute[T,U] (name) {
+
+        /**
+         * Lazily computed result of evaluating the attribute's computation.
+         */
+        private lazy val result = u
+
+        /**
+         * Return the value of this attribute for node `t`, always returning
+         * `u` but only evaluating it once.
+         */
+        def apply (t : T) : U =
+            result
+
+    }
+
+    /**
+     * Define a constant attribute of `T` nodes of type `U` given by the value
+     * `u`. `u` is evaluated at most once.
      */
     def constant[T <: AnyRef,U] (u : => U) : Attribute[T,U] =
         macro AttributionCommonMacros.constantMacro[T,U]

@@ -327,9 +327,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
     /**
      * Define a cached attribute of `T` nodes of type `U` by the function `f`,
      * which should not depend on the value of this attribute.  The computed
-     * attribute value is cached so it will be computed at most once. If
-     * `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
-     * output to identify this attribute.
+     * attribute value is cached so it will be computed at most once.
      */
     def attr[T <: AnyRef,U] (f : T => U) : CachedAttribute[T,U] =
         macro AttributionMacros.attrMacro[T,U,CachedAttribute[T,U]]
@@ -345,8 +343,6 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * Define a cached dynamic attribute of `T` nodes of type `U` by the partial
      * function `f`, which should not depend on the value of this attribute.
      * The computed attribute value is cached so it will be computed at most once.
-     * If `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
-     * output to identify this attribute.
      */
     def dynAttr[T <: AnyRef,U] (f : T => U) : CachedDynamicAttribute[T,U] =
         macro AttributionMacros.dynAttrMacro[T,U,CachedDynamicAttribute[T,U]]
@@ -362,8 +358,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * Define a parameterised attribute of `T` nodes of type `U` by the function
      * `f`, which takes an argument of type `A`.  The computed attribute value
      * for a given `T` and `A` pair is cached so it will be computed at most
-     * once.  If `optNameDef` is not `None`, then `optNameDef.get` and the `A`
-     * value are used in debugging output to identify this attribute.
+     * once.
      */
     def paramAttr[V,T <: AnyRef,U] (f : V => T => U) : CachedParamAttribute[V,T,U] =
         macro AttributionMacros.paramAttrMacro[V,T,U,CachedParamAttribute[V,T,U]]
@@ -379,8 +374,6 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * Define an attribute of `T` nodes of type `U` by the function `f`, which
      * takes the current node and its parent as its arguments. `T` must be
      * a sub-type of `Attributable` so that parents can be accessed generically.
-     * If `optNameDef` is not `None`, then `optNameDef.get` is used in debugging
-     * output to identify this attribute.
      */
     def childAttr[T <: Attributable,U] (f : T => Attributable => U) : CachedAttribute[T,U] =
         macro AttributionMacros.childAttrMacro[T,U,CachedAttribute[T,U]]
@@ -397,9 +390,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * attribute must have a tree value and will be spliced into the tree to
      * have the same parent as the node on which it is defined.  This kind of
      * attribute is used to generate new trees that must share context
-     * with the node on which they are defined. If `optNameDef` is not `None`,
-     * then `optNameDef.get` is used in debugging output to identify this
-     * attribute.
+     * with the node on which they are defined.
      */
     def tree[T <: Attributable,U <: Attributable] (f : T => U) : CachedAttribute[T,U] =
         macro AttributionMacros.treeMacro[T,U,CachedAttribute[T,U]]
@@ -433,8 +424,6 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * attribute, which will be given by `init` initially and will be evaluated
      * iteratively until a fixed point is reached (in conjunction with other
      * circular attributes on which it depends).  The final value is cached.
-     * If `optNameDef` is not `None`, then `optNameDef.get` is used in
-     * debugging output to identify this attribute.
      */
     def circular[T <: AnyRef,U] (init : U) (f : T => U) : T => U =
         macro AttributionCommonMacros.circularMacro[T,U]
