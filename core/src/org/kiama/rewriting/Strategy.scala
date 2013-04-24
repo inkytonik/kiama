@@ -21,8 +21,6 @@
 package org.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.dsprofile.Events.wrap
-
 /**
  * Any-rewriting strategies. A strategy is a function that takes a term
  * of any type as input and either succeeds producing a new term (`Some`),
@@ -37,7 +35,16 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      */
     p =>
 
+    import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
     import scala.language.experimental.macros
+
+    /**
+     * Make one of these strategies with the given name and body `f`.
+     */
+    def mkStrategy (name : String, f : Any => Option[Any]) : Strategy =
+        new Strategy (name) {
+            val body = f
+        }
 
     /**
      * Implementation of this strategy. When applied to a term produce either
@@ -50,10 +57,13 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * Apply this strategy to a term. By default, just run the implementation
      * body wrapped in profiling.
      */
-    def apply (r : Any) : Option[Any] =
-        wrap ("event" -> "StratEval", "strategy" -> this, "subject" -> r) {
-            body (r)
-        }
+    def apply (r : Any) : Option[Any] = {
+        val i = start ("event" -> "StratEval", "strategy" -> this,
+                       "subject" -> r, "subjectHash" -> r.##)
+        val result = body (r)
+        finish (i, "result" -> result)
+        result
+    }
 
     /**
      * Sequential composition. Construct a strategy that first applies
@@ -68,14 +78,13 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * the constructed strategy.
      */
     def <* (name : String, q : => Strategy) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t1 : Any) =>
-                    p (t1) match {
-                        case Some (t2) => q (t2)
-                        case None      => None
-                    }
-        }
+        mkStrategy (name,
+            t1 =>
+                p (t1) match {
+                    case Some (t2) => q (t2)
+                    case None      => None
+                }
+        )
 
     /**
      * Deterministic choice.  Construct a strategy that first applies
@@ -91,14 +100,13 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * the constructed strategy.
      */
     def <+ (name : String, q : => Strategy) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t1 : Any) =>
-                    p (t1) match {
-                        case Some (t2) => Some (t2)
-                        case None      => q (t1)
-                    }
-        }
+        mkStrategy (name,
+            (t1 : Any) =>
+                p (t1) match {
+                    case Some (t2) => Some (t2)
+                    case None      => q (t1)
+                }
+        )
 
     /**
      * Non-deterministic choice. Normally, construct a strategy that
@@ -135,52 +143,18 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * the constructed strategy.
      */
     def < (name : String, lr : => PlusStrategy) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t1 : Any) =>
-                    p (t1) match {
-                        case Some (t2) => lr.left (t2)
-                        case None      => lr.right (t1)
-                    }
-        }
+        mkStrategy (name,
+            t1 =>
+                p (t1) match {
+                    case Some (t2) => lr.left (t2)
+                    case None      => lr.right (t1)
+                }
+        )
 
     /**
      * Identify this strategy by its name.
      */
     override def toString : String =
         name
-
-}
-
-/**
- * Helper class to contain commonality of choice in non-deterministic
- * choice operator and then-else part of a conditional choice. Only
- * returned by the non-deterministic choice operator. The first argument
- * specifies a name for the constructed strategy. `p` and `q` are
- * evaluated at most once.
- */
-class PlusStrategy (name : String, p : => Strategy, q : => Strategy) extends Strategy (name) {
-
-    /**
-     * The left alternative of the choice.
-     */
-    lazy val left = p
-
-    /**
-     * The right alternative of the choice.
-     */
-    lazy val right = q
-
-    /**
-     * The strategy itself (lazily computed).
-     */
-    private lazy val s = left <+ (name, right)
-
-    /**
-     * Implementation of this strategy. Just apply `s`.
-     */
-    val body =
-        (t : Any) =>
-            s (t)
 
 }

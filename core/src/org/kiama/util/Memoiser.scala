@@ -44,7 +44,7 @@ trait Memoiser {
      * Common interface for encapsulation of memoisation for a single memoised
      * entity.
      */
-    trait MemoisedCore[T,U] {
+    trait MemoisedBase[T,U] {
 
         /**
          * The version number of this entities memo table.
@@ -55,6 +55,11 @@ trait Memoiser {
          * Immediately reset the memo table.
          */
         def reset ()
+
+        /**
+         * Has the value of this attribute at `t` already been computed or not?
+         */
+        def hasBeenComputedAt (t : T) : Boolean
 
         /**
          * Check to see if a reset has been requested via the common memo
@@ -72,7 +77,7 @@ trait Memoiser {
     /**
      * A memoised entity that uses equality to compare argument values.
      */
-    trait Memoised[T,U] extends MemoisedCore[T,U] {
+    trait Memoised[T,U] extends MemoisedBase[T,U] {
 
         import scala.collection.mutable.HashMap
 
@@ -102,7 +107,7 @@ trait Memoiser {
     /**
      * A memoised entity that uses identity to compare argument values.
      */
-    trait IdMemoised[T,U] extends MemoisedCore[T,U] {
+    trait IdMemoised[T,U] extends MemoisedBase[T,U] {
 
         import java.util.IdentityHashMap
 

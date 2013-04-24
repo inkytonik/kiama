@@ -54,32 +54,40 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.allbu
      */
-    def allbu (name : String, s : Strategy) : Strategy =
-        all (allbu (s)) <+ (name, s)
+    def allbu (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = all (result) <+ (name, s)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.alltd
      */
-    def alltd (name : String, s : Strategy) : Strategy =
-        s <+ (name, all (alltd (s)))
+    def alltd (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = s <+ (name, all (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.alldownup2
      */
-    def alldownup2 (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
-        (s1 <+ all (alldownup2 (s1, s2))) <* (name, s2)
+    def alldownup2 (name : String, s1 : Strategy, s2 : Strategy) : Strategy = {
+        lazy val result : Strategy = (s1 <+ all (result)) <* (name, s2)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.alltdfold
      */
-    def alltdfold (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
-        s1 <+ (name, all (alltdfold (s1, s2)) <* s2)
+    def alltdfold (name : String, s1 : Strategy, s2 : Strategy) : Strategy = {
+        lazy val result : Strategy = s1 <+ (name, all (result) <* s2)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -110,16 +118,20 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.bottomupS
      */
-    def bottomupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        (stop (bottomupS (s, stop)) <+ all (bottomupS (s, stop))) <* (name, s)
+    def bottomupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
+        lazy val result : Strategy = (stop (result) <+ all (result)) <* (name, s)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.breadthfirst
      */
-    def breadthfirst (name : String, s : Strategy) : Strategy =
-        all (s) <* (name, all (breadthfirst (s)))
+    def breadthfirst (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = all (s) <* (name, all (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -141,32 +153,40 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.downup
      */
-    def downup (name : String, s : Strategy) : Strategy =
-        s <* all (downup (s)) <* (name, s)
+    def downup (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = s <* all (result) <* (name, s)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.downup
      */
-    def downup (name : String, s1 : Strategy, s2 : Strategy) : Strategy =
-        s1 <* all (downup (s1, s2)) <* (name, s2)
+    def downup (name : String, s1 : Strategy, s2 : Strategy) : Strategy = {
+        lazy val result : Strategy = s1 <* all (result) <* (name, s2)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.downupS
      */
-    def downupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        s <* (name, stop (downupS (s, stop)) <+ all (downupS (s, stop)) <* s)
+    def downupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
+        lazy val result : Strategy = s <* (name, stop (result) <+ all (result) <* s)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.downupS
      */
-    def downupS (name : String, s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        s1 <* (name, stop (downupS (s1, s2, stop)) <+ all (downupS (s1, s2, stop)) <* s2)
+    def downupS (name : String, s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
+        lazy val result : Strategy = s1 <* (name, stop (result) <+ all (result) <* s2)
+        result
+    }
 
     /**
      * A strategy that tests whether the two sub-terms of a pair of terms are equal.
@@ -212,8 +232,10 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.innermost
      */
-    def innermost (name : String, s : Strategy) : Strategy =
-        bottomup (name, attempt (s <* innermost (s)))
+    def innermost (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = bottomup (name, attempt (s <* result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -243,7 +265,7 @@ trait Rewriter extends RewriterCore {
      * direct subterms.
      */
     val isleaf : Strategy =
-      all (fail)
+        all (fail)
 
     /**
      * Construct a strategy that succeeds when applied to a pair `(x,y)`
@@ -290,24 +312,30 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.leaves
      */
-    def leaves (name : String, s : Strategy, isleaf : Strategy) : Strategy =
-        (isleaf <* s) <+ (name, all (leaves (s, isleaf)))
+    def leaves (name : String, s : Strategy, isleaf : Strategy) : Strategy = {
+        lazy val result : Strategy = (isleaf <* s) <+ (name, all (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.leaves
      */
-    def leaves (name : String, s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy =
-        (isleaf <* s) <+ (name, skip (leaves (s, isleaf, skip)) <+ all (leaves (s, isleaf, skip)))
+    def leaves (name : String, s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy = {
+        lazy val result : Strategy = (isleaf <* s) <+ (name, skip (result) <+ all (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.loop
      */
-    def loop (name : String, c : Strategy, s : Strategy) : Strategy =
-        attempt (name, c <* s <* loop (c, s))
+    def loop (name : String, c : Strategy, s : Strategy) : Strategy = {
+        lazy val result : Strategy = attempt (name, c <* s <* result)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -333,8 +361,10 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.loopnot
      */
-    def loopnot (name : String, r : Strategy, s : Strategy) : Strategy =
-        r <+ (name, s <* loopnot (r, s))
+    def loopnot (name : String, r : Strategy, s : Strategy) : Strategy = {
+        lazy val result : Strategy = r <+ (name, s <* result)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -352,16 +382,20 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.manybu
      */
-    def manybu (name : String, s : Strategy) : Strategy =
-        some (manybu (s)) <* attempt (s) <+ (name, s)
+    def manybu (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = some (result) <* attempt (s) <+ (name, s)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.manytd
      */
-    def manytd (name : String, s : Strategy) : Strategy =
-        s <* all (attempt (manytd (s))) <+ (name, some (manytd (s)))
+    def manytd (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = s <* all (attempt (result)) <+ (name, some (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -376,16 +410,20 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.oncebu
      */
-    def oncebu (name : String, s : Strategy) : Strategy =
-        one (oncebu (s)) <+ (name, s)
+    def oncebu (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = one (result) <+ (name, s)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.oncetd
      */
-    def oncetd (name : String, s : Strategy) : Strategy =
-        s <+ (name, one (oncetd (s)))
+    def oncetd (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = s <+ (name, one (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -409,8 +447,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.reduce
      */
     def reduce (name : String, s : Strategy) : Strategy = {
-        def x : Strategy = some (x) + s
-        repeat (name, x)
+        lazy val inner : Strategy = some (inner) + s
+        repeat (name, inner)
     }
 
     /**
@@ -418,16 +456,20 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.repeat
      */
-    def repeat (name : String, s : Strategy) : Strategy =
-        attempt (name, s <* (repeat (s)))
+    def repeat (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = attempt (name, s <* result)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.repeat
      */
-    def repeat (name : String, s : Strategy, r : Strategy) : Strategy =
-        (s <* (repeat (s, r))) <+ (name, r)
+    def repeat (name : String, s : Strategy, r : Strategy) : Strategy = {
+        lazy val result : Strategy = (s <* result) <+ (name, r)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -450,16 +492,20 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.repeat1
      */
-    def repeat1 (name : String, s : Strategy, r : Strategy) : Strategy =
-        s <* (name, repeat1 (s, r) <+ (r))
+    def repeat1 (name : String, s : Strategy, r : Strategy) : Strategy = {
+        lazy val result : Strategy = s <* (name, result <+ r)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.repeatuntil
      */
-    def repeatuntil (name : String, s : Strategy, r : Strategy) : Strategy =
-        s <* (name, r <+ repeatuntil (s, r))
+    def repeatuntil (name : String, s : Strategy, r : Strategy) : Strategy = {
+        lazy val result : Strategy = s <* (name, r <+ result)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -482,24 +528,30 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.somebu
      */
-    def somebu (name : String, s : Strategy) : Strategy =
-        some (somebu (s)) <+ (name, s)
+    def somebu (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = some (result) <+ (name, s)
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.somedownup
      */
-    def somedownup (name : String, s : Strategy) : Strategy =
-        (s <* all (somedownup (s)) <* (attempt (s))) <+ (name, some (somedownup (s)) <+ attempt (s))
+    def somedownup (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = (s <* all (result) <* (attempt (s))) <+ (name, some (result) <+ attempt (s))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.sometd
      */
-    def sometd (name : String, s : Strategy) : Strategy =
-        s <+ (name, some (sometd (s)))
+    def sometd (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = s <+ (name, some (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -514,16 +566,20 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.topdown
      */
-    def topdown (name : String, s : Strategy) : Strategy =
-        s <* (name, all (topdown (s)))
+    def topdown (name : String, s : Strategy) : Strategy = {
+        lazy val result : Strategy = s <* (name, all (result))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
      * @see RewriterCore.topdownS
      */
-    def topdownS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        s <* (stop (topdownS (s, stop)) <+ (name, all (topdownS (s, stop))))
+    def topdownS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
+        lazy val result : Strategy = s <* (stop (result) <+ (name, all (result)))
+        result
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but

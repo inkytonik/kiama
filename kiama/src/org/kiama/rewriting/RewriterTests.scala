@@ -31,7 +31,13 @@ import org.scalatest.prop.Checkers
 class RewriterTests extends Tests with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._
-    import org.kiama.rewriting.Rewriter.{fail => rwfail, test => rwtest, _}
+
+    /**
+     * The rewriter which is being tested.
+     */
+    val rewriter : Rewriter = Rewriter
+
+    import rewriter.{fail => rwfail, test => rwtest, _}
 
     test ("basic arithmetic evaluation") {
         val eval =
@@ -1407,23 +1413,24 @@ class RewriterTests extends Tests with Checkers with Generator {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Var ("1.0"), Var ("2.0")), Var ("3.0")), Sub (Var ("4.0"), Var ("5.0")))
 
-        var l : List[Double] = Nil
-
-        val r = rule {
-                    case Num (i) => l = l :+ i
-                                    Var (i.toString)
-                }
-
         test ("innermost visits the correct nodes in the correct order") {
+            var l : List[Double] = Nil
+            val r = rule {
+                        case Num (i) => l = l :+ i
+                                        Var (i.toString)
+                    }
             val s = innermost (r)
-            l = Nil
             expectResult (Some (u)) (s (t))
             expectResult (List (1, 2, 3, 4, 5)) (l)
         }
 
         test ("innermost2 visits the correct node") {
+            var l : List[Double] = Nil
+            val r = rule {
+                        case Num (i) => l = l :+ i
+                                        Var (i.toString)
+                    }
             val s = innermost2 (r)
-            l = Nil
             expectResult (Some (u)) (s (t))
             expectResult (List (1, 2, 3, 4, 5)) (l)
         }
@@ -1800,36 +1807,44 @@ class RewriterTests extends Tests with Checkers with Generator {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Num (12), Num (13)), Num (14)), Sub (Num (16), Num (17)))
 
-        var l : List[Double] = Nil
-        var count = 9
-
-        val r = rule {
-                    case Num (i) => l = l :+ i
-                                    Num (count)
-                    case n       => count = count + 1
-                                    n
-                }
-
         test ("everywhere traverses in expected order") {
+            var l : List[Double] = Nil
+            var count = 9
+            val r = rule {
+                        case Num (i) => l = l :+ i
+                                        Num (count)
+                        case n       => count = count + 1
+                                        n
+                    }
             val s = everywhere (r)
-            count = 9
-            l = Nil
             expectResult (Some (u)) (s (t))
             expectResult (List (1, 2, 3, 4, 5)) (l)
         }
 
         test ("everywheretd traverses in expected order") {
+            var l : List[Double] = Nil
+            var count = 9
+            val r = rule {
+                        case Num (i) => l = l :+ i
+                                        Num (count)
+                        case n       => count = count + 1
+                                        n
+                    }
             val s = everywheretd (r)
-            count = 9
-            l = Nil
             expectResult (Some (u)) (s (t))
             expectResult (List (1, 2, 3, 4, 5)) (l)
         }
 
         test ("everywherebu traverses in expected order") {
+            var l : List[Double] = Nil
+            var count = 9
+            val r = rule {
+                        case Num (i) => l = l :+ i
+                                        Num (count)
+                        case n       => count = count + 1
+                                        n
+                    }
             val s = everywheretd (r)
-            count = 9
-            l = Nil
             expectResult (Some (u)) (s (t))
             expectResult (List (1, 2, 3, 4, 5)) (l)
         }

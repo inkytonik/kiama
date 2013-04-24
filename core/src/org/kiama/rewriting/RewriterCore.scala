@@ -27,13 +27,21 @@ package rewriting
  */
 trait RewriterCore {
 
-    import org.bitbucket.inkytonik.dsprofile.Events.wrap
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
     import scala.collection.mutable.Builder
     import scala.collection.mutable.WeakHashMap
     import scala.language.higherKinds
     import scala.language.experimental.macros
+
+    /**
+     * Make a strategy with the given name and body `f`. By default, make a
+     * basic strategy.
+     */
+    def mkStrategy (name : String, f : Any => Option[Any]) : Strategy =
+        new Strategy (name) {
+            val body = f
+        }
 
     // Builder combinators.
 
@@ -71,21 +79,13 @@ trait RewriterCore {
      * A strategy that always fails.
      */
     val fail : Strategy =
-        new Strategy ("fail") {
-            val body =
-                (r : Any) =>
-                    None
-        }
+        mkStrategy ("fail", _ => None)
 
     /**
      * A strategy that always succeeds.
      */
     val id : Strategy =
-        new Strategy ("id") {
-            val body =
-                (r : Any) =>
-                    Some (r)
-        }
+        mkStrategy ("id", Some (_))
 
     /**
      * Create a logging strategy based on a strategy `s`. The returned strategy
@@ -103,20 +103,19 @@ trait RewriterCore {
      */
     def log (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
         lazy val strat = s
-        new Strategy (name) {
-            val body =
-                (t1 : Any) => {
-                    emitter.emit (msg + t1)
-                    val r = strat (t1)
-                    r match {
-                        case Some (t2) =>
-                            emitter.emitln (" succeeded with " + t2)
-                        case None =>
-                            emitter.emitln (" failed")
-                    }
-                    r
+        mkStrategy (name,
+            t1 => {
+                emitter.emit (msg + t1)
+                val r = strat (t1)
+                r match {
+                    case Some (t2) =>
+                        emitter.emitln (" succeeded with " + t2)
+                    case None =>
+                        emitter.emitln (" failed")
                 }
-        }
+                r
+            }
+        )
     }
 
     /**
@@ -134,19 +133,18 @@ trait RewriterCore {
      */
     def logfail[T] (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
         lazy val strat = s
-        new Strategy (name) {
-            val body =
-                (t1 : Any) => {
-                    val r = strat (t1)
-                    r match {
-                        case Some (t2) =>
-                            // Do nothing
-                        case None =>
-                            emitter.emitln (msg + t1 + " failed")
-                    }
-                    r
+        mkStrategy (name,
+            t1 => {
+                val r = strat (t1)
+                r match {
+                    case Some (t2) =>
+                        // Do nothing
+                    case None =>
+                        emitter.emitln (msg + t1 + " failed")
                 }
-        }
+                r
+            }
+        )
     }
 
     /**
@@ -165,13 +163,8 @@ trait RewriterCore {
      */
     def memo (name : String, s : => Strategy) : Strategy = {
         lazy val strat = s
-        new Strategy (name) {
-            private val cache =
-                new scala.collection.mutable.HashMap[Any,Option[Any]]
-            val body =
-                (t : Any) =>
-                    cache.getOrElseUpdate (t, strat (t))
-        }
+        val cache = new scala.collection.mutable.HashMap[Any,Option[Any]]
+        mkStrategy (name, t => cache.getOrElseUpdate (t, strat (t)))
     }
 
     /**
@@ -218,14 +211,13 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def query[T] (name : String, f : Any ==> T) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t : Any) => {
-                    if (f isDefinedAt t)
-                        f (t)
-                    Some (t)
-                }
-        }
+        mkStrategy (name,
+            t => {
+                if (f isDefinedAt t)
+                    f (t)
+                Some (t)
+            }
+        )
 
     /**
      * Define a term query by a function `f`. The query always succeeds with
@@ -241,13 +233,12 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def queryf[T] (name : String, f : Any => T) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t : Any) => {
-                    f (t)
-                    Some (t)
-                }
-        }
+        mkStrategy (name,
+            t => {
+                f (t)
+                Some (t)
+            }
+        )
 
     /**
      * Define a rewrite rule using a partial function `f`. If the function is
@@ -263,14 +254,13 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def rule (name : String, f : Any ==> Any) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t : Any) =>
-                    if (f isDefinedAt t)
-                        Some (f (t))
-                    else
-                        None
-        }
+        mkStrategy (name,
+            t =>
+                if (f isDefinedAt t)
+                    Some (f (t))
+                else
+                    None
+        )
 
     /**
      * Define a rewrite rule using a function `f` that returns a term.
@@ -301,14 +291,13 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def rulefs (name : String, f : Any ==> Strategy) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t : Any) =>
-                    if (f isDefinedAt t)
-                        (f (t)) (t)
-                    else
-                        None
-        }
+        mkStrategy (name,
+            t =>
+                if (f isDefinedAt t)
+                    (f (t)) (t)
+                else
+                    None
+        )
 
     /**
      * Make a strategy from a partial function `f`. If the function is
@@ -325,14 +314,13 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def strategy (name : String, f : Any ==> Option[Any]) : Strategy =
-        new Strategy (name) {
-            val body =
-                (t : Any) =>
-                    if (f isDefinedAt t)
-                        f (t)
-                    else
-                        None
-        }
+        mkStrategy (name,
+            t =>
+                if (f isDefinedAt t)
+                    f (t)
+                else
+                    None
+        )
 
     /**
      * Make a strategy from a function `f`. The function return value
@@ -346,9 +334,7 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def strategyf (name : String, f : Any => Option[Any]) : Strategy =
-        new Strategy (name) {
-            val body = f
-        }
+        mkStrategy (name, f)
 
     /**
      * Construct a strategy that succeeds only if the subject term matches
@@ -424,19 +410,15 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def child (name : String, i : Int, s : => Strategy) : Strategy =
-        new Strategy (name) {
-
+        mkStrategy (name, {
             lazy val strat = s
-
-            val body =
-                (t : Any) =>
-                    t match {
-                        case p : Product => childProduct (strat, i, p)
-                        case t : Seq[_]  => childSeq (strat, i, t.asInstanceOf[Seq[Any]])
-                        case _           => None
-                    }
-
-        }
+            t =>
+                t match {
+                    case p : Product => childProduct (strat, i, p)
+                    case t : Seq[_]  => childSeq (strat, i, t.asInstanceOf[Seq[Any]])
+                    case _           => None
+                }
+        })
 
     def childProduct (s : Strategy, i : Int, p : Product) : Option[Any] = {
         val numchildren = p.productArity
@@ -537,21 +519,17 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def all (name : String, s : => Strategy) : Strategy =
-        new Strategy (name) {
-
+        mkStrategy (name, {
             lazy val strat = s
-
-            val body =
-                (t : Any) =>
-                    t match {
-                        case r : Rewritable     => allRewritable (strat, r)
-                        case p : Product        => allProduct (strat, p)
-                        case m : Map[_,_]       => allMap (strat, m.asInstanceOf[Map[Any,Any]])
-                        case t : Traversable[_] => allTraversable (strat, t.asInstanceOf[Traversable[Any]])
-                        case _                  => Some (t)
-                    }
-
-        }
+            t =>
+                t match {
+                    case r : Rewritable     => allRewritable (strat, r)
+                    case p : Product        => allProduct (strat, p)
+                    case m : Map[_,_]       => allMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => allTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                    case _                  => Some (t)
+                }
+        })
 
     def allRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
@@ -683,21 +661,17 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def one (name : String, s : => Strategy) : Strategy =
-        new Strategy (name) {
-
+        mkStrategy (name, {
             lazy val strat = s
-
-            val body =
-                (t : Any) =>
-                    t match {
-                        case r : Rewritable     => oneRewritable (strat, r)
-                        case p : Product        => oneProduct (strat, p)
-                        case m : Map[_,_]       => oneMap (strat, m.asInstanceOf[Map[Any,Any]])
-                        case t : Traversable[_] => oneTraversable (strat, t.asInstanceOf[Traversable[Any]])
-                        case _                  => None
-                    }
-
-        }
+            t =>
+                t match {
+                    case r : Rewritable     => oneRewritable (strat, r)
+                    case p : Product        => oneProduct (strat, p)
+                    case m : Map[_,_]       => oneMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => oneTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                    case _                  => None
+                }
+        })
 
     def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
@@ -837,21 +811,17 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def some (name : String, s : => Strategy) : Strategy =
-        new Strategy (name) {
-
+        mkStrategy (name, {
             lazy val strat = s
-
-            val body =
-                (t : Any) =>
-                    t match {
-                        case r : Rewritable     => someRewritable (strat, r)
-                        case p : Product        => someProduct (strat, p)
-                        case m : Map[_,_]       => someMap (strat, m.asInstanceOf[Map[Any,Any]])
-                        case t : Traversable[_] => someTraversable (strat, t.asInstanceOf[Traversable[Any]])
-                        case _                  => None
-                    }
-
-        }
+            t =>
+                t match {
+                    case r : Rewritable     => someRewritable (strat, r)
+                    case p : Product        => someProduct (strat, p)
+                    case m : Map[_,_]       => someMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] => someTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                    case _                  => None
+                }
+        })
 
     def someRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
@@ -998,16 +968,13 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def congruence (name : String, ss : Strategy*) : Strategy =
-        new Strategy (name) {
-
-            val body =
-                (t : Any) =>
-                    t match {
-                        case p : Product => congruenceProduct (p, ss : _*)
-                        case _           => Some (t)
-                    }
-
-        }
+        mkStrategy (name,
+            t =>
+                t match {
+                    case p : Product => congruenceProduct (p, ss : _*)
+                    case _           => Some (t)
+                }
+        )
 
     def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
        val numchildren = p.productArity
