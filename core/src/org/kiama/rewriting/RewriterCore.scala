@@ -420,6 +420,9 @@ trait RewriterCore {
                 }
         })
 
+    /**
+     * Implementation of `child` for `Product` values.
+     */
     def childProduct (s : Strategy, i : Int, p : Product) : Option[Any] = {
         val numchildren = p.productArity
         if ((i < 1) || (i > numchildren)) {
@@ -445,6 +448,9 @@ trait RewriterCore {
         }
     }
 
+    /**
+     * Implementation of `child` for `Seq` values.
+     */
     def childSeq[CC[U] <: Seq[U]] (s : Strategy, i : Int, t : CC[Any])
             (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
                         : Option[CC[Any]] = {
@@ -531,6 +537,9 @@ trait RewriterCore {
                 }
         })
 
+    /**
+     * Implementation of `all` for `Rewritable` values.
+     */
     def allRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
         if (numchildren == 0)
@@ -560,6 +569,9 @@ trait RewriterCore {
         }
     }
 
+    /**
+     * Implementation of `all` for `Product` values.
+     */
     def allProduct (s : Strategy, p : Product) : Option[Any] = {
         val numchildren = p.productArity
         if (numchildren == 0)
@@ -588,6 +600,9 @@ trait RewriterCore {
         }
     }
 
+    /**
+     * Implementation of `all` for `Traversable` values.
+     */
     def allTraversable[CC[_] <: Traversable[Any]] (s : Strategy, t : CC[Any])
             (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
                         : Option[CC[Any]] =
@@ -612,6 +627,9 @@ trait RewriterCore {
                 Some (t)
         }
 
+    /**
+     * Implementation of `all` for `Map` values.
+     */
     def allMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
             (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
                         : Option[CC[Any,Any]] =
@@ -673,6 +691,9 @@ trait RewriterCore {
                 }
         })
 
+    /**
+     * Implementation of `one` for `Rewritable` values.
+     */
     def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
         val children = r.deconstruct
@@ -705,6 +726,9 @@ trait RewriterCore {
         None
     }
 
+    /**
+     * Implementation of `one` for `Product` values.
+     */
     def oneProduct (s : Strategy, p : Product) : Option[Any] = {
         val numchildren = p.productArity
         var i = 0
@@ -736,6 +760,9 @@ trait RewriterCore {
         None
     }
 
+    /**
+     * Implementation of `one` for `Traversable` values.
+     */
     def oneTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
                 (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
                         : Option[CC[Any]] = {
@@ -761,6 +788,9 @@ trait RewriterCore {
             Some (b.result)
     }
 
+    /**
+     * Implementation of `one` for `Map` values.
+     */
     def oneMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
                 (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
                         : Option[CC[Any,Any]] = {
@@ -823,6 +853,9 @@ trait RewriterCore {
                 }
         })
 
+    /**
+     * Implementation of `some` for `Rewritable` values.
+     */
     def someRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
         if (numchildren == 0)
@@ -857,6 +890,9 @@ trait RewriterCore {
         }
     }
 
+    /**
+     * Implementation of `some` for `Product` values.
+     */
     def someProduct (s : Strategy, p : Product) : Option[Any] = {
         val numchildren = p.productArity
         if (numchildren == 0)
@@ -890,6 +926,9 @@ trait RewriterCore {
         }
     }
 
+    /**
+     * Implementation of `some` for `Traversable` values.
+     */
     def someTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
                 (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
                         : Option[CC[Any]] =
@@ -919,6 +958,9 @@ trait RewriterCore {
                 None
         }
 
+    /**
+     * Implementation of `some` for `Map` values.
+     */
     def someMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
                 (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
                         : Option[CC[Any,Any]] =
@@ -976,6 +1018,9 @@ trait RewriterCore {
                 }
         )
 
+    /**
+     * Implementation of `congruence` for `Product` values.
+     */
     def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
        val numchildren = p.productArity
        if (numchildren == ss.length) {
