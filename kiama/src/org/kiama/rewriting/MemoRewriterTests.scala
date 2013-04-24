@@ -23,12 +23,19 @@ package rewriting
 
 import org.kiama.util.Tests
 
-abstract class N
-case class A () extends N
-case class B () extends N
-case class S (n : N) extends N
-case class T (n : N, uses : Int) extends N
-case class P (l : N, r : N) extends N
+/**
+ * Supporting definitions for the memo rewriter tests.
+ */
+object MemoRewriterTestsSupport {
+
+    abstract class N
+    case class A () extends N
+    case class B () extends N
+    case class S (n : N) extends N
+    case class T (n : N, uses : Int) extends N
+    case class P (l : N, r : N) extends N
+
+}
 
 /**
  * Tests of memoising rewriting.
@@ -39,6 +46,7 @@ class MemoRewriterTests extends {
 
 } with RewriterTests {
 
+    import MemoRewriterTestsSupport._
     import rewriter.{test => rwtest, _}
 
     val atob =
