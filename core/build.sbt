@@ -1,7 +1,7 @@
 // Dependencies
 
 libraryDependencies ++= Seq (
-    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.1.0",
+    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.2.0",
     "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0"
 )
 
