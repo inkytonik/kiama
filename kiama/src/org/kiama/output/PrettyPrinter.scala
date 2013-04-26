@@ -899,3 +899,8 @@ trait PrettyPrinter extends PrettyPrinterBase {
     }
 
 }
+
+/**
+ * Default pretty printer.
+ */
+object PrettyPrinter extends PrettyPrinter

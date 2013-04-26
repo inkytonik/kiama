@@ -35,7 +35,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     import Syntax._
 
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.iswim.driver.PrettyPrinter._
+    import org.kiama.output.PrettyPrinter._
     import org.kiama.util.Messaging._
 
     import SECDBase._

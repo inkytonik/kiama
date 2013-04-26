@@ -26,12 +26,10 @@ package example.iswim.secd
  * Add boolean values and associated operations to a SECD machine
  */
 
-import org.kiama.output.PrettyPrinter
-
 object BooleanOps {
 
     import SECDBase._
-    import org.kiama.example.iswim.driver.PrettyPrinter._
+    import org.kiama.output.PrettyPrinter._
 
     /**
      * Extra bytecode instructions for this extension

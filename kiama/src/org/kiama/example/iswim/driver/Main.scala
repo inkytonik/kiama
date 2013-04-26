@@ -34,7 +34,7 @@ import org.kiama.util.StdoutEmitter
 object Main extends Parser with SemanticAnalysis with CodeGenerator with StdoutEmitter {
 
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.iswim.driver.PrettyPrinter._
+    import org.kiama.output.PrettyPrinter._
     import org.kiama.util.Emitter
     import org.kiama.util.IO.filereader
     import org.kiama.util.Messaging._

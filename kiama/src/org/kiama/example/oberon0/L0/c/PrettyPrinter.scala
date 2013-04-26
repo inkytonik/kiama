@@ -22,8 +22,6 @@ package org.kiama
 package example.oberon0
 package L0.c
 
-import org.kiama.output.ParenPrettyPrinter
-
 trait PrettyPrinter extends base.c.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
