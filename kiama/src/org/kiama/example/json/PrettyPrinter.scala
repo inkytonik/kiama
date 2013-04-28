@@ -44,7 +44,7 @@ trait PrettyPrinting extends org.kiama.output.PrettyPrinter {
             case JNull ()     => "null"
             case JTrue ()     => "true"
             case JFalse ()    => "false"
-            case JNumber (d)  => value (if (d.toInt.toDouble == d) d.toInt else d)
+            case JNumber (d)  => value (if (d.isWhole) d.toInt else d)
             case JString (s)  => dquotes (value (s))
             case JArray (vs)  =>
                 brackets (group (nest (line <> ssep (vs map show, comma <> line)) <> line))
