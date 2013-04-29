@@ -94,10 +94,9 @@ trait UncachedAttributionCore extends AttributionCommon {
                                    "attribute" -> this, "parameter" -> Some (arg),
                                    "circular" -> false)
                     val key = new ParamAttributeKey (arg, t)
-                    if (visited containsKey key) {
-
+                    if (visited containsKey key)
                         throw new IllegalStateException ("Cycle detected in attribute evaluation")
-                    } else {
+                    else {
                         visited.put (key, ())
                         val u = f (arg) (t)
                         visited.remove (key)
