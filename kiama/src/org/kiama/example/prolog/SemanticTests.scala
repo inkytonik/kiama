@@ -51,8 +51,8 @@ class SemanticTestDriver extends SyntaxAnalysis with Compiler[Program]
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.
      */
-    override def process (ast : Program, console : Console, emitter : Emitter) : Boolean = {
-        super.process (ast, console, emitter)
+    override def process (filename : String, ast : Program, console : Console, emitter : Emitter) : Boolean = {
+        super.process (filename, ast, console, emitter)
         resetmessages
         check (ast)
         if (messagecount > 0) {

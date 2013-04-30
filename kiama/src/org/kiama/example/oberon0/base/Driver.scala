@@ -164,7 +164,7 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
                     val reader = filereader (arg)
                     makeast (reader, arg, emitter) match {
                         case Left (ast) =>
-                            process (ast, console, emitter)
+                            process (arg, ast, console, emitter)
                         case Right (msg) =>
                             if (challengeFlag) {
                                 section (emitter, "stdout")
@@ -196,10 +196,10 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
      * Process the given abstract syntax tree.  Send output to emitter,
      * marking sections so that we can split things later.
      */
-    override def process (ast : ModuleDecl, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : ModuleDecl, console : Console, emitter : Emitter) : Boolean = {
 
         // Perform default processing
-        super.process (ast, console, emitter)
+        super.process (filename, ast, console, emitter)
 
         if (printastFlag) {
             section (emitter, "ast")

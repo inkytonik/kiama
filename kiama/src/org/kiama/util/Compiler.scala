@@ -48,10 +48,10 @@ trait CompilerBase[T] {
         driver (args, JLineConsole, new Emitter)
     }
 
-     /**
-      * Check the supplied arguments, returning any arguments that are to be
-      * processed elsewhere. Default: return the arguments unchanged.
-      */
+    /**
+     * Check the supplied arguments, returning any arguments that are to be
+     * processed elsewhere. Default: return the arguments unchanged.
+     */
     def checkargs (args : Array[String], emitter : Emitter) : Array[String] =
         args
 
@@ -79,7 +79,7 @@ trait CompilerBase[T] {
                 val reader = filereader (arg, encoding)
                 makeast (reader, arg, emitter) match {
                     case Left (ast) =>
-                        process (ast, console, emitter)
+                        process (arg, ast, console, emitter)
                     case Right (msg) =>
                         emitter.emitln (msg)
                 }
@@ -97,13 +97,15 @@ trait CompilerBase[T] {
     def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[T,String]
 
     /**
-     * Function to process the input that was parsed.  `console` should be
-     * used to read anything needed by the processing.  `emitter` should be
-     * used for output.  Return true if everything worked, false otherwise.
-     * If false is returned, messages about the problem should be logged
-     * by `process` using the messaging facility.
+     * Function to process the input that was parsed. `filename` is the
+     * name of the file from which the input came. `ast` is the abstract
+     * syntax tree produced by the parser from that file. `console` should
+     * be used to read anything needed by the processing. `emitter` should
+     * be used for output. emitterReturn true if everything worked, false
+     * otherwise. If false is returned, messages about the problem should
+     * be logged by `process` using the messaging facility.
      */
-    def process (ast : T, console : Console, emitter : Emitter) : Boolean
+    def process (filename : String, ast : T, console : Console, emitter : Emitter) : Boolean
 
     /**
      * Run the driver using the given args and return the resulting output,
@@ -150,7 +152,7 @@ trait Compiler[T <: Attributable] extends RegexCompiler[T] {
 
     import org.kiama.attribution.Attribution.initTree
 
-    def process (ast : T, console : Console, emitter : Emitter) : Boolean = {
+    def process (filename : String, ast : T, console : Console, emitter : Emitter) : Boolean = {
         initTree (ast)
         true
     }

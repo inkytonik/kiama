@@ -36,8 +36,8 @@ class Driver extends Parser with Compiler[Stm] {
     /**
      * Process the AST by optimising it, then print optimised AST.
      */
-    override def process (ast : Stm, console : Console, emitter : Emitter) : Boolean = {
-        super.process (ast, console, emitter)
+    override def process (filename : String, ast : Stm, console : Console, emitter : Emitter) : Boolean = {
+        super.process (filename, ast, console, emitter)
         val optast = Optimise.run (ast)
         emitter.emitln (optast)
         true

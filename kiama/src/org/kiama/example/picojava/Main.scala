@@ -52,9 +52,9 @@ object Main extends ProfilingCompiler[Program] with Parser {
      * Process a picoJava program by checking for errors, optionally obfuscating and
      * then printing any errors that were found.
      */
-    override def process (program : Program, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, program : Program, console : Console, emitter : Emitter) : Boolean = {
 
-        super.process (program, console, emitter)
+        super.process (filename, program, console, emitter)
 
         resetmessages
         program->errors

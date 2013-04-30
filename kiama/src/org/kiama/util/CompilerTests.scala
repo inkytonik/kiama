@@ -35,7 +35,7 @@ class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] 
     def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[Any,String] =
          Right ("Dummy")
 
-    def process (ast : Any, console : Console, emitter : Emitter) : Boolean =
+    def process (filename : String, ast : Any, console : Console, emitter : Emitter) : Boolean =
          false
 
     test ("compiler driver produces an appropriate message if a file is not found") {

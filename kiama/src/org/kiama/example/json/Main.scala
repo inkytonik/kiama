@@ -40,9 +40,9 @@ class Driver extends SyntaxAnalysis with Compiler[JValue] {
     /**
      * Process the tree (currently just print it).
      */
-    override def process (ast : JValue, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : JValue, console : Console, emitter : Emitter) : Boolean = {
 
-        super.process (ast, console, emitter)
+        super.process (filename, ast, console, emitter)
 
         // Pretty-print AST as a product value
         emitter.emitln (pretty_any (ast))

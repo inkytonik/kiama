@@ -77,9 +77,9 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
      * are used for input and output.  Return true if everything worked, false
      * otherwise.
      */
-    override def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
-        super.process (ast, console, emitter)
+        super.process (filename, ast, console, emitter)
 
         // Initialise compiler state
         SymbolTable.reset ()
@@ -148,7 +148,7 @@ class ParserDriver extends SyntaxAnalysis with Compiler[ObrInt] {
      * are used for input and output.  Return true if everything worked, false
      * otherwise.
      */
-    override def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
         // Print ast to the emitter
         emitter.emitln (ast.toString)
@@ -179,7 +179,7 @@ class SemanticDriver extends SyntaxAnalysis with Compiler[ObrInt] {
      * are used for input and output.  Return true if everything worked, false
      * otherwise.
      */
-    override def process (ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
 
         // Initialise compiler state
         SymbolTable.reset ()
