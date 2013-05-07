@@ -1140,7 +1140,13 @@ trait RewriterCore {
         macro RewriterCoreMacros.bottomupSMacro
 
     /**
-     * Construct a strategy that applies `s` in breadth first order.
+     * Construct a strategy that applies `s` in breadth first order. This
+     * strategy does not apply `s` to the root of the subject term.
+     *
+     * It is called `breadthfirst` to follow Stratego's library, but is not
+     * really conducting a breadth-first traversal since all of the
+     * descendants of the first child of a term are visited before any of
+     * the descendants of the second child of a term.
      */
     def breadthfirst (s : Strategy) : Strategy =
         macro RewriterCoreMacros.breadthfirstMacro
