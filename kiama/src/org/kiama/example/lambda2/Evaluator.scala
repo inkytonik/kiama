@@ -83,7 +83,7 @@ trait RewritingEvaluator extends Evaluator {
     import org.kiama.rewriting.Strategy
 
     /**
-     * Evaluate the given expression by rewriting it with the evals
+     * Evaluate the given expression by rewriting it with the s
      * strategy.
      */
     def eval (exp : Exp) : Exp =
