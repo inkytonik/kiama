@@ -29,7 +29,6 @@ import org.kiama.util.PositionedParserUtilities
 trait Parser extends PositionedParserUtilities {
 
     import AST._
-    import Lambda.typecheck
 
     lazy val start =
         exp
@@ -38,8 +37,9 @@ trait Parser extends PositionedParserUtilities {
         "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam |
         exp2
 
-    def itype : PackratParser[Type] =
-        if (typecheck) (":" ~> ttype) else ("" ^^^ NoType ())
+    lazy val itype : PackratParser[Type] =
+        ":" ~> ttype |
+        "" ^^^ NoType ()
 
     lazy val exp2 : PackratParser[Exp] =
         exp2 ~ op ~ exp1 ^^ Opn |

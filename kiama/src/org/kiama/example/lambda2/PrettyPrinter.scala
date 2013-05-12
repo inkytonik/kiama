@@ -80,7 +80,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
         t match {
             case IntType ()       => "Int"
             case FunType (t1, t2) => showtype (t1) <+> "->" <+> showtype (t2)
-            case NoType ()        => "empty" // Not used
+            case NoType ()        => "???" // Not used
         }
 
     /**

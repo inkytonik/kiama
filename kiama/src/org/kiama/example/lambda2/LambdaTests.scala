@@ -74,35 +74,76 @@ class LambdaTests extends Tests with Checkers with Parser {
         }
     }
 
+    /**
+     * Parse and type check the expression and expect no messages.
+     */
+    def assertNoMessage (term : String) {
+        resetmessages
+        parseAll (start, term) match {
+            case Success (e, in) if in.atEnd =>
+                initTree (e)
+                tipe (e)
+                if (messagecount != 0)
+                    fail ("tipe: no messages expected, got " + messages)
+                tipe2 (e)
+                if (messagecount != 0)
+                    fail ("tipe2: no messages expected, got " + messages)
+            case Success (_, in) =>
+                fail ("extraneous input at " + in.pos + ": " + term)
+            case f =>
+                fail ("parse failure: " + f)
+        }
+    }
+
     test ("an unknown variable by itself is reported") {
         assertMessage ("y", 1, 1, "'y' unknown")
     }
 
-    test ("an unknown variable in an abstraction is reported") {
+    test ("an unknown variable in an abstraction is reported (untyped)") {
         assertMessage ("""\x : Int . x + y""", 1, 16, "'y' unknown")
     }
 
-    test ("an Int -> Int cannot be used as an Int") {
+    test ("an unknown variable in an abstraction is reported (typed)") {
+        assertMessage ("""\x . x + y""", 1, 10, "'y' unknown")
+    }
+
+    test ("an Int -> Int cannot be used as an Int (typed)") {
         assertMessage ("""(\x : Int -> Int . x + 1) (\y : Int . y)""", 1, 20,
                        "expected Int, found Int -> Int")
     }
 
-    test ("an Int cannot be passed to an Int -> Int") {
+    test ("an Int -> Int cannot be used as an Int (untyped)") {
+        assertNoMessage ("""(\x . x + 1) (\y . y)""")
+    }
+
+    test ("an Int cannot be passed to an Int -> Int (typed)") {
         assertMessage ("""(\x : Int -> Int . x 4) 3""", 1, 25,
                        "expected Int -> Int, found Int")
     }
 
-    test ("an Int -> Int cannot be passed to an Int") {
+    test ("an Int cannot be passed to an Int -> Int (untyped)") {
+        assertNoMessage ("""(\x . x 4) 3""")
+    }
+
+    test ("an Int -> Int cannot be passed to an Int (typed)") {
         assertMessage ("""(\x : Int . x + x) (\y : Int . y + 1)""", 1, 21,
                        "expected Int, found Int -> Int")
+    }
+
+    test ("an Int -> Int cannot be passed to an Int (untyped") {
+        assertNoMessage ("""(\x . x + x) (\y . y + 1)""")
     }
 
     test ("an Int cannot be directly applied as a function") {
         assertMessage ("""1 3""", 1, 1, "application of non-function")
     }
 
-    test ("an Int cannot be applied as a function via a parameter") {
+    test ("an Int cannot be applied as a function via a parameter (typed)") {
         assertMessage ("""(\x : Int . x 5) 7""", 1, 13, "application of non-function")
+    }
+
+    test ("an Int cannot be applied as a function via a parameter (untyped)") {
+        assertNoMessage ("""(\x . x 5) 7""")
     }
 
     /**
@@ -254,7 +295,7 @@ class LambdaTests extends Tests with Checkers with Parser {
     }
 
     test ("a beta reduction and an operator evaluation works") {
-        assertEvalAll ("""(\x : Int . x + 1) 4""", Num (5))
+        assertEvalAll ("""(\x . x + 1) 4""", Num (5))
     }
 
     test ("an unused parameter is ignored: integer param") {
@@ -266,7 +307,7 @@ class LambdaTests extends Tests with Checkers with Parser {
     }
 
     test ("an unused parameter is ignored: function param") {
-        assertEvalAll ("""(\x:Int->Int.99) (\y:Int.y)""", Num (99))
+        assertEvalAll ("""(\x.99) (\y:Int.y)""", Num (99))
     }
 
     test ("a function of one parameter passed as a parameter can be called") {
@@ -280,12 +321,11 @@ class LambdaTests extends Tests with Checkers with Parser {
     }
 
     test ("multiple parameters are passed correctly") {
-        assertEvalAll ("""(\x : Int . \f : Int -> Int . f x) 4 (\y : Int . y - 1)""",
-                       Num (3))
+        assertEvalAll ("""(\x . \f . f x) 4 (\y . y - 1)""", Num (3))
     }
 
     test ("applications in arguments are evaluated correctly") {
-        assertEvalAll ("""(\x : Int . x + x) ((\y : Int . y + 1) 5)""",
+        assertEvalAll ("""(\x . x + x) ((\y . y + 1) 5)""",
                        Num (12))
     }
 

@@ -49,19 +49,12 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     override val prompt = mechanism + super.prompt
 
     /**
-     * Are we currently type-checking or not?  Default: true.
-     */
-    var typecheck = true
-
-    /**
      * Print help about the available commands.
      */
     def help {
         emitter.emitln ("""exp                  print the result of evaluating exp
             |:eval                list the available evaluation mechanisms
-            |:eval <mechanism>    change to using <mechanism> to evaluate
-            |:type                print current type setting (default: on)
-            |:type (on|off)       turn typing on or off""".stripMargin)
+            |:eval <mechanism>    change to using <mechanism> to evaluate""".stripMargin)
     }
 
     /**
@@ -88,17 +81,6 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                 if (!setEvaluator (mech))
                     emitter.emitln ("unknown evaluation mechanism: " + mech)
 
-            case Command (Array (":type")) =>
-                emitter.emitln ("Typing is " + (if (typecheck) "on" else "off"))
-
-            case Command (Array (":type", "on")) =>
-                typecheck = true
-                emitter.emitln ("Typing is on")
-
-            case Command (Array (":type", "off")) =>
-                typecheck = false
-                emitter.emitln ("Typing is off")
-
             // Otherwise it's an expression for evaluation
             case _ => super.processline (line)
         }
@@ -117,21 +99,17 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
      * Process an expression.
      */
     def process (e : AST.Exp) {
+        resetmessages
         initTree (e)
-        if (typecheck) {
-            // First conduct a semantic analysis check: compute the expression's
-            // type and see if any errors occurred
-            e->tipe
-            if (messagecount == 0) {
-                // If everything is OK, evaluate the expression
-                emitter.emitln (pretty (evaluator.eval (e)))
-            } else {
-                // Otherwise report the errors and reset for next expression
-                report (new Emitter)
-                resetmessages
-            }
-        } else {
+        // First conduct a semantic analysis check: compute the expression's
+        // type and see if any errors occurred
+        e->tipe
+        if (messagecount == 0) {
+            // If everything is OK, evaluate the expression
             emitter.emitln (pretty (evaluator.eval (e)))
+        } else {
+            // Otherwise report the errors and reset for next expression
+            report (new Emitter)
         }
     }
 
