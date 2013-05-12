@@ -168,7 +168,7 @@ class LambdaTests extends Tests with Checkers with Parser {
     /**
      * Test the assertion on all available evaluation mechanisms.
      * Same as single result version, except that result1 is
-     * expected for mecahnisms that evaluate inside lambdas and
+     * expected for mechanisms that evaluate inside lambdas and
      * result2 is expected for those that don't.
      */
     def assertEvalAll (term : String, result1 : Exp, result2 : Exp) {
