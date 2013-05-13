@@ -6,7 +6,7 @@
 
 // Main settings
 
-version in ThisBuild := "1.5.0-SNAPSHOT"
+version in ThisBuild := "1.5.0"
 
 organization in ThisBuild := "com.googlecode.kiama"
 
