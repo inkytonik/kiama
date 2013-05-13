@@ -49,6 +49,12 @@ class Emitter {
         println
     }
 
+    /**
+     * Close this emitter. Default: do nothing.
+     */
+    def close () {
+    }
+
 }
 
 /**
@@ -83,7 +89,7 @@ class StringEmitter extends Emitter {
 class FileEmitter (filename : String) extends StringEmitter {
     import org.kiama.util.IO.filewriter
 
-    def close () {
+    override def close () {
         val out = filewriter (filename)
         out.write (result ())
         out.close ()
