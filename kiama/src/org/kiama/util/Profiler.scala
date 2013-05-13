@@ -91,6 +91,17 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
                 }
 
             /**
+             * `subjectHash` gives the hash code of the `subject` dimension
+             * and is useful if you can't tell the different between subjects
+             * from their `toString` representation.
+             */
+            case "subjectHash" =>
+                checkFor (record, dim, "", "subject") {
+                    case s =>
+                        s.##
+                }
+
+            /**
              * `depends-on` dimension is a summary of the direct dependencies
              * of an evaluation. Each dependence is summarised by the type of
              * the node where it was evaluated, the attribute that was evaluated

@@ -59,7 +59,7 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      */
     def apply (r : Any) : Option[Any] = {
         val i = start ("event" -> "StratEval", "strategy" -> this,
-                       "subject" -> r, "subjectHash" -> r.##)
+                       "subject" -> r)
         val result = body (r)
         finish (i, "result" -> result)
         result
