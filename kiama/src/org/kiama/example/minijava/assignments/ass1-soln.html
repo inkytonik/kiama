@@ -1,0 +1,399 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>COMP332 2012 Assignment One (Sample Solution)</title>
+  </head>
+
+  <body>
+    <h1>Macquarie University<br>Department of Computing</h1>
+
+    <h2>COMP332 Programming Languages 2012<br>
+  Assignment One (Sample Solution)</h2>
+
+    <p>This assignment concerned the design, development, testing, and
+    documentation of a syntax analyser for a simple MiniJava version of
+    the Java programming language. We had to implement a lexical
+    analyser, parser, and tree builder for the language, building on the
+    skeleton code. Also, we had to design test cases to demonstrate that
+    our implementation is working correctly.</p>
+
+    <p>This report presents the design and implementation of my syntax
+    analyser and describes the design of the tests I have used to
+    check the correctness of the implementation. Parts One and Two are
+    discussed separately. The full code for this sample solution is on
+    the COMP332 iLearn site.</p>
+
+    <h3>Part One: Design and implementation</h3>
+
+    <p>I first describe the design and implementation of the parsing
+    code, without consideration of tree building. The second
+    sub-section adds tree building to the parsing code.</p>
+
+    <h4>Parsing</h4>
+
+    <p>My parser design follows the method discussed in lectures. Each
+    context-free grammar production translates into a Scala parser
+    value whose definition mimics the production. Operators in the
+    grammar translate into their equivalents from the Scala parsing
+    library.</p>
+
+    <p>I use lazy values to define my parsers so that I don't have to
+    worry about the order in which I define them. An alternative would
+    be to use non-lazy vals and be careful about the order, but this
+    harder to write.</p>
+
+    <p>The translation from the grammar to the parsers is mostly
+    straight-forward. For example, the productions</p>
+
+<pre>
+Arguments         : Type Identifier ("," Type Identifier)*
+                  | /* empty */.
+
+Statement         : "{" Statement* "}"
+                  | "if" "(" Expression ")" Statement "else" Statement
+                  | "while" "(" Expression ")" Statement
+                  | "System.out.println" "(" Expression ")" ";"
+                  | Identifier "=" Expression ";"
+                  | Identifier "[" Expression "]" "=" Expression ";".
+</pre>
+
+    <p>become</p>
+
+<pre>
+lazy val arguments =
+    repsep (argument, ",")
+
+lazy val argument =
+    tipe ~ identifier
+
+lazy val statement =
+    "{" ~> (statement*) <~ "}" |
+    "if" ~> ("(" ~> expression <~ ")") ~ statement ~ ("else" ~> statement) |
+    "while" ~> ("(" ~> expression <~ ")") ~ statement |
+    "System.out.println" ~> ("(" ~> expression <~ ")") <~ ";" |
+    identifier ~ ("=" ~> expression) <~ ";" |
+    identifier ~ ("[" ~> expression <~ "]") ~ ("=" ~> expression) <~ ";" 
+</pre>
+
+    <p>The <code>repsep</code> method used in the <code>arguments</code>
+    definition builds a parser where input parsed by the first parser is
+    separated by instances of input parsed by the second parser, allowing
+    no repetitions at all. Thus, this is equivalent to the two alternatives
+    for this symbol given in the grammar.</p>
+
+    <p>Appropriate bracketing and the <code><~</code> and <code>~></code> 
+    operators are used in the productions to make sure that we throw away
+    the values of the literal strings and just retain the values of the
+    components that need to end up in the tree. A more complex case of
+    this occurs in the parsers for <code>ClassDeclaration</code> which
+    we solve by bracketing each pair of components.</p>
+
+<pre>
+lazy val classDeclaration =
+    ("class" ~> identifier) ~ (("extends" ~> identifier)?) ~
+        ("{" ~> (varDeclaration*)) ~ ((methodDeclaration*) <~ "}")
+</pre>    
+
+    <p>Similar translations implement the other productions.</p>
+
+    <p>The expression parsers follow the approach described in lectures
+    to describe the precedence and associativity of operators. We
+    were given the <code>factor</code> parser. I added
+    <code>expression0</code> for multiplication,
+    <code>expression1</code> for addition and subtraction,
+    <code>expression2</code> for less-than and 
+    <code>expression</code> for Boolean AND, in decreasing order
+    of precedence.</p>
+
+    <p>The parsers for the terminal symbols of the grammar (which
+    effectively implement the lexical analysis) follow their natural
+    language descriptions, since the assignment did not give
+    productions for them. No conversion is needed since the string
+    value returned by these parsers is what we want to return to the
+    expression parser.</p>
+
+<pre>
+lazy val integer : PackratParser[String] =
+    regex ("[0-9]+".r)
+
+lazy val identifier : PackratParser[String] =
+    regex ("[a-zA-Z][a-zA-Z0-9_]*".r)
+</pre>
+
+    <h4>Tree building</h4>
+
+    <p>The skeleton provided the tree structure that we were to
+    produce. Adding tree building to my parsing code followed the
+    method discussed in lectures. Each parser was augmented with a
+    tree construction action to build the appropriate tree fragment
+    from the components recognised by its component parsers.</p>
+
+    <p>In almost all cases, the tree building action simply constructs
+    a node of the appropriate case class using the <code>^^</code>
+    operator, since the components correspond directly to the case
+    class constructor arguments.</p>
+
+    <p>For example, the parsers from the previous section become the
+    following when types and tree building actions are added.</p>
+
+<pre>
+lazy val arguments : PackratParser[List[Argument]] =
+    repsep (argument, ",")
+
+lazy val argument : PackratParser[Argument] =
+    tipe ~ identifier ^^ {
+        case t ~ n =>
+            Argument (t, n)
+    }
+
+lazy val statement : PackratParser[Statement] =
+    "{" ~> (statement*) <~ "}" ^^ {
+        case ss =>
+            Block (ss)
+    } |
+    "if" ~> ("(" ~> expression <~ ")") ~ statement ~ ("else" ~> statement) ^^ {
+        case e ~ s1 ~ s2 =>
+            If (e, s1, s2)
+    } |
+    "while" ~> ("(" ~> expression <~ ")") ~ statement ^^ {
+        case e ~ s =>
+            While (e, s)
+    } |
+    "System.out.println" ~> ("(" ~> expression <~ ")") <~ ";" ^^ {
+        case e =>
+            Println (e)
+    } |
+    identifier ~ ("=" ~> expression) <~ ";" ^^ {
+        case n ~ e =>
+            VarAssign (n, e)
+    } |
+    identifier ~ ("[" ~> expression <~ "]") ~ ("=" ~> expression) <~ ";" ^^ {
+        case n ~ i ~ e =>
+            ArrAssign (n, i, e)
+    }
+</pre>
+
+
+    <h3>Part One: Testing</h3>
+
+    <p><em>Note regarding marking: I am aware that proper testing for
+    this assignment was quite a bit of work. We did not expect the
+    level of testing described below for a good mark, but it is
+    worthwhile to bear in mind that without this kind of testing,
+    any confidence you have in the correct operation of your program
+    is probably mis-placed.</em></p>
+
+    <p>I used all of the MiniJava example programs from the MiniJava web
+    site as general tests. My parser correctly handles all of these
+    files, which gives me some confidence that things are ok, particularly
+    combniations of many constructs and handling of whitespace and
+    comments. These tests are somewhat unsatisfactory, however, since
+    they cannot be run and checked automatically by sbt. Hence, we want
+    to be as complete as practical in the sbt tests.</p>
+
+    <p>I designed positive tests (correct input) based on the possible
+    alternatives in the grammar, to make sure that I had all of the bases
+    covered for correct programs. I tried to make each test just test 
+    one thing. For example, there is no need to test all sorts of 
+    expressions as a while statement condition, since there will be
+    tests of expressions elsewhere.</p>
+
+    <p>Consider the terminal symbols, starting with 
+    identifiers. The skeleton already had a test for a normal identifier
+    containing multiple letters. Missing were a minimal test (an identifier
+    with just one letter) and one that tested inclusion of digits and
+    underscores. There was already a negative test for parsing an 
+    integer as an identifier. I added two more to make check that
+    sequences that start with a digit or underscore, but otherwise
+    are ok as identifiers, are not allowed. Similar tests were 
+    written for integer terminals, although there are less possibilites
+    to test since integers have a simpler structure.</p>
+
+    <p>For non-terminal constructs, I used the following general 
+    procedure for designing test cases. Constructs that involve no
+    alternatives (including repetition) just need one test case.
+    Where alternatives are present, I made sure to have at least
+    one test case for each alternative. Repetitions are a special
+    case of alternation. For each repetition, I designed tests to
+    deal with the lower boundary conditions (empty or single case).
+    Upper boundary conditions of repetitions were infinite, so they
+    cannot be tested, but I made sure to have tests of multiple
+    repetitions for each situation. For possibly empty repetitions
+    I also have a test case for a single element, since a common
+    error to make is to forget the repetition completely.</p>
+
+    <p>As an example, consider the following production.</p>
+
+<pre>
+ClassDeclaration  : "class" Identifier ("extends" Identifier)? {"
+                       VarDeclaration*
+                       MethodDeclaration*
+                    "}".
+</pre>   
+
+    <p>We need two tests of the class header, one that has an 
+    <code>extends</code> clause and one that doesn't. To deal
+    with the repetitions, we need to account for nothing in the
+    body, one of each repetition or more than one of each repetition.
+    Considering all of the combinations leads to quite a few
+    tests, but they are routine.</p>
+
+    <p>Expression testing requires a little more work, since the 
+    precedence and associativity rules for binary operators are
+    not encoded in the grammar that we were given.  Hence, I 
+    included some extra tests to make sure that the operators 
+    were all associative in the correct way and that expressions
+    with multiple operators correctly took into account the
+    relative precedence of those operators. Also, I checked that
+    parentheses correctly override the associativity and 
+    precedence rules. For the less than operator I have a negative
+    test to make sure that it is not associative.</p>
+
+    <p>I didn't test all of the combinations of binary operators
+    for precedence ordering, but I tested each step in the precedence
+    hierarchy. By transitivity, the other cases should be covered
+    as well. For example,
+    I test that <code>*</code> has higher precedence than <code>+</code>
+    and that <code>+</code> has higher precedence than <code><</code>.
+    From these two tests we can be reasonable sure that <code>*</code>
+    has higher precedence than <code><</code>.</p>
+
+    <p>Testing negative conditions (erroneous input) is harder since
+    there are a lot more possibilities. I limited my testing to the
+    cases that were likely possibilities for errors. For example, where
+    a repetition called for one or more of something, I tested to make
+    sure that the wrong number is not allowed. For example, a main class
+    has to have exactly one statment, so I have negative tests for zero
+    and more than one. Similarly, a method body has to have a return
+    statement so I have a negative test to check that an empty body
+    is not allowed. In general, the aim of negative tests is to spot
+    places where it is likely that an error has been made.</p>
+
+    <p>Overall, as usual we can't be sure that problems are still not
+    present since we can't test every possible input combination.
+    However, the combinations I have tried work, plus the fact that the
+    more complex actual MiniJava progams are handled correctly, means
+    that I have a high level of confidence that this program is working
+    properly.</code>
+
+    <h3>Part Two</h3>
+
+    <p>The first task for Part Two was to research Java interfaces
+    and to come up with a version that makes sense in the context
+    of MiniJava.</p>
+
+    <p>The main idea of Java interfaces is to provide a way to 
+    declare the signatures of methods without their bodies. Java
+    classes can declare that they implement one or more interfaces,
+    in which case they need to provide implementations for the 
+    the methods in those interfaces.</p>
+
+    <p>The signature of a method comprises its name, its argument 
+    names and types, and its return type. A class declares that
+    it implements an interface via an <code>implements</code>
+    clause in its declaration. For example, the following is a
+    declaration of an interface <code>Colourable</code> and a 
+    use of it by a <code>Shape</code> class, assuming the 
+    existence of a <code>Colour</code> class or interface.</p>
+
+<pre>
+interface Colourable {
+    void setColour (Colour colour);
+    Colour getColour ();
+}
+
+class Shape implements Colourable {
+
+    void setColour (Colour colour) {
+        ... implementation ...
+    }
+
+    Colour getColour () {
+        ... implementation ...
+    }
+
+}
+</pre>    
+
+    <p>Java interfaces have more aspects than this (e.g., a class
+    can implement more than one interface), but I decided on this
+    level of support since it fits with the rest of MiniJava.</p>
+
+    <p>I then considered how to add interfaces to the syntax of
+    MiniJava. By analogy to the existing syntax of classes and
+    methods, I added these productions to the grammar.</p>
+
+<pre>
+InterfaceDeclaration :
+    "interface" Identifier "{"
+        SignatureDeclaration*
+    "}".
+
+SignatureDeclaration :
+    "public" Type Identifier "(" Arguments ")" ";".
+</pre>    
+
+    <p>To allow interface declarations to appear in a program,
+    I modified the program production as follows.</p>
+
+<pre>
+Program : MainClass ClassOrInterfaceDeclaration*.
+
+ClassOrInterfaceDeclaration :
+      ClassDeclaration
+    | InterfaceDeclaration.
+</pre>    
+
+    <p>Finally, I modified class declarations to allow an optional 
+    implements clause after the optional extends clause.</p>
+
+<pre>
+ClassDeclaration :
+    "class" Identifier ("extends" Identifier)? ("implements" Identifier)? {"
+        VarDeclaration*
+        MethodDeclaration*
+    "}".
+</pre>
+
+    <p>To accomodate interfaces in the abstract syntax tree, I added a new
+    tree node type for interfaces. It and <code>Class</code> share
+    a new common superclass <code>ClassOrInterface</code> and a program is now
+    a list of classes or interfaces. Also, <code>Class</code> got a new
+    field to store its optional implements information, analogous to the 
+    existing field that stores the optional superclass. A new node type 
+    for signatures was added that is the same as for methods with the body
+    components and return expression removed.</p>
+    
+<pre>    
+case class Program (main : MainClass,
+                    classesOrInterfaces : List[ClassOrInterface]) extends SourceNode
+
+sealed abstract class ClassOrInterface extends SourceNode
+
+case class Class (name : String, superclass : Option[String],
+                  implements : Option[String],
+                  vars : List[Var], methods : List[Method]) extends ClassOrInterface
+
+case class Interface (name : String, signatures : List[Signature]) extends ClassOrInterface
+
+case class Signature (tipe : Type, name : String, args : List[Argument]) extends SourceNode
+</pre>
+
+    <p>Modifying the parser and tree construction to accommodate these new
+    constructs or changes to old ones was straight-forward and proceeded as
+    described in Part One. No new techniques were needed.</p>
+
+    <p>Testing was undertaken as for the main part of the assignment. A set
+    of tests similar to those for classes were added for interfaces, and
+    tests for signature declarations were added similar to those already 
+    present for method declarations. Also, tests of the optional implements
+    clause were added. A test of mixed classes and interfaces in a program was
+    added.</p>
+
+    <hr>
+    <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012 by
+Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
+  </body>
+</html>

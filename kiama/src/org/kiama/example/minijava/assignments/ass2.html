@@ -1,0 +1,352 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>COMP332 2012 Assignment Two</title>
+  </head>
+
+  <body>
+    <h1>Macquarie University<br>Department of Computing</h1>
+
+    <h2>COMP332 Programming Languages 2012</h2>
+    
+    <h2>Assignment Two</h2>
+  
+    <h3>MiniJava Semantic Analysis</h3>
+
+    <p>Due: 11am Monday 8 October (Week 9)<br>
+      Worth: 10%</p>
+
+    <p>This assignment asks you to develop part of a semantic analyser for
+    the MiniJava programming language. We will build on the work done in
+    Assignment One, but will not support the interfaces that were added
+    in Part Two of that assignment.</p>
+
+    <p>Building this implementation will give you insight into the
+    way that programming language implementations work in general,
+    as well as specific experience with how Java is compiled and
+    executed. All compiler or language processors must enforce the
+    rules of the language. The semantic analyser enforces rules to
+    do with naming and typing in particular. We only proceed to
+    code generation if these rules are satisfied.</p>
+
+    <p>We will build on the first two assignments in Assignment Three where we
+    will add a simple code generator so that we can run our programs.</p>
+
+    <h4>Updates from Assignment One</h4>
+
+    <p>To support the semantic analysis tasks that we wish to carry out, it
+    is useful to have a slightly different tree structure from that of 
+    Assignment One. This section outlines the changes. See the new version
+    of <code>MiniJavaTree.scala</code> in the skeleton for details.
+    The syntax analyser has been updated to use the new structure.</p>
+
+    <ul>
+
+    <li><p>Name analysis needs to treat defining and applied occurrences of 
+    identifiers differently. The easiest way to do this is to distinguish
+    them in the tree structure. For MiniJava it is possible for the parser
+    to locate them syntactically, since any single occurrence of an identifier
+    is either a defining occurrence or an applied occurrence, but cannot
+    be both. The new tree node types <code>IdnDef</code> and
+    <code>IdnUse</code> are used to represent these two cases. They just
+    contain the identifier string.</p></li>
+
+    <li><p>The structure of the syntax tree is intimately related to the 
+    computations we perform on it. Since we will be dealing with naming
+    scopes, we want a structure that makes it easy to identify where
+    they begin and end. For this reason, classes and methods now have 
+    extra internal structure. All of the children that lie within the
+    scope of a class or method are now located under a special 
+    <code>ClassBody</code> or <code>MethodBody</code> node inside the
+    <code>Class</code> or <code>Method</code> node. Note that the 
+    defining identifier occurrence for the class or method is <em>not</em>
+    inside the body, since it belongs to the outer scope.</p></li>
+
+    <li><p>An expression of the form <code>arr.length</code> where
+    <code>arr</code> is presumably an array, was previously represented
+    in the tree by a <code>CallExp</code> node.
+    Since the array length operation is special and not really like
+    a normal method call, there is a new <code>LengthExp</code>
+    kind of node for this purpose.</li>
+
+    <li><p>The syntax tree has also been changed to use Kiama's support
+    for annotating nodes with their source positions, since we will need
+    that information when we report semantic errors. You can use any node
+    as the first argument to Kiama's <code>message</code> method and 
+    its position will be used for the message.</p></li>
+
+    </ul>
+
+     <h4>What you have to do</h4>
+
+     <p>You have to write, document and test a Scala semantic analyser
+     for the MiniJava language, as described below. There is one part for
+     each of two passing assessments standards: a) P and Cr, and b) D
+     and HD, with part (b) requiring more independent work than part
+     (a).</p>
+
+     <p>You are strongly advised to complete each part of the
+     assignment before moving onto the next one. In fact, within each
+     part it is advisable to solve small portions at a time rather
+     than trying to code the whole solution in one go.</p>
+     
+    <h4>MiniJava semantic rules</h4>
+
+    <p>This section explains the rules of name and type analysis for
+    MiniJava which you will need in the assignment. Some languages
+    allow name and type analysis to be handled separately, but in 
+    Java-like languages they are intertwined since in an expression
+    such as <code>o.m()</code> we need to know the meaning of the
+    name <code>o</code> in order to work out that it's of a reference
+    type and only then can we look up the name <code>m</code> in the
+    referenced class to find out what it means.</p>
+
+    <p>Basically, MiniJava names work as in Java, with some simplifications.
+    Four different kinds of named entity exist: classes, methods, method
+    arguments and variables. The whole program is a scope containing all of the 
+    normal classes. Each class has a scope nested within the program scope,
+    containing all of the class's variables and methods. Each method has a scope
+    nested within its class scope, containing all of the method's arguments and
+    variables. Declared names are usable anywhere in the scope in which 
+    they are defined, not just from their declaration to the end of the 
+    scope.</p>
+
+    <p>The main class is <em>not</em> represented by an entity like the 
+    normal classes, since the main class name cannot be used as a normal class
+    name. The main class only exists as an entry point for the program.
+    The expression <code>this</code> makes no sense in the main class,
+    since it has no variables or methods, but we will not check this
+    condition in this assignment.</p>
+
+    <p>MiniJava variables and arguments can refer to values of type 
+    integer, Boolean, integer array or reference to an instance of a 
+    particular class. The first three types are represented by the
+    syntax tree node types used in Assignment One. Reference types are
+    represented by instances of the <code>ReferenceType</code> case
+    class defined in <code>SymbolTable.scala.</code>.<p>
+
+    <p>The full MiniJava semantic analyser phase must implement the following
+    rules and check any associated conditions (but see below for what
+    you need to do in the two parts of the assignment):<p>
+
+    <ol>
+
+    <li><p>There must be at most one defining occurrence of any name in
+    a scope, not counting definitions in enclosing scopes.</p></li>
+
+    <li><p>Each applied identifier occurrence must refer to exactly 
+    one defining occurrence. That defining occurrence is located by
+    first looking in the innermost scope in which the applied
+    occurrence occurs. If the defining occurrence is not located
+    in the innermost scope, the search proceeds recursively to the
+    smallest enclosing scope.</p>
+
+    <li><p>If a defining occurence of an applied identifier is not
+    found in the class in which that applied occurrence appears,
+    and the class has a superclass, then the search moves to the 
+    superclass. If that class has no definition for the identifier
+    and has a superclass, the search moves to that superclass.
+    And so on until the definition is found or the superclass chain
+    is exhausted.</p></li>
+
+    <li><p>The type of an integer expression is integer.</p></li>
+
+    <li><p>The type of a true or false expression is Boolean.</p></li>
+
+    <li><p>The type of an identifier expression referring to a
+    variable, argument or class is the declared type of the variable 
+    or argument (in the first two cases) or a reference type that
+    refers to instances of that class (in the last case). Method 
+    names cannot be used by themselves in expressions; they can
+    only be used in call expressions.<p></li>
+
+    <li><p>The condition in an if-statement or while-statement must
+    be of type Boolean.</p></li>
+
+    <li><p>The expression in a println-statement can be of any type.</p></li>
+
+    <li><p>In a variable assignment statement, the name on the left-hand
+    side must refer to a variable or argument. The type of the expression
+    on the right-hand side must be the same as that of the variable or
+    argument.</p></li>
+
+    <li><p>In an array assignment statement or index expression, the 
+    base sub-expression must be of integer array type and the index sub-expression
+    must be of integer type. In the assignment case, the type of the
+    right-hand side sub-expression must be integer. In the index expression
+    case the type of the sub-expression is integer.</p>
+
+    <li><p>In plus, minus and star expressions, the types of both
+    sub-expressions must be integer. The type of the expression is integer.</p></li>
+
+    <li><p>In a logical AND expression, the types of both sub-expressions
+    must be Boolean. The type of the expression is Boolean.</p></li>
+
+    <li><p>In a logical NOT expresion, the type of the sub-expression must
+    be Boolean. The type of the expression is Boolean.</p></li>
+
+    <li><p>In a less-than expression, the types of both sub-expressions must
+    be integer. The type of the expression is Boolean.</p></li>
+
+    <li><p>In a length expression, the type of the base sub-expression must be
+    integer array. The type of the expression is integer.</p></li>
+
+    <li><p>In a method call expression the named entity that is being called
+    must be a method of the class whose instance is referenced by the base
+    expression (or in a superclass if that class has no method with the 
+    given name). The number of arguments supplied in the call and their
+    types must be the same as the number of arguments and argument types
+    required by the called method. The type of the expression is the return
+    type of the method.</p></li>
+
+    <li><p>The type of a <code>this</code> expression is a reference to an
+    instance of the class in which the <code>this</code> expression occurs.</p></li>
+
+    <li><p>In a new array expression the type of the sub-expression must be integer.
+    The type of the new array expression is integer array.</p></li>
+
+    <li><p>In a new instance expression the name used must refer to a normal
+    class. The type of the expression is a reference to an instance of that
+    class.</p></li>
+
+    <li><p>The type of the return expression in a method must be the same as
+    the declared return type of the method.</p></li>
+
+    </ol>
+
+<h4>Part One (Pass and Credit, 74 marks): The basic MiniJava semantic rules</h4>
+
+<p>The first part of the assignment involves implementing and
+testing the basic MiniJava semantic rules. Specifically, you 
+must implement rules 1, 2, 4-15 and 17-19 listed in the previous
+section.</p>
+
+<p>Your code must use the Kiama attribute grammar and environment libraries as
+discussed in lectures and practicals. You should use the expression language
+semantic analyser as a guide for your implementation, although note that 
+MiniJava is a much more complex language.</p>
+
+<p>A skeleton sbt project for the assignment has been provided on BitBucket as
+the <code>inkytonik/comp332-ass2</code> repository.  The modules are very
+similar to those used in the practical exercises for Week 6 and 7.
+For this assignment you should not have to modify any parts of
+the implementation except the semantic analyser (<code>SemanticAnalysis</code>)
+and the related tests (<code>SemanticTests.scala</code>).</p>
+
+<p>Some of the semantic analysis and useful associated testing code is given
+to get you started, including most of the basic environment handling; you must
+provide the rest, particularly the implementations of the checks that enforce
+rules (look for FIXME in the code for some places where new code has to go).</p>
+
+<h4>Part Two (Distinction and High Distinction, 26 marks): The more complex semantic rules</h4>
+
+<p>The second part of the assignment entails implementing and testing
+the semantic rules that were not covered by Part One, i.e., rules 3,
+16 and 20.</p>
+
+<h4>Running the semantic analyser and testing it</h4>
+
+The skeleton for this assignment is designed to be run from within sbt.
+For example, to compile your project and run it on the file
+<code>test/factorial.java</code> you use the command
+
+<pre>
+  run test/factorial.java
+</pre>
+
+<p>Assuming your code compiles and runs, this will print any semantic 
+errors that have been found. If no errors are detected, you will see
+no output.</p>
+
+<p>The project is also set up to do automatic testing. See the file
+<code>SemanticTests.scala</code> which provides the necessary
+definitions to test the semantic analyser on some sample inputs. Note
+that the tests we provide are <em>not</em> sufficient to test all of
+your code. You must augment them with other tests.</p>
+
+<p>You can run the tests using the <code>test</code> command in sbt. This
+command will build the project and then run each test in turn,
+comparing the output produced by your program with the expected
+output. Any deviations will be reported as test failures.</p>
+
+<p>Running all of the tests can be time-consuming since it also runs
+the parsing tests. To just run the semantic analysis tests you can use
+the command <code>test-only *SemanticTests</code>.</p>
+
+<h4>What you must hand in and how</h4>
+
+<ol>
+
+    <li> <p>All of the code for your semantic analyser. To make this
+    clear, submit <em>every file</em> that is needed to build your
+    program from source, including files in the skeleton that you have
+    not changed. Do not add any new files or include multiple versions
+    of your files. Do not include any libraries. We will compile all
+    of the files that you submit using sbt, so you should avoid any
+    other build mechanisms.</p></li>
+
+    <li><p>Your submission should include all of the tests that you have
+    used to make sure that your program is working correctly. Note
+    that just testing one or two simple cases is not enough for many
+    marks. You should test as comprehensively as you can.</p></li>
+
+     <li> <p>A type-written report that describes how you have
+     achieved the goals of the assignment. Your report must contain
+     the following components or sections:</p></li>
+
+      <ul>
+
+      <li>A title page or heading that gives the assignment details,
+      your name and student number.</li>
+
+      <li>A brief introduction that summarises the aim of the
+     assignment and the structure of the rest of the report.</li>
+
+      <li>A description of the design and implementation work that you
+      have done to achieve the goals of the assignment. Listing some
+      code fragments may be useful to illustrate your description, but
+      don't just give a long listing. Leaving out obvious stuff is OK,
+      as long as what you have done is clear. A good rule of thumb is
+      to include enough detail to allow a student to understand it if
+      they are at the stage you were at when you started work on the
+      assignment.</li>
+
+     <li>A description of the testing that you carried out. You should
+     demonstrate that you have used a properly representative set of
+     test cases to be confident that you have covered all the bases.
+     Include details of the tests that you used and the rationale
+     behind why they were chosen. Do not just print the tests out
+     without explanation.</li>
+
+    </ul>
+
+</ol>
+
+<p>Submit your code and report electronically as a single zip file
+called <code>ass2.zip</code> using the appropriate submission link on
+the COMP332 iLearn website by the due date and time. Your report
+should be in PDF format. DO NOT SUBMIT YOUR ASSIGNMENT OR DOCUMENTATION
+IN ANY OTHER FORMAT THAN ZIP and PDF, RESPECTIVELY.</p>
+
+<h4>Marking</h4>
+
+<p>The assignment will be assessed according to the assessment
+standards for Learning Outcomes 2, 3 and 4 as specified in the Unit
+Guide.</p>
+
+<p>Marks will be allocated equally to the code and to the report. Your
+code will be assessed for correctness and quality with respect to the
+assignment description. Marking of the report will assess the clarity
+and accuracy of your description and the adequacy of your testing.
+Marks allocated to testing will be 30% of the marks for the
+assignment.</p>
+
+    <hr>
+    <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
+<!-- Created: Thu Jul  9 11:51:06 EST 2004 -->
+<!-- hhmts start -->Last modified: 7 September 2012 <!-- hhmts end -->
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2010-2012 by
+Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
+  </body>
+</html>

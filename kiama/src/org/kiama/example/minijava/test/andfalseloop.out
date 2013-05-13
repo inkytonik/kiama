@@ -1,0 +1,52 @@
+.source kiama/src/org/kiama/example/minijava/test/andfalseloop.java
+.class public AndFalseLoop
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    iconst_0
+    ifeq L1
+    new LoopClass
+    dup
+    invokespecial LoopClass/<init>()V
+    invokevirtual LoopClass/run()Z
+    goto L2
+L1:
+    iconst_0
+L2:
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source kiama/src/org/kiama/example/minijava/test/andfalseloop.java
+.class public LoopClass
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public run()Z
+.limit stack 1
+.limit locals 1
+L1:
+    iconst_1
+    ifeq L2
+    goto L1
+L2:
+    iconst_0
+    ireturn
+.end method

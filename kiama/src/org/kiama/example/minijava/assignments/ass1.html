@@ -1,0 +1,398 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>COMP332 2012 Assignment One</title>
+  </head>
+
+  <body>
+    <h1>Macquarie University<br>Department of Computing</h1>
+
+    <h2>COMP332 Programming Languages 2012</h2>
+    
+    <h2>Assignment One</h2>
+  
+    <h3>MiniJava Syntax Analysis</h3>
+
+    <p>Due: 11am Monday 3 September (Week 6)<br>
+      Worth: 10%</p>
+
+    <p>This assignment asks you to develop a lexical analyser, parser
+    and tree builder for a version of the Java programming language.
+    We will build on these components in later assignments to build a
+    full implementation of this Java version.</p>
+
+    <p>Building this implementation will give you insight into the
+    way that programming language implementations work in general,
+    as well as specific experience with how Java is compiled and
+    executed.</p>
+    
+    <p>This kind of task often arises in programming situations other
+    than language implementation. For example, many applications have
+    configuration files that are written in simple languages. The
+    application must be able to read these files reliably and
+    understand their structure, just as a compiler must read program
+    files and understand them.</p>
+    
+     <p>Aspects such as checking the validity of names or
+    types and translating the program into an executable form are beyond
+    the scope of syntax analysis. We will address them in Assignments Two
+    and Three.</p>
+
+    <h4>MiniJava</h4>
+        
+    <p>Java is a very widely used object-oriented programming language.
+    Building a compiler for the whole of Java is not feasible for a 
+    unit like COMP332. Instead, we will implement a cut-down version
+    called <em>MiniJava</em>. This exercise will still require you to 
+    come to terms with the fundamental issues for progarmming language
+    implementation, but within a more tractable setting.</p>
+
+    <p>MiniJava is a strict subset of Java where programs contain a
+    main class and some number of other classes. Classes can contain
+    private field and public instance method declarations, but more advanced
+    features such as visibility control, static methods and overloading
+    are not present.
+    The data types other than class instances are just integers, Booleans
+    and integer arrays.
+    Expressions are restricted to basic operations on integers, Booleans
+    and arrays, plus calling instance methods. Allowed statements are
+    assignment, conditionals, while loops and blocks. There is no 
+    mechanism for input, so data must be encoded in the program. Output
+    is restricted to calling <code>System.out.println</code>.</p>
+
+    <p>As an example, here is a simple factorial calculation implemented
+    in MiniJava:</p>
+
+<pre>
+  class Factorial {
+      public static void main () {
+          System.out.println (new Fac ().ComputeFac (10));
+      }
+  }
+  
+  class Fac {
+      public int ComputeFac (int num) {
+          int num_aux;
+          if (num < 1)
+              num_aux = 1;
+          else 
+              num_aux = num * (this.ComputeFac (num - 1));
+          return num_aux;
+      }
+  }
+</pre>    
+
+    <p>You can find more information about MiniJava at the
+    <a href="http://www.cambridge.org/us/features/052182060X/#progs">web site of the Modern Compiler Implementation in Java textbook</a>.
+    In particular, that site features some more MiniJava programs
+    that you might find useful. They are also included in the
+    <code>test</code> directory of the assignment skeleton, 
+    modified to remove the main argument array, since we are not
+    handling that in this assignment.</p>
+
+    <p>Note that the implementation approach used in that textbook
+    is not the same as the one we will be using in our assignments.
+    In particular, that textbook follows an approach that uses some
+    tools and hand-codes the rest of the compiler in Java. In contrast,
+    we will write our implementations in Scala using the Scala and
+    Kiama libraries, without any tools other than sbt and the Scala
+    compiler.</p>
+
+     <h4>What you have to do</h4>
+
+     <p>You have to write, document and test a Scala lexical analyser,
+     parser and tree builder for MiniJava as described below. There is
+     one part for each of two passing assessments standards: a) P and Cr,
+     and b) D and HD, with part (b) requiring more independent work
+     than part (a).</p>
+
+     <p>You are strongly advised to complete each part of the
+     assignment before moving onto the next one. In fact, within each
+     part it is advisable to solve small portions at a time rather
+     than trying to code the whole solution in one go.</p>
+     
+<h4>The syntax of MinJava</h4>
+
+       <p>To guide your implementation, here is a complete
+       context-free grammar for the MiniJava language</p>
+
+<pre>
+  Program           : MainClass ClassDeclaration*.
+  
+  MainClass         : "class" Identifier "{"
+                          "public" "static" "void" "main" "(" ")" "{"
+                              Statement
+                          "}"
+                      "}".
+  
+  ClassDeclaration  : "class" Identifier ("extends" Identifier)? {"
+                           VarDeclaration*
+                           MethodDeclaration*
+                      "}".
+  
+  VarDeclaration    : Type Identifier ";".
+  
+  MethodDeclaration : "public" Type Identifier "(" Arguments ")" "{"
+                          VarDeclaration*
+                          Statement*
+                          "return" Expression ";"
+                      "}".
+  
+  Arguments         : Type Identifier ("," Type Identifier)*
+                    | /* empty */.
+  
+  Type              : "int"
+                    | "boolean"
+                    | "int" "[" "]"
+                    | Identifier.
+  
+  Statement         : "{" Statement* "}"
+                    | "if" "(" Expression ")" Statement "else" Statement
+                    | "while" "(" Expression ")" Statement
+                    | "System.out.println" "(" Expression ")" ";"
+                    | Identifier "=" Expression ";"
+                    | Identifier "[" Expression "]" "=" Expression ";".
+  
+  Expression        : Expression ("&&" | "<" | "+" | "-" | "*") Expression
+                    | Expression "[" Expression "]"
+                    | Expression "." "length"
+                    | Expression "." Identifier "(" ExpressionList ")"
+                    | Integer
+                    | "true"
+                    | "false"
+                    | "this"
+                    | Identifier
+                    | "new" "int" "[" Expression "]"
+                    | "new" Identifier "(" ")"
+                    | "!" Expression
+                    | "(" Expression ")".
+  
+  ExpressionList    : Expression ("," Expression)*
+                    | /* empty */.
+</pre>
+
+<p>Note: in this syntax definition, the comment <code>/* empty */</code>
+denotes an empty alternative.</p>
+
+<p>The symbols <code>Integer</code> and <code>Identifier</code> are terminals
+in this grammar. Both integer literals and identifiers match the longest
+sequence of characters that they can.</p>
+
+<p>An <code>Integer</code> comprises a sequence of one or more digits.</p>
+
+<p>An <code>Identifier</code> comprises a sequence of characters that starts
+with a letter and continues with zero or more letters, digits or underscores.
+For the purposes of this assignment, you don't need to worry about identifiers
+that look exactly like keywords. Just assume that they will not occur in the
+input.</p>
+
+<p>Whitespace does not contribute to the program structure, except to separate
+symbols that would otherwise be merged without the whitespace. E.g., the
+characters "onetwo" denote a single identifier, whereas the characters "one
+two" denote two consecutive identifiers.</p>
+
+<p>The binary operators <code>&&</code>, <code><</code>, <code>+</code>,
+<code>-</code> and <code>*</code> are all left associative, except for
+<code><</code> which is not associative. The binary operators have a precedence
+order given by the previous sentence, from lowest to highest, except that
+<code>+</code> and <code>-</code> have the same precedence.</p>
+
+<h4>Part One (Pass and Credit, 74 marks): The main language</h4>
+
+<p>The first part of the assignment involves building a syntax
+analyser and tree builder for the MiniJava language as defined
+above.</p>
+
+<p>Your code must use the Scala parsing library as discussed in
+lectures and practicals. You should use the expression language
+syntax analyser and tree builder as a guide for your
+implementation.</p>
+
+<p>A skeleton sbt project for the assignment has been provided on
+BitBucket as the <code>inkytonik/comp332-ass1</code> repository. 
+The modules are very similar to those used in the practical exercises
+for Week 2 and 3. The skeleton contains the modules you will need.
+Some of the parsing and tree construction is given to you as an
+illustration; you must provide the rest (look for FIXME in the
+code).</p>
+
+<p>As well as lexing and parsing the input, your program should
+construct a suitable source program tree to represent the parsed
+result. See <code>MiniJavaTree.scala</code> in the skeleton for
+the full definition and description of the tree structures that
+you must use. For this part of the assignment, you should not
+have to modify the tree classes, just create instances in your
+parser code.</p>
+
+<p>As an example of the desired tree structure, here is the
+factorial program from above in source program tree form. Make
+sure you understand this structure and the nodes in it, before
+you start coding the assignment. This program does not use all
+of the tree node classes.</p>
+
+<pre>
+  Program (
+      MainClass (
+          "Factorial",
+          Println (
+              CallExp (NewExp ("Fac"), "ComputeFac", List (IntExp (10))))),
+      List (
+          Class (
+              "Fac",
+              None,
+              Nil,
+              List (
+                  Method (
+                      IntType (),
+                      "ComputeFac",
+                      List (Argument (IntType (), "num")),
+                      List (Var (IntType (), "num_aux")),
+                      List (
+                          If (
+                              LessExp (IdnExp ("num"), IntExp (1)),
+                              VarAssign ("num_aux", IntExp (1)),
+                              VarAssign (
+                                  "num_aux",
+                                  StarExp (
+                                      IdnExp ("num"),
+                                      CallExp (
+                                          ThisExp (),
+                                          "ComputeFac",
+                                          List (
+                                              MinusExp (
+                                                  IdnExp ("num"),
+                                                  IntExp (1)))))))),
+                      IdnExp ("num_aux"))))))
+</pre>
+
+<h4>Part Two (Distinction and High Distinction, 26 marks): Extending the language</h4>
+
+<p>The second part of the assignment entails extending the language.
+The aim is to give you some exposure to researching a language feature
+and its syntax, then adding it to the syntax analyser and tree builder
+implementation.</p>
+
+<p>Specifically, you should devise an extension that supports the use
+of <emph>interfaces</emph> in MiniJava programs. Consult any Java
+available reference for information on Java interfaces. You should
+support the definition of named interfaces that include signatures
+(no bodies) for the methods that comprise the interface.</p>
+
+<p>As well as determining an appropriate syntax for MiniJava interfaces
+and recognising it in your parser, you must augment your tree definition
+to contain whatever new classes you need to appropriately represent
+interfaces in the source program tree. You should re-use existing 
+classes where it makes sense, but you will at least need a new class 
+to represent interfaces themselves.</p>
+
+<p>Consult the teaching staff of the unit if you are in doubt about
+what to include in your extension.</p>
+
+<h4>Running the syntax analyser and testing it</h4>
+
+The skeleton for this assignment is designed to be run from within sbt.
+For example, to compile your project and run it on the file
+<code>test/factorial.java</code> you use the command
+
+<pre>
+  run test/factorial.java
+</pre>
+
+<p>Assuming your code compiles and runs, this will print the tree that
+has been constructed (for correct input), or will print a syntax error
+message (for incorrect input).</p>
+
+<p>The project is also set up to do automatic testing. See the file
+<code>ParsingTests.scala</code> which provides the necessary
+definitions to test the syntax analyser on some sample inputs. Note
+that the tests we provide are <em>not</em> sufficient to test all of
+your code. You must augment them with other tests.</p>
+
+<p>You can run the tests using the <code>test</code> command in sbt. This
+command will build the project and then run each test in turn,
+comparing the output produced by your program with the expected
+output. Any deviations will be reported as test failures.</p>
+
+</ul>
+
+<h4>What you must hand in and how</h4>
+
+<ol>
+
+    <li> <p>All of the code for your syntax analyser. To make this
+    clear, submit <em>every file</em> that is needed to build your
+    program from source, including files in the skeleton that you have
+    not changed. Do not add any new files or include multiple versions
+    of your files. Do not include any libraries. We will compile all
+    of the files that you submit using sbt, so you should avoid any
+    other build mechanisms.</p></li>
+
+    <li><p>Your submission should include all of the tests that you have
+    used to make sure that your program is working correctly. Note
+    that just testing one or two simple cases is not enough for many
+    marks. You should test as comprehensively as you can.</p></li>
+
+     <li> <p>A type-written report that describes how you have
+     achieved the goals of the assignment. Your report must contain
+     the following components or sections:</p></li>
+
+      <ul>
+
+      <li>A title page or heading that gives the assignment details,
+      your name and student number.</li>
+
+      <li>A brief introduction that summarises the aim of the
+     assignment and the structure of the rest of the report.</li>
+
+      <li>A description of the design and implementation work that you
+      have done to achieve the goals of the assignment. Listing some
+      code fragments may be useful to illustrate your description, but
+      don't just give a long listing. Leaving out obvious stuff is OK,
+      as long as what you have done is clear. A good rule of thumb is
+      to include enough detail to allow a student to understand it if
+      they are at the stage you were at when you started work on the
+      assignment.</li>
+
+     <li>A description of the testing that you carried out. You should
+     demonstrate that you have used a properly representative set of
+     test cases to be confident that you have covered all the bases.
+     Include details of the tests that you used and the rationale
+     behind why they were chosen. Do not just print the tests out
+     without explanation.</li>
+
+     <li>If you attempted Part Two, include a description of your
+     language extension sufficient to explain what you have added
+     to the language syntax and to the tree structure.</li>
+
+    </ul>
+
+</ol>
+
+<p>Submit your code and report electronically as a single zip file
+called <code>ass1.zip</code> using the appropriate submission link on
+the COMP332 iLearn website by the due date and time. Your report
+should be in PDF format. DO NOT SUBMIT YOUR ASSIGNMENT OR DOCUMENTATION
+IN ANY OTHER FORMAT THAN ZIP and PDF, RESPECTIVELY.</p>
+
+<h4>Marking</h4>
+
+<p>The assignment will be assessed according to the assessment
+standards for Learning Outcomes 2, 3 and 4 as specified in the Unit
+Guide.</p>
+
+<p>Marks will be allocated equally to the code and to the report. Your
+code will be assessed for correctness and quality with respect to the
+assignment description. Marking of the report will assess the clarity
+and accuracy of your description and the adequacy of your testing.
+Marks allocated to testing will be 30% of the marks for the
+assignment.</p>
+
+    <hr>
+    <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
+<!-- Created: Thu Jul  9 11:51:06 EST 2004 -->
+<!-- hhmts start -->Last modified: 9 August 2012 <!-- hhmts end -->
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2010-2012 by
+Anthony Sloane. All rights reserved.</A></FONT><BR>
+  </body>
+</html>

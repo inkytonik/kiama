@@ -1,0 +1,45 @@
+.source kiama/src/org/kiama/example/minijava/test/arraylength.java
+.class public ArrayLength
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    new ArrayLengthClass
+    dup
+    invokespecial ArrayLengthClass/<init>()V
+    invokevirtual ArrayLengthClass/run()I
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source kiama/src/org/kiama/example/minijava/test/arraylength.java
+.class public ArrayLengthClass
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public run()I
+.limit stack 2
+.limit locals 2
+    bipush 10
+    newarray int
+    astore 1
+    aload 1
+    arraylength
+    ireturn
+.end method

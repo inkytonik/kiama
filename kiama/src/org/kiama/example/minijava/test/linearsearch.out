@@ -1,0 +1,243 @@
+.source kiama/src/org/kiama/example/minijava/test/linearsearch.java
+.class public LinearSearch
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    new LS
+    dup
+    invokespecial LS/<init>()V
+    bipush 10
+    invokevirtual LS/Start(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source kiama/src/org/kiama/example/minijava/test/linearsearch.java
+.class public LS
+.super java/lang/Object
+.field public number [I
+.field public size I
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public Start(I)I
+.limit stack 3
+.limit locals 4
+    aload 0
+    iload 1
+    invokevirtual LS/Init(I)I
+    istore 2
+    aload 0
+    invokevirtual LS/Print()I
+    istore 3
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 9999
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 0
+    bipush 8
+    invokevirtual LS/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 0
+    bipush 12
+    invokevirtual LS/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 0
+    bipush 17
+    invokevirtual LS/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 0
+    bipush 50
+    invokevirtual LS/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    bipush 55
+    ireturn
+.end method
+
+.method public Print()I
+.limit stack 6
+.limit locals 2
+    iconst_1
+    istore 1
+L1:
+    iload 1
+    aload 0
+    getfield LS/size I
+    if_icmpge L3
+    iconst_1
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 0
+    getfield LS/number [I
+    iload 1
+    iaload
+    invokevirtual java/io/PrintStream/println(I)V
+    iload 1
+    iconst_1
+    iadd
+    istore 1
+    goto L1
+L2:
+    iconst_0
+    ireturn
+.end method
+
+.method public Search(I)I
+.limit stack 9
+.limit locals 8
+    iconst_1
+    istore 2
+    iconst_0
+    istore 3
+    iconst_0
+    istore 4
+L1:
+    iload 2
+    aload 0
+    getfield LS/size I
+    if_icmpge L3
+    iconst_1
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L2
+    aload 0
+    getfield LS/number [I
+    iload 2
+    iaload
+    istore 5
+    iload 1
+    iconst_1
+    iadd
+    istore 6
+    iload 5
+    iload 1
+    if_icmpge L7
+    iconst_1
+    goto L8
+L7:
+    iconst_0
+L8:
+    ifeq L5
+    iconst_0
+    istore 7
+    goto L6
+L5:
+    iload 5
+    iload 6
+    if_icmpge L13
+    iconst_1
+    goto L14
+L13:
+    iconst_0
+L14:
+    ifeq L11
+    iconst_0
+    goto L12
+L11:
+    iconst_1
+L12:
+    ifeq L9
+    iconst_0
+    istore 7
+    goto L10
+L9:
+    iconst_1
+    istore 3
+    iconst_1
+    istore 4
+    aload 0
+    getfield LS/size I
+    istore 2
+L10:
+L6:
+    iload 2
+    iconst_1
+    iadd
+    istore 2
+    goto L1
+L2:
+    iload 4
+    ireturn
+.end method
+
+.method public Init(I)I
+.limit stack 8
+.limit locals 6
+    aload 0
+    iload 1
+    putfield LS/size I
+    aload 0
+    iload 1
+    newarray int
+    putfield LS/number [I
+    iconst_1
+    istore 2
+    aload 0
+    getfield LS/size I
+    iconst_1
+    iadd
+    istore 3
+L1:
+    iload 2
+    aload 0
+    getfield LS/size I
+    if_icmpge L3
+    iconst_1
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L2
+    iconst_2
+    iload 2
+    imul
+    istore 4
+    iload 3
+    iconst_3
+    isub
+    istore 5
+    aload 0
+    getfield LS/number [I
+    iload 2
+    iload 4
+    iload 5
+    iadd
+    iastore
+    iload 2
+    iconst_1
+    iadd
+    istore 2
+    iload 3
+    iconst_1
+    isub
+    istore 3
+    goto L1
+L2:
+    iconst_0
+    ireturn
+.end method

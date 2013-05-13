@@ -1,0 +1,68 @@
+.source kiama/src/org/kiama/example/minijava/test/array.java
+.class public Array
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    new ArrayClass
+    dup
+    invokespecial ArrayClass/<init>()V
+    invokevirtual ArrayClass/run()I
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source kiama/src/org/kiama/example/minijava/test/array.java
+.class public ArrayClass
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public run()I
+.limit stack 4
+.limit locals 3
+    iconst_0
+    istore 1
+    bipush 10
+    newarray int
+    astore 2
+L1:
+    iload 1
+    bipush 10
+    if_icmpge L3
+    iconst_1
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L2
+    aload 2
+    iload 1
+    iload 1
+    iastore
+    iload 1
+    iconst_1
+    iadd
+    istore 1
+    goto L1
+L2:
+    aload 2
+    iconst_5
+    iaload
+    ireturn
+.end method

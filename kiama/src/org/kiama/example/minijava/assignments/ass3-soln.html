@@ -1,0 +1,309 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>COMP332 2012 Assignment Three (Sample Solution)</title>
+  </head>
+
+  <body>
+    <h1>Macquarie University<br>Department of Computing</h1>
+
+    <h2>COMP332 Programming Languages 2012<br>
+  Assignment Three (Sample Solution)</h2>
+
+    <p>This assignment concerned the design, development, testing, and
+    documentation of a translator from MiniJava to the Java Virtual
+    Machine. The skeleton for the assignment provided much of the 
+    translator implementation. We needed to finish it off by implementing
+    the missing portions.</p>
+
+    <p>The features that we had to be implement were:</p>
+
+    <ol>
+        <li>artihmetic operations (subtraction and multiplication)</li>
+        <li>conditional and while statements</li>
+        <li>Boolean constants (<code>true</code> and <code>false</code>)
+            and operations (<code>and</code>, <code>not</code>), and
+        <li>array creation, length, indexing and assignment.</li>
+    </ol>
+
+    <p>The following discussion considers each one of these in turn.</p>
+
+    <h3>Arithmetic operations</h3>
+
+    <p>The skeleton already implemented addition by first translating the
+    two operand expressions, then generating an <code>iadd</code>  
+    instruction. I followed the same scheme for the two missing operations.
+    For example, for subtraction I use an <code>isub</code> operation as
+    follows in <code>translateExp</code>.</p>
+
+<pre>
+case MinusExp (left, right) =>
+    translateExp (left)
+    translateExp (right)
+    gen (Isub ())
+</pre>
+
+    <h3>Conditional and while statements</h3>
+
+    <p>In the week 10 practical exercise we saw a simple scheme for 
+    translating conditional statements. The difference for this assignment
+    is that the conditional statements have both then and else branches,
+    whereas in the practical they only had one branch. It was easy to
+    extend the scheme to accommodate the extra branch.</p>
+
+    <p>The code I generate for a conditional statement first checks the
+    condition, jumping to a label for the else branch if the condition
+    is false. Otherwise, the code falls through to the code for the 
+    then branch, followed by a jump over the else branch. The code that
+    was added to <code>translateStmt</code> is as follows.</p>
+
+<pre>
+case If (cond, stmt1, stmt2) =>
+    val label1 = makeLabel ()
+    val label2 = makeLabel ()
+    translateCond (cond, label1)
+    translateStmt (stmt1)
+    gen (Goto (label2))
+    gen (Label (label1))
+    translateStmt (stmt2)
+    gen (Label (label2))
+</pre>
+
+    <p>While statements are handled essentially the same as in the
+    practical. The code first checks the condition and jump after the
+    loop body if the condition is false. Otherwise, we fall through to
+    the body followed by a jump back up to the top of the loop. The
+    code is as follows.</p>
+
+<pre>
+case While (cond, stmt) =>
+    val label1 = makeLabel ()
+    val label2 = makeLabel ()
+    gen (Label (label1))
+    translateCond (cond, label2)
+    translateStmt (stmt)
+    gen (Goto (label1))
+    gen (Label (label2))
+</pre>    
+
+    <h3>Boolean constants and operations</h3>
+    
+    <p>As noted in the assignment handout, the JVM doesn't really have Boolean
+    operations, so to translate MiniJava Booleans, we use integers, with the 
+    convetion that one is true and zero is false. Thus, the two cases for
+    true and false in <code>translateExp</code> became:</p>
+
+<pre>
+case TrueExp () =>
+    gen (Iconst_1 ())
+
+case FalseExp () =>
+    gen (Iconst_0 ())
+</pre>
+
+    <p>I chose to implement the Boolean <code>and</code> and <code>not</code>
+    operations using flow control, rather than trying to find integer operations
+    that had the desired effect. In the case of <code>not</code> it suffices to
+    evaluate the operand expression, then use an <code>ifeq</code> instruction
+    to jump to code to push one if the expression is zero. Otherwise, the
+    code falls through to code to push zero and jump over the other code.</p> 
+
+<pre>
+case NotExp (exp) =>
+    val label1 = makeLabel ()
+    val label2 = makeLabel ()
+    translateExp (exp)
+    gen (Ifeq (label1))
+    gen (Iconst_0 ())
+    gen (Goto (label2))
+    gen (Label (label1))
+    gen (Iconst_1 ())
+    gen (Label (label2))
+</pre>
+
+    <p>The <code>and</code> operation can be handled in a similar fashion,
+    but we need to take care to implement the short-circuit evaluation 
+    semantics. In other words, if the left operand expression evaluates to
+    false, then we should not evaluate the right operand expression.</p>
+
+    <p>The code first evaluates the left expression. If that expression is
+    equal to zero, it jumps straight to code to push a zero (false) value
+    as the result of the whole expression. Otherwise, if the left expression
+    is true, the control falls through to code that evaluates the right
+    expression.  No more work needs to be done, since at that point the
+    value of the right expression is the same as the value of the whole expression,
+    and that value is on the operand stack already. So, after the right
+    expression has been evaluated, we just need to jump over the false
+    code.</p> 
+
+<pre>
+case AndExp (left, right) =>
+    val label1 = makeLabel ()
+    val label2 = makeLabel ()
+    translateExp (left)
+    gen (Ifeq (label1))
+    translateExp (right)
+    gen (Goto (label2))
+    gen (Label (label1))
+    gen (Iconst_0 ())
+    gen (Label (label2))
+</pre>
+
+    <h3>Arrays</h3>
+
+    <p>Arrays were a bit trickier than the other constructs, not because 
+    they were hard to generate code for, but because I needed to find the
+    right instructions to deal with arrays. At this point it is worth
+    noticing that the JVM has two sets of array instructions: one set
+    for arrays of primitive values (e.g., integers) and another set for
+    arrays of object references. MiniJava only has arrays with integer
+    elements, so we only use the first set of instructions.</p>
+
+    <p>First, array creation. For integer arrays creation is achieved by
+    the <code>newarray</code> instruction where the argument is the 
+    primitive element type. When using Jasmin, we can specify the 
+    elementy type by name.  The number of elements that we want in the
+    array must already be on the operand stack when the creation 
+    instruction is executed. Thus, in <code>translateExp</code> a new
+    array expression is translated as follows.</p>
+
+<pre>
+case NewArrExp (exp) =>
+    translateExp (exp)
+    gen (NewArray ("int"))
+</pre>    
+
+    <p>The length of an array is obtained by pushing the array reference
+    on the operand stack and executing an <code>arraylength</code>
+    instruction. Thus, the translation code for this case is:</p>
+
+<pre>
+case LengthExp (base) =>
+    translateExp (base)
+    gen (ArrayLength ())
+</pre>
+
+    <p>An array indexing operation requires the array reference and the
+    index of the element which we want to obtain to both be on the 
+    stack (in that order). Then the <code>iaload</code> instruction
+    replaces them with the requested element.</p>
+
+<pre>
+case IndExp (base, ind) =>
+    translateExp (base)
+    translateExp (ind)
+    gen (Iaload ())
+</pre>
+
+    <p>Finally, in <code>translateStmt</code> we need to implement
+    array assignment statements. These are implemented using
+    <code>iastore</code> instructions, which expect the array 
+    reference, the index value and the value to be assigned to be
+    on the stack (in that order). In an <code>ArrAssign</code>
+    statement construct the array is given by an identifier, so 
+    we use the skeleton's <code>translateIdnLoad</code> method to
+    generate code to load the value of whatever that identifier
+    refers to (since it might be a field, argument or local
+    variable). Thus, the code to translate array assignments
+    is as follows.</p>
+
+<pre>
+case ArrAssign (idnuse, ind, exp) =>
+    translateIdnLoad (idnuse)
+    translateExp (ind)
+    translateExp (exp)
+    gen (Iastore ())
+</pre>
+
+    <h3>Testing</h3>
+
+    <p>I used two testing approaches for this asignment. First, for each
+    of the constructs that I had to implement I created small MiniJava
+    programs that uses these constructs in simple ways, trying to focus
+    on one aspect of the construct at a time.</p>
+
+    <p>I tried to get tests that tested all of the different possibilities
+    for a construct. E.g, for the <code>and</code> expressions, we have
+    three possibilities, depending on the truth value of the left and
+    right expressions. Thus, there are three test cases to make sure that
+    the possibilities are all covered. (The implementation of the basic
+    Boolean values are also tested in these tests.)</p>
+
+    <p>To illusrate the idea, consider the following test case:</p>
+
+<pre>
+class AndFalseLoop {
+    public static void main () {
+        System.out.println (false &amp;&amp; (new LoopClass ().run ()));
+    }
+}
+
+class LoopClass {
+
+    public boolean run () {
+        while (true) {}
+        return false;
+    }
+
+}
+</pre>
+
+    <p>This test is designed to test the short-circuit evaluation. An
+    <code>and</code> expression is evaluated which has a false left
+    operand and a right operand that goes into an infinite loop.
+    Under short-circuit evaluation we expected to get false for this
+    program, so the expected output is <code>0</code>.</p>
+
+    <p>Similarly, for statements such as conditional or while statements,
+    I have tests that make sure that all of the flow control possibilities
+    are covered. E.g., for a while statement, we cover zero iterations of
+    the loop, one iteration and more than one iteration.</p>
+
+    <p>As a further illustration, we have the following test case which
+    tests that loops that iterate more than once iterate the correct
+    number of times. The expected output for this test is <code>10</code>.</p>
+
+<pre>
+class WhileMany {
+    public static void main () {
+        System.out.println (new WhileManyClass ().run ());
+    }
+}
+
+class WhileManyClass {
+
+    public int run () {
+        int v;
+        v = 0;
+        while (v &lt; 10) {
+            v = v + 1;
+        }
+        return v;
+    }
+
+}
+</pre>    
+
+    <p>As well as using these small synthetic tests, I also tested my
+    translator using the bigger MiniJava programs that were provided in
+    the skeleton. These bigger tests are likley to exercise the 
+    translation much more than the simple cases, particularly using
+    more complex operands for the expressions or bodies for the 
+    structured statements.</p>
+
+    <p>I wrote a small script setup that runs my compiler over all of the
+    tests in the test sub-directory, uses Jasmin to produce class files,
+    runs the main program with the JVM, and captures the output from the
+    run. That output is compared to the <code>.exp</code> file that 
+    belongs to the test and any difference is flagged as a test failure.</p>
+
+    <p>In each case, I obtain the output that I expect to see, so I am
+    reasonably confident that my translations are correct.</p>
+
+    <hr>
+    <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012 by
+Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
+  </body>
+</html>

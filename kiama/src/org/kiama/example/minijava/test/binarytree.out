@@ -1,0 +1,747 @@
+.source kiama/src/org/kiama/example/minijava/test/binarytree.java
+.class public BinaryTree
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    new BT
+    dup
+    invokespecial BT/<init>()V
+    invokevirtual BT/Start()I
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source kiama/src/org/kiama/example/minijava/test/binarytree.java
+.class public Tree
+.super java/lang/Object
+.field public left LTree;
+.field public right LTree;
+.field public key I
+.field public has_left Z
+.field public has_right Z
+.field public my_null LTree;
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public Init(I)Z
+.limit stack 2
+.limit locals 2
+    aload 0
+    iload 1
+    putfield Tree/key I
+    aload 0
+    iconst_0
+    putfield Tree/has_left Z
+    aload 0
+    iconst_0
+    putfield Tree/has_right Z
+    iconst_1
+    ireturn
+.end method
+
+.method public SetRight(LTree;)Z
+.limit stack 2
+.limit locals 2
+    aload 0
+    aload 1
+    putfield Tree/right LTree;
+    iconst_1
+    ireturn
+.end method
+
+.method public SetLeft(LTree;)Z
+.limit stack 2
+.limit locals 2
+    aload 0
+    aload 1
+    putfield Tree/left LTree;
+    iconst_1
+    ireturn
+.end method
+
+.method public GetRight()LTree;
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Tree/right LTree;
+    areturn
+.end method
+
+.method public GetLeft()LTree;
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Tree/left LTree;
+    areturn
+.end method
+
+.method public GetKey()I
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Tree/key I
+    ireturn
+.end method
+
+.method public SetKey(I)Z
+.limit stack 2
+.limit locals 2
+    aload 0
+    iload 1
+    putfield Tree/key I
+    iconst_1
+    ireturn
+.end method
+
+.method public GetHas_Right()Z
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Tree/has_right Z
+    ireturn
+.end method
+
+.method public GetHas_Left()Z
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Tree/has_left Z
+    ireturn
+.end method
+
+.method public SetHas_Left(Z)Z
+.limit stack 2
+.limit locals 2
+    aload 0
+    iload 1
+    putfield Tree/has_left Z
+    iconst_1
+    ireturn
+.end method
+
+.method public SetHas_Right(Z)Z
+.limit stack 2
+.limit locals 2
+    aload 0
+    iload 1
+    putfield Tree/has_right Z
+    iconst_1
+    ireturn
+.end method
+
+.method public Compare(II)Z
+.limit stack 4
+.limit locals 5
+    iconst_0
+    istore 3
+    iload 2
+    iconst_1
+    iadd
+    istore 4
+    iload 1
+    iload 2
+    if_icmpge L3
+    iconst_1
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L1
+    iconst_0
+    istore 3
+    goto L2
+L1:
+    iload 1
+    iload 4
+    if_icmpge L9
+    iconst_1
+    goto L10
+L9:
+    iconst_0
+L10:
+    ifeq L7
+    iconst_0
+    goto L8
+L7:
+    iconst_1
+L8:
+    ifeq L5
+    iconst_0
+    istore 3
+    goto L6
+L5:
+    iconst_1
+    istore 3
+L6:
+L2:
+    iload 3
+    ireturn
+.end method
+
+.method public Insert(I)Z
+.limit stack 3
+.limit locals 7
+    new Tree
+    dup
+    invokespecial Tree/<init>()V
+    astore 2
+    aload 2
+    iload 1
+    invokevirtual Tree/Init(I)Z
+    istore 3
+    aload 0
+    astore 4
+    iconst_1
+    istore 5
+L1:
+    iload 5
+    ifeq L2
+    aload 4
+    invokevirtual Tree/GetKey()I
+    istore 6
+    iload 1
+    iload 6
+    if_icmpge L5
+    iconst_1
+    goto L6
+L5:
+    iconst_0
+L6:
+    ifeq L3
+    aload 4
+    invokevirtual Tree/GetHas_Left()Z
+    ifeq L7
+    aload 4
+    invokevirtual Tree/GetLeft()LTree;
+    astore 4
+    goto L8
+L7:
+    iconst_0
+    istore 5
+    aload 4
+    iconst_1
+    invokevirtual Tree/SetHas_Left(Z)Z
+    istore 3
+    aload 4
+    aload 2
+    invokevirtual Tree/SetLeft(LTree;)Z
+    istore 3
+L8:
+    goto L4
+L3:
+    aload 4
+    invokevirtual Tree/GetHas_Right()Z
+    ifeq L9
+    aload 4
+    invokevirtual Tree/GetRight()LTree;
+    astore 4
+    goto L10
+L9:
+    iconst_0
+    istore 5
+    aload 4
+    iconst_1
+    invokevirtual Tree/SetHas_Right(Z)Z
+    istore 3
+    aload 4
+    aload 2
+    invokevirtual Tree/SetRight(LTree;)Z
+    istore 3
+L10:
+L4:
+    goto L1
+L2:
+    iconst_1
+    ireturn
+.end method
+
+.method public Delete(I)Z
+.limit stack 8
+.limit locals 9
+    aload 0
+    astore 2
+    aload 0
+    astore 3
+    iconst_1
+    istore 4
+    iconst_0
+    istore 5
+    iconst_1
+    istore 6
+L1:
+    iload 4
+    ifeq L2
+    aload 2
+    invokevirtual Tree/GetKey()I
+    istore 7
+    iload 1
+    iload 7
+    if_icmpge L5
+    iconst_1
+    goto L6
+L5:
+    iconst_0
+L6:
+    ifeq L3
+    aload 2
+    invokevirtual Tree/GetHas_Left()Z
+    ifeq L7
+    aload 2
+    astore 3
+    aload 2
+    invokevirtual Tree/GetLeft()LTree;
+    astore 2
+    goto L8
+L7:
+    iconst_0
+    istore 4
+L8:
+    goto L4
+L3:
+    iload 7
+    iload 1
+    if_icmpge L11
+    iconst_1
+    goto L12
+L11:
+    iconst_0
+L12:
+    ifeq L9
+    aload 2
+    invokevirtual Tree/GetHas_Right()Z
+    ifeq L13
+    aload 2
+    astore 3
+    aload 2
+    invokevirtual Tree/GetRight()LTree;
+    astore 2
+    goto L14
+L13:
+    iconst_0
+    istore 4
+L14:
+    goto L10
+L9:
+    iload 6
+    ifeq L15
+    aload 2
+    invokevirtual Tree/GetHas_Right()Z
+    ifeq L21
+    iconst_0
+    goto L22
+L21:
+    iconst_1
+L22:
+    ifeq L19
+    aload 2
+    invokevirtual Tree/GetHas_Left()Z
+    ifeq L23
+    iconst_0
+    goto L24
+L23:
+    iconst_1
+L24:
+    goto L20
+L19:
+    iconst_0
+L20:
+    ifeq L17
+    iconst_1
+    istore 8
+    goto L18
+L17:
+    aload 0
+    aload 3
+    aload 2
+    invokevirtual Tree/Remove(LTree;LTree;)Z
+    istore 8
+L18:
+    goto L16
+L15:
+    aload 0
+    aload 3
+    aload 2
+    invokevirtual Tree/Remove(LTree;LTree;)Z
+    istore 8
+L16:
+    iconst_1
+    istore 5
+    iconst_0
+    istore 4
+L10:
+L4:
+    iconst_0
+    istore 6
+    goto L1
+L2:
+    iload 5
+    ireturn
+.end method
+
+.method public Remove(LTree;LTree;)Z
+.limit stack 4
+.limit locals 6
+    aload 2
+    invokevirtual Tree/GetHas_Left()Z
+    ifeq L1
+    aload 0
+    aload 1
+    aload 2
+    invokevirtual Tree/RemoveLeft(LTree;LTree;)Z
+    istore 3
+    goto L2
+L1:
+    aload 2
+    invokevirtual Tree/GetHas_Right()Z
+    ifeq L3
+    aload 0
+    aload 1
+    aload 2
+    invokevirtual Tree/RemoveRight(LTree;LTree;)Z
+    istore 3
+    goto L4
+L3:
+    aload 2
+    invokevirtual Tree/GetKey()I
+    istore 4
+    aload 1
+    invokevirtual Tree/GetLeft()LTree;
+    invokevirtual Tree/GetKey()I
+    istore 5
+    aload 0
+    iload 4
+    iload 5
+    invokevirtual Tree/Compare(II)Z
+    ifeq L5
+    aload 1
+    aload 0
+    getfield Tree/my_null LTree;
+    invokevirtual Tree/SetLeft(LTree;)Z
+    istore 3
+    aload 1
+    iconst_0
+    invokevirtual Tree/SetHas_Left(Z)Z
+    istore 3
+    goto L6
+L5:
+    aload 1
+    aload 0
+    getfield Tree/my_null LTree;
+    invokevirtual Tree/SetRight(LTree;)Z
+    istore 3
+    aload 1
+    iconst_0
+    invokevirtual Tree/SetHas_Right(Z)Z
+    istore 3
+L6:
+L4:
+L2:
+    iconst_1
+    ireturn
+.end method
+
+.method public RemoveRight(LTree;LTree;)Z
+.limit stack 3
+.limit locals 4
+L1:
+    aload 2
+    invokevirtual Tree/GetHas_Right()Z
+    ifeq L2
+    aload 2
+    aload 2
+    invokevirtual Tree/GetRight()LTree;
+    invokevirtual Tree/GetKey()I
+    invokevirtual Tree/SetKey(I)Z
+    istore 3
+    aload 2
+    astore 1
+    aload 2
+    invokevirtual Tree/GetRight()LTree;
+    astore 2
+    goto L1
+L2:
+    aload 1
+    aload 0
+    getfield Tree/my_null LTree;
+    invokevirtual Tree/SetRight(LTree;)Z
+    istore 3
+    aload 1
+    iconst_0
+    invokevirtual Tree/SetHas_Right(Z)Z
+    istore 3
+    iconst_1
+    ireturn
+.end method
+
+.method public RemoveLeft(LTree;LTree;)Z
+.limit stack 3
+.limit locals 4
+L1:
+    aload 2
+    invokevirtual Tree/GetHas_Left()Z
+    ifeq L2
+    aload 2
+    aload 2
+    invokevirtual Tree/GetLeft()LTree;
+    invokevirtual Tree/GetKey()I
+    invokevirtual Tree/SetKey(I)Z
+    istore 3
+    aload 2
+    astore 1
+    aload 2
+    invokevirtual Tree/GetLeft()LTree;
+    astore 2
+    goto L1
+L2:
+    aload 1
+    aload 0
+    getfield Tree/my_null LTree;
+    invokevirtual Tree/SetLeft(LTree;)Z
+    istore 3
+    aload 1
+    iconst_0
+    invokevirtual Tree/SetHas_Left(Z)Z
+    istore 3
+    iconst_1
+    ireturn
+.end method
+
+.method public Search(I)I
+.limit stack 3
+.limit locals 6
+    aload 0
+    astore 2
+    iconst_1
+    istore 3
+    iconst_0
+    istore 4
+L1:
+    iload 3
+    ifeq L2
+    aload 2
+    invokevirtual Tree/GetKey()I
+    istore 5
+    iload 1
+    iload 5
+    if_icmpge L5
+    iconst_1
+    goto L6
+L5:
+    iconst_0
+L6:
+    ifeq L3
+    aload 2
+    invokevirtual Tree/GetHas_Left()Z
+    ifeq L7
+    aload 2
+    invokevirtual Tree/GetLeft()LTree;
+    astore 2
+    goto L8
+L7:
+    iconst_0
+    istore 3
+L8:
+    goto L4
+L3:
+    iload 5
+    iload 1
+    if_icmpge L11
+    iconst_1
+    goto L12
+L11:
+    iconst_0
+L12:
+    ifeq L9
+    aload 2
+    invokevirtual Tree/GetHas_Right()Z
+    ifeq L13
+    aload 2
+    invokevirtual Tree/GetRight()LTree;
+    astore 2
+    goto L14
+L13:
+    iconst_0
+    istore 3
+L14:
+    goto L10
+L9:
+    iconst_1
+    istore 4
+    iconst_0
+    istore 3
+L10:
+L4:
+    goto L1
+L2:
+    iload 4
+    ireturn
+.end method
+
+.method public Print()Z
+.limit stack 2
+.limit locals 3
+    aload 0
+    astore 1
+    aload 0
+    aload 1
+    invokevirtual Tree/RecPrint(LTree;)Z
+    istore 2
+    iconst_1
+    ireturn
+.end method
+
+.method public RecPrint(LTree;)Z
+.limit stack 2
+.limit locals 3
+    aload 1
+    invokevirtual Tree/GetHas_Left()Z
+    ifeq L1
+    aload 0
+    aload 1
+    invokevirtual Tree/GetLeft()LTree;
+    invokevirtual Tree/RecPrint(LTree;)Z
+    istore 2
+    goto L2
+L1:
+    iconst_1
+    istore 2
+L2:
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 1
+    invokevirtual Tree/GetKey()I
+    invokevirtual java/io/PrintStream/println(I)V
+    aload 1
+    invokevirtual Tree/GetHas_Right()Z
+    ifeq L3
+    aload 0
+    aload 1
+    invokevirtual Tree/GetRight()LTree;
+    invokevirtual Tree/RecPrint(LTree;)Z
+    istore 2
+    goto L4
+L3:
+    iconst_1
+    istore 2
+L4:
+    iconst_1
+    ireturn
+.end method
+.source kiama/src/org/kiama/example/minijava/test/binarytree.java
+.class public BT
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public Start()I
+.limit stack 3
+.limit locals 3
+    new Tree
+    dup
+    invokespecial Tree/<init>()V
+    astore 1
+    aload 1
+    bipush 16
+    invokevirtual Tree/Init(I)Z
+    istore 2
+    aload 1
+    invokevirtual Tree/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 100000000
+    invokevirtual java/io/PrintStream/println(I)V
+    aload 1
+    bipush 8
+    invokevirtual Tree/Insert(I)Z
+    istore 2
+    aload 1
+    invokevirtual Tree/Print()Z
+    istore 2
+    aload 1
+    bipush 24
+    invokevirtual Tree/Insert(I)Z
+    istore 2
+    aload 1
+    iconst_4
+    invokevirtual Tree/Insert(I)Z
+    istore 2
+    aload 1
+    bipush 12
+    invokevirtual Tree/Insert(I)Z
+    istore 2
+    aload 1
+    bipush 20
+    invokevirtual Tree/Insert(I)Z
+    istore 2
+    aload 1
+    bipush 28
+    invokevirtual Tree/Insert(I)Z
+    istore 2
+    aload 1
+    bipush 14
+    invokevirtual Tree/Insert(I)Z
+    istore 2
+    aload 1
+    invokevirtual Tree/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 1
+    bipush 24
+    invokevirtual Tree/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 1
+    bipush 12
+    invokevirtual Tree/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 1
+    bipush 16
+    invokevirtual Tree/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 1
+    bipush 50
+    invokevirtual Tree/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 1
+    bipush 12
+    invokevirtual Tree/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    aload 1
+    bipush 12
+    invokevirtual Tree/Delete(I)Z
+    istore 2
+    aload 1
+    invokevirtual Tree/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 1
+    bipush 12
+    invokevirtual Tree/Search(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    iconst_0
+    ireturn
+.end method

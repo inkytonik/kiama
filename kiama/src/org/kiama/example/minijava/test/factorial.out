@@ -1,0 +1,64 @@
+.source kiama/src/org/kiama/example/minijava/test/factorial.java
+.class public Factorial
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    new Fac
+    dup
+    invokespecial Fac/<init>()V
+    bipush 10
+    invokevirtual Fac/ComputeFac(I)I
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source kiama/src/org/kiama/example/minijava/test/factorial.java
+.class public Fac
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public ComputeFac(I)I
+.limit stack 5
+.limit locals 3
+    iload 1
+    iconst_1
+    if_icmpge L3
+    iconst_1
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L1
+    iconst_1
+    istore 2
+    goto L2
+L1:
+    iload 1
+    aload 0
+    iload 1
+    iconst_1
+    isub
+    invokevirtual Fac/ComputeFac(I)I
+    imul
+    istore 2
+L2:
+    iload 2
+    ireturn
+.end method
