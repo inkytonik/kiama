@@ -12,7 +12,7 @@ organization in ThisBuild := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion in ThisBuild := "2.10.1"
+scalaVersion in ThisBuild := "2.10.2"
 
 scalacOptions in ThisBuild <<= baseDirectory map {
     bd => Seq (
