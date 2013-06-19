@@ -50,7 +50,7 @@ trait Evaluator {
         private var count = 0
         def apply () : Idn = {
             count = count + 1
-            "_v" + count
+            s"_v$count"
         }
     }
 

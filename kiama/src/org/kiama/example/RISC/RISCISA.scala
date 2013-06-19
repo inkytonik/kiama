@@ -50,7 +50,7 @@ object RISCISA {
      */
     type RegNo = Int
 
-    def sayReg (reg : RegNo) : String = "$" + reg
+    def sayReg (reg : RegNo) : String = s"$$$reg"
 
     /**
      * Machine instructions.
@@ -63,7 +63,7 @@ object RISCISA {
      */
     case class MOV (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-                "mov " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"mov ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -71,7 +71,7 @@ object RISCISA {
      */
     case class MOVI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "movi " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"movi ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -80,7 +80,7 @@ object RISCISA {
      */
     case class MVN (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "mvn " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"mvn ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -89,7 +89,7 @@ object RISCISA {
      */
     case class MVNI (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "mvni " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"mvni ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -97,7 +97,7 @@ object RISCISA {
      */
     case class ADD (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "add " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"add ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -106,7 +106,7 @@ object RISCISA {
      */
     case class ADDI (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "addi " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"addi ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -115,7 +115,7 @@ object RISCISA {
      */
     case class SUB (a : RegNo, b : RegNo, c : RegNo) extends Instr  {
         override def toString : String =
-            "sub " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"sub ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -124,7 +124,7 @@ object RISCISA {
      */
     case class SUBI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "subi " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"subi ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -132,7 +132,7 @@ object RISCISA {
      */
     case class MUL (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "mul " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"mul ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -141,7 +141,7 @@ object RISCISA {
      */
     case class MULI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "muli " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"muli ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -150,7 +150,7 @@ object RISCISA {
      */
     case class DIV (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "div " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"div ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -159,7 +159,7 @@ object RISCISA {
      */
     case class DIVI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "divi " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"divi ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -168,7 +168,7 @@ object RISCISA {
      */
     case class MOD (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "mod " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"mod ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -177,7 +177,7 @@ object RISCISA {
      */
     case class MODI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "modi " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"modi ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -187,7 +187,7 @@ object RISCISA {
      */
     case class CMP (b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "cmp " + sayReg (b) + ", " + sayReg (c)
+            s"cmp ${sayReg (b)}, ${sayReg (c)}"
      }
 
     /**
@@ -198,7 +198,7 @@ object RISCISA {
      */
     case class CMPI (b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "cmpi " + sayReg (b) + ", " + im
+            s"cmpi ${sayReg (b)}, $im"
     }
 
     /**
@@ -207,7 +207,7 @@ object RISCISA {
      */
     case class CHKI (b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "chki " + sayReg (b) + ", " + im
+            s"chki ${sayReg (b)}, $im"
     }
 
     /**
@@ -216,7 +216,7 @@ object RISCISA {
      */
     case class AND (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "and " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"and ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -225,7 +225,7 @@ object RISCISA {
      */
     case class ANDI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "andi " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"andi ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -234,7 +234,7 @@ object RISCISA {
      */
     case class OR (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "or " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"or ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -243,7 +243,7 @@ object RISCISA {
      */
     case class ORI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "ori " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"ori ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -252,7 +252,7 @@ object RISCISA {
      */
     case class XOR (a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            "xor " + sayReg (a) + ", " + sayReg (b) + ", " + sayReg (c)
+            s"xor ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
     }
 
     /**
@@ -261,7 +261,7 @@ object RISCISA {
      */
     case class XORI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
         override def toString : String =
-            "xori " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"xori ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -271,7 +271,7 @@ object RISCISA {
      */
     case class LDW (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "ldw " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"ldw ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -280,7 +280,7 @@ object RISCISA {
      */
     case class LDB (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "ldb " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"ldb ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -290,7 +290,7 @@ object RISCISA {
      */
     case class POP (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "pop " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"pop ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -300,7 +300,7 @@ object RISCISA {
      */
     case class STW (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "stw " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"stw ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -310,7 +310,7 @@ object RISCISA {
      */
     case class STB (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "stb " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"stb ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -321,7 +321,7 @@ object RISCISA {
      */
     case class PSH (a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            "psh " + sayReg (a) + ", " + sayReg (b) + ", " + im
+            s"psh ${sayReg (a)}, ${sayReg (b)}, $im"
     }
 
     /**
@@ -329,7 +329,7 @@ object RISCISA {
      * in register a.
      */
     case class RD (a : RegNo) extends Instr {
-        override def toString : String = "rd " + sayReg (a)
+        override def toString : String = s"rd ${sayReg (a)}"
     }
 
     /**
@@ -337,7 +337,7 @@ object RISCISA {
      * standard output.
      */
     case class WRD (c : RegNo) extends Instr {
-        override def toString : String = "wrd " + sayReg (c)
+        override def toString : String = s"wrd ${sayReg (c)}"
     }
 
     /**
@@ -345,7 +345,7 @@ object RISCISA {
      * standard output.
      */
     case class WRH (c : RegNo) extends Instr {
-        override def toString : String = "wrh " + sayReg (c)
+        override def toString : String = s"wrh ${sayReg (c)}"
     }
 
     /**
@@ -365,9 +365,9 @@ object RISCISA {
         var disp : Disp = -1
         override def toString : String =
             if (disp != -1)
-                "(" + disp + ")"
+                s"($disp)"
             else
-                "label" + label
+                s"label$label"
         def copy(label : Int = label) : Branch
     }
 
@@ -376,7 +376,7 @@ object RISCISA {
      * value plus four times disp.
      */
     case class BEQ (val label : Int) extends Branch {
-        override def toString : String = "beq " + super.toString
+        override def toString : String = s"beq ${super.toString}"
         def copy(label : Int) : Branch = BEQ (label)
     }
 
@@ -385,7 +385,7 @@ object RISCISA {
      * value plus four times disp.
      */
     case class BNE (val label : Int) extends Branch {
-        override def toString : String = "bne " + super.toString
+        override def toString : String = s"bne ${super.toString}"
         def copy(label : Int) : Branch = BNE (label)
     }
 
@@ -394,7 +394,7 @@ object RISCISA {
      * value plus four times disp.
      */
     case class BLT (val label : Int) extends Branch {
-        override def toString : String = "blt " + super.toString
+        override def toString : String = s"blt ${super.toString}"
         def copy(label : Int) : Branch = BLT (label)
     }
 
@@ -403,7 +403,7 @@ object RISCISA {
      * value plus four times disp.
      */
     case class BGE (val label : Int) extends Branch {
-        override def toString : String = "bge " + super.toString
+        override def toString : String = s"bge ${super.toString}"
         def copy(label : Int) : Branch = BGE (label)
     }
 
@@ -412,7 +412,7 @@ object RISCISA {
      * counter to its value plus four times disp.
      */
     case class BLE (val label : Int) extends Branch {
-        override def toString : String = "ble " + super.toString
+        override def toString : String = s"ble ${super.toString}"
         def copy(label : Int) : Branch = BLE (label)
     }
 
@@ -421,7 +421,7 @@ object RISCISA {
      * counter to its value plus four times disp.
      */
     case class BGT (val label : Int) extends Branch {
-        override def toString : String = "bgt " + super.toString
+        override def toString : String = s"bgt ${super.toString}"
         def copy(label : Int) : Branch = BGT (label)
     }
 
@@ -429,7 +429,7 @@ object RISCISA {
      * Set the program counter to its value plus disp.
      */
     case class BR (val label : Int) extends Branch {
-        override def toString : String = "br " + super.toString
+        override def toString : String = s"br ${super.toString}"
         def copy(label : Int) : Branch = BR (label)
     }
 
@@ -438,7 +438,7 @@ object RISCISA {
      * program counter to its value plus disp.
      */
     case class BSR (val label : Int) extends Branch {
-        override def toString : String = "bsr " + super.toString
+        override def toString : String = s"bsr ${super.toString}"
         def copy(label : Int) : Branch = BSR (label)
     }
 
@@ -447,7 +447,7 @@ object RISCISA {
      * value is zero, halt the machine.
      */
     case class RET (c : RegNo) extends Instr {
-        override def toString : String = "ret " + sayReg (c)
+        override def toString : String = s"ret ${sayReg (c)}"
     }
 
     /**
@@ -462,14 +462,14 @@ object RISCISA {
      * clash with the Label class in RISCTree
      */
     case class Target (label : Int) extends Pseudo {
-        override def toString : String = "label" + label + ":"
+        override def toString : String = s"label$label:"
     }
 
     /**
      * Comment
      */
     case class Comment (text : String) extends Pseudo {
-        override def toString : String = "! " + text
+        override def toString : String = s"! $text"
     }
 
     /**
@@ -480,7 +480,7 @@ object RISCISA {
          for (line <- code) {
              line match {
                  case _ : Target => emitter.emitln (line)
-                 case _          => emitter.emitln ("    " + line)
+                 case _          => emitter.emitln (s"    $line")
              }
          }
      }

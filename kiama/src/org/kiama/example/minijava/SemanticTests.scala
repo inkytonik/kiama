@@ -610,12 +610,12 @@ class SemanticTests extends FunSuite {
     def parseProgram (str : String) : Program =
         parseAll (parser, str) match {
             case Success (r, in) =>
-                if (!in.atEnd) fail ("input remaining at " + in.pos)
+                if (!in.atEnd) fail (s"input remaining at ${in.pos}")
                 r
             case f : Error =>
-                fail ("parse error: " + f)
+                fail (s"parse error: $f")
             case f : Failure =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
 
     /**
@@ -671,9 +671,9 @@ class SemanticTests extends FunSuite {
      */
     def assertMessage (index : Int, line : Int, column : Int, msg : String) {
         val m = messages (index)
-        expectResult (msg, "wrong text in message " + index) (m.message)
-        expectResult (line, "wrong line number in message " + index) (m.pos.line)
-        expectResult (column, "wrong column number in message " + index) (m.pos.column)
+        expectResult (msg, s"wrong text in message $index") (m.message)
+        expectResult (line, s"wrong line number in message $index") (m.pos.line)
+        expectResult (column, s"wrong column number in message $index") (m.pos.column)
     }
 
 }

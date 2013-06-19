@@ -41,8 +41,8 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
      * against the expected output.
      */
     def querytest (fn : String, q : String, exp : String) {
-        val fullfn = "kiama/src/org/kiama/example/prolog/test/" + fn
-        test (q + " on " + fullfn) {
+        val fullfn = s"kiama/src/org/kiama/example/prolog/test/$fn"
+        test (s"$q on $fullfn") {
             val emitter = new StringEmitter
             parseAll (program, filereader (fullfn)) match {
                 case Success (programtree, _) =>
@@ -51,10 +51,10 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
                             interpret (querytree, programtree, emitter)
                             expectResult (exp) (emitter.result)
                         case f =>
-                            fail ("can't parse query '" + q + "': " + f)
+                            fail (s"can't parse query '$q': $f")
                     }
                 case f =>
-                    fail ("can't parse program file '" + fn + "': " + f)
+                    fail (s"can't parse program file '$fn': $f")
             }
         }
     }

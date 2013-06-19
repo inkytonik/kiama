@@ -37,19 +37,19 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
     abstract override def check (n : SourceASTNode) {
         n match {
             case ModuleDecl (_, _, u @ IdnUse (i)) if !isModule (u->entity) =>
-                message (u, i + " is not a module")
+                message (u, s"$i is not a module")
 
             case d @ IdnDef (i) if d->entity == MultipleEntity () =>
-                message (d, i + " is already declared")
+                message (d, s"$i is already declared")
 
             case HasParent (u @ IdnUse (i2), ModuleDecl (IdnDef (i1), _, _)) if i1 != i2 =>
-                message (u, "end module name '" + i2 + "' should be '" + i1 + "'")
+                message (u, s"end module name '$i2' should be '$i1'")
 
             case u @ IdnUse (i) if u->entity == UnknownEntity () =>
-                message (u, i + " is not declared")
+                message (u, s"$i is not declared")
 
             case NamedType (u @ IdnUse (i)) if !isType (u->entity) =>
-                message (u, i + " is not a type name")
+                message (u, s"$i is not a type name")
 
             case Assignment (l, _) if !isLvalue (l) =>
                 message (n, "illegal assignment")
@@ -59,7 +59,7 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
                     message (e, "expression is not constant")
                 e match {
                     case u @ IdnExp (IdnUse (i)) if !(isRvalue (u)) =>
-                        message (u, i + " cannot be used in an expression")
+                        message (u, s"$i cannot be used in an expression")
 
                     case DivExp (_, r) if (r->expconst) && (r->isconst) && (r->value == 0) =>
                         message (r, "division by zero in constant expression")

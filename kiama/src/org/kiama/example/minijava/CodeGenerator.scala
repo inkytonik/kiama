@@ -44,12 +44,12 @@ object CodeGenerator {
             if (isTest)
                 emitter
             else
-                new FileEmitter (classfile.name + ".j")
+                new FileEmitter (s"${classfile.name}.j")
 
         // Output header
-        codeEmitter.emitln (".source " + classfile.source)
-        codeEmitter.emitln (".class public " + classfile.name)
-        codeEmitter.emitln (".super " + classfile.superclassname)
+        codeEmitter.emitln (s".source ${classfile.source}")
+        codeEmitter.emitln (s".class public ${classfile.name}")
+        codeEmitter.emitln (s".super ${classfile.superclassname}")
 
         // Output the fields
         classfile.fields.map (generateField)
@@ -60,7 +60,7 @@ object CodeGenerator {
         codeEmitter.emitln (".limit stack 1")
         codeEmitter.emitln (".limit locals 1")
         codeEmitter.emitln ("    aload_0")
-        codeEmitter.emitln ("    invokespecial " + classfile.superclassname + "/<init>()V")
+        codeEmitter.emitln (s"    invokespecial ${classfile.superclassname}/<init>()V")
         codeEmitter.emitln ("    return")
         codeEmitter.emitln (".end method")
 
@@ -71,7 +71,7 @@ object CodeGenerator {
          * Generate a declaration for a field.
          */
         def generateField (field : JVMField) {
-            codeEmitter.emitln (".field public " + field.name + " " + field.tipe)
+            codeEmitter.emitln (s".field public ${field.name} ${field.tipe}")
         }
 
         /**
@@ -113,8 +113,8 @@ object CodeGenerator {
             if (method.isStatic)
                 codeEmitter.emit ("static ")
             codeEmitter.emitln (method.spec)
-            codeEmitter.emitln (".limit stack " + maxstack)
-            codeEmitter.emitln (".limit locals " + (maxloc + 1))
+            codeEmitter.emitln (s".limit stack $maxstack")
+            codeEmitter.emitln (s".limit locals ${maxloc + 1}")
             method.instrs.map (generateInstr)
             codeEmitter.emitln (".end method")
 
@@ -136,11 +136,11 @@ object CodeGenerator {
         def generateInstr (instr : JVMInstr) {
             instr match {
                 case Label (label) =>
-                    codeEmitter.emitln (label + ":")
+                    codeEmitter.emitln (s"$label:")
                 case _ =>
-                    codeEmitter.emit ("    " + instr.productPrefix.toLowerCase)
+                    codeEmitter.emit (s"    ${instr.productPrefix.toLowerCase}")
                     for (arg <- instr.productIterator) {
-                        codeEmitter.emit (" " + arg)
+                        codeEmitter.emit (s" $arg")
                     }
                     codeEmitter.emitln
             }

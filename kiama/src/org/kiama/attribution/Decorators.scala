@@ -90,7 +90,7 @@ object Decorators {
         def error (t : T) : Nothing = {
             in.reset
             out.reset
-            sys.error ("chain root of tree reached at " + t)
+            sys.error (s"chain root of tree reached at $t")
         }
 
         def indflt (t : T) : U =

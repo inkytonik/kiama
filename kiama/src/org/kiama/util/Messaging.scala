@@ -37,7 +37,7 @@ object Messaging {
      */
     case class Record (pos : Position, message : String) {
         override def toString : String =
-            pos.line + "." + pos.column + ": " + message
+            s"${pos.line}.${pos.column}: $message"
     }
 
     /**

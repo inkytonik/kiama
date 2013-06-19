@@ -109,7 +109,7 @@ trait RewriterCore {
                 val r = strat (t1)
                 r match {
                     case Some (t2) =>
-                        emitter.emitln (" succeeded with " + t2)
+                        emitter.emitln (s" succeeded with $t2")
                     case None =>
                         emitter.emitln (" failed")
                 }
@@ -140,7 +140,7 @@ trait RewriterCore {
                     case Some (t2) =>
                         // Do nothing
                     case None =>
-                        emitter.emitln (msg + t1 + " failed")
+                        emitter.emitln (s"$msg$t1 failed")
                 }
                 r
             }
@@ -374,9 +374,7 @@ trait RewriterCore {
             ctor.newInstance (children : _*).asInstanceOf[T]
         } catch {
             case e : IllegalArgumentException =>
-                sys.error ("dup illegal arguments: " + ctor + " (" +
-                           children.deep.mkString (",") + "), expects " +
-                           ctor.getParameterTypes.length)
+                sys.error (s"""dup illegal arguments: $ctor (${children.deep.mkString (",")}), expects ${ctor.getParameterTypes.length}""")
         }
     }
 
@@ -498,8 +496,7 @@ trait RewriterCore {
                 case (r1 : AnyRef, r2: AnyRef) =>
                     r1 eq r2
                 case _ =>
-                    sys.error ("Rewriter.same: comparison of non-AnyRefs " + v1 + " and " +
-                               v2 + ", should not be reached")
+                    sys.error (s"Rewriter.same: comparison of non-AnyRefs $v1 and $v2, should not be reached")
             }
 
     /**

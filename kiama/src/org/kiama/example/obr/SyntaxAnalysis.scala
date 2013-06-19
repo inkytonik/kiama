@@ -187,7 +187,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
     lazy val ident : PackratParser[Identifier] =
         "[a-zA-Z][a-zA-Z0-9]*".r into (s => {
             if (reservedWords contains s)
-                failure ("keyword \"" + s + "\" found where variable name expected")
+                failure (s"""keyword "$s" found where variable name expected""")
             else
                 success (s)
         })

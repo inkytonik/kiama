@@ -88,7 +88,7 @@ object RISCEncoder {
             val newinst = (inst.asInstanceOf[Instr]) match {
                 case b : Branch =>
                     if (! (labels contains b.label))
-                        sys.error ("Assembler.resolve: unmarked label:" + b.label)
+                        sys.error (s"Assembler.resolve: unmarked label: ${b.label}")
                     val newb = b.copy ()
                     newb.disp = labels (b.label) - currloc
                     newb

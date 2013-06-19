@@ -36,8 +36,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
             case Call (u @ IdnUse (i), cps) =>
                 (u->numparams).foreach (m =>
                     if (m != cps.length)
-                        message (n, "wrong number of parameters in call of " + i +
-                                    ", expected " + m + ", got " + (cps.length))
+                        message (n, s"wrong number of parameters in call of $i, expected $m, got ${cps.length}")
                 )
 
             case HasParent (e : Expression, Call (u, _)) =>

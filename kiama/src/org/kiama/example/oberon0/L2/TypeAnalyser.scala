@@ -32,7 +32,7 @@ trait TypeAnalyser extends L1.TypeAnalyser {
     abstract override def check (n : SourceASTNode) {
         n match {
             case ForStatement (IdnExp (u @ IdnUse (i)), _, _, _, _) if !isVariable (u->entity) =>
-                message (u, "illegal FOR loop control variable " + i)
+                message (u, s"illegal FOR loop control variable $i")
 
             case _ =>
                 // Do nothing by default

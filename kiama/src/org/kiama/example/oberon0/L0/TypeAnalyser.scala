@@ -34,7 +34,7 @@ trait TypeAnalyser extends NameAnalyser {
     abstract override def check (n : SourceASTNode) {
         n match {
             case e : Expression if !isCompatible (e->tipe, e->exptype) =>
-                message (n, "type error: got " + (e->tipe) + ", but expected " + (e->exptype))
+                message (n, s"type error: got ${e->tipe}, but expected ${e->exptype}")
 
             case _ =>
                 // Do nothing by default

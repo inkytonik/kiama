@@ -63,8 +63,7 @@ trait StringOps extends SECDBase {
     }
     case class UserExceptionValue(m : String) extends ExceptionValue {
         override def toString : String =
-            "userExceptionValue@" ++ hashCode.toHexString ++ ": " ++
-            m ++ " at " ++ this.pos.toString
+            s"userExceptionValue@${hashCode.toHexString}: $m at ${this.pos.toString}"
     }
 
     /**

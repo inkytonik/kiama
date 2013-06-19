@@ -252,8 +252,7 @@ object SECDBase {
     abstract class MachineExceptionValue extends ExceptionValue {
         def message : String
         override def toString : String =
-            "MachineExceptionValue" ++ ": " ++ message ++ " at " ++
-            this.pos.toString
+            s"MachineExceptionValue: $message at ${this.pos.toString}"
     }
 
     case class UnboundVariable() extends MachineExceptionValue {
@@ -320,7 +319,7 @@ abstract class SECDBase
     ) extends Value with Continuation {
         override def hashCode : Int = super.hashCode
         override def equals(that : Any) : Boolean = super.equals(that)
-        override def toString : String = "ContValue@" ++ hashCode.toHexString
+        override def toString : String = s"ContValue@${hashCode.toHexString}"
         def getType : TypeValue = ContTypeValue()
     }
 
@@ -338,7 +337,7 @@ abstract class SECDBase
     ) extends Value {
         override def hashCode : Int = super.hashCode
         override def equals(that : Any) : Boolean = super.equals(that)
-        override def toString : String = "ClosureValue@" ++ hashCode.toHexString
+        override def toString : String = s"ClosureValue@${hashCode.toHexString}"
         def getType : TypeValue = ClosureTypeValue()
     }
 
@@ -350,7 +349,7 @@ abstract class SECDBase
     case class PrimValue(bdy : Code) extends Value {
         override def hashCode : Int = super.hashCode
         override def equals(that : Any) : Boolean = super.equals(that)
-        override def toString : String = "PrimValue@" ++ hashCode.toHexString
+        override def toString : String = s"PrimValue@${hashCode.toHexString}"
         def getType : TypeValue = PrimTypeValue()
     }
 

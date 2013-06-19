@@ -92,7 +92,7 @@ object AST {
         override def value : Double = 3
         override def vars : Set[Idn] = Set (s)
         override def depth : Int = 2
-        override def toString : String = "Var(\"" + s + "\")"
+        override def toString : String = s"""Var("$s")"""
     }
 
     /**

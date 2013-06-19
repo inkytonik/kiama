@@ -46,7 +46,7 @@ trait Driver extends CompilerDriver with ProfilingCompiler[ModuleDecl] {
            |   -t     sample runs and print timing information""".stripMargin
 
     override def usageMessage : String =
-        "Usage: driver <profileopt>? <options>? <filename>\n" + baseUsageMessage
+        s"Usage: driver <profileopt>? <options>? <filename>\n$baseUsageMessage"
 }
 
 /**
@@ -77,7 +77,7 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
            |   -x   run in LDTA challenge mode""".stripMargin
 
     def usageMessage : String =
-        "Usage: driver <options>? <filename>\n" + baseUsageMessage
+        s"Usage: driver <options>? <filename>\n$baseUsageMessage"
 
     var helpFlag : Boolean = _
     var printastFlag : Boolean = _
@@ -139,7 +139,7 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
             } else
                 Array (input.get)
         } else {
-            emitter.emitln ("Program arguments were " + args.mkString (" "))
+            emitter.emitln (s"""Program arguments were ${args.mkString (" ")}""")
             emitter.emitln (usageMessage)
             Array.empty
         }
@@ -149,7 +149,7 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
      * Output a section heading so that the output can be split later.
      */
     def section (emitter : Emitter, name : String) {
-        emitter.emitln ("* " + name)
+        emitter.emitln (s"* $name")
     }
 
     /**
@@ -230,7 +230,7 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
             // to errors file.
             if (challengeFlag) {
                 section (emitter, "stdout")
-                emitter.emitln ("line " + sortedmessages (0).pos.line)
+                emitter.emitln (s"line ${sortedmessages (0).pos.line}")
             }
             section (emitter, "errors")
             report (emitter)
@@ -265,7 +265,7 @@ trait TransformingDriver extends Driver {
         with Analyser with Transformer =>
 
     override def usageMessage : String =
-        super.usageMessage + """
+        """${super.usageMessage}
         |   -i   print the intermediate abstract syntax tree
         |   -I   pretty-print the intermediate abstract syntax tree""".stripMargin
 
@@ -335,7 +335,7 @@ trait TranslatingDriver extends TransformingDriver {
         with Analyser with Transformer with Translator with c.CPrettyPrinter =>
 
     override def usageMessage : String =
-        super.usageMessage + """
+        """${super.usageMessage}
         |   -c   print the C abstract syntax tree
         |   -C   pretty-print the C abstract syntax tree""".stripMargin
 

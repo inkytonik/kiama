@@ -72,7 +72,7 @@ class ErrorTests extends Tests with Parser {
                 expectResult ("17.3: Can not assign a variable of type C to a value of type D") (messages (4))
             }
             case f =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 

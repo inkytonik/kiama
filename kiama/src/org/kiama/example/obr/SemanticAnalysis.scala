@@ -45,7 +45,7 @@ object SemanticAnalysis {
 
                     case p @ ObrInt (i1, ds, ss, i2) =>
                         if (i1 != i2)
-                            message (p, "identifier " + i2 + " at end should be " + i1)
+                            message (p, s"identifier $i2 at end should be $i1")
 
                     case n @ AssignStmt (l, r)  =>
                         if (!(l->assignable))
@@ -56,89 +56,88 @@ object SemanticAnalysis {
 
                     case n @ ForStmt (i, e1, e2, ss) =>
                         if (n->entity == Unknown ())
-                            message (n, i + " is not declared")
+                            message (n, s"$i is not declared")
                         val t = (n->entity).tipe;
                         if ((t != IntType ()) && (t != UnknownType ()))
-                            message (n, "for loop variable " + i + " must be integer")
+                            message (n, s"for loop variable $i must be integer")
 
                     // Check a RAISE statement to make sure its parameter is an exception constant.
                     case n @ RaiseStmt (i) =>
                         if (n->entity == Unknown ())
-                            message (n, i + " is not declared")
+                            message (n, s"$i is not declared")
                         val t = (n->entity).tipe;
                         if ((t != ExnType ()) && (t != UnknownType ()))
-                            message (n, "raise parameter " + i + " must be an exception constant")
+                            message (n, s"raise parameter $i must be an exception constant")
 
                     // Check a CATCH clause to make sure its parameter is an exception constant.
                     case n @ Catch (i, ss) =>
                         if (n->entity == Unknown ())
-                            message (n, i + " is not declared")
+                            message (n, s"$i is not declared")
                         val t = (n->entity).tipe;
                         if ((t != ExnType ()) && (t != UnknownType ()))
-                            message (n, "catch clause parameter " + i + " must be an exception constant")
+                            message (n, s"catch clause parameter $i must be an exception constant")
 
                     case n @ IntParam (i) if (n->entity == Multiple ()) =>
-                        message (n, i + " is declared more than once")
+                        message (n, s"$i is declared more than once")
 
                     case n @ IntVar (i) if (n->entity == Multiple ()) =>
-                        message (n, i + " is declared more than once")
+                        message (n, s"$i is declared more than once")
 
                     case n @ BoolVar (i) if (n->entity == Multiple ()) =>
-                        message (n, i + " is declared more than once")
+                        message (n, s"$i is declared more than once")
 
                     case n @ ArrayVar (i, v) if (n->entity == Multiple ()) =>
-                        message (n, i + " is declared more than once")
+                        message (n, s"$i is declared more than once")
 
                     case n @ RecordVar (i, _) =>
                         (n->entity) match {
                              case Variable (RecordType (fs)) =>
                                  if (fs.distinct.length != fs.length)
-                                     message (n, i + " contains duplicate field(s)")
+                                     message (n, s"$i contains duplicate field(s)")
                              case Multiple () =>
-                                 message (n, i + " is declared more than once")
+                                 message (n, s"$i is declared more than once")
                         }
 
                     case n @ IntConst (i, v) if (n->entity == Multiple ()) =>
-                        message (n, i + " is declared more than once")
+                        message (n, s"$i is declared more than once")
 
                     // Extra clauses to report errors from enumeration variable declarations
                     case n @ EnumVar (i, cs)                            =>
                         if (n->entity == Multiple ())
-                            message (n, i + " is declared more than once")
+                            message (n, s"$i is declared more than once")
 
                     case n @ EnumConst (i) if (n->entity == Multiple ())   =>
-                        message (n, i + " is declared more than once")
+                        message (n, s"$i is declared more than once")
 
                     // Extra clause to report errors from exception constant declarations
                     case n @ ExnConst (i) if (n->entity == Multiple ())    =>
-                        message (n, i + " is declared more than once")
+                        message (n, s"$i is declared more than once")
 
                     case e : Expression =>
                         e match {
                             case v @ IdnExp (i) if (v->entity == Unknown ()) =>
-                                message (v, i + " is not declared")
+                                message (v, s"$i is not declared")
 
                             case v @ IndexExp (a, r) =>
                                 (v->entity).tipe match {
                                     case ArrayType (_) =>
                                     case _ =>
-                                        message (v, "attempt to index the non-array " + a)
+                                        message (v, s"attempt to index the non-array $a")
                                 }
 
                             case v @ FieldExp (r, f) =>
                                 ((v->entity).tipe) match {
                                     case RecordType (fs) =>
                                         if (! (fs contains f))
-                                            message (v, f + " is not a field of " + r)
+                                            message (v, s"$f is not a field of $r")
                                     case _ =>
-                                        message (v, "attempt to access field of non-record " + r)
+                                        message (v, s"attempt to access field of non-record $r")
                                 }
 
                             case _                  =>
                         }
                         if (!(e->exptipe exists ((_ : TypeBase) iscompatible e->tipe)))
-                            message (e, "type error: expected " + (e->exptipe).mkString(" or ") +
-                                     " got " + (e->tipe))
+                            message (e, s"""type error: expected ${(e->exptipe).mkString(" or ")} got ${e->tipe}""")
 
                     case _ =>
 

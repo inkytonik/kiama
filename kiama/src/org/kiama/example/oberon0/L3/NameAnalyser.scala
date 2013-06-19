@@ -35,7 +35,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
         n match {
             case HasParent (u @ IdnUse (i1), ProcDecl (IdnDef (i2), _, _, _)) =>
                 if (i1 != i2)
-                    message (u, "end procedure name " + i1 + " should be " + i2)
+                    message (u, s"end procedure name $i1 should be $i2")
 
             case u : IdnUse =>
                 checkNonLocalVarAccess (u)
@@ -45,7 +45,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
                     case _: BuiltinProc | _ : Procedure =>
                         // Ok
                     case _ =>
-                        message (n, "call of non-procedure " + i)
+                        message (n, s"call of non-procedure $i")
                 }
 
             case _ =>
@@ -64,13 +64,13 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
         (u->entity) match {
             case Procedure (i, p) =>
                 if (u->level > p->level)
-                    message (u, "non-local procedure access to " + i + " is not allowed")
+                    message (u, s"non-local procedure access to $i is not allowed")
 
             case Variable (i, t) if (t->level != 0) && (u->level > t->level) =>
-                message (u, "non-local variable access to " + i + " is not allowed")
+                message (u, s"non-local variable access to $i is not allowed")
 
             case Parameter (_, Variable (i, t)) if (t->level != 0) && (u->level > t->level) =>
-                message (u, "non-local parameter access to " + i + " is not allowed")
+                message (u, s"non-local parameter access to $i is not allowed")
 
             case _ =>
                 // Ok

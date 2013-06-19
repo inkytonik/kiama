@@ -138,8 +138,8 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
                        if (start == source.length ())
                            "end of source"
                        else
-                           "`" + source.charAt (start) + "'"
-                   Failure ("string matching regex `" + r + "' expected but " + found + " found", in)
+                           s"`${source.charAt (start)}'"
+                   Failure (s"string matching regex `$r' expected but $found found", in)
             }
         }
 

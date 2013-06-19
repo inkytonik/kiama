@@ -144,7 +144,7 @@ class UniplateTests extends Tests with Checkers with Generator {
         def uniquevars : Exp => Exp = {
             var count = 0
             rewrite ({
-                everywhere (rule { case Var (s) => count = count + 1; Var ("x" + count) })
+                everywhere (rule { case Var (s) => count = count + 1; Var (s"x$count") })
             })
         }
         expectResult (numexp) (uniquevars (numexp))
@@ -163,7 +163,7 @@ class UniplateTests extends Tests with Checkers with Generator {
 
     test ("variable renaming") {
         def rename : Exp => Exp =
-            rewrite (everywhere (rule { case Var (s) => Var ("_" + s) }))
+            rewrite (everywhere (rule { case Var (s) => Var (s"_$s") }))
         check ((e : Exp) => rename (e).vars == e.vars.map ("_" + _))
     }
 

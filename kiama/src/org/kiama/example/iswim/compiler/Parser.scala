@@ -74,13 +74,13 @@ trait Parser extends JavaTokenParsers with WhitespacePositionedParserUtilities {
         name("variable name expected") into {
             case v @ Variable(s) =>
                 if (reserved contains s)
-                    failure("keyword \"" + s + "\" found where variable name expected")
+                    failure(s"""keyword "$s" found where variable name expected""")
                 else
                     success(v)
         }
 
     def keyword (k : String) : Parser[Pos] = {
-        val msg = "keyword \"" + k + "\" expected"
+        val msg = s"""keyword "$k" expected"""
         name(msg) into {
             case Variable(s) =>
                 if (k == s)
@@ -92,7 +92,7 @@ trait Parser extends JavaTokenParsers with WhitespacePositionedParserUtilities {
 
     def operator (op : String) : Parser[Pos] =
         op ^^ Pos |
-        failure("operator \"" + op + "\" expected")
+        failure(s"""operator "$op" expected""")
 
     /**
      * Literals, identifiers, keywords and other atomic phrases

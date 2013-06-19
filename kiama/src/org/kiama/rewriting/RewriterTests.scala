@@ -608,7 +608,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     def travtest (basemsg : String, testmsg : String,
                   eval : Option[Any], result : Option[Any],
                   expecting : Expecting = Equal) {
-        val msg = basemsg + " - " + testmsg + ", " + expecting
+        val msg = s"$basemsg - $testmsg, $expecting"
         test (msg) {
             expecting match {
                 case Equal   => expectResult (result) (eval)
@@ -963,7 +963,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val s = debug ("hello there: ", e)
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         expectsame (Some (t)) (s (t))
-        expectResult ("hello there: " + t + "\n") (e.result)
+        expectResult (s"hello there: $t\n") (e.result)
     }
 
     test ("log strategy produces the expected message and result on success") {
@@ -974,7 +974,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         val u = Asgn (Var ("i"), Num (42))
         expectResult (Some (u)) (s (t))
-        expectResult ("test log " + t + " succeeded with " + u + "\n") (e.result)
+        expectResult (s"test log $t succeeded with $u\n") (e.result)
     }
 
     test ("log strategy produces the expected message and result on failure") {
@@ -984,7 +984,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val s = log (r, "test log ", e)
         val t = Add (Num (1), Var ("i"))
         expectResult (None) (s (t))
-        expectResult ("test log " + t + " failed\n") (e.result)
+        expectResult (s"test log $t failed\n") (e.result)
     }
 
     test ("logfail strategy produces no message but the right result on success") {
@@ -1005,7 +1005,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val s = logfail (r, "test log ", e)
         val t = Add (Num (1), Var ("i"))
         expectResult (None) (s (t))
-        expectResult ("test log " + t + " failed\n") (e.result)
+        expectResult (s"test log $t failed\n") (e.result)
     }
 
     test ("rewrite returns the original term when the strategy fails") {
@@ -1024,7 +1024,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         var count = 0
         val s = memo (everywhere (rule {
                     case Var (_) => count = count + 1;
-                                    Var ("i" + count)
+                                    Var (s"i$count")
                 }))
         val r = Some (Asgn (Var ("i1"), Add (Num (1), Var ("i2"))))
         expectResult (r) (s (t))

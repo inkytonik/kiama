@@ -46,7 +46,7 @@ class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] 
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
-        expectResult ("IDoNotExist.txt (" + msg + ")\n") (e.result)
+        expectResult (s"IDoNotExist.txt ($msg)\n") (e.result)
     }
 
     test ("filetests using a directory that doesn't exist fails") {
@@ -123,8 +123,7 @@ trait TestCompiler[T] extends FunSuite {
                       rt : String) {
 
              val ct = cmd.mkString (" ").replaceAllLiterally ("kiama/src/org/kiama/", "")
-             val title = name + ": " + ct + ", expecting " + rt + extra
-
+             val title = s"$name: $ct, expecting $rt$extra"
              test (title) {
                  val cc =
                      try {
@@ -137,10 +136,10 @@ trait TestCompiler[T] extends FunSuite {
                      }
                  try {
                      val rc = Source.fromFile (rp).mkString
-                     assert (sanitise (cc) === sanitise (rc), title + " generated bad output")
+                     assert (sanitise (cc) === sanitise (rc), s"$title generated bad output")
                  } catch {
                      case e : java.io.FileNotFoundException =>
-                         fail (rp + " not found")
+                         fail (s"$rp not found")
                  }
              }
          }
@@ -161,17 +160,17 @@ trait TestCompiler[T] extends FunSuite {
                         name.startsWith (c) && name.endsWith (resext)
                     }
                 }
-            val cp = path + "/" + c
+            val cp = s"$path/$c"
             for (r <- dir.list (resfilter)) {
-                val rp = path + "/" + r
+                val rp = s"$path/$r"
                 val it = r.replace (resext, inext)
-                val ip = path + "/" + it
+                val ip = s"$path/$it"
                 val inf = new File (ip)
                 val (console, msg) =
                     if (inf.exists)
-                        (new FileConsole (ip), " from input " + it)
+                        (new FileConsole (ip), s" from input $it")
                     else
-                        (new StringConsole (indefault), " from string \"" + indefault + "\"")
+                        (new StringConsole (indefault), s""" from string "$indefault"""")
                 filetest (name, rp, console, msg, args :+ cp, r)
             }
         }
@@ -179,7 +178,7 @@ trait TestCompiler[T] extends FunSuite {
         val dir = new File (path)
         val children = dir.list
         if (children == null) {
-            throw (new IllegalArgumentException ("bad test file path " + path))
+            throw (new IllegalArgumentException (s"bad test file path $path"))
         } else {
             for (args <- argslist) {
                 for (c <- children) {
@@ -188,9 +187,9 @@ trait TestCompiler[T] extends FunSuite {
                             case Some (inext) =>
                                 infiletests (c, dir, inext, args)
                             case None =>
-                                val cp = path + "/" + c
+                                val cp = s"$path/$c"
                                 val rt = c.replace (srcext, resext)
-                                val rp = path + "/" + rt
+                                val rp = s"$path/$rt"
                                 filetest (name, rp, new Console, "", args :+ cp, rt)
                         }
                     }

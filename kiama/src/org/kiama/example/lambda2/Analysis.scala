@@ -91,8 +91,7 @@ object Analysis {
                 tipe (e) == expectedType) {
             true
         } else {
-            message (e, "expected " + pretty (expectedType) +
-                        ", found " + pretty (tipe (e)))
+            message (e, s"expected ${pretty (expectedType)}, found ${pretty (tipe (e))}")
             false
         }
 
@@ -114,7 +113,7 @@ object Analysis {
                 (e->env).collectFirst {
                     case (y, t) if x == y => t
                 }.getOrElse {
-                    message (e, "'" + x + "' unknown")
+                    message (e, s"'$x' unknown")
                     NoType ()
                 }
 
@@ -197,8 +196,7 @@ object Analysis {
                 tipe2 (e) == expectedType) {
             true
         } else {
-            message (e, "expected " + pretty (expectedType) +
-                        ", found " + pretty (tipe2 (e)))
+            message (e, s"expected ${pretty (expectedType)}, found ${pretty (tipe2 (e))}")
             false
         }
 
@@ -221,7 +219,7 @@ object Analysis {
                 (e->lookup (x)) match {
                     case Some (Lam (_, t, _)) => t
                     case None =>
-                        message (e, "'" + x + "' unknown")
+                        message (e, s"'$x' unknown")
                         NoType ()
                 }
 

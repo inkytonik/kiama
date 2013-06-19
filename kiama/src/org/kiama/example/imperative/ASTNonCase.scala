@@ -43,7 +43,7 @@ object ASTNonCase {
                 case _ =>
                     illegalArgs ("Num", "Double", cs)
             }
-        override def toString : String = "Num(" + d + ")"
+        override def toString : String = s"Num($d)"
     }
 
     class Var (val s : Idn) extends Exp {
@@ -56,7 +56,7 @@ object ASTNonCase {
                 case _ =>
                     illegalArgs ("Var", "Idn", cs)
             }
-        override def toString : String = "Var(" + s + ")"
+        override def toString : String = s"Var($s)"
     }
 
     class Neg (val e : Exp) extends Exp {
@@ -69,7 +69,7 @@ object ASTNonCase {
                 case _ =>
                     illegalArgs ("Neg", "Exp", cs)
             }
-        override def toString : String = "Neg(" + e + ")"
+        override def toString : String = s"Neg($e)"
     }
 
     abstract class Binary (val l : Exp, val r : Exp) extends Exp {
@@ -85,7 +85,7 @@ object ASTNonCase {
                 case _ =>
                     illegalArgs ("Add", "Exp, Exp", cs)
             }
-        override def toString : String = "Add(" + l + "," + r + ")"
+        override def toString : String = s"Add($l,$r)"
     }
 
     class Sub (l : Exp, r : Exp) extends Binary (l, r) {
@@ -96,7 +96,7 @@ object ASTNonCase {
                 case _ =>
                     illegalArgs ("Sub", "Exp, Exp", cs)
             }
-        override def toString : String = "Sub(" + l + "," + r + ")"
+        override def toString : String = s"Sub($l,$r)"
     }
 
     class Mul (l : Exp, r : Exp) extends Binary (l, r) {
@@ -107,7 +107,7 @@ object ASTNonCase {
                 case _ =>
                     illegalArgs ("Mul", "Exp, Exp", cs)
             }
-        override def toString : String = "Mul(" + l + "," + r + ")"
+        override def toString : String = s"Mul($l,$r)"
     }
 
     class Div (l : Exp, r : Exp) extends Binary (l, r) {
@@ -118,7 +118,7 @@ object ASTNonCase {
                 case _ =>
                     illegalArgs ("Div", "Exp, Exp", cs)
             }
-        override def toString : String = "Div(" + l + "," + r + ")"
+        override def toString : String = s"Div($l,$r)"
     }
 
 }

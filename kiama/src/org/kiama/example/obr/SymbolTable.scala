@@ -173,7 +173,7 @@ object SymbolTable {
      */
     case class EnumType (ident : Identifier) extends Type {
         override val storage = WORDSIZE
-        override def toString : String = "enumeration " + ident
+        override def toString : String = s"enumeration $ident"
     }
 
     /**

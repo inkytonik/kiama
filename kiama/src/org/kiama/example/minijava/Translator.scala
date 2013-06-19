@@ -106,7 +106,7 @@ object Translator {
 
                 case _ =>
                     // Not reached
-                    sys.error ("locnum: non-argument/variable found: " + idnuse)
+                    sys.error (s"locnum: non-argument/variable found: $idnuse")
             }
         }
 
@@ -128,7 +128,7 @@ object Translator {
          */
         def makeLabel () : String = {
             labelCount = labelCount + 1
-            "L" + labelCount
+            s"L$labelCount"
         }
 
         /**
@@ -186,7 +186,7 @@ object Translator {
                                     translateType (tipe)
                            }
             val retType = translateType (method.body.tipe)
-            val prefix = if (className == "") "" else (className + "/")
+            val prefix = if (className == "") "" else s"$className/"
             JVMMethodSpec (prefix+ method.name.idn, argTypes, retType)
         }
 
@@ -270,7 +270,7 @@ object Translator {
                 val className = cls.name.idn
                 val fieldName = field.name.idn
                 gen (Aload (0))
-                gen (GetField (className + "/" + fieldName, translateType (field.tipe)))
+                gen (GetField (s"$className/$fieldName", translateType (field.tipe)))
             }
 
             def loadLocal (tipe : Type) {
@@ -307,7 +307,7 @@ object Translator {
                 val fieldName = field.name.idn
                 gen (Aload (0))
                 translateExp (exp)
-                gen (PutField (className + "/" + fieldName, translateType (field.tipe)))
+                gen (PutField (s"$className/$fieldName", translateType (field.tipe)))
             }
 
             def storeLocal (tipe : Type) {
@@ -414,9 +414,7 @@ object Translator {
                     gen (InvokeVirtual (methodSpec (className, method)))
 
                 case tipe =>
-                    sys.error ("translateCall: non-reference base type for call: " +
-                               tipe)
-
+                    sys.error (s"translateCall: non-reference base type for call: $tipe")
             }
         }
 
@@ -491,7 +489,7 @@ object Translator {
                 case NewExp (IdnUse (idn)) =>
                     gen (New (idn))
                     gen (Dup ())
-                    gen (InvokeSpecial (JVMMethodSpec (idn + "/<init>", Nil,
+                    gen (InvokeSpecial (JVMMethodSpec (s"$idn/<init>", Nil,
                                                        JVMVoidType ())))
 
                 case NewArrayExp (exp) =>

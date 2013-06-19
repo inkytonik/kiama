@@ -46,13 +46,12 @@ class LambdaTests extends Tests with Checkers with Parser {
     def assertType (e : Exp, aname : String, a : Exp => Type, line : Int, col : Int, msg : String) {
         a (e)
         if (messagecount == 0)
-            fail (aname + ": no messages produced, expected (" + line + "," + col + ") " + msg)
+            fail (s"$aname: no messages produced, expected ($line,$col) $msg")
         else {
             val m = messages (0)
             if ((m.pos.line != line) || (m.pos.column != col) ||
                 (m.message != msg))
-                fail (aname + ": incorrect message, expected (" + line + "," + col + ") " + msg +
-                      ", got (" + m.pos.line + "," + m.pos.column + ") " + m.message)
+                fail (s"$aname: incorrect message, expected ($line,$col) $msg, got (${m.pos.line},${m.pos.column}) $m.message")
         }
     }
 
@@ -68,9 +67,9 @@ class LambdaTests extends Tests with Checkers with Parser {
                 assertType (e, "tipe", tipe, line, col, msg)
                 assertType (e, "tipe2", tipe2, line, col, msg)
             case Success (_, in) =>
-                fail ("extraneous input at " + in.pos + ": " + term)
+                fail (s"extraneous input at ${in.pos}: $term")
             case f =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 
@@ -84,14 +83,14 @@ class LambdaTests extends Tests with Checkers with Parser {
                 initTree (e)
                 tipe (e)
                 if (messagecount != 0)
-                    fail ("tipe: no messages expected, got " + messages)
+                    fail (s"tipe: no messages expected, got $messages")
                 tipe2 (e)
                 if (messagecount != 0)
-                    fail ("tipe2: no messages expected, got " + messages)
+                    fail (s"tipe2: no messages expected, got $messages")
             case Success (_, in) =>
-                fail ("extraneous input at " + in.pos + ": " + term)
+                fail (s"extraneous input at ${in.pos}: $term")
             case f =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 
@@ -157,10 +156,10 @@ class LambdaTests extends Tests with Checkers with Parser {
                 case Var (n)            =>
                     Var (e (n))
                 case Lam (n, t, b)      =>
-                    val m = "v" + d.toString
+                    val m = s"v${d.toString}"
                     Lam (m, t, canonise (b, d + 1, e + (n->m)))
                 case Let (n, t, e2, e1) =>
-                    val m = "v" + d.toString
+                    val m = s"v${d.toString}"
                     Let (m, t, canonise (e2, d + 1, e), canonise (e1, d + 1, e + (n->m)))
             } +
             all (canons (d, e))
@@ -175,7 +174,7 @@ class LambdaTests extends Tests with Checkers with Parser {
      */
     def assertSame (mech : String, e1 : Exp, e2 : Exp) {
         if (canon (e1) != canon (e2))
-            fail (mech + ": " + e1 + " and " + e2 + " are not equal")
+            fail (s"$mech: $e1 and $e2 are not equal")
     }
 
     /**
@@ -190,9 +189,9 @@ class LambdaTests extends Tests with Checkers with Parser {
                 val r = evaluator.eval (e)
                 assertSame (mech, result, r)
             case Success (_, in) =>
-                fail ("extraneous input at " + in.pos + ": " + term)
+                fail (s"extraneous input at ${in.pos}: $term")
             case f =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 
@@ -342,12 +341,11 @@ class LambdaTests extends Tests with Checkers with Parser {
             case Success (e, in) if in.atEnd =>
                 val r = pretty (e)
                 if (r != result)
-                    fail ("pretty-print of " + term + " expected " + result +
-                        ", got " + r)
+                    fail (s"pretty-print of $term expected $result, got $r")
             case Success (_, in) =>
-                fail ("extraneous input at " + in.pos + ": " + term)
+                fail (s"extraneous input at ${in.pos}: $term")
             case f =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 
@@ -357,8 +355,7 @@ class LambdaTests extends Tests with Checkers with Parser {
     def assertPrettyE (term : Exp, result : String) {
         val r = pretty (term)
         if (r != result)
-            fail ("pretty-print of " + term + " expected " + result +
-                  ", got " + r)
+            fail (s"pretty-print of $term expected $result, got $r")
     }
 
     test ("pretty-print lambda expression, simple operation") {

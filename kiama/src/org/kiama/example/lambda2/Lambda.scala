@@ -70,7 +70,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
             case Command (Array (":eval")) =>
                 emitter.emitln ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
-                    emitter.emit ("  " + mech)
+                    emitter.emit (s"  $mech")
                     if (mech == mechanism)
                         emitter.emitln (" (current)")
                     else
@@ -79,7 +79,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
 
             case Command (Array (":eval", mech)) =>
                 if (!setEvaluator (mech))
-                    emitter.emitln ("unknown evaluation mechanism: " + mech)
+                    emitter.emitln (s"unknown evaluation mechanism: $mech")
 
             // Otherwise it's an expression for evaluation
             case _ => super.processline (line)

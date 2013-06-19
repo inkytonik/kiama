@@ -72,7 +72,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         def value : T =
             _value match {
                 case None     =>
-                    sys.error ("State.value: " + name + "." + sname + " is undefined")
+                    sys.error (s"State.value: $name.$sname is undefined")
                 case Some (t) =>
                     t
             }
@@ -202,13 +202,11 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         def value (t : T) : U =
             _value match {
                 case None =>
-                    sys.error ("ParamState.value: " + name + "." + sname +
-                        " is undefined")
+                    sys.error (s"ParamState.value: $name.$sname is undefined")
                 case Some (m) if m contains t =>
                     m (t)
                 case _ =>
-                    sys.error ("ParamState.value: " + name + "." + sname + "(" + t +
-                        ") is undefined")
+                    sys.error (s"ParamState.value: $name.$sname($t) is undefined")
             }
 
         /**
@@ -287,7 +285,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * printing inconsistent state exceptions.
          */
         override def toString : String =
-            name + "." + s.sname + " := " + t
+            s"$name.${s.sname} := $t"
 
     }
 
@@ -326,7 +324,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * printing inconsistent state exceptions.
          */
         override def toString : String =
-            name + "." + s.sname + "(" + t + ") := " + u
+            s"$name.${s.sname}($t) := $u"
 
     }
 
@@ -407,7 +405,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         var nsteps = 0
         do {
             if (debug)
-                emitter.emitln (name + " step " + nsteps)
+                emitter.emitln (s"$name step $nsteps")
             nsteps += 1
         } while (step)
     }
@@ -432,4 +430,4 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
  * another update of the same state item in that step.
  */
 class InconsistentUpdateException[T] (m : Machine, u : Machine#Update, v : T)
-    extends Exception ("Machine = " + m.name + ", update = " + u + ", other value = " + v)
+    extends Exception (s"Machine = ${m.name}, update = $u, other value = $v")

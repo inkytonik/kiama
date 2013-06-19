@@ -60,14 +60,14 @@ object AST {
      * Lambda expressions binding x within e.
      */
     case class Lam (x : Idn, e : Exp) extends Exp {
-        override def toString : String = "(\\" + x + "." + e + ")"
+        override def toString : String = s"(\\$x.$e)"
     }
 
     /**
      * Application of l to r.
      */
     case class App (l : Exp, r : Exp) extends Exp {
-        override def toString : String = "(" + l + " " + r + ")"
+        override def toString : String = s"($l $r)"
     }
 
     /**

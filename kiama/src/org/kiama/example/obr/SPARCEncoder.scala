@@ -122,14 +122,14 @@ class SPARCEncoder (emitter : Emitter) {
      * Emit a formatted instruction.
      */
     private def emit (insn : String) {
-        emitter.emit ("    " + insn + "\n")
+        emitter.emit (s"    $insn\n")
     }
 
     /**
      * Emit a string label.
      */
     private def label (lab : String) {
-        emitter.emit (lab + ":\n")
+        emitter.emit (s"$lab:\n")
     }
 
     /**
@@ -144,7 +144,7 @@ class SPARCEncoder (emitter : Emitter) {
      * the register where its value is stored.
      */
     private def opnd (d : Datum) : String =
-        "%l" + (d->reg)
+        s"%l${d->reg}"
 
     /**
      * Convert an address to an assembly language operand.
@@ -152,8 +152,8 @@ class SPARCEncoder (emitter : Emitter) {
     private def opnd (a : Address) : String =
         a match {
             case Local (0)           => "[%l0]"
-            case Local (offset)      => "[%l0+" + offset + "]"
-            case Indexed (_, offset) => "[%l0+" + opnd (offset) + "]"
+            case Local (offset)      => s"[%l0+$offset]"
+            case Indexed (_, offset) => s"[%l0+${opnd (offset)}]"
         }
 
     /**
@@ -171,12 +171,12 @@ class SPARCEncoder (emitter : Emitter) {
         emit (".asciz \"%d\\n\"")
         emit (".align 4")
         label ("mem")
-        emit (".skip " + memsize)
+        emit (s".skip $memsize")
         emit (".seg \"text\"")
         emit (".globl main")
         label ("main")
         emit ("save %sp, -112, %sp")
-        emit ("set mem, " + memreg)
+        emit (s"set mem, $memreg")
     }
 
     /**
@@ -185,31 +185,31 @@ class SPARCEncoder (emitter : Emitter) {
      */
     private def encode (i : Item) : Unit = {
         resetavailregs
-        emit ("! " + i)
+        emit (s"! $i")
         i match {
 
             case Beq (cond, dest) =>
                 encode (cond)
-                emit ("tst " + opnd (cond))
-                emit ("be " + dest)
+                emit (s"tst ${opnd (cond)}")
+                emit (s"be $dest")
                 emit ("nop")
 
             case Bne (cond, dest) =>
                 encode (cond)
-                emit ("tst " + opnd (cond))
-                emit ("bne " + dest)
+                emit (s"tst ${opnd (cond)}")
+                emit (s"bne $dest")
                 emit ("nop")
 
             case Jmp (dest) =>
-                emit ("ba " + dest)
+                emit (s"ba $dest")
                 emit ("nop")
 
             case LabelDef (lab) =>
                 label (lab.toString)
 
             case Read (Local (offset)) =>
-                emit ("set ifmt, " + arg1reg)
-                emit ("add " + memreg + ", " + offset + ", " + arg2reg)
+                emit (s"set ifmt, $arg1reg")
+                emit (s"add $memreg, $offset, $arg2reg")
                 emit ("call scanf")
                 emit ("nop")
 
@@ -223,12 +223,12 @@ class SPARCEncoder (emitter : Emitter) {
             case StW (mem, d) =>
                 encode (d)
                 encode (mem)
-                emit ("st " + opnd (d) + ", " + opnd (mem))
+                emit (s"st ${opnd (d)}, ${opnd (mem)}")
 
             case Write (d) =>
                 encode (d)
-                emit ("set ofmt, " + arg1reg)
-                emit ("mov " + opnd (d) + ", " + arg2reg)
+                emit (s"set ofmt $arg1reg")
+                emit (s"mov ${opnd (d)}, $arg2reg")
                 emit ("call printf")
                 emit ("nop")
 
@@ -241,7 +241,7 @@ class SPARCEncoder (emitter : Emitter) {
      */
     private def arith2 (opcode : String, e : Datum, d : Datum) {
         encode (e)
-        emit (opcode + " " + opnd (e) + ", " + opnd (d))
+        emit (s"$opcode ${opnd (e)}, ${opnd (d)}")
     }
 
     /**
@@ -251,7 +251,7 @@ class SPARCEncoder (emitter : Emitter) {
     private def arith3 (opcode : String, l : Datum, r : Datum, d : Datum) {
         encode (l)
         encode (r)
-        emit (opcode + " " + opnd (l) + ", " + opnd (r) + ", " + opnd (d))
+        emit ("$opcode ${opnd (l)}, ${opnd (r)}, ${opnd (d)}")
     }
 
     /**
@@ -263,11 +263,11 @@ class SPARCEncoder (emitter : Emitter) {
         val lab = genlabel
         encode (l)
         encode (r)
-        emit ("cmp " + opnd (l) + ", " + opnd (r))
-        emit ("mov 1, " + opnd (d))
-        emit (br + " " + lab)
+        emit (s"cmp ${opnd (l)}, ${opnd (r)}")
+        emit (s"mov 1, ${opnd (d)}")
+        emit (s"$br $lab")
         emit ("nop")
-        emit ("mov 0, " + opnd (d))
+        emit (s"mov 0, ${opnd (d)}")
         label (lab.toString)
     }
 
@@ -296,7 +296,7 @@ class SPARCEncoder (emitter : Emitter) {
             case Not (e) =>
                 // Relies on d and e registers being the same
                 encode (e)
-                emit ("btog 1, " + opnd (e))
+                emit (s"btog 1, ${opnd (e)}")
 
             case SubW (l, r) =>
                 arith3 ("sub", l, r, d)
@@ -308,11 +308,11 @@ class SPARCEncoder (emitter : Emitter) {
             case RemW (l, r) =>
                 encode (l)
                 encode (r)
-                emit ("mov " + opnd (l) + ", " + arg1reg)
-                emit ("mov " + opnd (r) + ", " + arg2reg)
+                emit (s"mov ${opnd (l)}, $arg1reg")
+                emit (s"mov ${opnd (r)}, $arg2reg")
                 emit ("call .rem")
                 emit ("nop")
-                emit ("mov " + resreg + ", " + opnd (d))
+                emit (s"mov $resreg, ${opnd (d)}")
 
             /**
              * Comparisons.
@@ -341,16 +341,16 @@ class SPARCEncoder (emitter : Emitter) {
                 val lab1 = genlabel
                 val lab2 = genlabel
                 encode (cond)
-                emit ("tst " + opnd (cond))
-                emit ("be " + lab1)
+                emit (s"tst ${opnd (cond)}")
+                emit (s"be $lab1")
                 emit ("nop")
                 encode (t)
-                emit ("mov " + opnd (t) + ", " + opnd (d))
-                emit ("ba " + lab2)
+                emit (s"mov ${opnd (t)}, ${opnd (d)}")
+                emit (s"ba $lab2")
                 emit ("nop")
                 label (lab1)
                 encode (f)
-                emit ("mov " + opnd (f) + ", " + opnd (d))
+                emit (s"mov ${opnd (f)}, ${opnd (d)}")
                 label (lab2)
 
             /**
@@ -358,7 +358,7 @@ class SPARCEncoder (emitter : Emitter) {
              * the datum's register.
              */
             case IntDatum (num) =>
-                emit ("mov " + num + ", " + opnd (d))
+                emit (s"mov $num, ${opnd (d)}")
 
             /**
              * A load leaf just turns into an evaluation of the memory address
@@ -366,7 +366,7 @@ class SPARCEncoder (emitter : Emitter) {
              */
             case LdW (mem) =>
                 encode (mem)
-                emit ("ld " + opnd (mem) + ", " + opnd (d))
+                emit (s"ld ${opnd (mem)}, ${opnd (d)}")
 
         }
 

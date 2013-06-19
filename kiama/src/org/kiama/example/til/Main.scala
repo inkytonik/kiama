@@ -45,7 +45,7 @@ trait Main extends StdoutEmitter {
                 emitter.emitln (result)
             } catch {
                 case e : FileNotFoundException =>
-                    emitter.emitln ("can't open " + arg + " for reading")
+                    emitter.emitln (s"can't open $arg for reading")
             }
         }
     }

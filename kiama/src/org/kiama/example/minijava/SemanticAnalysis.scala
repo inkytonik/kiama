@@ -47,10 +47,10 @@ object SemanticAnalysis {
         // Check this node
         n match {
             case d @ IdnDef (i) if (d->entity == MultipleEntity ()) =>
-                message (d, i + " is declared more than once")
+                message (d, s"$i is declared more than once")
 
             case u @ IdnUse (i) if (u->entity == UnknownEntity ()) =>
-                message (u, i + " is not declared")
+                message (u, s"$i is not declared")
 
             case VarAssign (u, _) =>
                 (u->entity) match {
@@ -64,8 +64,7 @@ object SemanticAnalysis {
 
             case e : Expression =>
                 if (!iscompatible (e->tipe, e->exptipe))
-                    message (e, "type error: expected " + (e->exptipe) +
-                                    " got " + (e->tipe))
+                    message (e, s"type error: expected ${e->exptipe} got ${e->tipe}")
                 e match {
 
                     case IdnExp (u) =>
@@ -85,10 +84,7 @@ object SemanticAnalysis {
                                 // Check that argument counts match (rule 16)
                                 val expargnum = decl.body.args.length
                                 if (expargnum != args.length)
-                                    message (u, "wrong number of arguments, got " +
-                                                 args.length + " but expected " +
-                                                 expargnum)
-
+                                    message (u, s"wrong number of arguments, got ${args.length} but expected $expargnum")
                             case ent =>
                                 if (ent != UnknownEntity ())
                                     message (u, "illegal call to non-method")

@@ -42,7 +42,7 @@ trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
      * We assume that there are no C names with "ob_" prefix.
      */
     def mangle (s : String) : String =
-        "ob_" + s
+        s"ob_$s"
 
     /**
      * Generate C equivalent of a type.

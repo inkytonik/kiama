@@ -102,14 +102,10 @@ object ErrorCheck {
                 t match {
                     case a : AssignStmt =>
                         if (!isSubtypeOf (a.Value->tipe) (a.Variable->tipe))
-                            a->record (c, "Can not assign a variable of type " +
-                                          (a.Variable->tipe).Name +
-                                          " to a value of type " +
-                                          (a.Value->tipe).Name)
+                            a->record (c, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
                     case d : ClassDecl =>
                         if (hasCycleOnSuperclassChain (d))
-                            d->record (c, "Cyclic inheritance chain for class " +
-                                          d.Name)
+                            d->record (c, s"Cyclic inheritance chain for class ${d.Name}")
                     case s : WhileStmt =>
                         if (!isSubtypeOf (s.Condition->tipe) (booleanType (s)))
                             s->record (c, "Condition must be a boolean expression")
@@ -118,7 +114,7 @@ object ErrorCheck {
                     case i : IdnUse =>
                         if (isUnknown (i->decl) &&
                             (!isQualified (i) || !isUnknown (i->qualifier->tipe)))
-                        i->record (c, "Unknown identifier " + i.Name)
+                        i->record (c, s"Unknown identifier ${i.Name}")
                     case _ =>
                 }
             }
@@ -133,7 +129,7 @@ object ErrorCheck {
      * }
      */
     val record : (Buffer[String],String) => ASTNode => Unit =
-        (b,s) => a => b += ((a.start) + ": " + s)
+        (b,s) => a => b += s"${a.start}: $s"
 
     /**
      * Is this entity qualified?

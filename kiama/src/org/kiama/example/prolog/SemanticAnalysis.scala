@@ -42,9 +42,9 @@ object SemanticAnalysis {
                     case Predicate (argtypes) =>
                         val arity = argtypes.length
                         if (ts.length != arity)
-                            message (n, s + " should have " + arity + " arguments but has " + ts.length)
+                            message (n, s"$s should have $arity arguments but has ${ts.length}")
                     case UnknownEntity () =>
-                        message (n, s + " is not declared")
+                        message (n, s"$s is not declared")
                 }
                 checktype (n)
 
@@ -53,9 +53,9 @@ object SemanticAnalysis {
                     case Predicate (argtypes) =>
                         val arity = argtypes.length
                         if (arity != 0)
-                            message (n, s + " should have " + arity + " arguments but has 0")
+                            message (n, s"$s should have $arity arguments but has 0")
                     case UnknownEntity () =>
-                        message (n, s + " is not declared")
+                        message (n, s"$s is not declared")
                 }
                 checktype (n)
 
@@ -78,7 +78,7 @@ object SemanticAnalysis {
     def checktype (n : Term) {
         if ((n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) &&
                 (n->tipe != n->exptipe))
-            message (n, "argument " + (n->tipe) + " found, " + (n->exptipe) + " expected")
+            message (n, s"argument ${n->tipe} found, ${n->exptipe} expected")
     }
 
     /**
@@ -154,7 +154,7 @@ object SemanticAnalysis {
             case n @ Atom (s) =>
                 lookup (n->env, s, UnknownEntity (), true)
             case n =>
-                sys.error ("n->entity called on " + n)
+                sys.error (s"n->entity called on $n")
         }
 
     /**
@@ -170,7 +170,7 @@ object SemanticAnalysis {
             case n @ Atom (s) =>
                 lookup (n->envin, s, UnknownEntity (), true)
             case n =>
-                sys.error ("n->entityin called on " + n)
+                sys.error (s"n->entityin called on $n")
         }
 
     /**

@@ -60,7 +60,7 @@ package output
      * ignored.
      */
     def indentedEllipsis (n : Int, s : String) : String =
-        (" " * n) + "...\n"
+        s"${" " * n}...\n"
 
     /**
      * Return the indentation of a line, i.e., the number of spaces that

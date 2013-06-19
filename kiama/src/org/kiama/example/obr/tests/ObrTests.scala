@@ -77,8 +77,7 @@ class ObrExecTests extends Driver with TestCompiler[ObrInt] {
      */
     private def exectest (name : String, dirname : String, spec : (String, List[Int], Int)) {
         val (obrfile, params, expect) = spec
-        val title = name + " processing " + obrfile + " parameters " +
-                    params.mkString("(",", ",")") + " expecting " + expect
+        val title = s"""$name processing $obrfile parameters ${params.mkString("(",", ",")")} expecting $expect"""
         test (title) {
             val console = new StringConsole(params.mkString("","\n","\n"))
             val cc =
@@ -89,8 +88,8 @@ class ObrExecTests extends Driver with TestCompiler[ObrInt] {
                         info ("failed with an exception ")
                         throw (e)
                 }
-            if (cc != expect + "\n")
-                fail (title + " generated bad output: " + cc)
+            if (cc != s"$expect\n")
+                fail (s"$title generated bad output: $cc")
         }
     }
 

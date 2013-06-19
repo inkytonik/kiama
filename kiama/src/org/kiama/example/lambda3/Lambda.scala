@@ -59,14 +59,14 @@ object AST {
      * Application of l to r.
      */
     case class App (e1 : Exp, e2 : Exp) extends Exp {
-        override def toString : String = "(" + e1 + " " + e2 + ")"
+        override def toString : String = s"($e1 $e2)"
     }
 
     /**
      * Lambda expression containing an abstracted binding.
      */
     case class Lam (b : Bind) extends Exp {
-        override def toString : String = "(\\" + b.name + " . " + b.term + ")"
+        override def toString : String = s"(\\${b.name} . ${b.term})"
     }
 
     /**

@@ -121,7 +121,7 @@ object Analysis {
             case BinExp (l, o, r) =>
                 l->errors; r->errors
             case e @ Var (s) if (e->lookup (s) == None) =>
-                message (e, s + " is not declared")
+                message (e, s"$s is not declared")
             case _ =>
         }
 

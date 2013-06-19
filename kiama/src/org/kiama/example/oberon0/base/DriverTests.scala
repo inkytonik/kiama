@@ -67,8 +67,8 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
      * language subset whose tests are used.
      */
     def mktests (proglang : String) {
-        val name = "Oberon0 testing " + artefact + " on " + proglang + " tests"
-        val path = "kiama/src/org/kiama/example/oberon0/" + proglang + "/tests"
+        val name = s"Oberon0 testing $artefact on $proglang tests"
+        val path = s"kiama/src/org/kiama/example/oberon0/$proglang/tests"
         filetests (name, path, ".ob", ".out")
     }
 

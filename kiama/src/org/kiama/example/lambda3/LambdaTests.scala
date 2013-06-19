@@ -44,9 +44,9 @@ class LambdaTests extends Tests with Parser {
             case Success (query, in) if in.atEnd =>
                 expectResult (result) (query.execute)
             case Success (_, in) =>
-                fail ("extraneous input at " + in.pos + ": " + str)
+                fail (s"extraneous input at ${in.pos}: $str")
             case f =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 
@@ -60,9 +60,9 @@ class LambdaTests extends Tests with Parser {
             case Success (query, in) if in.atEnd =>
                 expectResult (result) (query.execute.toString)
             case Success (_, in) =>
-                fail ("extraneous input at " + in.pos + ": " + str)
+                fail (s"extraneous input at ${in.pos}: $str")
             case f =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 
@@ -76,28 +76,28 @@ class LambdaTests extends Tests with Parser {
             case Success (resultexp, in) if in.atEnd =>
                 expectQuery (str, resultexp)
             case Success (_, in) =>
-                fail ("extraneous input in expected result at " + in.pos + ": " + result)
+                fail (s"extraneous input in expected result at ${in.pos}: $result")
             case f =>
-                fail ("parse failure in expected result: " + f)
+                fail (s"parse failure in expected result: $f")
         }
     }
 
     // Test construction short-hands
 
     def mkvaluetest[T] (s : String, r : T) {
-        test (s + " is " + r) {
+        test (s"$s is $r") {
             expectQuery (s, r)
         }
     }
 
     def mkprinttest (s : String, r : String) {
-        test (s + " is " + r) {
+        test (s"$s is $r") {
             expectQueryPrint (s, r)
         }
     }
 
     def mkparsetest (s : String, r : String) {
-        test (s + " is " + r) {
+        test (s"$s is $r") {
             expectQueryParse (s, r)
         }
     }

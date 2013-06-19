@@ -45,7 +45,7 @@ object JVMTree {
      * A JVM array with the given element type.
      */
     case class JVMArrayType (elemType : JVMType) extends JVMType {
-        override def toString = "[" + elemType
+        override def toString = s"[$elemType"
     }
 
     /**
@@ -66,7 +66,7 @@ object JVMTree {
      * A class type.
      */
     case class JVMClassType (name : String) extends JVMType {
-        override def toString = "L" + name + ";"
+        override def toString = s"L$name;"
     }
 
     /**

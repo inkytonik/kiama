@@ -60,7 +60,6 @@ trait Rewritable {
      * of the problem is thrown.
      */
     protected def illegalArgs (desc : String, argtypes : String, args : Array[Any]) =
-        throw (new IllegalArgumentException ("making " + desc + ": expecting " +
-                    argtypes + ", got " + args.mkString (", ")))
+        throw (new IllegalArgumentException (s"making $desc: expecting $argtypes, got ${args.mkString (", ")}"))
 
 }

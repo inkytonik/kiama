@@ -102,7 +102,7 @@ class RISC (code : Code, console : Console, emitter : Emitter)
      */
     def execute (instr : Instr) {
         if (debug)
-            emitter.emitln (name + " exec: " + instr)
+            emitter.emitln (s"$name exec: $instr")
         try {
             arithmetic (instr)
             memory (instr)
@@ -111,16 +111,16 @@ class RISC (code : Code, console : Console, emitter : Emitter)
         }
         catch {
             case e : Exception =>
-                emitter.emitln ("Exception " + e + " at " + instr)
+                emitter.emitln (s"Exception $e at $instr")
                 emitter.emitln ("RISC.R =")
                 emitter.emit ("    Map(")
                 for (r <- R.keys.toList.sorted)
-                    emitter.emit (r + " -> " + R (r) + ", ")
+                    emitter.emit (s"$r -> ${R (r)}, ")
                 emitter.emitln (")")
                 emitter.emitln ("RISC.Mem =")
                 emitter.emit ("    Map(")
                 for (m <- Mem.keys.toList.sorted)
-                    emitter.emit (m + " -> " + Mem (m) + ", ")
+                    emitter.emit (s"$m -> ${Mem (m)}, ")
                 emitter.emitln (")")
                 halt := true
         }

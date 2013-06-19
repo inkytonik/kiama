@@ -80,9 +80,9 @@ trait Tests extends FunSuite with BeforeAndAfter {
      */
     def assertMessage (index : Int, line : Int, column : Int, msg : String) {
         val m = messages (index)
-        expectResult (msg, "wrong text in message " + index) (m.message)
-        expectResult (line, "wrong line number in message " + index) (m.pos.line)
-        expectResult (column, "wrong column number in message " + index) (m.pos.column)
+        expectResult (msg, s"wrong text in message $index") (m.message)
+        expectResult (line, s"wrong line number in message $index") (m.pos.line)
+        expectResult (column, s"wrong column number in message $index") (m.pos.column)
     }
 
     /**
@@ -107,21 +107,21 @@ trait RegexParserTests extends Tests {
      * Fail a test with a message about reaching the end of the input.
      */
     def failInputEnd (in : Input) {
-        fail ("input remaining at " + in.pos)
+        fail (s"input remaining at ${in.pos}")
     }
 
     /**
      * Fail a test with a message detailing a parse error.
      */
     def failParseError (f : Error) {
-        fail ("parse error: " + f)
+        fail (s"parse error: $f")
     }
 
     /**
      * Fail a test with a message detailing a parse failure.
      */
     def failParseFailure (f : Failure) {
-        fail ("parse faiure: " + f)
+        fail (s"parse faiure: $f")
     }
 
     /**

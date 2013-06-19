@@ -106,7 +106,7 @@ trait ParsingREPLBase[T] extends REPLBase with RegexParsers {
             case Success (e, in) if in.atEnd =>
                 process (e)
             case Success (_, in) =>
-                emitter.emitln ("extraneous input at " + in.pos)
+                emitter.emitln (s"extraneous input at ${in.pos}")
             case f =>
                 emitter.emitln (f)
         }

@@ -83,7 +83,7 @@ trait SemanticAnalysis {
         attr {
             case v@Variable(s) =>
                 val bound : Boolean = (v->envir).contains(v)
-                if (!bound) message(v,"unbound variable '" ++ s ++ "'")
+                if (!bound) message(v,s"unbound variable '$s'")
                 bound
             case Binding(_,e) => e->isSemanticallyCorrect
             case Primitives(_) => true

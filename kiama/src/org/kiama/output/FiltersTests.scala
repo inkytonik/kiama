@@ -150,7 +150,7 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
         test ("keepMaxIndent with indent of two and FIXME insertion works") {
 
             def fixmeInsertion (n : Int, s : String) : String =
-                ("FIXME" * n) + "\n"
+                s"""${"FIXME" * n}\n"""
 
             val result =
                 """FIXMEFIXME

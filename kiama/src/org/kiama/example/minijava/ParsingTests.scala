@@ -623,12 +623,12 @@ class ParsingTests extends SyntaxAnalysis with FunSuite {
     def assertParseOk[T] (str : String, p : Parser[T], result : T) {
         parseAll (p, str) match {
             case Success (r, in) =>
-                if (r != result) fail ("found '" + r + "' not '" + result + "'")
-                if (!in.atEnd) fail ("input remaining at " + in.pos)
+                if (r != result) fail (s"found '$r' not '$result'")
+                if (!in.atEnd) fail (s"input remaining at ${in.pos}")
             case f : Error =>
-                fail ("parse error: " + f)
+                fail (s"parse error: $f")
             case f : Failure =>
-                fail ("parse failure: " + f)
+                fail (s"parse failure: $f")
         }
     }
 
@@ -645,7 +645,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuite {
                              msg : String, iserr : Boolean = false) {
         parseAll (p, str) match {
             case Success (r, _) =>
-                fail ("expected to find parse error in " + str + " but it succeeded with " + r)
+                fail (s"expected to find parse error in $str but it succeeded with $r")
             case e : NoSuccess =>
                 if (iserr && e.isInstanceOf[Failure])
                     fail ("got parse failure when expecting parse error")

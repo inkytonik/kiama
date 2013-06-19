@@ -35,7 +35,7 @@ trait PrettyPrinter extends CPrettyPrinter {
                 vsep (ds map toDoc, semi)
 
             case CInclude (s) =>
-                "#include " + s
+                s"#include $s"
 
             case CFunctionDecl (d, args, b) =>
                 toDoc (d) <+>
@@ -74,7 +74,7 @@ trait PrettyPrinter extends CPrettyPrinter {
         }
 
     def arraydimensToDoc (t1 : CArrayType) : Doc = {
-        "[" + t1.size + "]" <>
+        s"[${t1.size}]" <>
         (t1.elemtype match {
             case t2 : CArrayType => arraydimensToDoc (t2)
             case _               => empty

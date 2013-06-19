@@ -46,7 +46,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
 
             case ArrayTypeDef (s, t) =>
                 if (isInteger (s->tipe) && (s->isconst) && (s->value < 0))
-                    message (s, "ARRAY size is " + (s->value) + " but should be >= 0")
+                    message (s, s"ARRAY size is ${s->value} but should be >= 0")
 
             case Assignment (l, _) if !(isNotArray (l->basetype)) =>
                 message (n, "can't assign to array")
@@ -66,7 +66,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
                 val t = r->basetype
                 if (isRecord (t)) {
                     if (!hasField (t, i))
-                        message (f, "record doesn't contain a field called '" + i + "'")
+                        message (f, s"record doesn't contain a field called '$i'")
                 } else
                     message (f, "field access attempted on non-RECORD")
 

@@ -47,7 +47,7 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
      */
     def targettreetest (name : String, dirname : String, obrfile : String,
                         tester : (String, Emitter, RISCNode) => Unit, emitter : Emitter = new Emitter) {
-        val title = name + " processing " + obrfile
+        val title = s"$name processing $obrfile"
 
         test(title) {
             // Initialise compiler state
@@ -63,18 +63,18 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
                         ast->errors
                         if (messagecount > 0) {
                             report(emitter)
-                            fail(title + " emitted a semantic error.")
+                            fail (s"$title emitted a semantic error.")
                         } else {
                             tester (title, emitter, ast->code)
                         }
                     case Right (msg) =>
                         emitter.emitln (msg)
-                        fail(title + " emitted a parse error.")
+                        fail (s"$title emitted a parse error.")
                 }
             } catch {
                 case e : FileNotFoundException =>
                     emitter.emitln (e.getMessage)
-                    info(title + " failed with an exception.")
+                    info (s"$title failed with an exception.")
                     throw (e)
             }
         }
@@ -92,7 +92,7 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
             case n : RISCProg  =>
                 realised = realised.reverse
                 if (!(realised containsSlice expected))
-                    fail(title + " unexpected IntDatum leaves, found " + realised + " expected slice " + expected)
+                    fail (s"$title unexpected IntDatum leaves, found $realised expected slice $expected")
         }) (code)
     }
 }
