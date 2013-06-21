@@ -756,6 +756,7 @@ trait PrettyPrinterBase {
  */
 trait PrettyPrinter extends PrettyPrinterBase {
 
+    import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
     import scala.collection.immutable.Queue
     import scala.collection.immutable.Queue.{empty => emptyDq}
 
@@ -763,40 +764,71 @@ trait PrettyPrinter extends PrettyPrinterBase {
 
     private type Remaining  = Int
     private type Horizontal = Boolean
-    private type Out        = Remaining => Layout
-    private type OutGroup   = Horizontal => Out => Out
+    private type Out        = Remaining => Trampoline[Layout]
+    private type OutGroup   = Horizontal => Out => Trampoline[Out]
     private type PPosition  = Int
     private type Dq         = Queue[(PPosition,OutGroup)]
-    private type TreeCont   = (PPosition,Dq) => Out
+    private type TreeCont   = (PPosition,Dq) => Trampoline[Out]
     private type IW         = (Indent,Width)
-    private type DocCont    = IW => TreeCont => TreeCont
+    private type DocCont    = IW => TreeCont => Trampoline[TreeCont]
 
     // Helper functions
 
-    private def scan (l : Width, out : OutGroup) : TreeCont => TreeCont =
-        (c : TreeCont) =>
+    private def scan (l : Width, out : OutGroup) (c : TreeCont) : Trampoline[TreeCont] =
+        step (
             (p : PPosition, dq : Dq) =>
                 if (dq.isEmpty) {
-                    out (false) (c (p + l, emptyDq))
+                    More (() =>
+                        for {
+                            o1 <- c (p + l, emptyDq)
+                            o2 <- out (false) (o1)
+                        } yield o2
+                    )
                 } else {
                     val (s, grp) = dq.last
-                    val n = (s, (h : Horizontal) => (grp (h)) compose (out (h)))
+                    val n = (s, (h : Horizontal) =>
+                                    (o1 : Out) =>
+                                        More (() =>
+                                            for {
+                                                o2 <- out (h) (o1)
+                                                o3 <- grp (h) (o2)
+                                            } yield o3)
+                                        )
                     prune (c) (p + l, dq.init :+ n)
                 }
+        )
 
-    private def prune (c : TreeCont) : TreeCont =
+    private def prune (c1 : TreeCont) : TreeCont =
         (p : PPosition, dq : Dq) =>
-            (r : Remaining) =>
-                if (dq.isEmpty) {
-                    c (p, emptyDq) (r)
-                } else {
-                    val (s, grp) = dq.head
-                    if (p > s + r) {
-                        grp (false) (prune (c) (p, dq.tail)) (r)
-                    } else {
-                        c (p, dq) (r)
+            Done (
+                (r : Remaining) =>
+                    if (dq.isEmpty)
+                        More (() =>
+                            for {
+                                o <- c1 (p, emptyDq)
+                                layout <- o (r)
+                            } yield layout
+                        )
+                    else {
+                        val (s, grp) = dq.head
+                        if (p > s + r) {
+                            More (() =>
+                                for {
+                                    c2 <- prune (c1) (p, dq.tail)
+                                    o <- grp (false) (c2)
+                                    layout <- o (r)
+                                } yield layout
+                            )
+                        } else {
+                            More (() =>
+                                for {
+                                    o <- c1 (p, dq)
+                                    layout <- o (r)
+                                } yield layout
+                            )
+                        }
                     }
-                }
+            )
 
     private def leave (c : TreeCont) : TreeCont =
         (p : PPosition, dq : Dq) =>
@@ -804,13 +836,31 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 c (p, emptyDq)
             } else if (dq.length == 1) {
                 val (s1, grp1) = dq.last
-                grp1 (true) (c (p, emptyDq))
+                More (() =>
+                    for {
+                        o1 <- c (p, emptyDq)
+                        o2 <- grp1 (true) (o1)
+                    } yield o2
+                )
             } else {
                 val (s1, grp1) = dq.last
                 val (s2, grp2) = dq.init.last
                 val n = (s2, (h : Horizontal) =>
-                                (c : Out) =>
-                                    grp2 (h) ((r : Remaining) => grp1 (p <= s1 + r) (c) (r)))
+                                 (o1 : Out) => {
+                                     val o3 =
+                                         (r : Remaining) =>
+                                             More (() =>
+                                                 for {
+                                                     o2 <- grp1 (p <= s1 + r) (o1)
+                                                     layout <- o2 (r)
+                                                 } yield layout
+                                             )
+                                     More (() =>
+                                         for {
+                                             o4 <- grp2 (h) (o3)
+                                         } yield o4
+                                     )
+                                 })
                 c (p, dq.init.init :+ n)
             }
 
@@ -821,7 +871,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
 
         // Forward function operations to the function
 
-        def apply (iw : IW) : TreeCont => TreeCont =
+        def apply (iw : IW) : TreeCont => Trampoline[TreeCont] =
             f (iw)
 
         // Basic operations
@@ -829,7 +879,13 @@ trait PrettyPrinter extends PrettyPrinterBase {
         def <> (e : Doc) : Doc =
             new Doc (
                 (iw : IW) =>
-                    (this (iw)) compose (e (iw))
+                    (c1 : TreeCont) =>
+                        More (() =>
+                            for {
+                                c2 <- e (iw) (c1)
+                                c3 <- f (iw) (c2)
+                            } yield c3
+                        )
             )
 
     }
@@ -844,8 +900,15 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 (iw : IW) => {
                     val l = t.length
                     val outText =
-                        (_ : Horizontal) => (c : Out) => (r : Remaining) =>
-                            t + c (r - l)
+                        (_ : Horizontal) => (o : Out) =>
+                            Done (
+                                (r : Remaining) =>
+                                    More (() =>
+                                        for {
+                                            layout <- o (r - l)
+                                        } yield t + layout
+                                    )
+                            )
                     scan (l, outText)
                 }
             )
@@ -854,12 +917,22 @@ trait PrettyPrinter extends PrettyPrinterBase {
         new Doc ({
             case (i, w) =>
                 val outLine =
-                    (h : Horizontal) => (c : Out) => (r : Remaining) =>
-                        if (h) {
-                            repl + c (r - repl.length)
-                        } else {
-                            '\n' + (" " * i) + c (w - i)
-                        }
+                    (h : Horizontal) => (c : Out) =>
+                        Done (
+                            (r : Remaining) =>
+                                if (h)
+                                    More (() =>
+                                        for {
+                                            layout <- c (r - repl.length)
+                                        } yield repl + layout
+                                    )
+                                else
+                                    More (() =>
+                                        for {
+                                            layout <- c (w - i)
+                                        } yield '\n' + (" " * i) + layout
+                                    )
+                        )
                 scan (1, outLine)
         })
 
@@ -872,17 +945,23 @@ trait PrettyPrinter extends PrettyPrinterBase {
     def group (d : Doc) : Doc =
         new Doc (
             (iw : IW) =>
-                (c : TreeCont) =>
-                    (p : PPosition, dq : Dq) => {
-                        val n = (h : Horizontal) => (c : Out) => c
-                        d (iw) (leave (c)) (p, dq :+ (p, n))
-                    }
+                (c1 : TreeCont) =>
+                    More (() =>
+                        for {
+                            c2 <- d (iw) (leave (c1))
+                        } yield
+                            (p : PPosition, dq : Dq) => {
+                                val n = (h : Horizontal) => (o : Out) => Done (o)
+                                c2 (p, dq :+ (p, n))
+                            }
+                    )
         )
 
     def empty : Doc =
         new Doc (
             (iw : IW) =>
-                (c : TreeCont) => c
+                (c : TreeCont) =>
+                    Done (c)
         )
 
     def nest (d : Doc, j : Indent = defaultIndent) : Doc =
@@ -894,8 +973,16 @@ trait PrettyPrinter extends PrettyPrinterBase {
     // Obtaining output
 
     def pretty (d : Doc, w : Width = defaultWidth) : Layout = {
-        val c = (p : PPosition, dq : Dq) => (r : Remaining) => ""
-        d (0, w) (c) (0, emptyDq) (w)
+        val cend =
+            (p : PPosition, dq : Dq) =>
+                Done ((r : Remaining) => Done (""))
+        val makeLayout =
+            for {
+                c <- d (0, w) (cend)
+                o <- c (0, emptyDq)
+                layout <- o (w)
+            } yield layout
+        makeLayout.runT
     }
 
 }
