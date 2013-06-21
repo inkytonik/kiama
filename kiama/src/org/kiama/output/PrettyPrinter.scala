@@ -759,12 +759,14 @@ trait PrettyPrinter extends PrettyPrinterBase {
     import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
     import scala.collection.immutable.Queue
     import scala.collection.immutable.Queue.{empty => emptyDq}
+    import scala.collection.mutable.ListBuffer
 
     // Internal data types
 
     private type Remaining  = Int
     private type Horizontal = Boolean
-    private type Out        = Remaining => Trampoline[Layout]
+    private type Buffer     = ListBuffer[String]
+    private type Out        = Remaining => Trampoline[Buffer]
     private type OutGroup   = Horizontal => Out => Trampoline[Out]
     private type PPosition  = Int
     private type Dq         = Queue[(PPosition,OutGroup)]
@@ -905,8 +907,8 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                 (r : Remaining) =>
                                     More (() =>
                                         for {
-                                            layout <- o (r - l)
-                                        } yield t + layout
+                                            buffer <- o (r - l)
+                                        } yield t +=: buffer
                                     )
                             )
                     scan (l, outText)
@@ -923,14 +925,14 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                 if (h)
                                     More (() =>
                                         for {
-                                            layout <- c (r - repl.length)
-                                        } yield repl + layout
+                                            buffer <- c (r - repl.length)
+                                        } yield repl +=: buffer
                                     )
                                 else
                                     More (() =>
                                         for {
-                                            layout <- c (w - i)
-                                        } yield '\n' + (" " * i) + layout
+                                            buffer <- c (w - i)
+                                        } yield "\n" +=: (" " * i) +=: buffer
                                     )
                         )
                 scan (1, outLine)
@@ -973,16 +975,18 @@ trait PrettyPrinter extends PrettyPrinterBase {
     // Obtaining output
 
     def pretty (d : Doc, w : Width = defaultWidth) : Layout = {
+        val initBuffer = new ListBuffer[String] ()
         val cend =
             (p : PPosition, dq : Dq) =>
-                Done ((r : Remaining) => Done (""))
-        val makeLayout =
+                Done ((r : Remaining) => Done (initBuffer))
+        val finalBufferComputation =
             for {
                 c <- d (0, w) (cend)
                 o <- c (0, emptyDq)
-                layout <- o (w)
-            } yield layout
-        makeLayout.runT
+                buffer <- o (w)
+            } yield buffer
+        val finalBuffer = finalBufferComputation.runT
+        finalBuffer.mkString
     }
 
 }
