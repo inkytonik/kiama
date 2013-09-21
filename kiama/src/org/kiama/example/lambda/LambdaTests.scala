@@ -42,7 +42,7 @@ class LambdaTests extends Tests with Checkers with Parser with Evaluator
         parseAll (start, term) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
-                    case Some (r) => expectResult (result) (r)
+                    case Some (r) => assertResult (result) (r)
                     case None     => fail (s"reduction failed: $term")
                 }
             case Success (_, in) =>

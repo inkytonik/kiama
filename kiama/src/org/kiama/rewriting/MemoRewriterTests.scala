@@ -57,33 +57,33 @@ class MemoRewriterTests extends {
     test ("a memoising strategy actually memoises") {
         val s = everywhere (atob).asInstanceOf[MemoStrategy]
         val t : N = A ()
-        expectResult (false) (s.hasBeenComputedAt (t))
+        assertResult (false) (s.hasBeenComputedAt (t))
         val result = rewrite (s) (t)
-        expectResult (B ()) (result)
-        expectResult (true) (s.hasBeenComputedAt (t))
+        assertResult (B ()) (result)
+        assertResult (true) (s.hasBeenComputedAt (t))
         expectsame (result) (rewrite (s) (t))
         s.reset ()
-        expectResult (false) (s.hasBeenComputedAt (t))
-        expectResult (B ()) (rewrite (s) (t))
-        expectResult (true) (s.hasBeenComputedAt (t))
+        assertResult (false) (s.hasBeenComputedAt (t))
+        assertResult (B ()) (rewrite (s) (t))
+        assertResult (true) (s.hasBeenComputedAt (t))
     }
 
     test ("resetting all memoising strategies actually does reset them") {
         val r = atob.asInstanceOf[MemoStrategy]
         val s = everywheretd (atob).asInstanceOf[MemoStrategy]
         val t = P (A (), A ())
-        expectResult (false) (s.hasBeenComputedAt (t))
-        expectResult (false) (r.hasBeenComputedAt (t.l))
-        expectResult (false) (r.hasBeenComputedAt (t.r))
-        expectResult (P (B (), B())) (rewrite (s) (t))
-        expectResult (true) (s.hasBeenComputedAt (t))
-        expectResult (true) (r.hasBeenComputedAt (t.l))
-        expectResult (true) (r.hasBeenComputedAt (t.r))
+        assertResult (false) (s.hasBeenComputedAt (t))
+        assertResult (false) (r.hasBeenComputedAt (t.l))
+        assertResult (false) (r.hasBeenComputedAt (t.r))
+        assertResult (P (B (), B())) (rewrite (s) (t))
+        assertResult (true) (s.hasBeenComputedAt (t))
+        assertResult (true) (r.hasBeenComputedAt (t.l))
+        assertResult (true) (r.hasBeenComputedAt (t.r))
         resetMemo ()
-        expectResult (false) (s.hasBeenComputedAt (t))
-        expectResult (false) (r.hasBeenComputedAt (t.l))
-        expectResult (false) (r.hasBeenComputedAt (t.r))
-        expectResult (P (B (), B())) (rewrite (s) (t))
+        assertResult (false) (s.hasBeenComputedAt (t))
+        assertResult (false) (r.hasBeenComputedAt (t.l))
+        assertResult (false) (r.hasBeenComputedAt (t.r))
+        assertResult (P (B (), B())) (rewrite (s) (t))
     }
 
     /**
@@ -100,7 +100,7 @@ class MemoRewriterTests extends {
 
         test (s"memo rewriting produces correct term ($direction)") {
             val expected = P(P(P(B(),B()),P(B(),B())),P(P(B(),B()),P(B(),B())))
-            expectResult (expected) (result)
+            assertResult (expected) (result)
         }
 
         test (s"memo rewriting preserves top-level sharing ($direction)") {
@@ -149,7 +149,7 @@ class MemoRewriterTests extends {
         test ("conditional node fusion preserves sharing") {
             val expected = P(S(T(S(A()),2)),S(S(T(S(A()),2))))
             val result = rewrite (fuse) (root)
-            expectResult (expected) (result)
+            assertResult (expected) (result)
             val resultls = result.l.asInstanceOf[S]
             val resultrss = result.r.asInstanceOf[S].n.asInstanceOf[S]
             expectsame (resultls.n) (resultrss.n)

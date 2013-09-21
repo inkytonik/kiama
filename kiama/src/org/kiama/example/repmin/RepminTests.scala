@@ -32,7 +32,7 @@ trait RepminTestsBase extends Tests {
     test ("repmin actually reps and mins") {
         val t = Fork (Leaf (3), Fork (Leaf (1), Leaf (10)))
         initTree (t)
-        expectResult (Fork (Leaf (1), Fork (Leaf (1), Leaf (1)))) (t->repmin)
+        assertResult (Fork (Leaf (1), Fork (Leaf (1), Leaf (1)))) (t->repmin)
     }
 
 }

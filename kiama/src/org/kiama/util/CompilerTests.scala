@@ -21,7 +21,7 @@
 package org.kiama
 package util
 
-import org.scalatest.FunSuite
+import org.scalatest.FunSuiteLike
 
 /**
  * Basic tests of compiler module.  Normal usage is tested by many of
@@ -46,14 +46,14 @@ class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] 
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
-        expectResult (s"IDoNotExist.txt ($msg)\n") (e.result)
+        assertResult (s"IDoNotExist.txt ($msg)\n") (e.result)
     }
 
     test ("filetests using a directory that doesn't exist fails") {
         val i = intercept[IllegalArgumentException] {
                     filetests ("Compiler", "kiama/src/org/kiama/util/IDoNotExist", ".src", ".out")
                 }
-        expectResult ("bad test file path kiama/src/org/kiama/util/IDoNotExist") (i.getMessage)
+        assertResult ("bad test file path kiama/src/org/kiama/util/IDoNotExist") (i.getMessage)
     }
 
 }
@@ -61,7 +61,7 @@ class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] 
 /**
  * Support for testing compiler drivers.
  */
-trait TestCompiler[T] extends FunSuite {
+trait TestCompiler[T] extends FunSuiteLike {
 
     self : CompilerBase[T] =>
 

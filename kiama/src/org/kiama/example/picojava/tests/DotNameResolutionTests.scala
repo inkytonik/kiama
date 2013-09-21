@@ -62,15 +62,15 @@ class DotNameResolutionTests extends Tests {
     initTree (ast)
 
     test ("class members are resolved") {
-        expectResult (declAAx) (axInA->decl)
+        assertResult (declAAx) (axInA->decl)
     }
 
     test ("nested classes are resolved") {
-        expectResult (declBB) (BBinBB->decl)
+        assertResult (declBB) (BBinBB->decl)
     }
 
     test ("nested names hide outer ones") {
-        expectResult (declAAx) (bxInBB->decl)
+        assertResult (declAAx) (bxInBB->decl)
     }
 
     test ("non-members in scope are not resolved as members") {

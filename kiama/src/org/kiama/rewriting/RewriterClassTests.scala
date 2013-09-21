@@ -50,33 +50,33 @@ class RewriterClassTests extends Tests with Checkers {
                 }
 
         test ("rewrite normal classes: top-level fail") {
-            expectResult (None) (r (p))
+            assertResult (None) (r (p))
         }
 
         test ("rewrite normal classes: all") {
             // (1 - abc) * (zyx - 4)
-            expectResult ("Some(Mul(Sub(Num(1.0),Var(abc)),Sub(Var(zyx),Num(4.0))))") (
+            assertResult ("Some(Mul(Sub(Num(1.0),Var(abc)),Sub(Var(zyx),Num(4.0))))") (
                 ((alltd (r)) (p)).toString
             )
         }
 
         test ("rewrite normal classes: some") {
             // (varname + 1) * (varname - 3)
-            expectResult ("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(varname),Num(3.0))))") (
+            assertResult ("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(varname),Num(3.0))))") (
                 ((sometd (s)) (p)).toString
             )
         }
 
         test ("rewrite normal classes: one") {
             // (varname + 1) * (xyz - 3)
-            expectResult ("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(xyz),Num(3.0))))") (
+            assertResult ("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(xyz),Num(3.0))))") (
                 ((oncetd (s)) (p)).toString
             )
         }
 
         test ("rewrite normal classes: counting all terms using count") {
             val countall = count { case _ => 1 }
-            expectResult (11) (countall (p))
+            assertResult (11) (countall (p))
         }
 
         test ("rewrite normal classes: counting all terms using a para") {
@@ -84,7 +84,7 @@ class RewriterClassTests extends Tests with Checkers {
                 para[Int] {
                     case (t, cs) => 1 + cs.sum
                 }
-            expectResult (11) (countfold (p))
+            assertResult (11) (countfold (p))
         }
 
         test ("constructing a Rewritable with wrong args throws exception") {
@@ -92,7 +92,7 @@ class RewriterClassTests extends Tests with Checkers {
             val i = intercept[IllegalArgumentException] {
                 t.reconstruct (Array (new Num (3), new Num (4), new Num (5)))
             }
-            expectResult ("making Add: expecting Exp, Exp, got Num(3.0), Num(4.0), Num(5.0)") (
+            assertResult ("making Add: expecting Exp, Exp, got Num(3.0), Num(4.0), Num(5.0)") (
                 i.getMessage
             )
         }

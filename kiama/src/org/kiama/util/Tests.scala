@@ -21,13 +21,13 @@
 package org.kiama
 package util
 
-import org.scalatest.{BeforeAndAfter, FunSuite}
+import org.scalatest.{BeforeAndAfter, FunSuiteLike}
 import scala.util.parsing.combinator.RegexParsers
 
 /**
  * General test support.
  */
-trait Tests extends FunSuite with BeforeAndAfter {
+trait Tests extends FunSuiteLike with BeforeAndAfter {
 
     import org.kiama.util.Messaging._
     import org.scalatest.Tag
@@ -80,9 +80,9 @@ trait Tests extends FunSuite with BeforeAndAfter {
      */
     def assertMessage (index : Int, line : Int, column : Int, msg : String) {
         val m = messages (index)
-        expectResult (msg, s"wrong text in message $index") (m.message)
-        expectResult (line, s"wrong line number in message $index") (m.pos.line)
-        expectResult (column, s"wrong column number in message $index") (m.pos.column)
+        assertResult (msg, s"wrong text in message $index") (m.message)
+        assertResult (line, s"wrong line number in message $index") (m.pos.line)
+        assertResult (column, s"wrong column number in message $index") (m.pos.column)
     }
 
     /**
@@ -161,9 +161,9 @@ trait RegexParserTests extends Tests {
                     fail ("got parse failure when expecting parse error")
                 else if (!iserr & e.isInstanceOf[Error])
                     fail ("got parse error when expecting parse failure")
-                expectResult (msg, "wrong message in error") (e.msg)
-                expectResult (line, "wrong line number in error") (e.next.pos.line)
-                expectResult (column, "wrong column number in error") (e.next.pos.column)
+                assertResult (msg, "wrong message in error") (e.msg)
+                assertResult (line, "wrong line number in error") (e.next.pos.line)
+                assertResult (column, "wrong column number in error") (e.next.pos.column)
         }
     }
 

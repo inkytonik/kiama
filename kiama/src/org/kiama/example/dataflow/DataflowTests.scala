@@ -59,68 +59,68 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
     val outAttr = out.asInstanceOf[CircularAttribute[Stm,Set[Var]]]
 
     test ("in - s1") {
-        expectResult (Set ("w", "v")) (in (s1))
+        assertResult (Set ("w", "v")) (in (s1))
     }
 
     test ("in - s2") {
-        expectResult (Set ("y", "w", "v")) (in (s2))
+        assertResult (Set ("y", "w", "v")) (in (s2))
     }
 
     test ("in - s3") {
-        expectResult (Set ("w", "v")) (in (s3))
+        assertResult (Set ("w", "v")) (in (s3))
     }
 
     test ("in - s4") {
-        expectResult (Set ("x", "w", "v")) (in (s4))
+        assertResult (Set ("x", "w", "v")) (in (s4))
     }
 
     test ("in - s411") {
-        expectResult (Set ("w", "v")) (in (s411))
+        assertResult (Set ("w", "v")) (in (s411))
     }
 
     test ("in - s412") {
-        expectResult (Set ("w", "v")) (in (s412))
+        assertResult (Set ("w", "v")) (in (s412))
     }
 
     test ("in - s5") {
-        expectResult (Set ("x")) (in (s5))
+        assertResult (Set ("x")) (in (s5))
     }
 
     test ("out - s1") {
-        expectResult (Set ("y", "w", "v")) (out (s1))
+        assertResult (Set ("y", "w", "v")) (out (s1))
     }
 
     test ("out - s2") {
-        expectResult (Set ("w", "v")) (out (s2))
+        assertResult (Set ("w", "v")) (out (s2))
     }
 
     test ("out - s3") {
-        expectResult (Set ("x", "w", "v")) (out (s3))
+        assertResult (Set ("x", "w", "v")) (out (s3))
     }
 
     test ("out - s4") {
-        expectResult (Set ("x", "w", "v")) (out (s4))
+        assertResult (Set ("x", "w", "v")) (out (s4))
     }
 
     test ("out - s411") {
-        expectResult (Set ("w", "v")) (out (s411))
+        assertResult (Set ("w", "v")) (out (s411))
     }
 
     test ("out - s412") {
-        expectResult (Set ("x", "w", "v")) (out (s412))
+        assertResult (Set ("x", "w", "v")) (out (s412))
     }
 
     test ("out - s412 (reset)") {
         outAttr.reset ()
-        expectResult (false) (outAttr.hasBeenComputedAt (s412))
-        expectResult (Set ("x", "w", "v")) (outAttr (s412))
-        expectResult (true) (outAttr.hasBeenComputedAt (s412))
+        assertResult (false) (outAttr.hasBeenComputedAt (s412))
+        assertResult (Set ("x", "w", "v")) (outAttr (s412))
+        assertResult (true) (outAttr.hasBeenComputedAt (s412))
         outAttr.reset ()
-        expectResult (false) (outAttr.hasBeenComputedAt (s412))
+        assertResult (false) (outAttr.hasBeenComputedAt (s412))
     }
 
     test ("out - s5") {
-        expectResult (Set ()) (out (s5))
+        assertResult (Set ()) (out (s5))
     }
 
     filetests ("Dataflow", "kiama/src/org/kiama/example/dataflow/tests", ".data", ".out")

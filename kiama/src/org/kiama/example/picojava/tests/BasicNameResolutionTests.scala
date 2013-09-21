@@ -63,15 +63,15 @@ class BasicNameResolutionTests extends Tests {
     initTree (ast)
 
     test ("bindings at the same nesting level are resolved") {
-        expectResult (declRx) (xInR->decl)
+        assertResult (declRx) (xInR->decl)
     }
 
     test ("bindings at an outer nesting level are resolved") {
-        expectResult (declRx) (xInA->decl)
+        assertResult (declRx) (xInA->decl)
     }
 
     test ("names can be declared after use") {
-        expectResult (declRz) (zInR->decl)
+        assertResult (declRz) (zInR->decl)
     }
 
     test ("a missing declaration for a top-level use is detected") {
@@ -83,7 +83,7 @@ class BasicNameResolutionTests extends Tests {
     }
 
     test ("a local shadowing binding is resolved") {
-        expectResult (declAz) (zInA->decl)
+        assertResult (declAz) (zInA->decl)
     }
 
 }

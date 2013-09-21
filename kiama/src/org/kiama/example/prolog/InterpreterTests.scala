@@ -49,7 +49,7 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
                     parseAll (query, q) match {
                         case Success (querytree, _) =>
                             interpret (querytree, programtree, emitter)
-                            expectResult (exp) (emitter.result)
+                            assertResult (exp) (emitter.result)
                         case f =>
                             fail (s"can't parse query '$q': $f")
                     }

@@ -42,7 +42,7 @@ class LambdaTests extends Tests with Parser {
         GenName.reset ()
         parseAll (start, str) match {
             case Success (query, in) if in.atEnd =>
-                expectResult (result) (query.execute)
+                assertResult (result) (query.execute)
             case Success (_, in) =>
                 fail (s"extraneous input at ${in.pos}: $str")
             case f =>
@@ -58,7 +58,7 @@ class LambdaTests extends Tests with Parser {
         GenName.reset ()
         parseAll (start, str) match {
             case Success (query, in) if in.atEnd =>
-                expectResult (result) (query.execute.toString)
+                assertResult (result) (query.execute.toString)
             case Success (_, in) =>
                 fail (s"extraneous input at ${in.pos}: $str")
             case f =>

@@ -35,21 +35,21 @@ class ImperativeTests extends Tests {
     import PrettyPrinter._
 
     test ("pretty-print imperative variable") {
-        expectResult ("xyz123") (pretty (Var ("xyz123")))
+        assertResult ("xyz123") (pretty (Var ("xyz123")))
     }
 
     test ("pretty-print imperative variable - product") {
-        expectResult ("""Var ("xyz123")""") (pretty_any (Var ("xyz123")))
+        assertResult ("""Var ("xyz123")""") (pretty_any (Var ("xyz123")))
     }
 
     test ("pretty-print imperative assignment") {
-        expectResult ("i = (0.0 * j);") (
+        assertResult ("i = (0.0 * j);") (
             pretty (Asgn (Var ("i"), Mul (Num (0), Var ("j"))))
         )
     }
 
     test ("pretty-print imperative assignment - product") {
-        expectResult ("""Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))""") (
+        assertResult ("""Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))""") (
             pretty_any (Asgn (Var ("i"), Mul (Num (0), Var ("j"))))
         )
     }
@@ -97,15 +97,15 @@ class ImperativeTests extends Tests {
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
     test ("pretty-print non-trivial imperative program (default width)") {
-        expectResult (pp1) (pretty (p))
+        assertResult (pp1) (pretty (p))
     }
 
     test ("pretty-print non-trivial imperative program (narrow)") {
-        expectResult (pp2) (pretty (group (show (p)), 40))
+        assertResult (pp2) (pretty (group (show (p)), 40))
     }
 
     test ("pretty-print non-trivial imperative program (product)") {
-        expectResult (ppp) (pretty_any (p))
+        assertResult (ppp) (pretty_any (p))
     }
 
 }

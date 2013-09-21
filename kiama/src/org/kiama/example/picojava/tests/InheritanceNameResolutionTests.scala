@@ -81,39 +81,39 @@ class InheritanceNameResolutionTests extends Tests {
     initTree (ast)
 
     test ("members are resolved in nested classes") {
-        expectResult (declAa) (aInAA->decl)
+        assertResult (declAa) (aInAA->decl)
     }
 
     test ("nested members shadow outer members") {
-        expectResult (declAAb) (bInAA->decl)
+        assertResult (declAAb) (bInAA->decl)
     }
 
     test ("class names are resolved in extends clauses") {
-        expectResult (declA) (AinB->decl)
+        assertResult (declA) (AinB->decl)
     }
 
     test ("inherited members are resolved") {
-        expectResult (declAa) (aInB->decl)
+        assertResult (declAa) (aInB->decl)
     }
 
     test ("local members hide inherited ones") {
-        expectResult (declBc) (cInB->decl)
+        assertResult (declBc) (cInB->decl)
     }
 
     test ("inherited inner classes are resolved") {
-        expectResult (declAA) (AAinBB->decl)
+        assertResult (declAA) (AAinBB->decl)
     }
 
     test ("inner references to members of outer class are resolved") {
-        expectResult (declBf) (fInBB->decl)
+        assertResult (declBf) (fInBB->decl)
     }
 
     test ("inner references to inherited members of outer class are resolved") {
-        expectResult (declAa) (aInBB->decl)
+        assertResult (declAa) (aInBB->decl)
     }
 
     test ("inherited members shadow outer occurrences of the same name") {
-        expectResult (declAAe) (eInBB->decl)
+        assertResult (declAAe) (eInBB->decl)
     }
 
 }

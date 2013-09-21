@@ -22,12 +22,12 @@ package org.kiama
 package example.json
 
 import org.kiama.util.RegexParserTests
-import org.scalatest.FunSuite
+import org.scalatest.FunSuiteLike
 
 /**
  * Tests that check that the rewriting and decoration works correctly.
  */
-class RewritingTests extends FunSuite {
+class RewritingTests extends FunSuiteLike {
 
     import JSONTree._
     import Rewriter._
@@ -112,7 +112,7 @@ class RewritingTests extends FunSuite {
                                             JName ("salary") -> JNumber (2344.0)))))))))))))))))))
 
     test ("total salary is correct") {
-        expectResult (399747.0) (total (company))
+        assertResult (399747.0) (total (company))
     }
 
     test ("halvng salaries in company works") {
@@ -182,7 +182,7 @@ class RewritingTests extends FunSuite {
                                                 JName ("address") -> JString (
                                                   "Wifi City"),
                                                 JName ("salary") -> JNumber (1172.0)))))))))))))))))))
-        expectResult (newcompany) (cut (company))
+        assertResult (newcompany) (cut (company))
     }
 
 }

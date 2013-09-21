@@ -111,11 +111,11 @@ class ObfuscationTests extends Tests {
     val obast = obfuscate (ast)
 
     test ("obfuscation produces correct program (pretty printed)") {
-        expectResult (pretty (expobast)) (pretty (obast))
+        assertResult (pretty (expobast)) (pretty (obast))
     }
 
     test ("obfuscation produces correct program") {
-        expectResult (expobast) (obast)
+        assertResult (expobast) (obast)
     }
 
 }

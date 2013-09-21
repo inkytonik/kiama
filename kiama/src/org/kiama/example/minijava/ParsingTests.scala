@@ -21,13 +21,13 @@
 package org.kiama
 package example.minijava
 
-import org.scalatest.FunSuite
+import org.scalatest.FunSuiteLike
 
 /**
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class ParsingTests extends SyntaxAnalysis with FunSuite {
+class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
 
     import MiniJavaTree._
 
@@ -651,9 +651,9 @@ class ParsingTests extends SyntaxAnalysis with FunSuite {
                     fail ("got parse failure when expecting parse error")
                 else if (!iserr & e.isInstanceOf[Error])
                     fail ("got parse error when expecting parse failure")
-                expectResult (msg, "wrong message in error") (e.msg)
-                expectResult (line, "wrong line number in error") (e.next.pos.line)
-                expectResult (column, "wrong column number in error") (e.next.pos.column)
+                assertResult (msg, "wrong message in error") (e.msg)
+                assertResult (line, "wrong line number in error") (e.next.pos.line)
+                assertResult (column, "wrong column number in error") (e.next.pos.column)
         }
     }
 

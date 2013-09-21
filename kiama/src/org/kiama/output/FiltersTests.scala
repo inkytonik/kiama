@@ -54,55 +54,55 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
             |""".stripMargin
 
         test ("keepMaxChars can handle zero count") {
-            expectResult ("") (keepMaxChars (0) (output))
+            assertResult ("") (keepMaxChars (0) (output))
         }
 
         test ("keepMaxChars can handle count in first line") {
-            expectResult ("The firs") (keepMaxChars (8) (output))
+            assertResult ("The firs") (keepMaxChars (8) (output))
         }
 
         test ("keepMaxChars can handle count in an inner line") {
-            expectResult ("The first line\n  the s") (keepMaxChars (22) (output))
+            assertResult ("The first line\n  the s") (keepMaxChars (22) (output))
         }
 
         test ("keepMaxChars can handle count after end") {
-            expectResult (output) (keepMaxChars (200) (output))
+            assertResult (output) (keepMaxChars (200) (output))
         }
 
         test ("keepMaxLines can handle zero count") {
-            expectResult ("") (keepMaxLines (0) (output))
+            assertResult ("") (keepMaxLines (0) (output))
         }
 
         test ("keepMaxLines can handle one count") {
-            expectResult ("The first line\n") (keepMaxLines (1) (output))
+            assertResult ("The first line\n") (keepMaxLines (1) (output))
         }
 
         test ("keepMaxLines can handle an inner count") {
-            expectResult ("The first line\n  the second, line\n    the third line!\n") (
+            assertResult ("The first line\n  the second, line\n    the third line!\n") (
                 keepMaxLines (3) (output)
             )
         }
 
         test ("keepMaxLines can handle count after end") {
-            expectResult (output) (keepMaxLines (10) (output))
+            assertResult (output) (keepMaxLines (10) (output))
         }
 
         test ("keepMaxWords can handle zero count") {
-            expectResult ("") (keepMaxWords (0) (output))
+            assertResult ("") (keepMaxWords (0) (output))
         }
 
         test ("keepMaxWords can handle count in first line") {
-            expectResult ("The first") (keepMaxWords (2) (output))
+            assertResult ("The first") (keepMaxWords (2) (output))
         }
 
         test ("keepMaxWords can handle count in an inner line") {
-            expectResult ("The first line\n  the second, line\n    the third") (
+            assertResult ("The first line\n  the second, line\n    the third") (
                 keepMaxWords (8) (output)
             )
         }
 
         test ("keepMaxWords can handle count after end") {
-            expectResult (output.init) (keepMaxWords (20) (output))
+            assertResult (output.init) (keepMaxWords (20) (output))
         }
 
     }
@@ -122,7 +122,7 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
             |""".stripMargin
 
         test ("keepMaxIndent with indent of zero replaces all") {
-            expectResult ("...\n") (keepMaxIndent (0, output))
+            assertResult ("...\n") (keepMaxIndent (0, output))
         }
 
         test ("keepMaxIndent with indent of one keeps just top-level lines") {
@@ -133,7 +133,7 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
                 |the ninth line
                 | ...
                 |""".stripMargin
-            expectResult (result) (keepMaxIndent (1, output))
+            assertResult (result) (keepMaxIndent (1, output))
         }
 
         test ("keepMaxIndent with indent of two keeps just top-level lines") {
@@ -144,7 +144,7 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
                 |the ninth line
                 |  ...
                 |""".stripMargin
-            expectResult (result) (keepMaxIndent (2, output))
+            assertResult (result) (keepMaxIndent (2, output))
         }
 
         test ("keepMaxIndent with indent of two and FIXME insertion works") {
@@ -159,7 +159,7 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
                 |the ninth line
                 |FIXMEFIXME
                 |""".stripMargin
-            expectResult (result) (keepMaxIndent (2, output, fixmeInsertion))
+            assertResult (result) (keepMaxIndent (2, output, fixmeInsertion))
 
         }
 
@@ -175,7 +175,7 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
                 |the ninth line
                 |   ...
                 |""".stripMargin
-            expectResult (result) (keepMaxIndent (3, output))
+            assertResult (result) (keepMaxIndent (3, output))
         }
 
         test ("keepMaxIndent with indent of four keeps top two levels") {
@@ -190,11 +190,11 @@ class FiltersTests extends Tests with Checkers with PrettyPrinter {
                 |the ninth line
                 |    ...
                 |""".stripMargin
-            expectResult (result) (keepMaxIndent (4, output))
+            assertResult (result) (keepMaxIndent (4, output))
         }
 
         test ("keepMaxIndent with indent of five keeps everything") {
-            expectResult (output) (keepMaxIndent (5, output))
+            assertResult (output) (keepMaxIndent (5, output))
         }
 
     }

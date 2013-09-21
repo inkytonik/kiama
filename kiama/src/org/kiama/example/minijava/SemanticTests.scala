@@ -21,7 +21,7 @@
 package org.kiama
 package example.minijava
 
-import org.scalatest.FunSuite
+import org.scalatest.FunSuiteLike
 
 /**
  * Parser to use for semantic tests. Separated from `SemanticTests` since
@@ -34,7 +34,7 @@ object SemanticTestParser extends SyntaxAnalysis
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class SemanticTests extends FunSuite {
+class SemanticTests extends FunSuiteLike {
 
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.initTree
@@ -120,7 +120,7 @@ class SemanticTests extends FunSuite {
     test ("an integer expression has integer type") {
         val exp = IntExp (42)
         embedExpressionAndCheck (exp)
-        expectResult (IntType ()) (exp->tipe)
+        assertResult (IntType ()) (exp->tipe)
     }
 
     // Test type of boolean expressions (Rule 5)
@@ -128,13 +128,13 @@ class SemanticTests extends FunSuite {
     test ("a true expression has Boolean type") {
         val exp = TrueExp ()
         embedExpressionAndCheck (exp)
-        expectResult (BooleanType ()) (exp->tipe)
+        assertResult (BooleanType ()) (exp->tipe)
     }
 
     test ("a false expression has Boolean type") {
         val exp = FalseExp ()
         embedExpressionAndCheck (exp)
-        expectResult (BooleanType ()) (exp->tipe)
+        assertResult (BooleanType ()) (exp->tipe)
     }
 
     // Test use of method names in expressions (rule 6)
@@ -320,7 +320,7 @@ class SemanticTests extends FunSuite {
         assert (messagecount === 2)
         assertMessage (0, 0, 0, "type error: expected int got boolean")
         assertMessage (1, 0, 0, "type error: expected int got boolean")
-        expectResult (IntType ()) (exp->tipe)
+        assertResult (IntType ()) (exp->tipe)
     }
 
     // Test type of and expressions (Rule 12)
@@ -337,7 +337,7 @@ class SemanticTests extends FunSuite {
         assert (messagecount === 2)
         assertMessage (0, 0, 0, "type error: expected boolean got int")
         assertMessage (1, 0, 0, "type error: expected boolean got int")
-        expectResult (BooleanType ()) (exp->tipe)
+        assertResult (BooleanType ()) (exp->tipe)
     }
 
     // Test type of plus expressions (Rule 13)
@@ -353,7 +353,7 @@ class SemanticTests extends FunSuite {
         embedExpressionAndCheck (exp, BooleanType ())
         assert (messagecount === 1)
         assertMessage (0, 0, 0, "type error: expected boolean got int")
-        expectResult (BooleanType ()) (exp->tipe)
+        assertResult (BooleanType ()) (exp->tipe)
     }
 
     // Test type of less-than expressions (Rule 14)
@@ -370,7 +370,7 @@ class SemanticTests extends FunSuite {
         assert (messagecount === 2)
         assertMessage (0, 0, 0, "type error: expected int got boolean")
         assertMessage (1, 0, 0, "type error: expected int got boolean")
-        expectResult (BooleanType ()) (exp->tipe)
+        assertResult (BooleanType ()) (exp->tipe)
     }
 
     // Test type of length expressions (Rule 15)
@@ -386,7 +386,7 @@ class SemanticTests extends FunSuite {
         embedExpressionAndCheck (exp)
         assert (messagecount === 1)
         assertMessage (0, 0, 0, "type error: expected int[] got int")
-        expectResult (IntType ()) (exp->tipe)
+        assertResult (IntType ()) (exp->tipe)
     }
 
     // Test method call expressions (rule 3, 16)
@@ -543,7 +543,7 @@ class SemanticTests extends FunSuite {
         val exp = NewArrayExp (IntExp (42))
         embedExpressionAndCheck (exp, IntArrayType ())
         assert (messagecount === 0)
-        expectResult (IntArrayType ()) (exp->tipe)
+        assertResult (IntArrayType ()) (exp->tipe)
     }
 
     test ("The type of the parameter in a new integer array expression must be an integer") {
@@ -671,9 +671,9 @@ class SemanticTests extends FunSuite {
      */
     def assertMessage (index : Int, line : Int, column : Int, msg : String) {
         val m = messages (index)
-        expectResult (msg, s"wrong text in message $index") (m.message)
-        expectResult (line, s"wrong line number in message $index") (m.pos.line)
-        expectResult (column, s"wrong column number in message $index") (m.pos.column)
+        assertResult (msg, s"wrong text in message $index") (m.message)
+        assertResult (line, s"wrong line number in message $index") (m.pos.line)
+        assertResult (column, s"wrong column number in message $index") (m.pos.column)
     }
 
 }
