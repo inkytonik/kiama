@@ -52,9 +52,9 @@ mainClass in ThisBuild := None
 
 // scalastyle
 
-org.scalastyle.sbt.ScalastylePlugin.Settings
+// org.scalastyle.sbt.ScalastylePlugin.Settings
 
-org.scalastyle.sbt.PluginKeys.config <<= baseDirectory { _ / "etc" / "scalastyle-config.xml" }
+// org.scalastyle.sbt.PluginKeys.config <<= baseDirectory { _ / "etc" / "scalastyle-config.xml" }
 
 // findbugs4sbt: commented out by default since it brings in many dependencies
 // and is used rarely. See also imports at top of file.

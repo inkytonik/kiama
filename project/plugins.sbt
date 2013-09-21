@@ -1,3 +1,3 @@
-resolvers += Resolver.sonatypeRepo ("releases")
+// resolvers += Resolver.sonatypeRepo ("releases")
 
-addSbtPlugin ("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.2.0")
+// addSbtPlugin ("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.2.0")
