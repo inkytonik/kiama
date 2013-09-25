@@ -55,12 +55,6 @@ object Interpreter {
     case class MatchGoal (left : Term, right : Term) extends Goal
 
     /**
-     * The goal list stack.  Each entry is a list of goals that are to be
-     * satisfied.
-     */
-    var glstack = new Stack[List[Goal]] ()
-
-    /**
      * Rename count.  Incremented that each time rename is called so we get
      * unique names each time.
      */
@@ -113,8 +107,13 @@ object Interpreter {
                     (v, Var (v))
                 }
 
-        // Push the query and the display goal
-        glstack.push (List (TermGoal (query), DisplayGoal (goalvars)))
+        /**
+         * The goal list stack.  Each entry is a list of goals that are to be
+         * satisfied. We start with the query and the display goal.
+         */
+        val glstack = Stack[List[Goal]] (
+                          List (TermGoal (query), DisplayGoal (goalvars))
+                      )
 
         /**
          * Loop until the interpretation is done, indicated by an empty goal
