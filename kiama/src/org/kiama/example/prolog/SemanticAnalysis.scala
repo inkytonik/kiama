@@ -246,7 +246,7 @@ object SemanticAnalysis {
      * index property gives us the position of the variable in the
      * argument list.
      */
-    var exptipe : Term => Type =
+    val exptipe : Term => Type =
         attr (
             n =>
                 n.parent match {

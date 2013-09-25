@@ -41,9 +41,8 @@ object Obfuscate extends Rewriter {
      */
     def obfuscate (p : Program) : Program = {
 
-
         // Map from declaration nodes to new variable names
-        var declNames = Map[Decl, String] ()
+        val declNames = Map[Decl, String] ()
 
         // The number of the most recent name that was used
         var next : Int = -1

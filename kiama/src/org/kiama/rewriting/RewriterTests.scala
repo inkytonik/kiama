@@ -969,7 +969,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     test ("log strategy produces the expected message and result on success") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = log (r, "test log ", e)
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         val u = Asgn (Var ("i"), Num (42))
@@ -980,7 +980,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     test ("log strategy produces the expected message and result on failure") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = log (r, "test log ", e)
         val t = Add (Num (1), Var ("i"))
         assertResult (None) (s (t))
@@ -990,7 +990,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     test ("logfail strategy produces no message but the right result on success") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = logfail (r, "test log ", e)
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         val u = Asgn (Var ("i"), Num (42))
@@ -1001,7 +1001,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     test ("logfail strategy produces the expected message and result on failure") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        var r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = logfail (r, "test log ", e)
         val t = Add (Num (1), Var ("i"))
         assertResult (None) (s (t))
