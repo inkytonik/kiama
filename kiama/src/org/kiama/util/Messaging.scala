@@ -27,7 +27,6 @@ package util
 object Messaging {
 
     import scala.collection.mutable.ListBuffer
-    import scala.collection.mutable.StringBuilder
     import scala.util.parsing.input.Positional
     import scala.util.parsing.input.Position
 

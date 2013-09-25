@@ -29,7 +29,6 @@ trait RewriterCore {
 
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
-    import scala.collection.mutable.Builder
     import scala.collection.mutable.WeakHashMap
     import scala.language.higherKinds
     import scala.language.experimental.macros
