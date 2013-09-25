@@ -27,7 +27,6 @@ object Interpreter {
     import Unifier._
     import org.kiama.rewriting.Rewriter.{ Term => _, _ }
     import org.kiama.util.Emitter
-    import scala.collection.mutable.ListBuffer
     import scala.collection.mutable.Stack
 
     /**
@@ -174,11 +173,8 @@ object Interpreter {
                     if (ps.isEmpty)
                         emitter.emitln ("yes")
                     else {
-                        val output = new ListBuffer[String]
-                        for ((s, v) <- ps) {
-                            output += (s"$s = $v")
-                        }
-                        emitter.emitln (output.result.mkString (" "))
+                        val output = ps.map { case (s, v) => s"$s = $v" }
+                        emitter.emitln (output.mkString (" "))
                     }
 
             }
