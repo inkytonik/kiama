@@ -94,7 +94,7 @@ trait ParLazy extends Par {
         val env = new mutable.HashMap[Idn,Idn]()
         val newname =
             rule {
-                case i : Idn => env.getOrElseUpdate (i, FreshVar ())
+                case i : Idn => env.getOrElseUpdate (i, freshVar ())
             }
         val chgname =
             rule {

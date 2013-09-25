@@ -21,10 +21,9 @@
 package org.kiama
 package example.prolog
 
+import PrologTree.Literal
 import org.kiama.output.PrettyPrinter
 import org.kiama.util.ParsingREPL
-
-import PrologTree.Literal
 
 /**
  * Conduct semantic analysis on the Prolog program in the file given as
@@ -36,7 +35,6 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
 
     import PrologTree.Program
     import SemanticAnalysis._
-    import Interpreter._
     import java.io.FileReader
     import java.io.FileNotFoundException
     import org.kiama.attribution.Attribution.initTree
@@ -118,10 +116,15 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
     override val prompt = "?- "
 
     /**
+     * The interpreter to use to evaluate queries.
+     */
+    val interpreter = new Interpreter
+
+    /**
      * Process a query by passing it and the program to the interpreter.
      */
     def process (querytree : Literal) {
-        interpret (querytree, programtree, new Emitter)
+        interpreter.interpret (querytree, programtree, new Emitter)
     }
 
 }

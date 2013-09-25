@@ -21,13 +21,12 @@
 package org.kiama
 package example.prolog
 
-object Interpreter {
+/**
+ * Abstract syntax tree representation of goals.
+ */
+object GoalAST {
 
     import PrologTree._
-    import Unifier._
-    import org.kiama.rewriting.Rewriter.{ Term => _, _ }
-    import org.kiama.util.Emitter
-    import scala.collection.mutable.Stack
 
     /**
      * Goals.
@@ -54,21 +53,31 @@ object Interpreter {
      */
     case class MatchGoal (left : Term, right : Term) extends Goal
 
-    /**
-     * Rename count.  Incremented that each time rename is called so we get
-     * unique names each time.
-     */
-    var renamecount = 0
+}
+
+class Interpreter {
+
+    import GoalAST._
+    import PrologTree._
+    import Unifier._
+    import org.kiama.rewriting.Rewriter.{ Term => _, _ }
+    import org.kiama.util.{Counter, Emitter}
+    import scala.collection.mutable.Stack
 
     /**
-     * Rename count.  Incremented each time rename is called so we get
-     * unique names each time.
+     * Rename counter. Used to produce unique names.
+     */
+    val counter = new Counter
+
+    /**
+     * Rename all of the variables in `t` to a unique name by appending
+     * a unique count to the old name.
      */
     def rename[T <: SourceNode] (t : T) : T = {
-        renamecount = renamecount + 1
+        val count = counter.next ()
         val r = everywheretd (rule {
             case Var (s) =>
-                Var (s + renamecount)
+                Var (s + count)
         })
         rewrite (r) (t)
     }

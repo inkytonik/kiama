@@ -30,10 +30,7 @@ import org.kiama.util.PositionedParserUtilities
  */
 object AST {
 
-    import Evaluator.cbn_eval
-    import org.kiama.rewriting.NominalAST.{Bind, Name}
-    import org.kiama.rewriting.NominalRewriter.{alphaequiv, fresh, fv,
-        subst, swap, Trans}
+    import org.kiama.rewriting.NominalAST.{Bind, Name, Trans}
     import org.kiama.util.Positioned
 
     /**
@@ -74,75 +71,53 @@ object AST {
      * type T when executed. These values are not in the term language but
      * are used to represent user commands.
      */
-    abstract class Query {
-        type T
-        def execute : T
-    }
+    abstract class Query[T]
 
     /**
      * A query that determines the alpha equivalence of two expressions.
      */
-    case class EquivQuery (e1 : Exp, e2 : Exp) extends Query {
-        type T = Boolean
-        def execute : T = alphaequiv (e1, e2)
-    }
+    case class EquivQuery (e1 : Exp, e2 : Exp) extends Query[Boolean]
 
     /**
      * A query that computes the value of an expression.
      */
-    case class EvalQuery (e : Exp) extends Query {
-        type T = Exp
-        def execute : T = cbn_eval (e)
-    }
+    case class EvalQuery (e : Exp) extends Query[Exp]
 
     /**
      * A query that determines the free names in an expression.
      */
-    case class FreeNamesQuery (e : Exp) extends Query {
-        type T = Set[Name]
-        def execute : T = fv (e)
-    }
+    case class FreeNamesQuery (e : Exp) extends Query[Set[Name]]
 
     /**
      * A query that determines whether a name is not free in an expression.
      */
-    case class FreshQuery (n : Name, e : Exp) extends Query {
-        type T = Boolean
-        def execute : T = fresh (n) (e)
-    }
+    case class FreshQuery (n : Name, e : Exp) extends Query[Boolean]
 
     /**
      * A query that substitutes an expression `e1` for name `n` in another
      * expression `e2`.
      */
-    case class SubstQuery (n : Name, e1 : Exp, e2 : Exp) extends Query {
-        type T = Exp
-        def execute : T = subst (n, e1) (e2)
-    }
+    case class SubstQuery (n : Name, e1 : Exp, e2 : Exp) extends Query[Exp]
 
     /**
      * A query that swaps two names in an expression.
      */
-    case class SwapQuery (tr : Trans, e : Exp) extends Query {
-        type T = Exp
-        def execute : T = swap (tr) (e)
-    }
+    case class SwapQuery (tr : Trans, e : Exp) extends Query[Exp]
 
 }
 
 /**
  * Parser for simple lambda calculus plus REPL queries.
  */
- trait Parser extends PositionedParserUtilities {
+trait Parser extends PositionedParserUtilities {
 
     import AST._
-    import org.kiama.rewriting.NominalAST.{Bind, Name}
-    import org.kiama.rewriting.NominalRewriter.Trans
+    import org.kiama.rewriting.NominalAST.{Bind, Name, Trans}
 
     lazy val start =
         phrase (query)
 
-    lazy val query : PackratParser[Query] =
+    lazy val query : PackratParser[Query[_]] =
         exp ~ ("===" ~> exp) ^^ EquivQuery |
         ("fv" ~> exp) ^^ FreeNamesQuery |
         name ~ ("#" ~> exp) ^^ FreshQuery |
@@ -181,11 +156,16 @@ object AST {
 /**
  * Evaluation methods for simple lambda calculus.
  */
-object Evaluator {
+class Evaluator {
 
     import AST._
     import org.kiama.rewriting.NominalAST.Bind
-    import org.kiama.rewriting.NominalRewriter.subst
+    import org.kiama.rewriting.NominalRewriter
+
+    /**
+     * The rewriter to use to perform the evaluation.
+     */
+    val rewriter = new NominalRewriter
 
     /**
      * Call-by-name evaluation.
@@ -196,13 +176,26 @@ object Evaluator {
                 val w = cbn_eval (t1)
                 w match {
                     case Lam (Bind (a, u : Exp)) =>
-                        val v = subst (a, t2) (u)
+                        val v = rewriter.subst (a, t2) (u)
                         cbn_eval (v)
                     case _ =>
                         App (w, t2)
                 }
             case _ =>
                 e
+        }
+
+    /**
+     * Query execution
+     */
+    def execute[T] (q : Query[T]) : T =
+        q match {
+            case EquivQuery (e1, e2)    => rewriter.alphaequiv (e1, e2)
+            case EvalQuery (e)          => cbn_eval (e)
+            case FreeNamesQuery (e)     => rewriter.fv (e)
+            case FreshQuery (n, e)      => rewriter.fresh (n) (e)
+            case SubstQuery (n, e1, e2) => rewriter.subst (n, e1) (e2)
+            case SwapQuery (tr, e)      => rewriter.swap (tr) (e)
         }
 
 }
@@ -212,7 +205,7 @@ object Evaluator {
  * nominal rewriting. This implementation is closely based on the example
  * used in Scrap your Nameplate, James Cheney, ICFP 2005.
  */
-object Lambda extends ParsingREPL[AST.Query] with Parser {
+object Lambda extends ParsingREPL[AST.Query[_]] with Parser {
 
     override def setup (args : Array[String]) : Boolean = {
         emitter.emitln
@@ -232,8 +225,10 @@ object Lambda extends ParsingREPL[AST.Query] with Parser {
 
     override val prompt = "query> "
 
-    def process (q : AST.Query) {
-        emitter.emitln (q.execute)
+    val evaluator = new Evaluator
+
+    def process (q : AST.Query[_]) {
+        emitter.emitln (evaluator.execute (q))
     }
 
 }

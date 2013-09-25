@@ -28,6 +28,8 @@ import AST._
  */
 trait Evaluator {
 
+    import org.kiama.util.Counter
+
     /**
      * Evaluate the given expression, returning the result of the
      * evaluation if it succeeded, or exp if it failed.
@@ -42,16 +44,18 @@ trait Evaluator {
         false
 
     /**
+     * Counter used to generate fresh names.
+     */
+    val counter = new Counter
+
+    /**
      * Generate a fresh variable name.  Prefix the name with an underscore
      * to avoid the potential for clashes with user-level variables (which
      * must start with a letter).
      */
-    object FreshVar {
-        private var count = 0
-        def apply () : Idn = {
-            count = count + 1
-            s"_v$count"
-        }
+    def freshVar () : Idn = {
+        val count = counter.next ()
+        s"_v$count"
     }
 
     /**
@@ -62,7 +66,7 @@ trait Evaluator {
             case Var (y) if x == y =>
                 e2
             case Lam (y, t, e3) =>
-                val z = FreshVar ()
+                val z = freshVar ()
                 Lam (z, t, substitute (x, e2, substitute (y, Var (z), e3)))
             case App (l, r) =>
                 App (substitute (x, e2, l), substitute (x, e2, r))

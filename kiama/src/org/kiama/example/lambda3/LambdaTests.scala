@@ -22,7 +22,6 @@ package org.kiama
 package example.lambda3
 
 import org.kiama.util.Tests
-import org.scalatest.prop.Checkers
 
 /**
  * Simple lambda calculus query tests.
@@ -30,7 +29,6 @@ import org.scalatest.prop.Checkers
 class LambdaTests extends Tests with Parser {
 
     import AST._
-    import org.kiama.rewriting.NominalAST.GenName
 
     /**
      * Parse and evaluate str as a query then evaluate the query and compare
@@ -39,10 +37,10 @@ class LambdaTests extends Tests with Parser {
      * is reset before the test is run.
      */
     def expectQuery[T] (str : String, result : T) {
-        GenName.reset ()
+        val evaluator = new Evaluator
         parseAll (start, str) match {
             case Success (query, in) if in.atEnd =>
-                assertResult (result) (query.execute)
+                assertResult (result) (evaluator.execute (query))
             case Success (_, in) =>
                 fail (s"extraneous input at ${in.pos}: $str")
             case f =>
@@ -55,10 +53,10 @@ class LambdaTests extends Tests with Parser {
      * of the query result.
      */
     def expectQueryPrint[T] (str : String, result : String) {
-        GenName.reset ()
+        val evaluator = new Evaluator
         parseAll (start, str) match {
             case Success (query, in) if in.atEnd =>
-                assertResult (result) (query.execute.toString)
+                assertResult (result) (evaluator.execute (query).toString)
             case Success (_, in) =>
                 fail (s"extraneous input at ${in.pos}: $str")
             case f =>

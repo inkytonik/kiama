@@ -31,7 +31,7 @@ object Obfuscate extends Rewriter {
 
     import AbstractSyntax._
     import NameResolution._
-    import attribution.Attribution._
+    import org.kiama.attribution.Attribution._
     import scala.collection.mutable.Map
 
     /**
@@ -41,19 +41,21 @@ object Obfuscate extends Rewriter {
      */
     def obfuscate (p : Program) : Program = {
 
+        import org.kiama.util.Counter
+
         // Map from declaration nodes to new variable names
         val declNames = Map[Decl, String] ()
 
-        // The number of the most recent name that was used
-        var next : Int = -1
+        // Counter to generate unique names
+        val counter = new Counter
 
         /**
          * Make and return a new name for declaration `d` and remember it in
          * the map.
          */
         def makeName (d : Decl) : String = {
-            next = next + 1
-            val varname = s"n$next"
+            val count = counter.next ()
+            val varname = s"n$count"
             declNames += ((d, varname))
             varname
         }

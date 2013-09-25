@@ -30,7 +30,6 @@ import org.kiama.util.{RegexCompiler, Tests}
  */
 class InterpreterTests extends SyntaxAnalysis with Tests {
 
-    import Interpreter.interpret
     import org.kiama.util.IO.filereader
     import org.kiama.util.StringEmitter
 
@@ -41,6 +40,7 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
      * against the expected output.
      */
     def querytest (fn : String, q : String, exp : String) {
+        val interpreter = new Interpreter
         val fullfn = s"kiama/src/org/kiama/example/prolog/test/$fn"
         test (s"$q on $fullfn") {
             val emitter = new StringEmitter
@@ -48,7 +48,7 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
                 case Success (programtree, _) =>
                     parseAll (query, q) match {
                         case Success (querytree, _) =>
-                            interpret (querytree, programtree, emitter)
+                            interpreter.interpret (querytree, programtree, emitter)
                             assertResult (exp) (emitter.result)
                         case f =>
                             fail (s"can't parse query '$q': $f")

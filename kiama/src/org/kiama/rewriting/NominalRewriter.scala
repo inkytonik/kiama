@@ -43,24 +43,9 @@ object NominalAST {
     case class Bind (name : Name, term : Any)
 
     /**
-     * Generate a fresh name based on a old name. The fresh name will have
-     * the same base as the old one and will have a unique index.
+     * A transposition of two names is just a tuple.
      */
-    object GenName {
-
-        private val initcount = -1
-        private var counter = initcount
-
-        def apply (oldname : Name) : Name = {
-            counter = counter + 1
-            Name (oldname.base, Some (counter))
-        }
-
-        def reset () {
-            counter = initcount
-        }
-
-    }
+    type Trans = (Name, Name)
 
 }
 
@@ -73,11 +58,7 @@ object NominalAST {
 class NominalRewriter extends Rewriter {
 
     import NominalAST._
-
-        /**
-     * A transposition of two names is just a tuple.
-     */
-    type Trans = (Name, Name)
+    import org.kiama.util.Counter
 
     /**
      * Swap two names (given by `tr`) throughout a term `t`.
@@ -136,16 +117,27 @@ class NominalRewriter extends Rewriter {
     }
 
     /**
+     * Counter to use to produce unique names.
+     */
+    val counter = new Counter
+
+    /**
+     * Make a unique name using an old name as the base.
+     */
+    def genName (oldname : Name) : Name = {
+        Name (oldname.base, Some (counter.next ()))
+    }
+
+    /**
      * Alternative extractor for Bind constructs. Decomposes an abstraction
      * returning the components after freshening the bound name.
      */
     object Binding {
         def unapply (b : Bind) : Option[(Name,Any)] = {
-            val n = GenName (b.name)
+            val n = genName (b.name)
             Some ((n, swap (n, b.name) (b.term)))
         }
     }
-
 
     /**
      * Substitution of `t1` for free occurrences of `n` in a term.
@@ -181,8 +173,3 @@ class NominalRewriter extends Rewriter {
         }
 
 }
-
-/**
- * Strategy-based term rewriting for nominal terms.
- */
-object NominalRewriter extends NominalRewriter

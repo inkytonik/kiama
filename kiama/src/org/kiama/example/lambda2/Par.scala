@@ -41,7 +41,7 @@ trait Par extends ReduceSubst {
     override lazy val beta =
         rule {
             case App (Lam (x, t, e1), e2) =>
-                val y = FreshVar ()
+                val y = freshVar ()
                 Letp (List (Bind (y, e2)),
                       Letp (List (Bind (x, Var (y))), e1))
         }
@@ -87,7 +87,7 @@ trait Par extends ReduceSubst {
     override lazy val subsLam =
         rule {
             case Letp (ds, Lam (x, t, e)) =>
-                val y = FreshVar ()
+                val y = freshVar ()
                 Lam (y, t, Letp (ds, Letp (List (Bind (x, Var (y))), e)))
         }
 
