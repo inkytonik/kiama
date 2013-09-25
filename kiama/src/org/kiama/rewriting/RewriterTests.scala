@@ -868,9 +868,9 @@ class RewriterTests extends Tests with Checkers with Generator {
     }
 
     {
-        // The type used here should be a Seq that is not implemented using case classes
-        // (or other Products)
-        import scala.collection.mutable.LinkedList
+        // The type used here should be an immutable Seq that is not implemented
+        // using case classes or other Products, which rules out lists.
+        import scala.collection.immutable.Vector
 
         val incint = rule { case i : Int => i + 1 }
         val inczerothchild = child (0, incint)
@@ -878,9 +878,9 @@ class RewriterTests extends Tests with Checkers with Generator {
         val incsecondchild = child (2, incint)
         val incallsecondchild = alltd (incsecondchild)
 
-        val l1 = LinkedList ()
-        val l2 = LinkedList (1)
-        val l3 = LinkedList (1, 2, 3, 4)
+        val l1 = Vector ()
+        val l2 = Vector (1)
+        val l3 = Vector (1, 2, 3, 4)
 
         test ("rewrite linkedlist by child index: inc zeroth child - fail, empty") {
             assertResult (None) (inczerothchild (l1))
@@ -891,7 +891,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("rewrite linkedlist by child index: inc first child - succeed, singleton") {
-            assertResult (Some (LinkedList (2))) (incfirstchild (l2))
+            assertResult (Some (Vector (2))) (incfirstchild (l2))
         }
 
         test ("rewrite linkedlist by child index: inc second child - fail, singleton") {
@@ -903,16 +903,16 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("rewrite linkedlist by child index: inc first child - succeed, multiple") {
-            assertResult (Some (LinkedList (2, 2, 3, 4))) (incfirstchild (l3))
+            assertResult (Some (Vector (2, 2, 3, 4))) (incfirstchild (l3))
         }
 
         test ("rewrite linkedlist by child index: inc second child - succeed, one level") {
-            assertResult (Some (LinkedList (1, 3, 3, 4))) (incsecondchild (l3))
+            assertResult (Some (Vector (1, 3, 3, 4))) (incsecondchild (l3))
         }
 
         test ("rewrite linkedlist by child index: inc second child - succeed, multi-level") {
-            assertResult (Some (LinkedList (LinkedList (1), LinkedList (3, 5, 5), LinkedList (6, 8)))) (
-                incallsecondchild (LinkedList (LinkedList (1), LinkedList (3, 4, 5), LinkedList (6, 7)))
+            assertResult (Some (Vector (Vector (1), Vector (3, 5, 5), Vector (6, 8)))) (
+                incallsecondchild (Vector (Vector (1), Vector (3, 4, 5), Vector (6, 7)))
             )
         }
     }
