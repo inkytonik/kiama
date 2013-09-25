@@ -264,8 +264,9 @@ trait TransformingDriver extends Driver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer =>
 
-    override def usageMessage : String =
-        """${super.usageMessage}
+    abstract override def usageMessage : String =
+        s"""${super.usageMessage}
+        |Transformation options:
         |   -i   print the intermediate abstract syntax tree
         |   -I   pretty-print the intermediate abstract syntax tree""".stripMargin
 
@@ -275,13 +276,13 @@ trait TransformingDriver extends Driver {
     val printiastFlagDefault = false
     val pprintiastFlagDefault = false
 
-    override def resetflags () {
+    abstract override def resetflags () {
         super.resetflags
         printiastFlag = printiastFlagDefault
         pprintiastFlag = pprintiastFlagDefault
     }
 
-    override def processargs (args : List[String]) : Boolean =
+    abstract override def processargs (args : List[String]) : Boolean =
         args match {
             case Nil =>
                 input != None
@@ -334,8 +335,9 @@ trait TranslatingDriver extends TransformingDriver {
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer with Translator with c.CPrettyPrinter =>
 
-    override def usageMessage : String =
-        """${super.usageMessage}
+    abstract override def usageMessage : String =
+        s"""${super.usageMessage}
+        |Translation options:
         |   -c   print the C abstract syntax tree
         |   -C   pretty-print the C abstract syntax tree""".stripMargin
 
@@ -345,13 +347,13 @@ trait TranslatingDriver extends TransformingDriver {
     val printcastFlagDefault = false
     val pprintcastFlagDefault = false
 
-    override def resetflags () {
+    abstract override def resetflags () {
         super.resetflags
         printcastFlag = printcastFlagDefault
         pprintcastFlag = pprintcastFlagDefault
     }
 
-    override def processargs (args : List[String]) : Boolean =
+    abstract override def processargs (args : List[String]) : Boolean =
         args match {
             case Nil =>
                 input != None
