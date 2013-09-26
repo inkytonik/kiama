@@ -122,27 +122,27 @@ trait TestCompiler[T] extends FunSuiteLike {
                       extra : String = "", cmd : Array[String],
                       rt : String) {
 
-             val ct = cmd.mkString (" ").replaceAllLiterally ("kiama/src/org/kiama/", "")
-             val title = s"$name: $ct, expecting $rt$extra"
-             test (title) {
-                 val cc =
-                     try {
-                         resetMemo
-                         compile (cmd, console)
-                     } catch {
-                         case e : Exception =>
-                             info ("failed with an exception ")
-                             throw (e)
-                     }
-                 try {
-                     val rc = Source.fromFile (rp).mkString
-                     assert (sanitise (cc) === sanitise (rc), s"$title generated bad output")
-                 } catch {
-                     case e : java.io.FileNotFoundException =>
-                         fail (s"$rp not found")
-                 }
-             }
-         }
+            val ct = cmd.mkString (" ").replaceAllLiterally ("kiama/src/org/kiama/", "")
+            val title = s"$name: $ct, expecting $rt$extra"
+            test (title) {
+                val cc =
+                    try {
+                        resetMemo
+                        compile (cmd, console)
+                    } catch {
+                        case e : Exception =>
+                            info ("failed with an exception ")
+                            throw (e)
+                    }
+                try {
+                    val rc = Source.fromFile (rp).mkString
+                    assert (sanitise (cc) === sanitise (rc), s"$title generated bad output")
+                } catch {
+                    case e : java.io.FileNotFoundException =>
+                        fail (s"$rp not found")
+                }
+            }
+        }
 
         /**
          * Make a set of file tests to produce the result files in `dir`.  For
