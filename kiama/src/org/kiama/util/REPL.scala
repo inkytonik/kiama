@@ -129,3 +129,36 @@ trait ParsingREPLBase[T] extends REPLBase with RegexParsers {
  * tree), then processes them. Output is emitted to standard output.
  */
 trait ParsingREPL[T] extends ParsingREPLBase[T] with StdoutEmitter
+
+/**
+ * A REPL that is capable of producing profiling reports. This trait
+ * augments the argument processing to allow a leading `-p` option to
+ * specify the profiling dimensions, or a leding `-t` option to specify
+ * that timings should be collected.
+ */
+trait ProfilingREPLBase[T] extends ParsingREPLBase[T] with Profiler {
+
+    var profiling = false
+    var dimensions = Seq[String] ()
+
+    /**
+     * Check for a -p option that indicates that this REPL session should
+     * print profiling information each time it evaluates something.
+     */
+    override def setup (args : Array[String]) : Boolean = {
+        if (args.length > 0) {
+            profiling = args (0) startsWith "-p"
+            if (profiling)
+                dimensions = parseProfileOption (args (0).drop (2))
+        }
+        super.setup (if (profiling) args.drop (1) else args)
+    }
+
+}
+
+/**
+ * A parsing REPL that is capable of producing profiling reports. Output
+ * is emitted to standard output.
+ */
+trait ProfilingREPL[T] extends ProfilingREPLBase[T] with StdoutEmitter
+
