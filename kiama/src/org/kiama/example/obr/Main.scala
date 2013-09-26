@@ -31,14 +31,12 @@ import org.kiama.util.Compiler
  */
 class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
 
+    import SemanticAnalysis._
+    import org.kiama.example.obr.{RISCEncoder, RISCTransformation}
+    import org.kiama.example.RISC.{RISC, RISCISA}
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
-    import SemanticAnalysis._
-    import RISCEncoder.{code => _, _}
-    import RISCTransformation._
-    import org.kiama.example.RISC.RISCISA
-    import org.kiama.example.RISC.RISC
 
     /**
      * The usage message for an erroneous invocation.
@@ -83,7 +81,7 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
 
         // Initialise compiler state
         SymbolTable.reset ()
-        RISCTree.reset ()
+        RISCLabels.reset ()
 
         // Conduct semantic analysis and report any errors
         ast->errors
@@ -97,7 +95,8 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
             }
 
             // Compile the source tree to a target tree
-            val targettree = ast->code
+            val transformer = new RISCTransformation
+            val targettree = transformer.code (ast)
             initTree (targettree)
 
             // Print out the target tree for debugging
@@ -106,14 +105,15 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
             }
 
             // Encode the target tree and emit the assembler or run if requested
-            encode (targettree)
+            val encoder = new RISCEncoder
+            encoder.encode (targettree)
 
             if (spillRISCAssemFlag) {
-                RISCISA.prettyprint (emitter, getassem)
+                RISCISA.prettyprint (emitter, encoder.getassem)
             }
 
             if (execFlag) {
-                val code = getcode
+                val code = encoder.getcode
                 val machine = new RISC (code, console, emitter)
                 machine.run
             }
@@ -167,7 +167,6 @@ class SemanticDriver extends SyntaxAnalysis with Compiler[ObrInt] {
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
     import SemanticAnalysis._
-    import RISCTransformation._
 
     /**
      * The usage message for an erroneous invocation.

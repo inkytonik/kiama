@@ -29,14 +29,13 @@ import org.kiama.util.Emitter
  * generation (e.g., by allocating registers). The resulting code is
  * made available as a list of RISC machine instructions.
  */
-object RISCEncoder {
+class RISCEncoder {
 
+    import RISCLabels.genlabelnum
     import RISCTree._
-    import org.kiama.example.RISC.RISCISA._
+    import org.kiama.example.RISC.RISCISA.{Label => RISCLabel, _}
     import org.kiama.attribution.Attribution._
-
     import scala.collection.mutable.ArrayBuffer
-    import scala.collection.mutable
     import scala.math.max
 
     /**
@@ -66,37 +65,50 @@ object RISCEncoder {
     }
 
     /**
-     * Return the code sequence that has been emitted.  Symbolic
-     * labels are resolved into numeric displacements and all
-     * pseudo-instructions (comments and labels) are stripped before
-     * the code is returned.
+     * Compute the final code sequence.  Compared to the one in the code
+     * buffer, symbolic labels are resolved into numeric displacements
+     * and all pseudo-instructions (comments and labels) are stripped
+     * before the code is returned.
      */
     def getcode : Code = {
-        val labels = new mutable.HashMap[Int,Int]()
+
+        val labels = new scala.collection.mutable.HashMap[RISCLabel,Int]()
 
         var currloc = 0
+
+        // Pass 1: compile mappings between labels and offsets
         for (inst <- code) {
             inst match {
-                case Target (lab)   => labels (lab) = currloc
-                case i : Instr      => currloc += 1
-                case _              =>
+                case Target (lab) => labels (lab) = currloc
+                case i : Instr    => currloc += 1
+                case _            =>
             }
         }
 
+        // Pass 2: remove pseudo instructions, add displacements to labels
         currloc = 0
-        for (inst <- code if inst.isInstanceOf[Instr]) yield {
-            val newinst = (inst.asInstanceOf[Instr]) match {
-                case b : Branch =>
-                    if (! (labels contains b.label))
-                        sys.error (s"Assembler.resolve: unmarked label: ${b.label}")
-                    val newb = b.copy ()
-                    newb.disp = labels (b.label) - currloc
-                    newb
-                case i          => i
-            }
-            currloc += 1
-            newinst
+        code.collect {
+            case b : Branch =>
+                if (! (labels contains b.label))
+                    sys.error (s"Assembler.resolve: unmarked label: ${b.label}")
+                val newlabel = b.label.copy (disp = labels (b.label) - currloc)
+                currloc = currloc + 1
+                // I wish we could abstract over copy...
+                b match {
+                    case _ : BEQ => BEQ (newlabel)
+                    case _ : BNE => BNE (newlabel)
+                    case _ : BLT => BLT (newlabel)
+                    case _ : BLE => BLE (newlabel)
+                    case _ : BGT => BGT (newlabel)
+                    case _ : BGE => BGE (newlabel)
+                    case _ : BR  => BR  (newlabel)
+                    case _ : BSR => BSR (newlabel)
+                }
+            case i : Instr =>
+                currloc = currloc + 1
+                i
         }
+
     }
 
     /**
@@ -105,11 +117,11 @@ object RISCEncoder {
     def getassem : AssemCode = code
 
     /**
-     * Generate a brand new target label.
+     * Generate a brand new target label. Shares counter with the transformation
+     * phase so that labels are unique.
      */
-    private def gentarget () : Int = {
-        val Label (label) = genlabel ()
-        label
+    def gentarget () : RISCLabel = {
+        RISCLabel (genlabelnum ())
     }
 
     /**
@@ -166,7 +178,7 @@ object RISCEncoder {
     /**
      * Label for exit point
      */
-    var exitlab : Int = _
+    var exitlab : RISCLabel = _
 
     /**
      * Encode the given RISC program by emitting the prologue, then the
@@ -198,18 +210,18 @@ object RISCEncoder {
             case Beq (cond, Label (dest)) =>
                 encode (cond)
                 emit (CMPI (cond->reg, 0))
-                emit (BEQ (dest))
+                emit (BEQ (RISCLabel (dest)))
 
             case Bne (cond, Label (dest)) =>
                 encode (cond)
                 emit (CMPI (cond->reg, 0))
-                emit (BNE (dest))
+                emit (BNE (RISCLabel (dest)))
 
             case Jmp (Label (dest)) =>
-                emit (BR (dest))
+                emit (BR (RISCLabel (dest)))
 
             case LabelDef (lab) =>
-                emit (Target (lab.num))
+                emit (Target (RISCLabel (lab.num)))
 
             case Ret () =>
                 emit (BR (exitlab))
@@ -235,7 +247,7 @@ object RISCEncoder {
     /**
      * Encode a comparison node
      */
-    private def compare (op : (Int) => Instr, l : Datum, r : Datum, d : Datum) {
+    private def compare (op : (RISCLabel) => Instr, l : Datum, r : Datum, d : Datum) {
         val lab = gentarget ()
         encode (l)
         encode (r)

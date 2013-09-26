@@ -25,13 +25,22 @@ package example.obr
 /**
  * Module implementing transformation from Obr to RISC tree code.
  */
-object RISCTransformation {
+class RISCTransformation {
 
     import ObrTree._
     import SemanticAnalysis._
+    import RISCLabels.genlabelnum
     import RISCTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
+
+    /**
+     * Generate a brand new target label. Shares counter with the encoding
+     * phase so that labels are unique.
+     */
+    def genlabel () : Label = {
+        Label (genlabelnum ())
+    }
 
     /**
      * The RISC machine program that is the translation of the given

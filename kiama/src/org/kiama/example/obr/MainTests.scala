@@ -31,15 +31,15 @@ import org.kiama.util.TestCompiler
  */
 class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
 
+    import RISCTree._
+    import SemanticAnalysis._
     import org.kiama.attribution.Attribution.initTree
+    import org.kiama.example.obr.RISCTransformation
     import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.IO._
     import org.kiama.util.Messaging._
     import org.kiama.rewriting.Rewriter._
-    import SemanticAnalysis._
-    import RISCTransformation._
-    import RISCTree._
 
     /**
      * Method to compile an Obr program and to apply a specified test to
@@ -52,7 +52,7 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
         test(title) {
             // Initialise compiler state
             SymbolTable.reset ()
-            RISCTree.reset ()
+            RISCLabels.reset ()
             resetmessages ()
 
             try {
@@ -65,7 +65,8 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
                             report(emitter)
                             fail (s"$title emitted a semantic error.")
                         } else {
-                            tester (title, emitter, ast->code)
+                            val transformer = new RISCTransformation
+                            tester (title, emitter, transformer.code (ast))
                         }
                     case Right (msg) =>
                         emitter.emitln (msg)

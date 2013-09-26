@@ -177,15 +177,15 @@ class RISC (code : Code, console : Console, emitter : Emitter)
      */
     def control (instr : Instr) {
         instr match {
-            case b : BEQ if (Z)        => PC := PC + b.disp
-            case b : BNE if (!Z)       => PC := PC + b.disp
-            case b : BLT if (N)        => PC := PC + b.disp
-            case b : BGE if (!N)       => PC := PC + b.disp
-            case b : BLE if (Z || N)   => PC := PC + b.disp
-            case b : BGT if (!Z && !N) => PC := PC + b.disp
-            case b : BR                => PC := PC + b.disp
+            case b : BEQ if (Z)        => PC := PC + b.label.disp
+            case b : BNE if (!Z)       => PC := PC + b.label.disp
+            case b : BLT if (N)        => PC := PC + b.label.disp
+            case b : BGE if (!N)       => PC := PC + b.label.disp
+            case b : BLE if (Z || N)   => PC := PC + b.label.disp
+            case b : BGT if (!Z && !N) => PC := PC + b.label.disp
+            case b : BR                => PC := PC + b.label.disp
             case b : BSR               => LNK := PC + 1
-                                          PC := PC + b.disp
+                                          PC := PC + b.label.disp
             case RET (c) => PC := R (c)
                             if (R (c) =:= 0) halt := true
             case _       => PC := PC + 1

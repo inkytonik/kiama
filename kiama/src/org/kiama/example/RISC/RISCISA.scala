@@ -356,90 +356,86 @@ object RISCISA {
     }
 
     /**
-     * Abstract interface for all branch instructions.  Branches are
-     * created using symbolic labels. The assembler sets the disp
-     * field once the symbolic label has been resolved to an offset.
+     * Branch target labels. If the `disp` field is -1 then this label
+     * has not been resolved. Otherwise, `disp` gives the offset from
+     * the start of the code block.
+     */
+    case class Label (num : Int, disp : Int = -1) extends Instr {
+        override def toString : String =
+            if (disp == -1)
+                s"label$num"
+            else
+                s"($disp)"
+    }
+
+    /**
+     * Common type for all branch instructions.
      */
     sealed abstract class Branch extends Instr {
-        def label : Int
-        var disp : Disp = -1
-        override def toString : String =
-            if (disp != -1)
-                s"($disp)"
-            else
-                s"label$label"
-        def copy(label : Int = label) : Branch
+        def label : Label
     }
 
     /**
      * If the Z condition code is set, set the program counter to its
      * value plus four times disp.
      */
-    case class BEQ (val label : Int) extends Branch {
-        override def toString : String = s"beq ${super.toString}"
-        def copy(label : Int) : Branch = BEQ (label)
+    case class BEQ (val label : Label) extends Branch {
+        override def toString : String = s"beq $label"
     }
 
     /**
      * If the Z condition code is clear, set the program counter to its
      * value plus four times disp.
      */
-    case class BNE (val label : Int) extends Branch {
-        override def toString : String = s"bne ${super.toString}"
-        def copy(label : Int) : Branch = BNE (label)
+    case class BNE (val label : Label) extends Branch {
+        override def toString : String = s"bne $label"
     }
 
     /**
      * If the N condition code is set, set the program counter to its
      * value plus four times disp.
      */
-    case class BLT (val label : Int) extends Branch {
-        override def toString : String = s"blt ${super.toString}"
-        def copy(label : Int) : Branch = BLT (label)
+    case class BLT (val label : Label) extends Branch {
+        override def toString : String = s"blt $label"
     }
 
     /**
      * If the N condition code is clear, set the program counter to its
      * value plus four times disp.
      */
-    case class BGE (val label : Int) extends Branch {
-        override def toString : String = s"bge ${super.toString}"
-        def copy(label : Int) : Branch = BGE (label)
+    case class BGE (val label : Label) extends Branch {
+        override def toString : String = s"bge $label"
     }
 
     /**
      * If either of the Z or N condition codes is set, set the program
      * counter to its value plus four times disp.
      */
-    case class BLE (val label : Int) extends Branch {
-        override def toString : String = s"ble ${super.toString}"
-        def copy(label : Int) : Branch = BLE (label)
+    case class BLE (val label : Label) extends Branch {
+        override def toString : String = s"ble $label"
     }
 
     /**
      * If both of the Z and N condition codes are clear, set the program
      * counter to its value plus four times disp.
      */
-    case class BGT (val label : Int) extends Branch {
-        override def toString : String = s"bgt ${super.toString}"
-        def copy(label : Int) : Branch = BGT (label)
+    case class BGT (val label : Label) extends Branch {
+        override def toString : String = s"bgt $label"
     }
 
     /**
      * Set the program counter to its value plus disp.
      */
-    case class BR (val label : Int) extends Branch {
-        override def toString : String = s"br ${super.toString}"
-        def copy(label : Int) : Branch = BR (label)
+    case class BR (val label : Label) extends Branch {
+        override def toString : String = s"br $label"
     }
 
     /**
      * Set R31 to the value of the program counter plus one. Set the
      * program counter to its value plus disp.
      */
-    case class BSR (val label : Int) extends Branch {
-        override def toString : String = s"bsr ${super.toString}"
-        def copy(label : Int) : Branch = BSR (label)
+    case class BSR (val label : Label) extends Branch {
+        override def toString : String = s"bsr $label"
     }
 
     /**
@@ -457,24 +453,21 @@ object RISCISA {
     sealed abstract class Pseudo extends Assembler
 
     /**
-     * Branch target label
-     * We call this Target rather than Label to avoid a name
-     * clash with the Label class in RISCTree
+     * Branch target label.
      */
-    case class Target (label : Int) extends Pseudo {
-        override def toString : String = s"label$label:"
+    case class Target (label : Label) extends Pseudo {
+        override def toString : String = s"$label:"
     }
 
     /**
-     * Comment
+     * Comment.
      */
     case class Comment (text : String) extends Pseudo {
         override def toString : String = s"! $text"
     }
 
     /**
-     * Pretty-print a list of assembly code instructions
-     * to an emitter
+     * Pretty-print a list of assembly code instructions to an emitter.
      */
      def prettyprint (emitter : Emitter, code : AssemCode) {
          for (line <- code) {

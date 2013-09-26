@@ -208,24 +208,4 @@ object RISCTree {
      */
     case class Label (num : Int)
 
-    /**
-     * Generate a unique label.
-     */
-    def genlabel () : Label = {
-        lastlab = lastlab + 1
-        Label (lastlab)
-    }
-
-    /**
-     * Last label generated.
-     */
-    private var lastlab = 0
-
-    /**
-     * Reset the module.
-     */
-    def reset () {
-        lastlab = 0
-    }
-
 }
