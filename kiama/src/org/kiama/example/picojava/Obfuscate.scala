@@ -32,7 +32,6 @@ object Obfuscate extends Rewriter {
     import AbstractSyntax._
     import NameResolution._
     import org.kiama.attribution.Attribution._
-    import scala.collection.mutable.Map
 
     /**
      * Obfuscate a program by renaming variable and class identifiers.
@@ -44,7 +43,7 @@ object Obfuscate extends Rewriter {
         import org.kiama.util.Counter
 
         // Map from declaration nodes to new variable names
-        val declNames = Map[Decl, String] ()
+        val declNames = scala.collection.mutable.Map[Decl, String] ()
 
         // Counter to generate unique names
         val counter = new Counter
