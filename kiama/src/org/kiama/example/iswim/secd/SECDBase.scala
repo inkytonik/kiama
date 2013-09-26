@@ -34,7 +34,6 @@ package example.iswim.secd
 import scala.util.parsing.input.Positional
 import scala.util.parsing.input.NoPosition
 import scala.util.parsing.input.Position
-import scala.collection.mutable.ListBuffer
 import org.kiama.attribution.Attributable
 import org.kiama.machine.Machine
 import org.kiama.util.StdoutEmitter
@@ -98,20 +97,15 @@ object SECDBase {
 
     class CodeTree(bdy : List[ByteCodeBase]) extends ByteCodeBase {
 
-        private lazy val flattened : List[Instruction] = {
-            val buffer = new ListBuffer[Instruction] ()
-            for (b <- bdy) {
-                b match {
-                    case cs : CodeTree =>
-                        buffer ++= cs.flattened
-                    case CodeSegment(code) =>
-                        buffer ++= code
-                    case i : Instruction =>
-                        buffer += i
-                }
-            }
-            buffer.toList
-        }
+        private lazy val flattened : List[Instruction] =
+            bdy.map {
+                case cs : CodeTree =>
+                    cs.flattened
+                case CodeSegment(code) =>
+                    code
+                case i : Instruction =>
+                    List (i)
+            }.flatten
 
         def toCodeSegment : CodeSegment =
             new CodeSegment(flattened)
