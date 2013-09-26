@@ -63,7 +63,7 @@ class ObrExecTests extends Driver with TestCompiler[ObrInt] {
     import org.kiama.util.StringConsole
 
     filetests ("ObrExec", "kiama/src/org/kiama/example/obr/tests/generic", ".obr", ".out",
-               Some (".in"), "0", List(Array("-e")))
+               Some (".in"), "0", List (Array ("-e")))
 
     /*
      * Method to execute an execution test on a single Obr program
@@ -79,10 +79,10 @@ class ObrExecTests extends Driver with TestCompiler[ObrInt] {
         val (obrfile, params, expect) = spec
         val title = s"""$name processing $obrfile parameters ${params.mkString("(",", ",")")} expecting $expect"""
         test (title) {
-            val console = new StringConsole(params.mkString("","\n","\n"))
+            val console = new StringConsole (params.mkString ("", "\n", "\n"))
             val cc =
                 try {
-                    compile (Array("-e", dirname + obrfile), console)
+                    compile (Array ("-e", dirname + obrfile), console)
                 } catch {
                     case e : Exception =>
                         info ("failed with an exception ")
@@ -230,9 +230,9 @@ class ObrExecTests extends Driver with TestCompiler[ObrInt] {
  */
 class ObrNumberingTest extends TreeTestDriver {
 
-    targettreetest("ObrNumbering", "kiama/src/org/kiama/example/obr/tests/exceptions/codegen/",
-                   "except8.obr", checkintdatums(List(3,1,4,0,2)))
-    targettreetest("ObrNumbering", "kiama/src/org/kiama/example/obr/tests/enum/codegen/",
-                   "enumtest2.obr", checkintdatums(List(1,3,1,0,2,2,1,0,1)))
+    targettreetest ("ObrNumbering", "kiama/src/org/kiama/example/obr/tests/exceptions/codegen/",
+                    "except8.obr", checkintdatums( List (3,1,4,0,2)))
+    targettreetest ("ObrNumbering", "kiama/src/org/kiama/example/obr/tests/enum/codegen/",
+                    "enumtest2.obr", checkintdatums (List (1,3,1,0,2,2,1,0,1)))
 
 }
