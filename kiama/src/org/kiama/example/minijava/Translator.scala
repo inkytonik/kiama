@@ -29,7 +29,7 @@ object Translator {
     import JVMTree._
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.attr
-    import scala.collection.mutable.ListBuffer
+    import org.kiama.util.Counter
     import SemanticAnalysis.{entity, tipe}
     import SymbolTable._
 
@@ -41,7 +41,7 @@ object Translator {
     def translate (sourcetree : Program, sourceFilename : String) : List[ClassFile] = {
 
         // An instruction buffer for translating statements and expressions into
-        val instrBuffer = new ListBuffer[JVMInstr] ()
+        val instrBuffer = new scala.collection.mutable.ListBuffer[JVMInstr] ()
 
         /**
          * Generate an instruction by appending it to the instruction buffer.
@@ -65,15 +65,15 @@ object Translator {
             }
 
         /**
-         * The number of local variable locations that have been used so far.
+         * Counter of local variable locations used so far.
          */
-        var varCount = 0
+        val varCounter = new Counter (0)
 
         /**
          * Reset the label count to zero.
          */
         def resetVarCount () {
-            varCount = 0
+            varCounter.reset ()
         }
 
         /**
@@ -86,8 +86,7 @@ object Translator {
         lazy val varnum : VariableEntity => Int =
             attr {
                 case v =>
-                    varCount = varCount + 1
-                    varCount
+                    varCounter.next ()
             }
 
         /**
@@ -111,15 +110,15 @@ object Translator {
         }
 
         /**
-         * The number of labels that have been allocated so far.
+         * Counter of labels used so far.
          */
-        var labelCount = 0
+        val labelCounter = new Counter (0)
 
         /**
          * Reset the label count to zero.
          */
         def resetLabelCount () {
-            labelCount = 0
+            labelCounter.reset ()
         }
 
         /**
@@ -127,8 +126,7 @@ object Translator {
          * the string "L" followed by a unique count.
          */
         def makeLabel () : String = {
-            labelCount = labelCount + 1
-            s"L$labelCount"
+            s"L${labelCounter.next ()}"
         }
 
         /**
