@@ -27,14 +27,16 @@ package util
  * useful for generating things like unique names for generated entities.
  * The methods synchronize on the counter value so they can be called safely
  * from more than one thread.
+ *
+ * `init` is the initial value of the counter (default: -1).
  */
-class Counter {
+class Counter (init : Int = -1) {
 
     /**
      * The most recent value that was generated, or -1 if no values have
      * been generated.
      */
-    private[this] var value = -1
+    private[this] var value = init
 
     /**
      * Return zero if this is the first time this method has been called.
@@ -49,9 +51,9 @@ class Counter {
     }
 
     /**
-     * Reset the value, by default to -1.
+     * Reset the value, by default to the initial value of the counter.
      */
-    def reset (to : Int = -1) {
+    def reset (to : Int = init) {
         synchronized {
             value = to
         }
