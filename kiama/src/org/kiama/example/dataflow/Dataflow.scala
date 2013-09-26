@@ -133,28 +133,18 @@ trait LivenessImpl extends Liveness {
 
     self : Liveness with Variables with ControlFlow =>
 
-    // For tests
-    var icount = 0
-    var ocount = 0
-
     val in : Stm => Set[Var] =
         circular (Set[Var]()) (
             // Optimisation to not include vars used to calculate v
             // if v is not live in the following.
             // case s @ Assign (v, _) if (! (out (s) contains v)) =>
             //    out (s)
-            s => {
-                icount = icount + 1
-                uses (s) ++ (out (s) -- defines (s))
-            }
+            s => uses (s) ++ (out (s) -- defines (s))
         )
 
     val out : Stm => Set[Var] =
         circular (Set[Var]()) (
-            s => {
-                ocount = ocount + 1
-                (s->succ) flatMap (in)
-            }
+            s => (s->succ) flatMap (in)
         )
 
 }
