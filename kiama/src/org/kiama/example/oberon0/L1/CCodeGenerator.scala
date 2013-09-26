@@ -56,11 +56,11 @@ trait CCodeGenerator extends L0.CCodeGenerator {
         val (e, ss) = eis.last
         val te = translate (e)
         val tss = translate (ss)
-        var s = oe.map (b => CIfElseStatement (te, tss, translate (b))).getOrElse (CIfStatement (te, tss))
-        for ((e,ss) <- eis.init.reverse) {
-            s = CIfElseStatement (translate (e), translate (ss), s)
+        val tail = oe.map (b => CIfElseStatement (te, tss, translate (b))).getOrElse (CIfStatement (te, tss))
+        eis.init.foldRight (tail) {
+            case ((e, ss), s) =>
+                CIfElseStatement (translate (e), translate (ss), s)
         }
-        s
     }
 
 }
