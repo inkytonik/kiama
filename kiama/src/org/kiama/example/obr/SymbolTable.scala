@@ -29,25 +29,25 @@ package example.obr
 object SymbolTable {
 
     import ObrTree._
-    import scala.collection.immutable
+    import scala.collection.immutable.Map
+    import org.kiama.util.Counter
 
     /**
      * An environment is a map from identifiers to entities.  I.e.
      * the bindings are the entries in the map.
      */
-    type Environment = immutable.Map[Identifier,Entity]
+    type Environment = Map[Identifier,Entity]
 
     /**
-     * The most recent memory location allocated to a variable, or
-     * alternatively the size of memory minus one.
+     * Counter for previously used location.
      */
-    var prevloc = 0
+    val prevLocCounter = new Counter (0)
 
     /**
      * Reset the symbol table.
      */
     def reset () {
-        prevloc = 0
+        prevLocCounter.reset ()
     }
 
     /**
@@ -70,8 +70,8 @@ object SymbolTable {
         override val isassignable =
             (tipe == IntType ()) || (tipe == BoolType ()) || (tipe.isInstanceOf[EnumType])
         override val locn = {
-            val loc = prevloc
-            prevloc = prevloc + tipe.storage
+            val loc = prevLocCounter.value
+            prevLocCounter.next (tipe.storage)
             loc
         }
     }

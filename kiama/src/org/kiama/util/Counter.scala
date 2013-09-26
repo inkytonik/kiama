@@ -36,17 +36,25 @@ class Counter (init : Int = -1) {
      * The most recent value that was generated, or -1 if no values have
      * been generated.
      */
-    private[this] var value = init
+    private[this] var _value = init
+
+    /**
+     * Return the current value of the counter.
+     */
+    def value : Int =
+        synchronized {
+            _value
+        }
 
     /**
      * Return zero if this is the first time this method has been called.
-     * Otherwise return one more than the most recent return value of this
-     * method.
+     * Otherwise increment the stored value and return its new value.
+     * `inc` is the amount to increment by (default: 1).
      */
-    def next () : Int = {
+    def next (inc : Int = 1) : Int = {
         synchronized {
-            value = value + 1
-            value
+            _value = _value + inc
+            _value
         }
     }
 
@@ -55,7 +63,7 @@ class Counter (init : Int = -1) {
      */
     def reset (to : Int = init) {
         synchronized {
-            value = to
+            _value = to
         }
     }
 

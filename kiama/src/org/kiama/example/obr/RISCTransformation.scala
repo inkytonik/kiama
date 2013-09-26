@@ -188,7 +188,7 @@ class RISCTransformation {
                 val lab3 = genlabel ()
                 val eloc = location (e)
                 // store current value of first unallocated location
-                val origprevloc = prevloc
+                val origprevloc = prevLocCounter.value
                 // allocate a temporary location to store the calculated
                 // maximum index value for this for loop.
                 val maxloc = Local (Variable (IntType ()).locn)
@@ -206,7 +206,7 @@ class RISCTransformation {
                           LabelDef (lab2))
                 // restore value of first unallocated location
                 // thereby deallocating our temporary.
-                prevloc = origprevloc
+                prevLocCounter.reset (origprevloc)
                 // ... and return our generated RISCTree code
                 result
 

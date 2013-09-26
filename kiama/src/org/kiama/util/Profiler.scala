@@ -30,6 +30,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribute
     import org.kiama.rewriting.Strategy
+    import org.kiama.util.Counter
 
     /**
      * Take any actions that need to be done at the start of reporting.
@@ -156,8 +157,8 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
         // Map from subjects to unique node numbers
         val nodeNums = new HashMap[Value,Int]
 
-        // Next node number to be used
-        var nodeNum = 0
+        // Counter for node numbers
+        val nodeNumCounter = new Counter
 
         def attributeOf (record : Record) : Value =
             checkFor (record, dim, "AttrEval", "attribute") (_.toString)
@@ -173,10 +174,8 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
 
         // Set the node number of subject if it doesn't already have one
         def setNodeNum (subject : Value) {
-            if (!nodeNums.contains (subject)) {
-                nodeNums (subject) = nodeNum
-                nodeNum += 1
-            }
+            if (!nodeNums.contains (subject))
+                nodeNums (subject) = nodeNumCounter.next ()
         }
 
         // Traverse dependencies collecting information
