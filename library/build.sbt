@@ -1,8 +1,14 @@
 // Dependencies
 
+// The dsinfo and dsprofile dependencies are here so that they end up
+// in published dependencies since they are needed by the core.
+
 libraryDependencies ++= Seq (
     "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.2.0",
-    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0"
+    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0",
+    "jline" % "jline" % "2.11",
+    "org.scalacheck" %% "scalacheck" % "1.10.0" % "test",
+    "org.scalatest" %% "scalatest" % "1.9.2" % "test"
 )
 
 // Interactive settings
@@ -25,7 +31,8 @@ scalaSource in Compile <<= baseDirectory { _ / "src" }
 scalaSource in Test <<= scalaSource in Compile
 
 unmanagedSources in Test <<= (scalaSource in Test) map { s => {
-    (s ** "*Tests.scala").get
+    val egs = s / "org" / "kiama" / "example" ** "*.scala"
+    ((s ** "*Tests.scala") +++ egs).get
 }}
 
 unmanagedSources in Compile <<=
@@ -46,6 +53,34 @@ unmanagedResources in Compile := Seq ()
 unmanagedResources in Test <<= (scalaSource in Test) map { s => {
     (s ** (-"*.scala" && -HiddenFileFilter)).get
 }}
+
+// Fork the runs and connect sbt's input and output to the forked process so
+// that we are immune to version clashes with the JLine library used by sbt
+
+fork in run := true
+
+connectInput in run := true
+
+outputStrategy in run := Some (StdoutOutput)
+
+// Don't run tests in parallel because some bits are not thread safe yet
+
+parallelExecution in Test := false
+
+// Some useful imports for demos and testing in console
+
+initialCommands in console := """
+    import org.kiama._
+    import attribution.Attribution._
+    import rewriting.Rewriter._
+""".stripMargin
+
+initialCommands in console in Test <<= (initialCommands in console) { cmds =>
+    cmds + """
+        import example.json.JSONTree._
+        import example.json.PrettyPrinter._
+    """.stripMargin
+}
 
 // No publishing, it's done in the root project
 

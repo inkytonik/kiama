@@ -24,20 +24,22 @@ import sbt.Keys._
 object KiamaBuild extends Build {
 
     import sbt.Project.Initialize
+    import sbtunidoc.Plugin.{unidocSettings, ScalaUnidoc, TestScalaUnidoc}
+    import sbtunidoc.Plugin.Unidoc
+    import sbtunidoc.Plugin.UnidocKeys.unidoc
 
     // Project configuration:
     //   - core project containing macros and code that they need
-    //   - kiama project containing everything else
-    //   - root project aggregates core and kiama
-    // Additional tasks:
-    //   - kiama/doc and kiama/test:doc generate unified documentation for
-    //     both the kiama and core sub-projects
+    //   - library project containing everything else, including all tests
+    //   - kiama (root) project aggregates core and library
 
-    lazy val root =
+    lazy val kiama =
         Project (
-            id = "root",
+            id = "kiama",
             base = file (".")
-        ) aggregate (core, kiama)
+        ) aggregate (core, library) settings (
+            allNewSettings : _*
+        )
 
     lazy val core =
         Project (
@@ -45,71 +47,32 @@ object KiamaBuild extends Build {
             base = file ("core")
         )
 
-    lazy val kiama =
+    lazy val library =
         Project (
-            id = "kiama",
-            base = file ("kiama")
-        ) dependsOn (core % "compile-internal, test-internal") settings (
-            allNewSettings : _*
-        )
+            id = "library",
+            base = file ("library")
+        ) dependsOn (core % "compile-internal, test-internal")
 
     // All settings that have to be added to the kiama project
     lazy val allNewSettings : Seq[Setting[_]] =
         Seq (
-            mappings in (Compile, packageBin) <++= mappings in (core, Compile, packageBin),
-            mappings in (Compile, packageSrc) <++= mappings in (core, Compile, packageSrc)
+            mappings in (Compile, packageBin) :=
+                (mappings in (core, Compile, packageBin)).value ++
+                    (mappings in (library, Compile, packageBin)).value,
+            mappings in (Compile, packageSrc) :=
+                (mappings in (core, Compile, packageSrc)).value ++
+                    (mappings in (library, Compile, packageSrc)).value,
+            mappings in (Test, packageBin) :=
+                (mappings in (library, Test, packageBin)).value,
+            mappings in (Test, packageSrc) :=
+                (mappings in (library, Test, packageSrc)).value
         ) ++
-        allUnidocSettings
-
-    // List of project names whose documentation will be combined in the kiama project
-    // unified documentation
-    lazy val docProjects = List ("kiama", "core")
-
-    // Override doc to generate unified documentation
-    // Based on setup used in Akka, see Akka's project/Unidoc.scala
-    // The main difference is that we do not use the aggregation structure to decide
-    // what to include, we just include all from docProjects. Also, we redefine the
-    // doc task so that things like packaging etc pick up the unified docs not the
-    // ones just for the kiama project.
-
-    val unidocDirectory = SettingKey[File] ("unidoc-directory")
-    val unidocExclude = SettingKey[Seq[String]] ("unidoc-exclude")
-    val unidocAllSources = TaskKey[Seq[Seq[File]]] ("unidoc-all-sources")
-    val unidocSources = TaskKey[Seq[File]] ("unidoc-sources")
-    val unidocAllClasspaths = TaskKey[Seq[Classpath]] ("unidoc-all-classpaths")
-    val unidocClasspath = TaskKey[Seq[File]] ("unidoc-classpath")
-
-    lazy val allUnidocSettings : Seq[Setting[_]] =
-        unidocSettings (Compile) ++ unidocSettings (Test)
-
-    def unidocSettings (conf : Configuration) : Seq[Setting[_]] = {
-        val subdir = Defaults.prefix (conf.name) + "api"
+        unidocSettings ++
         Seq (
-            doc in conf <<= unidocTask (conf, subdir),
-            unidocDirectory in conf <<= crossTarget / subdir,
-            unidocAllSources in conf <<= (buildStructure) flatMap allSources (conf),
-            unidocSources in conf <<= (unidocAllSources in conf) map { _.flatten },
-            unidocAllClasspaths in conf <<= (buildStructure) flatMap allClasspaths (conf),
-            unidocClasspath in conf <<= (unidocAllClasspaths in conf) map { _.flatten.map (_.data).distinct }
+            doc in Compile := (doc in ScalaUnidoc).value,
+            doc in Test := (doc in TestScalaUnidoc).value,
+            target in unidoc in ScalaUnidoc := crossTarget.value / "api",
+            target in unidoc in TestScalaUnidoc := crossTarget.value / "test-api"
         )
-    }
-
-    def unidocTask (conf : Configuration, subdir : String) : Initialize[Task[File]] =
-        (compilers, cacheDirectory, unidocSources in conf, unidocClasspath in conf,
-                unidocDirectory in conf, scalacOptions in (conf, doc), streams) map {
-            (compilers, cache, sources, classpath, target, options, s) => {
-                val scaladoc = new Scaladoc (100, compilers.scalac)
-                scaladoc.cached (cache / subdir, "main", sources, classpath, target, options, s.log)
-                target
-            }
-        }
-
-    def allSources (conf : Configuration) (structure : Load.BuildStructure) : Task[Seq[Seq[File]]] = {
-        docProjects flatMap { sources in conf in LocalProject (_) get structure.data } join
-    }
-
-    def allClasspaths (conf : Configuration) (structure : Load.BuildStructure) : Task[Seq[Classpath]] = {
-        docProjects flatMap { dependencyClasspath in conf in LocalProject (_) get structure.data } join
-    }
 
 }

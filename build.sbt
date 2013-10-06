@@ -4,6 +4,8 @@
 // import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
 // import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
 
+import sbtunidoc.Plugin.UnidocKeys.unidoc
+
 // Main settings
 
 version in ThisBuild := "1.5.2-SNAPSHOT"
@@ -49,6 +51,55 @@ shellPrompt <<= (name, version) { (n, v) =>
 // No main class since Kiama is a library
 
 mainClass in ThisBuild := None
+
+// unidoc
+
+scalacOptions in (ScalaUnidoc, unidoc) ++=
+    Seq (
+        "-Ymacro-no-expand",
+        "-doc-source-url",
+            "https://code.google.com/p/kiama/source/browse€{FILE_PATH}.scala"
+    )
+
+scalacOptions in (TestScalaUnidoc, unidoc) <<= scalacOptions in (ScalaUnidoc, unidoc)
+
+// Publishing
+
+publishTo <<= version { v =>
+    val nexus = "https://oss.sonatype.org/"
+    if (v.trim.endsWith ("SNAPSHOT"))
+        Some ("snapshots" at nexus + "content/repositories/snapshots")
+    else
+        Some ("releases" at nexus + "service/local/staging/deploy/maven2")
+}
+
+publishMavenStyle := true
+
+publishArtifact in Test := true
+
+pomIncludeRepository := { x => false }
+
+pomExtra := (
+    <url>http://kiama.googlecode.com</url>
+    <licenses>
+        <license>
+            <name>LGPL 3.0 license</name>
+            <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://kiama.googlecode.com/hg</url>
+        <connection>scm:hg:https://kiama.googlecode.com/hg</connection>
+    </scm>
+    <developers>
+        <developer>
+           <id>inkytonik</id>
+           <name>Tony Sloane</name>
+           <url>https://code.google.com/u/inkytonik</url>
+        </developer>
+    </developers>
+)
 
 // scalastyle
 
