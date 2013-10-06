@@ -45,7 +45,7 @@ resolvers in ThisBuild ++= Seq (
 logLevel in ThisBuild := Level.Info
 
 shellPrompt <<= (name, version) { (n, v) =>
-     _ => "kiama " + n + " " + v + "> "
+     _ => "kiama " + v + "> "
 }
 
 // No main class since Kiama is a library
