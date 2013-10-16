@@ -26,7 +26,7 @@ import org.scalatest.prop.Checkers
 
 /**
  * Rewriting tests that operate on normal class values, i.e., not instances
- * of products or colleciton class values.
+ * of products or collection class values.
  */
 class RewriterClassTests extends Tests with Checkers {
 
