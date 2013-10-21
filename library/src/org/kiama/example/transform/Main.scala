@@ -45,7 +45,6 @@ class Driver extends Parser with Compiler[Program] {
         // Check for semantic errors on the original expression.  This
         // will cause a translation to a priority-correct representation
         // and error computation on that rep.
-        resetmessages
         expr->errors
 
         // For testing, print the priority-correct representation

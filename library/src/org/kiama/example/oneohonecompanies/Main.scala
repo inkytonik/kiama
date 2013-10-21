@@ -21,13 +21,13 @@
 package org.kiama
 package example.oneohonecompanies
 
-import org.kiama.util.StdoutEmitter
+object Main {
 
-object Main extends StdoutEmitter {
-
+    import org.kiama.util.Emitter
     import SampleCompany.company
 
     def main (args : Array[String]) {
+        val emitter = new Emitter
         emitter.emitln (Total.total (company))
         emitter.emitln (Total.total (Cut.cut (company)))
         emitter.emitln (Depth.depth (company))

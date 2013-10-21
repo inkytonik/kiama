@@ -31,14 +31,11 @@ class SyntaxAnalysis extends PositionedParserUtilities {
     import PrologTree._
     import scala.language.postfixOps
 
-    lazy val parser =
-        phrase (program)
-
     lazy val program =
-        (clause+) ^^ Program
+        phrase ((clause+) ^^ Program)
 
     lazy val query =
-        literal <~ "."
+        phrase (literal <~ ".")
 
     lazy val clause =
         literal ~ (":-" ~> literals) <~ "." ^^ Rule |

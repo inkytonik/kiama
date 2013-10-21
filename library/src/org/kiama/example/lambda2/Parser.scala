@@ -30,7 +30,7 @@ trait Parser extends PositionedParserUtilities {
 
     import AST._
 
-    lazy val start =
+    lazy val parser =
         exp
 
     lazy val exp : PackratParser[Exp] =

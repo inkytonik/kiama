@@ -50,7 +50,6 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with Parser {
 
         super.process (filename, program, config)
 
-        resetmessages
         program->errors
 
         if (config.obfuscate ()) {

@@ -21,56 +21,51 @@
 package org.kiama
 package util
 
+import org.kiama.attribution.Attributable
 import scala.util.parsing.combinator.RegexParsers
 
 /**
  * General support for applications that implement read-eval-print loops (REPLs).
- * Output is emitted using a configurable emitter.
  */
-trait REPLBase {
+trait REPLBase[C <: REPLConfig] extends Profiler {
 
     /**
-     * The emitter to use to display any output.
+     * Banner message that is printed before the REPL starts.
      */
-    def emitter : Emitter
+    def banner : String
 
     /**
-     * Whether lines consisting entirely of whitespace should be ignored or not.
-     * Default: yes.
-     */
-    def ignoreWhitespaceLines : Boolean =
-        true
-
-    /**
-     * Read lines from the console and pass non-null ones to `processline`.
-     * If `ignoreWhitespaceLines` is true, do not pass lines that contain
-     * just whitespace, otherwise do. Continue until `processline` returns
-     * false. Call `setup` before entering the loop and call `prompt` each
-     * time input is about to be read.  The command-line arguments are
-     * passed to the `setup` method.
+     * The entry point for this REPL.
      */
     def main (args : Array[String]) {
-
-        // If the setup works, read lines and process them
-        if (setup (args)) {
-            var cont = true
-            while (cont) {
-                val line = JLineConsole.readLine (prompt)
-                if (line == null) {
-                    emitter.emitln
-                    cont = false
-                } else if (!ignoreWhitespaceLines || (line.trim.length != 0))
-                    processline (line)
-            }
-        }
-
+        driver (args)
     }
 
     /**
-     * Carry out setup processing for the REPL.  Default: do nothing.
+     * Create the configuration for a particular run of the REPL. If supplied, use
+     * `emitter` instead of a standard output emitter.
      */
-    def setup (args : Array[String]) : Boolean =
-        true
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : C
+
+    /**
+     * Driver for this REPL. First, use the argument list to create a
+     * configuration for this execution. If the arguments parse ok, then
+     * print the REPL banner. Read lines from the console and pass non-null ones
+     * to `processline`. If `ignoreWhitespaceLines` is true, do not pass lines that
+     * contain just whitespace, otherwise do. Continue until `processline`
+     * returns false. Call `prompt` each time input is about to be read.
+     */
+    def driver (args : Array[String]) {
+        val config = createConfig (args)
+        config.emitter.emitln (banner)
+        if (config.profile.get != None) {
+            val dimensions = parseProfileOption (config.profile ())
+            profile (processlines (config), dimensions : _*)
+        } else if (config.time ())
+            time (processlines (config))
+        else
+            processlines (config)
+    }
 
     /**
      * Define the prompt (default: `"> "`).
@@ -79,86 +74,90 @@ trait REPLBase {
         "> "
 
     /**
+     * Process interactively entered lines, one by one.
+     */
+    def processlines (config : C) {
+        var cont = true
+        while (cont) {
+            val line = config.console ().readLine (prompt)
+            if (line == null) {
+                config.emitter.emitln
+                cont = false
+            } else if (config.processWhitespaceLines () || (line.trim.length != 0))
+                processline (line, config)
+        }
+    }
+
+    /**
      * Process a user input line.
      */
-    def processline (line : String) : Unit
+    def processline (line : String, config : C) : Unit
 
 }
 
 /**
  * General support for applications that implement read-eval-print loops (REPLs).
- * Output is emitted to standard output.
  */
-trait REPL extends REPLBase with StdoutEmitter
+trait REPL extends REPLBase[REPLConfig] {
+
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : REPLConfig =
+        new REPLConfig (args, emitter)
+
+}
 
 /**
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. Output is emitted using a configurable emitter.
  */
-trait ParsingREPLBase[T] extends REPLBase with RegexParsers {
+trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] with RegexParsers {
+
+    import org.kiama.attribution.Attribution.initTree
+    import org.kiama.util.Messaging.resetmessages
 
     /**
      * Process a user input line by parsing it to get a value of type `T`,
      * then passing it to the `process` method.
      */
-    def processline (line : String) {
-        parseAll (start, line) match {
+    def processline (line : String, config : C) {
+        parseAll (parser, line) match {
             case Success (e, in) if in.atEnd =>
-                process (e)
+                process (e, config)
             case Success (_, in) =>
-                emitter.emitln (s"extraneous input at ${in.pos}")
+                config.emitter.emitln (s"extraneous input at ${in.pos}")
             case f =>
-                emitter.emitln (f)
+                config.emitter.emitln (f)
         }
     }
 
     /**
      * The parser to use to convert user input lines into values.
      */
-    def start : Parser[T]
+    def parser : Parser[T]
 
     /**
-     * Process a user input value.
+     * Process a user input value. By default, just reset the messages and
+     * initialise the tree.
      */
-    def process (t : T) : Unit
-
-}
-
-/**
- * A REPL that parses its input lines into a value (such as an abstract syntax
- * tree), then processes them. Output is emitted to standard output.
- */
-trait ParsingREPL[T] extends ParsingREPLBase[T] with StdoutEmitter
-
-/**
- * A REPL that is capable of producing profiling reports. This trait
- * augments the argument processing to allow a leading `-p` option to
- * specify the profiling dimensions, or a leding `-t` option to specify
- * that timings should be collected.
- */
-trait ProfilingREPLBase[T] extends ParsingREPLBase[T] with Profiler {
-
-    var profiling = false
-    var dimensions = Seq[String] ()
-
-    /**
-     * Check for a -p option that indicates that this REPL session should
-     * print profiling information each time it evaluates something.
-     */
-    override def setup (args : Array[String]) : Boolean = {
-        if (args.length > 0) {
-            profiling = args (0) startsWith "-p"
-            if (profiling)
-                dimensions = parseProfileOption (args (0).drop (2))
-        }
-        super.setup (if (profiling) args.drop (1) else args)
+    def process (t : T, config : C) {
+        resetmessages
+        initTree (t)
     }
 
 }
 
 /**
- * A parsing REPL that is capable of producing profiling reports. Output
- * is emitted to standard output.
+ * A REPL that parses its input lines into a value (such as an abstract syntax
+ * tree), then processes them. `C` is the type of the configuration.
  */
-trait ProfilingREPL[T] extends ProfilingREPLBase[T] with StdoutEmitter
+trait ParsingREPLWithConfig[T <: Attributable, C <: REPLConfig] extends ParsingREPLBase[T,C]
 
+/**
+ * A REPL that parses its input lines into a value (such as an abstract syntax
+ * tree), then processes them. Output is emitted to standard output.
+ */
+trait ParsingREPL[T <: Attributable] extends ParsingREPLWithConfig[T,REPLConfig] {
+
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : REPLConfig =
+        new REPLConfig (args, emitter)
+
+}

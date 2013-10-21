@@ -29,24 +29,15 @@ trait GeneratingREPLBase[T] extends REPL {
 
     import org.scalacheck._
 
-    /**
-     * Don't ignore whitespace lines since we are using them to indicate
-     * the generation command.
-     */
-    override val ignoreWhitespaceLines = false
+    val banner = "Each time you hit ENTER a new instance is generated and printed."
 
-    /**
-     * Carry out setup processing for the REPL.
-     */
-    override def setup (args : Array[String]) : Boolean = {
-        emitter.emitln ("Each time you hit ENTER a new instance is generated and printed.")
-        true
-    }
-
-    /**
-     * Display a prompt.
-     */
     override val prompt = "Hit ENTER to generate an instance: "
+
+    /**
+     * Generating REPLs insist on processing whitespace.
+     */
+    override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : REPLConfig =
+        super.createConfig ("-w" +: args, emitter)
 
     /**
      * The generator to use to make values of type T.
@@ -56,18 +47,18 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Generate a new instance and print it, ignoring the input line.
      */
-    def processline (line : String) {
+    def processline (line : String, config : REPLConfig) {
         generator.arbitrary (Gen.Params ()) match {
-            case Some (t) => process (t)
-            case None     => emitter.emitln ("can't generate an instance")
+            case Some (t) => process (t, config)
+            case None     => config.emitter.emitln ("can't generate an instance")
         }
     }
 
     /**
      * Process a generated value.  Default: print it.
      */
-    def process (t : T) {
-        emitter.emitln (t)
+    def process (t : T, config : REPLConfig) {
+        config.emitter.emitln (t)
     }
 
 }
@@ -76,4 +67,4 @@ trait GeneratingREPLBase[T] extends REPL {
  * A REPL that uses ScalaCheck to generate random instances of abstract
  * syntax trees of type T and prints them to standard output.
  */
-trait GeneratingREPL[T] extends GeneratingREPLBase[T] with StdoutEmitter
+trait GeneratingREPL[T] extends GeneratingREPLBase[T]

@@ -79,9 +79,11 @@ class Config (args : Array[String], val emitter : Emitter) extends ScallopConf (
     val time = opt[Boolean] ("time", descr = "Report execution time")
 
     /**
-     * The filenames that were specified positionally after all of the options.
+     * The zero or more filenames that were specified positionally after all of the options.
      */
-    val filenames = trailArg[List[String]] ("files", descr = "Input files")
+    val filenames = trailArg[List[String]] ("files", descr = "Input files",
+                                            required = false,
+                                            default = Some (List ()))
 
     /**
      * Handle errors by printing them, then printing the help message, then
@@ -93,5 +95,19 @@ class Config (args : Array[String], val emitter : Emitter) extends ScallopConf (
             emitter.emitln (builder.help)
             sys.exit (1)
         }
+
+}
+
+/**
+ * Configurations for Kiama REPLS. Adds some options to the default
+ * set that all Kiama programs support.
+ */
+class REPLConfig (args : Array[String], emitter : Emitter) extends Config (args, emitter) {
+
+    /**
+     * Whitespace option. If set, pass input lines that are completely white space
+     * to the REPL processing. By default, these lines are ignored.
+     */
+    val processWhitespaceLines = opt[Boolean] ("processWhitespaceLines", 'w', descr = "Process whitespace lines")
 
 }

@@ -330,7 +330,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     }
 
     test("compile a simple, but complete, program") {
-        val prog = parseAll(start, """
+        val prog = parseAll(parser, """
         /*
          * Title:       Fibonacci fun
          * Description: A very simple imperative Fibonacci function with driver.

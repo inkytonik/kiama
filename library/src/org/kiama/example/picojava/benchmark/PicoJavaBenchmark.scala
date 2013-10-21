@@ -21,13 +21,14 @@
 package org.kiama
 package example.picojava.benchmark
 
-import org.kiama.util.StdoutEmitter
-
-object PicoJavaBenchmark extends App with StdoutEmitter {
+object PicoJavaBenchmark extends App {
 
     import org.kiama.attribution._
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.ErrorCheck._
+    import org.kiama.util.Emitter
+
+    val emitter = new Emitter
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 

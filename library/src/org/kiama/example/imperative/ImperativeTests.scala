@@ -198,14 +198,15 @@ trait Generator {
  */
 object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
 
+    import org.kiama.util.REPLConfig
     import org.scalacheck.Arbitrary
 
     def generator : Arbitrary[AST.Stmt] =
         arbStmt
 
-    override def process (s : AST.Stmt) {
-        emitter.emitln (s)
-        emitter.emitln (PrettyPrinter.pretty (s))
+    override def process (s : AST.Stmt, config : REPLConfig) {
+        config.emitter.emitln (s)
+        config.emitter.emitln (PrettyPrinter.pretty (s))
     }
 
 }

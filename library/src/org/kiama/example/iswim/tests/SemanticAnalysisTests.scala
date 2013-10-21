@@ -54,7 +54,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     }
 
     test("test of top level bindings in which all variables correctly bound") {
-        val prog = parseAll(start,
+        val prog = parseAll(parser,
 """ let x = 1 and y = 60;
 
     let f = fun(x) { x + y };
@@ -97,7 +97,7 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
     }
 
     test("test of top level bindings in which some variables incorrectly bound") {
-        val prog = parseAll(start,
+        val prog = parseAll(parser,
 """ let x = 1 and y = 60;
 
     let f = fun(x) { x + w };

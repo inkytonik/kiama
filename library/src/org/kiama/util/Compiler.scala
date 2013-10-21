@@ -36,6 +36,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
 
     import org.kiama.util.{Console, Emitter, StringEmitter}
     import org.kiama.util.IO._
+    import org.kiama.util.Messaging.resetmessages
     import scala.io.Source
 
     /**
@@ -116,10 +117,11 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * Function to process the input that was parsed. `filename` is the name
      * of the file from which the input came. `ast` is the abstract syntax tree
      * produced by the parser from that file. `config` provides access to all
-     * aspects of the configuration. The default implmentation does nothing.
+     * aspects of the configuration. The default implmentation jsut resets the
+     * messages.
      */
     def process (filename : String, ast : T, config : C) {
-        // Do nothing
+        resetmessages
     }
 
 }

@@ -304,7 +304,7 @@ in      factorial(plusone 5)
             write "\n"
         }
 """,
-            start,
+            parser,
             IswimProg(List(
               Primitives(List(
                   Variable("write"),Variable("read"),
@@ -388,7 +388,7 @@ in      factorial(plusone 5)
  * which marks the entry point to the catch block of the closest enclosing try...catch construct.
  */
 """
-        assertParseError (input, start, 45, 1, """operator "{" expected""")
+        assertParseError (input, parser, 45, 1, """operator "{" expected""")
     }
 
 }

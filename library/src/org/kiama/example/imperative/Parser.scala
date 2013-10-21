@@ -31,7 +31,7 @@ trait Parser extends PositionedParserUtilities {
     import AST._
     import scala.language.postfixOps
 
-    lazy val start =
+    lazy val parser =
         phrase (stmt)
 
     lazy val stmt : PackratParser[Stmt] =

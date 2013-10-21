@@ -27,10 +27,10 @@ package example.iswim.driver
  */
 
 import org.kiama.example.iswim.secd._
-
+import org.kiama.util.Emitter
 import SECDBase._
 
-class SECD(code : CodeTree) extends SECDBase with ExceptionHandler
+class SECD(code : CodeTree, config : ISWIMConfig) extends SECDBase (config) with ExceptionHandler
     with IntegerOps with BooleanOps with ConversionOps
     with IntComparisonOps with StackOps with RecordOps
     with HeapOps with IOOps with StringOps {

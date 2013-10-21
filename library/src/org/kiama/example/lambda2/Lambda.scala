@@ -37,52 +37,49 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     import Evaluators._
     import PrettyPrinter._
 
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.util.Emitter
-    import org.kiama.util.Messaging._
+    import org.kiama.util.{Emitter, REPLConfig}
+    import org.kiama.util.Messaging.{messagecount, report}
 
-    override def setup (args : Array[String]) : Boolean = {
-        emitter.emitln ("Enter lambda calculus expressions for evaluation (:help for help)")
-        true
-    }
+    val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 
     override val prompt = mechanism + super.prompt
-
-    /**
-     * Print help about the available commands.
-     */
-    def help {
-        emitter.emitln ("""exp                  print the result of evaluating exp
-            |:eval                list the available evaluation mechanisms
-            |:eval <mechanism>    change to using <mechanism> to evaluate""".stripMargin)
-    }
 
     /**
      * Process a user input line by intercepting meta-level commands to
      * update the evaluation mechanisms.  By default we just parse what
      * they type into an expression.
      */
-    override def processline (line : String) {
+    override def processline (line : String, config : REPLConfig) {
+
+        /**
+         * Print help about the available commands.
+         */
+        def help {
+            config.emitter.emitln ("""exp                  print the result of evaluating exp
+                |:eval                list the available evaluation mechanisms
+                |:eval <mechanism>    change to using <mechanism> to evaluate""".stripMargin)
+        }
+
         line match {
             case Command (Array (":help")) =>
                 help
 
             case Command (Array (":eval")) =>
-                emitter.emitln ("Available evaluation mechanisms:")
+                config.emitter.emitln ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
-                    emitter.emit (s"  $mech")
+                    config.emitter.emit (s"  $mech")
                     if (mech == mechanism)
-                        emitter.emitln (" (current)")
+                        config.emitter.emitln (" (current)")
                     else
-                        emitter.emitln
+                        config.emitter.emitln
                 }
 
             case Command (Array (":eval", mech)) =>
                 if (!setEvaluator (mech))
-                    emitter.emitln (s"unknown evaluation mechanism: $mech")
+                    config.emitter.emitln (s"unknown evaluation mechanism: $mech")
 
             // Otherwise it's an expression for evaluation
-            case _ => super.processline (line)
+            case _ => super.processline (line, config)
         }
     }
 
@@ -98,18 +95,17 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     /**
      * Process an expression.
      */
-    def process (e : AST.Exp) {
-        resetmessages
-        initTree (e)
+    override def process (e : AST.Exp, config : REPLConfig) {
+        super.process (e, config)
         // First conduct a semantic analysis check: compute the expression's
         // type and see if any errors occurred
         e->tipe
         if (messagecount == 0) {
             // If everything is OK, evaluate the expression
-            emitter.emitln (pretty (evaluator.eval (e)))
+            config.emitter.emitln (pretty (evaluator.eval (e)))
         } else {
             // Otherwise report the errors and reset for next expression
-            report (new Emitter)
+            report (config.emitter)
         }
     }
 

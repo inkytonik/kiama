@@ -38,7 +38,7 @@ class LambdaTests extends Tests with Parser {
      */
     def expectQuery[T] (str : String, result : T) {
         val evaluator = new Evaluator
-        parseAll (start, str) match {
+        parseAll (parser, str) match {
             case Success (query, in) if in.atEnd =>
                 assertResult (result) (evaluator.execute (query))
             case Success (_, in) =>
@@ -54,7 +54,7 @@ class LambdaTests extends Tests with Parser {
      */
     def expectQueryPrint[T] (str : String, result : String) {
         val evaluator = new Evaluator
-        parseAll (start, str) match {
+        parseAll (parser, str) match {
             case Success (query, in) if in.atEnd =>
                 assertResult (result) (evaluator.execute (query).toString)
             case Success (_, in) =>

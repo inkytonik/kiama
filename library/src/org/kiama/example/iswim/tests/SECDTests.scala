@@ -20,7 +20,8 @@
  */
 
 package org.kiama
-package example.iswim.tests
+package example.iswim
+package tests
 
 /*
  * Tests of the basic SECD machine.
@@ -42,8 +43,11 @@ class SECDTests extends Tests {
     import IOOps._
     import StringOps._
     import RecordOps._
+    import driver.ISWIMConfig
+    import org.kiama.util.StringEmitter
 
-    private abstract class SECD(code : Code) extends SECDBase
+    private abstract class SECD(code : Code)
+        extends SECDBase (new ISWIMConfig (Array (), new StringEmitter))
         with IntegerOps with BooleanOps
         with IntComparisonOps with StackOps
         with HeapOps with IOOps with StringOps

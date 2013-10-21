@@ -21,13 +21,14 @@
 package org.kiama
 package example.lambda
 
-import org.kiama.util.{ParsingREPL, PositionedParserUtilities, ProfilingREPL}
+import org.kiama.util.{ParsingREPL, PositionedParserUtilities, Profiler}
 
 /**
  * A simple lambda calculus.
  */
 object AST {
 
+    import org.kiama.attribution.Attributable
     import org.kiama.util.Positioned
 
     /**
@@ -38,7 +39,7 @@ object AST {
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends Positioned
+    sealed abstract class Exp extends Attributable with Positioned
 
     /**
      * Numeric expressions.
@@ -82,7 +83,7 @@ trait Parser extends PositionedParserUtilities {
 
     import AST._
 
-    lazy val start =
+    lazy val parser =
         phrase (exp)
 
     lazy val exp : PackratParser[Exp] =
@@ -158,22 +159,23 @@ trait Evaluator {
 /**
  * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-object Lambda extends ProfilingREPL[AST.Exp] with Parser with Evaluator {
+object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator with Profiler {
 
-    override def setup (args : Array[String]) : Boolean = {
-        emitter.emitln ("Enter lambda calculus expressions for evaluation.")
-        super.setup (args)
-    }
+    import org.kiama.util.REPLConfig
+
+    val banner = "Enter lambda calculus expressions for evaluation."
 
     override val prompt = "lambda> "
 
-    def process (e : AST.Exp) {
+    override def process (e : AST.Exp, config : REPLConfig) {
+        super.process (e, config)
         val result =
-            if (profiling)
-                profile (normal (e), dimensions : _*)
-            else
-                normal (e)
-        emitter.emitln (result.getOrElse ("reduction failed"))
+            if (config.profile.get != None) {
+                    val dimensions = parseProfileOption (config.profile ())
+                    profile (normal (e), dimensions : _*)
+                } else
+                    normal (e)
+        config.emitter.emitln (result.getOrElse ("reduction failed"))
     }
 
 }

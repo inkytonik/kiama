@@ -35,7 +35,7 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
     import Translator.translate
     import org.kiama.output.PrettyPrinter.pretty_any
     import org.kiama.util.Config
-    import org.kiama.util.Messaging.{messagecount, report, resetmessages}
+    import org.kiama.util.Messaging.{messagecount, report}
 
     /**
      * Whether this is a test run or not. Test runs generate all of their
@@ -59,7 +59,6 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
         // emitter.emitln (pretty_any (ast))
 
         // Perform the semantic checks
-        resetmessages
         check (ast)
 
         // Report any errors that occurred, return status

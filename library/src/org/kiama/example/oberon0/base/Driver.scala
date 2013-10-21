@@ -36,8 +36,6 @@ trait Driver extends PrettyPrinter {
 
     this : SymbolTable =>
 
-    import org.kiama.util.Messaging.resetmessages
-
     /**
      * The name of this artefact.
      */
@@ -49,7 +47,6 @@ trait Driver extends PrettyPrinter {
      */
     def initialiseSemanticAnalysis {
         resetEnvironments
-        resetmessages
         resetMemo
     }
 

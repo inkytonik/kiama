@@ -42,16 +42,15 @@ class SemanticTestDriver extends SyntaxAnalysis with Compiler[Program]
     import org.kiama.util.Messaging._
 
     /**
-     * The usage message for an erroneous invocation.
+     * For the purposes of tests, the parser we want is the program one.
      */
-    val usage = "usage: run file.pl"
+    val parser = program
 
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.
      */
     override def process (filename : String, ast : Program, config : Config) {
         super.process (filename, ast, config)
-        resetmessages
         check (ast)
         if (messagecount > 0)
             report (config.emitter)

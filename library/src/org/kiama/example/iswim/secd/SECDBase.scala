@@ -31,12 +31,10 @@ package example.iswim.secd
 // reported.
 
 
-import scala.util.parsing.input.Positional
-import scala.util.parsing.input.NoPosition
-import scala.util.parsing.input.Position
 import org.kiama.attribution.Attributable
+import org.kiama.example.iswim.driver.ISWIMConfig
 import org.kiama.machine.Machine
-import org.kiama.util.StdoutEmitter
+import scala.util.parsing.input.{NoPosition, Position, Positional}
 
 object SECDBase {
 
@@ -287,10 +285,14 @@ object SECDBase {
  * such as strings and integers. You can add these using
  * traits to implement each one in a stackable manner.
  */
-abstract class SECDBase
-        extends Machine("SECD") with StdoutEmitter {
+abstract class SECDBase (config : ISWIMConfig) extends Machine("SECD") {
 
     import SECDBase._
+
+    /**
+     * The emitter to use in this machine.
+     */
+    val emitter = config.emitter
 
     /**
      * Base machine value types

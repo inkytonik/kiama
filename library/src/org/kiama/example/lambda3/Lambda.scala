@@ -30,13 +30,14 @@ import org.kiama.util.PositionedParserUtilities
  */
 object AST {
 
+    import org.kiama.attribution.Attributable
     import org.kiama.rewriting.NominalAST.{Bind, Name, Trans}
     import org.kiama.util.Positioned
 
     /**
      * Lambda calculus expressions.
      */
-    abstract class Exp extends Positioned
+    abstract class Exp extends Attributable with Positioned
 
     /**
      * Numeric expression.
@@ -71,7 +72,7 @@ object AST {
      * type T when executed. These values are not in the term language but
      * are used to represent user commands.
      */
-    abstract class Query[T]
+    abstract class Query[T] extends Attributable with Positioned
 
     /**
      * A query that determines the alpha equivalence of two expressions.
@@ -114,7 +115,7 @@ trait Parser extends PositionedParserUtilities {
     import AST._
     import org.kiama.rewriting.NominalAST.{Bind, Name, Trans}
 
-    lazy val start =
+    lazy val parser =
         phrase (query)
 
     lazy val query : PackratParser[Query[_]] =
@@ -207,28 +208,30 @@ class Evaluator {
  */
 object Lambda extends ParsingREPL[AST.Query[_]] with Parser {
 
-    override def setup (args : Array[String]) : Boolean = {
-        emitter.emitln
-        emitter.emitln ("Enter lambda calculus queries:")
-        emitter.emitln
-        emitter.emitln (" e               evaluate e")
-        emitter.emitln (" (n1 <-> n2) e   swap n1 and n2 in e")
-        emitter.emitln (" n # e           is n fresh in e?")
-        emitter.emitln (" fv e            free variables of e")
-        emitter.emitln (" e1 === e2       is e1 alpha equivalent to e2?")
-        emitter.emitln (" [n -> e1] e2    substitute e1 for n in e2")
-        emitter.emitln
-        emitter.emitln ("where n = name, e = expression")
-        emitter.emitln
-        true
-    }
+    import org.kiama.util.REPLConfig
+
+    val banner =
+        """
+        |Enter lambda calculus queries:
+        |
+        | e               evaluate e
+        | (n1 <-> n2) e   swap n1 and n2 in e
+        | n # e           is n fresh in e?
+        | fv e            free variables of e
+        | e1 === e2       is e1 alpha equivalent to e2?
+        | [n -> e1] e2    substitute e1 for n in e2
+        |
+        |where n = name, e = expression"
+        |
+        """.stripMargin
 
     override val prompt = "query> "
 
     val evaluator = new Evaluator
 
-    def process (q : AST.Query[_]) {
-        emitter.emitln (evaluator.execute (q))
+    override def process (q : AST.Query[_], config : REPLConfig) {
+        super.process (q, config)
+        config.emitter.emitln (evaluator.execute (q))
     }
 
 }

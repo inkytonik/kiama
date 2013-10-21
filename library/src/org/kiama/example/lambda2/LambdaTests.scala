@@ -61,7 +61,7 @@ class LambdaTests extends Tests with Checkers with Parser {
      */
     def assertMessage (term : String, line : Int, col : Int, msg : String) {
         resetmessages
-        parseAll (start, term) match {
+        parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 initTree (e)
                 assertType (e, "tipe", tipe, line, col, msg)
@@ -78,7 +78,7 @@ class LambdaTests extends Tests with Checkers with Parser {
      */
     def assertNoMessage (term : String) {
         resetmessages
-        parseAll (start, term) match {
+        parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 initTree (e)
                 tipe (e)
@@ -184,7 +184,7 @@ class LambdaTests extends Tests with Checkers with Parser {
      * the result fails.
      */
     def assertEval (mech : String, term : String, result : Exp) {
-        parseAll (start, term) match {
+        parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 val r = evaluator.eval (e)
                 assertSame (mech, result, r)
@@ -337,7 +337,7 @@ class LambdaTests extends Tests with Checkers with Parser {
      * Parse and pretty-print resulting term then compare to result.
      */
     def assertPrettyS (term : String, result : String) {
-        parseAll (start, term) match {
+        parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 val r = pretty (e)
                 if (r != result)

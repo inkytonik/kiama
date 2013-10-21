@@ -39,7 +39,7 @@ class LambdaTests extends Tests with Checkers with Parser with Evaluator
      * or the comparison fail.
      */
     def expectEval (term : String, result : Exp) {
-        parseAll (start, term) match {
+        parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
                     case Some (r) => assertResult (result) (r)
@@ -57,7 +57,7 @@ class LambdaTests extends Tests with Checkers with Parser with Evaluator
      * parsing or the comparison fail.
      */
     def evalTo (term : String, result : Exp) : Boolean = {
-        parseAll (start, term) match {
+        parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 normal (e) match {
                     case Some (r) => r == result

@@ -106,7 +106,7 @@ trait Parser extends JavaTokenParsers with WhitespacePositionedParserUtilities {
     /**
      * Top level parsers
      */
-    lazy val start : PackratParser[IswimProg] =  // removed importstmt
+    lazy val parser : PackratParser[IswimProg] =  // removed importstmt
         phrase("" ~> rep1sep((letstmt | letrecstmt | primstmt | exprstmt),
                              operator(";")) ^^ IswimProg)
 

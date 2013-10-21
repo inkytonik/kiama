@@ -23,14 +23,16 @@ package example.til
 
 import java.io.Reader
 import org.kiama.util.PositionedParserUtilities
-import org.kiama.util.StdoutEmitter
 
 /**
  * Standard main program for TIL chairmarks.
  */
-trait Main extends StdoutEmitter {
+trait Main {
 
+    import org.kiama.util.Emitter
     import org.kiama.util.IO._
+
+    val emitter = new Emitter
 
     /**
      * Accept file name arguments and process them one-by-one by
