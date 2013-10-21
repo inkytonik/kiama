@@ -46,7 +46,7 @@ trait Evaluator {
     /**
      * Counter used to generate fresh names.
      */
-    val counter = new Counter
+    val freshVarCounter = new Counter
 
     /**
      * Generate a fresh variable name.  Prefix the name with an underscore
@@ -54,7 +54,7 @@ trait Evaluator {
      * must start with a letter).
      */
     def freshVar () : Idn = {
-        val count = counter.next ()
+        val count = freshVarCounter.next ()
         s"_v$count"
     }
 

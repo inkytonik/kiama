@@ -31,20 +31,20 @@ object RISCLabels {
     /**
      * Counter for new labels.
      */
-    val counter = new Counter (0)
+    val newLabelCounter = new Counter (0)
 
     /**
      * Generate a unique label number starting from one.
      */
     def genlabelnum () : Int = {
-        counter.next ()
+        newLabelCounter.next ()
     }
 
     /**
      * Reset the label counter.
      */
     def reset () {
-        counter.reset ()
+        newLabelCounter.reset ()
     }
 
 }

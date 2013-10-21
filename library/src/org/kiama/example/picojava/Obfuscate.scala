@@ -46,14 +46,14 @@ object Obfuscate extends Rewriter {
         val declNames = scala.collection.mutable.Map[Decl, String] ()
 
         // Counter to generate unique names
-        val counter = new Counter
+        val uniqueNameCounter = new Counter
 
         /**
          * Make and return a new name for declaration `d` and remember it in
          * the map.
          */
         def makeName (d : Decl) : String = {
-            val count = counter.next ()
+            val count = uniqueNameCounter.next ()
             val varname = s"n$count"
             declNames += ((d, varname))
             varname

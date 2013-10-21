@@ -119,13 +119,13 @@ class NominalRewriter extends Rewriter {
     /**
      * Counter to use to produce unique names.
      */
-    val counter = new Counter
+    val uniqueNameCounter = new Counter
 
     /**
      * Make a unique name using an old name as the base.
      */
     def genName (oldname : Name) : Name = {
-        Name (oldname.base, Some (counter.next ()))
+        Name (oldname.base, Some (uniqueNameCounter.next ()))
     }
 
     /**

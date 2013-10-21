@@ -65,16 +65,16 @@ class Interpreter {
     import scala.collection.mutable.Stack
 
     /**
-     * Rename counter. Used to produce unique names.
+     * Counter used to produce unique names.
      */
-    val counter = new Counter
+    val uniqueNameCounter = new Counter
 
     /**
      * Rename all of the variables in `t` to a unique name by appending
      * a unique count to the old name.
      */
     def rename[T <: SourceNode] (t : T) : T = {
-        val count = counter.next ()
+        val count = uniqueNameCounter.next ()
         val r = everywheretd (rule {
             case Var (s) =>
                 Var (s + count)
