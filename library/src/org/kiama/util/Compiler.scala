@@ -27,33 +27,54 @@ import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Trait to provide basic functionality for a compiler-like program
- * constructed from phases.
+ * constructed from phases, including profiling and timing support.
+ * `T` is the type of the syntax tree communicated from the parser
+ * to the main processing of the compiler. `C` is the type of the
+ * configuration.
  */
-trait CompilerBase[T] {
+trait CompilerBase[T, C <: Config] extends Profiler {
 
-    import java.io.Reader
-    import org.kiama.util.Console
-    import org.kiama.util.JLineConsole
-    import org.kiama.util.Emitter
+    import org.kiama.util.{Console, Emitter, StringEmitter}
     import org.kiama.util.IO._
-    import org.kiama.util.StringEmitter
     import scala.io.Source
 
     /**
-     * Process the program in the file given as the first command-line
-     * argument, read input using JLine input editing, and emit output
-     * to the standard output.
+     * The entry point for this compiler.
      */
     def main (args : Array[String]) {
-        driver (args, JLineConsole, new Emitter)
+        driver (args)
     }
 
     /**
-     * Check the supplied arguments, returning any arguments that are to be
-     * processed elsewhere. Default: return the arguments unchanged.
+     * Create the configuration for a particular run of the compiler.
+     * If supplied, use `emitter` instead of a standard output emitter.
      */
-    def checkargs (args : Array[String], emitter : Emitter) : Array[String] =
-        args
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : C
+
+    /**
+     * Driver for this compiler. First, use the argument list to create a
+     * configuration for this execution. Then, use the configuration to
+     * run the file processing in the appropriate way.
+     */
+    def driver (args : Array[String]) {
+        val config = createConfig (args)
+        if (config.profile.get != None) {
+            val dimensions = parseProfileOption (config.profile ())
+            profile (processfiles (config.filenames (), config), dimensions : _*)
+        } else if (config.time ())
+            time (processfiles (config.filenames (), config))
+        else
+            processfiles (config.filenames (), config)
+    }
+
+    /**
+     * Process the files one by one.
+     */
+    def processfiles (filenames : Seq[String], config : C) {
+        for (filename <- filenames) {
+            processfile (filename, config)
+        }
+    }
 
     /**
      * The character encoding of input files read by this compiler.
@@ -63,77 +84,65 @@ trait CompilerBase[T] {
         "UTF-8"
 
     /**
-     * Process the arguments, using the given console for input and the
-     * given emitter for output.  The arguments are first processed by
-     * checkargs.  Any remaining arguments are interpreted as names of
-     * files which are processed in turn by using `makeast` to turn
-     * their contents into abstract syntax trees (ASTs) and then by
-     * process which conducts arbitrary processing on the ASTs. The
-     * character encoding of the files is given by the `encoding`
-     * method.
+     * Process a file argument by using `makeast` to turn their contents into
+     * abstract syntax trees (ASTs) and then by process which conducts arbitrary
+     * processing on the ASTs. The character encoding of the files is given by
+     * the `encoding` method.
      */
-    def driver (args : Array[String], console : Console, emitter : Emitter) {
-        val newargs = checkargs (args, emitter)
-        for (arg <- newargs) {
-            try {
-                val reader = filereader (arg, encoding)
-                makeast (reader, arg, emitter) match {
-                    case Left (ast) =>
-                        process (arg, ast, console, emitter)
-                    case Right (msg) =>
-                        emitter.emitln (msg)
-                }
-            } catch {
-                case e : FileNotFoundException =>
-                    emitter.emitln (e.getMessage)
+    def processfile (filename : String, config : C) {
+        val emitter = config.emitter
+        try {
+            val reader = filereader (filename, encoding)
+            makeast (reader, filename, config) match {
+                case Left (ast) =>
+                    process (filename, ast, config)
+                case Right (msg) =>
+                    emitter.emitln (msg)
             }
+        } catch {
+            case e : FileNotFoundException =>
+                emitter.emitln (e.getMessage)
         }
     }
 
     /**
      * Make an AST from the file with the given name, returning it wrapped in
      * `Left`.  Returns `Right` with an error message if an AST cannot be made.
+     * `config` provides access to all aspects of the configuration.
      */
-    def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[T,String]
+    def makeast (reader : Reader, filename : String, config : C) : Either[T,String]
 
     /**
-     * Function to process the input that was parsed. `filename` is the
-     * name of the file from which the input came. `ast` is the abstract
-     * syntax tree produced by the parser from that file. `console` should
-     * be used to read anything needed by the processing. `emitter` should
-     * be used for output. emitterReturn true if everything worked, false
-     * otherwise. If false is returned, messages about the problem should
-     * be logged by `process` using the messaging facility.
+     * Function to process the input that was parsed. `filename` is the name
+     * of the file from which the input came. `ast` is the abstract syntax tree
+     * produced by the parser from that file. `config` provides access to all
+     * aspects of the configuration. The default implmentation does nothing.
      */
-    def process (filename : String, ast : T, console : Console, emitter : Emitter) : Boolean
-
-    /**
-     * Run the driver using the given args and return the resulting output,
-     * which may be error messages or the result of running the compiled
-     * program, for example. Read standard input from the specified console.
-     * Reset the message buffer before calling the driver.
-     */
-    def compile (args : Array[String], console : Console) : String = {
-        val emitter = new StringEmitter
-        Messaging.resetmessages
-        driver (args, console, emitter)
-        emitter.result
+    def process (filename : String, ast : T, config : C) {
+        // Do nothing
     }
 
 }
 
 /**
- * A compiler that uses a Scala combinator character-level parser. Define
- * `parser` to specify the actual parser to be used.
+ * A compiler that uses RegexParsers to produce Attributable ASTs. The AST
+ * is initialised with `initTree` by `process`. Override it and call it
+ * before performing specific attribution. `C` is the type of the compiler
+ * configuration.
  */
-trait RegexCompiler[T] extends CompilerBase[T] with RegexParsers {
+trait CompilerWithConfig[T <: Attributable, C <: Config] extends CompilerBase[T,C] with RegexParsers {
+
+    import org.kiama.attribution.Attribution.initTree
 
     /**
      * The actual parser used to produce the AST.
      */
     def parser : Parser[T]
 
-    def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[T,String] =
+    /**
+     * Make an AST by running the parser, reporting errors if the parse fails.
+     */
+    def makeast (reader : Reader, filename : String, config : C) : Either[T,String] =
         parseAll (parser, reader) match {
             case Success (ast, _) =>
                 Left (ast)
@@ -141,53 +150,24 @@ trait RegexCompiler[T] extends CompilerBase[T] with RegexParsers {
                 Right (f.toString)
         }
 
-}
-
-/**
- * A compiler that uses RegexParser to produce Attributable ASTs. The AST
- * is initialised with `initTree` by `process`. Override it and call it before
- * performing specific attribution.
- */
-trait Compiler[T <: Attributable] extends RegexCompiler[T] {
-
-    import org.kiama.attribution.Attribution.initTree
-
-    def process (filename : String, ast : T, console : Console, emitter : Emitter) : Boolean = {
-        initTree (ast)
-        true
-    }
-
-}
-
-/**
- * A compiler that is capable of producing profiling reports. This trait
- * augments the argument processing to allow a leading `-p` option to
- * specify the profiling dimensions, or a leding `-t` option to specify
- * that timings should be collected.
- */
-trait ProfilingCompiler[T <: Attributable] extends Compiler[T] with Profiler {
-
     /**
-     * Wrap the normal compiler driver in a `profile` call, if we are profiling
-     * (indicated by a `-p` option with dimensions). Before calling the driver,
-     * extract the comma-separated profiling dimensions if they are there. If
-     * dimensions are present, print reports along those dimensions, otherwise
-     * enter an interactive shell to allow reports to be produced.
-     *
-     * If not profiling, check for a `-t` option and, if present, run the compiler
-     * driver to collect timings.
-     *
-     * If neither `-p` nor `-t` are the first option, just run the compiler driver
-     * as normal.
+     * Process the AST by performing any processing at the next level up
+     * and then initialising the AST for attribution.
      */
-    override def driver (args : Array[String], console : Console, emitter : Emitter) {
-        if ((args.size > 0) && (args (0).startsWith ("-p"))) {
-            val dimensions = parseProfileOption (args (0).drop (2))
-            profile (super.driver (args.tail, console, emitter), dimensions : _*)
-        } else if ((args.size > 0) && (args (0) == "-t"))
-            time (super.driver (args.tail, console, emitter))
-        else
-            super.driver (args, console, emitter)
+    override def process (filename : String, ast : T, config : C) {
+        super.process (filename, ast, config)
+        initTree (ast)
     }
+
+}
+
+/**
+ * Specialisation of `CompilerWithConfig` that uses the default configuration
+ * type.
+ */
+trait Compiler[T <: Attributable] extends CompilerWithConfig[T,Config] {
+
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Config =
+        new Config (args, emitter)
 
 }

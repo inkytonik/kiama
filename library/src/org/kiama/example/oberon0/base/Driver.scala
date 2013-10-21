@@ -22,165 +22,26 @@ package org.kiama
 package example.oberon0
 package base
 
-import base.source.ModuleDecl
-import org.kiama.util.{Compiler, ProfilingCompiler}
+import source.ModuleDecl
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.attribution.Attribution.resetMemo
-import org.kiama.util.Console
-import org.kiama.util.Emitter
+import org.kiama.util.{CompilerWithConfig, Config, Emitter}
 import org.kiama.output.PrettyPrinter
 import scala.util.parsing.combinator.RegexParsers
 
 /**
- * The entry point Oberon0 compiler driver with profiling support.
+ * Common functionality for all forms of Oberon0 driver.
  */
-trait Driver extends CompilerDriver with ProfilingCompiler[ModuleDecl] {
-    this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
-        with Analyser =>
+trait Driver extends PrettyPrinter {
 
-    override def baseUsageMessage : String =
-        super.baseUsageMessage +
-        """|
-           |Profile options:
-           |   -pdims print attribution profile using given dimensions
-           |   -t     sample runs and print timing information""".stripMargin
+    this : SymbolTable =>
 
-    override def usageMessage : String =
-        s"Usage: driver <profileopt>? <options>? <filename>\n$baseUsageMessage"
-}
-
-/**
- * A driver for an artefact that parses, pretty prints and performs semantic
- * analysis.
- */
-trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
-
-    this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
-        with Analyser =>
-
-    import org.kiama.util.IO.{filereader, FileNotFoundException}
-    import org.kiama.util.Messaging.{message, messagecount, report,
-        resetmessages, sortedmessages}
+    import org.kiama.util.Messaging.resetmessages
 
     /**
      * The name of this artefact.
      */
     def artefact : String
-
-    // Command-line argument handling
-
-    def baseUsageMessage : String =
-        """|Options:
-           |   -h   print this help message and stop
-           |   -a   print the abstract syntax tree
-           |   -A   pretty-print the abstract syntax tree
-           |   -x   run in LDTA challenge mode""".stripMargin
-
-    def usageMessage : String =
-        s"Usage: driver <options>? <filename>\n$baseUsageMessage"
-
-    var helpFlag : Boolean = _
-    var printastFlag : Boolean = _
-    var pprintastFlag : Boolean = _
-    var challengeFlag : Boolean = _
-    var input : Option[String] = None
-
-    val helpFlagDefault = false
-    val printastFlagDefault = false
-    val pprintastFlagDefault = false
-    val challengeFlagDefault = false
-
-    def resetflags () {
-        helpFlag = helpFlagDefault
-        printastFlag = printastFlagDefault
-        pprintastFlag = pprintastFlagDefault
-        challengeFlag = challengeFlagDefault
-        input = None
-    }
-
-    def processargs (args : List[String]) : Boolean =
-        args match {
-            case Nil =>
-                input != None
-            case arg :: rest =>
-                if (input != None)
-                    false
-                else if (arg.startsWith ("-")) {
-                    if (arg == "-h") {
-                        helpFlag = true
-                        processargs (rest)
-                    } else if (arg == "-a") {
-                        printastFlag = true
-                        processargs (rest)
-                    } else if (arg == "-A") {
-                        pprintastFlag = true
-                        processargs (rest)
-                    } else if (arg == "-x") {
-                        challengeFlag = true
-                        processargs (rest)
-                    } else
-                        false
-                } else {
-                    input = Some (arg)
-                    processargs (rest)
-                }
-        }
-
-    /**
-     * Process the command-line arguments and return an array of the input
-     * file names if processing should continue, None otherwise.
-     */
-    override def checkargs (args : Array[String], emitter : Emitter) : Array[String] = {
-        resetflags ()
-        if (processargs (args.toList)) {
-            if (helpFlag) {
-                emitter.emitln (usageMessage)
-                Array.empty
-            } else
-                Array (input.get)
-        } else {
-            emitter.emitln (s"""Program arguments were ${args.mkString (" ")}""")
-            emitter.emitln (usageMessage)
-            Array.empty
-        }
-    }
-
-    /**
-     * Output a section heading so that the output can be split later.
-     */
-    def section (emitter : Emitter, name : String) {
-        emitter.emitln (s"* $name")
-    }
-
-    /**
-     * Custom driver for section tagging and challenge mode for errors.  If
-     * a parse error occurs: in challenge mode, just send "parse failed" to
-     * standard output, otherwise send the message to the errors file.
-     */
-    override def driver (args : Array[String], console : Console, emitter : Emitter) {
-        checkargs (args, emitter) match {
-            case Array (arg) =>
-                try {
-                    val reader = filereader (arg)
-                    makeast (reader, arg, emitter) match {
-                        case Left (ast) =>
-                            process (arg, ast, console, emitter)
-                        case Right (msg) =>
-                            if (challengeFlag) {
-                                section (emitter, "stdout")
-                                emitter.emitln ("parse failed")
-                            }
-                            section (emitter, "errors")
-                            emitter.emitln (msg)
-                    }
-                } catch {
-                    case e : FileNotFoundException =>
-                        emitter.emitln (e.getMessage)
-                }
-            case _ =>
-                // Do nothing, bad args
-        }
-    }
 
     /**
      * Perform initialisation of semantic analysis that is necessary before
@@ -193,19 +54,91 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
     }
 
     /**
+     * Output a section heading so that the output can be split later.
+     */
+    def section (emitter : Emitter, name : String) {
+        emitter.emitln (s"* $name")
+    }
+
+}
+
+/**
+ * Configuration for an Oberon0 compiler. For simplicity the different kinds
+ * of compiler share a configuration type, so some of these settings have no
+ * effect for some of the drivers.
+ */
+class Oberon0Config (args : Array[String], emitter : Emitter, testPrettyPrint : Boolean = false) extends Config (args, emitter) {
+    val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
+    val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
+    val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
+                                       default = Some (testPrettyPrint))
+    val intPrint = opt[Boolean] ("intPrint", 'i', descr = "Print the intermediate abstract syntax tree")
+    val intPrettyPrint = opt[Boolean] ("intPrettyPrint", 'I', descr = "Pretty-print the intermediate abstract syntax tree")
+    val cPrint = opt[Boolean] ("cPrint", 'c', descr = "Print the C abstract syntax tree")
+    val cPrettyPrint = opt[Boolean] ("cPrettyPrint", 'C', descr = "Pretty-print the C abstract syntax tree",
+                                     default = Some (testPrettyPrint))
+}
+
+/**
+ * A driver for an artefact that parses, pretty prints and performs semantic
+ * analysis.
+ */
+trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
+
+    this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
+        with Analyser =>
+
+    import java.io.File
+    import org.kiama.util.Emitter
+    import org.kiama.util.IO.{filereader, FileNotFoundException}
+    import org.kiama.util.Messaging.{message, messagecount, report,
+        sortedmessages}
+
+    override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Oberon0Config =
+        new Oberon0Config (args, emitter)
+
+    /**
+     * Custom driver for section tagging and challenge mode for errors.  If
+     * a parse error occurs: in challenge mode, just send "parse failed" to
+     * standard output, otherwise send the message to the errors file.
+     */
+    override def processfile (filename : String, config : Oberon0Config) {
+        val emitter = config.emitter
+        try {
+            val reader = filereader (filename)
+            makeast (reader, filename, config) match {
+                case Left (ast) =>
+                    process (filename, ast, config)
+                case Right (msg) =>
+                    if (config.challenge ()) {
+                        section (emitter, "stdout")
+                        emitter.emitln ("parse failed")
+                    }
+                    section (emitter, "errors")
+                    emitter.emitln (msg)
+            }
+        } catch {
+            case e : FileNotFoundException =>
+                emitter.emitln (e.getMessage)
+        }
+    }
+
+    /**
      * Process the given abstract syntax tree.  Send output to emitter,
      * marking sections so that we can split things later.
      */
-    override def process (filename : String, ast : ModuleDecl, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : ModuleDecl, config : Oberon0Config) {
+
+        val emitter = config.emitter
 
         // Perform default processing
-        super.process (filename, ast, console, emitter)
+        super.process (filename, ast, config)
 
-        if (printastFlag) {
+        if (config.astPrint ()) {
             section (emitter, "ast")
             emitter.emitln (pretty_any (ast))
         }
-        if (pprintastFlag) {
+        if (config.astPrettyPrint ()) {
             section (emitter, "_pp.ob")
             emitter.emitln (pretty (toDoc (ast)))
         }
@@ -216,25 +149,22 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
         if (messagecount == 0) {
 
             // No semantic errors, go on to process the AST as appropriate
-            val nast = processast (ast, console, emitter)
+            val nast = processast (ast, config)
 
             // Consume the processed AST (e.g., by generating code from it)
-            consumeast (nast, console, emitter)
-
-            true
+            consumeast (nast, config)
 
         } else {
 
             // Semantic analysis failed, abort.  If in challenge mode, report
             // line number of first error to standard output.  Make full report
             // to errors file.
-            if (challengeFlag) {
+            if (config.challenge ()) {
                 section (emitter, "stdout")
                 emitter.emitln (s"line ${sortedmessages (0).pos.line}")
             }
             section (emitter, "errors")
             report (emitter)
-            false
 
         }
 
@@ -243,14 +173,14 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
     /**
      * Process the AST, returning the new one.  By default, return the AST unchanged.
      */
-    def processast (ast : ModuleDecl, console : Console, emitter : Emitter) : ModuleDecl =
+    def processast (ast : ModuleDecl, config : Oberon0Config) : ModuleDecl =
         ast
 
     /**
      * Consume the AST. For example, translate it to something else. By default, do
      * nothing.
      */
-    def consumeast (ast : ModuleDecl, console : Console, emitter : Emitter) {
+    def consumeast (ast : ModuleDecl, config : Oberon0Config) {
     }
 
 }
@@ -259,66 +189,27 @@ trait CompilerDriver extends Compiler[ModuleDecl] with PrettyPrinter {
  * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis and transforms.
  */
-trait TransformingDriver extends Driver {
+trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer =>
 
-    abstract override def usageMessage : String =
-        s"""${super.usageMessage}
-        |Transformation options:
-        |   -i   print the intermediate abstract syntax tree
-        |   -I   pretty-print the intermediate abstract syntax tree""".stripMargin
-
-    var printiastFlag : Boolean = _
-    var pprintiastFlag : Boolean = _
-
-    val printiastFlagDefault = false
-    val pprintiastFlagDefault = false
-
-    abstract override def resetflags () {
-        super.resetflags
-        printiastFlag = printiastFlagDefault
-        pprintiastFlag = pprintiastFlagDefault
-    }
-
-    abstract override def processargs (args : List[String]) : Boolean =
-        args match {
-            case Nil =>
-                input != None
-            case arg :: rest =>
-                if (input != None)
-                    false
-                else if (arg.startsWith ("-")) {
-                    if (arg == "-i") {
-                        printiastFlag = true
-                        processargs (rest)
-                    } else if (arg == "-I") {
-                        pprintiastFlag = true
-                        processargs (rest)
-                    } else
-                        super.processargs (args)
-                } else {
-                    input = Some (arg)
-                    processargs (rest)
-                }
-        }
-
     /**
      * Process the AST by transforming it.  Then apply higher-level transformations.
      */
-    override def processast (ast : ModuleDecl, console : Console, emitter : Emitter) : ModuleDecl = {
+    override def processast (ast : ModuleDecl, config : Oberon0Config) : ModuleDecl = {
+        val emitter = config.emitter
         initialiseSemanticAnalysis
         val nast = transform (ast)
-        if (printiastFlag) {
+        if (config.intPrint ()) {
             section (emitter, "iast")
             emitter.emitln (pretty_any (nast))
         }
-        if (challengeFlag)
+        if (config.challenge ())
             section (emitter, "_lifted.ob")
-        else if (pprintiastFlag)
+        else if (config.intPrettyPrint ())
             section (emitter, "_ipp.ob")
-        if (pprintiastFlag || challengeFlag)
+        if (config.intPrettyPrint () || config.challenge ())
             emitter.emitln (pretty (toDoc (nast)))
         initTree (nast)
         nast
@@ -330,62 +221,23 @@ trait TransformingDriver extends Driver {
  * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis, transforms and translates.
  */
-trait TranslatingDriver extends TransformingDriver {
+trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
     this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
         with Analyser with Transformer with Translator with c.CPrettyPrinter =>
 
-    abstract override def usageMessage : String =
-        s"""${super.usageMessage}
-        |Translation options:
-        |   -c   print the C abstract syntax tree
-        |   -C   pretty-print the C abstract syntax tree""".stripMargin
-
-    var printcastFlag : Boolean = _
-    var pprintcastFlag : Boolean = _
-
-    val printcastFlagDefault = false
-    val pprintcastFlagDefault = false
-
-    abstract override def resetflags () {
-        super.resetflags
-        printcastFlag = printcastFlagDefault
-        pprintcastFlag = pprintcastFlagDefault
-    }
-
-    abstract override def processargs (args : List[String]) : Boolean =
-        args match {
-            case Nil =>
-                input != None
-            case arg :: rest =>
-                if (input != None)
-                    false
-                else if (arg.startsWith ("-")) {
-                    if (arg == "-c") {
-                        printcastFlag = true
-                        processargs (rest)
-                    } else if (arg == "-C") {
-                        pprintcastFlag = true
-                        processargs (rest)
-                    } else
-                        super.processargs (args)
-                } else {
-                    input = Some (arg)
-                    processargs (rest)
-                }
-        }
-
     /**
      * Consume the AST by translating it to C.
      */
-    override def consumeast (ast : ModuleDecl, console : Console, emitter : Emitter) {
+    override def consumeast (ast : ModuleDecl, config : Oberon0Config) {
+        val emitter = config.emitter
         initialiseSemanticAnalysis
         val nast = translate (ast)
-        if (printcastFlag) {
+        if (config.cPrint ()) {
             section (emitter, "cast")
             emitter.emitln (pretty_any (nast))
         }
-        if (pprintcastFlag || challengeFlag) {
+        if (config.cPrettyPrint () || config.challenge ()) {
             section (emitter, "c")
             emitter.emitln (pretty (toDoc (nast)))
         }

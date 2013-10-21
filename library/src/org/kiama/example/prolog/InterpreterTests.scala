@@ -21,7 +21,7 @@
 package org.kiama
 package example.prolog
 
-import org.kiama.util.{RegexCompiler, Tests}
+import org.kiama.util.Tests
 
 /**
  * Tests that check that the queries run correctly. I.e., given a base

@@ -41,9 +41,20 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
-    override def main (args : Array[String]) {
+    /**
+     * If the program is correct, this is the tree representing it.
+     * Needed so that the process method can access it.
+     */
+    var programtree : Program = _
 
+    /**
+     * Command-line argument will be the name of the file that contains the
+     * Prolog program. The setup parses this file and craetes a representation
+     * in the `programtree` variable for use by the main REPL processing.
+     */
+    override def setup (args : Array[String]) : Boolean =
         args.size match {
+
             // If there is exactly one command-line argument
             case 1 =>
                 try {
@@ -51,6 +62,7 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
                     val reader = new FileReader (args (0))
                     // Parse the file
                     parse (parser, reader) match {
+
                         // If it worked, we get a source tree
                         case Success (sourcetree, _) =>
                             // Pretty print the source tree
@@ -61,29 +73,26 @@ object Main extends SyntaxAnalysis with ParsingREPL[Literal] with PrettyPrinter 
                                 emitter.emitln
                                 emitter.emitln ("Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix)")
                                 emitter.emitln
-                                super.main (args)
                             }
+                            true
+
                         // Parsing failed, so report it
                         case f =>
                             emitter.emitln (f)
+                            false
+
                     }
                 } catch {
                     case e : FileNotFoundException =>
                         emitter.emitln (e.getMessage)
+                        false
                 }
             // Complain otherwise
             case _ =>
                 emitter.emitln ("usage: run file.pl")
+                false
 
         }
-
-    }
-
-    /**
-     * If the program is correct, this is the tree representing it.
-     * Needed so that the process method can access it.
-     */
-    var programtree : Program = _
 
     /**
      * Process the program by analysing it to check for semantic

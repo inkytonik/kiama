@@ -38,10 +38,8 @@ class SemanticTestDriver extends SyntaxAnalysis with Compiler[Program]
         with TestCompiler[Program] {
 
     import SemanticAnalysis._
-    import java.io.FileReader
+    import org.kiama.util.Config
     import org.kiama.util.Messaging._
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
 
     /**
      * The usage message for an erroneous invocation.
@@ -51,15 +49,12 @@ class SemanticTestDriver extends SyntaxAnalysis with Compiler[Program]
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.
      */
-    override def process (filename : String, ast : Program, console : Console, emitter : Emitter) : Boolean = {
-        super.process (filename, ast, console, emitter)
+    override def process (filename : String, ast : Program, config : Config) {
+        super.process (filename, ast, config)
         resetmessages
         check (ast)
-        if (messagecount > 0) {
-            report (emitter)
-            false
-        } else
-            true
+        if (messagecount > 0)
+            report (config.emitter)
     }
 
 }

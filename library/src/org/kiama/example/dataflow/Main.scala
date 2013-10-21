@@ -30,17 +30,15 @@ import org.kiama.util.Compiler
  */
 class Driver extends Parser with Compiler[Stm] {
 
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
+    import org.kiama.util.Config
 
     /**
      * Process the AST by optimising it, then print optimised AST.
      */
-    override def process (filename : String, ast : Stm, console : Console, emitter : Emitter) : Boolean = {
-        super.process (filename, ast, console, emitter)
+    override def process (filename : String, ast : Stm, config : Config) {
+        super.process (filename, ast, config)
         val optast = Optimise.run (ast)
-        emitter.emitln (optast)
-        true
+        config.emitter.emitln (optast)
     }
 
 }

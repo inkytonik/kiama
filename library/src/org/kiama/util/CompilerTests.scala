@@ -27,26 +27,27 @@ import org.scalatest.FunSuiteLike
  * Basic tests of compiler module.  Normal usage is tested by many of
  * the examples.
  */
-class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] {
+class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompiler[Any] {
 
     import java.io.Reader
     import org.scalatest.TestFailedException
 
-    def makeast (reader : Reader, filename : String, emitter : Emitter) : Either[Any,String] =
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Config =
+        new Config (args, emitter)
+
+    def makeast (reader : Reader, filename : String, config : Config) : Either[Any,String] =
          Right ("Dummy")
 
-    def process (filename : String, ast : Any, console : Console, emitter : Emitter) : Boolean =
-         false
-
     test ("compiler driver produces an appropriate message if a file is not found") {
-        val e = new StringEmitter
-        driver (Array ("IDoNotExist.txt"), new StringConsole (""), e)
-        val msg =
+        val emitter = new StringEmitter
+        val config = createConfig (Array ("IDoNotExist.txt"), emitter)
+        testdriver (config)
+        val expectedMsg =
             if (System.getProperty("os.name").startsWith ("Windows"))
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
-        assertResult (s"IDoNotExist.txt ($msg)\n") (e.result)
+        assertResult (s"IDoNotExist.txt ($expectedMsg)\n") (emitter.result)
     }
 
     test ("filetests using a directory that doesn't exist fails") {
@@ -61,17 +62,27 @@ class CompilerTests extends CompilerBase[Any] with Tests with TestCompiler[Any] 
 /**
  * Support for testing compiler drivers.
  */
-trait TestCompiler[T] extends FunSuiteLike {
+trait TestCompilerWithConfig[T, C <: Config] extends FunSuiteLike {
 
-    self : CompilerBase[T] =>
+    self : CompilerBase[T,C] =>
 
-    import org.kiama.attribution.Attribution.resetMemo
     import java.io.File
+    import org.kiama.attribution.Attribution
+    import org.kiama.util.Config
     import scala.io.Source
 
     /**
+     * Run the compiler in test mode using the given configuration.
+     */
+    def testdriver (config : C) {
+        Attribution.resetMemo
+        Messaging.resetmessages
+        processfiles (config.filenames (), config)
+    }
+
+    /**
      * Flag to decide whether to sanitise the output before comparison
-     * of test results with expected results (see sanitise method).
+     * of test results with expected results (see `sanitise` method).
      * Default is true; override with false if you want actual results
      * compared.
      */
@@ -112,28 +123,26 @@ trait TestCompiler[T] extends FunSuiteLike {
 
         /**
          * Make a single file test processing using the command-line `cmd`,
-         * expecting output as in the file `rp`.  Use the given console for
-         * input.  The `extra` string is appended to the normal test title.
-         * `name` is an identifying string used in messages. If the compilation
-         * fails, `rp` is assumed to contain the expected messages. `rt` is a
-         * version of `rp` to use in the test title.
+         * expecting output as in the file `rp`.  The `extra` string is appended
+         * to the normal test title. `name` is an identifying string used in
+         * messages. If the compilation fails, `rp` is assumed to contain the
+         * expected messages. `rt` is a version of `rp` to use in the test title.
          */
-        def filetest (name : String, rp : String, console : Console,
-                      extra : String = "", cmd : Array[String],
-                      rt : String) {
-
+        def filetest (name : String, rp : String, cmd : Array[String], rt : String,
+                      extra : String = "") {
             val ct = cmd.mkString (" ").replaceAllLiterally ("kiama/src/org/kiama/", "")
             val title = s"$name: $ct, expecting $rt$extra"
             test (title) {
-                val cc =
-                    try {
-                        resetMemo
-                        compile (cmd, console)
-                    } catch {
-                        case e : Exception =>
-                            info ("failed with an exception ")
-                            throw (e)
-                    }
+                val emitter = new StringEmitter
+                val config = createConfig (cmd, emitter)
+                try {
+                    testdriver (config)
+                } catch {
+                    case e : Exception =>
+                        info ("failed with an exception ")
+                        throw (e)
+                }
+                val cc = emitter.result
                 try {
                     val rc = Source.fromFile (rp).mkString
                     assert (sanitise (cc) === sanitise (rc), s"$title generated bad output")
@@ -166,12 +175,12 @@ trait TestCompiler[T] extends FunSuiteLike {
                 val it = r.replace (resext, inext)
                 val ip = s"$path/$it"
                 val inf = new File (ip)
-                val (console, msg) =
+                val (consoleArgs, msg) =
                     if (inf.exists)
-                        (new FileConsole (ip), s" from input $it")
+                        (Array ("-c", "file", ip), s" from input $it")
                     else
-                        (new StringConsole (indefault), s""" from string "$indefault"""")
-                filetest (name, rp, console, msg, args :+ cp, r)
+                        (Array ("-c", "string", indefault), s""" from string "$indefault"""")
+                filetest (name, rp, consoleArgs ++ args :+ cp, r, msg)
             }
         }
 
@@ -190,7 +199,7 @@ trait TestCompiler[T] extends FunSuiteLike {
                                 val cp = s"$path/$c"
                                 val rt = c.replace (srcext, resext)
                                 val rp = s"$path/$rt"
-                                filetest (name, rp, new Console, "", args :+ cp, rt)
+                                filetest (name, rp, args :+ cp, rt)
                         }
                     }
                 }
@@ -198,5 +207,15 @@ trait TestCompiler[T] extends FunSuiteLike {
         }
 
     }
+
+}
+
+/**
+ * Specialisation of `TestCompilerWithConfig` that uses the default
+ * configuration type.
+ */
+trait TestCompiler[T] extends TestCompilerWithConfig[T,Config] {
+
+    self : CompilerBase[T,Config] =>
 
 }

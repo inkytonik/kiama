@@ -19,16 +19,17 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-package org.kiama.example.obr.tests
+package org.kiama
+package example.obr.tests
 
 import org.kiama.example.obr._
 import org.kiama.example.obr.ObrTree.ObrInt
-import org.kiama.util.TestCompiler
+import org.kiama.util.TestCompilerWithConfig
 
 /**
  * Obr regression tests: compilation to assembly.
  */
-class ObrRegressionTests extends Driver with TestCompiler[ObrInt] {
+class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
     filetests ("ObrRegression", "library/src/org/kiama/example/obr/tests/generic", ".obr", ".risc",
                argslist = List (Array ("-a")))
@@ -38,7 +39,7 @@ class ObrRegressionTests extends Driver with TestCompiler[ObrInt] {
 /**
  * Obr parser tests.
  */
-class ObrParserTests extends ParserDriver with TestCompiler[ObrInt] {
+class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
     filetests ("ObrParserEnum", "library/src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
     filetests ("ObrParserException", "library/src/org/kiama/example/obr/tests/exceptions/parser", ".obr", ".out")
@@ -48,7 +49,7 @@ class ObrParserTests extends ParserDriver with TestCompiler[ObrInt] {
 /**
  * Obr semantic analysis tests.
  */
-class ObrSemanticTests extends SemanticDriver with TestCompiler[ObrInt] {
+class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
     filetests ("ObrSemanticEnum", "library/src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
     filetests ("ObrSemanticException", "library/src/org/kiama/example/obr/tests/exceptions/semantic", ".obr", ".out")
@@ -58,9 +59,9 @@ class ObrSemanticTests extends SemanticDriver with TestCompiler[ObrInt] {
 /**
  * Obr tests: compilation and execution.
  */
-class ObrExecTests extends Driver with TestCompiler[ObrInt] {
+class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
-    import org.kiama.util.StringConsole
+    import org.kiama.util.{Config, StringEmitter}
 
     filetests ("ObrExec", "library/src/org/kiama/example/obr/tests/generic", ".obr", ".out",
                Some (".in"), "0", List (Array ("-e")))
@@ -79,17 +80,20 @@ class ObrExecTests extends Driver with TestCompiler[ObrInt] {
         val (obrfile, params, expect) = spec
         val title = s"""$name processing $obrfile parameters ${params.mkString("(",", ",")")} expecting $expect"""
         test (title) {
-            val console = new StringConsole (params.mkString ("", "\n", "\n"))
-            val cc =
-                try {
-                    compile (Array ("-e", dirname + obrfile), console)
-                } catch {
-                    case e : Exception =>
-                        info ("failed with an exception ")
-                        throw (e)
-                }
-            if (cc != s"$expect\n")
-                fail (s"$title generated bad output: $cc")
+            val emitter = new StringEmitter
+            val args = Array ("-c", "string", params.mkString ("", "\n", "\n"),
+                              "-e", dirname + obrfile)
+            val config = createConfig (args, emitter)
+            try {
+                testdriver (config)
+            } catch {
+                case e : Exception =>
+                    info ("failed with an exception ")
+                    throw (e)
+            }
+            val output = emitter.result
+            if (output != s"$expect\n")
+                fail (s"$title generated bad output: $output")
         }
     }
 

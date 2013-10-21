@@ -22,4 +22,4 @@ package org.kiama
 package example.oberon0
 package drivers
 
-class A4Tests extends A4Phases with base.TranslatingTestDriver
+class A4Tests extends A4Phases with base.TestDriver

@@ -22,7 +22,6 @@ package org.kiama
 package example.minijava
 
 import MiniJavaTree.Program
-import org.kiama.util.Emitter
 import org.kiama.util.Compiler
 
 /**
@@ -35,7 +34,7 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
     import SemanticAnalysis.check
     import Translator.translate
     import org.kiama.output.PrettyPrinter.pretty_any
-    import org.kiama.util.Console
+    import org.kiama.util.Config
     import org.kiama.util.Messaging.{messagecount, report, resetmessages}
 
     /**
@@ -52,10 +51,9 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
      * translate the program and generate code for the translation. Return
      * whether or not the semantic analysis checks were passed.
      */
-    override def process (filename : String, ast : Program, console : Console,
-                          emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : Program, config : Config) {
 
-        super.process (filename, ast, console, emitter)
+        super.process (filename, ast, config)
 
         // Pretty print the abstract syntax tree
         // emitter.emitln (pretty_any (ast))
@@ -67,8 +65,7 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
         // Report any errors that occurred, return status
         if (messagecount > 0) {
 
-            report (emitter)
-            false
+            report (config.emitter)
 
         } else {
 
@@ -76,12 +73,10 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
             val targettree = translate (ast, filename)
 
             // Pretty print the target tree
-            // emitter.emitln (pretty_any (targettree))
+            // config.emitter.emitln (pretty_any (targettree))
 
             // Output code for the target tree
-            targettree.map (generate (isTest, _, emitter))
-
-            true
+            targettree.map (generate (isTest, _, config.emitter))
 
         }
 

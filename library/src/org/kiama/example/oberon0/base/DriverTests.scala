@@ -22,15 +22,16 @@ package org.kiama
 package example.oberon0
 package base
 
-import org.kiama.util.TestCompiler
+import org.kiama.util.{CompilerBase, Emitter, TestCompilerWithConfig}
+import scala.util.parsing.combinator.RegexParsers
 import source.ModuleDecl
 
 /**
  * A driver for testing.
  */
-trait TestDriver extends TestCompiler[ModuleDecl] {
+trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : Driver =>
+    this : SymbolTable with CompilerBase[ModuleDecl,Oberon0Config] =>
 
     import scala.collection.mutable.ListBuffer
 
@@ -127,19 +128,10 @@ trait TestDriver extends TestCompiler[ModuleDecl] {
         b.result ().mkString ("\n")
     }
 
-    // Always pretty-print AST
-    override val pprintastFlagDefault = true
-
-}
-
-/**
- * Driver for testing a translator.
- */
-trait TranslatingTestDriver extends TestDriver {
-
-    this : TranslatingDriver =>
-
-    // Always pretty-print C AST
-    override val pprintcastFlagDefault = true
+    /**
+     * In the test configuration we pretty print the source and C ASTs by default.
+     */
+    override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Oberon0Config =
+        new Oberon0Config (args, emitter, true)
 
 }

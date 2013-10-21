@@ -24,60 +24,36 @@ package example.obr
 
 import ObrTree.ObrInt
 import org.kiama.attribution.Attribution.initTree
-import org.kiama.util.Compiler
+import org.kiama.util.{Console, CompilerWithConfig, Config, Emitter,
+    JLineConsole}
+
+/**
+ * Configuration for the Obr compiler.
+ */
+class ObrConfig (args : Array[String], emitter : Emitter) extends Config (args, emitter) {
+    val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
+    val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
+    val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
+    val execute = opt[Boolean] ("execute", descr = "Execute the compiled code")
+}
 
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
+class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
 
     import SemanticAnalysis._
     import org.kiama.example.obr.{RISCEncoder, RISCTransformation}
     import org.kiama.example.RISC.{RISC, RISCISA}
-    import org.kiama.util.Console
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging._
 
-    /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = """|usage: scala org.obr.compiler.Main [options] file.obr
-                   |options:    -t spill target tree to stdout
-                   |            -a spill RISC assembler to stdout
-                   |            -s spill global environment to stdout
-                   |            -e run compiled code""".stripMargin
+    override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : ObrConfig =
+        new ObrConfig (args, emitter)
 
-    /**
-     * The following flags correspond to the command line arguments
-     */
-    var spillTargetTreeFlag = false
-    var spillRISCAssemFlag = false
-    var spillEnvirFlag = false
-    var execFlag : Boolean = false
+    override def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
-    /**
-     * Scan command line arguments to handle any compiler switches.
-     */
-    override def checkargs (args : Array[String], emitter : Emitter) : Array[String] = {
-        def checkFlag (arg : String) : Boolean =
-            arg match {
-                case "-t" => { spillTargetTreeFlag = true; false }
-                case "-a" => { spillRISCAssemFlag = true; false }
-                case "-s" => { spillEnvirFlag = true; false }
-                case "-e" => { execFlag = true; false }
-                case _ => true
-            }
-        for (a <- args; if (checkFlag (a))) yield (a)
-    }
-
-    /**
-     * Function to process the input that was parsed.  console and emitter
-     * are used for input and output.  Return true if everything worked, false
-     * otherwise.
-     */
-    override def process (filename : String, ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
-
-        super.process (filename, ast, console, emitter)
+        super.process (filename, ast, config)
 
         // Initialise compiler state
         SymbolTable.reset ()
@@ -86,12 +62,11 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
         // Conduct semantic analysis and report any errors
         ast->errors
         if (messagecount > 0) {
-            report (emitter)
-            false
+            report (config.emitter)
         } else {
             // Print out final environment
-            if (spillEnvirFlag) {
-                emitter.emitln (ast->envout)
+            if (config.envPrint ()) {
+                config.emitter.emitln (ast->envout)
             }
 
             // Compile the source tree to a target tree
@@ -100,24 +75,23 @@ class Driver extends SyntaxAnalysis with Compiler[ObrInt] {
             initTree (targettree)
 
             // Print out the target tree for debugging
-            if (spillTargetTreeFlag) {
-                emitter.emitln (targettree)
+            if (config.targetPrint ()) {
+                config.emitter.emitln (targettree)
             }
 
             // Encode the target tree and emit the assembler or run if requested
             val encoder = new RISCEncoder
             encoder.encode (targettree)
 
-            if (spillRISCAssemFlag) {
-                RISCISA.prettyprint (emitter, encoder.getassem)
+            if (config.riscPrint ()) {
+                RISCISA.prettyprint (config.emitter, encoder.getassem)
             }
 
-            if (execFlag) {
+            if (config.execute ()) {
                 val code = encoder.getcode
-                val machine = new RISC (code, console, emitter)
+                val machine = new RISC (code, config.console (), config.emitter)
                 machine.run
             }
-            true
         }
 
     }
@@ -132,28 +106,10 @@ object Main extends Driver
 /**
  * The next driver simply spills the abstract syntax tree to the console.
  */
-class ParserDriver extends SyntaxAnalysis with Compiler[ObrInt] {
+class ParserDriver extends Driver {
 
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
-    import org.kiama.util.Messaging._
-
-    /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = "usage: scala org.kiama.example.org.obr.Main file.obr"
-
-    /**
-     * Function to process the input that was parsed.  console and emitter
-     * are used for input and output.  Return true if everything worked, false
-     * otherwise.
-     */
-    override def process (filename : String, ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
-
-        // Print ast to the emitter
-        emitter.emitln (ast.toString)
-        true
-
+    override def process (filename : String, ast : ObrInt, config : ObrConfig) {
+        config.emitter.emitln (ast.toString)
     }
 
 }
@@ -161,24 +117,12 @@ class ParserDriver extends SyntaxAnalysis with Compiler[ObrInt] {
 /**
  * A driver which parses a program file and runs the semantic analyser.
  */
-class SemanticDriver extends SyntaxAnalysis with Compiler[ObrInt] {
+class SemanticDriver extends Driver {
 
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
-    import org.kiama.util.Messaging._
     import SemanticAnalysis._
+    import org.kiama.util.Messaging._
 
-    /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = "usage: scala org.kiama.example.org.obr.Main file.obr"
-
-    /**
-     * Function to process the input that was parsed.  console and emitter
-     * are used for input and output.  Return true if everything worked, false
-     * otherwise.
-     */
-    override def process (filename : String, ast : ObrInt, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
         // Initialise compiler state
         SymbolTable.reset ()
@@ -186,11 +130,8 @@ class SemanticDriver extends SyntaxAnalysis with Compiler[ObrInt] {
         // Conduct semantic analysis and report any errors
         initTree (ast)
         ast->errors
-        if (messagecount > 0) {
-            report (emitter)
-            false
-        } else
-            true
+        if (messagecount > 0)
+            report (config.emitter)
 
     }
 

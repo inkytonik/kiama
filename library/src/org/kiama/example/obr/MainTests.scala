@@ -23,20 +23,19 @@ package org.kiama
 package example.obr
 
 import ObrTree.ObrInt
-import org.kiama.util.TestCompiler
+import org.kiama.util.TestCompilerWithConfig
 
 /**
  * A driver which compiles a file and allows a test to be run on the resulting
  * target tree.
  */
-class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
+class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
     import RISCTree._
     import SemanticAnalysis._
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.obr.RISCTransformation
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
+    import org.kiama.util.{Config, Emitter}
     import org.kiama.util.IO._
     import org.kiama.util.Messaging._
     import org.kiama.rewriting.Rewriter._
@@ -46,7 +45,7 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
      * the resulting target tree.
      */
     def targettreetest (name : String, dirname : String, obrfile : String,
-                        tester : (String, Emitter, RISCNode) => Unit, emitter : Emitter = new Emitter) {
+                        tester : (String, Emitter, RISCNode) => Unit) {
         val title = s"$name processing $obrfile"
 
         test(title) {
@@ -55,26 +54,29 @@ class TreeTestDriver extends Driver with TestCompiler[ObrInt] {
             RISCLabels.reset ()
             resetmessages ()
 
+            val filename = dirname + obrfile
+            val config = createConfig (Array (filename))
+
             try {
-                val reader = filereader (dirname + obrfile)
-                makeast (reader, dirname + obrfile, emitter) match {
+                val reader = filereader (filename)
+                makeast (reader, filename, config) match {
                     case Left (ast) =>
                         initTree (ast)
                         ast->errors
                         if (messagecount > 0) {
-                            report(emitter)
+                            report (config.emitter)
                             fail (s"$title emitted a semantic error.")
                         } else {
                             val transformer = new RISCTransformation
-                            tester (title, emitter, transformer.code (ast))
+                            tester (title, config.emitter, transformer.code (ast))
                         }
                     case Right (msg) =>
-                        emitter.emitln (msg)
+                        config.emitter.emitln (msg)
                         fail (s"$title emitted a parse error.")
                 }
             } catch {
                 case e : FileNotFoundException =>
-                    emitter.emitln (e.getMessage)
+                    config.emitter.emitln (e.getMessage)
                     info (s"$title failed with an exception.")
                     throw (e)
             }

@@ -22,7 +22,7 @@ package org.kiama
 package example.oberon0
 package drivers
 
-trait A2bPhases extends base.Driver
+trait A2bPhases extends base.FrontEndDriver
     with L2.Parser
     with L2.source.PrettyPrinter
     with L2.NameAnalyser

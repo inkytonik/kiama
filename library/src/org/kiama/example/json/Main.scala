@@ -29,28 +29,20 @@ object Main extends Driver
 class Driver extends SyntaxAnalysis with Compiler[JValue] {
 
     import PrettyPrinter.{pretty_any, pretty}
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
-
-    /**
-     * The usage message for an erroneous invocation.
-     */
-    val usage = "usage: run file.json"
+    import org.kiama.util.Config
 
     /**
      * Process the tree (currently just print it).
      */
-    override def process (filename : String, ast : JValue, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, ast : JValue, config : Config) = {
 
-        super.process (filename, ast, console, emitter)
+        super.process (filename, ast, config)
 
         // Pretty-print AST as a product value
-        emitter.emitln (pretty_any (ast))
+        config.emitter.emitln (pretty_any (ast))
 
         // Pretty-print AST as a JSON value
-        emitter.emitln (pretty (ast))
-
-        true
+        config.emitter.emitln (pretty (ast))
 
     }
 

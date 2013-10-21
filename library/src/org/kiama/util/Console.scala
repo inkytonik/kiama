@@ -107,6 +107,12 @@ object JLineConsole extends Console {
                 }
         }
 
+     /**
+      * Print representation for usage messages.
+      */
+     override def toString : String =
+         "JLineConsole"
+
 }
 
 /**

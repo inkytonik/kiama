@@ -29,18 +29,17 @@ import org.kiama.util.Compiler
  */
 class Driver extends Parser with Compiler[Program] {
 
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
+    import org.kiama.util.Config
     import org.kiama.util.Messaging._
 
-    override def process (filename : String, program : Program, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, program : Program, config : Config) {
 
         import Analysis._
 
-        super.process (filename, program, console, emitter)
+        super.process (filename, program, config)
 
         // Print original program and obtain "no priority" expression
-        emitter.emitln (program)
+        config.emitter.emitln (program)
         val expr = program.expr
 
         // Check for semantic errors on the original expression.  This
@@ -50,14 +49,11 @@ class Driver extends Parser with Compiler[Program] {
         expr->errors
 
         // For testing, print the priority-correct representation
-        emitter.emitln (expr->ast)
+        config.emitter.emitln (expr->ast)
 
         // Report any semantic errors
-        if (messagecount > 0) {
-            report (emitter)
-            false
-        } else
-            true
+        if (messagecount > 0)
+            report (config.emitter)
 
     }
 

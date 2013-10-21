@@ -22,53 +22,44 @@ package org.kiama
 package example.picojava
 
 import AbstractSyntax.Program
-import org.kiama.util.ProfilingCompiler
+import org.kiama.util.{CompilerWithConfig, Config, Emitter}
 
-object Main extends ProfilingCompiler[Program] with Parser {
+/**
+ * Configuration for the Picojava compiler.
+ */
+class PicojavaConfig (args : Array[String], emitter : Emitter) extends Config (args, emitter) {
+    val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
+}
+
+object Main extends CompilerWithConfig[Program,PicojavaConfig] with Parser {
 
     import Obfuscate.obfuscate
     import ErrorCheck.errors
     import PrettyPrinter.pretty
-    import org.kiama.util.Console
-    import org.kiama.util.Emitter
+    import org.kiama.util.Config
     import org.kiama.util.Messaging._
 
-    /**
-     * Whether or not to perform program obfuscation.
-     */
-    var doObfuscation = false
-
-    /**
-     * Check for `-o` which means print out the program and its obfuscated form.
-     */
-    override def checkargs (args : Array[String], emitter : Emitter) : Array[String] =
-        if (args.size > 0 && args (0) == "-o") {
-            doObfuscation = true
-            args.drop (1)
-        } else
-            args
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : PicojavaConfig =
+        new PicojavaConfig (args, emitter)
 
     /**
      * Process a picoJava program by checking for errors, optionally obfuscating and
      * then printing any errors that were found.
      */
-    override def process (filename : String, program : Program, console : Console, emitter : Emitter) : Boolean = {
+    override def process (filename : String, program : Program, config : PicojavaConfig) {
 
-        super.process (filename, program, console, emitter)
+        super.process (filename, program, config)
 
         resetmessages
         program->errors
 
-        if (doObfuscation) {
-            emitter.emitln (pretty (program))
-            emitter.emitln (pretty (obfuscate (program)))
+        if (config.obfuscate ()) {
+            config.emitter.emitln (pretty (program))
+            config.emitter.emitln (pretty (obfuscate (program)))
         }
 
-        if (messagecount > 0) {
-            report (emitter)
-            false
-        } else
-            true
+        if (messagecount > 0)
+            report (config.emitter)
 
     }
 
