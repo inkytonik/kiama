@@ -29,6 +29,8 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait REPLBase[C <: REPLConfig] extends Profiler {
 
+    import scala.annotation.tailrec
+
     /**
      * Banner message that is printed before the REPL starts.
      */
@@ -74,24 +76,22 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
         "> "
 
     /**
-     * Process interactively entered lines, one by one.
+     * Process interactively entered lines, one by one, until end of file.
      */
-    def processlines (config : C) {
-        var cont = true
-        while (cont) {
-            val line = config.console ().readLine (prompt)
-            if (line == null) {
-                config.emitter.emitln
-                cont = false
-            } else if (config.processWhitespaceLines () || (line.trim.length != 0))
-                processline (line, config)
-        }
+    @tailrec
+    final def processlines (config : C) {
+        val line = config.console ().readLine (prompt)
+        if (line == null) {
+            config.emitter.emitln
+        } else if (config.processWhitespaceLines () || (line.trim.length != 0))
+            processlines (processline (line, config))
     }
 
     /**
-     * Process a user input line.
+     * Process a user input line. The return value allows the processing to
+     * return a new configuration that will be used in subsequent processing.
      */
-    def processline (line : String, config : C) : Unit
+    def processline (line : String, config : C) : C
 
 }
 
@@ -115,9 +115,10 @@ trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] wi
 
     /**
      * Process a user input line by parsing it to get a value of type `T`,
-     * then passing it to the `process` method.
+     * then passing it to the `process` method. Returns the configuration
+     * unchanged.
      */
-    def processline (line : String, config : C) {
+    def processline (line : String, config : C) : C = {
         parseAll (parser, line) match {
             case Success (e, in) if in.atEnd =>
                 process (e, config)
@@ -126,6 +127,7 @@ trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] wi
             case f =>
                 config.emitter.emitln (f)
         }
+        config
     }
 
     /**

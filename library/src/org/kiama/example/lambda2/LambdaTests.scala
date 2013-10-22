@@ -30,7 +30,7 @@ import org.scalatest.prop.Checkers
 class LambdaTests extends Tests with Checkers with Parser {
 
     import AST._
-    import Evaluators._
+    import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.rewriting.Rewriter._
@@ -187,7 +187,7 @@ class LambdaTests extends Tests with Checkers with Parser {
     def assertEval (mech : String, term : String, result : Exp) {
         parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
-                val r = evaluator.eval (e)
+                val r = evaluatorFor (mech).eval (e)
                 assertSame (mech, result, r)
             case Success (_, in) =>
                 fail (s"extraneous input at ${in.pos}: $term")
@@ -201,7 +201,6 @@ class LambdaTests extends Tests with Checkers with Parser {
      */
     def assertEvalAll (term : String, result : Exp) {
         for (mech <- mechanisms) {
-            setEvaluator (mech)
             assertEval (mech, term, result)
         }
     }
@@ -214,7 +213,7 @@ class LambdaTests extends Tests with Checkers with Parser {
      */
     def assertEvalAll (term : String, result1 : Exp, result2 : Exp) {
         for (mech <- mechanisms) {
-            setEvaluator (mech)
+            val evaluator = evaluatorFor (mech)
             assertEval (mech, term,
                         if (evaluator.reducesinlambdas)
                             result1

@@ -21,7 +21,15 @@
 package org.kiama
 package example.lambda2
 
-import org.kiama.util.ParsingREPL
+import org.kiama.util.{Emitter, ParsingREPLWithConfig, REPLConfig}
+
+/**
+ * Configuration for the Lambda REPL.
+ */
+class LambdaConfig (args : Array[String], emitter : Emitter) extends REPLConfig (args, emitter) {
+    val mechanism = opt[String] ("mechanism", descr = "Evaluation mechanism",
+                                 default = Some ("reduce"))
+}
 
 /**
  * A simple typed lambda calculus read-eval-print-loop that offers
@@ -31,24 +39,27 @@ import org.kiama.util.ParsingREPL
  * Visser, LDTA 2002 (published in Volume 65/3 of Electronic Notes in
  * Theoretical Computer Science, Elsevier).
  */
-object Lambda extends ParsingREPL[AST.Exp] with Parser {
+object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
 
-    import Evaluators._
+    import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
-
-    import org.kiama.util.{Emitter, REPLConfig}
+    import org.kiama.util.Emitter
     import org.kiama.util.Messaging
 
-    val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
+    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : LambdaConfig =
+        new LambdaConfig (args, emitter)
 
-    override val prompt = mechanism + super.prompt
+    val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 
     /**
      * Process a user input line by intercepting meta-level commands to
      * update the evaluation mechanisms.  By default we just parse what
      * they type into an expression.
      */
-    override def processline (line : String, config : REPLConfig) {
+    override def processline (line : String, config : LambdaConfig) : LambdaConfig = {
+
+        // Shorthand access to the emitter
+        val emitter = config.emitter
 
         /**
          * Print help about the available commands.
@@ -64,22 +75,27 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
                 help
 
             case Command (Array (":eval")) =>
-                config.emitter.emitln ("Available evaluation mechanisms:")
+                emitter.emitln ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
-                    config.emitter.emit (s"  $mech")
-                    if (mech == mechanism)
-                        config.emitter.emitln (" (current)")
+                    emitter.emit (s"  $mech")
+                    if (mech == config.mechanism ())
+                        emitter.emitln (" (current)")
                     else
-                        config.emitter.emitln
+                        emitter.emitln
                 }
 
             case Command (Array (":eval", mech)) =>
-                if (!setEvaluator (mech))
-                    config.emitter.emitln (s"unknown evaluation mechanism: $mech")
+                if (mechanisms contains mech)
+                    return createConfig (Array ("-m", mech), emitter)
+                else
+                    emitter.emitln (s"unknown evaluation mechanism: $mech")
 
             // Otherwise it's an expression for evaluation
-            case _ => super.processline (line, config)
+            case _ =>
+                super.processline (line, config)
         }
+
+        config
     }
 
     /**
@@ -104,13 +120,14 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     /**
      * Process an expression.
      */
-    override def process (e : AST.Exp, config : REPLConfig) {
+    override def process (e : AST.Exp, config : LambdaConfig) {
         super.process (e, config)
         // First conduct a semantic analysis check: compute the expression's
         // type and see if any errors occurred
         analysis.tipe (e)
         if (messaging.messagecount == 0) {
             // If everything is OK, evaluate the expression
+            val evaluator = evaluatorFor (config.mechanism ())
             config.emitter.emitln (pretty (evaluator.eval (e)))
         } else {
             // Otherwise report the errors and reset for next expression

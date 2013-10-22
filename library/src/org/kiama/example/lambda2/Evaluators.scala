@@ -30,7 +30,7 @@ object Evaluators {
 
    /**
      * Map of evaluator names to the evaluators themselves.
-     * Coments refer to names in Dolstra and Visser paper.
+     * Comments refer to names in Dolstra and Visser paper.
      */
     private val evalmap =
         Map ("reduce"         -> new ReduceEvaluator,          // eval1
@@ -49,26 +49,9 @@ object Evaluators {
     val mechanisms = evalmap.keySet
 
     /**
-     * The name of the current evaluation mechanism (default: "reduce")
+     * The evaluator for the given mechanism.
      */
-    var mechanism = "reduce"
-
-    /**
-     * The current evaluation mechanism.
-     */
-    var evaluator = evalmap (mechanism)
-
-    /**
-     * Change the current evaluation mechanism to that denoted by mech
-     * if it is a legal one, otherwise do nothing.  Returns whether the
-     * change could be made or not.
-     */
-    def setEvaluator (mech : String) : Boolean =
-        if (mechanisms contains mech) {
-            mechanism = mech
-            evaluator = evalmap (mech)
-            true
-        } else
-            false
+    def evaluatorFor (mechanism : String) : Evaluator =
+        evalmap (mechanism)
 
 }
