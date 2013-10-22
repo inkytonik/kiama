@@ -35,30 +35,39 @@ class DynamicAttributionTests extends Tests {
     case class Leaf (value : Int) extends Tree
     case class Unused (b : Boolean) extends Tree
 
-    var count = 0
+    /**
+     * Definitions of the attributes that will be tested below. We package
+     * them in a class so that each test can have its own instance of the
+     * attributes so that there is no shared state.
+     */
+    class Definitions {
 
-    lazy val sumleafDef : Tree ==> Int =
-        {
-            case Leaf (v) => count = count + 1; v
-            case _        => -1
-        }
+        var count = 0
 
-    before {
-        count = 0
+        lazy val sumleaf : Tree => Int =
+            dynAttr {
+                case Leaf (v) => count = count + 1; v
+                case _        => -1
+            }
+
     }
 
     test ("dynamic attribution base works on Leafs") {
-        val sumleaf = dynAttr (sumleafDef)
+        val definitions = new Definitions
+        import definitions._
         assertResult (2) (sumleaf (Leaf (2)))
     }
 
     test ("dynamic attribution base defaults on Pairs") {
-        val sumleaf = dynAttr (sumleafDef)
+        val definitions = new Definitions
+        import definitions._
         assertResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))
     }
 
     test ("dynamic attribute are re-evaluated when reset") {
-        val sumleaf = dynAttr (sumleafDef)
+        val definitions = new Definitions
+        import definitions._
+
         val t = Leaf (2)
 
         assertResult (false, "hasBeenComputedAt") (sumleaf.hasBeenComputedAt (t))
@@ -75,7 +84,9 @@ class DynamicAttributionTests extends Tests {
     }
 
     test ("dynamic attribute can be extended and reduced manually") {
-        val sumleaf = dynAttr (sumleafDef)
+        val definitions = new Definitions
+        import definitions._
+
         val newcase : Tree ==> Int =
             {
                 case Leaf (88)   => 77
@@ -124,7 +135,8 @@ class DynamicAttributionTests extends Tests {
     }
 
     test ("dynamic attribute can be extended and reduced with a using operation") {
-        val sumleaf = dynAttr (sumleafDef)
+        val definitions = new Definitions
+        import definitions._
 
         assertResult (2) (sumleaf (Leaf (2)))
         assertResult (-1) (sumleaf (Pair (Leaf (1), Leaf (2))))

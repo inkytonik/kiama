@@ -44,65 +44,75 @@ class AttributionTests extends Tests {
     case class TripleTree (p : (Tree,Tree,Tree)) extends Tree
     case class QuadTree (p : (Tree,Tree,Tree,Tree)) extends Tree
 
+    val l = Leaf (3)
     val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
     val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
     val u = Pair (Leaf (1), Leaf (2))
 
-    var count = 0
+    /**
+     * Definitions of the attributes that will be tested below. We package
+     * them in a class so that each test can have its own instance of the
+     * attributes so that there is no shared state.
+     */
+    class Definitions {
 
-    lazy val maximumDef : Tree => Int =
-        {
-            case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
-            case Leaf (v)   => v
-        }
+        var count = 0
 
-    lazy val maximum =
-        attr (maximumDef)
-
-    lazy val leafComputedDef : Tree => Boolean =
-        {
-            case t @ Leaf (v) =>
-                leafComputed.hasBeenComputedAt (t)
-        }
-
-    lazy val leafComputed =
-        attr (leafComputedDef)
-
-    lazy val cattrDef : Tree => Attributable => Int =
-        {
-            case Pair (l, r) => {
-                case Pair (l, r) => 0
-                case Leaf (v)    => 1
-                case _           => 2
+        lazy val maximumDef : Tree => Int =
+            {
+                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
+                case Leaf (v)   => v
             }
-            case Leaf (v) => {
-                case Pair (l, r) => 3
-                case Leaf (v)    => 4
-                case _           => 5
-            }
-            case _ => {
-                case _ => 6
-            }
-        }
 
-    lazy val pattrDef : String => Attributable => Int =
-        {
-            case "hello" => {
-                case Pair (l, r) => count = count + 1; 0
-                case Leaf (v)    => 1
-                case _           => 2
-            }
-            case "goodbye" => {
-                case _ => 3
-            }
-        }
+        lazy val maximum =
+            attr (maximumDef)
 
-    before {
-        count = 0
-        maximum.reset ()
+        lazy val leafComputedDef : Tree => Boolean =
+            {
+                case t @ Leaf (v) =>
+                    leafComputed.hasBeenComputedAt (t)
+            }
+
+        lazy val leafComputed =
+            attr (leafComputedDef)
+
+        lazy val cattrDef : Tree => Attributable => Int =
+            {
+                case Pair (l, r) => {
+                    case Pair (l, r) => 0
+                    case Leaf (v)    => 1
+                    case _           => 2
+                }
+                case Leaf (v) => {
+                    case Pair (l, r) => 3
+                    case Leaf (v)    => 4
+                    case _           => 5
+                }
+                case _ => {
+                    case _ => 6
+                }
+            }
+
+        lazy val pattrDef : String => Attributable => Int =
+            {
+                case "hello" => {
+                    case Pair (l, r) => count = count + 1; 0
+                    case Leaf (v)    => 1
+                    case _           => 2
+                }
+                case "goodbye" => {
+                    case _ => 3
+                }
+            }
+
+        lazy val answer : Tree => Int =
+            constant { count = count + 1; 42 }
+
     }
 
     test ("cached attributes are only evaluated once") {
+        val definitions = new Definitions
+        import definitions._
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         assertResult (10, "first value") (t->maximum)
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
@@ -112,6 +122,8 @@ class AttributionTests extends Tests {
     }
 
     test ("resetMemo resets the hasBeenComputedAt state") {
+        val definitions = new Definitions
+        import definitions._
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         t->maximum
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
@@ -120,21 +132,23 @@ class AttributionTests extends Tests {
     }
 
     test ("hasBeenComputedAt returns false while an attribute is being evaluated") {
-        val l = Leaf (3)
+        val definitions = new Definitions
+        import definitions._
         assertResult (false, "hasBeenComputedAt during") (l->leafComputed)
         assertResult (true, "hasBeenComputedAt after") (leafComputed.hasBeenComputedAt (l))
     }
 
     test ("constant attributes are only evaluated once") {
-        lazy val answer : Tree => Int =
-            constant { count = count + 1; 42 }
-
+        val definitions = new Definitions
+        import definitions._
         assertResult (42, "first value") (t->answer)
         assertResult (42, "second value") (t->answer)
         assertResult (1, "evaluation count") (count)
     }
 
     test ("cached attributes are re-evaluated after a reset") {
+        val definitions = new Definitions
+        import definitions._
         assertResult (10, "first value") (t->maximum)
         assertResult (10, "first value") (t->maximum)
         assertResult (2, "evaluation count") (count)
@@ -144,12 +158,16 @@ class AttributionTests extends Tests {
     }
 
     test ("cached attributes are distinct for nodes that are equal") {
+        val definitions = new Definitions
+        import definitions._
         assertResult (10, "first value") (t->maximum)
         assertResult (10, "second value") (s->maximum)
         assertResult (4, "evaluation count") (count)
     }
 
     test ("cached attributes can be reset") {
+        val definitions = new Definitions
+        import definitions._
         assertResult (10, "first value") (t->maximum)
         resetMemo
         assertResult (10, "second value") (t->maximum)
@@ -157,6 +175,8 @@ class AttributionTests extends Tests {
     }
 
     test ("uncached attributes are evaluated each time") {
+        val definitions = new Definitions
+        import definitions._
         import UncachedAttribution._
 
         lazy val maximum : Tree => Int =
@@ -171,6 +191,9 @@ class AttributionTests extends Tests {
     }
 
     test ("cached child attributes work") {
+        val definitions = new Definitions
+        import definitions._
+
         lazy val cattr =
             childAttr (cattrDef)
 
@@ -189,6 +212,8 @@ class AttributionTests extends Tests {
     }
 
     test ("uncached child attributes work") {
+        val definitions = new Definitions
+        import definitions._
         import UncachedAttribution._
 
         lazy val cattr : Tree => Int =
@@ -209,6 +234,9 @@ class AttributionTests extends Tests {
     }
 
     test ("cached parameterised attributes work") {
+        val definitions = new Definitions
+        import definitions._
+
         lazy val pattr =
             paramAttr (pattrDef)
 
@@ -223,7 +251,8 @@ class AttributionTests extends Tests {
     }
 
     test ("cached parameterised attributes are re-evaluated after reset") {
-        count = 0
+        val definitions = new Definitions
+        import definitions._
 
         lazy val pattr =
             paramAttr (pattrDef)
@@ -242,6 +271,8 @@ class AttributionTests extends Tests {
     }
 
     test ("uncached parameterised attributes work") {
+        val definitions = new Definitions
+        import definitions._
         import UncachedAttribution._
 
         lazy val pattr =
