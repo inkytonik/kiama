@@ -77,6 +77,12 @@ class SemanticAnalysis (messaging : Messaging) {
                  }
         )
 
+    /**
+     * Return whether this node is semantically correct or not?
+     * Note that for tests to pass this computation must check every
+     * compnonent of the node, not just enough to determine that it's
+     * not semantically correct.
+     */
     val isSemanticallyCorrect : Iswim => Boolean =
         attr {
             case v@Variable(s) =>
@@ -92,12 +98,12 @@ class SemanticAnalysis (messaging : Messaging) {
                 } else
                     e->isSemanticallyCorrect
             case e =>
-                var result : Boolean = true
-                for ( n <- e.children ) {
-                    val ncorrect = (n.asInstanceOf[Iswim])->isSemanticallyCorrect
-                    result = result && ncorrect
+                // forall no good here since it doesn't necessarily visit all children
+                // Have to do && that way around otherwise it can short circuit
+                e.children.foldLeft (true) {
+                    case (b, n) =>
+                        (n.asInstanceOf[Iswim])->isSemanticallyCorrect && b
                 }
-                result
         }
 
 }

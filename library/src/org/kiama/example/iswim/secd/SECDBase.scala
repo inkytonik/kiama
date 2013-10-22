@@ -244,7 +244,7 @@ object SECDBase {
     abstract class MachineExceptionValue extends ExceptionValue {
         def message : String
         override def toString : String =
-            s"MachineExceptionValue: $message at ${this.pos.toString}"
+            s"MachineExceptionValue: $message at $pos"
     }
 
     case class UnboundVariable() extends MachineExceptionValue {

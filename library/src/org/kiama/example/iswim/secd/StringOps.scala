@@ -72,25 +72,23 @@ trait StringOps extends SECDBase {
      * A backslash at the end is silently ignored.
      */
     private def unescape(s : String) : String = {
-        val b = new StringBuilder
-        var escape = false
-        for (c <- s) {
-            if (escape) {
-                c match {
-                    case 'n'  => b += '\n'
-                    case 't'  => b += '\t'
-                    case '"'  => b += '"'
-                    case '\\' => b += '\\'
-                    case _    => b += c
-                }
-                escape = false
-            } else if (c == '\\') {
-                escape = true
-            } else {
-                b += c
+        val (escape, v) =
+            s.foldLeft ((false, Vector[Char] ())) {
+                case ((escape, v), c) =>
+                    if (escape)
+                        c match {
+                            case 'n'  => (false, v :+ '\n')
+                            case 't'  => (false, v :+ '\t')
+                            case '"'  => (false, v :+ '"')
+                            case '\\' => (false, v :+ '\\')
+                            case _    => (false, v :+ c)
+                        }
+                    else if (c == '\\')
+                        (true, v)
+                    else
+                        (false, v :+ c)
             }
-        }
-        b.toString
+        v.mkString
     }
 
     /**

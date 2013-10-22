@@ -60,7 +60,7 @@ trait IOOps extends SECDBase with StringOps {
         }
         // Read a string value from the terminal
         case Read() :: next =>
-            var line = readLine
+            val line = readLine
             stack := StringValue(line) :: stack
             control := next
     }
