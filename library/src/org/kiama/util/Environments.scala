@@ -36,37 +36,21 @@ trait Environments {
     abstract class Entity
 
     /**
+     * A counter to count generated names.
+     */
+    val nameCounter = new Counter (0)
+
+    /**
      * Reset the environment module.
      */
     def resetEnvironments {
-        Named.resetCount
-    }
-
-    /**
-     * Static support for entity names.
-     */
-    object Named {
-
-        /**
-         * Count of the named things that have been produced so far.
-         */
-        var count = 0
-
-        /**
-         * Reset the entity count.
-         */
-        def resetCount {
-            count = 0
-        }
-
+        nameCounter.reset ()
     }
 
     /**
      * Support for unique ids for named things.
      */
     trait Named {
-
-        import Named.count
 
         /**
          * The underlying name of this thing.
@@ -76,10 +60,7 @@ trait Environments {
         /**
          * A unique number to represent this thing.
          */
-        private val num = {
-            count = count + 1
-            count
-        }
+        private val num = nameCounter.next ()
 
         /**
          * A unique identifier for this thing, incorporating the underlying
