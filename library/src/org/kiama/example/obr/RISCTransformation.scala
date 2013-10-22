@@ -25,10 +25,10 @@ package example.obr
 /**
  * Module implementing transformation from Obr to RISC tree code.
  */
-class RISCTransformation {
+class RISCTransformation (analysis : SemanticAnalysis) {
 
+    import analysis.{divideByZeroExn, entity, indexOutOfBoundsExn}
     import ObrTree._
-    import SemanticAnalysis._
     import RISCLabels.genlabelnum
     import RISCTree._
     import SymbolTable._

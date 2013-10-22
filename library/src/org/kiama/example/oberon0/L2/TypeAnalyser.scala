@@ -25,8 +25,8 @@ package L2
 trait TypeAnalyser extends L1.TypeAnalyser {
 
     import base.source.{IdnUse, SourceASTNode}
+    import messaging.message
     import L0.source.{Expression, IdnExp}
-    import org.kiama.util.Messaging.message
     import source.{CaseStatement, ForStatement}
 
     abstract override def check (n : SourceASTNode) {

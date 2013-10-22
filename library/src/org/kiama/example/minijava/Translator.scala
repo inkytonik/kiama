@@ -30,7 +30,6 @@ object Translator {
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Counter
-    import SemanticAnalysis.{entity, tipe}
     import SymbolTable._
 
     /**
@@ -38,7 +37,7 @@ object Translator {
      * MiniJava program which came from the given source file. Return
      * one class file for each class in the MiniJava program.
      */
-    def translate (sourcetree : Program, sourceFilename : String) : List[ClassFile] = {
+    def translate (sourcetree : Program, sourceFilename : String, analysis : SemanticAnalysis) : List[ClassFile] = {
 
         // An instruction buffer for translating statements and expressions into
         val instrBuffer = new scala.collection.mutable.ListBuffer[JVMInstr] ()
@@ -96,7 +95,7 @@ object Translator {
          */
         def locnum (idnuse : IdnUse) : Int = {
             val numargs = idnuse->argCount
-            (idnuse->entity) match {
+            analysis.entity (idnuse) match {
                 case ArgumentEntity (decl) =>
                     decl.index
 
@@ -278,7 +277,7 @@ object Translator {
                     gen (Aload (locnum (idnuse)))
             }
 
-            (idnuse->entity) match {
+            analysis.entity (idnuse) match {
                 case FieldEntity (decl) =>
                     loadField (decl)
                 case ArgumentEntity (decl) =>
@@ -316,7 +315,7 @@ object Translator {
                     gen (Astore (locnum (idnuse)))
             }
 
-            (idnuse->entity) match {
+            analysis.entity (idnuse) match {
                 case FieldEntity (decl) =>
                     storeField (decl)
                 case ArgumentEntity (decl) =>
@@ -394,7 +393,7 @@ object Translator {
          * puts that object on the top of the operand stack.
          */
         def translateCall (exp : CallExp) {
-            (exp.base->tipe) match {
+            analysis.tipe (exp.base) match {
 
                 case ReferenceType (Class (IdnDef (className), _, _)) =>
                     // We are calling via a reference, ok
@@ -406,7 +405,7 @@ object Translator {
                     exp.args.map (translateExp)
 
                     // Get the method that is being called
-                    val MethodEntity (method) = (exp.name)->entity
+                    val MethodEntity (method) = analysis.entity (exp.name)
 
                     // Generate an invocation of the correct method spec
                     gen (InvokeVirtual (methodSpec (className, method)))

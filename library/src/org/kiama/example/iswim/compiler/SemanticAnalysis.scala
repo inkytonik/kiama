@@ -21,17 +21,15 @@
 package org.kiama
 package example.iswim.compiler
 
+import org.kiama.util.Messaging
+
 /**
  * Simple semantic analysis of untyped ISWIM programs
  */
+class SemanticAnalysis (messaging : Messaging) {
 
-import org.kiama.attribution.Attributable
-
-trait SemanticAnalysis {
-
+    import messaging.message
     import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging._
-
     import Syntax._
 
     /**

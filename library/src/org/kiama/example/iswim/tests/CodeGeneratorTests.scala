@@ -30,13 +30,13 @@ import org.kiama.util.Tests
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
 
-class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis with Parser {
+class CodeGeneratorTests extends Tests with CodeGenerator with Parser {
 
     import Syntax._
 
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.output.PrettyPrinter._
-    import org.kiama.util.Messaging._
+    import org.kiama.util.Messaging
 
     import SECDBase._
     import IntegerOps._
@@ -46,6 +46,12 @@ class CodeGeneratorTests extends Tests with CodeGenerator with SemanticAnalysis 
     import StringOps._
     import HeapOps._
     import RecordOps._
+
+    /**
+     * Analyser to use for tests.
+     */
+    val analyser = new SemanticAnalysis (new Messaging)
+    import analyser.isSemanticallyCorrect
 
     test("compile a simple arithmetic expression") {
         val prog = parseAll(expr, "10 + x * 42")

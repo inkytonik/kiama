@@ -30,28 +30,28 @@ import org.scalatest.prop.Checkers
 class LambdaTests extends Tests with Checkers with Parser {
 
     import AST._
-    import Analysis._
     import Evaluators._
     import PrettyPrinter._
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
-    import org.kiama.util.Messaging._
+    import org.kiama.util.Messaging
     import org.scalacheck.Prop.{all => _, _}
 
     /**
      * Compute the type of e using the specified attribute and check to make
      * sure the relevant message is reported.
      */
-    def assertType (e : Exp, aname : String, a : Exp => Type, line : Int, col : Int, msg : String) {
+    def assertType (e : Exp, analysis : Analysis, aname : String, a : Exp => Type, line : Int, col : Int, msg : String) {
+        val messaging = analysis.messaging
         a (e)
-        if (messagecount == 0)
+        if (messaging.messagecount == 0)
             fail (s"$aname: no messages produced, expected ($line,$col) $msg")
         else {
-            val m = messages (0)
-            if ((m.pos.line != line) || (m.pos.column != col) ||
-                (m.message != msg))
-                fail (s"$aname: incorrect message, expected ($line,$col) $msg, got (${m.pos.line},${m.pos.column}) $m.message")
+            val m = messaging.messages (0)
+            if ((m.line != line) || (m.column != col) ||
+                (m.label != msg))
+                fail (s"$aname: incorrect message, expected ($line,$col) $msg, got (${m.line},${m.column}) $m.label")
         }
     }
 
@@ -60,12 +60,12 @@ class LambdaTests extends Tests with Checkers with Parser {
      * message is produced.  We test both of the analysis methods.
      */
     def assertMessage (term : String, line : Int, col : Int, msg : String) {
-        resetmessages
         parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 initTree (e)
-                assertType (e, "tipe", tipe, line, col, msg)
-                assertType (e, "tipe2", tipe2, line, col, msg)
+                val analysis = new Analysis (new Messaging)
+                assertType (e, analysis, "tipe", analysis.tipe, line, col, msg)
+                assertType (e, analysis, "tipe2", analysis.tipe2, line, col, msg)
             case Success (_, in) =>
                 fail (s"extraneous input at ${in.pos}: $term")
             case f =>
@@ -77,16 +77,17 @@ class LambdaTests extends Tests with Checkers with Parser {
      * Parse and type check the expression and expect no messages.
      */
     def assertNoMessage (term : String) {
-        resetmessages
         parseAll (parser, term) match {
             case Success (e, in) if in.atEnd =>
                 initTree (e)
-                tipe (e)
-                if (messagecount != 0)
-                    fail (s"tipe: no messages expected, got $messages")
-                tipe2 (e)
-                if (messagecount != 0)
-                    fail (s"tipe2: no messages expected, got $messages")
+                val messaging = new Messaging
+                val analysis = new Analysis (messaging)
+                analysis.tipe (e)
+                if (messaging.messagecount != 0)
+                    fail (s"tipe: no messages expected, got ${messaging.messages}")
+                analysis.tipe2 (e)
+                if (messaging.messagecount != 0)
+                    fail (s"tipe2: no messages expected, got ${messaging.messages}")
             case Success (_, in) =>
                 fail (s"extraneous input at ${in.pos}: $term")
             case f =>

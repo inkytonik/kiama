@@ -76,7 +76,6 @@ trait TestCompilerWithConfig[T, C <: Config] extends FunSuiteLike {
      */
     def testdriver (config : C) {
         Attribution.resetMemo
-        Messaging.resetmessages
         processfiles (config.filenames (), config)
     }
 

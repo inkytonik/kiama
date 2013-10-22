@@ -29,32 +29,36 @@ import org.kiama.attribution.Attribution.initTree
 import org.kiama.example.iswim.compiler._
 import org.kiama.util.Tests
 
-class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
+class SemanticAnalysisTests extends Tests with Parser {
 
-    import org.kiama.util.Messaging._
+    import org.kiama.util.{Message, Messaging}
+    import Syntax.{Expr, Iswim}
+
+    def runSemanticChecks (parseResult : ParseResult[Iswim], semanticallyCorrect : Boolean,
+                           messages : (Int, Message)*) : SemanticAnalysis = {
+        assert (parseResult.successful)
+        val ast = parseResult.get
+        initTree (ast)
+        val messaging = new Messaging
+        val analysis = new SemanticAnalysis (messaging)
+        val correct = analysis.isSemanticallyCorrect (ast)
+        assert (correct === semanticallyCorrect)
+        assertMessages (messaging, messages : _*)
+        analysis
+    }
 
     test("simple test of use of a correctly bound variable") {
-        val prog = parseAll(expr, "let x = 1 in x + x")
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === true)
-        assert(messagecount === 0)
+        val parseResult = parseAll(expr, "let x = 1 in x + x")
+        runSemanticChecks (parseResult, true)
     }
 
     test("simple test of a recursive binding") {
-        val prog = parseAll(expr, "letrec f = fun(x){ g x } and g = fun(y){ f y } in f 1")
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === true)
-        assert(messagecount === 0)
+        val parseResult = parseAll(expr, "letrec f = fun(x){ g x } and g = fun(y){ f y } in f 1")
+        runSemanticChecks (parseResult, true)
     }
 
     test("test of top level bindings in which all variables correctly bound") {
-        val prog = parseAll(parser,
+        val parseResult = parseAll(parser,
 """ let x = 1 and y = 60;
 
     let f = fun(x) { x + y };
@@ -65,39 +69,24 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
         f(20) + g(y)
     }
 """)
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === true)
-        assert(messagecount === 0)
+        runSemanticChecks (parseResult, true)
     }
 
     test("simple test of use of an unbound variable in body of let") {
-        val prog = parseAll(expr, "let x = 1 in x + y")
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === false)
-        assert(messagecount === 1)
-        assertMessage(0, 1, 18, "unbound variable 'y'")
+        val parseResult = parseAll(expr, "let x = 1 in x + y")
+        runSemanticChecks (parseResult, false,
+            (0, Message (1, 18, "unbound variable 'y'")))
     }
 
     test("use of an unbound variable in an expression being bound to a variable in a let") {
-        val prog = parseAll(expr, "let x = y and z = x in z + x")
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === false)
-        assert(messagecount === 2)
-        assertMessage(0, 1, 9, "unbound variable 'y'")
-        assertMessage(1, 1, 19, "unbound variable 'x'")
+        val parseResult = parseAll(expr, "let x = y and z = x in z + x")
+        runSemanticChecks (parseResult, false,
+            (0, Message (1, 9, "unbound variable 'y'")),
+            (1, Message (1, 19, "unbound variable 'x'")))
     }
 
     test("test of top level bindings in which some variables incorrectly bound") {
-        val prog = parseAll(parser,
+        val parseResult = parseAll(parser,
 """ let x = 1 and y = 60;
 
     let f = fun(x) { x + w };
@@ -111,55 +100,42 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
         f(20) + g(y)
     }
 """)
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === false)
-        assert(messagecount === 6)
-        assertMessage(0, 3, 26, "unbound variable 'w'")
-        assertMessage(1, 5, 31, "unbound variable 'w'")
-        assertMessage(2, 5, 40, "unbound variable 't'")
-        assertMessage(3, 5, 55, "unbound variable 't'")
-        assertMessage(4, 5, 69, "unbound variable 'z1'")
-        assertMessage(5, 8, 29, "unbound variable 'm'")
+        runSemanticChecks (parseResult, false,
+            (0, Message (3, 26, "unbound variable 'w'")),
+            (1, Message (5, 31, "unbound variable 'w'")),
+            (2, Message (5, 40, "unbound variable 't'")),
+            (3, Message (5, 55, "unbound variable 't'")),
+            (4, Message (5, 69, "unbound variable 'z1'")),
+            (5, Message (8, 29, "unbound variable 'm'")))
     }
 
     test("correct use of bound variables in a match expression") {
-        val prog = parseAll(expr, """
+        val parseResult = parseAll(expr, """
     (1,2) match {
         ()      -> 34;
         (y,z)   -> y + z;
         x       -> x * x
     }
 """)
-        assert(prog.successful)
-        initTree (prog.get)
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === true)
+        runSemanticChecks (parseResult, true)
     }
 
     test("unbound variables in a match expression") {
-        val prog = parseAll(expr, """
+        val parseResult = parseAll(expr, """
     (1,2) match {
         ()      -> y;
         (y,z)   -> y + w;
         x       -> x * z
     }
 """)
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === false)
-        assert(messagecount === 3)
-        assertMessage(0, 3, 20, "unbound variable 'y'")
-        assertMessage(1, 4, 24, "unbound variable 'w'")
-        assertMessage(2, 5, 24, "unbound variable 'z'")
+        runSemanticChecks (parseResult, false,
+            (0, Message (3, 20, "unbound variable 'y'")),
+            (1, Message (4, 24, "unbound variable 'w'")),
+            (2, Message (5, 24, "unbound variable 'z'")))
     }
 
     test("unreachable clauses in a match expression") {
-        val prog = parseAll(expr, """
+        val parseResult = parseAll(expr, """
     (1,2) match {
         ()      -> 1;
         w       -> w + 1;
@@ -167,14 +143,9 @@ class SemanticAnalysisTests extends Tests with SemanticAnalysis with Parser {
         x       -> x / 10
     }
 """)
-        assert(prog.successful)
-        initTree (prog.get)
-        resetmessages
-        val result = (prog.get)->isSemanticallyCorrect
-        assert(result === false)
-        assert(messagecount === 2)
-        assertMessage(0, 5, 9, "unreachable match clause")
-        assertMessage(1, 6, 9, "unreachable match clause")
+        runSemanticChecks (parseResult, false,
+            (0, Message (5, 9, "unreachable match clause")),
+            (1, Message (6, 9, "unreachable match clause")))
     }
 
 }

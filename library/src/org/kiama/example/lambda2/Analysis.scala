@@ -21,6 +21,8 @@
 package org.kiama
 package example.lambda2
 
+import org.kiama.util.Messaging
+
 /**
  * Analyses for typed lambda calculus expressions.  A simple free variable
  * analysis plus name and type analysis.  There are two versions of the
@@ -28,12 +30,12 @@ package example.lambda2
  * from the AST, and one (tipe2) that represents names by references to the
  * nodes of their binding lambda expressions.
  */
-object Analysis {
+class Analysis (val messaging : Messaging) {
 
     import AST._
     import PrettyPrinter._
+    import messaging.message
     import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging._
 
     /**
      * The variables that are free in the given expression.

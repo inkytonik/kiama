@@ -30,7 +30,6 @@ import org.kiama.example.iswim.secd._
 trait CodeGenerator {
 
     import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging._
 
     import Syntax._
 

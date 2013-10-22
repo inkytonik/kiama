@@ -86,10 +86,9 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
         with Analyser =>
 
     import java.io.File
+    import messaging.{message, messagecount, report, resetmessages, sortedmessages}
     import org.kiama.util.Emitter
     import org.kiama.util.IO.{filereader, FileNotFoundException}
-    import org.kiama.util.Messaging.{message, messagecount, report,
-        sortedmessages}
 
     override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Oberon0Config =
         new Oberon0Config (args, emitter)
@@ -142,6 +141,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
 
         // Perform semantic analysis
         initialiseSemanticAnalysis
+        resetmessages
         check (ast)
         if (messagecount == 0) {
 
@@ -158,7 +158,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
             // to errors file.
             if (config.challenge ()) {
                 section (emitter, "stdout")
-                emitter.emitln (s"line ${sortedmessages (0).pos.line}")
+                emitter.emitln (s"line ${sortedmessages (0).line}")
             }
             section (emitter, "errors")
             report (emitter)

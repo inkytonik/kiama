@@ -21,18 +21,20 @@
 package org.kiama
 package example.prolog
 
-object SemanticAnalysis {
+import org.kiama.util.Messaging
 
+class SemanticAnalysis (messaging : Messaging) {
+
+    import messaging.message
     import PrologTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging._
 
     /**
      * Does the sub-tree rooted at the given node contain any semantic
      * errors or not? If yes, as a side-effect this method will record
-     * those errors using the Messaging module so that they can be
-     * reported to the user later.
+     * those errors using `messaging` so that they can be reported to
+     * the user later.
      */
     def check (n : SourceNode) {
         // Check this node

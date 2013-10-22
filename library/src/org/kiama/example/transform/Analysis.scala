@@ -21,18 +21,20 @@
 package org.kiama
 package example.transform
 
+import org.kiama.util.Messaging
+
 /**
  * Operator priority resolution and name analysis for transformation compiler.
  * Transform the generic operator tree from the parser into one that
  * correctly represents the precedence of the operators.  Operators are
  * assumed to be left associative.
  */
-object Analysis {
+class Analysis (messaging : Messaging) {
 
     import AST._
+    import messaging.message
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging._
     import scala.collection.immutable
 
     lazy val prioenv : Program => Map[String,Int] =

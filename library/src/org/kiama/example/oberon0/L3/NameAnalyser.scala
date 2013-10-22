@@ -25,9 +25,9 @@ package L3
 trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
 
     import base.source.{Block, IdnDef, IdnUse, ModuleDecl, SourceASTNode}
+    import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.down
-    import org.kiama.util.Messaging.message
     import org.kiama.util.Patterns.HasParent
     import source.{Call, FPSection, ProcDecl}
 

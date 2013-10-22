@@ -31,11 +31,9 @@ import org.kiama.util.Compiler
 trait Driver extends SyntaxAnalysis with Compiler[Program] {
 
     import CodeGenerator.generate
-    import SemanticAnalysis.check
     import Translator.translate
     import org.kiama.output.PrettyPrinter.pretty_any
-    import org.kiama.util.Config
-    import org.kiama.util.Messaging.{messagecount, report}
+    import org.kiama.util.{Config, Messaging}
 
     /**
      * Whether this is a test run or not. Test runs generate all of their
@@ -59,17 +57,19 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
         // emitter.emitln (pretty_any (ast))
 
         // Perform the semantic checks
-        check (ast)
+        val messaging = new Messaging
+        val analysis = new SemanticAnalysis (messaging)
+        analysis.check (ast)
 
         // Report any errors that occurred, return status
-        if (messagecount > 0) {
+        if (messaging.messagecount > 0) {
 
-            report (config.emitter)
+            messaging.report (config.emitter)
 
         } else {
 
             // Translate the source tree to JVM
-            val targettree = translate (ast, filename)
+            val targettree = translate (ast, filename, analysis)
 
             // Pretty print the target tree
             // config.emitter.emitln (pretty_any (targettree))

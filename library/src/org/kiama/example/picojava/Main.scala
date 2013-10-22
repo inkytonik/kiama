@@ -37,7 +37,6 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with Parser {
     import ErrorCheck.errors
     import PrettyPrinter.pretty
     import org.kiama.util.Config
-    import org.kiama.util.Messaging._
 
     def createConfig (args : Array[String], emitter : Emitter = new Emitter) : PicojavaConfig =
         new PicojavaConfig (args, emitter)
@@ -56,9 +55,6 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with Parser {
             config.emitter.emitln (pretty (program))
             config.emitter.emitln (pretty (obfuscate (program)))
         }
-
-        if (messagecount > 0)
-            report (config.emitter)
 
     }
 

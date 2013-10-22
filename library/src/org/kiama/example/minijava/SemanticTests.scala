@@ -21,7 +21,7 @@
 package org.kiama
 package example.minijava
 
-import org.scalatest.FunSuiteLike
+import org.kiama.util.Tests
 
 /**
  * Parser to use for semantic tests. Separated from `SemanticTests` since
@@ -34,41 +34,38 @@ object SemanticTestParser extends SyntaxAnalysis
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class SemanticTests extends FunSuiteLike {
+class SemanticTests extends Tests {
 
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.util.Messaging.{messagecount, messages, resetmessages}
-    import SemanticAnalysis._
+    import org.kiama.util.{Message, Messaging}
     import SemanticTestParser.{Error, parser, parseAll, Success, Failure}
 
     // Tests of definition uniqueness (Rule 1)
 
     test ("two declarations of same class is an error") {
-        parseTest ("""
+        semanticTest ("""
             |class Main { public static void main () { System.out.println (0); } }
             |class Main { }
-            """.stripMargin)
-        assert (messagecount === 2)
-        assertMessage (0, 2, 7, "Main is declared more than once")
-        assertMessage (1, 3, 7, "Main is declared more than once")
+            """.stripMargin,
+            (0, Message (2, 7, "Main is declared more than once")),
+            (1, Message (3, 7, "Main is declared more than once")))
     }
 
     test ("two declarations of same name in same class is an error") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    int mult;
             |    int mult;
             |}
-            """.stripMargin)
-        assert (messagecount === 2)
-        assertMessage (0, 4, 9, "mult is declared more than once")
-        assertMessage (1, 5, 9, "mult is declared more than once")
+            """.stripMargin,
+           (0, Message (4, 9, "mult is declared more than once")),
+           (1, Message (5, 9, "mult is declared more than once")))
     }
 
     test ("two declarations of same name in different scopes is ok") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    int notmult;
@@ -78,13 +75,12 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     // Test of applied occurence matching defining occurrence (Rule 2)
 
     test ("use of a name that is not declared is an error") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public int m () {
@@ -92,13 +88,12 @@ class SemanticTests extends FunSuiteLike {
             |        return 0;
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 1)
-        assertMessage (0, 5, 9, "notdecl is not declared")
+            """.stripMargin,
+            (0, Message (5, 9, "notdecl is not declared")))
     }
 
     test ("use of a name that is declared in wrong scope is an error") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public int m1 () {
@@ -110,37 +105,36 @@ class SemanticTests extends FunSuiteLike {
             |        return 0;
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 1)
-        assertMessage (0, 9, 9, "notdecl is not declared")
+            """.stripMargin,
+            (0, Message (9, 9, "notdecl is not declared")))
     }
 
     // Test type of integer expression (Rule 4)
 
     test ("an integer expression has integer type") {
         val exp = IntExp (42)
-        embedExpressionAndCheck (exp)
-        assertResult (IntType ()) (exp->tipe)
+        val analysis = semanticTest (embedExpression (exp))
+        assertResult (IntType ()) (analysis.tipe (exp))
     }
 
     // Test type of boolean expressions (Rule 5)
 
     test ("a true expression has Boolean type") {
         val exp = TrueExp ()
-        embedExpressionAndCheck (exp)
-        assertResult (BooleanType ()) (exp->tipe)
+        val analysis = semanticTest (embedExpression (exp, BooleanType ()))
+        assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
     test ("a false expression has Boolean type") {
         val exp = FalseExp ()
-        embedExpressionAndCheck (exp)
-        assertResult (BooleanType ()) (exp->tipe)
+        val analysis = semanticTest (embedExpression (exp, BooleanType ()))
+        assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
     // Test use of method names in expressions (rule 6)
 
     test ("a method name cannot be used in an expression") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    int v;
@@ -148,9 +142,8 @@ class SemanticTests extends FunSuiteLike {
             |        return m;
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 1)
-        assertMessage (0, 6, 16, "can't refer to methods directly")
+            """.stripMargin,
+            (0, Message (6, 16, "can't refer to methods directly")))
     }
 
     // Test type of condition in if and while statements (Rule 7)
@@ -159,34 +152,32 @@ class SemanticTests extends FunSuiteLike {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
         val stmts = List (If (cond, Block (Nil), Block (Nil)))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the condition of an if statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
         val stmts = List (If (cond, Block (Nil), Block (Nil)))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected boolean got int")
+        semanticTest (
+            embedExpression (exp, IntType (), Nil, stmts),
+            (0, Message (0, 0, "type error: expected boolean got int")))
     }
 
     test ("the condition of a while statement can have Boolean type") {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
         val stmts = List (While (cond, Block (Nil)))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the condition of a while statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
         val stmts = List (While (cond, Block (Nil)))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected boolean got int")
+        semanticTest (
+            embedExpression (exp, IntType (), Nil, stmts),
+            (0, Message (0, 0, "type error: expected boolean got int")))
     }
 
     // Test type of expression in println statement can be of any type (Rule 8)
@@ -195,32 +186,28 @@ class SemanticTests extends FunSuiteLike {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
         val stmts = List (Println (exp1))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of integer type") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
         val stmts = List (Println (exp1))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of integer array type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewArrayExp (IntExp (42))
         val stmts = List (Println (exp1))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of reference type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewExp (IdnUse ("Test"))
         val stmts = List (Println (exp1))
-        embedExpressionAndCheck (exp, IntType (), Nil, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     // Test that assignment RHSes have compatible types with LHS (Rule 9)
@@ -230,8 +217,7 @@ class SemanticTests extends FunSuiteLike {
         val exp1 = IntExp (42)
         val vars = List (Var (IntType (), IdnDef ("v")))
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("a Boolean expression is not assignment compatible with an integer var") {
@@ -239,9 +225,9 @@ class SemanticTests extends FunSuiteLike {
         val exp1 = TrueExp ()
         val vars = List (Var (IntType (), IdnDef ("v")))
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected int got boolean")
+        semanticTest (
+            embedExpression (exp, IntType (), vars, stmts),
+            (0, Message (0, 0, "type error: expected int got boolean")))
     }
 
     test ("a Boolean expression is assignment compatible with a Boolean var") {
@@ -249,8 +235,7 @@ class SemanticTests extends FunSuiteLike {
         val exp1 = TrueExp ()
         val vars = List (Var (BooleanType (), IdnDef ("v")))
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with a Boolean var") {
@@ -258,9 +243,9 @@ class SemanticTests extends FunSuiteLike {
         val exp1 = IntExp (42)
         val vars = List (Var (BooleanType (), IdnDef ("v")))
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected boolean got int")
+        semanticTest (
+            embedExpression (exp, IntType (), vars, stmts),
+            (0, Message (0, 0, "type error: expected boolean got int")))
     }
 
     test ("an integer array expression is assignment compatible with an integer array var") {
@@ -268,8 +253,7 @@ class SemanticTests extends FunSuiteLike {
         val exp1 = NewArrayExp (IntExp (42))
         val vars = List (Var (IntArrayType (), IdnDef ("v")))
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with an integer array var") {
@@ -277,9 +261,9 @@ class SemanticTests extends FunSuiteLike {
         val exp1 = IntExp (42)
         val vars = List (Var (IntArrayType (), IdnDef ("v")))
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected int[] got int")
+        semanticTest (
+            embedExpression (exp, IntType (), vars, stmts),
+            (0, Message (0, 0, "type error: expected int[] got int")))
     }
 
     // Test types in array assignments (Rule 10)
@@ -290,8 +274,7 @@ class SemanticTests extends FunSuiteLike {
         val exp2 = IntExp (99)
         val vars = List (Var (IntArrayType (), IdnDef ("v")))
         val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("Boolean expressions are not ok in an integer array assignment") {
@@ -300,99 +283,99 @@ class SemanticTests extends FunSuiteLike {
         val exp2 = FalseExp ()
         val vars = List (Var (IntArrayType (), IdnDef ("v")))
         val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
-        embedExpressionAndCheck (exp, IntType (), vars, stmts)
-        assert (messagecount === 2)
-        assertMessage (0, 0, 0, "type error: expected int got boolean")
-        assertMessage (1, 0, 0, "type error: expected int got boolean")
+        semanticTest (
+            embedExpression (exp, IntType (), vars, stmts),
+            (0, Message (0, 0, "type error: expected int got boolean")),
+            (1, Message (0, 0, "type error: expected int got boolean")))
     }
 
     // Test type of plus expressions (Rule 11)
 
     test ("the children of a plus expression are allowed to be integers") {
         val exp = PlusExp (IntExp (42), IntExp (99))
-        embedExpressionAndCheck (exp)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp))
     }
 
     test ("the children of a plus expression must be integers and its type is integer") {
         val exp = PlusExp (TrueExp (), FalseExp ())
-        embedExpressionAndCheck (exp)
-        assert (messagecount === 2)
-        assertMessage (0, 0, 0, "type error: expected int got boolean")
-        assertMessage (1, 0, 0, "type error: expected int got boolean")
-        assertResult (IntType ()) (exp->tipe)
+        val analysis =
+            semanticTest (
+                embedExpression (exp),
+                (0, Message (0, 0, "type error: expected int got boolean")),
+                (1, Message (0, 0, "type error: expected int got boolean")))
+        assertResult (IntType ()) (analysis.tipe (exp))
     }
 
     // Test type of and expressions (Rule 12)
 
     test ("the children of an and expression are allowed to be Booleans") {
         val exp = AndExp (TrueExp (), FalseExp ())
-        embedExpressionAndCheck (exp, BooleanType ())
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, BooleanType ()))
     }
 
     test ("the children of an and expression must be Booelans and its type is Boolean") {
         val exp = AndExp (IntExp (42), IntExp (99))
-        embedExpressionAndCheck (exp, BooleanType ())
-        assert (messagecount === 2)
-        assertMessage (0, 0, 0, "type error: expected boolean got int")
-        assertMessage (1, 0, 0, "type error: expected boolean got int")
-        assertResult (BooleanType ()) (exp->tipe)
+        val analysis =
+            semanticTest (
+                embedExpression (exp, BooleanType ()),
+                (0, Message (0, 0, "type error: expected boolean got int")),
+                (1, Message (0, 0, "type error: expected boolean got int")))
+        assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
     // Test type of plus expressions (Rule 13)
 
     test ("the child of a not expression is allowed to be Boolean") {
         val exp = NotExp (TrueExp ())
-        embedExpressionAndCheck (exp, BooleanType ())
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, BooleanType ()))
     }
 
     test ("the child of a not expression must be Boolean and its type is Boolean") {
         val exp = NotExp (IntExp (42))
-        embedExpressionAndCheck (exp, BooleanType ())
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected boolean got int")
-        assertResult (BooleanType ()) (exp->tipe)
+        val analysis =
+            semanticTest (
+                embedExpression (exp, BooleanType ()),
+                (0, Message (0, 0, "type error: expected boolean got int")))
+        assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
     // Test type of less-than expressions (Rule 14)
 
     test ("the children of a less-than expression are allowed to be integers") {
         val exp = LessExp (IntExp (42), IntExp (99))
-        embedExpressionAndCheck (exp, BooleanType ())
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp, BooleanType ()))
     }
 
     test ("the children of a less-than expression must be integers and its type is Boolean") {
         val exp = LessExp (TrueExp (), FalseExp ())
-        embedExpressionAndCheck (exp, BooleanType ())
-        assert (messagecount === 2)
-        assertMessage (0, 0, 0, "type error: expected int got boolean")
-        assertMessage (1, 0, 0, "type error: expected int got boolean")
-        assertResult (BooleanType ()) (exp->tipe)
+        val analysis =
+            semanticTest (
+                embedExpression (exp, BooleanType ()),
+                (0, Message (0, 0, "type error: expected int got boolean")),
+                (1, Message (0, 0, "type error: expected int got boolean")))
+        assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
     // Test type of length expressions (Rule 15)
 
     test ("the child of a length expression is allowed to be an integer array") {
         val exp = LengthExp (NewArrayExp (IntExp (42)))
-        embedExpressionAndCheck (exp)
-        assert (messagecount === 0)
+        semanticTest (embedExpression (exp))
     }
 
     test ("the child of a length expression must be an integer array and its type is integer") {
         val exp = LengthExp (IntExp (42))
-        embedExpressionAndCheck (exp)
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected int[] got int")
-        assertResult (IntType ()) (exp->tipe)
+        val analysis =
+            semanticTest (
+                embedExpression (exp),
+                (0, Message (0, 0, "type error: expected int[] got int")))
+        assertResult (IntType ()) (analysis.tipe (exp))
     }
 
     // Test method call expressions (rule 3, 16)
 
     test ("a non-method cannot be called") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    int v;
@@ -400,13 +383,12 @@ class SemanticTests extends FunSuiteLike {
             |        return this.v ();
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 1)
-        assertMessage (0, 6, 21, "illegal call to non-method")
+            """.stripMargin,
+            (0, Message (6, 21, "illegal call to non-method")))
     }
 
     test ("a superclass method can be called") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Super {
             |    public int m (int v) {
@@ -420,11 +402,10 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     test ("the type of a method call expression is the method return type (1)") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    int v;
@@ -437,11 +418,10 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     test ("the type of a method call expression is the method return type (2)") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    int v;
@@ -453,13 +433,12 @@ class SemanticTests extends FunSuiteLike {
             |        return 0;
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 1)
-        assertMessage (0, 9, 13, "type error: expected int got boolean")
+            """.stripMargin,
+            (0, Message (9, 13, "type error: expected int got boolean")))
     }
 
     test ("the numbers of arguments in a call can match the declaration") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public int m (int a, int b) {
@@ -470,11 +449,10 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     test ("the numbers of arguments in a call must match the declaration") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public int m (int a, int b) {
@@ -484,13 +462,12 @@ class SemanticTests extends FunSuiteLike {
             |        return this.m (42);
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 1)
-        assertMessage (0, 8, 21, "wrong number of arguments, got 1 but expected 2")
+            """.stripMargin,
+            (0, Message (8, 21, "wrong number of arguments, got 1 but expected 2")))
     }
 
     test ("the types of arguments in a call must match the declaration") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public int m (boolean a, int[] b) {
@@ -500,14 +477,13 @@ class SemanticTests extends FunSuiteLike {
             |        return this.m (42, 99);
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 2)
-        assertMessage (0, 8, 24, "type error: expected boolean got int")
-        assertMessage (1, 8, 28, "type error: expected int[] got int")
+            """.stripMargin,
+            (0, Message (8, 24, "type error: expected boolean got int")),
+            (1, Message (8, 28, "type error: expected int[] got int")))
     }
 
     test ("forward references to methods work") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    int v;
@@ -520,13 +496,12 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     // Test the type of "this" (rule 17)
 
     test ("the type of this is the current class") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public Test m () {
@@ -534,23 +509,21 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     // Test the types in new integer array expressions (rule 18)
 
     test ("The type of a new array expression is an integer array") {
         val exp = NewArrayExp (IntExp (42))
-        embedExpressionAndCheck (exp, IntArrayType ())
-        assert (messagecount === 0)
-        assertResult (IntArrayType ()) (exp->tipe)
+        val analysis = semanticTest (embedExpression (exp, IntArrayType ()))
+        assertResult (IntArrayType ()) (analysis.tipe (exp))
     }
 
     test ("The type of the parameter in a new integer array expression must be an integer") {
         val exp = NewArrayExp (TrueExp ())
-        embedExpressionAndCheck (exp, IntArrayType ())
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "type error: expected int got boolean")
+        semanticTest (
+            embedExpression (exp, IntArrayType ()),
+            (0, Message (0, 0, "type error: expected int got boolean")))
     }
 
     // Test the use of names in new expressions (rule 19)
@@ -558,13 +531,13 @@ class SemanticTests extends FunSuiteLike {
     test ("The name used in a new expression must refer to a class") {
         val exp = NewExp (IdnUse ("v"))
         val vars = List (Var (IntType (), IdnDef ("v")))
-        embedExpressionAndCheck (exp, IntType (), vars)
-        assert (messagecount === 1)
-        assertMessage (0, 0, 0, "illegal instance creation of non-class type")
+        semanticTest (
+            embedExpression (exp, IntType (), vars),
+            (0, Message (0, 0, "illegal instance creation of non-class type")))
     }
 
     test ("The type of a new expression is a reference to the created class") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public Test m () {
@@ -572,13 +545,12 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     // Test the return type of a method (rule 20)
 
     test ("The return expression of a method can return the appropriate type") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public int m () {
@@ -586,20 +558,18 @@ class SemanticTests extends FunSuiteLike {
             |    }
             |}
             """.stripMargin)
-        assert (messagecount === 0)
     }
 
     test ("The return expression of a method cannot return an inappropriate type") {
-        parseTest ("""
+        semanticTest ("""
             |class Dummy { public static void main () { System.out.println (0); } }
             |class Test {
             |    public int m () {
             |        return true;
             |    }
             |}
-            """.stripMargin)
-        assert (messagecount === 1)
-        assertMessage (0, 5, 16, "type error: expected int got boolean")
+            """.stripMargin,
+            (0, Message (5, 16, "type error: expected int got boolean")))
     }
 
     /**
@@ -619,61 +589,59 @@ class SemanticTests extends FunSuiteLike {
         }
 
     /**
-     * Parse some test input as a program and run the semantic analyser
-     * over the resulting tree (if the parse succeeds).
+     * Parse some test input as a program, run the semantic analyser
+     * over the resulting tree (if the parse succeeds) and check that
+     * the expected messages are produced. Returns the analysis object
+     * so that more tests can be performed by caller.
      */
-    def parseTest (str : String) {
-        runSemanticChecks (parseProgram (str))
-    }
+    def semanticTest (str : String, messages : (Int, Message)*) : SemanticAnalysis =
+        runSemanticChecks (parseProgram (str), messages : _*)
+
+    /**
+     * Run the semantic analyser over a given tree and check that the
+     * expected messages are produced. Returns the analysis object
+     * so that more tests can be performed by caller.
+     */
+    def semanticTest (prog : Program, messages : (Int, Message)*) : SemanticAnalysis =
+        runSemanticChecks (prog, messages : _*)
 
     /**
      * Run the semantic checks on the given program.
      */
-    def runSemanticChecks (prog : Program) {
+    def runSemanticChecks (prog : Program, messages : (Int, Message)*) : SemanticAnalysis = {
         initTree (prog)
-        resetmessages
-        check (prog)
+        val messaging = new Messaging
+        val analysis = new SemanticAnalysis (messaging)
+        analysis.check (prog)
+        assertMessages (messaging, messages : _*)
+        analysis
     }
 
     /**
      * Construct a program by inserting the given expression into a return
-     * statement of a method and then run the semantic checks on it. The
-     * idea is that you construct the expression outside, insert it into
-     * the program, run the checks and then you can check that attributes
-     * of the expression are as you expect. The optional `retType`, `vars`
-     * and `stmts` arguments can be used to inject a return type, variable
-     * declarations or statements into the method as well. The return type
-     * defaults to integer and the variable and statement lists to empty.
+     * statement of a method. The idea is that you construct the expression
+     * outside and insert it into the program for checking. The optional
+     * `retType`, `vars` and `stmts` arguments can be used to inject a return
+     * type, variable declarations or statements into the method as well. The
+     * return type defaults to integer and the variable and statement lists
+     * to empty.
      */
-    def embedExpressionAndCheck (exp : Expression,
-                                 retType : Type = IntType (),
-                                 vars : List[Var] = Nil,
-                                 stmts : List[Statement] = Nil) {
-        val prog =
-            Program (MainClass (IdnDef ("Dummy"), Println (IntExp (0))),
-                List(
-                    Class (IdnDef ("Test"), None,
-                        ClassBody (
-                            Nil,
-                            List (
-                                Method (IdnDef ("m"),
-                                    MethodBody (
-                                        retType,
-                                        Nil,
-                                        vars,
-                                        stmts,
-                                        exp)))))))
-        runSemanticChecks (prog)
-    }
-
-    /**
-     * Assert that a message was produced at a given position.
-     */
-    def assertMessage (index : Int, line : Int, column : Int, msg : String) {
-        val m = messages (index)
-        assertResult (msg, s"wrong text in message $index") (m.message)
-        assertResult (line, s"wrong line number in message $index") (m.pos.line)
-        assertResult (column, s"wrong column number in message $index") (m.pos.column)
-    }
+    def embedExpression (exp : Expression,
+                         retType : Type = IntType (),
+                         vars : List[Var] = Nil,
+                         stmts : List[Statement] = Nil) =
+        Program (MainClass (IdnDef ("Dummy"), Println (IntExp (0))),
+            List(
+                Class (IdnDef ("Test"), None,
+                    ClassBody (
+                        Nil,
+                        List (
+                            Method (IdnDef ("m"),
+                                MethodBody (
+                                    retType,
+                                    Nil,
+                                    vars,
+                                    stmts,
+                                    exp)))))))
 
 }

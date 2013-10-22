@@ -29,7 +29,6 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait Tests extends FunSuiteLike with BeforeAndAfter {
 
-    import org.kiama.util.Messaging._
     import org.scalatest.Tag
 
     /**
@@ -76,13 +75,22 @@ trait Tests extends FunSuiteLike with BeforeAndAfter {
     }
 
     /**
-     * Assert that a message was produced at a given position.
+     * Assert that the given messsaging object has recorded the given messages.
      */
-    def assertMessage (index : Int, line : Int, column : Int, msg : String) {
-        val m = messages (index)
-        assertResult (msg, s"wrong text in message $index") (m.message)
-        assertResult (line, s"wrong line number in message $index") (m.pos.line)
-        assertResult (column, s"wrong column number in message $index") (m.pos.column)
+    def assertMessages (messaging : Messaging, messages : (Int, Message)*) {
+        assert (messaging.messagecount === messages.size, "Wrong number of messages produced")
+        for ((index, message) <- messages)
+            assertMessage (messaging, index, message)
+    }
+
+    /**
+     * Assert that a message at `index` was produced at a given position.
+     */
+    def assertMessage (messaging : Messaging, index : Int, message : Message) {
+        val m = messaging.messages (index)
+        assertResult (message.label, s"wrong text in message $index") (m.label)
+        assertResult (message.line, s"wrong line number in message $index") (m.line)
+        assertResult (message.column, s"wrong column number in message $index") (m.column)
     }
 
     /**

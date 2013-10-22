@@ -26,8 +26,8 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
     import base.source.{Identifier, IdnDef, IdnUse, SourceASTNode}
     import L0.source.Expression
+    import messaging.message
     import org.kiama.attribution.Attribution.attr
-    import org.kiama.util.Messaging.message
     import org.kiama.util.Patterns.HasParent
     import source.{Call, Mode, ValMode, VarMode}
 

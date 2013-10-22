@@ -26,9 +26,9 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
 
     import base.source.{Block, Identifier, IdnDef, IdnUse, ModuleDecl,
         SourceASTNode}
+    import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
-    import org.kiama.util.Messaging.message
     import org.kiama.util.Patterns.HasParent
     import source.{AddExp, Assignment, BinaryExpression, ConstDecl,
         DivExp, Expression, IdnExp, IntExp, ModExp, MulExp, NamedType, NegExp,

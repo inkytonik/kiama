@@ -42,11 +42,9 @@ class ObrConfig (args : Array[String], emitter : Emitter) extends Config (args, 
  */
 class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
 
-    import SemanticAnalysis._
     import org.kiama.example.obr.{RISCEncoder, RISCTransformation}
     import org.kiama.example.RISC.{RISC, RISCISA}
-    import org.kiama.util.Emitter
-    import org.kiama.util.Messaging._
+    import org.kiama.util.{Emitter, Messaging}
 
     override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : ObrConfig =
         new ObrConfig (args, emitter)
@@ -60,17 +58,19 @@ class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
         RISCLabels.reset ()
 
         // Conduct semantic analysis and report any errors
-        ast->errors
-        if (messagecount > 0) {
-            report (config.emitter)
+        val messaging = new Messaging
+        val analysis = new SemanticAnalysis (messaging)
+        analysis.errors (ast)
+        if (messaging.messagecount > 0) {
+            messaging.report (config.emitter)
         } else {
             // Print out final environment
             if (config.envPrint ()) {
-                config.emitter.emitln (ast->envout)
+                config.emitter.emitln (analysis.envout (ast))
             }
 
             // Compile the source tree to a target tree
-            val transformer = new RISCTransformation
+            val transformer = new RISCTransformation (analysis)
             val targettree = transformer.code (ast)
             initTree (targettree)
 
@@ -119,8 +119,7 @@ class ParserDriver extends Driver {
  */
 class SemanticDriver extends Driver {
 
-    import SemanticAnalysis._
-    import org.kiama.util.Messaging._
+    import org.kiama.util.Messaging
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
@@ -128,10 +127,12 @@ class SemanticDriver extends Driver {
         SymbolTable.reset ()
 
         // Conduct semantic analysis and report any errors
+        val messaging = new Messaging
+        val analysis = new SemanticAnalysis (messaging)
         initTree (ast)
-        ast->errors
-        if (messagecount > 0)
-            report (config.emitter)
+        analysis.errors (ast)
+        if (messaging.messagecount > 0)
+            messaging.report (config.emitter)
 
     }
 

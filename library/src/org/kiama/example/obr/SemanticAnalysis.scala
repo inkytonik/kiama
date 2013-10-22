@@ -22,17 +22,19 @@
 package org.kiama
 package example.obr
 
-object SemanticAnalysis {
+import org.kiama.util.Messaging
 
+class SemanticAnalysis (messaging : Messaging) {
+
+    import messaging.message
     import ObrTree._
     import SymbolTable._
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging._
 
     /**
      * Visit all nodes to check for semantic errors.  Errors will be recorded
-     * using the Messaging module so that they can be reported to the user later.
+     * using `messaging` so that they can be reported to the user later.
      */
     val errors : Attributable => Unit =
         attr (

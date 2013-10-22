@@ -74,10 +74,9 @@ object Main extends SyntaxAnalysis with ParsingREPLWithConfig[Literal,PrologConf
     import java.io.FileReader
     import java.io.FileNotFoundException
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.util.Messaging.{messagecount, report, resetmessages}
+    import org.kiama.util.Messaging
     import org.kiama.util.StringEmitter
     import PrologTree.Program
-    import SemanticAnalysis.check
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
@@ -97,12 +96,13 @@ object Main extends SyntaxAnalysis with ParsingREPLWithConfig[Literal,PrologConf
                 case Success (dbtree, _) =>
                     // Pretty print the source tree
                     // emitter.emitln (pretty (product (dbtree)))
-                    resetmessages
+                    val messaging = new Messaging
+                    val analysis = new SemanticAnalysis (messaging)
                     initTree (dbtree)
-                    check (dbtree)
-                    if (messagecount > 0) {
+                    analysis.check (dbtree)
+                    if (messaging.messagecount > 0) {
                         val emitter = new StringEmitter
-                        report (emitter)
+                        messaging.report (emitter)
                         Left (s"database file errors: ${emitter.result}")
                     } else {
                         Right (Some (dbtree))

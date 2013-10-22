@@ -21,26 +21,26 @@
 package org.kiama
 package example.minijava
 
-import org.kiama.util.Environments
+import org.kiama.util.Messaging
 
 /**
  * Semantic analysis module containing static checking of Minijava
  * semantic rules, most notably name analysis.
  */
-object SemanticAnalysis {
+class SemanticAnalysis (val messaging : Messaging) {
 
+    import messaging.message
     import MiniJavaTree._
     import org.kiama.==>
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
     import org.kiama.util.Patterns.HasParent
-    import org.kiama.util.Messaging.message
     import SymbolTable._
 
     /**
      * Check the sub-tree rooted at the given node to see if it contains
      * any semantic errors. If yes, as a side-effect this method will
-     * record those errors using the Messaging module so that they can be
+     * record those errors using `messaging` so that they can be
      * reported to the user later.
      */
     def check (n : SourceNode) {

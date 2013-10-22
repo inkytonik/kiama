@@ -24,7 +24,13 @@ package base
 
 trait Analyser {
 
+    import org.kiama.util.Messaging
     import source.SourceASTNode
+
+    /**
+     * The messaging module to use for this compiler.
+     */
+    val messaging = new Messaging
 
     /**
      * Check an AST node for semantic errors. Report any errors using the

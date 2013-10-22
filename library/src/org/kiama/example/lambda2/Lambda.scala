@@ -33,12 +33,11 @@ import org.kiama.util.ParsingREPL
  */
 object Lambda extends ParsingREPL[AST.Exp] with Parser {
 
-    import Analysis._
     import Evaluators._
     import PrettyPrinter._
 
     import org.kiama.util.{Emitter, REPLConfig}
-    import org.kiama.util.Messaging.{messagecount, report}
+    import org.kiama.util.Messaging
 
     val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 
@@ -93,19 +92,29 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser {
     }
 
     /**
+     * The messaging module to use during processing.
+     */
+    val messaging = new Messaging
+
+    /**
+     * The analysis object to use for processing.
+     */
+    val analysis = new Analysis (messaging)
+
+    /**
      * Process an expression.
      */
     override def process (e : AST.Exp, config : REPLConfig) {
         super.process (e, config)
         // First conduct a semantic analysis check: compute the expression's
         // type and see if any errors occurred
-        e->tipe
-        if (messagecount == 0) {
+        analysis.tipe (e)
+        if (messaging.messagecount == 0) {
             // If everything is OK, evaluate the expression
             config.emitter.emitln (pretty (evaluator.eval (e)))
         } else {
             // Otherwise report the errors and reset for next expression
-            report (config.emitter)
+            messaging.report (config.emitter)
         }
     }
 

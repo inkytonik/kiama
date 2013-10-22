@@ -112,7 +112,6 @@ trait REPL extends REPLBase[REPLConfig] {
 trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] with RegexParsers {
 
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.util.Messaging.resetmessages
 
     /**
      * Process a user input line by parsing it to get a value of type `T`,
@@ -135,11 +134,9 @@ trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] wi
     def parser : Parser[T]
 
     /**
-     * Process a user input value. By default, just reset the messages and
-     * initialise the tree.
+     * Process a user input value. By default, just initialise the tree.
      */
     def process (t : T, config : C) {
-        resetmessages
         initTree (t)
     }
 

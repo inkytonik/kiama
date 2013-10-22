@@ -22,47 +22,49 @@ package org.kiama
 package util
 
 /**
+ * A message record consisting of a coordinate position `pos` and a label string
+ */
+case class Message (line : Int, column : Int, label : String) {
+    override def toString : String =
+        s"$line.$column: $label"
+}
+
+/**
  * Facility for buffering of messages associated with positioned values.
  */
-object Messaging {
+class Messaging {
 
     import scala.collection.mutable.ListBuffer
     import scala.util.parsing.input.Positional
-    import scala.util.parsing.input.Position
-
-    /**
-     * A message record consisting of a coordinate position `pos` and
-     * a `message` string.
-     */
-    case class Record (pos : Position, message : String) {
-        override def toString : String =
-            s"${pos.line}.${pos.column}: $message"
-    }
 
     /**
      * Buffer of messages.
      */
-    val messages = new ListBuffer[Record] ()
+    val messages = new ListBuffer[Message] ()
 
     /**
      * The messages sorted by increasing position.
      */
-    def sortedmessages : Seq[Record] =
-        messages.toList.sortWith (_.pos < _.pos)
+    def sortedmessages : Seq[Message] =
+        messages.toList.sortWith {
+            case (msg1, msg2) =>
+                (msg1.line < msg2.line) ||
+                ((msg1.line == msg2.line) && (msg1.column < msg2.column))
+        }
 
     /**
      * Buffer a new message associated with the given `Positional` value.
      */
-    def message (value : Positional, message : String) {
-        messages += Record (value.pos, message)
+    def message (value : Positional, label : String) {
+        messages += Message (value.pos.line, value.pos.column, label)
     }
 
     /**
      * Buffer a new message associated with the given `Positioned` value.
      * The `finish` position is ignored at present.
      */
-    def message (value : Positioned, message : String) {
-        messages += Record (value.start, message)
+    def message (value : Positioned, label : String) {
+        messages += Message (value.start.line, value.start.column, label)
     }
 
     /**

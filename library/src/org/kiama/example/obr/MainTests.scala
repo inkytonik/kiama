@@ -32,12 +32,10 @@ import org.kiama.util.TestCompilerWithConfig
 class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
     import RISCTree._
-    import SemanticAnalysis._
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.obr.RISCTransformation
-    import org.kiama.util.{Config, Emitter}
+    import org.kiama.util.{Config, Emitter, Messaging}
     import org.kiama.util.IO._
-    import org.kiama.util.Messaging._
     import org.kiama.rewriting.Rewriter._
 
     /**
@@ -52,7 +50,6 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
             // Initialise compiler state
             SymbolTable.reset ()
             RISCLabels.reset ()
-            resetmessages ()
 
             val filename = dirname + obrfile
             val config = createConfig (Array (filename))
@@ -61,13 +58,15 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
                 val reader = filereader (filename)
                 makeast (reader, filename, config) match {
                     case Left (ast) =>
+                        val messaging = new Messaging
+                        val analysis = new SemanticAnalysis (messaging)
                         initTree (ast)
-                        ast->errors
-                        if (messagecount > 0) {
-                            report (config.emitter)
+                        analysis.errors (ast)
+                        if (messaging.messagecount > 0) {
+                            messaging.report (config.emitter)
                             fail (s"$title emitted a semantic error.")
                         } else {
-                            val transformer = new RISCTransformation
+                            val transformer = new RISCTransformation (analysis)
                             tester (title, config.emitter, transformer.code (ast))
                         }
                     case Right (msg) =>

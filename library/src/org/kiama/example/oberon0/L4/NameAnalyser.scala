@@ -26,7 +26,7 @@ trait NameAnalyser extends L3.NameAnalyser {
 
     import base.source.SourceASTNode
     import L0.source.Expression
-    import org.kiama.util.Messaging.message
+    import messaging.message
     import source.{FieldExp, IndexExp, RecordTypeDef}
 
     abstract override def check (n : SourceASTNode) {

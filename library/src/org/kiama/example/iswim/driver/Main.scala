@@ -44,12 +44,11 @@ class ISWIMConfig (args : Array[String], emitter : Emitter) extends Config (args
 /**
  * Main program for ISWIM.
  */
-object Main extends Parser with SemanticAnalysis with CodeGenerator
-                with CompilerWithConfig[IswimProg,ISWIMConfig] {
+object Main extends Parser with CodeGenerator with CompilerWithConfig[IswimProg,ISWIMConfig] {
 
     import org.kiama.example.iswim.secd.SECDBase.CodeSegment
     import org.kiama.output.PrettyPrinter._
-    import org.kiama.util.Messaging._
+    import org.kiama.util.Messaging
 
     def createConfig (args : Array[String], emitter : Emitter = new Emitter) : ISWIMConfig =
         new ISWIMConfig (args, emitter)
@@ -59,9 +58,13 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator
      * bytecode, optionally dumping the bytecode and optionally executing.
      */
     override def process (filename : String, iswimcode : IswimProg, config : ISWIMConfig) {
+
         super.process (filename, iswimcode, config)
-        resetmessages
         val emitter = config.emitter
+        val messaging = new Messaging
+        val analysis = new SemanticAnalysis (messaging)
+        import analysis.isSemanticallyCorrect
+
         if (iswimcode->isSemanticallyCorrect) {
             val bytecode = iswimcode->code
             if (config.dumpBytecode ()) {
@@ -81,7 +84,9 @@ object Main extends Parser with SemanticAnalysis with CodeGenerator
                     case _ => emitter.emitln("** stack corrupted **")
                 }
             }
-        } else report (emitter)
+        } else
+            messaging.report (emitter)
+
     }
 
 }
