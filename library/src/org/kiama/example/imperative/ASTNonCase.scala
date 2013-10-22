@@ -36,9 +36,9 @@ object ASTNonCase {
     class Num (val d : Double) extends Exp {
         def arity : Int = 1
         def deconstruct : List[Double] = List (d)
-        def reconstruct (cs : Array[Any]) : Exp =
+        def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
-                case Array (d : Double) =>
+                case Seq (d : Double) =>
                     new Num (d)
                 case _ =>
                     illegalArgs ("Num", "Double", cs)
@@ -49,9 +49,9 @@ object ASTNonCase {
     class Var (val s : Idn) extends Exp {
         def arity : Int = 1
         def deconstruct : List[Idn] = List (s)
-        def reconstruct (cs : Array[Any]) : Exp =
+        def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
-                case Array (s : Idn) =>
+                case Seq (s : Idn) =>
                     new Var (s)
                 case _ =>
                     illegalArgs ("Var", "Idn", cs)
@@ -62,9 +62,9 @@ object ASTNonCase {
     class Neg (val e : Exp) extends Exp {
         def arity : Int = 1
         def deconstruct : List[Exp] = List (e)
-        def reconstruct (cs : Array[Any]) : Exp =
+        def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
-                case Array (e : Exp) =>
+                case Seq (e : Exp) =>
                     new Neg (e)
                 case _ =>
                     illegalArgs ("Neg", "Exp", cs)
@@ -78,9 +78,9 @@ object ASTNonCase {
     }
 
     class Add (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Any]) : Exp =
+        def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
-                case Array (l : Exp, r : Exp) =>
+                case Seq (l : Exp, r : Exp) =>
                     new Add (l, r)
                 case _ =>
                     illegalArgs ("Add", "Exp, Exp", cs)
@@ -89,9 +89,9 @@ object ASTNonCase {
     }
 
     class Sub (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Any]) : Exp =
+        def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
-                case Array (l : Exp, r : Exp) =>
+                case Seq (l : Exp, r : Exp) =>
                     new Sub (l, r)
                 case _ =>
                     illegalArgs ("Sub", "Exp, Exp", cs)
@@ -100,9 +100,9 @@ object ASTNonCase {
     }
 
     class Mul (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Any]) : Exp =
+        def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
-                case Array (l : Exp, r : Exp) =>
+                case Seq (l : Exp, r : Exp) =>
                     new Mul (l, r)
                 case _ =>
                     illegalArgs ("Mul", "Exp, Exp", cs)
@@ -111,9 +111,9 @@ object ASTNonCase {
     }
 
     class Div (l : Exp, r : Exp) extends Binary (l, r) {
-        def reconstruct (cs : Array[Any]) : Exp =
+        def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
-                case Array (l : Exp, r : Exp) =>
+                case Seq (l : Exp, r : Exp) =>
                     new Div (l, r)
                 case _ =>
                     illegalArgs ("Div", "Exp, Exp", cs)

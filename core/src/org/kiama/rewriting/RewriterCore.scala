@@ -430,13 +430,8 @@ trait RewriterCore {
                 case Some (ti) if (same (ct, ti)) =>
                     Some (p)
                 case Some (ti) =>
-                    val newchildren = new Array[AnyRef](numchildren)
-                    var j = 0
-                    while (j < numchildren) {
-                        newchildren (j) = makechild (p.productElement (j))
-                        j = j + 1
-                    }
-                    newchildren (i-1) = makechild (ti)
+                    val newchildren = p.productIterator.toArray.map (makechild)
+                    newchildren (i - 1) = makechild (ti)
                     val ret = dup (p, newchildren)
                     Some (ret)
                 case None =>
@@ -462,16 +457,10 @@ trait RewriterCore {
                 case Some (ti) =>
                     val b = cbf (t)
                     b.sizeHint (t.size)
-                    var j = 0
-                    while (j < i - 1) {
-                        b += t (j)
-                        j = j + 1
-                    }
-                    b += ti
-                    j = j + 1
-                    while (j < numchildren) {
-                        b += t (j)
-                        j = j + 1
+                    t.foldLeft (0) {
+                        case (j, ct) =>
+                            b += (if (j == i - 1) ti else ct)
+                            j + 1
                     }
                     Some (b.result)
                 case None =>
@@ -541,22 +530,18 @@ trait RewriterCore {
         if (numchildren == 0)
             Some (r)
         else {
-            val children = r.deconstruct
             val newchildren = new Array[Any](numchildren)
-            var changed = false
-            var i = 0
-            while (i < numchildren) {
-                val ct = children (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        newchildren (i) = makechild (ti)
-                        if (!same (ct, ti))
-                            changed = true
-                    case None =>
-                        return None
+            val (changed, _) =
+                r.deconstruct.foldLeft (false, 0) {
+                    case ((changed, i), ct) =>
+                        s (ct) match {
+                            case Some (ti) =>
+                                newchildren (i) = makechild (ti)
+                                (changed || !same (ct, ti), i + 1)
+                            case None =>
+                                return None
+                        }
                 }
-                i = i + 1
-            }
             if (changed) {
                 val ret = r.reconstruct (newchildren)
                 Some (ret)
@@ -574,20 +559,17 @@ trait RewriterCore {
             Some (p)
         else {
             val newchildren = new Array[AnyRef](numchildren)
-            var changed = false
-            var i = 0
-            while (i < numchildren) {
-                val ct = p.productElement (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        newchildren (i) = makechild (ti)
-                        if (!same (ct, ti))
-                            changed = true
-                    case None =>
-                        return None
+            val (changed, _) =
+                p.productIterator.foldLeft (false, 0) {
+                    case ((changed, i), ct) =>
+                        s (ct) match {
+                            case Some (ti) =>
+                                newchildren (i) = makechild (ti)
+                                (changed || !same (ct, ti), i + 1)
+                            case None =>
+                                return None
+                        }
                 }
-                i = i + 1
-            }
             if (changed) {
                 val ret = dup (p, newchildren)
                 Some (ret)
@@ -607,15 +589,16 @@ trait RewriterCore {
         else {
             val b = cbf (t)
             b.sizeHint (t.size)
-            var changed = false
-            for (ct <- t)
-                s (ct) match {
-                    case Some (ti) =>
-                        b += ti
-                        if (!same (ct, ti))
-                            changed = true
-                    case None =>
-                        return None
+            val (changed, _) =
+                t.foldLeft (false, 0) {
+                    case ((changed, i), ct) =>
+                        s (ct) match {
+                            case Some (ti) =>
+                                b += ti
+                                (changed || !same (ct, ti), i + 1)
+                            case None =>
+                                return None
+                        }
                 }
             if (changed)
                 Some (b.result)
@@ -634,15 +617,16 @@ trait RewriterCore {
         else {
             val b = cbf (t)
             b.sizeHint (t.size)
-            var changed = false
-            for (ct <- t)
-                s (ct) match {
-                    case Some (ti @ (tix,tiy)) =>
-                        b += ti
-                        if (!same (ct, ti))
-                            changed = true
-                    case _ =>
-                        return None
+            val (changed, _) =
+                t.foldLeft (false, 0) {
+                    case ((changed, i), ct) =>
+                        s (ct) match {
+                            case Some (ti @ (tix,tiy)) =>
+                                b += ti
+                                (changed || !same (ct, ti), i + 1)
+                            case _ =>
+                                return None
+                        }
                 }
             if (changed)
                 Some (b.result)
@@ -693,31 +677,18 @@ trait RewriterCore {
     def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
         val children = r.deconstruct
-        var i = 0
-        while (i < numchildren) {
-            val ct = children (i)
-            s (ct) match {
-                case Some (ti) if (same (ct, ti)) =>
-                    return Some (r)
-                case Some (ti) =>
-                    val newchildren = new Array[Any] (numchildren)
-                    var j = 0
-                    while (j < i) {
-                        newchildren (j) = makechild (children (j))
-                        j = j + 1
-                    }
-                    newchildren (i) = makechild (ti)
-                    j = j + 1
-                    while (j < numchildren) {
-                        newchildren (j) = makechild (children (j))
-                        j = j + 1
-                    }
-                    val ret = r.reconstruct (newchildren)
-                    return Some (ret)
-                case None =>
-                    // Do nothing
-            }
-            i = i + 1
+        children.foldLeft (0) {
+            case (i, ct) =>
+                s (ct) match {
+                    case Some (ti) if (same (ct, ti)) =>
+                        return Some (r)
+                    case Some (ti) =>
+                        val newchildren = children.updated (i, ti)
+                        val ret = r.reconstruct (newchildren)
+                        return Some (ret)
+                    case None =>
+                        i + 1
+                }
         }
         None
     }
@@ -727,31 +698,19 @@ trait RewriterCore {
      */
     def oneProduct (s : Strategy, p : Product) : Option[Any] = {
         val numchildren = p.productArity
-        var i = 0
-        while (i < numchildren) {
-            val ct = p.productElement (i)
-            s (ct) match {
-                case Some (ti) if (same (ct, ti)) =>
-                    return Some (p)
-                case Some (ti) =>
-                    val newchildren = new Array[AnyRef] (numchildren)
-                    var j = 0
-                    while (j < i) {
-                        newchildren (j) = makechild (p.productElement (j))
-                        j = j + 1
-                    }
-                    newchildren (i) = makechild (ti)
-                    j = j + 1
-                    while (j < numchildren) {
-                        newchildren (j) = makechild (p.productElement (j))
-                        j = j + 1
-                    }
-                    val ret = dup (p, newchildren)
-                    return Some (ret)
-                case None =>
-                    // Do nothing
-            }
-            i = i + 1
+        p.productIterator.foldLeft (0) {
+            case (i, ct) =>
+                s (ct) match {
+                    case Some (ti) if (same (ct, ti)) =>
+                        return Some (p)
+                    case Some (ti) =>
+                        val newchildren = p.productIterator.toArray.map (makechild)
+                        newchildren (i) = makechild (ti)
+                        val ret = dup (p, newchildren)
+                        return Some (ret)
+                    case None =>
+                        i + 1
+                }
         }
         None
     }
@@ -764,20 +723,25 @@ trait RewriterCore {
                         : Option[CC[Any]] = {
         val b = cbf (t)
         b.sizeHint (t.size)
-        var add = true
-        for (ct <- t)
-            if (add)
-                s (ct) match {
-                    case Some (ti) if same (ct, ti) =>
-                        return Some (t)
-                    case Some (ti) =>
-                        b += ti
-                        add = false
-                    case None =>
+        val add =
+            t.foldLeft (true) {
+                case (add, ct) =>
+                    if (add)
+                        s (ct) match {
+                            case Some (ti) if same (ct, ti) =>
+                                return Some (t)
+                            case Some (ti) =>
+                                b += ti
+                                false
+                            case None =>
+                                b += ct
+                                true
+                        }
+                    else {
                         b += ct
-                }
-            else
-                b += ct
+                        false
+                    }
+            }
         if (add)
             None
         else
@@ -792,20 +756,25 @@ trait RewriterCore {
                         : Option[CC[Any,Any]] = {
         val b = cbf (t)
         b.sizeHint (t.size)
-        var add = true
-        for (ct <- t)
-            if (add)
-                s (ct) match {
-                    case Some (ti @ (tix,tiy)) if (same (ct, ti)) =>
-                        return Some (t)
-                    case Some (ti @ (tix, tiy)) =>
-                        b += ti
-                        add = false
-                    case None =>
+        val add =
+            t.foldLeft (true) {
+                case (add, ct) =>
+                    if (add)
+                        s (ct) match {
+                            case Some (ti @ (tix,tiy)) if (same (ct, ti)) =>
+                                return Some (t)
+                            case Some (ti @ (tix, tiy)) =>
+                                b += ti
+                                false
+                            case None =>
+                                b += ct
+                                true
+                        }
+                    else {
                         b += ct
-                }
-            else
-                b += ct
+                        false
+                    }
+            }
         if (add)
             None
         else
@@ -857,24 +826,19 @@ trait RewriterCore {
         if (numchildren == 0)
             None
         else {
-            val children = r.deconstruct
             val newchildren = new Array[Any](numchildren)
-            var success = false
-            var changed = false
-            var i = 0
-            while (i < numchildren) {
-                val ct = children (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        newchildren (i) = makechild (ti)
-                        if (!same (ct, ti))
-                            changed = true
-                        success = true
-                    case None =>
-                        newchildren (i) = makechild (ct)
+            val (success, changed, _) =
+                r.deconstruct.foldLeft (false, false, 0) {
+                    case ((success, changed, i), ct) =>
+                        s (ct) match {
+                            case Some (ti) =>
+                                newchildren (i) = makechild (ti)
+                                (true, changed || !same (ct, ti), i + 1)
+                            case None =>
+                                newchildren (i) = makechild (ct)
+                                (success, changed, i + 1)
+                        }
                 }
-                i = i + 1
-            }
             if (success)
                 if (changed) {
                     val ret = r.reconstruct (newchildren)
@@ -895,22 +859,18 @@ trait RewriterCore {
             None
         else {
             val newchildren = new Array[AnyRef](numchildren)
-            var success = false
-            var changed = false
-            var i = 0
-            while (i < numchildren) {
-                val ct = p.productElement (i)
-                s (ct) match {
-                    case Some (ti) =>
-                        newchildren (i) = makechild (ti)
-                        if (!same (ct, ti))
-                            changed = true
-                        success = true
-                    case None =>
-                        newchildren (i) = makechild (ct)
+            val (success, changed, _) =
+                p.productIterator.foldLeft (false, false, 0) {
+                    case ((success, changed, i), ct) =>
+                        s (ct) match {
+                            case Some (ti) =>
+                                newchildren (i) = makechild (ti)
+                                (true, changed || !same (ct, ti), i + 1)
+                            case None =>
+                                newchildren (i) = makechild (ct)
+                                (success, changed, i + 1)
+                        }
                 }
-                i = i + 1
-            }
             if (success)
                 if (changed) {
                     val ret = dup (p, newchildren)
@@ -933,17 +893,17 @@ trait RewriterCore {
         else {
             val b = cbf (t)
             b.sizeHint (t.size)
-            var success = false
-            var changed = false
-            for (ct <- t)
-                s (ct) match {
-                    case Some (ti) =>
-                        b += ti
-                        if (!same (ct, ti))
-                            changed = true
-                        success = true
-                    case None =>
-                        b += ct
+            val (success, changed) =
+                t.foldLeft (false, false) {
+                    case ((success, changed), ct) =>
+                        s (ct) match {
+                            case Some (ti) =>
+                                b += ti
+                                (true, changed || !same (ct, ti))
+                            case None =>
+                                b += ct
+                                (success, changed)
+                        }
                 }
             if (success)
                 if (changed)
@@ -965,17 +925,17 @@ trait RewriterCore {
         else {
             val b = cbf (t)
             b.sizeHint (t.size)
-            var success = false
-            var changed = false
-            for (ct <- t)
-                s (ct) match {
-                    case Some (ti @ (tix, tiy)) =>
-                        b += ti
-                        if (!same (ct, ti))
-                            changed = true
-                        success = true
-                    case _ =>
-                        b += ct
+            val (success, changed) =
+                t.foldLeft (false, false) {
+                    case ((success, changed), ct) =>
+                        s (ct) match {
+                            case Some (ti @ (tix, tiy)) =>
+                                b += ti
+                                (true, changed || !same (ct, ti))
+                            case _ =>
+                                b += ct
+                                (success, changed)
+                        }
                 }
             if (success)
                 if (changed)
@@ -1021,20 +981,17 @@ trait RewriterCore {
        val numchildren = p.productArity
        if (numchildren == ss.length) {
            val newchildren = new Array[AnyRef](numchildren)
-           var changed = false
-           var i = 0
-           while (i < numchildren) {
-               val ct = p.productElement (i)
-               (ss (i)) (ct) match {
-                   case Some (ti) =>
-                       newchildren (i) = makechild (ti)
-                       if (!same (ct, ti))
-                           changed = true
-                   case None =>
-                       return None
+           val (changed, _) =
+               p.productIterator.foldLeft (false, 0) {
+                   case ((changed, i), ct) =>
+                       (ss (i)) (ct) match {
+                           case Some (ti) =>
+                               newchildren (i) = makechild (ti)
+                               (changed || !same (ct, ti), i + 1)
+                           case None =>
+                               return None
+                       }
                }
-               i = i + 1
-           }
            if (changed) {
                val ret = dup (p, newchildren)
                Some (ret)
