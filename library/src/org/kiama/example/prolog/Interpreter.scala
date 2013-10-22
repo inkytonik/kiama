@@ -98,11 +98,10 @@ class Interpreter {
         def varsof (t : Term) : Set[String] =
             t match {
                 case Var (s)      => Set (s)
-                case Pred (_, ts) => var res = Set.empty[String]
-                                     for (t <- ts) {
-                                         res = res.union (varsof (t))
+                case Pred (_, ts) => ts.foldLeft (Set.empty[String]) {
+                                         case (s, t) =>
+                                             s.union (varsof (t))
                                      }
-                                     res
                 case _            => Set.empty
             }
 
