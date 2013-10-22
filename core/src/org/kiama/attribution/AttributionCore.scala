@@ -142,6 +142,8 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * The result is memoised so that it is only evaluated once for a given definition.
      * The attribute definition should not itself require the value of this attribute.
      * If it does, a circularity error is reported by throwing an `IllegalStateException`.
+     * This kind of attribute encapsulates state to keep track of the current definition,
+     * so an instance should only be used from one thread at a time.
      */
     class CachedDynamicAttribute[T <: AnyRef,U] (name : String, f : T => U) extends CachedAttribute[T,U] (name, f) {
 
