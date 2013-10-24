@@ -759,13 +759,12 @@ trait PrettyPrinter extends PrettyPrinterBase {
     import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
     import scala.collection.immutable.Queue
     import scala.collection.immutable.Queue.{empty => emptyDq}
-    import scala.collection.mutable.ListBuffer
 
     // Internal data types
 
     private type Remaining  = Int
     private type Horizontal = Boolean
-    private type Buffer     = ListBuffer[String]
+    private type Buffer     = Vector[String]
     private type Out        = Remaining => Trampoline[Buffer]
     private type OutGroup   = Horizontal => Out => Trampoline[Out]
     private type PPosition  = Int
@@ -908,7 +907,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                     More (() =>
                                         for {
                                             buffer <- o (r - l)
-                                        } yield t +=: buffer
+                                        } yield t +: buffer
                                     )
                             )
                     scan (l, outText)
@@ -926,13 +925,13 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                     More (() =>
                                         for {
                                             buffer <- c (r - repl.length)
-                                        } yield repl +=: buffer
+                                        } yield repl +: buffer
                                     )
                                 else
                                     More (() =>
                                         for {
                                             buffer <- c (w - i)
-                                        } yield "\n" +=: (" " * i) +=: buffer
+                                        } yield "\n" +: (" " * i) +: buffer
                                     )
                         )
                 scan (1, outLine)
@@ -975,7 +974,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
     // Obtaining output
 
     def pretty (d : Doc, w : Width = defaultWidth) : Layout = {
-        val initBuffer = new ListBuffer[String] ()
+        val initBuffer = Vector[String] ()
         val cend =
             (p : PPosition, dq : Dq) =>
                 Done ((r : Remaining) => Done (initBuffer))
