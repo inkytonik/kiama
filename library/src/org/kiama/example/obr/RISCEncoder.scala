@@ -72,42 +72,50 @@ class RISCEncoder {
      */
     def getcode : Code = {
 
-        val labels = new scala.collection.mutable.HashMap[RISCLabel,Int]()
-
-        var currloc = 0
-
         // Pass 1: compile mappings between labels and offsets
-        for (inst <- code) {
-            inst match {
-                case Target (lab) => labels (lab) = currloc
-                case i : Instr    => currloc += 1
-                case _            =>
+        val (labels, _) =
+            code.foldLeft (Map[RISCLabel,Int] (), 0) {
+                case ((labels, currloc), instr) =>
+                    instr match {
+                        case Target (lab) =>
+                            (labels.updated (lab, currloc), currloc)
+                        case _ : Instr =>
+                            (labels, currloc + 1)
+                        case _ =>
+                            (labels, currloc)
+                    }
             }
-        }
 
         // Pass 2: remove pseudo instructions, add displacements to labels
-        currloc = 0
-        code.collect {
-            case b : Branch =>
-                if (! (labels contains b.label))
-                    sys.error (s"Assembler.resolve: unmarked label: ${b.label}")
-                val newlabel = b.label.copy (disp = labels (b.label) - currloc)
-                currloc = currloc + 1
-                // I wish we could abstract over copy...
-                b match {
-                    case _ : BEQ => BEQ (newlabel)
-                    case _ : BNE => BNE (newlabel)
-                    case _ : BLT => BLT (newlabel)
-                    case _ : BLE => BLE (newlabel)
-                    case _ : BGT => BGT (newlabel)
-                    case _ : BGE => BGE (newlabel)
-                    case _ : BR  => BR  (newlabel)
-                    case _ : BSR => BSR (newlabel)
-                }
-            case i : Instr =>
-                currloc = currloc + 1
-                i
-        }
+        val (newcode, _) =
+            code.foldLeft (Vector[Instr] (), 0) {
+                case ((newcode, currloc), instr) =>
+                    instr match {
+                        case b : Branch =>
+                            if (! (labels contains b.label))
+                                sys.error (s"Assembler.resolve: unmarked label: ${b.label}")
+                            val newlabel = b.label.copy (disp = labels (b.label) - currloc)
+                            // I wish we could abstract over copy...
+                            val newinstr =
+                                b match {
+                                    case _ : BEQ => BEQ (newlabel)
+                                    case _ : BNE => BNE (newlabel)
+                                    case _ : BLT => BLT (newlabel)
+                                    case _ : BLE => BLE (newlabel)
+                                    case _ : BGT => BGT (newlabel)
+                                    case _ : BGE => BGE (newlabel)
+                                    case _ : BR  => BR  (newlabel)
+                                    case _ : BSR => BSR (newlabel)
+                                }
+                            (newcode :+ newinstr, currloc + 1)
+                        case i : Instr =>
+                            (newcode :+ i, currloc + 1)
+                        case _ : Pseudo =>
+                            (newcode, currloc)
+                    }
+            }
+
+        newcode
 
     }
 
