@@ -95,8 +95,6 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
      * all language levels.
      */
     override def sanitise (s : String) : String = {
-        val b = new ListBuffer[String]
-
         // Pattern for a line marked with just p
         val MarkedLine1 = """\[([0-9]+)\](.*)""".r
 
@@ -106,26 +104,27 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
         /**
          * Include line in the output if it meets the criteria.
          */
-        def processline (line : String, p : Int, q : Int = 0, r : Int = maxlanglevel) {
+        def processline (lines : Vector[String], line : String,
+                         p : Int, q : Int = 0, r : Int = maxlanglevel) : Vector[String] =
             if ((p <= tasklevel) && (langlevel >= q) && (langlevel <= r))
-                b += line
-        }
+                lines :+ line
+            else
+                lines
 
-        // Iterate over all possible output lines, checking them if they are
+        // Fold over all possible output lines, checking them if they are
         // marked. Unmarked lines are always included.
-        for (t <- s.lines) {
-            t match {
-                case MarkedLine1 (ps, line) =>
-                    processline (line, ps.toInt)
-                case MarkedLine2 (ps, qs, rs, line) =>
-                    processline (line, ps.toInt, qs.toInt, rs.toInt)
-                case _ =>
-                    b += t
+        val lines =
+            s.lines.foldLeft (Vector[String] ()) {
+                case (lines, MarkedLine1 (ps, line)) =>
+                    processline (lines, line, ps.toInt)
+                case (lines, MarkedLine2 (ps, qs, rs, line)) =>
+                    processline (lines, line, ps.toInt, qs.toInt, rs.toInt)
+                case (lines, t) =>
+                    lines :+ t
             }
-        }
 
         // Return the selected lines
-        b.result ().mkString ("\n")
+        lines.mkString ("\n")
     }
 
     /**
