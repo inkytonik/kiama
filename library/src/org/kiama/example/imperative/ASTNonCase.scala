@@ -28,6 +28,7 @@ package example.imperative
 object ASTNonCase {
 
     import org.kiama.rewriting.Rewritable
+    import scala.collection.immutable.Seq
 
     type Idn = String
 
@@ -35,7 +36,7 @@ object ASTNonCase {
 
     class Num (val d : Double) extends Exp {
         def arity : Int = 1
-        def deconstruct : List[Double] = List (d)
+        def deconstruct : Seq[Double] = Seq (d)
         def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
                 case Seq (d : Double) =>
@@ -48,7 +49,7 @@ object ASTNonCase {
 
     class Var (val s : Idn) extends Exp {
         def arity : Int = 1
-        def deconstruct : List[Idn] = List (s)
+        def deconstruct : Seq[Idn] = Seq (s)
         def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
                 case Seq (s : Idn) =>
@@ -61,7 +62,7 @@ object ASTNonCase {
 
     class Neg (val e : Exp) extends Exp {
         def arity : Int = 1
-        def deconstruct : List[Exp] = List (e)
+        def deconstruct : Seq[Exp] = Seq (e)
         def reconstruct (cs : Seq[Any]) : Exp =
             cs match {
                 case Seq (e : Exp) =>
@@ -74,7 +75,7 @@ object ASTNonCase {
 
     abstract class Binary (val l : Exp, val r : Exp) extends Exp {
         def arity : Int = 2
-        def deconstruct : List[Exp] = List (l, r)
+        def deconstruct : Seq[Exp] = Seq (l, r)
     }
 
     class Add (l : Exp, r : Exp) extends Binary (l, r) {

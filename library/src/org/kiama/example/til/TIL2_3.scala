@@ -28,9 +28,10 @@ trait TIL2_3 extends TIL1_1 with TransformingMain {
 
     import AST._
     import org.kiama.rewriting.Rewriter._
+    import scala.collection.immutable.Seq
 
     def transform (ast : Program) : Program = {
-        val decls = new scala.collection.mutable.ListBuffer[Decl] ()
+        val decls = Seq.newBuilder[Decl]
         val getandremovedecls =
             everywhere (rule {
                 case (d : Decl) :: ss =>
@@ -38,7 +39,7 @@ trait TIL2_3 extends TIL1_1 with TransformingMain {
                     ss
             })
         val Program (stmts) = rewrite (getandremovedecls) (ast)
-        Program (decls.toList ++ stmts)
+        Program (decls.result () ++ stmts)
     }
 
 }

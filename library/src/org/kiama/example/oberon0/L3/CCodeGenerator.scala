@@ -34,22 +34,23 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
     import c.{CAddrExp, CAddrType, CCall, CDerefExp, CStrExp, CVoidType}
     import L0.source.{Expression, IdnExp}
     import source.{Call, Mode, ProcDecl, ValMode, VarMode}
+    import scala.collection.immutable.Seq
 
     /**
      * Add STDIO header since output is now possible.
      */
     override def translate (m : ModuleDecl) : CProgram = {
         val CProgram (is, ds) = super.translate (m)
-        CProgram (CInclude ("<stdio.h>") :: is, ds)
+        CProgram (CInclude ("<stdio.h>") +: is, ds)
     }
 
     /**
      * Add translation of procedure declarations.
      */
-    override def translate (d : Declaration) : List[CDeclaration] =
+    override def translate (d : Declaration) : Seq[CDeclaration] =
         d match {
             case ProcDecl (p @ IdnDef (i), ps, Block (ds, ss), _) =>
-                List (CFunctionDecl (CVarDecl (mangle (i), CVoidType ()),
+                Seq (CFunctionDecl (CVarDecl (mangle (i), CVoidType ()),
                                      translateFormalParams (p),
                                      CBlock (ds flatMap translate,
                                              ss map translate)))
@@ -60,7 +61,7 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
     /**
      * Translate the formal parameters of a particular defined procedure.
      */
-    def translateFormalParams (p : IdnDef): List[CDeclaration] =
+    def translateFormalParams (p : IdnDef): Seq[CDeclaration] =
         (p->parameters).get.map {
             case ParamInfo (m, i, t) =>
                 translateFormalParam (m, i, t)
@@ -86,11 +87,11 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
                     case _ : BuiltinProc =>
                         s match {
                             case "Read" =>
-                                CCall ("scanf", CStrExp ("%d") :: cps)
+                                CCall ("scanf", CStrExp ("%d") +: cps)
                             case "Write" =>
-                                CCall ("printf", CStrExp (" %d") :: cps)
+                                CCall ("printf", CStrExp (" %d") +: cps)
                             case "WriteLn" =>
-                                CCall ("puts", List (CStrExp ("")))
+                                CCall ("puts", Seq (CStrExp ("")))
                         }
                     case _ =>
                         CCall (mangle (s), cps)
@@ -103,11 +104,11 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
      * Translate the actual parameters of a procedure call. Assumes that the
      * right number of parameters are present.
      */
-    def translateActualParams (u : IdnUse, ps : List[Expression]) : List[CExpression] =
+    def translateActualParams (u : IdnUse, ps : Seq[Expression]) : Seq[CExpression] =
         (for (i <- 0 until ps.length)
             yield
                 translateActualParam (ps (i), parammode (u, i + 1))
-         ).toList
+         ).toSeq
 
     /**
      * Compute an expression for a given actual parameter, inserting an

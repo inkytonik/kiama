@@ -50,7 +50,7 @@ trait ParLazyUpdate extends ParLazy {
         rulefs {
             case Letp (ds1, v @ Var (x)) =>
                 option (eval (Letp (ds1, v))) <* rule {
-                    case Letp (ds2, e) => Letp (Bind (x, e) :: ds2, e)
+                    case Letp (ds2, e) => Letp (Bind (x, e) +: ds2, e)
                 }
         }
 

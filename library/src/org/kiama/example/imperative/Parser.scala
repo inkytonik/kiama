@@ -29,6 +29,7 @@ import org.kiama.util.PositionedParserUtilities
 trait Parser extends PositionedParserUtilities {
 
     import AST._
+    import scala.collection.immutable.Seq
     import scala.language.postfixOps
 
     lazy val parser =
@@ -72,6 +73,6 @@ trait Parser extends PositionedParserUtilities {
         not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r
 
     lazy val keyword =
-        keywords ("[^a-zA-Z0-9]".r, List ("while"))
+        keywords ("[^a-zA-Z0-9]".r, Seq ("while"))
 
 }

@@ -31,6 +31,7 @@ package example.obr
 object RISCTree {
 
     import org.kiama.attribution.Attributable
+    import scala.collection.immutable.Seq
 
     /**
      * Superclass of all RISC tree nodes.
@@ -46,7 +47,7 @@ object RISCTree {
     /**
      * A stack program consisting of the given statements.
      */
-    case class RISCProg (insns : List[Item]) extends RISCNode
+    case class RISCProg (insns : Seq[Item]) extends RISCNode
 
     /**
      * Superclass of all item constructs, ie. target constructs that do
@@ -184,7 +185,7 @@ object RISCTree {
      * A compound datum, consisting of a sequence of items to execute
      * followed by a datum whose value is evaluated and returned.
      */
-    case class SequenceDatum (insns : List[Item], d : Datum) extends Datum
+    case class SequenceDatum (insns : Seq[Item], d : Datum) extends Datum
 
     /**
      * Memory addresses that can be stored to or loaded from.

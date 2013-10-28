@@ -24,6 +24,7 @@ package base.source
 
 import org.kiama.attribution.Attributable
 import org.kiama.util.Positioned
+import scala.collection.immutable.Seq
 
 /**
  * Root type of all source abstract syntax tree nodes.
@@ -48,7 +49,7 @@ abstract class Statement extends SourceASTNode
 /**
  * Block of declarations and statements.
  */
-case class Block (decls : List[Declaration], stmts: List[Statement]) extends Statement
+case class Block (decls : Seq[Declaration], stmts: Seq[Statement]) extends Statement
 
 /**
  * Empty statements.

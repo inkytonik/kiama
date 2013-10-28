@@ -28,6 +28,7 @@ object JSONTree {
 
     import org.kiama.attribution.Attributable
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     /**
      * Interface for all JSON tree nodes.
@@ -37,7 +38,7 @@ object JSONTree {
     /**
      * A JSON object.
      */
-    case class JObject (fields : List[(JName,JValue)]) extends JValue
+    case class JObject (fields : Seq[(JName,JValue)]) extends JValue
 
     /**
      * The name of a JSON field.
@@ -47,7 +48,7 @@ object JSONTree {
     /**
      * A JSON array.
      */
-    case class JArray (values: Vector[JValue]) extends JValue
+    case class JArray (values : Seq[JValue]) extends JValue
 
     /**
      * A JSON string value.

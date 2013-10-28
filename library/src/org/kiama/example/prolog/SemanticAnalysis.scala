@@ -29,6 +29,7 @@ class SemanticAnalysis (messaging : Messaging) {
     import PrologTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
+    import scala.collection.immutable.Seq
 
     /**
      * Does the sub-tree rooted at the given node contain any semantic
@@ -88,8 +89,8 @@ class SemanticAnalysis (messaging : Messaging) {
      * predicates for lists: cons and nil.
      */
     val defenv : Environment =
-        rootenv ("nil" -> Predicate (List ()),
-                 "cons" -> Predicate (List (UnknownType (), ListType ())))
+        rootenv ("nil" -> Predicate (Seq ()),
+                 "cons" -> Predicate (Seq (UnknownType (), ListType ())))
 
     /**
      * The environment containing all bindings visible at a particular
@@ -126,18 +127,21 @@ class SemanticAnalysis (messaging : Messaging) {
                 val argtypes = ts map tipe
                 lookup (n->envin, s, UnknownEntity (), true) match {
                     case Predicate (oldargtypes) =>
-                        val newargtypes = oldargtypes.toArray
-                        for (i <- 0 until newargtypes.length)
-                            if ((newargtypes (i) == UnknownType ()) &&
-                                    (i < argtypes.length))
-                                newargtypes (i) = argtypes (i)
-                        define (n->envin, s, Predicate (newargtypes.toList))
+                        val extargtypes = argtypes.padTo (oldargtypes.length, UnknownType ())
+                        val newargtypes =
+                            (oldargtypes, extargtypes).zipped.map {
+                                case (UnknownType (), argtipe) =>
+                                    argtipe
+                                case (oldtipe, _) =>
+                                    oldtipe
+                            }
+                        define (n->envin, s, Predicate (newargtypes))
                     case _ =>
                         define (n->envin, s, Predicate (argtypes))
                 }
             case n @ Atom (s) if ! isDefinedInEnv (n->envin, s) =>
                 define (n->envin, s, Predicate (Nil))
-            case n if (n.hasChildren) =>
+            case n if n.hasChildren =>
                 (n.lastChild[SourceNode])->env
             case n =>
                 n->envin

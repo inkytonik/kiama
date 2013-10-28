@@ -41,7 +41,7 @@ trait TIL2_2 extends TIL1_1 with TransformingMain {
                 Decl (upperid) ::
                 Assign (upperid, Add (t, Num (1))) ::
                 While (Sub (Var (id), Var (upperid)),
-                    b ++ List (Assign (id, Add (Var (id), Num (1))))) ::
+                    b ++ Seq (Assign (id, Add (Var (id), Num (1))))) ::
                 ss
         })
 

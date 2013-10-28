@@ -29,6 +29,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
     import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Patterns.HasParent
+    import scala.collection.immutable.Seq
     import source.{Call, Mode, ValMode, VarMode}
 
     abstract override def check (n : SourceASTNode) {
@@ -79,7 +80,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * work it out from the declaration.  Returns None if the entity is
      * not a procedure.
      */
-    lazy val parameters : Identifier => Option[List[ParamInfo]] =
+    lazy val parameters : Identifier => Option[Seq[ParamInfo]] =
         attr (
             n =>
                 (n->entity) match {

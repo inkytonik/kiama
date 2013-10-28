@@ -24,6 +24,7 @@ package L2.source
 
 import base.source.{Block, SourceASTNode, Statement}
 import L0.source.{Expression, IdnExp}
+import scala.collection.immutable.Seq
 
 /**
  * FOR statements.
@@ -35,13 +36,13 @@ case class ForStatement (idn : IdnExp, lower : Expression,
 /**
  * Case statements.
  */
-case class CaseStatement (exp : Expression, cases : List[Case],
+case class CaseStatement (exp : Expression, cases : Seq[Case],
                           optelse : Option[Block]) extends Statement
 
 /**
  * A single case of a case statement.
  */
-case class Case (conds : List[Condition], block : Block) extends Statement
+case class Case (conds : Seq[Condition], block : Block) extends Statement
 
 /**
  * Non-terminal type for case conditions.

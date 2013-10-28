@@ -78,9 +78,9 @@ object Obfuscate extends Rewriter {
             topdown (attempt (obfuscateDecl))
 
         /**
-         * List of names that we do not want to replace.
+         * Sequence of names that we do not want to replace.
          */
-        val predefinedNames = List ("boolean", "int")
+        val predefinedNames = Seq ("boolean", "int")
 
         /**
          * Rule that detects pre-defined identifiers and leaves them unchanged

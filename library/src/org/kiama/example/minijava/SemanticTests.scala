@@ -39,6 +39,7 @@ class SemanticTests extends Tests {
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.util.{Message, Messaging}
+    import scala.collection.immutable.Seq
     import SemanticTestParser.{Error, parser, parseAll, Success, Failure}
 
     // Tests of definition uniqueness (Rule 1)
@@ -151,14 +152,14 @@ class SemanticTests extends Tests {
     test ("the condition of an if statement can have Boolean type") {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
-        val stmts = List (If (cond, Block (Nil), Block (Nil)))
+        val stmts = Seq (If (cond, Block (Nil), Block (Nil)))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the condition of an if statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
-        val stmts = List (If (cond, Block (Nil), Block (Nil)))
+        val stmts = Seq (If (cond, Block (Nil), Block (Nil)))
         semanticTest (
             embedExpression (exp, IntType (), Nil, stmts),
             (0, Message (0, 0, "type error: expected boolean got int")))
@@ -167,14 +168,14 @@ class SemanticTests extends Tests {
     test ("the condition of a while statement can have Boolean type") {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
-        val stmts = List (While (cond, Block (Nil)))
+        val stmts = Seq (While (cond, Block (Nil)))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the condition of a while statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
-        val stmts = List (While (cond, Block (Nil)))
+        val stmts = Seq (While (cond, Block (Nil)))
         semanticTest (
             embedExpression (exp, IntType (), Nil, stmts),
             (0, Message (0, 0, "type error: expected boolean got int")))
@@ -185,28 +186,28 @@ class SemanticTests extends Tests {
     test ("the expression in a println statement can be of Boolean type") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val stmts = List (Println (exp1))
+        val stmts = Seq (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of integer type") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val stmts = List (Println (exp1))
+        val stmts = Seq (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of integer array type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewArrayExp (IntExp (42))
-        val stmts = List (Println (exp1))
+        val stmts = Seq (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of reference type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewExp (IdnUse ("Test"))
-        val stmts = List (Println (exp1))
+        val stmts = Seq (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
@@ -215,16 +216,16 @@ class SemanticTests extends Tests {
     test ("an integer expression is assignment compatible with an integer var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = List (Var (IntType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Seq (Var (IntType (), IdnDef ("v")))
+        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("a Boolean expression is not assignment compatible with an integer var") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val vars = List (Var (IntType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Seq (Var (IntType (), IdnDef ("v")))
+        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             (0, Message (0, 0, "type error: expected int got boolean")))
@@ -233,16 +234,16 @@ class SemanticTests extends Tests {
     test ("a Boolean expression is assignment compatible with a Boolean var") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val vars = List (Var (BooleanType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Seq (Var (BooleanType (), IdnDef ("v")))
+        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with a Boolean var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = List (Var (BooleanType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Seq (Var (BooleanType (), IdnDef ("v")))
+        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             (0, Message (0, 0, "type error: expected boolean got int")))
@@ -251,16 +252,16 @@ class SemanticTests extends Tests {
     test ("an integer array expression is assignment compatible with an integer array var") {
         val exp = IntExp (0) // dummy
         val exp1 = NewArrayExp (IntExp (42))
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with an integer array var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             (0, Message (0, 0, "type error: expected int[] got int")))
@@ -272,8 +273,8 @@ class SemanticTests extends Tests {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
         val exp2 = IntExp (99)
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
+        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Seq (ArrayAssign (IdnUse ("v"), exp1, exp2))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
@@ -281,8 +282,8 @@ class SemanticTests extends Tests {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
         val exp2 = FalseExp ()
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
+        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Seq (ArrayAssign (IdnUse ("v"), exp1, exp2))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             (0, Message (0, 0, "type error: expected int got boolean")),
@@ -530,7 +531,7 @@ class SemanticTests extends Tests {
 
     test ("The name used in a new expression must refer to a class") {
         val exp = NewExp (IdnUse ("v"))
-        val vars = List (Var (IntType (), IdnDef ("v")))
+        val vars = Seq (Var (IntType (), IdnDef ("v")))
         semanticTest (
             embedExpression (exp, IntType (), vars),
             (0, Message (0, 0, "illegal instance creation of non-class type")))
@@ -628,14 +629,14 @@ class SemanticTests extends Tests {
      */
     def embedExpression (exp : Expression,
                          retType : Type = IntType (),
-                         vars : List[Var] = Nil,
-                         stmts : List[Statement] = Nil) =
+                         vars : Seq[Var] = Nil,
+                         stmts : Seq[Statement] = Nil) =
         Program (MainClass (IdnDef ("Dummy"), Println (IntExp (0))),
-            List(
+            Seq(
                 Class (IdnDef ("Test"), None,
                     ClassBody (
                         Nil,
-                        List (
+                        Seq (
                             Method (IdnDef ("m"),
                                 MethodBody (
                                     retType,

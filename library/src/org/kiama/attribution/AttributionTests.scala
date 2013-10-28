@@ -410,7 +410,7 @@ class AttributionTests extends Tests {
 
             initTree (t)
 
-            val tchildren = t.children.toArray
+            val tchildren = t.children.toSeq
             assertResult (2) (tchildren.length)
             expectsame (c1) (tchildren (0))
             expectsame (c4) (tchildren (1))
@@ -425,7 +425,7 @@ class AttributionTests extends Tests {
             assertResult (null) (t.parent)
             assertResult (null) (t.prev)
 
-            val c1children = c1.children.toArray
+            val c1children = c1.children.toSeq
             assertResult (0) (c1children.length)
             assertResult (false) (c1.hasChildren)
             assertResult (0) (c1.index)
@@ -436,7 +436,7 @@ class AttributionTests extends Tests {
             expectsame (t) (c1.parent)
             assertResult (null) (c1.prev)
 
-            val c2children = c2.children.toArray
+            val c2children = c2.children.toSeq
             assertResult (0) (c2children.length)
             assertResult (false) (c2.hasChildren)
             assertResult (0) (c2.index)
@@ -447,7 +447,7 @@ class AttributionTests extends Tests {
             expectsame (c4) (c2.parent)
             assertResult (null) (c2.prev)
 
-            val c3children = c3.children.toArray
+            val c3children = c3.children.toSeq
             assertResult (0) (c3children.length)
             assertResult (false) (c3.hasChildren)
             assertResult (1) (c3.index)
@@ -458,7 +458,7 @@ class AttributionTests extends Tests {
             expectsame (c4) (c3.parent)
             expectsame (c2) (c3.prev)
 
-            val c4children = c4.children.toArray
+            val c4children = c4.children.toSeq
             assertResult (2) (c4children.length)
             expectsame (c2) (c4children (0))
             expectsame (c3) (c4children (1))

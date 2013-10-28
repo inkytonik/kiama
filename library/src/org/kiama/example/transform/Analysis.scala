@@ -35,11 +35,11 @@ class Analysis (messaging : Messaging) {
     import messaging.message
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
-    import scala.collection.immutable
+    import scala.collection.immutable.{HashMap, Seq}
 
     lazy val prioenv : Program => Map[String,Int] =
         attr (
-            p => immutable.HashMap (p.ops : _*)
+            p => HashMap (p.ops : _*)
         )
 
     lazy val prio : String => ASTNode => Int =
@@ -56,11 +56,11 @@ class Analysis (messaging : Messaging) {
                 e1->op_tree
             case e1 @ Factor (e)    =>
                 val (optor, opnd) = e1->ops
-                val (_, es) = e1->eval_top (optor, "", e :: opnd)
+                val (_, es) = e1->eval_top (optor, "", e +: opnd)
                 es.head
         }
 
-    type Stacks = (List[String], List[Exp])
+    type Stacks = (Seq[String], Seq[Exp])
 
     lazy val ops : ExpR => Stacks =
         childAttr {
@@ -69,15 +69,15 @@ class Analysis (messaging : Messaging) {
                     (Nil, Nil)
                 case e0 @ BinExpR (e, op, _) =>
                     val (optor, opnd) = e0->ops
-                    e0->eval_top (optor, op, e :: opnd)
+                    e0->eval_top (optor, op, e +: opnd)
             }
         }
 
-    lazy val eval_top : ((List[String], String, List[Exp])) => ExpR => Stacks =
+    lazy val eval_top : ((Seq[String], String, Seq[Exp])) => ExpR => Stacks =
         paramAttr {
             case (Nil, op, opnd) => (
                 _ =>
-                    (List (op), opnd)
+                    (Seq (op), opnd)
             )
             case (top_op :: rest_ops, op, opnd) => (
                 e =>

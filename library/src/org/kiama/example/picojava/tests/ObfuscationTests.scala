@@ -30,6 +30,7 @@ class ObfuscationTests extends Tests {
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.Obfuscate.obfuscate
     import org.kiama.example.picojava.PrettyPrinter.pretty
+    import scala.collection.immutable.Seq
 
     // For the actual program text, see ObfuscationTest.pj
 
@@ -38,19 +39,19 @@ class ObfuscationTests extends Tests {
     val ast =
         Program (
             Block (
-                List (
+                Seq (
                     ClassDecl (
                         "ALongClassName",
                         None,
                         Block (
-                            List (
+                            Seq (
                                 VarDecl (Use ("int"), "avar"),
                                 VarDecl (Use ("int"), "bvar"),
                                 ClassDecl (
                                     "NestedClass",
                                     None,
                                     Block (
-                                        List (
+                                        Seq (
                                             VarDecl (Use ("int"), "item"),
                                             AssignStmt (
                                                 Use ("avar"),
@@ -63,7 +64,7 @@ class ObfuscationTests extends Tests {
                         "AnotherClassName",
                         None,
                         Block (
-                            List (
+                            Seq (
                                 VarDecl (Use ("int"), "avar"),
                                 VarDecl (Use ("ALongClassName"), "object"),
                                 AssignStmt (
@@ -75,19 +76,19 @@ class ObfuscationTests extends Tests {
     val expobast =
         Program (
             Block (
-                List (
+                Seq (
                     ClassDecl (
                         "n0",
                         None,
                         Block (
-                            List (
+                            Seq (
                                 VarDecl (Use ("int"), "n1"),
                                 VarDecl (Use ("int"), "n2"),
                                 ClassDecl (
                                     "n3",
                                     None,
                                     Block (
-                                        List (
+                                        Seq (
                                             VarDecl (Use ("int"), "n4"),
                                             AssignStmt (Use ("n7"), Use ("n4"))))),
                                 VarDecl (Use ("n3"), "n5"),
@@ -98,7 +99,7 @@ class ObfuscationTests extends Tests {
                         "n6",
                         None,
                         Block (
-                            List (
+                            Seq (
                                 VarDecl (Use ("int"), "n7"),
                                 VarDecl (Use ("n0"), "n8"),
                                 AssignStmt (

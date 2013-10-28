@@ -38,6 +38,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         extends PrettyPrinter {
 
     import scala.language.implicitConversions
+    import scala.collection.immutable.Seq
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
@@ -87,7 +88,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * state value only becomes defined when this latter process happens.
          */
         def := (t : T) {
-            updates = new ScalarUpdate (this, t) :: updates
+            updates = new ScalarUpdate (this, t) +: updates
         }
 
         /**
@@ -138,7 +139,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          * state value only becomes defined when this latter process happens.
          */
         def := (u : U) {
-            updates = new ParamUpdate (state, t, u) :: updates
+            updates = new ParamUpdate (state, t, u) +: updates
         }
 
         /**
@@ -334,7 +335,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     /**
      * The updates for the current step of execution of this machine.
      */
-    private var updates : List[Update] = Nil
+    private var updates : Seq[Update] = Nil
 
     /**
      * Initialise the state of this machine.  This routine is called

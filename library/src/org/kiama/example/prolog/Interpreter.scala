@@ -119,8 +119,8 @@ class Interpreter {
          * The goal list stack.  Each entry is a list of goals that are to be
          * satisfied. We start with the query and the display goal.
          */
-        val glstack = Stack[List[Goal]] (
-                          List (TermGoal (query), DisplayGoal (goalvars))
+        val glstack = Stack[Seq[Goal]] (
+                          Seq (TermGoal (query), DisplayGoal (goalvars))
                       )
 
         /**
@@ -147,7 +147,7 @@ class Interpreter {
                     for (clause <- clauses) {
                         val c = rename (clause)
                         val bdygoals = c.bdy map TermGoal
-                        glstack.push (UnifyGoal (l, c.hd) :: (bdygoals ++ gl.tail))
+                        glstack.push (UnifyGoal (l, c.hd) +: (bdygoals ++ gl.tail))
                     }
 
                 /**

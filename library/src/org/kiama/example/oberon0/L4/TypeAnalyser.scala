@@ -30,6 +30,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
     import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Patterns.HasParent
+    import scala.collection.immutable.Seq
     import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
         RecordTypeDef}
 
@@ -112,7 +113,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
                 super.deftypeDef (n)
         }
 
-    def fieldListsToFields (fls : List[FieldList]) : List[Field] =
+    def fieldListsToFields (fls : Seq[FieldList]) : Seq[Field] =
         (for (fl <- fls)
             yield {
                 val t = (fl.tipe)->deftype
@@ -131,8 +132,8 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
                 r->basetype match {
                     case RecordType (fs) =>
                         fs.filter (_.ident == i) match {
-                            case List (f) => f.tipe
-                            case _        => unknownType
+                            case Seq (f) => f.tipe
+                            case _       => unknownType
                         }
                     case _ =>
                         unknownType

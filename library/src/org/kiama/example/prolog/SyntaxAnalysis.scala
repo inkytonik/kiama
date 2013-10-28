@@ -30,6 +30,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
 
     import PrologTree._
     import scala.language.postfixOps
+    import scala.collection.immutable.Seq
 
     lazy val program =
         phrase ((clause+) ^^ Program)
@@ -66,10 +67,10 @@ class SyntaxAnalysis extends PositionedParserUtilities {
 
     lazy val listterms : PackratParser[Literal] =
         term ~ ("," ~> listterms) ^^ {
-            case h ~ t => Pred ("cons", List (h, t))
+            case h ~ t => Pred ("cons", Seq (h, t))
         } |
         term ^^ {
-            case h => Pred ("cons", List (h, Pred ("nil", Nil)))
+            case h => Pred ("cons", Seq (h, Pred ("nil", Nil)))
         }
 
     lazy val atom =

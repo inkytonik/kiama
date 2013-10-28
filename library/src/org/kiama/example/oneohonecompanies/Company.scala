@@ -24,11 +24,12 @@ package example.oneohonecompanies
 object Company {
 
     import org.kiama.attribution.Attributable
+    import scala.collection.immutable.Seq
 
     trait Node extends Attributable
 
-    case class Company (depts : List[Dept]) extends Node
-    case class Dept (n : Name, m : Manager, su : List[SubUnit]) extends Node
+    case class Company (depts : Seq[Dept]) extends Node
+    case class Dept (n : Name, m : Manager, su : Seq[SubUnit]) extends Node
 
     type Manager = Employee
     case class Employee (n : Name, a : Address, s : Salary) extends Node

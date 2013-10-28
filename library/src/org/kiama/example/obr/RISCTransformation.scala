@@ -33,6 +33,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
     import RISCTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
+    import scala.collection.immutable.Seq
 
     /**
      * Generate a brand new target label. Shares counter with the encoding
@@ -57,7 +58,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                 exnloc = Local (Variable (ExnType ()).locn)
                 val dbody = decls.flatMap (ditems)
                 val sbody = stmts.flatMap (sitems)
-                val sepilogue = List (
+                val sepilogue = Seq (
                         Write (IntDatum (0))
                     ,   Ret ()
                     ,   LabelDef (exnlab)
@@ -79,7 +80,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                     Local ((n->entity).locn),
                     MulW (
                         SequenceDatum(
-                            List(
+                            Seq(
                                 StW (tempintloc, SubW (i->datum, IntDatum(1))),
                                 Bne (CmpltW (LdW (tempintloc), IntDatum (0)), lab1),
                                 Beq (CmpltW (
@@ -132,7 +133,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * The RISC tree items that are the translation of the given
      * Obr language declaration.
      */
-    private val ditems : Declaration => List[Item] =
+    private val ditems : Declaration => Seq[Item] =
         attr {
 
             /**
@@ -140,7 +141,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * the location of the parameter.
              */
             case d @ IntParam (_) =>
-                 List (StW (location (d), Read ()))
+                 Seq (StW (location (d), Read ()))
 
             /**
              * All other kinds of declaration generate no code.
@@ -154,7 +155,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * The RISC tree items that are the translation of the given
      * Obr language statement.
      */
-    private val sitems : Statement => List[Item] =
+    private val sitems : Statement => Seq[Item] =
         attr {
 
             /**
@@ -162,14 +163,14 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * into the lvalue location.
              */
             case AssignStmt (e, exp) =>
-                List (StW (location (e), exp->datum))
+                Seq (StW (location (e), exp->datum))
 
             /**
              * An EXIT statement translates into a jump to the exit label
              * of the current LOOP statement.
              */
             case s @ ExitStmt () =>
-                List (Jmp (exitlab))
+                Seq (Jmp (exitlab))
 
             /**
              * A for statement first evaluates the minimum and maximum bounds,
@@ -194,7 +195,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                 val maxloc = Local (Variable (IntType ()).locn)
                 // generate RISCTree code
                 val result =
-                    List (StW (eloc, min->datum),
+                    Seq (StW (eloc, min->datum),
                           StW (maxloc, max->datum),
                           Bne (CmpgtW (LdW (eloc), LdW (maxloc)), lab2),
                           Jmp (lab1),
@@ -202,7 +203,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                           StW (eloc, AddW (LdW (eloc), IntDatum (1))),
                           LabelDef (lab1)) ++
                     body.flatMap (sitems) ++
-                    List (Bne (CmpltW (LdW (eloc), LdW (maxloc)), lab3),
+                    Seq (Bne (CmpltW (LdW (eloc), LdW (maxloc)), lab3),
                           LabelDef (lab2))
                 // restore value of first unallocated location
                 // thereby deallocating our temporary.
@@ -218,11 +219,11 @@ class RISCTransformation (analysis : SemanticAnalysis) {
             case IfStmt (cond, thens, elses) =>
                 val lab1 = genlabel ()
                 val lab2 = genlabel ()
-                List (Beq (cond->datum, lab1)) ++
+                Seq (Beq (cond->datum, lab1)) ++
                     thens.flatMap (sitems) ++
-                    List (Jmp (lab2), LabelDef (lab1)) ++
+                    Seq (Jmp (lab2), LabelDef (lab1)) ++
                     elses.flatMap (sitems) ++
-                    List (LabelDef (lab2))
+                    Seq (LabelDef (lab2))
 
             /**
              * A LOOP statement translates into a simple infinite loop
@@ -241,9 +242,9 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                 // Set exit label to exit point of this loop
                 exitlab = lab2
                 // Construct loop code
-                val result = List (LabelDef (lab1)) ++
+                val result = Seq (LabelDef (lab1)) ++
                                 body.flatMap (sitems) ++
-                                List (Jmp (lab1), LabelDef (lab2))
+                                Seq (Jmp (lab1), LabelDef (lab2))
                 // Restore exit label
                 exitlab = origexitlab
                 // Return loop code
@@ -255,7 +256,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * terminate the program.
              */
             case ReturnStmt (exp) =>
-                List (Write (exp->datum), Ret ())
+                Seq (Write (exp->datum), Ret ())
 
             /**
              * A while statement translates into the standard evaluation
@@ -264,9 +265,9 @@ class RISCTransformation (analysis : SemanticAnalysis) {
             case WhileStmt (cond, body) =>
                 val lab1 = genlabel ()
                 val lab2 = genlabel ()
-                List (Jmp (lab1), LabelDef (lab2)) ++
+                Seq (Jmp (lab1), LabelDef (lab2)) ++
                     body.flatMap (sitems) ++
-                    List (LabelDef (lab1), Bne (cond->datum, lab2))
+                    Seq (LabelDef (lab1), Bne (cond->datum, lab2))
 
             /**
              * A TRY statement translates to the code generated from its body followed by
@@ -296,9 +297,9 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                 exnlab = origexnlab
                 // Translate the catch clauses, append the resulting RISC code to that for
                 // the body and return
-                tbody ++ List (Jmp (lab2), LabelDef (lab1)) ++
+                tbody ++ Seq (Jmp (lab2), LabelDef (lab1)) ++
                     cblocks.flatMap (cblock (_, lab2)) ++
-                    List (Jmp (exnlab), LabelDef (lab2))
+                    Seq (Jmp (exnlab), LabelDef (lab2))
 
             /**
              * A RAISE statement stores the integer associated with the specified
@@ -315,7 +316,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                 // Generate code to store that vale as the current exception number
                 // and then to jump to the entry point of the exception handler currently
                 // in scope.
-                List (StW (exnloc, exnconst), Jmp (exnlab))
+                Seq (StW (exnloc, exnconst), Jmp (exnlab))
 
         }
 
@@ -324,7 +325,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * to a test of the value of the current exception followed by code which
      * executed if that test succeeds.
      */
-    private def cblock (clause : Catch, exitlab : Label) : List[Item] =
+    private def cblock (clause : Catch, exitlab : Label) : Seq[Item] =
         clause match {
 
             case n @ Catch(idn, stmts) =>
@@ -337,9 +338,9 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                 }
                 // Generate code for statements in the catch body, guarded by a
                 // conditional branch to test the exception value thrown.
-                List (Beq (CmpeqW (LdW (exnloc), exnconst), lab1)) ++
+                Seq (Beq (CmpeqW (LdW (exnloc), exnconst), lab1)) ++
                     stmts.flatMap (sitems) ++
-                    List(Jmp (exitlab), LabelDef (lab1))
+                    Seq(Jmp (exitlab), LabelDef (lab1))
 
         }
 
@@ -431,7 +432,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
             case ModExp (l, r) =>
                 val lab1 = genlabel ()
                 SequenceDatum (
-                    List (
+                    Seq (
                             StW (tempintloc, r->datum)
                         ,   Bne (LdW (tempintloc), lab1)
                         ,   StW (exnloc, IntDatum (divideByZeroExn))
@@ -482,7 +483,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
             case SlashExp (l, r) =>
                 val lab1 = genlabel ()
                 SequenceDatum (
-                        List (
+                        Seq (
                                 // Calculate value of right operand and store result
                                 // in the memory location reserved for temporaries.
                                 StW (tempintloc, r->datum)

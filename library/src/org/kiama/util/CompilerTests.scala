@@ -22,6 +22,7 @@ package org.kiama
 package util
 
 import org.scalatest.FunSuiteLike
+import scala.collection.immutable.Seq
 
 /**
  * Basic tests of compiler module.  Normal usage is tested by many of
@@ -32,7 +33,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     import java.io.Reader
     import org.scalatest.TestFailedException
 
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Config =
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : Config =
         new Config (args, emitter)
 
     def makeast (reader : Reader, filename : String, config : Config) : Either[Any,String] =
@@ -40,7 +41,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
-        val config = createConfig (Array ("IDoNotExist.txt"), emitter)
+        val config = createConfig (Seq ("IDoNotExist.txt"), emitter)
         testdriver (config)
         val expectedMsg =
             if (System.getProperty("os.name").startsWith ("Windows"))
@@ -116,7 +117,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends FunSuiteLike {
      */
     def filetests (name : String, path : String, srcext : String, resext : String,
                    optinext : Option[String] = None, indefault : String = "",
-                   argslist : List[Array[String]] = List (Array ())) {
+                   argslist : Seq[Seq[String]] = Seq (Seq ())) {
 
         import java.io.FilenameFilter
 
@@ -127,7 +128,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends FunSuiteLike {
          * messages. If the compilation fails, `rp` is assumed to contain the
          * expected messages. `rt` is a version of `rp` to use in the test title.
          */
-        def filetest (name : String, rp : String, cmd : Array[String], rt : String,
+        def filetest (name : String, rp : String, cmd : Seq[String], rt : String,
                       extra : String = "") {
             val ct = cmd.mkString (" ").replaceAllLiterally ("kiama/src/org/kiama/", "")
             val title = s"$name: $ct, expecting $rt$extra"
@@ -161,7 +162,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends FunSuiteLike {
          * command line args to use.
          */
         def infiletests (c : String, dir : File, inext : String,
-                         args : Array[String]) {
+                         args : Seq[String]) {
             val resfilter =
                 new FilenameFilter {
                     def accept (dir : File, name : String) : Boolean = {
@@ -176,9 +177,9 @@ trait TestCompilerWithConfig[T, C <: Config] extends FunSuiteLike {
                 val inf = new File (ip)
                 val (consoleArgs, msg) =
                     if (inf.exists)
-                        (Array ("-c", "file", ip), s" from input $it")
+                        (Seq ("-c", "file", ip), s" from input $it")
                     else
-                        (Array ("-c", "string", indefault), s""" from string "$indefault"""")
+                        (Seq ("-c", "string", indefault), s""" from string "$indefault"""")
                 filetest (name, rp, consoleArgs ++ args :+ cp, r, msg)
             }
         }

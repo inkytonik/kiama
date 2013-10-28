@@ -30,6 +30,7 @@ import org.scalatest.FunSuiteLike
 class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
 
     import MiniJavaTree._
+    import scala.collection.immutable.Seq
 
     // Tests of parsing terminals
 
@@ -110,12 +111,12 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
 
     test ("parsing a method call expression produces the correct tree (one arg)") {
         assertParseOk ("a.m (1)", expression,
-            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), List (IntExp (1))))
+            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), Seq (IntExp (1))))
     }
 
     test ("parsing a method call expression produces the correct tree (many args)") {
         assertParseOk ("a.m (1, 2, 3)", expression,
-            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), List (IntExp (1), IntExp (2), IntExp (3))))
+            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), Seq (IntExp (1), IntExp (2), IntExp (3))))
     }
 
     test ("parsing an integer expression produces the correct tree") {
@@ -263,13 +264,13 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
 
     test ("parsing a block produces the correct tree (one statement)") {
         assertParseOk ("{ a = 1; }", statement,
-            Block (List (
+            Block (Seq (
                 VarAssign (IdnUse ("a"), IntExp (1)))))
     }
 
     test ("parsing a block produces the correct tree (many statements)") {
         assertParseOk ("{ a = 1; b = 2; c = 3; }", statement,
-            Block (List (
+            Block (Seq (
                 VarAssign (IdnUse ("a"), IntExp (1)),
                 VarAssign (IdnUse ("b"), IntExp (2)),
                 VarAssign (IdnUse ("c"), IntExp (3)))))
@@ -328,7 +329,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             program,
             Program (
                 MainClass (IdnDef ("Main"), VarAssign (IdnUse ("a"), IntExp (1))),
-                List (
+                Seq (
                     Class (IdnDef ("Normal1"), None, ClassBody (Nil, Nil)))))
     }
 
@@ -341,7 +342,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             program,
             Program (
                 MainClass (IdnDef ("Main"), VarAssign (IdnUse ("a"), IntExp (1))),
-                List (
+                Seq (
                     Class (IdnDef ("Normal1"), None, ClassBody (Nil, Nil)),
                     Class (IdnDef ("Normal2"), None, ClassBody (Nil, Nil)))))
     }
@@ -376,7 +377,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
     test ("a class with just a var declaration parses") {
         assertParseOk ("class Foo { int a; }", classDeclaration,
             Class (IdnDef ("Foo"), None,
-                ClassBody (List (Field (IntType (), IdnDef ("a"))),
+                ClassBody (Seq (Field (IntType (), IdnDef ("a"))),
                            Nil)))
     }
 
@@ -385,7 +386,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             classDeclaration,
             Class (IdnDef ("Foo"), None,
                 ClassBody (
-                    List (Field (IntType (), IdnDef ("a")),
+                    Seq (Field (IntType (), IdnDef ("a")),
                           Field (IntType (), IdnDef ("b")),
                           Field (IntType (), IdnDef ("c"))),
                     Nil)))
@@ -400,7 +401,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             Class (IdnDef ("Foo"), None,
                 ClassBody (
                     Nil,
-                    List (Method (IdnDef ("m1"),
+                    Seq (Method (IdnDef ("m1"),
                             MethodBody (
                                 IntType (),
                                 Nil,
@@ -420,7 +421,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             Class (IdnDef ("Foo"), None,
                 ClassBody (
                     Nil,
-                    List (Method (IdnDef ("m1"),
+                    Seq (Method (IdnDef ("m1"),
                               MethodBody (
                                   IntType (),
                                   Nil,
@@ -454,10 +455,10 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             classDeclaration,
             Class (IdnDef ("Foo"), None,
                 ClassBody (
-                    List (Field (IntType (), IdnDef ("a")),
+                    Seq (Field (IntType (), IdnDef ("a")),
                           Field (IntType (), IdnDef ("b")),
                           Field (IntType (), IdnDef ("c"))),
-                    List (Method (IdnDef ("m1"),
+                    Seq (Method (IdnDef ("m1"),
                               MethodBody (
                                   IntType (),
                                   Nil,
@@ -529,7 +530,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
                 MethodBody (
                     IntType (),
                     Nil,
-                    List (Var (IntType (), IdnDef ("a"))),
+                    Seq (Var (IntType (), IdnDef ("a"))),
                     Nil,
                     IntExp (1))))
     }
@@ -542,7 +543,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
                     IntType (),
                     Nil,
                     Nil,
-                    List (VarAssign (IdnUse ("a"), IntExp (1))),
+                    Seq (VarAssign (IdnUse ("a"), IntExp (1))),
                     IntExp (1))))
     }
 
@@ -553,9 +554,9 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
                 MethodBody (
                     IntType (),
                     Nil,
-                    List (Var (IntType (), IdnDef ("a")),
+                    Seq (Var (IntType (), IdnDef ("a")),
                           Var (IntType (), IdnDef ("b"))),
-                    List (VarAssign (IdnUse ("a"), IntExp (1)),
+                    Seq (VarAssign (IdnUse ("a"), IntExp (1)),
                           VarAssign (IdnUse ("b"), IntExp (1))),
                     IntExp (1))))
     }
@@ -578,7 +579,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             Method (IdnDef ("m"),
                 MethodBody (
                     IntType (),
-                    List (Argument (IntType (), IdnDef ("a"))),
+                    Seq (Argument (IntType (), IdnDef ("a"))),
                     Nil,
                     Nil,
                     IntExp (1))))
@@ -590,7 +591,7 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             Method (IdnDef ("m"),
                 MethodBody (
                     IntType (),
-                    List (Argument (IntType (), IdnDef ("a")),
+                    Seq (Argument (IntType (), IdnDef ("a")),
                           Argument (IntType (), IdnDef ("b")),
                           Argument (IntType (), IdnDef ("c"))),
                     Nil,
@@ -604,12 +605,12 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
 
     test ("a singleton argument list parses") {
         assertParseOk ("int a", arguments,
-            List (Argument (IntType (), IdnDef ("a"))))
+            Seq (Argument (IntType (), IdnDef ("a"))))
     }
 
     test ("an argument list with many arguments parses") {
         assertParseOk ("int a, int b, int c", arguments,
-            List (Argument (IntType (), IdnDef ("a")),
+            Seq (Argument (IntType (), IdnDef ("a")),
                   Argument (IntType (), IdnDef ("b")),
                   Argument (IntType (), IdnDef ("c"))))
     }

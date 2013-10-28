@@ -29,6 +29,8 @@ package rewriting
  */
 trait CallbackRewriter extends Rewriter {
 
+    import scala.collection.immutable.Seq
+
     /**
      * The method to call when a rewrite operation has happened. It will
      * be called under two circumstances. First, when a `rule` (or similar, such
@@ -76,7 +78,7 @@ trait CallbackRewriter extends Rewriter {
     /**
      * Product duplication with callback notification.
      */
-    protected override def dup[T <: Product] (t : T, children : Array[AnyRef]) : T =
+    protected override def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T =
         rewriting (t, super.dup (t, children))
 
 }

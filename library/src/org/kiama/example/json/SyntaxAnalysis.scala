@@ -29,6 +29,7 @@ import org.kiama.util.PositionedParserUtilities
 trait SyntaxAnalysis extends PositionedParserUtilities {
 
     import JSONTree._
+    import scala.collection.immutable.Seq
 
     lazy val parser =
         phrase (jvalue)
@@ -49,7 +50,7 @@ trait SyntaxAnalysis extends PositionedParserUtilities {
 
     lazy val jarray =
         "[" ~> repsep (jvalue, ",") <~ "]" ^^ {
-            case l => JArray (Vector (l : _*))
+            case l => JArray (Seq (l : _*))
         }
 
     lazy val jstring =

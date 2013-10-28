@@ -25,11 +25,12 @@ package L3.source
 import base.source.{Block, Declaration, IdnDef, IdnUse, SourceASTNode,
     Statement}
 import L0.source.{Expression, TypeDef}
+import scala.collection.immutable.Seq
 
 /**
  * Procedure declarations.
  */
-case class ProcDecl (idndef : IdnDef, params : List[FPSection], body : Block,
+case class ProcDecl (idndef : IdnDef, params : Seq[FPSection], body : Block,
                      idnuse : IdnUse) extends Declaration
 
 /**
@@ -50,9 +51,9 @@ case class ValMode () extends Mode
 /**
  * Formal parameter sections.
  */
-case class FPSection (mode : Mode, idndefs : List[IdnDef], tipe : TypeDef) extends SourceASTNode
+case class FPSection (mode : Mode, idndefs : Seq[IdnDef], tipe : TypeDef) extends SourceASTNode
 
 /**
  * Call statements.
  */
-case class Call (idnuse : IdnUse, params : List[Expression]) extends Statement
+case class Call (idnuse : IdnUse, params : Seq[Expression]) extends Statement

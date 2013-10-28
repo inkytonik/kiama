@@ -28,6 +28,7 @@ object AST {
 
     import org.kiama.attribution.Attributable
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     /**
      * All AST nodes.
@@ -44,7 +45,7 @@ object AST {
      * expression using those operators, and an equivalent expression with
      * correct operator structure which is filled in after parsing.
      */
-    case class Program (ops : List[(String,Int)], vars : List[VarDecl],
+    case class Program (ops : Seq[(String,Int)], vars : Seq[VarDecl],
                         expr : ExpR) extends ASTNode
 
     /**

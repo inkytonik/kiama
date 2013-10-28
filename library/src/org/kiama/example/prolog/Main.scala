@@ -24,11 +24,12 @@ package example.prolog
 import PrologTree.Literal
 import org.kiama.output.PrettyPrinter
 import org.kiama.util.{Emitter, REPLConfig, ParsingREPLWithConfig}
+import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Prolog REPL.
  */
-class PrologConfig (args : Array[String], emitter : Emitter) extends REPLConfig (args, emitter) {
+class PrologConfig (args : Seq[String], emitter : Emitter) extends REPLConfig (args, emitter) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
@@ -80,7 +81,7 @@ object Main extends SyntaxAnalysis with ParsingREPLWithConfig[Literal,PrologConf
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : PrologConfig =
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : PrologConfig =
         new PrologConfig (args, emitter)
 
     /**

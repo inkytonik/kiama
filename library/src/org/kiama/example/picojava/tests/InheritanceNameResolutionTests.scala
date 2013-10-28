@@ -36,6 +36,7 @@ class InheritanceNameResolutionTests extends Tests {
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
+    import scala.collection.immutable.Seq
 
     // For the actual program text, see InheritanceNameResolutionTests.pj
 
@@ -55,29 +56,29 @@ class InheritanceNameResolutionTests extends Tests {
     private val declBf  = VarDecl (Use ("int"), "f")
 
     private val declAA = ClassDecl ("AA", None, Block(
-                             List (declAAb,
-                                   VarDecl (Use ("int"), "d"),
-                                   declAAe,
-                                   AssignStmt (aInAA, bInAA))))
+                             Seq (declAAb,
+                                  VarDecl (Use ("int"), "d"),
+                                  declAAe,
+                                  AssignStmt (aInAA, bInAA))))
 
     private val declA = ClassDecl ("A", None, Block(
-                            List (declAa,
-                                  VarDecl (Use ("int"), "b"),
-                                  VarDecl (Use ("int"), "c"),
-                                  declAA)))
+                            Seq (declAa,
+                                 VarDecl (Use ("int"), "b"),
+                                 VarDecl (Use ("int"), "c"),
+                                 declAA)))
 
     val ast =
         Program (Block (
-            List (declA,
-                  ClassDecl ("B", Some (AinB), Block (
-                      List (declBc,
-                            VarDecl (Use ("int"), "e"),
-                            declBf,
-                            AssignStmt (aInB, cInB),
-                            ClassDecl ("BB", Some (AAinBB), Block (
-                                List (VarDecl (Use ("int"), "d"),
-                                      AssignStmt (aInBB, Use ("d")),
-                                      AssignStmt (eInBB, fInBB))))))))))
+            Seq (declA,
+                 ClassDecl ("B", Some (AinB), Block (
+                     Seq (declBc,
+                          VarDecl (Use ("int"), "e"),
+                          declBf,
+                          AssignStmt (aInB, cInB),
+                          ClassDecl ("BB", Some (AAinBB), Block (
+                              Seq (VarDecl (Use ("int"), "d"),
+                                   AssignStmt (aInBB, Use ("d")),
+                                   AssignStmt (eInBB, fInBB))))))))))
     initTree (ast)
 
     test ("members are resolved in nested classes") {

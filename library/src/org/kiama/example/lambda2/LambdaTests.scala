@@ -37,6 +37,7 @@ class LambdaTests extends Tests with Checkers with Parser {
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Messaging
     import org.scalacheck.Prop.{all => _, _}
+    import scala.collection.immutable.Seq
 
     /**
      * Compute the type of e using the specified attribute and check to make
@@ -404,12 +405,12 @@ class LambdaTests extends Tests with Checkers with Parser {
 
     test ("pretty-printed parallel lets") {
         assertPrettyE (
-            Letp (List (Bind ("a", Num (1)),
+            Letp (Seq (Bind ("a", Num (1)),
                         Bind ("b", Num (1)),
-                        Bind ("c", Letp (List (Bind ("d", Num (1)),
+                        Bind ("c", Letp (Seq (Bind ("d", Num (1)),
                                             Bind ("e", Num (1))),
                                         Num (1)))),
-                  Letp (List (Bind ("f", Num (1)),
+                  Letp (Seq (Bind ("f", Num (1)),
                                 Bind ("g", Num (1))),
                         Num (1))),
 """(letp

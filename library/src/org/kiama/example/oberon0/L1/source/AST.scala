@@ -24,13 +24,14 @@ package L1.source
 
 import base.source.{Block, Statement}
 import L0.source.Expression
+import scala.collection.immutable.Seq
 
 /**
  * Conditional statements containing a main expression and then block, zero
  * or more else if blocks, and an optional else block.
  */
 case class IfStatement (cond : Expression, block : Block,
-                        elsifs : List[(Expression,Block)],
+                        elsifs : Seq[(Expression,Block)],
                         optelse : Option[Block]) extends Statement
 
 /**

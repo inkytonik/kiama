@@ -28,6 +28,7 @@ package util
 trait GeneratingREPLBase[T] extends REPL {
 
     import org.scalacheck._
+    import scala.collection.immutable.Seq
 
     val banner = "Each time you hit ENTER a new instance is generated and printed."
 
@@ -36,7 +37,7 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Generating REPLs insist on processing whitespace.
      */
-    override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : REPLConfig =
+    override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : REPLConfig =
         super.createConfig ("-w" +: args, emitter)
 
     /**

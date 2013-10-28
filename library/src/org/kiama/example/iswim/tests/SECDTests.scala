@@ -45,9 +45,10 @@ class SECDTests extends Tests {
     import RecordOps._
     import driver.ISWIMConfig
     import org.kiama.util.StringEmitter
+    import scala.collection.immutable.Seq
 
     private abstract class SECD(code : Code)
-        extends SECDBase (new ISWIMConfig (Array (), new StringEmitter))
+        extends SECDBase (new ISWIMConfig (Seq (), new StringEmitter))
         with IntegerOps with BooleanOps
         with IntComparisonOps with StackOps
         with HeapOps with IOOps with StringOps

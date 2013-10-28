@@ -29,6 +29,7 @@ import org.kiama.util.WhitespacePositionedParserUtilities
  */
 trait Parser extends WhitespacePositionedParserUtilities {
 
+    import scala.collection.immutable.Seq
     import source.{Block, Declaration, EmptyStmt, IdnDef, IdnUse,
         ModuleDecl, Statement}
 
@@ -53,7 +54,7 @@ trait Parser extends WhitespacePositionedParserUtilities {
     lazy val declarations =
         declarationsDef
 
-    def declarationsDef : PackratParser[List[Declaration]]
+    def declarationsDef : PackratParser[Seq[Declaration]]
         "" ^^^ Nil
 
     lazy val statements =
@@ -78,8 +79,8 @@ trait Parser extends WhitespacePositionedParserUtilities {
     lazy val idnuse =
         ident ^^ IdnUse
 
-    def keywordStrings : List[String] =
-        List ("BEGIN", "END", "MODULE")
+    def keywordStrings : Seq[String] =
+        Seq ("BEGIN", "END", "MODULE")
 
     lazy val keyword =
         keywords ("[^a-zA-Z0-9]".r, keywordStrings)

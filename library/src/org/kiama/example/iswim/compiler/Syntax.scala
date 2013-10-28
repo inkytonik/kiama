@@ -30,6 +30,7 @@ import org.kiama.attribution.Attributable
 object Syntax {
 
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     /**
      * In essence, all program clauses in ISWIM are expressions.
@@ -43,7 +44,7 @@ object Syntax {
     /**
      * A complete ISWIM program
      */
-    case class IswimProg(bds : List[Stmt]) extends Iswim
+    case class IswimProg(bds : Seq[Stmt]) extends Iswim
 
     /**
      * A simple statement which simply computes a value
@@ -93,11 +94,11 @@ object Syntax {
      * Binding Constructs
      */
     case class Binding(v : Variable, e : Expr) extends Iswim
-    case class Let(bind : List[Binding], body : Expr) extends Expr
-    case class LetRec(bind : List[Binding], body : Expr) extends Expr
+    case class Let(bind : Seq[Binding], body : Expr) extends Expr
+    case class LetRec(bind : Seq[Binding], body : Expr) extends Expr
 
-    case class LetStmt(bind : List[Binding]) extends Stmt
-    case class LetRecStmt(bind : List[Binding]) extends Stmt
+    case class LetStmt(bind : Seq[Binding]) extends Stmt
+    case class LetRecStmt(bind : Seq[Binding]) extends Stmt
 
     /**
      * Import statement (not used at the moment)
@@ -120,16 +121,16 @@ object Syntax {
     /**
      * Blocks
      */
-    case class Block(es : List[Expr]) extends Expr
+    case class Block(es : Seq[Expr]) extends Expr
 
     /**
      * Records / Tuples
      */
     case class Empty() extends Expr
-    case class Tuple(fields : List[Expr]) extends Expr
-    case class Pattern(ns : List[Variable]) extends Iswim
+    case class Tuple(fields : Seq[Expr]) extends Expr
+    case class Pattern(ns : Seq[Variable]) extends Iswim
     case class MatchClause(p : Pattern, e : Expr) extends Iswim
-    case class Match(ctrl : Expr, clauses : List[MatchClause]) extends Expr
+    case class Match(ctrl : Expr, clauses : Seq[MatchClause]) extends Expr
 
     /**
      * Continuations
@@ -157,5 +158,5 @@ object Syntax {
      * of values which we assume will be constructed and pre-loaded into the environment
      * by the the startup pre-amble.
      */
-    case class Primitives(nms : List[Variable]) extends Stmt
+    case class Primitives(nms : Seq[Variable]) extends Stmt
 }

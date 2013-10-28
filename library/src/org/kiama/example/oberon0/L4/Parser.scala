@@ -28,6 +28,7 @@ package L4
 trait Parser extends L3.Parser {
 
     import L0.source.{Expression, TypeDef}
+    import scala.collection.immutable.Seq
     import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
         RecordTypeDef}
 
@@ -56,7 +57,7 @@ trait Parser extends L3.Parser {
     lazy val fldidn =
         ident ^^ FieldIdn
 
-    override def keywordStrings : List[String] =
-        "ARRAY" :: "OF" :: "RECORD" :: super.keywordStrings
+    override def keywordStrings : Seq[String] =
+        "ARRAY" +: "OF" +: "RECORD" +: super.keywordStrings
 
 }

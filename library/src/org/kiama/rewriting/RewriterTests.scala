@@ -31,6 +31,7 @@ import org.scalatest.prop.Checkers
 class RewriterTests extends Tests with Checkers with Generator {
 
     import org.kiama.example.imperative.AST._
+    import scala.collection.immutable.Seq
 
     /**
      * The rewriter which is being tested.
@@ -328,10 +329,10 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         {
-            val l1 = List (Num (1), Num (2), Num (3))
-            val r1 = List (Num (2), Num (3), Num (4))
-            val l2 = List (Num (1), Var ("i"), Num (3))
-            val l3 = List (Num (1))
+            val l1 = Seq (Num (1), Num (2), Num (3))
+            val r1 = Seq (Num (2), Num (3), Num (4))
+            val l2 = Seq (Num (1), Var ("i"), Num (3))
+            val l3 = Seq (Num (1))
 
             test ("map fail over a nil list gives nil") {
                 assertResult (Some (Nil)) (map (rwfail) (Nil))
@@ -531,7 +532,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val incodd = sometd (rule { case i : Int if i % 2 != 0 => i + 1 })
 
         test ("rewrite list: increment all numbers - non-empty") {
-            assertResult (Some (List (2, 3, 4))) ((incall) (List (1, 2, 3)))
+            assertResult (Some (Seq (2, 3, 4))) ((incall) (Seq (1, 2, 3)))
         }
 
         test ("rewrite list: increment all numbers - empty") {
@@ -539,7 +540,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("rewrite list: increment first number - non-empty") {
-            assertResult (Some (List (2, 2, 3))) ((incfirst) (List (1, 2, 3)))
+            assertResult (Some (Seq (2, 2, 3))) ((incfirst) (Seq (1, 2, 3)))
         }
 
         test ("rewrite list: increment first number - empty") {
@@ -547,29 +548,29 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("rewrite list: increment odd numbers - succeed") {
-            assertResult (Some (List (2, 2, 4))) ((incodd) (List (1, 2, 3)))
+            assertResult (Some (Seq (2, 2, 4))) ((incodd) (Seq (1, 2, 3)))
         }
 
         test ("rewrite list: increment odd numbers - fail") {
-            assertResult (None) ((incodd) (List (2, 4, 6)))
+            assertResult (None) ((incodd) (Seq (2, 4, 6)))
         }
 
-        val l = List (List (1, 2), List (3), List (4, 5, 6))
+        val l = Seq (Seq (1, 2), Seq (3), Seq (4, 5, 6))
 
         test ("rewrite list: nested increment all numbers") {
-            assertResult (Some (List (List (2, 3), List (4), List (5, 6, 7)))) ((incall) (l))
+            assertResult (Some (Seq (Seq (2, 3), Seq (4), Seq (5, 6, 7)))) ((incall) (l))
         }
 
         test ("rewrite list: nested increment first number") {
-            assertResult (Some (List (List (2, 2), List (3), List (4, 5, 6)))) ((incfirst) (l))
+            assertResult (Some (Seq (Seq (2, 2), Seq (3), Seq (4, 5, 6)))) ((incfirst) (l))
         }
 
         test ("rewrite list: nested increment odd numbers - succeed") {
-            assertResult (Some (List (List (2, 2), List (4), List (4, 6, 6)))) ((incodd) (l))
+            assertResult (Some (Seq (Seq (2, 2), Seq (4), Seq (4, 6, 6)))) ((incodd) (l))
         }
 
         test ("rewrite list: nested increment odd numbers - fail") {
-            assertResult (None) ((incodd) (List (List (2, 2), List (4), List (4, 6, 6))))
+            assertResult (None) ((incodd) (Seq (Seq (2, 2), Seq (4), Seq (4, 6, 6))))
         }
     }
 
@@ -619,10 +620,10 @@ class RewriterTests extends Tests with Checkers with Generator {
     }
 
     {
-        val l = List (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
-        val ll = List (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
-        val r = List (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
-        val s = List (Sub (Num (0), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+        val l = Seq (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+        val ll = Seq (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+        val r = Seq (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
+        val s = Seq (Sub (Num (0), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
 
         val strat = rule { case _ : Double => 0 }
         val basemsg = "rewrite list: doubles to zero in non-primitive list"
@@ -778,15 +779,15 @@ class RewriterTests extends Tests with Checkers with Generator {
         val m1 = Map (Set (1, 3) -> 0, Set (2, 4, 6) -> 0)
         val m2 = Map (Set (12, 16) -> 0, Set (23) -> 0)
 
-        // List of the maps
-        val l = List (m1, m2)
-        val ll = List (Map (Set (1, 3) -> 0, Set (2, 4, 6) -> 0),
+        // Sequence of the maps
+        val l = Seq (m1, m2)
+        val ll = Seq (Map (Set (1, 3) -> 0, Set (2, 4, 6) -> 0),
                        Map (Set (12, 16) -> 0, Set (23) -> 0))
 
         {
-            val r = List (Map (Set (2, 4) -> 1, Set (3, 5, 7) -> 1),
+            val r = Seq (Map (Set (2, 4) -> 1, Set (3, 5, 7) -> 1),
                           Map (Set (13, 17) -> 1, Set (24) -> 1))
-            val s = List (Map (Set (2, 3) -> 0, Set (2, 4, 6) -> 0),
+            val s = Seq (Map (Set (2, 3) -> 0, Set (2, 4, 6) -> 0),
                           Map (Set (12, 16) -> 0, Set (23) -> 0))
 
             val basemsg = "rewrite set: heterogeneous collection: inc integers"
@@ -802,9 +803,9 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         {
-            val r = List (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 3),
+            val r = Seq (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 3),
                           Map (Set (12, 16) -> 2, Set (23) -> 1))
-            val s = List (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 0),
+            val s = Seq (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 0),
                           Map (Set (12, 16) -> 0, Set (23) -> 0))
 
             val basemsg = "rewrite set: heterogeneous collection: set to size"
@@ -920,21 +921,21 @@ class RewriterTests extends Tests with Checkers with Generator {
     {
         // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
         val p =
-            Seqn (List (
+            Seqn (Seq (
                 Asgn (Var ("i"), Num (10)),
                 Asgn (Var ("count"), Num (0)),
                 While (Var ("i"),
-                    Seqn (List (
+                    Seqn (Seq (
                         Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                         Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
 
         // { i = 0; count = 0; while (i) { count = bob + 1; i = 0 + i; } }
         val q =
-            Seqn (List (
+            Seqn (Seq (
                 Asgn (Var ("i"), Num (0)),
                 Asgn (Var ("count"), Num (0)),
                 While (Var ("i"),
-                    Seqn (List (
+                    Seqn (Seq (
                         Asgn (Var ("count"), Add (Var ("bob"), Num (1))),
                         Asgn (Var ("i"), Add (Num (0), Var ("i"))))))))
 
@@ -1353,7 +1354,7 @@ class RewriterTests extends Tests with Checkers with Generator {
 
     test ("breadthfirst traverses in correct order") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
-        var l : List[Double] = Nil
+        var l = Seq[Double] ()
         val r = rule {
                     case n @ Num (i) => l = l :+ i
                                         n
@@ -1361,7 +1362,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                 }
         val s = breadthfirst (r)
         expectsame (Some (t)) (s (t))
-        assertResult (List (3, 1, 2, 4, 5)) (l)
+        assertResult (Seq (3, 1, 2, 4, 5)) (l)
     }
 
     test ("leaves with a failing leaf detector succeeds but doesn't collect anything") {
@@ -1414,25 +1415,25 @@ class RewriterTests extends Tests with Checkers with Generator {
         val u = Mul (Add (Add (Var ("1.0"), Var ("2.0")), Var ("3.0")), Sub (Var ("4.0"), Var ("5.0")))
 
         test ("innermost visits the correct nodes in the correct order") {
-            var l : List[Double] = Nil
+            var l = Seq[Double] ()
             val r = rule {
                         case Num (i) => l = l :+ i
                                         Var (i.toString)
                     }
             val s = innermost (r)
             assertResult (Some (u)) (s (t))
-            assertResult (List (1, 2, 3, 4, 5)) (l)
+            assertResult (Seq (1, 2, 3, 4, 5)) (l)
         }
 
         test ("innermost2 visits the correct node") {
-            var l : List[Double] = Nil
+            var l = Seq[Double] ()
             val r = rule {
                         case Num (i) => l = l :+ i
                                         Var (i.toString)
                     }
             val s = innermost2 (r)
             assertResult (Some (u)) (s (t))
-            assertResult (List (1, 2, 3, 4, 5)) (l)
+            assertResult (Seq (1, 2, 3, 4, 5)) (l)
         }
 
     }
@@ -1808,7 +1809,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val u = Mul (Add (Add (Num (12), Num (13)), Num (14)), Sub (Num (16), Num (17)))
 
         test ("everywhere traverses in expected order") {
-            var l : List[Double] = Nil
+            var l = Seq[Double] ()
             var count = 9
             val r = rule {
                         case Num (i) => l = l :+ i
@@ -1818,11 +1819,11 @@ class RewriterTests extends Tests with Checkers with Generator {
                     }
             val s = everywhere (r)
             assertResult (Some (u)) (s (t))
-            assertResult (List (1, 2, 3, 4, 5)) (l)
+            assertResult (Seq (1, 2, 3, 4, 5)) (l)
         }
 
         test ("everywheretd traverses in expected order") {
-            var l : List[Double] = Nil
+            var l = Seq[Double] ()
             var count = 9
             val r = rule {
                         case Num (i) => l = l :+ i
@@ -1832,11 +1833,11 @@ class RewriterTests extends Tests with Checkers with Generator {
                     }
             val s = everywheretd (r)
             assertResult (Some (u)) (s (t))
-            assertResult (List (1, 2, 3, 4, 5)) (l)
+            assertResult (Seq (1, 2, 3, 4, 5)) (l)
         }
 
         test ("everywherebu traverses in expected order") {
-            var l : List[Double] = Nil
+            var l = Seq[Double] ()
             var count = 9
             val r = rule {
                         case Num (i) => l = l :+ i
@@ -1846,7 +1847,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     }
             val s = everywheretd (r)
             assertResult (Some (u)) (s (t))
-            assertResult (List (1, 2, 3, 4, 5)) (l)
+            assertResult (Seq (1, 2, 3, 4, 5)) (l)
         }
     }
 

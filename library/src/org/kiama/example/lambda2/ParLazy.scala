@@ -30,13 +30,14 @@ trait ParLazy extends Par {
     import AST._
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
+    import scala.collection.immutable.Seq
 
     /**
      * Lift an expression to be evaluated to a substitution.
      */
     lazy val letLift =
         rule {
-            case e : Exp => Letp (List (), e)
+            case e : Exp => Letp (Seq (), e)
         }
 
     /**

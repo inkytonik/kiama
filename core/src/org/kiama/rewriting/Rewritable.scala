@@ -29,6 +29,8 @@ package rewriting
  */
 trait Rewritable {
 
+    import scala.collection.immutable.Seq
+
     /**
      * Return the number of components that this value has.  Should be
      * greater than or equal to zero.

@@ -22,11 +22,12 @@ package org.kiama
 package example.lambda2
 
 import org.kiama.util.{Emitter, ParsingREPLWithConfig, REPLConfig}
+import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Lambda REPL.
  */
-class LambdaConfig (args : Array[String], emitter : Emitter) extends REPLConfig (args, emitter) {
+class LambdaConfig (args : Seq[String], emitter : Emitter) extends REPLConfig (args, emitter) {
     val mechanism = opt[String] ("mechanism", descr = "Evaluation mechanism",
                                  default = Some ("reduce"))
 }
@@ -46,7 +47,7 @@ object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging
 
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : LambdaConfig =
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : LambdaConfig =
         new LambdaConfig (args, emitter)
 
     val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
@@ -71,10 +72,10 @@ object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
         }
 
         line match {
-            case Command (Array (":help")) =>
+            case Command (Seq (":help")) =>
                 help
 
-            case Command (Array (":eval")) =>
+            case Command (Seq (":eval")) =>
                 emitter.emitln ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
                     emitter.emit (s"  $mech")
@@ -84,9 +85,9 @@ object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
                         emitter.emitln
                 }
 
-            case Command (Array (":eval", mech)) =>
+            case Command (Seq (":eval", mech)) =>
                 if (mechanisms contains mech)
-                    return createConfig (Array ("-m", mech), emitter)
+                    return createConfig (Seq ("-m", mech), emitter)
                 else
                     emitter.emitln (s"unknown evaluation mechanism: $mech")
 
@@ -102,8 +103,8 @@ object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
      * Extractor for commands, splits the line into separate words.
      */
     object Command {
-        def unapply (line : String) : Option[Array[String]] = {
-            Some (line split ' ')
+        def unapply (line : String) : Option[Seq[String]] = {
+            Some ((line split ' ').toIndexedSeq)
         }
     }
 

@@ -37,6 +37,7 @@ class DotNameResolutionTests extends Tests {
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
     import org.kiama.example.picojava.TypeAnalysis._
+    import scala.collection.immutable.Seq
 
     // For the actual program text, see DotNameResolutionTests.pj
 
@@ -45,20 +46,20 @@ class DotNameResolutionTests extends Tests {
     private val bxInBB  = Use ("x")
     private val byInBB  = Use ("y")
     private val BBinBB  = Use ("BB")
-    private val declAA  = ClassDecl ("AA", None, Block (List (declAAx)))
+    private val declAA  = ClassDecl ("AA", None, Block (Seq (declAAx)))
     private val declBB  = ClassDecl ("BB", Some (Use ("AA")), Block (
-                              List (VarDecl (BBinBB, "b"),
-                                    AssignStmt (Dot (Use ("b"), byInBB),
-                                                Dot (Use ("b"), bxInBB)))))
+                              Seq (VarDecl (BBinBB, "b"),
+                                   AssignStmt (Dot (Use ("b"), byInBB),
+                                               Dot (Use ("b"), bxInBB)))))
 
     val ast =
         Program (Block (
-            List (ClassDecl ("A", None, Block (
-                      List (VarDecl (Use ("int"), "y"),
-                            VarDecl (Use ("AA"), "a"),
-                            AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
-                            declAA,
-                            declBB))))))
+            Seq (ClassDecl ("A", None, Block (
+                     Seq (VarDecl (Use ("int"), "y"),
+                          VarDecl (Use ("AA"), "a"),
+                          AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
+                          declAA,
+                          declBB))))))
     initTree (ast)
 
     test ("class members are resolved") {

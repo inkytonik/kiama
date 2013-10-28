@@ -27,6 +27,7 @@ trait PrettyPrinter extends L2.source.PrettyPrinter {
     this : org.kiama.output.PrettyPrinter =>
 
     import base.source.{IdnDef, IdnUse, SourceASTNode}
+    import scala.collection.immutable.Seq
 
     override def toDoc (n : SourceASTNode) : Doc =
         n match {
@@ -45,7 +46,7 @@ trait PrettyPrinter extends L2.source.PrettyPrinter {
                 super.toDoc (n)
         }
 
-    def paramsToDoc (ds : List[Doc], sep : Doc) : Doc =
+    def paramsToDoc (ds : Seq[Doc], sep : Doc) : Doc =
         ds match {
             case Nil => empty
             case _   => space <> parens (hsep (ds, sep))

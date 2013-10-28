@@ -35,6 +35,7 @@ class UniplateTests extends Tests with Checkers with Generator {
     import org.kiama.rewriting.Rewriter._
     import org.scalacheck._
     import org.scalacheck.Prop._
+    import scala.collection.immutable.Seq
 
     /**
      * A simple numeric test expression.
@@ -70,9 +71,9 @@ class UniplateTests extends Tests with Checkers with Generator {
             // Simple check of set and list versions of collect
             val variablesl = collectl { case Var (s) => s }
             assertResult (Set ()) (variabless (numexp))
-            assertResult (List ()) (variablesl (numexp))
+            assertResult (Seq ()) (variablesl (numexp))
             assertResult (Set ("var1", "var2")) (variabless (varexp))
-            assertResult (List ("var1", "var2", "var1")) (variablesl (varexp))
+            assertResult (Seq ("var1", "var2", "var1")) (variablesl (varexp))
         }
     }
 

@@ -42,6 +42,7 @@ object SECDBase {
     import org.kiama.output.PrettyPrinter._
     import scala.language.implicitConversions
     import scala.util.parsing.input.Positional
+    import scala.collection.immutable.Seq
 
     /**
      * Base class for SECD bytecode instructions
@@ -115,6 +116,8 @@ object SECDBase {
             new CodeTree(bs.toList)
         def apply(bs : List[ByteCodeBase]) : CodeTree =
             new CodeTree(bs)
+        def apply(bs : Seq[ByteCodeBase]) : CodeTree =
+            new CodeTree(bs.toList)
     }
 
     case class CodeSegment(code : Code) extends ByteCode {
@@ -162,7 +165,7 @@ object SECDBase {
         }
     }
 
-    case class MkClosures(fss : List[FunctionSpec]) extends Instruction {
+    case class MkClosures(fss : Seq[FunctionSpec]) extends Instruction {
         override def toDoc : Doc =
             list(fss, "MkClosures", (fs : FunctionSpec) => fs.toDoc)
     }
@@ -170,8 +173,8 @@ object SECDBase {
     case class App() extends Instruction
     case class TailApp() extends Instruction
 
-    case class Enter(nms : List[Name]) extends Instruction
-    case class BindPrims(nms : List[Name]) extends Instruction
+    case class Enter(nms : Seq[Name]) extends Instruction
+    case class BindPrims(nms : Seq[Name]) extends Instruction
     case class Exit() extends Instruction
 
     /**

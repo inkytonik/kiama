@@ -33,6 +33,7 @@ trait Rewriter extends RewriterCore {
 
     import scala.collection.generic.CanBuildFrom
     import scala.language.higherKinds
+    import scala.collection.immutable.Seq
 
     /**
      * Rewrite a term.  Apply the strategy `s` to a term returning the result term
@@ -373,8 +374,8 @@ trait Rewriter extends RewriterCore {
      */
     def map (name : String, s : Strategy) : Strategy =
         strategy (name, {
-            case l : List[_] =>
-                allTraversable[List] (s, l)
+            case l : Seq[_] =>
+                allTraversable[Seq] (s, l)
         })
 
     /**

@@ -23,11 +23,12 @@ package example.picojava
 
 import AbstractSyntax.Program
 import org.kiama.util.{CompilerWithConfig, Config, Emitter}
+import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Picojava compiler.
  */
-class PicojavaConfig (args : Array[String], emitter : Emitter) extends Config (args, emitter) {
+class PicojavaConfig (args : Seq[String], emitter : Emitter) extends Config (args, emitter) {
     val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
 }
 
@@ -38,7 +39,7 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with Parser {
     import PrettyPrinter.pretty
     import org.kiama.util.Config
 
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : PicojavaConfig =
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : PicojavaConfig =
         new PicojavaConfig (args, emitter)
 
     /**

@@ -36,6 +36,7 @@ object AbstractSyntax {
 
     import org.kiama.attribution.Attributable
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     // Created by parser
     sealed trait ASTNode extends Attributable with Positioned

@@ -23,11 +23,12 @@ package example.oberon0
 package L4.c
 
 import base.c.{CDeclaration, CExpression, CType, CVarDecl}
+import scala.collection.immutable.Seq
 
 /**
  * C record types.
  */
-case class CRecordType (fields : List[CVarDecl]) extends CType
+case class CRecordType (fields : Seq[CVarDecl]) extends CType
 
 /**
  * C array index expressions.

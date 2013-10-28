@@ -24,6 +24,7 @@ package L3.c
 
 import base.c.{CExpression, CStatement, CType}
 import L0.c.CUnaryExpression
+import scala.collection.immutable.Seq
 
 /**
  * C void type.
@@ -38,7 +39,7 @@ case class CAddrType (basetype : CType) extends CType
 /**
  * C call statements.
  */
-case class CCall (s : String, ps : List[CExpression]) extends CStatement
+case class CCall (s : String, ps : Seq[CExpression]) extends CStatement
 
 /**
  * C string expressions.

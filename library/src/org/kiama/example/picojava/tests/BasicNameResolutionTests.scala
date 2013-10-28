@@ -37,6 +37,7 @@ class BasicNameResolutionTests extends Tests {
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
     import org.kiama.example.picojava.TypeAnalysis._
+    import scala.collection.immutable.Seq
 
     // For the actual program text, see BasicNameResolutionTests.pj
 
@@ -52,14 +53,14 @@ class BasicNameResolutionTests extends Tests {
 
     val ast =
         Program (Block (
-            List (declRx,
-                  AssignStmt (xInR, zInR),
-                  declRz,
-                  AssignStmt (yInR, Use ("x")),
-                  ClassDecl ("A", None, Block (
-                      List (declAz,
-                            AssignStmt (xInA, zInA),
-                            AssignStmt (yInA, Use ("z"))))))))
+            Seq (declRx,
+                 AssignStmt (xInR, zInR),
+                 declRz,
+                 AssignStmt (yInR, Use ("x")),
+                 ClassDecl ("A", None, Block (
+                     Seq (declAz,
+                          AssignStmt (xInA, zInA),
+                          AssignStmt (yInA, Use ("z"))))))))
     initTree (ast)
 
     test ("bindings at the same nesting level are resolved") {

@@ -32,6 +32,8 @@ import scala.language.implicitConversions
  */
 trait PrettyPrinterBase {
 
+    import scala.collection.immutable.Seq
+
     /**
      * Indentation is expressed as integer space units.
      */
@@ -256,10 +258,24 @@ trait PrettyPrinterBase {
      * is converted to a document (default: use the `value` combinator).
      * `sep` defaults to `comma`.
      */
-    def list[T] (l : List[T], prefix : String = "List",
+    def list[T] (l : Seq[T], prefix : String = "List",
                  elemToDoc : T => Doc = (x : T) => value (x),
                  sep : Doc = comma,
                  sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+        seq (l, prefix, elemToDoc, sep, sepfn)
+
+    /**
+     * Return a document that pretty-prints a sequence in Scala notation,
+     * inserting line breaks between elements as necessary.
+     * The `prefix` string can be changed from the default `"Seq"`.
+     * The `elemToDoc` argument can be used to alter the way each element
+     * is converted to a document (default: use the `value` combinator).
+     * `sep` defaults to `comma`.
+     */
+    def seq[T] (l : Seq[T], prefix : String = "Seq",
+                elemToDoc : T => Doc = (x : T) => value (x),
+                sep : Doc = comma,
+                sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
@@ -275,6 +291,21 @@ trait PrettyPrinterBase {
                elemToDoc : PrettyPrintable => Doc = _.toDoc,
                sep : Doc = comma,
                sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+        pseq (l, prefix, elemToDoc, sep, sepfn)
+
+    /**
+     * Return a document that pretty-prints a sequence of pretty-printables
+     * in Scala notation, inserting line breaks between elements as necessary.
+     * The `prefix` string can be changed from the default `"Seq"`.
+     * The `elemToDoc` argument can be used to alter the way each element
+     * is converted to a document (default: call the element's `toDoc`
+     * method).
+     * `sep` defaults to a `comma`.
+     */
+    def pseq (l : Seq[PrettyPrintable], prefix : String = "Seq",
+              elemToDoc : PrettyPrintable => Doc = _.toDoc,
+              sep : Doc = comma,
+              sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
@@ -757,14 +788,14 @@ trait PrettyPrinterBase {
 trait PrettyPrinter extends PrettyPrinterBase {
 
     import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
-    import scala.collection.immutable.Queue
+    import scala.collection.immutable.{Queue, Seq}
     import scala.collection.immutable.Queue.{empty => emptyDq}
 
     // Internal data types
 
     private type Remaining  = Int
     private type Horizontal = Boolean
-    private type Buffer     = Vector[String]
+    private type Buffer     = Seq[String]
     private type Out        = Remaining => Trampoline[Buffer]
     private type OutGroup   = Horizontal => Out => Trampoline[Out]
     private type PPosition  = Int
@@ -974,7 +1005,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
     // Obtaining output
 
     def pretty (d : Doc, w : Width = defaultWidth) : Layout = {
-        val initBuffer = Vector[String] ()
+        val initBuffer = Seq[String] ()
         val cend =
             (p : PPosition, dq : Dq) =>
                 Done ((r : Remaining) => Done (initBuffer))

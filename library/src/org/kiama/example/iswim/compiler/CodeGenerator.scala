@@ -30,6 +30,7 @@ import org.kiama.example.iswim.secd._
 trait CodeGenerator {
 
     import org.kiama.attribution.Attribution._
+    import scala.collection.immutable.Seq
 
     import Syntax._
 
@@ -176,7 +177,7 @@ trait CodeGenerator {
              * Function Definition and Application
              */
             case Lambda(Variable(pn),bdy) =>
-                MkClosures(List(FunctionSpec(None,pn,code(bdy))))
+                MkClosures(Seq(FunctionSpec(None,pn,code(bdy))))
             case Return(e) => CodeTree(e->code, ResumeFromDump())
             case Apply(f,e) => CodeTree(e->code, f->code, App())
 
@@ -186,7 +187,7 @@ trait CodeGenerator {
             case If(e,thn,els) => CodeTree(e->code, Test(code(thn), code(els)))
             // We translate "while" into a tail recursion.
             case While(ctrl,body) => CodeTree(
-                MkClosures(List(
+                MkClosures(Seq(
                     FunctionSpec(None,"@loop",CodeTree(
                         ctrl->code,
                         Test(
@@ -231,8 +232,8 @@ trait CodeGenerator {
              */
             case Tuple(fs) => CodeTree(CodeTree(fs.map(code)),MkRecord(fs.length))
 
-            case MatchClause(Pattern(List(Variable(s))),e) =>
-                CodeTree(Pop(1), Enter(List(s)), e->code, Exit())
+            case MatchClause(Pattern(Seq(Variable(s))),e) =>
+                CodeTree(Pop(1), Enter(Seq(s)), e->code, Exit())
             case m@MatchClause(Pattern(pat),e) =>
                 CodeTree(
                     Dup(1),

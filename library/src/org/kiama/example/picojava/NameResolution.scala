@@ -37,6 +37,7 @@ object NameResolution {
     import TypeAnalysis._
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
+    import scala.collection.immutable.Seq
 
     /**
      * decl refers to the appropriate declaration of the Access,

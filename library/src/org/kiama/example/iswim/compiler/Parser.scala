@@ -34,7 +34,7 @@ trait Parser extends JavaTokenParsers with WhitespacePositionedParserUtilities {
 
     import org.kiama.util.Positioned
     import Syntax._
-    import scala.collection.immutable.HashSet
+    import scala.collection.immutable.{HashSet, Seq}
     import scala.math._
     import scala.util.matching.Regex
 
@@ -177,9 +177,9 @@ trait Parser extends JavaTokenParsers with WhitespacePositionedParserUtilities {
         ^^    {case ce ~ p ~ cs => Match(ce, cs) setPos p}
         )
 
-    lazy val pattern : PackratParser[(Pos, List[Variable])] = (
-            operator("()") ^^ (p => (p,List()))
-        |   variable ^^ (v => (Pos("") setPos v, List(v)))
+    lazy val pattern : PackratParser[(Pos, Seq[Variable])] = (
+            operator("()") ^^ (p => (p,Seq()))
+        |   variable ^^ (v => (Pos("") setPos v, Seq(v)))
         |   operator("(") ~ rep1sep(variable, operator(",")) <~ operator(")") ^^
                 {case p ~ vs => (p, vs)}
         )

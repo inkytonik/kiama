@@ -27,28 +27,29 @@ object PicoJavaBenchmark extends App {
     import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.ErrorCheck._
     import org.kiama.util.Emitter
+    import scala.collection.immutable.Seq
 
     val emitter = new Emitter
 
     // For the actual program text this is based on, see DotNameResolutionTests.pj
 
     def basicAst : ClassDecl =
-        ClassDecl ("AA", None, Block (List (VarDecl (Use ("int"), "x"))))
+        ClassDecl ("AA", None, Block (Seq (VarDecl (Use ("int"), "x"))))
 
     def createAst (subtree : ClassDecl) : ClassDecl =
         ClassDecl ("AA", None, Block (
-              List (VarDecl (Use ("int"), "y"),
-                    VarDecl (Use ("AA"), "a"),
-                    AssignStmt (Use ("x"),
-                                Dot (Use ("a"), Use ("x"))),
-                    subtree,
-                    ClassDecl ("BB", Some (Use ("AA")), Block (
-                        List (VarDecl (Use ("BB"), "b"),
-                              AssignStmt (Dot (Use ("b"), Use("y")),
-                                          Dot (Use ("b"), Use("x")))))))))
+              Seq (VarDecl (Use ("int"), "y"),
+                   VarDecl (Use ("AA"), "a"),
+                   AssignStmt (Use ("x"),
+                               Dot (Use ("a"), Use ("x"))),
+                   subtree,
+                   ClassDecl ("BB", Some (Use ("AA")), Block (
+                       Seq (VarDecl (Use ("BB"), "b"),
+                            AssignStmt (Dot (Use ("b"), Use("y")),
+                                        Dot (Use ("b"), Use("x")))))))))
 
     def createProgram (subtree : ClassDecl) : Program =
-        Program (Block (List (subtree)))
+        Program (Block (Seq (subtree)))
 
     // Warm up the JIT compiler
 

@@ -29,7 +29,7 @@ package example.obr
 object SymbolTable {
 
     import ObrTree._
-    import scala.collection.immutable.Map
+    import scala.collection.immutable.{Map, Seq}
     import org.kiama.util.Counter
 
     /**
@@ -152,7 +152,7 @@ object SymbolTable {
     /**
      * A record type with the given fields.
      */
-    case class RecordType (fields : List[Identifier]) extends Type {
+    case class RecordType (fields : Seq[Identifier]) extends Type {
         override val storage = WORDSIZE * fields.length
         override def toString : String = "record"
     }

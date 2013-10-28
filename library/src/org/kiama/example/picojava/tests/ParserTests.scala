@@ -35,6 +35,7 @@ import org.kiama.util.RegexParserTests
 class ParserTests extends Parser with RegexParserTests {
 
     import org.kiama.example.picojava.AbstractSyntax._
+    import scala.collection.immutable.Seq
 
     test ("parse identifier: single letter") {
         assertParseOk ("a", IDENTIFIER, "a")
@@ -81,7 +82,7 @@ class ParserTests extends Parser with RegexParserTests {
     }
 
     test ("parse an empty block") {
-        assertParseOk ("{}", program, Program (Block (List ())))
+        assertParseOk ("{}", program, Program (Block (Seq ())))
     }
 
     test ("generate a parse error for an empty program") {
@@ -94,12 +95,12 @@ class ParserTests extends Parser with RegexParserTests {
 
     test ("parse an empty class declaration") {
         assertParseOk ("{ class A { } }", program,
-            Program (Block (List (ClassDecl ("A", None, Block (List ()))))))
+            Program (Block (Seq (ClassDecl ("A", None, Block (Seq ()))))))
     }
 
     test ("parse an empty class declaration with an extends clause") {
         assertParseOk ("{ class A extends B { } }", program,
-            Program (Block (List (ClassDecl ("A", Some (Use ("B")), Block (List ()))))))
+            Program (Block (Seq (ClassDecl ("A", Some (Use ("B")), Block (Seq ()))))))
     }
 
     test ("generate a parse error for a class declaration with a qualified extends clause") {
@@ -109,17 +110,17 @@ class ParserTests extends Parser with RegexParserTests {
 
     test ("parse a nested class") {
         assertParseOk ("{ class A { class B { } } }", program,
-            Program (Block (List (ClassDecl ("A", None, Block (List (ClassDecl ("B", None, Block (List ())))))))))
+            Program (Block (Seq (ClassDecl ("A", None, Block (Seq (ClassDecl ("B", None, Block (Seq ())))))))))
     }
 
     test ("parse a variable declaration with a simple type") {
         assertParseOk ("{ A a; }", program,
-            Program (Block (List (VarDecl (Use ("A"), "a")))))
+            Program (Block (Seq (VarDecl (Use ("A"), "a")))))
     }
 
     test ("parse a variable declaration with a qualified type") {
         assertParseOk ("{ A.B.C a; }", program,
-            Program (Block (List (VarDecl (Dot (Dot (Use ("A"), Use ("B")), Use ("C")), "a")))))
+            Program (Block (Seq (VarDecl (Dot (Dot (Use ("A"), Use ("B")), Use ("C")), "a")))))
     }
 
     test ("generate an error for a qualified variable declaration") {
@@ -129,22 +130,22 @@ class ParserTests extends Parser with RegexParserTests {
 
     test ("parse a simple assignment statement") {
         assertParseOk ("{ a = b; }", program,
-            Program (Block (List (AssignStmt (Use ("a"), Use ("b"))))))
+            Program (Block (Seq (AssignStmt (Use ("a"), Use ("b"))))))
     }
 
     test ("parse an assignment statement with a qualified left-hand side") {
         assertParseOk ("{ a.b.c = b; }", program,
-            Program (Block (List (AssignStmt (Dot (Dot (Use ("a"), Use ("b")), Use ("c")), Use ("b"))))))
+            Program (Block (Seq (AssignStmt (Dot (Dot (Use ("a"), Use ("b")), Use ("c")), Use ("b"))))))
     }
 
     test ("parse an assignment statement with a qualified right-hand side") {
         assertParseOk ("{ a = b.c.d; }", program,
-            Program (Block (List (AssignStmt (Use ("a"), Dot (Dot (Use ("b"), Use ("c")), Use ("d")))))))
+            Program (Block (Seq (AssignStmt (Use ("a"), Dot (Dot (Use ("b"), Use ("c")), Use ("d")))))))
     }
 
     test ("parse a while statement") {
         assertParseOk ("{ while ( a ) a = b; }", program,
-            Program (Block (List (WhileStmt (Use ("a"), AssignStmt (Use ("a"), Use ("b")))))))
+            Program (Block (Seq (WhileStmt (Use ("a"), AssignStmt (Use ("a"), Use ("b")))))))
     }
 
     test ("generate an error for a while statement with a block body") {

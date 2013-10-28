@@ -30,6 +30,7 @@ trait RewriterCore {
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
     import scala.collection.mutable.WeakHashMap
+    import scala.collection.immutable.Seq
     import scala.language.higherKinds
     import scala.language.experimental.macros
 
@@ -366,14 +367,14 @@ trait RewriterCore {
      * there are the wrong number of new children, or if one of the new
      * children is not of the appropriate type.
      */
-    protected def dup[T <: Product] (t : T, children : Array[AnyRef]) : T = {
+    protected def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T = {
         val clazz = t.getClass
         val ctor = constrcache.getOrElseUpdate (clazz, (clazz.getConstructors())(0))
         try {
             ctor.newInstance (children : _*).asInstanceOf[T]
         } catch {
             case e : IllegalArgumentException =>
-                sys.error (s"""dup illegal arguments: $ctor (${children.deep.mkString (",")}), expects ${ctor.getParameterTypes.length}""")
+                sys.error (s"""dup illegal arguments: $ctor (${children.mkString (",")}), expects ${ctor.getParameterTypes.length}""")
         }
     }
 
@@ -432,7 +433,7 @@ trait RewriterCore {
                 case Some (ti) =>
                     val newchildren = p.productIterator.toArray.map (makechild)
                     newchildren (i - 1) = makechild (ti)
-                    val ret = dup (p, newchildren)
+                    val ret = dup (p, newchildren.toIndexedSeq)
                     Some (ret)
                 case None =>
                     None
@@ -530,20 +531,20 @@ trait RewriterCore {
         if (numchildren == 0)
             Some (r)
         else {
-            val newchildren = new Array[Any](numchildren)
-            val (changed, _) =
-                r.deconstruct.foldLeft (false, 0) {
-                    case ((changed, i), ct) =>
+            val newchildren = Seq.newBuilder[Any]
+            val changed =
+                r.deconstruct.foldLeft (false) {
+                    case (changed, ct) =>
                         s (ct) match {
                             case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                (changed || !same (ct, ti), i + 1)
+                                newchildren += makechild (ti)
+                                changed || !same (ct, ti)
                             case None =>
                                 return None
                         }
                 }
             if (changed) {
-                val ret = r.reconstruct (newchildren)
+                val ret = r.reconstruct (newchildren.result ())
                 Some (ret)
             } else
                 Some (r)
@@ -558,20 +559,20 @@ trait RewriterCore {
         if (numchildren == 0)
             Some (p)
         else {
-            val newchildren = new Array[AnyRef](numchildren)
-            val (changed, _) =
-                p.productIterator.foldLeft (false, 0) {
-                    case ((changed, i), ct) =>
+            val newchildren = Seq.newBuilder[AnyRef]
+            val changed =
+                p.productIterator.foldLeft (false) {
+                    case (changed, ct) =>
                         s (ct) match {
                             case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                (changed || !same (ct, ti), i + 1)
+                                newchildren += makechild (ti)
+                                changed || !same (ct, ti)
                             case None =>
                                 return None
                         }
                 }
             if (changed) {
-                val ret = dup (p, newchildren)
+                val ret = dup (p, newchildren.result)
                 Some (ret)
             } else
                 Some (p)
@@ -706,7 +707,7 @@ trait RewriterCore {
                     case Some (ti) =>
                         val newchildren = p.productIterator.toArray.map (makechild)
                         newchildren (i) = makechild (ti)
-                        val ret = dup (p, newchildren)
+                        val ret = dup (p, newchildren.toIndexedSeq)
                         return Some (ret)
                     case None =>
                         i + 1
@@ -826,22 +827,22 @@ trait RewriterCore {
         if (numchildren == 0)
             None
         else {
-            val newchildren = new Array[Any](numchildren)
-            val (success, changed, _) =
-                r.deconstruct.foldLeft (false, false, 0) {
-                    case ((success, changed, i), ct) =>
+            val newchildren = Seq.newBuilder[Any]
+            val (success, changed) =
+                r.deconstruct.foldLeft (false, false) {
+                    case ((success, changed), ct) =>
                         s (ct) match {
                             case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                (true, changed || !same (ct, ti), i + 1)
+                                newchildren += makechild (ti)
+                                (true, changed || !same (ct, ti))
                             case None =>
-                                newchildren (i) = makechild (ct)
-                                (success, changed, i + 1)
+                                newchildren += makechild (ct)
+                                (success, changed)
                         }
                 }
             if (success)
                 if (changed) {
-                    val ret = r.reconstruct (newchildren)
+                    val ret = r.reconstruct (newchildren.result ())
                     Some (ret)
                 } else
                     Some (r)
@@ -858,22 +859,22 @@ trait RewriterCore {
         if (numchildren == 0)
             None
         else {
-            val newchildren = new Array[AnyRef](numchildren)
-            val (success, changed, _) =
-                p.productIterator.foldLeft (false, false, 0) {
-                    case ((success, changed, i), ct) =>
+            val newchildren = Seq.newBuilder[AnyRef]
+            val (success, changed) =
+                p.productIterator.foldLeft (false, false) {
+                    case ((success, changed), ct) =>
                         s (ct) match {
                             case Some (ti) =>
-                                newchildren (i) = makechild (ti)
-                                (true, changed || !same (ct, ti), i + 1)
+                                newchildren += makechild (ti)
+                                (true, changed || !same (ct, ti))
                             case None =>
-                                newchildren (i) = makechild (ct)
-                                (success, changed, i + 1)
+                                newchildren += makechild (ct)
+                                (success, changed)
                         }
                 }
             if (success)
                 if (changed) {
-                    val ret = dup (p, newchildren)
+                    val ret = dup (p, newchildren.result)
                     Some (ret)
                 } else
                     Some (p)
@@ -980,20 +981,20 @@ trait RewriterCore {
     def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
        val numchildren = p.productArity
        if (numchildren == ss.length) {
-           val newchildren = new Array[AnyRef](numchildren)
+           val newchildren = Seq.newBuilder[AnyRef]
            val (changed, _) =
                p.productIterator.foldLeft (false, 0) {
                    case ((changed, i), ct) =>
                        (ss (i)) (ct) match {
                            case Some (ti) =>
-                               newchildren (i) = makechild (ti)
+                               newchildren += makechild (ti)
                                (changed || !same (ct, ti), i + 1)
                            case None =>
                                return None
                        }
                }
            if (changed) {
-               val ret = dup (p, newchildren)
+               val ret = dup (p, newchildren.result)
                Some (ret)
            } else
                Some (p)
@@ -1241,10 +1242,10 @@ trait RewriterCore {
     def loopnot (r : Strategy, s : Strategy) : Strategy =
         macro RewriterCoreMacros.loopnotMacro
     /**
-     * Construct a strategy that applies `s` to each element of a list,
-     * returning a new list of the results if all of the applications
+     * Construct a strategy that applies `s` to each element of a sequence,
+     * returning a new sequence of the results if all of the applications
      * succeed, otherwise fail.  If all of the applications succeed
-     * without change, return the input list.
+     * without change, return the input sequence.
      */
     def map (s : Strategy) : Strategy =
         macro RewriterCoreMacros.mapMacro

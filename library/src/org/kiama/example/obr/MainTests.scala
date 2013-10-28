@@ -37,6 +37,7 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
     import org.kiama.util.{Config, Emitter, Messaging}
     import org.kiama.util.IO._
     import org.kiama.rewriting.Rewriter._
+    import scala.collection.immutable.Seq
 
     /**
      * Method to compile an Obr program and to apply a specified test to
@@ -52,7 +53,7 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
             RISCLabels.reset ()
 
             val filename = dirname + obrfile
-            val config = createConfig (Array (filename))
+            val config = createConfig (Seq (filename))
 
             try {
                 val reader = filereader (filename)
@@ -86,15 +87,15 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * Test a target tree by collecting together its IntDatum leaves and checking the resulting
      * sequence of integers to see if it contains an expected sequence of integers as a slice.
      */
-    def checkintdatums (expected : List[Int]) (title : String, emitter : Emitter, code : RISCNode) {
-        var realised : List[Int] = Nil
+    def checkintdatums (expected : Seq[Int]) (title : String, emitter : Emitter, code : RISCNode) {
+        val realised = Seq.newBuilder[Int]
         bottomup (query {
             case IntDatum(num) =>
-                realised = num :: realised
+                realised += num
             case n : RISCProg  =>
-                realised = realised.reverse
-                if (!(realised containsSlice expected))
-                    fail (s"$title unexpected IntDatum leaves, found $realised expected slice $expected")
+                val found = realised.result
+                if (!(found containsSlice expected))
+                    fail (s"$title unexpected IntDatum leaves, found $found expected slice $expected")
         }) (code)
     }
 }

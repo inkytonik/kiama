@@ -29,7 +29,7 @@ trait Lifter extends base.Transformer with NameAnalyser {
 
     import base.source.{Block, Declaration, ModuleDecl}
     import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
-    import scala.collection.mutable.ListBuffer
+    import scala.collection.immutable.Seq
 
     /**
      * Lift inner declarations within the module to the top level.  Assumes
@@ -38,9 +38,9 @@ trait Lifter extends base.Transformer with NameAnalyser {
     override def transform (m : ModuleDecl) : ModuleDecl = {
 
         /**
-         * Buffer of collected declarations.
+         * The collected declarations.
          */
-        val decls = ListBuffer[Declaration] ()
+        val decls = Seq.newBuilder[Declaration]
 
         /**
          * Lift declarations from inner blocks to the top level by adding
@@ -53,14 +53,14 @@ trait Lifter extends base.Transformer with NameAnalyser {
 
                     // Add this block's decls to the buffer, clear them
                     case Block (ds, ss) =>
-                        decls appendAll ds
+                        decls ++= ds
                         Block (Nil, ss)
 
                     // The module declarations will have been added to the
                     // buffer already. Create a new module with all of the
                     // accumulated declarations.
                     case ModuleDecl (i1, Block (Nil, ss), i2) =>
-                        ModuleDecl (i1, Block (decls.result, ss), i2)
+                        ModuleDecl (i1, Block (decls.result (), ss), i2)
 
                 }
             )

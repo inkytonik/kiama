@@ -22,11 +22,13 @@ package org.kiama
 package example.oberon0
 package L2.source
 
+
 trait PrettyPrinter extends L1.source.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
     import base.source.SourceASTNode
+    import scala.collection.immutable.Seq
 
     override def toDoc (n : SourceASTNode) : Doc =
         n match {
@@ -52,7 +54,7 @@ trait PrettyPrinter extends L1.source.PrettyPrinter {
         s.optelse.map (b => "ELSE" <> semisep (b.stmts) <> line).getOrElse (empty) <>
         "END"
 
-    def casesToDoc (l : List[Case]) : Doc = {
+    def casesToDoc (l : Seq[Case]) : Doc = {
 
         def condToDoc (cond : Condition) : Doc =
             cond match {
@@ -62,7 +64,7 @@ trait PrettyPrinter extends L1.source.PrettyPrinter {
                     toDoc (min) <+> ".." <+> toDoc (max)
             }
 
-        def condsToDoc (conds : List[Condition]) : Doc =
+        def condsToDoc (conds : Seq[Condition]) : Doc =
             hsep (conds map condToDoc, comma)
 
         def singleCaseToDoc (kase : Case) : Doc =

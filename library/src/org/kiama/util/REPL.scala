@@ -22,6 +22,7 @@ package org.kiama
 package util
 
 import org.kiama.attribution.Attributable
+import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
 
 /**
@@ -40,14 +41,14 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * The entry point for this REPL.
      */
     def main (args : Array[String]) {
-        driver (args)
+        driver (args.toIndexedSeq)
     }
 
     /**
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : C
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : C
 
     /**
      * Driver for this REPL. First, use the argument list to create a
@@ -57,7 +58,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * contain just whitespace, otherwise do. Continue until `processline`
      * returns false. Call `prompt` each time input is about to be read.
      */
-    def driver (args : Array[String]) {
+    def driver (args : Seq[String]) {
         val config = createConfig (args)
         config.emitter.emitln (banner)
         if (config.profile.get != None) {
@@ -100,7 +101,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
  */
 trait REPL extends REPLBase[REPLConfig] {
 
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : REPLConfig =
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : REPLConfig =
         new REPLConfig (args, emitter)
 
 }
@@ -156,7 +157,7 @@ trait ParsingREPLWithConfig[T <: Attributable, C <: REPLConfig] extends ParsingR
  */
 trait ParsingREPL[T <: Attributable] extends ParsingREPLWithConfig[T,REPLConfig] {
 
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : REPLConfig =
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : REPLConfig =
         new REPLConfig (args, emitter)
 
 }

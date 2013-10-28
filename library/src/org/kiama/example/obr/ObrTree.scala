@@ -29,6 +29,7 @@ object ObrTree {
 
     import org.kiama.attribution.Attributable
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     /**
      * Interface for all Obr tree nodes.
@@ -40,8 +41,8 @@ object ObrTree {
      * returning an integer value.  The two identifiers name the program and
      * must be the same.
      */
-    case class ObrInt (idn1: Identifier, decls : List[Declaration],
-                       stmts : List[Statement], idn2 : Identifier) extends ObrNode
+    case class ObrInt (idn1: Identifier, decls : Seq[Declaration],
+                       stmts : Seq[Statement], idn2 : Identifier) extends ObrNode
 
     /**
      * Marker trait for all node types that have an entity.
@@ -81,12 +82,12 @@ object ObrTree {
     /**
      * A declaration of a record variable with the given fields.
      */
-    case class RecordVar (idn: Identifier, fields : List[Identifier]) extends Declaration
+    case class RecordVar (idn: Identifier, fields : Seq[Identifier]) extends Declaration
 
     /**
      * A declaration of an enumeration variable with given enumeration constants.
      */
-    case class EnumVar (idn : Identifier, consts : List[EnumConst]) extends Declaration
+    case class EnumVar (idn : Identifier, consts : Seq[EnumConst]) extends Declaration
 
     /**
      * A declaration of an enumeration constant
@@ -124,20 +125,20 @@ object ObrTree {
      * a range given by its two expressions.
      */
     case class ForStmt (idn : Identifier, min : Expression, max : Expression,
-                        body : List[Statement]) extends Statement with EntityNode
+                        body : Seq[Statement]) extends Statement with EntityNode
 
     /**
      * A conditional statement that evaluates a Boolean expression and, if it is
      * true, executes its first sequence of statements, and if its is false, executes
      * its second sequence of statements.
      */
-    case class IfStmt (cond : Expression, thens : List[Statement],
-                       elses : List[Statement]) extends Statement
+    case class IfStmt (cond : Expression, thens : Seq[Statement],
+                       elses : Seq[Statement]) extends Statement
 
     /**
      * A loop that executes forever.
      */
-    case class LoopStmt (body : List[Statement]) extends Statement
+    case class LoopStmt (body : Seq[Statement]) extends Statement
 
     /**
      * A statement that returns a value and terminates the program.
@@ -147,7 +148,7 @@ object ObrTree {
     /**
      * A statement that executes its body while its expression is true.
      */
-    case class WhileStmt (cond : Expression, body : List[Statement]) extends Statement
+    case class WhileStmt (cond : Expression, body : Seq[Statement]) extends Statement
 
     /**
      * A statement that raises a specified exception.
@@ -157,9 +158,9 @@ object ObrTree {
     /**
      * A statement that is used to catch exception
      */
-    case class TryStmt (body : TryBody, catches : List[Catch]) extends Statement
-    case class TryBody (stmts : List[Statement]) extends ObrNode
-    case class Catch (idn : Identifier, stmts : List[Statement]) extends ObrNode with EntityNode
+    case class TryStmt (body : TryBody, catches : Seq[Catch]) extends Statement
+    case class TryBody (stmts : Seq[Statement]) extends ObrNode
+    case class Catch (idn : Identifier, stmts : Seq[Statement]) extends ObrNode with EntityNode
 
     /**
     * Superclass of all expression classes.

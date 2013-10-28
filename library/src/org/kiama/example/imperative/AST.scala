@@ -30,6 +30,7 @@ object AST {
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     /**
      * Identifiers are represented as strings.

@@ -38,7 +38,8 @@ object ErrorCheck {
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Patterns.HasParent
-    import scala.collection.mutable.{Buffer,ListBuffer}
+    import scala.collection.immutable.Seq
+    import scala.collection.mutable.Builder
 
     /**
      * All of the error messages for a program.
@@ -51,9 +52,9 @@ object ErrorCheck {
      */
     val errors : Program => Seq[String] =
         p => {
-            val b = new ListBuffer[String] ()
+            val b = Seq.newBuilder[String]
             p->collectErrors (b)
-            b
+            b.result ()
         }
 
     /**
@@ -91,7 +92,7 @@ object ErrorCheck {
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val collectErrors : Buffer[String] => Attributable => Unit =
+    val collectErrors : Builder[String,Seq[String]] => Attributable => Unit =
         // NOTE: Not using paramAttr here, since we don't want caching for this
         c => (
             t => {
@@ -128,7 +129,7 @@ object ErrorCheck {
      *    c.add(s);
      * }
      */
-    val record : (Buffer[String],String) => ASTNode => Unit =
+    val record : (Builder[String,Seq[String]],String) => ASTNode => Unit =
         (b,s) => a => b += s"${a.start}: $s"
 
     /**

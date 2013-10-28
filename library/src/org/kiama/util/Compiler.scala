@@ -23,6 +23,7 @@ package util
 
 import java.io.Reader
 import org.kiama.attribution.Attributable
+import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
 
 /**
@@ -42,21 +43,21 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * The entry point for this compiler.
      */
     def main (args : Array[String]) {
-        driver (args)
+        driver (args.toIndexedSeq)
     }
 
     /**
      * Create the configuration for a particular run of the compiler.
      * If supplied, use `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : C
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : C
 
     /**
      * Driver for this compiler. First, use the argument list to create a
      * configuration for this execution. Then, use the configuration to
      * run the file processing in the appropriate way.
      */
-    def driver (args : Array[String]) {
+    def driver (args : Seq[String]) {
         val config = createConfig (args)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
@@ -167,7 +168,7 @@ trait CompilerWithConfig[T <: Attributable, C <: Config] extends CompilerBase[T,
  */
 trait Compiler[T <: Attributable] extends CompilerWithConfig[T,Config] {
 
-    def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Config =
+    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : Config =
         new Config (args, emitter)
 
 }

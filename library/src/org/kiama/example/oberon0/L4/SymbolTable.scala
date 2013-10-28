@@ -24,6 +24,8 @@ package L4
 
 trait SymbolTable extends L3.SymbolTable {
 
+    import scala.collection.immutable.Seq
+
     /**
      * An array type with the given size and element type.  Setting size
      * to zero and elemtype to the unknown type means an arbitrary array
@@ -36,7 +38,7 @@ trait SymbolTable extends L3.SymbolTable {
     /**
      * A record with the given fields.
      */
-    case class RecordType (fields : List[Field]) extends Type {
+    case class RecordType (fields : Seq[Field]) extends Type {
         override def toString : String = s"RECORD ${fields.mkString ("; ")} END"
     }
 

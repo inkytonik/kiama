@@ -29,8 +29,9 @@ trait Parser extends L2.Parser {
 
     import base.source.{Declaration, Statement}
     import source.{Call, FPSection, ProcDecl, ValMode, VarMode}
+    import scala.collection.immutable.Seq
 
-    override def declarationsDef : PackratParser[List[Declaration]] =
+    override def declarationsDef : PackratParser[Seq[Declaration]] =
         super.declarationsDef ~ rep (procedureDeclaration <~ ";") ^^ {
             case ds ~ pds => ds ++ pds
         }
@@ -38,7 +39,7 @@ trait Parser extends L2.Parser {
     lazy val procedureDeclaration =
         ("PROCEDURE" ~> idndef) ~ (optformalParameters <~ ";") ~ block ~ idnuse ^^ ProcDecl
 
-    lazy val optformalParameters : PackratParser[List[FPSection]] =
+    lazy val optformalParameters : PackratParser[Seq[FPSection]] =
         "(" ~> repsep (fpsection, ";") <~ ")" |
         result (Nil)
 
@@ -60,7 +61,7 @@ trait Parser extends L2.Parser {
         "(" ~> repsep (expression, ",") <~ ")" |
         guard (";" | "ELSE" | "END") ^^^ Nil
 
-    override def keywordStrings : List[String] =
-        "PROCEDURE" :: super.keywordStrings
+    override def keywordStrings : Seq[String] =
+        "PROCEDURE" +: super.keywordStrings
 
 }

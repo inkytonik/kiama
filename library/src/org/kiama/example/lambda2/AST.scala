@@ -30,6 +30,7 @@ object AST {
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     /**
      * Identifiers are represented as strings.
@@ -74,7 +75,7 @@ object AST {
     /**
      * Parallel bindings in body.
      */
-    case class Letp (bs : List[Bind], e : Exp) extends Exp
+    case class Letp (bs : Seq[Bind], e : Exp) extends Exp
 
     /**
      * A single binding from a set of parallel bindings (Letp).  No type

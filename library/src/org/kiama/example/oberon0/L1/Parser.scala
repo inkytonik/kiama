@@ -29,6 +29,7 @@ trait Parser extends L0.Parser {
 
     import base.source.{Block, Statement}
     import L0.source.Expression
+    import scala.collection.immutable.Seq
     import source.{IfStatement, WhileStatement}
 
     override def statementDef : PackratParser[Statement]=
@@ -54,7 +55,7 @@ trait Parser extends L0.Parser {
         "WHILE" ~> expression ~ ("DO" ~> statementSequence <~ "END") ^^
         WhileStatement
 
-    override def keywordStrings : List[String] =
-        "DO" :: "ELSE" :: "ELSIF" :: "IF" :: "THEN" :: "WHILE" :: super.keywordStrings
+    override def keywordStrings : Seq[String] =
+        "DO" +: "ELSE" +: "ELSIF" +: "IF" +: "THEN" +: "WHILE" +: super.keywordStrings
 
 }

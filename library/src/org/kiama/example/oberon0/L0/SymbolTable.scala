@@ -22,10 +22,11 @@ package org.kiama
 package example.oberon0
 package L0
 
+
 trait SymbolTable extends base.SymbolTable {
 
     import base.source.ModuleDecl
-    import scala.collection.immutable.Stack
+    import scala.collection.immutable.{Seq, Stack}
     import source.{ConstDecl, TypeDecl, TypeDef}
 
     /**
@@ -107,8 +108,8 @@ trait SymbolTable extends base.SymbolTable {
     def defenv : Environment =
         rootenv (defenvPairs : _*)
 
-    def defenvPairs : List[(String,Entity)] =
-        List (
+    def defenvPairs : Seq[(String,Entity)] =
+        Seq (
             "INTEGER" -> integerType,
             "BOOLEAN" -> booleanType,
             "TRUE" -> trueConstant,

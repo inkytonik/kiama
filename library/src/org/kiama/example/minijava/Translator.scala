@@ -30,6 +30,7 @@ object Translator {
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Counter
+    import scala.collection.immutable.Seq
     import SymbolTable._
 
     /**
@@ -37,16 +38,16 @@ object Translator {
      * MiniJava program which came from the given source file. Return
      * one class file for each class in the MiniJava program.
      */
-    def translate (sourcetree : Program, sourceFilename : String, analysis : SemanticAnalysis) : List[ClassFile] = {
+    def translate (sourcetree : Program, sourceFilename : String, analysis : SemanticAnalysis) : Seq[ClassFile] = {
 
         // An instruction buffer for translating statements and expressions into
-        val instrBuffer = new scala.collection.mutable.ListBuffer[JVMInstr] ()
+        val instructions = Seq.newBuilder[JVMInstr]
 
         /**
          * Generate an instruction by appending it to the instruction buffer.
          */
         def gen (instr : JVMInstr) {
-            instrBuffer.append (instr)
+            instructions += instr
         }
 
         /**
@@ -134,21 +135,21 @@ object Translator {
         def translateMainClass (m : MainClass) : ClassFile = {
 
             // Translate the main class's statement
-            instrBuffer.clear ()
+            instructions.clear ()
             translateStmt (m.stmt)
             gen (Return ())
-            val instrs = instrBuffer.result ()
+            val instrs = instructions.result ()
 
             // Make a main method containing the statement from this class
             val mainMethod =
                 JVMMethod (JVMMethodSpec ("main",
-                                          List (JVMArrayType (JVMStringType ())),
+                                          Seq (JVMArrayType (JVMStringType ())),
                                           JVMVoidType ()),
                            true,
                            instrs)
 
             ClassFile (sourceFilename, m.name.idn, "java/lang/Object",
-                       Nil, List (mainMethod))
+                       Nil, Seq (mainMethod))
 
         }
 
@@ -166,7 +167,7 @@ object Translator {
         /**
          * Translate the fields of a class.
          */
-        def translateFields (fieldVars : List[Field]) : List[JVMField] =
+        def translateFields (fieldVars : Seq[Field]) : Seq[JVMField] =
             fieldVars.map {
                 case Field (tipe, IdnDef (idn)) =>
                     JVMField (idn, translateType (tipe))
@@ -197,7 +198,7 @@ object Translator {
             resetVarCount ()
 
             // Translate the method's statements
-            instrBuffer.clear ()
+            instructions.clear ()
             method.body.optStmts.map (translateStmt)
 
             // Emit the code to compute the return value
@@ -212,7 +213,7 @@ object Translator {
             }
 
             // Gather all of the method's instructions
-            val instrs = instrBuffer.result ()
+            val instrs = instructions.result ()
 
             JVMMethod (methodSpec ("", method), false, instrs)
 
@@ -221,7 +222,7 @@ object Translator {
         /**
          * Translate the methods of a class.
          */
-        def translateMethods (methods : List[Method]) : List[JVMMethod] =
+        def translateMethods (methods : Seq[Method]) : Seq[JVMMethod] =
             methods.map (translateMethod)
 
         /**
@@ -357,7 +358,7 @@ object Translator {
                     translateExp (exp)
                     gen (
                         InvokeVirtual (JVMMethodSpec ("java/io/PrintStream/println",
-                                                      List (JVMIntType ()),
+                                                      Seq (JVMIntType ()),
                                                       JVMVoidType ())))
 
                 case VarAssign (idnuse, exp) =>
@@ -526,7 +527,7 @@ object Translator {
         // Translate all of the classes and return a list of the class files
         val mainClassfile = translateMainClass (sourcetree.main)
         val otherClassfiles = sourcetree.classes.map (translateClass)
-        mainClassfile :: otherClassfiles
+        mainClassfile +: otherClassfiles
 
     }
 

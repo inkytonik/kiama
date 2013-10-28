@@ -35,6 +35,7 @@ object PredefinedTypes {
     import NameResolution._
     import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
+    import scala.collection.immutable.Seq
 
     /*
      * A list of declarations of primitive types.
@@ -47,9 +48,9 @@ object PredefinedTypes {
      */
     val getPredefinedTypeList : Program => Seq[TypeDecl] =
         constant {
-            List (UnknownDecl ("$unknown"),
-                  PrimitiveDecl ("boolean"),
-                  PrimitiveDecl ("int"))
+            Seq (UnknownDecl ("$unknown"),
+                 PrimitiveDecl ("boolean"),
+                 PrimitiveDecl ("int"))
         }
 
     /**

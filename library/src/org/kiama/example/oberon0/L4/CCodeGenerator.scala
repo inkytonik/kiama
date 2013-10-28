@@ -33,6 +33,7 @@ trait CCodeGenerator extends L3.CCodeGenerator with TypeAnalyser {
     import L0.source.{Expression, IdnExp}
     import L0.c.CIdnExp
     import L3.source.Mode
+    import scala.collection.immutable.Seq
     import source.{FieldExp, FieldIdn, IndexExp}
 
     /**

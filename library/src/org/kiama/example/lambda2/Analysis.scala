@@ -36,6 +36,7 @@ class Analysis (val messaging : Messaging) {
     import PrettyPrinter._
     import messaging.message
     import org.kiama.attribution.Attribution._
+    import scala.collection.immutable.Seq
 
     /**
      * The variables that are free in the given expression.
@@ -57,12 +58,12 @@ class Analysis (val messaging : Messaging) {
      * The environment of an expression is the list of variable names that
      * are visible in that expression and their types.
      */
-    val env : Exp => List[(Idn,Type)] =
+    val env : Exp => Seq[(Idn,Type)] =
         attr {
 
             // Nothing is visible at the root of the tree
             case p if p.isRoot =>
-                List ()
+                Seq ()
 
             // Othrewise, look at the context
             case n =>
@@ -74,7 +75,7 @@ class Analysis (val messaging : Messaging) {
                     // of the same var since we add inner bindings at the beginning
                     // of the env and we search the env list below in tipe from
                     // beginning to end
-                    case p @ Lam (x, t, _) => (x,t) :: p->env
+                    case p @ Lam (x, t, _) => (x,t) +: (p->env)
 
                     // Other expressions do not bind new identifiers so they just
                     // get their environment from their parent

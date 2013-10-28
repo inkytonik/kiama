@@ -27,6 +27,7 @@ import org.kiama.attribution.Attribution.initTree
 import org.kiama.attribution.Attribution.resetMemo
 import org.kiama.util.{CompilerWithConfig, Config, Emitter}
 import org.kiama.output.PrettyPrinter
+import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
 
 /**
@@ -64,7 +65,7 @@ trait Driver extends PrettyPrinter {
  * of compiler share a configuration type, so some of these settings have no
  * effect for some of the drivers.
  */
-class Oberon0Config (args : Array[String], emitter : Emitter, testPrettyPrint : Boolean = false) extends Config (args, emitter) {
+class Oberon0Config (args : Seq[String], emitter : Emitter, testPrettyPrint : Boolean = false) extends Config (args, emitter) {
     val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
     val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
     val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
@@ -90,7 +91,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     import org.kiama.util.Emitter
     import org.kiama.util.IO.{filereader, FileNotFoundException}
 
-    override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : Oberon0Config =
+    override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : Oberon0Config =
         new Oberon0Config (args, emitter)
 
     /**

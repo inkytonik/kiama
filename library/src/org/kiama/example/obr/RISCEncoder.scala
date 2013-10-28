@@ -35,13 +35,13 @@ class RISCEncoder {
     import RISCTree._
     import org.kiama.example.RISC.RISCISA.{Label => RISCLabel, _}
     import org.kiama.attribution.Attribution._
-    import scala.collection.mutable.ArrayBuffer
+    import scala.collection.immutable.Seq
     import scala.math.max
 
     /**
      * The code sequence that is being assembled.
      */
-    private val code = new ArrayBuffer[Assembler]
+    private val code = Seq.newBuilder[Assembler]
 
     /**
      * Emit a RISC instruction.
@@ -72,9 +72,12 @@ class RISCEncoder {
      */
     def getcode : Code = {
 
+        // Get the final instruction sequence
+        val instrs = code.result ()
+
         // Pass 1: compile mappings between labels and offsets
         val (labels, _) =
-            code.foldLeft (Map[RISCLabel,Int] (), 0) {
+            instrs.foldLeft (Map[RISCLabel,Int] (), 0) {
                 case ((labels, currloc), instr) =>
                     instr match {
                         case Target (lab) =>
@@ -88,7 +91,7 @@ class RISCEncoder {
 
         // Pass 2: remove pseudo instructions, add displacements to labels
         val (newcode, _) =
-            code.foldLeft (Vector[Instr] (), 0) {
+            instrs.foldLeft (Seq.empty[Instr], 0) {
                 case ((newcode, currloc), instr) =>
                     instr match {
                         case b : Branch =>
@@ -122,15 +125,15 @@ class RISCEncoder {
     /**
      * Return the raw assembler code
      */
-    def getassem : AssemCode = code
+    def getassem : AssemCode =
+        code.result ()
 
     /**
      * Generate a brand new target label. Shares counter with the transformation
      * phase so that labels are unique.
      */
-    def gentarget () : RISCLabel = {
+    def gentarget () : RISCLabel =
         RISCLabel (genlabelnum ())
-    }
 
     /**
      * Register allocations:

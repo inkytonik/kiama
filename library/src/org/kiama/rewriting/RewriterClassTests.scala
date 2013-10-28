@@ -32,6 +32,7 @@ class RewriterClassTests extends Tests with Checkers {
 
     import org.kiama.example.imperative.ASTNonCase._
     import org.kiama.rewriting.Rewriter._
+    import scala.collection.immutable.Seq
 
     {
         // (abc + 1) * (xyz - 3)
@@ -90,7 +91,7 @@ class RewriterClassTests extends Tests with Checkers {
         test ("constructing a Rewritable with wrong args throws exception") {
             val t =  new Add (new Num (1), new Num (2))
             val i = intercept[IllegalArgumentException] {
-                t.reconstruct (Array (new Num (3), new Num (4), new Num (5)))
+                t.reconstruct (Seq (new Num (3), new Num (4), new Num (5)))
             }
             assertResult ("making Add: expecting Exp, Exp, got Num(3.0), Num(4.0), Num(5.0)") (
                 i.getMessage

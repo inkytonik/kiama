@@ -33,11 +33,12 @@ class OneOhOneTests extends Tests {
     import Precedence.precedence
     import Other._
     import org.kiama.attribution.Attribution.initTree
+    import scala.collection.immutable.Seq
 
     // Some pathological companies
 
     val empty = Company (Nil)
-    val onlymanager = Company (List (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
+    val onlymanager = Company (Seq (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
 
     test ("total of all salaries by rewriting - company") {
         assertResult (399747.0) (total (company))
@@ -160,17 +161,17 @@ class OneOhOneTests extends Tests {
     }
 
     test ("salaries not ordered - employee") {
-        val d = Company (List (Dept ("D1", Employee ("An", "Emp", 100),
-                               List (PU (Employee ("Another", "Emp", 500))))))
+        val d = Company (Seq (Dept ("D1", Employee ("An", "Emp", 100),
+                               Seq (PU (Employee ("Another", "Emp", 500))))))
         initTree (d)
         assertResult (false) (precedence (d))
     }
 
     test ("salaries not ordered - manager") {
         val d1 = Dept ("D2", Employee ("The", "Emp", 100),
-                       List (PU (Employee ("That", "Emp", 50))))
-        val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25),
-                               List (DU (d1)))))
+                       Seq (PU (Employee ("That", "Emp", 50))))
+        val d2 = Company (Seq (Dept ("D3", Employee ("TheOther", "Emp", 25),
+                               Seq (DU (d1)))))
         initTree (d2)
         assertResult (false) (precedence (d2))
     }

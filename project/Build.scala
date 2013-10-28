@@ -27,6 +27,7 @@ object KiamaBuild extends Build {
     import sbtunidoc.Plugin.{unidocSettings, ScalaUnidoc, TestScalaUnidoc}
     import sbtunidoc.Plugin.Unidoc
     import sbtunidoc.Plugin.UnidocKeys.unidoc
+    import scala.collection.immutable.Seq
 
     // Project configuration:
     //   - core project containing macros and code that they need

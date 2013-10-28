@@ -31,6 +31,8 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait ParserUtilities extends RegexParsers with PackratParsers {
 
+    import scala.collection.immutable.Seq
+
     /**
      * Use `parser` to parse the string `str`. If the parse is sucessful and produces
      * the value `t`, return `Left (t)`. Otherwise, return `Right (msg)` where `msg`
@@ -268,7 +270,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * This parser succeeds if any of the keywords is present, provided
      * that it's not immediately followed by something that extends it.
      */
-    def keywords (ext : Regex, kws : List[String]) : Parser[String] =
+    def keywords (ext : Regex, kws : Seq[String]) : Parser[String] =
         regex ("(%s)%s".format (kws.mkString ("|"), ext).r)
 
 }

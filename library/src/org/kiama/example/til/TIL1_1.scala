@@ -28,6 +28,8 @@ import org.kiama.util.{Positioned, PositionedParserUtilities}
  */
 object AST {
 
+    import scala.collection.immutable.Seq
+
     case class Program (ss : Seq[Stat])
 
     sealed abstract class Stat extends Positioned
@@ -74,6 +76,7 @@ trait TIL1_1 extends PositionedParserUtilities {
 
     import AST._
     import scala.language.postfixOps
+    import scala.collection.immutable.Seq
 
     type Root = Program
 
@@ -127,8 +130,8 @@ trait TIL1_1 extends PositionedParserUtilities {
 
     lazy val keyword =
         keywords ("[^a-zA-Z0-9]".r,
-                  List ("var", "if", "then", "else", "while", "do",
-                        "for", "read", "write"))
+                  Seq ("var", "if", "then", "else", "while", "do",
+                       "for", "read", "write"))
 
     lazy val identifier =
         not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r ^^ Id

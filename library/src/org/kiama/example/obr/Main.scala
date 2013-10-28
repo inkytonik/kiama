@@ -26,11 +26,12 @@ import ObrTree.ObrInt
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.util.{Console, CompilerWithConfig, Config, Emitter,
     JLineConsole}
+import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Obr compiler.
  */
-class ObrConfig (args : Array[String], emitter : Emitter) extends Config (args, emitter) {
+class ObrConfig (args : Seq[String], emitter : Emitter) extends Config (args, emitter) {
     val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
     val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
     val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
@@ -46,7 +47,7 @@ class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
     import org.kiama.example.RISC.{RISC, RISCISA}
     import org.kiama.util.{Emitter, Messaging}
 
-    override def createConfig (args : Array[String], emitter : Emitter = new Emitter) : ObrConfig =
+    override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : ObrConfig =
         new ObrConfig (args, emitter)
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {

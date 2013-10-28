@@ -36,6 +36,7 @@ trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
     import source.{AddExp, AndExp, Assignment, ConstDecl, DivExp, EqExp,
         Expression, GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp,
         MulExp, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl, VarDecl}
+    import scala.collection.immutable.Seq
 
     /**
      * Mangle an Oberon name so it is safe to be used at the C level.
@@ -56,12 +57,12 @@ trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
     /**
      * Generate C equivalent of a declaration.
      */
-    def translate (d : Declaration) : List[CDeclaration] =
+    def translate (d : Declaration) : Seq[CDeclaration] =
         d match {
             case ConstDecl (IdnDef (i), e) =>
-                List (CInitDecl (CVarDecl (mangle (i), CIntType ()), CIntExp (e->value)))
+                Seq (CInitDecl (CVarDecl (mangle (i), CIntType ()), CIntExp (e->value)))
             case TypeDecl (IdnDef (i), t) =>
-                List (CTypeDef (CVarDecl (mangle (i), translate (t->deftype))))
+                Seq (CTypeDef (CVarDecl (mangle (i), translate (t->deftype))))
             case VarDecl (is, td) =>
                 val t = td->deftype
                 is map {

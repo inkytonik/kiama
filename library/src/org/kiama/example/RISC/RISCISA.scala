@@ -27,6 +27,7 @@ package example.RISC
 object RISCISA {
 
     import org.kiama.util.Emitter
+    import scala.collection.immutable.Seq
 
     /**
      * A machine code sequence.

@@ -21,8 +21,7 @@
 package org.kiama
 package example.imperative
 
-import org.kiama.util.GeneratingREPL
-import org.kiama.util.Tests
+import org.kiama.util.{GeneratingREPL, Tests}
 
 /**
  * Imperative language tests pretty-printer tests.
@@ -33,6 +32,7 @@ class ImperativeTests extends Tests {
 
     import AST._
     import PrettyPrinter._
+    import scala.collection.immutable.Seq
 
     test ("pretty-print imperative variable") {
         assertResult ("xyz123") (pretty (Var ("xyz123")))
@@ -56,11 +56,11 @@ class ImperativeTests extends Tests {
 
     // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
     val p =
-        Seqn (List (
+        Seqn (Seq (
             Asgn (Var ("i"), Num (10)),
             Asgn (Var ("count"), Num (0)),
             While (Var ("i"),
-                Seqn (List (
+                Seqn (Seq (
                     Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                     Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
 

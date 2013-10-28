@@ -28,20 +28,21 @@ object PrologTree {
 
     import org.kiama.attribution.Attributable
     import org.kiama.util.Positioned
+    import scala.collection.immutable.Seq
 
     sealed abstract class SourceNode extends Attributable with Positioned
 
-    case class Program (cs : List[Clause]) extends SourceNode
+    case class Program (cs : Seq[Clause]) extends SourceNode
 
     sealed abstract class Clause extends SourceNode {
         def hd : Term
-        def bdy : List[Term]
+        def bdy : Seq[Term]
     }
 
     case class Fact (hd : Term) extends Clause {
-        def bdy : List[Term] = Nil
+        def bdy : Seq[Term] = Nil
     }
-    case class Rule (hd : Term, bdy : List[Term]) extends Clause
+    case class Rule (hd : Term, bdy : Seq[Term]) extends Clause
 
     sealed abstract class Term extends SourceNode
 
@@ -57,7 +58,7 @@ object PrologTree {
     case class Atom (s : String) extends Literal {
         override def toString : String = s
     }
-    case class Pred (s : String, ts : List[Term]) extends Literal {
+    case class Pred (s : String, ts : Seq[Term]) extends Literal {
         override def toString : String = s + ts.mkString ("(", ", ", ")")
     }
     case class Cut () extends Literal {

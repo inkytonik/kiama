@@ -22,6 +22,7 @@ package org.kiama
 package util
 
 import org.rogach.scallop.ScallopConf
+import scala.collection.immutable.Seq
 
 /**
  * Configurations for Kiama programs. `args` gives the command-line
@@ -29,7 +30,7 @@ import org.rogach.scallop.ScallopConf
  * settings. `emitter` allows the output target to be altered for
  * purposes such as testing; it defaults to standard output.
  */
-class Config (args : Array[String], val emitter : Emitter) extends ScallopConf (args) {
+class Config (args : Seq[String], val emitter : Emitter) extends ScallopConf (args) {
 
     import org.kiama.util.{FileConsole, JLineConsole, StringConsole}
     import org.rogach.scallop.{ArgType, ValueConverter}
@@ -102,7 +103,7 @@ class Config (args : Array[String], val emitter : Emitter) extends ScallopConf (
  * Configurations for Kiama REPLS. Adds some options to the default
  * set that all Kiama programs support.
  */
-class REPLConfig (args : Array[String], emitter : Emitter) extends Config (args, emitter) {
+class REPLConfig (args : Seq[String], emitter : Emitter) extends Config (args, emitter) {
 
     /**
      * Whitespace option. If set, pass input lines that are completely white space

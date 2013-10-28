@@ -29,6 +29,7 @@ import org.kiama.util.PositionedParserUtilities
 class SyntaxAnalysis extends PositionedParserUtilities {
 
     import MiniJavaTree._
+    import scala.collection.immutable.Seq
     import scala.language.postfixOps
 
     lazy val parser : PackratParser[Program] =
@@ -65,7 +66,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
     lazy val result : PackratParser[Expression] =
         "return" ~> expression <~ ";"
 
-    lazy val arguments : PackratParser[List[Argument]] =
+    lazy val arguments : PackratParser[Seq[Argument]] =
         repsep (argument, ",")
 
     lazy val argument : PackratParser[Argument] =
@@ -119,7 +120,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
         "!" ~> expression ^^ NotExp |
         "(" ~> expression <~ ")"
 
-    lazy val expressionList : PackratParser[List[Expression]] =
+    lazy val expressionList : PackratParser[Seq[Expression]] =
         repsep (expression, ",")
 
     lazy val integer : PackratParser[String] =

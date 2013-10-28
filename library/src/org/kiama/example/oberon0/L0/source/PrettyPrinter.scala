@@ -29,6 +29,7 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
     import base.source.{Block, Declaration, Identifier, IdnDef,
         SourceASTNode}
     import org.kiama.output.PrettyExpression
+    import scala.collection.immutable.Seq
 
     /**
      * Pretty-print a block, omitting the BEGIN if there are no statements.
@@ -42,7 +43,7 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
         }
     }
 
-    def declsToDoc (ds : List[Declaration]) : Doc =
+    def declsToDoc (ds : Seq[Declaration]) : Doc =
         if (ds == Nil)
             empty
         else {
@@ -61,7 +62,7 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
             case _             => super.declsection (d)
         }
 
-    def optSectionToDoc (section : String, optds : Option[List[Declaration]]) : Doc =
+    def optSectionToDoc (section : String, optds : Option[Seq[Declaration]]) : Doc =
         (section, optds) match {
             case (_, None)       => empty
             case ("", Some (ds)) => nest (line <> vsep (ds map toDoc, line)) <> line
@@ -95,7 +96,7 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
                 super.toDoc (n)
         }
 
-    def idlistToDoc (ids : List[IdnDef]) : Doc =
+    def idlistToDoc (ids : Seq[IdnDef]) : Doc =
         hsep (ids map toDoc, comma)
 
     override def toParenDoc (e : PrettyExpression) : Doc =
