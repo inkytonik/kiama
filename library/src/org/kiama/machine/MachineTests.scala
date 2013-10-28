@@ -151,10 +151,10 @@ class MachineTests extends Tests {
         m.reset
         s := 0
         s := 1
-        val i = intercept[InconsistentUpdateException[Int]] {
+        val i = intercept[InconsistentUpdateException] {
                     m.performUpdates
                 }
-        assertResult ("Machine = m, update = m.s := 0, other value = 1") (i.getMessage)
+        assertResult ("Machine = m, updates = List(m.s := 1, m.s := 0)") (i.getMessage)
     }
 
     // Parameterised state
@@ -284,10 +284,10 @@ class MachineTests extends Tests {
         m.reset
         p ("one") := 0
         p ("one") := 1
-        val i = intercept[InconsistentUpdateException[Int]] {
+        val i = intercept[InconsistentUpdateException] {
                     m.performUpdates
                 }
-        assertResult ("Machine = m, update = m.p(one) := 0, other value = 1") (i.getMessage)
+        assertResult ("Machine = m, updates = List(m.p(one) := 1, m.p(one) := 0)") (i.getMessage)
     }
 
     // Tests of step debugging trace

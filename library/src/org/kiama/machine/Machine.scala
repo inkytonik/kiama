@@ -22,7 +22,6 @@ package org.kiama
 package machine
 
 import java.lang.Exception
-import scala.collection.mutable
 import org.kiama.util.Emitter
 import org.kiama.output.PrettyPrinter
 
@@ -39,6 +38,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
 
     import scala.language.implicitConversions
     import scala.collection.immutable.Seq
+    import scala.collection.mutable.{Map => MutableMap}
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
@@ -166,7 +166,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * A parameterised item of abstract state machine state holding values
      * of type `U`, associated with parameters of type `T`.
      */
-    class ParamState[T,U] (val psname : String) extends State[mutable.HashMap[T,U]] (psname) {
+    class ParamState[T,U] (val psname : String) extends State[MutableMap[T,U]] (psname) {
 
         /**
          * Is this state item undefined at `t` or not ?
@@ -219,7 +219,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
          */
         def change (t : T, u : U) {
             _value match {
-                case None     => _value = Some (mutable.HashMap ((t, u)))
+                case None     => _value = Some (MutableMap ((t, u)))
                 case Some (m) => m += ((t, u))
             }
         }
@@ -368,15 +368,10 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
             false
         else {
             // Check updates for consistency
-            val m = new mutable.HashMap[AnyRef,Any]
-            for (u <- updates) {
-                val k = u.key
-                if (m contains k) {
-                    if (m (k) != u.value)
-                        throw new InconsistentUpdateException (this, u, m (k))
-                } else {
-                    m (k) = u.value
-                }
+            updates.groupBy (_.key).map {
+                case (key, keyUpdates) =>
+                    if (keyUpdates.map (_.value).distinct.length != 1)
+                        throw new InconsistentUpdateException (this, keyUpdates)
             }
             // Actually perform the updates
             updates.map (_.perform)
@@ -430,8 +425,8 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
 /**
  * A machine has performed an inconsistent update in the sense that a step
  * has updated an item of state to two different values.  `m` is the machine
- * that performed the update, `u` is the update, and `v` is the value used by
- * another update of the same state item in that step.
+ * that performed the update, `updates` is all of the updates for the key
+ * that was updated inconsistently.
  */
-class InconsistentUpdateException[T] (m : Machine, u : Machine#Update, v : T)
-    extends Exception (s"Machine = ${m.name}, update = $u, other value = $v")
+class InconsistentUpdateException (m : Machine, updates : Seq[Machine#Update])
+    extends Exception (s"Machine = ${m.name}, updates = $updates")
