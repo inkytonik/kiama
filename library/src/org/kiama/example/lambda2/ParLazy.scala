@@ -91,7 +91,7 @@ trait ParLazy extends Par {
      * Assumes that the names are unique to start with.
      */
     def rename : Strategy = {
-        val env = new scala.collection.mutable.HashMap[Idn,Idn]()
+        val env = scala.collection.mutable.HashMap[Idn,Idn] ()
         val newname =
             rule {
                 case i : Idn => env.getOrElseUpdate (i, freshVar ())

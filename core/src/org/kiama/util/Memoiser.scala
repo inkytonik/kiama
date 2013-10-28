@@ -79,12 +79,10 @@ trait Memoiser {
      */
     trait Memoised[T,U] extends MemoisedBase[T,U] {
 
-        import scala.collection.mutable.HashMap
-
         /**
          * The memo table as a mutable hash map.
          */
-        val memo = new HashMap[T,U]
+        val memo = scala.collection.mutable.HashMap[T,U] ()
 
         /**
          * Immediately reset the memo table.

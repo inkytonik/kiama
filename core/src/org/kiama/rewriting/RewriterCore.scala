@@ -29,7 +29,6 @@ trait RewriterCore {
 
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
-    import scala.collection.mutable.WeakHashMap
     import scala.collection.immutable.Seq
     import scala.language.higherKinds
     import scala.language.experimental.macros
@@ -163,7 +162,7 @@ trait RewriterCore {
      */
     def memo (name : String, s : => Strategy) : Strategy = {
         lazy val strat = s
-        val cache = new scala.collection.mutable.HashMap[Any,Option[Any]]
+        val cache = scala.collection.mutable.HashMap[Any,Option[Any]] ()
         mkStrategy (name, t => cache.getOrElseUpdate (t, strat (t)))
     }
 
@@ -358,7 +357,7 @@ trait RewriterCore {
      * Cache of constructors for product duplication.
      */
     protected val constrcache =
-        new WeakHashMap[java.lang.Class[_], java.lang.reflect.Constructor[_]]
+        scala.collection.mutable.WeakHashMap[java.lang.Class[_], java.lang.reflect.Constructor[_]] ()
 
     /**
      * General product duplication function.  Returns a product that applies

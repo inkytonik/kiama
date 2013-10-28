@@ -64,7 +64,7 @@ object PicoJavaBenchmark extends App {
 
     // Initialize inputs
 
-    val inputs = new scala.collection.mutable.ArrayBuffer[Program]
+    val inputs = scala.collection.mutable.ArrayBuffer[Program] ()
     for (i <- 0 until 100) {
         var bigAsst = createAst(basicAst)
         for (i <- 0 until 150) bigAsst = createAst(bigAsst)

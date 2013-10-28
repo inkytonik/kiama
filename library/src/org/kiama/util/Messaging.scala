@@ -34,13 +34,12 @@ case class Message (line : Int, column : Int, label : String) {
  */
 class Messaging {
 
-    import scala.collection.mutable.ListBuffer
     import scala.util.parsing.input.Positional
 
     /**
      * Buffer of messages.
      */
-    val messages = new ListBuffer[Message] ()
+    val messages = scala.collection.mutable.ListBuffer[Message] ()
 
     /**
      * The messages sorted by increasing position.

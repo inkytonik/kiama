@@ -62,7 +62,6 @@ class Interpreter {
     import Unifier._
     import org.kiama.rewriting.Rewriter.{ Term => _, _ }
     import org.kiama.util.{Counter, Emitter}
-    import scala.collection.mutable.Stack
 
     /**
      * Counter used to produce unique names.
@@ -119,9 +118,10 @@ class Interpreter {
          * The goal list stack.  Each entry is a list of goals that are to be
          * satisfied. We start with the query and the display goal.
          */
-        val glstack = Stack[Seq[Goal]] (
-                          Seq (TermGoal (query), DisplayGoal (goalvars))
-                      )
+        val glstack =
+            scala.collection.mutable.Stack[Seq[Goal]] (
+                Seq (TermGoal (query), DisplayGoal (goalvars))
+            )
 
         /**
          * Loop until the interpretation is done, indicated by an empty goal

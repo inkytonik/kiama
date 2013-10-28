@@ -139,23 +139,23 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
      */
     def printDependencyGraph (record : Record, dim : Dimension) {
 
-        import scala.collection.mutable.{HashMap, Set, Stack}
+        import scala.collection.mutable.{Set => MutableSet}
 
         // Set of subject nodes involved in this attribution evaluation.
-        val subjects = Set[Value] ()
+        val subjects = MutableSet[Value] ()
 
         // Map from subject to set of attributes
-        val attributes = new HashMap[Value,Set[Value]] ()
+        val attributes = scala.collection.mutable.HashMap[Value,MutableSet[Value]] ()
 
         // A link from an attribute of one node to an attribute of another
         case class Link (srcNum : Int, srcAttrName : Value,
                          dstNum : Int, dstAttrName : Value)
 
         // Collection of links representing direct dependencies
-        val links = Set[Link] ()
+        val links = MutableSet[Link] ()
 
         // Map from subjects to unique node numbers
-        val nodeNums = new HashMap[Value,Int]
+        val nodeNums = scala.collection.mutable.HashMap[Value,Int] ()
 
         // Counter for node numbers
         val nodeNumCounter = new Counter
@@ -168,7 +168,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
 
         def addAtrrName (subject : Value, attribute : Value) {
             if (! attributes.contains (subject))
-                attributes (subject) = Set[Value] ()
+                attributes (subject) = MutableSet[Value] ()
             attributes (subject).add (attribute)
         }
 
@@ -179,7 +179,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
         }
 
         // Traverse dependencies collecting information
-        val pending = new Stack[Record] ()
+        val pending = scala.collection.mutable.Stack[Record] ()
         pending.push (record)
         while (!pending.isEmpty) {
             val curr = pending.pop ()

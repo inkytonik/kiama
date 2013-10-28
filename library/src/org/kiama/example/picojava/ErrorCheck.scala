@@ -39,7 +39,8 @@ object ErrorCheck {
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
-    import scala.collection.mutable.Builder
+
+    type Errors = scala.collection.mutable.Builder[String,Seq[String]]
 
     /**
      * All of the error messages for a program.
@@ -92,7 +93,7 @@ object ErrorCheck {
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val collectErrors : Builder[String,Seq[String]] => Attributable => Unit =
+    val collectErrors : Errors => Attributable => Unit =
         // NOTE: Not using paramAttr here, since we don't want caching for this
         c => (
             t => {
@@ -129,8 +130,8 @@ object ErrorCheck {
      *    c.add(s);
      * }
      */
-    val record : (Builder[String,Seq[String]],String) => ASTNode => Unit =
-        (b,s) => a => b += s"${a.start}: $s"
+    val record : (Errors,String) => ASTNode => Unit =
+        (c,s) => a => c += s"${a.start}: $s"
 
     /**
      * Is this entity qualified?

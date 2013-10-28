@@ -124,7 +124,7 @@ trait Attributable extends Product with Cloneable {
     /**
      * Record of this node's `Attributable` children.
      */
-    private val _children = new scala.collection.mutable.ListBuffer[Attributable]
+    private val _children = scala.collection.mutable.ListBuffer[Attributable] ()
 
     /**
      * Reference an attribute or function that can be applied to this node.

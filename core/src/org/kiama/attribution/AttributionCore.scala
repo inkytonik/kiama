@@ -147,12 +147,10 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      */
     class CachedDynamicAttribute[T <: AnyRef,U] (name : String, f : T => U) extends CachedAttribute[T,U] (name, f) {
 
-        import scala.collection.mutable.ListBuffer
-
         /**
          * List of functions that currently dynamically define this attribute.
          */
-        val functions = new ListBuffer[T ==> U] ()
+        val functions = scala.collection.mutable.ListBuffer[T ==> U] ()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
