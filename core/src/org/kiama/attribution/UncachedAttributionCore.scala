@@ -38,13 +38,12 @@ trait UncachedAttributionCore extends AttributionCommon {
      */
     class UncachedAttribute[T <: AnyRef,U] (name : String, f : T => U) extends Attribute[T,U] (name) {
 
-        import java.util.IdentityHashMap
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
         /**
          * Are we currently evaluating this attribute for a given tree?
          */
-        private val visited = new IdentityHashMap[T,Unit]
+        private val visited = new java.util.IdentityHashMap[T,Unit]
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -74,13 +73,12 @@ trait UncachedAttributionCore extends AttributionCommon {
 
         attr =>
 
-        import java.util.IdentityHashMap
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
          */
-        private val visited = new IdentityHashMap[ParamAttributeKey,Unit]
+        private val visited = new java.util.IdentityHashMap[ParamAttributeKey,Unit]
 
         /**
          * Return the value of this attribute for node `t`, raising an error if

@@ -107,12 +107,10 @@ trait Memoiser {
      */
     trait IdMemoised[T,U] extends MemoisedBase[T,U] {
 
-        import java.util.IdentityHashMap
-
         /**
          * The memo table as an identity hash map.
          */
-        val memo = new IdentityHashMap[T,U]
+        val memo = new java.util.IdentityHashMap[T,U]
 
         /**
          * Immediately reset the memo table.

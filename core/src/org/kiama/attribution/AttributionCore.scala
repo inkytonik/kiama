@@ -235,19 +235,18 @@ trait AttributionCore extends AttributionCommon with Memoiser {
             Attribute[T,U] (name) with IdMemoised[T,U] {
 
         import CircularAttribute._
-        import java.util.IdentityHashMap
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
         /**
          * Has the value of this attribute for a given tree already been computed?
          */
-        private val computed = new IdentityHashMap[T,Unit]
+        private val computed = new java.util.IdentityHashMap[T,Unit]
 
         /**
          * Has the attribute for given tree been computed on this iteration of the
          * circular evaluation?
          */
-        private val visited = new IdentityHashMap[T,Unit]
+        private val visited = new java.util.IdentityHashMap[T,Unit]
 
         /**
          * Return the value of the attribute for tree `t`, or the initial value if
