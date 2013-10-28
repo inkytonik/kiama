@@ -36,9 +36,10 @@ import org.kiama.output.PrettyPrinter
 abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         extends PrettyPrinter {
 
-    import scala.language.implicitConversions
+    import scala.annotation.tailrec
     import scala.collection.immutable.Seq
     import scala.collection.mutable.{Map => MutableMap}
+    import scala.language.implicitConversions
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
@@ -400,13 +401,12 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * Execute the steps of this machine.  Halt when a step makes no
      * updates.  `init` should be called before this method.
      */
-    def steps {
-        var nsteps = 0
-        do {
-            if (debug)
-                emitter.emitln (s"$name step $nsteps")
-            nsteps += 1
-        } while (step)
+    @tailrec
+    private def steps (nstep : Int) {
+        if (debug)
+            emitter.emitln (s"$name step $nstep")
+        if (step)
+            steps (nstep + 1)
     }
 
     /**
@@ -416,7 +416,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     def run {
         init
         performUpdates
-        steps
+        steps (0)
         finit
     }
 
