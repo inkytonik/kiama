@@ -21,8 +21,7 @@
 package org.kiama
 package example.lambda3
 
-import org.kiama.util.ParsingREPL
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.util.{ParsingREPL, PositionedParserUtilities}
 
 /**
  * A simple lambda calculus using abstracted name binding.

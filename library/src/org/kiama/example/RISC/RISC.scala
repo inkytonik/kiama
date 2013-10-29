@@ -23,8 +23,7 @@ package example.RISC
 
 import RISCISA._
 import org.kiama.machine.Machine
-import org.kiama.util.Console
-import org.kiama.util.Emitter
+import org.kiama.util.{Console, Emitter}
 
 /**
  * Abstract state machine simulation of a simple RISC architecture.  Run the

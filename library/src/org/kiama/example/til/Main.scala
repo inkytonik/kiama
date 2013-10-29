@@ -30,7 +30,7 @@ import org.kiama.util.PositionedParserUtilities
 trait Main {
 
     import org.kiama.util.Emitter
-    import org.kiama.util.IO._
+    import org.kiama.util.IO.{filereader, FileNotFoundException}
 
     val emitter = new Emitter
 

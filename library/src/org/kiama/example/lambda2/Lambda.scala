@@ -44,8 +44,7 @@ object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
-    import org.kiama.util.Emitter
-    import org.kiama.util.Messaging
+    import org.kiama.util.{Emitter, Messaging}
 
     def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : LambdaConfig =
         new LambdaConfig (args, emitter)

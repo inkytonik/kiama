@@ -36,7 +36,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait CompilerBase[T, C <: Config] extends Profiler {
 
     import org.kiama.util.{Console, Emitter, StringEmitter}
-    import org.kiama.util.IO._
+    import org.kiama.util.IO.{filereader, FileNotFoundException}
     import scala.io.Source
 
     /**

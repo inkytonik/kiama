@@ -75,8 +75,7 @@ object Main extends SyntaxAnalysis with ParsingREPLWithConfig[Literal,PrologConf
     import java.io.FileReader
     import java.io.FileNotFoundException
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.util.Messaging
-    import org.kiama.util.StringEmitter
+    import org.kiama.util.{Messaging, StringEmitter}
     import PrologTree.Program
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"

@@ -21,8 +21,7 @@
 package org.kiama
 package example.lambda
 
-import org.kiama.util.GeneratingREPL
-import org.kiama.util.Tests
+import org.kiama.util.{GeneratingREPL, Tests}
 import org.scalatest.prop.Checkers
 
 /**

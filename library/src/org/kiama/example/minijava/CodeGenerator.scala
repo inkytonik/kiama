@@ -28,8 +28,7 @@ object CodeGenerator {
 
     import java.io.{BufferedWriter, FileWriter, PrintWriter}
     import JVMTree._
-    import org.kiama.util.Emitter
-    import org.kiama.util.FileEmitter
+    import org.kiama.util.{Emitter, FileEmitter}
 
     /**
      * Generate the Jasmine code for a single classfile.

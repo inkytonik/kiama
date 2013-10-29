@@ -35,7 +35,7 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.obr.RISCTransformation
     import org.kiama.util.{Config, Emitter, Messaging}
-    import org.kiama.util.IO._
+    import org.kiama.util.IO.{filereader, FileNotFoundException}
     import org.kiama.rewriting.Rewriter._
     import scala.collection.immutable.Seq
 
