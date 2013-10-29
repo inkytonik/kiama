@@ -41,16 +41,16 @@ class DotNameResolutionTests extends Tests {
 
     // For the actual program text, see DotNameResolutionTests.pj
 
-    private val axInA   = Use ("x")
-    private val declAAx = VarDecl (Use ("int"), "x")
-    private val bxInBB  = Use ("x")
-    private val byInBB  = Use ("y")
-    private val BBinBB  = Use ("BB")
-    private val declAA  = ClassDecl ("AA", None, Block (Seq (declAAx)))
-    private val declBB  = ClassDecl ("BB", Some (Use ("AA")), Block (
-                              Seq (VarDecl (BBinBB, "b"),
-                                   AssignStmt (Dot (Use ("b"), byInBB),
-                                               Dot (Use ("b"), bxInBB)))))
+    val axInA   = Use ("x")
+    val declAAx = VarDecl (Use ("int"), "x")
+    val bxInBB  = Use ("x")
+    val byInBB  = Use ("y")
+    val BBinBB  = Use ("BB")
+    val declAA  = ClassDecl ("AA", None, Block (Seq (declAAx)))
+    val declBB  = ClassDecl ("BB", Some (Use ("AA")), Block (
+                      Seq (VarDecl (BBinBB, "b"),
+                           AssignStmt (Dot (Use ("b"), byInBB),
+                                       Dot (Use ("b"), bxInBB)))))
 
     val ast =
         Program (Block (

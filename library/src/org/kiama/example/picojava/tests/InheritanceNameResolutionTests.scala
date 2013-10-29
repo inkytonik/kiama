@@ -40,32 +40,32 @@ class InheritanceNameResolutionTests extends Tests {
 
     // For the actual program text, see InheritanceNameResolutionTests.pj
 
-    private val declAa  = VarDecl (Use ("int"), "a")
-    private val aInAA   = Use ("a")
-    private val declAAb = VarDecl (Use ("int"), "b")
-    private val bInAA   = Use ("b")
-    private val AinB    = Use ("A")
-    private val aInB    = Use ("a")
-    private val declBc  = VarDecl (Use ("int"), "c")
-    private val cInB    = Use ("c")
-    private val AAinBB  = Use ("AA")
-    private val aInBB   = Use ("a")
-    private val declAAe = VarDecl (Use ("int"), "e")
-    private val eInBB   = Use ("e")
-    private val fInBB   = Use ("f")
-    private val declBf  = VarDecl (Use ("int"), "f")
+    val declAa  = VarDecl (Use ("int"), "a")
+    val aInAA   = Use ("a")
+    val declAAb = VarDecl (Use ("int"), "b")
+    val bInAA   = Use ("b")
+    val AinB    = Use ("A")
+    val aInB    = Use ("a")
+    val declBc  = VarDecl (Use ("int"), "c")
+    val cInB    = Use ("c")
+    val AAinBB  = Use ("AA")
+    val aInBB   = Use ("a")
+    val declAAe = VarDecl (Use ("int"), "e")
+    val eInBB   = Use ("e")
+    val fInBB   = Use ("f")
+    val declBf  = VarDecl (Use ("int"), "f")
 
-    private val declAA = ClassDecl ("AA", None, Block(
-                             Seq (declAAb,
-                                  VarDecl (Use ("int"), "d"),
-                                  declAAe,
-                                  AssignStmt (aInAA, bInAA))))
+    val declAA = ClassDecl ("AA", None, Block(
+                     Seq (declAAb,
+                          VarDecl (Use ("int"), "d"),
+                          declAAe,
+                          AssignStmt (aInAA, bInAA))))
 
-    private val declA = ClassDecl ("A", None, Block(
-                            Seq (declAa,
-                                 VarDecl (Use ("int"), "b"),
-                                 VarDecl (Use ("int"), "c"),
-                                 declAA)))
+    val declA = ClassDecl ("A", None, Block(
+                    Seq (declAa,
+                         VarDecl (Use ("int"), "b"),
+                         VarDecl (Use ("int"), "c"),
+                         declAA)))
 
     val ast =
         Program (Block (

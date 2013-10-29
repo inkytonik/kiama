@@ -32,7 +32,7 @@ object Evaluators {
      * Map of evaluator names to the evaluators themselves.
      * Comments refer to names in Dolstra and Visser paper.
      */
-    private val evalmap =
+    val evalmap =
         Map ("reduce"         -> new ReduceEvaluator,          // eval1
              "reducesubst"    -> new ReduceSubstEvaluator,     // eval2
              "innermostsubst" -> new InnermostSubstEvaluator,  // eval3

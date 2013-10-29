@@ -60,7 +60,7 @@ trait Environments {
         /**
          * A unique number to represent this thing.
          */
-        private val num = nameCounter.next ()
+        val num = nameCounter.next ()
 
         /**
          * A unique identifier for this thing, incorporating the underlying

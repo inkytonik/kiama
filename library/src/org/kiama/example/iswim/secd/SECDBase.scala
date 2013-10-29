@@ -96,7 +96,7 @@ object SECDBase {
 
     class CodeTree(bdy : List[ByteCodeBase]) extends ByteCodeBase {
 
-        private lazy val flattened : List[Instruction] =
+        lazy val flattened : List[Instruction] =
             bdy.map {
                 case cs : CodeTree =>
                     cs.flattened

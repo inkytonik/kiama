@@ -34,17 +34,21 @@ object Trampolines {
      */
     sealed abstract class Trampoline[+A] {
 
+        import scala.annotation.tailrec
+
         /**
          * Run this computation to produce its `A`. The key idea is that this
          * method is directly tail recursive so the Scala compiler can convert
          * it into a loop.
          */
+        @tailrec
         final def runT : A =
             resume match {
                 case Left (k)  => k ().runT
                 case Right (a) => a
             }
 
+        @tailrec
         final def resume : Either[() => Trampoline[A], A] =
             this match {
                 case Done(v)       => Right (v)

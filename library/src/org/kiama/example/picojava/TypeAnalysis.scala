@@ -95,7 +95,7 @@ object TypeAnalysis {
      * syn lazy boolean TypeDecl.isSuperTypeOf(TypeDecl typeDecl) = this == typeDecl;
      * eq UnknownDecl.isSuperTypeOf(TypeDecl typeDecl) = true;
      */
-    private val isSuperTypeOf : TypeDecl => TypeDecl => Boolean =
+    val isSuperTypeOf : TypeDecl => TypeDecl => Boolean =
         paramAttr {
             typedecl => {
                 case UnknownDecl (_) => true
@@ -112,7 +112,7 @@ object TypeAnalysis {
      *    this == typeDecl || typeDecl.superClass() != null && typeDecl.superClass().isSubtypeOf(this);
      * eq UnknownDecl.isSuperTypeOfClassDecl(ClassDecl typeDecl) = true;
      */
-    private val isSuperTypeOfClassDecl : ClassDecl => TypeDecl => Boolean =
+    val isSuperTypeOfClassDecl : ClassDecl => TypeDecl => Boolean =
         paramAttr {
             typedecl => {
                 case UnknownDecl (_) => true

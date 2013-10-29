@@ -28,8 +28,8 @@ class TIL1_1Tests extends TIL1_1 with RegexParserTests {
     import AST._
     import scala.collection.immutable.Seq
 
-    private val n = Id ("n")
-    private val f = Id ("f")
+    val n = Id ("n")
+    val f = Id ("f")
 
     test ("parse factorial program") {
         val input = """

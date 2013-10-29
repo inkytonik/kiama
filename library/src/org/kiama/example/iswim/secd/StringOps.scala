@@ -71,7 +71,7 @@ trait StringOps extends SECDBase {
      * \n, \" and \\.  \c where c is some other character is turned into c.
      * A backslash at the end is silently ignored.
      */
-    private def unescape(s : String) : String = {
+    def unescape(s : String) : String = {
         val (escape, v) =
             s.foldLeft ((false, Vector[Char] ())) {
                 case ((escape, v), c) =>

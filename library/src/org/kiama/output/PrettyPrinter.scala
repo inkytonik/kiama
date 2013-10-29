@@ -349,9 +349,10 @@ trait PrettyPrinterBase {
         group (vsep (ds))
 
     /**
-     * Helper fold.
+     * Return a document that is the result of folding `f` over the sequence
+     * `ds`. Returns the empty document is `ds` is empty.
      */
-    private def fold (ds : Seq[Doc], f : (Doc, Doc) => Doc) =
+    def folddoc (ds : Seq[Doc], f : (Doc, Doc) => Doc) =
         if (ds.isEmpty)
             empty
         else
@@ -362,7 +363,7 @@ trait PrettyPrinterBase {
      * horizontally with `<+>`.
      */
     def hsep (ds : Seq[Doc]) : Doc =
-        fold (ds, (_ <+> _))
+        folddoc (ds, (_ <+> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -370,14 +371,14 @@ trait PrettyPrinterBase {
      * before the `<+>`.
      */
     def hsep (ds : Seq[Doc], sep : Doc) : Doc =
-        fold (ds, (_ <> sep <+> _))
+        folddoc (ds, (_ <> sep <+> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * vertically with `<@>`.
      */
     def vsep (ds : Seq[Doc]) : Doc =
-        fold (ds, (_ <@> _))
+        folddoc (ds, (_ <@> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -385,7 +386,7 @@ trait PrettyPrinterBase {
      * before the `<@>`.
      */
     def vsep (ds : Seq[Doc], sep : Doc) : Doc =
-        fold (ds, (_ <> sep <@> _))
+        folddoc (ds, (_ <> sep <@> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -393,7 +394,7 @@ trait PrettyPrinterBase {
      * inserts a `line` and continues with the rest of the sequence.
      */
     def fillsep (ds : Seq[Doc]) : Doc =
-        fold (ds, (_ </> _))
+        folddoc (ds, (_ </> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -402,7 +403,7 @@ trait PrettyPrinterBase {
      * documents with the given separator before the `<+>`.
      */
     def fillsep (ds : Seq[Doc], sep : Doc) : Doc =
-        fold (ds, (_ <> sep </> _))
+        folddoc (ds, (_ <> sep </> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -410,7 +411,7 @@ trait PrettyPrinterBase {
      * separator.
      */
     def ssep (ds : Seq[Doc], sep : Doc) : Doc =
-        fold (ds, (_ <> sep <> _))
+        folddoc (ds, (_ <> sep <> _))
 
     /**
      * Return a pretty-printer document for a separated sequence.
@@ -423,7 +424,7 @@ trait PrettyPrinterBase {
         if (ds.isEmpty)
             empty
         else
-            linebreak <> fold (ds, _ <> sep <@> _)
+            linebreak <> folddoc (ds, _ <> sep <@> _)
 
     /**
      * Return a pretty-printer document for a separated sequence.
@@ -436,7 +437,7 @@ trait PrettyPrinterBase {
         if (ds.isEmpty)
             empty
         else
-            fold (ds, _ <@@> sep <+> _) <> linebreak
+            folddoc (ds, _ <@@> sep <+> _) <> linebreak
 
     /**
      * Return a pretty-printer document for a sequence where each element
@@ -449,7 +450,7 @@ trait PrettyPrinterBase {
         if (ds.isEmpty)
             empty
         else
-            linebreak <> fold (ds, _ <> term <@> _) <> term
+            linebreak <> folddoc (ds, _ <> term <@> _) <> term
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -464,14 +465,14 @@ trait PrettyPrinterBase {
      * horizontally with `<>`.
      */
     def hcat (ds : Seq[Doc]) : Doc =
-        fold (ds, (_ <> _))
+        folddoc (ds, (_ <> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * vertically with `<@@>`.
      */
     def vcat (ds : Seq[Doc]) : Doc =
-        fold (ds, (_ <@@> _))
+        folddoc (ds, (_ <@@> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -479,7 +480,7 @@ trait PrettyPrinterBase {
      * inserts a `linebreak` and continues to the end of the sequence.
      */
     def fillcat (ds : Seq[Doc]) : Doc =
-        fold (ds, (_ <\> _))
+        folddoc (ds, (_ <\> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence

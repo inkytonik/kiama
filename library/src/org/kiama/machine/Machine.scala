@@ -402,7 +402,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * updates.  `init` should be called before this method.
      */
     @tailrec
-    private def steps (nstep : Int) {
+    final def steps (nstep : Int) {
         if (debug)
             emitter.emitln (s"$name step $nstep")
         if (step)

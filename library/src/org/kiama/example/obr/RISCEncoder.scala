@@ -41,19 +41,19 @@ class RISCEncoder {
     /**
      * The code sequence that is being assembled.
      */
-    private val code = Seq.newBuilder[Assembler]
+    val code = Seq.newBuilder[Assembler]
 
     /**
      * Emit a RISC instruction.
      */
-    private def emit (instr : Assembler) {
+    def emit (instr : Assembler) {
         code += instr
     }
 
     /**
      * Emit a comment.
      */
-    private def emitcomment (text : String) {
+    def emitcomment (text : String) {
         code += Comment (text)
     }
 
@@ -149,13 +149,13 @@ class RISCEncoder {
     /**
      * First and last temporary registers
      */
-    private final val firsttemp = 1
-    private final val lasttemp = 26
+    val firsttemp = 1
+    val lasttemp = 26
 
     /**
      * Local register to use for base address of memory block.
      */
-    private final val memreg = 27
+    val memreg = 27
 
     /**
      * Register allocation - we use an attribute grammar to implement
@@ -163,7 +163,7 @@ class RISCEncoder {
      * is handled by a special case, this attribution assumes that the
      * children of each node will be evaluated in left to right order.
      */
-     private val reg : RISCNode => RegNo =
+     val reg : RISCNode => RegNo =
         childAttr (
             d => {
                 // Base case

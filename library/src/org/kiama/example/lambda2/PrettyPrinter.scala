@@ -67,7 +67,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printing document for an instance of a type declaration.
      */
-    private def showtypedecl (t : Type) : Doc =
+    def showtypedecl (t : Type) : Doc =
         if (t == NoType ())
             empty
         else
@@ -76,7 +76,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printing document for an instance of a type.
      */
-    private def showtype (t : Type) : Doc =
+    def showtype (t : Type) : Doc =
         t match {
             case IntType ()       => "Int"
             case FunType (t1, t2) => showtype (t1) <+> "->" <+> showtype (t2)
@@ -86,7 +86,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
-    private def showbin (l : Exp, op : String, r : Exp) : Doc =
+    def showbin (l : Exp, op : String, r : Exp) : Doc =
         parens (show (l) <+> op <+> show (r))
 
 }

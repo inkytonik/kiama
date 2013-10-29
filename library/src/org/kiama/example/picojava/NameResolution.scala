@@ -145,7 +145,7 @@ object NameResolution {
      * Search a sequence of block statements for a declaration matching a given name.
      * Return the matching declaration or the unknown declaration if not found.
      */
-    private def finddecl (t : Attributable, name : String, blockstmts : Seq[BlockStmt]) : Decl =
+    def finddecl (t : Attributable, name : String, blockstmts : Seq[BlockStmt]) : Decl =
         blockstmts.collectFirst {
             case blockstmt if blockstmt->declarationOf (name) != null =>
                 blockstmt->declarationOf (name)

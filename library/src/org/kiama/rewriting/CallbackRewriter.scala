@@ -50,7 +50,7 @@ trait CallbackRewriter extends Rewriter {
      * and new terms to the rewriting method and succeed with the term that
      * it returns.
      */
-    private def dispatch (name : String, s : Strategy) : Strategy =
+    def dispatch (name : String, s : Strategy) : Strategy =
         new Strategy (name) {
             val body =
                 (t : Any) =>

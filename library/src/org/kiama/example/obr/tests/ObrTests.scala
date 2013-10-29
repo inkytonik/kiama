@@ -77,7 +77,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
      *                          - a list containing the parameters to pass to the Obr program
      *                          - the corresponding result we expect the program to produce
      */
-    private def exectest (name : String, dirname : String, spec : (String, Seq[Int], Int)) {
+    def exectest (name : String, dirname : String, spec : (String, Seq[Int], Int)) {
         val (obrfile, params, expect) = spec
         val title = s"""$name processing $obrfile parameters ${params.mkString("(",", ",")")} expecting $expect"""
         test (title) {

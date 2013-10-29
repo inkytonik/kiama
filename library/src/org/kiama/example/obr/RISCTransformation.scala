@@ -69,7 +69,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * Return the address for the location of the entity represented
      * by a given node.
      */
-    private def location (n : EntityNode) : Address =
+    def location (n : EntityNode) : Address =
         n match {
             case e @ IndexExp (_, i) =>
                 val lab1 = genlabel ()
@@ -159,7 +159,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * The RISC tree items that are the translation of the given
      * Obr language declaration.
      */
-    private val ditems : Declaration => Seq[Item] =
+    val ditems : Declaration => Seq[Item] =
         attr {
 
             /**
@@ -181,7 +181,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * The RISC tree items that are the translation of the given
      * Obr language statement.
      */
-    private val sitems : Statement => Seq[Item] =
+    val sitems : Statement => Seq[Item] =
         attr {
 
             /**
@@ -334,7 +334,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * to a test of the value of the current exception followed by code which
      * executed if that test succeeds.
      */
-    private def cblock (clause : Catch, exitlab : Label) : Seq[Item] =
+    def cblock (clause : Catch, exitlab : Label) : Seq[Item] =
         clause match {
 
             case n @ Catch(idn, stmts) =>
@@ -357,7 +357,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * The RISC machine datum that is the translation of the given
      * Obr language expression.
      */
-    private val datum : Expression => Datum =
+    val datum : Expression => Datum =
         attr {
 
             /**

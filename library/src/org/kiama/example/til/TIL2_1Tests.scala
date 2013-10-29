@@ -28,9 +28,9 @@ class TIL2_1Tests extends TIL2_1 with TransformerTests {
     import AST._
     import scala.collection.immutable.Seq
 
-    private val x = Id ("x")
-    private val y = Id ("y")
-    private val n = Id ("n")
+    val x = Id ("x")
+    val y = Id ("y")
+    val n = Id ("n")
 
     test ("transform a single for loop") {
         val input = "for x := 1 to n do write x; end"

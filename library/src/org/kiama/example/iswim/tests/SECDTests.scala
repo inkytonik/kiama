@@ -47,7 +47,7 @@ class SECDTests extends Tests {
     import org.kiama.util.StringEmitter
     import scala.collection.immutable.Seq
 
-    private abstract class SECD(code : Code)
+    abstract class SECD(code : Code)
         extends SECDBase (new ISWIMConfig (Seq (), new StringEmitter))
         with IntegerOps with BooleanOps
         with IntComparisonOps with StackOps
@@ -70,7 +70,7 @@ class SECDTests extends Tests {
         /**
          * Wrap supplied code in a preamble / postamble
          */
-        private val program : CodeSegment = CodeSegment(
+        val program : CodeSegment = CodeSegment(
             MkClosures(
                 List(FunctionSpec(None,"@exnHandler", CodeSegment(code)))
             )

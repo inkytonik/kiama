@@ -32,7 +32,7 @@ object Precedence {
      * Return the salary of the boss of a particular part of a company,
      * or Float.MaxValue if there is no such boss.
      */
-    private val bosssalary : Node => Salary =
+    val bosssalary : Node => Salary =
         down[Node,Salary] {
             case n if n.isRoot =>
                 Float.MaxValue

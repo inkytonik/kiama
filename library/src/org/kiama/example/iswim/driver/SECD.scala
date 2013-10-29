@@ -109,7 +109,7 @@ class SECD(code : CodeTree, config : ISWIMConfig) extends SECDBase (config) with
      * register is initialised to contain a global
      * "abort" exception handler.
      */
-    private val program : CodeSegment = CodeSegment(
+    val program : CodeSegment = CodeSegment(
         MkClosures(List(
             FunctionSpec(
                 None
