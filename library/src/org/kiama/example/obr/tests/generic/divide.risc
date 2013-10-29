@@ -3,21 +3,21 @@
     ! StW(Local(0),Read())
     rd $1
     stw $1, $27, 0
-    ! Write(SequenceDatum(List(StW(Local(4),IntDatum(2)), Bne(LdW(Local(4)),Label(2)), StW(Local(8),IntDatum(0)), Jmp(Label(1)), LabelDef(Label(2))),DivW(IntDatum(9),LdW(Local(4)))))
+    ! Write(SequenceDatum(List(StW(Local(4),IntDatum(2)), Bne(LdW(Local(4)),Label(1)), StW(Local(8),IntDatum(0)), Jmp(Label(2)), LabelDef(Label(1))),DivW(IntDatum(9),LdW(Local(4)))))
     ! StW(Local(4),IntDatum(2))
     movi $2, $0, 2
     stw $2, $27, 4
-    ! Bne(LdW(Local(4)),Label(2))
+    ! Bne(LdW(Local(4)),Label(1))
     ldw $1, $27, 4
     cmpi $1, 0
-    bne label2
+    bne label1
     ! StW(Local(8),IntDatum(0))
     movi $1, $0, 0
     stw $1, $27, 8
-    ! Jmp(Label(1))
-    br label1
-    ! LabelDef(Label(2))
-label2:
+    ! Jmp(Label(2))
+    br label2
+    ! LabelDef(Label(1))
+label1:
     movi $1, $0, 9
     ldw $2, $27, 4
     div $1, $1, $2
@@ -31,8 +31,8 @@ label2:
     wrl
     ! Ret()
     br label3
-    ! LabelDef(Label(1))
-label1:
+    ! LabelDef(Label(2))
+label2:
     ! Write(IntDatum(-1))
     movi $1, $0, -1
     wrd $1

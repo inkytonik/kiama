@@ -32,7 +32,8 @@ class RISCTransformation (analysis : SemanticAnalysis) {
     import RISCLabels.genlabelnum
     import RISCTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution._
+    import org.kiama.attribution.Attribution.attr
+    import org.kiama.attribution.Decorators.down
     import scala.collection.immutable.Seq
 
     /**
@@ -53,15 +54,12 @@ class RISCTransformation (analysis : SemanticAnalysis) {
     val code : ObrInt => RISCProg =
         attr {
             case p @ ObrInt (_, decls, stmts, _) =>
-                tempintloc = Local (Variable (IntType ()).locn)
-                exnlab = genlabel ()
-                exnloc = Local (Variable (ExnType ()).locn)
                 val dbody = decls.flatMap (ditems)
                 val sbody = stmts.flatMap (sitems)
                 val sepilogue = Seq (
                         Write (IntDatum (0))
                     ,   Ret ()
-                    ,   LabelDef (exnlab)
+                    ,   LabelDef (p->exnlab)
                     ,   Write (IntDatum (-1))
                     )
                 RISCProg (dbody ++ sbody ++ sepilogue)
@@ -73,7 +71,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      */
     private def location (n : EntityNode) : Address =
         n match {
-            case IndexExp (_, i) =>
+            case e @ IndexExp (_, i) =>
                 val lab1 = genlabel ()
                 val lab2 = genlabel ()
                 Indexed (
@@ -89,7 +87,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                                     }, LdW (tempintloc)), lab2),
                                 LabelDef (lab1),
                                 StW (exnloc, IntDatum (indexOutOfBoundsExn)),
-                                Jmp (exnlab),
+                                Jmp (e->exnlab),
                                 LabelDef (lab2)),
                             LdW (tempintloc)),
                         IntDatum (WORDSIZE)))
@@ -101,11 +99,14 @@ class RISCTransformation (analysis : SemanticAnalysis) {
         }
 
     /**
-     * The current label to which an EXIT statement should jump.
-     * Undefined outside of all LOOP statements where no
-     * EXIT statement should appear.
+     * The current label to which an EXIT statement should jump when used
+     * at the given context.
      */
-    private var exitlab : Label = _
+    val exitlab =
+        down[ObrNode,Label] {
+            case _ : LoopStmt =>
+                genlabel ()
+        }
 
     /**
      * The label marking the entry point to the currently active error handler
@@ -114,20 +115,45 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * Notice that since this version of Obr has no procedures, the currently
      * active exception handler can be determined completely statically.
      */
-    private var exnlab : Label = _
+    val exnlab =
+        down[ObrNode,Label] {
+
+            // Programs and Try statements can catch exceptions.
+            case _ : ObrInt | _ : TryStmt =>
+                genlabel ()
+
+            // Catch blocks don't use the exnlab of their context, but the
+            // one from the context of the Try in which they occur, since
+            // re-raising an exception has to go out one level.
+            case s : Catch =>
+                s->exnlabOuter
+
+        }
+
+    /**
+     * The exception label for the context outside the current Try statement.
+     * Only valid when used inside a Try statement.
+     */
+    val exnlabOuter : ObrNode => Label =
+        down[ObrNode,Label] {
+            case s : TryStmt =>
+                (s.parent[ObrNode])->exnlab
+        }
 
     /**
      * A location reserved for storing temporary integer values while
      * they are checked for possible division by zero or index out of
      * bounds errors.
      */
-    private var tempintloc : Address = _
+    val tempintloc : Address =
+        Local (Variable (IntType ()).locn)
 
     /**
      * A location reserved for storing the exception value associated with
      * a raised exception.
      */
-    private var exnloc : Address = _
+    val exnloc : Address =
+        Local (Variable (ExnType ()).locn)
 
     /**
      * The RISC tree items that are the translation of the given
@@ -170,7 +196,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * of the current LOOP statement.
              */
             case s @ ExitStmt () =>
-                Seq (Jmp (exitlab))
+                Seq (Jmp (s->exitlab))
 
             /**
              * A for statement first evaluates the minimum and maximum bounds,
@@ -235,18 +261,10 @@ class RISCTransformation (analysis : SemanticAnalysis) {
             case s @ LoopStmt (body) =>
                 // Generate label for top of loop body
                 val lab1 = genlabel ()
-                // Generate label for exit point of loop
-                val lab2 = genlabel ()
-                // Store current exit label
-                val origexitlab = exitlab
-                // Set exit label to exit point of this loop
-                exitlab = lab2
                 // Construct loop code
                 val result = Seq (LabelDef (lab1)) ++
                                 body.flatMap (sitems) ++
-                                Seq (Jmp (lab1), LabelDef (lab2))
-                // Restore exit label
-                exitlab = origexitlab
+                                Seq (Jmp (lab1), LabelDef (s->exitlab))
                 // Return loop code
                 result
 
@@ -281,25 +299,16 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * the current TRY statement within its body and to the exception handler which
              * is associated with the enclosing scope within the bodies of its CATCH blocks.
              */
-            case TryStmt (TryBody (body), cblocks) =>
-                // A label for the entry point of the exception handler code
-                val lab1 = genlabel ()
+            case s @ TryStmt (TryBody (body), cblocks) =>
                 // A label for the exit point of the exception handler code
-                val lab2 = genlabel ()
-                // Store away the label of the current exception handler
-                val origexnlab = exnlab
-                // Make the label marking the entry point to the catch block of this
-                // try statement the current exception handler label.
-                exnlab = lab1
+                val tryexitlab = genlabel ()
                 // Construct the translated RISC code for the body of this try statement
                 val tbody = body.flatMap (sitems)
-                // Re-establish the exception handler label from the enclosing scope
-                exnlab = origexnlab
                 // Translate the catch clauses, append the resulting RISC code to that for
                 // the body and return
-                tbody ++ Seq (Jmp (lab2), LabelDef (lab1)) ++
-                    cblocks.flatMap (cblock (_, lab2)) ++
-                    Seq (Jmp (exnlab), LabelDef (lab2))
+                tbody ++ Seq (Jmp (tryexitlab), LabelDef (s->exnlab)) ++
+                    cblocks.flatMap (cblock (_, tryexitlab)) ++
+                    Seq (Jmp (s->exnlabOuter), LabelDef (tryexitlab))
 
             /**
              * A RAISE statement stores the integer associated with the specified
@@ -307,16 +316,16 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * value and jumps to the exception handler (CATCH blocks) for the
              * current scope.
              */
-            case n @ RaiseStmt (_) =>
+            case s @ RaiseStmt (_) =>
                 // Get hold of the integer constant associated with the exception
                 // kind specified in this RAISE statement
-                val exnconst = (n->entity) match {
+                val exnconst = (s->entity) match {
                     case Constant (_, v) => IntDatum (v)
                 }
                 // Generate code to store that vale as the current exception number
                 // and then to jump to the entry point of the exception handler currently
                 // in scope.
-                Seq (StW (exnloc, exnconst), Jmp (exnlab))
+                Seq (StW (exnloc, exnconst), Jmp (s->exnlab))
 
         }
 
@@ -429,14 +438,14 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * A modulus expression turns into a remainder operation.
              * See the translation of SlashExps for more information.
              */
-            case ModExp (l, r) =>
+            case e @ ModExp (l, r) =>
                 val lab1 = genlabel ()
                 SequenceDatum (
                     Seq (
                             StW (tempintloc, r->datum)
                         ,   Bne (LdW (tempintloc), lab1)
                         ,   StW (exnloc, IntDatum (divideByZeroExn))
-                        ,   Jmp (exnlab)
+                        ,   Jmp (e->exnlab)
                         ,   LabelDef (lab1)
                         )
                 ,   RemW (l->datum, LdW (tempintloc))
@@ -480,7 +489,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * see if it is 0 and if it is we raise a DivideByZero
              * exception.
              */
-            case SlashExp (l, r) =>
+            case e @ SlashExp (l, r) =>
                 val lab1 = genlabel ()
                 SequenceDatum (
                         Seq (
@@ -495,7 +504,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                             ,   StW (exnloc, IntDatum (divideByZeroExn))
                                 // Raise this exception by jumping to the current
                                 // (nearest enclosing) exception handler.
-                            ,   Jmp (exnlab)
+                            ,   Jmp (e->exnlab)
                             ,   LabelDef (lab1)
                             )
                         // Finally execute the division operation.

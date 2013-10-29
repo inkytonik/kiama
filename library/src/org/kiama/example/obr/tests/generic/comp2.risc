@@ -3,7 +3,7 @@
     ! StW(Local(0),Read())
     rd $1
     stw $1, $27, 0
-    ! Beq(Not(IntDatum(0)),Label(2))
+    ! Beq(Not(IntDatum(0)),Label(1))
     movi $1, $0, 0
     cmpi $1, 0
     movi $1, $0, 0
@@ -11,15 +11,23 @@
     movi $1, $0, 1
 label5:
     cmpi $1, 0
-    beq label2
+    beq label1
     ! Write(IntDatum(1))
     movi $1, $0, 1
     wrd $1
     wrl
     ! Ret()
     br label4
-    ! Jmp(Label(3))
-    br label3
+    ! Jmp(Label(2))
+    br label2
+    ! LabelDef(Label(1))
+label1:
+    ! Write(IntDatum(0))
+    movi $1, $0, 0
+    wrd $1
+    wrl
+    ! Ret()
+    br label4
     ! LabelDef(Label(2))
 label2:
     ! Write(IntDatum(0))
@@ -30,14 +38,6 @@ label2:
     br label4
     ! LabelDef(Label(3))
 label3:
-    ! Write(IntDatum(0))
-    movi $1, $0, 0
-    wrd $1
-    wrl
-    ! Ret()
-    br label4
-    ! LabelDef(Label(1))
-label1:
     ! Write(IntDatum(-1))
     movi $1, $0, -1
     wrd $1
