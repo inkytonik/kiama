@@ -52,6 +52,10 @@ shellPrompt <<= (name, version) { (n, v) =>
 
 mainClass in ThisBuild := None
 
+// Don't buffer log messages during testing
+
+logBuffered in ThisBuild := false
+
 // unidoc
 
 scalacOptions in (ScalaUnidoc, unidoc) ++=
