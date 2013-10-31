@@ -28,11 +28,14 @@ import org.kiama.util.{Positioned, PositionedParserUtilities}
  */
 object AST {
 
+    import org.kiama.attribution.Attributable
     import scala.collection.immutable.Seq
 
-    case class Program (ss : Seq[Stat])
+    abstract class ASTNode extends Attributable with Positioned
 
-    sealed abstract class Stat extends Positioned
+    case class Program (ss : Seq[Stat]) extends ASTNode
+
+    sealed abstract class Stat extends ASTNode
 
     case class Decl (i : Id) extends Stat
 
@@ -47,9 +50,9 @@ object AST {
     case class Read (i : Id) extends Stat
     case class Write (e : Exp) extends Stat
 
-    sealed abstract class Exp
+    sealed abstract class Exp extends ASTNode
 
-    case class Id (s : String) {
+    case class Id (s : String) extends ASTNode {
         override def toString : String = s"""Id ("$s")"""
     }
 

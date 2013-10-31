@@ -21,67 +21,22 @@
 package org.kiama
 package example.til
 
-import java.io.Reader
-import org.kiama.util.PositionedParserUtilities
+import AST.Program
+import org.kiama.util.{Compiler, Config}
 
 /**
- * Standard main program for TIL chairmarks.
+ * Main program for TIL chairmarks that just parse and print their ASTs
+ * to standard output.
  */
-trait Main {
+trait ParsingMain extends Compiler[Program] {
 
     import org.kiama.util.Emitter
-    import org.kiama.util.IO.{filereader, FileNotFoundException}
 
     val emitter = new Emitter
 
-    /**
-     * Accept file name arguments and process them one-by-one by
-     * passing a reader on the file to process.  The resulting
-     * value is printed.
-     */
-    def main (args : Array[String]) {
-        for (arg <- args) {
-            try {
-                val reader = filereader (arg)
-                val result = process (reader)
-                emitter.emitln (result)
-            } catch {
-                case e : FileNotFoundException =>
-                    emitter.emitln (s"can't open $arg for reading")
-            }
-        }
+    override def process (filename : String, ast : Program, config : Config) {
+        emitter.emitln (ast)
     }
-
-    /**
-      * Process the file given by the argument reader and return
-      * some useful result.
-      */
-    def process (reader : Reader) : Any
-
-}
-
-/**
- * Main program for TIL chairmarks that just parse.
- */
-trait ParsingMain extends Main {
-
-    self : PositionedParserUtilities =>
-
-    /**
-     * The parser to call.
-     */
-    def parser : Parser[AST.Program]
-
-    /**
-      * Process the file given by the argument reader and return
-      * some useful result. This default implementation parses
-      * the input and returns the parser result.
-      */
-    def process (reader : Reader) : Any =
-        parseAll (parser, reader) match {
-            case Success (p, _) => p
-            case f              => f
-        }
 
 }
 
@@ -90,23 +45,11 @@ trait ParsingMain extends Main {
  */
 trait TransformingMain extends ParsingMain {
 
-    self : PositionedParserUtilities =>
+    def transform (ast : Program) : Program
 
-    import org.kiama.rewriting.Rewriter._
-
-    /**
-     * Transform a single AST.
-     */
-    def transform (ast : AST.Program) : AST.Program
-
-    /**
-      * Process the file given by the argument reader by parsing it,
-      * transforming it and returning the resulting AST.
-      */
-    override def process (reader : Reader) : Any =
-        parseAll (parser, reader) match {
-            case Success (p, _) => transform (p)
-            case f              => f
-        }
+    override def process (filename : String, ast : Program, config : Config) {
+        val newast = transform (ast)
+        super.process (filename, newast, config)
+    }
 
 }
