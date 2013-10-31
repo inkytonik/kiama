@@ -412,15 +412,15 @@ class AttributionTests extends Tests {
 
             val tchildren = t.children.toSeq
             assertResult (2) (tchildren.length)
-            expectsame (c1) (tchildren (0))
-            expectsame (c4) (tchildren (1))
-            expectsame (c1) (t.firstChild)
+            assertSame (c1) (tchildren (0))
+            assertSame (c4) (tchildren (1))
+            assertSame (c1) (t.firstChild)
             assertResult (true) (t.hasChildren)
             assertResult (-1) (t.index)
             assertResult (true) (t.isFirst)
             assertResult (true) (t.isLast)
             assertResult (true) (t.isRoot)
-            expectsame (c4) (t.lastChild)
+            assertSame (c4) (t.lastChild)
             assertResult (null) (t.next)
             assertResult (null) (t.parent)
             assertResult (null) (t.prev)
@@ -432,8 +432,8 @@ class AttributionTests extends Tests {
             assertResult (true) (c1.isFirst)
             assertResult (false) (c1.isLast)
             assertResult (false) (c1.isRoot)
-            expectsame (c4) (c1.next)
-            expectsame (t) (c1.parent)
+            assertSame (c4) (c1.next)
+            assertSame (t) (c1.parent)
             assertResult (null) (c1.prev)
 
             val c2children = c2.children.toSeq
@@ -443,8 +443,8 @@ class AttributionTests extends Tests {
             assertResult (true) (c2.isFirst)
             assertResult (false) (c2.isLast)
             assertResult (false) (c2.isRoot)
-            expectsame (c3) (c2.next)
-            expectsame (c4) (c2.parent)
+            assertSame (c3) (c2.next)
+            assertSame (c4) (c2.parent)
             assertResult (null) (c2.prev)
 
             val c3children = c3.children.toSeq
@@ -455,23 +455,23 @@ class AttributionTests extends Tests {
             assertResult (true) (c3.isLast)
             assertResult (false) (c3.isRoot)
             assertResult (null) (c3.next)
-            expectsame (c4) (c3.parent)
-            expectsame (c2) (c3.prev)
+            assertSame (c4) (c3.parent)
+            assertSame (c2) (c3.prev)
 
             val c4children = c4.children.toSeq
             assertResult (2) (c4children.length)
-            expectsame (c2) (c4children (0))
-            expectsame (c3) (c4children (1))
-            expectsame (c2) (c4.firstChild)
+            assertSame (c2) (c4children (0))
+            assertSame (c3) (c4children (1))
+            assertSame (c2) (c4.firstChild)
             assertResult (true) (c4.hasChildren)
             assertResult (1) (c4.index)
             assertResult (false) (c4.isFirst)
             assertResult (true) (c4.isLast)
             assertResult (false) (c4.isRoot)
-            expectsame (c3) (c4.lastChild)
+            assertSame (c3) (c4.lastChild)
             assertResult (null) (c4.next)
-            expectsame (t) (c4.parent)
-            expectsame (c1) (c4.prev)
+            assertSame (t) (c4.parent)
+            assertSame (c1) (c4.prev)
 
         }
     }
@@ -484,13 +484,13 @@ class AttributionTests extends Tests {
         val c4 = Leaf (6)
         val t2 = EitherTree (Right (c4))
         initTree (t1)
-        expectsame (null) (t1.parent)
-        expectsame (t1) (c3.parent)
-        expectsame (c3) (c1.parent)
-        expectsame (c3) (c2.parent)
+        assertSame (null) (t1.parent)
+        assertSame (t1) (c3.parent)
+        assertSame (c3) (c1.parent)
+        assertSame (c3) (c2.parent)
         initTree (t2)
-        expectsame (null) (t2.parent)
-        expectsame (t2) (c4.parent)
+        assertSame (null) (t2.parent)
+        assertSame (t2) (c4.parent)
     }
 
     test ("a list child's parent property is set correctly") {
@@ -500,11 +500,11 @@ class AttributionTests extends Tests {
         val c4 = ListTree (List (c2, c3))
         val t = Pair (c1, c4)
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c4.parent)
-        expectsame (c4) (c2.parent)
-        expectsame (c4) (c3.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c4.parent)
+        assertSame (c4) (c2.parent)
+        assertSame (c4) (c3.parent)
     }
 
     test ("a set child's parent property is set correctly") {
@@ -514,11 +514,11 @@ class AttributionTests extends Tests {
         val c4 = SetTree (Set (c2, c3))
         val t = Pair (c1, c4)
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c4.parent)
-        expectsame (c4) (c2.parent)
-        expectsame (c4) (c3.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c4.parent)
+        assertSame (c4) (c2.parent)
+        assertSame (c4) (c3.parent)
     }
 
     test ("a sequential vector child's parent property is set correctly") {
@@ -528,11 +528,11 @@ class AttributionTests extends Tests {
         val c4 = GenSeqTree (Vector (c2, c3))
         val t = Pair (c1, c4)
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c4.parent)
-        expectsame (c4) (c2.parent)
-        expectsame (c4) (c3.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c4.parent)
+        assertSame (c4) (c2.parent)
+        assertSame (c4) (c3.parent)
     }
 
     test ("a parallel vector child's parent property is set correctly") {
@@ -542,11 +542,11 @@ class AttributionTests extends Tests {
         val c4 = GenSeqTree (Vector (c2, c3).par)
         val t = Pair (c1, c4)
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c4.parent)
-        expectsame (c4) (c2.parent)
-        expectsame (c4) (c3.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c4.parent)
+        assertSame (c4) (c2.parent)
+        assertSame (c4) (c3.parent)
     }
 
     test ("a map's tuple parent properties are set correctly") {
@@ -558,13 +558,13 @@ class AttributionTests extends Tests {
         val c6 = MapTree (Map (c4 -> c5))
         val t = MapTree (Map (c1 -> c2, c3 -> c6))
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c2.parent)
-        expectsame (t) (c3.parent)
-        expectsame (t) (c6.parent)
-        expectsame (c6) (c4.parent)
-        expectsame (c6) (c5.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c2.parent)
+        assertSame (t) (c3.parent)
+        assertSame (t) (c6.parent)
+        assertSame (c6) (c4.parent)
+        assertSame (c6) (c5.parent)
     }
 
     test ("a pair's component parent properties are set correctly") {
@@ -574,11 +574,11 @@ class AttributionTests extends Tests {
         val c4 = PairTree (c2, c3)
         val t = PairTree (c1, c4)
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c4.parent)
-        expectsame (c4) (c2.parent)
-        expectsame (c4) (c3.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c4.parent)
+        assertSame (c4) (c2.parent)
+        assertSame (c4) (c3.parent)
     }
 
     test ("a triple's component parent properties are set correctly") {
@@ -589,12 +589,12 @@ class AttributionTests extends Tests {
         val c5 = TripleTree (c2, c3, c4)
         val t = PairTree (c5, c1)
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c5.parent)
-        expectsame (c5) (c2.parent)
-        expectsame (c5) (c4.parent)
-        expectsame (c5) (c4.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c5.parent)
+        assertSame (c5) (c2.parent)
+        assertSame (c5) (c4.parent)
+        assertSame (c5) (c4.parent)
     }
 
     test ("a quad's component parent properties are set correctly") {
@@ -606,13 +606,13 @@ class AttributionTests extends Tests {
         val c6 = QuadTree (c2, c3, c4, c5)
         val t = PairTree (c1, c6)
         initTree (t)
-        expectsame (null) (t.parent)
-        expectsame (t) (c1.parent)
-        expectsame (t) (c6.parent)
-        expectsame (c6) (c2.parent)
-        expectsame (c6) (c3.parent)
-        expectsame (c6) (c4.parent)
-        expectsame (c6) (c5.parent)
+        assertSame (null) (t.parent)
+        assertSame (t) (c1.parent)
+        assertSame (t) (c6.parent)
+        assertSame (c6) (c2.parent)
+        assertSame (c6) (c3.parent)
+        assertSame (c6) (c4.parent)
+        assertSame (c6) (c5.parent)
     }
 
     test ("a chain that is only defined at the root returns the root value") {
@@ -689,7 +689,7 @@ class AttributionTests extends Tests {
         assertResult (u) (ct)
 
         // Must not get the original term (eq)
-        expectnotsame (t) (ct)
+        assertNotSame (t) (ct)
 
         // Make sure that the parents proerpties are set correctly
         // (for the top level)
@@ -705,14 +705,14 @@ class AttributionTests extends Tests {
         val c1 = mul.l
         val mulsub = mul.r.asInstanceOf[Sub]
         val c2 = mulsub.l
-        expectnotsame (c1) (c2)
+        assertNotSame (c1) (c2)
 
         // Check the terms at the positions of the two c ocurrences
         // against the one at the position of the d occurrence (which
         // is == but not eq to the two original c's)
         val d1 = mulsub.r
-        expectnotsame (c1) (d1)
-        expectnotsame (c2) (d1)
+        assertNotSame (c1) (d1)
+        assertNotSame (c2) (d1)
     }
 
 }

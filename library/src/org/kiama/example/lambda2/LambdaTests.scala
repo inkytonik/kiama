@@ -21,13 +21,13 @@
 package org.kiama
 package example.lambda2
 
-import org.kiama.util.Tests
+import org.kiama.util.RegexParserTests
 import org.scalatest.prop.Checkers
 
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends Tests with Checkers with Parser {
+class LambdaTests extends RegexParserTests with Checkers with Parser {
 
     import AST._
     import Evaluators.{evaluatorFor, mechanisms}
@@ -61,16 +61,12 @@ class LambdaTests extends Tests with Checkers with Parser {
      * message is produced.  We test both of the analysis methods.
      */
     def assertMessage (term : String, line : Int, col : Int, msg : String) {
-        parseAll (parser, term) match {
-            case Success (e, in) if in.atEnd =>
-                initTree (e)
+        assertParseCheck (term, parser) {
+            exp =>
+                initTree (exp)
                 val analysis = new Analysis (new Messaging)
-                assertType (e, analysis, "tipe", analysis.tipe, line, col, msg)
-                assertType (e, analysis, "tipe2", analysis.tipe2, line, col, msg)
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $term")
-            case f =>
-                fail (s"parse failure: $f")
+                assertType (exp, analysis, "tipe", analysis.tipe, line, col, msg)
+                assertType (exp, analysis, "tipe2", analysis.tipe2, line, col, msg)
         }
     }
 
@@ -78,23 +74,19 @@ class LambdaTests extends Tests with Checkers with Parser {
      * Parse and type check the expression and expect no messages.
      */
     def assertNoMessage (term : String) {
-        parseAll (parser, term) match {
-            case Success (e, in) if in.atEnd =>
-                initTree (e)
+        assertParseCheck (term, parser) {
+            exp =>
+                initTree (exp)
                 val messaging = new Messaging
                 val analysis = new Analysis (messaging)
-                analysis.tipe (e)
+                analysis.tipe (exp)
                 if (messaging.messagecount != 0)
                     fail (s"tipe: no messages expected, got ${messaging.messages}")
-                analysis.tipe2 (e)
+                analysis.tipe2 (exp)
                 if (messaging.messagecount != 0)
                     fail (s"tipe2: no messages expected, got ${messaging.messages}")
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $term")
-            case f =>
-                fail (s"parse failure: $f")
+            }
         }
-    }
 
     test ("an unknown variable by itself is reported") {
         assertMessage ("y", 1, 1, "'y' unknown")
@@ -185,24 +177,20 @@ class LambdaTests extends Tests with Checkers with Parser {
      * result. Fail if the parsing fails or the comparison with
      * the result fails.
      */
-    def assertEval (mech : String, term : String, result : Exp) {
-        parseAll (parser, term) match {
-            case Success (e, in) if in.atEnd =>
-                val r = evaluatorFor (mech).eval (e)
-                assertSame (mech, result, r)
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $term")
-            case f =>
-                fail (s"parse failure: $f")
+    def assertEval (mech : String, term : String, expected : Exp) {
+        assertParseCheck (term, parser) {
+            exp =>
+                val result = evaluatorFor (mech).eval (exp)
+                assertSame (mech, expected, result)
         }
     }
 
     /**
      * Test the assertion on all available evaluation mechanisms.
      */
-    def assertEvalAll (term : String, result : Exp) {
+    def assertEvalAll (term : String, expected : Exp) {
         for (mech <- mechanisms) {
-            assertEval (mech, term, result)
+            assertEval (mech, term, expected)
         }
     }
 
@@ -212,14 +200,14 @@ class LambdaTests extends Tests with Checkers with Parser {
      * expected for mechanisms that evaluate inside lambdas and
      * result2 is expected for those that don't.
      */
-    def assertEvalAll (term : String, result1 : Exp, result2 : Exp) {
+    def assertEvalAll (term : String, expected1 : Exp, expected2 : Exp) {
         for (mech <- mechanisms) {
             val evaluator = evaluatorFor (mech)
             assertEval (mech, term,
                         if (evaluator.reducesinlambdas)
-                            result1
+                            expected1
                         else
-                            result2)
+                            expected2)
         }
     }
 
@@ -337,16 +325,12 @@ class LambdaTests extends Tests with Checkers with Parser {
     /**
      * Parse and pretty-print resulting term then compare to result.
      */
-    def assertPrettyS (term : String, result : String) {
-        parseAll (parser, term) match {
-            case Success (e, in) if in.atEnd =>
-                val r = pretty (e)
-                if (r != result)
-                    fail (s"pretty-print of $term expected $result, got $r")
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $term")
-            case f =>
-                fail (s"parse failure: $f")
+    def assertPrettyS (term : String, expected : String) {
+        assertParseCheck (term, parser) {
+            exp =>
+                val result = pretty (exp)
+                if (result != expected)
+                    fail (s"pretty-print of $term expected $expected, got $result")
         }
     }
 

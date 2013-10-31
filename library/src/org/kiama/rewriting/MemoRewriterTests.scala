@@ -61,7 +61,7 @@ class MemoRewriterTests extends {
         val result = rewrite (s) (t)
         assertResult (B ()) (result)
         assertResult (true) (s.hasBeenComputedAt (t))
-        expectsame (result) (rewrite (s) (t))
+        assertSame (result) (rewrite (s) (t))
         s.reset ()
         assertResult (false) (s.hasBeenComputedAt (t))
         assertResult (B ()) (rewrite (s) (t))
@@ -104,15 +104,15 @@ class MemoRewriterTests extends {
         }
 
         test (s"memo rewriting preserves top-level sharing ($direction)") {
-            expectsame (result.l) (result.r)
+            assertSame (result.l) (result.r)
         }
 
         test (s"memo rewriting preserves second-level sharing ($direction)") {
             val lp = result.l.asInstanceOf[P]
             val rp = result.r.asInstanceOf[P]
-            expectsame (lp.l) (lp.r)
-            expectsame (lp.r) (rp.l)
-            expectsame (rp.l) (rp.r)
+            assertSame (lp.l) (lp.r)
+            assertSame (lp.r) (rp.l)
+            assertSame (rp.l) (rp.r)
         }
 
         test (s"memo rewriting preserves third-level sharing ($direction)") {
@@ -120,12 +120,12 @@ class MemoRewriterTests extends {
             val lrs = result.l.asInstanceOf[P].r.asInstanceOf[P]
             val rls = result.r.asInstanceOf[P].l.asInstanceOf[P]
             val rrs = result.r.asInstanceOf[P].r.asInstanceOf[P]
-            expectsame (lls.l) (lrs.l)
-            expectsame (lrs.l) (rls.l)
-            expectsame (rls.l) (rrs.l)
-            expectsame (lls.r) (lrs.r)
-            expectsame (lrs.r) (rls.r)
-            expectsame (rls.r) (rrs.r)
+            assertSame (lls.l) (lrs.l)
+            assertSame (lrs.l) (rls.l)
+            assertSame (rls.l) (rrs.l)
+            assertSame (lls.r) (lrs.r)
+            assertSame (lrs.r) (rls.r)
+            assertSame (rls.r) (rrs.r)
         }
 
     }
@@ -152,7 +152,7 @@ class MemoRewriterTests extends {
             assertResult (expected) (result)
             val resultls = result.l.asInstanceOf[S]
             val resultrss = result.r.asInstanceOf[S].n.asInstanceOf[S]
-            expectsame (resultls.n) (resultrss.n)
+            assertSame (resultls.n) (resultrss.n)
         }
     }
 

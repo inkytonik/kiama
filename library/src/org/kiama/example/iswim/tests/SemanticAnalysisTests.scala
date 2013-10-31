@@ -27,17 +27,15 @@ package example.iswim.tests
 
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.example.iswim.compiler._
-import org.kiama.util.Tests
+import org.kiama.util.RegexParserTests
 
-class SemanticAnalysisTests extends Tests with Parser {
+class SemanticAnalysisTests extends RegexParserTests with Parser {
 
     import org.kiama.util.{Message, Messaging}
     import Syntax.{Expr, Iswim}
 
-    def runSemanticChecks (parseResult : ParseResult[Iswim], semanticallyCorrect : Boolean,
+    def runSemanticChecks (ast : Iswim, semanticallyCorrect : Boolean,
                            messages : (Int, Message)*) : SemanticAnalysis = {
-        assert (parseResult.successful)
-        val ast = parseResult.get
         initTree (ast)
         val messaging = new Messaging
         val analysis = new SemanticAnalysis (messaging)
@@ -47,18 +45,24 @@ class SemanticAnalysisTests extends Tests with Parser {
         analysis
     }
 
+    def assertRunCheck (str : String, parser : Parser[Iswim], correct : Boolean,
+                        messages : (Int, Message)*) {
+        assertParseCheck (str, parser) {
+            iswim =>
+                runSemanticChecks (iswim, correct, messages : _*)
+        }
+    }
+
     test("simple test of use of a correctly bound variable") {
-        val parseResult = parseAll(expr, "let x = 1 in x + x")
-        runSemanticChecks (parseResult, true)
+        assertRunCheck("let x = 1 in x + x", expr, true)
     }
 
     test("simple test of a recursive binding") {
-        val parseResult = parseAll(expr, "letrec f = fun(x){ g x } and g = fun(y){ f y } in f 1")
-        runSemanticChecks (parseResult, true)
+        assertRunCheck("letrec f = fun(x){ g x } and g = fun(y){ f y } in f 1", expr, true)
     }
 
     test("test of top level bindings in which all variables correctly bound") {
-        val parseResult = parseAll(parser,
+        assertRunCheck(
 """ let x = 1 and y = 60;
 
     let f = fun(x) { x + y };
@@ -68,25 +72,22 @@ class SemanticAnalysisTests extends Tests with Parser {
     let main = fun(w) {
         f(20) + g(y)
     }
-""")
-        runSemanticChecks (parseResult, true)
+""", parser, true)
     }
 
     test("simple test of use of an unbound variable in body of let") {
-        val parseResult = parseAll(expr, "let x = 1 in x + y")
-        runSemanticChecks (parseResult, false,
+        assertRunCheck("let x = 1 in x + y", expr, false,
             (0, Message (1, 18, "unbound variable 'y'")))
     }
 
     test("use of an unbound variable in an expression being bound to a variable in a let") {
-        val parseResult = parseAll(expr, "let x = y and z = x in z + x")
-        runSemanticChecks (parseResult, false,
+        assertRunCheck("let x = y and z = x in z + x", expr, false,
             (0, Message (1, 9, "unbound variable 'y'")),
             (1, Message (1, 19, "unbound variable 'x'")))
     }
 
     test("test of top level bindings in which some variables incorrectly bound") {
-        val parseResult = parseAll(parser,
+        assertRunCheck(
 """ let x = 1 and y = 60;
 
     let f = fun(x) { x + w };
@@ -99,8 +100,7 @@ class SemanticAnalysisTests extends Tests with Parser {
     let main = fun(w) {
         f(20) + g(y)
     }
-""")
-        runSemanticChecks (parseResult, false,
+""", parser, false,
             (0, Message (3, 26, "unbound variable 'w'")),
             (1, Message (5, 31, "unbound variable 'w'")),
             (2, Message (5, 40, "unbound variable 't'")),
@@ -110,40 +110,37 @@ class SemanticAnalysisTests extends Tests with Parser {
     }
 
     test("correct use of bound variables in a match expression") {
-        val parseResult = parseAll(expr, """
+        assertRunCheck("""
     (1,2) match {
         ()      -> 34;
         (y,z)   -> y + z;
         x       -> x * x
     }
-""")
-        runSemanticChecks (parseResult, true)
+""", expr, true)
     }
 
     test("unbound variables in a match expression") {
-        val parseResult = parseAll(expr, """
+        assertRunCheck("""
     (1,2) match {
         ()      -> y;
         (y,z)   -> y + w;
         x       -> x * z
     }
-""")
-        runSemanticChecks (parseResult, false,
+""", expr, false,
             (0, Message (3, 20, "unbound variable 'y'")),
             (1, Message (4, 24, "unbound variable 'w'")),
             (2, Message (5, 24, "unbound variable 'z'")))
     }
 
     test("unreachable clauses in a match expression") {
-        val parseResult = parseAll(expr, """
+        assertRunCheck("""
     (1,2) match {
         ()      -> 1;
         w       -> w + 1;
         (y,z)   -> y + z;
         x       -> x / 10
     }
-""")
-        runSemanticChecks (parseResult, false,
+""", expr, false,
             (0, Message (5, 9, "unreachable match clause")),
             (1, Message (6, 9, "unreachable match clause")))
     }

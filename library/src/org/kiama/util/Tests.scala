@@ -55,20 +55,20 @@ trait Tests extends FunSuiteLike with BeforeAndAfter {
     }
 
     /**
-     * Analogous to ScalaTest's expect but it uses same to compare
+     * Analogous to ScalaTest's `assertResult` but it uses same to compare
      * the two values instead of equality.
      */
-    def expectsame (expected : Any) (actual : Any) {
+    def assertSame (expected : Any) (actual : Any) {
         if (!same (expected, actual)) {
             failExpectedTest (expected, actual, "same object as ")
         }
     }
 
     /**
-     * Analogous to ScalaTest's expect but it uses same to compare
+     * Analogous to ScalaTest's `assertResult` but it uses same to compare
      * the two values instead of equality.
      */
-    def expectnotsame (expected : Any) (actual : Any) {
+    def assertNotSame (expected : Any) (actual : Any) {
         if (same (expected, actual)) {
             failExpectedTest (expected, actual, "not same object as ")
         }
@@ -121,47 +121,62 @@ trait RegexParserTests extends Tests {
     /**
      * Fail a test with a message detailing a parse error.
      */
-    def failParseError (f : Error) {
-        fail (s"parse error: $f")
+    def failParseError (error : Error) {
+        fail (s"parse error: $error")
     }
 
     /**
      * Fail a test with a message detailing a parse failure.
      */
-    def failParseFailure (f : Failure) {
-        fail (s"parse faiure: $f")
+    def failParseFailure (failure : Failure) {
+        fail (s"parse faiure: $failure")
     }
 
     /**
-     * Assert that a parsing operation should be performed correctly.
-     * Try to parse `str` as a `T` using the parser `p`, which is expected
-     * to succeed and to produce the given result.  Fail if `p` doesn't
-     * produce the given result or if `p` doesn't consume all of the input.
+     * Parse a string and if the parse succeeds, pass the result of the parse
+     * to a function for further processing or checking. `str` is the string to
+     * be parsed and `parser` is the parser to parse it with. `func` accepts the
+     * result value of the parse and returns whatever it likes which is returned
+     * from `assertParseCheck`. Fail if the parse succeeds but doesn't consume
+     * all of `str` or if the parse fails.
      */
-    def assertParseOk[T] (str : String, p : Parser[T], result : T) {
-        parseAll (p, str) match {
-            case Success (r, in) =>
-                if (r != result) failExpectedTest (result, r)
-                if (!in.atEnd) failInputEnd (in)
-            case f : Error =>
-                failParseError (f)
-            case f : Failure =>
-                failParseFailure (f)
+    def assertParseCheck[T,U] (str : String, parser : Parser[T]) (func : T => U) : U =
+        parseAll (parser, str) match {
+            case Success (value, in) if in.atEnd =>
+                func (value)
+            case Success (_, in) =>
+                fail (s"extraneous input at ${in.pos}: $str")
+            case f =>
+                fail (s"parse failure: $f")
+        }
+
+    /**
+     * Assert that a parsing operation should be performed correctly.
+     * Try to parse `str` as a `T` using `parser`, which is expected
+     * to succeed and to produce the `expected` value.  Fail if `p` doesn't
+     * produce the expected value or if `parser` doesn't consume all of the
+     * input.
+     */
+    def assertParseOk[T] (str : String, parser : Parser[T], expected : T) {
+        assertParseCheck (str, parser) {
+            result =>
+                if (result != expected)
+                    failExpectedTest (result, expected)
         }
     }
 
     /**
      * Assert that a parsing operation should not result in success.
-     * Try to parse `str` as a `T` using the parser `p`, which is expected
+     * Try to parse `str` as a `T` using `parser`, which is expected
      * to not succeed, giving either a fatal error or failure (as specified
      * by the `iserr` parameter, which defaults to failure). Fail the test
      * if the parsing operation succeeds. Furthermore, fail the test if it
      * fails, but the error or failure is not indicated at the given `line`
      * and `column` location or doesn't contain the given message `msg`.
      */
-    def assertParseError[T] (str : String, p : Parser[T], line : Int, column : Int,
-                             msg : String, iserr : Boolean = false) {
-        parseAll (p, str) match {
+    def assertParseError[T] (str : String, parser : Parser[T], line : Int,
+                             column : Int, msg : String, iserr : Boolean = false) {
+        parseAll (parser, str) match {
             case Success (r, _) =>
                 fail ("expected to find parse error in %s but it succeeded with %s".format (str, r))
             case e : NoSuccess =>
@@ -175,6 +190,14 @@ trait RegexParserTests extends Tests {
         }
     }
 
+    /**
+     * Parse a string and if the parse succeeds, return the result of the parse.
+     * `str` is the string to be parsed and `parser` is the parser to parse it
+     * with.
+     */
+    def assertParseReturn[T] (str : String, parser : Parser[T]) : T =
+        assertParseCheck (str, parser) (identity)
+
 }
 
 /**
@@ -185,22 +208,17 @@ trait TransformerTests extends RegexParserTests {
     self : RegexParsers =>
 
     /**
-     * Assert that a transformation should be performed correctly.
-     * Try to parse `str` as a `T` using the parser `p`, which is expected
-     * to succeed while consuming all of the input. Then pass the resulting
-     * `T` to the `t` transformation function. Fail the test if the value
-     * produced by the transformation is not `result`.
+     * Assert that a transformation should be performed correctly. Try to parse
+     * `str` as a `T` using the parser `parser`, which is expected to succeed
+     * while consuming all of the input. Then pass the resulting `T` to the
+     * `trans` transformation function. Fail the test if the value produced by
+     * the transformation is not `expected`.
      */
-    def assertTransformOk[T] (str : String, p : Parser[T], t : T => T, result : T) {
-        parseAll (p, str) match {
-            case Success (r, in) =>
-                if (!in.atEnd) failInputEnd (in)
-                val newr = t (r)
-                if (newr != result) failExpectedTest (result, newr)
-            case f : Error =>
-                failParseError (f)
-            case f : Failure =>
-                failParseFailure (f)
+    def assertTransformOk[T] (str : String, parser : Parser[T], trans : T => T, expected : T) {
+        assertParseCheck (str, parser) {
+            result =>
+                val transformed = trans (result)
+                if (transformed != expected) failExpectedTest (expected, transformed)
         }
     }
 

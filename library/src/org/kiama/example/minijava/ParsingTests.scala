@@ -21,13 +21,13 @@
 package org.kiama
 package example.minijava
 
-import org.scalatest.FunSuiteLike
+import org.kiama.util.RegexParserTests
 
 /**
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
+class ParsingTests extends SyntaxAnalysis with RegexParserTests {
 
     import MiniJavaTree._
     import scala.collection.immutable.Seq
@@ -613,49 +613,6 @@ class ParsingTests extends SyntaxAnalysis with FunSuiteLike {
             Seq (Argument (IntType (), IdnDef ("a")),
                   Argument (IntType (), IdnDef ("b")),
                   Argument (IntType (), IdnDef ("c"))))
-    }
-
-    /**
-     * Assert that a parsing operation should be performed correctly.
-     * Try to parse `str` as a `T` using the parser `p`, which is expected
-     * to succeed and to produce the given result.  Fail if `p` doesn't
-     * produce the given result or if `p` doesn't consume all of the input.
-     */
-    def assertParseOk[T] (str : String, p : Parser[T], result : T) {
-        parseAll (p, str) match {
-            case Success (r, in) =>
-                if (r != result) fail (s"found '$r' not '$result'")
-                if (!in.atEnd) fail (s"input remaining at ${in.pos}")
-            case f : Error =>
-                fail (s"parse error: $f")
-            case f : Failure =>
-                fail (s"parse failure: $f")
-        }
-    }
-
-    /**
-     * Assert that a parsing operation should not result in success.
-     * Try to parse `str` as a `T` using the parser `p`, which is expected
-     * to not succeed, giving either a fatal error or failure (as specified
-     * by the `iserr` parameter, which defaults to failure). Fail the test
-     * if the parsing operation succeeds. Furthermore, fail the test if it
-     * fails, but the error or failure is not indicated at the given `line`
-     * and `column` location or doesn't contain the given message `msg`.
-     */
-    def assertParseError[T] (str : String, p : Parser[T], line : Int, column : Int,
-                             msg : String, iserr : Boolean = false) {
-        parseAll (p, str) match {
-            case Success (r, _) =>
-                fail (s"expected to find parse error in $str but it succeeded with $r")
-            case e : NoSuccess =>
-                if (iserr && e.isInstanceOf[Failure])
-                    fail ("got parse failure when expecting parse error")
-                else if (!iserr & e.isInstanceOf[Error])
-                    fail ("got parse error when expecting parse failure")
-                assertResult (msg, "wrong message in error") (e.msg)
-                assertResult (line, "wrong line number in error") (e.next.pos.line)
-                assertResult (column, "wrong column number in error") (e.next.pos.column)
-        }
     }
 
 }

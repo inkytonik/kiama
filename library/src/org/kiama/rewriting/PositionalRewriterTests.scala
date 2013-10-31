@@ -49,10 +49,10 @@ class PositionalRewriterTests extends Tests {
 
     def check (no : One) {
         assertResult (One (Two (Leaf (43), Leaf (100)))) (no)
-        expectsame (po) (no.pos)
-        expectsame (pt) (no.a.pos)
-        expectsame (pl1) (no.a.asInstanceOf[Two].l.pos)
-        expectsame (pl2) (no.a.asInstanceOf[Two].r.pos)
+        assertSame (po) (no.pos)
+        assertSame (pt) (no.a.pos)
+        assertSame (pl1) (no.a.asInstanceOf[Two].l.pos)
+        assertSame (pl2) (no.a.asInstanceOf[Two].r.pos)
     }
 
     test ("positional rewriting with positions and strategyf works") {
@@ -89,10 +89,10 @@ class PositionalRewriterTests extends Tests {
         val oo = One (Two (Leaf (42), Leaf (99)))
         val noo = rewrite (r) (oo)
         assertResult (One (Two (Leaf (43), Leaf (100)))) (noo)
-        expectsame (NoPosition) (noo.pos)
-        expectsame (NoPosition) (noo.a.pos)
-        expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.pos)
-        expectsame (NoPosition) (noo.a.asInstanceOf[Two].r.pos)
+        assertSame (NoPosition) (noo.pos)
+        assertSame (NoPosition) (noo.a.pos)
+        assertSame (NoPosition) (noo.a.asInstanceOf[Two].l.pos)
+        assertSame (NoPosition) (noo.a.asInstanceOf[Two].r.pos)
     }
 
 }
@@ -147,14 +147,14 @@ class PositionedRewriterTests extends Tests {
 
     def check (no : One) {
         assertResult (One (Two (Leaf (43), Leaf (100)))) (no)
-        expectsame (pos) (no.start)
-        expectsame (pof) (no.finish)
-        expectsame (pts) (no.a.start)
-        expectsame (ptf) (no.a.finish)
-        expectsame (pl1s) (no.a.asInstanceOf[Two].l.start)
-        expectsame (pl1f) (no.a.asInstanceOf[Two].l.finish)
-        expectsame (pl2s) (no.a.asInstanceOf[Two].r.start)
-        expectsame (pl2f) (no.a.asInstanceOf[Two].r.finish)
+        assertSame (pos) (no.start)
+        assertSame (pof) (no.finish)
+        assertSame (pts) (no.a.start)
+        assertSame (ptf) (no.a.finish)
+        assertSame (pl1s) (no.a.asInstanceOf[Two].l.start)
+        assertSame (pl1f) (no.a.asInstanceOf[Two].l.finish)
+        assertSame (pl2s) (no.a.asInstanceOf[Two].r.start)
+        assertSame (pl2f) (no.a.asInstanceOf[Two].r.finish)
     }
 
     test ("positioned rewriting with positions and strategyf works") {
@@ -190,14 +190,14 @@ class PositionedRewriterTests extends Tests {
     test ("positioned rewriting with no positions works") {
         val oo = One (Two (Leaf (42), Leaf (99)))
         val noo = rewrite (r) (oo)
-        expectsame (NoPosition) (noo.start)
-        expectsame (NoPosition) (noo.a.start)
-        expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.start)
-        expectsame (NoPosition) (noo.a.asInstanceOf[Two].r.start)
-        expectsame (NoPosition) (noo.finish)
-        expectsame (NoPosition) (noo.a.finish)
-        expectsame (NoPosition) (noo.a.asInstanceOf[Two].l.finish)
-        expectsame (NoPosition) (noo.a.asInstanceOf[Two].r.finish)
+        assertSame (NoPosition) (noo.start)
+        assertSame (NoPosition) (noo.a.start)
+        assertSame (NoPosition) (noo.a.asInstanceOf[Two].l.start)
+        assertSame (NoPosition) (noo.a.asInstanceOf[Two].r.start)
+        assertSame (NoPosition) (noo.finish)
+        assertSame (NoPosition) (noo.a.finish)
+        assertSame (NoPosition) (noo.a.asInstanceOf[Two].l.finish)
+        assertSame (NoPosition) (noo.a.asInstanceOf[Two].r.finish)
    }
 
 }

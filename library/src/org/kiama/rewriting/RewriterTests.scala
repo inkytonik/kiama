@@ -108,11 +108,11 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("issubterm: selected subterms - succeed sub") {
-            expectsame (Some (t)) (issubterm (Num (1), t))
+            assertSame (Some (t)) (issubterm (Num (1), t))
         }
 
         test ("issubterm: selected subterms - succeed self") {
-            expectsame (Some (t)) (issubterm (t, t))
+            assertSame (Some (t)) (issubterm (t, t))
         }
 
         test ("issubterm: selected proper subterms - fail") {
@@ -120,7 +120,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("issubterm: selected proper subterms - succeed sub") {
-            expectsame (Some (t)) (ispropersubterm (Num (1), t))
+            assertSame (Some (t)) (ispropersubterm (Num (1), t))
         }
 
         test ("issubterm: selected proper subterms - fail self") {
@@ -132,11 +132,11 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("issuperterm: selected superterms - succeed sub") {
-            expectsame (Some (t)) (issuperterm (t, Num (1)))
+            assertSame (Some (t)) (issuperterm (t, Num (1)))
         }
 
         test ("issuperterm: selected superterms - succeed self") {
-            expectsame (Some (t)) (issuperterm (t, t))
+            assertSame (Some (t)) (issuperterm (t, t))
         }
 
         test ("issuperterm: selected proper superterms - fail") {
@@ -144,7 +144,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         }
 
         test ("issuperterm: selected proper superterms - succeed sub") {
-            expectsame (Some (t)) (ispropersuperterm (t, Num (1)))
+            assertSame (Some (t)) (ispropersuperterm (t, Num (1)))
         }
 
         test ("issuperterm: selected proper superterms - fail self") {
@@ -184,7 +184,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val r = rule { case Num (i) => Num (i + 1) }
         val s = where (r)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("test: failure") {
@@ -199,7 +199,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val r = rule { case Num (i) => Num (i + 1) }
         val s = rwtest (r)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("leaf detection") {
@@ -281,11 +281,11 @@ class RewriterTests extends Tests with Checkers with Generator {
         val ee = Mul (Num (1), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
 
         test ("a bottomup traversal applying identity returns the same term") {
-            expectsame (Some (e)) ((bottomup (id)) (e))
+            assertSame (Some (e)) ((bottomup (id)) (e))
         }
 
         test ("a bottomup traversal applying identity doesn't returns term with same value") {
-            expectnotsame (Some (ee)) ((bottomup (id)) (e))
+            assertNotSame (Some (ee)) ((bottomup (id)) (e))
         }
 
         test ("counting all terms using count") {
@@ -296,7 +296,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         test ("counting all terms using queryf") {
             var count = 0
             val countall = everywhere (queryf (_ => count = count + 1))
-            expectsame (Some (e)) (countall (e))
+            assertSame (Some (e)) (countall (e))
             assertResult (11) (count)
         }
 
@@ -347,7 +347,7 @@ class RewriterTests extends Tests with Checkers with Generator {
             }
 
             test ("map id over a non-nil list gives that list") {
-                expectsame (Some (l1)) (map (id) (l1))
+                assertSame (Some (l1)) (map (id) (l1))
             }
 
             {
@@ -370,11 +370,11 @@ class RewriterTests extends Tests with Checkers with Generator {
                 }
 
                 test ("map isnum over a list with one num succeeds with same list") {
-                    expectsame (Some (l3)) (map (isnum) (l3))
+                    assertSame (Some (l3)) (map (isnum) (l3))
                 }
 
                 test ("map isnum over a list with more than one num succeeds with same list") {
-                    expectsame (Some (l1)) (map (isnum) (l1))
+                    assertSame (Some (l1)) (map (isnum) (l1))
                 }
 
                 test ("map isnum over a list with non-num fails") {
@@ -412,11 +412,11 @@ class RewriterTests extends Tests with Checkers with Generator {
             }
 
             test ("rewriting leaf types: increment doubles - all, bottomup, same") {
-                expectsame (Some (e)) ((allbu (double)) (e))
+                assertSame (Some (e)) ((allbu (double)) (e))
             }
 
             test ("rewriting leaf types: increment doubles - all, bottomup, not same") {
-                expectnotsame (Some (ee)) ((allbu (double)) (e))
+                assertNotSame (Some (ee)) ((allbu (double)) (e))
             }
 
             test ("rewriting leaf types: increment doubles - some, topdown") {
@@ -447,11 +447,11 @@ class RewriterTests extends Tests with Checkers with Generator {
             }
 
             test ("rewriting leaf types: reverse identifiers - all, bottomup, same") {
-                expectsame (Some (e)) ((allbu (rev)) (e))
+                assertSame (Some (e)) ((allbu (rev)) (e))
             }
 
             test ("rewriting leaf types: reverse identifiers - all, bottomup, not same") {
-                expectnotsame (Some (ee)) ((allbu (rev)) (e))
+                assertNotSame (Some (ee)) ((allbu (rev)) (e))
             }
 
             test ("rewriting leaf types: reverse identifiers - some, topdown") {
@@ -486,11 +486,11 @@ class RewriterTests extends Tests with Checkers with Generator {
             }
 
             test ("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, same") {
-                expectsame (Some (e)) ((allbu (evendoubleincrev)) (e))
+                assertSame (Some (e)) ((allbu (evendoubleincrev)) (e))
             }
 
             test ("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, not same") {
-                expectnotsame (Some (ee)) ((allbu (evendoubleincrev)) (e))
+                assertNotSame (Some (ee)) ((allbu (evendoubleincrev)) (e))
             }
 
             test ("rewriting leaf types: increment even doubles and reverse idn - some, topdown") {
@@ -607,14 +607,14 @@ class RewriterTests extends Tests with Checkers with Generator {
     case object NotSame extends Expecting
 
     def travtest (basemsg : String, testmsg : String,
-                  eval : Option[Any], result : Option[Any],
+                  eval : Option[Any], expected : Option[Any],
                   expecting : Expecting = Equal) {
         val msg = s"$basemsg - $testmsg, $expecting"
         test (msg) {
             expecting match {
-                case Equal   => assertResult (result) (eval)
-                case Same    => expectsame (result) (eval)
-                case NotSame => expectnotsame (result) (eval)
+                case Equal   => assertResult (expected) (eval)
+                case Same    => assertSame (expected) (eval)
+                case NotSame => assertNotSame (expected) (eval)
             }
         }
     }
@@ -963,7 +963,7 @@ class RewriterTests extends Tests with Checkers with Generator {
         val e = new StringEmitter
         val s = debug ("hello there: ", e)
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
         assertResult (s"hello there: $t\n") (e.result)
     }
 
@@ -1011,7 +1011,7 @@ class RewriterTests extends Tests with Checkers with Generator {
 
     test ("rewrite returns the original term when the strategy fails") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
-        expectsame (Some (t)) (Some (rewrite (rwfail) (t)))
+        assertSame (Some (t)) (Some (rewrite (rwfail) (t)))
     }
 
     test ("rewrite returns the strategy result when the strategy succeeds") {
@@ -1047,7 +1047,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     test ("repeat on failure succeeds") {
         val s = repeat (rwfail)
         val t = Num (10)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("repeat of non-failure works") {
@@ -1128,7 +1128,7 @@ class RewriterTests extends Tests with Checkers with Generator {
     test ("zero repeat of failure is identity") {
         val s = repeat (rwfail, 0)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("non-zero repeat of failure fails") {
@@ -1178,7 +1178,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                 }
         val s = loop (rwfail, f)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("loop on non-failure with initially false condition is identity") {
@@ -1190,7 +1190,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                 }
         val s = loop (r, f)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("loop on failure with initially true condition is identity") {
@@ -1199,7 +1199,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                 }
         val s = loop (r, rwfail)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("loop on non-failure with initially true condition works") {
@@ -1219,7 +1219,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                 }
         val s = loopnot (id, f)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("loopnot on non-failure with initially true condition is identity") {
@@ -1337,7 +1337,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     }
         val s = loopiter (r, 10, 1)
         val t = Num (1)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("counting loopiter counts correctly") {
@@ -1361,7 +1361,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case n           => n
                 }
         val s = breadthfirst (r)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
         assertResult (Seq (3, 1, 2, 4, 5)) (l)
     }
 
@@ -1654,7 +1654,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case n => count = count - 1; n
                 }
         val s = restore (d, e)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
         assertResult (1) (count)
     }
 
@@ -1684,7 +1684,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case n => count = count - 1; n
                 }
         val s = restorealways (d, e)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
         assertResult (0) (count)
     }
 
@@ -1714,7 +1714,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case n => count = count - 1; n
                 }
         val s = lastly (d, e)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
         assertResult (0) (count)
     }
 
@@ -1753,7 +1753,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case Add (l, r) => Add (r, l)
                 }
         val s = or (d, e)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("or applies second strategy and restores term if first strategy succeeds") {
@@ -1765,7 +1765,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case Add (l, r) => Add (r, l)
                 }
         val s = or (d, e)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     test ("and fails if the first strategy fails") {
@@ -1801,7 +1801,7 @@ class RewriterTests extends Tests with Checkers with Generator {
                     case Add (l, r) => Add (r, l)
                 }
         val s = and (d, e)
-        expectsame (Some (t)) (s (t))
+        assertSame (Some (t)) (s (t))
     }
 
     {

@@ -21,62 +21,51 @@
 package org.kiama
 package example.lambda3
 
-import org.kiama.util.Tests
+import org.kiama.util.RegexParserTests
 
 /**
  * Simple lambda calculus query tests.
  */
-class LambdaTests extends Tests with Parser {
+class LambdaTests extends RegexParserTests with Parser {
 
     import AST._
 
     /**
-     * Parse and evaluate str as a query then evaluate the query and compare
-     * the outcome to result. Fail if any of the parsing or the comparison
-     * fail. `T` is the result type of the query. Generated name counting
-     * is reset before the test is run.
+     * Try to parse and evaluate str as a query then evaluate the query
+     * and compare the outcome to `expected`. `T` is the result type of
+     * the query.
      */
-    def expectQuery[T] (str : String, result : T) {
-        val evaluator = new Evaluator
-        parseAll (parser, str) match {
-            case Success (query, in) if in.atEnd =>
-                assertResult (result) (evaluator.execute (query))
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $str")
-            case f =>
-                fail (s"parse failure: $f")
+    def assertQuery[T] (str : String, expected : T) {
+        assertParseCheck (str, query) {
+            exp => {
+                val evaluator = new Evaluator
+                assertResult (expected) (evaluator.execute (exp))
+            }
         }
     }
 
     /**
-     * As for expectQuery except that the expected result is the `toString`
+     * As for assertQuery except that the expected result is the `toString`
      * of the query result.
      */
-    def expectQueryPrint[T] (str : String, result : String) {
-        val evaluator = new Evaluator
-        parseAll (parser, str) match {
-            case Success (query, in) if in.atEnd =>
-                assertResult (result) (evaluator.execute (query).toString)
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $str")
-            case f =>
-                fail (s"parse failure: $f")
+    def assertQueryPrint[T] (str : String, expected : String) {
+        assertParseCheck (str, query) {
+            exp => {
+                val evaluator = new Evaluator
+                assertResult (expected) (evaluator.execute (exp).toString)
+            }
         }
     }
 
     /**
-     * As for expectQuery except that the expected result is a string
+     * As for assertQuery except that the expected result is a string
      * which is first parsed as an expression to obtain the expected result
      * value.
      */
-    def expectQueryParse (str : String, result : String) {
-        parseAll (exp, result) match {
-            case Success (resultexp, in) if in.atEnd =>
-                expectQuery (str, resultexp)
-            case Success (_, in) =>
-                fail (s"extraneous input in expected result at ${in.pos}: $result")
-            case f =>
-                fail (s"parse failure in expected result: $f")
+    def assertQueryParse (str : String, expectedStr : String) {
+        assertParseCheck (expectedStr, exp) {
+            expected =>
+                assertQuery (str, expected)
         }
     }
 
@@ -84,19 +73,19 @@ class LambdaTests extends Tests with Parser {
 
     def mkvaluetest[T] (s : String, r : T) {
         test (s"$s is $r") {
-            expectQuery (s, r)
+            assertQuery (s, r)
         }
     }
 
     def mkprinttest (s : String, r : String) {
         test (s"$s is $r") {
-            expectQueryPrint (s, r)
+            assertQueryPrint (s, r)
         }
     }
 
     def mkparsetest (s : String, r : String) {
         test (s"$s is $r") {
-            expectQueryParse (s, r)
+            assertQueryParse (s, r)
         }
     }
 

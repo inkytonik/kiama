@@ -30,9 +30,9 @@ package org.kiama
 package example.picojava.tests
 
 import org.kiama.example.picojava.Parser
-import org.kiama.util.Tests
+import org.kiama.util.RegexParserTests
 
-class ErrorTests extends Tests with Parser {
+class ErrorTests extends RegexParserTests with Parser {
 
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.ErrorCheck.errors
@@ -61,8 +61,8 @@ class ErrorTests extends Tests with Parser {
   refC = refD;
 }
 """;
-        parseAll (program, text) match {
-            case Success (ast, _) => {
+        assertParseCheck (text, program) {
+            ast =>
                 initTree (ast)
                 val messages = ast->errors
                 assertResult ("5.9: Unknown identifier b") (messages (0))
@@ -70,9 +70,6 @@ class ErrorTests extends Tests with Parser {
                 assertResult ("3.3: Cyclic inheritance chain for class A") (messages (2))
                 assertResult ("9.3: Cyclic inheritance chain for class B") (messages (3))
                 assertResult ("17.3: Can not assign a variable of type C to a value of type D") (messages (4))
-            }
-            case f =>
-                fail (s"parse failure: $f")
         }
     }
 

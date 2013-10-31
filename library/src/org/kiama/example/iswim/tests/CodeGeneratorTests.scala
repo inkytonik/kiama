@@ -26,11 +26,11 @@ package example.iswim.tests
  * Tests of code generation attribution.
  */
 
-import org.kiama.util.Tests
+import org.kiama.util.RegexParserTests
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
 
-class CodeGeneratorTests extends Tests with CodeGenerator with Parser {
+class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser {
 
     import Syntax._
 
@@ -54,245 +54,255 @@ class CodeGeneratorTests extends Tests with CodeGenerator with Parser {
     import analyser.isSemanticallyCorrect
 
     test("compile a simple arithmetic expression") {
-        val prog = parseAll(expr, "10 + x * 42")
-        assert(prog.successful)
-        initTree (prog.get)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            PushInt(10),
-            Lookup("x"),
-            PushInt(42),
-            Mult(),
-            Add()
-        ))
+        assertParseCheck("10 + x * 42", expr) {
+            prog =>
+                initTree (prog)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    PushInt(10),
+                    Lookup("x"),
+                    PushInt(42),
+                    Mult(),
+                    Add()
+                ))
+        }
     }
 
     test("compile a simple boolean expression") {
-        val prog = parseAll(expr, "true & x | y")
-        assert(prog.successful)
-        initTree (prog.get)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            PushTrue(),
-            Test(CodeSegment(Lookup("x")),PushFalse()),
-            Test(PushTrue(),CodeSegment(Lookup("y")))
-        ))
+        assertParseCheck ("true & x | y", expr) {
+            prog =>
+                initTree (prog)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    PushTrue(),
+                    Test(CodeSegment(Lookup("x")),PushFalse()),
+                    Test(PushTrue(),CodeSegment(Lookup("y")))
+                ))
+        }
     }
 
     test("compile a boolean comparison expression") {
-        val prog = parseAll(expr, "(a == 20) | (b != 30) & (a > b)")
-        assert(prog.successful)
-        initTree (prog.get)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            Lookup("a"),
-            PushInt(20),
-            Equals(),
-            Test(PushTrue(),CodeSegment(
-                Lookup("b"),
-                PushInt(30),
-                Equals(),
-                Test(PushFalse(),PushTrue()),
-                Test(CodeSegment(
+        assertParseCheck("(a == 20) | (b != 30) & (a > b)", expr) {
+            prog =>
+                initTree (prog)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
                     Lookup("a"),
-                    Lookup("b"),
-                    Swap(1,1),
-                    LessThan()
-                ),PushFalse()))
-            )
-        ))
+                    PushInt(20),
+                    Equals(),
+                    Test(PushTrue(),CodeSegment(
+                        Lookup("b"),
+                        PushInt(30),
+                        Equals(),
+                        Test(PushFalse(),PushTrue()),
+                        Test(CodeSegment(
+                            Lookup("a"),
+                            Lookup("b"),
+                            Swap(1,1),
+                            LessThan()
+                        ),PushFalse()))
+                    )
+                ))
+        }
     }
 
     test("compile a let expression") {
-        val prog = parseAll(expr,"let x = 10 and y = 22 + 11 in x * y")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            PushInt(10),
-            PushInt(22),
-            PushInt(11),
-            Add(),
-            Enter(List("x","y")),
-            Lookup("x"),
-            Lookup("y"),
-            Mult(),
-            Exit()
-        ))
+        assertParseCheck("let x = 10 and y = 22 + 11 in x * y", expr) {
+            prog =>
+                initTree (prog)
+                assert(prog->isSemanticallyCorrect)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    PushInt(10),
+                    PushInt(22),
+                    PushInt(11),
+                    Add(),
+                    Enter(List("x","y")),
+                    Lookup("x"),
+                    Lookup("y"),
+                    Mult(),
+                    Exit()
+                ))
+        }
     }
 
     test("compile a letrec expression") {
-        val prog = parseAll(expr,"letrec f = fun(n) (n + 1) and g = fun(m) (m - 1) in f")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            MkClosures(List(
-                FunctionSpec(Some("f"),"n",CodeSegment(
-                    Lookup("n"),
-                    PushInt(1),
-                    Add()
-                )),
-                FunctionSpec(Some("g"),"m",CodeSegment(
-                    Lookup("m"),
-                    PushInt(1),
-                    Sub()
+        assertParseCheck("letrec f = fun(n) (n + 1) and g = fun(m) (m - 1) in f", expr) {
+            prog =>
+                initTree (prog)
+                assert((prog)->isSemanticallyCorrect)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    MkClosures(List(
+                        FunctionSpec(Some("f"),"n",CodeSegment(
+                            Lookup("n"),
+                            PushInt(1),
+                            Add()
+                        )),
+                        FunctionSpec(Some("g"),"m",CodeSegment(
+                            Lookup("m"),
+                            PushInt(1),
+                            Sub()
+                        ))
+                    )),
+                    Enter(List("f","g")),
+                    Lookup("f"),
+                    Exit()
                 ))
-            )),
-            Enter(List("f","g")),
-            Lookup("f"),
-            Exit()
-        ))
+        }
     }
 
     test("compile a tuple expressio") {
-        val prog = parseAll(expr,"(10,20,(),30)")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            PushInt(10),
-            PushInt(20),
-            PushEmpty(),
-            PushInt(30),
-            MkRecord(4)
-        ))
+        assertParseCheck("(10,20,(),30)", expr) {
+            prog =>
+                initTree (prog)
+                assert(prog->isSemanticallyCorrect)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    PushInt(10),
+                    PushInt(20),
+                    PushEmpty(),
+                    PushInt(30),
+                    MkRecord(4)
+                ))
+        }
     }
 
     test("compile a let binding of a lambda expression") {
-        val prog = parseAll(expr,"let f = fun(n) (n + 1) and g = fun(m) (m - 1) in f(g(10))")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            MkClosures(List(
-                FunctionSpec(None,"n",CodeSegment(
-                    Lookup("n"),
-                    PushInt(1),
-                    Add()
+        assertParseCheck("let f = fun(n) (n + 1) and g = fun(m) (m - 1) in f(g(10))", expr) {
+            prog =>
+                initTree (prog)
+                assert((prog)->isSemanticallyCorrect)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    MkClosures(List(
+                        FunctionSpec(None,"n",CodeSegment(
+                            Lookup("n"),
+                            PushInt(1),
+                            Add()
+                        ))
+                    )),
+                    MkClosures(List(
+                        FunctionSpec(None,"m",CodeSegment(
+                            Lookup("m"),
+                            PushInt(1),
+                            Sub()
+                        ))
+                    )),
+                    Enter(List("f","g")),
+                    PushInt(10),
+                    Lookup("g"),
+                    App(),
+                    Lookup("f"),
+                    App(),
+                    Exit()
                 ))
-            )),
-            MkClosures(List(
-                FunctionSpec(None,"m",CodeSegment(
-                    Lookup("m"),
-                    PushInt(1),
-                    Sub()
-                ))
-            )),
-            Enter(List("f","g")),
-            PushInt(10),
-            Lookup("g"),
-            App(),
-            Lookup("f"),
-            App(),
-            Exit()
-        ))
+        }
     }
 
     test("compile some function applications") {
-        val prog = parseAll(expr,"f(10 + g(h(k)))")
-        assert(prog.successful)
-        initTree (prog.get)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            PushInt(10),
-            Lookup("k"),
-            Lookup("h"),
-            App(),
-            Lookup("g"),
-            App(),
-            Add(),
-            Lookup("f"),
-            App()
-        ))
+        assertParseCheck("f(10 + g(h(k)))", expr) {
+            prog =>
+                initTree (prog)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    PushInt(10),
+                    Lookup("k"),
+                    Lookup("h"),
+                    App(),
+                    Lookup("g"),
+                    App(),
+                    Add(),
+                    Lookup("f"),
+                    App()
+                ))
+        }
     }
 
     test("compile a block expression") {
-        val prog = parseAll(expr,"{10;20;\"hello\";();22} + {true}")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            PushInt(10),
-            Pop(1),
-            PushInt(20),
-            Pop(1),
-            PushString("hello"),
-            Pop(1),
-            PushEmpty(),
-            Pop(1),
-            PushInt(22),
-            PushTrue(),
-            Add()
-        ))
+        assertParseCheck("{10;20;\"hello\";();22} + {true}", expr) {
+            prog =>
+                initTree (prog)
+                assert((prog)->isSemanticallyCorrect)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    PushInt(10),
+                    Pop(1),
+                    PushInt(20),
+                    Pop(1),
+                    PushString("hello"),
+                    Pop(1),
+                    PushEmpty(),
+                    Pop(1),
+                    PushInt(22),
+                    PushTrue(),
+                    Add()
+                ))
+        }
     }
 
     test("compile a simple while loop - count from 1 to 20") {
-        val prog = parseAll(expr,"""
+        assertParseCheck("""
     let c = mkref 0
     in while (val c < 20) {
         c := val c + 1
     }
-""")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        assert(result === CodeSegment(
-            Alloc(),
-            Dup(1),
-            PushInt(0),
-            Put(),
-            Enter(List("c")),
-            MkClosures(List(
-                FunctionSpec(None,"@loop", CodeTree(
-                    Lookup("c"),
-                    Get(),
-                    PushInt(20),
-                    LessThan(),
-                    Test(
-                        CodeTree(
-                            Lookup("c"),
+""", expr) {
+            prog =>
+                initTree (prog)
+                assert(prog->isSemanticallyCorrect)
+                val result : CodeSegment = code(prog)
+                assert(result === CodeSegment(
+                    Alloc(),
+                    Dup(1),
+                    PushInt(0),
+                    Put(),
+                    Enter(List("c")),
+                    MkClosures(List(
+                        FunctionSpec(None,"@loop", CodeTree(
                             Lookup("c"),
                             Get(),
-                            PushInt(1),
-                            Add(),
-                            Dup(1),
-                            Swap(1,2),
-                            Put(),
-                            Lookup("@loop"),
-                            Dup(1),
-                            TailApp()
-                        ),
-                        PushEmpty()
-                    )
+                            PushInt(20),
+                            LessThan(),
+                            Test(
+                                CodeTree(
+                                    Lookup("c"),
+                                    Lookup("c"),
+                                    Get(),
+                                    PushInt(1),
+                                    Add(),
+                                    Dup(1),
+                                    Swap(1,2),
+                                    Put(),
+                                    Lookup("@loop"),
+                                    Dup(1),
+                                    TailApp()
+                                ),
+                                PushEmpty()
+                            )
+                        ))
+                    )),
+                    Dup(1),
+                    App(),
+                    Exit()
                 ))
-            )),
-            Dup(1),
-            App(),
-            Exit()
-        ))
+        }
     }
 
     test("compile a simple match expression") {
-        val prog = parseAll(expr,"""
+        assertParseCheck("""
     (1,2) match {
         (x,y,z)     -> x * y + z;
         ()          -> 20
     }
-""")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        initTree (result)
-        val p = pretty(result)
-        assert(p === """CodeSegment(
+""", expr) {
+        prog =>
+            initTree (prog)
+            assert(prog->isSemanticallyCorrect)
+            val result : CodeSegment = code(prog)
+            initTree (result)
+            val p = pretty(result)
+            assert(p === """CodeSegment(
     1: PushInt(1),
     2: PushInt(2),
     3: MkRecord(2),
@@ -333,10 +343,11 @@ class CodeGeneratorTests extends Tests with CodeGenerator with Parser {
                 CodeSegment(
                     38: PushMachineException(MachineExceptionValue: match error, value not matched at <undefined position>),
                     39: RaiseException())))))""")
+        }
     }
 
     test("compile a simple, but complete, program") {
-        val prog = parseAll(parser, """
+        assertParseCheck("""
         /*
          * Title:       Fibonacci fun
          * Description: A very simple imperative Fibonacci function with driver.
@@ -366,14 +377,14 @@ class CodeGeneratorTests extends Tests with CodeGenerator with Parser {
             write (fib 200);
             write "\n"
         }
-""")
-        assert(prog.successful)
-        initTree (prog.get)
-        assert((prog.get)->isSemanticallyCorrect)
-        val result : CodeSegment = code(prog.get)
-        initTree (result)
-        val p = pretty(result)
-        assert(p === """CodeSegment(
+""", parser) {
+        prog =>
+            initTree (prog)
+            assert(prog->isSemanticallyCorrect)
+            val result : CodeSegment = code(prog)
+            initTree (result)
+            val p = pretty(result)
+            assert(p === """CodeSegment(
     1: BindPrims(List(write, read, fields, type)),
     2: MkClosures(
         FunctionSpec(
@@ -453,6 +464,7 @@ class CodeGeneratorTests extends Tests with CodeGenerator with Parser {
     69: App(),
     70: Exit(),
     71: Exit())""")
-   }
+        }
+    }
 
 }

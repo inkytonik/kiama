@@ -21,17 +21,17 @@
 package org.kiama
 package example.prolog
 
-import org.kiama.util.Tests
+import org.kiama.util.RegexParserTests
 
 /**
  * Tests that check that the queries run correctly. I.e., given a base
  * Prolog file containing definitions, that running specific queries
  * over those definitions give the expected results.
  */
-class InterpreterTests extends SyntaxAnalysis with Tests {
+class InterpreterTests extends SyntaxAnalysis with RegexParserTests {
 
-    import org.kiama.util.IO.filereader
     import org.kiama.util.StringEmitter
+    import scala.io.Source
 
     /**
      * The interpreter to use to run the tests.
@@ -39,26 +39,23 @@ class InterpreterTests extends SyntaxAnalysis with Tests {
     val interpreter = new Interpreter
 
     /**
-     * Create an interpreter test. The file name is the one that should be
-     * loaded to obtain definitions. The query string is run against the
-     * loaded definitions to obtain some textual output, which is compared
-     * against the expected output.
+     * Create an interpreter test. The file name `fn` is the one that should be
+     * loaded to obtain definitions. It is assumed to be relative to the Prolog
+     * example test directory. The query string `q` is run against the loaded
+     * definitions to obtain some textual output, which is compared against the
+     * expected output.
      */
     def querytest (fn : String, q : String, exp : String) {
-        val fullfn = s"library/src/org/kiama/example/prolog/test/$fn"
-        test (s"$q on $fullfn") {
-            val emitter = new StringEmitter
-            parseAll (program, filereader (fullfn)) match {
-                case Success (programtree, _) =>
-                    parseAll (query, q) match {
-                        case Success (querytree, _) =>
+        val filename = s"library/src/org/kiama/example/prolog/test/$fn"
+        test (s"$q on $filename") {
+            assertParseCheck (Source.fromFile (filename).mkString, program) {
+                programtree =>
+                    assertParseCheck (q, query) {
+                        querytree =>
+                            val emitter = new StringEmitter
                             interpreter.interpret (querytree, programtree, emitter)
                             assertResult (exp) (emitter.result)
-                        case f =>
-                            fail (s"can't parse query '$q': $f")
                     }
-                case f =>
-                    fail (s"can't parse program file '$fn': $f")
             }
         }
     }

@@ -21,51 +21,43 @@
 package org.kiama
 package example.lambda
 
-import org.kiama.util.{GeneratingREPL, Tests}
+import org.kiama.util.{GeneratingREPL, RegexParserTests}
 import org.scalatest.prop.Checkers
 
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends Tests with Checkers with Parser with Evaluator
-        with Generator {
+class LambdaTests extends RegexParserTests with Checkers with Parser
+        with Evaluator with Generator {
 
     import AST._
     import org.scalacheck.Prop._
 
     /**
-     * Parse and evaluate term then compare to result. Fail if any the parsing
-     * or the comparison fail.
+     * Parse and evaluate `term` then compare to `expected`.
      */
-    def expectEval (term : String, result : Exp) {
-        parseAll (parser, term) match {
-            case Success (e, in) if in.atEnd =>
-                normal (e) match {
-                    case Some (r) => assertResult (result) (r)
+    def assertEval (term : String, expected : Exp) {
+        assertParseCheck (term, parser) {
+            exp =>
+                normal (exp) match {
+                    case Some (r) => assertResult (expected) (r)
                     case None     => fail (s"reduction failed: $term")
                 }
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $term")
-            case f =>
-                fail (s"parse failure: $f")
         }
     }
 
    /**
-     * Parse and evaluate term then compare to expected result. Fail if the
-     * parsing or the comparison fail.
+     * Parse and evaluate term then compare to expected result, returning
+     * the result of the comparison.
      */
-    def evalTo (term : String, result : Exp) : Boolean = {
-        parseAll (parser, term) match {
-            case Success (e, in) if in.atEnd =>
-                normal (e) match {
-                    case Some (r) => r == result
+    def evalTo (term : String, expected : Exp) : Boolean =
+        assertParseCheck (term, parser) {
+            exp =>
+                normal (exp) match {
+                    case Some (r) => r == expected
                     case None     => false
                 }
-            case _ =>
-                false
         }
-    }
 
     test ("an integer leaf evaluates to itself") {
         check ((i : Int) => (i >= 0) ==> evalTo (i.toString, Num (i)))
@@ -76,23 +68,23 @@ class LambdaTests extends Tests with Checkers with Parser with Evaluator
     }
 
     test ("a numeric parameter is passed and ignored") {
-        expectEval ("""(\x.99) 42""", Num (99))
+        assertEval ("""(\x.99) 42""", Num (99))
     }
 
     test ("a numeric parameter is passed and substituted") {
-        expectEval ("""(\x.x) 42""", Num (42))
+        assertEval ("""(\x.x) 42""", Num (42))
     }
 
     test ("a function parameter is passed and ignored") {
-        expectEval ("""(\x.99) (\y.y)""", Num (99))
+        assertEval ("""(\x.99) (\y.y)""", Num (99))
     }
 
     test ("a function parameter is passed and substituted") {
-        expectEval ("""(\x.x) (\y.y)""", Lam ("y", Var ("y")))
+        assertEval ("""(\x.x) (\y.y)""", Lam ("y", Var ("y")))
     }
 
     test ("a variable is substituted at multiple levels") {
-        expectEval ("""(\y.(\z.z) y) x""", Var ("x"))
+        assertEval ("""(\y.(\z.z) y) x""", Var ("x"))
     }
 
     /**
@@ -102,7 +94,7 @@ class LambdaTests extends Tests with Checkers with Parser with Evaluator
      *  (((if-then-else)false)42)99 -> 99
      */
     test ("Church encodings of Booleans work") {
-        expectEval ("""(((\a.\b.\c.((a)b)c) (\x.\y.y)) 42) 99""", Num (99))
+        assertEval ("""(((\a.\b.\c.((a)b)c) (\x.\y.y)) 42) 99""", Num (99))
     }
 
 }

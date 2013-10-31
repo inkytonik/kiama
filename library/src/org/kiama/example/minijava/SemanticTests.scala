@@ -21,26 +21,18 @@
 package org.kiama
 package example.minijava
 
-import org.kiama.util.Tests
-
-/**
- * Parser to use for semantic tests. Separated from `SemanticTests` since
- * we only need the program parser and we don't want to bring all of the
- * parsers into scope in the tests.
- */
-object SemanticTestParser extends SyntaxAnalysis
+import org.kiama.util.RegexParserTests
 
 /**
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class SemanticTests extends Tests {
+class SemanticTests extends SyntaxAnalysis with RegexParserTests {
 
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.util.{Message, Messaging}
     import scala.collection.immutable.Seq
-    import SemanticTestParser.{Error, parser, parseAll, Success, Failure}
 
     // Tests of definition uniqueness (Rule 1)
 
@@ -574,29 +566,13 @@ class SemanticTests extends Tests {
     }
 
     /**
-     * Parse some test input as a program and, if the parse succeeds with
-     * no input left, return the program tree. If the parse fails, fail
-     * the test.
-     */
-    def parseProgram (str : String) : Program =
-        parseAll (parser, str) match {
-            case Success (r, in) =>
-                if (!in.atEnd) fail (s"input remaining at ${in.pos}")
-                r
-            case f : Error =>
-                fail (s"parse error: $f")
-            case f : Failure =>
-                fail (s"parse failure: $f")
-        }
-
-    /**
      * Parse some test input as a program, run the semantic analyser
      * over the resulting tree (if the parse succeeds) and check that
      * the expected messages are produced. Returns the analysis object
      * so that more tests can be performed by caller.
      */
     def semanticTest (str : String, messages : (Int, Message)*) : SemanticAnalysis =
-        runSemanticChecks (parseProgram (str), messages : _*)
+        runSemanticChecks (assertParseReturn (str, parser), messages : _*)
 
     /**
      * Run the semantic analyser over a given tree and check that the
