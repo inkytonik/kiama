@@ -1,17 +1,3 @@
-// Dependencies
-
-// The dsinfo and dsprofile dependencies are here so that they end up
-// in published dependencies since they are needed by the core.
-
-libraryDependencies ++= Seq (
-    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.2.0",
-    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.2.0",
-    "jline" % "jline" % "2.11",
-    "org.scalacheck" %% "scalacheck" % "1.10.1" % "test",
-    "org.scalatest" %% "scalatest" % "1.9.2" % "test",
-    "org.rogach" %% "scallop" % "0.9.4"
- )
-
 // Interactive settings
 
 shellPrompt <<= (name, version) { (n, v) =>

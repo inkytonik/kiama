@@ -32,6 +32,17 @@ resolvers in ThisBuild ++= Seq (
     Resolver.sonatypeRepo ("snapshots")
 )
 
+// Dependencies
+
+libraryDependencies in ThisBuild ++= Seq (
+    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.2.0",
+    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.3.0-SNAPSHOT",
+    "jline" % "jline" % "2.11",
+    "org.scalacheck" %% "scalacheck" % "1.10.1" % "test",
+    "org.scalatest" %% "scalatest" % "1.9.2" % "test",
+    "org.rogach" %% "scallop" % "0.9.4"
+)
+
 // Migration manager (mima)
 
 // mimaDefaultSettings
