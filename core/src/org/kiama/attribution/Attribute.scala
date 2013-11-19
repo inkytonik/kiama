@@ -33,4 +33,9 @@ abstract class Attribute[T <: AnyRef,U] (val name : String) extends (T => U) {
     def reportCycle (t : T) : U =
         throw new IllegalStateException (s"Cycle detected in attribute evaluation '$name' at $t")
 
+    /**
+     * The attribute's string representation is its name.
+     */
+    override def toString : String = name
+
 }
