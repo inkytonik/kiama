@@ -715,5 +715,162 @@ class AttributionTests extends Tests {
         assertNotSame (c2) (d1)
     }
 
+    test ("a circular attribute that never changes evaluates to initial value") {
+        import org.kiama.example.imperative.AST.Num
+
+        lazy val zero : Num => Double =
+            circular (0.0) (_ => 0)
+
+        val n = Num (1)
+        assertResult (0) (zero (n))
+    }
+
+    test ("two circular attributes that never change from initial value do converge") {
+
+        import org.kiama.example.imperative.AST.Num
+
+        lazy val counter : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    pass (n)
+            )
+
+        lazy val pass : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    counter (n)
+            )
+
+        val n = Num (1)
+        assertResult (0.0) (counter (n))
+        assertResult (0.0) (pass (n))
+    }
+
+    test ("a directly circular attribute can count") {
+        import org.kiama.example.imperative.AST.Num
+
+        lazy val counter : Num => Double =
+            circular (0.0) (
+                (n : Num) => {
+                    val current = counter (n)
+                    current + (if (current < 10) n.d else 0)
+                }
+            )
+
+        val n = Num (1)
+        assertResult (10.0) (counter (n))
+    }
+
+    test ("a cycle of two circular attributes can count") {
+        import org.kiama.example.imperative.AST.Num
+
+        lazy val counter : Num => Double =
+            circular (0.0) (
+                (n : Num) => {
+                    val current = pass (n)
+                    current + (if (current < 10) n.d else 0)
+                }
+            )
+
+        lazy val pass : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    counter (n)
+            )
+
+        val n = Num (1)
+        assertResult (10.0) (counter (n))
+        assertResult (10.0) (pass (n))
+    }
+
+    test ("a cycle of three circular attributes can count") {
+        import org.kiama.example.imperative.AST.Num
+
+        lazy val counter : Num => Double =
+            circular (0.0) (
+                (n : Num) => {
+                    val current = double (n)
+                    current + (if (current < 10) n.d else 0)
+                }
+            )
+
+        lazy val double : Num => Double =
+            circular (0.0) (
+                (n : Num) => {
+                    val current = pass (n)
+                    if (current < 10) current * 2 else current
+                }
+            )
+
+        lazy val pass : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    counter (n)
+            )
+
+        val n = Num (1)
+        assertResult (14.0) (counter (n))
+        assertResult (14.0) (double (n))
+        assertResult (14.0) (pass (n))
+    }
+
+    test ("a single circular attribute plus a cycle of two circular attributes can count") {
+        import org.kiama.example.imperative.AST.Num
+
+        lazy val entry : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    counter (n)
+            )
+
+        lazy val counter : Num => Double =
+            circular (0.0) (
+                (n : Num) => {
+                    val current = double (n)
+                    current + (if (current < 10) n.d else 0)
+                }
+            )
+
+        lazy val double : Num => Double =
+            circular (0.0) (
+                (n : Num) => {
+                    val current = counter (n)
+                    if (current < 10) current * 2 else current
+                }
+            )
+
+        val n = Num (1)
+        assertResult (14.0) (entry (n))
+        assertResult (14.0) (counter (n))
+        assertResult (14.0) (double (n))
+    }
+
+    test ("a single circular attribute plus a cycle of two trivial circular attributes converges") {
+        import org.kiama.example.imperative.AST.Num
+
+        lazy val entry : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    pass1 (n)
+            )
+
+        lazy val pass1 : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    pass2 (n)
+            )
+
+        lazy val pass2 : Num => Double =
+            circular (0.0) (
+                (n : Num) =>
+                    pass1 (n)
+            )
+
+        val n = Num (1)
+        assertResult (0.0) (entry (n))
+        assertResult (0.0) (pass1 (n))
+        assertResult (0.0) (pass2 (n))
+    }
+
 }
 

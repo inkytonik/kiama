@@ -216,6 +216,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
     private object CircularAttribute {
         var IN_CIRCLE = false
         var CHANGE = false
+        var READY = false
     }
 
     /**
@@ -262,53 +263,132 @@ trait AttributionCore extends AttributionCommon with Memoiser {
 
         /**
          * Return the value of this attribute for node `t`.  Essentially Figure 6
-         * from the CRAG paper.
+         * from the CRAG paper, plus the READY optimisation (section 3.3).
          */
         def apply (t : T) : U = {
-            val i = start ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
-                           "parameter" -> None, "circular" -> true)
             resetIfRequested ()
+
             if (computed containsKey t) {
+
+                // We have previously computed this attribute occurrence so fetch it from the cache.
+
+                val i = start ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
+                               "parameter" -> None, "circular" -> true, "phase" -> "computed")
                 val u = value (t)
                 finish (i, "value" -> u, "cached" -> true, "phase" -> "computed")
                 u
+
             } else if (!IN_CIRCLE) {
+
+                // This is the first evaluation of a circular attribute occurrence, so enter
+                // a fixed-point computation that cmoputes it and all dependent attribute
+                // occurrences until they stabilise.
+
                 IN_CIRCLE = true
                 visited.put (t, ())
-                var u = init
-                finish (i, "value" -> u, "cached" -> false, "phase" -> "circle")
                 do {
-                    CHANGE = false
+
+                    // Evaluate the attribute occurrence once. Compare the value that is
+                    // computed (newu) with the previous value (u). If they are the same,
+                    // we are done, since it and all dependent occurrences have stabilised.
+                    // If the values are different, cache the new one and repeat.
+
                     val i = start ("event" -> "AttrEval", "subject" -> t,
                                    "attribute" -> this, "parameter" -> None,
-                                   "circular" -> true, "iter" -> true)
+                                   "circular" -> true, "phase" -> "iterate")
+                    CHANGE = false
+                    val u = value (t)
                     val newu = f (t)
-                    finish (i, "value" -> newu, "cached" -> false, "phase" -> "iterate")
-                    if (u != newu) {
+                    if (u == newu) {
+                        finish (i, "value" -> u, "cached" -> false, "phase" -> "iteratenochange")
+                    } else {
+                        finish (i, "value" -> newu, "cached" -> false, "phase" -> "iteratechange")
                         CHANGE = true
-                        u = newu
+                        memo.put (t, newu)
                     }
+
                 } while (CHANGE)
-                visited.remove (t)
+
+                // The value of this attribute at t has been computed and cached.
                 computed.put (t, ())
-                memo.put (t, u)
+
+                // All of the values of dependent attribute occurences are also final, but have
+                // not yet been cached. Enter READY mode to go around the circle one more time
+                // to cache them.
+
+                READY = true
+                val u = f (t)
+                READY = false
+
+                // Now we have computed and cached all of the attribute occurrences on the circle
+                // so we are done with this one. Return the final value of the initial attribute
+                // occurrence.
+
+                visited.remove (t)
                 IN_CIRCLE = false
                 u
+
             } else if (! (visited containsKey t)) {
-                visited.put (t, ())
-                var u = value (t)
-                val newu = f (t)
-                if (u != newu) {
-                    CHANGE = true
-                    u = newu
-                    memo.put (t, u)
+
+                if (READY) {
+
+                    // We get to this point if a fixed-point iteration has ended with no changes.
+                    // The value of the initial attribute occurrence of the circle has stabilised,
+                    // been cached and marked as computed. Since a fixed-point has been reached,
+                    // it must be that all dependent attribute occurrences have also stabilised
+                    // and been cached, so in the READY phase we do one more iteration to mark
+                    // them as computed as well. This code handles an occurrence that hasn't yet
+                    // been visited on this last iteration.
+
+                    computed.put (t, ())
+                    visited.put (t, ())
+                    val u = f (t)
+                    visited.remove (t)
+                    u
+
+                } else {
+
+                    // We are in a circle but not at the beginning of it. In other words, we are
+                    // evaluating a circular attribute occurrence on which the initial circular
+                    // attribute occurrence depends. We reach here if we have not previously
+                    // visited this occurrence on this iteration of the fixed-point computation.
+                    // Evaluate this attribute occurrence. As for the initial attribute occurrence
+                    // above, if the value changes, note that something has changed on the cycle,
+                    // and cache the new value.
+
+                    val i = start ("event" -> "AttrEval", "subject" -> t,
+                                   "attribute" -> this, "parameter" -> None,
+                                   "circular" -> true, "phase" -> "notvisited")
+                    visited.put (t, ())
+                    val u = value (t)
+                    val newu = f (t)
+                    visited.remove (t)
+                    if (u == newu) {
+                        finish (i, "value" -> u, "cached" -> false, "phase" -> "notvisitednochange")
+                        u
+                    } else {
+                        finish (i, "value" -> newu, "cached" -> false, "phase" -> "notvisitedchange")
+                        CHANGE = true
+                        memo.put (t, newu)
+                        newu
+                    }
+
                 }
-                visited.remove (t)
-                finish (i, "value" -> u, "cached" -> false, "phase" -> "notvisited")
-                u
+
             } else {
-                finish (i, "value" -> init, "cached" -> false, "phase" -> "initial")
-                init
+
+                // We reach this point if we ask for the value of a circular attribute occurrence
+                // and we have already visited it in the current fixed-point iteration. We just
+                // return the cached value since that is our view of the value of this attribute
+                // so far.
+
+                val i = start ("event" -> "AttrEval", "subject" -> t,
+                               "attribute" -> this, "parameter" -> None,
+                               "circular" -> true, "phase" -> "default")
+                val u = value (t)
+                finish (i, "value" -> u, "cached" -> false, "phase" -> "default")
+                u
+
             }
         }
 
