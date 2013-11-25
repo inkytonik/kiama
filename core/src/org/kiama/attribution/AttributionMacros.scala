@@ -34,6 +34,9 @@ object AttributionMacros {
     def childAttrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => Attributable => U]): c.Expr[A] =
         makeCallWithName (c)
 
+    def circularMacro[T <: AnyRef,U,A] (c : Context) (init : c.Expr[U]) (f : c.Expr[T => U]): c.Expr[A] =
+        makeCallWithName (c)
+
     def dynAttrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
         makeCallWithName (c)
 

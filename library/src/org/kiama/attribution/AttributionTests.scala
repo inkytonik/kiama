@@ -718,7 +718,7 @@ class AttributionTests extends Tests {
     test ("a circular attribute that never changes evaluates to initial value") {
         import org.kiama.example.imperative.AST.Num
 
-        lazy val zero : Num => Double =
+        lazy val zero : CircularAttribute[Num,Double] =
             circular (0.0) (_ => 0)
 
         val n = Num (1)
@@ -731,13 +731,13 @@ class AttributionTests extends Tests {
 
         import org.kiama.example.imperative.AST.Num
 
-        lazy val counter : Num => Double =
+        lazy val counter : CircularAttribute[Num,Double] =
             circular (0.0) (
                 (n : Num) =>
                     pass (n)
             )
 
-        lazy val pass : Num => Double =
+        lazy val pass : CircularAttribute[Num,Double] =
             circular (0.0) (
                 (n : Num) =>
                     counter (n)
@@ -757,7 +757,7 @@ class AttributionTests extends Tests {
     test ("a directly circular attribute can count") {
         import org.kiama.example.imperative.AST.Num
 
-        lazy val counter : Num => Double =
+        lazy val counter : CircularAttribute[Num,Double] =
             circular (0.0) (
                 (n : Num) => {
                     val current = counter (n)

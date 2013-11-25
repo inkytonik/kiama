@@ -509,14 +509,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * iteratively until a fixed point is reached (in conjunction with other
      * circular attributes on which it depends).  The final value is cached.
      */
-    def circular[T <: AnyRef,U] (init : U) (f : T => U) : T => U =
-        macro AttributionCommonMacros.circularMacro[T,U]
+    def circular[T <: AnyRef,U] (init : U) (f : T => U) : CircularAttribute[T,U] =
+        macro AttributionMacros.circularMacro[T,U,CircularAttribute[T,U]]
 
     /**
      * As for the other `circular` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def circular[T <: AnyRef,U] (name : String, init : U) (f : T => U) : T => U =
+    def circular[T <: AnyRef,U] (name : String, init : U) (f : T => U) : CircularAttribute[T,U] =
         new CircularAttribute (name, init, f)
 
 }
