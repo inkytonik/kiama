@@ -722,7 +722,9 @@ class AttributionTests extends Tests {
             circular (0.0) (_ => 0)
 
         val n = Num (1)
+        assertResult (false) (zero.hasBeenComputedAt (n))
         assertResult (0) (zero (n))
+        assertResult (true) (zero.hasBeenComputedAt (n))
     }
 
     test ("two circular attributes that never change from initial value do converge") {
@@ -742,8 +744,14 @@ class AttributionTests extends Tests {
             )
 
         val n = Num (1)
+        assertResult (false) (counter.hasBeenComputedAt (n))
+        assertResult (false) (pass.hasBeenComputedAt (n))
         assertResult (0.0) (counter (n))
+        assertResult (true) (counter.hasBeenComputedAt (n))
+        assertResult (true) (pass.hasBeenComputedAt (n))
         assertResult (0.0) (pass (n))
+        assertResult (true) (counter.hasBeenComputedAt (n))
+        assertResult (true) (pass.hasBeenComputedAt (n))
     }
 
     test ("a directly circular attribute can count") {
@@ -758,7 +766,9 @@ class AttributionTests extends Tests {
             )
 
         val n = Num (1)
+        assertResult (false) (counter.hasBeenComputedAt (n))
         assertResult (10.0) (counter (n))
+        assertResult (true) (counter.hasBeenComputedAt (n))
     }
 
     test ("a cycle of two circular attributes can count") {

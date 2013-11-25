@@ -265,10 +265,8 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Return the value of this attribute for node `t`.  Essentially Figure 6
          * from the CRAG paper, plus the READY optimisation (section 3.3).
          */
-        def apply (t : T) : U = {
-            resetIfRequested ()
-
-            if (computed containsKey t) {
+        def apply (t : T) : U =
+            if (hasBeenComputedAt (t)) {
 
                 // We have previously computed this attribute occurrence so fetch it from the cache.
 
@@ -390,7 +388,6 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 u
 
             }
-        }
 
         /**
          * Immediately reset this attribute's memoisation cache.
@@ -399,6 +396,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
             super.reset ()
             computed.clear ()
             visited.clear ()
+        }
+
+        /**
+         * Has the value of this attribute at `t` already been computed or not?
+         */
+        override def hasBeenComputedAt (t : T) : Boolean = {
+            resetIfRequested ()
+            computed containsKey t
         }
 
     }
