@@ -75,6 +75,12 @@ class Config (args : Seq[String], val emitter : Emitter) extends ScallopConf (ar
     val profile = opt[String] ("profile", descr = "Profiling dimensions (comma-separated)")
 
     /**
+     * Logging option. If profiling and this is set, print out events as they are generated.
+     */
+    val logging = opt[Boolean] ("logging", descr = "Print profile events dynamically)",
+                                default = Some (false))
+
+    /**
      * Time option. If set, print out execution time report.
      */
     val time = opt[Boolean] ("time", descr = "Report execution time")

@@ -27,6 +27,7 @@ package attribution
  */
 trait UncachedAttributionCore extends AttributionCommon {
 
+    import scala.collection.immutable.Seq
     import scala.language.experimental.macros
 
     /**
@@ -50,16 +51,16 @@ trait UncachedAttributionCore extends AttributionCommon {
          * it depends on itself.
          */
         def apply (t : T) : U = {
-            val i = start ("event" -> "AttrEval", "subject" -> t,
-                           "attribute" -> this, "parameter" -> None,
-                           "circular" -> false)
+            val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
+                                "attribute" -> this, "parameter" -> None,
+                                "circular" -> false))
             if (visited containsKey t)
                 reportCycle (t)
             else {
                 visited.put (t, ())
                 val u = f (t)
                 visited.remove (t)
-                finish (i, "value" -> u, "cached" -> false)
+                finish (i, Seq ("value" -> u, "cached" -> false))
                 u
             }
         }
@@ -88,9 +89,9 @@ trait UncachedAttributionCore extends AttributionCommon {
             new Attribute[T,U] (name) {
 
                 def apply (t : T) : U = {
-                    val i = start ("event" -> "AttrEval", "subject" -> t,
-                                   "attribute" -> this, "parameter" -> Some (arg),
-                                   "circular" -> false)
+                    val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
+                                        "attribute" -> this, "parameter" -> Some (arg),
+                                        "circular" -> false))
                     val key = new ParamAttributeKey (arg, t)
                     if (visited containsKey key)
                         throw new IllegalStateException ("Cycle detected in attribute evaluation")
@@ -98,7 +99,7 @@ trait UncachedAttributionCore extends AttributionCommon {
                         visited.put (key, ())
                         val u = f (arg) (t)
                         visited.remove (key)
-                        finish (i, "value" -> u, "cached" -> false)
+                        finish (i, Seq ("value" -> u, "cached" -> false))
                         u
                     }
                 }

@@ -63,7 +63,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
         config.emitter.emitln (banner)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
-            profile (processlines (config), dimensions : _*)
+            profile (processlines (config), dimensions, config.logging ())
         } else if (config.time ())
             time (processlines (config))
         else

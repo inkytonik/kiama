@@ -172,7 +172,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator with Profi
         val result =
             if (config.profile.get != None) {
                     val dimensions = parseProfileOption (config.profile ())
-                    profile (normal (e), dimensions : _*)
+                    profile (normal (e), dimensions, config.logging ())
                 } else
                     normal (e)
         config.emitter.emitln (result.getOrElse ("reduction failed"))

@@ -29,6 +29,7 @@ import org.kiama.util.Memoiser
 trait MemoRewriter extends Rewriter with Memoiser {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+    import scala.collection.immutable.Seq
 
     /*
      * Any-rewriting strategies that memoise their results.
@@ -49,17 +50,17 @@ trait MemoRewriter extends Rewriter with Memoiser {
          * it depends on itself.
          */
         override def apply (r : Any) : Option[Any] = {
-            val i = start ("event" -> "StratEval", "strategy" -> this,
-                           "subject" -> r, "subjectHash" -> r.##)
+            val i = start (Seq ("event" -> "StratEval", "strategy" -> this,
+                                "subject" -> r, "subjectHash" -> r.##))
             resetIfRequested ()
             val u1 = memo.get (r)
             if (u1 == null) {
                 val u2 = body (r)
                 memo.put (r, u2)
-                finish (i, "cached" -> false, "result" -> u2)
+                finish (i, Seq ("cached" -> false, "result" -> u2))
                 u2
             } else {
-                finish (i, "cached" -> true, "result" -> u1)
+                finish (i, Seq ("cached" -> true, "result" -> u1))
                 u1
             }
         }

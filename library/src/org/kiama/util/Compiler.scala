@@ -61,7 +61,8 @@ trait CompilerBase[T, C <: Config] extends Profiler {
         val config = createConfig (args)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
-            profile (processfiles (config.filenames (), config), dimensions : _*)
+            profile (processfiles (config.filenames (), config), dimensions,
+                                   config.logging ())
         } else if (config.time ())
             time (processfiles (config.filenames (), config))
         else

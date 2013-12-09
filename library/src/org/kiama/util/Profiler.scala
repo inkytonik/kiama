@@ -31,6 +31,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
     import org.kiama.attribution.Attribute
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Counter
+    import scala.collection.immutable.Seq
 
     /**
      * Take any actions that need to be done at the start of reporting.
