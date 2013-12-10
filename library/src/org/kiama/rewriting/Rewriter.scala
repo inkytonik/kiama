@@ -56,8 +56,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.allbu
      */
     def allbu (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = all (result) <+ (name, s)
-        result
+        lazy val result : Strategy = all (result) <+ s
+        mkStrategy (name, result)
     }
 
     /**
@@ -66,8 +66,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.alltd
      */
     def alltd (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = s <+ (name, all (result))
-        result
+        lazy val result : Strategy = s <+ all (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -76,8 +76,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.alldownup2
      */
     def alldownup2 (name : String, s1 : Strategy, s2 : Strategy) : Strategy = {
-        lazy val result : Strategy = (s1 <+ all (result)) <* (name, s2)
-        result
+        lazy val result : Strategy = (s1 <+ all (result)) <* s2
+        mkStrategy (name, result)
     }
 
     /**
@@ -86,8 +86,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.alltdfold
      */
     def alltdfold (name : String, s1 : Strategy, s2 : Strategy) : Strategy = {
-        lazy val result : Strategy = s1 <+ (name, all (result) <* s2)
-        result
+        lazy val result : Strategy = s1 <+ (all (result) <* s2)
+        mkStrategy (name, result)
     }
 
     /**
@@ -120,8 +120,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.bottomupS
      */
     def bottomupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
-        lazy val result : Strategy = (stop (result) <+ all (result)) <* (name, s)
-        result
+        lazy val result : Strategy = (stop (result) <+ all (result)) <* s
+        mkStrategy (name, result)
     }
 
     /**
@@ -130,8 +130,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.breadthfirst
      */
     def breadthfirst (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = all (s) <* (name, all (result))
-        result
+        lazy val result : Strategy = all (s) <* all (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -155,8 +155,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.downup
      */
     def downup (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = s <* all (result) <* (name, s)
-        result
+        lazy val result : Strategy = s <* all (result) <* s
+        mkStrategy (name, result)
     }
 
     /**
@@ -165,8 +165,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.downup
      */
     def downup (name : String, s1 : Strategy, s2 : Strategy) : Strategy = {
-        lazy val result : Strategy = s1 <* all (result) <* (name, s2)
-        result
+        lazy val result : Strategy = s1 <* all (result) <* s2
+        mkStrategy (name, result)
     }
 
     /**
@@ -175,8 +175,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.downupS
      */
     def downupS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
-        lazy val result : Strategy = s <* (name, stop (result) <+ all (result) <* s)
-        result
+        lazy val result : Strategy = s <* (stop (result) <+ all (result) <* s)
+        mkStrategy (name, result)
     }
 
     /**
@@ -185,17 +185,17 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.downupS
      */
     def downupS (name : String, s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
-        lazy val result : Strategy = s1 <* (name, stop (result) <+ all (result) <* s2)
-        result
+        lazy val result : Strategy = s1 <* (stop (result) <+ all (result) <* s2)
+        mkStrategy (name, result)
     }
 
     /**
      * A strategy that tests whether the two sub-terms of a pair of terms are equal.
      */
     val eq : Strategy =
-       rule {
+       rule ("eq", {
            case t @ (x, y) if x == y => t
-       }
+       })
 
     /**
      * Construct a strategy that tests whether the two sub-terms of a
@@ -234,8 +234,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.innermost
      */
     def innermost (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = bottomup (name, attempt (s <* result))
-        result
+        lazy val result : Strategy = bottomup (attempt (s <* result))
+        mkStrategy (name, result)
     }
 
     /**
@@ -259,46 +259,46 @@ trait Rewriter extends RewriterCore {
      * least one direct subterm.
      */
     val isinnernode : Strategy =
-        one (id)
+        mkStrategy ("isinnernode", one (id))
 
     /**
      * Construct a strategy that succeeds if the current term has no
      * direct subterms.
      */
     val isleaf : Strategy =
-        all (fail)
+        mkStrategy ("isleaf", all (fail))
 
     /**
      * Construct a strategy that succeeds when applied to a pair `(x,y)`
      * if `x` is a sub-term of `y` but is not equal to `y`.
      */
     val ispropersubterm : Strategy =
-        not (eq) <* issubterm
+        mkStrategy ("ispropersubterm", not (eq) <* issubterm)
 
     /**
      * Construct a strategy that succeeds when applied to a pair `(x,y)`
      * if `x` is a sub-term of `y`.
      */
     val issubterm : Strategy =
-        strategy {
+        strategy ("issubterm", {
             case (x : Any, y : Any) => where (oncetd (term (x))) (y)
-        }
+        })
 
     /**
      * Construct a strategy that succeeds when applied to a pair `(x,y)`
      * if `x` is a superterm of `y`.
      */
     val issuperterm : Strategy =
-        strategy {
+        strategy ("issuperterm", {
             case (x, y) => issubterm (y, x)
-        }
+        })
 
     /**
      * Construct a strategy that succeeds when applied to a pair `(x,y)`
      * if `x` is a super-term of `y` but is not equal to `y`.
      */
     val ispropersuperterm : Strategy =
-        not (eq) <* issuperterm
+        mkStrategy ("ispropersuperterm", not (eq) <* issuperterm)
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -314,8 +314,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.leaves
      */
     def leaves (name : String, s : Strategy, isleaf : Strategy) : Strategy = {
-        lazy val result : Strategy = (isleaf <* s) <+ (name, all (result))
-        result
+        lazy val result : Strategy = (isleaf <* s) <+ all (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -324,8 +324,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.leaves
      */
     def leaves (name : String, s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy = {
-        lazy val result : Strategy = (isleaf <* s) <+ (name, skip (result) <+ all (result))
-        result
+        lazy val result : Strategy = (isleaf <* s) <+ skip (result) <+ all (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -334,8 +334,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.loop
      */
     def loop (name : String, c : Strategy, s : Strategy) : Strategy = {
-        lazy val result : Strategy = attempt (name, c <* s <* result)
-        result
+        lazy val result : Strategy = attempt (c <* s <* result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -351,11 +351,14 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.loopiter
      */
-    def loopiter (name : String, s : Int => Strategy, low : Int, high : Int) : Strategy =
-        if (low <= high)
-            s (low) <* (name, loopiter (s, low + 1, high))
-        else
-            id
+    def loopiter (name : String, s : Int => Strategy, low : Int, high : Int) : Strategy = {
+        lazy val result =
+            if (low <= high)
+                s (low) <* loopiter (s, low + 1, high)
+            else
+                id
+        mkStrategy (name, result)
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -363,8 +366,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.loopnot
      */
     def loopnot (name : String, r : Strategy, s : Strategy) : Strategy = {
-        lazy val result : Strategy = r <+ (name, s <* result)
-        result
+        lazy val result : Strategy = r <+ (s <* result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -384,8 +387,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.manybu
      */
     def manybu (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = some (result) <* attempt (s) <+ (name, s)
-        result
+        lazy val result : Strategy = some (result) <* attempt (s) <+ s
+        mkStrategy (name, result)
     }
 
     /**
@@ -394,8 +397,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.manytd
      */
     def manytd (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = s <* all (attempt (result)) <+ (name, some (result))
-        result
+        lazy val result : Strategy = s <* all (attempt (result)) <+ some (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -412,8 +415,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.oncebu
      */
     def oncebu (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = one (result) <+ (name, s)
-        result
+        lazy val result : Strategy = one (result) <+ s
+        mkStrategy (name, result)
     }
 
     /**
@@ -422,8 +425,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.oncetd
      */
     def oncetd (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = s <+ (name, one (result))
-        result
+        lazy val result : Strategy = s <+ one (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -458,8 +461,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.repeat
      */
     def repeat (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = attempt (name, s <* result)
-        result
+        lazy val result : Strategy = attempt (s <* result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -468,8 +471,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.repeat
      */
     def repeat (name : String, s : Strategy, r : Strategy) : Strategy = {
-        lazy val result : Strategy = (s <* result) <+ (name, r)
-        result
+        lazy val result : Strategy = (s <* result) <+ r
+        mkStrategy (name, result)
     }
 
     /**
@@ -477,8 +480,10 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.repeat
      */
-    def repeat (name : String, s : Strategy, n : Int) : Strategy =
-        if (n == 0) id else s <* (name, repeat (s, n - 1))
+    def repeat (name : String, s : Strategy, n : Int) : Strategy = {
+        lazy val result = if (n == 0) id else s <* repeat (s, n - 1)
+        mkStrategy (name, result)
+    }
 
     /**
      * As for the version in `RewriterCore` without the `name` argument but
@@ -494,8 +499,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.repeat1
      */
     def repeat1 (name : String, s : Strategy, r : Strategy) : Strategy = {
-        lazy val result : Strategy = s <* (name, result <+ r)
-        result
+        lazy val result : Strategy = s <* (result <+ r)
+        mkStrategy (name, result)
     }
 
     /**
@@ -504,8 +509,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.repeatuntil
      */
     def repeatuntil (name : String, s : Strategy, r : Strategy) : Strategy = {
-        lazy val result : Strategy = s <* (name, r <+ result)
-        result
+        lazy val result : Strategy = s <* (r <+ result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -530,8 +535,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.somebu
      */
     def somebu (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = some (result) <+ (name, s)
-        result
+        lazy val result : Strategy = some (result) <+ s
+        mkStrategy (name, result)
     }
 
     /**
@@ -540,8 +545,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.somedownup
      */
     def somedownup (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = (s <* all (result) <* (attempt (s))) <+ (name, some (result) <+ attempt (s))
-        result
+        lazy val result : Strategy = (s <* all (result) <* (attempt (s))) <+ some (result) <+ attempt (s)
+        mkStrategy (name, result)
     }
 
     /**
@@ -550,8 +555,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.sometd
      */
     def sometd (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = s <+ (name, some (result))
-        result
+        lazy val result : Strategy = s <+ some (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -568,8 +573,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.topdown
      */
     def topdown (name : String, s : Strategy) : Strategy = {
-        lazy val result : Strategy = s <* (name, all (result))
-        result
+        lazy val result : Strategy = s <* all (result)
+        mkStrategy (name, result)
     }
 
     /**
@@ -578,8 +583,8 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.topdownS
      */
     def topdownS (name : String, s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = {
-        lazy val result : Strategy = s <* (stop (result) <+ (name, all (result)))
-        result
+        lazy val result : Strategy = s <* (stop (result) <+ all (result))
+        mkStrategy (name, result)
     }
 
     /**
