@@ -1,0 +1,12 @@
+* _pp.ob
+MODULE nonintconstant;
+
+    CONST
+        aconst1 = 125;
+        aconst2 = TRUE;
+        aconst3 = TRUE OR (aconst1 = 100);
+
+END nonintconstant.
+[3]* errors
+[3]5.15: type error: got BOOLEAN, but expected INTEGER
+[3]6.15: type error: got BOOLEAN, but expected INTEGER

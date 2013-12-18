@@ -1,0 +1,35 @@
+(* TRY in CATCH test                       *)
+(* Just check that TRY...CATCH blocks      *)
+(* work correctly when embedded within the *)
+(* CATCH block of another TRY.             *)
+
+PROGRAM Except ( i : INTEGER ) : INTEGER;
+
+CONST
+  Limit = 100;
+  TestException : EXCEPTION;
+
+VAR
+  result : INTEGER;
+
+BEGIN
+  result := 0;
+
+  TRY
+    RAISE TestException;
+  CATCH TestException DO
+    TRY
+      result := Limit * i;
+      IF i = 0 THEN
+        RAISE DivideByZero;
+      END
+    CATCH DivideByZero DO
+      result := -2;
+    END
+  CATCH DivideByZero DO
+    result := -3;
+  END
+  
+  RETURN result;
+END Except.
+

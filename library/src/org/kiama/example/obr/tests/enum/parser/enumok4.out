@@ -1,0 +1,1 @@
+ObrInt(EnumOk4,List(IntParam(i), EnumVar(WeekDays,List(EnumConst(Monday), EnumConst(Tuesday), EnumConst(Wednesday), EnumConst(Thursday), EnumConst(Friday)))),List(),EnumOk4)

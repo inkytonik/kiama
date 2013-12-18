@@ -1,0 +1,75 @@
+#! /bin/sh
+# exectests
+# Run the execution tests of the Kiama MiniJava example.
+
+SRC=src/org/kiama/example/minijava/test
+MAIN=org.kiama.example.minijava.Main
+
+# Run a single execution test
+#  - split foo.out into constituent Jasmin .j files
+#  - compile each of them with Jasmin
+#  - run the main class to get foo.output
+#  - compare foo.output with foo.exp, reporting any difference as test failure
+
+function run () {
+
+    base=$1
+    main=$2
+
+    echo Testing $base
+
+    # Split the .out file into constituent .j files
+    cat $base.out | awk '
+        ($1 == ".source") {
+            source = $2
+            next
+        }
+        ($1 == ".class") {
+            classfile = $3 ".j"
+            print ".source " source >> classfile
+        }
+        {
+            print >> classfile
+        }
+    '
+
+    # Use Jasmin to make *.class files
+    jasmin *.j >/dev/null
+
+    # Run the main class and capture the output
+    java $main >$base.output
+
+    # Check for test success or failure
+    if cmp -s $base.output $base.exp
+    then
+        rm $base.output
+    else
+        echo "!!!!!!!!! $1 failed"
+    fi
+
+    # Clean up generated files
+    rm -f *.j *.class
+
+}
+
+run andfalseloop AndFalseLoop
+run andtruefalse AndTrueFalse
+run andtruetrue AndTrueTrue
+run array Array
+run arraylength ArrayLength
+run iffalse IfFalse
+run iftrue IfTrue
+run mul Mul
+run notfalse NotFalse
+run nottrue NotTrue
+run sub Sub
+run whilemany WhileMany
+run whileone WhileOne
+run whilezero WhileZero
+
+run binarysearch BinarySearch
+run bubblesort BubbleSort
+run factorial Factorial
+run linearsearch LinearSearch
+run linkedlist LinkedList
+run quicksort QuickSort

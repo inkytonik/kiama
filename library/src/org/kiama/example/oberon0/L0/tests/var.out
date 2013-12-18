@@ -1,0 +1,37 @@
+* _pp.ob
+MODULE var;
+
+    VAR
+        avar1 : INTEGER;
+        avar2 : avar1;
+        avar4 : INTEGER;
+        avar3 : INTEGER;
+        avar3 : BOOLEAN;
+        avar4 : INTEGER;
+        avar5, avar5 : INTEGER;
+        avar6 : avar3;
+        avar7 : avar1;
+
+BEGIN
+    avar := 42;
+    avar := bvar;
+    avar := 99 - (avar + 1);
+    avar1 := 1;
+    avar2 := 1;
+    avar3 := 1;
+    avar4 := 1;
+    avar5 := 1;
+    avar6 := 1;
+    avar7 := 1
+END var.
+* errors
+5.13: avar1 is not a type name
+8.5: avar3 is already declared
+9.5: avar4 is already declared
+10.12: avar5 is already declared
+12.13: avar1 is not a type name
+15.5: avar is not declared
+16.5: avar is not declared
+16.13: bvar is not declared
+17.5: avar is not declared
+17.19: avar is not declared

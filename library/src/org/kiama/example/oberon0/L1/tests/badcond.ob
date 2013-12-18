@@ -1,0 +1,10 @@
+MODULE badcond;
+
+VAR
+    avar : INTEGER;
+
+BEGIN
+    IF avar THEN
+        avar := 42
+    END
+END badcond.

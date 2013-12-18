@@ -1,0 +1,24 @@
+MODULE recurse;
+
+VAR
+    c : INTEGER;
+
+PROCEDURE proc (a : INTEGER; b : INTEGER; VAR c : INTEGER);
+
+BEGIN
+    IF b = 0 THEN
+        c := a
+    ELSE
+        proc (a + 1, b - 1, c)
+    END
+END proc;
+
+BEGIN
+    proc (8, 4, c);
+    Write (c);
+    WriteLn
+END recurse.
+
+(*
+12
+*)

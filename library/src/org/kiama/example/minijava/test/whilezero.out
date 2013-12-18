@@ -1,0 +1,52 @@
+.source library/src/org/kiama/example/minijava/test/whilezero.java
+.class public WhileZero
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    new WhileZeroClass
+    dup
+    invokespecial WhileZeroClass/<init>()V
+    invokevirtual WhileZeroClass/run()I
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source library/src/org/kiama/example/minijava/test/whilezero.java
+.class public WhileZeroClass
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public run()I
+.limit stack 2
+.limit locals 2
+    iconst_0
+    istore 1
+L1:
+    iconst_0
+    ifeq L2
+    iload 1
+    iconst_1
+    iadd
+    istore 1
+    goto L1
+L2:
+    iload 1
+    ireturn
+.end method

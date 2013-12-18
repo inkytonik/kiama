@@ -1,0 +1,698 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>COMP332 2012 Assignment Two (Sample Solution)</title>
+  </head>
+
+  <body>
+    <h1>Macquarie University<br>Department of Computing</h1>
+
+    <h2>COMP332 Programming Languages 2012<br>
+  Assignment Two (Sample Solution)</h2>
+
+    <p>This assignment concerned the design, development, testing, and
+    documentation of a semantic analyser for a simple MiniJava version of
+    the Java programming language. We had to implement checks for a 
+    variety of semantic conditions, mostly involving naming and typing.
+    Also, we had to design test cases to demonstrate that our
+    implementation is working correctly.</p>
+
+    <p>This report presents the design and implementation of my semantic
+    analyser and describes the design of the tests I have used to
+    check the correctness of the implementation. Parts One and Two are
+    discussed separately. The full code for this sample solution is on
+    the COMP332 iLearn site.</p>
+
+    <h3>Part One: The basic MiniJava semantic rules</h3>
+
+    <p>This part of the assignment required us to implement rules 
+    1, 2, 4-15 and 17-19 as specified in the handout. In the following
+    I consider each rule in turn, discussing how each of them was
+    implemented. Testing is considered in the final sub-section.</p>
+
+    <p><em>Rule 1: There must be at most one defining occurrence of any name
+    in a scope, not counting definitions in enclosing scopes.</em></p>
+
+    <p><em>Rule 2: Each applied identifier occurrence must refer to exactly
+    one defining occurrence. That defining occurrence is located by first
+    looking in the innermost scope in which the applied occurrence occurs.
+    If the defining occurrence is not located in the innermost scope, the
+    search proceeds recursively to the smallest enclosing scope.</em></p>
+
+    <p>Rules 1 and 2 were already implemented in the skeleton since that code
+    built an environment for each node of the tree, containing just the
+    named entities that are visible at that node. The <code>check</code>
+    method already contained checks for undefined and multiply-defined
+    entities.</p>
+
+    <p><em>Rule 4: The type of an integer expression is integer.</em></p>
+
+    <p>This rule required examination of the <code>tipe</code> attribute,
+    which returns the type of an expression node. The skeleton implementation
+    of the attribute already contained a case for this rule.</p>
+
+    <p>For this rule and others concerning the type of expressions and their
+    expected type I also needed to augment the <code>check</code> method with
+    a case to check that an expression's type is compatible with its expected
+    type.</p>
+
+<pre>
+case e : Expression =>
+    if (!iscompatible (e->tipe, e->exptipe))
+        message (e, "type error: expected " + (e->exptipe) + " got " + (e->tipe))
+</pre>    
+
+    <p>I followed the same scheme as in the practical exercises by
+    defining an <code>iscompatible</code> method which compares the type
+    and expected type for equality, but allows an unknown type in either
+    place so that errors can be supressed when we don't care about the
+    type or when there is another error that prevents a type from being
+    calculated.</p>
+
+<pre>
+def iscompatible (t1 : Type, t2 : Type) : Boolean =
+    (t1 == UnknownType ()) || (t2 == UnknownType ()) || (t1 == t2)
+</pre>
+
+    <p><em>Rule 5: The type of a true or false expression is Boolean.</em></p>
+
+    <p>To implement this rule I added cases for the true and false expressions
+    to the tipe attribute as follows.</p>
+
+<pre>
+case _ : TrueExp | _ : FalseExp =>
+    BooleanType ()
+</pre>
+
+    <p><em>Rule 6: The type of an identifier expression referring to a
+    variable, argument or class is the declared type of the variable or
+    argument (in the first two cases) or a reference type that refers to
+    instances of that class (in the last case). Method names cannot be
+    used by themselves in expressions; they can only be used in call
+    expressions.</em></p>
+
+    <p>This rule required a case for <code>tipe</code> at <code>IdnExp</code>
+    nodes. The case looks at the entity associated with the identifier
+    occurrence to determine what kind of entity it is, returning the 
+    appropriate type as specified in the rule. An important aspect was
+    having a default case to specify an unknown type in the case when
+    there is no sensible entity associated with the identifier occurrence.
+    Otherwise, we will get spurious type errors when identifiers are 
+    not declared.</p>
+
+<pre>
+case IdnExp (i) =>
+    (i->entity) match {
+        case ClassEntity (decl) =>
+            ReferenceType (decl)
+        case ArgumentEntity (decl) =>
+            actualTypeOf (decl.tipe)
+        case VariableEntity (decl) =>
+            actualTypeOf (decl.tipe)
+        case _ =>
+            UnknownType ()
+    }
+</pre>
+
+    <p>Note that in the argument and variable entity cases we don't just
+    use the type as found in the declaration. This is because if the 
+    type is a class type then that type will just refer to the name of
+    the class. To be useful for type-checking, we really need to use a
+    reference type that refers to the declaration of the named class.
+    Thus, we use a helper method <code>actualTypeOf</code> that converts
+    such types by looking up the entity of a named class.</p>
+
+<pre>
+def actualTypeOf (t : Type) : Type =
+    t match {
+        case ClassType (idn) =>
+            (idn->entity) match {
+                case ClassEntity (decl) =>
+                    ReferenceType (decl)
+                case _ =>
+                    UnknownType ()
+            }
+        case _ =>
+            t
+    }
+</pre>    
+
+    <p>In the non-class type cases, the type in the declaration is the
+    same as the internal type for type checking, so we just leave it 
+    alone.</p>
+
+    <p><code>actualTypeOf</code> will be used by later cases for the
+    same reason.</p>
+
+    <p><em>Rule 7: The condition in an if-statement or while-statement
+    must be of type Boolean.</em></p>
+
+    <p>This rule required updating the <code>exptipe</code> attribute 
+    to have a case for when the parent of an expression is an if or
+    while statement node.</p>    
+
+<pre>
+case _ : If | _ : While =>
+    BooleanType ()
+</pre>
+
+    <p><em>Rule 8: The expression in a println-statement can be of any
+    type.</em></p>
+
+    <p>This rule was handled by a catch-all case for <code>exptipe</code>
+    that returned the unknown type for expressions that are not covered
+    by other cases.</p>
+
+<pre>
+case _ =>
+    UnknownType ()
+</pre>    
+
+    <p><em>Rule 9: In a variable assignment statement, the name on the 
+    left-hand side must refer to a variable or argument. The type of
+    the expression on the right-hand side must be the same as that of
+    the variable or argument.</em></p>
+
+    <p>This rule required <code>exptipe</code> to have a case for 
+    variable assignment nodes. There are two sub-cases: one for 
+    normal variables and one for method arguments. In each case
+    the expected type can be extracted from the respective entity.
+    As for rule 6, we have a default case that returns an unknown
+    type when we don't know the entity on the left-hand side of an
+    assignment.</p>
+
+<pre>
+case VarAssign (lhs, _) =>
+    (lhs->entity) match {
+        case VariableEntity (Var (t, _)) =>
+            actualTypeOf (t)
+        case ArgumentEntity (Argument (t, _)) =>
+            actualTypeOf (t)
+        case _ =>
+            UnknownType ()
+    }
+</pre>
+
+    <p><em>Rule 10: In an array assignment statement or index expression,
+    the base sub-expression must be of integer array type and the index
+    sub-expression must be of integer type. In the assignment case, the
+    type of the right-hand side sub-expression must be integer. In the
+    index expression case the type of the sub-expression is integer.</em></p>
+
+    <p>This rule is handled similarly to the other cases for the expected
+    type. The difference is that an array assignment contains three
+    expression children. We need to have one case for each of these
+    expressions so the cases require guards to discriminate between
+    them.</p>
+
+<pre>
+case ArrAssign (base, _, _) if base eq e =>
+    IntArrayType ()
+
+case ArrAssign (_, index, _) if index eq e =>
+    IntType ()
+
+case ArrAssign (_, _, elem) if elem eq e =>
+    IntType ()
+</pre>
+
+    <p><em>Rules 11: In plus, minus and star expressions, the types of
+    both sub-expressions must be integer. The type of the expression is
+    integer. Rule 12: In a logical AND expression, the types of both
+    sub-expressions must be Boolean. The type of the expression is Boolean.
+    Rule 13: In a logical NOT expresion, the type of the sub-expression
+    must be Boolean. The type of the expression is Boolean. Rule 14: In
+    a less-than expression, the types of both sub-expressions must be
+    integer. The type of the expression is Boolean. Rule 15: In a length
+    expression, the type of the base sub-expression must be integer
+    array. The type of the expression is integer.</em></p>
+
+    <p>Rule 11 was already implemented in the skeleton. The other rules
+    are handled similarly, by these cases in the <code>tipe</code>
+    attribute definition:</p>
+
+<pre>
+// Rule 11
+case _ : PlusExp | _ : MinusExp | _ : StarExp =>
+    IntType ()
+
+// Rule 12
+case _ : AndExp =>
+    BooleanType ()
+
+// Rule 13
+case _ : NotExp =>
+    BooleanType ()
+
+// Rule 14
+case _ : LessExp =>
+    BooleanType ()
+
+// Rule 15
+case _ : LengthExp =>
+    IntType ()
+</pre>
+
+    <p>and by these cases in the <code>exptipe</code> attribute 
+    definition:</p>
+
+<pre>
+// Rule 11
+case _ : PlusExp | _ : MinusExp | _ : StarExp =>
+    IntType ()
+
+// Rule 12
+case _ : AndExp =>
+    BooleanType ()
+
+// Rule 13
+case _ : NotExp =>
+    BooleanType ()
+
+// Rule 14
+case _ : LessExp =>
+    IntType ()
+
+// Rule 15
+case _ : LengthExp =>
+    IntArrayType ()
+</pre>
+
+    <p><em>Rule 17: The type of a this expression is a reference to an
+    instance of the class in which the this expression occurs.</em></p>
+
+    <p>This rule required a bit more work. The reason is that the type
+    that we need is not constant, nor is it directly obtainable from 
+    the <code>ThisExp</code> node. What we need to do is to look upwards
+    in the tree to find the nearest enclosing <code>Class</code> node.
+    The type of <code>this</code> will be a reference to that class
+    type. I implmented the search in a new <code>thistype</code>
+    attribute and use it in the <code>ThisExp</code> case of the 
+    <code>tipe</code> attribute.</p>
+
+<pre>
+case e : ThisExp =>
+    e->thistype
+</pre>
+
+    <p>The <code>thistype</code> attribute has three cases. If we are
+    at the root then we have not found a class, so we return the
+    unknown type. If we are at a class node then we return it.
+    Otherwise, we just search up the tree by asking our parent what
+    its <code>thistype</code> is.</p>   
+
+<pre>
+lazy val thistype : SourceNode => Type =
+    attr {
+        case n if n.isRoot =>
+            UnknownType ()
+
+        case decl : Class =>
+            ReferenceType (decl)
+
+        case n =>
+            (n.parent[SourceNode])->thistype
+
+    }
+</pre>
+
+    <p><em>Rule 18: In a new array expression the type of the sub-expression
+    must be integer. The type of the new array expression is integer array. 
+    </em></p>
+
+    <p>These rules are again straight-forward. <code>tipe</code> just returns
+    an integer array type in the new array expression case.</p>
+
+<pre>
+case _ : NewArrExp =>
+    IntArrayType ()
+</pre>
+
+    <p>The <code>exptipe</code> attribute needs a case to restrict the
+    expression in a new array creation expression to be of integer
+    type.</p>
+
+<pre>
+case _ : NewArrExp =>
+    IntType ()
+</pre>
+
+    <p><em>Rule 19: In a new instance expression the name used must refer
+    to a normal class. The type of the expression is a reference to an
+    instance of that class.</em></p>
+
+    <p>As for some of the earlier cases, we just get the entity referred
+    to by a name in a new expression. In <code>check</code> we have a 
+    case to complain if the entity that is used in such an expression is
+    not referring to a class entity. Note that this test automatically
+    rules out the main class since a different kind of entity is used
+    for that one. As usual, we don't raise an error if the entity is
+    unknown.</p>
+
+<pre>
+case e : Expression =>
+    ...
+    e match {
+        ...
+        case NewExp (u) =>
+            (u->entity) match {
+                // Rule 19
+                case _ : ClassEntity =>
+                    // Do nothing
+                case ent =>
+                    if (ent != UnknownEntity)
+                        message (u, "illegal instance creation of non-class type")
+            }
+        ...
+    }
+</pre>
+
+    <p>The <code>NewExp</code> case of <code>tipe</code> just looks up
+    the entity and makes a reference type if the a class is being
+    referred to. Otherwise, we return the unknown type.</p>
+
+<pre>
+case NewExp (i) =>
+    (i->entity) match {
+        case ClassEntity (decl) =>
+            ReferenceType (decl)
+        case _ =>
+            UnknownType ()
+    }
+</pre>
+
+    <h3>Part One: Testing</h3>
+
+    <p><em>As in Assignment One, there are many, many tests that we
+    could write for our semantic analysis. It is difficult to know
+    when we have been complete enough. What you will find in the 
+    sample solution is a pretty complete attempt, but there are
+    still more tests that we could imagine having. For marking,
+    we wanted to see that you had put some effort into considering
+    completeness, not necessarily going as far as could be done.</em>
+
+    <p>Testing semantic analysis checking is really a matter of making
+    sure the tests cover positive cases (i.e., code that passes the
+    checks) as well as negative cases (i.e., code that violates the
+    checks). For some semantic rules, there is only a positive case
+    since there is no way for an input program to violate the rule
+    (e.g., rule 4).</p>
+
+    <p>With these basic principles in place, in each case it is best
+    to construct the tests so that each one tests a single semantic
+    rule in either positive mode, or where applicable, negative mode.
+    This approach was followed in the skeleton which provided tests
+    for rules 1, 2, 4 and 11.</p>
+
+    <p>I reused the skeleton test framework to embed expressions
+    into a dummy class so that they could be parsed and analysed.
+    I extended this idea to allow variable declarations and statements
+    to be optionally embedded into the class as well. This capability
+    was needed to test some of the more complex rules that involve
+    statements and classes.  This extension resulted in an a
+    <code>embedExpressionAndCheck</code> method which has the
+    following signature.</p>
+
+<pre>
+def embedExpressionAndCheck (exp : Expression,
+                             retType : Type = IntType (),
+                             vars : List[Var] = Nil,
+                             stmts : List[Statement] = Nil)
+</pre>
+
+    <p>For example, the first test below declares an integer
+    variable <code>v</code> and uses it in an assignment statement to
+    make sure that an integer expression can be assigned to it. This
+    is a positive test since we expect no error. The second test 
+    below is similar, but tests the negative condition since the
+    variable is of integer type but the expression is Boolean.
+    Most of the tests follow this pattern.</p>
+
+<pre>
+test ("an integer expression is assignment compatible with an integer var") {
+    val exp = IntExp (0) // dummy
+    val exp1 = IntExp (42)
+    val vars = List (Var (IntType (), IdnDef ("v")))
+    val stmts = List (VarAssign (IdnUse ("v"), exp1))
+    embedExpressionAndCheck (exp, vars, stmts)
+    assert (messagecount === 0)
+}
+
+test ("a Boolean expression is not assignment compatible with an integer var") {
+    val exp = IntExp (0) // dummy
+    val exp1 = TrueExp ()
+    val vars = List (Var (IntType (), IdnDef ("v")))
+    val stmts = List (VarAssign (IdnUse ("v"), exp1))
+    embedExpressionAndCheck (exp, IntType (), vars, stmts)
+    assert (messagecount === 1)
+    assertMessage (0, 0, 0, "type error: expected int got boolean")
+}
+</pre>
+
+    <p>In a few places tests are hard-coded as a program where that is
+    possible. For example, to check that the type of <code>this</code> is
+    the current class type, we just have a simple program with a method
+    that returns that type. This test uses the skeleton's <code>parseTest</code>
+    method.</p>
+
+<pre>
+test ("the type of this is the current class") {
+    parseTest ("""
+        |class Dummy { public static void main () { System.out.println (0); } }
+        |class Test {
+        |    public Test m () {
+        |        return this;
+        |    }
+        |}
+        """.stripMargin)
+    assert (messagecount === 0)
+}
+</pre>
+
+    <h3>Part Two: The more complex semantic rules</h3>
+
+    <p>Part Two involved implementing the remaining semantic checks,
+    namely those for rules 3, 16 and 20. As before, I discuss how
+    each of these was achieved, before considering testing.</p>
+
+    <p><em>Rule 20: The type of the return expression in a method must be
+    the same as the declared return type of the method.</em></p>
+
+    <p>Of the rules in Part Two, rule 20 is the easiest since it follows the
+    same pattern as those in Part One. A return expression occurs directly
+    as a child of the method body node. The body node contains the return
+    type of the method as a field. Thus, the relevant case of
+    <code>exptipe</code> just has to extract it and return it (after 
+    making sure it is an actual type as we have done before).</p>
+
+<pre>
+case MethodBody (t, _, _, _, _) =>
+    actualTypeOf (t)
+</pre>
+
+    <p><em>Rule 16: In a method call expression the named entity
+    that is being called must be a method of the class whose instance is
+    referenced by the base expression (or in a superclass if that class has
+    no method with the given name). The number of arguments supplied in the call
+    and their types must be the same as the number of arguments and argument
+    types required by the called method. The type of the expression is
+    the return type of the method.</em></p>
+
+    <p><em>Rule 3: If a defining occurence of an applied identifier is not
+    found in the class in which that applied occurrence appears, and the
+    class has a superclass, then the search moves to the superclass. If that
+    class has no definition for the identifier and has a superclass, the
+    search moves to that superclass. And so on until the definition is
+    found or the superclass chain is exhausted.</em></p>
+
+    <p>The main problem with processing method calls is that the skeleton
+    code for the <code>entity</code> attribute only knows how to look up
+    names in the current environment. For a call like <code>o.m</code>
+    we need to look <code>m</code> up in the definition of the class of
+    <code>o</code>, not in the current environment. Thus, we need to add
+    a case for identifiers that occur as the child of a call expression.
+    We make use of the <code>HasParent</code> pattern to do this check,
+    but you could also do it with an explicit check of the parent of the
+    identifier use just the same.</p>
+
+<pre>
+lazy val entity : IdnNode => Entity =
+    attr {
+
+        case HasParent (n @ IdnUse (i), CallExp (base, _, _)) =>
+            (base->tipe) match {
+                case ReferenceType (decl) =>
+                    lookup (decl->env, i, UnknownEntity)  /* *** */
+                case t =>
+                    UnknownEntity
+            }
+        case n =>
+            lookup (n->env, n.idn, UnknownEntity)
+
+    }
+</pre>
+
+    <p>For rule 3, we must deal with superclass lookups. We extend the code
+    we just saw for looking up methods, to look in the superclass if there
+    is one if a method name is not found. The checking will actually be done
+    by a helper method <code>findMethod</code>, we replace the line marked
+    by <code>/* *** */</code> with the following call.</p>
+
+<pre>
+findMethod (decl, i)
+</pre>
+
+    <p>We first lookup in the environment of <code>decl</code>. If it's there,
+    we are done. Otherwise, we look to see if <code>decl</code> has a superclass
+    clause. If so, we check to make sure that the named used in the superclass
+    clause, actually refers to a class, since it could be undefined or some
+    other named entity, for example. If it's a class, then we recursively call
+    <code>findMethod</code> to look in the superclass. If there is no superclass
+    clause, or the thing named there is not a class, we bail out by returning
+    the unknown entity.</p>
+
+<pre>
+def findMethod (decl : Class, i : String) : Entity =
+    lookup (decl->env, i, UnknownEntity) match {
+
+        case UnknownEntity =>
+            decl.superclass match {
+                case Some (superidn) =>
+                    (superidn->entity) match {
+                        case ClassEntity (superdecl) =>
+                            findMethod (superdecl, i)
+                        case _ =>
+                            UnknownEntity
+                    }
+                case None =>
+                    UnknownEntity
+            }
+
+        case entity =>
+            // Found it in decl's env, so return it
+            entity
+
+    }
+</pre>
+
+    <p>In our first cut at checking for rule 16, we have a check whose purpose is to
+    ensure that a call expression can only make a call to a method entity.</p>
+
+<pre>
+case e : Expression =>
+    ...
+    e match {
+        ...
+        case CallExp (_, u, args) =>
+            (u->entity) match {
+                // Rule 16
+                case _ : MethodEntity =>
+                    // Do nothing
+                case ent =>
+                    if (ent != UnknownEntity)
+                        message (u, "illegal call to non-method")
+            }
+        ...
+    }
+</pre>
+
+    <p>To support the checking of method arguments, the "Do nothing" code
+    here needs to make an additional check.
+
+<pre>
+    val expargnum = decl.body.args.length
+    if (expargnum != args.length)
+        message (u, "wrong number of arguments, got " +
+                     args.length + " but expected " + 
+                     expargnum)
+</pre>    
+
+    <p>The <code>tipe</code> attribute has a case that specifies the type
+    of a call expression to be the return type of the called method (or
+    unknown if the called identifier is not referring to a method).</p>
+
+<pre>
+case CallExp (_, i, _) =>
+    (i->entity) match {
+        case MethodEntity (decl) =>
+            actualTypeOf (decl.body.tipe)
+        case _ =>
+            UnknownType ()
+    }
+</pre>        
+
+    <p>We also need to specify the expected type of each argument in a 
+    call expression. In the <code>exptipe</code> attribute case for an
+    expression whose parent is a call expression, if we are calling a
+    method we use a helper methoed <code>expTypeOfArg</code> to work 
+    out what the type of the argument. We somehow need to know which 
+    argument in the argument list the expression <code>e</code> is,
+    so we use a Kiama node property <code>e.index</code> for this 
+    purpose. (An alternative method would be to write a method that
+    searches the argument list for <code>e</code> and returns the 
+    position where it was found.)</p>
+
+<pre>
+case CallExp (_, u, _) =>
+    (u->entity) match {
+        case MethodEntity (decl) =>
+            expTypeOfArg (decl, e.index)
+
+        case _ =>
+            // No idea what is being called, so no type constraint
+            UnknownType ()
+    }
+</pre>    
+
+    <p><code>expTypeOfArg</code> looks up the formal argument if the
+    actual argument is in range and returns the relevant actual type.
+    Note that the base expression and method name are counted in the
+    index count, so we need to subtract two from the index to get the
+    zero-indexed argument number.</p>
+
+<pre>
+def expTypeOfArg (method : Method, index : Int) : Type = {
+    val argnum = index - 2
+    val numargs = method.body.args.length
+    if (argnum &lt; numargs) {
+        val arg = method.body.args (argnum)
+        actualTypeOf (arg.tipe)
+    } else
+        UnknownType ()
+}
+</pre>
+
+    <h3>Part Two: Testing</h3>
+
+    <p>Testing was undertaken using the same principles as for the first part
+    of the assignment. The only real difference is that in these tests it is
+    natural to test multiple things at once. For example, to test that the
+    type of a call expression is correct, we are also testing that the
+    method name is looked up properly. Here is the positive test.</p>
+
+<pre>
+test ("the type of a method call expression is the method return type (1)") {
+    parseTest ("""
+        |class Dummy { public static void main () { System.out.println (0); } }
+        |class Test {
+        |    int v;
+        |    public int m () {
+        |        return 42;
+        |    }
+        |    public int n () {
+        |        v = this.m ();
+        |        return 0;
+        |    }
+        |}
+        """.stripMargin)
+    assert (messagecount === 0)
+}
+</pre>
+
+    <hr>
+    <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
+<br>
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012 by
+Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
+  </body>
+</html>

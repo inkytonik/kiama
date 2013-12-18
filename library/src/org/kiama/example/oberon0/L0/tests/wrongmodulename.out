@@ -1,0 +1,5 @@
+* _pp.ob
+MODULE aname;
+END anothername.
+* errors
+3.5: end module name 'anothername' should be 'aname'

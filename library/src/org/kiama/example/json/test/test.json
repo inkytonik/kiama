@@ -1,0 +1,9 @@
+{
+   "one"   : 1.7,
+   "two"   : "two",
+   "three" : true,
+   "four"  : false,
+   "five"  : null,
+   "six"   : { "a" : 5, "b" : "hello" },
+   "seven" : [ "c", 7e5, [ false, true ], { "d" : "D", "e" : "E" } ]
+}

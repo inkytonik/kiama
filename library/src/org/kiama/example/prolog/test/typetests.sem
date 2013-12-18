@@ -1,0 +1,8 @@
+5.5: argument list found, integer expected
+5.15: argument atom found, integer expected
+11.4: argument integer found, atom expected
+11.14: argument list found, atom expected
+17.4: argument atom found, list expected
+17.13: argument integer found, list expected
+25.15: argument atom found, integer expected
+28.30: argument integer found, list expected

@@ -1,0 +1,14 @@
+(* Legal TRY statement (semicolon before CATCH) *)
+
+PROGRAM ExcOk5 (i : INTEGER) : INTEGER;
+
+BEGIN
+
+   TRY
+      A := B / C;
+   CATCH DivideByZero DO
+      A := 1;
+      B := C - A;
+   END
+
+END ExcOk5.

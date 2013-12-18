@@ -1,0 +1,6 @@
+* errors
+[8.5] failure: clause expected
+
+    END
+
+    ^

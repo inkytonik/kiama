@@ -1,0 +1,34 @@
+The Kiama team are pleased to bring you the next release of the library.
+
+### Breaking changes
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package)
+    * Integrate dynamic attributes with the other attributes and simplify their interface (see new `Attribution.dynattr` attribute builders).
+
+### New features
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package)
+    * [Issue 55](https://code.google.com/p/kiama/issues/detail?id=55): Add variants of attribute builders that take a name argument which is used to print the attribute when reporting dependence cycles. E.g., `attr ("name") { ... }`.
+    * [Issue 56](https://code.google.com/p/kiama/issues/detail?id=56): Make `Attribution` a trait as well as an object so it can be reused.
+    * Add `hasBeenComputedAt(n)` method to cached attributes that tells you if they've already been evaluated at a particular node `n`.
+    * Make `Attributable` node property setting skip `Either` nodes as it already did for options, traversables, tuples etc.
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.rewriting.package)
+    * Make `Rewriter` class into a trait so it can be mixed in.
+* [Output](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.output.package)
+    * Add more ASCII symbol printers (e.g., tilde, exclamation) to the pretty printing library.
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.util.package)
+    * Add `keywords` method to parser utilities to make it easier to define parsers that match one of a list of keywords.
+    * Generalise file reading and writing to allow the character encoding to be specified and to buffer writing.
+* Examples
+    * Add simple Prolog implementation example.
+
+### Fixes
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package)
+    * [Issue 54](https://code.google.com/p/kiama/issues/detail?id=54): Make `Attribution.initTree` idempotent.
+    * Don't unnecessarily re-evaluate attribute definitions in the `down` decorator.
+* General
+    * [Issue 53](https://code.google.com/p/kiama/issues/detail?id=53): Move back to JLine 1.0 to regain compatibility with sbt. This fixes a bug where echo was lost when exiting a REPL back to the sbt prompt.
+
+### Other
+* Publish for both Scala 2.9.2 and 2.10.0.
+* Move to Scalatest 1.9.1 and ScalaCheck 1.10.0.
+* Remove dependencies on JUnit and Argot.
+* Many other minor bug fixes and code style improvements.

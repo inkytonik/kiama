@@ -1,0 +1,9 @@
+(* Missing enumeration constant identifier *)
+
+PROGRAM Err801a (i : INTEGER) : INTEGER;
+
+VAR
+    x : ( );
+
+BEGIN
+END Err801a.

@@ -1,0 +1,657 @@
+.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.class public LinkedList
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+.limit stack 3
+.limit locals 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    new LL
+    dup
+    invokespecial LL/<init>()V
+    invokevirtual LL/Start()I
+    invokevirtual java/io/PrintStream/println(I)V
+    return
+.end method
+.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.class public Element
+.super java/lang/Object
+.field public Age I
+.field public Salary I
+.field public Married Z
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public Init(IIZ)Z
+.limit stack 2
+.limit locals 4
+    aload 0
+    iload 1
+    putfield Element/Age I
+    aload 0
+    iload 2
+    putfield Element/Salary I
+    aload 0
+    iload 3
+    putfield Element/Married Z
+    iconst_1
+    ireturn
+.end method
+
+.method public GetAge()I
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Element/Age I
+    ireturn
+.end method
+
+.method public GetSalary()I
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Element/Salary I
+    ireturn
+.end method
+
+.method public GetMarried()Z
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield Element/Married Z
+    ireturn
+.end method
+
+.method public Equal(LElement;)Z
+.limit stack 7
+.limit locals 6
+    iconst_1
+    istore 2
+    aload 1
+    invokevirtual Element/GetAge()I
+    istore 3
+    aload 0
+    iload 3
+    aload 0
+    getfield Element/Age I
+    invokevirtual Element/Compare(II)Z
+    ifeq L3
+    iconst_0
+    goto L4
+L3:
+    iconst_1
+L4:
+    ifeq L1
+    iconst_0
+    istore 2
+    goto L2
+L1:
+    aload 1
+    invokevirtual Element/GetSalary()I
+    istore 4
+    aload 0
+    iload 4
+    aload 0
+    getfield Element/Salary I
+    invokevirtual Element/Compare(II)Z
+    ifeq L7
+    iconst_0
+    goto L8
+L7:
+    iconst_1
+L8:
+    ifeq L5
+    iconst_0
+    istore 2
+    goto L6
+L5:
+    aload 0
+    getfield Element/Married Z
+    ifeq L9
+    aload 1
+    invokevirtual Element/GetMarried()Z
+    ifeq L13
+    iconst_0
+    goto L14
+L13:
+    iconst_1
+L14:
+    ifeq L11
+    iconst_0
+    istore 2
+    goto L12
+L11:
+    iconst_0
+    istore 5
+L12:
+    goto L10
+L9:
+    aload 1
+    invokevirtual Element/GetMarried()Z
+    ifeq L15
+    iconst_0
+    istore 2
+    goto L16
+L15:
+    iconst_0
+    istore 5
+L16:
+L10:
+L6:
+L2:
+    iload 2
+    ireturn
+.end method
+
+.method public Compare(II)Z
+.limit stack 4
+.limit locals 5
+    iconst_0
+    istore 3
+    iload 2
+    iconst_1
+    iadd
+    istore 4
+    iload 1
+    iload 2
+    if_icmpge L3
+    iconst_1
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L1
+    iconst_0
+    istore 3
+    goto L2
+L1:
+    iload 1
+    iload 4
+    if_icmpge L9
+    iconst_1
+    goto L10
+L9:
+    iconst_0
+L10:
+    ifeq L7
+    iconst_0
+    goto L8
+L7:
+    iconst_1
+L8:
+    ifeq L5
+    iconst_0
+    istore 3
+    goto L6
+L5:
+    iconst_1
+    istore 3
+L6:
+L2:
+    iload 3
+    ireturn
+.end method
+.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.class public List
+.super java/lang/Object
+.field public elem LElement;
+.field public next LList;
+.field public end Z
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public Init()Z
+.limit stack 2
+.limit locals 1
+    aload 0
+    iconst_1
+    putfield List/end Z
+    iconst_1
+    ireturn
+.end method
+
+.method public InitNew(LElement;LList;Z)Z
+.limit stack 2
+.limit locals 4
+    aload 0
+    iload 3
+    putfield List/end Z
+    aload 0
+    aload 1
+    putfield List/elem LElement;
+    aload 0
+    aload 2
+    putfield List/next LList;
+    iconst_1
+    ireturn
+.end method
+
+.method public Insert(LElement;)LList;
+.limit stack 4
+.limit locals 5
+    aload 0
+    astore 2
+    new List
+    dup
+    invokespecial List/<init>()V
+    astore 3
+    aload 3
+    aload 1
+    aload 2
+    iconst_0
+    invokevirtual List/InitNew(LElement;LList;Z)Z
+    istore 4
+    aload 3
+    areturn
+.end method
+
+.method public SetNext(LList;)Z
+.limit stack 2
+.limit locals 2
+    aload 0
+    aload 1
+    putfield List/next LList;
+    iconst_1
+    ireturn
+.end method
+
+.method public Delete(LElement;)LList;
+.limit stack 9
+.limit locals 11
+    aload 0
+    astore 2
+    iconst_0
+    istore 3
+    iconst_0
+    iconst_1
+    isub
+    istore 4
+    aload 0
+    astore 5
+    aload 0
+    astore 6
+    aload 0
+    getfield List/end Z
+    istore 7
+    aload 0
+    getfield List/elem LElement;
+    astore 8
+L1:
+    iload 7
+    ifeq L5
+    iconst_0
+    goto L6
+L5:
+    iconst_1
+L6:
+    ifeq L3
+    iload 3
+    ifeq L7
+    iconst_0
+    goto L8
+L7:
+    iconst_1
+L8:
+    goto L4
+L3:
+    iconst_0
+L4:
+    ifeq L2
+    aload 1
+    aload 8
+    invokevirtual Element/Equal(LElement;)Z
+    ifeq L9
+    iconst_1
+    istore 3
+    iload 4
+    iconst_0
+    if_icmpge L13
+    iconst_1
+    goto L14
+L13:
+    iconst_0
+L14:
+    ifeq L11
+    aload 5
+    invokevirtual List/GetNext()LList;
+    astore 2
+    goto L12
+L11:
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    iconst_0
+    ldc 555
+    isub
+    invokevirtual java/io/PrintStream/println(I)V
+    aload 6
+    aload 5
+    invokevirtual List/GetNext()LList;
+    invokevirtual List/SetNext(LList;)Z
+    istore 9
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    iconst_0
+    ldc 555
+    isub
+    invokevirtual java/io/PrintStream/println(I)V
+L12:
+    goto L10
+L9:
+    iconst_0
+    istore 10
+L10:
+    iload 3
+    ifeq L17
+    iconst_0
+    goto L18
+L17:
+    iconst_1
+L18:
+    ifeq L15
+    aload 5
+    astore 6
+    aload 5
+    invokevirtual List/GetNext()LList;
+    astore 5
+    aload 5
+    invokevirtual List/GetEnd()Z
+    istore 7
+    aload 5
+    invokevirtual List/GetElem()LElement;
+    astore 8
+    iconst_1
+    istore 4
+    goto L16
+L15:
+    iconst_0
+    istore 10
+L16:
+    goto L1
+L2:
+    aload 2
+    areturn
+.end method
+
+.method public Search(LElement;)I
+.limit stack 5
+.limit locals 7
+    iconst_0
+    istore 2
+    aload 0
+    astore 3
+    aload 0
+    getfield List/end Z
+    istore 4
+    aload 0
+    getfield List/elem LElement;
+    astore 5
+L1:
+    iload 4
+    ifeq L3
+    iconst_0
+    goto L4
+L3:
+    iconst_1
+L4:
+    ifeq L2
+    aload 1
+    aload 5
+    invokevirtual Element/Equal(LElement;)Z
+    ifeq L5
+    iconst_1
+    istore 2
+    goto L6
+L5:
+    iconst_0
+    istore 6
+L6:
+    aload 3
+    invokevirtual List/GetNext()LList;
+    astore 3
+    aload 3
+    invokevirtual List/GetEnd()Z
+    istore 4
+    aload 3
+    invokevirtual List/GetElem()LElement;
+    astore 5
+    goto L1
+L2:
+    iload 2
+    ireturn
+.end method
+
+.method public GetEnd()Z
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield List/end Z
+    ireturn
+.end method
+
+.method public GetElem()LElement;
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield List/elem LElement;
+    areturn
+.end method
+
+.method public GetNext()LList;
+.limit stack 2
+.limit locals 1
+    aload 0
+    getfield List/next LList;
+    areturn
+.end method
+
+.method public Print()Z
+.limit stack 5
+.limit locals 4
+    aload 0
+    astore 1
+    aload 0
+    getfield List/end Z
+    istore 2
+    aload 0
+    getfield List/elem LElement;
+    astore 3
+L1:
+    iload 2
+    ifeq L3
+    iconst_0
+    goto L4
+L3:
+    iconst_1
+L4:
+    ifeq L2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 3
+    invokevirtual Element/GetAge()I
+    invokevirtual java/io/PrintStream/println(I)V
+    aload 1
+    invokevirtual List/GetNext()LList;
+    astore 1
+    aload 1
+    invokevirtual List/GetEnd()Z
+    istore 2
+    aload 1
+    invokevirtual List/GetElem()LElement;
+    astore 3
+    goto L1
+L2:
+    iconst_1
+    ireturn
+.end method
+.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.class public LL
+.super java/lang/Object
+
+.method <init>()V
+.limit stack 1
+.limit locals 1
+    aload_0
+    invokespecial java/lang/Object/<init>()V
+    return
+.end method
+
+.method public Start()I
+.limit stack 4
+.limit locals 7
+    new List
+    dup
+    invokespecial List/<init>()V
+    astore 1
+    aload 1
+    invokevirtual List/Init()Z
+    istore 2
+    aload 1
+    astore 3
+    aload 3
+    invokevirtual List/Init()Z
+    istore 2
+    aload 3
+    invokevirtual List/Print()Z
+    istore 2
+    new Element
+    dup
+    invokespecial Element/<init>()V
+    astore 4
+    aload 4
+    bipush 25
+    ldc 37000
+    iconst_0
+    invokevirtual Element/Init(IIZ)Z
+    istore 2
+    aload 3
+    aload 4
+    invokevirtual List/Insert(LElement;)LList;
+    astore 3
+    aload 3
+    invokevirtual List/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 10000000
+    invokevirtual java/io/PrintStream/println(I)V
+    new Element
+    dup
+    invokespecial Element/<init>()V
+    astore 4
+    aload 4
+    bipush 39
+    ldc 42000
+    iconst_1
+    invokevirtual Element/Init(IIZ)Z
+    istore 2
+    aload 4
+    astore 5
+    aload 3
+    aload 4
+    invokevirtual List/Insert(LElement;)LList;
+    astore 3
+    aload 3
+    invokevirtual List/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 10000000
+    invokevirtual java/io/PrintStream/println(I)V
+    new Element
+    dup
+    invokespecial Element/<init>()V
+    astore 4
+    aload 4
+    bipush 22
+    ldc 34000
+    iconst_0
+    invokevirtual Element/Init(IIZ)Z
+    istore 2
+    aload 3
+    aload 4
+    invokevirtual List/Insert(LElement;)LList;
+    astore 3
+    aload 3
+    invokevirtual List/Print()Z
+    istore 2
+    new Element
+    dup
+    invokespecial Element/<init>()V
+    astore 6
+    aload 6
+    bipush 27
+    ldc 34000
+    iconst_0
+    invokevirtual Element/Init(IIZ)Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 3
+    aload 5
+    invokevirtual List/Search(LElement;)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    aload 3
+    aload 6
+    invokevirtual List/Search(LElement;)I
+    invokevirtual java/io/PrintStream/println(I)V
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 10000000
+    invokevirtual java/io/PrintStream/println(I)V
+    new Element
+    dup
+    invokespecial Element/<init>()V
+    astore 4
+    aload 4
+    bipush 28
+    ldc 35000
+    iconst_0
+    invokevirtual Element/Init(IIZ)Z
+    istore 2
+    aload 3
+    aload 4
+    invokevirtual List/Insert(LElement;)LList;
+    astore 3
+    aload 3
+    invokevirtual List/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 2220000
+    invokevirtual java/io/PrintStream/println(I)V
+    aload 3
+    aload 5
+    invokevirtual List/Delete(LElement;)LList;
+    astore 3
+    aload 3
+    invokevirtual List/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 33300000
+    invokevirtual java/io/PrintStream/println(I)V
+    aload 3
+    aload 4
+    invokevirtual List/Delete(LElement;)LList;
+    astore 3
+    aload 3
+    invokevirtual List/Print()Z
+    istore 2
+    getstatic java/lang/System/out Ljava/io/PrintStream;
+    ldc 44440000
+    invokevirtual java/io/PrintStream/println(I)V
+    iconst_0
+    ireturn
+.end method
