@@ -34,7 +34,7 @@ trait TIL2_1 extends TIL1_1 with TransformingMain {
         rewrite (declareforvars) (ast)
 
     val declareforvars =
-        everywherebu (rule {
+        everywherebu (rule[List[Stat]] {
             case (s @ For (Id (i), f, t, b)) :: ss =>
                 Decl (Id (i)) :: s :: ss
         })

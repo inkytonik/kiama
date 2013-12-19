@@ -63,7 +63,7 @@ trait Desugarer extends base.Transformer with NameAnalyser {
          */
         val renameNames =
             everywherebu (
-                rule {
+                rule[Identifier] {
                     case i : IdnDef => nameOf (i, true)
                     case i @ IdnUse (s) =>
                         (i->entity) match {

@@ -27,7 +27,7 @@ package L2
  */
 trait Desugarer extends L0.Desugarer {
 
-    import base.source.{Block, IdnDef, IdnUse, ModuleDecl}
+    import base.source.{Block, IdnDef, IdnUse, ModuleDecl, Statement}
     import L0.source.{AddExp, AndExp, Assignment, EqExp, Expression,
         GeExp, IdnExp, IntExp, LeExp, NamedType, OrExp, VarDecl}
     import L1.source.{IfStatement, WhileStatement}
@@ -66,7 +66,7 @@ trait Desugarer extends L0.Desugarer {
      * If e3 is negative, op is <=, otherwise it is >=.
      */
     lazy val desugarFor =
-        rule {
+        rule[Statement] {
             case ForStatement (idnexp, lower, upper, optby, Block (Nil, stmts)) =>
                 val limvarname = "_limit"
                 val limexp = IdnExp (IdnUse (limvarname))
@@ -112,7 +112,7 @@ trait Desugarer extends L0.Desugarer {
      *   END
      */
     lazy val desugarCase =
-        rule {
+        rule[Statement] {
             case CaseStatement (exp, cases, optelse) =>
                 val casevarname = "_caseval"
                 val caseexp = IdnExp (IdnUse (casevarname))

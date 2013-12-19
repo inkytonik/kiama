@@ -34,8 +34,8 @@ object AttributableSupport {
         import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
 
         val deepcloner =
-            everywherebu (rule {
-                case n : Attributable if !n.hasChildren =>
+            everywherebu (rule[Attributable] {
+                case n if !n.hasChildren =>
                     n.clone ()
             })
 

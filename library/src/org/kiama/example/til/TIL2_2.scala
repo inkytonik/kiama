@@ -33,7 +33,7 @@ trait TIL2_2 extends TIL1_1 with TransformingMain {
         rewrite (fortowhile) (ast)
 
     val fortowhile =
-        everywhere (rule {
+        everywhere (rule[List[Stat]] {
             case (s @ For (id @ Id (i), f, t, b)) :: ss =>
                 val upperid = Id (s"Upper$i")
                 Decl (id) ::

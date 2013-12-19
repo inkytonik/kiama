@@ -133,7 +133,7 @@ trait Evaluator {
      * \xgc-reduction
      */
     val xgc_reduction =
-        rule {
+        rule[Exp] {
             // Substitution generation
             case App (Lam (x, e1), e2)           => Sub (e1, x, e2)
 

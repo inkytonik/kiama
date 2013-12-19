@@ -60,8 +60,8 @@ trait CallbackRewriter extends Rewriter {
                     }
         }
 
-    override def rule (n : String, f : Any ==> Any) : Strategy =
-        dispatch (n, super.rule (n, f))
+    override def ruleWithName[T] (n : String, f : T ==> T) : Strategy =
+        dispatch (n, super.ruleWithName[T] (n, f))
 
     override def rulef (n : String, f : Any => Any) : Strategy =
         dispatch (n, super.rulef (n, f))
@@ -78,7 +78,7 @@ trait CallbackRewriter extends Rewriter {
     /**
      * Product duplication with callback notification.
      */
-    protected override def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T =
+    override def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T =
         rewriting (t, super.dup (t, children))
 
 }

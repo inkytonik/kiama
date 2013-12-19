@@ -50,7 +50,7 @@ class MemoRewriterTests extends {
     import rewriter.{test => rwtest, _}
 
     val atob =
-        rule {
+        rule[N] {
             case A () => B ()
         }
 
@@ -140,7 +140,7 @@ class MemoRewriterTests extends {
         val root = P (T (tta, 1), T (T (tta, 1), 1))
 
         val fuseT =
-            rule {
+            rule[N] {
                 case T (n, 1) => S (n)
             }
 

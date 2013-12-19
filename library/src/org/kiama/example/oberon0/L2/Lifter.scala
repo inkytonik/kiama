@@ -49,12 +49,14 @@ trait Lifter extends base.Transformer with NameAnalyser {
          */
         lazy val liftBlocks =
             everywherebu (
-                rule {
+                rule[Block] {
 
                     // Add this block's decls to the buffer, clear them
                     case Block (ds, ss) =>
                         decls ++= ds
                         Block (Nil, ss)
+
+                } <+ rule[ModuleDecl] {
 
                     // The module declarations will have been added to the
                     // buffer already. Create a new module with all of the

@@ -193,7 +193,7 @@ trait Rewriter extends RewriterCore {
      * A strategy that tests whether the two sub-terms of a pair of terms are equal.
      */
     val eq : Strategy =
-       rule ("eq", {
+       ruleWithName[(Any,Any)] ("eq", {
            case t @ (x, y) if x == y => t
        })
 

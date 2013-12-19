@@ -36,15 +36,15 @@ trait ParLazy extends Par {
      * Lift an expression to be evaluated to a substitution.
      */
     lazy val letLift =
-        rule {
-            case e : Exp => Letp (Seq (), e)
+        rule[Exp] {
+            case e => Letp (Seq (), e)
         }
 
     /**
      * Drop the bindings.
      */
     lazy val letDrop =
-        rule {
+        rule[Exp] {
             case Letp (_, e) => e
         }
 
@@ -54,7 +54,7 @@ trait ParLazy extends Par {
     override lazy val subsVar =
         rulefs {
             case Letp (ds, Var (x)) =>
-                option (lookupb (x, ds)) <* rule { case e : Exp => Letp (ds, e) }
+                option (lookupb (x, ds)) <* rule[Exp] { case e => Letp (ds, e) }
         }
 
     /**
@@ -64,7 +64,7 @@ trait ParLazy extends Par {
     def letAppL (eval : => Strategy) : Strategy =
         rulefs {
             case Letp (ds1, App (e1, e2)) =>
-                option (eval (Letp (ds1, e1))) <* rule {
+                option (eval (Letp (ds1, e1))) <* rule[Letp] {
                     case Letp (ds2, e3) =>
                         Letp (ds2, App (e3, e2))
                 }
@@ -79,7 +79,7 @@ trait ParLazy extends Par {
             case Letp (ds1, Opn (e1, op, e2)) =>
                 option (eval (Letp (ds1, e1))) <* rulefs {
                     case Letp (ds2, e3) =>
-                        option (eval (Letp (ds2, e2))) <* rule {
+                        option (eval (Letp (ds2, e2))) <* rule[Letp] {
                             case Letp (ds3, e4) =>
                                 Letp (ds3, Opn (e3, op, e4))
                         }
@@ -93,12 +93,12 @@ trait ParLazy extends Par {
     def rename : Strategy = {
         val env = scala.collection.mutable.HashMap[Idn,Idn] ()
         val newname =
-            rule {
-                case i : Idn => env.getOrElseUpdate (i, freshVar ())
+            rule[Idn] {
+                case i => env.getOrElseUpdate (i, freshVar ())
             }
         val chgname =
-            rule {
-                case i : Idn => env.getOrElse (i, i)
+            rule[Idn] {
+                case i => env.getOrElse (i, i)
             }
         lazy val r : Strategy =
             attempt (Var (chgname) + App (r, r) + Lam (newname, id, r) +
@@ -113,7 +113,7 @@ trait ParLazy extends Par {
     lazy val letLetRen =
         rulefs {
             case Letp (ds1, Letp (ds2, e1)) =>
-                option (rename (Letp (ds2, e1))) <* rule {
+                option (rename (Letp (ds2, e1))) <* rule[Letp] {
                     case Letp (ds3, e2) =>
                         val ds4 = ds3 ++ ds1
                         Letp (ds4, e2)

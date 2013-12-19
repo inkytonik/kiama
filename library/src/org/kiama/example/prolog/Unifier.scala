@@ -43,7 +43,7 @@ abstract class Subst {
      * Apply this substitution to a term, returning the resulting term.
      */
     def apply[T] (t : T) : T = {
-        val r = everywheretd (rule {
+        val r = everywheretd (rule[Term] {
             case Var (s) if m contains s => m (s)
         })
         rewrite (r) (t)

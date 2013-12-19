@@ -74,7 +74,7 @@ class Interpreter {
      */
     def rename[T <: PrologTree] (t : T) : T = {
         val count = uniqueNameCounter.next ()
-        val r = everywheretd (rule {
+        val r = everywheretd (rule[Var] {
             case Var (s) =>
                 Var (s + count)
         })

@@ -39,7 +39,7 @@ object Rewriter {
      * Cut all salaries by half.
      */
     def cut (c : JValue) : JValue =
-        rewrite (everywhere (rule {
+        rewrite (everywhere (rule[(JName, JNumber)] {
             case (n @ JName ("salary"), JNumber (d)) =>
                 (n, JNumber (d / 2))
         })) (c)

@@ -30,6 +30,6 @@ object Cut {
      * Reduce all salaries by half.
      */
     def cut (c : Company) : Company =
-        rewrite (everywhere (rule { case s : Salary => s / 2 })) (c)
+        rewrite (everywhere (rule[Salary] { case s => s / 2 })) (c)
 
 }

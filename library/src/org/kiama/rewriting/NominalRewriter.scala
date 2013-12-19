@@ -64,10 +64,10 @@ class NominalRewriter extends Rewriter {
      * Swap two names (given by `tr`) throughout a term `t`.
      */
     def swap[T] (tr : Trans) (t : T) : T = {
-        val s = everywhere (rule {
-                    case n : Name => if (n == tr._1) tr._2
-                                     else if (n == tr._2) tr._1
-                                     else n
+        val s = everywhere (rule[Name] {
+                    case n => if (n == tr._1) tr._2
+                              else if (n == tr._2) tr._1
+                              else n
                 })
         rewrite (s) (t)
     }

@@ -43,7 +43,7 @@ class PositionalRewriterTests extends Tests {
     val po = new TestPosition { val line = 7; val column = 8 }
     val o = One (t).setPos (po)
 
-    val r = everywhere (rule {
+    val r = everywhere (rule[Leaf] {
                 case Leaf (i) => Leaf (i + 1)
             })
 
@@ -141,7 +141,7 @@ class PositionedRewriterTests extends Tests {
     val pof = new TestPosition { val line = 15; val column = 16 }
     val o = One (t).setStart (pos).setFinish (pof)
 
-    val r = everywhere (rule {
+    val r = everywhere (rule[Leaf] {
                 case Leaf (i) => Leaf (i + 1)
             })
 

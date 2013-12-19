@@ -145,7 +145,7 @@ class LambdaTests extends RegexParserTests with Parser {
      */
     def canon (x : Exp) : Exp = {
         def canons (d : Int, e : Map[Idn,Idn]) : Strategy =
-            rule {
+            rule[Exp] {
                 case Var (n)            =>
                     Var (e (n))
                 case Lam (n, t, b)      =>

@@ -33,7 +33,7 @@ trait TIL2_3 extends TIL1_1 with TransformingMain {
     def transform (ast : Program) : Program = {
         val decls = Seq.newBuilder[Decl]
         val getandremovedecls =
-            everywhere (rule {
+            everywhere (rule[List[Stat]] {
                 case (d : Decl) :: ss =>
                     decls += d
                     ss

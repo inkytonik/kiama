@@ -47,7 +47,7 @@ trait ReduceSubst extends Reduce {
      * Beta reduction via term-level substitution.
      */
     override lazy val beta =
-        rule {
+        rule[Exp] {
             case App (Lam (x, t, e1), e2) => Let (x, t, e2, e1)
         }
 
@@ -55,7 +55,7 @@ trait ReduceSubst extends Reduce {
      * Substitution in numeric terms.
      */
     lazy val subsNum =
-        rule {
+        rule[Exp] {
             case Let (_, _, _, e : Num) => e
         }
 
@@ -63,7 +63,7 @@ trait ReduceSubst extends Reduce {
      * Substitution in variable terms.
      */
     lazy val subsVar =
-        rule {
+        rule[Exp] {
             case Let (x, _, e, Var (y)) if x == y => e
             case Let (_, _, _, v : Var)           => v
         }
@@ -72,7 +72,7 @@ trait ReduceSubst extends Reduce {
      * Substitution in applications.
      */
     lazy val subsApp =
-        rule {
+        rule[Exp] {
             case Let (x, t, e, App (e1, e2)) =>
                 App (Let (x, t, e, e1), Let (x, t, e, e2))
         }
@@ -81,7 +81,7 @@ trait ReduceSubst extends Reduce {
      * Substitution in lambda abstractions.
      */
     lazy val subsLam =
-        rule {
+        rule[Exp] {
             case Let (x, t1, e1, Lam (y, t2, e2)) if x == y =>
                 Lam (y, t2, e2)
             case Let (x, t1, e1, Lam (y, t2, e2)) =>
@@ -93,7 +93,7 @@ trait ReduceSubst extends Reduce {
      * Substitution in primitive operations
      */
     lazy val subsOpn =
-        rule {
+        rule[Exp] {
             case Let (x, t, e1, Opn (e2, op, e3)) =>
                 Opn (Let (x, t, e1, e2), op, Let (x, t, e1, e3))
         }

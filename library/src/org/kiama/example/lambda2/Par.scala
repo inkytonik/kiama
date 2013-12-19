@@ -40,7 +40,7 @@ trait Par extends ReduceSubst {
      * Beta reduction via term-level substitution.
      */
     override lazy val beta =
-        rule {
+        rule[Exp] {
             case App (Lam (x, t, e1), e2) =>
                 val y = freshVar ()
                 Letp (Seq (Bind (y, e2)),
@@ -51,7 +51,7 @@ trait Par extends ReduceSubst {
      * Substitution in numeric terms.
      */
     override lazy val subsNum =
-        rule {
+        rule[Exp] {
             case Letp (_, e : Num) => e
         }
 
@@ -77,7 +77,7 @@ trait Par extends ReduceSubst {
      * Substitution in applications.
      */
     override lazy val subsApp =
-        rule {
+        rule[Exp] {
             case Letp (ds, App (e1, e2)) =>
                 App (Letp (ds, e1), Letp (ds, e2))
         }
@@ -86,7 +86,7 @@ trait Par extends ReduceSubst {
      * Substitution in lambda abstractions.
      */
     override lazy val subsLam =
-        rule {
+        rule[Exp] {
             case Letp (ds, Lam (x, t, e)) =>
                 val y = freshVar ()
                 Lam (y, t, Letp (ds, Letp (Seq (Bind (x, Var (y))), e)))
@@ -96,7 +96,7 @@ trait Par extends ReduceSubst {
      * Substitution in primitive operations
      */
     override lazy val subsOpn =
-        rule {
+        rule[Exp] {
             case Letp (ds, Opn (e1, op, e2)) =>
                 Opn (Letp (ds, e1), op, Letp (ds, e2))
         }
@@ -105,7 +105,7 @@ trait Par extends ReduceSubst {
      * Merging two arbitrary parallel binders.
      */
     lazy val letLet =
-        rule {
+        rule[Letp] {
             case Letp (ds1, Letp (ds2, e1)) =>
                 val ds3 = ds2 map {
                     case Bind (x, e) => Bind (x, Letp (ds1, e))

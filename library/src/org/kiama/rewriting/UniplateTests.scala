@@ -92,7 +92,7 @@ class UniplateTests extends Tests with Generator {
 
     test ("arithmetic simplification") {
         def simplify : Exp => Exp =
-            rewrite (everywhere (rule {
+            rewrite (everywhere (rule[Exp] {
                 case Sub (x, y)           => simplify (Add (x, Neg (y)))
                 case Add (x, y) if x == y => Mul (Num (2), x)
             }))
@@ -119,7 +119,7 @@ class UniplateTests extends Tests with Generator {
             def genDoubleNeg (sz : Int) : Gen[Neg] =
                 for { e <- super.genNeg (sz) } yield Neg (e)
             def doubleneg : Exp => Exp =
-                rewrite (everywherebu ( rule { case Neg (Neg (x)) => x }))
+                rewrite (everywherebu ( rule[Exp] { case Neg (Neg (x)) => x }))
             assertResult (numexp) (doubleneg (numexp))
             assertResult (varexp) (doubleneg (varexp))
             check ((e : Exp) => doubleneg (e).value == e.value)
@@ -129,7 +129,7 @@ class UniplateTests extends Tests with Generator {
 
     test ("reciprocal division to multiplication conversion") {
         def reciprocal : Exp => Exp =
-            rewrite (everywherebu (rule {
+            rewrite (everywherebu (rule[Exp] {
                 case Div (n, m) => Mul (n, Div (Num (1), m))
             }))
 
@@ -144,7 +144,7 @@ class UniplateTests extends Tests with Generator {
         def uniquevars : Exp => Exp = {
             var count = 0
             rewrite ({
-                everywhere (rule { case Var (s) => count = count + 1; Var (s"x$count") })
+                everywhere (rule[Var] { case _ => count = count + 1; Var (s"x$count") })
             })
         }
         assertResult (numexp) (uniquevars (numexp))
@@ -163,7 +163,7 @@ class UniplateTests extends Tests with Generator {
 
     test ("variable renaming") {
         def rename : Exp => Exp =
-            rewrite (everywhere (rule { case Var (s) => Var (s"_$s") }))
+            rewrite (everywhere (rule[Var] { case Var (s) => Var (s"_$s") }))
         check ((e : Exp) => rename (e).vars == e.vars.map ("_" + _))
     }
 
@@ -174,7 +174,7 @@ class UniplateTests extends Tests with Generator {
             def genIntAdd (sz : Int) : Gen[Add] =
                 for { l <- genNum; r <- genNum } yield Add (l, r)
             def optimiseadd : Exp => Exp =
-                rewrite (everywherebu (rule {
+                rewrite (everywherebu (rule[Exp] {
                     case Add (Num (n), Num (m)) => Num (n + m)
                 }))
             check ((e : Exp) => {

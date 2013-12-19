@@ -41,7 +41,7 @@ trait Reduce extends RewritingEvaluator {
      * Beta reduction via meta-level substitution.
      */
     lazy val beta =
-        rule {
+        rule[Exp] {
             case App (Lam (x, _, e1), e2) => substitute (x, e2, e1)
         }
 
@@ -49,7 +49,7 @@ trait Reduce extends RewritingEvaluator {
      * Evaluation of arithmetic operators.
      */
     lazy val arithop =
-        rule {
+        rule[Exp] {
             case Opn (Num (l), op, Num (r)) => Num (op.eval (l, r))
         }
 

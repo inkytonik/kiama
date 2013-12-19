@@ -77,8 +77,8 @@ object RewriterCoreMacros {
     def queryfMacro[T] (c : Context) (f : c.Expr[Any => T]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def ruleMacro (c : Context) (f : c.Expr[Any ==> Any]) : c.Expr[Strategy] =
-        makeCallWithName (c)
+    def ruleMacro[T] (c : Context) (f : c.Expr[T ==> T]) : c.Expr[Strategy] =
+        makeCallWithName (c, "this.ruleWithName")
 
     def rulefMacro (c : Context) (f : c.Expr[Any => Any]) : c.Expr[Strategy] =
         makeCallWithName (c)
@@ -98,8 +98,8 @@ object RewriterCoreMacros {
     def strategyfMacro (c : Context) (f : c.Expr[Any => Option[Any]]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def termMacro (c : Context) (t : Any) : c.Expr[Strategy] =
-        makeCallWithName (c)
+    def termMacro[T] (c : Context) (t : T) : c.Expr[Strategy] =
+        makeCallWithName (c, "this.termWithName")
 
     // Macros for the library combinators
 

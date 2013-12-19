@@ -41,7 +41,7 @@ class RewriterTests extends Tests with Generator {
 
     test ("basic arithmetic evaluation") {
         val eval =
-            rule {
+            rule[Exp] {
                 case Add (Num (i), Num (j)) => Num (i + j)
                 case Sub (Num (i), Num (j)) => Num (i - j)
                 case Mul (Num (i), Num (j)) => Num (i * j)
@@ -157,11 +157,11 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("strategies that have no effect: some terms to themselves") {
-        val noopstmt = everywherebu (rule { case Asgn (v, e) => Asgn (v, e) })
+        val noopstmt = everywherebu (rule[Asgn] { case a => a })
         check ((t : Stmt) => Some (t) == noopstmt (t))
         check ((t : Exp) => Some (t) == noopstmt (t))
 
-        val noopexp = everywherebu (rule { case Num (i) => Num (i) })
+        val noopexp = everywherebu (rule[Num] { case n => n })
         check ((t : Stmt) => Some (t) == noopexp (t))
         check ((t : Exp) => Some (t) == noopexp (t))
     }
@@ -180,7 +180,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("where restores the original term after succcess") {
-        val r = rule { case Num (i) => Num (i + 1) }
+        val r = rule[Num] { case Num (i) => Num (i + 1) }
         val s = where (r)
         val t = Num (1)
         assertSame (Some (t)) (s (t))
@@ -195,7 +195,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("test restores the original term after succcess") {
-        val r = rule { case Num (i) => Num (i + 1) }
+        val r = rule[Num] { case Num (i) => Num (i + 1) }
         val s = rwtest (r)
         val t = Num (1)
         assertSame (Some (t)) (s (t))
@@ -245,8 +245,8 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("conditional choice operator: condition for just success or failure") {
-            val ismulbytwo = rule { case t @ Mul (Num (2), _) => t }
-            val multoadd = rule { case Mul (Num (2), x) => Add (x, x) }
+            val ismulbytwo = rule[Mul] { case t @ Mul (Num (2), _) => t }
+            val multoadd = rule[Exp] { case Mul (Num (2), x) => Add (x, x) }
             val error : Strategy = build (Num (99))
             val trans1 = ismulbytwo < multoadd + error
             assertResult (Some (Add (Num (3), Num (3)))) ((trans1) (e1))
@@ -254,8 +254,8 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("conditional choice operator: condition that transforms object") {
-            val mulbytwotoadd = rule { case t @ Mul (Num (2), x) => Add (x, x) }
-            val add = rule { case Add (_, _) => Num (42) }
+            val mulbytwotoadd = rule[Exp] { case t @ Mul (Num (2), x) => Add (x, x) }
+            val add = rule[Exp] { case Add (_, _) => Num (42) }
             val trans2 = mulbytwotoadd < add + id
             assertResult (Some (Num (42))) ((trans2) (e1))
             assertResult (Some (Add (Num (2), Num (3)))) ((trans2) (e2))
@@ -268,7 +268,7 @@ class RewriterTests extends Tests with Generator {
         val e2 = Add (Num (4), Num (5))
 
         // Single step passing
-        val twotothree = rule { case Num (2) => Num (3) }
+        val twotothree = rule[Num] { case Num (2) => Num (3) }
         val pass = rulefs { case Num (2) => twotothree }
         val passtd = everywhere (pass)
         assertResult (Some (Mul (Num (3), (Num (5))))) ((passtd) (e1))
@@ -350,7 +350,7 @@ class RewriterTests extends Tests with Generator {
             }
 
             {
-                val inc = rule { case d : Double => d + 1 }
+                val inc = rule[Double] { case d => d + 1 }
 
                 test ("map double inc over a nil list gives nil") {
                     assertResult (Some (Nil)) (map (inc) (Nil))
@@ -362,7 +362,7 @@ class RewriterTests extends Tests with Generator {
             }
 
             {
-                val isnum = rule { case n : Num => n }
+                val isnum = rule[Num] { case n => n }
 
                 test ("map isnum over a nil list gives nil") {
                     assertResult (Some (Nil)) (map (isnum) (Nil))
@@ -383,7 +383,7 @@ class RewriterTests extends Tests with Generator {
             }
 
             {
-                val isnuminc = rule { case Num (i) => Num (i + 1) }
+                val isnuminc = rule[Num] { case Num (i) => Num (i + 1) }
 
                 test ("map isnuminc over a nil list gives nil") {
                     assertResult (Some (Nil)) (map (isnuminc) (Nil))
@@ -404,7 +404,7 @@ class RewriterTests extends Tests with Generator {
             val r = Mul (Num (2), Add (Sub (Var ("hello"), Num (3)), Var ("harold")))
             val s = Mul (Num (2), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
 
-            val double = rule { case d : Double => d + 1 }
+            val double = rule[Double] { case d => d + 1 }
 
             test ("rewriting leaf types: increment doubles - all, topdown") {
                 assertResult (Some (r)) ((alltd (double)) (e))
@@ -439,7 +439,7 @@ class RewriterTests extends Tests with Generator {
             val r = Mul (Num (1), Add (Sub (Var ("olleh"), Num (2)), Var ("dlorah")))
             val s = Mul (Num (1), Add (Sub (Var ("olleh"), Num (2)), Var ("harold")))
 
-            val rev = rule { case s : String => s.reverse }
+            val rev = rule[String] { case s => s.reverse }
 
             test ("rewriting leaf types: reverse identifiers - all, topdown") {
                 assertResult (Some (r)) ((alltd (rev)) (e))
@@ -475,7 +475,7 @@ class RewriterTests extends Tests with Generator {
             val s = Mul (Num (2), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
 
             val evendoubleincrev =
-                rule {
+                rule[Any] {
                     case i : Double if i < 2 => i + 1
                     case s : String => s.reverse
                 }
@@ -511,7 +511,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("rewrite to increment an integer") {
-        val inc = rule { case i : Int => i + 1 }
+        val inc = rule[Int] { case i => i + 1 }
         assertResult (Some (4)) ((inc) (3))
     }
 
@@ -521,14 +521,14 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("rewrite failing to increment an integer with a double increment") {
-        val inc = rule { case d : Double => d + 1 }
+        val inc = rule[Double] { case d => d + 1 }
         assertResult (None) ((inc) (3))
     }
 
     {
-        val incall = alltd (rule { case i : Int => i + 1 })
-        val incfirst = oncetd (rule { case i : Int => i + 1 })
-        val incodd = sometd (rule { case i : Int if i % 2 != 0 => i + 1 })
+        val incall = alltd (rule[Int] { case i => i + 1 })
+        val incfirst = oncetd (rule[Int] { case i => i + 1 })
+        val incodd = sometd (rule[Int] { case i if i % 2 != 0 => i + 1 })
 
         test ("rewrite list: increment all numbers - non-empty") {
             assertResult (Some (Seq (2, 3, 4))) ((incall) (Seq (1, 2, 3)))
@@ -624,7 +624,7 @@ class RewriterTests extends Tests with Generator {
         val r = Seq (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
         val s = Seq (Sub (Num (0), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
 
-        val strat = rule { case _ : Double => 0 }
+        val strat = rule[Double] { case _ => 0 }
         val basemsg = "rewrite list: doubles to zero in non-primitive list"
 
         travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
@@ -640,7 +640,7 @@ class RewriterTests extends Tests with Generator {
         val v = Set (1, 5, 8, 9)
         val vv = Set (1, 5, 8, 9)
 
-        val strat = rule { case i : Int => i }
+        val strat = rule[Int] { case i => i }
         val basemsg = "rewrite set: no change"
 
         travtest (basemsg, "all, topdown", alltd (strat) (v), Some (v), Same)
@@ -664,7 +664,7 @@ class RewriterTests extends Tests with Generator {
         val s = Set (2, 10, 16, 18)
         val t = Set (2, 5, 8, 9)
 
-        val strat = rule { case i : Int => i * 2 }
+        val strat = rule[Int] { case i => i * 2 }
         val basemsg = "rewrite set: double value"
 
         travtest (basemsg, "all, topdown", alltd (strat) (r), Some (s))
@@ -680,7 +680,7 @@ class RewriterTests extends Tests with Generator {
         val m = Map ("one" -> 1, "two" -> 2, "three" -> 3)
         val mm = Map ("one" -> 1, "two" -> 2, "three" -> 3)
 
-        val strat = rule { case s : String => s }
+        val strat = rule[String] { case s => s }
         val basemsg = "rewrite map: no change"
 
         travtest (basemsg, "all, topdown", alltd (strat) (m), Some (m), Same)
@@ -704,7 +704,7 @@ class RewriterTests extends Tests with Generator {
         val r = Map ("eno" -> 1, "owt" -> 2, "eerht" -> 3)
         val s = Map ("eno" -> 1, "two" -> 2, "three" -> 3)
 
-        val strat = rule { case s : String => s.reverse }
+        val strat = rule[String] { case s => s.reverse }
         val basemsg = "rewrite map: reverse keys"
 
         travtest (basemsg, "all, topdown", alltd (strat) (m), Some (r))
@@ -722,7 +722,7 @@ class RewriterTests extends Tests with Generator {
         val r = Map ("one" -> 2, "two" -> 3, "three" -> 4)
         val s = Map ("one" -> 2, "two" -> 2, "three" -> 3)
 
-        val strat = rule { case i : Int => i + 1 }
+        val strat = rule[Int] { case i => i + 1 }
         val basemsg = "rewrite map: increment values"
 
         travtest (basemsg, "all, topdown", alltd (strat) (m), Some (r))
@@ -741,7 +741,7 @@ class RewriterTests extends Tests with Generator {
         val s = Map ("eno" -> 1, "two" -> 2, "three" -> 3)
 
         val basemsg = "rewrite map: reverse keys and increment values"
-        val strat = rule {
+        val strat = rule[Any] {
                         case s : String => s.reverse
                         case i : Int    => i + 1
                     }
@@ -762,7 +762,7 @@ class RewriterTests extends Tests with Generator {
         val s = Map (2 -> 4, 3 -> 4, 5 -> 6)
 
         val basemsg = "rewrite map: increment key and double value"
-        val strat = rule { case (k : Int, v : Int) => (k + 1, v * 2) }
+        val strat = rule[(Int,Int)] { case (k, v) => (k + 1, v * 2) }
 
         travtest (basemsg, "all, topdown", alltd (strat) (m), Some (r))
         travtest (basemsg, "all, bottomup", allbu (strat) (m), Some (m), Same)
@@ -790,7 +790,7 @@ class RewriterTests extends Tests with Generator {
                           Map (Set (12, 16) -> 0, Set (23) -> 0))
 
             val basemsg = "rewrite set: heterogeneous collection: inc integers"
-            val strat = rule { case i : Int => i + 1 }
+            val strat = rule[Int] { case i => i + 1 }
 
             travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
             travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (l), Same)
@@ -808,7 +808,7 @@ class RewriterTests extends Tests with Generator {
                           Map (Set (12, 16) -> 0, Set (23) -> 0))
 
             val basemsg = "rewrite set: heterogeneous collection: set to size"
-            val strat = rule { case (s : Set[_], _) => (s, s.size) }
+            val strat = rule[(Set[_], Int)] { case (s, _) => (s, s.size) }
 
             travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
             travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (l), Same)
@@ -825,7 +825,7 @@ class RewriterTests extends Tests with Generator {
         val r = Add (Num (3), Num (4))
         val t = Sub (l, r)
 
-        val incnum = rule { case Num (i) => Num (i + 1) }
+        val incnum = rule[Num] { case Num (i) => Num (i + 1) }
         val inczerothchild = child (0, incnum)
         val incfirstchild = child (1, incnum)
         val incsecondchild = child (2, incnum)
@@ -872,7 +872,7 @@ class RewriterTests extends Tests with Generator {
         // using case classes or other Products, which rules out lists.
         import scala.collection.immutable.Vector
 
-        val incint = rule { case i : Int => i + 1 }
+        val incint = rule[Int] { case i => i + 1 }
         val inczerothchild = child (0, incint)
         val incfirstchild = child (1, incint)
         val incsecondchild = child (2, incint)
@@ -938,11 +938,11 @@ class RewriterTests extends Tests with Generator {
                         Asgn (Var ("count"), Add (Var ("bob"), Num (1))),
                         Asgn (Var ("i"), Add (Num (0), Var ("i"))))))))
 
-        val incint = rule { case i : Int => i + 1 }
-        val clearlist = rule { case _ => Nil }
+        val incint = rule[Int] { case i => i + 1 }
+        val clearlist = rule[List[_]] { case _ => Nil }
         val zeronumsbreakadds =
-            alltd (Num (rule { case _ => 0}) +
-                   Add (rule { case Var (_) => Var ("bob")}, id))
+            alltd (Num (rule[Double] { case _ => 0}) +
+                   Add (rule[Var] { case _ => Var ("bob")}, id))
 
         test ("rewrite by congruence: top-level wrong congruence") {
             assertResult (None) (Num (incint) (p))
@@ -969,7 +969,7 @@ class RewriterTests extends Tests with Generator {
     test ("log strategy produces the expected message and result on success") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule[Asgn] { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = log (r, "test log ", e)
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         val u = Asgn (Var ("i"), Num (42))
@@ -980,7 +980,7 @@ class RewriterTests extends Tests with Generator {
     test ("log strategy produces the expected message and result on failure") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule[Asgn] { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = log (r, "test log ", e)
         val t = Add (Num (1), Var ("i"))
         assertResult (None) (s (t))
@@ -990,7 +990,7 @@ class RewriterTests extends Tests with Generator {
     test ("logfail strategy produces no message but the right result on success") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule[Asgn] { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = logfail (r, "test log ", e)
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         val u = Asgn (Var ("i"), Num (42))
@@ -1001,7 +1001,7 @@ class RewriterTests extends Tests with Generator {
     test ("logfail strategy produces the expected message and result on failure") {
         import org.kiama.util.StringEmitter
         val e = new StringEmitter
-        val r = rule { case Asgn (l, r) => Asgn (l, Num (42)) }
+        val r = rule[Asgn] { case Asgn (l, r) => Asgn (l, Num (42)) }
         val s = logfail (r, "test log ", e)
         val t = Add (Num (1), Var ("i"))
         assertResult (None) (s (t))
@@ -1015,16 +1015,16 @@ class RewriterTests extends Tests with Generator {
 
     test ("rewrite returns the strategy result when the strategy succeeds") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
-        val s = everywhere (rule { case Var (_) => Var ("hello") })
+        val s = everywhere (rule[Var] { case _ => Var ("hello") })
         assertResult (s (t)) (Some (rewrite (s) (t)))
     }
 
     test ("a memo strategy returns the previous result") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         var count = 0
-        val s = memo (everywhere (rule {
-                    case Var (_) => count = count + 1;
-                                    Var (s"i$count")
+        val s = memo (everywhere (rule[Var] {
+                    case _ => count = count + 1;
+                              Var (s"i$count")
                 }))
         val r = Some (Asgn (Var ("i1"), Add (Num (1), Var ("i2"))))
         assertResult (r) (s (t))
@@ -1033,13 +1033,15 @@ class RewriterTests extends Tests with Generator {
 
     test ("an illegal dup throws an appropriate exception") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
-        val s = everywhere (rule { case Var (_) => 42 })
-        val i = intercept[RuntimeException] { s (t) }
+        val i = intercept[RuntimeException] {
+                    dup (t, Seq (Num (42), Num (99)))
+                }
         val base = "dup illegal arguments"
-        val method = "public org.kiama.example.imperative.ImperativeTree$Add"
-        val argtype = "org.kiama.example.imperative.ImperativeTree$Exp"
-        val error = "(Num(1.0),42), expects 2"
-        val msg = "%s: %s(%s,%s) %s".format (base, method, argtype, argtype, error)
+        val method = "public org.kiama.example.imperative.ImperativeTree$Asgn"
+        val arg1type = "org.kiama.example.imperative.ImperativeTree$Var"
+        val arg2type = "org.kiama.example.imperative.ImperativeTree$Exp"
+        val error = "(Num(42.0),Num(99.0)), expects 2"
+        val msg = "%s: %s(%s,%s) %s".format (base, method, arg1type, arg2type, error)
         assertResult (msg) (i.getMessage)
     }
 
@@ -1050,7 +1052,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat of non-failure works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
         val s = repeat (r)
@@ -1058,7 +1060,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat with a final strategy on failure applies the final strategy") {
-        val f = rule {
+        val f = rule[Num] {
                     case Num (10) => Num (20)
                 }
         val s = repeat (rwfail, f)
@@ -1066,10 +1068,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat with a final strategy works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (10) => Num (20)
                 }
         val s = repeat (r, f)
@@ -1077,7 +1079,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat with a final failure fails") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
         val s = repeat (r, rwfail)
@@ -1090,7 +1092,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat1 of non-failure works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
         val s = repeat1 (r)
@@ -1098,7 +1100,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat1 with a final strategy on failure doesn't apply the final strategy") {
-        val f = rule {
+        val f = rule[Num] {
                     case Num (10) => Num (20)
                 }
         val s = repeat1 (rwfail, f)
@@ -1106,10 +1108,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat1 with a final strategy works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (10) => Num (20)
                 }
         val s = repeat1 (r, f)
@@ -1117,7 +1119,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeat1 with a final failure fails") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
         val s = repeat1 (r, rwfail)
@@ -1136,7 +1138,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("zero repeat of non-failure is identity") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
         val s = repeat (r, 0)
@@ -1145,7 +1147,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("non-zero repeat of non-failure is repeated correct number of times") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
         val s = repeat (r, 4)
@@ -1153,7 +1155,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeatuntil on failure fails") {
-        val f = rule {
+        val f = rule[Num] {
                     case Num (10) => Num (20)
                 }
         val s = repeatuntil (rwfail, f)
@@ -1161,10 +1163,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("repeatuntil on non-failure works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i + 1)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (10) => Num (20)
                 }
         val s = repeatuntil (r, f)
@@ -1172,7 +1174,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loop on failure is identity") {
-        val f = rule {
+        val f = rule[Num] {
                     case Num (1) => Num (2)
                 }
         val s = loop (rwfail, f)
@@ -1181,10 +1183,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loop on non-failure with initially false condition is identity") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i > 10 => Num (i)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (1) => Num (2)
                 }
         val s = loop (r, f)
@@ -1193,7 +1195,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loop on failure with initially true condition is identity") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i)
                 }
         val s = loop (r, rwfail)
@@ -1202,10 +1204,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loop on non-failure with initially true condition works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
         val s = loop (r, f)
@@ -1213,7 +1215,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loopnot on succeess is identity") {
-        val f = rule {
+        val f = rule[Num] {
                     case Num (1) => Num (2)
                 }
         val s = loopnot (id, f)
@@ -1222,10 +1224,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loopnot on non-failure with initially true condition is identity") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (1) => Num (2)
                 }
         val s = loopnot (r, f)
@@ -1234,7 +1236,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loopnot on failure with initially false condition fails") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i >= 10 => Num (i + 1)
                 }
         val s = loopnot (r, rwfail)
@@ -1242,10 +1244,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loopnot on non-failure with initially false condition works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i >= 10 => Num (i)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
         val s = loopnot (r, f)
@@ -1253,7 +1255,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("doloop on failure applies once") {
-        val f = rule {
+        val f = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
         val s = doloop (f, rwfail)
@@ -1261,10 +1263,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("doloop on non-failure with initially false condition applies once") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (i) if i >= 10 => Num (i)
                 }
         val s = doloop (r, f)
@@ -1272,7 +1274,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("doloop on failure with initially true condition is failure") {
-        val f = rule {
+        val f = rule[Num] {
                     case Num (i) if i < 10 => Num (i)
                 }
         val s = doloop (rwfail, f)
@@ -1280,10 +1282,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("doloop on non-failure with initially true condition works") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (i) if i < 10 => Num (i)
                 }
         val s = doloop (r, f)
@@ -1291,10 +1293,10 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loopiter with failure init fails") {
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (1) => Num (2)
                 }
         val s = loopiter (rwfail, r, f)
@@ -1302,13 +1304,13 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loopiter with succeeding init and initially true condition works") {
-        val i = rule {
+        val i = rule[Num] {
                     case Num (100) => Num (1)
                 }
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i < 10 => Num (i)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (1) => Num (2)
                 }
         val s = loopiter (i, r, f)
@@ -1316,13 +1318,13 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("loopiter with succeeding init and initially false condition works") {
-        val i = rule {
+        val i = rule[Num] {
                     case Num (100) => Num (1)
                 }
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) if i >= 10 => Num (i)
                 }
-        val f = rule {
+        val f = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
         val s = loopiter (i, r, f)
@@ -1331,7 +1333,7 @@ class RewriterTests extends Tests with Generator {
 
     test ("counting loopiter is identity if there is nothing to count") {
         val r = (i : Int) =>
-                    rule {
+                    rule[Num] {
                         case Num (j) => Num (i + j)
                     }
         val s = loopiter (r, 10, 1)
@@ -1342,7 +1344,7 @@ class RewriterTests extends Tests with Generator {
     test ("counting loopiter counts correctly") {
         var count = 0
         val r = (i : Int) =>
-                    rule {
+                    rule[Num] {
                         case Num (j) => count = count + i
                                         Num (j + 1)
                     }
@@ -1354,7 +1356,7 @@ class RewriterTests extends Tests with Generator {
     test ("breadthfirst traverses in correct order") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         var l = Seq[Double] ()
-        val r = rule {
+        val r = rule[Any] {
                     case n @ Num (i) => l = l :+ i
                                         n
                     case n           => n
@@ -1367,8 +1369,10 @@ class RewriterTests extends Tests with Generator {
     test ("leaves with a failing leaf detector succeeds but doesn't collect anything") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         var sum = 0.0
-        val r = rule {
-                    case Num (i) => sum = sum + i
+        val r = rule[Exp] {
+                    case n @ Num (i) => sum = sum + i
+                                        n
+                    case n           => n
                 }
         val s = leaves (r, rwfail)
         assertResult (Some (t)) (s (t))
@@ -1378,11 +1382,11 @@ class RewriterTests extends Tests with Generator {
     test ("leaves with a non-failing leaf detector succeeds and collects correctly") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         var sum = 0.0
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) => sum = sum + i
                                     Num (i)
                 }
-        val l = rule {
+        val l = rule[Num] {
                     case Num (i) if (i % 2 != 1) => Num (i)
                 }
         val s = leaves (r, l)
@@ -1393,17 +1397,14 @@ class RewriterTests extends Tests with Generator {
     test ("skipping leaves with a non-failing leaf detector succeeds and collects correctly") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         var sum = 0.0
-        val r = rule {
+        val r = rule[Num] {
                     case Num (i) => sum = sum + i
                                     Num (i)
                 }
-        val l = rule {
+        val l = rule[Num] {
                     case Num (i) if (i % 2 != 0) => Num (i)
                 }
-        val x = (y : Strategy) =>
-                    rule {
-                        case n @ Sub (_, _) => n
-                    }
+        val x = (y : Strategy) => rule[Sub] { case n => n }
         val s = leaves (r, l, x)
         assertResult (Some (t)) (s (t))
         assertResult (4) (sum)
@@ -1415,7 +1416,7 @@ class RewriterTests extends Tests with Generator {
 
         test ("innermost visits the correct nodes in the correct order") {
             var l = Seq[Double] ()
-            val r = rule {
+            val r = rule[Exp] {
                         case Num (i) => l = l :+ i
                                         Var (i.toString)
                     }
@@ -1426,7 +1427,7 @@ class RewriterTests extends Tests with Generator {
 
         test ("innermost2 visits the correct node") {
             var l = Seq[Double] ()
-            val r = rule {
+            val r = rule[Exp] {
                         case Num (i) => l = l :+ i
                                         Var (i.toString)
                     }
@@ -1440,7 +1441,7 @@ class RewriterTests extends Tests with Generator {
     test ("downup (one arg version) visits the correct frontier") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (4), Num (5)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r @ Num (3)) => Add (r, l)
                     case Sub (l, r)           => Sub (r, l)
                     case n                    => n
@@ -1452,12 +1453,12 @@ class RewriterTests extends Tests with Generator {
     test ("downup (two arg version) visits the correct frontier") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (8), Num (9)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r @ Num (3)) => Add (r, l)
                     case Sub (l, r)           => Sub (r, l)
                     case n                    => n
                 }
-        val e = rule {
+        val e = rule[Any] {
                     case Sub (l, r)           => Sub (Num (8), Num (9))
                     case n                    => n
                 }
@@ -1468,7 +1469,7 @@ class RewriterTests extends Tests with Generator {
     test ("somedownup visits the correct frontier") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Num (3), Num (4)), Num (3)), Sub (Num (2), Num (3)))
-        val d = rule {
+        val d = rule[Exp] {
                     case Add (Num (l), Num (r)) => Add (Num (l + 1), Num (r + 1))
                     case Sub (Num (l), Num (r)) => Sub (Num (l - 1), Num (r - 1))
                     case n : Mul                => n
@@ -1480,13 +1481,13 @@ class RewriterTests extends Tests with Generator {
     test ("downupS (two arg version) visits the correct frontier") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (4), Num (5)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r @ Num (3)) => Add (r, l)
                     case Sub (l, r)           => Sub (r, l)
                     case n                    => n
                 }
         def f (y : => Strategy) : Strategy =
-            rule {
+            rule[Add] {
                 case n @ Add (_, Num (3)) => n
             }
         val s = downupS (d, f)
@@ -1496,17 +1497,17 @@ class RewriterTests extends Tests with Generator {
     test ("downupS (three arg version) visits the correct frontier") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (8), Num (9)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r @ Num (3)) => Add (r, l)
                     case Sub (l, r)           => Sub (r, l)
                     case n                    => n
                 }
-        val e = rule {
+        val e = rule[Any] {
                     case Sub (l, r)           => Sub (Num (8), Num (9))
                     case n                    => n
                 }
         def f (y : => Strategy) : Strategy =
-            rule {
+            rule[Add] {
                 case n @ Add (_, Num (3)) => n
             }
         val s = downupS (d, e, f _)
@@ -1516,11 +1517,11 @@ class RewriterTests extends Tests with Generator {
     test ("alldownup2 visits the correct frontier") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Mul (Num (3), Add (Num (1), Num (2))), Sub (Num (5), Num (4)))
-        val d = rule {
+        val d = rule[Exp] {
                     case Add (l, r @ Num (3)) => Add (r, l)
                     case Sub (l, r)           => Sub (r, l)
                 }
-        val e = rule {
+        val e = rule[Any] {
                     case Add (l, r) => Mul (l, r)
                     case n          => n
                 }
@@ -1531,13 +1532,13 @@ class RewriterTests extends Tests with Generator {
     test ("topdownS stops at the right spots") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (5), Num (4)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r) => Add (r, l)
                     case Sub (l, r) => Sub (r, l)
                     case n          => n
                 }
         def f (y : => Strategy) : Strategy =
-            rule {
+            rule[Add] {
                 case n @ Add (Num (3), _) => n
             }
         val s = topdownS (d, f)
@@ -1547,7 +1548,7 @@ class RewriterTests extends Tests with Generator {
     test ("topdownS with no stopping doesn't stop") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (2), Num (1))), Sub (Num (5), Num (4)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r) => Add (r, l)
                     case Sub (l, r) => Sub (r, l)
                     case n          => n
@@ -1559,13 +1560,13 @@ class RewriterTests extends Tests with Generator {
     test ("bottomupS stops at the right spots") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (1), Num (2))), Sub (Num (5), Num (4)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r) => Add (r, l)
                     case Sub (l, r) => Sub (r, l)
                     case n          => n
                 }
         def f (y : => Strategy) : Strategy =
-            rule {
+            rule[Add] {
                 case n @ Add (_, Num (3)) => n
             }
         val s = bottomupS (d, f)
@@ -1575,7 +1576,7 @@ class RewriterTests extends Tests with Generator {
     test ("bottomupS with no stopping doesn't stop") {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (3), Add (Num (2), Num (1))), Sub (Num (5), Num (4)))
-        val d = rule {
+        val d = rule[Any] {
                     case Add (l, r) => Add (r, l)
                     case Sub (l, r) => Sub (r, l)
                     case n          => n
@@ -1588,9 +1589,9 @@ class RewriterTests extends Tests with Generator {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Add (Num (12), Num (11)), Num (10)), Sub (Num (4), Num (5)))
         var count = 13
-        val d = rule {
-                    case Num (i) if (count > 10) => count = count - 1
-                                                    Num (count)
+        val d = rule[Num] {
+                    case _ if (count > 10) => count = count - 1
+                                              Num (count)
                 }
         val s = manybu (d)
         assertResult (Some (u)) (s (t))
@@ -1600,7 +1601,7 @@ class RewriterTests extends Tests with Generator {
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
         val u = Mul (Add (Num (11), Add (Num (2), Num (1))), Sub (Num (4), Num (5)))
         var count = 13
-        val d = rule {
+        val d = rule[Exp] {
                     case Num (i) if (count > 10) =>
                         count = count - 1
                         Num (count)
@@ -1615,10 +1616,8 @@ class RewriterTests extends Tests with Generator {
     test ("alltdfold can be used to evaluate an expression") {
         // ((1 + 2) + 3) * (4 - 5) = -6
         val t = Mul (Add (Add (Num (1), Num (2)), Num (3)), Sub (Num (4), Num (5)))
-        val d = rule {
-                    case n : Num => n
-                }
-        val e = rule {
+        val d = rule[Num] { case n => n }
+        val e = rule[Exp] {
                     case Add (Num (i), Num (j)) => Num (i + j)
                     case Sub (Num (i), Num (j)) => Num (i - j)
                     case Mul (Num (i), Num (j)) => Num (i * j)
@@ -1630,12 +1629,12 @@ class RewriterTests extends Tests with Generator {
     test ("restore restores when the strategy fails") {
         val t = Add (Num (1), Num (2))
         var count = 0
-        val d = rule {
+        val d = rule[Exp] {
                     case n => count = count + 1; n
-                } <* rule {
+                } <* rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val e = rule {
+        val e = rule[Exp] {
                     case n => count = count - 1; n
                 }
         val s = restore (d, e)
@@ -1646,10 +1645,10 @@ class RewriterTests extends Tests with Generator {
     test ("restore doesn't restore when the strategy succeeds") {
         val t = Add (Num (1), Num (2))
         var count = 0
-        val d = rule {
+        val d = rule[Exp] {
                     case n => count = count + 1; n
                 }
-        val e = rule {
+        val e = rule[Exp] {
                     case n => count = count - 1; n
                 }
         val s = restore (d, e)
@@ -1660,12 +1659,12 @@ class RewriterTests extends Tests with Generator {
     test ("restorealways restores when the strategy fails") {
         val t = Add (Num (1), Num (2))
         var count = 0
-        val d = rule {
+        val d = rule[Exp] {
                     case n => count = count + 1; n
-                } <* rule {
+                } <* rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val e = rule {
+        val e = rule[Exp] {
                     case n => count = count - 1; n
                 }
         val s = restorealways (d, e)
@@ -1676,10 +1675,10 @@ class RewriterTests extends Tests with Generator {
     test ("restorealways restores when the strategy succeeds") {
         val t = Add (Num (1), Num (2))
         var count = 0
-        val d = rule {
+        val d = rule[Exp] {
                     case n => count = count + 1; n
                 }
-        val e = rule {
+        val e = rule[Exp] {
                     case n => count = count - 1; n
                 }
         val s = restorealways (d, e)
@@ -1690,12 +1689,12 @@ class RewriterTests extends Tests with Generator {
     test ("lastly applies the second strategy when the first strategy fails") {
         val t = Add (Num (1), Num (2))
         var count = 0
-        val d = rule {
+        val d = rule[Exp] {
                     case n => count = count + 1; n
-                } <* rule {
+                } <* rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val e = rule {
+        val e = rule[Exp] {
                     case n => count = count - 1; n
                 }
         val s = lastly (d, e)
@@ -1706,10 +1705,10 @@ class RewriterTests extends Tests with Generator {
     test ("lastly applies the second strategy when the first strategy succeeds") {
         val t = Add (Num (1), Num (2))
         var count = 0
-        val d = rule {
+        val d = rule[Exp] {
                     case n => count = count + 1; n
                 }
-        val e = rule {
+        val e = rule[Exp] {
                     case n => count = count - 1; n
                 }
         val s = lastly (d, e)
@@ -1720,10 +1719,10 @@ class RewriterTests extends Tests with Generator {
     test ("ior applies second strategy if first strategy fails") {
         val t = Add (Num (1), Num (2))
         val u = Add (Num (2), Num (1))
-        val d = rule {
+        val d = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val e = rule {
+        val e = rule[Add] {
                     case Add (l, r) => Add (r, l)
                 }
         val s = ior (d, e)
@@ -1733,10 +1732,10 @@ class RewriterTests extends Tests with Generator {
     test ("ior applies second strategy if first strategy succeeds") {
         val t = Add (Num (1), Num (2))
         val u = Add (Num (9), Num (8))
-        val d = rule {
+        val d = rule[Add] {
                     case Add (l, r) => Add (Num (8), Num (9))
                 }
-        val e = rule {
+        val e = rule[Add] {
                     case Add (l, r) => Add (r, l)
                 }
         val s = ior (d, e)
@@ -1745,10 +1744,10 @@ class RewriterTests extends Tests with Generator {
 
     test ("or applies second strategy and restores term if first strategy fails") {
         val t = Add (Num (1), Num (2))
-        val d = rule {
+        val d = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val e = rule {
+        val e = rule[Add] {
                     case Add (l, r) => Add (r, l)
                 }
         val s = or (d, e)
@@ -1757,10 +1756,10 @@ class RewriterTests extends Tests with Generator {
 
     test ("or applies second strategy and restores term if first strategy succeeds") {
         val t = Add (Num (1), Num (2))
-        val d = rule {
+        val d = rule[Add] {
                     case Add (l, r) => Add (Num (8), Num (9))
                 }
-        val e = rule {
+        val e = rule[Add] {
                     case Add (l, r) => Add (r, l)
                 }
         val s = or (d, e)
@@ -1769,10 +1768,10 @@ class RewriterTests extends Tests with Generator {
 
     test ("and fails if the first strategy fails") {
         val t = Add (Num (1), Num (2))
-        val d = rule {
+        val d = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
-        val e = rule {
+        val e = rule[Add] {
                     case Add (l, r) => Add (r, l)
                 }
         val s = and (d, e)
@@ -1781,10 +1780,10 @@ class RewriterTests extends Tests with Generator {
 
     test ("and fails if the first strategy succeeds but the second strategy fails") {
         val t = Add (Num (1), Num (2))
-        val d = rule {
+        val d = rule[Add] {
                     case Add (l, r) => Add (r, l)
                 }
-        val e = rule {
+        val e = rule[Num] {
                     case Num (i) => Num (i + 1)
                 }
         val s = and (d, e)
@@ -1793,10 +1792,10 @@ class RewriterTests extends Tests with Generator {
 
     test ("and succeeds and restores term if both strategies succeed") {
         val t = Add (Num (1), Num (2))
-        val d = rule {
+        val d = rule[Add] {
                     case Add (l, r) => Add (Num (8), Num (9))
                 }
-        val e = rule {
+        val e = rule[Add] {
                     case Add (l, r) => Add (r, l)
                 }
         val s = and (d, e)
@@ -1810,7 +1809,7 @@ class RewriterTests extends Tests with Generator {
         test ("everywhere traverses in expected order") {
             var l = Seq[Double] ()
             var count = 9
-            val r = rule {
+            val r = rule[Any] {
                         case Num (i) => l = l :+ i
                                         Num (count)
                         case n       => count = count + 1
@@ -1824,7 +1823,7 @@ class RewriterTests extends Tests with Generator {
         test ("everywheretd traverses in expected order") {
             var l = Seq[Double] ()
             var count = 9
-            val r = rule {
+            val r = rule[Any] {
                         case Num (i) => l = l :+ i
                                         Num (count)
                         case n       => count = count + 1
@@ -1838,7 +1837,7 @@ class RewriterTests extends Tests with Generator {
         test ("everywherebu traverses in expected order") {
             var l = Seq[Double] ()
             var count = 9
-            val r = rule {
+            val r = rule[Any] {
                         case Num (i) => l = l :+ i
                                         Num (count)
                         case n       => count = count + 1
@@ -1852,7 +1851,7 @@ class RewriterTests extends Tests with Generator {
 
     // Strategy naming tests
 
-    val myrule1 = rule {
+    val myrule1 = rule[Num] {
         case Num (i) => Num (i + 1)
     }
 
@@ -1861,7 +1860,7 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("rule in closure has the correct name") {
-        val myrule2 = rule {
+        val myrule2 = rule[Num] {
             case Num (i) => Num (i + 1)
         }
         assertResult ("myrule2") (myrule2.name)

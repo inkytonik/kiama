@@ -240,26 +240,39 @@ trait RewriterCore {
         )
 
     /**
-     * Define a rewrite rule using a partial function `f`. If the function is
-     * defined at the current term, then the strategy succeeds with the return
-     * value of the function applied to the current term. Otherwise the
-     * strategy fails.
+     * Define a rewrite rule using a partial function `f` defined on the type
+     * `T`. If the current term is a `T` and the function is defined at the
+     * current term, then the strategy succeeds with the return value of the
+     * function applied to the current term. Otherwise, the strategy fails.
+     *
+     * Due to the type erasure performed on Scala programs the type test
+     * will be imprecise for some types. E.g., it is not possible to tell
+     * the difference between `List[Int]` and `List[String]`.
      */
-    def rule (f : Any ==> Any) : Strategy =
-        macro RewriterCoreMacros.ruleMacro
+    def rule[T] (f : T ==> T) : Strategy =
+        macro RewriterCoreMacros.ruleMacro[T]
 
     /**
-     * As for the version without the `name` argument but specifies the name for
-     * the constructed strategy.
+     * As for `rule` but specifies the name for the constructed strategy.
      */
-    def rule (name : String, f : Any ==> Any) : Strategy =
+    def ruleWithName[T] (name : String, f : T ==> T) : Strategy = {
+        val anyf = f.asInstanceOf[Any ==> T]
         mkStrategy (name,
-            t =>
-                if (f isDefinedAt t)
-                    Some (f (t))
+            t => {
+                val isDefinedAtArg =
+                    try {
+                        anyf isDefinedAt t
+                    } catch {
+                        case _ : ClassCastException =>
+                            false
+                    }
+                if (isDefinedAtArg)
+                    Some (anyf (t))
                 else
                     None
+            }
         )
+    }
 
     /**
      * Define a rewrite rule using a function `f` that returns a term.
@@ -339,15 +352,15 @@ trait RewriterCore {
      * Construct a strategy that succeeds only if the subject term matches
      * the given term `t`.
      */
-    def term (t : Any) : Strategy =
-        macro RewriterCoreMacros.termMacro
+    def term[T] (t : T) : Strategy =
+        macro RewriterCoreMacros.termMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def term (name : String, t : Any) : Strategy =
-        rule (name, {
+    def termWithName[T] (name : String, t : T) : Strategy =
+        ruleWithName[T] (name, {
             case `t` => t
         })
 
@@ -366,7 +379,7 @@ trait RewriterCore {
      * there are the wrong number of new children, or if one of the new
      * children is not of the appropriate type.
      */
-    protected def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T = {
+    def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T = {
         val clazz = t.getClass
         val ctor = constrcache.getOrElseUpdate (clazz, (clazz.getConstructors())(0))
         try {

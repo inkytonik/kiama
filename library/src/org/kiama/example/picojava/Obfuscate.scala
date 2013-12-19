@@ -64,7 +64,7 @@ object Obfuscate extends Rewriter {
          * generated name.
          */
         val obfuscateDecl =
-            rule {
+            rule[Decl] {
                 case d : VarDecl =>
                     d.copy (Name = makeName (d))
                 case d : ClassDecl =>
@@ -86,7 +86,7 @@ object Obfuscate extends Rewriter {
          * Rule that detects pre-defined identifiers and leaves them unchanged
          */
         val preservePredefinedUse =
-            rule {
+            rule[Use] {
                 case u @ Use (name) if predefinedNames contains name =>
                     u
             }
@@ -98,7 +98,7 @@ object Obfuscate extends Rewriter {
          * process the node. See also `obfuscateUses2` below.
          */
         val preservePredefinedUse2 =
-            rule {
+            rule[Use] {
                 case u @ Use (name) if ! (predefinedNames contains name) =>
                     u
             }
@@ -108,8 +108,8 @@ object Obfuscate extends Rewriter {
          * determined for that identifier's declaration.
          */
         val obfuscateNormalUse =
-            rule {
-                case u : Use =>
+            rule[Use] {
+                case u =>
                     u.copy (Name = declNames.getOrElse (u->decl, "$UNDEF$"))
             }
 

@@ -39,14 +39,15 @@ object Optimise {
     lazy val rules = elimDeadAssign <* elimEmpties
 
     lazy val elimDeadAssign =
-        alltd (rule {
+        alltd (rule[Stm] {
             case s @ Assign (v, _) if (! (s->out contains v)) =>
                 Empty ()
         })
 
     lazy val elimEmpties =
-        bottomup (attempt (rule {
+        bottomup (attempt (rule[List[Stm]] {
             case Empty () :: ss => ss
+        } <+ rule[Stm] {
             case Block (Nil)    => Empty ()
         }))
 

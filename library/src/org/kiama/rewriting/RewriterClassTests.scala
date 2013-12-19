@@ -39,14 +39,14 @@ class RewriterClassTests extends Tests {
                          new Sub (new Var ("xyz"), new Num (3.0)))
 
         // Incr Nums, reverse Vars, turn Adds into Sub, swap Add args
-        val r = rule {
+        val r = rule[Exp] {
                     case n : Num => new Num (n.d + 1)
                     case v : Var => new Var (v.s.reverse)
                     case a : Add => new Sub (a.r, a.l)
                 }
         // Canonicalise variables
-        val s = rule {
-                    case v : Var => new Var ("varname")
+        val s = rule[Var] {
+                    case v => new Var ("varname")
                 }
 
         test ("rewrite normal classes: top-level fail") {
