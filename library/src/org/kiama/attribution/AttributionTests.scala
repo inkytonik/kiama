@@ -59,6 +59,31 @@ class AttributionTests extends Tests {
 
         var count = 0
 
+        lazy val incDef : Int => Int =
+            {
+                case i => count = count + 1; i + 1
+            }
+
+        lazy val inc =
+            attr (incDef)
+
+        lazy val concatDef : Int => Int => Int =
+            {
+                case 1 => {
+                    case i => count = count + 1; i + 1
+                }
+                case 2 => {
+                    case 0 => count = count + 1; 999
+                    case i => count = count + 1; i + 2
+                }
+                case n => {
+                    case i => count = count + 1; i * i
+                }
+            }
+
+        lazy val concat =
+            paramAttr (concatDef)
+
         lazy val maximumDef : TestTree => Int =
             {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
@@ -111,7 +136,81 @@ class AttributionTests extends Tests {
 
     }
 
-    test ("cached attributes are only evaluated once") {
+    test ("attributes of a value type are correctly evaluated") {
+        val definitions = new Definitions
+        import definitions._
+        assertResult (false, "hasBeenComputedAt") (inc.hasBeenComputedAt (1))
+        assertResult (false, "hasBeenComputedAt") (inc.hasBeenComputedAt (2))
+        assertResult (0, "evaluation count") (count)
+        assertResult (2, "first inc of 1") (inc (1))
+        assertResult (1, "evaluation count") (count)
+        assertResult (true, "hasBeenComputedAt") (inc.hasBeenComputedAt (1))
+        assertResult (false, "hasBeenComputedAt") (inc.hasBeenComputedAt (2))
+        assertResult (3, "first inc of 2") (inc (2))
+        assertResult (2, "evaluation count") (count)
+        assertResult (true, "hasBeenComputedAt") (inc.hasBeenComputedAt (1))
+        assertResult (true, "hasBeenComputedAt") (inc.hasBeenComputedAt (2))
+        assertResult (2, "second inc of 1") (inc (1))
+        assertResult (3, "second inc of 2") (inc (2))
+        assertResult (2, "evaluation count") (count)
+    }
+
+    test ("parameterised attributes of a value type are correctly evaluated") {
+        val definitions = new Definitions
+        import definitions._
+
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (1, 0))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (2, 0))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (3, 0))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (4, 0))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (1, 1))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (2, 1))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (3, 1))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (4, 1))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (1, 2))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (2, 2))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (3, 2))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (4, 2))
+        assertResult (0, "evaluation count") (count)
+
+        assertResult (1) (concat (1) (0))
+        assertResult (999) (concat (2) (0))
+        assertResult (0) (concat (3) (0))
+        assertResult (2) (concat (1) (1))
+        assertResult (3) (concat (2) (1))
+        assertResult (1) (concat (3) (1))
+        assertResult (3) (concat (1) (2))
+        assertResult (4) (concat (2) (2))
+        assertResult (4) (concat (3) (2))
+
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (1, 0))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (2, 0))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (3, 0))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (4, 0))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (1, 1))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (2, 1))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (3, 1))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (4, 1))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (1, 2))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (2, 2))
+        assertResult (true, "hasBeenComputedAt") (concat.hasBeenComputedAt (3, 2))
+        assertResult (false, "hasBeenComputedAt") (concat.hasBeenComputedAt (4, 2))
+        assertResult (9, "evaluation count") (count)
+
+        assertResult (1) (concat (1) (0))
+        assertResult (999) (concat (2) (0))
+        assertResult (0) (concat (3) (0))
+        assertResult (2) (concat (1) (1))
+        assertResult (3) (concat (2) (1))
+        assertResult (1) (concat (3) (1))
+        assertResult (3) (concat (1) (2))
+        assertResult (4) (concat (2) (2))
+        assertResult (4) (concat (3) (2))
+        assertResult (9, "evaluation count") (count)
+
+    }
+
+    test ("cached attributes are correctly evaluated") {
         val definitions = new Definitions
         import definitions._
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))

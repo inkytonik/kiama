@@ -41,7 +41,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * `f` should not itself require the value of this attribute. If it does, a
      * circularity error is reported by throwing an `IllegalStateException`.
      */
-    class CachedAttribute[T <: AnyRef,U] (name : String, f : T => U) extends
+    class CachedAttribute[T,U] (name : String, f : T => U) extends
             Attribute[T,U] (name) with IdMemoised[T,Option[U]] {
 
         /**
@@ -86,7 +86,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
     /**
      * A variation of the `CachedAttribute` class for parameterised attributes.
      */
-    class CachedParamAttribute[A,T <: AnyRef,U] (name : String, f : A => T => U) extends
+    class CachedParamAttribute[A,T,U] (name : String, f : A => T => U) extends
             (A => Attribute[T,U]) with Memoised[ParamAttributeKey,Option[U]] {
 
         attr =>
@@ -146,7 +146,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * This kind of attribute encapsulates state to keep track of the current definition,
      * so an instance should only be used from one thread at a time.
      */
-    class CachedDynamicAttribute[T <: AnyRef,U] (name : String, f : T => U) extends CachedAttribute[T,U] (name, f) {
+    class CachedDynamicAttribute[T,U] (name : String, f : T => U) extends CachedAttribute[T,U] (name, f) {
 
         /**
          * List of functions that currently dynamically define this attribute.
@@ -233,7 +233,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T <: AnyRef,U] (name : String, init : U, f : T => U) extends
+    class CircularAttribute[T,U] (name : String, init : U, f : T => U) extends
             Attribute[T,U] (name) with IdMemoised[T,U] {
 
         import CircularAttribute._
@@ -414,14 +414,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * which should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: AnyRef,U] (f : T => U) : CachedAttribute[T,U] =
+    def attr[T,U] (f : T => U) : CachedAttribute[T,U] =
         macro AttributionMacros.attrMacro[T,U,CachedAttribute[T,U]]
 
     /**
      * As for the other `attr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def attr[T <: AnyRef,U] (name : String, f : T => U) : CachedAttribute[T,U] =
+    def attr[T,U] (name : String, f : T => U) : CachedAttribute[T,U] =
         new CachedAttribute (name, f)
 
     /**
@@ -429,14 +429,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * function `f`, which should not depend on the value of this attribute.
      * The computed attribute value is cached so it will be computed at most once.
      */
-    def dynAttr[T <: AnyRef,U] (f : T => U) : CachedDynamicAttribute[T,U] =
+    def dynAttr[T,U] (f : T => U) : CachedDynamicAttribute[T,U] =
         macro AttributionMacros.dynAttrMacro[T,U,CachedDynamicAttribute[T,U]]
 
     /**
      * As for the other `dynAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def dynAttr[T <: AnyRef,U] (name : String, f : T => U) : CachedDynamicAttribute[T,U] =
+    def dynAttr[T,U] (name : String, f : T => U) : CachedDynamicAttribute[T,U] =
         new CachedDynamicAttribute (name, f)
 
     /**
@@ -445,14 +445,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * for a given `T` and `A` pair is cached so it will be computed at most
      * once.
      */
-    def paramAttr[V,T <: AnyRef,U] (f : V => T => U) : CachedParamAttribute[V,T,U] =
+    def paramAttr[V,T,U] (f : V => T => U) : CachedParamAttribute[V,T,U] =
         macro AttributionMacros.paramAttrMacro[V,T,U,CachedParamAttribute[V,T,U]]
 
     /**
      * As for the other `paramAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def paramAttr[V,T <: AnyRef,U] (name : String, f : V => T => U) : CachedParamAttribute[V,T,U] =
+    def paramAttr[V,T,U] (name : String, f : V => T => U) : CachedParamAttribute[V,T,U] =
         new CachedParamAttribute (name, f)
 
     /**
@@ -495,7 +495,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * Implicitly converts functions to dynamic attributes. This conversion allows us
      * to use simpler types for dynamic attributes, but still extend them later.
      */
-    implicit def internalToDynamicAttribute[T <: AnyRef,U] (f : T => U) : CachedDynamicAttribute[T,U] =
+    implicit def internalToDynamicAttribute[T,U] (f : T => U) : CachedDynamicAttribute[T,U] =
         f match {
             case f : CachedDynamicAttribute[_,_] =>
                 f.asInstanceOf[CachedDynamicAttribute[T,U]]
@@ -510,14 +510,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * iteratively until a fixed point is reached (in conjunction with other
      * circular attributes on which it depends).  The final value is cached.
      */
-    def circular[T <: AnyRef,U] (init : U) (f : T => U) : CircularAttribute[T,U] =
+    def circular[T,U] (init : U) (f : T => U) : CircularAttribute[T,U] =
         macro AttributionMacros.circularMacro[T,U,CircularAttribute[T,U]]
 
     /**
      * As for the other `circular` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def circular[T <: AnyRef,U] (name : String, init : U) (f : T => U) : CircularAttribute[T,U] =
+    def circular[T,U] (name : String, init : U) (f : T => U) : CircularAttribute[T,U] =
         new CircularAttribute (name, init, f)
 
 }

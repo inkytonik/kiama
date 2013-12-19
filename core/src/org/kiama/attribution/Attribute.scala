@@ -24,7 +24,7 @@ package attribution
 /**
  * Common functionality for all attributes.
  */
-abstract class Attribute[T <: AnyRef,U] (val name : String) extends (T => U) {
+abstract class Attribute[T,U] (val name : String) extends (T => U) {
 
     /**
      * Report a cycle in the calculation of this attribute discovered when

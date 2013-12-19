@@ -28,22 +28,22 @@ object AttributionMacros {
 
     // Macros for the builder methods
 
-    def attrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
+    def attrMacro[T,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
         makeCallWithName (c)
 
-    def childAttrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => Attributable => U]): c.Expr[A] =
+    def childAttrMacro[T <: Attributable,U,A] (c : Context) (f : c.Expr[T => Attributable => U]): c.Expr[A] =
         makeCallWithName (c)
 
-    def circularMacro[T <: AnyRef,U,A] (c : Context) (init : c.Expr[U]) (f : c.Expr[T => U]): c.Expr[A] =
+    def circularMacro[T,U,A] (c : Context) (init : c.Expr[U]) (f : c.Expr[T => U]): c.Expr[A] =
         makeCallWithName (c)
 
-    def dynAttrMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
+    def dynAttrMacro[T,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
         makeCallWithName (c)
 
-    def paramAttrMacro[V,T <: AnyRef,U,P] (c : Context) (f : c.Expr[V => T => U]): c.Expr[P] =
+    def paramAttrMacro[V,T,U,P] (c : Context) (f : c.Expr[V => T => U]): c.Expr[P] =
         makeCallWithName (c)
 
-    def treeMacro[T <: AnyRef,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
+    def treeMacro[T <: Attributable,U,A] (c : Context) (f : c.Expr[T => U]): c.Expr[A] =
         makeCallWithName (c)
 
 }
