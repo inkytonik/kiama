@@ -24,21 +24,20 @@ package example.transform
 /**
  * Abstract syntax.
  */
-object AST {
+object TransformTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     /**
      * All AST nodes.
      */
-    sealed abstract class ASTNode extends Attributable with Positioned
+    sealed abstract class TransformTree extends Tree
 
     /**
      * Nodes that have entities associated with them.
      */
-    sealed trait EntityNode extends ASTNode
+    sealed trait EntityNode extends TransformTree
 
     /**
      * A program is a map from operator names to priorities, a right recursive
@@ -46,17 +45,17 @@ object AST {
      * correct operator structure which is filled in after parsing.
      */
     case class Program (ops : Seq[(String,Int)], vars : Seq[VarDecl],
-                        expr : ExpR) extends ASTNode
+                        expr : ExpR) extends TransformTree
 
     /**
      * A variable declaration.
      */
-    case class VarDecl (name : String) extends ASTNode
+    case class VarDecl (name : String) extends TransformTree
 
     /**
      * Right recursive expression syntax class.
      */
-    sealed abstract class ExpR extends ASTNode
+    sealed abstract class ExpR extends TransformTree
 
     /**
      * Right recursive binary operator expression.
@@ -71,7 +70,7 @@ object AST {
     /**
      * Unrestricted expression syntax class.
      */
-    sealed abstract class Exp extends ASTNode
+    sealed abstract class Exp extends TransformTree
 
     /**
      * Binary operator expression with arbitrary expression children.

@@ -31,11 +31,10 @@ package example.picojava
 
 object NameResolution {
 
-    import AbstractSyntax._
     import NullObjects._
+    import PicoJavaTree._
     import PredefinedTypes._
     import TypeAnalysis._
-    import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 
@@ -85,7 +84,7 @@ object NameResolution {
      *    // Do a remote lookup on the object's type.
      *    getObjectReference().decl().type().remoteLookup(name);
      */
-    val lookup : String => Attributable => Decl =
+    val lookup : String => PicoJavaTree => Decl =
         paramAttr {
             name => {
                 case b : Block =>
@@ -102,15 +101,18 @@ object NameResolution {
                         case b : Block =>
                             val d = b->localLookup (name)
                             if (isUnknown (d)) b->lookup (name) else d
-                        case p => p->lookup (name)
+                        case p : PicoJavaTree =>
+                            p->lookup (name)
                     }
                 case i : IdnUse =>
                     i.parent match {
-                        case Dot (a, i2) if i eq i2 => a->decl->tipe->remoteLookup (name)
-                        case p                      => p->lookup (name)
+                        case Dot (a, i2) if i eq i2 =>
+                            a->decl->tipe->remoteLookup (name)
+                        case p : PicoJavaTree =>
+                            p->lookup (name)
                     }
                 case t =>
-                    t.parent->lookup (name)
+                    t.parent[PicoJavaTree]->lookup (name)
            }
        }
 
@@ -133,11 +135,12 @@ object NameResolution {
      *     return unknownDecl();
      * }
      */
-    val localLookup : String => Attributable => Decl =
+    val localLookup : String => PicoJavaTree => Decl =
         paramAttr {
             name => {
                 case p : Program => finddecl (p, name, p->getPredefinedTypeList)
                 case b : Block   => finddecl (b, name, b.BlockStmts)
+                case n           => n.parent[PicoJavaTree]->localLookup (name)
             }
         }
 
@@ -145,7 +148,7 @@ object NameResolution {
      * Search a sequence of block statements for a declaration matching a given name.
      * Return the matching declaration or the unknown declaration if not found.
      */
-    def finddecl (t : Attributable, name : String, blockstmts : Seq[BlockStmt]) : Decl =
+    def finddecl (t : PicoJavaTree, name : String, blockstmts : Seq[BlockStmt]) : Decl =
         blockstmts.collectFirst {
             case blockstmt if blockstmt->declarationOf (name) != null =>
                 blockstmt->declarationOf (name)

@@ -28,7 +28,7 @@ package base
  */
 trait Transformer {
 
-    import source.{ModuleDecl, SourceASTNode}
+    import source.{ModuleDecl, SourceTree}
     import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
 
     /**

@@ -32,19 +32,18 @@ package example.picojava
 /**
  * PicoJava abstract syntax
  */
-object AbstractSyntax {
+object PicoJavaTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     // Created by parser
-    sealed trait ASTNode extends Attributable with Positioned
+    sealed trait PicoJavaTree extends Tree
 
-    case class Program (Block : Block) extends ASTNode
+    case class Program (Block : Block) extends PicoJavaTree
 
-    case class Block (BlockStmts : Seq[BlockStmt]) extends ASTNode
-    sealed abstract class BlockStmt extends ASTNode
+    case class Block (BlockStmts : Seq[BlockStmt]) extends PicoJavaTree
+    sealed abstract class BlockStmt extends PicoJavaTree
 
     sealed abstract class Decl (val Name : String) extends BlockStmt
     sealed abstract class TypeDecl (Name : String) extends Decl (Name)
@@ -55,7 +54,7 @@ object AbstractSyntax {
     case class AssignStmt (Variable : Access, Value : Exp) extends Stmt
     case class WhileStmt (Condition : Exp, Body : Stmt) extends Stmt
 
-    sealed abstract class Exp extends ASTNode
+    sealed abstract class Exp extends PicoJavaTree
     sealed abstract class Access extends Exp
     sealed abstract class IdnUse (val Name : String) extends Access
 

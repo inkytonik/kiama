@@ -30,7 +30,7 @@ import org.kiama.example.imperative.Generator
  */
 class UniplateTests extends Tests with Generator {
 
-    import org.kiama.example.imperative.AST._
+    import org.kiama.example.imperative.ImperativeTree._
     import org.kiama.rewriting.Rewriter._
     import org.scalacheck._
     import org.scalacheck.Prop._

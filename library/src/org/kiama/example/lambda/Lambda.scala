@@ -26,10 +26,9 @@ import org.kiama.util.{ParsingREPL, PositionedParserUtilities, Profiler}
 /**
  * A simple lambda calculus.
  */
-object AST {
+object LambdaTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
 
     /**
      * Identifiers are represented as strings.
@@ -39,7 +38,7 @@ object AST {
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends Attributable with Positioned
+    sealed abstract class Exp extends Tree
 
     /**
      * Numeric expressions.
@@ -77,11 +76,11 @@ object AST {
 }
 
 /**
- * Parser to AST.
+ * Parser to abstract syntax tree for simple lambda calculus.
  */
 trait Parser extends PositionedParserUtilities {
 
-    import AST._
+    import LambdaTree._
 
     lazy val parser =
         phrase (exp)
@@ -114,7 +113,7 @@ trait Parser extends PositionedParserUtilities {
  */
 trait Evaluator {
 
-    import AST._
+    import LambdaTree._
     import org.kiama.rewriting.Rewriter._
 
     /**
@@ -159,7 +158,7 @@ trait Evaluator {
 /**
  * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator with Profiler {
+object Lambda extends ParsingREPL[LambdaTree.Exp] with Parser with Evaluator with Profiler {
 
     import org.kiama.util.REPLConfig
 
@@ -167,7 +166,7 @@ object Lambda extends ParsingREPL[AST.Exp] with Parser with Evaluator with Profi
 
     override val prompt = "lambda> "
 
-    override def process (e : AST.Exp, config : REPLConfig) {
+    override def process (e : LambdaTree.Exp, config : REPLConfig) {
         super.process (e, config)
         val result =
             if (config.profile.get != None) {

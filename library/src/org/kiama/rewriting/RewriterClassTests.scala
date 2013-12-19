@@ -29,7 +29,7 @@ import org.kiama.util.Tests
  */
 class RewriterClassTests extends Tests {
 
-    import org.kiama.example.imperative.ASTNonCase._
+    import org.kiama.example.imperative.ImperativeNonCaseTree._
     import org.kiama.rewriting.Rewriter._
     import scala.collection.immutable.Seq
 

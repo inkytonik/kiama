@@ -24,12 +24,12 @@ package L4
 
 trait NameAnalyser extends L3.NameAnalyser {
 
-    import base.source.SourceASTNode
+    import base.source.SourceTree
     import L0.source.Expression
     import messaging.message
     import source.{FieldExp, IndexExp, RecordTypeDef}
 
-    abstract override def check (n : SourceASTNode) {
+    abstract override def check (n : SourceTree) {
         n match {
             case n @ RecordTypeDef (fls) =>
                 val flnames = fls.flatMap (_.idndefs)

@@ -27,8 +27,8 @@ import org.kiama.util.Tests
 class ObfuscationTests extends Tests {
 
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.Obfuscate.obfuscate
+    import org.kiama.example.picojava.PicoJavaTree._
     import org.kiama.example.picojava.PrettyPrinter.pretty
     import scala.collection.immutable.Seq
 

@@ -27,7 +27,7 @@ package example.lambda2
  */
 trait ReduceSubst extends Reduce {
 
-    import AST._
+    import LambdaTree._
     import org.kiama.rewriting.Rewriter._
 
     /**

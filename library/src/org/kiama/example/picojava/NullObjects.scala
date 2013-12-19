@@ -31,9 +31,8 @@ package example.picojava
 
 object NullObjects {
 
-    import AbstractSyntax._
     import NameResolution._
-    import org.kiama.attribution.Attributable
+    import PicoJavaTree._
     import org.kiama.attribution.Attribution._
 
     /**
@@ -45,11 +44,13 @@ object NullObjects {
      * eq Program.getBlock().unknownDecl() = unknownDecl();
      * eq Program.getPredefinedType().unknownDecl() = unknownDecl();
      */
-    val unknownDecl : Attributable => UnknownDecl =
+    val unknownDecl : PicoJavaTree => UnknownDecl =
         attr {
-            case p : Program => (p->localLookup ("$unknown")).asInstanceOf[UnknownDecl]
+            case p : Program =>
+                (p->localLookup ("$unknown")).asInstanceOf[UnknownDecl]
             // FIXME: need NTA case?
-            case t           => t.parent->unknownDecl
+            case t =>
+                t.parent[PicoJavaTree]->unknownDecl
         }
 
 }

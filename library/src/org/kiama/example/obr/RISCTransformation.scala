@@ -69,7 +69,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * Return the address for the location of the entity represented
      * by a given node.
      */
-    def location (n : EntityNode) : Address =
+    def location (n : EntityTree) : Address =
         n match {
             case e @ IndexExp (_, i) =>
                 val lab1 = genlabel ()
@@ -103,7 +103,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * at the given context.
      */
     val exitlab =
-        down[ObrNode,Label] {
+        down[ObrTree,Label] {
             case _ : LoopStmt =>
                 genlabel ()
         }
@@ -116,7 +116,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * active exception handler can be determined completely statically.
      */
     val exnlab =
-        down[ObrNode,Label] {
+        down[ObrTree,Label] {
 
             // Programs and Try statements can catch exceptions.
             case _ : ObrInt | _ : TryStmt =>
@@ -134,10 +134,10 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * The exception label for the context outside the current Try statement.
      * Only valid when used inside a Try statement.
      */
-    val exnlabOuter : ObrNode => Label =
-        down[ObrNode,Label] {
+    val exnlabOuter : ObrTree => Label =
+        down[ObrTree,Label] {
             case s : TryStmt =>
-                (s.parent[ObrNode])->exnlab
+                (s.parent[ObrTree])->exnlab
         }
 
     /**

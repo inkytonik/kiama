@@ -21,21 +21,21 @@
 package org.kiama
 package example.repmin
 
-import org.kiama.attribution.Attributable
+import org.kiama.util.Tree
 import org.kiama.attribution.Attribution._
 
 /**
  * AST for Repmin examples.
  */
-sealed abstract class Tree extends Attributable
-case class Fork (left : Tree, right : Tree) extends Tree
-case class Leaf (value : Int) extends Tree
+sealed abstract class RepminTree extends Tree
+case class Fork (left : RepminTree, right : RepminTree) extends RepminTree
+case class Leaf (value : Int) extends RepminTree
 
 /**
  * Repmin implementations must provide a repmin attribute.
  */
 trait RepminImpl {
-    val repmin : Tree => Tree
+    val repmin : RepminTree => RepminTree
 }
 
 /**
@@ -43,34 +43,34 @@ trait RepminImpl {
  */
 trait RepminBase extends RepminImpl {
 
-    val locmin : Tree => Int =
+    val locmin : RepminTree => Int =
         attr {
             case Fork (l, r) => (l->locmin) min (r->locmin)
             case Leaf (v)    => v
         }
 
-    val repmin : Tree => Tree =
+    val repmin : RepminTree => RepminTree =
         attr {
             case Fork (l, r) => Fork (l->repmin, r->repmin)
             case t : Leaf    => Leaf (t->globmin)
         }
 
-    val globmin : Tree => Int
+    val globmin : RepminTree => Int
 
 }
 
 /**
  * Classic repmin problem defined in an "attributes first" style.
- * repmin is a tree with the same structure as its argument tree
+ * repmin is a Repmintree with the same structure as its argument Repmintree
  * but with all of the leaves replaced by leaves containing the
- * minimum leaf value from the input tree.
+ * minimum leaf value from the input Repmintree.
  */
 trait Repmin extends RepminBase {
 
-    val globmin : Tree => Int =
+    val globmin : RepminTree => Int =
         attr {
             case t if t.isRoot => t->locmin
-            case t             => t.parent[Tree]->globmin
+            case t             => t.parent[RepminTree]->globmin
         }
 
 }
@@ -82,8 +82,8 @@ trait RepminDec extends RepminBase {
 
     import org.kiama.attribution.Decorators._
 
-    val globmin : Tree => Int =
-        down[Tree,Int] {
+    val globmin : RepminTree => Int =
+        down[RepminTree,Int] {
             case t if t.isRoot => t->locmin
         }
 

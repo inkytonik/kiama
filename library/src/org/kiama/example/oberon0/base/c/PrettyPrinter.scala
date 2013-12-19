@@ -28,7 +28,7 @@ trait PrettyPrinter extends CPrettyPrinter {
 
     import org.kiama.output.PrettyExpression
 
-    def toDoc (n : CASTNode) : Doc =
+    def toDoc (n : CTree) : Doc =
         n match {
             case CProgram (is, ds) =>
                 vsep (is map toDoc) <@>

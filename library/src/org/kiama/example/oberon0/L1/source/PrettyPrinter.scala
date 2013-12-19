@@ -26,10 +26,10 @@ trait PrettyPrinter extends L0.source.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    import base.source.{Block, SourceASTNode}
+    import base.source.{Block, SourceTree}
     import L0.source.Expression
 
-    override def toDoc (n : SourceASTNode) : Doc =
+    override def toDoc (n : SourceTree) : Doc =
         n match {
             case s : IfStatement =>
                 ifToDoc (s)

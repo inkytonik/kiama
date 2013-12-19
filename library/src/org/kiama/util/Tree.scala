@@ -19,27 +19,8 @@
  */
 
 package org.kiama
-package example.oneohonecompanies
+package util
 
-object Company {
+import org.kiama.attribution.Attributable
 
-    import org.kiama.attribution.Attributable
-    import scala.collection.immutable.Seq
-
-    trait Node extends Attributable
-
-    case class Company (depts : Seq[Dept]) extends Node
-    case class Dept (n : Name, m : Manager, su : Seq[SubUnit]) extends Node
-
-    type Manager = Employee
-    case class Employee (n : Name, a : Address, s : Salary) extends Node
-
-    abstract class SubUnit extends Node
-    case class PU (e : Employee) extends SubUnit
-    case class DU (d : Dept) extends SubUnit
-
-    type Name = String
-    type Address = String
-    type Salary = Double
-
-}
+trait Tree extends Attributable with Positioned

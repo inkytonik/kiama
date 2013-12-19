@@ -27,7 +27,7 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
     this : org.kiama.output.PrettyPrinter =>
 
     import base.source.{Block, Declaration, Identifier, IdnDef,
-        SourceASTNode}
+        SourceTree}
     import org.kiama.output.PrettyExpression
     import scala.collection.immutable.Seq
 
@@ -69,7 +69,7 @@ trait PrettyPrinter extends base.source.PrettyPrinter {
             case (s, Some (ds))  => nest (line <> s <> semisep (ds, empty)) <> line
         }
 
-    override def toDoc (n : SourceASTNode) : Doc =
+    override def toDoc (n : SourceTree) : Doc =
         n match {
             case ConstDecl (id, e) =>
                 toDoc (id) <+> equal <+> toDoc (e) <> semi

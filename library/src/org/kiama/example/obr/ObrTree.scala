@@ -27,14 +27,13 @@ package example.obr
  */
 object ObrTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     /**
      * Interface for all Obr tree nodes.
      */
-    sealed abstract class ObrNode extends Attributable with Positioned
+    sealed abstract class ObrTree extends Tree
 
     /**
      * An Obr program consisting of the given declarations and statements and
@@ -42,22 +41,22 @@ object ObrTree {
      * must be the same.
      */
     case class ObrInt (idn1: Identifier, decls : Seq[Declaration],
-                       stmts : Seq[Statement], idn2 : Identifier) extends ObrNode
+                       stmts : Seq[Statement], idn2 : Identifier) extends ObrTree
 
     /**
      * Marker trait for all node types that have an entity.
      */
-    trait EntityNode extends ObrNode
+    trait EntityTree extends ObrTree
 
     /**
      * Marker trait for all expression node types that can be assigned.
      */
-    trait AssignNode extends Expression with EntityNode
+    trait AssignTree extends Expression with EntityTree
 
     /**
      * Superclass of all declaration classes.
      */
-    sealed abstract class Declaration extends ObrNode with EntityNode
+    sealed abstract class Declaration extends ObrTree with EntityTree
 
     /**
      * A declaration of an integer variable.
@@ -92,7 +91,7 @@ object ObrTree {
     /**
      * A declaration of an enumeration constant
      */
-    case class EnumConst (idn : Identifier) extends ObrNode with EntityNode
+    case class EnumConst (idn : Identifier) extends ObrTree with EntityTree
 
     /**
      * A declaration of an integer constant with the given value.
@@ -107,13 +106,13 @@ object ObrTree {
     /**
     * Superclass of all statement classes.
     */
-    sealed abstract class Statement extends ObrNode
+    sealed abstract class Statement extends ObrTree
 
     /**
     * A statement that evaluates its second expression and assigns it to the
      * variable or array element denoted by its first expression.
     */
-    case class AssignStmt (left : AssignNode, right : Expression) extends Statement
+    case class AssignStmt (left : AssignTree, right : Expression) extends Statement
 
     /**
     * A statement that exits the nearest enclosing loop.
@@ -125,7 +124,7 @@ object ObrTree {
      * a range given by its two expressions.
      */
     case class ForStmt (idn : Identifier, min : Expression, max : Expression,
-                        body : Seq[Statement]) extends Statement with EntityNode
+                        body : Seq[Statement]) extends Statement with EntityTree
 
     /**
      * A conditional statement that evaluates a Boolean expression and, if it is
@@ -153,19 +152,19 @@ object ObrTree {
     /**
      * A statement that raises a specified exception.
      */
-    case class RaiseStmt (idn : Identifier) extends Statement with EntityNode
+    case class RaiseStmt (idn : Identifier) extends Statement with EntityTree
 
     /**
      * A statement that is used to catch exception
      */
     case class TryStmt (body : TryBody, catches : Seq[Catch]) extends Statement
-    case class TryBody (stmts : Seq[Statement]) extends ObrNode
-    case class Catch (idn : Identifier, stmts : Seq[Statement]) extends ObrNode with EntityNode
+    case class TryBody (stmts : Seq[Statement]) extends ObrTree
+    case class Catch (idn : Identifier, stmts : Seq[Statement]) extends ObrTree with EntityTree
 
     /**
     * Superclass of all expression classes.
     */
-    abstract class Expression extends ObrNode
+    abstract class Expression extends ObrTree
 
     /**
      * An expression whose value is the logical AND of the values of two expressions.
@@ -185,7 +184,7 @@ object ObrTree {
     /**
      * An expression that accesses a field of a record.
      */
-    case class FieldExp (idn : Identifier, field : Identifier) extends AssignNode
+    case class FieldExp (idn : Identifier, field : Identifier) extends AssignTree
 
     /**
      * An expression that compares the values of two expressions for greater-than order.
@@ -195,12 +194,12 @@ object ObrTree {
     /**
      * An expression whose value is the current value of a named variable or constant.
      */
-    case class IdnExp (idn : Identifier) extends AssignNode
+    case class IdnExp (idn : Identifier) extends AssignTree
 
     /**
      * An expression that indexes an array.
      */
-    case class IndexExp (idn : Identifier, indx : Expression) extends AssignNode
+    case class IndexExp (idn : Identifier, indx : Expression) extends AssignTree
 
     /**
      * An expression whose value is an integer constant.

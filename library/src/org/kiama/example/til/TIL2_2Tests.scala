@@ -25,7 +25,7 @@ import org.kiama.util.TransformerTests
 
 class TIL2_2Tests extends TIL2_2 with TransformerTests {
 
-    import AST._
+    import TILTree._
     import scala.collection.immutable.Seq
 
     test ("transform a single for loop") {

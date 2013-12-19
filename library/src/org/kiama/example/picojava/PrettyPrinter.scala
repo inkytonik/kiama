@@ -22,22 +22,22 @@ package org.kiama
 package example.picojava
 
 /**
- * AST pretty-printing.
+ * Abstract syntax tree pretty-printing for PicoJava.
  */
 object PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
-    import AbstractSyntax._
+    import PicoJavaTree._
 
     /**
      * Return a pretty-printed version of a node.
      */
-    def pretty (t : ASTNode) : String =
+    def pretty (t : PicoJavaTree) : String =
         super.pretty (show (t))
 
     /**
      * Convert a PicoJava AST node to a pretty-printing document.
      */
-    def show (t : ASTNode) : Doc =
+    def show (t : PicoJavaTree) : Doc =
         t match {
             case Program (b) =>
                 show (b)

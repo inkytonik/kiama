@@ -25,7 +25,7 @@ import org.kiama.util.TransformerTests
 
 class TIL2_1Tests extends TIL2_1 with TransformerTests {
 
-    import AST._
+    import TILTree._
     import scala.collection.immutable.Seq
 
     val x = Id ("x")

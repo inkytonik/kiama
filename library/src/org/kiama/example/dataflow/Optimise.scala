@@ -31,7 +31,7 @@ import org.kiama.rewriting.Rewriter._
 object Optimise {
 
     import Dataflow._
-    import DataflowAST._
+    import DataflowTree._
 
     def run (t : Stm) : Stm =
         rewrite (rules) (t)

@@ -31,9 +31,8 @@ import org.kiama.util.Messaging
  */
 class Analysis (messaging : Messaging) {
 
-    import AST._
+    import TransformTree._
     import messaging.message
-    import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
     import scala.collection.immutable.{HashMap, Seq}
 
@@ -42,11 +41,11 @@ class Analysis (messaging : Messaging) {
             p => HashMap (p.ops : _*)
         )
 
-    lazy val prio : String => ASTNode => Int =
+    lazy val prio : String => TransformTree => Int =
         paramAttr (
             op => {
                 case p : Program => (p->prioenv) getOrElse (op, 0)
-                case e           => (e.parent[ASTNode])->prio (op)
+                case e           => (e.parent[TransformTree])->prio (op)
             }
         )
 
@@ -95,11 +94,11 @@ class Analysis (messaging : Messaging) {
      * containing the associated declaration or None if there no
      * such declaration.
      */
-    lazy val lookup : String => Attributable => Option[VarDecl] =
+    lazy val lookup : String => TransformTree => Option[VarDecl] =
         paramAttr {
             s => {
                 case p : Program => p.vars.find (_.name == s)
-                case e           => (e.parent)->lookup (s)
+                case e           => e.parent[TransformTree]->lookup (s)
             }
         }
 

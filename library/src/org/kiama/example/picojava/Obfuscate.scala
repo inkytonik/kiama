@@ -29,8 +29,8 @@ import org.kiama.rewriting.Rewriter
  */
 object Obfuscate extends Rewriter {
 
-    import AbstractSyntax._
     import NameResolution._
+    import PicoJavaTree._
     import org.kiama.attribution.Attribution._
 
     /**

@@ -34,7 +34,7 @@ import org.kiama.util.RegexParserTests
 
 class ParserTests extends Parser with RegexParserTests {
 
-    import org.kiama.example.picojava.AbstractSyntax._
+    import org.kiama.example.picojava.PicoJavaTree._
     import scala.collection.immutable.Seq
 
     test ("parse identifier: single letter") {

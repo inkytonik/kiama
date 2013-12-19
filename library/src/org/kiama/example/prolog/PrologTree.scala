@@ -26,15 +26,14 @@ package example.prolog
  */
 object PrologTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
-    sealed abstract class SourceNode extends Attributable with Positioned
+    sealed abstract class PrologTree extends Tree
 
-    case class Program (cs : Seq[Clause]) extends SourceNode
+    case class Program (cs : Seq[Clause]) extends PrologTree
 
-    sealed abstract class Clause extends SourceNode {
+    sealed abstract class Clause extends PrologTree {
         def hd : Term
         def bdy : Seq[Term]
     }
@@ -44,7 +43,7 @@ object PrologTree {
     }
     case class Rule (hd : Term, bdy : Seq[Term]) extends Clause
 
-    sealed abstract class Term extends SourceNode
+    sealed abstract class Term extends PrologTree
 
     case class Var (s : String) extends Term {
         override def toString : String = s

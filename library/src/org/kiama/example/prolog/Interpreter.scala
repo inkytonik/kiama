@@ -24,7 +24,7 @@ package example.prolog
 /**
  * Abstract syntax tree representation of goals.
  */
-object GoalAST {
+object GoalTree {
 
     import PrologTree._
 
@@ -57,7 +57,7 @@ object GoalAST {
 
 class Interpreter {
 
-    import GoalAST._
+    import GoalTree._
     import PrologTree._
     import Unifier._
     import org.kiama.rewriting.Rewriter.{ Term => _, _ }
@@ -72,7 +72,7 @@ class Interpreter {
      * Rename all of the variables in `t` to a unique name by appending
      * a unique count to the old name.
      */
-    def rename[T <: SourceNode] (t : T) : T = {
+    def rename[T <: PrologTree] (t : T) : T = {
         val count = uniqueNameCounter.next ()
         val r = everywheretd (rule {
             case Var (s) =>

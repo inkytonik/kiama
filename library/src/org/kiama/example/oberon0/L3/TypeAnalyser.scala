@@ -24,7 +24,7 @@ package L3
 
 trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
-    import base.source.{Identifier, IdnDef, IdnUse, SourceASTNode}
+    import base.source.{Identifier, IdnDef, IdnUse, SourceTree}
     import L0.source.Expression
     import messaging.message
     import org.kiama.attribution.Attribution.attr
@@ -32,7 +32,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
     import scala.collection.immutable.Seq
     import source.{Call, Mode, ValMode, VarMode}
 
-    abstract override def check (n : SourceASTNode) {
+    abstract override def check (n : SourceTree) {
         n match {
             case Call (u @ IdnUse (i), cps) =>
                 (u->numparams).foreach (m =>

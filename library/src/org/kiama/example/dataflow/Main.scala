@@ -21,7 +21,7 @@
 package org.kiama
 package example.dataflow
 
-import DataflowAST._
+import DataflowTree._
 import org.kiama.util.Compiler
 
 /**
@@ -33,7 +33,7 @@ class Driver extends Parser with Compiler[Stm] {
     import org.kiama.util.Config
 
     /**
-     * Process the AST by optimising it, then print optimised AST.
+     * Process the tree by optimising it, then print optimised tree.
      */
     override def process (filename : String, ast : Stm, config : Config) {
         super.process (filename, ast, config)

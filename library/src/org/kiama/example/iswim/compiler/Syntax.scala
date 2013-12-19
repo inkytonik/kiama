@@ -24,12 +24,9 @@ package example.iswim.compiler
 /**
  * Abstract syntax for a variant of ISWIM.
  */
-
-import org.kiama.attribution.Attributable
-
 object Syntax {
 
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     /**
@@ -37,7 +34,7 @@ object Syntax {
      * In this variant, however, we treat top level let expressions
      * as statements.
      */
-    abstract class Iswim extends Attributable with Positioned
+    abstract class Iswim extends Tree
     sealed abstract class Expr extends Iswim
     sealed abstract class Stmt extends Iswim
 

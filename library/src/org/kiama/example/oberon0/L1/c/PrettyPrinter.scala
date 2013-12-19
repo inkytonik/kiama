@@ -26,9 +26,9 @@ trait PrettyPrinter extends L0.c.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    import base.c.CASTNode
+    import base.c.CTree
 
-    override def toDoc (n : CASTNode) : Doc =
+    override def toDoc (n : CTree) : Doc =
         n match {
             case CIfStatement (c, ts) =>
                 "if" <+> parens (toParenDoc (c)) <+> toDoc (ts)

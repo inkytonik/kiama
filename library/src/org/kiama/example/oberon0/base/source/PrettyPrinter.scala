@@ -31,7 +31,7 @@ trait PrettyPrinter extends SourcePrettyPrinter {
     def declsection (d : Declaration) : String =
         ""
 
-    def toDoc (n : SourceASTNode) : Doc =
+    def toDoc (n : SourceTree) : Doc =
         n match {
             case ModuleDecl (IdnDef (i1), Block (Nil, Nil), IdnUse (i2)) =>
                 "MODULE" <+> i1 <> semi <@> "END" <+> i2 <> dot
@@ -65,7 +65,7 @@ trait PrettyPrinter extends SourcePrettyPrinter {
      * Pretty-print a nested list of nodes separated by sep (default: semi
      * colon) and line breaks.
      */
-    def semisep (l : Seq[SourceASTNode], sep : Doc = semi) : Doc =
+    def semisep (l : Seq[SourceTree], sep : Doc = semi) : Doc =
         nest (lsep (l map toDoc, sep))
 
 }

@@ -22,29 +22,28 @@ package org.kiama
 package example.oberon0
 package base.source
 
-import org.kiama.attribution.Attributable
-import org.kiama.util.Positioned
+import org.kiama.util.Tree
 import scala.collection.immutable.Seq
 
 /**
  * Root type of all source abstract syntax tree nodes.
  */
-abstract class SourceASTNode extends Attributable with Positioned
+abstract class SourceTree extends Tree
 
 /**
  * Non-terminal type for declarations.
  */
-abstract class Declaration extends SourceASTNode
+abstract class Declaration extends SourceTree
 
 /**
  * Module declarations.
  */
-case class ModuleDecl (idndef : IdnDef, block : Block, idnuse : IdnUse) extends SourceASTNode
+case class ModuleDecl (idndef : IdnDef, block : Block, idnuse : IdnUse) extends SourceTree
 
 /**
  * Non-terminal type for statements.
  */
-abstract class Statement extends SourceASTNode
+abstract class Statement extends SourceTree
 
 /**
  * Block of declarations and statements.
@@ -59,7 +58,7 @@ case class EmptyStmt () extends Statement
 /**
  * Common interface for all identifier occurrences.
  */
-abstract class Identifier extends SourceASTNode {
+abstract class Identifier extends SourceTree {
     def ident : String
 }
 

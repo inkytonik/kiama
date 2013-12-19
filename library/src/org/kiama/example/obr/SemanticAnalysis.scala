@@ -29,19 +29,18 @@ class SemanticAnalysis (messaging : Messaging) {
     import messaging.message
     import ObrTree._
     import SymbolTable._
-    import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
 
     /**
      * Visit all nodes to check for semantic errors.  Errors will be recorded
      * using `messaging` so that they can be reported to the user later.
      */
-    val errors : Attributable => Unit =
+    val errors : ObrTree => Unit =
         attr (
             node => {
                 // Process the errors of the children of node
                 for (child <- node.children)
-                    child->errors
+                    child.asInstanceOf[ObrTree]->errors
 
                 node match {
 
@@ -189,13 +188,13 @@ class SemanticAnalysis (messaging : Messaging) {
      * The environment containing all bindings visible at a particular
      * node in the tree, not including any that are defined at that node.
      */
-    val env : ObrNode => Environment =
+    val env : ObrTree => Environment =
         attr {
             case ObrInt (_, ds, ss, _)          => (ds.last)->envout
             case d : Declaration if (d.isFirst) => initEnv
             case d : Declaration                => (d.prev[Declaration])->envout
             case d : EnumConst if (!d.isFirst)  => (d.prev[EnumConst])->envout
-            case n                              => (n.parent[ObrNode])->env
+            case n                              => (n.parent[ObrTree])->env
         }
 
     /**
@@ -203,7 +202,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * particular node in the tree.  I.e., its the environment at the
      * node plus any new bindings introduced by the node.
      */
-    val envout : ObrNode => Environment =
+    val envout : ObrTree => Environment =
         attr {
             case n @ IntParam (i)      => define (n->env, i, Variable (IntType ()))
             case n @ IntVar (i)        => define (n->env, i, Variable (IntType ()))
@@ -239,7 +238,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * If a name has been used previously in a declaration then return an
      * unknown entity which will trigger an error.
      */
-    val entity : EntityNode => Entity =
+    val entity : EntityTree => Entity =
         attr {
             case n @ IntParam (i)     => (n->envout) (i)
             case n @ IntVar (i)       => (n->envout) (i)

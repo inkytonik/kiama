@@ -31,9 +31,9 @@ package example.picojava
 
 object TypeAnalysis {
 
-    import AbstractSyntax._
     import NameResolution._
     import NullObjects._
+    import PicoJavaTree._
     import PredefinedTypes._
     import org.kiama.attribution.Attribution._
 
@@ -60,11 +60,11 @@ object TypeAnalysis {
      * eq Dot.type() = getIdnUse().type();
      * eq BooleanLiteral.type() = booleanType();
      */
-    val tipe : ASTNode => TypeDecl =
+    val tipe : PicoJavaTree => TypeDecl =
         attr {
             case t : TypeDecl       => t
             case v : VarDecl        => v.Type->decl->tipe
-            case i : IdnUse          => i->decl->tipe
+            case i : IdnUse         => i->decl->tipe
             case d : Dot            => d.IdnUse->tipe
             case b : BooleanLiteral => b->booleanType
             case t                  => t->unknownDecl

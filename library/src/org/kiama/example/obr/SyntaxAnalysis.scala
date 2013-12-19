@@ -172,7 +172,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
         "~" ~> factor ^^ NotExp |
         "-" ~> factor ^^ NegExp
 
-    lazy val lvalue : PackratParser[AssignNode] =
+    lazy val lvalue : PackratParser[AssignTree] =
         ident ~ ("[" ~> expression <~ "]") ^^ IndexExp |
         ident ~ withPos (".") ~ ident ^^
             { case r ~ p ~ f => FieldExp (r, f) setPos p } |

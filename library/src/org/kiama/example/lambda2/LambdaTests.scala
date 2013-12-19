@@ -28,7 +28,7 @@ import org.kiama.util.RegexParserTests
  */
 class LambdaTests extends RegexParserTests with Parser {
 
-    import AST._
+    import LambdaTree._
     import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
     import org.kiama.attribution.Attribution.initTree

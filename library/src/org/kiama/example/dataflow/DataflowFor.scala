@@ -23,7 +23,7 @@ package example.dataflow
 
 import org.kiama.attribution.Attribution._
 import org.kiama.util.Patterns.HasParent
-import DataflowAST._
+import DataflowTree._
 import Dataflow._
 
 case class Foreach (cond : Var, body : Stm) extends Stm

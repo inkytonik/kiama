@@ -27,7 +27,7 @@ package rewriting
  * so that the classes here don't get an outer field referring to an
  * instance of that class.
  */
-object NominalAST {
+object NominalTree {
 
     /**
      * A name comprising a base string with an optional integer index. The
@@ -57,7 +57,7 @@ object NominalAST {
  */
 class NominalRewriter extends Rewriter {
 
-    import NominalAST._
+    import NominalTree._
     import org.kiama.util.Counter
 
     /**

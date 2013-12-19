@@ -32,7 +32,7 @@ import org.kiama.util.Messaging
  */
 class Analysis (val messaging : Messaging) {
 
-    import AST._
+    import LambdaTree._
     import PrettyPrinter._
     import messaging.message
     import org.kiama.attribution.Attribution._

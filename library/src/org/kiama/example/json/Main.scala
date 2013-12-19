@@ -38,10 +38,10 @@ class Driver extends SyntaxAnalysis with Compiler[JValue] {
 
         super.process (filename, ast, config)
 
-        // Pretty-print AST as a product value
+        // Pretty-print tree as a product value
         config.emitter.emitln (pretty_any (ast))
 
-        // Pretty-print AST as a JSON value
+        // Pretty-print tree as a JSON value
         config.emitter.emitln (pretty (ast))
 
     }

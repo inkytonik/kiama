@@ -25,7 +25,7 @@ import org.kiama.util.Tests
 
 class OneOhOneTests extends Tests {
 
-    import Company._
+    import CompanyTree._
     import SampleCompany._
     import Total._
     import Cut.cut

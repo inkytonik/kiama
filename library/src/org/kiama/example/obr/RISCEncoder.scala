@@ -163,7 +163,7 @@ class RISCEncoder {
      * is handled by a special case, this attribution assumes that the
      * children of each node will be evaluated in left to right order.
      */
-     val reg : RISCNode => RegNo =
+     val reg : RISCTree => RegNo =
         childAttr (
             d => {
                 // Base case
@@ -173,9 +173,9 @@ class RISCEncoder {
                 case p : Cond                       => p->reg
 
                 // Default allocation algorithm for all other nodes
-                case p : RISCNode if d.isFirst      => p->reg
+                case p : RISCTree if d.isFirst      => p->reg
                 case _                              =>
-                    d.prev[RISCNode] match {
+                    d.prev[RISCTree] match {
                         case s : NeedsRegister  =>
                             if (s->reg >= lasttemp)
                                 sys.error ("out of local registers")

@@ -37,7 +37,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * those errors using `messaging` so that they can be reported to
      * the user later.
      */
-    def check (n : SourceNode) {
+    def check (n : PrologTree) {
         // Check this node
         n match {
             case n @ Pred (s, ts) =>
@@ -71,7 +71,7 @@ class SemanticAnalysis (messaging : Messaging) {
 
         // Check the children of this node
         for (child <- n.children)
-            check (child.asInstanceOf[SourceNode])
+            check (child.asInstanceOf[PrologTree])
     }
 
     /**
@@ -100,11 +100,11 @@ class SemanticAnalysis (messaging : Messaging) {
      * node for its environment, including any definitions there.  If
      * we are the first in a sequence or not in a sequence, ask the parent.
      */
-    val envin : SourceNode => Environment =
+    val envin : PrologTree => Environment =
         attr {
             case p : Program     => defenv
-            case n if !n.isFirst => (n.prev[SourceNode])->env
-            case n               => (n.parent[SourceNode])->envin
+            case n if !n.isFirst => (n.prev[PrologTree])->env
+            case n               => (n.parent[PrologTree])->envin
         }
 
     /**
@@ -121,7 +121,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * we use only those argument types for which we don't know
      * anything already.
      */
-    val env : SourceNode => Environment =
+    val env : PrologTree => Environment =
         attr {
             case n @ Pred (s, ts) =>
                 val argtypes = ts map tipe
@@ -142,7 +142,7 @@ class SemanticAnalysis (messaging : Messaging) {
             case n @ Atom (s) if ! isDefinedInEnv (n->envin, s) =>
                 define (n->envin, s, Predicate (Nil))
             case n if n.hasChildren =>
-                (n.lastChild[SourceNode])->env
+                (n.lastChild[PrologTree])->env
             case n =>
                 n->envin
         }
@@ -153,7 +153,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * have implemented the environments correctly, nothing can be unknown
      * since the first appearance is the defining ocurrence.
      */
-    val entity : SourceNode => Entity =
+    val entity : PrologTree => Entity =
         attr {
             case n @ Pred (s, ts) =>
                 lookup (n->env, s, UnknownEntity (), true)
@@ -169,7 +169,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * implied by the node itself.  Used for type checking since we don't want
      * to use information from this node to check this node (a circularity).
      */
-    val entityin : SourceNode => Entity =
+    val entityin : PrologTree => Entity =
         attr {
             case n @ Pred (s, ts) =>
                 lookup (n->envin, s, UnknownEntity (), true)
@@ -184,11 +184,11 @@ class SemanticAnalysis (messaging : Messaging) {
      * gets reset for each clause since the variables of one clause are not
      * related to those in the next clause.
      */
-    val varsin : SourceNode => Environment =
+    val varsin : PrologTree => Environment =
         attr {
             case c : Clause      => rootenv ()
-            case n if !n.isFirst => (n.prev[SourceNode])->vars
-            case n               => (n.parent[SourceNode])->varsin
+            case n if !n.isFirst => (n.prev[PrologTree])->vars
+            case n               => (n.parent[PrologTree])->varsin
         }
 
     /**
@@ -200,7 +200,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * type for the context.  Otherwise, the variable has been seen before and
      * already has a type constraint, so we don't change anything.
      */
-    val vars : SourceNode => Environment =
+    val vars : PrologTree => Environment =
         attr {
             case n @ Var (s) =>
                 lookup (n->varsin, s, UnknownEntity (), true) match {
@@ -212,7 +212,7 @@ class SemanticAnalysis (messaging : Messaging) {
                         define (n->varsin, s, Variable (n->exptipe))
                 }
             case n if (n.hasChildren) =>
-                (n.lastChild[SourceNode])->vars
+                (n.lastChild[PrologTree])->vars
             case n =>
                 n->varsin
         }

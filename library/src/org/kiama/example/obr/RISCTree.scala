@@ -30,30 +30,30 @@ package example.obr
  */
 object RISCTree {
 
-    import org.kiama.attribution.Attributable
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     /**
      * Superclass of all RISC tree nodes.
      */
-    sealed abstract class RISCNode extends Attributable
+    sealed abstract class RISCTree extends Tree
 
     /**
      * Trait to mark those nodes which need to have a return value
      * allocated to a register.
      */
-    trait NeedsRegister extends RISCNode
+    trait NeedsRegister extends RISCTree
 
     /**
      * A stack program consisting of the given statements.
      */
-    case class RISCProg (insns : Seq[Item]) extends RISCNode
+    case class RISCProg (insns : Seq[Item]) extends RISCTree
 
     /**
      * Superclass of all item constructs, ie. target constructs that do
      * not return a value to their enclosing construct.
      */
-    sealed abstract class Item extends RISCNode
+    sealed abstract class Item extends RISCTree
 
     /**
      * Branch to the given label if the value of the given datum is
@@ -99,7 +99,7 @@ object RISCTree {
      * register (%l1 to %l7) that is being used to store the value of
      * this datum (set by the encoder).
      */
-    sealed abstract class Datum extends RISCNode with NeedsRegister
+    sealed abstract class Datum extends RISCTree with NeedsRegister
 
     /**
      * Read an integer value from standard input.
@@ -190,7 +190,7 @@ object RISCTree {
     /**
      * Memory addresses that can be stored to or loaded from.
      */
-    sealed abstract class Address extends RISCNode
+    sealed abstract class Address extends RISCTree
 
     /**
      * An address that is calculated by an known integer offset from

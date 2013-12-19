@@ -34,8 +34,8 @@ import org.kiama.util.Tests
 class DotNameResolutionTests extends Tests {
 
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.NameResolution._
+    import org.kiama.example.picojava.PicoJavaTree._
     import org.kiama.example.picojava.TypeAnalysis._
     import scala.collection.immutable.Seq
 

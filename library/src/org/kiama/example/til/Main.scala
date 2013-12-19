@@ -21,7 +21,7 @@
 package org.kiama
 package example.til
 
-import AST.Program
+import TILTree.Program
 import org.kiama.util.{Compiler, Config}
 
 /**

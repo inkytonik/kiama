@@ -24,7 +24,7 @@ package L4
 
 trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
 
-    import base.source.{IdnDef, SourceASTNode}
+    import base.source.{IdnDef, SourceTree}
     import L0.source.{Assignment, Expression, NamedType, TypeDef}
     import L3.source.{FPSection, ValMode}
     import messaging.message
@@ -34,7 +34,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
     import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
         RecordTypeDef}
 
-    abstract override def check (n : SourceASTNode) {
+    abstract override def check (n : SourceTree) {
         n match {
             case FPSection (_, _, t) if !t.isInstanceOf[NamedType] =>
                 message (t, "parameter type must be identifier")

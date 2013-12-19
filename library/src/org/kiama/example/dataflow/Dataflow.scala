@@ -22,7 +22,7 @@ package org.kiama
 package example.dataflow
 
 import org.kiama.attribution.Attribution._
-import DataflowAST._
+import DataflowTree._
 
 /**
  * Control flow interface.

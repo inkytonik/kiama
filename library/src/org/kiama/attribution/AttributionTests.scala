@@ -29,20 +29,21 @@ import org.kiama.util.Tests
 class AttributionTests extends Tests {
 
     import Attribution._
+    import org.kiama.util.Tree
     import scala.collection.GenSeq
 
-    abstract class Tree extends Attributable
-    case class Pair (left : Tree, right : Tree) extends Tree
-    case class Leaf (value : Int) extends Tree
-    case class Unused (b : Boolean) extends Tree
-    case class EitherTree (e : Either[Pair,Leaf]) extends Tree
-    case class ListTree (l : List[Tree]) extends Tree
-    case class SetTree (s : Set[Tree]) extends Tree
-    case class GenSeqTree (v : GenSeq[Tree]) extends Tree
-    case class MapTree (m : Map[Tree,Tree]) extends Tree
-    case class PairTree (p : (Tree,Tree)) extends Tree
-    case class TripleTree (p : (Tree,Tree,Tree)) extends Tree
-    case class QuadTree (p : (Tree,Tree,Tree,Tree)) extends Tree
+    abstract class TestTree extends Tree
+    case class Pair (left : TestTree, right : TestTree) extends TestTree
+    case class Leaf (value : Int) extends TestTree
+    case class Unused (b : Boolean) extends TestTree
+    case class EitherTree (e : Either[Pair,Leaf]) extends TestTree
+    case class ListTree (l : List[TestTree]) extends TestTree
+    case class SetTree (s : Set[TestTree]) extends TestTree
+    case class GenSeqTree (v : GenSeq[TestTree]) extends TestTree
+    case class MapTree (m : Map[TestTree,TestTree]) extends TestTree
+    case class PairTree (p : (TestTree,TestTree)) extends TestTree
+    case class TripleTree (p : (TestTree,TestTree,TestTree)) extends TestTree
+    case class QuadTree (p : (TestTree,TestTree,TestTree,TestTree)) extends TestTree
 
     val l = Leaf (3)
     val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
@@ -58,7 +59,7 @@ class AttributionTests extends Tests {
 
         var count = 0
 
-        lazy val maximumDef : Tree => Int =
+        lazy val maximumDef : TestTree => Int =
             {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -67,7 +68,7 @@ class AttributionTests extends Tests {
         lazy val maximum =
             attr (maximumDef)
 
-        lazy val leafComputedDef : Tree => Boolean =
+        lazy val leafComputedDef : TestTree => Boolean =
             {
                 case t @ Leaf (v) =>
                     leafComputed.hasBeenComputedAt (t)
@@ -76,7 +77,7 @@ class AttributionTests extends Tests {
         lazy val leafComputed =
             attr (leafComputedDef)
 
-        lazy val cattrDef : Tree => Attributable => Int =
+        lazy val cattrDef : TestTree => Attributable => Int =
             {
                 case Pair (l, r) => {
                     case Pair (l, r) => 0
@@ -105,7 +106,7 @@ class AttributionTests extends Tests {
                 }
             }
 
-        lazy val answer : Tree => Int =
+        lazy val answer : TestTree => Int =
             constant { count = count + 1; 42 }
 
     }
@@ -179,7 +180,7 @@ class AttributionTests extends Tests {
         import definitions._
         import UncachedAttribution._
 
-        lazy val maximum : Tree => Int =
+        lazy val maximum : TestTree => Int =
             attr {
                 case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
                 case Leaf (v)   => v
@@ -216,7 +217,7 @@ class AttributionTests extends Tests {
         import definitions._
         import UncachedAttribution._
 
-        lazy val cattr : Tree => Int =
+        lazy val cattr : TestTree => Int =
             childAttr (cattrDef)
 
         val f = Leaf (4)
@@ -289,11 +290,11 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for cached attributes") {
-        lazy val direct : Tree => Int =
+        lazy val direct : TestTree => Int =
             attr (t => t->direct)
-        lazy val indirect : Tree => Int =
+        lazy val indirect : TestTree => Int =
             attr (t => t->indirect2)
-        lazy val indirect2 : Tree => Int =
+        lazy val indirect2 : TestTree => Int =
             attr (t => t->indirect)
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
@@ -317,11 +318,11 @@ class AttributionTests extends Tests {
     test ("circularities are detected for uncached attributes") {
         import UncachedAttribution._
 
-        lazy val direct : Tree => Int =
+        lazy val direct : TestTree => Int =
             attr (t => t->direct)
-        lazy val indirect : Tree => Int =
+        lazy val indirect : TestTree => Int =
             attr (t => t->indirect2)
-        lazy val indirect2 : Tree => Int =
+        lazy val indirect2 : TestTree => Int =
             attr (t => t->indirect)
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
@@ -619,7 +620,7 @@ class AttributionTests extends Tests {
         import Decorators.{Chain, chain}
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         initTree (t)
-        def rootupd (in : Tree => Int) : Tree ==> Int = {
+        def rootupd (in : TestTree => Int) : TestTree ==> Int = {
             case n if n.isRoot => 42
         }
         val rootchain = chain (rootupd)
@@ -645,10 +646,10 @@ class AttributionTests extends Tests {
 
         // A chain with refusing-all-in update function. This exercises a
         // different path in the 'in' attribute to the previous checks.
-        def refuse (in : Tree => Int) : Tree ==> Int =
-            new (Tree ==> Int) {
-                def apply (t : Tree) : Int = in (t) // Never used
-                def isDefinedAt (t : Tree) : Boolean = false
+        def refuse (in : TestTree => Int) : TestTree ==> Int =
+            new (TestTree ==> Int) {
+                def apply (t : TestTree) : Int = in (t) // Never used
+                def isDefinedAt (t : TestTree) : Boolean = false
             }
         val refchain = chain (refuse)
         val i3 = intercept[RuntimeException] {
@@ -664,7 +665,7 @@ class AttributionTests extends Tests {
 
     test ("deep cloning a term with sharing gives an equal but not eq term") {
         import AttributableSupport.deepclone
-        import org.kiama.example.imperative.AST._
+        import org.kiama.example.imperative.ImperativeTree._
 
         val c = Add (Num (1), Num (2))
         val d = Add (Num (1), Num (2))
@@ -716,7 +717,7 @@ class AttributionTests extends Tests {
     }
 
     test ("a circular attribute that never changes evaluates to initial value") {
-        import org.kiama.example.imperative.AST.Num
+        import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val zero : CircularAttribute[Num,Double] =
             circular (0.0) (_ => 0)
@@ -729,7 +730,7 @@ class AttributionTests extends Tests {
 
     test ("two circular attributes that never change from initial value do converge") {
 
-        import org.kiama.example.imperative.AST.Num
+        import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : CircularAttribute[Num,Double] =
             circular (0.0) (
@@ -755,7 +756,7 @@ class AttributionTests extends Tests {
     }
 
     test ("a directly circular attribute can count") {
-        import org.kiama.example.imperative.AST.Num
+        import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : CircularAttribute[Num,Double] =
             circular (0.0) (
@@ -772,7 +773,7 @@ class AttributionTests extends Tests {
     }
 
     test ("a cycle of two circular attributes can count") {
-        import org.kiama.example.imperative.AST.Num
+        import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : Num => Double =
             circular (0.0) (
@@ -794,7 +795,7 @@ class AttributionTests extends Tests {
     }
 
     test ("a cycle of three circular attributes can count") {
-        import org.kiama.example.imperative.AST.Num
+        import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : Num => Double =
             circular (0.0) (
@@ -825,7 +826,7 @@ class AttributionTests extends Tests {
     }
 
     test ("a single circular attribute plus a cycle of two circular attributes can count") {
-        import org.kiama.example.imperative.AST.Num
+        import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val entry : Num => Double =
             circular (0.0) (
@@ -856,7 +857,7 @@ class AttributionTests extends Tests {
     }
 
     test ("a single circular attribute plus a cycle of two trivial circular attributes converges") {
-        import org.kiama.example.imperative.AST.Num
+        import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val entry : Num => Double =
             circular (0.0) (

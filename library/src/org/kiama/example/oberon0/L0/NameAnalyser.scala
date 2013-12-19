@@ -25,7 +25,7 @@ package L0
 trait NameAnalyser extends base.Analyser with SymbolTable {
 
     import base.source.{Block, Identifier, IdnDef, IdnUse, ModuleDecl,
-        SourceASTNode}
+        SourceTree}
     import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
@@ -34,7 +34,7 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
         DivExp, Expression, IdnExp, IntExp, ModExp, MulExp, NamedType, NegExp,
         SubExp, TypeDecl, TypeDef, UnaryExpression, VarDecl}
 
-    abstract override def check (n : SourceASTNode) {
+    abstract override def check (n : SourceTree) {
         n match {
             case ModuleDecl (_, _, u @ IdnUse (i)) if !isModule (u->entity) =>
                 message (u, s"$i is not a module")
@@ -142,17 +142,17 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      * assignment and expression mean that we don't need to traverse into
      * those constructs, since declarations can't occur there.
      */
-    lazy val env : Chain[SourceASTNode,Environment] =
+    lazy val env : Chain[SourceTree,Environment] =
         chain (envin, envout)
 
-    def envin (in : SourceASTNode => Environment) : SourceASTNode ==> Environment = {
+    def envin (in : SourceTree => Environment) : SourceTree ==> Environment = {
         case _ : ModuleDecl                            => enter (defenv)
         case b : Block                                 => enter (in (b))
         case HasParent (_ : Expression, p : ConstDecl) => p->(env.in)
         case HasParent (_ : TypeDef, p : TypeDecl)     => p->(env.in)
     }
 
-    def envout (out : SourceASTNode => Environment) : SourceASTNode ==> Environment = {
+    def envout (out : SourceTree => Environment) : SourceTree ==> Environment = {
         case b : Block        => leave (out (b))
         case ConstDecl (d, _) => d->env
         case TypeDecl (d, _)  => d->env

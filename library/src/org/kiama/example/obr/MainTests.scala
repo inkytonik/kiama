@@ -44,7 +44,7 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * the resulting target tree.
      */
     def targettreetest (name : String, dirname : String, obrfile : String,
-                        tester : (String, Emitter, RISCNode) => Unit) {
+                        tester : (String, Emitter, RISCTree) => Unit) {
         val title = s"$name processing $obrfile"
 
         test(title) {
@@ -87,7 +87,7 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * Test a target tree by collecting together its IntDatum leaves and checking the resulting
      * sequence of integers to see if it contains an expected sequence of integers as a slice.
      */
-    def checkintdatums (expected : Seq[Int]) (title : String, emitter : Emitter, code : RISCNode) {
+    def checkintdatums (expected : Seq[Int]) (title : String, emitter : Emitter, code : RISCTree) {
         val realised = Seq.newBuilder[Int]
         bottomup (query {
             case IntDatum(num) =>

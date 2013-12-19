@@ -36,7 +36,7 @@ import org.kiama.util.PositionedParserUtilities
  */
 trait Parser extends PositionedParserUtilities {
 
-    import AbstractSyntax._
+    import PicoJavaTree._
     import scala.language.postfixOps
 
     lazy val parser =

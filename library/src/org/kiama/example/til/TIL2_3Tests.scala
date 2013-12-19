@@ -25,7 +25,7 @@ import org.kiama.util.TransformerTests
 
 class TIL2_3Tests extends TIL2_3 with TransformerTests {
 
-    import AST._
+    import TILTree._
     import scala.collection.immutable.Seq
 
     test ("transform a program with many nested declarations") {

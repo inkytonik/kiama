@@ -21,21 +21,21 @@
 package org.kiama
 package example.til
 
-import org.kiama.util.{Positioned, PositionedParserUtilities}
+import org.kiama.util.PositionedParserUtilities
 
 /**
  * AST the basic Tiny Imperative Language.
  */
-object AST {
+object TILTree {
 
-    import org.kiama.attribution.Attributable
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
-    abstract class ASTNode extends Attributable with Positioned
+    abstract class TilTree extends Tree
 
-    case class Program (ss : Seq[Stat]) extends ASTNode
+    case class Program (ss : Seq[Stat]) extends TilTree
 
-    sealed abstract class Stat extends ASTNode
+    sealed abstract class Stat extends TilTree
 
     case class Decl (i : Id) extends Stat
 
@@ -50,9 +50,9 @@ object AST {
     case class Read (i : Id) extends Stat
     case class Write (e : Exp) extends Stat
 
-    sealed abstract class Exp extends ASTNode
+    sealed abstract class Exp extends TilTree
 
-    case class Id (s : String) extends ASTNode {
+    case class Id (s : String) extends TilTree {
         override def toString : String = s"""Id ("$s")"""
     }
 
@@ -77,7 +77,7 @@ object AST {
  */
 trait TIL1_1 extends PositionedParserUtilities {
 
-    import AST._
+    import TILTree._
     import scala.language.postfixOps
     import scala.collection.immutable.Seq
 

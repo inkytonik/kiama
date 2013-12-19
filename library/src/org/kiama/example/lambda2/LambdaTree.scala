@@ -24,12 +24,11 @@ package example.lambda2
 /**
  * A simple lambda calculus abstract syntax.
  */
-object AST {
+object LambdaTree {
 
-    import org.kiama.attribution.Attributable
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     /**
@@ -40,7 +39,7 @@ object AST {
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends Attributable with Positioned
+    sealed abstract class Exp extends Tree
 
     /**
      * Numeric expressions.
@@ -87,7 +86,7 @@ object AST {
     /**
      * Types.
      */
-    sealed abstract class Type extends Attributable
+    sealed abstract class Type extends Tree
 
     /**
      * Primitive integer type.

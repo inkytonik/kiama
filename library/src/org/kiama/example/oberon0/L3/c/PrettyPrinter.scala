@@ -26,10 +26,10 @@ trait PrettyPrinter extends L1.c.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    import base.c.{CASTNode, CType}
+    import base.c.{CTree, CType}
     import org.kiama.output.PrettyExpression
 
-    override def toDoc (n : CASTNode) : Doc =
+    override def toDoc (n : CTree) : Doc =
         n match {
             case CCall (s, ps) =>
                 s <+> parens (hsep (ps map toParenDoc, comma)) <> semi

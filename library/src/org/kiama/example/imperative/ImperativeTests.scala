@@ -21,6 +21,7 @@
 package org.kiama
 package example.imperative
 
+import ImperativeTree._
 import org.kiama.util.{GeneratingREPL, Tests}
 
 /**
@@ -30,7 +31,6 @@ import org.kiama.util.{GeneratingREPL, Tests}
  */
 class ImperativeTests extends Tests {
 
-    import AST._
     import PrettyPrinter._
     import scala.collection.immutable.Seq
 
@@ -116,7 +116,7 @@ class ImperativeTests extends Tests {
 trait Generator {
 
     import org.scalacheck._
-    import AST._
+    import ImperativeTree._
 
     val genInteger = for (i <- Gen.choose (1, 100)) yield Num (i)
     val genDouble = for (i <- Gen.choose (1.0, 1000000.0)) yield Num (i)
@@ -196,15 +196,15 @@ trait Generator {
 /**
  * A read-eval-print loop for generating random imperative statements.
  */
-object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator {
+object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
 
     import org.kiama.util.REPLConfig
     import org.scalacheck.Arbitrary
 
-    def generator : Arbitrary[AST.Stmt] =
+    def generator : Arbitrary[Stmt] =
         arbStmt
 
-    override def process (s : AST.Stmt, config : REPLConfig) {
+    override def process (s : Stmt, config : REPLConfig) {
         config.emitter.emitln (s)
         config.emitter.emitln (PrettyPrinter.pretty (s))
     }

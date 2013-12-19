@@ -21,6 +21,7 @@
 package org.kiama
 package example.lambda2
 
+import LambdaTree.Exp
 import org.kiama.util.{Emitter, ParsingREPLWithConfig, REPLConfig}
 import scala.collection.immutable.Seq
 
@@ -40,7 +41,7 @@ class LambdaConfig (args : Seq[String], emitter : Emitter) extends REPLConfig (a
  * Visser, LDTA 2002 (published in Volume 65/3 of Electronic Notes in
  * Theoretical Computer Science, Elsevier).
  */
-object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
+object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with Parser {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
@@ -120,7 +121,7 @@ object Lambda extends ParsingREPLWithConfig[AST.Exp,LambdaConfig] with Parser {
     /**
      * Process an expression.
      */
-    override def process (e : AST.Exp, config : LambdaConfig) {
+    override def process (e : Exp, config : LambdaConfig) {
         super.process (e, config)
         // First conduct a semantic analysis check: compute the expression's
         // type and see if any errors occurred

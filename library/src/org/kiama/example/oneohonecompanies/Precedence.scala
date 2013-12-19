@@ -23,7 +23,7 @@ package example.oneohonecompanies
 
 object Precedence {
 
-    import Company.{Company,Dept,Employee,Node,Salary}
+    import CompanyTree.{Company,Dept,Employee,CompanyTree,Salary}
     import Other.salary
     import org.kiama.attribution.Decorators.down
     import org.kiama.rewriting.Rewriter.everything
@@ -32,17 +32,17 @@ object Precedence {
      * Return the salary of the boss of a particular part of a company,
      * or Float.MaxValue if there is no such boss.
      */
-    val bosssalary : Node => Salary =
-        down[Node,Salary] {
+    val bosssalary : CompanyTree => Salary =
+        down[CompanyTree,Salary] {
             case n if n.isRoot =>
                 Float.MaxValue
             case Dept (_, m, _) =>
                 m->salary
             case e : Employee =>
-                e.parent[Node] match {
+                e.parent[CompanyTree] match {
                     case p @ Dept (_, m, _) if m eq e =>
                         // Avoid comparing manager's salary with itself
-                        p.parent[Node]->bosssalary
+                        p.parent[CompanyTree]->bosssalary
                     case p =>
                         p->bosssalary
                 }

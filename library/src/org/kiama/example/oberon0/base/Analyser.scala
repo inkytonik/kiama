@@ -25,7 +25,7 @@ package base
 trait Analyser {
 
     import org.kiama.util.Messaging
-    import source.SourceASTNode
+    import source.SourceTree
 
     /**
      * The messaging module to use for this compiler.
@@ -37,9 +37,9 @@ trait Analyser {
      * messaging module. This default implementation just ask the node's
      * children to check themselves.
      */
-    def check (n : SourceASTNode) {
+    def check (n : SourceTree) {
         for (child <- n.children)
-            check (child.asInstanceOf[SourceASTNode])
+            check (child.asInstanceOf[SourceTree])
     }
 
 }

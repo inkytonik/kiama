@@ -54,14 +54,14 @@ object Translator {
          * Return the number of arguments that the method containing an
          * node has, or zero if the node doesn't occur in a method.
          */
-        lazy val argCount : SourceNode => Int =
+        lazy val argCount : MiniJavaTree => Int =
             attr {
                 case n if n.isRoot =>
                     0
                 case methodBody : MethodBody =>
                     methodBody.args.length
                 case n =>
-                    (n.parent[SourceNode])->argCount
+                    (n.parent[MiniJavaTree])->argCount
             }
 
         /**

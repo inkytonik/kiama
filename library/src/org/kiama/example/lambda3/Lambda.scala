@@ -27,16 +27,15 @@ import org.kiama.util.{ParsingREPL, PositionedParserUtilities}
  * A simple lambda calculus using abstracted name binding.
  * The basic term syntax is augmented with query commands for the REPL.
  */
-object AST {
+object LambdaTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.rewriting.NominalAST.{Bind, Name, Trans}
-    import org.kiama.util.Positioned
+    import org.kiama.rewriting.NominalTree.{Bind, Name, Trans}
+    import org.kiama.util.Tree
 
     /**
      * Lambda calculus expressions.
      */
-    abstract class Exp extends Attributable with Positioned
+    abstract class Exp extends Tree
 
     /**
      * Numeric expression.
@@ -71,7 +70,7 @@ object AST {
      * type T when executed. These values are not in the term language but
      * are used to represent user commands.
      */
-    abstract class Query[T] extends Attributable with Positioned
+    abstract class Query[T] extends Tree
 
     /**
      * A query that determines the alpha equivalence of two expressions.
@@ -111,8 +110,8 @@ object AST {
  */
 trait Parser extends PositionedParserUtilities {
 
-    import AST._
-    import org.kiama.rewriting.NominalAST.{Bind, Name, Trans}
+    import LambdaTree._
+    import org.kiama.rewriting.NominalTree.{Bind, Name, Trans}
 
     lazy val parser =
         phrase (query)
@@ -158,8 +157,8 @@ trait Parser extends PositionedParserUtilities {
  */
 class Evaluator {
 
-    import AST._
-    import org.kiama.rewriting.NominalAST.Bind
+    import LambdaTree._
+    import org.kiama.rewriting.NominalTree.Bind
     import org.kiama.rewriting.NominalRewriter
 
     /**
@@ -205,7 +204,7 @@ class Evaluator {
  * nominal rewriting. This implementation is closely based on the example
  * used in Scrap your Nameplate, James Cheney, ICFP 2005.
  */
-object Lambda extends ParsingREPL[AST.Query[_]] with Parser {
+object Lambda extends ParsingREPL[LambdaTree.Query[_]] with Parser {
 
     import org.kiama.util.REPLConfig
 
@@ -228,7 +227,7 @@ object Lambda extends ParsingREPL[AST.Query[_]] with Parser {
 
     val evaluator = new Evaluator
 
-    override def process (q : AST.Query[_], config : REPLConfig) {
+    override def process (q : LambdaTree.Query[_], config : REPLConfig) {
         super.process (q, config)
         config.emitter.emitln (evaluator.execute (q))
     }

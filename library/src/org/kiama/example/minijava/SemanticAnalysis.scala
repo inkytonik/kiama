@@ -43,7 +43,7 @@ class SemanticAnalysis (val messaging : Messaging) {
      * record those errors using `messaging` so that they can be
      * reported to the user later.
      */
-    def check (n : SourceNode) {
+    def check (n : MiniJavaTree) {
         // Check this node
         n match {
             case d @ IdnDef (i) if (d->entity == MultipleEntity ()) =>
@@ -111,7 +111,7 @@ class SemanticAnalysis (val messaging : Messaging) {
 
         // Check the children of this node
         for (child <- n.children)
-            check (child.asInstanceOf[SourceNode])
+            check (child.asInstanceOf[MiniJavaTree])
     }
 
     /**
@@ -149,10 +149,10 @@ class SemanticAnalysis (val messaging : Messaging) {
      * are used to (optionally) update attribute value as it proceeds through
      * the tree.
      */
-    lazy val defenv : Chain[SourceNode,Environment] =
+    lazy val defenv : Chain[MiniJavaTree,Environment] =
         chain (defenvin, defenvout)
 
-    def defenvin (in : SourceNode => Environment) : SourceNode ==> Environment = {
+    def defenvin (in : MiniJavaTree => Environment) : MiniJavaTree ==> Environment = {
 
         // At the root, get a new empty environment
         case n : Program =>
@@ -165,7 +165,7 @@ class SemanticAnalysis (val messaging : Messaging) {
 
     }
 
-    def defenvout (out : SourceNode => Environment) : SourceNode ==> Environment = {
+    def defenvout (out : MiniJavaTree => Environment) : MiniJavaTree ==> Environment = {
 
         // When leaving a nested scope region, remove the innermost scope from
         // the environment
@@ -189,27 +189,27 @@ class SemanticAnalysis (val messaging : Messaging) {
      * The environment to use to lookup names at a node. Defined to be the
      * completed defining environment for the smallest enclosing scope.
      */
-    lazy val env : SourceNode => Environment =
+    lazy val env : MiniJavaTree => Environment =
         attr {
 
             // At a scope-introducing node, get the final value of the
             // defining environment, so that all of the definitions of
             // that scope are present.
             case n @ (_ : Program | _ : Class | _ : Method) =>
-                (n.lastChild[SourceNode])->defenv
+                (n.lastChild[MiniJavaTree])->defenv
 
             // Otherwise, ask our parent so we work out way up to the
             // nearest scope node ancestor (which represents the smallest
             // enclosing scope).
             case n =>
-                (n.parent[SourceNode])->env
+                (n.parent[MiniJavaTree])->env
 
         }
 
     /**
      * The program entity referred to by an identifier definition or use.
      */
-    lazy val entity : IdnNode => Entity =
+    lazy val entity : IdnTree => Entity =
         attr {
 
             // If we are looking at an identifier used as a method call,
@@ -374,7 +374,7 @@ class SemanticAnalysis (val messaging : Messaging) {
      * The type of the normal class in which this node occurs.
      * Rule 17
      */
-    lazy val thistype : SourceNode => Type =
+    lazy val thistype : MiniJavaTree => Type =
         attr {
 
             // We got to the root without seeing a normal class, so
@@ -389,7 +389,7 @@ class SemanticAnalysis (val messaging : Messaging) {
 
             // Otherwise, ask our parent
             case n =>
-                (n.parent[SourceNode])->thistype
+                (n.parent[MiniJavaTree])->thistype
 
         }
 

@@ -26,14 +26,13 @@ package example.json
  */
 object JSONTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     /**
      * Interface for all JSON tree nodes.
      */
-    sealed abstract class JValue extends Attributable with Positioned
+    sealed abstract class JValue extends Tree
 
     /**
      * A JSON object.
@@ -43,7 +42,7 @@ object JSONTree {
     /**
      * The name of a JSON field.
      */
-    case class JName (s : String) extends Attributable with Positioned
+    case class JName (s : String) extends Tree
 
     /**
      * A JSON array.

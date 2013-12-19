@@ -31,9 +31,8 @@ package example.picojava
 
 object PredefinedTypes {
 
-    import AbstractSyntax._
     import NameResolution._
-    import org.kiama.attribution.Attributable
+    import PicoJavaTree._
     import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 
@@ -63,11 +62,13 @@ object PredefinedTypes {
      * eq Program.getBlock().booleanType() = booleanType();
      * eq Program.getPredefinedType().booleanType() = booleanType();
      */
-    val booleanType : Attributable => PrimitiveDecl =
+    val booleanType : PicoJavaTree => PrimitiveDecl =
         attr {
-            case p : Program => (p->localLookup ("boolean")).asInstanceOf[PrimitiveDecl]
+            case p : Program =>
+                (p->localLookup ("boolean")).asInstanceOf[PrimitiveDecl]
             // FIXME don't have NTA case, needed?
-            case t           => t.parent->booleanType
+            case t =>
+                t.parent[PicoJavaTree]->booleanType
         }
 
 }

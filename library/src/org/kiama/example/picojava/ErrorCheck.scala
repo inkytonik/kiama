@@ -31,11 +31,10 @@ package example.picojava
 
 object ErrorCheck {
 
-    import AbstractSyntax._
     import NameResolution._
+    import PicoJavaTree._
     import PredefinedTypes._
     import TypeAnalysis._
-    import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
     import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
@@ -93,13 +92,13 @@ object ErrorCheck {
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val collectErrors : Errors => Attributable => Unit =
+    val collectErrors : Errors => PicoJavaTree => Unit =
         // NOTE: Not using paramAttr here, since we don't want caching for this
         c => (
             t => {
                 // Process the errors of the children of t
                 for (child <- t.children)
-                    child->collectErrors (c)
+                    child.asInstanceOf[PicoJavaTree]->collectErrors (c)
                 // Process the errors at t
                 t match {
                     case a : AssignStmt =>
@@ -130,7 +129,7 @@ object ErrorCheck {
      *    c.add(s);
      * }
      */
-    val record : (Errors,String) => ASTNode => Unit =
+    val record : (Errors,String) => PicoJavaTree => Unit =
         (c,s) => a => c += s"${a.start}: $s"
 
     /**

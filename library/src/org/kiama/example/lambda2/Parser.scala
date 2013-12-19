@@ -24,11 +24,11 @@ package example.lambda2
 import org.kiama.util.PositionedParserUtilities
 
 /**
- * Parser to AST.
+ * Parser to abstract syntax for optionally typed lambda calculus.
  */
 trait Parser extends PositionedParserUtilities {
 
-    import AST._
+    import LambdaTree._
 
     lazy val parser =
         exp

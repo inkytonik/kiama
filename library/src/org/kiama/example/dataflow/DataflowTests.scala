@@ -21,7 +21,7 @@
 package org.kiama
 package example.dataflow
 
-import DataflowAST.Stm
+import DataflowTree.Stm
 import org.kiama.util.TestCompiler
 
 /**
@@ -29,7 +29,7 @@ import org.kiama.util.TestCompiler
  */
 class DataflowTests extends Driver with TestCompiler[Stm] {
 
-    import DataflowAST._
+    import DataflowTree._
     import Dataflow._
     import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq

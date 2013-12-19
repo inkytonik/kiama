@@ -29,11 +29,12 @@ import org.kiama.util.Tests
 class DynamicAttributionTests extends Tests {
 
     import Attribution._
+    import org.kiama.util.Tree
 
-    abstract class Tree extends Attributable
-    case class Pair (left : Tree, right : Tree) extends Tree
-    case class Leaf (value : Int) extends Tree
-    case class Unused (b : Boolean) extends Tree
+    abstract class TestTree extends Tree
+    case class Pair (left : TestTree, right : TestTree) extends TestTree
+    case class Leaf (value : Int) extends TestTree
+    case class Unused (b : Boolean) extends TestTree
 
     /**
      * Definitions of the attributes that will be tested below. We package
@@ -44,7 +45,7 @@ class DynamicAttributionTests extends Tests {
 
         var count = 0
 
-        lazy val sumleaf : Tree => Int =
+        lazy val sumleaf : TestTree => Int =
             dynAttr {
                 case Leaf (v) => count = count + 1; v
                 case _        => -1
@@ -87,12 +88,12 @@ class DynamicAttributionTests extends Tests {
         val definitions = new Definitions
         import definitions._
 
-        val newcase : Tree ==> Int =
+        val newcase : TestTree ==> Int =
             {
                 case Leaf (88)   => 77
                 case Pair (l, r) => (l->sumleaf) + (r->sumleaf)
             }
-        val func : Tree ==> Int =
+        val func : TestTree ==> Int =
             {
                 case Pair (l, r) => 99
             }
@@ -174,7 +175,7 @@ class DynamicAttributionTests extends Tests {
 
     test ("using a dynamic attribute outside its domain raises an exception") {
 
-        val sumleafDef : Tree ==> Int =
+        val sumleafDef : TestTree ==> Int =
             {
                 case Leaf (v) => v
             }
@@ -205,11 +206,11 @@ class DynamicAttributionTests extends Tests {
     }
 
     test ("circularities are detected for dynamic attributes") {
-        lazy val direct : Tree => Int =
+        lazy val direct : TestTree => Int =
             dynAttr (t => t->direct)
-        lazy val indirect : Tree => Int =
+        lazy val indirect : TestTree => Int =
             dynAttr (t => t->indirect2)
-        lazy val indirect2 : Tree => Int =
+        lazy val indirect2 : TestTree => Int =
             dynAttr (t => t->indirect)
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))

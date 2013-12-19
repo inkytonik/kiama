@@ -28,7 +28,7 @@ import org.kiama.util.PositionedParserUtilities
  */
 trait Parser extends PositionedParserUtilities {
 
-    import DataflowAST._
+    import DataflowTree._
     import scala.collection.immutable.Seq
     import scala.language.postfixOps
 

@@ -27,7 +27,7 @@ package example.lambda2
  */
 trait LazySubst extends EagerSubst {
 
-    import AST._
+    import LambdaTree._
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
 

@@ -22,23 +22,23 @@ package org.kiama
 package example.imperative
 
 /**
- * AST pretty-printing.
+ * Abstract syntax tree pretty-printing for the imperative language.
  */
 object PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
-    import AST._
+    import ImperativeTree._
 
     /**
      * Return a pretty-printed version of a node.
      */
-    def pretty (t : ImperativeNode) : String =
+    def pretty (t : ImperativeTree) : String =
         super.pretty (show (t))
 
     /**
      * Convert an imperative node to a pretty-printing document in
      * fully-parenthesised C style.
      */
-    def show (t : ImperativeNode) : Doc =
+    def show (t : ImperativeTree) : Doc =
         t match {
             case Num (d)      => value (d)
             case Var (s)      => s
@@ -56,7 +56,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
-    def showbin (l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
+    def showbin (l : ImperativeTree, op : String, r : ImperativeTree) : Doc =
         parens (show (l) <+> op <+> show (r))
 
 }

@@ -22,7 +22,7 @@ package org.kiama
 package example.json
 
 /**
- * AST pretty-printing.
+ * Abstract syntax tree pretty-printing for JSON.
  */
 trait PrettyPrinting extends org.kiama.output.PrettyPrinter {
 
@@ -61,7 +61,7 @@ trait PrettyPrinting extends org.kiama.output.PrettyPrinter {
 }
 
 /**
- * AST pretty-printing.
+ * Abstract syntax tree pretty-printing for JSON.
  */
 object PrettyPrinter extends PrettyPrinting
 

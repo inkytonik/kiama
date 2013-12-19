@@ -24,15 +24,14 @@ package example.dataflow
 /**
  * Imperative language AST for dataflow example.
  */
-object DataflowAST {
+object DataflowTree {
 
-    import org.kiama.attribution.Attributable
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     type Var = String
 
-    abstract class Stm extends Attributable with Positioned
+    abstract class Stm extends Tree
 
     case class Assign (left : Var, right : Var) extends Stm
     case class While (cond : Var, body : Stm) extends Stm

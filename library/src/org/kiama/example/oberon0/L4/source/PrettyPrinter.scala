@@ -26,10 +26,10 @@ trait PrettyPrinter extends L3.source.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    import base.source.SourceASTNode
+    import base.source.SourceTree
     import org.kiama.output.PrettyExpression
 
-    override def toDoc (n : SourceASTNode) : Doc =
+    override def toDoc (n : SourceTree) : Doc =
         n match {
             case ArrayTypeDef (s, t) =>
                 "ARRAY" <+> toDoc (s) <+> "OF" <+> toDoc (t)

@@ -27,7 +27,7 @@ package example.til
  */
 trait TIL2_1 extends TIL1_1 with TransformingMain {
 
-    import AST._
+    import TILTree._
     import org.kiama.rewriting.Rewriter._
 
     def transform (ast : Program) : Program =

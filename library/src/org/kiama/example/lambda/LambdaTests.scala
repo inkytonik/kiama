@@ -28,7 +28,7 @@ import org.kiama.util.{GeneratingREPL, RegexParserTests}
  */
 class LambdaTests extends RegexParserTests with Parser with Evaluator with Generator {
 
-    import AST._
+    import LambdaTree._
     import org.scalacheck.Prop._
 
     /**
@@ -103,7 +103,7 @@ class LambdaTests extends RegexParserTests with Parser with Evaluator with Gener
 trait Generator {
 
     import org.scalacheck._
-    import AST._
+    import LambdaTree._
 
     val genNum = for (i <- Gen.choose (1, 100)) yield Num (i)
     val genIdn : Gen[String] = for (s <- Gen.identifier) yield (s.take (5))
@@ -133,11 +133,11 @@ trait Generator {
 /**
  * A read-eval-print loop for generating random expressions.
  */
-object LambdaGen extends GeneratingREPL[AST.Exp] with Generator {
+object LambdaGen extends GeneratingREPL[LambdaTree.Exp] with Generator {
 
     import org.scalacheck.Arbitrary
 
-    def generator : Arbitrary[AST.Exp] =
+    def generator : Arbitrary[LambdaTree.Exp] =
         arbExp
 
 }

@@ -24,8 +24,8 @@ package example.picojava.benchmark
 object PicoJavaBenchmark extends App {
 
     import org.kiama.attribution._
-    import org.kiama.example.picojava.AbstractSyntax._
     import org.kiama.example.picojava.ErrorCheck._
+    import org.kiama.example.picojava.PicoJavaTree._
     import org.kiama.util.Emitter
     import scala.collection.immutable.Seq
 

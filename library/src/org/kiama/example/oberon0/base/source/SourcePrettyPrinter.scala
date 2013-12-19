@@ -31,6 +31,6 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    def toDoc (n : SourceASTNode) : Doc
+    def toDoc (n : SourceTree) : Doc
 
 }

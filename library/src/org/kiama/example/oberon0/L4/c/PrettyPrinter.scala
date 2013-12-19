@@ -26,7 +26,7 @@ trait PrettyPrinter extends L3.c.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    import base.c.{CASTNode, CType}
+    import base.c.{CTree, CType}
     import L3.c.CDerefExp
     import org.kiama.output.PrettyExpression
 

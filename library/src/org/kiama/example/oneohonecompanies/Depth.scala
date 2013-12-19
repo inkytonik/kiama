@@ -23,7 +23,7 @@ package example.oneohonecompanies
 
 object Depth {
 
-    import Company.{Company,Dept}
+    import CompanyTree.{Company,Dept}
     import org.kiama.rewriting.Rewriter.para
 
     /**

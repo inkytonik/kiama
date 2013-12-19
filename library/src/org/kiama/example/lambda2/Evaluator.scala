@@ -21,7 +21,7 @@
 package org.kiama
 package example.lambda2
 
-import AST._
+import LambdaTree._
 
 /**
  * Interface for a lambda2 evaluator.

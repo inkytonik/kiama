@@ -24,12 +24,11 @@ package example.imperative
 /**
  * A simple imperative language abstract syntax designed for testing.
  */
-object AST {
+object ImperativeTree {
 
-    import org.kiama.attribution.Attributable
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
-    import org.kiama.util.Positioned
+    import org.kiama.util.Tree
     import scala.collection.immutable.Seq
 
     /**
@@ -38,17 +37,14 @@ object AST {
     type Idn = String
 
     /**
-     * Superclass of all imperative language tree node types.  The Product
-     * supertype is used here to enable generic access to the children of
-     * an ImperativeNode; this capability is only used in the Kiama tests
-     * and is not usually needed for normal use of the library.
+     * Superclass of all imperative language tree node types.
      */
-    trait ImperativeNode extends Attributable with Positioned
+    trait ImperativeTree extends Tree
 
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends ImperativeNode {
+    sealed abstract class Exp extends ImperativeTree {
 
         /**
          * The numeric value of the expression.
@@ -160,7 +156,7 @@ object AST {
     /**
      * Statements.
      */
-    sealed abstract class Stmt extends ImperativeNode {
+    sealed abstract class Stmt extends ImperativeTree {
 
         /**
          * The set of all variable references in the statement.

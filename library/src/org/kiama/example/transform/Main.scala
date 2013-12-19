@@ -21,7 +21,7 @@
 package org.kiama
 package example.transform
 
-import AST.Program
+import TransformTree.Program
 import org.kiama.util.Compiler
 
 /**

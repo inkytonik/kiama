@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2008-2013 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2013 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -19,27 +19,27 @@
  */
 
 package org.kiama
-package example.imperative
+package example.oneohonecompanies
 
-import ImperativeTree.Stmt
-import org.kiama.util.ParsingREPL
+object CompanyTree {
 
-/**
- * A read-eval-print loop for parsing imperative programs and printing thei
- * abstract synax trees.
- */
-object Imperative extends ParsingREPL[Stmt] with Parser {
+    import org.kiama.util.Tree
+    import scala.collection.immutable.Seq
 
-    import org.kiama.util.REPLConfig
+    trait CompanyTree extends Tree
 
-    val banner = "Enter imperative language programs for parsing."
+    case class Company (depts : Seq[Dept]) extends CompanyTree
+    case class Dept (n : Name, m : Manager, su : Seq[SubUnit]) extends CompanyTree
 
-    override val prompt = "imperative> "
+    type Manager = Employee
+    case class Employee (n : Name, a : Address, s : Salary) extends CompanyTree
 
-    override def process (s : Stmt, config : REPLConfig) {
-        super.process (s, config)
-        config.emitter.emitln (s)
-        config.emitter.emitln (PrettyPrinter.pretty (s))
-    }
+    abstract class SubUnit extends CompanyTree
+    case class PU (e : Employee) extends SubUnit
+    case class DU (d : Dept) extends SubUnit
+
+    type Name = String
+    type Address = String
+    type Salary = Double
 
 }

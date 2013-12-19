@@ -23,7 +23,7 @@ package example.oneohonecompanies
 
 object SampleCompany {
 
-    import Company._
+    import CompanyTree._
     import org.kiama.attribution.Attribution.initTree
     import scala.collection.immutable.Seq
 

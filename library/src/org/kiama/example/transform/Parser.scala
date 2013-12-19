@@ -28,7 +28,7 @@ import org.kiama.util.PositionedParserUtilities
  */
 trait Parser extends PositionedParserUtilities {
 
-    import AST._
+    import TransformTree._
 
     lazy val parser =
         phrase (program)

@@ -28,7 +28,7 @@ import org.kiama.util.RegexParserTests
  */
 class LambdaTests extends RegexParserTests with Parser {
 
-    import AST._
+    import LambdaTree._
 
     /**
      * Try to parse and evaluate str as a query then evaluate the query

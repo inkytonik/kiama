@@ -27,7 +27,7 @@ package example.lambda2
  */
 trait ParLazy extends Par {
 
-    import AST._
+    import LambdaTree._
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
     import scala.collection.immutable.Seq

@@ -29,7 +29,7 @@ import org.kiama.util.Tests
  */
 class RewriterTests extends Tests with Generator {
 
-    import org.kiama.example.imperative.AST._
+    import org.kiama.example.imperative.ImperativeTree._
     import scala.collection.immutable.Seq
 
     /**
@@ -1036,8 +1036,8 @@ class RewriterTests extends Tests with Generator {
         val s = everywhere (rule { case Var (_) => 42 })
         val i = intercept[RuntimeException] { s (t) }
         val base = "dup illegal arguments"
-        val method = "public org.kiama.example.imperative.AST$Add"
-        val argtype = "org.kiama.example.imperative.AST$Exp"
+        val method = "public org.kiama.example.imperative.ImperativeTree$Add"
+        val argtype = "org.kiama.example.imperative.ImperativeTree$Exp"
         val error = "(Num(1.0),42), expects 2"
         val msg = "%s: %s(%s,%s) %s".format (base, method, argtype, argtype, error)
         assertResult (msg) (i.getMessage)

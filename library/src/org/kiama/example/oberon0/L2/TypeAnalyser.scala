@@ -24,12 +24,12 @@ package L2
 
 trait TypeAnalyser extends L1.TypeAnalyser {
 
-    import base.source.{IdnUse, SourceASTNode}
+    import base.source.{IdnUse, SourceTree}
     import messaging.message
     import L0.source.{Expression, IdnExp}
     import source.{CaseStatement, ForStatement}
 
-    abstract override def check (n : SourceASTNode) {
+    abstract override def check (n : SourceTree) {
         n match {
             case ForStatement (IdnExp (u @ IdnUse (i)), _, _, _, _) if !isVariable (u->entity) =>
                 message (u, s"illegal FOR loop control variable $i")

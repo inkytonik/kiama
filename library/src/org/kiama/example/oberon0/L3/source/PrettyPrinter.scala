@@ -26,10 +26,10 @@ trait PrettyPrinter extends L2.source.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    import base.source.{IdnDef, IdnUse, SourceASTNode}
+    import base.source.{IdnDef, IdnUse, SourceTree}
     import scala.collection.immutable.Seq
 
-    override def toDoc (n : SourceASTNode) : Doc =
+    override def toDoc (n : SourceTree) : Doc =
         n match {
             case ProcDecl (IdnDef (i1), as, b, IdnUse (i2)) =>
                 "PROCEDURE" <+> i1 <> paramsToDoc (as map toDoc, semi) <> semi <@>

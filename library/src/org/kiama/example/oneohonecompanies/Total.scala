@@ -23,7 +23,7 @@ package example.oneohonecompanies
 
 object Total {
 
-    import Company._
+    import CompanyTree._
     import org.kiama.==>
     import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.everything

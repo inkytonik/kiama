@@ -23,7 +23,7 @@ package example.oneohonecompanies
 
 object Cut {
 
-    import Company.{Company,Salary}
+    import CompanyTree.{Company,Salary}
     import org.kiama.rewriting.Rewriter.{everywhere,rewrite,rule}
 
     /**

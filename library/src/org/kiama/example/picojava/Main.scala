@@ -21,7 +21,7 @@
 package org.kiama
 package example.picojava
 
-import AbstractSyntax.Program
+import PicoJavaTree.Program
 import org.kiama.util.{CompilerWithConfig, Config, Emitter}
 import scala.collection.immutable.Seq
 

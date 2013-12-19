@@ -24,11 +24,11 @@ package example.imperative
 import org.kiama.util.PositionedParserUtilities
 
 /**
- * Parser to AST.
+ * Parser to abstract syntax tree for the imperative language.
  */
 trait Parser extends PositionedParserUtilities {
 
-    import AST._
+    import ImperativeTree._
     import scala.collection.immutable.Seq
     import scala.language.postfixOps
 

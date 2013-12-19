@@ -23,13 +23,13 @@ package example.oneohonecompanies
 
 object Other {
 
-    import Company._
+    import CompanyTree._
     import org.kiama.attribution.Attribution._
 
     /**
      * Number of employees in a company unit.
      */
-    lazy val numemp : Node => Int =
+    lazy val numemp : CompanyTree => Int =
         attr {
             case Company (ds)     => (ds map numemp).sum
             case Dept (_, _, sus) => 1 + (sus map numemp).sum
@@ -40,7 +40,7 @@ object Other {
     /**
      * Total salary in a company unit.
      */
-    lazy val salary : Node => Double =
+    lazy val salary : CompanyTree => Double =
         attr {
             case Company (ds)       => (ds map salary).sum
             case Dept (_, m, sus)   => m.s + (sus map salary).sum
@@ -52,12 +52,12 @@ object Other {
     /**
      * Average salary for a department or company.
      */
-    lazy val averagesalary : Node => Double =
+    lazy val averagesalary : CompanyTree => Double =
         attr {
             case n @ (_ : Company | _ : Dept) =>
                 (n->salary) / (n->numemp)
             case n =>
-                (n.parent[Node])->averagesalary
+                (n.parent[CompanyTree])->averagesalary
         }
 
     lazy val aboveaverage : Employee => Boolean =

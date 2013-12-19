@@ -23,7 +23,7 @@ package example.lambda2
 
 object PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
-    import AST._
+    import LambdaTree._
 
     /**
      * Return a pretty-printed version of an expression.

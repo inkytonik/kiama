@@ -25,7 +25,7 @@ import org.kiama.util.RegexParserTests
 
 class TIL1_1Tests extends TIL1_1 with RegexParserTests {
 
-    import AST._
+    import TILTree._
     import scala.collection.immutable.Seq
 
     val n = Id ("n")

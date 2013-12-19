@@ -27,10 +27,10 @@ trait PrettyPrinter extends L1.source.PrettyPrinter {
 
     this : org.kiama.output.PrettyPrinter =>
 
-    import base.source.SourceASTNode
+    import base.source.SourceTree
     import scala.collection.immutable.Seq
 
-    override def toDoc (n : SourceASTNode) : Doc =
+    override def toDoc (n : SourceTree) : Doc =
         n match {
             case s : ForStatement =>
                 forToDoc (s)

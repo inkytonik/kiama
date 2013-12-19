@@ -20,40 +20,40 @@
 
 package org.kiama
 package example.oberon0
-package L3.source
+package L4.source
 
-import base.source.{Block, Declaration, IdnDef, IdnUse, SourceASTNode,
-    Statement}
+import base.source.SourceTree
 import L0.source.{Expression, TypeDef}
 import scala.collection.immutable.Seq
 
 /**
- * Procedure declarations.
+ * Array type definitions.
  */
-case class ProcDecl (idndef : IdnDef, params : Seq[FPSection], body : Block,
-                     idnuse : IdnUse) extends Declaration
+case class ArrayTypeDef (size : Expression, tipe: TypeDef) extends TypeDef
 
 /**
- * Non-terminal type for parameter passing modes.
+ * Array index expressions.
  */
-sealed abstract class Mode
+case class IndexExp (base : Expression, exp : Expression) extends Expression
 
 /**
- * Pass by variable (reference) mode.
+ * Record type definitions.
  */
-case class VarMode () extends Mode
+case class RecordTypeDef (fields : Seq[FieldList]) extends TypeDef
 
 /**
- * Pass by value mode.
+ * Record field lists.
  */
-case class ValMode () extends Mode
+case class FieldList (idndefs : Seq[String], tipe : TypeDef) extends SourceTree
 
 /**
- * Formal parameter sections.
+ * Record field access expressions.
  */
-case class FPSection (mode : Mode, idndefs : Seq[IdnDef], tipe : TypeDef) extends SourceASTNode
+case class FieldExp (base : Expression, fieldname : FieldIdn) extends Expression
 
 /**
- * Call statements.
+ * Field identifier. We don't use IdnDef for fields, since we don't perform
+ * the same kind of name analysis on them. Fields only need to be looked up
+ * in the appropriate record type, not have the full scope handling performed.
  */
-case class Call (idnuse : IdnUse, params : Seq[Expression]) extends Statement
+case class FieldIdn (ident : String) extends SourceTree

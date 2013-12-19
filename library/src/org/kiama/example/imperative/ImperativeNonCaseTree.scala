@@ -25,7 +25,7 @@ package example.imperative
  * A version of the imperative expression abstract syntax built without
  * using case classes.  Used for testing on non-case class data structures.
  */
-object ASTNonCase {
+object ImperativeNonCaseTree {
 
     import org.kiama.rewriting.Rewritable
     import scala.collection.immutable.Seq

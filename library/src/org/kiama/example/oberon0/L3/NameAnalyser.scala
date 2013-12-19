@@ -24,14 +24,14 @@ package L3
 
 trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
 
-    import base.source.{Block, IdnDef, IdnUse, ModuleDecl, SourceASTNode}
+    import base.source.{Block, IdnDef, IdnUse, ModuleDecl, SourceTree}
     import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.down
     import org.kiama.util.Patterns.HasParent
     import source.{Call, FPSection, ProcDecl}
 
-    abstract override def check (n : SourceASTNode) {
+    abstract override def check (n : SourceTree) {
         n match {
             case HasParent (u @ IdnUse (i1), ProcDecl (IdnDef (i2), _, _, _)) =>
                 if (i1 != i2)
@@ -81,10 +81,10 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
      * Level of a node considering the module level to be zero and incrementing
      * each time we enter a nested procedure declaration.
      */
-    lazy val level : SourceASTNode => Int =
-        down[SourceASTNode, Int] {
+    lazy val level : SourceTree => Int =
+        down[SourceTree, Int] {
             case _ : ModuleDecl => 0
-            case n : ProcDecl   => (n.parent[SourceASTNode]->level) + 1
+            case n : ProcDecl   => (n.parent[SourceTree]->level) + 1
         }
 
     override def entityFromDecl (n : IdnDef, i : String) : Entity =
@@ -100,12 +100,12 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
      * that pushes a scope for all blocks.  Don't include the procedure name in the
      * scope of its own body.
      */
-    def envinl (in : SourceASTNode => Environment) : SourceASTNode ==> Environment = {
+    def envinl (in : SourceTree => Environment) : SourceTree ==> Environment = {
         case HasParent (b : Block, _ : ProcDecl) =>
             in (b)
     }
 
-    override def envin (in : SourceASTNode => Environment) : SourceASTNode ==> Environment =
+    override def envin (in : SourceTree => Environment) : SourceTree ==> Environment =
         (envinl (in)) orElse (super.envin (in))
 
     /**
@@ -114,7 +114,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
      * scope, but not in the scope of its own body.  All arguments and local declarations
      * go in the nested scope.
      */
-    def envoutl (out : SourceASTNode => Environment) : SourceASTNode ==> Environment = {
+    def envoutl (out : SourceTree => Environment) : SourceTree ==> Environment = {
         case HasParent (b : Block, _ : ProcDecl) =>
             out (b)
         case HasParent (n @ IdnDef (i), p : ProcDecl) =>
@@ -123,7 +123,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
             leave (out (p))
     }
 
-    override def envout (out : SourceASTNode => Environment) : SourceASTNode ==> Environment =
+    override def envout (out : SourceTree => Environment) : SourceTree ==> Environment =
         (envoutl (out)) orElse (super.envout (out))
 
 }
