@@ -8,7 +8,7 @@ import sbtunidoc.Plugin.UnidocKeys.unidoc
 
 // Main settings
 
-version in ThisBuild := "1.5.2-SNAPSHOT"
+version in ThisBuild := "1.6.0-SNAPSHOT"
 
 organization in ThisBuild := "com.googlecode.kiama"
 
