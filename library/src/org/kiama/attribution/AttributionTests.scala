@@ -29,6 +29,7 @@ import org.kiama.util.Tests
 class AttributionTests extends Tests {
 
     import Attribution._
+    import Decorators._
     import org.kiama.util.Tree
     import scala.collection.GenSeq
 
@@ -49,6 +50,7 @@ class AttributionTests extends Tests {
     val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
     val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
     val u = Pair (Leaf (1), Leaf (2))
+    val v = Pair (Leaf (3), Pair (Leaf (1), Leaf (3)))
 
     /**
      * Definitions of the attributes that will be tested below. We package
@@ -715,8 +717,33 @@ class AttributionTests extends Tests {
         assertSame (c6) (c5.parent)
     }
 
+    test ("a collectl that collects the Ints from Leafs works and is cached") {
+        var count = 0
+        val collectNum = collectl { case Leaf (i) => count = count + 1; i }
+        assertResult (false) (collectNum.hasBeenComputedAt (s))
+        assertResult (0) (count)
+        assertResult (List (3, 1, 10)) (collectNum (s))
+        assertResult (true) (collectNum.hasBeenComputedAt (s))
+        assertResult (3) (count)
+        assertResult (List (3, 1, 10)) (collectNum (s))
+        assertResult (true) (collectNum.hasBeenComputedAt (s))
+        assertResult (3) (count)
+    }
+
+    test ("a collects that collects the Ints from Leafs works and is cached") {
+        var count = 0
+        val collectNum = collects { case Leaf (i) => count = count + 1; i }
+        assertResult (false) (collectNum.hasBeenComputedAt (v))
+        assertResult (0) (count)
+        assertResult (Set (3, 1)) (collectNum (v))
+        assertResult (true) (collectNum.hasBeenComputedAt (v))
+        assertResult (3) (count)
+        assertResult (Set (1, 3)) (collectNum (v))
+        assertResult (true) (collectNum.hasBeenComputedAt (v))
+        assertResult (3) (count)
+    }
+
     test ("a chain that is only defined at the root returns the root value") {
-        import Decorators.{Chain, chain}
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         initTree (t)
         def rootupd (in : TestTree => Int) : TestTree ==> Int = {
@@ -728,7 +755,6 @@ class AttributionTests extends Tests {
     }
 
     test ("a chain with no updates throws appropriate exceptions") {
-        import Decorators.{Chain, chain}
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         initTree (t)
 

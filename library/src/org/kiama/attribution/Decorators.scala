@@ -29,6 +29,28 @@ object Decorators {
 
     import org.kiama.attribution.Attribution._
     import org.kiama.attribution.Attributable
+    import org.kiama.rewriting.Rewriter.{collectl => rwcollectl,
+        collects => rwcollects}
+
+    /**
+     * A cached attribute that wraps the `collectl` rewriting combinator.
+     * Run `f` in a top-down left-to-right traversal of the sub-tree to
+     * which the attribute is applied. Accumulate the values produced
+     * at the places where `f` is defined into a list and return the
+     * list.
+     */
+    def collectl[U] (f : Any ==> U) : CachedAttribute[Any,List[U]] =
+        attr (rwcollectl (f))
+
+    /**
+     * A cached attribute that wraps the `collects` rewriting combinator.
+     * Run `f` in a top-down left-to-right traversal of the sub-tree to
+     * which the attribute is applied. Accumulate the values produced
+     * at the places where `f` is defined into a set and return the
+     * set.
+     */
+    def collects[U] (f : Any ==> U) : CachedAttribute[Any,Set[U]] =
+        attr (rwcollects (f))
 
     /**
      * A decorator that propagates an attribute value down the tree. The

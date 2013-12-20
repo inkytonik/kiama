@@ -603,11 +603,11 @@ trait Rewriter extends RewriterCore {
      * the values produced by the function in the collection and return the
      * final value of the list.
      */
-    def collect[CC[U] <: Traversable[U],T] (f : Any ==> T)
-            (implicit cbf : CanBuildFrom[CC[T],T,CC[T]]) : Any => CC[T] =
+    def collect[U,CC[_] <: Traversable[_]] (f : Any ==> U)
+            (implicit cbf : CanBuildFrom[CC[U],U,CC[U]]) : Any => CC[U] =
         (t : Any) => {
             val b = cbf ()
-            val add = (v : T) => b += v
+            val add = (u : U) => b += u
             (everywhere (query (f andThen add))) (t)
             b.result ()
         }
@@ -618,8 +618,8 @@ trait Rewriter extends RewriterCore {
      * produced by the function in a list and return the final value of
      * the list.
      */
-    def collectl[T] (f : Any ==> T) : Any => List[T] =
-        collect[List,T] (f)
+    def collectl[U] (f : Any ==> U) : Any => List[U] =
+        collect[U,List] (f)
 
     /**
      * Collect query results in a set.  Run the function `f` as a top-down
@@ -627,8 +627,8 @@ trait Rewriter extends RewriterCore {
      * produced by the function in a set and return the final value of
      * the set.
      */
-    def collects[T] (f : Any ==> T) : Any => Set[T] =
-        collect[Set,T] (f)
+    def collects[U] (f : Any ==> U) : Any => Set[U] =
+        collect[U,Set] (f)
 
     /**
      * Count function results.  Run the function `f` as a top-down query on

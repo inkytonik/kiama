@@ -29,8 +29,7 @@ class SemanticAnalysis (messaging : Messaging) {
     import GrammarTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
-    import org.kiama.attribution.Decorators.down
-    import org.kiama.rewriting.Rewriter.collectl
+    import org.kiama.attribution.Decorators.{collectl, down}
     import scala.collection.immutable.{Seq, Set}
 
     /**
@@ -164,12 +163,9 @@ class SemanticAnalysis (messaging : Messaging) {
      * Non-terminal applied occurrences in a grammar.
      */
     val ntuses : Grammar => Seq[NonTermUse] =
-        attr {
-            case g =>
-                collectl {
-                    case n : NonTermUse =>
-                        n
-                } (g)
+        collectl {
+            case n : NonTermUse =>
+                n
         }
 
     // Grammar properties
