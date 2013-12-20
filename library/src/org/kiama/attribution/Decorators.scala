@@ -58,20 +58,37 @@ object Decorators {
      * nodes where it is known. If `a` does not define a value for the
      * attribute at a particular node, then the decorator asks the parent
      * of the node for its value of the attribute and uses that value.
-     * For this reason, `a` should at least provide a value for the root
-     * of the tree.
+     * If no node on the path to the root defines a value for the attribute,
+     * then default is returned.
      */
-    def down[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] = {
+    def down[T <: Attributable,U] (default : => U) (a : T ==> U) : CachedAttribute[T,U] = {
         lazy val dattr : CachedAttribute[T,U] =
             attr (
                 t =>
                     if (a.isDefinedAt (t))
                         a (t)
+                    else if (t.parent == null)
+                        default
                     else
                         dattr (t.parent[T])
             )
         dattr
     }
+
+    /**
+     * Variant of `down` that throws an error if `a` is not defined on the
+     * path to the root of the tree.
+     */
+    def downErr[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] =
+        down[T,U] (sys.error ("downErr: function is not defined on path to root")) (a)
+
+    /**
+     * Variant of `down` that returns `None` if `a` is not defined on the
+     * path to the root of the tree, otherwise it wraps the value that `a`
+     * returns in `Some`.
+     */
+    def downOpt[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,Option[U]] =
+        down[T,Option[U]] (None) (a andThen (Some (_)))
 
     /**
      * A pair of attributes that thread through a tree in a depth-first

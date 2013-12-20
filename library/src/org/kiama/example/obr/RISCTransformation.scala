@@ -103,7 +103,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * at the given context.
      */
     val exitlab =
-        down[ObrTree,Label] {
+        down[ObrTree,Label] (Label (0)) {
             case _ : LoopStmt =>
                 genlabel ()
         }
@@ -116,7 +116,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * active exception handler can be determined completely statically.
      */
     val exnlab =
-        down[ObrTree,Label] {
+        down[ObrTree,Label] (Label (0)) {
 
             // Programs and Try statements can catch exceptions.
             case _ : ObrInt | _ : TryStmt =>
@@ -135,7 +135,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * Only valid when used inside a Try statement.
      */
     val exnlabOuter : ObrTree => Label =
-        down[ObrTree,Label] {
+        down[ObrTree,Label] (Label (0)) {
             case s : TryStmt =>
                 (s.parent[ObrTree])->exnlab
         }

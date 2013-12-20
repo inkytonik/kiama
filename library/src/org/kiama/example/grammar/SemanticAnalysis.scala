@@ -29,7 +29,7 @@ class SemanticAnalysis (messaging : Messaging) {
     import GrammarTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
-    import org.kiama.attribution.Decorators.{collectl, down}
+    import org.kiama.attribution.Decorators.{collectl, downErr}
     import scala.collection.immutable.{Seq, Set}
 
     /**
@@ -101,7 +101,7 @@ class SemanticAnalysis (messaging : Messaging) {
      * are visible anywhere.
      */
     val env =
-        down[GrammarTree,Environment] {
+        downErr[GrammarTree,Environment] {
             case g : Grammar =>
                 (g.lastChild[Rule])->defenv
         }
@@ -122,16 +122,16 @@ class SemanticAnalysis (messaging : Messaging) {
      * The grammar that contains a node.
      */
     val grammar =
-        down[GrammarTree,Grammar] {
-            case r : Grammar =>
-                r
+        downErr[GrammarTree,Grammar] {
+            case g : Grammar =>
+                g
         }
 
     /**
      * The rule that contains a node.
      */
     val rule =
-        down[GrammarTree,Rule] {
+        downErr[GrammarTree,Rule] {
             case r : Rule =>
                 r
         }
@@ -279,7 +279,7 @@ class SemanticAnalysis (messaging : Messaging) {
             case n : NonTermUse =>
                 val suffix = n.parent.next[SymbolList]
                 if (suffix->nullable)
-                    (suffix->first).union (((n->rule).lhs)->follow)
+                    (suffix->first).union ((n->rule).lhs->follow)
                 else
                     suffix->first
 

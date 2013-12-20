@@ -83,7 +83,7 @@ trait RepminDec extends RepminBase {
     import org.kiama.attribution.Decorators._
 
     val globmin : RepminTree => Int =
-        down[RepminTree,Int] {
+        downErr[RepminTree,Int] {
             case t if t.isRoot => t->locmin
         }
 

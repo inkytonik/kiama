@@ -743,6 +743,45 @@ class AttributionTests extends Tests {
         assertResult (3) (count)
     }
 
+    {
+        val t = Pair (Leaf (3), Pair (l, Leaf (10)))
+        initTree (t)
+
+        test ("a down attribute that is defined returns the computed value") {
+            val dattr = down[TestTree,Int] (99) { case _ : Pair => 42 }
+            assertResult (42) (l->dattr)
+        }
+
+        test ("a down attribute that is not defined returns the default value") {
+            val dattr = down[TestTree,Int] (99) { case _ : Unused => 42 }
+            assertResult (99) (l->dattr)
+        }
+
+        test ("a downErr attribute that is defined returns the computed value") {
+            val dattr = downErr[TestTree,Int] { case _ : Pair => 42 }
+            assertResult (42) (l->dattr)
+        }
+
+        test ("a downErr attribute that is not defined throws an error") {
+            val dattr = downErr[TestTree,Int] { case _ : Unused => 42 }
+            val i = intercept[RuntimeException] {
+                        l->dattr
+                    }
+            assertResult ("downErr: function is not defined on path to root") (i.getMessage)
+        }
+
+        test ("a downOpt attribute that is defined returns Some of the computed value") {
+            val dattr = downOpt[TestTree,Int] { case _ : Pair => 42 }
+            assertResult (Some (42)) (l->dattr)
+        }
+
+        test ("a downOpt attribute that is not defined returns None") {
+            val dattr = downOpt[TestTree,Int] { case _ : Unused => 42 }
+            assertResult (None) (l->dattr)
+        }
+
+    }
+
     test ("a chain that is only defined at the root returns the root value") {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
         initTree (t)

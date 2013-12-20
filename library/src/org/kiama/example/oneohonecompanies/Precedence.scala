@@ -33,9 +33,7 @@ object Precedence {
      * or Float.MaxValue if there is no such boss.
      */
     val bosssalary : CompanyTree => Salary =
-        down[CompanyTree,Salary] {
-            case n if n.isRoot =>
-                Float.MaxValue
+        down[CompanyTree,Salary] (Float.MaxValue) {
             case Dept (_, m, _) =>
                 m->salary
             case e : Employee =>

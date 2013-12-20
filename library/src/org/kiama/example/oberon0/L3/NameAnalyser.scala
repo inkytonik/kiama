@@ -82,8 +82,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
      * each time we enter a nested procedure declaration.
      */
     lazy val level : SourceTree => Int =
-        down[SourceTree, Int] {
-            case _ : ModuleDecl => 0
+        down[SourceTree, Int] (0) {
             case n : ProcDecl   => (n.parent[SourceTree]->level) + 1
         }
 
