@@ -1437,4 +1437,40 @@ trait RewriterCore {
     def where (s : Strategy) : Strategy =
         macro RewriterCoreMacros.whereMacro
 
+    // Queries below here
+
+    /**
+     * Collect query results in a list.  Run the function `f` as a top-down
+     * left-to-right query on the subject term.  Accumulate the values
+     * produced by the function in a list and return the final value of
+     * the list.
+     */
+    def collectl[U] (f : Any ==> U) : Any => List[U] =
+        macro RewriterCoreMacros.collectlMacro[U]
+
+    /**
+     * Collect query results in a set.  Run the function `f` as a top-down
+     * left-to-right query on the subject term.  Accumulate the values
+     * produced by the function in a set and return the final value of
+     * the set.
+     */
+    def collects[U] (f : Any ==> U) : Any => Set[U] =
+        macro RewriterCoreMacros.collectsMacro[U]
+
+    /**
+     * Count function results.  Run the function `f` as a top-down query on
+     * the subject term.  Sum the integer values returned by `f` from all
+     * applications.
+     */
+    def count (f : Any ==> Int) : Any => Int =
+        macro RewriterCoreMacros.countMacro
+
+    /**
+     * Apply the function at every term in `t` in a top-down, left-to-right order.
+     * Collect the resulting `T` values by accumulating them using `f` with initial
+     * left value `v`.  Return the final value of the accumulation.
+     */
+    def everything[T] (v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T =
+        macro RewriterCoreMacros.everythingMacro[T]
+
 }

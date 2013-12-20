@@ -253,4 +253,18 @@ object RewriterCoreMacros {
     def whereMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
+    // Queries
+
+    def collectlMacro[U] (c : Context) (f : c.Expr[Any ==> U]) : c.Expr[Any => List[U]] =
+        makeCallWithName (c)
+
+    def collectsMacro[U] (c : Context) (f : c.Expr[Any ==> U]) : c.Expr[Any => Set[U]] =
+        makeCallWithName (c)
+
+    def countMacro (c : Context) (f : c.Expr[Any ==> Int]) : c.Expr[Any => Int] =
+        makeCallWithName (c)
+
+    def everythingMacro[T] (c : Context) (v : c.Expr[T]) (f : c.Expr[(T, T) => T]) (g : c.Expr[Any ==> T]) (t : c.Expr[Any]) : c.Expr[T] =
+        makeCallWithName (c)
+
 }

@@ -595,7 +595,7 @@ trait Rewriter extends RewriterCore {
     def where (name : String, s : Strategy) : Strategy =
         strategyf (name, t => (s <* build (t)) (t))
 
-    // Older stuff below here
+    // Queries below here
 
     /**
      * Collect query results in a traversable collection.  Run the function
@@ -603,23 +603,22 @@ trait Rewriter extends RewriterCore {
      * the values produced by the function in the collection and return the
      * final value of the list.
      */
-    def collect[U,CC[_] <: Traversable[_]] (f : Any ==> U)
+    def collect[U,CC[_] <: Traversable[_]] (name : String, f : Any ==> U)
             (implicit cbf : CanBuildFrom[CC[U],U,CC[U]]) : Any => CC[U] =
         (t : Any) => {
             val b = cbf ()
             val add = (u : U) => b += u
-            (everywhere (query (f andThen add))) (t)
+            (everywhere (name, query (f andThen add))) (t)
             b.result ()
         }
 
     /**
-     * Collect query results in a list.  Run the function `f` as a top-down
-     * left-to-right query on the subject term.  Accumulate the values
-     * produced by the function in a list and return the final value of
-     * the list.
+     * As for the version in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.collectl
      */
-    def collectl[U] (f : Any ==> U) : Any => List[U] =
-        collect[U,List] (f)
+    def collectl[U] (name : String, f : Any ==> U) : Any => List[U] =
+        collect[U,List] (name, f)
 
     /**
      * Collect query results in a set.  Run the function `f` as a top-down
@@ -627,24 +626,24 @@ trait Rewriter extends RewriterCore {
      * produced by the function in a set and return the final value of
      * the set.
      */
-    def collects[U] (f : Any ==> U) : Any => Set[U] =
-        collect[U,Set] (f)
+    def collects[U] (name : String, f : Any ==> U) : Any => Set[U] =
+        collect[U,Set] (name, f)
 
     /**
      * Count function results.  Run the function `f` as a top-down query on
      * the subject term.  Sum the integer values returned by `f` from all
      * applications.
      */
-    def count (f : Any ==> Int) : Any => Int =
-        everything (0) (_ + _) (f)
+    def count (name : String, f : Any ==> Int) : Any => Int =
+        everything (name, 0) (_ + _) (f)
 
     /**
      * Apply the function at every term in `t` in a top-down, left-to-right order.
      * Collect the resulting `T` values by accumulating them using `f` with initial
      * left value `v`.  Return the final value of the accumulation.
      */
-    def everything[T] (v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T =
-        (collectl (g) (t)).foldLeft (v) (f)
+    def everything[T] (name : String, v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T =
+        (collectl (name, g) (t)).foldLeft (v) (f)
 
 }
 
