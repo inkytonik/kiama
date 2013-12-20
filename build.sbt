@@ -35,8 +35,8 @@ resolvers in ThisBuild ++= Seq (
 // Dependencies
 
 libraryDependencies in ThisBuild ++= Seq (
-    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.3.0-SNAPSHOT",
-    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.3.0-SNAPSHOT",
+    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.3.0",
+    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.3.0",
     "jline" % "jline" % "2.11",
     "org.scalacheck" %% "scalacheck" % "1.10.1" % "test",
     "org.scalatest" %% "scalatest" % "2.0" % "test",
