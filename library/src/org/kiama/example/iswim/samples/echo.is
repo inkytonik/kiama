@@ -1,7 +1,7 @@
 /**
  * Title:     Code Sample - echo input from terminal
  * Author:    Dominic Verity
- * Copyright: Macquarie University (C) 2007-2011
+ * Copyright: Macquarie University (C) 2007-2014
  *
  * A very simple example of the use of the imperative features of
  * our ISWIM like language. Uses a tail recursive function to emulate
@@ -22,12 +22,12 @@ and t = mkref 0;
 
 // Our loop as a tail recursive function.
 letrec loop = fun(e) (
-    if ((r := read()) != "") { 
-        write (val r); 
-        write "\n"; 
-        t := (val t) + toInt(val r); 
-        loop() 
-    } 
+    if ((r := read()) != "") {
+        write (val r);
+        write "\n";
+        t := (val t) + toInt(val r);
+        loop()
+    }
     else {
         write("Total:\n");
         write(val t);

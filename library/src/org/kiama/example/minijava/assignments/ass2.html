@@ -8,9 +8,9 @@
     <h1>Macquarie University<br>Department of Computing</h1>
 
     <h2>COMP332 Programming Languages 2012</h2>
-    
+
     <h2>Assignment Two</h2>
-  
+
     <h3>MiniJava Semantic Analysis</h3>
 
     <p>Due: 11am Monday 8 October (Week 9)<br>
@@ -35,14 +35,14 @@
     <h4>Updates from Assignment One</h4>
 
     <p>To support the semantic analysis tasks that we wish to carry out, it
-    is useful to have a slightly different tree structure from that of 
+    is useful to have a slightly different tree structure from that of
     Assignment One. This section outlines the changes. See the new version
     of <code>MiniJavaTree.scala</code> in the skeleton for details.
     The syntax analyser has been updated to use the new structure.</p>
 
     <ul>
 
-    <li><p>Name analysis needs to treat defining and applied occurrences of 
+    <li><p>Name analysis needs to treat defining and applied occurrences of
     identifiers differently. The easiest way to do this is to distinguish
     them in the tree structure. For MiniJava it is possible for the parser
     to locate them syntactically, since any single occurrence of an identifier
@@ -51,14 +51,14 @@
     <code>IdnUse</code> are used to represent these two cases. They just
     contain the identifier string.</p></li>
 
-    <li><p>The structure of the syntax tree is intimately related to the 
+    <li><p>The structure of the syntax tree is intimately related to the
     computations we perform on it. Since we will be dealing with naming
     scopes, we want a structure that makes it easy to identify where
-    they begin and end. For this reason, classes and methods now have 
+    they begin and end. For this reason, classes and methods now have
     extra internal structure. All of the children that lie within the
-    scope of a class or method are now located under a special 
+    scope of a class or method are now located under a special
     <code>ClassBody</code> or <code>MethodBody</code> node inside the
-    <code>Class</code> or <code>Method</code> node. Note that the 
+    <code>Class</code> or <code>Method</code> node. Note that the
     defining identifier occurrence for the class or method is <em>not</em>
     inside the body, since it belongs to the outer scope.</p></li>
 
@@ -72,7 +72,7 @@
     <li><p>The syntax tree has also been changed to use Kiama's support
     for annotating nodes with their source positions, since we will need
     that information when we report semantic errors. You can use any node
-    as the first argument to Kiama's <code>message</code> method and 
+    as the first argument to Kiama's <code>message</code> method and
     its position will be used for the message.</p></li>
 
     </ul>
@@ -89,12 +89,12 @@
      assignment before moving onto the next one. In fact, within each
      part it is advisable to solve small portions at a time rather
      than trying to code the whole solution in one go.</p>
-     
+
     <h4>MiniJava semantic rules</h4>
 
     <p>This section explains the rules of name and type analysis for
     MiniJava which you will need in the assignment. Some languages
-    allow name and type analysis to be handled separately, but in 
+    allow name and type analysis to be handled separately, but in
     Java-like languages they are intertwined since in an expression
     such as <code>o.m()</code> we need to know the meaning of the
     name <code>o</code> in order to work out that it's of a reference
@@ -103,23 +103,23 @@
 
     <p>Basically, MiniJava names work as in Java, with some simplifications.
     Four different kinds of named entity exist: classes, methods, method
-    arguments and variables. The whole program is a scope containing all of the 
+    arguments and variables. The whole program is a scope containing all of the
     normal classes. Each class has a scope nested within the program scope,
     containing all of the class's variables and methods. Each method has a scope
     nested within its class scope, containing all of the method's arguments and
-    variables. Declared names are usable anywhere in the scope in which 
-    they are defined, not just from their declaration to the end of the 
+    variables. Declared names are usable anywhere in the scope in which
+    they are defined, not just from their declaration to the end of the
     scope.</p>
 
-    <p>The main class is <em>not</em> represented by an entity like the 
+    <p>The main class is <em>not</em> represented by an entity like the
     normal classes, since the main class name cannot be used as a normal class
     name. The main class only exists as an entry point for the program.
     The expression <code>this</code> makes no sense in the main class,
     since it has no variables or methods, but we will not check this
     condition in this assignment.</p>
 
-    <p>MiniJava variables and arguments can refer to values of type 
-    integer, Boolean, integer array or reference to an instance of a 
+    <p>MiniJava variables and arguments can refer to values of type
+    integer, Boolean, integer array or reference to an instance of a
     particular class. The first three types are represented by the
     syntax tree node types used in Assignment One. Reference types are
     represented by instances of the <code>ReferenceType</code> case
@@ -134,7 +134,7 @@
     <li><p>There must be at most one defining occurrence of any name in
     a scope, not counting definitions in enclosing scopes.</p></li>
 
-    <li><p>Each applied identifier occurrence must refer to exactly 
+    <li><p>Each applied identifier occurrence must refer to exactly
     one defining occurrence. That defining occurrence is located by
     first looking in the innermost scope in which the applied
     occurrence occurs. If the defining occurrence is not located
@@ -143,7 +143,7 @@
 
     <li><p>If a defining occurence of an applied identifier is not
     found in the class in which that applied occurrence appears,
-    and the class has a superclass, then the search moves to the 
+    and the class has a superclass, then the search moves to the
     superclass. If that class has no definition for the identifier
     and has a superclass, the search moves to that superclass.
     And so on until the definition is found or the superclass chain
@@ -154,9 +154,9 @@
     <li><p>The type of a true or false expression is Boolean.</p></li>
 
     <li><p>The type of an identifier expression referring to a
-    variable, argument or class is the declared type of the variable 
+    variable, argument or class is the declared type of the variable
     or argument (in the first two cases) or a reference type that
-    refers to instances of that class (in the last case). Method 
+    refers to instances of that class (in the last case). Method
     names cannot be used by themselves in expressions; they can
     only be used in call expressions.<p></li>
 
@@ -170,7 +170,7 @@
     on the right-hand side must be the same as that of the variable or
     argument.</p></li>
 
-    <li><p>In an array assignment statement or index expression, the 
+    <li><p>In an array assignment statement or index expression, the
     base sub-expression must be of integer array type and the index sub-expression
     must be of integer type. In the assignment case, the type of the
     right-hand side sub-expression must be integer. In the index expression
@@ -193,7 +193,7 @@
 
     <li><p>In a method call expression the named entity that is being called
     must be a method of the class whose instance is referenced by the base
-    expression (or in a superclass if that class has no method with the 
+    expression (or in a superclass if that class has no method with the
     given name). The number of arguments supplied in the call and their
     types must be the same as the number of arguments and argument types
     required by the called method. The type of the expression is the return
@@ -217,13 +217,13 @@
 <h4>Part One (Pass and Credit, 74 marks): The basic MiniJava semantic rules</h4>
 
 <p>The first part of the assignment involves implementing and
-testing the basic MiniJava semantic rules. Specifically, you 
+testing the basic MiniJava semantic rules. Specifically, you
 must implement rules 1, 2, 4-15 and 17-19 listed in the previous
 section.</p>
 
 <p>Your code must use the Kiama attribute grammar and environment libraries as
 discussed in lectures and practicals. You should use the expression language
-semantic analyser as a guide for your implementation, although note that 
+semantic analyser as a guide for your implementation, although note that
 MiniJava is a much more complex language.</p>
 
 <p>A skeleton sbt project for the assignment has been provided on BitBucket as
@@ -254,7 +254,7 @@ For example, to compile your project and run it on the file
   run test/factorial.java
 </pre>
 
-<p>Assuming your code compiles and runs, this will print any semantic 
+<p>Assuming your code compiles and runs, this will print any semantic
 errors that have been found. If no errors are detected, you will see
 no output.</p>
 
@@ -346,7 +346,7 @@ assignment.</p>
 <!-- Created: Thu Jul  9 11:51:06 EST 2004 -->
 <!-- hhmts start -->Last modified: 7 September 2012 <!-- hhmts end -->
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2010-2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2010-2014 by
 Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

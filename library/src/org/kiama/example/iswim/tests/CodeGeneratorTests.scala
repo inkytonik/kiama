@@ -1,8 +1,8 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2010-2013 Dominic R B Verity, Macquarie University.
- * Copyright (C) 2011-2013 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2014 Dominic R B Verity, Macquarie University.
+ * Copyright (C) 2011-2014 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -351,7 +351,7 @@ class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser
         /*
          * Title:       Fibonacci fun
          * Description: A very simple imperative Fibonacci function with driver.
-         * Copyright:   (c) 2010-2013 Dominic Verity, Macquarie University
+         * Copyright:   (c) 2010-2014 Dominic Verity, Macquarie University
          */
 
         // declare preloaded primitives

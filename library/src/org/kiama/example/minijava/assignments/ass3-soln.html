@@ -12,7 +12,7 @@
 
     <p>This assignment concerned the design, development, testing, and
     documentation of a translator from MiniJava to the Java Virtual
-    Machine. The skeleton for the assignment provided much of the 
+    Machine. The skeleton for the assignment provided much of the
     translator implementation. We needed to finish it off by implementing
     the missing portions.</p>
 
@@ -31,7 +31,7 @@
     <h3>Arithmetic operations</h3>
 
     <p>The skeleton already implemented addition by first translating the
-    two operand expressions, then generating an <code>iadd</code>  
+    two operand expressions, then generating an <code>iadd</code>
     instruction. I followed the same scheme for the two missing operations.
     For example, for subtraction I use an <code>isub</code> operation as
     follows in <code>translateExp</code>.</p>
@@ -45,7 +45,7 @@ case MinusExp (left, right) =>
 
     <h3>Conditional and while statements</h3>
 
-    <p>In the week 10 practical exercise we saw a simple scheme for 
+    <p>In the week 10 practical exercise we saw a simple scheme for
     translating conditional statements. The difference for this assignment
     is that the conditional statements have both then and else branches,
     whereas in the practical they only had one branch. It was easy to
@@ -53,7 +53,7 @@ case MinusExp (left, right) =>
 
     <p>The code I generate for a conditional statement first checks the
     condition, jumping to a label for the else branch if the condition
-    is false. Otherwise, the code falls through to the code for the 
+    is false. Otherwise, the code falls through to the code for the
     then branch, followed by a jump over the else branch. The code that
     was added to <code>translateStmt</code> is as follows.</p>
 
@@ -84,12 +84,12 @@ case While (cond, stmt) =>
     translateStmt (stmt)
     gen (Goto (label1))
     gen (Label (label2))
-</pre>    
+</pre>
 
     <h3>Boolean constants and operations</h3>
-    
+
     <p>As noted in the assignment handout, the JVM doesn't really have Boolean
-    operations, so to translate MiniJava Booleans, we use integers, with the 
+    operations, so to translate MiniJava Booleans, we use integers, with the
     convetion that one is true and zero is false. Thus, the two cases for
     true and false in <code>translateExp</code> became:</p>
 
@@ -106,7 +106,7 @@ case FalseExp () =>
     that had the desired effect. In the case of <code>not</code> it suffices to
     evaluate the operand expression, then use an <code>ifeq</code> instruction
     to jump to code to push one if the expression is zero. Otherwise, the
-    code falls through to code to push zero and jump over the other code.</p> 
+    code falls through to code to push zero and jump over the other code.</p>
 
 <pre>
 case NotExp (exp) =>
@@ -122,7 +122,7 @@ case NotExp (exp) =>
 </pre>
 
     <p>The <code>and</code> operation can be handled in a similar fashion,
-    but we need to take care to implement the short-circuit evaluation 
+    but we need to take care to implement the short-circuit evaluation
     semantics. In other words, if the left operand expression evaluates to
     false, then we should not evaluate the right operand expression.</p>
 
@@ -134,7 +134,7 @@ case NotExp (exp) =>
     value of the right expression is the same as the value of the whole expression,
     and that value is on the operand stack already. So, after the right
     expression has been evaluated, we just need to jump over the false
-    code.</p> 
+    code.</p>
 
 <pre>
 case AndExp (left, right) =>
@@ -151,7 +151,7 @@ case AndExp (left, right) =>
 
     <h3>Arrays</h3>
 
-    <p>Arrays were a bit trickier than the other constructs, not because 
+    <p>Arrays were a bit trickier than the other constructs, not because
     they were hard to generate code for, but because I needed to find the
     right instructions to deal with arrays. At this point it is worth
     noticing that the JVM has two sets of array instructions: one set
@@ -160,10 +160,10 @@ case AndExp (left, right) =>
     elements, so we only use the first set of instructions.</p>
 
     <p>First, array creation. For integer arrays creation is achieved by
-    the <code>newarray</code> instruction where the argument is the 
-    primitive element type. When using Jasmin, we can specify the 
+    the <code>newarray</code> instruction where the argument is the
+    primitive element type. When using Jasmin, we can specify the
     elementy type by name.  The number of elements that we want in the
-    array must already be on the operand stack when the creation 
+    array must already be on the operand stack when the creation
     instruction is executed. Thus, in <code>translateExp</code> a new
     array expression is translated as follows.</p>
 
@@ -171,7 +171,7 @@ case AndExp (left, right) =>
 case NewArrExp (exp) =>
     translateExp (exp)
     gen (NewArray ("int"))
-</pre>    
+</pre>
 
     <p>The length of an array is obtained by pushing the array reference
     on the operand stack and executing an <code>arraylength</code>
@@ -184,7 +184,7 @@ case LengthExp (base) =>
 </pre>
 
     <p>An array indexing operation requires the array reference and the
-    index of the element which we want to obtain to both be on the 
+    index of the element which we want to obtain to both be on the
     stack (in that order). Then the <code>iaload</code> instruction
     replaces them with the requested element.</p>
 
@@ -197,10 +197,10 @@ case IndExp (base, ind) =>
 
     <p>Finally, in <code>translateStmt</code> we need to implement
     array assignment statements. These are implemented using
-    <code>iastore</code> instructions, which expect the array 
+    <code>iastore</code> instructions, which expect the array
     reference, the index value and the value to be assigned to be
     on the stack (in that order). In an <code>ArrAssign</code>
-    statement construct the array is given by an identifier, so 
+    statement construct the array is given by an identifier, so
     we use the skeleton's <code>translateIdnLoad</code> method to
     generate code to load the value of whatever that identifier
     refers to (since it might be a field, argument or local
@@ -282,19 +282,19 @@ class WhileManyClass {
     }
 
 }
-</pre>    
+</pre>
 
     <p>As well as using these small synthetic tests, I also tested my
     translator using the bigger MiniJava programs that were provided in
-    the skeleton. These bigger tests are likley to exercise the 
+    the skeleton. These bigger tests are likley to exercise the
     translation much more than the simple cases, particularly using
-    more complex operands for the expressions or bodies for the 
+    more complex operands for the expressions or bodies for the
     structured statements.</p>
 
     <p>I wrote a small script setup that runs my compiler over all of the
     tests in the test sub-directory, uses Jasmin to produce class files,
     runs the main program with the JVM, and captures the output from the
-    run. That output is compared to the <code>.exp</code> file that 
+    run. That output is compared to the <code>.exp</code> file that
     belongs to the test and any difference is flagged as a test failure.</p>
 
     <p>In each case, I obtain the output that I expect to see, so I am
@@ -303,7 +303,7 @@ class WhileManyClass {
     <hr>
     <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012-2014 by
 Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

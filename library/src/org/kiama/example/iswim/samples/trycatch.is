@@ -2,7 +2,7 @@
  * Title:     An implementation of try...catch exception
  *            handling using continuations
  * Author:    Dominic Verity
- * Copyright: Macquarie University (C) 2007-2011
+ * Copyright: Macquarie University (C) 2007-2014
  *
  * A try..catch block is implemented using 2 continuations:
  *        The first marks the exit point for normal exits.
@@ -14,25 +14,25 @@
  *   |                       |
  *   |                       |                    code in the try block
  *   |                       |
- *   |                       |         at the end of the try block throw to normal 
- *   |                       V         exit continuation to avoid exectuing the exception 
+ *   |                       |         at the end of the try block throw to normal
+ *   |                       V         exit continuation to avoid exectuing the exception
  *   |                      ___        handler after successful execution of try code.
- *   |                              
+ *   |
  *   |
  *   |                                         code of corresponding
  *   |                                         exception handler.
  *   V
  *  ---
- * 
+ *
  * The SECD machine provides a primitive, called 'raise', which allows us
- * to raise an exception. This can be brought into scope in user code using the 'primitives' 
+ * to raise an exception. This can be brought into scope in user code using the 'primitives'
  * key word. The same mechanism also allows us to bring the names of the exception
  * values associated with the various machine exceptions into scope. Having done that we can
  * write code to catch and handle different kinds of machine error.
  *
  * The creation of user exception values is supported by the 'newException' primitive.
  * User exception values may be 'raise'd just like machine exception values. User exception
- * values contain a string describing that type of exception. Like other values, we may 
+ * values contain a string describing that type of exception. Like other values, we may
  * compare exception values for (in)equality (using == and !=), print them to the terminal
  * using the 'write' primitive and convert them to string values using the 'toString' primitive.
  *
@@ -44,18 +44,18 @@
  * the correct semantics for nested try...catch blocks.
  *
  * On the other hand, the value of the 'handler' register is not stored in a closure when it is built.
- * That means that the exception handler in play when we execute a closure is the one that was in place 
- * at the point when the closure was entered rather than the one from the point at which the closure was 
+ * That means that the exception handler in play when we execute a closure is the one that was in place
+ * at the point when the closure was entered rather than the one from the point at which the closure was
  * created. In other words, we can think of the current exception handler as being stored in a dynamically
  * scoped, globally accessible 'handler' variable.
  *
  * There are a number of other places where such dynamically scoped variables are useful in implementing
  * control structures. So one might consider extending ISWIM and the SECD machine to allow us to declare
- * variables which are dynamically scoped in user code.... but we haven't done so yet! 
- * 
+ * variables which are dynamically scoped in user code.... but we haven't done so yet!
+ *
  * The code below implements try...catch as a function:
  *
- * tryCatch try catch - which takes parameters: 
+ * tryCatch try catch - which takes parameters:
  *      a function try() representing the body of the try..catch
  *      a function catch(exn) representing the corresponding catch block,
  *                 this takes as its parameter the exception object given at
@@ -63,7 +63,7 @@
  *
  * The actual implementation of this function is remarkably simple.
  */
- 
+
 // Bring some useful primitives into scope
 primitives write, newException, raise, setHandler, DivisionByZero, TypeError;
 
@@ -90,11 +90,11 @@ let tryCatch = fun(try) fun(catch) (
     write "\n";
 
     let exn = newException "simplest possible test"
-    in tryCatch (fun(a) { 
+    in tryCatch (fun(a) {
         writeln "One";
         raise exn;
-        writeln "Two" 
-    }) (fun(err) { 
+        writeln "Two"
+    }) (fun(err) {
         writeln err
     });
 
@@ -102,30 +102,30 @@ let tryCatch = fun(try) fun(catch) (
     write "\n";
     writeln "A test that the re-raising of exceptions works properly:";
     write "\n";
-    
+
     let exn = newException "re-raising exception"
-    in tryCatch (fun(a) { 
+    in tryCatch (fun(a) {
         writeln "Three";
-        tryCatch (fun(a) { 
+        tryCatch (fun(a) {
             writeln "Four";
             raise exn;
-            writeln "Five" 
-        }) (fun(err) { 
+            writeln "Five"
+        }) (fun(err) {
             writeln "Inner Exception Handler.";
             writeln err;
             raise err
         });
-        writeln "Six" 
-    }) (fun(err) { 
+        writeln "Six"
+    }) (fun(err) {
         writeln "Outer Exception Handler.";
-        writeln err 
+        writeln err
     });
 
     // Machine errors and exception handling
     write "\n";
     writeln "A test that we can catch machine errors and work out what they are:";
     write "\n";
-    
+
     let errorHandler = fun(err)
         if (err == DivisionByZero)
             writeln "division by zero error caught."
@@ -137,13 +137,13 @@ let tryCatch = fun(try) fun(catch) (
         tryCatch(fun(a) {
             10 / 0
         }) errorHandler;
-        
+
         tryCatch(fun(a) {
             0 + ()
         }) errorHandler;
-        
+
         tryCatch(fun(a) {
-           10 match { () -> "hello hello" } 
+           10 match { () -> "hello hello" }
         }) errorHandler
     };
 
@@ -151,22 +151,22 @@ let tryCatch = fun(try) fun(catch) (
     write "\n";
     writeln "A test that exceptions work as expected when they are raised within a recursive function:";
     write "\n";
-    
+
     let exn = newException "recursion exception"
     in letrec test = fun(n)
         if (20 <= n) raise exn
-        else { 
+        else {
             writeln "before";
             writeln n;
             test (n + 1);
-            writeln "after" 
+            writeln "after"
         }
         in tryCatch (fun(a) {
             test 0
         }) (fun(err) {
             writeln err
         });
-        
+
     // Exceptions and lexical / dynamic scope
     write "\n";
     writeln "Test that the current exception handler is determined by the point from which a closure is called";
@@ -176,12 +176,12 @@ let tryCatch = fun(try) fun(catch) (
     let exn = newException "check dynamic scoping of the exception handler"
     in  let f = tryCatch(fun(a) {
             fun(b)(raise exn)       // build a closure within a try...catch block and bind it to f
-        }) (fun(err) { 
+        }) (fun(err) {
             writeln "whoops - the current exception handler is lexically scoped..."
         })
         in tryCatch(fun(a) {
             f ()                    // call f to raise our exception.
         }) (fun(err) {
             writeln "phew - the exception handler is dynamically scoped after all :-)"
-        }) 
+        })
 }

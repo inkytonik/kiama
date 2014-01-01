@@ -6,10 +6,10 @@
  *
  *              Here we represent functions with multiple parameters in
  *              curried form, as single argument functions whose return
- *              results are themselves function closures. 
+ *              results are themselves function closures.
  *
- * Copyright:   (C) 2010-2012 Dominic Verity, Macquarie University
- */ 
+ * Copyright:   (C) 2010-2014 Dominic Verity, Macquarie University
+ */
 
 primitives write;
 
@@ -91,7 +91,7 @@ let writeList = fun(ls) {
         }
     };
     write "]"
-}; 
+};
 
 let lst1 = seq 4 10;
 

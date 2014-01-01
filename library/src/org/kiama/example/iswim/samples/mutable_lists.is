@@ -4,10 +4,10 @@
  *
  *            Here we represent functions with multiple parameters in
  *            curried form, as single argument functions whose return
- *            results are themselves function closures. 
+ *            results are themselves function closures.
  *
  * Author:    Dominic Verity
- * Copyright: Macquarie University (C) 2010-2011
+ * Copyright: Macquarie University (C) 2010-2014
  *
  */
 
@@ -29,12 +29,12 @@ let cons = fun(hd) (fun (tl) (
         fun(tl){cdr := tl})
 ))
 
-and nil = 
+and nil =
     let err = fun(a)(raise listexn)
     in (err,err,err,err);
 
 // Functions for manipulating these cons objects
-let car = fun(lst) (lst match{ (a,c,h,t) -> a (); v -> raise listexn }) 
+let car = fun(lst) (lst match{ (a,c,h,t) -> a (); v -> raise listexn })
 and cdr = fun(lst) (lst match{ (a,c,h,t) -> c (); v -> raise listexn })
 and setcar = fun(lst) (lst match{ (a,c,h,t) -> h; v -> raise listexn })
 and setcdr = fun(lst) (lst match{ (a,c,h,t) -> t; v -> raise listexn });
@@ -58,7 +58,7 @@ let printList = fun(ls) {
 and reverse = fun(ls) (
     letrec shuntReverse = fun(left) fun(right) (
         if (left == nil) right                  // stop once left hand list is exhausted
-        else 
+        else
             let lefttail = cdr left             // get hold of tail of left hand list
             in {
                 setcdr left right;              // change tail pointer of first cons cell in left
@@ -68,7 +68,7 @@ and reverse = fun(ls) (
     ) in shuntReverse ls nil                    // start with right hand list empty
 )
 
-// Test these functions        
+// Test these functions
 and ls1 = cons 1 (cons 2 (cons 3 (cons 4 (cons 5 nil))));
 
 {
@@ -80,8 +80,8 @@ and ls1 = cons 1 (cons 2 (cons 3 (cons 4 (cons 5 nil))));
     write "\n";                 // reverse ls1 has actually changed....
     car nil                     // will raise a list exception - nil has no head.
 }
-        
 
 
 
- 
+
+

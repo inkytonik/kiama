@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2010-2013 Dominic R B Verity, Anthony Sloane, Macquarie University.
+ * Copyright (C) 2010-2014 Dominic R B Verity, Anthony Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -277,7 +277,7 @@ in      factorial(plusone 5)
         /*
          * Title:       Fibonacci fun
          * Description: A very simple imperative Fibonacci function with driver.
-         * Copyright:   (C) 2010-2013 Dominic Verity, Macquarie University
+         * Copyright:   (C) 2010-2014 Dominic Verity, Macquarie University
          */
 
         // declare preloaded primitives
@@ -348,7 +348,7 @@ in      factorial(plusone 5)
  * Title:     An implementation of try...catch exception
  *            handling using continuations
  * Author:    Dominic Verity
- * Copyright: Macquarie University (C) 2007-2013
+ * Copyright: Macquarie University (C) 2007-2014
  *
  * A try..catch block is implemented using 2 continuations:
  *        The first marks the exit point for normal exits.

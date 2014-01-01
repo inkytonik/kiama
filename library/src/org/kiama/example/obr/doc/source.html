@@ -108,7 +108,7 @@ BoolExp:        Expression : Boolean
 BoolVar:        Declaration : Identifier
 EqualExp:       Expression : Expression Expression
 ExitStmt:       Statement
-ForStmt:        Statement: Identifier Expression Expression Statement* 
+ForStmt:        Statement: Identifier Expression Expression Statement*
 GreaterExp:     Expression : Expression Expression
 IdnExp:         Expression : Identifier
 IdnLeaf:        Identifier
@@ -166,7 +166,7 @@ WhileStmt:      Statement : Expression Statement*
     of the construct.  In the case
     of an array variable the component is an integer that gives the
     size of the array.  The lowest index of an array is always zero.
-    
+
     <p>An IntParam construct is just like an IntVar except that the
     initial value of the variable is read from the standard input
     when the program begins execution.</p>
@@ -181,7 +181,7 @@ WhileStmt:      Statement : Expression Statement*
     type returned by the root Expression is determined by the
     function. Each component expression must return a value that is
     compatible with the corresponding argument type of the function.
-    
+
      <p>AndExp, EqualExp, GreaterExp, LessExp, MinusExp,
     ModExp, NotEqualExp, OrExp, PlusExp, SlashExp and StarExp are the dyadic
     node types.</p>
@@ -217,7 +217,7 @@ WhileStmt:      Statement : Expression Statement*
 
     An identifier is a leaf of the source program tree.  Its unique
     encoding is established at the time the tree is built.
-    
+
     <h4>IfStmt</h4>
 
     The IfStmt construct represents a conditional statement. The
@@ -263,7 +263,7 @@ WhileStmt:      Statement : Expression Statement*
     the root Expression of the Monadic construct is determined by the
     function. The component expression must return a value that is
     compatible with the argument type of the function.
-    
+
      <p>NegExp and NotExp are the monadic node types.</p>
 
     <h4>ObrInt</h4>
@@ -323,7 +323,7 @@ ObrInt (
 Last modified: Mon Aug 18  9:24:56 EST 2003
 <!-- hhmts end -->
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (C) 2003-2011,
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (C) 2003-2014,
 by Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

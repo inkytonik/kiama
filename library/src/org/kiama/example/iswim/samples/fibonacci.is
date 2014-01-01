@@ -1,21 +1,21 @@
 /**
  * Title:       Fibonacci fun
  * Description: A very simple imperative Fibonacci function with driver.
- * Copyright:   (C) 2010-2012 Dominic Verity, Macquarie University
- */ 
+ * Copyright:   (C) 2010-2014 Dominic Verity, Macquarie University
+ */
 
 // declare preloaded primitives
 primitives write, read, fields, type;
 
 // Imperative fibonacci function
-letrec fib = fun(n) 
+letrec fib = fun(n)
     let r1 = mkref 0
-    and r2 = mkref 1 
+    and r2 = mkref 1
     and r3 = mkref (-1)
     in  letrec f = fun(m)
-            if (m == 0)  
+            if (m == 0)
                 val r1
-            else {  
+            else {
                 r3 := val r1 + val r2;
                 r1 := val r2;
                 r2 := val r3;

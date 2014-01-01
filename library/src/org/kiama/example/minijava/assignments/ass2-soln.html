@@ -12,7 +12,7 @@
 
     <p>This assignment concerned the design, development, testing, and
     documentation of a semantic analyser for a simple MiniJava version of
-    the Java programming language. We had to implement checks for a 
+    the Java programming language. We had to implement checks for a
     variety of semantic conditions, mostly involving naming and typing.
     Also, we had to design test cases to demonstrate that our
     implementation is working correctly.</p>
@@ -25,7 +25,7 @@
 
     <h3>Part One: The basic MiniJava semantic rules</h3>
 
-    <p>This part of the assignment required us to implement rules 
+    <p>This part of the assignment required us to implement rules
     1, 2, 4-15 and 17-19 as specified in the handout. In the following
     I consider each rule in turn, discussing how each of them was
     implemented. Testing is considered in the final sub-section.</p>
@@ -60,7 +60,7 @@
 case e : Expression =>
     if (!iscompatible (e->tipe, e->exptipe))
         message (e, "type error: expected " + (e->exptipe) + " got " + (e->tipe))
-</pre>    
+</pre>
 
     <p>I followed the same scheme as in the practical exercises by
     defining an <code>iscompatible</code> method which compares the type
@@ -93,11 +93,11 @@ case _ : TrueExp | _ : FalseExp =>
 
     <p>This rule required a case for <code>tipe</code> at <code>IdnExp</code>
     nodes. The case looks at the entity associated with the identifier
-    occurrence to determine what kind of entity it is, returning the 
+    occurrence to determine what kind of entity it is, returning the
     appropriate type as specified in the rule. An important aspect was
     having a default case to specify an unknown type in the case when
     there is no sensible entity associated with the identifier occurrence.
-    Otherwise, we will get spurious type errors when identifiers are 
+    Otherwise, we will get spurious type errors when identifiers are
     not declared.</p>
 
 <pre>
@@ -115,7 +115,7 @@ case IdnExp (i) =>
 </pre>
 
     <p>Note that in the argument and variable entity cases we don't just
-    use the type as found in the declaration. This is because if the 
+    use the type as found in the declaration. This is because if the
     type is a class type then that type will just refer to the name of
     the class. To be useful for type-checking, we really need to use a
     reference type that refers to the declaration of the named class.
@@ -135,10 +135,10 @@ def actualTypeOf (t : Type) : Type =
         case _ =>
             t
     }
-</pre>    
+</pre>
 
     <p>In the non-class type cases, the type in the declaration is the
-    same as the internal type for type checking, so we just leave it 
+    same as the internal type for type checking, so we just leave it
     alone.</p>
 
     <p><code>actualTypeOf</code> will be used by later cases for the
@@ -147,9 +147,9 @@ def actualTypeOf (t : Type) : Type =
     <p><em>Rule 7: The condition in an if-statement or while-statement
     must be of type Boolean.</em></p>
 
-    <p>This rule required updating the <code>exptipe</code> attribute 
+    <p>This rule required updating the <code>exptipe</code> attribute
     to have a case for when the parent of an expression is an if or
-    while statement node.</p>    
+    while statement node.</p>
 
 <pre>
 case _ : If | _ : While =>
@@ -166,15 +166,15 @@ case _ : If | _ : While =>
 <pre>
 case _ =>
     UnknownType ()
-</pre>    
+</pre>
 
-    <p><em>Rule 9: In a variable assignment statement, the name on the 
+    <p><em>Rule 9: In a variable assignment statement, the name on the
     left-hand side must refer to a variable or argument. The type of
     the expression on the right-hand side must be the same as that of
     the variable or argument.</em></p>
 
-    <p>This rule required <code>exptipe</code> to have a case for 
-    variable assignment nodes. There are two sub-cases: one for 
+    <p>This rule required <code>exptipe</code> to have a case for
+    variable assignment nodes. There are two sub-cases: one for
     normal variables and one for method arguments. In each case
     the expected type can be extracted from the respective entity.
     As for rule 6, we have a default case that returns an unknown
@@ -253,7 +253,7 @@ case _ : LengthExp =>
     IntType ()
 </pre>
 
-    <p>and by these cases in the <code>exptipe</code> attribute 
+    <p>and by these cases in the <code>exptipe</code> attribute
     definition:</p>
 
 <pre>
@@ -282,12 +282,12 @@ case _ : LengthExp =>
     instance of the class in which the this expression occurs.</em></p>
 
     <p>This rule required a bit more work. The reason is that the type
-    that we need is not constant, nor is it directly obtainable from 
+    that we need is not constant, nor is it directly obtainable from
     the <code>ThisExp</code> node. What we need to do is to look upwards
     in the tree to find the nearest enclosing <code>Class</code> node.
     The type of <code>this</code> will be a reference to that class
     type. I implmented the search in a new <code>thistype</code>
-    attribute and use it in the <code>ThisExp</code> case of the 
+    attribute and use it in the <code>ThisExp</code> case of the
     <code>tipe</code> attribute.</p>
 
 <pre>
@@ -299,7 +299,7 @@ case e : ThisExp =>
     at the root then we have not found a class, so we return the
     unknown type. If we are at a class node then we return it.
     Otherwise, we just search up the tree by asking our parent what
-    its <code>thistype</code> is.</p>   
+    its <code>thistype</code> is.</p>
 
 <pre>
 lazy val thistype : SourceNode => Type =
@@ -317,7 +317,7 @@ lazy val thistype : SourceNode => Type =
 </pre>
 
     <p><em>Rule 18: In a new array expression the type of the sub-expression
-    must be integer. The type of the new array expression is integer array. 
+    must be integer. The type of the new array expression is integer array.
     </em></p>
 
     <p>These rules are again straight-forward. <code>tipe</code> just returns
@@ -342,7 +342,7 @@ case _ : NewArrExp =>
     instance of that class.</em></p>
 
     <p>As for some of the earlier cases, we just get the entity referred
-    to by a name in a new expression. In <code>check</code> we have a 
+    to by a name in a new expression. In <code>check</code> we have a
     case to complain if the entity that is used in such an expression is
     not referring to a class entity. Note that this test automatically
     rules out the main class since a different kind of entity is used
@@ -385,7 +385,7 @@ case NewExp (i) =>
 
     <p><em>As in Assignment One, there are many, many tests that we
     could write for our semantic analysis. It is difficult to know
-    when we have been complete enough. What you will find in the 
+    when we have been complete enough. What you will find in the
     sample solution is a pretty complete attempt, but there are
     still more tests that we could imagine having. For marking,
     we wanted to see that you had put some effort into considering
@@ -423,7 +423,7 @@ def embedExpressionAndCheck (exp : Expression,
     <p>For example, the first test below declares an integer
     variable <code>v</code> and uses it in an assignment statement to
     make sure that an integer expression can be assigned to it. This
-    is a positive test since we expect no error. The second test 
+    is a positive test since we expect no error. The second test
     below is similar, but tests the negative condition since the
     variable is of integer type but the expression is Boolean.
     Most of the tests follow this pattern.</p>
@@ -482,7 +482,7 @@ test ("the type of this is the current class") {
     same pattern as those in Part One. A return expression occurs directly
     as a child of the method body node. The body node contains the return
     type of the method as a field. Thus, the relevant case of
-    <code>exptipe</code> just has to extract it and return it (after 
+    <code>exptipe</code> just has to extract it and return it (after
     making sure it is an actual type as we have done before).</p>
 
 <pre>
@@ -603,9 +603,9 @@ case e : Expression =>
     val expargnum = decl.body.args.length
     if (expargnum != args.length)
         message (u, "wrong number of arguments, got " +
-                     args.length + " but expected " + 
+                     args.length + " but expected " +
                      expargnum)
-</pre>    
+</pre>
 
     <p>The <code>tipe</code> attribute has a case that specifies the type
     of a call expression to be the return type of the called method (or
@@ -619,17 +619,17 @@ case CallExp (_, i, _) =>
         case _ =>
             UnknownType ()
     }
-</pre>        
+</pre>
 
-    <p>We also need to specify the expected type of each argument in a 
+    <p>We also need to specify the expected type of each argument in a
     call expression. In the <code>exptipe</code> attribute case for an
     expression whose parent is a call expression, if we are calling a
-    method we use a helper methoed <code>expTypeOfArg</code> to work 
-    out what the type of the argument. We somehow need to know which 
+    method we use a helper methoed <code>expTypeOfArg</code> to work
+    out what the type of the argument. We somehow need to know which
     argument in the argument list the expression <code>e</code> is,
-    so we use a Kiama node property <code>e.index</code> for this 
+    so we use a Kiama node property <code>e.index</code> for this
     purpose. (An alternative method would be to write a method that
-    searches the argument list for <code>e</code> and returns the 
+    searches the argument list for <code>e</code> and returns the
     position where it was found.)</p>
 
 <pre>
@@ -642,7 +642,7 @@ case CallExp (_, u, _) =>
             // No idea what is being called, so no type constraint
             UnknownType ()
     }
-</pre>    
+</pre>
 
     <p><code>expTypeOfArg</code> looks up the formal argument if the
     actual argument is in range and returns the relevant actual type.
@@ -692,7 +692,7 @@ test ("the type of a method call expression is the method return type (1)") {
     <hr>
     <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012-2014 by
 Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

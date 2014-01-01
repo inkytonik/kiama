@@ -8,9 +8,9 @@
     <h1>Macquarie University<br>Department of Computing</h1>
 
     <h2>COMP332 Programming Languages 2012</h2>
-    
+
     <h2>Assignment One</h2>
-  
+
     <h3>MiniJava Syntax Analysis</h3>
 
     <p>Due: 11am Monday 3 September (Week 6)<br>
@@ -25,25 +25,25 @@
     way that programming language implementations work in general,
     as well as specific experience with how Java is compiled and
     executed.</p>
-    
+
     <p>This kind of task often arises in programming situations other
     than language implementation. For example, many applications have
     configuration files that are written in simple languages. The
     application must be able to read these files reliably and
     understand their structure, just as a compiler must read program
     files and understand them.</p>
-    
+
      <p>Aspects such as checking the validity of names or
     types and translating the program into an executable form are beyond
     the scope of syntax analysis. We will address them in Assignments Two
     and Three.</p>
 
     <h4>MiniJava</h4>
-        
+
     <p>Java is a very widely used object-oriented programming language.
-    Building a compiler for the whole of Java is not feasible for a 
+    Building a compiler for the whole of Java is not feasible for a
     unit like COMP332. Instead, we will implement a cut-down version
-    called <em>MiniJava</em>. This exercise will still require you to 
+    called <em>MiniJava</em>. This exercise will still require you to
     come to terms with the fundamental issues for progarmming language
     implementation, but within a more tractable setting.</p>
 
@@ -56,7 +56,7 @@
     and integer arrays.
     Expressions are restricted to basic operations on integers, Booleans
     and arrays, plus calling instance methods. Allowed statements are
-    assignment, conditionals, while loops and blocks. There is no 
+    assignment, conditionals, while loops and blocks. There is no
     mechanism for input, so data must be encoded in the program. Output
     is restricted to calling <code>System.out.println</code>.</p>
 
@@ -69,24 +69,24 @@
           System.out.println (new Fac ().ComputeFac (10));
       }
   }
-  
+
   class Fac {
       public int ComputeFac (int num) {
           int num_aux;
           if (num < 1)
               num_aux = 1;
-          else 
+          else
               num_aux = num * (this.ComputeFac (num - 1));
           return num_aux;
       }
   }
-</pre>    
+</pre>
 
     <p>You can find more information about MiniJava at the
     <a href="http://www.cambridge.org/us/features/052182060X/#progs">web site of the Modern Compiler Implementation in Java textbook</a>.
     In particular, that site features some more MiniJava programs
     that you might find useful. They are also included in the
-    <code>test</code> directory of the assignment skeleton, 
+    <code>test</code> directory of the assignment skeleton,
     modified to remove the main argument array, since we are not
     handling that in this assignment.</p>
 
@@ -110,7 +110,7 @@
      assignment before moving onto the next one. In fact, within each
      part it is advisable to solve small portions at a time rather
      than trying to code the whole solution in one go.</p>
-     
+
 <h4>The syntax of MinJava</h4>
 
        <p>To guide your implementation, here is a complete
@@ -118,41 +118,41 @@
 
 <pre>
   Program           : MainClass ClassDeclaration*.
-  
+
   MainClass         : "class" Identifier "{"
                           "public" "static" "void" "main" "(" ")" "{"
                               Statement
                           "}"
                       "}".
-  
+
   ClassDeclaration  : "class" Identifier ("extends" Identifier)? {"
                            VarDeclaration*
                            MethodDeclaration*
                       "}".
-  
+
   VarDeclaration    : Type Identifier ";".
-  
+
   MethodDeclaration : "public" Type Identifier "(" Arguments ")" "{"
                           VarDeclaration*
                           Statement*
                           "return" Expression ";"
                       "}".
-  
+
   Arguments         : Type Identifier ("," Type Identifier)*
                     | /* empty */.
-  
+
   Type              : "int"
                     | "boolean"
                     | "int" "[" "]"
                     | Identifier.
-  
+
   Statement         : "{" Statement* "}"
                     | "if" "(" Expression ")" Statement "else" Statement
                     | "while" "(" Expression ")" Statement
                     | "System.out.println" "(" Expression ")" ";"
                     | Identifier "=" Expression ";"
                     | Identifier "[" Expression "]" "=" Expression ";".
-  
+
   Expression        : Expression ("&&" | "<" | "+" | "-" | "*") Expression
                     | Expression "[" Expression "]"
                     | Expression "." "length"
@@ -166,7 +166,7 @@
                     | "new" Identifier "(" ")"
                     | "!" Expression
                     | "(" Expression ")".
-  
+
   ExpressionList    : Expression ("," Expression)*
                     | /* empty */.
 </pre>
@@ -209,7 +209,7 @@ syntax analyser and tree builder as a guide for your
 implementation.</p>
 
 <p>A skeleton sbt project for the assignment has been provided on
-BitBucket as the <code>inkytonik/comp332-ass1</code> repository. 
+BitBucket as the <code>inkytonik/comp332-ass1</code> repository.
 The modules are very similar to those used in the practical exercises
 for Week 2 and 3. The skeleton contains the modules you will need.
 Some of the parsing and tree construction is given to you as an
@@ -281,8 +281,8 @@ support the definition of named interfaces that include signatures
 <p>As well as determining an appropriate syntax for MiniJava interfaces
 and recognising it in your parser, you must augment your tree definition
 to contain whatever new classes you need to appropriately represent
-interfaces in the source program tree. You should re-use existing 
-classes where it makes sense, but you will at least need a new class 
+interfaces in the source program tree. You should re-use existing
+classes where it makes sense, but you will at least need a new class
 to represent interfaces themselves.</p>
 
 <p>Consult the teaching staff of the unit if you are in doubt about
@@ -392,7 +392,7 @@ assignment.</p>
 <!-- Created: Thu Jul  9 11:51:06 EST 2004 -->
 <!-- hhmts start -->Last modified: 9 August 2012 <!-- hhmts end -->
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2010-2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2010-2014 by
 Anthony Sloane. All rights reserved.</A></FONT><BR>
   </body>
 </html>

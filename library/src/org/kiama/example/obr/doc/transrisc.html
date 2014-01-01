@@ -9,7 +9,7 @@
     <h2>COMP332 Obr Translation into RISC Code</h2>
 
     This document describes
-    
+
     <UL>
     <LI>the structure of the target trees used by the Obr compiler to represent
         RISC target programs,
@@ -17,17 +17,17 @@
         construct, and
     <LI>how to get Obr to generate and run RISC machine code.
     </UL>
-    
+
     <P>The document concludes with examples of translations of a couple of
     simple Obr programs.</P>
-    
+
     <P>The code that supports the tree structure and encoding described in
     this document can be found in <code>RISCTree.scala</code> and
     <code>Encoder.scala</code> in the Obr compiler.  The mapping from Obr
     trees to RISC trees can be found in <code>Transformation.scala</code>.</p>
 
     <h2>The RISC Target Program Tree</h2>
-    
+
     <p>All of the information that the translation task of the compiler
     provides about the target program is embodied in the target
     program tree.  If a particular item of information cannot be
@@ -62,7 +62,7 @@
 
     <p>The following productions summarise the constructs of the RISC by
     giving the structure of the subtree for each construct.</p>
-    
+
 <pre>
 RISCProg:        RISCNode: Item+
 
@@ -106,7 +106,7 @@ Indexed:         Address: Local Datum
     decisions about operand access.</p>
 
     <h4>RISC</h4>
-    
+
 <pre>
 RISC:     RISC: Item+
 </pre>
@@ -114,7 +114,7 @@ RISC:     RISC: Item+
   <p>The encoding of a RISC construct is very simple, we simply encode each of the items in its body, concatenate the resulting RISC code sequences and then add <em>prologue</em> (initilisation) and <em>epilogue</em> (termination) code. Currently this prologue code simply initialises register $27 topoints to the memory segment which will be used to store the values of global variables and temporaries. The epilogue is begun by a standard label to enable the <code>Ret</code> construct (see below) to transfer control to it. Then it simply terminates the program by executing a <code>ret $0</code> instruction.</p>
 
     <h4>Branches</h4>
-    
+
 <pre>
 Beq:       Item: Datum Label
 Bne:       Item: Datum Label
@@ -122,7 +122,7 @@ Jmp:       Item: Label
 </pre>
 
     <p>A branch (<code>Beq</code> or <code>Bne</code>) is encoded as the encoding of its <em>Datum</em> component followed by a test and branch to the <em>Label</em> component. A <code>Beq</code> does a branch on equal to zero and a <code>Bne</code> does a branch on not equal to zero.</p>
-    
+
      <p>A <code>Jmp</code> does an unconditional branch to its <em>Label</em> component.</p>
 
     <h4><code>LabelDef</code></h4>
@@ -130,9 +130,9 @@ Jmp:       Item: Label
 <pre>
 LabelDef:  Item: Label
 </pre>
-    
+
   <p>A <code>LabelDef</code> construct represents a definition of a label and is encoded by emitting that definition in the appropriate assembler syntax.</p>
-        
+
     <h4><code>Read</code> and <code>Write</code></h4>
 
 <pre>
@@ -141,12 +141,12 @@ Write:     Item: Datum
 </pre>
 
   <p>These constructs are encoded using the corresponding terminal IO RISC instructions <code>rd</code>, <code>wrd</code> and <code>wrl</code>.  In the case of <code>Read</code> the value read is stored in the location given by the <em>Address</em> component.  In the case of <code>Write</code> the value written is that given by the <em>Datum</em> component which is encoded first.</p>
-        
+
         <h4><code>Ret</code></h4>
-        
+
 <pre>
 Ret:       Item
-</pre>            
+</pre>
 
   <p>A <code>Ret</code> construct is encoded by an unconditional jump to a label at the end of the code comprising the program (i.e., to the beginning of the epilogue). This encoding ensures that a return from any part of the program will complete necessary processing before exiting the program.</p>
 
@@ -181,20 +181,20 @@ IntDatum:  Datum: Int
     into the location required by the <em>Datum</em>.</p>
 
 <h4><code>Cond</code> and <code>Not</code></h4>
-        
+
 <pre>
 Cond:      Datum: Datum Datum Datum
 Not:       Datum: Datum
 </pre>
 
     <p>A <code>Cond</code> construct is encoded by encoding its first <em>Datum</em> component, followed by a sequence of instructions that evaluate the second <em>Datum</em> if the first <em>Datum</em> is non-zero, or evaluate the third <em>Datum</em> if the first <em>Datum</em> is zero. In either case the result value will be left in the location required by the <code>Cond</code> <em>Datum</em> itself. The <code>Not</code> construct is encoded as if it were converted to a corresponding <code>Cond</code> tree under the following translation: </p>
-        
+
 <pre>
 Not (d) -&gt; Cond (d, IntDatum(0), IntDatum(1))
 </pre>
 
         <h4>Comparisons: <code>CmpeqW</code>, <code>CmpneW</code>, <code>CmpgtW</code>, <code>CmpltW</code></h4>
-        
+
 <pre>
 CmpeqW:    Datum: Datum Datum
 CmpneW:    Datum: Datum Datum
@@ -211,14 +211,14 @@ LdW:       Datum: Address
 </pre>
 
     <p>A <code>LdW</code> construct is encoded as a load of a word value from the location specified by its <em>Address</em> component into the register associated with this <code>LdW</code>.</p>
-    
+
         <h4>Addresses: <code>Local</code>, <code>Indexed</code></h4>
-    
+
 <pre>
 Local:     Address: Int
 Indexed:   Address: Local Datum
-</pre>        
-    
+</pre>
+
 
     <p>A <code>Local</code> address represents a word-sized storage location in the main block of memory that is accessible to an Obr program. Its <code>Int</code> child specifies the offset in bytes from the start of the memory block at which the word is located.</p>
 
@@ -229,7 +229,7 @@ Indexed:   Address: Local Datum
     <h4><code>SequenceDatum</code></h4>
 
     A <code>SequenceDatum</code> construct of the form
-    
+
 <pre>
 SequenceDatum Item-1 ... Item-n Datum
 </pre>
@@ -246,9 +246,9 @@ Code for Datum
     Here <code>Item-i</code> is the ith element of the component <em>Item</em> list.
 
     <h2>Transforming Obr Source Trees to RISC Target Trees</h2>
-    
+
     <p>The results of the mapping process from source to target are reflected in the properties and structure of the target tree. This section describes how Obr source data and actions are mapped to target constructs.</p>
-    
+
     <h3>Obr/RISC Data Mapping</h3>
 
     <p>Obr programs can manipulate only integer and Boolean basic values plus structured values that are arrays and records. Both parameters and variables can be declared. Therefore, a definition of the data mapping task must specify how values of these types are implemented on the RISC, and how storage is allocated for parameters and variables.</p>
@@ -258,9 +258,9 @@ Code for Datum
       <p>Obr constants do not need any storage since the compiler knows their value and can construct an <code>IntDatum</code> node that can be used directly.</p>
 
     <p>An Obr integer is implemented by a RISC word (32 bits). For convenience, Boolean values are also represented by RISC words. True is represented by 1, and false is represented by 0.</p>
-    
+
      <p>Storage for all of the variables declared in an Obr program is allocated in a single area of RISC memory. During execution, register $27 contains the address of the beginning of the memory area. Thus, any variable's location can be specified by the sum of a non-negative integer and the contents of register $27. Since each variable occupies four bytes of memory, the offsets from the content of register $27 are all multiples of 4: The topmost variable is in location $27, the next variable is in location $27 + 4, and so on.</p>
-    
+
      <p>Arrays and records are allocated as contiguous memory as if the array elements or fields were declared as individual integer variables. (Recall that array elements and fields must be integers.) Therefore an array of N elements or a record with N fields is allocated as N contiguous words of memory.</p>
 
     <h3>Obr/RISC Action Mapping</h3>
@@ -394,15 +394,15 @@ WhileStmt (e, s) -&gt;
     <h2>Running Compiled Programs</h2>
 
     <p>The default behaviour of the Obr compiler is to execute all syntactic, semantic and code generation phases, reporting any errors that occur but doing nothing else. To alter this behaviour we provide three command line flags:</p>
-    
+
     <ul>
         <li><p><code>-t</code> spill the target tree constructed by the translation phase to the standard output.</p></li>
         <li><p><code>-a</code> spill the output of the encoding phase to the standard output as RISC assembly language code.</p></li>
         <li><p><code>-e</code> assemble and execute the generated RISC code in the Obr compilers built in RISC machine emulator.</p></li>
     </ul>
-    
+
     <h3>Detailed Examples</h3>
-    
+
     <p>This section shows the complete RISC target trees and assembly code that
     would be produced for the factorial and GCD Obr programs.</p>
 
@@ -428,19 +428,19 @@ END GCD.
 <pre>
 RISCProg(
     List(
-        StW(Local(0),Read()), 
-        StW(Local(4),Read()), 
-        Jmp(Label(2)), 
-        LabelDef(Label(3)), 
+        StW(Local(0),Read()),
+        StW(Local(4),Read()),
+        Jmp(Label(2)),
+        LabelDef(Label(3)),
         Beq(CmpgtW(LdW(Local(0)),LdW(Local(4))),Label(4)),
-        StW(Local(0),SubW(LdW(Local(0)),LdW(Local(4)))), 
-        Jmp(Label(5)), 
-        LabelDef(Label(4)), 
-        StW(Local(4),SubW(LdW(Local(4)),LdW(Local(0)))), 
-        LabelDef(Label(5)), 
-        LabelDef(Label(2)), 
-        Bne(CmpneW(LdW(Local(0)),LdW(Local(4))),Label(3)), 
-        Write(LdW(Local(0))), 
+        StW(Local(0),SubW(LdW(Local(0)),LdW(Local(4)))),
+        Jmp(Label(5)),
+        LabelDef(Label(4)),
+        StW(Local(4),SubW(LdW(Local(4)),LdW(Local(0)))),
+        LabelDef(Label(5)),
+        LabelDef(Label(2)),
+        Bne(CmpneW(LdW(Local(0)),LdW(Local(4))),Label(3)),
+        Write(LdW(Local(0))),
         Ret()))
 </pre>
 
@@ -509,7 +509,7 @@ label6:
 </pre>
 
    <P>Here is the same information for the Obr factorial program.</P>
-   
+
 <pre>
 PROGRAM Factorial (v : INTEGER) : INTEGER;
 
@@ -540,27 +540,27 @@ END Factorial.
 <pre>
 RISCProg(
     List(
-        StW(Local(0),Read()), 
+        StW(Local(0),Read()),
         Beq(
             Cond(
                 CmpltW(LdW(Local(0)),IntDatum(0)),
                 IntDatum(1),
                 CmpgtW(LdW(Local(0)),IntDatum(7))),
             Label(2)),
-        Write(NegW(IntDatum(1))), 
-        Ret(), 
-        Jmp(Label(3)), 
-        LabelDef(Label(2)), 
-        StW(Local(4),IntDatum(0)), 
-        StW(Local(8),IntDatum(1)), 
-        Jmp(Label(4)), 
-        LabelDef(Label(5)), 
-        StW(Local(4),AddW(LdW(Local(4)),IntDatum(1))), 
-        StW(Local(8),MulW(LdW(Local(8)),LdW(Local(4)))), 
-        LabelDef(Label(4)), 
-        Bne(CmpltW(LdW(Local(4)),LdW(Local(0))),Label(5)), 
-        Write(LdW(Local(8))), 
-        Ret(), 
+        Write(NegW(IntDatum(1))),
+        Ret(),
+        Jmp(Label(3)),
+        LabelDef(Label(2)),
+        StW(Local(4),IntDatum(0)),
+        StW(Local(8),IntDatum(1)),
+        Jmp(Label(4)),
+        LabelDef(Label(5)),
+        StW(Local(4),AddW(LdW(Local(4)),IntDatum(1))),
+        StW(Local(8),MulW(LdW(Local(8)),LdW(Local(4)))),
+        LabelDef(Label(4)),
+        Bne(CmpltW(LdW(Local(4)),LdW(Local(0))),Label(5)),
+        Write(LdW(Local(8))),
+        Ret(),
         LabelDef(Label(3))))
 </pre>
 
@@ -652,13 +652,13 @@ label3:
 label6:
     ret $0
 </pre>
-   
+
     <hr>
     <address><a href="mailto:asloane@comp.mq.edu.au">Tony Sloane</a> and <a href="mailto:domv@ics.mq.edu.au">Dominic Verity</a></address>
 <!-- Created: Thu Jul  9 11:51:06 EST 1998 -->
 <!-- hhmts start -->Last Modified: Tue Oct 05 16:10:03 +1100 2010<!-- hhmts end -->
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 1998-2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 1998-2014 by
 Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

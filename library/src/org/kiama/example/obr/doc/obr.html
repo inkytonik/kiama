@@ -9,7 +9,7 @@
     <h2>Obr Language Reference Manual</h2>
 
     Obr is a simple imperative language modelled on the Oberon family
-    of languages designed by Niklaus Wirth.  
+    of languages designed by Niklaus Wirth.
     This document provides background information needed to understand
     the semantics of the language.<p>
 
@@ -41,7 +41,7 @@ Integer: [0-9]+
 <pre>
 ( ) : ; + - * = , := ~ # &lt; &gt; . [ ] .. |
 AND ARRAY BEGIN BOOLEAN CONST DO ELSE ELSIF END EXIT FALSE FOR IF
-INTEGER LOOP MOD OF OR PROGRAM RETURN THEN TO TRUE VAR WHILE 
+INTEGER LOOP MOD OF OR PROGRAM RETURN THEN TO TRUE VAR WHILE
 </pre>
 
     An identifier is a freely chosen representation for an object.  It
@@ -52,7 +52,7 @@ INTEGER LOOP MOD OF OR PROGRAM RETURN THEN TO TRUE VAR WHILE
 
     Denotations have the usual meanings.<p>
 
-    Keywords can be used only as indicated by the context-free grammar 
+    Keywords can be used only as indicated by the context-free grammar
     productions.<p>
 
     Comments are arbitrary sequences of characters beginning with
@@ -112,7 +112,7 @@ StatementSeq : Statement*.
     <h3>Declarations</h3>
 
 <pre>
-ParameterDecl : Identifier ":" "INTEGER". 
+ParameterDecl : Identifier ":" "INTEGER".
 Declarations  : ("CONST" (ConstantDecl ";")+)?
                 ("VAR" (VariableDecl ";")+)?.
 ConstantDecl  : Identifier "=" Integer.
@@ -146,7 +146,7 @@ TypeSpec      : "INTEGER"
       Values of type "BOOLEAN" represent truth values.  Only two
       Boolean values exist: true and false, denoted by the keywords
       "TRUE" and "FALSE", respectively.<p>
-      
+
       Values of array type represent collections of a given number of
       integer elements.<p>
 
@@ -266,7 +266,7 @@ FOR <em>id</em> := <em>e1</em> TO <em>e2</em> DO <em>s</em> END
 <em>limit</em> := <em>e2</em>;
 LOOP
   IF <em>id</em> &gt; <em>limit</em> THEN EXIT END;
-  <em>s</em>; 
+  <em>s</em>;
   <em>id</em> := <em>id</em> + 1;
 END;
 </pre>
@@ -301,7 +301,7 @@ AddOp      : "+" | "-" | "OR".
 Term       : Factor | Term MulOp Factor.
 MulOp      : "*" | "/" | "MOD" | "AND".
 Factor     : Identifier | Integer |
-           | Identifier "[" Expression "]" 
+           | Identifier "[" Expression "]"
            | "TRUE" | "FALSE" | "(" Expression ")"
            | "~" Factor | "-" Factor.
 </pre>
@@ -317,21 +317,21 @@ Factor     : Identifier | Integer |
 <pre>
      Op1      Op2      Result     Operation
 
-=    integer   integer   Boolean     integer equality 
-     Boolean   Boolean   Boolean     Boolean equality  
-#    integer   integer   Boolean     integer inequality 
-     Boolean   Boolean   Boolean     Boolean inequality  
-&lt;    integer   integer   Boolean     integer less than  
-&gt;    integer   integer   Boolean     integer greater than  
-+    integer   integer   integer     integer addition  
--    integer   integer   integer     integer subtraction  
-*    integer   integer   integer     integer multiplication  
-/    integer   integer   integer     integer division  
-MOD  integer   integer   integer     integer remainder  
-OR   Boolean   Boolean   Boolean     disjunction   
-AND  Boolean   Boolean   Boolean     conjunction   
--    integer             integer     integer negation  
-~    Boolean             Boolean     Boolean complement  
+=    integer   integer   Boolean     integer equality
+     Boolean   Boolean   Boolean     Boolean equality
+#    integer   integer   Boolean     integer inequality
+     Boolean   Boolean   Boolean     Boolean inequality
+&lt;    integer   integer   Boolean     integer less than
+&gt;    integer   integer   Boolean     integer greater than
++    integer   integer   integer     integer addition
+-    integer   integer   integer     integer subtraction
+*    integer   integer   integer     integer multiplication
+/    integer   integer   integer     integer division
+MOD  integer   integer   integer     integer remainder
+OR   Boolean   Boolean   Boolean     disjunction
+AND  Boolean   Boolean   Boolean     conjunction
+-    integer             integer     integer negation
+~    Boolean             Boolean     Boolean complement
 </pre>
 
     Equality yields the value true if its operands have the same
@@ -351,8 +351,8 @@ AND  Boolean   Boolean   Boolean     conjunction
       <li>Let q and 0 &lt; r &lt; |n| be two integers such that
         m = q * n + r.
       <li>If r = 0 then the result of m / n is q.
-      <li>Otherwise, if m &gt; 0 and n &gt; 0 then the result of 
-        m / n is q. 
+      <li>Otherwise, if m &gt; 0 and n &gt; 0 then the result of
+        m / n is q.
       <li>Otherwise, the result of m / n is either q or q+1
         at the discretion of the implementor.
     </ol>
@@ -427,7 +427,7 @@ END Factorial.
 Last modified: Wed Sep 9 2009
 <!-- hhmts end -->
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (C) 2003-2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (C) 2003-2014 by
 Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

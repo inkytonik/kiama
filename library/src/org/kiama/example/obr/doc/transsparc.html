@@ -9,7 +9,7 @@
     <h2>Obr Translation into SPARC Code</h2>
 
     This document describes
-    
+
     <UL>
     <LI>the structure of the target trees used by the Obr compiler to represent
         SPARC target programs,
@@ -17,17 +17,17 @@
         construct, and
     <LI>how to assemble and run the SPARC assembly language code.
     </UL>
-    
+
     <P>The document concludes with examples of translations of a couple of
     simple Obr programs.</P>
-    
+
     <P>The code that supports the tree structure and encoding described in
     this document can be found in <code>SPARCTree.scala</code> and
     <code>Encoder.scala</code> in the Obr compiler.  The mapping from Obr
     trees to SPARC trees can be found in <code>Transformation.scala</code>.</p>
 
     <h2>The SPARC Target Program Tree</h2>
-    
+
     <p>All of the information that the translation task of the compiler
     provides about the target program is embodied in the target
     program tree.  If a particular item of information cannot be
@@ -62,7 +62,7 @@
 
     <p>The following productions summarise the constructs of the SPARC by
     giving the structure of the subtree for each construct.</p>
-    
+
 <pre>
 SPARC:     SPARC: Item+ Int
 
@@ -105,7 +105,7 @@ Indexed:   Address: Local Datum
     decisions about operand access.</p>
 
     <h4>SPARC</h4>
-    
+
 <pre>
 SPARC:     SPARC: Item+ Int
 </pre>
@@ -123,7 +123,7 @@ SPARC:     SPARC: Item+ Int
     transfer control to it.</p>
 
     <h4>Branches</h4>
-    
+
 <pre>
 Beq:       Item: Datum Label
 Bne:       Item: Datum Label
@@ -134,7 +134,7 @@ Jmp:       Item: Label
     <em>Datum</em> component followed by a test and branch to the
     <em>Label</em> component. A Beq does a branch on equal to zero and
     a Bne does a branch on not equal to zero.</p>
-    
+
      <p>A Jmp does an unconditional branch to its <em>Label</em>
     component.</p>
 
@@ -143,10 +143,10 @@ Jmp:       Item: Label
 <pre>
 LabelDef:  Item: Label
 </pre>
-    
+
         <p>A LabelDef construct represents a definition of a label and is encoded
         by emitting that definition in the appropriate assembler syntax.</p>
-        
+
     <h4>Read, Write</h4>
 
 <pre>
@@ -159,12 +159,12 @@ Write:     Item: Datum
         Read the value read is stored in the location given by the
         <em>Address</em> component.  In the case of Write the value written
         is that given by the <em>Datum</em> component which is encoded first.</p>
-        
+
         <h4>Ret</h4>
-        
+
 <pre>
 Ret:       Item
-</pre>            
+</pre>
 
         <p>A Ret construct is encoded by an unconditional jump to a
         label at the end of the code comprising the program (i.e., to
@@ -203,7 +203,7 @@ SubW:      Datum: Datum Datum
     remainder.</p>
 
         <h4>Cond</h4>
-        
+
 <pre>
 Cond:      Datum: Datum Datum Datum
 </pre>
@@ -216,7 +216,7 @@ Cond:      Datum: Datum Datum Datum
     left in the location required by the Cond Datum itself.</p>
 
         <h4>Comparisons: CmpeqW, CmpneW, CmpgtW, CmpltW</h4>
-        
+
 <pre>
 CmpeqW:    Datum: Datum Datum
 CmpneW:    Datum: Datum Datum
@@ -231,7 +231,7 @@ CmpltW:    Datum: Datum Datum
     location required by the comparison Datum.</p>
 
         <h4>IntDatum</h4>
-        
+
 <pre>
 IntDatum:  Datum: Int
 </pre>
@@ -248,36 +248,36 @@ LdW:       Datum: Address
     <p>A LdW construct is encoded as a load of a word value from the
     location specified by its <em>Address</em> component into the
     location of the LdW.</p>
-    
+
         <h4>Addresses: Local, Indexed</h4>
-    
+
 <pre>
 Local:     Address: Int
 Indexed:   Address: Local Datum
-</pre>        
-    
+</pre>
+
 
     <p>A Local address represents a word-sized storage location in the
     main block of memory that is accessible to an Obr program. The Int
     component is the offset in bytes from the start of the memory block
     at which the word is located.</p>
-    
+
     <p>An Indexed address is an address that is computed as a byte offset
     from a local address.  The offset is given by a computation expressed
     as a Datum.</p>
-    
+
     <p>When an address is used in another construct (i.e., an LdW or an
     StW) it is first encoded, then used as an operand in the load or store.
     Local address do not produce any code when they are encoded.  Indexed
     addresses encode their Datum component.</p>
 
     <h2>Transforming Obr Source Trees to SPARC Target Trees</h2>
-    
+
     <p>The results of the mapping process from source to target are
     reflected in the properties and structure of the target tree.
     This section describes how Obr source data and actions are mapped
     to target constructs.</p>
-    
+
     <h3>Obr/SPARC Data Mapping</h3>
 
     <p>Obr programs can manipulate only integer and Boolean basic values
@@ -302,7 +302,7 @@ Indexed:   Address: Local Datum
     <p>An Obr integer is implemented by a SPARC word (32 bits). For
     convenience, Boolean values are also represented by SPARC words.
     True is represented by one, and false is represented by zero.</p>
-    
+
      <p>Storage for all of the variables declared in an Obr program is
     allocated in a single area of SPARC memory. During execution,
     register %l0 contains the address of the beginning of the memory
@@ -312,7 +312,7 @@ Indexed:   Address: Local Datum
     content of register %l0 are all multiples of 4: The topmost
     variable is in location [%l0], the next variable is in location
     [%l0+4], and so on.</p>
-    
+
      <p>Arrays and records are allocated as contiguous memory as if
     the array elements or fields were declared as individual integer
     variables. (Recall that array elements and fields must be
@@ -333,9 +333,9 @@ Indexed:   Address: Local Datum
     left child is the address of the variable, array element or field
     being assigned, and whose right child is the translation of the
     expression on the right-hand side of the assignment.</p>
-    
+
     <h4>Boolean Expressions and Operations</h4>
-    
+
     <p>A BoolExp is translated into an IntDatum where zero is used for
     FALSE and 1 for TRUE.</p>
 
@@ -350,8 +350,8 @@ OrExp (e1, e2) -&gt; Cond (t1, 1, t2)
 
     <p>In both of these translations t1 and t2 are the translations of
     e1 and e2, respectively.</p>
-    
-    <p>NotExp translates into a Boolean complement operation using the 
+
+    <p>NotExp translates into a Boolean complement operation using the
     Not target construct.</p>
 
     <h4>Comparison Operations</h4>
@@ -365,9 +365,9 @@ OrExp (e1, e2) -&gt; Cond (t1, 1, t2)
     <p>An ExitStmt is implemented by a jump to the terminating label
     of the closest containing LoopStmt. See also the description of
     the LoopStmt construct below.</p>
-    
+
     <h4>FieldExp</h4>
-        
+
         <p>A FieldExp translates to a LdW from the address of the given
         record field.</p>
 
@@ -395,11 +395,11 @@ ForStmt (id, e1, e2, s) -&gt;
     and mem is a new integer memory location not used elsewhere.</p>
 
     <p>Note that this scheme avoids a problem if the maximum expression
-    e2 evaluates to the maximum integer possible, because id is not 
+    e2 evaluates to the maximum integer possible, because id is not
     incremented unless overflow cannot happen.</p>
 
     <h4>IdnExp</h4>
-    
+
     <p>An IdnExp is translated into either an IntDatum containing the
     integer value of the identifier (if it denotes a constant), or a
     LdW from the location in which the variable is stored.</p>
@@ -429,11 +429,11 @@ IfStmt (e, s1, s2) -&gt;
     be calculated as part of the address computation.</p>
 
     <h4>Integer Expressions and Arithmetic Operations</h4>
-    
+
     <p>An IntExp is translated into an IntDatum whose value is the
     Int component of the IntExp.</p>
 
-    <p>The arithmetic target constructs are used to implement the 
+    <p>The arithmetic target constructs are used to implement the
     arithmetic operators (MinusExp, NegExp, ModExp, PlusExp, SlashExp
     and StarExp) in the obvious way. For example, PlusExp is
     represented by AddW, ModExp by RemW, and NegExp by NegW.</p>
@@ -511,9 +511,9 @@ factorial
 </pre>
 
     <p>This execution should print 24.</p>
-    
+
     <h3>Detailed Examples</h3>
-    
+
     <p>This section shows the complete SPARC target trees and assembly code that
     would be produced for the factorial and GCD Obr programs.</p>
 
@@ -648,7 +648,7 @@ go:
 </pre>
 
    <P>Here is the same information for the Obr factorial program.</P>
-   
+
 <pre>
 PROGRAM Factorial (v : INTEGER) : INTEGER;
 
@@ -814,15 +814,15 @@ L2:
     ! Epilogue
 go:
     ret
-    restore    
+    restore
 </pre>
-   
+
     <hr>
     <address><a href="mailto:asloane@comp.mq.edu.au">Tony Sloane</a> and <a href="mailto:domv@ics.mq.edu.au">Dominic Verity</a></address>
 <!-- Created: Thu Jul  9 11:51:06 EST 1998 -->
 <!-- hhmts start -->Last Modified: Tue 20 Oct 2009<!-- hhmts end -->
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (C) 1998-2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (C) 1998-2014 by
 Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

@@ -1,7 +1,7 @@
 /**
  * Title:     Code Sample - for loop with continue and break
  * Author:    Dominic Verity
- * Copyright: Macquarie University (C) 2007-2011
+ * Copyright: Macquarie University (C) 2007-2014
  *
  * The following functions implement a for() loop and associated continue()
  * and break() operations.
@@ -12,17 +12,17 @@
  *            the loop counter is incremented. throw to here to continue.
  *      brk - which marks the point just after the iteration jump, throw to here to break.
  *
- * Here multiple parameter functions are represented in uncurried form, as functions which 
+ * Here multiple parameter functions are represented in uncurried form, as functions which
  * expect a single argument which consists of a tuple of argument values. These are then
  * taken apart using the match construct.
  */
- 
+
 // Bring some useful primitives into scope
 primitives write;
 
 // Package for(), continue() and break() together so that they can have shared
 // access to the continue and break continuations.
-let forFunctions = 
+let forFunctions =
     let cnt = mkref ()  // ref value to hold the current "continue" continuation.
     and brk = mkref ()  // ref value to hold the current "break" continuation.
                         // these local variables are all in scope in the bodies of the
@@ -45,7 +45,7 @@ let forFunctions =
                         callcc(fun(c) top := c);    // ~~~~~~~~~~~~ top of loop body ~~~~~~~~~~~~~~~~~~~~~~~~~~
                         if (stop < (val counter))   // if we've come to the end
                             throw () to (val brk)   // go to the exit point of the loop
-                        else (); 
+                        else ();
                         body(val counter)           // execute loop body.
                     });                             // ----- throw () to (val cnt) gets us to here ------------
                     counter := (val counter) + 1;   // advance counter and
@@ -68,30 +68,30 @@ let forFunctions =
                 else ()
         })
         in (for,continue,break);
-        
+
 // Notice that the variables brk and cnt are not in scope here.
-// However the function closures in the triple which we've bound to 
+// However the function closures in the triple which we've bound to
 // forFunctions still have shared access to the reference values
 // they were bound to when those closures were constructed.
 
 // Again this is just a matter of using closures to hide shared data.
-        
+
 let for = forFunctions match { (f,c,b) -> f }
 and continue = forFunctions match { (f,c,b) -> c }
 and break = forFunctions match { (f,c,b) -> b };
 
-// Now for some tests that this implementation works.   
+// Now for some tests that this implementation works.
 {
     // Using break and continue in a loop
-    for(1,20, fun(n) { 
+    for(1,20, fun(n) {
         if (n == 14) break() else ();
         if (n % 2 == 0) {
             write "an even number\n";
             continue()
         } else ();
-        write(n); 
+        write(n);
         write "\n" });
-        
+
     // Testing that things work for nested loops
     for(1,20, fun(n) {
         for(1,20, fun(m) {

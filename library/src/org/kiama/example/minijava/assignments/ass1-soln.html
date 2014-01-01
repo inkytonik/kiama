@@ -72,7 +72,7 @@ lazy val statement =
     "while" ~> ("(" ~> expression <~ ")") ~ statement |
     "System.out.println" ~> ("(" ~> expression <~ ")") <~ ";" |
     identifier ~ ("=" ~> expression) <~ ";" |
-    identifier ~ ("[" ~> expression <~ "]") ~ ("=" ~> expression) <~ ";" 
+    identifier ~ ("[" ~> expression <~ "]") ~ ("=" ~> expression) <~ ";"
 </pre>
 
     <p>The <code>repsep</code> method used in the <code>arguments</code>
@@ -81,7 +81,7 @@ lazy val statement =
     no repetitions at all. Thus, this is equivalent to the two alternatives
     for this symbol given in the grammar.</p>
 
-    <p>Appropriate bracketing and the <code><~</code> and <code>~></code> 
+    <p>Appropriate bracketing and the <code><~</code> and <code>~></code>
     operators are used in the productions to make sure that we throw away
     the values of the literal strings and just retain the values of the
     components that need to end up in the tree. A more complex case of
@@ -92,7 +92,7 @@ lazy val statement =
 lazy val classDeclaration =
     ("class" ~> identifier) ~ (("extends" ~> identifier)?) ~
         ("{" ~> (varDeclaration*)) ~ ((methodDeclaration*) <~ "}")
-</pre>    
+</pre>
 
     <p>Similar translations implement the other productions.</p>
 
@@ -101,7 +101,7 @@ lazy val classDeclaration =
     were given the <code>factor</code> parser. I added
     <code>expression0</code> for multiplication,
     <code>expression1</code> for addition and subtraction,
-    <code>expression2</code> for less-than and 
+    <code>expression2</code> for less-than and
     <code>expression</code> for Boolean AND, in decreasing order
     of precedence.</p>
 
@@ -193,23 +193,23 @@ lazy val statement : PackratParser[Statement] =
 
     <p>I designed positive tests (correct input) based on the possible
     alternatives in the grammar, to make sure that I had all of the bases
-    covered for correct programs. I tried to make each test just test 
-    one thing. For example, there is no need to test all sorts of 
+    covered for correct programs. I tried to make each test just test
+    one thing. For example, there is no need to test all sorts of
     expressions as a while statement condition, since there will be
     tests of expressions elsewhere.</p>
 
-    <p>Consider the terminal symbols, starting with 
+    <p>Consider the terminal symbols, starting with
     identifiers. The skeleton already had a test for a normal identifier
     containing multiple letters. Missing were a minimal test (an identifier
     with just one letter) and one that tested inclusion of digits and
-    underscores. There was already a negative test for parsing an 
+    underscores. There was already a negative test for parsing an
     integer as an identifier. I added two more to make check that
     sequences that start with a digit or underscore, but otherwise
-    are ok as identifiers, are not allowed. Similar tests were 
+    are ok as identifiers, are not allowed. Similar tests were
     written for integer terminals, although there are less possibilites
     to test since integers have a simpler structure.</p>
 
-    <p>For non-terminal constructs, I used the following general 
+    <p>For non-terminal constructs, I used the following general
     procedure for designing test cases. Constructs that involve no
     alternatives (including repetition) just need one test case.
     Where alternatives are present, I made sure to have at least
@@ -229,23 +229,23 @@ ClassDeclaration  : "class" Identifier ("extends" Identifier)? {"
                        VarDeclaration*
                        MethodDeclaration*
                     "}".
-</pre>   
+</pre>
 
-    <p>We need two tests of the class header, one that has an 
+    <p>We need two tests of the class header, one that has an
     <code>extends</code> clause and one that doesn't. To deal
     with the repetitions, we need to account for nothing in the
     body, one of each repetition or more than one of each repetition.
     Considering all of the combinations leads to quite a few
     tests, but they are routine.</p>
 
-    <p>Expression testing requires a little more work, since the 
+    <p>Expression testing requires a little more work, since the
     precedence and associativity rules for binary operators are
-    not encoded in the grammar that we were given.  Hence, I 
-    included some extra tests to make sure that the operators 
+    not encoded in the grammar that we were given.  Hence, I
+    included some extra tests to make sure that the operators
     were all associative in the correct way and that expressions
     with multiple operators correctly took into account the
     relative precedence of those operators. Also, I checked that
-    parentheses correctly override the associativity and 
+    parentheses correctly override the associativity and
     precedence rules. For the less than operator I have a negative
     test to make sure that it is not associative.</p>
 
@@ -282,18 +282,18 @@ ClassDeclaration  : "class" Identifier ("extends" Identifier)? {"
     and to come up with a version that makes sense in the context
     of MiniJava.</p>
 
-    <p>The main idea of Java interfaces is to provide a way to 
+    <p>The main idea of Java interfaces is to provide a way to
     declare the signatures of methods without their bodies. Java
     classes can declare that they implement one or more interfaces,
-    in which case they need to provide implementations for the 
+    in which case they need to provide implementations for the
     the methods in those interfaces.</p>
 
-    <p>The signature of a method comprises its name, its argument 
+    <p>The signature of a method comprises its name, its argument
     names and types, and its return type. A class declares that
     it implements an interface via an <code>implements</code>
     clause in its declaration. For example, the following is a
-    declaration of an interface <code>Colourable</code> and a 
-    use of it by a <code>Shape</code> class, assuming the 
+    declaration of an interface <code>Colourable</code> and a
+    use of it by a <code>Shape</code> class, assuming the
     existence of a <code>Colour</code> class or interface.</p>
 
 <pre>
@@ -313,7 +313,7 @@ class Shape implements Colourable {
     }
 
 }
-</pre>    
+</pre>
 
     <p>Java interfaces have more aspects than this (e.g., a class
     can implement more than one interface), but I decided on this
@@ -331,7 +331,7 @@ InterfaceDeclaration :
 
 SignatureDeclaration :
     "public" Type Identifier "(" Arguments ")" ";".
-</pre>    
+</pre>
 
     <p>To allow interface declarations to appear in a program,
     I modified the program production as follows.</p>
@@ -342,9 +342,9 @@ Program : MainClass ClassOrInterfaceDeclaration*.
 ClassOrInterfaceDeclaration :
       ClassDeclaration
     | InterfaceDeclaration.
-</pre>    
+</pre>
 
-    <p>Finally, I modified class declarations to allow an optional 
+    <p>Finally, I modified class declarations to allow an optional
     implements clause after the optional extends clause.</p>
 
 <pre>
@@ -359,12 +359,12 @@ ClassDeclaration :
     tree node type for interfaces. It and <code>Class</code> share
     a new common superclass <code>ClassOrInterface</code> and a program is now
     a list of classes or interfaces. Also, <code>Class</code> got a new
-    field to store its optional implements information, analogous to the 
-    existing field that stores the optional superclass. A new node type 
+    field to store its optional implements information, analogous to the
+    existing field that stores the optional superclass. A new node type
     for signatures was added that is the same as for methods with the body
     components and return expression removed.</p>
-    
-<pre>    
+
+<pre>
 case class Program (main : MainClass,
                     classesOrInterfaces : List[ClassOrInterface]) extends SourceNode
 
@@ -385,7 +385,7 @@ case class Signature (tipe : Type, name : String, args : List[Argument]) extends
 
     <p>Testing was undertaken as for the main part of the assignment. A set
     of tests similar to those for classes were added for interfaces, and
-    tests for signature declarations were added similar to those already 
+    tests for signature declarations were added similar to those already
     present for method declarations. Also, tests of the optional implements
     clause were added. A test of mixed classes and interfaces in a program was
     added.</p>
@@ -393,7 +393,7 @@ case class Signature (tipe : Type, name : String, args : List[Argument]) extends
     <hr>
     <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012-2014 by
 Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>

@@ -8,9 +8,9 @@
     <h1>Macquarie University<br>Department of Computing</h1>
 
     <h2>COMP332 Programming Languages 2012</h2>
-    
+
     <h2>Assignment Three</h2>
-  
+
     <h3>MiniJava Translation to the Java Virtual Machine</h3>
 
     <p>Due: 11am Monday 5 November (Week 13)<br>
@@ -29,7 +29,7 @@
     scheme is heavily based on that used in the practical exercises for
     weeks 9 and 10. If you have not completed those exercises, we strongly
     encourage you to do so before starting work on this assignment. In
-    many cases, the work required here is the same or very similar to 
+    many cases, the work required here is the same or very similar to
     that required in the practical exercises. You should also make sure
     that you have read the "Translation and Code Generation" lecture
     notes from week 9 since they give an overview of the processes
@@ -49,7 +49,7 @@
     is only used for local variables now.</p>
 
     <p>Also, note that the semantic analysis phase from Assignment
-    Two does not deal properly with classes whose names are used 
+    Two does not deal properly with classes whose names are used
     either before the declaration of the class, or within the class
     itself. Ultimately, it would be best to support these structures,
     but for the purposes of this unit, we will just assume that
@@ -63,12 +63,12 @@
 
     <p>You have to write, document and test a Scala translator
     for the MiniJava language to the Java virtual machine.
-    Your translator should support all of the features of the 
+    Your translator should support all of the features of the
     MiniJava language and translate them to equivalent JVM
     operations.</p>
 
     <p>A skeleton sbt project for the assignment has been provided
-    on BitBucket as the <code>inkytonik/comp332-ass3</code> repository.  
+    on BitBucket as the <code>inkytonik/comp332-ass3</code> repository.
     The skeleton implements quite a lot of the translation for you.
     Look for FIXME to find places where you have to extend the
     skeleton.</p>
@@ -88,7 +88,7 @@
     are supposed to do. This is hard to automate using our previous
     techniques. You will probably find it useful to write scripts
     to run your compiler, use Jasmin to convert the resulting
-    <code>.j</code> files into <code>.class</code> files and 
+    <code>.j</code> files into <code>.class</code> files and
     then use the <code>java</code> command to run the relevant
     main class. To help with testing, the <code>test/*.exp</code>
     files contain the expected output when you run the different
@@ -97,14 +97,14 @@
     <h4>MiniJava translation and code generation</h4>
 
     <p>The assignment skeleton contains the outline of a translator
-    (in <code>Translator.scala</code>) and the implementation of a 
+    (in <code>Translator.scala</code>) and the implementation of a
     code generator (in <code>CodeGenerator.scala</code>). You should
     <em>not</em> have to modify the code generator to complete this
     assignment. Just finish the implementation of the translator.</p>
 
     <p>The skeleton translator contains much of the code you will
     need. In particular, the skeleton already knows how to translate
-    classes and methods into the JVM tree representation. Your 
+    classes and methods into the JVM tree representation. Your
     focus will be to implement <code>translateStmt</code> and
     <code>translateExp</code> which translate statements and
     expressions, respectively.</p>
@@ -112,16 +112,16 @@
     <p>As in the practical exercises for the expression language, you
     will build trees that represent the class files that you want to
     generate. The structure of those trees is defined in
-    <code>JVMTree.scala</code>. The skeleton contains definitions 
+    <code>JVMTree.scala</code>. The skeleton contains definitions
     for many of the JVM operations in the JVM tree definition (see
     the section labelled "JVM instructions"). You may want to add
-    more instructions, if the operations you want to use are not 
+    more instructions, if the operations you want to use are not
     already present. Follow the explanation in the code to add new
     instructions.</p>
 
     <p>You may also find it useful to use the Java compiler to help
     you work out the appropriate operations to use. For example,
-    you can write simple Java programs, compile them with the 
+    you can write simple Java programs, compile them with the
     <code>javac</code> compiler and then use the <code>javap -c</code>
     command to look at the class file(s) and the instructions that
     are produced by the Java compiler.</p>
@@ -131,13 +131,13 @@
     the section labelled "Instruction Set Summary", "The Java
     Virtual Machine Instruction Set" and "Compiling for the Java
     Virtual Machine". Bear in mind that many JVM operations are not
-    needed for the simple MiniJava language, particularly those 
+    needed for the simple MiniJava language, particularly those
     dealing with floating-point numbers and exceptions.</p>
 
     <p>The following useful links point to the documentation for Java 5,
     which should be sufficient for this assignment. We would not expect
     that you will need to read all of this documentation, but it will
-    probably be useful as a reference, particularly the instruction 
+    probably be useful as a reference, particularly the instruction
     set information, if you are unsure about what an instruction does.</p>
 
     <ul>
@@ -149,18 +149,18 @@
 
     <p>For examples on the type of code that you might generate, consult the
     lecture notes "Translation and Code Generation" (week 9) and the "Compiling
-    for the Java Virtual Machine" link above which both contain 
-    examples. Part of this assignment is to explore the JVM, so you 
-    may need more features of the JVM than are covered in the lecture notes. 
+    for the Java Virtual Machine" link above which both contain
+    examples. Part of this assignment is to explore the JVM, so you
+    may need more features of the JVM than are covered in the lecture notes.
     Use the documentation above or other resources you can find on the net
     to explore this space. In most cases, the JVM has operations that directly
-    correspond to the MiniJava source constructs, so the code that you 
+    correspond to the MiniJava source constructs, so the code that you
     generate should be quite simple.</p>
 
     <p>As an example, consider the generation of code for a plus expression.
     We need to generate the translations of the two operands of the expression.
     That JVM code will leave those two values on the top of the operand stack.
-    Thus, we only need to append an <code>iadd</code> instruction to add 
+    Thus, we only need to append an <code>iadd</code> instruction to add
     them together and leave the result on the stack instead. The translator
     code in <code>translateExp</code> for this case looks like this:</p>
 
@@ -169,10 +169,10 @@ case PlusExp (left, right) =>
     translateExp (left)
     translateExp (right)
     gen (Iadd ())
-</pre>    
+</pre>
 
     <p>As a more complex example, consider generating code for a less
-    expression whose value is assigned to a Boolean variable. E.g., 
+    expression whose value is assigned to a Boolean variable. E.g.,
     MiniJava code like this: <code>b := i1 &lt; i2</code> where <code>b</code>
     is a Boolean variable and the other two variables are integers.
     Here is the translation code that first evaluates the two operands,
@@ -202,12 +202,12 @@ case LessExp (left, right) =>
 
     <ol>
         <li><p>The and operation needs to be short-circuited, so you will
-        have to use a scheme to make sure that the right operand is 
+        have to use a scheme to make sure that the right operand is
         not evaluated if the left operand is false.</p></li>
 
         <li><p>The JVM has quite a few operations for dealing with arrays
         directly, including operations for loading and storing from integer
-        arrays, and for calculating the length of an array. It also has 
+        arrays, and for calculating the length of an array. It also has
         operations for dealing with arrays whose elements are references,
         but these are not needed for MiniJava.</p></li>
 
@@ -235,7 +235,7 @@ case LessExp (left, right) =>
         that the method has.</p></li>
 
         <li><p>There are a few instructions for returning from methods:
-        one for returning an integer (<code>ireturn</code>), one for 
+        one for returning an integer (<code>ireturn</code>), one for
         returning an object or array reference (<code>areturn</code>),
         and one for returning from a void method (<code>return</code>).</p></li>
     </ol>
@@ -311,7 +311,7 @@ assignment.</p>
     <hr>
     <address><a href="mailto:Anthony.Sloane@mq.edu.au">Tony Sloane</a></address>
 <br>
-<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012 by
+<a href="http://www.mq.edu.au/legalstuff.html">Copyright (c) 2012-2014 by
 Anthony Sloane, Macquarie University. All rights reserved.</A></FONT><BR>
   </body>
 </html>
