@@ -50,6 +50,6 @@ class ParamAttributeKey (val arg : Any, val node : Any) {
         }
 
     override def hashCode : Int =
-        System.identityHashCode(node) ^ arg.hashCode
+        System.identityHashCode (node) ^ arg.hashCode
 
 }
