@@ -52,34 +52,32 @@ trait AttributionCore extends AttributionCommon with Memoiser {
             val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
                                 "attribute" -> this, "parameter" -> None,
                                 "circular" -> false))
-            resetIfRequested ()
-            memo.get (t) match {
-                case None     => reportCycle (t)
-                case Some (u) => finish (i, Seq ("value" -> u, "cached" -> true))
-                                 u
-                case _        => // null
-                                 memo.put (t, None)
-                                 val u = f (t)
-                                 memo.put (t, Some (u))
-                                 finish (i, Seq ("value" -> u, "cached" -> false))
-                                 u
+            get (t) match {
+                case Some (Some (u)) =>
+                    finish (i, Seq ("value" -> u, "cached" -> true))
+                    u
+                case Some (None) =>
+                    reportCycle (t)
+                case None =>
+                    put (t, None)
+                    val u = f (t)
+                    put (t, Some (u))
+                    finish (i, Seq ("value" -> u, "cached" -> false))
+                    u
             }
         }
 
         /**
          * Has the value of this attribute at `t` already been computed or not?
-         * If the table contains `Some (u)` then we've compute it and the value
+         * If the table contains `Some (u)` then we've computed it and the value
          * was `u`. If the memo table contains `None` we are in the middle of
          * computing it. Otherwise the memo table contains no entry for `t`.
          */
-        override def hasBeenComputedAt (t : T) : Boolean = {
-            resetIfRequested ()
-            memo.get (t) match {
-                case Some (_) => true
-                case _        => // null, None
-                                 false
+        override def hasBeenComputedAt (t : T) : Boolean =
+            get (t) match {
+                case Some (Some (_)) => true
+                case _               => false
             }
-        }
 
     }
 
@@ -102,17 +100,19 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
                                         "attribute" -> this, "parameter" -> Some (arg),
                                         "circular" -> false))
-                    resetIfRequested ()
                     val key = new ParamAttributeKey (arg, t)
-                    memo.get (key) match {
-                        case Some (None)     => reportCycle (t)
-                        case Some (Some (u)) => finish (i, Seq ("value" -> u, "cached" -> true))
-                                                u
-                        case None            => memo.put (key, None)
-                                                val u = f (arg) (t)
-                                                memo.put (key, Some (u))
-                                                finish (i, Seq ("value" -> u, "cached" -> false))
-                                                u
+                    get (key) match {
+                        case Some (Some (u)) =>
+                            finish (i, Seq ("value" -> u, "cached" -> true))
+                            u
+                        case Some (None) =>
+                            reportCycle (t)
+                        case None =>
+                            put (key, None)
+                            val u = f (arg) (t)
+                            put (key, Some (u))
+                            finish (i, Seq ("value" -> u, "cached" -> false))
+                            u
                     }
                 }
 
@@ -127,10 +127,9 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          */
         def hasBeenComputedAt (arg : A, t : T) : Boolean = {
             val key = new ParamAttributeKey (arg, t)
-            memo.get (key) match {
+            get (key) match {
                 case Some (Some (_)) => true
-                case _               => // None, Some (None)
-                                        false
+                case _               => false
             }
         }
 
@@ -161,17 +160,18 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * function on this list is defined, then `f` will be used.
          */
         override def apply (t : T) : U = {
-            resetIfRequested ()
-            memo.get (t) match {
-                case None     => reportCycle (t)
-                case Some (u) => u
-                case _        => // null
-                                 memo.put (t, None)
-                                 val pf = functions.find (_.isDefinedAt (t))
-                                 val func = pf.getOrElse (f)
-                                 val u = func (t)
-                                 memo.put (t, Some (u))
-                                 u
+            get (t) match {
+                case Some (Some (u)) =>
+                    u
+                case Some (None) =>
+                    reportCycle (t)
+                case None =>
+                    put (t, None)
+                    val pf = functions.find (_.isDefinedAt (t))
+                    val func = pf.getOrElse (f)
+                    val u = func (t)
+                    put (t, Some (u))
+                    u
             }
         }
 
@@ -254,13 +254,8 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Return the value of the attribute for tree `t`, or the initial value if
          * no value for `t` has been computed.
          */
-        private def value (t : T) : U = {
-            val v = memo.get (t)
-            if (v == null)
-                init
-            else
-                v
-        }
+        private def value (t : T) : U =
+            getWithDefault (t, init)
 
         /**
          * Return the value of this attribute for node `t`.  Essentially Figure 6
@@ -303,7 +298,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     } else {
                         finish (i, Seq ("value" -> newu, "cached" -> false, "phase" -> "iteratechange"))
                         CHANGE = true
-                        memo.put (t, newu)
+                        put (t, newu)
                     }
 
                 } while (CHANGE)
@@ -368,7 +363,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     } else {
                         finish (i, Seq ("value" -> newu, "cached" -> false, "phase" -> "notvisitedchange"))
                         CHANGE = true
-                        memo.put (t, newu)
+                        put (t, newu)
                         newu
                     }
 

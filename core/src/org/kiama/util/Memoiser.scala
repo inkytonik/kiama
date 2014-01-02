@@ -21,6 +21,8 @@
 package org.kiama
 package util
 
+import com.google.common.cache.{Cache, CacheBuilder}
+
 /**
  * Support for memoisation, encapsulating common behaviour of memoised
  * entities and a general reset mechanism for all such entities.
@@ -42,9 +44,14 @@ trait Memoiser {
 
     /**
      * Common interface for encapsulation of memoisation for a single memoised
-     * entity.
+     * entity backed by a configurable cache.
      */
     trait MemoisedBase[T,U] {
+
+        /**
+         * The memo table.
+         */
+        def memo : Cache[AnyRef,AnyRef]
 
         /**
          * The version number of this entities memo table.
@@ -52,14 +59,41 @@ trait Memoiser {
         private var thisMemoVersion = 0
 
         /**
+         * Return the value stored at key `t` as an option.
+         */
+        def get (t : T) : Option[U] = {
+            resetIfRequested ()
+            Option (memo.getIfPresent (t).asInstanceOf[U])
+        }
+
+        /**
+         * Return the value stored at key `t` if there is one, otherwise
+         * return `u`.
+         */
+        def getWithDefault (t : T, u : U) : U =
+            get (t).getOrElse (u)
+
+        /**
+         * Store the value `u` under the key `t`.
+         */
+        def put (t : T, u : U) {
+            resetIfRequested ()
+            memo.put (t.asInstanceOf[AnyRef], u.asInstanceOf[AnyRef])
+        }
+
+        /**
          * Immediately reset the memo table.
          */
-        def reset ()
+        def reset () {
+            memo.invalidateAll ()
+        }
 
         /**
          * Has the value of this attribute at `t` already been computed or not?
+         * By default, does the memo table contain a value for `t`?
          */
-        def hasBeenComputedAt (t : T) : Boolean
+        def hasBeenComputedAt (t : T) : Boolean =
+            get (t) != None
 
         /**
          * Check to see if a reset has been requested via the common memo
@@ -75,61 +109,24 @@ trait Memoiser {
     }
 
     /**
-     * A memoised entity that uses equality to compare argument values.
+     * A memoised entity that uses equality to compare keys.
      */
     trait Memoised[T,U] extends MemoisedBase[T,U] {
 
-        /**
-         * The memo table as a mutable hash map.
-         */
-        val memo = scala.collection.mutable.HashMap[T,U] ()
-
-        /**
-         * Immediately reset the memo table.
-         */
-        def reset () {
-            memo.clear ()
-        }
-
-        /**
-         * Has the value of this attribute at `t` already been computed or not?
-         * By default, does the memo table contain a value for `t`?
-         */
-        def hasBeenComputedAt (t : T) : Boolean = {
-            resetIfRequested ()
-            memo contains t
-        }
+        val memo : Cache[AnyRef,AnyRef] =
+            CacheBuilder.newBuilder ().build ()
 
     }
 
     /**
-     * A memoised entity that uses identity to compare argument values.
+     * A memoised entity that weakly holds onto its keys and uses identity
+     * to compare them.
      */
     trait IdMemoised[T,U] extends MemoisedBase[T,U] {
 
-        /**
-         * The memo table as an identity hash map.
-         */
-        val memo = new java.util.IdentityHashMap[T,U]
-
-        /**
-         * Immediately reset the memo table.
-         */
-        def reset () {
-            memo.clear ()
-        }
-
-        /**
-         * Has the value of this attribute at `t` already been computed or not?
-         * By default, does the memo table contain a value for `t`?
-         */
-        def hasBeenComputedAt (t : T) : Boolean = {
-            resetIfRequested ()
-            memo.get (t) != null
-        }
+        val memo : Cache[AnyRef,AnyRef] =
+            CacheBuilder.newBuilder ().weakKeys ().build ()
 
     }
 
 }
-
-

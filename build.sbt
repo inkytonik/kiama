@@ -35,12 +35,20 @@ resolvers in ThisBuild ++= Seq (
 // Dependencies
 
 libraryDependencies in ThisBuild ++= Seq (
+    // Caching:
+    "com.google.code.findbugs" % "jsr305" % "1.3.+",
+    "com.google.guava" % "guava" % "15.0",
+    // DSL support:
     "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.3.0",
+    // Profiling:
     "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.3.0",
+    // Command-line handling:
+    "org.rogach" %% "scallop" % "0.9.4",
+    // REPLs:
     "jline" % "jline" % "2.11",
+    // Testing:
     "org.scalacheck" %% "scalacheck" % "1.10.1" % "test",
-    "org.scalatest" %% "scalatest" % "2.0" % "test",
-    "org.rogach" %% "scallop" % "0.9.4"
+    "org.scalatest" %% "scalatest" % "2.0" % "test"
 )
 
 // Migration manager (mima)

@@ -24,7 +24,8 @@ package rewriting
 import org.kiama.util.Memoiser
 
 /**
- * Strategy-based term rewriting where all strategy results are memoised.
+ * Strategy-based term rewriting where all strategy results are memoised
+ * by identity on the subject term.
  */
 trait MemoRewriter extends Rewriter with Memoiser {
 
@@ -32,7 +33,8 @@ trait MemoRewriter extends Rewriter with Memoiser {
     import scala.collection.immutable.Seq
 
     /*
-     * Any-rewriting strategies that memoise their results.
+     * Any-rewriting strategies that memoise their results by identity on
+     * the subject term.
      */
     abstract class MemoStrategy (name : String) extends
             Strategy (name) with IdMemoised[Any,Option[Any]] {
@@ -52,16 +54,15 @@ trait MemoRewriter extends Rewriter with Memoiser {
         override def apply (r : Any) : Option[Any] = {
             val i = start (Seq ("event" -> "StratEval", "strategy" -> this,
                                 "subject" -> r, "subjectHash" -> r.##))
-            resetIfRequested ()
-            val u1 = memo.get (r)
-            if (u1 == null) {
-                val u2 = body (r)
-                memo.put (r, u2)
-                finish (i, Seq ("cached" -> false, "result" -> u2))
-                u2
-            } else {
-                finish (i, Seq ("cached" -> true, "result" -> u1))
-                u1
+            get (r) match {
+                case None =>
+                    val u = body (r)
+                    put (r, u)
+                    finish (i, Seq ("cached" -> false, "result" -> u))
+                    u
+                case Some (u) =>
+                    finish (i, Seq ("cached" -> true, "result" -> u))
+                    u
             }
         }
 
