@@ -37,14 +37,15 @@ trait UncachedAttributionCore extends AttributionCommon {
      * require the value of this attribute. If it does, a circularity error is reported
      * by throwing an `IllegalStateException`.
      */
-    class UncachedAttribute[T <: AnyRef,U] (name : String, f : T => U) extends Attribute[T,U] (name) {
+    class UncachedAttribute[T,U] (name : String, f : T => U) extends Attribute[T,U] (name) {
 
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+        import org.kiama.util.WeakIdentityHashSet
 
         /**
          * Are we currently evaluating this attribute for a given tree?
          */
-        private val visited = new java.util.IdentityHashMap[T,Unit]
+        private val visited = new WeakIdentityHashSet[T] ()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -54,10 +55,10 @@ trait UncachedAttributionCore extends AttributionCommon {
             val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
                                 "attribute" -> this, "parameter" -> None,
                                 "circular" -> false))
-            if (visited containsKey t)
+            if (visited contains t)
                 reportCycle (t)
             else {
-                visited.put (t, ())
+                visited.add (t)
                 val u = f (t)
                 visited.remove (t)
                 finish (i, Seq ("value" -> u, "cached" -> false))
@@ -70,7 +71,7 @@ trait UncachedAttributionCore extends AttributionCommon {
     /**
      * A variation of the `UncachedAttribute` class for parameterised attributes.
      */
-    class UncachedParamAttribute[A,T <: AnyRef,U] (name : String, f : A => T => U) extends (A => Attribute[T,U]) {
+    class UncachedParamAttribute[A,T,U] (name : String, f : A => T => U) extends (A => Attribute[T,U]) {
 
         attr =>
 
@@ -113,14 +114,14 @@ trait UncachedAttributionCore extends AttributionCommon {
      * which should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T <: AnyRef,U] (f : T => U) : UncachedAttribute[T,U] =
+    def attr[T,U] (f : T => U) : UncachedAttribute[T,U] =
         macro AttributionMacros.attrMacro[T,U,UncachedAttribute[T,U]]
 
     /**
      * As for the other `attr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def attr[T <: AnyRef,U] (name : String, f : T => U) : UncachedAttribute[T,U] =
+    def attr[T,U] (name : String, f : T => U) : UncachedAttribute[T,U] =
         new UncachedAttribute (name, f)
 
     /**
@@ -129,14 +130,14 @@ trait UncachedAttributionCore extends AttributionCommon {
      * value for a given `T` and `A` pair is cached so it will be computed at most
      * once.
      */
-    def paramAttr[V,T <: AnyRef,U] (f : V => T => U) : UncachedParamAttribute[V,T,U] =
+    def paramAttr[V,T,U] (f : V => T => U) : UncachedParamAttribute[V,T,U] =
         macro AttributionMacros.paramAttrMacro[V,T,U,UncachedParamAttribute[V,T,U]]
 
     /**
      * As for the other `paramAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def paramAttr[V,T <: AnyRef,U] (name : String, f : V => T => U) : UncachedParamAttribute[V,T,U] =
+    def paramAttr[V,T,U] (name : String, f : V => T => U) : UncachedParamAttribute[V,T,U] =
         new UncachedParamAttribute (name, f)
 
     /**
