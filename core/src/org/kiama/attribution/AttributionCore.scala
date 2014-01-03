@@ -238,17 +238,18 @@ trait AttributionCore extends AttributionCommon with Memoiser {
 
         import CircularAttribute._
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+        import org.kiama.util.WeakIdentityHashSet
 
         /**
          * Has the value of this attribute for a given tree already been computed?
          */
-        private val computed = new java.util.IdentityHashMap[T,Unit]
+        private val computed = new WeakIdentityHashSet[T]
 
         /**
          * Has the attribute for given tree been computed on this iteration of the
          * circular evaluation?
          */
-        private val visited = new java.util.IdentityHashMap[T,Unit]
+        private val visited = new WeakIdentityHashSet[T]
 
         /**
          * Return the value of the attribute for tree `t`, or the initial value if
@@ -279,7 +280,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 // occurrences until they stabilise.
 
                 IN_CIRCLE = true
-                visited.put (t, ())
+                visited.add (t)
                 do {
 
                     // Evaluate the attribute occurrence once. Compare the value that is
@@ -304,7 +305,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 } while (CHANGE)
 
                 // The value of this attribute at t has been computed and cached.
-                computed.put (t, ())
+                computed.add (t)
 
                 // All of the values of dependent attribute occurences are also final, but have
                 // not yet been cached. Enter READY mode to go around the circle one more time
@@ -322,7 +323,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 IN_CIRCLE = false
                 u
 
-            } else if (! (visited containsKey t)) {
+            } else if (! (visited contains t)) {
 
                 if (READY) {
 
@@ -334,8 +335,8 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     // them as computed as well. This code handles an occurrence that hasn't yet
                     // been visited on this last iteration.
 
-                    computed.put (t, ())
-                    visited.put (t, ())
+                    computed.add (t)
+                    visited.add (t)
                     val u = f (t)
                     visited.remove (t)
                     u
@@ -353,7 +354,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
                                         "attribute" -> this, "parameter" -> None,
                                         "circular" -> true, "phase" -> "notvisited"))
-                    visited.put (t, ())
+                    visited.add (t)
                     val u = value (t)
                     val newu = f (t)
                     visited.remove (t)
@@ -399,7 +400,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          */
         override def hasBeenComputedAt (t : T) : Boolean = {
             resetIfRequested ()
-            computed containsKey t
+            computed contains t
         }
 
     }
