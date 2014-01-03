@@ -1,8 +1,8 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2014 Matthew Roberts, Macquarie University.
- * Copyright (C) 2014 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2013-2014 Matthew Roberts, Macquarie University.
+ * Copyright (C) 2013-2014 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
