@@ -470,6 +470,34 @@ class AttributionTests extends Tests {
         assertResult ("Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }
 
+    test ("circularities are detected for uncached parameterised attributes") {
+        import UncachedAttribution._
+
+        lazy val direct : Int => Tree => Int =
+            paramAttr (i => (t => t->direct (i)))
+        lazy val indirect : Int => Tree => Int =
+            paramAttr (i => (t => t->indirect2 (i)))
+        lazy val indirect2 : Int => Tree => Int =
+            paramAttr (i => (t => t->indirect (i)))
+
+        val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
+
+        val i1 = intercept[IllegalStateException] {
+                     t->direct (1)
+                 }
+        assertResult ("Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
+
+        val i2 = intercept[IllegalStateException] {
+                     t->indirect (8)
+                 }
+        assertResult ("Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
+
+        val i3 = intercept[IllegalStateException] {
+                     t->indirect2 (9)
+                 }
+        assertResult ("Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
+    }
+
     test ("parameterised attribute keys compare correctly") {
         val n = Leaf (1)
         val k1 = new ParamAttributeKey ("hello", n)

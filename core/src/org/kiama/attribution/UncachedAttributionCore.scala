@@ -76,11 +76,12 @@ trait UncachedAttributionCore extends AttributionCommon {
         attr =>
 
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+        import scala.collection.mutable.HashSet
 
         /**
          * Are we currently evaluating this attribute for a given argument and tree?
          */
-        private val visited = new java.util.IdentityHashMap[ParamAttributeKey,Unit]
+        private val visited = HashSet[ParamAttributeKey] ()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -94,16 +95,19 @@ trait UncachedAttributionCore extends AttributionCommon {
                                         "attribute" -> this, "parameter" -> Some (arg),
                                         "circular" -> false))
                     val key = new ParamAttributeKey (arg, t)
-                    if (visited containsKey key)
-                        throw new IllegalStateException ("Cycle detected in attribute evaluation")
+                    if (visited contains key)
+                        reportCycle (t)
                     else {
-                        visited.put (key, ())
+                        visited.add (key)
                         val u = f (arg) (t)
                         visited.remove (key)
                         finish (i, Seq ("value" -> u, "cached" -> false))
                         u
                     }
                 }
+
+                override def reportCycle (t : T) : U =
+                    throw new IllegalStateException (s"Cycle detected in attribute evaluation '$name' ($arg) at $t")
 
             }
 
