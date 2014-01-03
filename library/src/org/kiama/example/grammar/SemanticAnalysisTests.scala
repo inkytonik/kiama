@@ -24,7 +24,7 @@ package example.grammar
 import org.kiama.util.Tests
 
 /**
- * Tests of grammar semantic g2analysis.
+ * Tests of grammar semantic analysis.
  */
 class SemanticAnalysisTests extends Tests {
 

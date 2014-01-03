@@ -23,6 +23,13 @@ package example.grammar
 
 import org.kiama.util.Messaging
 
+/**
+ * Perform name analysis checks for the grammar language. Also, define
+ * auxiliary properties nullability, first and follow for grammar symbols.
+ * The latter are based on definitions found in the paper "Circular
+ * Reference Attributed Grammars - their Evaluation and Applications", by
+ * Magnusson and Hedin from LDTA 2003.
+ */
 class SemanticAnalysis (messaging : Messaging) {
 
     import messaging.message
