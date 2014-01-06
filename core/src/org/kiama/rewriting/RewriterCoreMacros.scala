@@ -25,6 +25,8 @@ object RewriterCoreMacros {
 
     import org.bitbucket.inkytonik.dsinfo.DSInfo.{makeCallWithName, makeThisCallWithName}
     import org.kiama.util.Emitter
+    import scala.collection.generic.CanBuildFrom
+    import scala.language.higherKinds
     import scala.reflect.macros.Context
 
     // Macros for the builder methods
@@ -255,11 +257,13 @@ object RewriterCoreMacros {
 
     // Queries
 
-    def collectlMacro[U] (c : Context) (f : c.Expr[Any ==> U]) : c.Expr[Any => List[U]] =
-        makeCallWithName (c)
+    def collectMacro[CC[X] <: Traversable[X],U] (c : Context) (f : c.Expr[Any ==> U])
+            (cbf : c.Expr[CanBuildFrom[CC[Any],U,CC[U]]]) : c.Expr[Any => CC[U]] =
+        makeCallWithName (c, "this.collectWithName")
 
-    def collectsMacro[U] (c : Context) (f : c.Expr[Any ==> U]) : c.Expr[Any => Set[U]] =
-        makeCallWithName (c)
+    def collectallMacro[CC[X] <: Traversable[X],U] (c : Context) (f : c.Expr[Any ==> CC[U]])
+            (cbf : c.Expr[CanBuildFrom[CC[Any],U,CC[U]]]) : c.Expr[Any => CC[U]] =
+        makeCallWithName (c, "this.collectallWithName")
 
     def countMacro (c : Context) (f : c.Expr[Any ==> Int]) : c.Expr[Any => Int] =
         makeCallWithName (c)

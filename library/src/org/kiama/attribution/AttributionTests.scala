@@ -745,32 +745,6 @@ class AttributionTests extends Tests {
         assertSame (c6) (c5.parent)
     }
 
-    test ("a collectl that collects the Ints from Leafs works and is cached") {
-        var count = 0
-        val collectNum = collectl { case Leaf (i) => count = count + 1; i }
-        assertResult (false) (collectNum.hasBeenComputedAt (s))
-        assertResult (0) (count)
-        assertResult (List (3, 1, 10)) (collectNum (s))
-        assertResult (true) (collectNum.hasBeenComputedAt (s))
-        assertResult (3) (count)
-        assertResult (List (3, 1, 10)) (collectNum (s))
-        assertResult (true) (collectNum.hasBeenComputedAt (s))
-        assertResult (3) (count)
-    }
-
-    test ("a collects that collects the Ints from Leafs works and is cached") {
-        var count = 0
-        val collectNum = collects { case Leaf (i) => count = count + 1; i }
-        assertResult (false) (collectNum.hasBeenComputedAt (v))
-        assertResult (0) (count)
-        assertResult (Set (3, 1)) (collectNum (v))
-        assertResult (true) (collectNum.hasBeenComputedAt (v))
-        assertResult (3) (count)
-        assertResult (Set (1, 3)) (collectNum (v))
-        assertResult (true) (collectNum.hasBeenComputedAt (v))
-        assertResult (3) (count)
-    }
-
     {
         val t = Pair (Leaf (3), Pair (l, Leaf (10)))
         initTree (t)

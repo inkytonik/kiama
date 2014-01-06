@@ -33,7 +33,7 @@ class UniplateTests extends Tests with Generator {
     import org.kiama.example.imperative.ImperativeTree._
     import org.kiama.rewriting.Rewriter._
     import org.scalacheck._
-    import org.scalacheck.Prop._
+    import org.scalacheck.Prop.{collect => _, _}
     import scala.collection.immutable.Seq
 
     /**
@@ -59,16 +59,31 @@ class UniplateTests extends Tests with Generator {
     }
 
     {
-        val variabless = collects { case Var (s) => s }
+        val variabless = collect[Set,String] { case Var (s) => s }
+        val variablesl = collect[List,String] { case Var (s) => s }
 
-        test ("collection of variable references: indirect style") {
+        test ("singleton collection of variable references: indirect style") {
+            check ((e : Exp) => variabless (e) == e.vars)
+        }
+
+        test ("singleton collection of variable references: indirect style on sets and lists") {
+            assertResult (Set ()) (variabless (numexp))
+            assertResult (Seq ()) (variablesl (numexp))
+            assertResult (Set ("var1", "var2")) (variabless (varexp))
+            assertResult (Seq ("var1", "var2", "var1")) (variablesl (varexp))
+        }
+    }
+
+    {
+        val variabless = collectall { case Var (s) => Set (s) }
+        val variablesl = collectall { case Var (s) => List (s) }
+
+        test ("all collection of variable references: indirect style") {
             // Indirect: using the collects combinator to manage the set
             check ((e : Exp) => variabless (e) == e.vars)
         }
 
-        test ("collection of variable references: indirect style on sets and lists") {
-            // Simple check of set and list versions of collect
-            val variablesl = collectl { case Var (s) => s }
+        test ("all collection of variable references: indirect style on sets and lists") {
             assertResult (Set ()) (variabless (numexp))
             assertResult (Seq ()) (variablesl (numexp))
             assertResult (Set ("var1", "var2")) (variabless (varexp))

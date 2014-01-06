@@ -598,36 +598,32 @@ trait Rewriter extends RewriterCore {
     // Queries below here
 
     /**
-     * Collect query results in a traversable collection.  Run the function
-     * `f` as a top-down left-to-right query on the subject term.  Accumulate
-     * the values produced by the function in the collection and return the
-     * final value of the list.
+     * As for `collect` in `RewriterCore` without the `name` argument but
+     * specifies the name for the constructed strategy.
+     * @see RewriterCore.collect
      */
-    def collect[U,CC[_] <: Traversable[_]] (name : String, f : Any ==> U)
-            (implicit cbf : CanBuildFrom[CC[U],U,CC[U]]) : Any => CC[U] =
+    def collectWithName[CC[X] <: Traversable[X],U] (name : String, f : Any ==> U)
+            (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
         (t : Any) => {
             val b = cbf ()
             val add = (u : U) => b += u
-            (everywhere (name, query (f andThen add))) (t)
+            (everywhere (query (f andThen add))) (t)
             b.result ()
         }
 
     /**
-     * As for the version in `RewriterCore` without the `name` argument but
+     * As for `collectall` in `RewriterCore` without the `name` argument but
      * specifies the name for the constructed strategy.
-     * @see RewriterCore.collectl
+     * @see RewriterCore.collectall
      */
-    def collectl[U] (name : String, f : Any ==> U) : Any => List[U] =
-        collect[U,List] (name, f)
-
-    /**
-     * Collect query results in a set.  Run the function `f` as a top-down
-     * left-to-right query on the subject term.  Accumulate the values
-     * produced by the function in a set and return the final value of
-     * the set.
-     */
-    def collects[U] (name : String, f : Any ==> U) : Any => Set[U] =
-        collect[U,Set] (name, f)
+    def collectallWithName[CC[X] <: Traversable[X],U] (name : String, f : Any ==> CC[U])
+            (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
+        (t : Any) => {
+            val b = cbf ()
+            val addall = (us : CC[U]) => b ++= us
+            (everywhere (query (f andThen addall))) (t)
+            b.result ()
+        }
 
     /**
      * Count function results.  Run the function `f` as a top-down query on
@@ -642,8 +638,10 @@ trait Rewriter extends RewriterCore {
      * Collect the resulting `T` values by accumulating them using `f` with initial
      * left value `v`.  Return the final value of the accumulation.
      */
-    def everything[T] (name : String, v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T =
-        (collectl (name, g) (t)).foldLeft (v) (f)
+    def everything[T] (name : String, v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T = {
+        val collector = collectWithName[List,T] (name, g)
+        collector (t).foldLeft (v) (f)
+    }
 
 }
 

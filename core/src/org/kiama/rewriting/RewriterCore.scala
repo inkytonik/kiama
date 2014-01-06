@@ -1440,22 +1440,24 @@ trait RewriterCore {
     // Queries below here
 
     /**
-     * Collect query results in a list.  Run the function `f` as a top-down
-     * left-to-right query on the subject term.  Accumulate the values
-     * produced by the function in a list and return the final value of
-     * the list.
+     * Collect query results in a traversable collection.  Run the function
+     * `f` as a top-down left-to-right query on the subject term.  Each
+     * application of `f` returns a single value. All of these values are
+     * accumulated in the collection.
      */
-    def collectl[U] (f : Any ==> U) : Any => List[U] =
-        macro RewriterCoreMacros.collectlMacro[U]
+    def collect[CC[X] <: Traversable[X],U] (f : Any ==> U)
+            (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
+        macro RewriterCoreMacros.collectMacro[CC,U]
 
     /**
-     * Collect query results in a set.  Run the function `f` as a top-down
-     * left-to-right query on the subject term.  Accumulate the values
-     * produced by the function in a set and return the final value of
-     * the set.
+     * Collect query results in a traversable collection.  Run the function
+     * `f` as a top-down left-to-right query on the subject term.  Each
+     * application of `f` returns a collection of values. All of these values
+     * are accumulated in the collection.
      */
-    def collects[U] (f : Any ==> U) : Any => Set[U] =
-        macro RewriterCoreMacros.collectsMacro[U]
+    def collectall[CC[X] <: Traversable[X],U] (f : Any ==> CC[U])
+            (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
+        macro RewriterCoreMacros.collectallMacro[CC,U]
 
     /**
      * Count function results.  Run the function `f` as a top-down query on
