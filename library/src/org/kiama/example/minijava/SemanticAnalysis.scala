@@ -21,32 +21,29 @@
 package org.kiama
 package example.minijava
 
-import org.kiama.util.Messaging
-
 /**
  * Semantic analysis module containing static checking of Minijava
  * semantic rules, most notably name analysis.
  */
-class SemanticAnalysis (val messaging : Messaging) {
+class SemanticAnalysis {
 
-    import messaging.message
     import MiniJavaTree._
     import org.kiama.==>
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
+    import org.kiama.rewriting.Rewriter.{collect, collectall}
+    import org.kiama.util.Message
+    import org.kiama.util.Messaging.{check, checkuse, message, noMessages}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Patterns.HasParent
+    import scala.collection.immutable.Seq
     import SymbolTable._
 
     /**
-     * Check the sub-tree rooted at the given node to see if it contains
-     * any semantic errors. If yes, as a side-effect this method will
-     * record those errors using `messaging` so that they can be
-     * reported to the user later.
+     * The semantic error messages for a given tree.
      */
-    def check (n : MiniJavaTree) {
-        // Check this node
-        n match {
+    val errors =
+        attr (collectall {
             case d @ IdnDef (i) if (d->entity == MultipleEntity ()) =>
                 message (d, s"$i is declared more than once")
 
@@ -54,66 +51,40 @@ class SemanticAnalysis (val messaging : Messaging) {
                 message (u, s"$i is not declared")
 
             case VarAssign (u, _) =>
-                (u->entity) match {
-                    // Rule 9
-                    case _ : FieldEntity | _ : VariableEntity | _ : ArgumentEntity =>
-                        // Do nothing
-                    case ent =>
-                        if (ent != UnknownEntity ())
-                            message (u, "illegal assignment to non-variable, non-argument")
+                checkuse (u->entity) {
+                    case _ : ClassEntity | _ : MethodEntity =>
+                        message (u, "illegal assignment to non-variable, non-argument")
                 }
 
             case e : Expression =>
-                if (!iscompatible (e->tipe, e->exptipe))
-                    message (e, s"type error: expected ${e->exptipe} got ${e->tipe}")
-                e match {
-
+                message (e, s"type error: expected ${e->exptipe} got ${e->tipe}",
+                         !iscompatible (e->tipe, e->exptipe)) ++
+                check (e) {
                     case IdnExp (u) =>
-                        (u->entity) match {
-                            // Rule 6
+                        checkuse (u->entity) {
                             case _ : MethodEntity =>
                                 message (u, "can't refer to methods directly")
-                            case _ =>
-                                // Do nothing
                         }
 
                     case CallExp (_, u, args) =>
-                        (u->entity) match {
-                            // Rule 16
+                        checkuse (u->entity) {
                             case MethodEntity (decl) =>
-
-                                // Check that argument counts match (rule 16)
                                 val expargnum = decl.body.args.length
-                                if (expargnum != args.length)
-                                    message (u, s"wrong number of arguments, got ${args.length} but expected $expargnum")
-                            case ent =>
-                                if (ent != UnknownEntity ())
-                                    message (u, "illegal call to non-method")
+                                message (u, s"wrong number of arguments, got ${args.length} but expected $expargnum",
+                                         expargnum != args.length)
+                            case _ =>
+                                message (u, "illegal call to non-method")
                         }
 
                     case NewExp (u) =>
-                        (u->entity) match {
-                            // Rule 19
+                        checkuse (u->entity) {
                             case _ : ClassEntity =>
-                                // Do nothing
-                            case ent =>
-                                if (ent != UnknownEntity ())
-                                    message (u, "illegal instance creation of non-class type")
+                                noMessages
+                            case _ =>
+                                message (u, "illegal instance creation of non-class type")
                         }
-
-                    case _ =>
-                        // Do nothing
-
                 }
-
-            case _ =>
-                // Do nothing by default
-        }
-
-        // Check the children of this node
-        for (child <- n.children)
-            check (child.asInstanceOf[MiniJavaTree])
-    }
+        })
 
     /**
      * Are two types compatible?  If either of them are unknown then we

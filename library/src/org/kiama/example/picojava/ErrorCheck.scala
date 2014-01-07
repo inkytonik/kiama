@@ -36,10 +36,10 @@ object ErrorCheck {
     import PredefinedTypes._
     import TypeAnalysis._
     import org.kiama.attribution.Attribution._
+    import org.kiama.rewriting.Rewriter.collectall
+    import org.kiama.util.Messaging.message
     import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
-
-    type Errors = scala.collection.mutable.Builder[String,Seq[String]]
 
     /**
      * All of the error messages for a program.
@@ -49,16 +49,6 @@ object ErrorCheck {
      *    collectErrors(c);
      *    return c;
      * }
-     */
-    val errors : Program => Seq[String] =
-        p => {
-            val b = Seq.newBuilder[String]
-            p->collectErrors (b)
-            b.result ()
-        }
-
-    /**
-     * Collect the errors for a node recursively.
      *
      * public void ASTNode.collectErrors(Collection c) {
      *    for(int i = 0; i < getNumChild(); i++)
@@ -92,45 +82,25 @@ object ErrorCheck {
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val collectErrors : Errors => PicoJavaTree => Unit =
-        // NOTE: Not using paramAttr here, since we don't want caching for this
-        c => (
-            t => {
-                // Process the errors of the children of t
-                for (child <- t.children)
-                    child.asInstanceOf[PicoJavaTree]->collectErrors (c)
-                // Process the errors at t
-                t match {
-                    case a : AssignStmt =>
-                        if (!isSubtypeOf (a.Value->tipe) (a.Variable->tipe))
-                            a->record (c, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
-                    case d : ClassDecl =>
-                        if (hasCycleOnSuperclassChain (d))
-                            d->record (c, s"Cyclic inheritance chain for class ${d.Name}")
-                    case s : WhileStmt =>
-                        if (!isSubtypeOf (s.Condition->tipe) (booleanType (s)))
-                            s->record (c, "Condition must be a boolean expression")
-                        if (!isValue (s.Condition))
-                            s->record (c, "Condition must be a value")
-                    case i : IdnUse =>
-                        if (isUnknown (i->decl) &&
-                            (!isQualified (i) || !isUnknown (i->qualifier->tipe)))
-                        i->record (c, s"Unknown identifier ${i.Name}")
-                    case _ =>
-                }
-            }
-        )
+    val errors =
+        attr (collectall {
 
-    /**
-     * Record a new error in the collection.
-     *
-     * protected void ASTNode.error(Collection c, String s) {
-     *    //c.add(getLine(getStart()) + ": " + s);
-     *    c.add(s);
-     * }
-     */
-    val record : (Errors,String) => PicoJavaTree => Unit =
-        (c,s) => a => c += s"${a.start}: $s"
+            case a : AssignStmt if !isSubtypeOf (a.Value->tipe) (a.Variable->tipe) =>
+                message (a, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
+
+            case d : ClassDecl if hasCycleOnSuperclassChain (d) =>
+                message (d, s"Cyclic inheritance chain for class ${d.Name}")
+
+            case s : WhileStmt =>
+                message (s, "Condition must be a boolean expression",
+                        !isSubtypeOf (s.Condition->tipe) (booleanType (s))) ++
+                message (s, "Condition must be a value",
+                         !isValue (s.Condition))
+
+            case i : IdnUse if isUnknown (i->decl) && (!isQualified (i) || !isUnknown (i->qualifier->tipe)) =>
+                message (i, s"Unknown identifier ${i.Name}")
+
+        })
 
     /**
      * Is this entity qualified?

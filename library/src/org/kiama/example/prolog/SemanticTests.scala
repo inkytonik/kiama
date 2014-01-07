@@ -37,7 +37,8 @@ class SemanticTests extends SemanticTestDriver {
 class SemanticTestDriver extends SyntaxAnalysis with Compiler[Program]
         with TestCompiler[Program] {
 
-    import org.kiama.util.{Config, Messaging}
+    import org.kiama.util.Config
+    import org.kiama.util.Messaging.report
 
     /**
      * For the purposes of tests, the parser we want is the program one.
@@ -49,11 +50,10 @@ class SemanticTestDriver extends SyntaxAnalysis with Compiler[Program]
      */
     override def process (filename : String, ast : Program, config : Config) {
         super.process (filename, ast, config)
-        val messaging = new Messaging
-        val analysis = new SemanticAnalysis (messaging)
-        analysis.check (ast)
-        if (messaging.messagecount > 0)
-            messaging.report (config.emitter)
+        val analysis = new SemanticAnalysis
+        val messages = analysis.errors (ast)
+        if (messages.length > 0)
+            report (messages, config.emitter)
     }
 
 }

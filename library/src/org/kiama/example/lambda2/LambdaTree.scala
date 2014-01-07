@@ -104,6 +104,11 @@ object LambdaTree {
     case class NoType () extends Type
 
     /**
+     * The entity cannot be typed.
+     */
+    case class UnknownType () extends Type
+
+    /**
      * Primitive binary operators.
      */
     sealed abstract class Op {

@@ -21,8 +21,6 @@
 package org.kiama
 package example.grammar
 
-import org.kiama.util.Messaging
-
 /**
  * Perform name analysis checks for the grammar language. Also, define
  * auxiliary properties nullability, first and follow for grammar symbols.
@@ -30,50 +28,28 @@ import org.kiama.util.Messaging
  * Reference Attributed Grammars - their Evaluation and Applications", by
  * Magnusson and Hedin from LDTA 2003.
  */
-class SemanticAnalysis (messaging : Messaging) {
+class SemanticAnalysis {
 
-    import messaging.message
     import GrammarTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
     import org.kiama.attribution.Decorators.downErr
-    import org.kiama.rewriting.Rewriter.collect
+    import org.kiama.rewriting.Rewriter.{collect, collectall}
+    import org.kiama.util.Message
+    import org.kiama.util.Messaging.message
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import scala.collection.immutable.{Seq, Set}
 
     /**
-     * Does the sub-tree rooted at the given node contain any semantic
-     * errors or not? If yes, as a side-effect this method will record
-     * those errors using `messaging` so that they can be reported to
-     * the user later.
+     * The semantic error messages for a given tree.
      */
-    def check (n : GrammarTree) {
-        // Check this node
-        n match {
-            case n @ NonTermDef (name) =>
-                n->entity match {
-                    case MultipleEntity () =>
-                        message (n, s"$name is defined more than once")
-                    case _ =>
-                        // everything ok
-                }
-
-            case n @ NonTermUse (name) =>
-                n->entity match {
-                    case UnknownEntity () =>
-                        message (n, s"$name is not declared")
-                    case _ =>
-                        // everything ok
-                }
-
-            case _ =>
-                // Do nothing by default
-        }
-
-        // Check the children of this node
-        for (child <- n.children)
-            check (child.asInstanceOf[GrammarTree])
-    }
+    val errors =
+        attr (collectall {
+            case n @ NonTermDef (name) if n->entity == MultipleEntity () =>
+                message (n, s"$name is defined more than once")
+            case n @ NonTermUse (name) if n->entity == UnknownEntity () =>
+                message (n, s"$name is not declared")
+        })
 
     /**
      * The `envin` contains the bindings that are defined "before" the given

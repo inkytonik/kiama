@@ -45,7 +45,8 @@ class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
 
     import org.kiama.example.obr.{RISCEncoder, RISCTransformation}
     import org.kiama.example.RISC.{RISC, RISCISA}
-    import org.kiama.util.{Emitter, Messaging}
+    import org.kiama.util.Emitter
+    import org.kiama.util.Messaging.report
 
     override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : ObrConfig =
         new ObrConfig (args, emitter)
@@ -59,11 +60,10 @@ class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
         RISCLabels.reset ()
 
         // Conduct semantic analysis and report any errors
-        val messaging = new Messaging
-        val analysis = new SemanticAnalysis (messaging)
-        analysis.errors (ast)
-        if (messaging.messagecount > 0) {
-            messaging.report (config.emitter)
+        val analysis = new SemanticAnalysis
+        val messages = analysis.errors (ast)
+        if (messages.length > 0) {
+            report (messages, config.emitter)
         } else {
             // Print out final environment
             if (config.envPrint ()) {
@@ -120,7 +120,7 @@ class ParserDriver extends Driver {
  */
 class SemanticDriver extends Driver {
 
-    import org.kiama.util.Messaging
+    import org.kiama.util.Messaging.report
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
@@ -128,12 +128,11 @@ class SemanticDriver extends Driver {
         SymbolTable.reset ()
 
         // Conduct semantic analysis and report any errors
-        val messaging = new Messaging
-        val analysis = new SemanticAnalysis (messaging)
+        val analysis = new SemanticAnalysis
         initTree (ast)
-        analysis.errors (ast)
-        if (messaging.messagecount > 0)
-            messaging.report (config.emitter)
+        val messages = analysis.errors (ast)
+        if (messages.length > 0)
+            report (messages, config.emitter)
 
     }
 

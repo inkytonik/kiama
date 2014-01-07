@@ -29,7 +29,8 @@ import org.kiama.util.Compiler
  */
 class Driver extends Parser with Compiler[Program] {
 
-    import org.kiama.util.{Config, Messaging}
+    import org.kiama.util.Config
+    import org.kiama.util.Messaging.report
 
     override def process (filename : String, program : Program, config : Config) {
 
@@ -42,17 +43,15 @@ class Driver extends Parser with Compiler[Program] {
         // Check for semantic errors on the original expression.  This
         // will cause a translation to a priority-correct representation
         // and error computation on that rep.
-        val messaging = new Messaging
-        val analysis = new Analysis (messaging)
-        import analysis._
-        expr->errors
+        val analysis = new Analysis
+        val messages = analysis.errors (expr)
 
         // For testing, print the priority-correct representation
         config.emitter.emitln (analysis.ast (expr))
 
         // Report any semantic errors
-        if (messaging.messagecount > 0)
-            messaging.report (config.emitter)
+        if (messages.length > 0)
+            report (messages, config.emitter)
 
     }
 

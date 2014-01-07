@@ -26,17 +26,21 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
 
     import base.source.{Block, Identifier, IdnDef, IdnUse, ModuleDecl,
         SourceTree}
-    import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
+    import org.kiama.util.Messaging.{check, message, Messages}
     import org.kiama.util.Patterns.HasParent
     import source.{AddExp, Assignment, BinaryExpression, ConstDecl,
         DivExp, Expression, IdnExp, IntExp, ModExp, MulExp, NamedType, NegExp,
         SubExp, TypeDecl, TypeDef, UnaryExpression, VarDecl}
 
-    abstract override def check (n : SourceTree) {
-        n match {
+    /**
+     * The error checking for this level.
+     */
+    override def errorsDef (n : SourceTree) : Messages =
+        super.errorsDef (n) ++
+        check (n) {
             case ModuleDecl (_, _, u @ IdnUse (i)) if !isModule (u->entity) =>
                 message (u, s"$i is not a module")
 
@@ -53,12 +57,11 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
                 message (u, s"$i is not a type name")
 
             case Assignment (l, _) if !isLvalue (l) =>
-                message (n, "illegal assignment")
+                message (l, "illegal assignment")
 
             case e : Expression =>
-                if ((e->rootconstexp) && !(e->isconst))
-                    message (e, "expression is not constant")
-                e match {
+                message (e, "expression is not constant", (e->rootconstexp) && !(e->isconst)) ++
+                check (e) {
                     case u @ IdnExp (IdnUse (i)) if !(isRvalue (u)) =>
                         message (u, s"$i cannot be used in an expression")
 
@@ -67,17 +70,8 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
 
                     case ModExp (_, r) if (r->expconst) && (r->isconst) && (r->value == 0) =>
                         message (r, "modulus by zero in constant expression")
-
-                    case _ =>
-                        // Do nothing by default
                 }
-
-            case _ =>
-                // Do nothing by default
         }
-
-        super.check (n)
-    }
 
     /**
      * Return true if the expression can legally appear on the left-hand side of an

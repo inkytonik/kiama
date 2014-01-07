@@ -24,22 +24,25 @@ package base
 
 trait Analyser {
 
-    import org.kiama.util.Messaging
+    import org.kiama.attribution.Attribution.attr
+    import org.kiama.rewriting.Rewriter.collectall
+    import org.kiama.util.Messaging.{Messages, noMessages}
     import source.SourceTree
 
     /**
-     * The messaging module to use for this compiler.
+     * The semantic errors for a tree.
      */
-    val messaging = new Messaging
+    val errors =
+        attr (collectall {
+            case n : SourceTree =>
+                errorsDef (n)
+        })
 
     /**
-     * Check an AST node for semantic errors. Report any errors using the
-     * messaging module. This default implementation just ask the node's
-     * children to check themselves.
+     * The error checking for this level, overridden to extend at later
+     * levels. No errors are collected at this level.
      */
-    def check (n : SourceTree) {
-        for (child <- n.children)
-            check (child.asInstanceOf[SourceTree])
-    }
+    def errorsDef (n : SourceTree) : Messages =
+        noMessages
 
 }

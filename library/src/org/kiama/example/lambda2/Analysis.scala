@@ -30,13 +30,52 @@ import org.kiama.util.Messaging
  * from the AST, and one (tipe2) that represents names by references to the
  * nodes of their binding lambda expressions.
  */
-class Analysis (val messaging : Messaging) {
+class Analysis {
 
     import LambdaTree._
     import PrettyPrinter._
-    import messaging.message
     import org.kiama.attribution.Attribution._
+    import org.kiama.rewriting.Rewriter.collectall
+    import org.kiama.util.Messaging.{check, message, Messages}
     import scala.collection.immutable.Seq
+
+    /**
+     * The semantic error messages for a given tree. This one uses the `tipe`
+     * attribute.
+     */
+    val errors =
+        attr (collectall {
+            case e : Exp =>
+                checkType (e, tipe) ++
+                check (e) {
+                    case App (e1, e2) =>
+                        check (e1->tipe) {
+                            case _ : IntType =>
+                                message (e1, "application of non-function")
+                        }
+                    case Var (x) =>
+                        message (e, s"'$x' unknown", e->tipe == UnknownType ())
+                }
+        })
+
+    /**
+     * The semantic error messages for a given tree. This one uses the `tipe2`
+     * attribute.
+     */
+    val errors2 =
+        attr (collectall {
+            case e : Exp =>
+                checkType (e, tipe2) ++
+                check (e) {
+                    case App (e1, e2) =>
+                        check (e1->tipe2) {
+                            case _ : IntType =>
+                                message (e1, "application of non-function")
+                        }
+                    case Var (x) =>
+                        message (e, s"'$x' unknown", e->tipe2 == UnknownType ())
+                }
+        })
 
     /**
      * The variables that are free in the given expression.
@@ -86,17 +125,15 @@ class Analysis (val messaging : Messaging) {
         }
 
     /**
-     * Return whether the type of `e` is `expectedType` or unknown. If it
-     * isn't either of these, also report an error.
+     * Check that the type of `e` is its expected type or unknown. If not,
+     * return an error. `tipe` is used to obtain the type.
      */
-    def checkType (e : Exp, expectedType : Type) : Boolean =
-        if (tipe (e) == NoType () || expectedType == NoType () ||
-                tipe (e) == expectedType) {
-            true
-        } else {
-            message (e, s"expected ${pretty (expectedType)}, found ${pretty (tipe (e))}")
-            false
-        }
+    def checkType (e : Exp, tipe : Exp => Type) : Messages = {
+        val expectedType = exptipe (e)
+        message (e, s"expected ${pretty (expectedType)}, found ${pretty (tipe (e))}",
+                 tipe (e) != NoType () && tipe (e) != UnknownType () &&
+                     expectedType != NoType () && tipe (e) != expectedType)
+    }
 
     /**
      * The type of an expression.  Checks constituent names and types.  Uses
@@ -116,8 +153,7 @@ class Analysis (val messaging : Messaging) {
                 (e->env).collectFirst {
                     case (y, t) if x == y => t
                 }.getOrElse {
-                    message (e, s"'$x' unknown")
-                    NoType ()
+                    UnknownType ()
                 }
 
             // A lambda expression is a function from the type of its argument
@@ -130,36 +166,32 @@ class Analysis (val messaging : Messaging) {
                     FunType (t, e->tipe)
 
             // For an application we first determine the type of the expression
-            // being applied.  If it's a function whose argument type is the same
-            // as the type of the argument in the application, then the type of
-            // the application is the type of the body of the function.  If it's
-            // a function but the argument types do not match, then it's an error.
-            // If it's not a function then it's also an error.
+            // being applied.  If it's a function then the application has type
+            // of that function's return type. If it's not a function then any
+            // type is allowed. We check separately that only functions are
+            // applied.
             case App (e1, e2) =>
                 e1->tipe match {
                     case FunType (t1, t2) =>
-                        if (checkType (e2, t1))
+                        if (e2->tipe == t1)
                             t2
                         else
                             NoType ()
-                    case NoType () =>
-                        NoType ()
                     case _ =>
-                        message (e1, "application of non-function")
                         NoType ()
                 }
 
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (e1, op, e2) =>
-                if (checkType (e1, IntType ()) && checkType (e2, IntType ()))
+                if ((e1->tipe == IntType ()) && (e2->tipe == IntType ()))
                     IntType ()
                 else
                     NoType ()
 
             // A let returns the type of the body expression
             case Let (i, t, e1, e2) =>
-                if (checkType (e1, t))
+                if (e1->tipe == t)
                     e2->tipe
                 else
                     NoType ()
@@ -167,6 +199,45 @@ class Analysis (val messaging : Messaging) {
             // A parallel returns the type of the body expression
             case Letp (bs, e) =>
                 e->tipe
+        }
+
+    /**
+     * The expected type of an expression.
+     */
+    val exptipe : Exp => Type =
+        attr {
+            case e =>
+                (e.parent) match {
+                    // The applied expression is allowed to be anything. We check
+                    // separately that it's a function.
+                    case App (e1, _) if e eq e1 =>
+                        NoType ()
+
+                    // The argument is expected to be of the functions input type
+                    case App (e1, e2) if e eq e2 =>
+                        e1->tipe match {
+                            case FunType (t1, _) =>
+                                t1
+                            case _ =>
+                                NoType ()
+                        }
+
+                    // The type of the bound expression must match the declared type
+                    case Let (_, t, e1, _) if e eq e1 =>
+                        t
+
+                    // The type of the body must match the context of the let
+                    case p @ Let (_, t, _, e2) if e eq e2 =>
+                        p->exptipe
+
+                    // The operands of an operation should be integers
+                    case Opn (_, _, _) =>
+                        IntType ()
+
+                    // Other expressions are allowed to be anything
+                    case _ =>
+                        NoType ()
+                }
         }
 
     /**
@@ -191,19 +262,6 @@ class Analysis (val messaging : Messaging) {
         }
 
     /**
-     * Return whether the type of `e` is `expectedType` or unknown. If it
-     * isn't either of these, also report an error.
-     */
-    def checkType2 (e : Exp, expectedType : Type) : Boolean =
-        if (tipe2 (e) == NoType () || expectedType == NoType () ||
-                tipe2 (e) == expectedType) {
-            true
-        } else {
-            message (e, s"expected ${pretty (expectedType)}, found ${pretty (tipe2 (e))}")
-            false
-        }
-
-    /**
      * The type of an expression.  Checks constituent names and types. Uses
      * the lookup attribute to get the lambda node that binds a name. For
      * other cases it behaves like tipe.
@@ -220,10 +278,10 @@ class Analysis (val messaging : Messaging) {
             // Otherwise it's an error.
             case e @ Var (x) =>
                 (e->lookup (x)) match {
-                    case Some (Lam (_, t, _)) => t
+                    case Some (Lam (_, t, _)) =>
+                        t
                     case None =>
-                        message (e, s"'$x' unknown")
-                        NoType ()
+                        UnknownType ()
                 }
 
             // A lambda expression is a function from the type of its argument
@@ -236,40 +294,35 @@ class Analysis (val messaging : Messaging) {
                     FunType (t, e->tipe2)
 
             // For an application we first determine the type of the expression
-            // being applied.  If it's a function whose argument type is the same
-            // as the type of the argument in the application, then the type of
-            // the application is the type of the body of the function.  If it's
-            // a function but the argument types do not match, then it's an error.
-            // If it's not a function then it's also an error.
+            // being applied.  If it's a function then the application has type
+            // of that function's return type. If it's not a function then any
+            // type is allowed. We check separately that only functions are
+            // applied.
             case App (e1, e2) =>
                 e1->tipe2 match {
                     case FunType (t1, t2) =>
-                        if (checkType2 (e2, t1))
+                        if (e2->tipe2 == t1)
                             t2
                         else
                             NoType ()
-                    case NoType () =>
-                        NoType ()
                     case _ =>
-                        message (e1, "application of non-function")
                         NoType ()
                 }
 
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (e1, op, e2) =>
-                if (checkType2 (e1, IntType ()) && checkType2 (e2, IntType ()))
+                if ((e1->tipe == IntType ()) && (e2->tipe == IntType ()))
                     IntType ()
                 else
                     NoType ()
 
             // A let returns the type of the body expression
             case Let (i, t, e1, e2) =>
-                if (checkType2 (e1, t))
+                if (e1->tipe2 == t)
                     e2->tipe2
                 else
                     NoType ()
-
 
             // A parallel returns the type of the body expression
             case Letp (bs, e) =>

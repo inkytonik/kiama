@@ -26,22 +26,19 @@ trait NameAnalyser extends L3.NameAnalyser {
 
     import base.source.SourceTree
     import L0.source.Expression
-    import messaging.message
+    import org.kiama.util.Messaging.{check, message, Messages}
     import source.{FieldExp, IndexExp, RecordTypeDef}
 
-    abstract override def check (n : SourceTree) {
-        n match {
+    /**
+     * The error checking for this level.
+     */
+    override def errorsDef (n : SourceTree) : Messages =
+        super.errorsDef (n) ++
+        check (n) {
             case n @ RecordTypeDef (fls) =>
                 val flnames = fls.flatMap (_.idndefs)
-                if (flnames.distinct != flnames)
-                    message (n, "record contains duplicate field names")
-
-            case _ =>
-                // Do nothing by default
+                message (n, "record contains duplicate field names", flnames.distinct != flnames)
         }
-
-        super.check (n)
-    }
 
     override def isLvalue (l : Expression) : Boolean =
         l match {

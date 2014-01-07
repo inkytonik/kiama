@@ -30,62 +30,80 @@ case class Message (line : Int, column : Int, label : String) {
 }
 
 /**
- * Facility for buffering of messages associated with positioned values.
+ * Facility for building messages associated with positioned values.
  */
-class Messaging {
+object Messaging {
 
+    import org.kiama.util.{Entity, ErrorEntity}
+    import scala.collection.immutable.{IndexedSeq, Seq}
     import scala.util.parsing.input.Positional
 
     /**
-     * Buffer of messages.
+     * The type of a sequence of messages.
      */
-    val messages = scala.collection.mutable.ListBuffer[Message] ()
+    type Messages = Seq[Message]
 
     /**
-     * The messages sorted by increasing position.
+     * A value representing no messages.
      */
-    def sortedmessages : Seq[Message] =
-        messages.toList.sortWith {
-            case (msg1, msg2) =>
-                (msg1.line < msg2.line) ||
-                ((msg1.line == msg2.line) && (msg1.column < msg2.column))
+    val noMessages = IndexedSeq.empty
+
+    /**
+     * Make a sequence of messages from a single message.
+     */
+    def aMessage (message : Message) =
+        IndexedSeq (message)
+
+    /**
+     * If `f` is defined at `t` apply it and return the resulting sequence
+     * of messages. Otherwise, return an empty sequence.
+     */
+    def check[T] (t : T) (f : T ==> Messages) : Messages =
+        f.applyOrElse (t, (_ : T) => noMessages)
+
+    /**
+     * Check that the entity `e` is used legally and return appropriate
+     * messages if not. If the entity is an error entity (unknown or multiply
+     * defined, keep silent on the grounds that the error has already been
+     *reported elsewhere (e.g., at the declaration site of the entity).
+     * Otherwise, if `f` is defined at `e` return the messages that `f (e)`
+     * evaluates to. If `f` is not defined at `e`, keep silent.
+     */
+    def checkuse (e : Entity) (f : Entity ==> Messages) : Messages =
+        e match {
+            case _ : ErrorEntity =>
+                noMessages
+            case _ =>
+                check (e) (f)
         }
 
     /**
-     * Buffer a new message associated with the given `Positional` value.
+     * If `cond` is true make a singleton message list that associates the
+     * message `msg` with the `Positioned` `value`. `cond` can be omitted
+     * and defaults to true. The `finish` position is ignored at present.
      */
-    def message (value : Positional, label : String) {
-        messages += Message (value.pos.line, value.pos.column, label)
-    }
-
-    /**
-     * Buffer a new message associated with the given `Positioned` value.
-     * The `finish` position is ignored at present.
-     */
-    def message (value : Positioned, label : String) {
-        messages += Message (value.start.line, value.start.column, label)
-    }
-
-    /**
-     * Return the number of messages that are buffered.
-     */
-    def messagecount : Int =
-        messages.size
+    def message (value : Positioned, msg : String, cond : Boolean = true) : Messages =
+        if (cond)
+            aMessage (Message (value.start.line, value.start.column, msg))
+        else
+            noMessages
 
     /**
      * Output the messages in order of position using the given emitter, which
      * defaults to standard output.
      */
-    def report (emitter : Emitter = new Emitter) {
-        for (m <- sortedmessages)
-            emitter.emitln (m)
+    def report (messages : Messages, emitter : Emitter = new Emitter) {
+        sortmessages (messages).map (emitter.emitln (_))
     }
 
     /**
-     * Reset the message buffer to empty.
+     * Sort the messages by increasing position.
      */
-    def resetmessages () {
-        messages.clear
-    }
+    def sortmessages (messages : Messages) : Messages =
+        messages.sortWith {
+            case (msg1, msg2) =>
+                (msg1.line < msg2.line) ||
+                ((msg1.line == msg2.line) && (msg1.column < msg2.column))
+        }
 
 }

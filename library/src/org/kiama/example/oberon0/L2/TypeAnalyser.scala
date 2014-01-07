@@ -25,21 +25,19 @@ package L2
 trait TypeAnalyser extends L1.TypeAnalyser {
 
     import base.source.{IdnUse, SourceTree}
-    import messaging.message
     import L0.source.{Expression, IdnExp}
+    import org.kiama.util.Messaging.{check, message, Messages}
     import source.{CaseStatement, ForStatement}
 
-    abstract override def check (n : SourceTree) {
-        n match {
+    /**
+     * The error checking for this level.
+     */
+    override def errorsDef (n : SourceTree) : Messages =
+        super.errorsDef (n) ++
+        check (n) {
             case ForStatement (IdnExp (u @ IdnUse (i)), _, _, _, _) if !isVariable (u->entity) =>
                 message (u, s"illegal FOR loop control variable $i")
-
-            case _ =>
-                // Do nothing by default
         }
-
-        super.check (n)
-    }
 
     override def exptypeDef : Expression => Type =
         (n =>

@@ -66,12 +66,10 @@ class SemanticAnalysisTests extends Tests {
     val g1 = Grammar (g1r1, Seq (g1r2, g1r3, g1r4))
 
     initTree (g1)
-    val g1messaging = new Messaging ()
-    val g1analysis = new SemanticAnalysis (g1messaging)
-    g1analysis.check (g1)
+    val g1analysis = new SemanticAnalysis
 
     test ("g1: has no semantic errors") {
-        assertResult (0) (g1messaging.messagecount)
+        assertResult (0) (g1analysis.errors (g1).length)
     }
 
     test ("g1: S is not nullable") {
@@ -144,12 +142,10 @@ class SemanticAnalysisTests extends Tests {
     val g2 = Grammar (g2r1, Seq (g2r2, g2r3, g2r4, g2r5, g2r6))
 
     initTree (g2)
-    val g2messaging = new Messaging ()
-    val g2analysis = new SemanticAnalysis (g2messaging)
-    g2analysis.check (g2)
+    val g2analysis = new SemanticAnalysis
 
     test ("g2: has no semantic errors") {
-        assertResult (0) (g2messaging.messagecount)
+        assertResult (0) (g2analysis.errors (g2).length)
     }
 
     test ("g2: S is not nullable") {
@@ -237,15 +233,13 @@ class SemanticAnalysisTests extends Tests {
     val g3 = Grammar (g3r1, Seq (g3r2, g3r3))
 
     initTree (g3)
-    val g3messaging = new Messaging ()
-    val g3analysis = new SemanticAnalysis (g3messaging)
-    g3analysis.check (g3)
+    val g3analysis = new SemanticAnalysis
 
-    test ("g3: has three semantic errors") {
-        assertMessages (g3messaging,
-            (0, Message (0, 0, "F is not declared")),
-            (1, Message (0, 0, "E is defined more than once")),
-            (2, Message (0, 0, "E is defined more than once")))
+    test ("g3: has the expected semantic errors") {
+        assertMessages (g3analysis.errors (g3),
+            Message (0, 0, "F is not declared"),
+            Message (0, 0, "E is defined more than once"),
+            Message (0, 0, "E is defined more than once"))
     }
 
 }

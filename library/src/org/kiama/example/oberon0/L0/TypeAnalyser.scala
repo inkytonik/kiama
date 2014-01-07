@@ -25,23 +25,21 @@ package L0
 trait TypeAnalyser extends NameAnalyser {
 
     import base.source.{IdnUse, SourceTree}
-    import messaging.message
     import org.kiama.attribution.Attribution.attr
+    import org.kiama.util.Messaging.{check, message, Messages}
     import source.{AndExp, Assignment, ConstDecl, Expression, IdnExp,
         IntExp, NamedType, NegExp, NotExp, OrExp, ProdExpression,
         RelationalExpression, SumExpression, TypeDecl, TypeDef}
 
-    abstract override def check (n : SourceTree) {
-        n match {
+    /**
+     * The error checking for this level.
+     */
+    override def errorsDef (n : SourceTree) : Messages =
+        super.errorsDef (n) ++
+        check (n) {
             case e : Expression if !isCompatible (e->tipe, e->exptype) =>
-                message (n, s"type error: got ${e->tipe}, but expected ${e->exptype}")
-
-            case _ =>
-                // Do nothing by default
+                message (e, s"type error: got ${e->tipe}, but expected ${e->exptype}")
         }
-
-        super.check (n)
-    }
 
     /**
      * Compatibility of types.  Return true if the type is compatible with the

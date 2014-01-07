@@ -53,8 +53,8 @@ END badproc.
 [2]8.11: avar1 is already declared
 [2]15.9: expression is not constant
 [2,0,4]23.5: non-local procedure access to proc1 is not allowed
-[2]28.5: end procedure name proc should be proc1
 [2]28.5: proc is not declared
+[2]28.5: end procedure name proc should be proc1
 [2]30.37: a is already declared
 [2]37.5: b is already declared
 [2]42.5: call of non-procedure abool

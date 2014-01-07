@@ -35,21 +35,21 @@ class SemanticAnalysisTests extends RegexParserTests with Parser {
     import Syntax.{Expr, Iswim}
 
     def runSemanticChecks (ast : Iswim, semanticallyCorrect : Boolean,
-                           messages : (Int, Message)*) : SemanticAnalysis = {
+                           expected : Message*) : SemanticAnalysis = {
         initTree (ast)
-        val messaging = new Messaging
-        val analysis = new SemanticAnalysis (messaging)
+        val analysis = new SemanticAnalysis
+        val messages = analysis.errors (ast)
         val correct = analysis.isSemanticallyCorrect (ast)
         assert (correct === semanticallyCorrect)
-        assertMessages (messaging, messages : _*)
+        assertMessages (messages, expected : _*)
         analysis
     }
 
     def assertRunCheck (str : String, parser : Parser[Iswim], correct : Boolean,
-                        messages : (Int, Message)*) {
+                        expected : Message*) {
         assertParseCheck (str, parser) {
             iswim =>
-                runSemanticChecks (iswim, correct, messages : _*)
+                runSemanticChecks (iswim, correct, expected : _*)
         }
     }
 
@@ -77,13 +77,13 @@ class SemanticAnalysisTests extends RegexParserTests with Parser {
 
     test("simple test of use of an unbound variable in body of let") {
         assertRunCheck("let x = 1 in x + y", expr, false,
-            (0, Message (1, 18, "unbound variable 'y'")))
+            Message (1, 18, "unbound variable 'y'"))
     }
 
     test("use of an unbound variable in an expression being bound to a variable in a let") {
         assertRunCheck("let x = y and z = x in z + x", expr, false,
-            (0, Message (1, 9, "unbound variable 'y'")),
-            (1, Message (1, 19, "unbound variable 'x'")))
+            Message (1, 9, "unbound variable 'y'"),
+            Message (1, 19, "unbound variable 'x'"))
     }
 
     test("test of top level bindings in which some variables incorrectly bound") {
@@ -101,12 +101,12 @@ class SemanticAnalysisTests extends RegexParserTests with Parser {
         f(20) + g(y)
     }
 """, parser, false,
-            (0, Message (3, 26, "unbound variable 'w'")),
-            (1, Message (5, 31, "unbound variable 'w'")),
-            (2, Message (5, 40, "unbound variable 't'")),
-            (3, Message (5, 55, "unbound variable 't'")),
-            (4, Message (5, 69, "unbound variable 'z1'")),
-            (5, Message (8, 29, "unbound variable 'm'")))
+            Message (3, 26, "unbound variable 'w'"),
+            Message (5, 31, "unbound variable 'w'"),
+            Message (5, 40, "unbound variable 't'"),
+            Message (5, 55, "unbound variable 't'"),
+            Message (5, 69, "unbound variable 'z1'"),
+            Message (8, 29, "unbound variable 'm'"))
     }
 
     test("correct use of bound variables in a match expression") {
@@ -127,9 +127,9 @@ class SemanticAnalysisTests extends RegexParserTests with Parser {
         x       -> x * z
     }
 """, expr, false,
-            (0, Message (3, 20, "unbound variable 'y'")),
-            (1, Message (4, 24, "unbound variable 'w'")),
-            (2, Message (5, 24, "unbound variable 'z'")))
+            Message (3, 20, "unbound variable 'y'"),
+            Message (4, 24, "unbound variable 'w'"),
+            Message (5, 24, "unbound variable 'z'"))
     }
 
     test("unreachable clauses in a match expression") {
@@ -141,8 +141,8 @@ class SemanticAnalysisTests extends RegexParserTests with Parser {
         x       -> x / 10
     }
 """, expr, false,
-            (0, Message (5, 9, "unreachable match clause")),
-            (1, Message (6, 9, "unreachable match clause")))
+            Message (5, 9, "unreachable match clause"),
+            Message (6, 9, "unreachable match clause"))
     }
 
 }

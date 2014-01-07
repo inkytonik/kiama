@@ -26,34 +26,32 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
     import base.source.{Identifier, IdnDef, IdnUse, SourceTree}
     import L0.source.Expression
-    import messaging.message
     import org.kiama.attribution.Attribution.attr
+    import org.kiama.util.Messaging.{check, message, Messages, noMessages}
     import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
     import source.{Call, Mode, ValMode, VarMode}
 
-    abstract override def check (n : SourceTree) {
-        n match {
+    /**
+     * The error checking for this level.
+     */
+    override def errorsDef (n : SourceTree) : Messages =
+        super.errorsDef (n) ++
+        check (n) {
             case Call (u @ IdnUse (i), cps) =>
-                (u->numparams).foreach (m =>
-                    if (m != cps.length)
-                        message (n, s"wrong number of parameters in call of $i, expected $m, got ${cps.length}")
-                )
+                check (u->numparams) {
+                    case Some (m) =>
+                        message (u, s"wrong number of parameters in call of $i, expected $m, got ${cps.length}", m != cps.length)
+                }
 
             case HasParent (e : Expression, Call (u, _)) =>
                 parammode (u, e.index) match {
                     case VarMode () if !isLvalue (e) =>
                         message (e, "illegal VAR parameter")
                     case _ =>
-                        // Ok
+                        noMessages
                 }
-
-            case _ =>
-                // Do nothing by default
         }
-
-        super.check (n)
-    }
 
     /**
      * Calculate the number of parameters to a procedure.  Return None if

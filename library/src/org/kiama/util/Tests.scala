@@ -31,6 +31,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
 
     import org.scalatest.Tag
+    import Messaging.Messages
 
     /**
      * Compare two values.  Use reference equality for references
@@ -75,23 +76,52 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
         }
     }
 
+/*
     /**
      * Assert that the given messsaging object has recorded the given messages.
+     * FIXME: remove
      */
     def assertMessages (messaging : Messaging, messages : (Int, Message)*) {
-        assert (messaging.messagecount === messages.size, "Wrong number of messages produced")
+        assert (messaging.messagecount === messages.size, "wrong number of messages produced")
         for ((index, message) <- messages)
             assertMessage (messaging, index, message)
     }
+*/
 
     /**
+     * Assert that the `received` list of messsages has recorded the `expected`
+     * messages in the same order.
+     */
+    def assertMessages (received : Messages, expected : Message*) {
+        assert (received.size === expected.size, "wrong number of messages produced")
+        received.zip (expected).zipWithIndex.map {
+            case ((rec, exp), i) =>
+                assertMessage (rec, i, exp)
+        }
+    }
+
+/*
+    /**
      * Assert that a message at `index` was produced at a given position.
+     * FIXME: remove
      */
     def assertMessage (messaging : Messaging, index : Int, message : Message) {
         val m = messaging.messages (index)
         assertResult (message.label, s"wrong text in message $index") (m.label)
         assertResult (message.line, s"wrong line number in message $index") (m.line)
         assertResult (message.column, s"wrong column number in message $index") (m.column)
+    }
+*/
+
+    /**
+     * Assert that a `received` message at the given zero-based `index` conforms
+     * to an expected one in that it reports the same message label at the same
+     * position.
+     */
+    def assertMessage (received : Message, index : Int, expected : Message) {
+        assertResult (expected.label, s"wrong text in message $index") (received.label)
+        assertResult (expected.line, s"wrong line number in message $index") (received.line)
+        assertResult (expected.column, s"wrong column number in message $index") (received.column)
     }
 
     /**

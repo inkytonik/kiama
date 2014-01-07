@@ -50,7 +50,7 @@ class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser
     /**
      * Analyser to use for tests.
      */
-    val analyser = new SemanticAnalysis (new Messaging)
+    val analyser = new SemanticAnalysis
     import analyser.isSemanticallyCorrect
 
     test("compile a simple arithmetic expression") {
@@ -130,7 +130,7 @@ class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser
         assertParseCheck("letrec f = fun(n) (n + 1) and g = fun(m) (m - 1) in f", expr) {
             prog =>
                 initTree (prog)
-                assert((prog)->isSemanticallyCorrect)
+                assert(prog->isSemanticallyCorrect)
                 val result : CodeSegment = code(prog)
                 assert(result === CodeSegment(
                     MkClosures(List(
@@ -152,7 +152,7 @@ class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser
         }
     }
 
-    test("compile a tuple expressio") {
+    test("compile a tuple expression") {
         assertParseCheck("(10,20,(),30)", expr) {
             prog =>
                 initTree (prog)
@@ -172,7 +172,7 @@ class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser
         assertParseCheck("let f = fun(n) (n + 1) and g = fun(m) (m - 1) in f(g(10))", expr) {
             prog =>
                 initTree (prog)
-                assert((prog)->isSemanticallyCorrect)
+                assert(prog->isSemanticallyCorrect)
                 val result : CodeSegment = code(prog)
                 assert(result === CodeSegment(
                     MkClosures(List(
@@ -223,7 +223,7 @@ class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser
         assertParseCheck("{10;20;\"hello\";();22} + {true}", expr) {
             prog =>
                 initTree (prog)
-                assert((prog)->isSemanticallyCorrect)
+                assert(prog->isSemanticallyCorrect)
                 val result : CodeSegment = code(prog)
                 assert(result === CodeSegment(
                     PushInt(10),

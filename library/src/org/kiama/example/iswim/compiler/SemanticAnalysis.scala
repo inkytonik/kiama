@@ -26,10 +26,11 @@ import org.kiama.util.Messaging
 /**
  * Simple semantic analysis of untyped ISWIM programs
  */
-class SemanticAnalysis (messaging : Messaging) {
+class SemanticAnalysis {
 
-    import messaging.message
     import org.kiama.attribution.Attribution._
+    import org.kiama.rewriting.Rewriter.collectall
+    import org.kiama.util.Messaging.{message, noMessages}
     import Syntax._
 
     /**
@@ -78,32 +79,30 @@ class SemanticAnalysis (messaging : Messaging) {
         )
 
     /**
-     * Return whether this node is semantically correct or not?
-     * Note that for tests to pass this computation must check every
-     * compnonent of the node, not just enough to determine that it's
-     * not semantically correct.
+     * Return the errors if any for the sub-tree rooted at a node.
+     */
+    val errors =
+        attr (collectall {
+            case v@Variable (s) =>
+                v.parent[Iswim] match {
+                    case Binding (w, _) if v eq w =>
+                        noMessages
+                    case _ : Pattern | _ : Primitives =>
+                        noMessages
+                    case _ =>
+                        message (v, s"unbound variable '$s'", !(v->envir).contains (v))
+                }
+            case m@MatchClause(_,e) if m->unreachable =>
+                message (m, "unreachable match clause")
+        })
+
+    /**
+     * Return whether this node is semantically correct or not.
      */
     val isSemanticallyCorrect : Iswim => Boolean =
         attr {
-            case v@Variable(s) =>
-                val bound : Boolean = (v->envir).contains(v)
-                if (!bound) message(v,s"unbound variable '$s'")
-                bound
-            case Binding(_,e) => e->isSemanticallyCorrect
-            case Primitives(_) => true
-            case m@MatchClause(_,e) =>
-                if (m->unreachable) {
-                    message(m,"unreachable match clause")
-                    false
-                } else
-                    e->isSemanticallyCorrect
-            case e =>
-                // forall no good here since it doesn't necessarily visit all children
-                // Have to do && that way around otherwise it can short circuit
-                e.children.foldLeft (true) {
-                    case (b, n) =>
-                        (n.asInstanceOf[Iswim])->isSemanticallyCorrect && b
-                }
+            case n =>
+                (n->errors).length == 0
         }
 
 }

@@ -45,7 +45,8 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with Parser {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
-    import org.kiama.util.{Emitter, Messaging}
+    import org.kiama.util.Emitter
+    import org.kiama.util.Messaging.report
 
     def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : LambdaConfig =
         new LambdaConfig (args, emitter)
@@ -109,14 +110,9 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with Parser {
     }
 
     /**
-     * The messaging module to use during processing.
-     */
-    val messaging = new Messaging
-
-    /**
      * The analysis object to use for processing.
      */
-    val analysis = new Analysis (messaging)
+    val analysis = new Analysis
 
     /**
      * Process an expression.
@@ -125,14 +121,14 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with Parser {
         super.process (e, config)
         // First conduct a semantic analysis check: compute the expression's
         // type and see if any errors occurred
-        analysis.tipe (e)
-        if (messaging.messagecount == 0) {
+        val messages = analysis.errors (e)
+        if (messages.length == 0) {
             // If everything is OK, evaluate the expression
             val evaluator = evaluatorFor (config.mechanism ())
             config.emitter.emitln (pretty (evaluator.eval (e)))
         } else {
             // Otherwise report the errors and reset for next expression
-            messaging.report (config.emitter)
+            report (messages, config.emitter)
         }
     }
 

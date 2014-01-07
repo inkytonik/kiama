@@ -23,67 +23,52 @@ package example.prolog
 
 import org.kiama.util.Messaging
 
-class SemanticAnalysis (messaging : Messaging) {
+class SemanticAnalysis {
 
-    import messaging.message
     import PrologTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
+    import org.kiama.rewriting.Rewriter.collectall
+    import org.kiama.util.Message
+    import org.kiama.util.Messaging.{check, message, Messages}
     import org.kiama.util.{Entity, UnknownEntity}
     import scala.collection.immutable.Seq
 
     /**
-     * Does the sub-tree rooted at the given node contain any semantic
-     * errors or not? If yes, as a side-effect this method will record
-     * those errors using `messaging` so that they can be reported to
-     * the user later.
+     * The semantic error messages for a given tree.
      */
-    def check (n : PrologTree) {
-        // Check this node
-        n match {
+    val errors =
+        attr (collectall {
             case n @ Pred (s, ts) =>
-                n->entity match {
-                    case Predicate (argtypes) =>
-                        val arity = argtypes.length
-                        if (ts.length != arity)
-                            message (n, s"$s should have $arity arguments but has ${ts.length}")
+                check (n->entity) {
+                    case Predicate (argtypes) if argtypes.length != ts.length =>
+                        message (n, s"$s should have ${argtypes.length} arguments but has ${ts.length}")
                     case UnknownEntity () =>
                         message (n, s"$s is not declared")
-                }
+                } ++
                 checktype (n)
 
             case n @ Atom (s) =>
-                n->entity match {
-                    case Predicate (argtypes) =>
-                        val arity = argtypes.length
-                        if (arity != 0)
-                            message (n, s"$s should have $arity arguments but has 0")
+                check (n->entity) {
+                    case Predicate (argtypes) if argtypes.length != 0 =>
+                        message (n, s"$s should have ${argtypes.length} arguments but has 0")
                     case UnknownEntity () =>
                         message (n, s"$s is not declared")
-                }
+                } ++
                 checktype (n)
 
             case n : Term =>
                 checktype (n)
-
-            case _ =>
-                // Do nothing by default
-        }
-
-        // Check the children of this node
-        for (child <- n.children)
-            check (child.asInstanceOf[PrologTree])
-    }
+        })
 
     /**
      * Check types: issue a message if n's type is not compatible with its
      * expected type.  The unknown type is compatible with any other type.
      */
-    def checktype (n : Term) {
-        if ((n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) &&
-                (n->tipe != n->exptipe))
-            message (n, s"argument ${n->tipe} found, ${n->exptipe} expected")
-    }
+    def checktype (n : Term) : Messages =
+        message (n, s"argument ${n->tipe} found, ${n->exptipe} expected",
+                 (n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) &&
+                    (n->tipe != n->exptipe))
 
     /**
      * Default environment.  Contains entities for the pre-defined
