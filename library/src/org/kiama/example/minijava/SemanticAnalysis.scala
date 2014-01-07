@@ -34,6 +34,7 @@ class SemanticAnalysis (val messaging : Messaging) {
     import org.kiama.==>
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
+    import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Patterns.HasParent
     import SymbolTable._
 

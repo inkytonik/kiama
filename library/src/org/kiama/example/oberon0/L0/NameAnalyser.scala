@@ -29,6 +29,7 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
     import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
+    import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Patterns.HasParent
     import source.{AddExp, Assignment, BinaryExpression, ConstDecl,
         DivExp, Expression, IdnExp, IntExp, ModExp, MulExp, NamedType, NegExp,

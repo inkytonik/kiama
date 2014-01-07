@@ -24,6 +24,7 @@ package L3
 
 trait SymbolTable extends L0.SymbolTable {
 
+    import org.kiama.util.Entity
     import source.{Mode, ProcDecl, ValMode, VarMode}
     import scala.collection.immutable.Seq
 

@@ -30,6 +30,7 @@ import org.kiama.util.Environments
 object SymbolTable extends Environments {
 
     import MiniJavaTree._
+    import org.kiama.util.Entity
 
     /**
      * A main class entity (i.e., the one that is used to start a program).

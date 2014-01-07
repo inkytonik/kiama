@@ -38,6 +38,7 @@ class SemanticAnalysis (messaging : Messaging) {
     import org.kiama.attribution.Attribution._
     import org.kiama.attribution.Decorators.downErr
     import org.kiama.rewriting.Rewriter.collect
+    import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import scala.collection.immutable.{Seq, Set}
 
     /**

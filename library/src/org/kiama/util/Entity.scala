@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2013-2014 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2014 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -19,23 +19,27 @@
  */
 
 package org.kiama
-package example.grammar
-
-import org.kiama.util.Environments
+package util
 
 /**
- * Symbol table module containing facilities for creating and
- * manipulating grammar symbol information.
+ * An entity that represents some program object.
  */
-object SymbolTable extends Environments {
+abstract class Entity
 
-    import GrammarTree._
-    import org.kiama.util.Entity
+/**
+ * An entity that represents an error situation. These entities are
+ * usually accepted in most situations to avoid cascade errors.
+ */
+abstract class ErrorEntity extends Entity
 
-    /**
-     * A non-terminal entity containing a reference to the production that
-     * defines the non-terminal.
-     */
-    case class NonTerminal (rule : Rule) extends Entity
+/**
+ * A entity represented by names for whom we have seen more than one
+ * declaration so we are unsure what is being represented.
+ */
+case class MultipleEntity () extends ErrorEntity
 
-}
+/**
+ * An unknown entity, for example one that is represened by names whose
+ * declarations are missing.
+ */
+case class UnknownEntity () extends ErrorEntity

@@ -29,6 +29,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
     import L3.source.{FPSection, ValMode}
     import messaging.message
     import org.kiama.attribution.Attribution.attr
+    import org.kiama.util.Entity
     import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
     import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,

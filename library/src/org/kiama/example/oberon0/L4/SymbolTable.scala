@@ -24,6 +24,7 @@ package L4
 
 trait SymbolTable extends L3.SymbolTable {
 
+    import org.kiama.util.Entity
     import scala.collection.immutable.Seq
 
     /**

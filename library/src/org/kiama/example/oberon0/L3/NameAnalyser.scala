@@ -28,6 +28,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
     import messaging.message
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.down
+    import org.kiama.util.Entity
     import org.kiama.util.Patterns.HasParent
     import source.{Call, FPSection, ProcDecl}
 

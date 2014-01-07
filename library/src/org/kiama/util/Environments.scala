@@ -31,11 +31,6 @@ import scala.collection.immutable.Stack
 trait Environments {
 
     /**
-     * An entity that represents some program object.
-     */
-    abstract class Entity
-
-    /**
      * A counter to count generated names.
      */
     val nameCounter = new Counter (0)
@@ -79,27 +74,6 @@ trait Environments {
      * A named entity.
      */
     trait NamedEntity extends Entity with Named
-
-    /**
-     * An entity that represents an error situation.  These entities are
-     * usually accepted in most situations to avoid cascade errors.
-     */
-    trait ErrorEntity extends Entity
-
-    /**
-     * A entity represented by names for whom we have seen more than one
-     * declaration so we are unsure what is being represented.
-     */
-    case class MultipleEntity () extends ErrorEntity {
-        lazy val ident = "multiple"
-    }
-
-    /**
-     * An unknown entity, represented by names whose declarations are missing.
-     */
-    case class UnknownEntity () extends ErrorEntity {
-        lazy val ident = "unknown"
-    }
 
     /**
      * A scope maps identifiers to entities.

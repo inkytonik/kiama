@@ -29,6 +29,7 @@ class SemanticAnalysis (messaging : Messaging) {
     import PrologTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
+    import org.kiama.util.{Entity, UnknownEntity}
     import scala.collection.immutable.Seq
 
     /**

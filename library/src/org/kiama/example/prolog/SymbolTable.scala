@@ -29,6 +29,7 @@ import org.kiama.util.Environments
  */
 object SymbolTable extends Environments {
 
+    import org.kiama.util.Entity
     import PrologTree._
     import scala.collection.immutable.Seq
 
