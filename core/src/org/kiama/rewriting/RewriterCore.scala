@@ -594,7 +594,7 @@ trait RewriterCore {
     /**
      * Implementation of `all` for `Traversable` values.
      */
-    def allTraversable[CC[_] <: Traversable[Any]] (s : Strategy, t : CC[Any])
+    def allTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
             (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
                         : Option[CC[Any]] =
         if (t.size == 0)
