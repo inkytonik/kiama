@@ -212,14 +212,14 @@ object Lambda extends ParsingREPL[LambdaTree.Query[_]] with Parser {
         """
         |Enter lambda calculus queries:
         |
-        | e               evaluate e
+        | e               evaluate e (e.g., (\x . x) 3)
         | (n1 <-> n2) e   swap n1 and n2 in e
         | n # e           is n fresh in e?
         | fv e            free variables of e
         | e1 === e2       is e1 alpha equivalent to e2?
         | [n -> e1] e2    substitute e1 for n in e2
         |
-        |where n = name, e = expression"
+        |where n = name, e = expression
         |
         """.stripMargin
 
