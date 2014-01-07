@@ -1019,7 +1019,7 @@ class RewriterTests extends Tests with Generator {
         assertResult (s (t)) (Some (rewrite (s) (t)))
     }
 
-    test ("a memo strategy returns the previous result") {
+    test ("a memo strategy returns the previous result without re-evaluating") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         var count = 0
         val s = memo (everywhere (rule[Var] {
@@ -1027,8 +1027,11 @@ class RewriterTests extends Tests with Generator {
                               Var (s"i$count")
                 }))
         val r = Some (Asgn (Var ("i1"), Add (Num (1), Var ("i2"))))
+        assertResult (0) (count)
         assertResult (r) (s (t))
+        assertResult (2) (count)
         assertResult (r) (s (t))
+        assertResult (2) (count)
     }
 
     test ("an illegal dup throws an appropriate exception") {

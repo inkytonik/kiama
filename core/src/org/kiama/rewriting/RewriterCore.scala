@@ -161,9 +161,24 @@ trait RewriterCore {
      * the constructed strategy.
      */
     def memo (name : String, s : => Strategy) : Strategy = {
+
+        import com.google.common.base.Function
+        import com.google.common.cache.{CacheBuilder, CacheLoader}
+
         lazy val strat = s
-        val cache = scala.collection.mutable.HashMap[Any,Option[Any]] ()
-        mkStrategy (name, t => cache.getOrElseUpdate (t, strat (t)))
+
+        val cache =
+            CacheBuilder.newBuilder ().build (
+                CacheLoader.from (
+                    new Function[AnyRef,Option[Any]] {
+                        def apply (t : AnyRef) : Option[Any] =
+                            strat (t)
+                    }
+                )
+            )
+
+        mkStrategy (name, t => cache.get (t.asInstanceOf[AnyRef]))
+
     }
 
     /**
@@ -367,28 +382,48 @@ trait RewriterCore {
     // Product duplication support
 
     /**
-     * Cache of constructors for product duplication.
+     * General product duplication functionality. This object is a function
+     * that returns a product that applies the same constructor as the
+     * product `t`, but with the given children instead of `t`'s children.
+     * The function fails if a constructor cannot be found, there are the
+     * wrong number of new children, or if one of the new children is not
+     * of the appropriate type.
      */
-    protected val constrcache =
-        scala.collection.mutable.WeakHashMap[java.lang.Class[_], java.lang.reflect.Constructor[_]] ()
+    object Duplicator {
+
+        import com.google.common.base.Function
+        import com.google.common.cache.{CacheBuilder, CacheLoader}
+        import java.lang.Class
+        import java.lang.reflect.Constructor
+
+        val cache =
+            CacheBuilder.newBuilder ().weakKeys ().build (
+                CacheLoader.from (
+                    new Function[Class[_],Constructor[_]] {
+                        def apply (clazz : Class[_]) : Constructor[_] =
+                            clazz.getConstructors () (0)
+                    }
+                )
+            )
+
+        def apply[T <: Product] (t : T, children : Seq[AnyRef]) : T = {
+            val ctor = cache.get (t.getClass)
+            try {
+                ctor.newInstance (children : _*).asInstanceOf[T]
+            } catch {
+                case e : IllegalArgumentException =>
+                    sys.error (s"""dup illegal arguments: $ctor (${children.mkString (",")}), expects ${ctor.getParameterTypes.length}""")
+            }
+        }
+
+    }
 
     /**
-     * General product duplication function.  Returns a product that applies
-     * the same constructor as the product `t`, but with the given children
-     * instead of `t`'s children.  Fails if a constructor cannot be found,
-     * there are the wrong number of new children, or if one of the new
-     * children is not of the appropriate type.
+     * The duplicator used by the generic traversals. Needs to be defined
+     * as a method so we can override it in other rewriting modules.
      */
-    def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T = {
-        val clazz = t.getClass
-        val ctor = constrcache.getOrElseUpdate (clazz, (clazz.getConstructors())(0))
-        try {
-            ctor.newInstance (children : _*).asInstanceOf[T]
-        } catch {
-            case e : IllegalArgumentException =>
-                sys.error (s"""dup illegal arguments: $ctor (${children.mkString (",")}), expects ${ctor.getParameterTypes.length}""")
-        }
-    }
+    def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T =
+        Duplicator (t, children)
 
     /**
      * Make an arbitrary value `c` into a term child, checking that it worked
