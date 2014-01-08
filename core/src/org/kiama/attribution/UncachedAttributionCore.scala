@@ -21,11 +21,13 @@
 package org.kiama
 package attribution
 
+import org.kiama.util.Memoiser
+
 /**
  * Reusable implementation of attribution of syntax trees in a functional style
  * with attribute values computed each time they are accessed.
  */
-trait UncachedAttributionCore extends AttributionCommon {
+trait UncachedAttributionCore extends AttributionCommon with Memoiser {
 
     import scala.collection.immutable.Seq
     import scala.language.experimental.macros
@@ -37,15 +39,10 @@ trait UncachedAttributionCore extends AttributionCommon {
      * require the value of this attribute. If it does, a circularity error is reported
      * by throwing an `IllegalStateException`.
      */
-    class UncachedAttribute[T,U] (name : String, f : T => U) extends Attribute[T,U] (name) {
+    class UncachedAttribute[T,U] (name : String, f : T => U) extends
+            Attribute[T,U] (name) with IdMemoised[T,Unit] {
 
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
-        import org.kiama.util.WeakIdentityHashSet
-
-        /**
-         * Are we currently evaluating this attribute for a given tree?
-         */
-        private val visited = new WeakIdentityHashSet[T] ()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -55,15 +52,17 @@ trait UncachedAttributionCore extends AttributionCommon {
             val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
                                 "attribute" -> this, "parameter" -> None,
                                 "circular" -> false))
-            if (visited contains t)
-                reportCycle (t)
-            else {
-                visited.add (t)
-                val u = f (t)
-                visited.remove (t)
-                finish (i, Seq ("value" -> u, "cached" -> false))
-                u
+            get (t) match {
+                case Some (()) =>
+                    reportCycle (t)
+                case None =>
+                    put (t, ())
+                    val u = f (t)
+                    resetAt (t)
+                    finish (i, Seq ("value" -> u, "cached" -> false))
+                    u
             }
+
         }
 
     }
@@ -71,17 +70,12 @@ trait UncachedAttributionCore extends AttributionCommon {
     /**
      * A variation of the `UncachedAttribute` class for parameterised attributes.
      */
-    class UncachedParamAttribute[A,T,U] (name : String, f : A => T => U) extends (A => Attribute[T,U]) {
+    class UncachedParamAttribute[A,T,U] (name : String, f : A => T => U) extends
+            (A => Attribute[T,U]) with Memoised[ParamAttributeKey,Unit] {
 
         attr =>
 
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
-        import scala.collection.mutable.HashSet
-
-        /**
-         * Are we currently evaluating this attribute for a given argument and tree?
-         */
-        private val visited = HashSet[ParamAttributeKey] ()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -95,14 +89,15 @@ trait UncachedAttributionCore extends AttributionCommon {
                                         "attribute" -> this, "parameter" -> Some (arg),
                                         "circular" -> false))
                     val key = new ParamAttributeKey (arg, t)
-                    if (visited contains key)
-                        reportCycle (t)
-                    else {
-                        visited.add (key)
-                        val u = f (arg) (t)
-                        visited.remove (key)
-                        finish (i, Seq ("value" -> u, "cached" -> false))
-                        u
+                    get (key) match {
+                        case Some (()) =>
+                            reportCycle (t)
+                        case None =>
+                            put (key, ())
+                            val u = f (arg) (t)
+                            resetAt (key)
+                            finish (i, Seq ("value" -> u, "cached" -> false))
+                            u
                     }
                 }
 
