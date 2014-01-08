@@ -22,21 +22,17 @@
 package org.kiama
 package example.obr
 
+import org.kiama.util.Environments
+
 /**
  * Symbol table module containing facilities for creating and
  * manipulating Obr language symbol information.
  */
-object SymbolTable {
+object SymbolTable extends Environments {
 
     import ObrTree._
     import scala.collection.immutable.{Map, Seq}
-    import org.kiama.util.Counter
-
-    /**
-     * An environment is a map from identifiers to entities.  I.e.
-     * the bindings are the entries in the map.
-     */
-    type Environment = Map[Identifier,Entity]
+    import org.kiama.util.{Counter, Entity}
 
     /**
      * Counter for previously used location.
@@ -51,25 +47,10 @@ object SymbolTable {
     }
 
     /**
-     * An entity represents a thing that an expression language program
-     * can create and act on.
+     * A variable entity of the given type.
      */
-    abstract class Entity {
-        val isconst = false
-        val isassignable = true
-        val tipe : Type = UnknownType ()
-        val locn = 0
-    }
-
-    /**
-     * A variable entity of the given type.  Allocation of a location
-     * for the variable assumes that all variables take four bytes.
-     */
-    case class Variable (override val tipe : Type) extends Entity {
-        override val isconst = false
-        override val isassignable =
-            (tipe == IntType ()) || (tipe == BoolType ()) || (tipe.isInstanceOf[EnumType])
-        override val locn = {
+    case class Variable (tipe : Type) extends Entity {
+        val locn = {
             val loc = prevLocCounter.value
             prevLocCounter.next (tipe.storage)
             loc
@@ -77,26 +58,10 @@ object SymbolTable {
     }
 
     /**
-     * A constant integer entity with the given value.
+     * A constant integer entity with the given type and value.
      * Can represent an integer or an enumeration constant.
      */
-    case class Constant (override val tipe : Type, value : Int) extends Entity {
-        override val isconst = true
-        override val isassignable = false
-    }
-
-    /**
-     * A singleton entity about which we know nothing.  Used as the
-     * entity referred to by names that aren't declared.
-     */
-    case class Unknown () extends Entity
-
-    /**
-     * A singleton entity about which we know too much.  Used as the
-     * entity referred to by names that are declared more than once
-     * in the same scope.
-     */
-    case class Multiple () extends Entity
+    case class Constant (tipe : Type, value : Int) extends Entity
 
     /**
      * The size in bytes of a word used to store both integer and Boolean

@@ -1,1 +1,1 @@
-ObrInt(EnumOk3,List(IntParam(i), EnumVar(CarColour,List(EnumConst(Red), EnumConst(Blue), EnumConst(Green)))),List(),EnumOk3)
+ObrInt(EnumOk3,List(IntParam(IdnDef(i)), EnumVar(IdnDef(CarColour),List(EnumConst(IdnDef(Red)), EnumConst(IdnDef(Blue)), EnumConst(IdnDef(Green))))),List(),EnumOk3)

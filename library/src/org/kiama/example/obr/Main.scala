@@ -67,7 +67,7 @@ class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
         } else {
             // Print out final environment
             if (config.envPrint ()) {
-                config.emitter.emitln (analysis.envout (ast))
+                config.emitter.emitln (analysis.env (ast))
             }
 
             // Compile the source tree to a target tree

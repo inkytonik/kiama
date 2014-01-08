@@ -1,1 +1,1 @@
-ObrInt(ExcOk2,List(IntParam(i)),List(RaiseStmt(CountException)),ExcOk2)
+ObrInt(ExcOk2,List(IntParam(IdnDef(i))),List(RaiseStmt(IdnUse(CountException))),ExcOk2)

@@ -27,9 +27,11 @@ class SemanticAnalysis {
     import ObrTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
+    import org.kiama.attribution.Decorators.{chain, Chain}
     import org.kiama.rewriting.Rewriter.collectall
+    import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Message
-    import org.kiama.util.Messaging.{check, message, noMessages}
+    import org.kiama.util.Messaging.{check, checkuse, message, noMessages}
     import scala.collection.immutable.Seq
 
     /**
@@ -40,94 +42,63 @@ class SemanticAnalysis {
             case p @ ObrInt (i1, ds, ss, i2) if (i1 != i2) =>
                 message (p, s"identifier $i2 at end should be $i1")
 
+            case d @ IdnDef (i) if d->entity == MultipleEntity () =>
+                message (d, s"$i is declared more than once")
+
+            case u @ IdnUse (i) if u->entity == UnknownEntity () =>
+                message (u, s"$i is not declared")
+
             case n @ AssignStmt (l, r) if !(l->assignable) =>
                 message (l, "illegal assignment")
 
             case n @ ExitStmt () if !(n->isinloop) =>
                 message (n, "an EXIT statement must be inside a LOOP statement")
 
-            case n @ ForStmt (i, e1, e2, ss) =>
-                check (n->entity) {
-                    case Unknown () =>
-                        message (n, s"$i is not declared")
+            case ForStmt (n @ IdnUse (i), e1, e2, ss) =>
+                checkuse (n->entity) {
                     case ent =>
-                        val t = ent.tipe
+                        val t = enttipe (ent)
                         message (n, s"for loop variable $i must be integer",
                                  (t != IntType ()) && (t != UnknownType ()))
                 }
 
             // Check a RAISE statement to make sure its parameter is an exception constant.
-            case n @ RaiseStmt (i) =>
-                check (n->entity) {
-                    case Unknown () =>
-                        message (n, s"$i is not declared")
+            case n @ RaiseStmt (v @ IdnUse (i)) =>
+                checkuse (v->entity) {
                     case ent =>
-                        val t = (n->entity).tipe
+                        val t = enttipe (ent)
                         message (n, s"raise parameter $i must be an exception constant",
                                  (t != ExnType ()) && (t != UnknownType ()))
                 }
 
             // Check a CATCH clause to make sure its parameter is an exception constant.
-            case n @ Catch (i, ss) =>
-                check (n->entity) {
-                    case Unknown () =>
-                        message (n, s"$i is not declared")
+            case n @ Catch (v @ IdnUse (i), ss) =>
+                checkuse (v->entity) {
                     case ent =>
-                        val t = (n->entity).tipe
+                        val t = enttipe (ent)
                         message (n, s"catch clause parameter $i must be an exception constant",
                                  (t != ExnType ()) && (t != UnknownType ()))
                 }
 
-            case n @ IntParam (i) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
-
-            case n @ IntVar (i) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
-
-            case n @ BoolVar (i) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
-
-            case n @ ArrayVar (i, v) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
-
-            case n @ RecordVar (i, _) =>
-                check (n->entity) {
+            case RecordVar (n @ IdnDef (i), _) =>
+                checkuse (n->entity) {
                      case Variable (RecordType (fs)) =>
                          message (n, s"$i contains duplicate field(s)",
                                   fs.distinct.length != fs.length)
-                     case Multiple () =>
-                         message (n, s"$i is declared more than once")
                 }
-
-            case n @ IntConst (i, v) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
-
-            // Extra clauses to report errors from enumeration variable declarations
-            case n @ EnumVar (i, cs) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
-
-            case n @ EnumConst (i) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
-
-            // Extra clause to report errors from exception constant declarations
-            case n @ ExnConst (i) if n->entity == Multiple () =>
-                message (n, s"$i is declared more than once")
 
             case e : Expression =>
                 check (e) {
-                    case v @ IdnExp (i) if v->entity == Unknown () =>
-                        message (v, s"$i is not declared")
-
-                    case v @ IndexExp (a, r) =>
-                        (v->entity).tipe match {
+                    case IndexExp (v @ IdnUse (a), r) =>
+                        check (enttipe (v->entity)) {
                             case ArrayType (_) | UnknownType () =>
                                 noMessages
                             case _ =>
                                 message (v, s"attempt to index the non-array $a")
                         }
 
-                    case v @ FieldExp (r, f) =>
-                        check ((v->entity).tipe) {
+                    case FieldExp (v @ IdnUse (r), f) =>
+                        check (enttipe (v->entity)) {
                             case RecordType (fs) =>
                                 message (v, s"$f is not a field of $r", ! (fs contains f))
                             case _ =>
@@ -143,8 +114,8 @@ class SemanticAnalysis {
      */
     val enumconstnum : EnumConst => Int =
         attr {
-            case c if (c.isFirst)   => 0
-            case c                  => (c.prev[EnumConst]->enumconstnum) + 1
+            case c if c.index == 1 => 0
+            case c                 => (c.prev[EnumConst]->enumconstnum) + 1
         }
 
     /**
@@ -168,119 +139,103 @@ class SemanticAnalysis {
         }
 
     /**
-     * Initial environment, pre-primed with predeclared identifiers
-     * like DivideByZero
+     * Initial environment, primed with bindings for pre-defined identifiers.
      */
-    val initEnv = Map (
-            "DivideByZero" -> Constant (ExnType (), divideByZeroExn)
-        ,   "IndexOutOfBounds" -> Constant (ExnType (), indexOutOfBoundsExn)
+    val initenv =
+        rootenv (
+            "DivideByZero" -> Constant (ExnType (), divideByZeroExn),
+            "IndexOutOfBounds" -> Constant (ExnType (), indexOutOfBoundsExn)
         )
 
     /**
-     * The environment containing all bindings visible at a particular
-     * node in the tree, not including any that are defined at that node.
+     * The entity defined by a defining occurrence of an identifier.
+     * Defined by the context of the occurrence.
      */
-    val env : ObrTree => Environment =
+    lazy val defentity : IdnDef => Entity =
         attr {
-            case ObrInt (_, ds, ss, _)          => (ds.last)->envout
-            case d : Declaration if (d.isFirst) => initEnv
-            case d : Declaration                => (d.prev[Declaration])->envout
-            case d : EnumConst if (!d.isFirst)  => (d.prev[EnumConst])->envout
-            case n                              => (n.parent[ObrTree])->env
+            case n =>
+                n.parent match {
+                    case _ : IntParam | _ : IntVar =>
+                        Variable (IntType ())
+                    case _ : BoolVar =>
+                         Variable (BoolType ())
+                    case ArrayVar (_, v) =>
+                        Variable (ArrayType (v))
+                    case RecordVar (IdnDef (i), fs) =>
+                        Variable (RecordType (fs))
+                    case EnumVar (IdnDef (i), _) =>
+                        Variable (EnumType (i))
+                    case p @ EnumConst (IdnDef (i)) =>
+                        val EnumVar (IdnDef (pi), _) = p.parent[EnumVar]
+                        Constant (EnumType (pi), p->enumconstnum)
+                    case p : ExnConst =>
+                        Constant (ExnType (), p->exnconstnum)
+                    case IntConst (_, v) =>
+                        Constant (IntType (), v)
+                    case _ =>
+                        UnknownEntity ()
+                }
         }
 
     /**
-     * The environment containing all bindings visible "after" a
-     * particular node in the tree.  I.e., its the environment at the
-     * node plus any new bindings introduced by the node.
+     * The environment containing bindings for things that are being defined.
      */
-    val envout : ObrTree => Environment =
+    lazy val defenv : Chain[ObrTree,Environment] =
+        chain (defenvin, defenvout)
+
+    def defenvin (in : ObrTree => Environment) : ObrTree ==> Environment = {
+
+        // At the root, get the initial environment
+        case n : ObrInt =>
+            initenv
+
+    }
+
+    def defenvout (out : ObrTree => Environment) : ObrTree ==> Environment = {
+
+        // At a defining occurrence of an identifier, check to see if it's already
+        // been defined in this scope. If so, change its entity to MultipleEntity,
+        // otherwise use the entity appropriate for this definition.
+        case n @ IdnDef (i) =>
+            val entity =
+                if (isDefinedInScope (n->(defenv.in), i))
+                    MultipleEntity ()
+                else
+                    n->defentity
+            define (out (n), i, entity)
+
+    }
+
+    /**
+     * The environment to use to lookup names at a node.
+     */
+    lazy val env : ObrTree => Environment =
         attr {
-            case n @ IntParam (i)      => define (n->env, i, Variable (IntType ()))
-            case n @ IntVar (i)        => define (n->env, i, Variable (IntType ()))
-            case n @ BoolVar (i)       => define (n->env, i, Variable (BoolType ()))
-            case n @ ArrayVar (i, v)   => define (n->env, i, Variable (ArrayType (v)))
-            case n @ RecordVar (i, fs) => define (n->env, i, Variable (RecordType (fs)))
-            // Extra clauses for the defining instance of an enumeration variable...
-            case n @ EnumVar (i, _)    =>
-                define (n.lastChild[EnumConst]->envout, i, Variable (EnumType (i)))
-            // ... and its constants
-            case n @ EnumConst (i)     =>
-                val EnumVar (pi, _) = n.parent[EnumVar]
-                define (n->env, i, Constant (EnumType (pi), n->enumconstnum))
-            // Extra clause for exception constants
-            case n @ ExnConst (i)      => define (n->env, i, Constant (ExnType (), n->exnconstnum))
-            case n @ IntConst (i, v)   => define (n->env, i, Constant (IntType (), v))
-            case n                     => n->env
+
+            // At a scope-introducing node, get the final value of the
+            // defining environment, so that all of the definitions of
+            // that scope are present.
+            case n : ObrInt =>
+                (n.lastChild[ObrTree])->defenv
+
+            // Otherwise, ask our parent so we work out way up to the
+            // nearest scope node ancestor (which represents the smallest
+            // enclosing scope).
+            case n =>
+                (n.parent[ObrTree])->env
+
         }
 
     /**
-     * envin is an environment of bindings already seen.  Add a binding of i
-     * to e and return the complete set of bindings, unless i already has a
-     * binding in envin, in which case define i to be a multiply-defined entity.
+     * The program entity referred to by an identifier definition or use.
      */
-    def define (envin : Environment, i : Identifier, e : => Entity) : Environment =
-        if (envin contains i)
-            envin + ((i, Multiple ()))
-        else
-            envin + ((i, e))
-
-    /**
-     * The entity referred to by a declaration or a variable expression.
-     * If a name has been used previously in a declaration then return an
-     * unknown entity which will trigger an error.
-     */
-    val entity : EntityTree => Entity =
+    lazy val entity : IdnTree => Entity =
         attr {
-            case n @ IntParam (i)     => (n->envout) (i)
-            case n @ IntVar (i)       => (n->envout) (i)
-            case n @ BoolVar (i)      => (n->envout) (i)
-            case n @ ArrayVar (i, v)  => (n->envout) (i)
-            case n @ RecordVar (i, _) => (n->envout) (i)
-            // Extra clauses to lookup entities for enumeration variable / constant declarations
-            case n @ EnumVar (i, _)   => (n->envout) (i)
-            case n @ EnumConst (i)    => (n->envout) (i)
-            // Extra clause to lookup entity for an exception constant declaration
-            case n @ ExnConst (i)     => (n->envout) (i)
-            case n @ IntConst (i, v)  => (n->envout) (i)
 
-            case n @ ForStmt (i, e1, e2, ss) =>
-                (n->env).get (i) match {
-                     case Some (e) => e
-                     case None     => Unknown ()
-                }
-
-            // Extra clause to lookup entity for the exception in a RAISE statement
-            case n @ RaiseStmt (i)    =>
-                (n->env).get (i) match {
-                    case Some (e) => e
-                    case None     => Unknown ()
-                }
-
-            // Extra clause to lookup entity for the exception in a CATCH clause
-            case n @ Catch (i, _)     =>
-                (n->env).get (i) match {
-                    case Some (e) => e
-                    case None     => Unknown ()
-                }
-
-            case n @ IdnExp (i) =>
-                (n->env).get (i) match {
-                     case Some (e) => e
-                     case None     => Unknown ()
-                }
-
-            case n @ IndexExp (i, _) =>
-                (n->env).get (i) match {
-                     case Some (e) => e
-                     case None     => Unknown ()
-                }
-
-            case n @ FieldExp (i, _) =>
-                (n->env).get (i) match {
-                     case Some (e) => e
-                     case None     => Unknown ()
-                }
+            // Just look the identifier up in the environment at the node.
+            // Return `UnknownEntity` if the identifier is not defined.
+            case n =>
+                lookup (n->env, n.idn, UnknownEntity ())
 
         }
 
@@ -294,7 +249,7 @@ class SemanticAnalysis {
             case EqualExp (l, r)    => BoolType ()
             case FieldExp (r, f)    => IntType ()
             case GreaterExp (l, r)  => BoolType ()
-            case n : IdnExp         => (n->entity).tipe
+            case IdnExp (n)         => enttipe (n->entity)
             case IndexExp (l, r)    => IntType ()
             case IntExp (i)         => IntType ()
             case LessExp (l, r)     => BoolType ()
@@ -319,7 +274,7 @@ class SemanticAnalysis {
                 (e.parent) match {
                     case AssignStmt (IndexExp (_, _), e1) if (e eq e1)  => Set (IntType ())
                     case AssignStmt (FieldExp (_, _), e1) if (e eq e1)  => Set (IntType ())
-                    case AssignStmt (v : IdnExp, e1) if (e eq e1)       => Set ((v->entity).tipe)
+                    case AssignStmt (IdnExp (v), e1) if (e eq e1)       => Set (enttipe (v->entity))
 
                     case ForStmt (_, _, _, _)                           => Set (IntType ())
                     case IfStmt (_, _, _)                               => Set (BoolType ())
@@ -368,10 +323,19 @@ class SemanticAnalysis {
      */
     val assignable : Expression => Boolean =
         attr {
-            case n @ IdnExp (_)  => (n->entity).isassignable
+            case IdnExp (n)      => isassignable (n->entity)
             case IndexExp (_, _) => true
             case FieldExp (_, _) => true
             case _               => false
+        }
+
+    /**
+     * Is the entity assignable?
+     */
+    val isassignable : Entity => Boolean =
+        attr {
+            case _ : Constant => false
+            case _            => true
         }
 
     /**
@@ -386,5 +350,24 @@ class SemanticAnalysis {
                 case p : Statement => p->isinloop
             }
         )
+
+    /**
+     * The type of an entity.
+     */
+    val enttipe : Entity => Type =
+        attr {
+            case Variable (tipe)    => tipe
+            case Constant (tipe, _) => tipe
+            case _                  => UnknownType ()
+        }
+
+    /**
+     * Is an entity constant or not?
+     */
+    val isconst : Entity => Boolean =
+        attr {
+            case _ : Variable => false
+            case _            => true
+        }
 
 }

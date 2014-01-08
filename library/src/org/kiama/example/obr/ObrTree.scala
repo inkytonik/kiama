@@ -46,7 +46,9 @@ object ObrTree {
     /**
      * Marker trait for all node types that have an entity.
      */
-    trait EntityTree extends ObrTree
+    trait EntityTree extends ObrTree {
+        def idn : IdnTree
+    }
 
     /**
      * Marker trait for all expression node types that can be assigned.
@@ -61,47 +63,47 @@ object ObrTree {
     /**
      * A declaration of an integer variable.
      */
-    case class IntVar (idn: Identifier) extends Declaration
+    case class IntVar (idn: IdnDef) extends Declaration
 
     /**
      * A declaration of an integer parameter.
      */
-    case class IntParam (idn: Identifier) extends Declaration
+    case class IntParam (idn: IdnDef) extends Declaration
 
     /**
      * A declaration of a Boolean variable.
      */
-    case class BoolVar (idn: Identifier) extends Declaration
+    case class BoolVar (idn: IdnDef) extends Declaration
 
     /**
      * A declaration of an array variable of the given size.
      */
-    case class ArrayVar (idn: Identifier, size : Int) extends Declaration
+    case class ArrayVar (idn: IdnDef, size : Int) extends Declaration
 
     /**
      * A declaration of a record variable with the given fields.
      */
-    case class RecordVar (idn: Identifier, fields : Seq[Identifier]) extends Declaration
+    case class RecordVar (idn: IdnDef, fields : Seq[Identifier]) extends Declaration
 
     /**
      * A declaration of an enumeration variable with given enumeration constants.
      */
-    case class EnumVar (idn : Identifier, consts : Seq[EnumConst]) extends Declaration
+    case class EnumVar (idn : IdnDef, consts : Seq[EnumConst]) extends Declaration
 
     /**
      * A declaration of an enumeration constant
      */
-    case class EnumConst (idn : Identifier) extends ObrTree with EntityTree
+    case class EnumConst (idn : IdnDef) extends ObrTree with EntityTree
 
     /**
      * A declaration of an integer constant with the given value.
      */
-    case class IntConst (idn: Identifier, value : Int) extends Declaration
+    case class IntConst (idn: IdnDef, value : Int) extends Declaration
 
     /**
      * A declaration of a new exception value
      */
-    case class ExnConst (idn : Identifier) extends Declaration
+    case class ExnConst (idn : IdnDef) extends Declaration
 
     /**
     * Superclass of all statement classes.
@@ -123,7 +125,7 @@ object ObrTree {
      * A statement that executes its body statements for each value of a variable in
      * a range given by its two expressions.
      */
-    case class ForStmt (idn : Identifier, min : Expression, max : Expression,
+    case class ForStmt (idn : IdnUse, min : Expression, max : Expression,
                         body : Seq[Statement]) extends Statement with EntityTree
 
     /**
@@ -152,14 +154,14 @@ object ObrTree {
     /**
      * A statement that raises a specified exception.
      */
-    case class RaiseStmt (idn : Identifier) extends Statement with EntityTree
+    case class RaiseStmt (idn : IdnUse) extends Statement
 
     /**
      * A statement that is used to catch exception
      */
     case class TryStmt (body : TryBody, catches : Seq[Catch]) extends Statement
     case class TryBody (stmts : Seq[Statement]) extends ObrTree
-    case class Catch (idn : Identifier, stmts : Seq[Statement]) extends ObrTree with EntityTree
+    case class Catch (idn : IdnUse, stmts : Seq[Statement]) extends ObrTree
 
     /**
     * Superclass of all expression classes.
@@ -184,7 +186,7 @@ object ObrTree {
     /**
      * An expression that accesses a field of a record.
      */
-    case class FieldExp (idn : Identifier, field : Identifier) extends AssignTree
+    case class FieldExp (idn : IdnUse, field : Identifier) extends AssignTree
 
     /**
      * An expression that compares the values of two expressions for greater-than order.
@@ -194,12 +196,12 @@ object ObrTree {
     /**
      * An expression whose value is the current value of a named variable or constant.
      */
-    case class IdnExp (idn : Identifier) extends AssignTree
+    case class IdnExp (idn : IdnUse) extends AssignTree
 
     /**
      * An expression that indexes an array.
      */
-    case class IndexExp (idn : Identifier, indx : Expression) extends AssignTree
+    case class IndexExp (idn : IdnUse, indx : Expression) extends AssignTree
 
     /**
      * An expression whose value is an integer constant.
@@ -256,6 +258,23 @@ object ObrTree {
      * An expression whose value is the product of the values of two expressions.
      */
     case class StarExp (left : Expression, right : Expression) extends Expression
+
+    /**
+     * An identifier reference.
+     */
+    abstract class IdnTree extends ObrTree {
+        def idn : String
+    }
+
+    /**
+     * A defining occurrence of an identifier.
+     */
+    case class IdnDef (idn : Identifier) extends IdnTree
+
+    /**
+     * An applied occurrence (use) of an identifier.
+     */
+    case class IdnUse (idn : Identifier) extends IdnTree
 
     /**
     * A representation of identifiers as strings.

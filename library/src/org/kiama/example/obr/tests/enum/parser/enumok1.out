@@ -1,1 +1,1 @@
-ObrInt(EnumOk1,List(IntParam(i), EnumVar(Single,List(EnumConst(Harold)))),List(),EnumOk1)
+ObrInt(EnumOk1,List(IntParam(IdnDef(i)), EnumVar(IdnDef(Single),List(EnumConst(IdnDef(Harold))))),List(),EnumOk1)

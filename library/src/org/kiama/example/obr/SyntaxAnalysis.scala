@@ -62,7 +62,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
                   ObrInt (i1, ps ++ ds, ss, i2) }
 
     lazy val parameterdecl : Parser[Declaration] =
-        ident <~ ":" <~ "INTEGER" ^^ IntParam
+        idndef <~ ":" <~ "INTEGER" ^^ IntParam
 
     lazy val declarations : Parser[Seq[Declaration]] =
         constantdecls ~ variabledecls ^^ { case cs ~ vs => cs ++ vs }
@@ -82,17 +82,17 @@ class SyntaxAnalysis extends PositionedParserUtilities {
             }
 
     lazy val constantdecl : Parser[Declaration] =
-        ident ~ ("=" ~> signed) ^^ IntConst |
-        ident <~ ":" <~ "EXCEPTION" ^^ ExnConst
+        idndef ~ ("=" ~> signed) ^^ IntConst |
+        idndef <~ ":" <~ "EXCEPTION" ^^ ExnConst
 
     lazy val variabledecl : Parser[Declaration] =
-        ident <~ ":" <~ "BOOLEAN" ^^ BoolVar |
-        ident <~ ":" <~ "INTEGER" ^^ IntVar |
-        ident ~ (":" ~> "ARRAY" ~> integer <~ "OF" <~ "INTEGER") ^^ ArrayVar |
-        ident ~ (":" ~> "RECORD" ~> (fielddecl+) <~ "END") ^^ RecordVar |
+        idndef <~ ":" <~ "BOOLEAN" ^^ BoolVar |
+        idndef <~ ":" <~ "INTEGER" ^^ IntVar |
+        idndef ~ (":" ~> "ARRAY" ~> integer <~ "OF" <~ "INTEGER") ^^ ArrayVar |
+        idndef ~ (":" ~> "RECORD" ~> (fielddecl+) <~ "END") ^^ RecordVar |
         // Extra clause to handle parsing the declaration of an enumeration variable
-        ident ~ (":" ~> "(" ~> rep1sep (withPos (ident), ",") <~ ")") ^^
-            { case i ~ cs => EnumVar (i, cs map { case p @ Pos (s) => EnumConst (s) setPos p }) }
+        idndef ~ (":" ~> "(" ~> rep1sep (idndef, ",") <~ ")") ^^
+            { case i ~ cs => EnumVar (i, cs map EnumConst )}
 
     lazy val fielddecl : Parser[Identifier] =
         ident <~ ":" <~ "INTEGER" <~ ";"
@@ -108,7 +108,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
         trycatch |
         "EXIT" ~ ";" ^^ (_ => ExitStmt ()) |
         "RETURN" ~> expression <~ ";" ^^ ReturnStmt |
-        "RAISE" ~> ident <~ ";" ^^ RaiseStmt
+        "RAISE" ~> idnuse <~ ";" ^^ RaiseStmt
 
     lazy val conditional : Parser[IfStmt] =
         "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt
@@ -120,7 +120,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
     lazy val iteration : Parser[Statement] =
         "LOOP" ~> statementseq <~ "END" ^^ LoopStmt |
         "WHILE" ~> expression ~ ("DO" ~> statementseq <~ "END") ^^ WhileStmt |
-        "FOR" ~> ident ~ (":=" ~> expression) ~ ("TO" ~> expression) ~
+        "FOR" ~> idnuse ~ (":=" ~> expression) ~ ("TO" ~> expression) ~
              ("DO" ~> statementseq <~ "END") ^^ ForStmt
 
     lazy val trycatch : Parser[TryStmt] =
@@ -130,7 +130,7 @@ class SyntaxAnalysis extends PositionedParserUtilities {
                 TryStmt (body, cs) }
 
     lazy val catchclause : Parser[Catch] =
-        ("CATCH" ~> ident <~ "DO") ~ statementseq ^^ Catch
+        ("CATCH" ~> idnuse <~ "DO") ~ statementseq ^^ Catch
 
     lazy val expression : PackratParser[Expression] =
         expression ~ withPos ("=") ~ simplexp ^^
@@ -173,16 +173,22 @@ class SyntaxAnalysis extends PositionedParserUtilities {
         "-" ~> factor ^^ NegExp
 
     lazy val lvalue : PackratParser[AssignTree] =
-        ident ~ ("[" ~> expression <~ "]") ^^ IndexExp |
-        ident ~ withPos (".") ~ ident ^^
+        idnuse ~ ("[" ~> expression <~ "]") ^^ IndexExp |
+        idnuse ~ withPos (".") ~ ident ^^
             { case r ~ p ~ f => FieldExp (r, f) setPos p } |
-        ident ^^ IdnExp
+        idnuse ^^ IdnExp
 
     lazy val integer : PackratParser[Int] =
         "[0-9]+".r ^^ (s => s.toInt)
 
     lazy val signed : PackratParser[Int] =
         "-?[0-9]+".r ^^ (s => s.toInt)
+
+    lazy val idndef : PackratParser[IdnDef] =
+        ident ^^ IdnDef
+
+    lazy val idnuse : PackratParser[IdnUse] =
+        ident ^^ IdnUse
 
     lazy val ident : PackratParser[Identifier] =
         "[a-zA-Z][a-zA-Z0-9]*".r into (s => {

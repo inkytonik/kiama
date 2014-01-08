@@ -1,1 +1,1 @@
-ObrInt(EnumOk2,List(IntParam(i), EnumVar(Binary,List(EnumConst(One), EnumConst(TheOther)))),List(),EnumOk2)
+ObrInt(EnumOk2,List(IntParam(IdnDef(i)), EnumVar(IdnDef(Binary),List(EnumConst(IdnDef(One)), EnumConst(IdnDef(TheOther))))),List(),EnumOk2)

@@ -34,6 +34,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
     import SymbolTable._
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.down
+    import org.kiama.util.Entity
     import scala.collection.immutable.Seq
 
     /**
@@ -66,23 +67,33 @@ class RISCTransformation (analysis : SemanticAnalysis) {
         }
 
     /**
+     * Get the location of an entity. Only valid for variables,
+     * but defined on all entities.
+     */
+    def locn (e : Entity) : Int =
+        e match {
+            case v : Variable => v.locn
+            case _            => 0
+        }
+
+    /**
      * Return the address for the location of the entity represented
      * by a given node.
      */
     def location (n : EntityTree) : Address =
         n match {
-            case e @ IndexExp (_, i) =>
+            case e @ IndexExp (v, i) =>
                 val lab1 = genlabel ()
                 val lab2 = genlabel ()
                 Indexed (
-                    Local ((n->entity).locn),
+                    Local (locn (v->entity)),
                     MulW (
                         SequenceDatum(
                             Seq(
                                 StW (tempintloc, SubW (i->datum, IntDatum(1))),
                                 Bne (CmpltW (LdW (tempintloc), IntDatum (0)), lab1),
                                 Beq (CmpltW (
-                                    (n->entity) match {
+                                    (v->entity) match {
                                         case Variable (ArrayType (size)) => IntDatum (size-1)
                                     }, LdW (tempintloc)), lab2),
                                 LabelDef (lab1),
@@ -91,11 +102,11 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                                 LabelDef (lab2)),
                             LdW (tempintloc)),
                         IntDatum (WORDSIZE)))
-            case FieldExp (_, f) =>
-                val e @ Variable (RecordType (fs)) = n->entity
-                Local (e.locn + fs.indexOf (f) * WORDSIZE)
+            case FieldExp (v, f) =>
+                val e @ Variable (RecordType (fs)) = v->entity
+                Local (locn (e) + fs.indexOf (f) * WORDSIZE)
             case _ =>
-                Local ((n->entity).locn)
+                Local (locn ((n.idn)->entity))
         }
 
     /**
@@ -146,14 +157,14 @@ class RISCTransformation (analysis : SemanticAnalysis) {
      * bounds errors.
      */
     val tempintloc : Address =
-        Local (Variable (IntType ()).locn)
+        Local (locn (Variable (IntType ())))
 
     /**
      * A location reserved for storing the exception value associated with
      * a raised exception.
      */
     val exnloc : Address =
-        Local (Variable (ExnType ()).locn)
+        Local (locn (Variable (ExnType ())))
 
     /**
      * The RISC tree items that are the translation of the given
@@ -218,7 +229,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
                 val origprevloc = prevLocCounter.value
                 // allocate a temporary location to store the calculated
                 // maximum index value for this for loop.
-                val maxloc = Local (Variable (IntType ()).locn)
+                val maxloc = Local (locn (Variable (IntType ())))
                 // generate RISCTree code
                 val result =
                     Seq (StW (eloc, min->datum),
@@ -316,7 +327,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * value and jumps to the exception handler (CATCH blocks) for the
              * current scope.
              */
-            case s @ RaiseStmt (_) =>
+            case RaiseStmt (s) =>
                 // Get hold of the integer constant associated with the exception
                 // kind specified in this RAISE statement
                 val exnconst = (s->entity) match {
@@ -337,7 +348,7 @@ class RISCTransformation (analysis : SemanticAnalysis) {
     def cblock (clause : Catch, exitlab : Label) : Seq[Item] =
         clause match {
 
-            case n @ Catch(idn, stmts) =>
+            case Catch (n, stmts) =>
                 // Generate a label for the exit point of this catch block.
                 val lab1 = genlabel ()
                 // Get hold of the integer constant associated with the exception
@@ -402,8 +413,8 @@ class RISCTransformation (analysis : SemanticAnalysis) {
              * the identifier denotes a constant, or b) a loads of the value
              * from the location at which the variable is stored.
              */
-            case e @ IdnExp (_) =>
-                (e->entity) match {
+            case e @ IdnExp (n) =>
+                (n->entity) match {
                     case Constant (_, v) => IntDatum (v)
                     case _               => LdW (location (e))
                 }
