@@ -237,7 +237,6 @@ class SemanticAnalysis {
 
         }
 
-
     /**
      * Return the internal type of a syntactic type. In most cases they
      * are the same. The exception is class types since the class type
