@@ -89,6 +89,13 @@ trait Memoiser {
         }
 
         /**
+         * Immediately reset the memo table at `t`.
+         */
+        def resetAt (t : T) {
+            memo.invalidate (t)
+        }
+
+        /**
          * Has the value of this attribute at `t` already been computed or not?
          * By default, does the memo table contain a value for `t`?
          */
