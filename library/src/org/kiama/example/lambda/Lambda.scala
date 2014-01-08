@@ -78,7 +78,7 @@ object LambdaTree {
 /**
  * Parser to abstract syntax tree for simple lambda calculus.
  */
-trait Parser extends PositionedParserUtilities {
+trait SyntaxAnalyser extends PositionedParserUtilities {
 
     import LambdaTree._
 
@@ -158,7 +158,7 @@ trait Evaluator {
 /**
  * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-object Lambda extends ParsingREPL[LambdaTree.Exp] with Parser with Evaluator with Profiler {
+object Lambda extends ParsingREPL[LambdaTree.Exp] with SyntaxAnalyser with Evaluator with Profiler {
 
     import org.kiama.util.REPLConfig
 

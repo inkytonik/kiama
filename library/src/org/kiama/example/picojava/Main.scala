@@ -32,9 +32,9 @@ class PicojavaConfig (args : Seq[String], emitter : Emitter) extends Config (arg
     val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
 }
 
-object Main extends CompilerWithConfig[Program,PicojavaConfig] with Parser {
+object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalyser {
 
-    import Obfuscate.obfuscate
+    import Obfuscator.obfuscate
     import ErrorCheck.errors
     import PrettyPrinter.pretty
     import org.kiama.util.Config

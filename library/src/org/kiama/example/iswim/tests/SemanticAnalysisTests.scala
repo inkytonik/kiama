@@ -29,15 +29,15 @@ import org.kiama.attribution.Attribution.initTree
 import org.kiama.example.iswim.compiler._
 import org.kiama.util.RegexParserTests
 
-class SemanticAnalysisTests extends RegexParserTests with Parser {
+class SemanticAnalysisTests extends RegexParserTests with SyntaxAnalyser {
 
     import org.kiama.util.{Message, Messaging}
-    import Syntax.{Expr, Iswim}
+    import IswimTree.{Expr, Iswim}
 
     def runSemanticChecks (ast : Iswim, semanticallyCorrect : Boolean,
-                           expected : Message*) : SemanticAnalysis = {
+                           expected : Message*) : SemanticAnalyser = {
         initTree (ast)
-        val analysis = new SemanticAnalysis
+        val analysis = new SemanticAnalyser
         val messages = analysis.errors (ast)
         val correct = analysis.isSemanticallyCorrect (ast)
         assert (correct === semanticallyCorrect)

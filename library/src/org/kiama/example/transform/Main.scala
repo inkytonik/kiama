@@ -43,11 +43,11 @@ class Driver extends Parser with Compiler[Program] {
         // Check for semantic errors on the original expression.  This
         // will cause a translation to a priority-correct representation
         // and error computation on that rep.
-        val analysis = new Analysis
-        val messages = analysis.errors (expr)
+        val analyser = new SemanticAnalyser
+        val messages = analyser.errors (expr)
 
         // For testing, print the priority-correct representation
-        config.emitter.emitln (analysis.ast (expr))
+        config.emitter.emitln (analyser.ast (expr))
 
         // Report any semantic errors
         if (messages.length > 0)

@@ -23,7 +23,7 @@ package example.oberon0
 package drivers
 
 trait A1Phases extends base.FrontEndDriver
-    with L2.Parser
+    with L2.SyntaxAnalyser
     with L2.source.PrettyPrinter
     with L2.NameAnalyser {
 

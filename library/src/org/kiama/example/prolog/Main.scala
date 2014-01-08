@@ -70,7 +70,7 @@ class PrologConfig (args : Seq[String], emitter : Emitter) extends REPLConfig (a
  * interactive read-eval-print loop (REPL) to read queries.  For each
  * query, call the interpreter to evaluate it.
  */
-object Main extends SyntaxAnalysis with ParsingREPLWithConfig[Literal,PrologConfig] with PrettyPrinter {
+object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConfig] with PrettyPrinter {
 
     import java.io.FileReader
     import java.io.FileNotFoundException
@@ -97,9 +97,9 @@ object Main extends SyntaxAnalysis with ParsingREPLWithConfig[Literal,PrologConf
                 case Success (dbtree, _) =>
                     // Pretty print the source tree
                     // emitter.emitln (pretty (product (dbtree)))
-                    val analysis = new SemanticAnalysis
+                    val analyser = new SemanticAnalyser
                     initTree (dbtree)
-                    val messages = analysis.errors (dbtree)
+                    val messages = analyser.errors (dbtree)
                     if (messages.length > 0) {
                         val emitter = new StringEmitter
                         report (messages, emitter)

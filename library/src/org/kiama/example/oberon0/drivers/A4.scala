@@ -23,7 +23,7 @@ package example.oberon0
 package drivers
 
 trait A4Phases extends base.TranslatingDriver
-    with L4.Parser
+    with L4.SyntaxAnalyser
     with L4.source.PrettyPrinter
     with L4.NameAnalyser
     with L4.TypeAnalyser

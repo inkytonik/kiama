@@ -34,7 +34,7 @@ object NameResolution {
     import NullObjects._
     import PicoJavaTree._
     import PredefinedTypes._
-    import TypeAnalysis._
+    import TypeAnalyser._
     import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 

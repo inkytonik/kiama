@@ -38,7 +38,7 @@ object Translator {
      * MiniJava program which came from the given source file. Return
      * one class file for each class in the MiniJava program.
      */
-    def translate (sourcetree : Program, sourceFilename : String, analysis : SemanticAnalysis) : Seq[ClassFile] = {
+    def translate (sourcetree : Program, sourceFilename : String, analyser : SemanticAnalyser) : Seq[ClassFile] = {
 
         // An instruction buffer for translating statements and expressions into
         val instructions = Seq.newBuilder[JVMInstr]
@@ -96,7 +96,7 @@ object Translator {
          */
         def locnum (idnuse : IdnUse) : Int = {
             val numargs = idnuse->argCount
-            analysis.entity (idnuse) match {
+            analyser.entity (idnuse) match {
                 case ArgumentEntity (decl) =>
                     decl.index
 
@@ -278,7 +278,7 @@ object Translator {
                     gen (Aload (locnum (idnuse)))
             }
 
-            analysis.entity (idnuse) match {
+            analyser.entity (idnuse) match {
                 case FieldEntity (decl) =>
                     loadField (decl)
                 case ArgumentEntity (decl) =>
@@ -316,7 +316,7 @@ object Translator {
                     gen (Astore (locnum (idnuse)))
             }
 
-            analysis.entity (idnuse) match {
+            analyser.entity (idnuse) match {
                 case FieldEntity (decl) =>
                     storeField (decl)
                 case ArgumentEntity (decl) =>
@@ -394,7 +394,7 @@ object Translator {
          * puts that object on the top of the operand stack.
          */
         def translateCall (exp : CallExp) {
-            analysis.tipe (exp.base) match {
+            analyser.tipe (exp.base) match {
 
                 case ReferenceType (Class (IdnDef (className), _, _)) =>
                     // We are calling via a reference, ok
@@ -406,7 +406,7 @@ object Translator {
                     exp.args.map (translateExp)
 
                     // Get the method that is being called
-                    val MethodEntity (method) = analysis.entity (exp.name)
+                    val MethodEntity (method) = analyser.entity (exp.name)
 
                     // Generate an invocation of the correct method spec
                     gen (InvokeVirtual (methodSpec (className, method)))

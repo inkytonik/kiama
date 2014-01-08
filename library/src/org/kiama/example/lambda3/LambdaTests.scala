@@ -26,7 +26,7 @@ import org.kiama.util.RegexParserTests
 /**
  * Simple lambda calculus query tests.
  */
-class LambdaTests extends RegexParserTests with Parser {
+class LambdaTests extends RegexParserTests with SyntaxAnalyser {
 
     import LambdaTree._
 

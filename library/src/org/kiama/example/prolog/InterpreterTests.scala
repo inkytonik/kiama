@@ -28,7 +28,7 @@ import org.kiama.util.RegexParserTests
  * Prolog file containing definitions, that running specific queries
  * over those definitions give the expected results.
  */
-class InterpreterTests extends SyntaxAnalysis with RegexParserTests {
+class InterpreterTests extends SyntaxAnalyser with RegexParserTests {
 
     import org.kiama.util.StringEmitter
     import scala.io.Source

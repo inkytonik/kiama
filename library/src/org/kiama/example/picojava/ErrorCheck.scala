@@ -34,7 +34,7 @@ object ErrorCheck {
     import NameResolution._
     import PicoJavaTree._
     import PredefinedTypes._
-    import TypeAnalysis._
+    import TypeAnalyser._
     import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.Messaging.message

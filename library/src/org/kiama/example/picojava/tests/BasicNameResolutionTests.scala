@@ -36,7 +36,7 @@ class BasicNameResolutionTests extends Tests {
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.NameResolution._
     import org.kiama.example.picojava.PicoJavaTree._
-    import org.kiama.example.picojava.TypeAnalysis._
+    import org.kiama.example.picojava.TypeAnalyser._
     import scala.collection.immutable.Seq
 
     // For the actual program text, see BasicNameResolutionTests.pj

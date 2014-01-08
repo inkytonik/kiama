@@ -28,9 +28,9 @@ package example.iswim.tests
 import org.kiama.util.RegexParserTests
 import org.kiama.example.iswim.compiler._
 
-class ParserTests extends RegexParserTests with Parser {
+class ParserTests extends RegexParserTests with SyntaxAnalyser {
 
-    import Syntax._
+    import IswimTree._
 
     test("parse a 0-tuple") {
         assertParseOk ("()", expr,

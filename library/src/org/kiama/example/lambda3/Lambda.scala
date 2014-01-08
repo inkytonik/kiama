@@ -108,7 +108,7 @@ object LambdaTree {
 /**
  * Parser for simple lambda calculus plus REPL queries.
  */
-trait Parser extends PositionedParserUtilities {
+trait SyntaxAnalyser extends PositionedParserUtilities {
 
     import LambdaTree._
     import org.kiama.rewriting.NominalTree.{Bind, Name, Trans}
@@ -204,7 +204,7 @@ class Evaluator {
  * nominal rewriting. This implementation is closely based on the example
  * used in Scrap your Nameplate, James Cheney, ICFP 2005.
  */
-object Lambda extends ParsingREPL[LambdaTree.Query[_]] with Parser {
+object Lambda extends ParsingREPL[LambdaTree.Query[_]] with SyntaxAnalyser {
 
     import org.kiama.util.REPLConfig
 

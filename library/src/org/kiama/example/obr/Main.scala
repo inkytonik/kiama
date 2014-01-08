@@ -41,9 +41,9 @@ class ObrConfig (args : Seq[String], emitter : Emitter) extends Config (args, em
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
+class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
 
-    import org.kiama.example.obr.{RISCEncoder, RISCTransformation}
+    import org.kiama.example.obr.{RISCEncoder, RISCTransformer}
     import org.kiama.example.RISC.{RISC, RISCISA}
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging.report
@@ -60,18 +60,18 @@ class Driver extends SyntaxAnalysis with CompilerWithConfig[ObrInt,ObrConfig] {
         RISCLabels.reset ()
 
         // Conduct semantic analysis and report any errors
-        val analysis = new SemanticAnalysis
-        val messages = analysis.errors (ast)
+        val analyser = new SemanticAnalyser
+        val messages = analyser.errors (ast)
         if (messages.length > 0) {
             report (messages, config.emitter)
         } else {
             // Print out final environment
             if (config.envPrint ()) {
-                config.emitter.emitln (analysis.env (ast))
+                config.emitter.emitln (analyser.env (ast))
             }
 
             // Compile the source tree to a target tree
-            val transformer = new RISCTransformation (analysis)
+            val transformer = new RISCTransformer (analyser)
             val targettree = transformer.code (ast)
             initTree (targettree)
 
@@ -128,9 +128,9 @@ class SemanticDriver extends Driver {
         SymbolTable.reset ()
 
         // Conduct semantic analysis and report any errors
-        val analysis = new SemanticAnalysis
+        val analyser = new SemanticAnalyser
         initTree (ast)
-        val messages = analysis.errors (ast)
+        val messages = analyser.errors (ast)
         if (messages.length > 0)
             report (messages, config.emitter)
 

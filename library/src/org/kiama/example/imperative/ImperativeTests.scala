@@ -200,13 +200,14 @@ object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
 
     import org.kiama.util.REPLConfig
     import org.scalacheck.Arbitrary
+    import PrettyPrinter.pretty
 
     def generator : Arbitrary[Stmt] =
         arbStmt
 
     override def process (s : Stmt, config : REPLConfig) {
         config.emitter.emitln (s)
-        config.emitter.emitln (PrettyPrinter.pretty (s))
+        config.emitter.emitln (pretty (s))
     }
 
 }

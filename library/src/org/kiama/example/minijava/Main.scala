@@ -28,7 +28,7 @@ import org.kiama.util.Compiler
  * Conduct syntax analysis on the MiniJava program in the file given as the
  * first command-line argument and print out the result source program tree.
  */
-trait Driver extends SyntaxAnalysis with Compiler[Program] {
+trait Driver extends SyntaxAnalyser with Compiler[Program] {
 
     import CodeGenerator.generate
     import Translator.translate
@@ -57,8 +57,8 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
         // emitter.emitln (pretty_any (ast))
 
         // Perform the semantic checks
-        val analysis = new SemanticAnalysis
-        val messages = analysis.errors (ast)
+        val analyser = new SemanticAnalyser
+        val messages = analyser.errors (ast)
 
         // Report any messages that were produced
         if (messages.length > 0) {
@@ -68,7 +68,7 @@ trait Driver extends SyntaxAnalysis with Compiler[Program] {
         } else {
 
             // Translate the source tree to JVM
-            val targettree = translate (ast, filename, analysis)
+            val targettree = translate (ast, filename, analyser)
 
             // Pretty print the target tree
             // config.emitter.emitln (pretty_any (targettree))

@@ -29,10 +29,10 @@
 package org.kiama
 package example.picojava.tests
 
-import org.kiama.example.picojava.Parser
+import org.kiama.example.picojava.SyntaxAnalyser
 import org.kiama.util.RegexParserTests
 
-class ParserTests extends Parser with RegexParserTests {
+class ParserTests extends SyntaxAnalyser with RegexParserTests {
 
     import org.kiama.example.picojava.PicoJavaTree._
     import scala.collection.immutable.Seq

@@ -28,7 +28,7 @@ import org.kiama.util.Compiler
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
-class Driver extends Parser with Compiler[Stm] {
+class Driver extends SyntaxAnalyser with Compiler[Stm] {
 
     import org.kiama.util.Config
 
@@ -37,7 +37,7 @@ class Driver extends Parser with Compiler[Stm] {
      */
     override def process (filename : String, ast : Stm, config : Config) {
         super.process (filename, ast, config)
-        val optast = Optimise.run (ast)
+        val optast = Optimiser.run (ast)
         config.emitter.emitln (optast)
     }
 

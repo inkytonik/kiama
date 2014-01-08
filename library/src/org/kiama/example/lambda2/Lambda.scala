@@ -41,7 +41,7 @@ class LambdaConfig (args : Seq[String], emitter : Emitter) extends REPLConfig (a
  * Visser, LDTA 2002 (published in Volume 65/3 of Electronic Notes in
  * Theoretical Computer Science, Elsevier).
  */
-object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with Parser {
+object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyser {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
@@ -112,7 +112,7 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with Parser {
     /**
      * The analysis object to use for processing.
      */
-    val analysis = new Analysis
+    val analyser = new Analyser
 
     /**
      * Process an expression.
@@ -121,7 +121,7 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with Parser {
         super.process (e, config)
         // First conduct a semantic analysis check: compute the expression's
         // type and see if any errors occurred
-        val messages = analysis.errors (e)
+        val messages = analyser.errors (e)
         if (messages.length == 0) {
             // If everything is OK, evaluate the expression
             val evaluator = evaluatorFor (config.mechanism ())

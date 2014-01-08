@@ -32,7 +32,7 @@ trait CodeGenerator {
     import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 
-    import Syntax._
+    import IswimTree._
 
     import SECDBase._
     import IntegerOps._

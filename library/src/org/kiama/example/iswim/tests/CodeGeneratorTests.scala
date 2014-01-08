@@ -30,9 +30,9 @@ import org.kiama.util.RegexParserTests
 import org.kiama.example.iswim.compiler._
 import org.kiama.example.iswim.secd._
 
-class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser {
+class CodeGeneratorTests extends RegexParserTests with CodeGenerator with SyntaxAnalyser {
 
-    import Syntax._
+    import IswimTree._
 
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.output.PrettyPrinter._
@@ -50,7 +50,7 @@ class CodeGeneratorTests extends RegexParserTests with CodeGenerator with Parser
     /**
      * Analyser to use for tests.
      */
-    val analyser = new SemanticAnalysis
+    val analyser = new SemanticAnalyser
     import analyser.isSemanticallyCorrect
 
     test("compile a simple arithmetic expression") {

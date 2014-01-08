@@ -26,7 +26,7 @@ import org.kiama.util.RegexParserTests
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends RegexParserTests with Parser {
+class LambdaTests extends RegexParserTests with SyntaxAnalyser {
 
     import LambdaTree._
     import Evaluators.{evaluatorFor, mechanisms}
@@ -42,7 +42,7 @@ class LambdaTests extends RegexParserTests with Parser {
      * Compute errors of `e` check to make sure the relevant message is reported. Use
      * `errors` to actually perform the check.
      */
-    def assertType (e : Exp, analysis : Analysis, aname : String, errors : Exp => Messages, line : Int, col : Int, msg : String) {
+    def assertType (e : Exp, aname : String, errors : Exp => Messages, line : Int, col : Int, msg : String) {
         val messages = errors (e)
         messages.length match {
             case 0 =>
@@ -65,9 +65,9 @@ class LambdaTests extends RegexParserTests with Parser {
         assertParseCheck (term, parser) {
             exp =>
                 initTree (exp)
-                val analysis = new Analysis
-                assertType (exp, analysis, "errors", analysis.errors, line, col, msg)
-                assertType (exp, analysis, "errors2", analysis.errors2, line, col, msg)
+                val analyser = new Analyser
+                assertType (exp, "errors", analyser.errors, line, col, msg)
+                assertType (exp, "errors2", analyser.errors2, line, col, msg)
         }
     }
 
@@ -78,11 +78,11 @@ class LambdaTests extends RegexParserTests with Parser {
         assertParseCheck (term, parser) {
             exp =>
                 initTree (exp)
-                val analysis = new Analysis
-                val messages = analysis.errors (exp)
+                val analyser = new Analyser
+                val messages = analyser.errors (exp)
                 if (messages.length != 0)
                     fail (s"errors: no messages expected, got ${messages}")
-                val messages2 = analysis.errors2 (exp)
+                val messages2 = analyser.errors2 (exp)
                 if (messages.length != 0)
                     fail (s"errors2: no messages expected, got ${messages2}")
             }

@@ -26,7 +26,7 @@ import org.kiama.util.{GeneratingREPL, RegexParserTests}
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends RegexParserTests with Parser with Evaluator with Generator {
+class LambdaTests extends RegexParserTests with SyntaxAnalyser with Evaluator with Generator {
 
     import LambdaTree._
     import org.scalacheck.Prop._
