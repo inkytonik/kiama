@@ -34,7 +34,7 @@ trait Positioned {
     /**
      * `start` is the position just before the input for the positioned
      * value starts, ignoring any whitespace if the relevant parser is
-     * skipping it.
+     * skipping it. Defaults to `NoPosition`.
      */
     var start : Position = NoPosition
 
@@ -50,7 +50,7 @@ trait Positioned {
 
     /**
      * `finish` is the position just after the last character of the
-     * input for the positioned value.
+     * input for the positioned value. Defaults to `NoPosition`.
      */
     var finish : Position = NoPosition
 
