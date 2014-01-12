@@ -34,6 +34,23 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
     import Messaging.Messages
 
     /**
+     * ScalaTest by default only shows the unqualified class name when
+     * it displays the name of the suite. If a suite class name is
+     * used in more than one package we can't tell them apart. Here
+     * we override the name that is printed so that we get a project
+     * relative source file name as well.
+     *
+     * This definition assumes that the test suite resides in the
+     * library project, that the name of the suite class is the same
+     * as the basename of the file and that the file is located in
+     * the folder given by the package name.
+     */
+    override def suiteName = {
+        val filename = getClass.getName.replaceAllLiterally (".", "/")
+        s"${super.suiteName} in library/src/$filename"
+    }
+
+    /**
      * Compare two values.  Use reference equality for references
      * and value equality for non-references.  If the values are
      * both Some values, perform the check on the wrapped values.
