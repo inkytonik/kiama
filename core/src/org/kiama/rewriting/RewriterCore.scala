@@ -27,6 +27,7 @@ package rewriting
  */
 trait RewriterCore {
 
+    import org.kiama.util.Comparison.same
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
     import scala.collection.immutable.Seq
@@ -516,24 +517,6 @@ trait RewriterCore {
             }
         }
     }
-
-    /**
-     * Compare two arbitrary values. If they are both references, use
-     * reference equality, otherwise throw an error since we should be
-     * able to cast anything to reference.
-     */
-    protected def same (v1 : Any, v2 : Any) : Boolean =
-        if (v1 == null)
-            v2 == null
-        else if (v2 == null)
-            false
-        else
-            (v1, v2) match {
-                case (r1 : AnyRef, r2: AnyRef) =>
-                    r1 eq r2
-                case _ =>
-                    sys.error (s"Rewriter.same: comparison of non-AnyRefs $v1 and $v2, should not be reached")
-            }
 
     /**
      * Traversal to all children.  Construct a strategy that applies `s` to all

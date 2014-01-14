@@ -31,6 +31,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
 
     import org.scalatest.Tag
+    import Comparison.{optsame, same}
     import Messaging.Messages
 
     /**
@@ -51,21 +52,6 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
     }
 
     /**
-     * Compare two values.  Use reference equality for references
-     * and value equality for non-references.  If the values are
-     * both Some values, perform the check on the wrapped values.
-     */
-    def same (v1 : Any, v2 : Any) : Boolean =
-        (v1, v2) match  {
-            case (Some (r1 : AnyRef), Some (r2 : AnyRef)) => r1 eq r2
-            case (None, None)                             => true
-            case (null, null)                             => true
-            case (r1 : AnyRef, r2 : AnyRef)               => r1 eq r2
-            case _ =>
-                sys.error ("Tests.same: unexpected case: %s, %s".format (v1, v2))
-        }
-
-    /**
      * Fail a test with a message about finding something and expecting
      * something else.
      */
@@ -74,7 +60,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
     }
 
     /**
-     * Analogous to ScalaTest's `assertResult` but it uses same to compare
+     * Analogous to ScalaTest's `assertResult` but it uses `same` to compare
      * the two values instead of equality.
      */
     def assertSame (expected : Any) (actual : Any) {
@@ -84,11 +70,31 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
     }
 
     /**
-     * Analogous to ScalaTest's `assertResult` but it uses same to compare
+     * Analogous to ScalaTest's `assertResult` but it uses `same` to compare
      * the two values instead of equality.
      */
     def assertNotSame (expected : Any) (actual : Any) {
         if (same (expected, actual)) {
+            failExpectedTest (expected, actual, "not same object as ")
+        }
+    }
+
+    /**
+     * Analogous to ScalaTest's `assertResult` but it uses `optsame` to compare
+     * the two values instead of equality.
+     */
+    def assertOptSame (expected : Any) (actual : Any) {
+        if (!optsame (expected, actual)) {
+            failExpectedTest (expected, actual, "same object as ")
+        }
+    }
+
+    /**
+     * Analogous to ScalaTest's `assertResult` but it uses `optsame` to compare
+     * the two values instead of equality.
+     */
+    def assertNotOptSame (expected : Any) (actual : Any) {
+        if (optsame (expected, actual)) {
             failExpectedTest (expected, actual, "not same object as ")
         }
     }

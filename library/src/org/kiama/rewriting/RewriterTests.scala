@@ -30,6 +30,7 @@ import org.kiama.util.Tests
 class RewriterTests extends Tests with Generator {
 
     import org.kiama.example.imperative.ImperativeTree._
+    import org.kiama.util.Comparison.optsame
     import scala.collection.immutable.Seq
 
     /**
@@ -54,8 +55,8 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("issubterm: a term is a subterm of itself") {
-        check ((t : Stmt) => same (Some (t), issubterm (t, t)))
-        check ((t : Exp) => same (Some (t), issubterm (t, t)))
+        check ((t : Stmt) => optsame (Some (t), issubterm (t, t)))
+        check ((t : Exp) => optsame (Some (t), issubterm (t, t)))
     }
 
     test ("issubterm: random descendants are subterms") {
@@ -95,8 +96,8 @@ class RewriterTests extends Tests with Generator {
                     t
             }
 
-        check ((t : Stmt) => same (Some (t), issubterm (pickdesc (t), t)))
-        check ((t : Exp) => same (Some (t), issubterm (pickdesc (t), t)))
+        check ((t : Stmt) => optsame (Some (t), issubterm (pickdesc (t), t)))
+        check ((t : Exp) => optsame (Some (t), issubterm (pickdesc (t), t)))
     }
 
     {
@@ -107,11 +108,11 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("issubterm: selected subterms - succeed sub") {
-            assertSame (Some (t)) (issubterm (Num (1), t))
+            assertOptSame (Some (t)) (issubterm (Num (1), t))
         }
 
         test ("issubterm: selected subterms - succeed self") {
-            assertSame (Some (t)) (issubterm (t, t))
+            assertOptSame (Some (t)) (issubterm (t, t))
         }
 
         test ("issubterm: selected proper subterms - fail") {
@@ -119,7 +120,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("issubterm: selected proper subterms - succeed sub") {
-            assertSame (Some (t)) (ispropersubterm (Num (1), t))
+            assertOptSame (Some (t)) (ispropersubterm (Num (1), t))
         }
 
         test ("issubterm: selected proper subterms - fail self") {
@@ -131,11 +132,11 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("issuperterm: selected superterms - succeed sub") {
-            assertSame (Some (t)) (issuperterm (t, Num (1)))
+            assertOptSame (Some (t)) (issuperterm (t, Num (1)))
         }
 
         test ("issuperterm: selected superterms - succeed self") {
-            assertSame (Some (t)) (issuperterm (t, t))
+            assertOptSame (Some (t)) (issuperterm (t, t))
         }
 
         test ("issuperterm: selected proper superterms - fail") {
@@ -143,7 +144,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("issuperterm: selected proper superterms - succeed sub") {
-            assertSame (Some (t)) (ispropersuperterm (t, Num (1)))
+            assertOptSame (Some (t)) (ispropersuperterm (t, Num (1)))
         }
 
         test ("issuperterm: selected proper superterms - fail self") {
@@ -152,8 +153,8 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("strategies that have no effect: identity") {
-        check ((t : Stmt) => same (Some (t), id (t)))
-        check ((t : Exp) => same (Some (t), id (t)))
+        check ((t : Stmt) => optsame (Some (t), id (t)))
+        check ((t : Exp) => optsame (Some (t), id (t)))
     }
 
     test ("strategies that have no effect: some terms to themselves") {
@@ -176,14 +177,14 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("where: identity") {
-        check ((t : Exp) => same (Some (t), where (id) (t)))
+        check ((t : Exp) => optsame (Some (t), where (id) (t)))
     }
 
     test ("where restores the original term after succcess") {
         val r = rule[Num] { case Num (i) => Num (i + 1) }
         val s = where (r)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("test: failure") {
@@ -191,36 +192,36 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("test: identity") {
-        check ((t : Exp) => same (Some (t), rwtest (id) (t)))
+        check ((t : Exp) => optsame (Some (t), rwtest (id) (t)))
     }
 
     test ("test restores the original term after succcess") {
         val r = rule[Num] { case Num (i) => Num (i + 1) }
         val s = rwtest (r)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("leaf detection") {
         check ((t : Exp) =>
-            same (if (t.productArity == 0) Some (t) else None, isleaf (t)))
+            optsame (if (t.productArity == 0) Some (t) else None, isleaf (t)))
     }
 
     test ("innernode detection") {
         check ((t : Exp) =>
-            same (if (t.productArity == 0) None else Some (t), isinnernode (t)))
+            optsame (if (t.productArity == 0) None else Some (t), isinnernode (t)))
     }
 
     test ("terms as strategies") {
-        check ((t : Stmt, u : Exp) => same (Some (t), (build (t)) (u)))
-        check ((t : Exp, u : Exp) => same (Some (t), (build (t)) (u)))
-        check ((t : Stmt, u : Stmt) => same (Some (t), (build (t)) (u)))
-        check ((t : Exp, u : Stmt) => same (Some (t), (build (t)) (u)))
+        check ((t : Stmt, u : Exp) => optsame (Some (t), (build (t)) (u)))
+        check ((t : Exp, u : Exp) => optsame (Some (t), (build (t)) (u)))
+        check ((t : Stmt, u : Stmt) => optsame (Some (t), (build (t)) (u)))
+        check ((t : Exp, u : Stmt) => optsame (Some (t), (build (t)) (u)))
     }
 
     test ("options as strategies") {
-        check ((t : Stmt, u : Exp) => same (Some (t), option (Some (t)) (u)))
-        check ((u : Exp) => same (None, option (None) (u)))
+        check ((t : Stmt, u : Exp) => optsame (Some (t), option (Some (t)) (u)))
+        check ((u : Exp) => optsame (None, option (None) (u)))
     }
 
     test ("term combinator") {
@@ -280,11 +281,11 @@ class RewriterTests extends Tests with Generator {
         val ee = Mul (Num (1), Add (Sub (Var ("hello"), Num (2)), Var ("harold")))
 
         test ("a bottomup traversal applying identity returns the same term") {
-            assertSame (Some (e)) ((bottomup (id)) (e))
+            assertOptSame (Some (e)) ((bottomup (id)) (e))
         }
 
         test ("a bottomup traversal applying identity doesn't returns term with same value") {
-            assertNotSame (Some (ee)) ((bottomup (id)) (e))
+            assertNotOptSame (Some (ee)) ((bottomup (id)) (e))
         }
 
         test ("counting all terms using count") {
@@ -295,7 +296,7 @@ class RewriterTests extends Tests with Generator {
         test ("counting all terms using queryf") {
             var count = 0
             val countall = everywhere (queryf (_ => count = count + 1))
-            assertSame (Some (e)) (countall (e))
+            assertOptSame (Some (e)) (countall (e))
             assertResult (11) (count)
         }
 
@@ -346,7 +347,7 @@ class RewriterTests extends Tests with Generator {
             }
 
             test ("map id over a non-nil list gives that list") {
-                assertSame (Some (l1)) (map (id) (l1))
+                assertOptSame (Some (l1)) (map (id) (l1))
             }
 
             {
@@ -369,11 +370,11 @@ class RewriterTests extends Tests with Generator {
                 }
 
                 test ("map isnum over a list with one num succeeds with same list") {
-                    assertSame (Some (l3)) (map (isnum) (l3))
+                    assertOptSame (Some (l3)) (map (isnum) (l3))
                 }
 
                 test ("map isnum over a list with more than one num succeeds with same list") {
-                    assertSame (Some (l1)) (map (isnum) (l1))
+                    assertOptSame (Some (l1)) (map (isnum) (l1))
                 }
 
                 test ("map isnum over a list with non-num fails") {
@@ -411,11 +412,11 @@ class RewriterTests extends Tests with Generator {
             }
 
             test ("rewriting leaf types: increment doubles - all, bottomup, same") {
-                assertSame (Some (e)) ((allbu (double)) (e))
+                assertOptSame (Some (e)) ((allbu (double)) (e))
             }
 
             test ("rewriting leaf types: increment doubles - all, bottomup, not same") {
-                assertNotSame (Some (ee)) ((allbu (double)) (e))
+                assertNotOptSame (Some (ee)) ((allbu (double)) (e))
             }
 
             test ("rewriting leaf types: increment doubles - some, topdown") {
@@ -446,11 +447,11 @@ class RewriterTests extends Tests with Generator {
             }
 
             test ("rewriting leaf types: reverse identifiers - all, bottomup, same") {
-                assertSame (Some (e)) ((allbu (rev)) (e))
+                assertOptSame (Some (e)) ((allbu (rev)) (e))
             }
 
             test ("rewriting leaf types: reverse identifiers - all, bottomup, not same") {
-                assertNotSame (Some (ee)) ((allbu (rev)) (e))
+                assertNotOptSame (Some (ee)) ((allbu (rev)) (e))
             }
 
             test ("rewriting leaf types: reverse identifiers - some, topdown") {
@@ -485,11 +486,11 @@ class RewriterTests extends Tests with Generator {
             }
 
             test ("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, same") {
-                assertSame (Some (e)) ((allbu (evendoubleincrev)) (e))
+                assertOptSame (Some (e)) ((allbu (evendoubleincrev)) (e))
             }
 
             test ("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, not same") {
-                assertNotSame (Some (ee)) ((allbu (evendoubleincrev)) (e))
+                assertNotOptSame (Some (ee)) ((allbu (evendoubleincrev)) (e))
             }
 
             test ("rewriting leaf types: increment even doubles and reverse idn - some, topdown") {
@@ -576,23 +577,23 @@ class RewriterTests extends Tests with Generator {
     test ("same comparison of equal references yields true xxxx") {
         class Num (i : Int)
         val r = new Num (42)
-        assertResult (true) (same (r, r))
+        assertResult (true) (optsame (r, r))
     }
 
     test ("same comparison of unequalt references yields false") {
         class Num (i : Int)
         val r1 = new Num (42)
         val r2 = new Num (42)
-        assertResult (false) (same (r1, r2))
+        assertResult (false) (optsame (r1, r2))
     }
 
     test ("same comparison of equal non-references yields true") {
-        assertResult (true) (same (42, 42))
+        assertResult (true) (optsame (42, 42))
     }
 
 
     test ("same comparison of unequalt non-references yields false") {
-        assertResult (false) (same (42, 43))
+        assertResult (false) (optsame (42, 43))
     }
 
     /**
@@ -612,8 +613,8 @@ class RewriterTests extends Tests with Generator {
         test (msg) {
             expecting match {
                 case Equal   => assertResult (expected) (eval)
-                case Same    => assertSame (expected) (eval)
-                case NotSame => assertNotSame (expected) (eval)
+                case Same    => assertOptSame (expected) (eval)
+                case NotSame => assertNotOptSame (expected) (eval)
             }
         }
     }
@@ -962,7 +963,7 @@ class RewriterTests extends Tests with Generator {
         val e = new StringEmitter
         val s = debug ("hello there: ", e)
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
         assertResult (s"hello there: $t\n") (e.result)
     }
 
@@ -1010,7 +1011,7 @@ class RewriterTests extends Tests with Generator {
 
     test ("rewrite returns the original term when the strategy fails") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
-        assertSame (Some (t)) (Some (rewrite (rwfail) (t)))
+        assertOptSame (Some (t)) (Some (rewrite (rwfail) (t)))
     }
 
     test ("rewrite returns the strategy result when the strategy succeeds") {
@@ -1051,7 +1052,7 @@ class RewriterTests extends Tests with Generator {
     test ("repeat on failure succeeds") {
         val s = repeat (rwfail)
         val t = Num (10)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("repeat of non-failure works") {
@@ -1132,7 +1133,7 @@ class RewriterTests extends Tests with Generator {
     test ("zero repeat of failure is identity") {
         val s = repeat (rwfail, 0)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("non-zero repeat of failure fails") {
@@ -1182,7 +1183,7 @@ class RewriterTests extends Tests with Generator {
                 }
         val s = loop (rwfail, f)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("loop on non-failure with initially false condition is identity") {
@@ -1194,7 +1195,7 @@ class RewriterTests extends Tests with Generator {
                 }
         val s = loop (r, f)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("loop on failure with initially true condition is identity") {
@@ -1203,7 +1204,7 @@ class RewriterTests extends Tests with Generator {
                 }
         val s = loop (r, rwfail)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("loop on non-failure with initially true condition works") {
@@ -1223,7 +1224,7 @@ class RewriterTests extends Tests with Generator {
                 }
         val s = loopnot (id, f)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("loopnot on non-failure with initially true condition is identity") {
@@ -1341,7 +1342,7 @@ class RewriterTests extends Tests with Generator {
                     }
         val s = loopiter (r, 10, 1)
         val t = Num (1)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("counting loopiter counts correctly") {
@@ -1365,7 +1366,7 @@ class RewriterTests extends Tests with Generator {
                     case n           => n
                 }
         val s = breadthfirst (r)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
         assertResult (Seq (3, 1, 2, 4, 5)) (l)
     }
 
@@ -1655,7 +1656,7 @@ class RewriterTests extends Tests with Generator {
                     case n => count = count - 1; n
                 }
         val s = restore (d, e)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
         assertResult (1) (count)
     }
 
@@ -1685,7 +1686,7 @@ class RewriterTests extends Tests with Generator {
                     case n => count = count - 1; n
                 }
         val s = restorealways (d, e)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
         assertResult (0) (count)
     }
 
@@ -1715,7 +1716,7 @@ class RewriterTests extends Tests with Generator {
                     case n => count = count - 1; n
                 }
         val s = lastly (d, e)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
         assertResult (0) (count)
     }
 
@@ -1754,7 +1755,7 @@ class RewriterTests extends Tests with Generator {
                     case Add (l, r) => Add (r, l)
                 }
         val s = or (d, e)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("or applies second strategy and restores term if first strategy succeeds") {
@@ -1766,7 +1767,7 @@ class RewriterTests extends Tests with Generator {
                     case Add (l, r) => Add (r, l)
                 }
         val s = or (d, e)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     test ("and fails if the first strategy fails") {
@@ -1802,7 +1803,7 @@ class RewriterTests extends Tests with Generator {
                     case Add (l, r) => Add (r, l)
                 }
         val s = and (d, e)
-        assertSame (Some (t)) (s (t))
+        assertOptSame (Some (t)) (s (t))
     }
 
     {
