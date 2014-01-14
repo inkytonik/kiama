@@ -99,18 +99,6 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
         }
     }
 
-/*
-    /**
-     * Assert that the given messsaging object has recorded the given messages.
-     * FIXME: remove
-     */
-    def assertMessages (messaging : Messaging, messages : (Int, Message)*) {
-        assert (messaging.messagecount === messages.size, "wrong number of messages produced")
-        for ((index, message) <- messages)
-            assertMessage (messaging, index, message)
-    }
-*/
-
     /**
      * Assert that the `received` list of messsages has recorded the `expected`
      * messages in the same order.
@@ -122,19 +110,6 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with Checkers {
                 assertMessage (rec, i, exp)
         }
     }
-
-/*
-    /**
-     * Assert that a message at `index` was produced at a given position.
-     * FIXME: remove
-     */
-    def assertMessage (messaging : Messaging, index : Int, message : Message) {
-        val m = messaging.messages (index)
-        assertResult (message.label, s"wrong text in message $index") (m.label)
-        assertResult (message.line, s"wrong line number in message $index") (m.line)
-        assertResult (message.column, s"wrong column number in message $index") (m.column)
-    }
-*/
 
     /**
      * Assert that a `received` message at the given zero-based `index` conforms
