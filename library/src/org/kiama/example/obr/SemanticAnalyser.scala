@@ -39,7 +39,7 @@ class SemanticAnalyser {
      */
     val errors =
         attr (collectall {
-            case p @ ObrInt (i1, ds, ss, i2) if (i1 != i2) =>
+            case p @ ObrInt (i1, ds, ss, i2) if i1 != i2 =>
                 message (p, s"identifier $i2 at end should be $i1")
 
             case d @ IdnDef (i) if d->entity == MultipleEntity () =>
@@ -130,8 +130,8 @@ class SemanticAnalyser {
      */
     val exnconstnum : Declaration => Int =
         attr {
-            case c if (c.isFirst)   => userExn
-            case c                  =>
+            case c if c.isFirst => userExn
+            case c =>
                 c.prev[Declaration] match {
                     case d : ExnConst   => (d->exnconstnum) + 1
                     case d              => d->exnconstnum
@@ -272,9 +272,9 @@ class SemanticAnalyser {
         attr (
             e =>
                 (e.parent) match {
-                    case AssignStmt (IndexExp (_, _), e1) if (e eq e1)  => Set (IntType ())
-                    case AssignStmt (FieldExp (_, _), e1) if (e eq e1)  => Set (IntType ())
-                    case AssignStmt (IdnExp (v), e1) if (e eq e1)       => Set (enttipe (v->entity))
+                    case AssignStmt (IndexExp (_, _), e1) if e eq e1    => Set (IntType ())
+                    case AssignStmt (FieldExp (_, _), e1) if e eq e1    => Set (IntType ())
+                    case AssignStmt (IdnExp (v), e1) if e eq e1         => Set (enttipe (v->entity))
 
                     case ForStmt (_, _, _, _)                           => Set (IntType ())
                     case IfStmt (_, _, _)                               => Set (BoolType ())
@@ -282,23 +282,23 @@ class SemanticAnalyser {
                     case WhileStmt (_, _)                               => Set (BoolType ())
 
                     case AndExp (_, _)                                  => Set (BoolType ())
-                    case EqualExp (l, e1) if (e eq e1)                  => Set (l->tipe)
+                    case EqualExp (l, e1) if e eq e1                    => Set (l->tipe)
 
                     // The left operand of a GreaterExp must be an integer or an enumeration value
-                    case GreaterExp (e1, _) if (e eq e1)                => Set (IntType (), EnumTypes ())
+                    case GreaterExp (e1, _) if e eq e1                  => Set (IntType (), EnumTypes ())
                     // The left and right operands of a GreaterExp must have the same type
-                    case GreaterExp (l, e1) if (e eq e1)                =>
+                    case GreaterExp (l, e1) if e eq e1                  =>
                         if ((l->tipe == IntType ()) || ((l->tipe).isInstanceOf[EnumType]))
                             Set (l->tipe)
                         else
                             Set (UnknownType ())
 
-                    case IndexExp (_, e1) if (e eq e1)                  => Set (IntType ())
+                    case IndexExp (_, e1) if e eq e1                    => Set (IntType ())
 
                     // The left operand of a LessExp must be an integer or an enumeration value
-                    case LessExp (e1, _) if (e eq e1)                   => Set (IntType (), EnumTypes ())
+                    case LessExp (e1, _) if e eq e1                     => Set (IntType (), EnumTypes ())
                     // The left and right operands of a LessExp must have the same type
-                    case LessExp (l, e1) if (e eq e1)                   =>
+                    case LessExp (l, e1) if e eq e1                     =>
                         if ((l->tipe == IntType ()) || ((l->tipe).isInstanceOf[EnumType]))
                             Set (l->tipe)
                         else
@@ -307,7 +307,7 @@ class SemanticAnalyser {
                     case MinusExp (_, _)                                => Set (IntType ())
                     case ModExp (_, _)                                  => Set (IntType ())
                     case NegExp (_)                                     => Set (IntType ())
-                    case NotEqualExp (l, e1) if (e eq e1)               => Set (l->tipe)
+                    case NotEqualExp (l, e1) if e eq e1                 => Set (l->tipe)
                     case NotExp (_)                                     => Set (BoolType ())
                     case OrExp (_, _)                                   => Set (BoolType ())
                     case PlusExp (_, _)                                 => Set (IntType ())

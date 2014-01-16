@@ -137,7 +137,7 @@ trait LivenessImpl extends Liveness {
         circular (Set[Var]()) (
             // Optimisation to not include vars used to calculate v
             // if v is not live in the following.
-            // case s @ Assign (v, _) if (! (out (s) contains v)) =>
+            // case s @ Assign (v, _) if ! (out (s) contains v) =>
             //    out (s)
             s => uses (s) ++ (out (s) -- defines (s))
         )

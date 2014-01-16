@@ -476,7 +476,7 @@ trait RewriterCore {
         } else {
             val ct = p.productElement (i-1)
             s (ct) match {
-                case Some (ti) if (same (ct, ti)) =>
+                case Some (ti) if same (ct, ti) =>
                     Some (p)
                 case Some (ti) =>
                     val newchildren = p.productIterator.toArray.map (makechild)
@@ -501,7 +501,7 @@ trait RewriterCore {
         } else {
             val ct = t (i - 1)
             s (ct) match {
-                case Some (ti) if (same (ct, ti)) =>
+                case Some (ti) if same (ct, ti) =>
                     Some (t)
                 case Some (ti) =>
                     val b = cbf (t)
@@ -711,7 +711,7 @@ trait RewriterCore {
         children.foldLeft (0) {
             case (i, ct) =>
                 s (ct) match {
-                    case Some (ti) if (same (ct, ti)) =>
+                    case Some (ti) if same (ct, ti) =>
                         return Some (r)
                     case Some (ti) =>
                         val newchildren = children.updated (i, ti)
@@ -732,7 +732,7 @@ trait RewriterCore {
         p.productIterator.foldLeft (0) {
             case (i, ct) =>
                 s (ct) match {
-                    case Some (ti) if (same (ct, ti)) =>
+                    case Some (ti) if same (ct, ti) =>
                         return Some (p)
                     case Some (ti) =>
                         val newchildren = p.productIterator.toArray.map (makechild)
@@ -792,7 +792,7 @@ trait RewriterCore {
                 case (add, ct) =>
                     if (add)
                         s (ct) match {
-                            case Some (ti @ (tix,tiy)) if (same (ct, ti)) =>
+                            case Some (ti @ (tix,tiy)) if same (ct, ti) =>
                                 return Some (t)
                             case Some (ti @ (tix, tiy)) =>
                                 b += ti

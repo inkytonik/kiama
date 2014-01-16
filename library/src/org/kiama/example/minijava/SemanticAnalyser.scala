@@ -44,10 +44,10 @@ class SemanticAnalyser {
      */
     val errors =
         attr (collectall {
-            case d @ IdnDef (i) if (d->entity == MultipleEntity ()) =>
+            case d @ IdnDef (i) if d->entity == MultipleEntity () =>
                 message (d, s"$i is declared more than once")
 
-            case u @ IdnUse (i) if (u->entity == UnknownEntity ()) =>
+            case u @ IdnUse (i) if u->entity == UnknownEntity () =>
                 message (u, s"$i is not declared")
 
             case VarAssign (u, _) =>

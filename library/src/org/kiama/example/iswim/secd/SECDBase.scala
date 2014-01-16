@@ -594,7 +594,7 @@ abstract class SECDBase (config : ISWIMConfig) extends Machine("SECD") {
     protected var execSrcPos : Position = NoPosition
     def main () {
         (control : Code) match {
-            case inst :: _ if (inst.pos != NoPosition) => execSrcPos = inst.pos
+            case inst :: _ if inst.pos != NoPosition => execSrcPos = inst.pos
             case _ =>
         }
         evalInst (control : Code)

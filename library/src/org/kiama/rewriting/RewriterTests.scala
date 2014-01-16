@@ -1391,7 +1391,7 @@ class RewriterTests extends Tests with Generator {
                                     Num (i)
                 }
         val l = rule[Num] {
-                    case Num (i) if (i % 2 != 1) => Num (i)
+                    case Num (i) if i % 2 != 1 => Num (i)
                 }
         val s = leaves (r, l)
         assertResult (Some (t)) (s (t))
@@ -1406,7 +1406,7 @@ class RewriterTests extends Tests with Generator {
                                     Num (i)
                 }
         val l = rule[Num] {
-                    case Num (i) if (i % 2 != 0) => Num (i)
+                    case Num (i) if i % 2 != 0 => Num (i)
                 }
         val x = (y : Strategy) => rule[Sub] { case n => n }
         val s = leaves (r, l, x)
@@ -1594,8 +1594,8 @@ class RewriterTests extends Tests with Generator {
         val u = Mul (Add (Add (Num (12), Num (11)), Num (10)), Sub (Num (4), Num (5)))
         var count = 13
         val d = rule[Num] {
-                    case _ if (count > 10) => count = count - 1
-                                              Num (count)
+                    case _ if count > 10 => count = count - 1
+                                            Num (count)
                 }
         val s = manybu (d)
         assertResult (Some (u)) (s (t))
@@ -1606,10 +1606,10 @@ class RewriterTests extends Tests with Generator {
         val u = Mul (Add (Num (11), Add (Num (2), Num (1))), Sub (Num (4), Num (5)))
         var count = 13
         val d = rule[Exp] {
-                    case Num (i) if (count > 10) =>
+                    case Num (i) if count > 10 =>
                         count = count - 1
                         Num (count)
-                    case Add (l, r) if (count > 10) =>
+                    case Add (l, r) if count > 10 =>
                         count = count - 1
                         Add (r, l)
                 }

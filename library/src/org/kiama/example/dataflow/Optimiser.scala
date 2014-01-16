@@ -40,7 +40,7 @@ object Optimiser {
 
     lazy val elimDeadAssign =
         alltd (rule[Stm] {
-            case s @ Assign (v, _) if (! (s->out contains v)) =>
+            case s @ Assign (v, _) if ! (s->out contains v) =>
                 Empty ()
         })
 

@@ -138,10 +138,10 @@ trait Evaluator {
             case App (Lam (x, e1), e2)           => Sub (e1, x, e2)
 
             // Explicit substitution
-            case Sub (Var (x), y, n) if (x == y) => n
-            case Sub (Var (x), _, _)             => Var (x)
-            case Sub (Lam (x, m), y, n)          => Lam (x, Sub (m, y, n))
-            case Sub (App (m1, m2), y, n)        => App (Sub (m1, y, n), Sub (m2, y, n))
+            case Sub (Var (x), y, n) if x == y => n
+            case Sub (Var (x), _, _)           => Var (x)
+            case Sub (Lam (x, m), y, n)        => Lam (x, Sub (m, y, n))
+            case Sub (App (m1, m2), y, n)      => App (Sub (m1, y, n), Sub (m2, y, n))
 
             // Garbage collection
             case Sub (m, x, n) if ! (fv (m) contains (x))

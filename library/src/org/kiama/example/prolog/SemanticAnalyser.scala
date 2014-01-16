@@ -197,7 +197,7 @@ class SemanticAnalyser {
                     case UnknownEntity () =>
                         define (n->varsin, s, Variable (n->exptipe))
                 }
-            case n if (n.hasChildren) =>
+            case n if n.hasChildren =>
                 (n.lastChild[PrologTree])->vars
             case n =>
                 n->varsin
