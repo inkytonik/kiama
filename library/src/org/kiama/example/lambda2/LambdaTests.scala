@@ -35,7 +35,6 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Messaging.Messages
-    import org.scalacheck.Prop.{all => _, _}
     import scala.collection.immutable.Seq
 
     /**
