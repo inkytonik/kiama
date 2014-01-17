@@ -22,7 +22,7 @@ package org.kiama
 package example.oberon0
 package base
 
-import org.kiama.util.{CompilerBase, Emitter, TestCompilerWithConfig}
+import org.kiama.util.{CompilerBase, Emitter, TestCompilerWithConfig, Tests}
 import scala.util.parsing.combinator.RegexParsers
 import source.ModuleDecl
 

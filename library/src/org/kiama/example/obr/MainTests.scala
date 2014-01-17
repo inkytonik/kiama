@@ -29,7 +29,7 @@ import org.kiama.util.TestCompilerWithConfig
  * A driver which compiles a file and allows a test to be run on the resulting
  * target tree.
  */
-class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
+trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
     import RISCTree._
     import org.kiama.attribution.Attribution.initTree
@@ -98,4 +98,5 @@ class TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
                     fail (s"$title unexpected IntDatum leaves, found $found expected slice $expected")
         }) (code)
     }
+
 }

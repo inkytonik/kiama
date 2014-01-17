@@ -60,7 +60,10 @@ class DotNameResolutionTests extends Tests {
                           AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
                           declAA,
                           declBB))))))
-    initTree (ast)
+
+    override def beforeAll () {
+        initTree (ast)
+    }
 
     test ("class members are resolved") {
         assertResult (declAAx) (axInA->decl)

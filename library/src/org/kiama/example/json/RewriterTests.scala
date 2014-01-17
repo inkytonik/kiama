@@ -21,13 +21,12 @@
 package org.kiama
 package example.json
 
-import org.kiama.util.RegexParserTests
-import org.scalatest.FunSuiteLike
+import org.kiama.util.Tests
 
 /**
  * Tests that check that the rewriting and decoration works correctly.
  */
-class RewriterTests extends FunSuiteLike {
+class RewriterTests extends Tests {
 
     import JSONTree._
     import Rewriter._

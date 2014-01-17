@@ -34,11 +34,6 @@ class InterpreterTests extends SyntaxAnalyser with RegexParserTests {
     import scala.io.Source
 
     /**
-     * The interpreter to use to run the tests.
-     */
-    val interpreter = new Interpreter
-
-    /**
      * Create an interpreter test. The file name `fn` is the one that should be
      * loaded to obtain definitions. It is assumed to be relative to the Prolog
      * example test directory. The query string `q` is run against the loaded
@@ -52,6 +47,7 @@ class InterpreterTests extends SyntaxAnalyser with RegexParserTests {
                 programtree =>
                     assertParseCheck (q, query) {
                         querytree =>
+                            val interpreter = new Interpreter
                             val emitter = new StringEmitter
                             interpreter.interpret (querytree, programtree, emitter)
                             assertResult (exp) (emitter.result)

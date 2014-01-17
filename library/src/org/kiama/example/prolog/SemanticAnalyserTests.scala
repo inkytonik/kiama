@@ -28,17 +28,13 @@ import org.kiama.util.{Compiler, TestCompiler}
  * Tests that check that the semantic analyser works correctly.  I.e., it correctly
  * diagnoses errors where they are present, and passes correct code.
  */
-class SemanticAnalyserTests extends SemanticTestDriver {
-
-    filetests ("Prolog", "library/src/org/kiama/example/prolog/test", ".pl", ".sem")
-
-}
-
-class SemanticTestDriver extends SyntaxAnalyser with Compiler[Program]
+class SemanticAnalyserTests extends SyntaxAnalyser with Compiler[Program]
         with TestCompiler[Program] {
 
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
+
+    filetests ("Prolog", "library/src/org/kiama/example/prolog/test", ".pl", ".sem")
 
     /**
      * For the purposes of tests, the parser we want is the program one.

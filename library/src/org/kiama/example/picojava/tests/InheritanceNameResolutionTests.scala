@@ -79,7 +79,10 @@ class InheritanceNameResolutionTests extends Tests {
                               Seq (VarDecl (Use ("int"), "d"),
                                    AssignStmt (aInBB, Use ("d")),
                                    AssignStmt (eInBB, fInBB))))))))))
-    initTree (ast)
+
+    override def beforeAll () {
+        initTree (ast)
+    }
 
     test ("members are resolved in nested classes") {
         assertResult (declAa) (aInAA->decl)

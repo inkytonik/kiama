@@ -21,7 +21,6 @@
 package org.kiama
 package util
 
-import org.scalatest.FunSuiteLike
 import scala.collection.immutable.Seq
 
 /**
@@ -63,7 +62,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 /**
  * Support for testing compiler drivers.
  */
-trait TestCompilerWithConfig[T, C <: Config] extends FunSuiteLike {
+trait TestCompilerWithConfig[T, C <: Config] extends Tests {
 
     self : CompilerBase[T,C] =>
 

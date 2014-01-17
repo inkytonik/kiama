@@ -65,8 +65,50 @@ class SemanticAnalysisTests extends Tests {
 
     val g1 = Grammar (g1r1, Seq (g1r2, g1r3, g1r4))
 
-    initTree (g1)
     val g1analyser = new SemanticAnalyser
+
+    /**
+     *   S -> E $
+     *   E  -> T E'
+     *   E' -> + T E' | e
+     *   T  -> F T'
+     *   T' -> * F T' | e
+     *   F  -> ( E ) | id
+     */
+
+    val g2r1 = mkRule (NonTermDef ("S"),  mkProd (E, EOI))
+    val g2r2 = mkRule (NonTermDef ("E"),  mkProd (T, Ep))
+    val g2r3 = mkRule (NonTermDef ("E'"), mkProd (plus, T, Ep),
+                                          mkProd ())
+    val g2r4 = mkRule (NonTermDef ("T"),  mkProd (F, Tp))
+    val g2r5 = mkRule (NonTermDef ("T'"), mkProd (star, F, Tp),
+                                          mkProd ())
+    val g2r6 = mkRule (NonTermDef ("F"),  mkProd (lparen, E, rparen),
+                                          mkProd (id))
+
+    val g2 = Grammar (g2r1, Seq (g2r2, g2r3, g2r4, g2r5, g2r6))
+
+    val g2analyser = new SemanticAnalyser
+
+    /**
+     *   S -> E F $
+     *   E -> +
+     *   E -> *
+     */
+
+    val g3r1 = mkRule (NonTermDef ("S"),  mkProd (E, F, EOI))
+    val g3r2 = mkRule (NonTermDef ("E"),  mkProd (plus))
+    val g3r3 = mkRule (NonTermDef ("E"),  mkProd (star))
+
+    val g3 = Grammar (g3r1, Seq (g3r2, g3r3))
+
+    val g3analyser = new SemanticAnalyser
+
+    override def beforeAll () {
+        initTree (g1)
+        initTree (g2)
+        initTree (g3)
+    }
 
     test ("g1: has no semantic errors") {
         assertResult (0) (g1analyser.errors (g1).length)
@@ -119,30 +161,6 @@ class SemanticAnalysisTests extends Tests {
     test ("g1: FOLLOW (F) is correct") {
         assertResult (Set (EOI, rparen, plus, star)) (g1analyser.follow (g1r4.lhs))
     }
-
-    /**
-     *   S -> E $
-     *   E  -> T E'
-     *   E' -> + T E' | e
-     *   T  -> F T'
-     *   T' -> * F T' | e
-     *   F  -> ( E ) | id
-     */
-
-    val g2r1 = mkRule (NonTermDef ("S"),  mkProd (E, EOI))
-    val g2r2 = mkRule (NonTermDef ("E"),  mkProd (T, Ep))
-    val g2r3 = mkRule (NonTermDef ("E'"), mkProd (plus, T, Ep),
-                                          mkProd ())
-    val g2r4 = mkRule (NonTermDef ("T"),  mkProd (F, Tp))
-    val g2r5 = mkRule (NonTermDef ("T'"), mkProd (star, F, Tp),
-                                          mkProd ())
-    val g2r6 = mkRule (NonTermDef ("F"),  mkProd (lparen, E, rparen),
-                                          mkProd (id))
-
-    val g2 = Grammar (g2r1, Seq (g2r2, g2r3, g2r4, g2r5, g2r6))
-
-    initTree (g2)
-    val g2analyser = new SemanticAnalyser
 
     test ("g2: has no semantic errors") {
         assertResult (0) (g2analyser.errors (g2).length)
@@ -219,21 +237,6 @@ class SemanticAnalysisTests extends Tests {
     test ("g2: FOLLOW (F) is correct") {
         assertResult (Set (EOI, rparen, plus, star)) (g2analyser.follow (g2r6.lhs))
     }
-
-    /**
-     *   S -> E F $
-     *   E -> +
-     *   E -> *
-     */
-
-    val g3r1 = mkRule (NonTermDef ("S"),  mkProd (E, F, EOI))
-    val g3r2 = mkRule (NonTermDef ("E"),  mkProd (plus))
-    val g3r3 = mkRule (NonTermDef ("E"),  mkProd (star))
-
-    val g3 = Grammar (g3r1, Seq (g3r2, g3r3))
-
-    initTree (g3)
-    val g3analyser = new SemanticAnalyser
 
     test ("g3: has the expected semantic errors") {
         assertMessages (g3analyser.errors (g3),

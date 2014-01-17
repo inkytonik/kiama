@@ -26,15 +26,11 @@ import org.kiama.util.Tests
 /**
  * Tests of extended data flow attribution.
  */
-class DataflowForTests extends Tests {
+class DataflowForTests extends DataflowFor with Tests {
 
     import DataflowTree._
-    import Dataflow._
     import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
-
-    DataflowFor.setup ()
-    DataflowForeach.setup ()
 
     /*
      * begin                 (prog)
@@ -57,7 +53,11 @@ class DataflowForTests extends Tests {
     val s4 = Foreach ("x", s41)
     val s5 = Return ("x")
     val prog = Block (Seq (s1, s2, s3, s4, s5))
-    initTree (prog)
+
+    override def beforeAll () {
+        initTree (prog)
+        addForAndForeachCases ()
+    }
 
     test ("in s1") {
         assertResult (Set ("w", "v")) (in (s1))

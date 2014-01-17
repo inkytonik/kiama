@@ -24,43 +24,34 @@ package example.dataflow
 import org.kiama.attribution.Attribution._
 import org.kiama.util.Patterns.HasParent
 import DataflowTree._
-import Dataflow._
 
 case class Foreach (cond : Var, body : Stm) extends Stm
 
-object DataflowForeach {
+case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
 
-    def setup () {
+trait DataflowFor extends Dataflow {
 
-        Dataflow.succ +=
+    def addForAndForeachCases () {
+
+        succ +=
             {
                 case t @ Foreach (_, body) =>
                     following (t) + body
             }
 
-        Dataflow.following +=
+        following +=
             {
                 case HasParent (t, parent : Foreach) =>
                     following (parent) + parent.body
             }
 
-    }
-
-}
-
-case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
-
-object DataflowFor {
-
-    def setup () {
-
-        Dataflow.succ +=
+        succ +=
             {
                 case For (init, c, inc, body) =>
                     Set (init)
             }
 
-        Dataflow.following +=
+        following +=
             {
                 case HasParent (s, parent : For) =>
                     parent match {

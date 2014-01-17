@@ -28,9 +28,8 @@ import org.kiama.rewriting.Rewriter._
  * variables that are not live out of the assignment and b) remove empty
  * statements from sequences.
  */
-object Optimiser {
+object Optimiser extends Dataflow {
 
-    import Dataflow._
     import DataflowTree._
 
     def run (t : Stm) : Stm =

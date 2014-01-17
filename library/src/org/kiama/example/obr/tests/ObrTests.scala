@@ -233,7 +233,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
  * to applied uses of each constant of the original source file occur
  * in an appropriate order.
  */
-class ObrNumberingTest extends TreeTestDriver {
+class ObrNumberingTests extends TreeTestDriver {
 
     targettreetest("ObrNumbering", "library/src/org/kiama/example/obr/tests/exceptions/codegen/",
                    "except8.obr", checkintdatums (Seq (3,1,4,0,2)))

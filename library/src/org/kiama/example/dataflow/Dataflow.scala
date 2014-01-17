@@ -149,4 +149,4 @@ trait LivenessImpl extends Liveness {
 
 }
 
-object Dataflow extends LivenessImpl with VariablesImpl with ControlFlowImpl
+trait Dataflow extends LivenessImpl with VariablesImpl with ControlFlowImpl

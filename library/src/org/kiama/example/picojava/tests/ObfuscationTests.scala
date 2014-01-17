@@ -106,7 +106,9 @@ class ObfuscationTests extends Tests {
                                     Use ("n7"),
                                     Dot (Use ("n8"), Use ("n2")))))))))
 
-    initTree (ast)
+    override def beforeAll () {
+        initTree (ast)
+    }
 
     // The obfuscated tree
     val obast = obfuscate (ast)

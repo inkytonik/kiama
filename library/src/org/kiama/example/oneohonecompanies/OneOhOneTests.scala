@@ -38,10 +38,13 @@ class OneOhOneTests extends Tests {
     // Some pathological companies
 
     val empty = Company (Nil)
-    initTree (empty)
 
     val onlymanager = Company (Seq (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
-    initTree (onlymanager)
+
+    override def beforeAll () {
+        initTree (empty)
+        initTree (onlymanager)
+    }
 
     test ("total of all salaries by rewriting - company") {
         assertResult (399747.0) (total (company))

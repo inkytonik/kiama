@@ -61,7 +61,10 @@ class BasicNameResolutionTests extends Tests {
                      Seq (declAz,
                           AssignStmt (xInA, zInA),
                           AssignStmt (yInA, Use ("z"))))))))
-    initTree (ast)
+
+    override def beforeAll () {
+        initTree (ast)
+    }
 
     test ("bindings at the same nesting level are resolved") {
         assertResult (declRx) (xInR->decl)
