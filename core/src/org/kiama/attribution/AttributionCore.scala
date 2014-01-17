@@ -211,13 +211,35 @@ trait AttributionCore extends AttributionCommon with Memoiser {
     }
 
     /**
-     * Global state for the circular attribute evaluation algorithm
-     * and the memoisation tables.
+     * Global state for the circular attribute evaluation algorithm.
      */
     private object CircularAttribute {
+
+        /**
+         * Are we currently evaluation a circle of attributes?
+         */
         var IN_CIRCLE = false
+
+        /**
+         * Has an attribute on the current circle changed value since the
+         * last time it was computed?
+         */
         var CHANGE = false
+
+        /**
+         * Are we in the final clean-up pass around the circle?
+         */
         var READY = false
+
+        /**
+         * Reset the circular attribute evaluation state.
+         */
+        def resetState () {
+            IN_CIRCLE = false
+            CHANGE = false
+            READY = false
+        }
+
     }
 
     /**
@@ -259,6 +281,20 @@ trait AttributionCore extends AttributionCommon with Memoiser {
             getWithDefault (t, init)
 
         /**
+         * Run the semantic function `f` in a safe manner. We need to guard against
+         * `f` throwing an exception which aboirt the computation, since we could
+         * then leave the global circular attribute state in a funny state.
+         */
+        def safef (t : T) : U =
+            try {
+                f (t)
+            } catch {
+                case e : RuntimeException =>
+                    resetState ()
+                    throw e
+            }
+
+        /**
          * Return the value of this attribute for node `t`.  Essentially Figure 6
          * from the CRAG paper, plus the READY optimisation (section 3.3).
          */
@@ -293,7 +329,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                                         "circular" -> true, "phase" -> "iterate"))
                     CHANGE = false
                     val u = value (t)
-                    val newu = f (t)
+                    val newu = safef (t)
                     if (u == newu) {
                         finish (i, Seq ("value" -> u, "cached" -> false, "phase" -> "iteratenochange"))
                     } else {
@@ -312,7 +348,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 // to cache them.
 
                 READY = true
-                val u = f (t)
+                val u = safef (t)
                 READY = false
 
                 // Now we have computed and cached all of the attribute occurrences on the circle
@@ -337,7 +373,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
 
                     computed.add (t)
                     visited.add (t)
-                    val u = f (t)
+                    val u = safef (t)
                     visited.remove (t)
                     u
 
@@ -356,7 +392,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                                         "circular" -> true, "phase" -> "notvisited"))
                     visited.add (t)
                     val u = value (t)
-                    val newu = f (t)
+                    val newu = safef (t)
                     visited.remove (t)
                     if (u == newu) {
                         finish (i, Seq ("value" -> u, "cached" -> false, "phase" -> "notvisitednochange"))
