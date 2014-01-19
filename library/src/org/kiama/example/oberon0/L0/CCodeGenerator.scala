@@ -29,12 +29,12 @@ trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
 
     import base.c.{CDeclaration, CExpression, CIntExp, CIntType,
         CStatement, CType, CVarDecl}
-    import base.source.{Declaration, IdnDef, IdnUse, Statement}
+    import base.source.{Declaration, Expression, IdnDef, IdnUse, Statement}
     import c.{CAddExp, CAndExp, CAssignment, CDivExp, CEqExp, CGeExp,
         CGtExp, CIdnExp, CInitDecl, CLeExp, CLtExp, CModExp, CMulExp,
         CNamedType, CNeExp, CNegExp, CNotExp, COrExp, CSubExp, CTypeDef}
     import source.{AddExp, AndExp, Assignment, ConstDecl, DivExp, EqExp,
-        Expression, GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp,
+        GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp,
         MulExp, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl, VarDecl}
     import scala.collection.immutable.Seq
 

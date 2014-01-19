@@ -20,33 +20,37 @@
 
 package org.kiama
 package example.oberon0
-package L4.c
+package L4.source
 
-trait PrettyPrinter extends L3.c.PrettyPrinter {
+trait SourcePrettyPrinter extends L3.source.SourcePrettyPrinter {
 
-    this : org.kiama.output.PrettyPrinter =>
-
-    import base.c.{CTree, CType}
-    import L3.c.CDerefExp
+    import base.source.{Expression, SourceTree}
     import org.kiama.output.PrettyExpression
 
-    override def basetypeToDoc (t : CType) : Doc =
-        t match {
-            case CRecordType (fls) =>
-                "struct" <+> "{" <> (nest (lterm (fls map toDoc, semi))) <>
-                    line <> "}" <> space
+    override def toDoc (n : SourceTree) : Doc =
+        n match {
+            case ArrayTypeDef (s, t) =>
+                "ARRAY" <+> toDoc (s) <+> "OF" <+> toDoc (t)
+
+            case RecordTypeDef (Nil) =>
+                "RECORD" <+> "END"
+
+            case RecordTypeDef (fs) =>
+                "RECORD" <+> hsep (fs map toDoc, semi) <+> "END"
+
+            case FieldList (ids, t) =>
+                (hsep (ids map text, comma)) <+> colon <+> toDoc (t)
+
             case _ =>
-                super.basetypeToDoc (t)
+                super.toDoc (n)
         }
 
     override def toParenDoc (e : PrettyExpression) : Doc =
         e match {
-            case CIndexExp (a, e) =>
-                toDoc (a) <> brackets (toDoc (e))
-            case CFieldExp (r : CDerefExp, f) =>
-                parens (toDoc (r)) <> dot <> f
-            case CFieldExp (r, f) =>
-                toDoc (r) <> dot <> f
+            case IndexExp (b, e) =>
+                toDoc (b) <> brackets (toDoc (e))
+            case FieldExp (b, FieldIdn (f)) =>
+                toDoc (b) <> "." <> f
             case _ =>
                 super.toParenDoc (e)
         }

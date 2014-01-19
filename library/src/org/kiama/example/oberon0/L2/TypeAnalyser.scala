@@ -24,8 +24,8 @@ package L2
 
 trait TypeAnalyser extends L1.TypeAnalyser {
 
-    import base.source.{IdnUse, SourceTree}
-    import L0.source.{Expression, IdnExp}
+    import base.source.{Expression, IdnUse, SourceTree}
+    import L0.source.IdnExp
     import org.kiama.util.Messaging.{check, message, Messages}
     import source.{CaseStatement, ForStatement}
 

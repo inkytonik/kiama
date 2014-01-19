@@ -24,13 +24,13 @@ package drivers
 
 trait A4Phases extends base.TranslatingDriver
     with L4.SyntaxAnalyser
-    with L4.source.PrettyPrinter
+    with L4.source.SourcePrettyPrinter
     with L4.NameAnalyser
     with L4.TypeAnalyser
     with L2.Lifter
     with L2.Desugarer
     with L4.CCodeGenerator
-    with L4.c.PrettyPrinter {
+    with L4.c.CPrettyPrinter {
 
     def artefact : String = "A4"
     def langlevel : Int = 4

@@ -24,7 +24,7 @@ package drivers
 
 trait A2bPhases extends base.FrontEndDriver
     with L2.SyntaxAnalyser
-    with L2.source.PrettyPrinter
+    with L2.source.SourcePrettyPrinter
     with L2.NameAnalyser
     with L2.TypeAnalyser {
 

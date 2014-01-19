@@ -27,12 +27,12 @@ package L0
  */
 trait SyntaxAnalyser extends base.SyntaxAnalyser {
 
-    import base.source.{Declaration, Statement}
+    import base.source.{Declaration, Expression, Statement}
     import scala.collection.immutable.Seq
     import scala.language.postfixOps
     import source.{AddExp, AndExp, Assignment, ConstDecl, DivExp, EqExp,
-        Expression, GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp,
-        MulExp, NamedType, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl,
+        GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp, MulExp,
+        NamedType, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl,
         TypeDef, VarDecl}
 
     override def declarationsDef : PackratParser[Seq[Declaration]] =

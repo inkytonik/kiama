@@ -22,8 +22,8 @@ package org.kiama
 package example.oberon0
 package L2.source
 
-import base.source.{Block, SourceTree, Statement}
-import L0.source.{Expression, IdnExp}
+import base.source.{Block, Expression, SourceTree, Statement}
+import L0.source.IdnExp
 import scala.collection.immutable.Seq
 
 /**

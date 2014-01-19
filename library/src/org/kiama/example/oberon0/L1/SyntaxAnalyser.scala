@@ -27,8 +27,7 @@ package L1
  */
 trait SyntaxAnalyser extends L0.SyntaxAnalyser {
 
-    import base.source.{Block, Statement}
-    import L0.source.Expression
+    import base.source.{Block, Expression, Statement}
     import scala.collection.immutable.Seq
     import source.{IfStatement, WhileStatement}
 

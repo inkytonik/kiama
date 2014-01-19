@@ -409,7 +409,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
  * particularly Oberon0, test most cases; we just pick up the remainder
  * for coverage here.
  */
-class ParenPrettyPrinterTests extends Tests with PrettyPrinter with ParenPrettyPrinter {
+class ParenPrettyPrinterTests extends Tests with ParenPrettyPrinter {
 
     abstract class Exp extends PrettyExpression
 

@@ -33,7 +33,7 @@ import scala.util.parsing.combinator.RegexParsers
 /**
  * Common functionality for all forms of Oberon0 driver.
  */
-trait Driver extends PrettyPrinter {
+trait Driver {
 
     this : SymbolTable =>
 

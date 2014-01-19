@@ -24,7 +24,7 @@ package L2
 
 trait NameAnalyser extends L0.NameAnalyser {
 
-    import L0.source.Expression
+    import base.source.Expression
     import org.kiama.util.Patterns.HasParent
     import source.{ForStatement, MinMaxCond, ValCond}
 

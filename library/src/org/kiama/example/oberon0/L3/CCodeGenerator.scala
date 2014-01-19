@@ -29,10 +29,10 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
 
     import base.c.{CBlock, CDeclaration, CExpression, CFunctionDecl,
         CInclude, CProgram, CStatement, CVarDecl}
-    import base.source.{Block, Declaration, IdnDef, IdnUse, ModuleDecl,
-        Statement}
+    import base.source.{Block, Declaration, Expression, IdnDef, IdnUse,
+        ModuleDecl, Statement}
     import c.{CAddrExp, CAddrType, CCall, CDerefExp, CStrExp, CVoidType}
-    import L0.source.{Expression, IdnExp}
+    import L0.source.IdnExp
     import source.{Call, Mode, ProcDecl, ValMode, VarMode}
     import scala.collection.immutable.Seq
 

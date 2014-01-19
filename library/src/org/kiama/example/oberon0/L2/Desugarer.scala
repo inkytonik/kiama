@@ -27,9 +27,10 @@ package L2
  */
 trait Desugarer extends L0.Desugarer {
 
-    import base.source.{Block, IdnDef, IdnUse, ModuleDecl, Statement}
-    import L0.source.{AddExp, AndExp, Assignment, EqExp, Expression,
-        GeExp, IdnExp, IntExp, LeExp, NamedType, OrExp, VarDecl}
+    import base.source.{Block, Expression, IdnDef, IdnUse, ModuleDecl,
+        Statement}
+    import L0.source.{AddExp, AndExp, Assignment, EqExp, GeExp, IdnExp,
+        IntExp, LeExp, NamedType, OrExp, VarDecl}
     import L1.source.{IfStatement, WhileStatement}
     import org.kiama.attribution.AttributableSupport.deepclone
     import org.kiama.rewriting.Rewriter.{everywhere, rewrite, rule}

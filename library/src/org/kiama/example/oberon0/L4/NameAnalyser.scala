@@ -24,8 +24,7 @@ package L4
 
 trait NameAnalyser extends L3.NameAnalyser {
 
-    import base.source.SourceTree
-    import L0.source.Expression
+    import base.source.{Expression, SourceTree}
     import org.kiama.util.Messaging.{check, message, Messages}
     import source.{FieldExp, IndexExp, RecordTypeDef}
 

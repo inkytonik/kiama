@@ -27,7 +27,8 @@ package L4
  */
 trait SyntaxAnalyser extends L3.SyntaxAnalyser {
 
-    import L0.source.{Expression, TypeDef}
+    import base.source.Expression
+    import L0.source.TypeDef
     import scala.collection.immutable.Seq
     import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
         RecordTypeDef}

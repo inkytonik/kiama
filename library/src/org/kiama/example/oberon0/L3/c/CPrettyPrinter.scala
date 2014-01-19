@@ -20,37 +20,33 @@
 
 package org.kiama
 package example.oberon0
-package L1.source
+package L3.c
 
-trait PrettyPrinter extends L0.source.PrettyPrinter {
+trait CPrettyPrinter extends L1.c.CPrettyPrinter {
 
-    this : org.kiama.output.PrettyPrinter =>
+    import base.c.{CExpression, CTree, CType}
+    import org.kiama.output.PrettyExpression
 
-    import base.source.{Block, SourceTree}
-    import L0.source.Expression
-
-    override def toDoc (n : SourceTree) : Doc =
+    override def toDoc (n : CTree) : Doc =
         n match {
-            case s : IfStatement =>
-                ifToDoc (s)
-
-            case s : WhileStatement =>
-                "WHILE" <+> toDoc (s.cond) <+> "DO" <> semisep (s.block.stmts) <@> "END"
+            case CCall (s, ps) =>
+                s <+> parens (hsep (ps map toParenDoc, comma)) <> semi
 
             case _ =>
                 super.toDoc (n)
         }
 
-    def ifToDoc (s : IfStatement) : Doc = {
+    override def basetypeToDoc (t : CType) : Doc =
+        t match {
+            case CVoidType ()   => "void" <> space
+            case CAddrType (bt) => super.basetypeToDoc (bt) <> "*"
+            case _              => super.basetypeToDoc (t)
+        }
 
-        def elsifToDoc (ei : (Expression, Block)) : Doc =
-            line <> "ELSIF" <+> toDoc (ei._1) <+> "THEN" <> semisep (ei._2.stmts)
-
-        "IF" <+> toDoc (s.cond) <+> "THEN" <>
-        semisep (s.block.stmts) <>
-        hcat (s.elsifs map elsifToDoc) <>
-        s.optelse.map (b => line <> "ELSE" <> semisep (b.stmts)).getOrElse (empty) <@>
-        "END"
-    }
+    override def toParenDoc (e : PrettyExpression) : Doc =
+        e match {
+            case CStrExp (s)  => dquotes (s)
+            case _            => super.toParenDoc (e)
+        }
 
 }

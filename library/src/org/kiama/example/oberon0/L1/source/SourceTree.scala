@@ -22,8 +22,7 @@ package org.kiama
 package example.oberon0
 package L1.source
 
-import base.source.{Block, Statement}
-import L0.source.Expression
+import base.source.{Block, Expression, Statement}
 import scala.collection.immutable.Seq
 
 /**

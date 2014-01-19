@@ -107,9 +107,7 @@ trait PrettyUnaryExpression extends PrettyOperatorExpression {
  * Ramsey, SP&E, 28 (12), October 1998.  We have not implemented support for
  * arbitrary arity infix operators.
  */
-trait ParenPrettyPrinter {
-
-    self : PrettyPrinter =>
+trait ParenPrettyPrinter extends PrettyPrinter {
 
     def toParenDoc (e : PrettyExpression) : Doc =
         e match {

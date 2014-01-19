@@ -24,7 +24,7 @@ package drivers
 
 trait A2aPhases extends base.FrontEndDriver
     with L3.SyntaxAnalyser
-    with L3.source.PrettyPrinter
+    with L3.source.SourcePrettyPrinter
     with L3.NameAnalyser {
 
     def artefact : String = "A2a"

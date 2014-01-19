@@ -28,9 +28,8 @@ package L1
 trait CCodeGenerator extends L0.CCodeGenerator {
 
     import base.c.CStatement
-    import base.source.{Statement, Block}
+    import base.source.{Block, Expression, Statement}
     import c.{CIfElseStatement, CIfStatement, CWhileStatement}
-    import L0.source.Expression
     import source.{IfStatement, WhileStatement}
     import scala.collection.immutable.Seq
 

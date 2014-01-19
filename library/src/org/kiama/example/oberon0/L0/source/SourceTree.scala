@@ -22,9 +22,10 @@ package org.kiama
 package example.oberon0
 package L0.source
 
-import base.source.{Declaration, IdnDef, IdnUse, SourceTree, Statement}
+import base.source.{Declaration, Expression, IdnDef, IdnUse, SourceTree,
+    Statement}
 import org.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
-    PrettyBinaryExpression, PrettyExpression, PrettyUnaryExpression}
+    PrettyBinaryExpression, PrettyUnaryExpression}
 import scala.collection.immutable.Seq
 
 /**
@@ -56,11 +57,6 @@ case class NamedType (idnuse : IdnUse) extends TypeDef
  * Assignment statements.
  */
 case class Assignment (desig : Expression, exp : Expression) extends Statement
-
-/**
- * Non-terminal type for expressions.
- */
-abstract class Expression extends SourceTree with PrettyExpression
 
 /**
  * Common interface for binary expressions.

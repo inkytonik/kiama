@@ -24,8 +24,8 @@ package L4
 
 trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
 
-    import base.source.{IdnDef, SourceTree}
-    import L0.source.{Assignment, Expression, NamedType, TypeDef}
+    import base.source.{Expression, IdnDef, SourceTree}
+    import L0.source.{Assignment, NamedType, TypeDef}
     import L3.source.{FPSection, ValMode}
     import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Entity

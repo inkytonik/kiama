@@ -24,12 +24,12 @@ package L0
 
 trait TypeAnalyser extends NameAnalyser {
 
-    import base.source.{IdnUse, SourceTree}
+    import base.source.{Expression, IdnUse, SourceTree}
     import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Messaging.{check, message, Messages}
-    import source.{AndExp, Assignment, ConstDecl, Expression, IdnExp,
-        IntExp, NamedType, NegExp, NotExp, OrExp, ProdExpression,
-        RelationalExpression, SumExpression, TypeDecl, TypeDef}
+    import source.{AndExp, Assignment, ConstDecl, IdnExp, IntExp, NamedType,
+        NegExp, NotExp, OrExp, ProdExpression, RelationalExpression,
+        SumExpression, TypeDecl, TypeDef}
 
     /**
      * The error checking for this level.

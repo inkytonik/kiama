@@ -24,8 +24,7 @@ package L3
 
 trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
-    import base.source.{Identifier, IdnDef, IdnUse, SourceTree}
-    import L0.source.Expression
+    import base.source.{Expression, Identifier, IdnDef, IdnUse, SourceTree}
     import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Messaging.{check, message, Messages, noMessages}
     import org.kiama.util.Patterns.HasParent

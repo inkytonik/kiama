@@ -22,9 +22,7 @@ package org.kiama
 package example.oberon0
 package L1.c
 
-trait PrettyPrinter extends L0.c.PrettyPrinter {
-
-    this : org.kiama.output.PrettyPrinter =>
+trait CPrettyPrinter extends L0.c.CPrettyPrinter {
 
     import base.c.CTree
 

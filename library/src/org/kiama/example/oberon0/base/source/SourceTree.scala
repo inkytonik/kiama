@@ -22,6 +22,7 @@ package org.kiama
 package example.oberon0
 package base.source
 
+import org.kiama.output.PrettyExpression
 import org.kiama.util.Tree
 import scala.collection.immutable.Seq
 
@@ -54,6 +55,11 @@ case class Block (decls : Seq[Declaration], stmts: Seq[Statement]) extends State
  * Empty statements.
  */
 case class EmptyStmt () extends Statement
+
+/**
+ * Non-terminal type for expressions.
+ */
+abstract class Expression extends SourceTree with PrettyExpression
 
 /**
  * Common interface for all identifier occurrences.

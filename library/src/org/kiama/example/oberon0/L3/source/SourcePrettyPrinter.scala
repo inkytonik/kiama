@@ -22,9 +22,7 @@ package org.kiama
 package example.oberon0
 package L3.source
 
-trait PrettyPrinter extends L2.source.PrettyPrinter {
-
-    this : org.kiama.output.PrettyPrinter =>
+trait SourcePrettyPrinter extends L2.source.SourcePrettyPrinter {
 
     import base.source.{IdnDef, IdnUse, SourceTree}
     import scala.collection.immutable.Seq

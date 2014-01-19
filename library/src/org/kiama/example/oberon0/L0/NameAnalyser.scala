@@ -24,15 +24,15 @@ package L0
 
 trait NameAnalyser extends base.Analyser with SymbolTable {
 
-    import base.source.{Block, Identifier, IdnDef, IdnUse, ModuleDecl,
-        SourceTree}
+    import base.source.{Block, Expression, Identifier, IdnDef, IdnUse,
+        ModuleDecl, SourceTree}
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Messaging.{check, message, Messages}
     import org.kiama.util.Patterns.HasParent
     import source.{AddExp, Assignment, BinaryExpression, ConstDecl,
-        DivExp, Expression, IdnExp, IntExp, ModExp, MulExp, NamedType, NegExp,
+        DivExp, IdnExp, IntExp, ModExp, MulExp, NamedType, NegExp,
         SubExp, TypeDecl, TypeDef, UnaryExpression, VarDecl}
 
     /**
