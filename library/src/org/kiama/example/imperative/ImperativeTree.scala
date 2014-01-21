@@ -28,7 +28,7 @@ object ImperativeTree {
 
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
@@ -39,7 +39,7 @@ object ImperativeTree {
     /**
      * Superclass of all imperative language tree node types.
      */
-    trait ImperativeTree extends Tree
+    trait ImperativeTree extends TreeNode
 
     /**
      * Expressions.

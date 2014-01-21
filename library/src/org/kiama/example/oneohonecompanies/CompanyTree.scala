@@ -23,10 +23,10 @@ package example.oneohonecompanies
 
 object CompanyTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
-    trait CompanyTree extends Tree
+    trait CompanyTree extends TreeNode
 
     case class Company (depts : Seq[Dept]) extends CompanyTree
     case class Dept (n : Name, m : Manager, su : Seq[SubUnit]) extends CompanyTree

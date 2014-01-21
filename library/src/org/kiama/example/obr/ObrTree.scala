@@ -27,13 +27,13 @@ package example.obr
  */
 object ObrTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
      * Interface for all Obr tree nodes.
      */
-    sealed abstract class ObrTree extends Tree
+    sealed abstract class ObrTree extends TreeNode
 
     /**
      * An Obr program consisting of the given declarations and statements and

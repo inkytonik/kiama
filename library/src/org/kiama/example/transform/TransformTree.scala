@@ -26,13 +26,13 @@ package example.transform
  */
 object TransformTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
      * All AST nodes.
      */
-    sealed abstract class TransformTree extends Tree
+    sealed abstract class TransformTree extends TreeNode
 
     /**
      * Nodes that have entities associated with them.

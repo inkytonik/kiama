@@ -21,13 +21,13 @@
 package org.kiama
 package example.repmin
 
-import org.kiama.util.Tree
+import org.kiama.util.TreeNode
 import org.kiama.attribution.Attribution._
 
 /**
  * AST for Repmin examples.
  */
-sealed abstract class RepminTree extends Tree
+sealed abstract class RepminTree extends TreeNode
 case class Fork (left : RepminTree, right : RepminTree) extends RepminTree
 case class Leaf (value : Int) extends RepminTree
 

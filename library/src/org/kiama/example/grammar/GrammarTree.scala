@@ -26,13 +26,13 @@ package example.grammar
  */
 object GrammarTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
      * Abstract syntax tree nodes.
      */
-    sealed abstract class GrammarTree extends Tree
+    sealed abstract class GrammarTree extends TreeNode
 
     /**
      * Grammars.

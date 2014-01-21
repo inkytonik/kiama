@@ -28,13 +28,13 @@ object MiniJavaTree {
 
     import org.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
         PrettyBinaryExpression, PrettyExpression, PrettyUnaryExpression}
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
      * The common supertype of all source tree nodes.
      */
-    sealed abstract class MiniJavaTree extends Tree
+    sealed abstract class MiniJavaTree extends TreeNode
 
     /**
      * A main program consisting of a main class and a possibly empty list of

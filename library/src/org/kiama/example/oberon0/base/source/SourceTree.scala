@@ -23,13 +23,13 @@ package example.oberon0
 package base.source
 
 import org.kiama.output.PrettyExpression
-import org.kiama.util.Tree
+import org.kiama.util.TreeNode
 import scala.collection.immutable.Seq
 
 /**
  * Root type of all source abstract syntax tree nodes.
  */
-abstract class SourceTree extends Tree
+abstract class SourceTree extends TreeNode
 
 /**
  * Non-terminal type for declarations.

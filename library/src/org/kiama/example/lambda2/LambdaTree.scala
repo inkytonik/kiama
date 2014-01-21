@@ -28,7 +28,7 @@ object LambdaTree {
 
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
@@ -39,7 +39,7 @@ object LambdaTree {
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends Tree
+    sealed abstract class Exp extends TreeNode
 
     /**
      * Numeric expressions.
@@ -86,7 +86,7 @@ object LambdaTree {
     /**
      * Types.
      */
-    sealed abstract class Type extends Tree
+    sealed abstract class Type extends TreeNode
 
     /**
      * Primitive integer type.

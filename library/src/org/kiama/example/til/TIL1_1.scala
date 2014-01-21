@@ -28,10 +28,10 @@ import org.kiama.util.PositionedParserUtilities
  */
 object TILTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
-    abstract class TilTree extends Tree
+    abstract class TilTree extends TreeNode
 
     case class Program (ss : Seq[Stat]) extends TilTree
 

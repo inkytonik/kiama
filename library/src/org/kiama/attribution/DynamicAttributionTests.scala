@@ -29,9 +29,9 @@ import org.kiama.util.Tests
 class DynamicAttributionTests extends Tests {
 
     import Attribution._
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
 
-    abstract class TestTree extends Tree
+    abstract class TestTree extends TreeNode
     case class Pair (left : TestTree, right : TestTree) extends TestTree
     case class Leaf (value : Int) extends TestTree
     case class Unused (b : Boolean) extends TestTree

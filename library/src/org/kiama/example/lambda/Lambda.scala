@@ -28,7 +28,7 @@ import org.kiama.util.{ParsingREPL, PositionedParserUtilities, Profiler}
  */
 object LambdaTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
 
     /**
      * Identifiers are represented as strings.
@@ -38,7 +38,7 @@ object LambdaTree {
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends Tree
+    sealed abstract class Exp extends TreeNode
 
     /**
      * Numeric expressions.

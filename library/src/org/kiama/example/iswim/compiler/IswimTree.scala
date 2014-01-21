@@ -26,7 +26,7 @@ package example.iswim.compiler
  */
 object IswimTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
@@ -34,7 +34,7 @@ object IswimTree {
      * In this variant, however, we treat top level let expressions
      * as statements.
      */
-    abstract class Iswim extends Tree
+    abstract class Iswim extends TreeNode
     sealed abstract class Expr extends Iswim
     sealed abstract class Stmt extends Iswim
 

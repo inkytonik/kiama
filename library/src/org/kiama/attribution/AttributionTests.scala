@@ -30,10 +30,10 @@ class AttributionTests extends Tests {
 
     import Attribution._
     import Decorators._
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.GenSeq
 
-    abstract class TestTree extends Tree
+    abstract class TestTree extends TreeNode
     case class Pair (left : TestTree, right : TestTree) extends TestTree
     case class Leaf (value : Int) extends TestTree
     case class Unused (b : Boolean) extends TestTree
@@ -445,11 +445,11 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for parameterised attributes") {
-        lazy val direct : Int => Tree => Int =
+        lazy val direct : Int => TreeNode => Int =
             paramAttr (i => (t => t->direct (i)))
-        lazy val indirect : Int => Tree => Int =
+        lazy val indirect : Int => TreeNode => Int =
             paramAttr (i => (t => t->indirect2 (i)))
-        lazy val indirect2 : Int => Tree => Int =
+        lazy val indirect2 : Int => TreeNode => Int =
             paramAttr (i => (t => t->indirect (i)))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
@@ -473,11 +473,11 @@ class AttributionTests extends Tests {
     test ("circularities are detected for uncached parameterised attributes") {
         import UncachedAttribution._
 
-        lazy val direct : Int => Tree => Int =
+        lazy val direct : Int => TreeNode => Int =
             paramAttr (i => (t => t->direct (i)))
-        lazy val indirect : Int => Tree => Int =
+        lazy val indirect : Int => TreeNode => Int =
             paramAttr (i => (t => t->indirect2 (i)))
-        lazy val indirect2 : Int => Tree => Int =
+        lazy val indirect2 : Int => TreeNode => Int =
             paramAttr (i => (t => t->indirect (i)))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
@@ -800,7 +800,7 @@ class AttributionTests extends Tests {
         initTree (t)
 
         // A chain with only identiy update functions
-        val idchain = chain[Tree,Int] ()
+        val idchain = chain[TreeNode,Int] ()
         val i1 = intercept[RuntimeException] {
                      t->(idchain.in)
                  }

@@ -23,4 +23,9 @@ package util
 
 import org.kiama.attribution.Attributable
 
-trait Tree extends Attributable with Positioned
+/**
+ * General behaviour for tree nodes. Case classes that implement actual
+ * tree node types should mix-in this trait.
+ */
+trait TreeNode extends Attributable with Positioned
+

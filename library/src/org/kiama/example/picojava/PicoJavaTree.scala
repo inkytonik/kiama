@@ -34,11 +34,11 @@ package example.picojava
  */
 object PicoJavaTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     // Created by parser
-    sealed trait PicoJavaTree extends Tree
+    sealed trait PicoJavaTree extends TreeNode
 
     case class Program (Block : Block) extends PicoJavaTree
 

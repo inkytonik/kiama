@@ -26,10 +26,10 @@ package example.prolog
  */
 object PrologTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
-    sealed abstract class PrologTree extends Tree
+    sealed abstract class PrologTree extends TreeNode
 
     case class Program (cs : Seq[Clause]) extends PrologTree
 

@@ -30,13 +30,13 @@ package example.obr
  */
 object RISCTree {
 
-    import org.kiama.util.Tree
+    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
     /**
      * Superclass of all RISC tree nodes.
      */
-    sealed abstract class RISCTree extends Tree
+    sealed abstract class RISCTree extends TreeNode
 
     /**
      * Trait to mark those nodes which need to have a return value
