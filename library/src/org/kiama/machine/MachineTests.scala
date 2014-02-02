@@ -47,7 +47,7 @@ class MachineTests extends Tests {
     test ("new state is undefined") {
         val m = makeMachine ()
         val s = new m.State[Int] ("s")
-        assertResult (true) (s.isUndefined)
+        assert (s.isUndefined)
     }
 
     test ("asking for the value of undefined state gives an error") {
@@ -65,17 +65,17 @@ class MachineTests extends Tests {
         m.reset
         s := 42
         m.performUpdates
-        assertResult (false) (s.isUndefined)
+        assert (!s.isUndefined)
         s.undefine
-        assertResult (true) (s.isUndefined)
+        assert (s.isUndefined)
     }
 
     test ("undefined state is not equal to anything") {
         val m = makeMachine ()
         val s = new m.State[Int] ("s")
-        assertResult (false) (s =:= 0)
-        assertResult (false) (s =:= 42)
-        assertResult (false) (s =:= 99)
+        assert (!(s =:= 0))
+        assert (!(s =:= 42))
+        assert (!(s =:= 99))
     }
 
     test ("defined state is only equal to its value") {
@@ -83,9 +83,9 @@ class MachineTests extends Tests {
         val s = new m.State[Int] ("s")
         s := 0
         m.performUpdates
-        assertResult (true) (s =:= 0)
-        assertResult (false) (s =:= 42)
-        assertResult (false) (s =:= 99)
+        assert (s =:= 0)
+        assert (!(s =:= 42))
+        assert (!(s =:= 99))
     }
 
     test ("undefined state toStrings to a special message") {
@@ -126,8 +126,8 @@ class MachineTests extends Tests {
         s := 0
         s := 0
         m.performUpdates
-        assertResult (true) (s =:= 0)
-        assertResult (false) (s =:= 1)
+        assert (s =:= 0)
+        assert (!(s =:= 1))
     }
 
     test ("inconsistent state updates in differents steps are allowed") {
@@ -136,13 +136,13 @@ class MachineTests extends Tests {
         m.reset
         s := 0
         m.performUpdates
-        assertResult (true) (s =:= 0)
-        assertResult (false) (s =:= 1)
+        assert (s =:= 0)
+        assert (!(s =:= 1))
         m.reset
         s := 1
         m.performUpdates
-        assertResult (false) (s =:= 0)
-        assertResult (true) (s =:= 1)
+        assert (!(s =:= 0))
+        assert (s =:= 1)
     }
 
     test ("inconsistent state updates in one step trigger an exception") {
@@ -162,9 +162,9 @@ class MachineTests extends Tests {
     test ("new parameterised state is undefined") {
         val m = makeMachine ()
         val p = new m.ParamState[Int,Int] ("p")
-        assertResult (true) (p.isUndefined (0))
-        assertResult (true) (p.isUndefined (42))
-        assertResult (true) (p.isUndefined (99))
+        assert (p.isUndefined (0))
+        assert (p.isUndefined (42))
+        assert (p.isUndefined (99))
     }
 
     test ("asking for the value of undefined parameterised state gives an error") {
@@ -194,17 +194,17 @@ class MachineTests extends Tests {
         m.reset
         p (0) := 42
         m.performUpdates
-        assertResult (false) (p.isUndefined (0))
+        assert (!(p.isUndefined (0)))
         p.undefine (0)
-        assertResult (true) (p.isUndefined (0))
+        assert (p.isUndefined (0))
     }
 
     test ("undefined parameterised state is not equal to anything") {
         val m = makeMachine ()
         val p = new m.ParamState[String,Int] ("p")
-        assertResult (false) (p ("one") =:= 0)
-        assertResult (false) (p ("one") =:= 42)
-        assertResult (false) (p ("one") =:= 99)
+        assert (!(p ("one") =:= 0))
+        assert (!(p ("one") =:= 42))
+        assert (!(p ("one") =:= 99))
     }
 
     test ("defined parameterised state is only equal to its value") {
@@ -213,18 +213,18 @@ class MachineTests extends Tests {
         m.reset
         p ("one") := 42
         m.performUpdates
-        assertResult (false) (p ("one") =:= 0)
-        assertResult (true) (p ("one") =:= 42)
-        assertResult (false) (p ("one") =:= 99)
+        assert (!(p ("one") =:= 0))
+        assert (p ("one") =:= 42)
+        assert (!(p ("one") =:= 99))
         m.reset
         p ("two") := 99
         m.performUpdates
-        assertResult (false) (p ("one") =:= 0)
-        assertResult (true) (p ("one") =:= 42)
-        assertResult (false) (p ("one") =:= 99)
-        assertResult (false) (p ("two") =:= 0)
-        assertResult (false) (p ("two") =:= 42)
-        assertResult (true) (p ("two") =:= 99)
+        assert (!(p ("one") =:= 0))
+        assert (p ("one") =:= 42)
+        assert (!(p ("one") =:= 99))
+        assert (!(p ("two") =:= 0))
+        assert (!(p ("two") =:= 42))
+        assert (p ("two") =:= 99)
     }
 
     test ("parameterised state updates trigger suitable debug messages") {
@@ -259,8 +259,8 @@ class MachineTests extends Tests {
         p ("one") := 0
         p ("one") := 0
         m.performUpdates
-        assertResult (true) (p ("one") =:= 0)
-        assertResult (false) (p ("one") =:= 1)
+        assert (p ("one") =:= 0)
+        assert (!(p ("one") =:= 1))
     }
 
     test ("inconsistent parameterised state updates in differents steps are allowed") {
@@ -269,13 +269,13 @@ class MachineTests extends Tests {
         m.reset
         p ("one") := 0
         m.performUpdates
-        assertResult (true) (p ("one") =:= 0)
-        assertResult (false) (p ("one") =:= 1)
+        assert (p ("one") =:= 0)
+        assert (!(p ("one") =:= 1))
         m.reset
         p ("one"):= 1
         m.performUpdates
-        assertResult (false) (p ("one") =:= 0)
-        assertResult (true) (p ("one") =:= 1)
+        assert (!(p ("one") =:= 0))
+        assert (p ("one") =:= 1)
     }
 
     test ("inconsistent parameterised state updates in one step trigger an exception") {

@@ -115,19 +115,19 @@ class SemanticAnalysisTests extends Tests {
     }
 
     test ("g1: S is not nullable") {
-        assertResult (false) (g1analyser.nullable (g1r1))
+        assert (!g1analyser.nullable (g1r1))
     }
 
     test ("g1: E is not nullable") {
-        assertResult (false) (g1analyser.nullable (g1r2))
+        assert (!g1analyser.nullable (g1r2))
     }
 
     test ("g1: T is not nullable") {
-        assertResult (false) (g1analyser.nullable (g1r3))
+        assert (!g1analyser.nullable (g1r3))
     }
 
     test ("g1: F is not nullable") {
-        assertResult (false) (g1analyser.nullable (g1r4))
+        assert (!g1analyser.nullable (g1r4))
     }
 
     test ("g1: FIRST (S) is correct") {
@@ -167,27 +167,27 @@ class SemanticAnalysisTests extends Tests {
     }
 
     test ("g2: S is not nullable") {
-        assertResult (false) (g2analyser.nullable (g2r1))
+        assert (!g2analyser.nullable (g2r1))
     }
 
     test ("g2: E is not nullable") {
-        assertResult (false) (g2analyser.nullable (g2r2))
+        assert (!g2analyser.nullable (g2r2))
     }
 
     test ("g2: Ep is nullable") {
-        assertResult (true) (g2analyser.nullable (g2r3))
+        assert (g2analyser.nullable (g2r3))
     }
 
     test ("g2: T is not nullable") {
-        assertResult (false) (g2analyser.nullable (g2r4))
+        assert (!g2analyser.nullable (g2r4))
     }
 
     test ("g2: Tp is nullable") {
-        assertResult (true) (g2analyser.nullable (g2r5))
+        assert (g2analyser.nullable (g2r5))
     }
 
     test ("g2: F is not nullable") {
-        assertResult (false) (g2analyser.nullable (g2r6))
+        assert (!g2analyser.nullable (g2r6))
     }
 
     test ("g2: FIRST (S) is correct") {

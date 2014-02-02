@@ -131,15 +131,15 @@ class OneOhOneTests extends Tests {
     }
 
     test ("craig is above average") {
-        assertResult (true) (craig->aboveaverage)
+        assert (craig->aboveaverage)
     }
 
     test ("klaus is above average") {
-        assertResult (true) (klaus->aboveaverage)
+        assert (klaus->aboveaverage)
     }
 
     test ("joe is below average") {
-        assertResult (false) (joe->aboveaverage)
+        assert (!(joe->aboveaverage))
     }
 
     test ("department depth - company") {
@@ -155,22 +155,22 @@ class OneOhOneTests extends Tests {
     }
 
     test ("salaries ordered - company") {
-        assertResult (true) (precedence (company))
+        assert (precedence (company))
     }
 
     test ("salaries ordered - empty") {
-        assertResult (true) (precedence (empty))
+        assert (precedence (empty))
     }
 
     test ("salaries ordered - onlymanager") {
-        assertResult (true) (precedence (onlymanager))
+        assert (precedence (onlymanager))
     }
 
     test ("salaries not ordered - employee") {
         val d = Company (Seq (Dept ("D1", Employee ("An", "Emp", 100),
                                     Seq (PU (Employee ("Another", "Emp", 500))))))
         initTree (d)
-        assertResult (false) (precedence (d))
+        assert (!precedence (d))
     }
 
     test ("salaries not ordered - manager") {
@@ -179,7 +179,7 @@ class OneOhOneTests extends Tests {
         val d2 = Company (Seq (Dept ("D3", Employee ("TheOther", "Emp", 25),
                                Seq (DU (d1)))))
         initTree (d2)
-        assertResult (false) (precedence (d2))
+        assert (!precedence (d2))
     }
 
     test ("company employee count is correct") {

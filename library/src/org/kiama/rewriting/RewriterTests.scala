@@ -577,23 +577,23 @@ class RewriterTests extends Tests with Generator {
     test ("same comparison of equal references yields true xxxx") {
         class Num (i : Int)
         val r = new Num (42)
-        assertResult (true) (optsame (r, r))
+        assert (optsame (r, r))
     }
 
     test ("same comparison of unequalt references yields false") {
         class Num (i : Int)
         val r1 = new Num (42)
         val r2 = new Num (42)
-        assertResult (false) (optsame (r1, r2))
+        assert (!optsame (r1, r2))
     }
 
     test ("same comparison of equal non-references yields true") {
-        assertResult (true) (optsame (42, 42))
+        assert (optsame (42, 42))
     }
 
 
     test ("same comparison of unequalt non-references yields false") {
-        assertResult (false) (optsame (42, 43))
+        assert (!optsame (42, 43))
     }
 
     /**

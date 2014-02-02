@@ -57,32 +57,32 @@ class MemoRewriterTests extends {
     test ("a memoising strategy actually memoises") {
         val s = everywhere (atob).asInstanceOf[MemoStrategy]
         val t : N = A ()
-        assertResult (false) (s.hasBeenComputedAt (t))
+        assert (!s.hasBeenComputedAt (t))
         val result = rewrite (s) (t)
         assertResult (B ()) (result)
-        assertResult (true) (s.hasBeenComputedAt (t))
+        assert (s.hasBeenComputedAt (t))
         assertSame (result) (rewrite (s) (t))
         s.reset ()
-        assertResult (false) (s.hasBeenComputedAt (t))
+        assert (!s.hasBeenComputedAt (t))
         assertResult (B ()) (rewrite (s) (t))
-        assertResult (true) (s.hasBeenComputedAt (t))
+        assert (s.hasBeenComputedAt (t))
     }
 
     test ("resetting all memoising strategies actually does reset them") {
         val r = atob.asInstanceOf[MemoStrategy]
         val s = everywheretd (atob).asInstanceOf[MemoStrategy]
         val t = P (A (), A ())
-        assertResult (false) (s.hasBeenComputedAt (t))
-        assertResult (false) (r.hasBeenComputedAt (t.l))
-        assertResult (false) (r.hasBeenComputedAt (t.r))
+        assert (!s.hasBeenComputedAt (t))
+        assert (!r.hasBeenComputedAt (t.l))
+        assert (!r.hasBeenComputedAt (t.r))
         assertResult (P (B (), B())) (rewrite (s) (t))
-        assertResult (true) (s.hasBeenComputedAt (t))
-        assertResult (true) (r.hasBeenComputedAt (t.l))
-        assertResult (true) (r.hasBeenComputedAt (t.r))
+        assert (s.hasBeenComputedAt (t))
+        assert (r.hasBeenComputedAt (t.l))
+        assert (r.hasBeenComputedAt (t.r))
         resetMemo ()
-        assertResult (false) (s.hasBeenComputedAt (t))
-        assertResult (false) (r.hasBeenComputedAt (t.l))
-        assertResult (false) (r.hasBeenComputedAt (t.r))
+        assert (!s.hasBeenComputedAt (t))
+        assert (!r.hasBeenComputedAt (t.l))
+        assert (!r.hasBeenComputedAt (t.r))
         assertResult (P (B (), B())) (rewrite (s) (t))
     }
 

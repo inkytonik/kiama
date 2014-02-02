@@ -115,11 +115,11 @@ class DataflowTests extends Driver with Dataflow with TestCompiler[Stm] {
 
     test ("out - s412 (reset)") {
         outAttr.reset ()
-        assertResult (false) (outAttr.hasBeenComputedAt (s412))
+        assert (!outAttr.hasBeenComputedAt (s412))
         assertResult (Set ("x", "w", "v")) (outAttr (s412))
-        assertResult (true) (outAttr.hasBeenComputedAt (s412))
+        assert (outAttr.hasBeenComputedAt (s412))
         outAttr.reset ()
-        assertResult (false) (outAttr.hasBeenComputedAt (s412))
+        assert (!outAttr.hasBeenComputedAt (s412))
     }
 
     test ("out - s5") {
