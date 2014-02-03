@@ -108,7 +108,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
 /**
  * Lambda calculus evaluator following Rose's \xgc, ie with explicit
  * substitutions and garbage collection.  See "Explicit Substitution
- * - Tutorial and Survey, Kristoffer H. Rose, BRICS LS-96-3, October
+ * - Tutorial and Survey", Kristoffer H. Rose, BRICS LS-96-3, October
  * 1996.
  */
 trait Evaluator {
@@ -121,11 +121,16 @@ trait Evaluator {
      */
     def fv (t : Exp) : Set[Idn] = {
         t match {
-            case Num (_)       => Set ()
-            case Var (x)       => Set (x)
-            case Lam (x, e)    => fv (e) - x
-            case App (m, n)    => fv (m) ++ fv (n)
-            case Sub (m, x, n) => (fv (m) - x) ++ fv (n)
+            case Num (_) =>
+                Set ()
+            case Var (x) =>
+                Set (x)
+            case Lam (x, e) =>
+                fv (e) - x
+            case App (m, n) =>
+                fv (m) ++ fv (n)
+            case Sub (m, x, n) =>
+                (fv (m) - x) ++ fv (n)
         }
     }
 
@@ -135,17 +140,22 @@ trait Evaluator {
     val xgc_reduction =
         rule[Exp] {
             // Substitution generation
-            case App (Lam (x, e1), e2)           => Sub (e1, x, e2)
+            case App (Lam (x, e1), e2) =>
+                Sub (e1, x, e2)
 
             // Explicit substitution
-            case Sub (Var (x), y, n) if x == y => n
-            case Sub (Var (x), _, _)           => Var (x)
-            case Sub (Lam (x, m), y, n)        => Lam (x, Sub (m, y, n))
-            case Sub (App (m1, m2), y, n)      => App (Sub (m1, y, n), Sub (m2, y, n))
+            case Sub (Var (x), y, n) if x == y =>
+                n
+            case Sub (Var (x), _, _) =>
+                Var (x)
+            case Sub (Lam (x, m), y, n) =>
+                Lam (x, Sub (m, y, n))
+            case Sub (App (m1, m2), y, n) =>
+                App (Sub (m1, y, n), Sub (m2, y, n))
 
             // Garbage collection
-            case Sub (m, x, n) if ! (fv (m) contains (x))
-                                                 => m
+            case Sub (m, x, n) if ! (fv (m) contains (x)) =>
+                m
         }
 
     /**
@@ -170,10 +180,10 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with SyntaxAnalyser with Evalu
         super.process (e, config)
         val result =
             if (config.profile.get != None) {
-                    val dimensions = parseProfileOption (config.profile ())
-                    profile (normal (e), dimensions, config.logging ())
-                } else
-                    normal (e)
+                val dimensions = parseProfileOption (config.profile ())
+                profile (normal (e), dimensions, config.logging ())
+            } else
+                normal (e)
         config.emitter.emitln (result.getOrElse ("reduction failed"))
     }
 
