@@ -73,6 +73,18 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser with Evaluator wi
         assertEval ("""(\x.x) 42""", Num (42))
     }
 
+    test ("name capturing is avoided (1)") {
+        assertEval ("""(\x.x) x""", Var ("x"))
+    }
+
+    test ("name capturing is avoided (2)") {
+        assertEval ("""(\x.\y.x) y""", Lam ("_v0", Var ("y")))
+    }
+
+    test ("name capturing is avoided (3)") {
+        assertEval ("""(\x. x y) (\x. y x)""", App (Var ("y"), Var ("y")))
+    }
+
     test ("a function parameter is passed and ignored") {
         assertEval ("""(\x.99) (\y.y)""", Num (99))
     }
