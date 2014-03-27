@@ -22,6 +22,8 @@ scalacOptions in ThisBuild <<= baseDirectory map {
         "-feature",
         "-sourcepath", bd.getAbsolutePath,
         "-unchecked"
+        // "-Xfatal-warnings",
+        // "-Xlint"
     )
 }
 

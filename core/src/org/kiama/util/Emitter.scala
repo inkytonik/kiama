@@ -45,7 +45,7 @@ class Emitter {
     /**
      * Emit a new line.
      */
-    def emitln {
+    def emitln () {
         println
     }
 

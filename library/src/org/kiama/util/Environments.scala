@@ -38,7 +38,7 @@ trait Environments {
     /**
      * Reset the environment module.
      */
-    def resetEnvironments {
+    def resetEnvironments () {
         nameCounter.reset ()
     }
 

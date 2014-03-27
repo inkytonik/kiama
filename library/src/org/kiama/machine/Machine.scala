@@ -66,7 +66,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Make this state item undefined.
          */
-        def undefine {
+        def undefine () {
             _value = None
         }
 
@@ -241,7 +241,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Perform this update
          */
-        def perform : Unit
+        def perform () : Unit
 
         /**
          * Return a key for use when checking consistency of this update
@@ -265,7 +265,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Perform this update.
          */
-        def perform {
+        def perform () {
             s.change (t)
             if (debug) {
                 val d = name <> '.' <> s.sname <+> ":=" </> nest (s.toDoc)
@@ -303,7 +303,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
         /**
          * Perform this update.
          */
-        def perform {
+        def perform () {
             s.change (t, u)
             if (debug) {
                 val d = name <> '.' <> s.sname <> '(' <> t.toDoc <> ')' <+>
@@ -344,18 +344,18 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * state updates will be performed after this routine returns.
      * Default: do nothing.
      */
-    def init { }
+    def init () { }
 
     /**
      * The rule to execute to run one step of this machine.
      */
-    def main : Unit
+    def main () : Unit
 
     /**
      * Clean up after this machine.  This routine is called after the
      * machine terminates.  Default: do nothing.
      */
-    def finit { }
+    def finit () { }
 
     /**
      * Perform any pending updates, returning true if updates were
@@ -364,7 +364,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * than once, it must be updated to the same value by all updates.
      * If updates are not consistent, the machine is aborted.
      */
-    def performUpdates : Boolean = {
+    def performUpdates () : Boolean = {
         if (updates.isEmpty)
             false
         else {
@@ -383,7 +383,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
     /**
      * Reset the machine to begin a step.
      */
-    def reset {
+    def reset () {
         updates = Nil
     }
 
@@ -413,7 +413,7 @@ abstract class Machine (val name : String, emitter : Emitter = new Emitter)
      * Run this machine by initialising its state and then executing
      * its steps.
      */
-    def run {
+    def run () {
         init
         performUpdates
         steps (0)

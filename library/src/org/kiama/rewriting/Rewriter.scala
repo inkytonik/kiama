@@ -290,7 +290,7 @@ trait Rewriter extends RewriterCore {
      */
     val issuperterm : Strategy =
         strategy ("issuperterm", {
-            case (x, y) => issubterm (y, x)
+            case (x, y) => issubterm ((y, x))
         })
 
     /**

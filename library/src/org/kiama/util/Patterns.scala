@@ -34,7 +34,7 @@ object Patterns {
      */
     object HasParent {
         def unapply[T <: Attributable] (x : T) : Some[(T, Attributable)] =
-            Some (x, x.parent)
+            Some ((x, x.parent))
     }
 
 }

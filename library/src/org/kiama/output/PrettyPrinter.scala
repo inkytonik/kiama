@@ -985,7 +985,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                         } yield
                             (p : PPosition, dq : Dq) => {
                                 val n = (h : Horizontal) => (o : Out) => Done (o)
-                                c2 (p, dq :+ (p, n))
+                                c2 (p, dq :+ ((p, n)))
                             }
                     )
         )
@@ -1000,7 +1000,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
     def nest (d : Doc, j : Indent = defaultIndent) : Doc =
         new Doc ({
             case (i, w) =>
-                d (i + j, w)
+                d ((i + j, w))
         })
 
     // Obtaining output
