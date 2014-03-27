@@ -25,7 +25,15 @@ BEGIN
     proc1 (a)
 END nonlocalvar.
 [2,0,4]* errors
-[2,0,4]15.5: non-local parameter access to b is not allowed
-[2,0,4]16.5: non-local variable access to c is not allowed
+[2,0,4][15.5] non-local parameter access to b is not allowed
+[2,0,4]
+[2,0,4]    b := 9;
+[2,0,4]
+[2,0,4]    ^
+[2,0,4][16.5] non-local variable access to c is not allowed
+[2,0,4]
+[2,0,4]    c := 10
+[2,0,4]
+[2,0,4]    ^
 [6,5,5]#include <stdio.h>
 [6,5,5]need to do lambda lifting

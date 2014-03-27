@@ -6,4 +6,8 @@ MODULE typenodecl;
 
 END typenodecl.
 * errors
-4.12: NOTYPE is not declared
+[4.12] NOTYPE is not declared
+
+    avar : NOTYPE;
+
+           ^

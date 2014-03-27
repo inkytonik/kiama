@@ -22,11 +22,32 @@ package org.kiama
 package util
 
 /**
- * A message record consisting of a coordinate position `pos` and a label string
+ * A message record consisting of a positioned value and a label string.
+ * Currently, just the start position of the value is used when reporting
+ * this message.
  */
-case class Message (line : Int, column : Int, label : String) {
-    override def toString : String =
-        s"$line.$column: $label"
+case class Message (value : Positioned, label : String) {
+
+    /**
+     * Return the start line of this message's position.
+     */
+    def line : Int =
+        value.start.line
+
+    /**
+     * Return the start column of this message's position.
+     */
+    def column : Int =
+        value.start.column
+
+    /**
+     * Format the message for reporting as a line containing the start
+     * position and the label, followed by lines containing the input
+     * text and a pointer to the message location.
+     */
+    def format : String =
+        s"[${value.start}] $label\n\n${value.start.longString}"
+
 }
 
 /**
@@ -84,7 +105,7 @@ object Messaging {
      */
     def message (value : Positioned, msg : String, cond : Boolean = true) : Messages =
         if (cond)
-            aMessage (Message (value.start.line, value.start.column, msg))
+            aMessage (Message (value, msg))
         else
             noMessages
 
@@ -93,7 +114,7 @@ object Messaging {
      * defaults to standard output.
      */
     def report (messages : Messages, emitter : Emitter = new Emitter) {
-        sortmessages (messages).map (emitter.emitln (_))
+        sortmessages (messages).map (msg => emitter.emitln (msg.format))
     }
 
     /**

@@ -17,7 +17,23 @@ BEGIN
     aconst1 := 42
 END const.
 * errors
-7.15: noconst is not declared
-8.21: division by zero in constant expression
-9.22: modulus by zero in constant expression
-[2]16.5: illegal assignment
+[7.15] noconst is not declared
+
+    aconst4 = noconst + 1;
+
+              ^
+[8.21] division by zero in constant expression
+
+    aconst5 = 1 DIV 0;
+
+                    ^
+[9.22] modulus by zero in constant expression
+
+    aconst6 = 2 MOD (3 DIV 4);
+
+                     ^
+[2][16.5] illegal assignment
+[2]
+[2]    aconst1 := 42
+[2]
+[2]    ^

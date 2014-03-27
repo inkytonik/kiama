@@ -35,14 +35,58 @@ BEGIN
     avar5 := 10
 END type.
 [2]* errors
-[2]10.5: aconst1 is already declared
-[2]11.14: aconst2 is not a type name
-[2]13.5: atype2 is already declared
-[2]14.5: atype3 is already declared
-[2]20.5: atype3 is already declared
-[2]21.13: aconst2 is not a type name
-[2]28.5: illegal assignment
-[2]28.5: atype1 cannot be used in an expression
-[2]29.22: atype1 cannot be used in an expression
-[3]31.24: type error: got BOOLEAN, but expected INTEGER
-[3]33.22: type error: got BOOLEAN, but expected INTEGER
+[2][10.5] aconst1 is already declared
+[2]
+[2]    aconst1 = INTEGER;
+[2]
+[2]    ^
+[2][11.14] aconst2 is not a type name
+[2]
+[2]    atype4 = aconst2;
+[2]
+[2]             ^
+[2][13.5] atype2 is already declared
+[2]
+[2]    atype2 = atype1;
+[2]
+[2]    ^
+[2][14.5] atype3 is already declared
+[2]
+[2]    atype3 = INTEGER;
+[2]
+[2]    ^
+[2][20.5] atype3 is already declared
+[2]
+[2]    atype3 : INTEGER;
+[2]
+[2]    ^
+[2][21.13] aconst2 is not a type name
+[2]
+[2]    avar2 : aconst2;
+[2]
+[2]            ^
+[2][28.5] illegal assignment
+[2]
+[2]    atype1 := 2;
+[2]
+[2]    ^
+[2][28.5] atype1 cannot be used in an expression
+[2]
+[2]    atype1 := 2;
+[2]
+[2]    ^
+[2][29.22] atype1 cannot be used in an expression
+[2]
+[2]    avar1 := avar1 + atype1;
+[2]
+[2]                     ^
+[3][31.24] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    avar1 := avar1 DIV avar4;
+[3]
+[3]                       ^
+[3][33.22] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    avar4 := avar1 = avar4;
+[3]
+[3]                     ^

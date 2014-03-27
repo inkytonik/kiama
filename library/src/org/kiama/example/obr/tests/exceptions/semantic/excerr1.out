@@ -1,5 +1,25 @@
-7.5: FallOverALot is declared more than once
-8.5: FallOverALot is declared more than once
-11.5: Bob is declared more than once
-14.5: DivideByZero is declared more than once
-17.5: Bob is declared more than once
+[7.5] FallOverALot is declared more than once
+
+    FallOverALot : EXCEPTION;
+
+    ^
+[8.5] FallOverALot is declared more than once
+
+    FallOverALot : EXCEPTION;
+
+    ^
+[11.5] Bob is declared more than once
+
+    Bob : EXCEPTION;
+
+    ^
+[14.5] DivideByZero is declared more than once
+
+    DivideByZero : EXCEPTION;
+
+    ^
+[17.5] Bob is declared more than once
+
+    Bob : INTEGER;
+
+    ^

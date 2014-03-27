@@ -75,6 +75,27 @@ trait Positioned {
 }
 
 /**
+ * Support operations for positioned values.
+ */
+object Positioned {
+
+    /**
+     * Return a dummy positioned value with starting position given by line
+     * `l` and column `c` and no ending position. The line contents are empty.
+     */
+    def apply (l : Int, c : Int) : Positioned = {
+        val pos = new Position {
+                      val line = l
+                      val column = c
+                      val lineContents = ""
+                  }
+        val positioned = new Positioned { }
+        positioned.setStart (pos)
+    }
+
+}
+
+/**
  * An extension of `ParserUtilities` that has support for automatically
  * tracking start and finish positions for tree nodes.
  */

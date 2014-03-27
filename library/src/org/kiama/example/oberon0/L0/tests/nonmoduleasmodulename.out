@@ -6,4 +6,8 @@ MODULE aname;
 
 END i.
 * errors
-6.5: end module name 'i' should be 'aname'
+[6.5] end module name 'i' should be 'aname'
+
+END i.
+
+    ^

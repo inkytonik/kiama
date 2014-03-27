@@ -10,4 +10,8 @@ BEGIN
     END
 END badcond.
 [3]* errors
-[3]7.8: type error: got INTEGER, but expected BOOLEAN
+[3][7.8] type error: got INTEGER, but expected BOOLEAN
+[3]
+[3]    IF avar THEN
+[3]
+[3]       ^

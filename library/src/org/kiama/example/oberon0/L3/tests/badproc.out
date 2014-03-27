@@ -50,22 +50,98 @@ BEGIN
     WriteLn (avar1)
 END badproc.
 * errors
-[2]8.11: avar1 is already declared
-[2]15.9: expression is not constant
-[2,0,4]23.5: non-local procedure access to proc1 is not allowed
-[2]28.5: proc is not declared
-[2]28.5: end procedure name proc should be proc1
-[2]30.37: a is already declared
-[2]37.5: b is already declared
-[2]42.5: call of non-procedure abool
-[3]43.5: wrong number of parameters in call of proc1, expected 2, got 0
-[3]44.5: wrong number of parameters in call of proc1, expected 2, got 1
-[3]44.12: illegal VAR parameter
-[3]45.5: wrong number of parameters in call of proc1, expected 2, got 3
-[3]45.12: illegal VAR parameter
-[3]45.15: type error: got INTEGER, but expected BOOLEAN
-[3]46.12: type error: got BOOLEAN, but expected INTEGER
-[3]46.19: type error: got INTEGER, but expected BOOLEAN
-[3]47.5: wrong number of parameters in call of Read, expected 1, got 2
-[3]48.5: wrong number of parameters in call of Write, expected 1, got 0
-[3]49.5: wrong number of parameters in call of WriteLn, expected 0, got 1
+[2][8.11] avar1 is already declared
+[2]
+[2]PROCEDURE avar1;
+[2]
+[2]          ^
+[2][15.9] expression is not constant
+[2]
+[2]    c = a + 1;
+[2]
+[2]        ^
+[2,0,4][23.5] non-local procedure access to proc1 is not allowed
+[2,0,4]
+[2,0,4]    proc1 (d, TRUE)
+[2,0,4]
+[2,0,4]    ^
+[2][28.5] proc is not declared
+[2]
+[2]END proc;
+[2]
+[2]    ^
+[2][28.5] end procedure name proc should be proc1
+[2]
+[2]END proc;
+[2]
+[2]    ^
+[2][30.37] a is already declared
+[2]
+[2]PROCEDURE redefparam1 (a : INTEGER; a : INTEGER);
+[2]
+[2]                                    ^
+[2][37.5] b is already declared
+[2]
+[2]    b : BOOLEAN;
+[2]
+[2]    ^
+[2][42.5] call of non-procedure abool
+[2]
+[2]    abool (1);
+[2]
+[2]    ^
+[3][43.5] wrong number of parameters in call of proc1, expected 2, got 0
+[3]
+[3]    proc1;
+[3]
+[3]    ^
+[3][44.5] wrong number of parameters in call of proc1, expected 2, got 1
+[3]
+[3]    proc1 (1);
+[3]
+[3]    ^
+[3][44.12] illegal VAR parameter
+[3]
+[3]    proc1 (1);
+[3]
+[3]           ^
+[3][45.5] wrong number of parameters in call of proc1, expected 2, got 3
+[3]
+[3]    proc1 (1, 2, 3);
+[3]
+[3]    ^
+[3][45.12] illegal VAR parameter
+[3]
+[3]    proc1 (1, 2, 3);
+[3]
+[3]           ^
+[3][45.15] type error: got INTEGER, but expected BOOLEAN
+[3]
+[3]    proc1 (1, 2, 3);
+[3]
+[3]              ^
+[3][46.12] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    proc1 (abool, avar2);
+[3]
+[3]           ^
+[3][46.19] type error: got INTEGER, but expected BOOLEAN
+[3]
+[3]    proc1 (abool, avar2);
+[3]
+[3]                  ^
+[3][47.5] wrong number of parameters in call of Read, expected 1, got 2
+[3]
+[3]    Read (avar1, avar2);
+[3]
+[3]    ^
+[3][48.5] wrong number of parameters in call of Write, expected 1, got 0
+[3]
+[3]    Write;
+[3]
+[3]    ^
+[3][49.5] wrong number of parameters in call of WriteLn, expected 0, got 1
+[3]
+[3]    WriteLn (avar1)
+[3]
+[3]    ^

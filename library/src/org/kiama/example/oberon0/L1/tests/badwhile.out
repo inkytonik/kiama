@@ -10,4 +10,8 @@ BEGIN
     END
 END badwhile.
 [3]* errors
-[3]7.11: type error: got INTEGER, but expected BOOLEAN
+[3][7.11] type error: got INTEGER, but expected BOOLEAN
+[3]
+[3]    WHILE avar DO
+[3]
+[3]          ^

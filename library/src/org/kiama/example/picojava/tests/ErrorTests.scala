@@ -36,7 +36,7 @@ class ErrorTests extends RegexParserTests with SyntaxAnalyser {
 
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.ErrorCheck.errors
-    import org.kiama.util.Message
+    import org.kiama.util.{Message, Positioned}
 
     /**
      * Parse the illegal program and make sure that the errors and their
@@ -66,11 +66,11 @@ class ErrorTests extends RegexParserTests with SyntaxAnalyser {
             ast =>
                 initTree (ast)
                 assertMessages (ast->errors,
-                    Message (3, 3, "Cyclic inheritance chain for class A"),
-                    Message (5, 9, "Unknown identifier b"),
-                    Message (7, 5, "Can not assign a variable of type boolean to a value of type A"),
-                    Message (9, 3, "Cyclic inheritance chain for class B"),
-                    Message (17, 3, "Can not assign a variable of type C to a value of type D"))
+                    Message (Positioned (3, 3), "Cyclic inheritance chain for class A"),
+                    Message (Positioned (5, 9), "Unknown identifier b"),
+                    Message (Positioned (7, 5), "Can not assign a variable of type boolean to a value of type A"),
+                    Message (Positioned (9, 3), "Cyclic inheritance chain for class B"),
+                    Message (Positioned (17, 3), "Can not assign a variable of type C to a value of type D"))
         }
     }
 

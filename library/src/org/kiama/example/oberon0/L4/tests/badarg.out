@@ -35,11 +35,43 @@ BEGIN
     nonvararrayparam (arr, rec)
 END badarg.
 [3]* errors
-[3]13.27: parameter type must be identifier
-[3]13.52: parameter type must be identifier
-[3]17.29: array parameter must be VAR
-[3]17.39: record parameter must be VAR
-[3]29.10: type error: got arr1, but expected arr2
-[3]29.13: type error: got rec1, but expected rec2
-[3]33.23: type error: got arr2, but expected arr1
-[3]33.28: type error: got rec2, but expected rec1
+[3][13.27] parameter type must be identifier
+[3]
+[3]PROCEDURE nonidparam (a : ARRAY 10 OF INTEGER; b : RECORD x : INTEGER END);
+[3]
+[3]                          ^
+[3][13.52] parameter type must be identifier
+[3]
+[3]PROCEDURE nonidparam (a : ARRAY 10 OF INTEGER; b : RECORD x : INTEGER END);
+[3]
+[3]                                                   ^
+[3][17.29] array parameter must be VAR
+[3]
+[3]PROCEDURE nonvararrayparam (a : arr1; b : rec1);
+[3]
+[3]                            ^
+[3][17.39] record parameter must be VAR
+[3]
+[3]PROCEDURE nonvararrayparam (a : arr1; b : rec1);
+[3]
+[3]                                      ^
+[3][29.10] type error: got arr1, but expected arr2
+[3]
+[3]    Two (a, b)
+[3]
+[3]         ^
+[3][29.13] type error: got rec1, but expected rec2
+[3]
+[3]    Two (a, b)
+[3]
+[3]            ^
+[3][33.23] type error: got arr2, but expected arr1
+[3]
+[3]    nonvararrayparam (arr, rec)
+[3]
+[3]                      ^
+[3][33.28] type error: got rec2, but expected rec1
+[3]
+[3]    nonvararrayparam (arr, rec)
+[3]
+[3]                           ^

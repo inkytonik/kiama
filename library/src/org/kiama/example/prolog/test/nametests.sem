@@ -1,7 +1,35 @@
-4.34: anatomleft should have 0 arguments but has 1
-5.41: apredleftprev should have 1 arguments but has 2
-7.26: apredlefthere should have 3 arguments but has 2
-10.1: apredright should have 2 arguments but has 1
-10.19: apredright should have 2 arguments but has 3
-12.16: anatomright should have 0 arguments but has 1
-13.1: anatomright should have 0 arguments but has 1
+[4.34] anatomleft should have 0 arguments but has 1
+
+apredleftprev (1) :- anatomleft, anatomleft (1).
+
+                                 ^
+[5.41] apredleftprev should have 1 arguments but has 2
+
+apredleftprev (1) :- apredleftprev (1), apredleftprev (1,2).
+
+                                        ^
+[7.26] apredlefthere should have 3 arguments but has 2
+
+apredlefthere (1,2,3) :- apredlefthere (1,20), apredlefthere(3,4,5).
+
+                         ^
+[10.1] apredright should have 2 arguments but has 1
+
+apredright (1) :- apredright (1,2,3).
+
+^
+[10.19] apredright should have 2 arguments but has 3
+
+apredright (1) :- apredright (1,2,3).
+
+                  ^
+[12.16] anatomright should have 0 arguments but has 1
+
+anatomright :- anatomright (1).
+
+               ^
+[13.1] anatomright should have 0 arguments but has 1
+
+anatomright (1) :- anatomright.
+
+^

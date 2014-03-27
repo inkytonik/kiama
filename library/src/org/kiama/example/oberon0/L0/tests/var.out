@@ -25,13 +25,53 @@ BEGIN
     avar7 := 1
 END var.
 * errors
-5.13: avar1 is not a type name
-8.5: avar3 is already declared
-9.5: avar4 is already declared
-10.12: avar5 is already declared
-12.13: avar1 is not a type name
-15.5: avar is not declared
-16.5: avar is not declared
-16.13: bvar is not declared
-17.5: avar is not declared
-17.19: avar is not declared
+[5.13] avar1 is not a type name
+
+    avar2 : avar1;
+
+            ^
+[8.5] avar3 is already declared
+
+    avar3 : BOOLEAN;
+
+    ^
+[9.5] avar4 is already declared
+
+    avar4 : INTEGER;
+
+    ^
+[10.12] avar5 is already declared
+
+    avar5, avar5 : INTEGER;
+
+           ^
+[12.13] avar1 is not a type name
+
+    avar7 : avar1;
+
+            ^
+[15.5] avar is not declared
+
+    avar := 42;
+
+    ^
+[16.5] avar is not declared
+
+    avar := bvar;
+
+    ^
+[16.13] bvar is not declared
+
+    avar := bvar;
+
+            ^
+[17.5] avar is not declared
+
+    avar := 99 - (avar + 1);
+
+    ^
+[17.19] avar is not declared
+
+    avar := 99 - (avar + 1);
+
+                  ^

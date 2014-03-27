@@ -24,16 +24,68 @@ BEGIN
     END
 END casename.
 * errors
-4.10: avar is not declared
-5.13: avar is not declared
-8.10: avar is not declared
-9.13: avar is not declared
-10.13: avar is not declared
-12.9: avar is not declared
-15.14: avar is not declared
-16.13: avar is not declared
-17.13: avar is not declared
-17.25: avar is not declared
-19.20: avar is not declared
-22.10: avar is not declared
-23.14: avar is not declared
+[4.10] avar is not declared
+
+    CASE avar OF
+
+         ^
+[5.13] avar is not declared
+
+        1 : avar := 2
+
+            ^
+[8.10] avar is not declared
+
+    CASE avar OF
+
+         ^
+[9.13] avar is not declared
+
+        1 : avar := 2
+
+            ^
+[10.13] avar is not declared
+
+      | 3 : avar := 4
+
+            ^
+[12.9] avar is not declared
+
+        avar := 5
+
+        ^
+[15.14] avar is not declared
+
+    CASE 6 * avar OF
+
+             ^
+[16.13] avar is not declared
+
+        7 : avar := 8
+
+            ^
+[17.13] avar is not declared
+
+      | 9 : avar := 10; avar := 11
+
+            ^
+[17.25] avar is not declared
+
+      | 9 : avar := 10; avar := 11
+
+                        ^
+[19.20] avar is not declared
+
+      | 13 .. 14 : avar := 15
+
+                   ^
+[22.10] avar is not declared
+
+    CASE avar OF
+
+         ^
+[23.14] avar is not declared
+
+        16 : avar := 17
+
+             ^

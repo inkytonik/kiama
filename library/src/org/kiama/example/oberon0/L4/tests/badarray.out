@@ -31,22 +31,98 @@ BEGIN
     array2 := array2 + 1
 END badarray.
 [3]* errors
-[3]7.20: ARRAY size is -1 but should be >= 0
-[3]8.20: type error: got BOOLEAN, but expected INTEGER
-[3]14.26: division by zero in constant expression
-[3]17.20: expression is not constant
-[3]20.5: can't assign to array
-[3]20.15: type error: got INTEGER, but expected atype4
-[3]21.12: type error: got BOOLEAN, but expected INTEGER
-[3]22.12: type error: got atype4, but expected INTEGER
-[3]23.18: type error: got BOOLEAN, but expected INTEGER
-[3]24.18: type error: got INTEGER, but expected BOOLEAN
-[3]25.12: index out of range
-[3]26.12: index out of range
-[3]27.12: type error: got BOOLEAN, but expected INTEGER
-[3]28.5: array indexing attempted on non-ARRAY
-[3]28.17: array indexing attempted on non-ARRAY
-[3]29.5: array indexing attempted on non-ARRAY
-[3]30.5: can't assign to array
-[3]30.15: type error: got INTEGER, but expected ARRAY 26 OF BOOLEAN
-[3]30.15: type error: got ARRAY 26 OF BOOLEAN, but expected INTEGER
+[3][7.20] ARRAY size is -1 but should be >= 0
+[3]
+[3]    atype1 = ARRAY -1 OF INTEGER;
+[3]
+[3]                   ^
+[3][8.20] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    atype3 = ARRAY TRUE OF INTEGER;
+[3]
+[3]                   ^
+[3][14.26] division by zero in constant expression
+[3]
+[3]    array3 : ARRAY 3 DIV 0 OF INTEGER;
+[3]
+[3]                         ^
+[3][17.20] expression is not constant
+[3]
+[3]    array4 : ARRAY aint OF INTEGER;
+[3]
+[3]                   ^
+[3][20.5] can't assign to array
+[3]
+[3]    array1 := 1;
+[3]
+[3]    ^
+[3][20.15] type error: got INTEGER, but expected atype4
+[3]
+[3]    array1 := 1;
+[3]
+[3]              ^
+[3][21.12] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    array1[abool] := 1;
+[3]
+[3]           ^
+[3][22.12] type error: got atype4, but expected INTEGER
+[3]
+[3]    array1[array1] := 2;
+[3]
+[3]           ^
+[3][23.18] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    array1[1] := abool;
+[3]
+[3]                 ^
+[3][24.18] type error: got INTEGER, but expected BOOLEAN
+[3]
+[3]    array2[1] := 1;
+[3]
+[3]                 ^
+[3][25.12] index out of range
+[3]
+[3]    array2[-2] := TRUE;
+[3]
+[3]           ^
+[3][26.12] index out of range
+[3]
+[3]    array2[100] := TRUE;
+[3]
+[3]           ^
+[3][27.12] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    array2[1 < 2] := TRUE;
+[3]
+[3]           ^
+[3][28.5] array indexing attempted on non-ARRAY
+[3]
+[3]    abool[3] := aint[4];
+[3]
+[3]    ^
+[3][28.17] array indexing attempted on non-ARRAY
+[3]
+[3]    abool[3] := aint[4];
+[3]
+[3]                ^
+[3][29.5] array indexing attempted on non-ARRAY
+[3]
+[3]    abool[3] := 4;
+[3]
+[3]    ^
+[3][30.5] can't assign to array
+[3]
+[3]    array2 := array2 + 1
+[3]
+[3]    ^
+[3][30.15] type error: got INTEGER, but expected ARRAY 26 OF BOOLEAN
+[3]
+[3]    array2 := array2 + 1
+[3]
+[3]              ^
+[3][30.15] type error: got ARRAY 26 OF BOOLEAN, but expected INTEGER
+[3]
+[3]    array2 := array2 + 1
+[3]
+[3]              ^

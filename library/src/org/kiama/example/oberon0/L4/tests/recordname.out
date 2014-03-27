@@ -7,5 +7,13 @@ MODULE recordname;
 
 END recordname.
 [2]* errors
-[2]4.16: record contains duplicate field names
-[2]5.16: record contains duplicate field names
+[2][4.16] record contains duplicate field names
+[2]
+[2]    arecord1 = RECORD x : INTEGER; x : INTEGER END;
+[2]
+[2]               ^
+[2][5.16] record contains duplicate field names
+[2]
+[2]    arecord3 = RECORD x, x : INTEGER END;
+[2]
+[2]               ^

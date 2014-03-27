@@ -1,8 +1,40 @@
-7.5: CarColour is declared more than once
-8.5: CarColour is declared more than once
-11.5: Bob is declared more than once
-12.5: Bob is declared more than once
-15.15: January is declared more than once
-15.41: January is declared more than once
-18.37: Ford is declared more than once
-19.29: Ford is declared more than once
+[7.5] CarColour is declared more than once
+
+    CarColour : (Red, Blue, Green);
+
+    ^
+[8.5] CarColour is declared more than once
+
+    CarColour: (Monday, Tuesday, Wednesday, Thursday, Friday);
+
+    ^
+[11.5] Bob is declared more than once
+
+    Bob : INTEGER;
+
+    ^
+[12.5] Bob is declared more than once
+
+    Bob : (Harold, Eugene);
+
+    ^
+[15.15] January is declared more than once
+
+    Months : (January, February, March, January, April);
+
+              ^
+[15.41] January is declared more than once
+
+    Months : (January, February, March, January, April);
+
+                                        ^
+[18.37] Ford is declared more than once
+
+    AusssieBrands : (Mazda, Toyota, Ford, Holden);
+
+                                    ^
+[19.29] Ford is declared more than once
+
+    CoolBrands : (Mercedes, Ford, Volkswagen);
+
+                            ^

@@ -87,10 +87,10 @@ class BS{
 	    count01 = count01 + 1 ;
 	    count02 = count02 + 2 ;
 	}
-	return count01 ;	
+	return count01 ;
     }
 
-    
+
     // This method compares two integers and
     // returns true if they are equal and false
     // otherwise
@@ -118,7 +118,7 @@ class BS{
 	System.out.println(99999);
 	return 0 ;
     }
-    
+
 
     // Initialize the integer array
     public int Init(int sz){
@@ -129,7 +129,7 @@ class BS{
 
 	size = sz ;
 	number = new int[sz] ;
-	
+
 	j = 1 ;
 	k = size + 1 ;
 	while (j < (size)) {
@@ -139,7 +139,7 @@ class BS{
 	    j = j + 1 ;
 	    k = k - 1 ;
 	}
-	return 0 ;	
+	return 0 ;
     }
 
 }

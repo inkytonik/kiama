@@ -1,8 +1,40 @@
-5.5: argument list found, integer expected
-5.15: argument atom found, integer expected
-11.4: argument integer found, atom expected
-11.14: argument list found, atom expected
-17.4: argument atom found, list expected
-17.13: argument integer found, list expected
-25.15: argument atom found, integer expected
-28.30: argument integer found, list expected
+[5.5] argument list found, integer expected
+
+pb([1]) :- pb(a).
+
+    ^
+[5.15] argument atom found, integer expected
+
+pb([1]) :- pb(a).
+
+              ^
+[11.4] argument integer found, atom expected
+
+pd(1) :- pd([1]).
+
+   ^
+[11.14] argument list found, atom expected
+
+pd(1) :- pd([1]).
+
+             ^
+[17.4] argument atom found, list expected
+
+pf(a) :- pf(1).
+
+   ^
+[17.13] argument integer found, list expected
+
+pf(a) :- pf(1).
+
+            ^
+[25.15] argument atom found, integer expected
+
+pi (Y) :- pi (a).
+
+              ^
+[28.30] argument integer found, list expected
+
+pk (1,[1]) :- pj (X), pk (X, X).
+
+                             ^

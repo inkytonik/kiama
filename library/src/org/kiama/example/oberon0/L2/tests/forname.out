@@ -20,24 +20,108 @@ BEGIN
     END
 END forname.
 * errors
-4.9: avar1 is not declared
-7.9: avar1 is not declared
-8.9: avar2 is not declared
-11.9: avar1 is not declared
-11.18: avar2 is not declared
-11.35: avar2 is not declared
-12.9: avar2 is not declared
-12.18: avar1 is not declared
-13.9: avar3 is not declared
-13.18: avar2 is not declared
-16.9: avar1 is not declared
-16.18: avar2 is not declared
-16.27: avar2 is not declared
-17.9: avar2 is not declared
-17.18: avar2 is not declared
-20.9: avar1 is not declared
-20.18: avar2 is not declared
-20.27: avar2 is not declared
-20.43: avar3 is not declared
-21.9: avar2 is not declared
-21.18: avar2 is not declared
+[4.9] avar1 is not declared
+
+    FOR avar1 := 1 TO 2 DO
+
+        ^
+[7.9] avar1 is not declared
+
+    FOR avar1 := 5 TO 6 DO
+
+        ^
+[8.9] avar2 is not declared
+
+        avar2 := 7
+
+        ^
+[11.9] avar1 is not declared
+
+    FOR avar1 := avar2 * 3 TO 5 - avar2 DO
+
+        ^
+[11.18] avar2 is not declared
+
+    FOR avar1 := avar2 * 3 TO 5 - avar2 DO
+
+                 ^
+[11.35] avar2 is not declared
+
+    FOR avar1 := avar2 * 3 TO 5 - avar2 DO
+
+                                  ^
+[12.9] avar2 is not declared
+
+        avar2 := avar1 MOD 8;
+
+        ^
+[12.18] avar1 is not declared
+
+        avar2 := avar1 MOD 8;
+
+                 ^
+[13.9] avar3 is not declared
+
+        avar3 := avar2 DIV 9
+
+        ^
+[13.18] avar2 is not declared
+
+        avar3 := avar2 DIV 9
+
+                 ^
+[16.9] avar1 is not declared
+
+    FOR avar1 := avar2 TO avar2 + 3 BY 2 DO
+
+        ^
+[16.18] avar2 is not declared
+
+    FOR avar1 := avar2 TO avar2 + 3 BY 2 DO
+
+                 ^
+[16.27] avar2 is not declared
+
+    FOR avar1 := avar2 TO avar2 + 3 BY 2 DO
+
+                          ^
+[17.9] avar2 is not declared
+
+        avar2 := avar2 + 1
+
+        ^
+[17.18] avar2 is not declared
+
+        avar2 := avar2 + 1
+
+                 ^
+[20.9] avar1 is not declared
+
+    FOR avar1 := avar2 TO avar2 DIV 2 BY -avar3 DO
+
+        ^
+[20.18] avar2 is not declared
+
+    FOR avar1 := avar2 TO avar2 DIV 2 BY -avar3 DO
+
+                 ^
+[20.27] avar2 is not declared
+
+    FOR avar1 := avar2 TO avar2 DIV 2 BY -avar3 DO
+
+                          ^
+[20.43] avar3 is not declared
+
+    FOR avar1 := avar2 TO avar2 DIV 2 BY -avar3 DO
+
+                                          ^
+[21.9] avar2 is not declared
+
+        avar2 := avar2 * 10
+
+        ^
+[21.18] avar2 is not declared
+
+        avar2 := avar2 * 10
+
+                 ^

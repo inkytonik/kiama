@@ -33,13 +33,53 @@ BEGIN
     END
 END badfor.
 [2]* errors
-[3]15.9: illegal FOR loop control variable aconst
-[3]19.9: illegal FOR loop control variable atype
-[2]19.9: atype cannot be used in an expression
-[3]23.9: type error: got BOOLEAN, but expected INTEGER
-[3]23.17: type error: got BOOLEAN, but expected INTEGER
-[3]23.26: type error: got BOOLEAN, but expected INTEGER
-[2]27.27: expression is not constant
-[2]31.9: dvar is not declared
-[2]32.9: dvar is not declared
-[2]35.34: division by zero in constant expression
+[3][15.9] illegal FOR loop control variable aconst
+[3]
+[3]    FOR aconst := 1 TO 10 DO
+[3]
+[3]        ^
+[3][19.9] illegal FOR loop control variable atype
+[3]
+[3]    FOR atype := 1 TO 10 DO
+[3]
+[3]        ^
+[2][19.9] atype cannot be used in an expression
+[2]
+[2]    FOR atype := 1 TO 10 DO
+[2]
+[2]        ^
+[3][23.9] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    FOR bvar := FALSE TO TRUE DO
+[3]
+[3]        ^
+[3][23.17] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    FOR bvar := FALSE TO TRUE DO
+[3]
+[3]                ^
+[3][23.26] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    FOR bvar := FALSE TO TRUE DO
+[3]
+[3]                         ^
+[2][27.27] expression is not constant
+[2]
+[2]    FOR avar := 1 TO 2 BY cvar * 2 DO
+[2]
+[2]                          ^
+[2][31.9] dvar is not declared
+[2]
+[2]    FOR dvar := 1 TO 2 DO
+[2]
+[2]        ^
+[2][32.9] dvar is not declared
+[2]
+[2]        dvar := 99
+[2]
+[2]        ^
+[2][35.34] division by zero in constant expression
+[2]
+[2]    FOR avar := 8 TO 10 BY 3 DIV 0 DO
+[2]
+[2]                                 ^

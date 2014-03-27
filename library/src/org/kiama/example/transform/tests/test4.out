@@ -1,4 +1,12 @@
 Program(List(),List(),BinExpR(Var(sum),#,BinExpR(Num(2),&,BinExpR(Num(3),^,Factor(Var(count))))))
 BinExp(BinExp(BinExp(Var(sum),#,Num(2)),&,Num(3)),^,Var(count))
-1.1: sum is not declared
-1.15: count is not declared
+[1.1] sum is not declared
+
+sum # 2 & 3 ^ count
+
+^
+[1.15] count is not declared
+
+sum # 2 & 3 ^ count
+
+              ^

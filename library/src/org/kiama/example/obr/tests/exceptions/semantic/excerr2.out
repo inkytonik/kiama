@@ -1,13 +1,65 @@
-14.5: illegal assignment
-14.21: type error: expected exception got integer
-15.5: illegal assignment
-15.21: type error: expected exception got integer
-18.8: type error: expected integer or any enumeration got exception
-19.14: type error: expected integer got exception
-23.5: raise parameter i must be an exception constant
-28.5: catch clause parameter j must be an exception constant
-30.5: catch clause parameter i must be an exception constant
-36.14: true is not declared
-38.9: illegal assignment
-38.25: type error: expected exception got integer
-40.18: type error: expected integer got exception
+[14.5] illegal assignment
+
+    FallOverALot := 1;
+
+    ^
+[14.21] type error: expected exception got integer
+
+    FallOverALot := 1;
+
+                    ^
+[15.5] illegal assignment
+
+    DivideByZero := 10;
+
+    ^
+[15.21] type error: expected exception got integer
+
+    DivideByZero := 10;
+
+                    ^
+[18.8] type error: expected integer or any enumeration got exception
+
+    IF FallOverALot > 10 THEN
+
+       ^
+[19.14] type error: expected integer got exception
+
+        i := DivideByZero + 1;
+
+             ^
+[23.5] raise parameter i must be an exception constant
+
+    RAISE i;
+
+    ^
+[28.5] catch clause parameter j must be an exception constant
+
+    CATCH j DO
+
+    ^
+[30.5] catch clause parameter i must be an exception constant
+
+    CATCH i DO
+
+    ^
+[36.14] true is not declared
+
+        i := true;
+
+             ^
+[38.9] illegal assignment
+
+        FallOverALot := 1;
+
+        ^
+[38.25] type error: expected exception got integer
+
+        FallOverALot := 1;
+
+                        ^
+[40.18] type error: expected integer got exception
+
+        i := j + DivideByZero;
+
+                 ^

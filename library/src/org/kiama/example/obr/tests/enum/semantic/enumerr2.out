@@ -1,13 +1,65 @@
-12.18: type error: expected enumeration CarColour got enumeration WeekDays
-15.5: illegal assignment
-19.15: type error: expected enumeration CarColour got enumeration WeekDays
-24.8: type error: expected integer or any enumeration got boolean
-29.18: type error: expected enumeration CarColour got integer
-32.10: type error: expected integer got enumeration CarColour
-35.18: type error: expected integer got enumeration CarColour
-35.22: type error: expected enumeration CarColour got integer
-35.24: type error: expected integer got enumeration CarColour
-38.18: type error: expected integer got enumeration CarColour
-38.22: type error: expected enumeration CarColour got integer
-38.24: type error: expected integer got enumeration WeekDays
-41.10: type error: expected integer got enumeration CarColour
+[12.18] type error: expected enumeration CarColour got enumeration WeekDays
+
+    CarColour := Wednesday;
+
+                 ^
+[15.5] illegal assignment
+
+    Red := Blue;
+
+    ^
+[19.15] type error: expected enumeration CarColour got enumeration WeekDays
+
+    IF Blue < Tuesday THEN
+
+              ^
+[24.8] type error: expected integer or any enumeration got boolean
+
+    IF FALSE < TRUE THEN
+
+       ^
+[29.18] type error: expected enumeration CarColour got integer
+
+    CarColour := 0;
+
+                 ^
+[32.10] type error: expected integer got enumeration CarColour
+
+    i := Red;
+
+         ^
+[35.18] type error: expected integer got enumeration CarColour
+
+    CarColour := Red + Green;
+
+                 ^
+[35.22] type error: expected enumeration CarColour got integer
+
+    CarColour := Red + Green;
+
+                     ^
+[35.24] type error: expected integer got enumeration CarColour
+
+    CarColour := Red + Green;
+
+                       ^
+[38.18] type error: expected integer got enumeration CarColour
+
+    CarColour := Red + Monday;
+
+                 ^
+[38.22] type error: expected enumeration CarColour got integer
+
+    CarColour := Red + Monday;
+
+                     ^
+[38.24] type error: expected integer got enumeration WeekDays
+
+    CarColour := Red + Monday;
+
+                       ^
+[41.10] type error: expected integer got enumeration CarColour
+
+    i := Red + 1;
+
+         ^

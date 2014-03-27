@@ -69,48 +69,228 @@ BEGIN
     END
 END condname.
 * errors
-4.8: bvar is not declared
-7.8: bvar is not declared
-8.9: avar is not declared
-12.8: bvar is not declared
-13.9: avar is not declared
-14.11: bvar is not declared
-17.9: bvar is not declared
-18.9: avar is not declared
-21.8: bvar is not declared
-21.16: bvar is not declared
-22.9: avar is not declared
-23.9: avar is not declared
-25.9: avar is not declared
-26.9: avar is not declared
-29.8: bvar is not declared
-30.9: avar is not declared
-31.11: bvar is not declared
-32.9: avar is not declared
-35.8: bvar is not declared
-36.9: avar is not declared
-37.11: bvar is not declared
-38.9: avar is not declared
-40.9: avar is not declared
-43.8: bvar is not declared
-44.9: avar is not declared
-45.11: bvar is not declared
-46.9: avar is not declared
-47.9: avar is not declared
-48.11: bvar is not declared
-49.9: avar is not declared
-50.11: bvar is not declared
-51.9: avar is not declared
-52.9: avar is not declared
-54.9: avar is not declared
-57.8: bvar is not declared
-58.12: bvar is not declared
-59.13: avar is not declared
-61.13: avar is not declared
-65.8: bvar is not declared
-66.12: bvar is not declared
-67.13: avar is not declared
-68.15: bvar is not declared
-69.13: avar is not declared
-71.11: bvar is not declared
-72.9: avar is not declared
+[4.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[7.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[8.9] avar is not declared
+
+        avar := 0
+
+        ^
+[12.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[13.9] avar is not declared
+
+        avar := 0;
+
+        ^
+[14.11] bvar is not declared
+
+    ELSIF bvar THEN
+
+          ^
+[17.9] bvar is not declared
+
+    IF ~bvar THEN
+
+        ^
+[18.9] avar is not declared
+
+        avar := 2
+
+        ^
+[21.8] bvar is not declared
+
+    IF bvar & ~bvar THEN
+
+       ^
+[21.16] bvar is not declared
+
+    IF bvar & ~bvar THEN
+
+               ^
+[22.9] avar is not declared
+
+        avar := 3;
+
+        ^
+[23.9] avar is not declared
+
+        avar := 4
+
+        ^
+[25.9] avar is not declared
+
+        avar := 5;
+
+        ^
+[26.9] avar is not declared
+
+        avar := 6
+
+        ^
+[29.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[30.9] avar is not declared
+
+        avar := 7
+
+        ^
+[31.11] bvar is not declared
+
+    ELSIF bvar THEN
+
+          ^
+[32.9] avar is not declared
+
+        avar := 8
+
+        ^
+[35.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[36.9] avar is not declared
+
+        avar := 9
+
+        ^
+[37.11] bvar is not declared
+
+    ELSIF bvar THEN
+
+          ^
+[38.9] avar is not declared
+
+        avar := 10
+
+        ^
+[40.9] avar is not declared
+
+        avar := 11        
+
+        ^
+[43.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[44.9] avar is not declared
+
+        avar := 12
+
+        ^
+[45.11] bvar is not declared
+
+    ELSIF bvar THEN
+
+          ^
+[46.9] avar is not declared
+
+        avar := 13;
+
+        ^
+[47.9] avar is not declared
+
+        avar := 14
+
+        ^
+[48.11] bvar is not declared
+
+    ELSIF bvar THEN
+
+          ^
+[49.9] avar is not declared
+
+        avar := 15
+
+        ^
+[50.11] bvar is not declared
+
+    ELSIF bvar THEN
+
+          ^
+[51.9] avar is not declared
+
+        avar := 16;
+
+        ^
+[52.9] avar is not declared
+
+        avar := 17
+
+        ^
+[54.9] avar is not declared
+
+        avar := 18        
+
+        ^
+[57.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[58.12] bvar is not declared
+
+        IF bvar THEN
+
+           ^
+[59.13] avar is not declared
+
+            avar := 19
+
+            ^
+[61.13] avar is not declared
+
+            avar := 20
+
+            ^
+[65.8] bvar is not declared
+
+    IF bvar THEN
+
+       ^
+[66.12] bvar is not declared
+
+        IF bvar THEN
+
+           ^
+[67.13] avar is not declared
+
+            avar := 21
+
+            ^
+[68.15] bvar is not declared
+
+        ELSIF bvar THEN
+
+              ^
+[69.13] avar is not declared
+
+            avar := 22
+
+            ^
+[71.11] bvar is not declared
+
+    ELSIF bvar THEN
+
+          ^
+[72.9] avar is not declared
+
+        avar := 23
+
+        ^

@@ -7,5 +7,13 @@ MODULE aname;
 
 END aname.
 * errors
-[2]5.5: anotherproc is not declared
-[2]5.5: end procedure name anotherproc should be aproc
+[2][5.5] anotherproc is not declared
+[2]
+[2]END anotherproc;
+[2]
+[2]    ^
+[2][5.5] end procedure name anotherproc should be aproc
+[2]
+[2]END anotherproc;
+[2]
+[2]    ^

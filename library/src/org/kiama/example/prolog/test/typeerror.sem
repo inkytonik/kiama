@@ -1,2 +1,10 @@
-3.21: argument atom found, integer expected
-4.7: argument list found, integer expected
+[3.21] argument atom found, integer expected
+
+less(X,Y) :- next(X,tony).
+
+                    ^
+[4.7] argument list found, integer expected
+
+less([1,2],Y) :- next(X,W), less(W,Y).
+
+      ^

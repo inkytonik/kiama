@@ -8,5 +8,13 @@ MODULE nonintconstant;
 
 END nonintconstant.
 [3]* errors
-[3]5.15: type error: got BOOLEAN, but expected INTEGER
-[3]6.15: type error: got BOOLEAN, but expected INTEGER
+[3][5.15] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    aconst2 = TRUE;
+[3]
+[3]              ^
+[3][6.15] type error: got BOOLEAN, but expected INTEGER
+[3]
+[3]    aconst3 = TRUE OR (aconst1 = 100);
+[3]
+[3]              ^
