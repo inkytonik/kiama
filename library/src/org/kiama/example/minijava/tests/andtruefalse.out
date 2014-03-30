@@ -1,5 +1,5 @@
-.source library/src/org/kiama/example/minijava/test/nottrue.java
-.class public NotTrue
+.source library/src/org/kiama/example/minijava/tests/andtruefalse.java
+.class public AndTrueFalse
 .super java/lang/Object
 
 .method <init>()V
@@ -19,7 +19,7 @@
     iconst_0
     goto L2
 L1:
-    iconst_1
+    iconst_0
 L2:
     invokevirtual java/io/PrintStream/println(I)V
     return

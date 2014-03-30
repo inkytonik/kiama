@@ -1,5 +1,5 @@
-.source library/src/org/kiama/example/minijava/test/iffalse.java
-.class public IfFalse
+.source library/src/org/kiama/example/minijava/tests/arraylength.java
+.class public ArrayLength
 .super java/lang/Object
 
 .method <init>()V
@@ -14,15 +14,15 @@
 .limit stack 3
 .limit locals 2
     getstatic java/lang/System/out Ljava/io/PrintStream;
-    new IfFalseClass
+    new ArrayLengthClass
     dup
-    invokespecial IfFalseClass/<init>()V
-    invokevirtual IfFalseClass/run()I
+    invokespecial ArrayLengthClass/<init>()V
+    invokevirtual ArrayLengthClass/run()I
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
-.source library/src/org/kiama/example/minijava/test/iffalse.java
-.class public IfFalseClass
+.source library/src/org/kiama/example/minijava/tests/arraylength.java
+.class public ArrayLengthClass
 .super java/lang/Object
 
 .method <init>()V
@@ -34,17 +34,12 @@
 .end method
 
 .method public run()I
-.limit stack 1
+.limit stack 2
 .limit locals 2
-    iconst_0
-    ifeq L1
-    bipush 42
-    istore 1
-    goto L2
-L1:
-    bipush 99
-    istore 1
-L2:
-    iload 1
+    bipush 10
+    newarray int
+    astore 1
+    aload 1
+    arraylength
     ireturn
 .end method

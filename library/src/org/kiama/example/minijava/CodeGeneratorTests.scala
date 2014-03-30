@@ -29,7 +29,7 @@ import org.kiama.util.TestCompiler
  */
 class CodeGeneratorTests extends Driver with TestCompiler[Program] {
 
-    val path = "library/src/org/kiama/example/minijava/test"
+    val path = "library/src/org/kiama/example/minijava/tests"
     filetests ("minijava code generation", path, ".java", ".out")
 
 }

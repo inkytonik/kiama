@@ -1,5 +1,5 @@
-.source library/src/org/kiama/example/minijava/test/whilezero.java
-.class public WhileZero
+.source library/src/org/kiama/example/minijava/tests/iftrue.java
+.class public IfTrue
 .super java/lang/Object
 
 .method <init>()V
@@ -14,15 +14,15 @@
 .limit stack 3
 .limit locals 2
     getstatic java/lang/System/out Ljava/io/PrintStream;
-    new WhileZeroClass
+    new IfTrueClass
     dup
-    invokespecial WhileZeroClass/<init>()V
-    invokevirtual WhileZeroClass/run()I
+    invokespecial IfTrueClass/<init>()V
+    invokevirtual IfTrueClass/run()I
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
-.source library/src/org/kiama/example/minijava/test/whilezero.java
-.class public WhileZeroClass
+.source library/src/org/kiama/example/minijava/tests/iftrue.java
+.class public IfTrueClass
 .super java/lang/Object
 
 .method <init>()V
@@ -34,18 +34,16 @@
 .end method
 
 .method public run()I
-.limit stack 2
+.limit stack 1
 .limit locals 2
-    iconst_0
-    istore 1
-L1:
-    iconst_0
-    ifeq L2
-    iload 1
     iconst_1
-    iadd
+    ifeq L1
+    bipush 42
     istore 1
-    goto L1
+    goto L2
+L1:
+    bipush 99
+    istore 1
 L2:
     iload 1
     ireturn

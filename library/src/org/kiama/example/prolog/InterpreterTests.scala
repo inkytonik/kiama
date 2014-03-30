@@ -41,7 +41,7 @@ class InterpreterTests extends SyntaxAnalyser with RegexParserTests {
      * expected output.
      */
     def querytest (fn : String, q : String, exp : String) {
-        val filename = s"library/src/org/kiama/example/prolog/test/$fn"
+        val filename = s"library/src/org/kiama/example/prolog/tests/$fn"
         test (s"$q on $filename") {
             assertParseCheck (Source.fromFile (filename).mkString, program) {
                 programtree =>

@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/test/whilemany.java
+.source library/src/org/kiama/example/minijava/tests/whilemany.java
 .class public WhileMany
 .super java/lang/Object
 
@@ -21,7 +21,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
-.source library/src/org/kiama/example/minijava/test/whilemany.java
+.source library/src/org/kiama/example/minijava/tests/whilemany.java
 .class public WhileManyClass
 .super java/lang/Object
 

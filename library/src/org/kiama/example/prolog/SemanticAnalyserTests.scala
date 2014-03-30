@@ -34,7 +34,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with Compiler[Program]
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
 
-    filetests ("Prolog", "library/src/org/kiama/example/prolog/test", ".pl", ".sem")
+    filetests ("Prolog", "library/src/org/kiama/example/prolog/tests", ".pl", ".sem")
 
     /**
      * For the purposes of tests, the parser we want is the program one.

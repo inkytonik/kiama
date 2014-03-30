@@ -1,5 +1,5 @@
-.source library/src/org/kiama/example/minijava/test/mul.java
-.class public Mul
+.source library/src/org/kiama/example/minijava/tests/andtruetrue.java
+.class public AndTrueTrue
 .super java/lang/Object
 
 .method <init>()V
@@ -14,9 +14,13 @@
 .limit stack 3
 .limit locals 2
     getstatic java/lang/System/out Ljava/io/PrintStream;
-    iconst_5
-    bipush 8
-    imul
+    iconst_1
+    ifeq L1
+    iconst_1
+    goto L2
+L1:
+    iconst_0
+L2:
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method

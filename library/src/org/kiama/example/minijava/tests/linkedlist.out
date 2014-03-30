@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.source library/src/org/kiama/example/minijava/tests/linkedlist.java
 .class public LinkedList
 .super java/lang/Object
 
@@ -21,7 +21,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
-.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.source library/src/org/kiama/example/minijava/tests/linkedlist.java
 .class public Element
 .super java/lang/Object
 .field public Age I
@@ -205,7 +205,7 @@ L2:
     iload 3
     ireturn
 .end method
-.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.source library/src/org/kiama/example/minijava/tests/linkedlist.java
 .class public List
 .super java/lang/Object
 .field public elem LElement;
@@ -500,7 +500,7 @@ L2:
     iconst_1
     ireturn
 .end method
-.source library/src/org/kiama/example/minijava/test/linkedlist.java
+.source library/src/org/kiama/example/minijava/tests/linkedlist.java
 .class public LL
 .super java/lang/Object
 
