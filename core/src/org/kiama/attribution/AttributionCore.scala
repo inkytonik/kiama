@@ -282,7 +282,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
 
         /**
          * Run the semantic function `f` in a safe manner. We need to guard against
-         * `f` throwing an exception which aboirt the computation, since we could
+         * `f` throwing an exception which aborts the computation, since we could
          * then leave the global circular attribute state in a funny state.
          */
         def safef (t : T) : U =
