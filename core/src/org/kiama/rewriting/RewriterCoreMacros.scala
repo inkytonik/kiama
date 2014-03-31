@@ -73,10 +73,10 @@ object RewriterCoreMacros {
     def optionMacro (c : Context) (o : c.Expr[Option[Any]]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def queryMacro[T,U] (c : Context) (f : c.Expr[T ==> U]) : c.Expr[Strategy] =
+    def queryMacro[T] (c : Context) (f : c.Expr[T ==> Unit]) : c.Expr[Strategy] =
         makeCallWithName (c, "this.queryWithName")
 
-    def queryfMacro[T] (c : Context) (f : c.Expr[Any => T]) : c.Expr[Strategy] =
+    def queryfMacro (c : Context) (f : c.Expr[Any => Unit]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
     def ruleMacro[T] (c : Context) (f : c.Expr[T ==> T]) : c.Expr[Strategy] =

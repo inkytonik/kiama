@@ -608,7 +608,7 @@ trait Rewriter extends RewriterCore {
             (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
         (t : Any) => {
             val b = cbf ()
-            val add = (u : U) => b += u
+            def add (u : U) { b += u }
             (everywhere (query (f andThen add))) (t)
             b.result ()
         }
@@ -622,7 +622,7 @@ trait Rewriter extends RewriterCore {
             (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
         (t : Any) => {
             val b = cbf ()
-            val addall = (us : CC[U]) => b ++= us
+            def addall (us : CC[U]) { b ++= us }
             (everywhere (query (f andThen addall))) (t)
             b.result ()
         }

@@ -237,14 +237,14 @@ trait RewriterCore {
      * will be imprecise for some types. E.g., it is not possible to tell
      * the difference between `List[Int]` and `List[String]`.
      */
-    def query[T,U] (f : T ==> U) : Strategy =
-        macro RewriterCoreMacros.queryMacro[T,U]
+    def query[T] (f : T ==> Unit) : Strategy =
+        macro RewriterCoreMacros.queryMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def queryWithName[T,U] (name : String, f : T ==> U) : Strategy =
+    def queryWithName[T] (name : String, f : T ==> Unit) : Strategy =
         mkStrategy (name,
             (t : Any) => {
                 val anyf = f.asInstanceOf[Any ==> Any]
@@ -261,14 +261,14 @@ trait RewriterCore {
      * function `f` to the subject term.  In other words, the strategy runs
      * `f` for its side-effects.
      */
-    def queryf[T] (f : Any => T) : Strategy =
-        macro RewriterCoreMacros.queryfMacro[T]
+    def queryf (f : Any => Unit) : Strategy =
+        macro RewriterCoreMacros.queryfMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def queryf[T] (name : String, f : Any => T) : Strategy =
+    def queryf (name : String, f : Any => Unit) : Strategy =
         mkStrategy (name,
             t => {
                 f (t)

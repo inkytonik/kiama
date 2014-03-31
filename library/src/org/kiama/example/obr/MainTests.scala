@@ -89,7 +89,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      */
     def checkintdatums (expected : Seq[Int]) (title : String, emitter : Emitter, code : RISCTree) {
         val realised = Seq.newBuilder[Int]
-        bottomup (query[RISCTree,Unit] {
+        bottomup (query[RISCTree] {
             case IntDatum(num) =>
                 realised += num
             case n : RISCProg  =>
