@@ -49,8 +49,8 @@ libraryDependencies in ThisBuild ++= Seq (
     // REPLs:
     "jline" % "jline" % "2.11",
     // Testing:
-    "org.scalacheck" %% "scalacheck" % "1.10.1" % "test",
-    "org.scalatest" %% "scalatest" % "2.0" % "test"
+    "org.scalacheck" %% "scalacheck" % "1.11.3" % "test",
+    "org.scalatest" %% "scalatest" % "2.1.2" % "test"
 )
 
 // Migration manager (mima)
