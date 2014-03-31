@@ -100,7 +100,7 @@ object RewriterCoreMacros {
     def strategyfMacro (c : Context) (f : c.Expr[Any => Option[Any]]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def termMacro[T] (c : Context) (t : T) : c.Expr[Strategy] =
+    def termMacro[T] (c : Context) (t : c.Expr[T]) : c.Expr[Strategy] =
         makeCallWithName (c, "this.termWithName")
 
     // Macros for the library combinators
