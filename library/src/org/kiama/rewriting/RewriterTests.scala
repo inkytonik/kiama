@@ -1881,4 +1881,38 @@ class RewriterTests extends Tests with Generator {
         assertResult ("mystrategy2") (mystrategy2.name)
     }
 
+    // Compilation tests
+
+    test ("rule that takes a basic type and returns the wrong basic type doesn't compile") {
+        assertTypeError ("rule[Int] { case i : Int => 3.5 }")
+    }
+
+    test ("rule that takes a reference type and returns the wrong reference type doesn't compile") {
+        assertTypeError ("rule[Num] { case Num (i) => Var (\"i\") }")
+    }
+
+    test ("rule that takes a reference type and returns a basic type doesn't compile") {
+        assertTypeError ("rule[Num] { case Num (i) => i }")
+    }
+
+    test ("rule that takes a basic type and returns a reference type doesn't compile") {
+        assertTypeError ("rule[Int] { case i => Num (i) }")
+    }
+
+    test ("strategy that takes a basic type and returns the wrong basic type doesn't compile") {
+        assertTypeError ("strategy[Int] { case i : Int => Some (3.5) }")
+    }
+
+    test ("strategy that takes a reference type and returns the wrong reference type doesn't compile") {
+        assertTypeError ("strategy[Num] { case Num (i) => Some (Var (\"i\")) }")
+    }
+
+    test ("strategy that takes a reference type and returns a basic type doesn't compile") {
+        assertTypeError ("strategy[Num] { case Num (i) => Some (i) }")
+    }
+
+    test ("strategy that takes a basic type and returns a reference type doesn't compile") {
+        assertTypeError ("strategy[Int] { case i => Some (Num (i)) }")
+    }
+
 }
