@@ -47,7 +47,7 @@ trait ParLazyUpdate extends ParLazy {
      * Update variable bindings using a given evaluation strategy.
      */
     def update (eval : Strategy) : Strategy =
-        rulefs {
+        rulefs[Letp] {
             case Letp (ds1, v @ Var (x)) =>
                 option (eval (Letp (ds1, v))) <* rule[Letp] {
                     case Letp (ds2, e) => Letp (Bind (x, e) +: ds2, e)

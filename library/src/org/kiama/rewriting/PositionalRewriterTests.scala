@@ -65,7 +65,7 @@ class PositionalRewriterTests extends Tests {
     }
 
     test ("positional rewriting with positions and strategy works") {
-        val r = everywhere (strategy {
+        val r = everywhere (strategy[Leaf] {
                     case Leaf (i) => Some (Leaf (i + 1))
                 })
         val no = rewrite (r) (o)
@@ -78,7 +78,7 @@ class PositionalRewriterTests extends Tests {
     }
 
     test ("positional rewriting with positions and rulefs works") {
-        val r = everywhere (rulefs {
+        val r = everywhere (rulefs[Leaf] {
                     case Leaf (i) => build (Leaf (i + 1))
                 })
         val no = rewrite (r) (o)
@@ -167,7 +167,7 @@ class PositionedRewriterTests extends Tests {
     }
 
     test ("positioned rewriting with positions and strategy works") {
-        val r = everywhere (strategy {
+        val r = everywhere (strategy[Leaf] {
                     case Leaf (i) => Some (Leaf (i + 1))
                 })
         val no = rewrite (r) (o)
@@ -180,7 +180,7 @@ class PositionedRewriterTests extends Tests {
     }
 
     test ("positioned rewriting with positions and rulefs works") {
-        val r = everywhere (rulefs {
+        val r = everywhere (rulefs[Leaf] {
                     case Leaf (i) => build (Leaf (i + 1))
                 })
         val no = rewrite (r) (o)

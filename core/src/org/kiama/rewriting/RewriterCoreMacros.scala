@@ -73,8 +73,8 @@ object RewriterCoreMacros {
     def optionMacro (c : Context) (o : c.Expr[Option[Any]]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def queryMacro[T] (c : Context) (f : c.Expr[Any ==> T]) : c.Expr[Strategy] =
-        makeCallWithName (c)
+    def queryMacro[T,U] (c : Context) (f : c.Expr[T ==> U]) : c.Expr[Strategy] =
+        makeCallWithName (c, "this.queryWithName")
 
     def queryfMacro[T] (c : Context) (f : c.Expr[Any => T]) : c.Expr[Strategy] =
         makeCallWithName (c)
@@ -85,8 +85,8 @@ object RewriterCoreMacros {
     def rulefMacro (c : Context) (f : c.Expr[Any => Any]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def rulefsMacro (c : Context) (f : c.Expr[Any ==> Strategy]) : c.Expr[Strategy] =
-        makeCallWithName (c)
+    def rulefsMacro[T] (c : Context) (f : c.Expr[T ==> Strategy]) : c.Expr[Strategy] =
+        makeCallWithName (c, "this.rulefsWithName")
 
     def seqMacro (c : Context) (q : c.Expr[Strategy]) : c.Expr[Strategy] =
         makeThisCallWithName (c)
@@ -94,8 +94,8 @@ object RewriterCoreMacros {
     def someMacro (c : Context) (s : c.Expr[Strategy]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def strategyMacro (c : Context) (f : c.Expr[Any ==> Option[Any]]) : c.Expr[Strategy] =
-        makeCallWithName (c)
+    def strategyMacro[T] (c : Context) (f : c.Expr[T ==> Option[T]]) : c.Expr[Strategy] =
+        makeCallWithName (c, "this.strategyWithName")
 
     def strategyfMacro (c : Context) (f : c.Expr[Any => Option[Any]]) : c.Expr[Strategy] =
         makeCallWithName (c)

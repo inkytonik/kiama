@@ -52,7 +52,7 @@ class UniplateTests extends Tests with Generator {
          */
         def variables (e : Exp) : Set[String] = {
             var vars = Set[String]()
-            everywhere (query { case Var (s) => vars += s }) (e)
+            everywhere (query[Var,Unit] { case Var (s) => vars += s }) (e)
             vars
         }
         check ((e : Exp) => variables (e) == e.vars)

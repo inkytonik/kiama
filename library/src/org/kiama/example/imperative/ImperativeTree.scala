@@ -194,62 +194,62 @@ object ImperativeTree {
     // Congruences
 
     def Num (s1 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Num =>
+        rulefs[Num] {
+            case _ =>
                 congruence (s1)
         }
 
     def Var (s1 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Var =>
+        rulefs[Var] {
+            case _ =>
                 congruence (s1)
         }
 
     def Neg (s1 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Var =>
+        rulefs[Var] {
+            case _ =>
                 congruence (s1)
         }
 
     def Add (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Add =>
+        rulefs[Add] {
+            case _ =>
                 congruence (s1, s2)
         }
 
     def Sub (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Sub =>
+        rulefs[Sub] {
+            case _ =>
                 congruence (s1, s2)
         }
 
     def Mul (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Mul =>
+        rulefs[Mul] {
+            case _ =>
                 congruence (s1, s2)
         }
 
     def Div (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Div =>
+        rulefs[Div] {
+            case _ =>
                 congruence (s1, s2)
         }
 
     def Seqn (s1 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Seqn =>
+        rulefs[Seqn] {
+            case _ =>
                 congruence (s1)
         }
 
     def Asgn (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Asgn =>
+        rulefs[Asgn] {
+            case _ =>
                 congruence (s1, s2)
         }
 
     def While (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : While =>
+        rulefs[While] {
+            case _ =>
                 congruence (s1, s2)
         }
 

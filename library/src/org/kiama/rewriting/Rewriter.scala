@@ -280,8 +280,9 @@ trait Rewriter extends RewriterCore {
      * if `x` is a sub-term of `y`.
      */
     val issubterm : Strategy =
-        strategy ("issubterm", {
-            case (x : Any, y : Any) => where (oncetd (term (x))) (y)
+        mkStrategy ("issubterm", {
+            case (x, y) =>
+                where (oncetd (term (x))) (y)
         })
 
     /**
@@ -289,8 +290,9 @@ trait Rewriter extends RewriterCore {
      * if `x` is a superterm of `y`.
      */
     val issuperterm : Strategy =
-        strategy ("issuperterm", {
-            case (x, y) => issubterm ((y, x))
+        mkStrategy ("issuperterm", {
+            case (x, y) =>
+                issubterm ((y, x))
         })
 
     /**
@@ -376,7 +378,7 @@ trait Rewriter extends RewriterCore {
      * @see RewriterCore.map
      */
     def map (name : String, s : Strategy) : Strategy =
-        strategy (name, {
+        strategyWithName[Seq[_]] (name, {
             case l : Seq[_] =>
                 allTraversable[Seq] (s, l)
         })

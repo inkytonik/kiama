@@ -43,6 +43,20 @@ trait RewriterCore {
             val body = f
         }
 
+    /**
+     * Is the function `anyf` defined at the domain value `t`? Allows for case
+     * that `anyf` may actually have a more specific domain and `t` may not be
+     * of the domain type. Relies on implementation that does a cast at the
+     * beginning of the `apply` for a partial function literal.
+     */
+    def isDefinedAtArg[T] (anyf : Any ==> T, t : Any) : Boolean =
+        try {
+            anyf isDefinedAt t
+        } catch {
+            case _ : ClassCastException =>
+                false
+        }
+
     // Builder combinators.
 
     /**
@@ -216,23 +230,30 @@ trait RewriterCore {
      * Define a term query by a partial function `f`. The query always succeeds
      * with no effect on the subject term but applies the given partial function
      * `f` to the subject term.  In other words, the strategy runs `f` for its
-     * side-effects.
+     * side-effects. If the subject term is not a `T` or the function is not
+     * defined at the subject term, the strategy fails.
+     *
+     * Due to the type erasure performed on Scala programs the type test
+     * will be imprecise for some types. E.g., it is not possible to tell
+     * the difference between `List[Int]` and `List[String]`.
      */
-    def query[T] (f : Any ==> T) : Strategy =
-        macro RewriterCoreMacros.queryMacro[T]
+    def query[T,U] (f : T ==> U) : Strategy =
+        macro RewriterCoreMacros.queryMacro[T,U]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def query[T] (name : String, f : Any ==> T) : Strategy =
+    def queryWithName[T,U] (name : String, f : T ==> U) : Strategy =
         mkStrategy (name,
-            t => {
-                if (f isDefinedAt t)
-                    f (t)
-                Some (t)
-            }
-        )
+            (t : Any) => {
+                val anyf = f.asInstanceOf[Any ==> Any]
+                if (isDefinedAtArg (anyf, t)) {
+                    anyf (t)
+                    Some (t)
+                } else
+                    None
+            })
 
     /**
      * Define a term query by a function `f`. The query always succeeds with
@@ -257,9 +278,9 @@ trait RewriterCore {
 
     /**
      * Define a rewrite rule using a partial function `f` defined on the type
-     * `T`. If the current term is a `T` and the function is defined at the
-     * current term, then the strategy succeeds with the return value of the
-     * function applied to the current term. Otherwise, the strategy fails.
+     * `T`. If the subject term is a `T` and the function is defined at the
+     * subject term, then the strategy succeeds with the return value of the
+     * function applied to the subject term. Otherwise, the strategy fails.
      *
      * Due to the type erasure performed on Scala programs the type test
      * will be imprecise for some types. E.g., it is not possible to tell
@@ -271,24 +292,15 @@ trait RewriterCore {
     /**
      * As for `rule` but specifies the name for the constructed strategy.
      */
-    def ruleWithName[T] (name : String, f : T ==> T) : Strategy = {
-        val anyf = f.asInstanceOf[Any ==> T]
+    def ruleWithName[T] (name : String, f : T ==> T) : Strategy =
         mkStrategy (name,
-            t => {
-                val isDefinedAtArg =
-                    try {
-                        anyf isDefinedAt t
-                    } catch {
-                        case _ : ClassCastException =>
-                            false
-                    }
-                if (isDefinedAtArg)
+            (t : Any) => {
+                val anyf = f.asInstanceOf[Any ==> Any]
+                if (isDefinedAtArg (anyf, t))
                     Some (anyf (t))
                 else
                     None
-            }
-        )
-    }
+            })
 
     /**
      * Define a rewrite rule using a function `f` that returns a term.
@@ -305,50 +317,58 @@ trait RewriterCore {
         strategyf (name, t => Some (f (t)))
 
     /**
-     * Define a rewrite rule using a function `f` that returns a strategy.  The
-     * rule applies the function to the subject term to get a strategy which
-     * is then applied again to the subject term. In other words, the function
-     * is only used for effects such as pattern matching.  The whole thing also
-     * fails if `f` is not defined at the term in the first place.
+     * Define a rewrite rule using a function `f` defined on type `T` that returns
+     * a strategy. If the subject term is a `T` and the function is defined at the
+     * subject term, the rule applies the function to the subject term to get a
+     * strategy which is then applied again to the subject term. In other words,
+     * the function is only used for effects such as pattern matching.  The whole
+     * thing also fails if `f` is not defined at the term in the first place.
      */
-    def rulefs (f : Any ==> Strategy) : Strategy =
-        macro RewriterCoreMacros.rulefsMacro
+    def rulefs[T] (f : T ==> Strategy) : Strategy =
+        macro RewriterCoreMacros.rulefsMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def rulefs (name : String, f : Any ==> Strategy) : Strategy =
+    def rulefsWithName[T] (name : String, f : T ==> Strategy) : Strategy =
         mkStrategy (name,
-            t =>
-                if (f isDefinedAt t)
-                    (f (t)) (t)
+            (t : Any) => {
+                val anyf = f.asInstanceOf[Any ==> Strategy]
+                if (isDefinedAtArg (anyf, t))
+                    (anyf (t)) (t)
                 else
                     None
-        )
+            })
 
     /**
-     * Make a strategy from a partial function `f`. If the function is
-     * defined at the current term, then the function return value
-     * when applied to the current term determines whether the strategy
-     * succeeds or fails. If the function is not defined at the current
-     * term, the strategy fails.
+     * Make a strategy from a partial function `f` defined on the type `T`.
+     * If the subject term is a `T` and the function is defined at the
+     * subject term, then the function return value when applied to the
+     * subject term determines whether the strategy succeeds or fails.
+     * If the subject term is not a `T` or the function is not defined at
+     * the subject term, the strategy fails.
+     *
+     * Due to the type erasure performed on Scala programs the type test
+     * will be imprecise for some types. E.g., it is not possible to tell
+     * the difference between `List[Int]` and `List[String]`.
      */
-    def strategy (f : Any ==> Option[Any]) : Strategy =
-        macro RewriterCoreMacros.strategyMacro
+    def strategy[T] (f : T ==> Option[T]) : Strategy =
+        macro RewriterCoreMacros.strategyMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def strategy (name : String, f : Any ==> Option[Any]) : Strategy =
+    def strategyWithName[T] (name : String, f : T ==> Option[T]) : Strategy =
         mkStrategy (name,
-            t =>
-                if (f isDefinedAt t)
-                    f (t)
+            (t : Any) => {
+                val anyf = f.asInstanceOf[Any ==> Option[Any]]
+                if (isDefinedAtArg (anyf, t))
+                    anyf (t)
                 else
                     None
-        )
+            })
 
     /**
      * Make a strategy from a function `f`. The function return value
@@ -1092,7 +1112,7 @@ trait RewriterCore {
         macro RewriterCoreMacros.alltdfoldMacro
 
     /**
-     * `and(s1, s2)` applies `s1` and `s2` to the current
+     * `and(s1, s2)` applies `s1` and `s2` to the subject
      * term and succeeds if both succeed. `s2` will always
      * be applied, i.e., and is ''not'' a short-circuit
      * operator
@@ -1201,7 +1221,7 @@ trait RewriterCore {
     /**
      * Construct a strategy that applies `s` repeatedly to the innermost
      * (i.e., lowest and left-most) (sub-)term to which it applies.
-     * Stop with the current term if `s` doesn't apply anywhere.
+     * Stop with the subject term if `s` doesn't apply anywhere.
      */
     def innermost (s : Strategy) : Strategy =
         macro RewriterCoreMacros.innermostMacro
@@ -1230,14 +1250,14 @@ trait RewriterCore {
 
     /**
      * Construct a strategy that applies to all of the leaves of the
-     * current term, using `isleaf` as the leaf predicate.
+     * subject term, using `isleaf` as the leaf predicate.
      */
     def leaves (s : Strategy, isleaf : Strategy) : Strategy =
         macro RewriterCoreMacros.leavesMacro1
 
     /**
      * Construct a strategy that applies to all of the leaves of the
-     * current term, using `isleaf` as the leaf predicate, skipping
+     * subject term, using `isleaf` as the leaf predicate, skipping
      * subterms for which `skip` when applied to the result succeeds.
      */
     def leaves (s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy =

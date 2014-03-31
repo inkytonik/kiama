@@ -270,7 +270,7 @@ class RewriterTests extends Tests with Generator {
 
         // Single step passing
         val twotothree = rule[Num] { case Num (2) => Num (3) }
-        val pass = rulefs { case Num (2) => twotothree }
+        val pass = rulefs[Num] { case Num (2) => twotothree }
         val passtd = everywhere (pass)
         assertResult (Some (Mul (Num (3), (Num (5))))) ((passtd) (e1))
         assertResult (Some (Add (Num (4), (Num (5))))) ((passtd) (e2))

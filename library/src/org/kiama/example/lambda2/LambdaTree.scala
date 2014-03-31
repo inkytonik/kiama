@@ -137,44 +137,44 @@ object LambdaTree {
     // Congruences
 
     def Var (s1 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Var =>
+        rulefs[Var] {
+            case _ =>
                 congruence (s1)
         }
 
     def App (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : App =>
+        rulefs[App] {
+            case _ =>
                 congruence (s1, s2)
         }
 
     def Lam (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Lam =>
+        rulefs[Lam] {
+            case _ =>
                 congruence (s1, s2, s3)
         }
 
     def Let (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy, s4 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Let =>
+        rulefs[Let] {
+            case _ =>
                 congruence (s1, s2, s3, s4)
         }
 
     def Opn (s1 : => Strategy, s2 : => Strategy, s3 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Opn =>
+        rulefs[Opn] {
+            case _ =>
                 congruence (s1, s2, s3)
         }
 
     def Letp (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Letp =>
+        rulefs[Letp] {
+            case _ =>
                 congruence (s1, s2)
         }
 
     def Bind (s1 : => Strategy, s2 : => Strategy) : Strategy =
-        rulefs {
-            case _ : Bind =>
+        rulefs[Bind] {
+            case _ =>
                 congruence (s1, s2)
         }
 

@@ -66,11 +66,11 @@ trait CallbackRewriter extends Rewriter {
     override def rulef (n : String, f : Any => Any) : Strategy =
         dispatch (n, super.rulef (n, f))
 
-    override def rulefs (n : String, f : Any ==> Strategy) : Strategy =
-        dispatch (n, super.rulefs (n, f))
+    override def rulefsWithName[T] (n : String, f : T ==> Strategy) : Strategy =
+        dispatch (n, super.rulefsWithName[T] (n, f))
 
-    override def strategy (n : String, f : Any ==> Option[Any]) : Strategy =
-        dispatch (n, super.strategy (n, f))
+    override def strategyWithName[T] (n : String, f : T ==> Option[T]) : Strategy =
+        dispatch (n, super.strategyWithName (n, f))
 
     override def strategyf (n : String, f : Any => Option[Any]) : Strategy =
         dispatch (n, super.strategyf (n, f))
