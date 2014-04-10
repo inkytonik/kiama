@@ -31,8 +31,9 @@ import org.kiama.util.Compiler
 trait Driver extends SyntaxAnalyser with Compiler[Program] {
 
     import CodeGenerator.generate
+    import PrettyPrinter.{pretty, pretty_any}
     import Translator.translate
-    import org.kiama.output.PrettyPrinter.pretty_any
+    import org.kiama.output.PrettyPrinter
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
 
@@ -71,7 +72,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
             val targettree = translate (ast, filename, analyser)
 
             // Pretty print the target tree
-            // config.emitter.emitln (pretty_any (targettree))
+            // config.output.emitln (pretty_any (targettree))
 
             // Output code for the target tree
             targettree.map (generate (isTest, _, config.output))
@@ -79,6 +80,12 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
         }
 
     }
+
+    /**
+     * Pretty printer to use to print minijava ASTs.
+     */
+    override def prettyprint (ast : Program) : String =
+        pretty (ast)
 
 }
 
