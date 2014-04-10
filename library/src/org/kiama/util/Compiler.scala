@@ -125,6 +125,12 @@ trait CompilerBase[T, C <: Config] extends Profiler {
         // Do nothing
     }
 
+    /**
+     * Pretty-print an abstract syntax trees. Default: return an empty string.
+     */
+    def prettyprint (ast : T) : String =
+        ""
+
 }
 
 /**
