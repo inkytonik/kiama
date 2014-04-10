@@ -22,13 +22,14 @@ package org.kiama
 package example.picojava
 
 import PicoJavaTree.Program
-import org.kiama.util.{CompilerWithConfig, Config, Emitter}
+import org.kiama.util.{CompilerWithConfig, Config, Emitter, ErrorEmitter,
+    OutputEmitter}
 import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Picojava compiler.
  */
-class PicojavaConfig (args : Seq[String], emitter : Emitter) extends Config (args, emitter) {
+class PicojavaConfig (args : Seq[String], output : Emitter, error : Emitter) extends Config (args, output, error) {
     val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
 }
 
@@ -39,8 +40,10 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
     import PrettyPrinter.pretty
     import org.kiama.util.Config
 
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : PicojavaConfig =
-        new PicojavaConfig (args, emitter)
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : PicojavaConfig =
+        new PicojavaConfig (args, output, error)
 
     /**
      * Process a picoJava program by checking for errors, optionally obfuscating and
@@ -53,8 +56,8 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
         program->errors
 
         if (config.obfuscate ()) {
-            config.emitter.emitln (pretty (program))
-            config.emitter.emitln (pretty (obfuscate (program)))
+            config.output.emitln (pretty (program))
+            config.output.emitln (pretty (obfuscate (program)))
         }
 
     }

@@ -39,8 +39,8 @@ object Imperative extends ParsingREPL[Stmt] with SyntaxAnalyser {
 
     override def process (s : Stmt, config : REPLConfig) {
         super.process (s, config)
-        config.emitter.emitln (s)
-        config.emitter.emitln (pretty (s))
+        config.output.emitln (s)
+        config.output.emitln (pretty (s))
     }
 
 }

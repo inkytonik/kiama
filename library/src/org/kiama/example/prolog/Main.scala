@@ -29,7 +29,7 @@ import scala.collection.immutable.Seq
 /**
  * Configuration for the Prolog REPL.
  */
-class PrologConfig (args : Seq[String], emitter : Emitter) extends REPLConfig (args, emitter) {
+class PrologConfig (args : Seq[String], output : Emitter, error : Emitter) extends REPLConfig (args, output, error) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
@@ -76,13 +76,15 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
     import java.io.FileNotFoundException
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.util.Messaging.report
-    import org.kiama.util.StringEmitter
+    import org.kiama.util.{Emitter, ErrorEmitter, OutputEmitter, StringEmitter}
     import PrologTree.Program
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : PrologConfig =
-        new PrologConfig (args, emitter)
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : PrologConfig =
+        new PrologConfig (args, output, error)
 
     /**
      * Helper function to create the database from the given filename or return
@@ -96,7 +98,7 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
                 // If parse worked, we get a source tree, check it
                 case Success (dbtree, _) =>
                     // Pretty print the source tree
-                    // emitter.emitln (pretty (product (dbtree)))
+                    // cnofig.error.emitln (pretty (product (dbtree)))
                     val analyser = new SemanticAnalyser
                     initTree (dbtree)
                     val messages = analyser.errors (dbtree)
@@ -136,7 +138,7 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
      * Process a query by passing it and the program to the interpreter.
      */
     override def process (querytree : Literal, config : PrologConfig) {
-        interpreter.interpret (querytree, config.database (), config.emitter)
+        interpreter.interpret (querytree, config.database (), config.output)
     }
 
 }

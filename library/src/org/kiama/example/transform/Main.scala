@@ -37,7 +37,7 @@ class Driver extends Parser with Compiler[Program] {
         super.process (filename, program, config)
 
         // Print original program and obtain "no priority" expression
-        config.emitter.emitln (program)
+        config.output.emitln (program)
         val expr = program.expr
 
         // Check for semantic errors on the original expression.  This
@@ -47,11 +47,11 @@ class Driver extends Parser with Compiler[Program] {
         val messages = analyser.errors (expr)
 
         // For testing, print the priority-correct representation
-        config.emitter.emitln (analyser.ast (expr))
+        config.output.emitln (analyser.ast (expr))
 
         // Report any semantic errors
         if (messages.length > 0)
-            report (messages, config.emitter)
+            report (messages, config.error)
 
     }
 

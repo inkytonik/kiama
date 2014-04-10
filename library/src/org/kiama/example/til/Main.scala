@@ -32,10 +32,8 @@ trait ParsingMain extends Compiler[Program] {
 
     import org.kiama.util.Emitter
 
-    val emitter = new Emitter
-
     override def process (filename : String, ast : Program, config : Config) {
-        emitter.emitln (ast)
+        config.output.emitln (ast)
     }
 
 }

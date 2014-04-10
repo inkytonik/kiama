@@ -63,7 +63,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
         // Report any messages that were produced
         if (messages.length > 0) {
 
-            report (messages, config.emitter)
+            report (messages, config.error)
 
         } else {
 
@@ -74,7 +74,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
             // config.emitter.emitln (pretty_any (targettree))
 
             // Output code for the target tree
-            targettree.map (generate (isTest, _, config.emitter))
+            targettree.map (generate (isTest, _, config.output))
 
         }
 

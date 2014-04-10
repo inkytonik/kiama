@@ -22,13 +22,14 @@ package org.kiama
 package example.lambda2
 
 import LambdaTree.Exp
-import org.kiama.util.{Emitter, ParsingREPLWithConfig, REPLConfig}
+import org.kiama.util.{Emitter, ErrorEmitter, OutputEmitter,
+    ParsingREPLWithConfig, REPLConfig}
 import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Lambda REPL.
  */
-class LambdaConfig (args : Seq[String], emitter : Emitter) extends REPLConfig (args, emitter) {
+class LambdaConfig (args : Seq[String], output : Emitter, error : Emitter) extends REPLConfig (args, output, error) {
     val mechanism = opt[String] ("mechanism", descr = "Evaluation mechanism",
                                  default = Some ("reduce"))
 }
@@ -48,8 +49,10 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging.report
 
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : LambdaConfig =
-        new LambdaConfig (args, emitter)
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : LambdaConfig =
+        new LambdaConfig (args, output, error)
 
     val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 
@@ -60,14 +63,14 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
      */
     override def processline (line : String, config : LambdaConfig) : LambdaConfig = {
 
-        // Shorthand access to the emitter
-        val emitter = config.emitter
+        // Shorthand access to the output emitter
+        val output = config.output
 
         /**
          * Print help about the available commands.
          */
         def help {
-            config.emitter.emitln ("""exp                  print the result of evaluating exp
+            config.output.emitln ("""exp                  print the result of evaluating exp
                 |:eval                list the available evaluation mechanisms
                 |:eval <mechanism>    change to using <mechanism> to evaluate""".stripMargin)
         }
@@ -77,20 +80,20 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
                 help
 
             case Command (Seq (":eval")) =>
-                emitter.emitln ("Available evaluation mechanisms:")
+                output.emitln ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
-                    emitter.emit (s"  $mech")
+                    output.emit (s"  $mech")
                     if (mech == config.mechanism ())
-                        emitter.emitln (" (current)")
+                        output.emitln (" (current)")
                     else
-                        emitter.emitln
+                        output.emitln
                 }
 
             case Command (Seq (":eval", mech)) =>
                 if (mechanisms contains mech)
-                    return createConfig (Seq ("-m", mech), emitter)
+                    return createConfig (Seq ("-m", mech), output)
                 else
-                    emitter.emitln (s"unknown evaluation mechanism: $mech")
+                    output.emitln (s"unknown evaluation mechanism: $mech")
 
             // Otherwise it's an expression for evaluation
             case _ =>
@@ -125,10 +128,10 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
         if (messages.length == 0) {
             // If everything is OK, evaluate the expression
             val evaluator = evaluatorFor (config.mechanism ())
-            config.emitter.emitln (pretty (evaluator.eval (e)))
+            config.output.emitln (pretty (evaluator.eval (e)))
         } else {
             // Otherwise report the errors and reset for next expression
-            report (messages, config.emitter)
+            report (messages, config.error)
         }
     }
 

@@ -111,9 +111,9 @@ object Messaging {
 
     /**
      * Output the messages in order of position using the given emitter, which
-     * defaults to standard output.
+     * defaults to standard error.
      */
-    def report (messages : Messages, emitter : Emitter = new Emitter) {
+    def report (messages : Messages, emitter : Emitter = new ErrorEmitter) {
         sortmessages (messages).map (msg => emitter.emitln (msg.format))
     }
 

@@ -22,7 +22,8 @@ package org.kiama
 package example.oberon0
 package base
 
-import org.kiama.util.{CompilerBase, Emitter, TestCompilerWithConfig, Tests}
+import org.kiama.util.{CompilerBase, Emitter, ErrorEmitter, OutputEmitter,
+    TestCompilerWithConfig, Tests}
 import scala.util.parsing.combinator.RegexParsers
 import source.ModuleDecl
 
@@ -130,7 +131,9 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
     /**
      * In the test configuration we pretty print the source and C ASTs by default.
      */
-    override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : Oberon0Config =
-        new Oberon0Config (args, emitter, true)
+    override def createConfig (args : Seq[String],
+                               output : Emitter = new OutputEmitter,
+                               error : Emitter = new ErrorEmitter) : Oberon0Config =
+        new Oberon0Config (args, output, error, true)
 
 }

@@ -48,7 +48,9 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : C
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : C
 
     /**
      * Driver for this REPL. First, use the argument list to create a
@@ -60,7 +62,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      */
     def driver (args : Seq[String]) {
         val config = createConfig (args)
-        config.emitter.emitln (banner)
+        config.output.emitln (banner)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
             profile (processlines (config), dimensions, config.logging ())
@@ -83,7 +85,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
     final def processlines (config : C) {
         val line = config.console ().readLine (prompt)
         if (line == null) {
-            config.emitter.emitln
+            config.output.emitln
         } else if (config.processWhitespaceLines () || (line.trim.length != 0))
             processlines (processline (line, config))
     }
@@ -101,8 +103,10 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
  */
 trait REPL extends REPLBase[REPLConfig] {
 
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : REPLConfig =
-        new REPLConfig (args, emitter)
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : REPLConfig =
+        new REPLConfig (args, output, error)
 
 }
 
@@ -124,9 +128,9 @@ trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] wi
             case Success (e, in) if in.atEnd =>
                 process (e, config)
             case Success (_, in) =>
-                config.emitter.emitln (s"extraneous input at ${in.pos}")
+                config.error.emitln (s"extraneous input at ${in.pos}")
             case f =>
-                config.emitter.emitln (f)
+                config.error.emitln (f)
         }
         config
     }
@@ -157,7 +161,9 @@ trait ParsingREPLWithConfig[T <: Attributable, C <: REPLConfig] extends ParsingR
  */
 trait ParsingREPL[T <: Attributable] extends ParsingREPLWithConfig[T,REPLConfig] {
 
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : REPLConfig =
-        new REPLConfig (args, emitter)
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : REPLConfig =
+        new REPLConfig (args, output, error)
 
 }

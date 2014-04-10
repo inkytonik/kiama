@@ -229,7 +229,7 @@ object Lambda extends ParsingREPL[LambdaTree.Query[_]] with SyntaxAnalyser {
 
     override def process (q : LambdaTree.Query[_], config : REPLConfig) {
         super.process (q, config)
-        config.emitter.emitln (evaluator.execute (q))
+        config.output.emitln (evaluator.execute (q))
     }
 
 }

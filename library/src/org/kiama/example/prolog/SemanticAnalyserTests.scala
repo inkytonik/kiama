@@ -49,7 +49,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with Compiler[Program]
         val analyser = new SemanticAnalyser
         val messages = analyser.errors (ast)
         if (messages.length > 0)
-            report (messages, config.emitter)
+            report (messages, config.error)
     }
 
 }

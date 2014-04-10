@@ -39,10 +39,10 @@ class Driver extends SyntaxAnalyser with Compiler[JValue] {
         super.process (filename, ast, config)
 
         // Pretty-print tree as a product value
-        config.emitter.emitln (pretty_any (ast))
+        config.output.emitln (pretty_any (ast))
 
         // Pretty-print tree as a JSON value
-        config.emitter.emitln (pretty (ast))
+        config.output.emitln (pretty (ast))
 
     }
 

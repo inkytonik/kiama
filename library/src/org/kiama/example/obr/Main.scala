@@ -25,13 +25,13 @@ package example.obr
 import ObrTree.ObrInt
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.util.{Console, CompilerWithConfig, Config, Emitter,
-    JLineConsole}
+    ErrorEmitter, JLineConsole, OutputEmitter}
 import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Obr compiler.
  */
-class ObrConfig (args : Seq[String], emitter : Emitter) extends Config (args, emitter) {
+class ObrConfig (args : Seq[String], output : Emitter, error : Emitter) extends Config (args, output, error) {
     val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
     val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
     val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
@@ -48,8 +48,10 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging.report
 
-    override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : ObrConfig =
-        new ObrConfig (args, emitter)
+    override def createConfig (args : Seq[String],
+                               output : Emitter = new OutputEmitter,
+                               error : Emitter = new ErrorEmitter) : ObrConfig =
+        new ObrConfig (args, output, error)
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
@@ -63,11 +65,11 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
         val analyser = new SemanticAnalyser
         val messages = analyser.errors (ast)
         if (messages.length > 0) {
-            report (messages, config.emitter)
+            report (messages, config.error)
         } else {
             // Print out final environment
             if (config.envPrint ()) {
-                config.emitter.emitln (analyser.env (ast))
+                config.output.emitln (analyser.env (ast))
             }
 
             // Compile the source tree to a target tree
@@ -77,7 +79,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
 
             // Print out the target tree for debugging
             if (config.targetPrint ()) {
-                config.emitter.emitln (targettree)
+                config.output.emitln (targettree)
             }
 
             // Encode the target tree and emit the assembler or run if requested
@@ -85,12 +87,12 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
             encoder.encode (targettree)
 
             if (config.riscPrint ()) {
-                RISCISA.prettyprint (config.emitter, encoder.getassem)
+                RISCISA.prettyprint (config.output, encoder.getassem)
             }
 
             if (config.execute ()) {
                 val code = encoder.getcode
-                val machine = new RISC (code, config.console (), config.emitter)
+                val machine = new RISC (code, config.console (), config.output)
                 machine.run
             }
         }
@@ -110,7 +112,7 @@ object Main extends Driver
 class ParserDriver extends Driver {
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {
-        config.emitter.emitln (ast.toString)
+        config.output.emitln (ast.toString)
     }
 
 }
@@ -132,7 +134,7 @@ class SemanticDriver extends Driver {
         initTree (ast)
         val messages = analyser.errors (ast)
         if (messages.length > 0)
-            report (messages, config.emitter)
+            report (messages, config.error)
 
     }
 

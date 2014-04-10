@@ -37,8 +37,10 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Generating REPLs insist on processing whitespace.
      */
-    override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : REPLConfig =
-        super.createConfig ("-w" +: args, emitter)
+    override def createConfig (args : Seq[String],
+                               output : Emitter = new OutputEmitter,
+                               error : Emitter = new ErrorEmitter) : REPLConfig =
+        super.createConfig ("-w" +: args, output, error)
 
     /**
      * The generator to use to make values of type T.
@@ -52,7 +54,7 @@ trait GeneratingREPLBase[T] extends REPL {
     def processline (line : String, config : REPLConfig) : REPLConfig = {
         generator.arbitrary (Gen.Parameters.default) match {
             case Some (t) => process (t, config)
-            case None     => config.emitter.emitln ("can't generate an instance")
+            case None     => config.output.emitln ("can't generate an instance")
         }
         config
     }
@@ -61,7 +63,7 @@ trait GeneratingREPLBase[T] extends REPL {
      * Process a generated value.  Default: print it.
      */
     def process (t : T, config : REPLConfig) {
-        config.emitter.emitln (t)
+        config.output.emitln (t)
     }
 
 }

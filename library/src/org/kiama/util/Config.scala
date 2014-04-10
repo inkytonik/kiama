@@ -27,10 +27,13 @@ import scala.collection.immutable.Seq
 /**
  * Configurations for Kiama programs. `args` gives the command-line
  * arguments that are used to determine many of the configuration
- * settings. `emitter` allows the output target to be altered for
+ * settings. The emitters allow the output and errors targets to be
+ * altered for testing. `output` defaults to
+
+ `emitter` allows the output target to be altered for
  * purposes such as testing; it defaults to standard output.
  */
-class Config (args : Seq[String], val emitter : Emitter) extends ScallopConf (args) {
+class Config (args : Seq[String], val output : Emitter, val error : Emitter) extends ScallopConf (args) {
 
     import org.kiama.util.{FileConsole, JLineConsole, StringConsole}
     import org.rogach.scallop.{ArgType, ValueConverter}
@@ -94,12 +97,12 @@ class Config (args : Seq[String], val emitter : Emitter) extends ScallopConf (ar
 
     /**
      * Handle errors by printing them, then printing the help message, then
-     * exiting. All output is performed to the emitter.
+     * exiting. All output is performed to the errors emitter.
      */
     errorMessageHandler =
         (message : String) => {
-            emitter.emitln (s"Command-line error: $message")
-            emitter.emitln (builder.help)
+            error.emitln (s"Command-line error: $message")
+            error.emitln (builder.help)
             sys.exit (1)
         }
 
@@ -109,7 +112,7 @@ class Config (args : Seq[String], val emitter : Emitter) extends ScallopConf (ar
  * Configurations for Kiama REPLS. Adds some options to the default
  * set that all Kiama programs support.
  */
-class REPLConfig (args : Seq[String], emitter : Emitter) extends Config (args, emitter) {
+class REPLConfig (args : Seq[String], output : Emitter, error : Emitter) extends Config (args, output, error) {
 
     /**
      * Whitespace option. If set, pass input lines that are completely white space

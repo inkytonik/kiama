@@ -50,7 +50,9 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * Create the configuration for a particular run of the compiler.
      * If supplied, use `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : C
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : C
 
     /**
      * Driver for this compiler. First, use the argument list to create a
@@ -92,18 +94,17 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * the `encoding` method.
      */
     def processfile (filename : String, config : C) {
-        val emitter = config.emitter
         try {
             val reader = filereader (filename, encoding)
             makeast (reader, filename, config) match {
                 case Left (ast) =>
                     process (filename, ast, config)
                 case Right (msg) =>
-                    emitter.emitln (msg)
+                    config.error.emitln (msg)
             }
         } catch {
             case e : FileNotFoundException =>
-                emitter.emitln (e.getMessage)
+                config.error.emitln (e.getMessage)
         }
     }
 
@@ -169,7 +170,9 @@ trait CompilerWithConfig[T <: Attributable, C <: Config] extends CompilerBase[T,
  */
 trait Compiler[T <: Attributable] extends CompilerWithConfig[T,Config] {
 
-    def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : Config =
-        new Config (args, emitter)
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : Config =
+        new Config (args, output, error)
 
 }

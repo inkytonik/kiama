@@ -64,19 +64,19 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
                         initTree (ast)
                         val messages = analyser.errors (ast)
                         if (messages.length > 0) {
-                            report (messages, config.emitter)
+                            report (messages, config.error)
                             fail (s"$title emitted a semantic error.")
                         } else {
                             val transformer = new RISCTransformer (analyser)
-                            tester (title, config.emitter, transformer.code (ast))
+                            tester (title, config.error, transformer.code (ast))
                         }
                     case Right (msg) =>
-                        config.emitter.emitln (msg)
+                        config.error.emitln (msg)
                         fail (s"$title emitted a parse error.")
                 }
             } catch {
                 case e : FileNotFoundException =>
-                    config.emitter.emitln (e.getMessage)
+                    config.error.emitln (e.getMessage)
                     info (s"$title failed with an exception.")
                     throw (e)
             }

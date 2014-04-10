@@ -25,7 +25,8 @@ package base
 import source.ModuleDecl
 import org.kiama.attribution.Attribution.initTree
 import org.kiama.attribution.Attribution.resetMemo
-import org.kiama.util.{CompilerWithConfig, Config, Emitter}
+import org.kiama.util.{CompilerWithConfig, Config, Emitter, ErrorEmitter,
+    OutputEmitter}
 import org.kiama.output.PrettyPrinter
 import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
@@ -65,7 +66,7 @@ trait Driver {
  * of compiler share a configuration type, so some of these settings have no
  * effect for some of the drivers.
  */
-class Oberon0Config (args : Seq[String], emitter : Emitter, testPrettyPrint : Boolean = false) extends Config (args, emitter) {
+class Oberon0Config (args : Seq[String], output : Emitter, errors : Emitter, testPrettyPrint : Boolean = false) extends Config (args, output, errors) {
     val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
     val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
     val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
@@ -91,8 +92,10 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     import org.kiama.util.Messaging.{report, sortmessages}
     import org.kiama.util.IO.{filereader, FileNotFoundException}
 
-    override def createConfig (args : Seq[String], emitter : Emitter = new Emitter) : Oberon0Config =
-        new Oberon0Config (args, emitter)
+    override def createConfig (args : Seq[String],
+                               output : Emitter = new OutputEmitter,
+                               error : Emitter = new ErrorEmitter) : Oberon0Config =
+        new Oberon0Config (args, output, error)
 
     /**
      * Custom driver for section tagging and challenge mode for errors.  If
@@ -100,23 +103,23 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
      * standard output, otherwise send the message to the errors file.
      */
     override def processfile (filename : String, config : Oberon0Config) {
-        val emitter = config.emitter
         try {
+            val output = config.output
             val reader = filereader (filename)
             makeast (reader, filename, config) match {
                 case Left (ast) =>
                     process (filename, ast, config)
                 case Right (msg) =>
                     if (config.challenge ()) {
-                        section (emitter, "stdout")
-                        emitter.emitln ("parse failed")
+                        section (output, "stdout")
+                        output.emitln ("parse failed")
                     }
-                    section (emitter, "errors")
-                    emitter.emitln (msg)
+                    section (output, "errors")
+                    output.emitln (msg)
             }
         } catch {
             case e : FileNotFoundException =>
-                emitter.emitln (e.getMessage)
+                config.error.emitln (e.getMessage)
         }
     }
 
@@ -126,18 +129,18 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
      */
     override def process (filename : String, ast : ModuleDecl, config : Oberon0Config) {
 
-        val emitter = config.emitter
+        val output = config.output
 
         // Perform default processing
         super.process (filename, ast, config)
 
         if (config.astPrint ()) {
-            section (emitter, "ast")
-            emitter.emitln (pretty_any (ast))
+            section (output, "ast")
+            output.emitln (pretty_any (ast))
         }
         if (config.astPrettyPrint ()) {
-            section (emitter, "_pp.ob")
-            emitter.emitln (pretty (toDoc (ast)))
+            section (output, "_pp.ob")
+            output.emitln (pretty (toDoc (ast)))
         }
 
         // Perform semantic analysis
@@ -157,12 +160,12 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
             // line number of first error to standard output.  Make full report
             // to errors file.
             if (config.challenge ()) {
-                section (emitter, "stdout")
+                section (output, "stdout")
                 val line = sortmessages (messages).head.line
-                emitter.emitln (s"line $line")
+                output.emitln (s"line $line")
             }
-            section (emitter, "errors")
-            report (messages, emitter)
+            section (output, "errors")
+            report (messages, output)
 
         }
 
@@ -196,19 +199,19 @@ trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDe
      * Process the AST by transforming it.  Then apply higher-level transformations.
      */
     override def processast (ast : ModuleDecl, config : Oberon0Config) : ModuleDecl = {
-        val emitter = config.emitter
+        val output = config.output
         initialiseSemanticAnalysis
         val nast = transform (ast)
         if (config.intPrint ()) {
-            section (emitter, "iast")
-            emitter.emitln (pretty_any (nast))
+            section (output, "iast")
+            output.emitln (pretty_any (nast))
         }
         if (config.challenge ())
-            section (emitter, "_lifted.ob")
+            section (output, "_lifted.ob")
         else if (config.intPrettyPrint ())
-            section (emitter, "_ipp.ob")
+            section (output, "_ipp.ob")
         if (config.intPrettyPrint () || config.challenge ())
-            emitter.emitln (pretty (toDoc (nast)))
+            output.emitln (pretty (toDoc (nast)))
         initTree (nast)
         nast
     }
@@ -228,16 +231,16 @@ trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[Modul
      * Consume the AST by translating it to C.
      */
     override def consumeast (ast : ModuleDecl, config : Oberon0Config) {
-        val emitter = config.emitter
+        val output = config.output
         initialiseSemanticAnalysis
         val nast = translate (ast)
         if (config.cPrint ()) {
-            section (emitter, "cast")
-            emitter.emitln (pretty_any (nast))
+            section (output, "cast")
+            output.emitln (pretty_any (nast))
         }
         if (config.cPrettyPrint () || config.challenge ()) {
-            section (emitter, "c")
-            emitter.emitln (pretty (toDoc (nast)))
+            section (output, "c")
+            output.emitln (pretty (toDoc (nast)))
         }
     }
 

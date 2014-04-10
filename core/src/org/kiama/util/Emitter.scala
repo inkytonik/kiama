@@ -22,11 +22,39 @@ package org.kiama
 package util
 
 /**
- * Class of objects that can emit arbitrary output.  By default, the output
- * is sent to the standard output.  Subclass this if you need it to go
- * somewhere else.
+ * Class of objects that can emit text.
  */
-class Emitter {
+abstract class Emitter {
+
+    /**
+     * Emit `any`.
+     */
+    def emit (any : Any)
+
+    /**
+     * Emit `any` and start a new line.
+     */
+    def emitln (any : Any)
+
+    /**
+     * Emit a new line.
+     */
+    def emitln ()
+
+    /**
+     * Close this emitter. Default: do nothing.
+     */
+    def close () {
+    }
+
+}
+
+/**
+ * Class of objects that can emit arbitrary output.  The output is sent
+ * to standard output. Use an `ErrorEmitter` if your output is signalling
+ * errors, warnings, log messages or similar.
+ */
+class OutputEmitter extends Emitter {
 
     /**
      * Emit `any`.
@@ -49,10 +77,34 @@ class Emitter {
         println
     }
 
+}
+
+/**
+ * Class of objects that can emit arbitrary error-like text such as program
+ * errors, warnings or log messages.  The messages are sent to standard error.
+ * Use an `OutputEmitter` if you just want to output normal program output.
+ */
+class ErrorEmitter extends Emitter {
+
     /**
-     * Close this emitter. Default: do nothing.
+     * Emit `any`.
      */
-    def close () {
+    def emit (any : Any) {
+        print (any.toString)
+    }
+
+    /**
+     * Emit `any` and start a new line.
+     */
+    def emitln (any : Any) {
+        println (any.toString)
+    }
+
+    /**
+     * Emit a new line.
+     */
+    def emitln () {
+        println
     }
 
 }

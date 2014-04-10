@@ -22,18 +22,18 @@ package org.kiama
 package machine
 
 import java.lang.Exception
-import org.kiama.util.Emitter
+import org.kiama.util.{Emitter, ErrorEmitter}
 import org.kiama.output.PrettyPrinter
 
 /**
  * A deterministic abstract state machine defined by its main rule and
  * called `name`.  Tracing messages are output to the given emitter, which
- * defaults to standard output. You should avoid accessing a single
+ * defaults to standard error. You should avoid accessing a single
  * machine frmom multiple threads since the machine encapsulates
  * state and updates. Machines are designed to be used in a single-threaded
  * fashion.
  */
-abstract class Machine (val name : String, emitter : Emitter = new Emitter)
+abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
         extends PrettyPrinter {
 
     import scala.annotation.tailrec

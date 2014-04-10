@@ -28,7 +28,7 @@ package rewriting
 trait RewriterCore {
 
     import org.kiama.util.Comparison.same
-    import org.kiama.util.Emitter
+    import org.kiama.util.{Emitter, ErrorEmitter, OutputEmitter}
     import scala.collection.generic.CanBuildFrom
     import scala.collection.immutable.Seq
     import scala.language.higherKinds
@@ -79,7 +79,7 @@ trait RewriterCore {
      * term is printed to the given emitter, prefixed by the string `s`.  The
      * emitter defaults to one that writes to standard output.
      */
-    def debug (msg : String, emitter : Emitter = new Emitter) : Strategy =
+    def debug (msg : String, emitter : Emitter = new OutputEmitter) : Strategy =
         macro RewriterCoreMacros.debugMacro
 
     /**
@@ -105,10 +105,10 @@ trait RewriterCore {
      * Create a logging strategy based on a strategy `s`. The returned strategy
      * succeeds or fails exactly as `s` does, but also prints the provided message,
      * the subject term, the success or failure status, and on success, the result
-     * term, to the provided emitter (default: standard output). `s` is evaluated
+     * term, to the provided emitter (default: standard error). `s` is evaluated
      * at most once.
      */
-    def log (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
+    def log (s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy =
         macro RewriterCoreMacros.logMacro
 
     /**
@@ -136,9 +136,9 @@ trait RewriterCore {
      * Create a logging strategy based on a strategy `s`.  The returned strategy
      * succeeds or fails exactly as `s` does, but if `s` fails, also prints the
      * provided message and the subject term to the provided emitter (default:
-     * standard output). `s` is evaluated at most once.
+     * standard error). `s` is evaluated at most once.
      */
-    def logfail[T] (s : Strategy, msg : String, emitter : Emitter = new Emitter) : Strategy =
+    def logfail[T] (s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy =
         macro RewriterCoreMacros.logfailMacro
 
     /**

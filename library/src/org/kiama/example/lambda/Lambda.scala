@@ -199,7 +199,7 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with SyntaxAnalyser with Evalu
                 profile (normal (e), dimensions, config.logging ())
             } else
                 normal (e)
-        config.emitter.emitln (result.getOrElse ("reduction failed"))
+        config.output.emitln (result.getOrElse ("reduction failed"))
     }
 
 }

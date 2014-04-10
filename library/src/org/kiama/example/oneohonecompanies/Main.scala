@@ -23,15 +23,15 @@ package example.oneohonecompanies
 
 object Main {
 
-    import org.kiama.util.Emitter
+    import org.kiama.util.OutputEmitter
     import SampleCompany.company
 
     def main (args : Array[String]) {
-        val emitter = new Emitter
-        emitter.emitln (Total.total (company))
-        emitter.emitln (Total.total (Cut.cut (company)))
-        emitter.emitln (Depth.depth (company))
-        emitter.emitln (Precedence.precedence (company))
+        val output = new OutputEmitter
+        output.emitln (Total.total (company))
+        output.emitln (Total.total (Cut.cut (company)))
+        output.emitln (Depth.depth (company))
+        output.emitln (Precedence.precedence (company))
     }
 
 }
