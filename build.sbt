@@ -8,13 +8,13 @@ import sbtunidoc.Plugin.UnidocKeys.unidoc
 
 // Main settings
 
-version in ThisBuild := "1.5.2-SNAPSHOT"
+version in ThisBuild := "1.5.3"
 
 organization in ThisBuild := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion in ThisBuild := "2.10.3"
+scalaVersion in ThisBuild := "2.11.0"
 
 scalacOptions in ThisBuild <<= baseDirectory map {
     bd => Seq (
@@ -35,12 +35,19 @@ resolvers in ThisBuild ++= Seq (
 // Dependencies
 
 libraryDependencies in ThisBuild ++= Seq (
-    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.2.0",
-    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.3.0-SNAPSHOT",
+    // DSL support:
+    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.4.0",
+    // Profiling:
+    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.4.0",
+    // Command-line handling:
+    "org.rogach" %% "scallop" % "0.9.5",
+    // Parsing
+    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1",
+    // REPLs:
     "jline" % "jline" % "2.11",
-    "org.scalacheck" %% "scalacheck" % "1.10.1" % "test",
-    "org.scalatest" %% "scalatest" % "2.0" % "test",
-    "org.rogach" %% "scallop" % "0.9.4"
+    // Testing:
+    "org.scalacheck" %% "scalacheck" % "1.11.3" % "test",
+    "org.scalatest" %% "scalatest" % "2.1.3" % "test"
 )
 
 // Migration manager (mima)
@@ -71,7 +78,7 @@ logBuffered in ThisBuild := false
 
 scalacOptions in (ScalaUnidoc, unidoc) ++=
     Seq (
-        "-Ymacro-no-expand",
+        "-Ymacro-expand:none",
         "-doc-source-url",
             "https://code.google.com/p/kiama/source/browse€{FILE_PATH}.scala"
     )

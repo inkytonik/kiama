@@ -44,6 +44,7 @@ trait IOOps extends SECDBase with StringOps {
 
     import IOOps._
     import SECDBase._
+    import scala.io.StdIn.readLine
 
     /**
      * Extend the partial function to evaluate a single instruction

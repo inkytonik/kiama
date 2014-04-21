@@ -25,7 +25,7 @@ object RewriterCoreMacros {
 
     import org.bitbucket.inkytonik.dsinfo.DSInfo.{makeCallWithName, makeThisCallWithName}
     import org.kiama.util.Emitter
-    import scala.reflect.macros.Context
+    import scala.reflect.macros.blackbox.Context
 
     // Macros for the builder methods
 
@@ -98,7 +98,7 @@ object RewriterCoreMacros {
     def strategyfMacro (c : Context) (f : c.Expr[Any => Option[Any]]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
-    def termMacro (c : Context) (t : Any) : c.Expr[Strategy] =
+    def termMacro (c : Context) (t : c.Expr[Any]) : c.Expr[Strategy] =
         makeCallWithName (c)
 
     // Macros for the library combinators

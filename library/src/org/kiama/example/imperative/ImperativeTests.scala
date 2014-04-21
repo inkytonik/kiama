@@ -157,7 +157,7 @@ trait Generator {
     implicit def arbExp : Arbitrary[Exp] =
         Arbitrary { Gen.sized (sz => genExp (sz)) }
 
-    val genLeafStmt = Gen.value (Null ())
+    val genLeafStmt = Gen.const (Null ())
 
     def genSeqn (sz : Int) : Gen[Seqn] =
         for { len <- Gen.choose (1,sz)

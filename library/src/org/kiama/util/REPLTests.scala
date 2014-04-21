@@ -50,7 +50,7 @@ trait GeneratingREPLBase[T] extends REPL {
      * the configuration unchanged.
      */
     def processline (line : String, config : REPLConfig) : REPLConfig = {
-        generator.arbitrary (Gen.Params ()) match {
+        generator.arbitrary (Gen.Parameters.default) match {
             case Some (t) => process (t, config)
             case None     => config.emitter.emitln ("can't generate an instance")
         }
