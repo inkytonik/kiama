@@ -30,7 +30,7 @@ class Console {
      * Read a line after prompting with the given prompt.
      */
     def readLine (prompt : String) : String =
-        scala.Console.readLine (prompt)
+        scala.io.StdIn.readLine (prompt)
 
     /**
      * Read an integer after prompting with the given prompt.  Throws a

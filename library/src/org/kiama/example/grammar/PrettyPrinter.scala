@@ -59,8 +59,8 @@ trait PrettyPrinter extends org.kiama.output.PrettyPrinter {
                 show (h)
             case NonEmptySymbolList (h, t) =>
                 show (h) <+> show (t)
-            case NonTermDef (s) =>
-                s
+            case nt : NonTerm =>
+                nt.name
             case TermSym (s) =>
                 s
             case NonTermSym (s) =>

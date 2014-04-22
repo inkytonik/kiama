@@ -1,3 +1,5 @@
+import com.typesafe.sbt.pgp.PgpKeys.{publishSigned, publishLocalSigned}
+
 // Interactive settings
 
 shellPrompt <<= (name, version) { (n, v) =>
@@ -45,3 +47,8 @@ unmanagedResources in Test <<= (scalaSource in Test) map { s => {
 publish := {}
 
 publishLocal := {}
+
+publishSigned := {}
+
+publishLocalSigned := {}
+

@@ -1,3 +1,5 @@
+import com.typesafe.sbt.pgp.PgpKeys.{publishSigned, publishLocalSigned}
+
 // Interactive settings
 
 shellPrompt <<= (name, version) { (n, v) =>
@@ -74,3 +76,7 @@ initialCommands in console in Test <<= (initialCommands in console) { cmds =>
 publish := {}
 
 publishLocal := {}
+
+publishSigned := {}
+
+publishLocalSigned := {}

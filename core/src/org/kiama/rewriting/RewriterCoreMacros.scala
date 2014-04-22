@@ -27,7 +27,7 @@ object RewriterCoreMacros {
     import org.kiama.util.Emitter
     import scala.collection.generic.CanBuildFrom
     import scala.language.higherKinds
-    import scala.reflect.macros.Context
+    import scala.reflect.macros.blackbox.Context
 
     // Macros for the builder methods
 
