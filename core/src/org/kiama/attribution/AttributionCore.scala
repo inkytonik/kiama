@@ -473,8 +473,8 @@ trait AttributionCore extends AttributionCommon with Memoiser {
 
     /**
      * Define a parameterised attribute of `T` nodes of type `U` by the function
-     * `f`, which takes an argument of type `A`.  The computed attribute value
-     * for a given `T` and `A` pair is cached so it will be computed at most
+     * `f`, which takes an argument of type `V`.  The computed attribute value
+     * for a given `V` and `T` pair is cached so it will be computed at most
      * once.
      */
     def paramAttr[V,T,U] (f : V => T => U) : CachedParamAttribute[V,T,U] =
