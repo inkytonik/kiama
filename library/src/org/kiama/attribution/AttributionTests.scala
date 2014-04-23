@@ -749,6 +749,35 @@ class AttributionTests extends Tests {
         val t = Pair (Leaf (3), Pair (l, Leaf (10)))
         initTree (t)
 
+        test ("a constant atRoot attribute returns the constant value") {
+            val rattr = atRoot[TestTree,Int] (_ => 99)
+            assertResult (99) (t->rattr)
+            assertResult (99) (l->rattr)
+        }
+
+        test ("a variable atRoot attribute returns the value from the root") {
+            val rattr = atRoot[TestTree,Int] {
+                            case n if n.parent == null =>
+                                42
+                            case _ =>
+                                99
+                        }
+            assertResult (42) (t->rattr)
+            assertResult (42) (l->rattr)
+        }
+
+        test ("a down attribute with default function returns the computed value") {
+            val dattr = down[TestTree,Int] (
+                            (n : TestTree) =>
+                                if (n.parent == null) 42 else 66
+                        ) {
+                            case n if n.parent != null =>
+                                99
+                        }
+            assertResult (42) (t->dattr)
+            assertResult (99) (l->dattr)
+        }
+
         test ("a down attribute that is defined returns the computed value") {
             val dattr = down[TestTree,Int] (99) { case _ : Pair => 42 }
             assertResult (42) (l->dattr)

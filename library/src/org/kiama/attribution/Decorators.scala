@@ -29,6 +29,16 @@ object Decorators {
 
     import org.kiama.attribution.Attribution._
     import org.kiama.attribution.Attributable
+    import scala.PartialFunction
+
+    /**
+     * A decorator that progagates an attribute value down the tree. The
+     * partial function `a` should define the value of the attribute at
+     * the root. The value defined at the root will also be made available
+     * at all other nodes.
+     */
+    def atRoot[T <: Attributable,U] (a : T => U) : CachedAttribute[T,U] =
+        down[T,U] (a) (PartialFunction.empty)
 
     /**
      * A decorator that propagates an attribute value down the tree. The
@@ -37,16 +47,16 @@ object Decorators {
      * attribute at a particular node, then the decorator asks the parent
      * of the node for its value of the attribute and uses that value.
      * If no node on the path to the root defines a value for the attribute,
-     * then default is returned.
+     * then default applied to the root is returned.
      */
-    def down[T <: Attributable,U] (default : => U) (a : T ==> U) : CachedAttribute[T,U] = {
+    def down[T <: Attributable,U] (default : T => U) (a : T ==> U) : CachedAttribute[T,U] = {
         lazy val dattr : CachedAttribute[T,U] =
             attr (
                 t =>
                     if (a.isDefinedAt (t))
                         a (t)
                     else if (t.parent == null)
-                        default
+                        default (t)
                     else
                         dattr (t.parent[T])
             )
@@ -54,11 +64,17 @@ object Decorators {
     }
 
     /**
+     * Variant of `down` that takes a default value instead of a default function.
+     */
+    def down[T <: Attributable,U] (default : U) (a : T ==> U) : CachedAttribute[T,U] =
+        down[T,U] ((_ : T) => default) (a)
+
+    /**
      * Variant of `down` that throws an error if `a` is not defined on the
      * path to the root of the tree.
      */
     def downErr[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] =
-        down[T,U] (sys.error ("downErr: function is not defined on path to root")) (a)
+        down[T,U] ((_ : T) => sys.error ("downErr: function is not defined on path to root")) (a)
 
     /**
      * Variant of `down` that returns `None` if `a` is not defined on the
