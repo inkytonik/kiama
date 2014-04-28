@@ -30,17 +30,18 @@ class PositionalRewriterTests extends Tests {
 
     import SupportPositionalRewriterTests._
     import org.kiama.rewriting.PositionalRewriter._
+    import org.kiama.util.Positioned.positionAt
     import scala.util.parsing.input.NoPosition
 
-    val pl1 = new TestPosition { val line = 1; val column = 2 }
+    val pl1 = positionAt (1, 2)
     val l1 = Leaf (42).setPos (pl1)
-    val pl2 = new TestPosition { val line = 3; val column = 4 }
+    val pl2 = positionAt (3, 4)
     val l2 = Leaf (99).setPos (pl2)
 
-    val pt = new TestPosition { val line = 9; val column = 10 }
+    val pt = positionAt (9, 10)
     val t = Two (l1, l2).setPos (pt)
 
-    val po = new TestPosition { val line = 7; val column = 8 }
+    val po = positionAt (7, 8)
     val o = One (t).setPos (po)
 
     val r = everywhere (rule[Leaf] {
@@ -104,16 +105,12 @@ class PositionalRewriterTests extends Tests {
  */
 object SupportPositionalRewriterTests {
 
-    import scala.util.parsing.input.{Positional, Position}
+    import scala.util.parsing.input.Positional
 
     trait Node extends Positional
     case class One (a : Node) extends Node
     case class Two (l : Node, r : Node) extends Node
     case class Leaf (i : Int) extends Node
-
-    trait TestPosition extends Position {
-        val lineContents = ""
-    }
 
 }
 
@@ -124,22 +121,31 @@ class PositionedRewriterTests extends Tests {
 
     import SupportPositionedRewriterTests._
     import org.kiama.rewriting.PositionedRewriter._
+    import org.kiama.util.Positioned._
     import scala.util.parsing.input.NoPosition
 
-    val pl1s = new TestPosition { val line = 1; val column = 2 }
-    val pl1f = new TestPosition { val line = 3; val column = 4 }
-    val l1 = Leaf (42).setStart (pl1s).setFinish (pl1f)
-    val pl2s = new TestPosition { val line = 5; val column = 6 }
-    val pl2f = new TestPosition { val line = 7; val column = 8 }
-    val l2 = Leaf (99).setStart (pl2s).setFinish (pl2f)
+    val pl1s = positionAt (1, 2)
+    val pl1f = positionAt (3, 4)
+    val l1 = Leaf (42)
+    setStart (l1, pl1s)
+    setFinish (l1, pl1f)
+    val pl2s = positionAt (5, 6)
+    val pl2f = positionAt (7, 8)
+    val l2 = Leaf (99)
+    setStart (l2, pl2s)
+    setFinish (l2, pl2f)
 
-    val pts = new TestPosition { val line = 9; val column = 10 }
-    val ptf = new TestPosition { val line = 11; val column = 12 }
-    val t = Two (l1, l2).setStart (pts).setFinish (ptf)
+    val pts = positionAt (9, 10)
+    val ptf = positionAt (11, 12)
+    val t = Two (l1, l2)
+    setStart (t, pts)
+    setFinish (t, ptf)
 
-    val pos = new TestPosition { val line = 13; val column = 14 }
-    val pof = new TestPosition { val line = 15; val column = 16 }
-    val o = One (t).setStart (pos).setFinish (pof)
+    val pos = positionAt (13, 14)
+    val pof = positionAt (15, 16)
+    val o = One (t)
+    setStart (o, pos)
+    setFinish (o, pof)
 
     val r = everywhere (rule[Leaf] {
                 case Leaf (i) => Leaf (i + 1)
@@ -147,14 +153,14 @@ class PositionedRewriterTests extends Tests {
 
     def check (no : One) {
         assertResult (One (Two (Leaf (43), Leaf (100)))) (no)
-        assertSame (pos) (no.start)
-        assertSame (pof) (no.finish)
-        assertSame (pts) (no.a.start)
-        assertSame (ptf) (no.a.finish)
-        assertSame (pl1s) (no.a.asInstanceOf[Two].l.start)
-        assertSame (pl1f) (no.a.asInstanceOf[Two].l.finish)
-        assertSame (pl2s) (no.a.asInstanceOf[Two].r.start)
-        assertSame (pl2f) (no.a.asInstanceOf[Two].r.finish)
+        assertSame (pos) (getStart (no))
+        assertSame (pof) (getFinish (no))
+        assertSame (pts) (getStart (no.a))
+        assertSame (ptf) (getFinish (no.a))
+        assertSame (pl1s) (getStart (no.a.asInstanceOf[Two].l))
+        assertSame (pl1f) (getFinish (no.a.asInstanceOf[Two].l))
+        assertSame (pl2s) (getStart (no.a.asInstanceOf[Two].r))
+        assertSame (pl2f) (getFinish (no.a.asInstanceOf[Two].r))
     }
 
     test ("positioned rewriting with positions and strategyf works") {
@@ -190,14 +196,14 @@ class PositionedRewriterTests extends Tests {
     test ("positioned rewriting with no positions works") {
         val oo = One (Two (Leaf (42), Leaf (99)))
         val noo = rewrite (r) (oo)
-        assertSame (NoPosition) (noo.start)
-        assertSame (NoPosition) (noo.a.start)
-        assertSame (NoPosition) (noo.a.asInstanceOf[Two].l.start)
-        assertSame (NoPosition) (noo.a.asInstanceOf[Two].r.start)
-        assertSame (NoPosition) (noo.finish)
-        assertSame (NoPosition) (noo.a.finish)
-        assertSame (NoPosition) (noo.a.asInstanceOf[Two].l.finish)
-        assertSame (NoPosition) (noo.a.asInstanceOf[Two].r.finish)
+        assertSame (NoPosition) (getStart (noo))
+        assertSame (NoPosition) (getStart (noo.a))
+        assertSame (NoPosition) (getStart (noo.a.asInstanceOf[Two].l))
+        assertSame (NoPosition) (getStart (noo.a.asInstanceOf[Two].r))
+        assertSame (NoPosition) (getFinish (noo))
+        assertSame (NoPosition) (getFinish (noo.a))
+        assertSame (NoPosition) (getFinish (noo.a.asInstanceOf[Two].l))
+        assertSame (NoPosition) (getFinish (noo.a.asInstanceOf[Two].r))
    }
 
 }
@@ -209,16 +215,9 @@ class PositionedRewriterTests extends Tests {
  */
 object SupportPositionedRewriterTests {
 
-    import org.kiama.util.Positioned
-    import scala.util.parsing.input.Position
-
-    trait Node extends Positioned
+    trait Node
     case class One (a : Node) extends Node
     case class Two (l : Node, r : Node) extends Node
     case class Leaf (i : Int) extends Node
-
-    trait TestPosition extends Position {
-        val lineContents = ""
-    }
 
 }

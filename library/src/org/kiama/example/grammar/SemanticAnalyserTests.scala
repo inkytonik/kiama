@@ -31,7 +31,7 @@ class SemanticAnalysisTests extends Tests {
     import GrammarTree._
     import PrettyPrinter._
     import org.kiama.attribution.Attribution.initTree
-    import org.kiama.util.{Message, Messaging, Positioned}
+    import org.kiama.util.{Message, Messaging}
     import scala.collection.immutable.Seq
 
     def S = NonTermSym (NonTermUse ("S"))
@@ -239,9 +239,9 @@ class SemanticAnalysisTests extends Tests {
 
     test ("g3: has the expected semantic errors") {
         assertMessages (g3analyser.errors (g3),
-            Message (Positioned (0, 0), "F is not declared"),
-            Message (Positioned (0, 0), "E is defined more than once"),
-            Message (Positioned (0, 0), "E is defined more than once"))
+            Message ("F is not declared"),
+            Message ("E is defined more than once"),
+            Message ("E is defined more than once"))
     }
 
 }

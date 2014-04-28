@@ -21,24 +21,25 @@
 package org.kiama
 package util
 
+import scala.util.parsing.input.{Position, NoPosition}
+
 /**
- * A message record consisting of a positioned value and a label string.
- * Currently, just the start position of the value is used when reporting
- * this message.
+ * A message record consisting of a position and a label string. If the
+ * position is not specified, it defaults to `NoPosition`.
  */
-case class Message (value : Positioned, label : String) {
+case class Message (label : String, pos : Position = NoPosition) {
 
     /**
      * Return the start line of this message's position.
      */
     def line : Int =
-        value.start.line
+        pos.line
 
     /**
      * Return the start column of this message's position.
      */
     def column : Int =
-        value.start.column
+        pos.column
 
     /**
      * Format the message for reporting as a line containing the start
@@ -46,7 +47,7 @@ case class Message (value : Positioned, label : String) {
      * text and a pointer to the message location.
      */
     def format : String =
-        s"[${value.start}] $label\n\n${value.start.longString}"
+        s"[${pos}] $label\n\n${pos.longString}"
 
 }
 
@@ -100,12 +101,13 @@ object Messaging {
 
     /**
      * If `cond` is true make a singleton message list that associates the
-     * message `msg` with the `Positioned` `value`. `cond` can be omitted
-     * and defaults to true. The `finish` position is ignored at present.
+     * message `msg` with the start position recorded for `value` (if any).
+     * `cond` can be omitted and defaults to true. Any `finish` position
+     * that is recorded for `value` is ignored at present.
      */
-    def message (value : Positioned, msg : String, cond : Boolean = true) : Messages =
+    def message[T] (value : T, msg : String, cond : Boolean = true) : Messages =
         if (cond)
-            aMessage (Message (value, msg))
+            aMessage (Message (msg, Positioned.getStart (value)))
         else
             noMessages
 

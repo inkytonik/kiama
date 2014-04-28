@@ -21,77 +21,78 @@
 package org.kiama
 package util
 
-import scala.util.matching.Regex
-import scala.util.parsing.combinator.{PackratParsers, RegexParsers}
-import scala.util.parsing.input.{NoPosition, Position}
-
 /**
- * Class to keep track of line and column positions. We keep track of
- * both the `start` and `finish` position.
+ * Record of source positions that correspond to program elements.
  */
-trait Positioned {
+object Positioned extends Memoiser {
+
+    import scala.util.parsing.input.{NoPosition, Position}
 
     /**
-     * `start` is the position just before the input for the positioned
-     * value starts, ignoring any whitespace if the relevant parser is
-     * skipping it. Defaults to `NoPosition`.
+     * Map between a value and a source code position.
      */
-    var start : Position = NoPosition
+    class PositionMap extends IdMemoised[Any,Position]
 
     /**
-     * Set the `start` position if it is `NoPosition`, otherwise leave
-     * it unchanged. Return the new positioned value.
+     * Map between value and starting position.
      */
-    def setStart (p : Position) : this.type = {
-        if (start eq NoPosition)
-            start = p
-        this
+    private val startMap = new PositionMap
+
+    /**
+     * Map between value and finishing position.
+     */
+    private val finishMap = new PositionMap
+
+    /**
+     * Get the start position of `t`. If it doesn't have one, return
+     * `NoPosition`.
+     */
+    def getStart[T] (t : T) : Position =
+        startMap.getWithDefault (t, NoPosition)
+
+    /**
+     * Get the finish position of `t`. If it doesn't have one, return
+     * `NoPosition`.
+     */
+    def getFinish[T] (t : T) : Position =
+        finishMap.getWithDefault (t, NoPosition)
+
+    /**
+     * Set the start position of `t` to `p` if it has not already been set.
+     */
+    def setStart[T] (t : T, p : Position) {
+        startMap.putIfNotPresent (t, p)
     }
 
     /**
-     * `finish` is the position just after the last character of the
-     * input for the positioned value. Defaults to `NoPosition`.
+     * Set the `finish` position of `t` to `p` if it has not already been set.
      */
-    var finish : Position = NoPosition
-
-    /**
-     * Set the `finish` position if it is `NoPosition`, otherwise leave
-     * it unchanged. Return the new positioned value.
-     */
-    def setFinish (p : Position) : this.type = {
-        if (finish eq NoPosition)
-            finish = p
-        this
+    def setFinish[T] (t : T, p : Position) {
+        finishMap.putIfNotPresent (t, p)
     }
 
     /**
-     * Set both the `start` and `finish` positions from the given
-     * `Positioned` value, if they are, individually, `NoPosition`,
-     * otherwise leave them unchanged.
+     * Set the start and finish positions of `t` to the positions of `a`
+     * if it has them. Return `t`.
      */
-    def setPos (p : Positioned) : this.type =
-        setStart (p.start).setFinish (p.finish)
-
-}
-
-/**
- * Support operations for positioned values.
- */
-object Positioned {
+    def dupPos[T] (a : Any, t : T) : T = {
+        startMap.dup (a, t, NoPosition)
+        finishMap.dup (a, t, NoPosition)
+        t
+    }
 
     /**
-     * Return a dummy positioned value with starting position given by line
-     * `l` and column `c` and no ending position. The line contents are empty.
+     * Return a position value with starting position given by line `l`,
+     * column `c` and empty line contents. This method is most useful
+     * for testing low-level messages and is not normally be needed in
+     * application code.
      */
-    def apply (l : Int, c : Int) : Positioned = {
-        val pos = new Position {
-                      val line = l
-                      val column = c
-                      val lineContents = ""
-                  }
-        val positioned = new Positioned { }
-        positioned.setStart (pos)
-    }
+    def positionAt (l : Int, c : Int) : Position =
+        new Position {
+            val line = l
+            val column = c
+            val lineContents = ""
+        }
 
 }
 
@@ -102,30 +103,41 @@ object Positioned {
 trait PositionedParserUtilities extends ParserUtilities {
 
     /**
-     * Run a parse function on some input and if the result is `Positioned`
-     * set its positions.
+     * A marker of a position. Used as a placeholder when there are no
+     * other suitable values associated with the position.
+     */
+    class Marker
+
+    /**
+     * Mark a string parser so that its value is discarded but a marker is
+     * returned instead. That return value can then be used to set the
+     * position of another value. We can't use the string value itself
+     * since we are not guaranteed to have reference equality on strings.
+     */
+    def mark[T] (p : Parser[String]) : Parser[Marker] =
+        p ^^ (_ => new Marker)
+
+    /**
+     * Run a parse function on some input and set the position of the
+     * resulting value.
      */
     def parseAndPosition[T] (f : Input => ParseResult[T], in : Input) : ParseResult[T] =
         f (in) match {
             case res @ Success (t, in1) =>
-                t match {
-                    case p : Positioned =>
-                        val startoffset = handleWhiteSpace (in)
-                        val newin = in.drop (startoffset - in.offset)
-                        val np = p.setStart (newin.pos).setFinish (in1.pos)
-                        Success (np.asInstanceOf[T], in1)
-                    case _ =>
-                        res
-                }
+                val startoffset = handleWhiteSpace (in)
+                val newin = in.drop (startoffset - in.offset)
+                Positioned.setStart (t, newin.pos)
+                Positioned.setFinish (t, in1.pos)
+                res
             case res =>
                 res
         }
 
     /**
-     * Make a new parser that processes input according to `f`. If the
-     * result produced by `f` is `Positioned`, set its start and finish
-     * positions. If the parser is ignoring whitespace then the start
-     * position will be the first non-white character that was accepted.
+     * Make a new parser that processes input according to `f`, setting
+     * the position of the value produced. If the parser is ignoring whitespace
+     * then the start position will be the first non-white character that
+     * was accepted.
      */
     override def Parser[T] (f : Input => ParseResult[T]) : Parser[T] =
         new Parser[T] {

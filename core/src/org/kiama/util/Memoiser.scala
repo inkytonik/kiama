@@ -21,13 +21,13 @@
 package org.kiama
 package util
 
-import com.google.common.cache.{Cache, CacheBuilder}
-
 /**
  * Support for memoisation, encapsulating common behaviour of memoised
  * entities and a general reset mechanism for all such entities.
  */
 trait Memoiser {
+
+    import com.google.common.cache.{Cache, CacheBuilder}
 
     /**
      * The version number of the current memo tables.
@@ -59,6 +59,17 @@ trait Memoiser {
         private var thisMemoVersion = 0
 
         /**
+         * Duplicate an entry if possible. If `t1` has a memoised value associated
+         * with it, set the value associated with `t2` to the same value. If there
+         * is no value associated with `t1`, set the value associated with `t2` to
+         * `u`.
+         */
+        def dup (t1 : T, t2 : T, u : U) {
+            resetIfRequested ()
+            put (t2, getWithDefault (t1, u))
+        }
+
+        /**
          * Return the value stored at key `t` as an option.
          */
         def get (t : T) : Option[U] = {
@@ -79,6 +90,16 @@ trait Memoiser {
         def put (t : T, u : U) {
             resetIfRequested ()
             memo.put (t.asInstanceOf[AnyRef], u.asInstanceOf[AnyRef])
+        }
+
+        /**
+         * Store the value `u` under the key `t` if `t` does not already have an
+         * associated value.
+         */
+        def putIfNotPresent (t : T, u : U) {
+            resetIfRequested ()
+            if (!hasBeenComputedAt (t))
+                put (t, u)
         }
 
         /**

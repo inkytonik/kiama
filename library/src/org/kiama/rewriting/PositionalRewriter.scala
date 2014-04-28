@@ -77,7 +77,7 @@ object PositionalRewriter extends PositionalRewriter
  */
 trait PositionedRewriter extends CallbackRewriter {
 
-    import org.kiama.util.Positioned
+    import org.kiama.util.Positioned.dupPos
 
     /**
      * If the two terms are instances of `org.kiama.util.Positioned`,
@@ -85,12 +85,7 @@ trait PositionedRewriter extends CallbackRewriter {
      * the old term. Always return the new term.
      */
     def rewriting[T] (oldTerm : T, newTerm : T) : T = {
-        (oldTerm, newTerm) match {
-            case (o : Positioned, n : Positioned) =>
-                n.setPos (o)
-            case _ =>
-                // Do nothing
-        }
+        dupPos (oldTerm, newTerm)
         newTerm
     }
 
