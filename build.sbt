@@ -38,8 +38,8 @@ resolvers in ThisBuild ++= Seq (
 
 libraryDependencies in ThisBuild ++= Seq (
     // Caching:
-    "com.google.code.findbugs" % "jsr305" % "2.0.0",
-    "com.google.guava" % "guava" % "15.0",
+    "com.google.code.findbugs" % "jsr305" % "2.0.3",
+    "com.google.guava" % "guava" % "17.0",
     // DSL support:
     "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.4.0",
     // Profiling:
