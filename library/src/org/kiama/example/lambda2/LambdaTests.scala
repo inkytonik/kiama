@@ -48,9 +48,8 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
                 fail (s"$aname: no messages produced, expected ($line,$col) $msg")
             case 1 =>
                 val m = messages.head
-                if ((m.line != line) || (m.column != col) ||
-                    (m.label != msg))
-                    fail (s"$aname: incorrect message, expected ($line,$col) $msg, got (${m.line},${m.column}) $m.label")
+                if ((m.line != line) || (m.column != col) || (m.label != msg))
+                    fail (s"$aname: incorrect message, expected ($line,$col) $msg, got (${m.line},${m.column}) ${m.label}")
             case n =>
                 fail (s"$aname: expected one message, but got $n messages: $messages")
         }
