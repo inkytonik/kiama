@@ -21,14 +21,17 @@
 package org.kiama
 package attribution
 
+import org.kiama.util.Compat210._
+
 object AttributionCommonMacros {
 
     import org.bitbucket.inkytonik.dsinfo.DSInfo.makeCallWithName
-    import scala.reflect.macros.blackbox.Context
+
+    import scala.reflect.macros._
 
     // Macros for the builder methods
 
-    def constantMacro[T,U] (c : Context) (u : c.Expr[U]): c.Expr[Attribute[T,U]] =
+    def constantMacro[T,U] (c : blackbox.Context) (u : c.Expr[U]): c.Expr[Attribute[T,U]] =
         makeCallWithName (c)
 
 }

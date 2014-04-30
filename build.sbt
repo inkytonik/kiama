@@ -16,6 +16,8 @@ organization in ThisBuild := "com.googlecode.kiama"
 
 scalaVersion in ThisBuild := "2.11.0"
 
+crossScalaVersions := Seq ("2.11.0", "2.10.4")
+
 scalacOptions in ThisBuild <<= baseDirectory map {
     bd => Seq (
         "-deprecation",
@@ -36,24 +38,43 @@ resolvers in ThisBuild ++= Seq (
 
 // Dependencies
 
-libraryDependencies in ThisBuild ++= Seq (
-    // Caching:
-    "com.google.code.findbugs" % "jsr305" % "2.0.3",
-    "com.google.guava" % "guava" % "17.0",
-    // DSL support:
-    "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % "0.4.0",
-    // Profiling:
-    "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % "0.4.0",
-    // Command-line handling:
-    "org.rogach" %% "scallop" % "0.9.5",
-    // Parsing
-    "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1",
-    // REPLs:
-    "jline" % "jline" % "2.11",
-    // Testing:
-    "org.scalacheck" %% "scalacheck" % "1.11.3" % "test",
-    "org.scalatest" %% "scalatest" % "2.1.3" % "test"
-)
+libraryDependencies in ThisBuild ++= {
+    val dsinfoVersion =
+        if (scalaVersion.value.startsWith ("2.10"))
+            "0.3.0"
+        else
+            "0.4.0"
+    val dsprofileVersion =
+        if (scalaVersion.value.startsWith ("2.10"))
+            "0.3.0"
+        else
+            "0.4.0"
+    val parserCombinatorLibrary =
+        if (scalaVersion.value.startsWith ("2.10"))
+            Seq ()
+        else
+            Seq ("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1")
+    Seq (
+        // Caching:
+        "com.google.code.findbugs" % "jsr305" % "2.0.3",
+        "com.google.guava" % "guava" % "17.0",
+        // DSL support:
+        "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
+        // Profiling:
+        "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion,
+        // Command-line handling:
+        "org.rogach" %% "scallop" % "0.9.5",
+        // Reflection
+        "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+        // REPLs:
+        "jline" % "jline" % "2.11",
+        // Testing:
+        "org.scalacheck" %% "scalacheck" % "1.11.3" % "test",
+        "org.scalatest" %% "scalatest" % "2.1.3" % "test"
+    ) ++
+        // Parsing:
+        parserCombinatorLibrary
+}
 
 // Migration manager (mima)
 
