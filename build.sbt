@@ -102,12 +102,18 @@ logBuffered in ThisBuild := false
 
 // unidoc
 
-scalacOptions in (ScalaUnidoc, unidoc) ++=
+scalacOptions in (ScalaUnidoc, unidoc) ++= {
+    val macroExpandOption =
+        if (scalaVersion.value.startsWith ("2.10"))
+            "-Ymacro-no-expand"
+        else
+            "-Ymacro-expand:none"
     Seq (
-        "-Ymacro-expand:none",
+        macroExpandOption,
         "-doc-source-url",
             "https://code.google.com/p/kiama/source/browse€{FILE_PATH}.scala"
     )
+}
 
 scalacOptions in (TestScalaUnidoc, unidoc) <<= scalacOptions in (ScalaUnidoc, unidoc)
 
