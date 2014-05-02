@@ -1,11 +1,5 @@
 import com.typesafe.sbt.pgp.PgpKeys.{publishSigned, publishLocalSigned}
 
-// Interactive settings
-
-shellPrompt <<= (name, version) { (n, v) =>
-     _ => "kiama " + n + " " + v + "> "
-}
-
 // Source code locations
 
 // Specify how to find source and test files.  Main sources are
@@ -15,33 +9,36 @@ shellPrompt <<= (name, version) { (n, v) =>
 //    - files whose names end in Tests.scala, which are actual test sources
 //    - Scala files within the examples src
 
-scalaSource in Compile <<= baseDirectory { _ / "src" }
+scalaSource in Compile := baseDirectory.value / "src"
 
-scalaSource in Test <<= scalaSource in Compile
+scalaSource in Test := (scalaSource in Compile).value
 
-unmanagedSources in Test <<= (scalaSource in Test) map { s => {
+unmanagedSources in Test := {
+    val s = (scalaSource in Test).value
     val egs = s / "org" / "kiama" / "example" ** "*.scala"
     ((s ** "*Tests.scala") +++ egs).get
-}}
+}
 
-unmanagedSources in Compile <<=
-    (scalaSource in Compile, unmanagedSources in Test) map { (s, tests) =>
-        ((s ** "*.scala") --- tests).get
-    }
+unmanagedSources in Compile := {
+    val s = (scalaSource in Compile).value
+    val tests = (unmanagedSources in Test).value
+    ((s ** "*.scala") --- tests).get
+}
 
 // Resources
 
-unmanagedResourceDirectories in Compile <<= (scalaSource in Compile) { Seq (_) }
+unmanagedResourceDirectories in Compile := Seq ((scalaSource in Compile).value)
 
-unmanagedResourceDirectories in Test <<= unmanagedResourceDirectories in Compile
+unmanagedResourceDirectories in Test := (unmanagedResourceDirectories in Compile).value
 
 // There are no compile resources
 unmanagedResources in Compile := Seq ()
 
 // Test resources are the non-Scala files in the source that are not hidden
-unmanagedResources in Test <<= (scalaSource in Test) map { s => {
+unmanagedResources in Test := {
+    val s = (scalaSource in Test).value
     (s ** (-"*.scala" && -HiddenFileFilter)).get
-}}
+}
 
 // Fork the runs and connect sbt's input and output to the forked process so
 // that we are immune to version clashes with the JLine library used by sbt
@@ -64,12 +61,11 @@ initialCommands in console := """
     import rewriting.Rewriter._
 """.stripMargin
 
-initialCommands in console in Test <<= (initialCommands in console) { cmds =>
-    cmds + """
+initialCommands in console in Test :=
+    (initialCommands in console).value + """
         import example.json.JSONTree._
         import example.json.PrettyPrinter._
     """.stripMargin
-}
 
 // No publishing, it's done in the root project
 

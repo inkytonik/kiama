@@ -1,9 +1,6 @@
 // import de.johoop.findbugs4sbt.FindBugs.findbugsSettings
 // import de.johoop.findbugs4sbt.ReportType.FancyHtml
 
-// import com.typesafe.tools.mima.plugin.MimaPlugin.mimaDefaultSettings
-// import com.typesafe.tools.mima.plugin.MimaKeys.previousArtifact
-
 import sbtunidoc.Plugin.UnidocKeys.unidoc
 
 // Main settings
@@ -18,16 +15,15 @@ scalaVersion in ThisBuild := "2.11.0"
 
 crossScalaVersions := Seq ("2.11.0", "2.10.4")
 
-scalacOptions in ThisBuild <<= baseDirectory map {
-    bd => Seq (
+scalacOptions in ThisBuild :=
+    Seq (
         "-deprecation",
         "-feature",
-        "-sourcepath", bd.getAbsolutePath,
+        "-sourcepath", baseDirectory.value.getAbsolutePath,
         "-unchecked"
         // "-Xfatal-warnings",
         // "-Xlint"
     )
-}
 
 // Dependency resolution
 
@@ -80,20 +76,13 @@ libraryDependencies in ThisBuild ++= {
 
 incOptions := incOptions.value.withNameHashing (true)
 
-// Migration manager (mima)
-
-// mimaDefaultSettings
-
-// previousArtifact in ThisBuild <<= (name, organization) { (n, o) =>
-//     Some (o % (n + "_2.10") % "1.4.0")
-// }
-
 // Interactive settings
 
 logLevel in ThisBuild := Level.Info
 
-shellPrompt <<= (name, version) { (n, v) =>
-     _ => "kiama " + v + "> "
+shellPrompt in ThisBuild := {
+    state =>
+        "kiama " + Project.extract (state).currentRef.project + " " + version.value + "> "
 }
 
 // No main class since Kiama is a library
@@ -119,13 +108,13 @@ scalacOptions in (ScalaUnidoc, unidoc) ++= {
     )
 }
 
-scalacOptions in (TestScalaUnidoc, unidoc) <<= scalacOptions in (ScalaUnidoc, unidoc)
+scalacOptions in (TestScalaUnidoc, unidoc) := (scalacOptions in (ScalaUnidoc, unidoc)).value
 
 // Publishing
 
-publishTo <<= version { v =>
+publishTo := {
     val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith ("SNAPSHOT"))
+    if (version.value.trim.endsWith ("SNAPSHOT"))
         Some ("snapshots" at nexus + "content/repositories/snapshots")
     else
         Some ("releases" at nexus + "service/local/staging/deploy/maven2")
@@ -163,7 +152,7 @@ pomExtra := (
 
 // org.scalastyle.sbt.ScalastylePlugin.Settings
 
-// org.scalastyle.sbt.PluginKeys.config <<= baseDirectory { _ / "etc" / "scalastyle-config.xml" }
+// org.scalastyle.sbt.PluginKeys.config := baseDirectory.value / "etc" / "scalastyle-config.xml"
 
 // findbugs4sbt: commented out by default since it brings in many dependencies
 // and is used rarely. See also imports at top of file.
