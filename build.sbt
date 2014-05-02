@@ -76,6 +76,10 @@ libraryDependencies in ThisBuild ++= {
         parserCombinatorLibrary
 }
 
+// Turn on incremental compilation based on name hashing
+
+incOptions := incOptions.value.withNameHashing (true)
+
 // Migration manager (mima)
 
 // mimaDefaultSettings
