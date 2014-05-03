@@ -24,7 +24,7 @@ package util
 /**
  * Record of source positions that correspond to program elements.
  */
-object Positioned extends Memoiser {
+object Positions extends Memoiser {
 
     import scala.util.parsing.input.{NoPosition, Position}
 
@@ -126,8 +126,8 @@ trait PositionedParserUtilities extends ParserUtilities {
             case res @ Success (t, in1) =>
                 val startoffset = handleWhiteSpace (in)
                 val newin = in.drop (startoffset - in.offset)
-                Positioned.setStart (t, newin.pos)
-                Positioned.setFinish (t, in1.pos)
+                Positions.setStart (t, newin.pos)
+                Positions.setFinish (t, in1.pos)
                 res
             case res =>
                 res

@@ -77,7 +77,7 @@ object PositionalRewriter extends PositionalRewriter
  */
 trait PositionedRewriter extends CallbackRewriter {
 
-    import org.kiama.util.Positioned.dupPos
+    import org.kiama.util.Positions.dupPos
 
     /**
      * If the two terms are instances of `org.kiama.util.Positioned`,

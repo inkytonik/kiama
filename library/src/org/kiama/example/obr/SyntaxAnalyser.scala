@@ -30,7 +30,7 @@ import org.kiama.util.PositionedParserUtilities
 class SyntaxAnalyser extends PositionedParserUtilities {
 
     import ObrTree._
-    import org.kiama.util.Positioned.dupPos
+    import org.kiama.util.Positions.dupPos
     import scala.collection.immutable.{HashSet, Seq}
     import scala.language.postfixOps
 

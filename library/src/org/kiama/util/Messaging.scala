@@ -107,7 +107,7 @@ object Messaging {
      */
     def message[T] (value : T, msg : String, cond : Boolean = true) : Messages =
         if (cond)
-            aMessage (Message (msg, Positioned.getStart (value)))
+            aMessage (Message (msg, Positions.getStart (value)))
         else
             noMessages
 

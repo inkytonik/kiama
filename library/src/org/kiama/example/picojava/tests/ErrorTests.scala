@@ -37,7 +37,7 @@ class ErrorTests extends RegexParserTests with SyntaxAnalyser {
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.picojava.ErrorCheck.errors
     import org.kiama.util.Message
-    import org.kiama.util.Positioned.positionAt
+    import org.kiama.util.Positions.positionAt
 
     /**
      * Parse the illegal program and make sure that the errors and their

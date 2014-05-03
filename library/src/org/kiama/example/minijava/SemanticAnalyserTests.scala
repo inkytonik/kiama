@@ -32,7 +32,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     import MiniJavaTree._
     import org.kiama.attribution.Attribution.initTree
     import org.kiama.util.{Message, Messaging}
-    import org.kiama.util.Positioned.positionAt
+    import org.kiama.util.Positions.positionAt
     import scala.collection.immutable.Seq
 
     // Tests of definition uniqueness (Rule 1)

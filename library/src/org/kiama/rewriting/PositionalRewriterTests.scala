@@ -30,7 +30,7 @@ class PositionalRewriterTests extends Tests {
 
     import SupportPositionalRewriterTests._
     import org.kiama.rewriting.PositionalRewriter._
-    import org.kiama.util.Positioned.positionAt
+    import org.kiama.util.Positions.positionAt
     import scala.util.parsing.input.NoPosition
 
     val pl1 = positionAt (1, 2)
@@ -121,7 +121,7 @@ class PositionedRewriterTests extends Tests {
 
     import SupportPositionedRewriterTests._
     import org.kiama.rewriting.PositionedRewriter._
-    import org.kiama.util.Positioned._
+    import org.kiama.util.Positions._
     import scala.util.parsing.input.NoPosition
 
     val pl1s = positionAt (1, 2)
