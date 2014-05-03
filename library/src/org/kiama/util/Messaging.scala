@@ -58,7 +58,6 @@ object Messaging {
 
     import org.kiama.util.{Entity, ErrorEntity}
     import scala.collection.immutable.{IndexedSeq, Seq}
-    import scala.util.parsing.input.Positional
 
     /**
      * The type of a sequence of messages.
