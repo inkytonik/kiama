@@ -82,7 +82,8 @@ logLevel in ThisBuild := Level.Info
 
 shellPrompt in ThisBuild := {
     state =>
-        "kiama " + Project.extract (state).currentRef.project + " " + version.value + "> "
+        Project.extract (state).currentRef.project + " " + version.value +
+            " " + scalaVersion.value + "> "
 }
 
 // No main class since Kiama is a library
