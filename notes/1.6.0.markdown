@@ -1,0 +1,69 @@
+The Kiama team is pleased to bring you the next release of the library. This release contains many enhancements, bug fixes and code tidy-up changes. The main themes of this release are to improve the safety of some features and to localise or remove mutability as much as possible. The release is cross-published for both Scala 2.10 and 2.11.
+
+### Enhancements
+
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.6.0/api/index.html#org.kiama.attribution.package)
+
+    * The type signatures of attribute creation methods (e.g., `attr`) now do not require that the attributed value is a sub-type of `AnyRef`. In practice, it is still not useful to attribute non-reference values but the simplified signatures make it easier to use the attribution library in generic contexts.
+
+    * [Issue 19](https://code.google.com/p/kiama/issues/detail?id=19): The `down` decorator is now safer because it requires either a default function or a default value to use if the root of the tree is reached without another computation being found, instead of relying on the decorator definition handling the root case. There are also variants `downErr`, which throws an exception in the default case, and `downOpt` which wraps the result in an option.
+
+    * [Issue 19](https://code.google.com/p/kiama/issues/detail?id=19): A new `atRoot` decorator is equivalent to using the `down` decorator with a decorator definition that is never defined; i.e., the default value from the root is just transported down unchanged.
+
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.6.0/api/index.html#org.kiama.rewriting.package)
+
+    * [Issue 26](https://code.google.com/p/kiama/issues/detail?id=26): Rewriting rule creation methods such as `rule` are now stricter on the type of the partial function that defines the rule. The aim is to prevent some errors that were previously only detected at run-time if your rewriting function didn't preserve types. E.g., `rule` is now of type `def rule[T] (f : T ==> T) : Strategy`. In practice, this change often means that you have to say what type you intend to use at the call site, as in `rule[Foo] { ... }`. If this rule is applied to something that is not a `Foo` then it will fail, otherwise the partial function is used as per usual.
+
+    * [Issue 20](https://code.google.com/p/kiama/issues/detail?id=20): The `collectl` and `collects` query combinators are now just sugar for a more general `collect` that can build any `Traversable` collection. Also, a new `collectall` query is a variant where the collecting application can result in a collection of items, not just a single item. The full collection accumulates all of these sub-collections.
+
+    * Query rewriting combinators such as `query` and `queryf` now do not have a result type parameter. Since the result of the underlying query function was ignored, the type parameter has been replaced by `Unit` and the parameter has been removed.
+
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.6.0/api/index.html#org.kiama.util.package)
+
+    * [Issue 13](https://code.google.com/p/kiama/issues/detail?id=13), [Issue 14](https://code.google.com/p/kiama/issues/detail?id=14): Kiama now uses the Guava collection library to implement caches for attributes and memoising rewriting. We use caches that hold weak references so the memory retention properties of the library should be better than previous versions of the library.
+
+    * The old `Positioned` trait that was mixed in to tree node types to add mutable position information has been removed. A new `Positions` module provides facilities for recording positions associated with nodes in storage that is separate from the nodes.
+
+    * The `PositionedParserUtilities` trait provides a new `mark` parser combinator that can be used to record a position for a parsed string value for use in setting positions of tree nodes. See the Obr example parser for typical usage.
+
+    * The `PositionalRewriter` that targeted tree nodes that extended Scala's parsing library `Positional` trait has been removed in favour of the new `Positions` support.
+
+    * The messages produced by the `Messaging` module now use Scala's standard format for display, which includes the input line of the message position and a pointer to the relevant column.
+
+    * The `Messaging` module no longer contains a mutable message buffer and we encourage a style where messages are collected from a tree using a generic query such as `collectall`. The `Messaging` module now has some methods for checking common situations for `Entity` values. See most of the examples for illustration of this new approach to messaging and checking.
+
+    * A new `TreeNode` utility type has been introduced to simplify getting an appropriate base type for tree nodes. At the moment `TreeNode` just extends the `Attributable` class so that all nodes can be attributed. A future version of the library aims to remove the need for `Attributable`; `TreeNode` will also be removed at that time.
+
+    * The configuration types used by the compiler and REPL frameworks now support separate emitters for standard output and standard error.
+
+    * The compiler framework now includes an optional tree pretty-printer in the compiler interface.
+
+* Examples
+
+    * Added a new example of using circular attributes to analyse context-free grammars.
+
+### Fixes
+
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.6.0/api/index.html#org.kiama.attribution.package)
+
+    * Circular attributes now correctly reset their evaluation state if an exception occurs while they are being computed.
+
+    * Uncached attributes now correctly detect dependence cycles.
+
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.6.0/api/index.html#org.kiama.util.package)
+
+    * The `Entity` trait and its specialisations `MultipleEntity` and `UnknownEntity` are now located outside the `Environments` trait.
+
+    * The `Environments` module now uses lists to implement stacks instead of the Scala `Stack` collection type.
+
+* Examples
+
+    * Fixed the Lambda example so that it doesn't capture free variables.
+
+### Other
+
+* Rationalised some file names and data structures to be more consistent, particularly in the examples.
+
+* Quite a few other minor fixes and code style improvements, including removal of some old benchmark code and the Iswim example which was starting to bit rot.
+
+* Move to sbt 0.13.2, Scala 2.10.4/2.11.0, Scala parser combinators 1.0.1, Guava 17, dsinfo 0.3/0.4, dsprofile 0.3/0.4, Scallop 0.9.5, ScalaCheck 1.11.4, ScalaTest 2.1.3
