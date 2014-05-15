@@ -24,13 +24,15 @@ The Kiama team is pleased to bring you the next release of the library. This rel
 
     * The old `Positioned` trait that was mixed in to tree node types to add mutable position information has been removed. A new `Positions` module provides facilities for recording positions associated with nodes in storage that is separate from the nodes.
 
-    * The `PositionedParserUtilities` trait provides a new `mark` parser combinator that can be used to record a position for a parsed string value for use in setting positions of tree nodes. See the Obr example parser for typical usage.
+    * The `PositionedParserUtilities` trait provides a new `mark` parser combinator that can be used to record a position for a parsed literal string for use in setting positions of tree nodes. See the Obr example parser for typical usage.
 
     * The `PositionalRewriter` that targeted tree nodes that extended Scala's parsing library `Positional` trait has been removed in favour of the new `Positions` support.
 
     * The messages produced by the `Messaging` module now use Scala's standard format for display, which includes the input line of the message position and a pointer to the relevant column.
 
-    * The `Messaging` module no longer contains a mutable message buffer and we encourage a style where messages are collected from a tree using a generic query such as `collectall`. The `Messaging` module now has some methods for checking common situations for `Entity` values. See most of the examples for illustration of this new approach to messaging and checking.
+    * The `Messaging` module no longer contains a mutable message buffer and we encourage a style where messages are collected from a tree using a generic query such as `collectall`.
+
+    * The `Messaging` module now has some methods for checking common situations for `Entity` values. See most of the examples for illustration of this new approach to messaging and checking.
 
     * A new `TreeNode` utility type has been introduced to simplify getting an appropriate base type for tree nodes. At the moment `TreeNode` just extends the `Attributable` class so that all nodes can be attributed. A future version of the library aims to remove the need for `Attributable`; `TreeNode` will also be removed at that time.
 
