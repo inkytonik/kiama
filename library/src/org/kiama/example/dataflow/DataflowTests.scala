@@ -22,7 +22,7 @@ package org.kiama
 package example.dataflow
 
 import DataflowTree.Stm
-import org.kiama.util.{TestCompiler, Tests}
+import org.kiama.util.TestCompiler
 
 /**
  * Tests of data flow attribution.
