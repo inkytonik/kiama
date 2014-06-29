@@ -153,7 +153,7 @@ trait ParenPrettyPrinter extends PrettyPrinter {
     }
 
     /**
-     * Return true if the inner expression should be parenthesised when appearing
+     * Return true if the inner expression should not be parenthesised when appearing
      * on the given side with the outer expression.
      */
     def noparens (inner : PrettyOperatorExpression, outer : PrettyOperatorExpression,
