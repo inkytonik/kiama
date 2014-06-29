@@ -66,7 +66,7 @@ libraryDependencies in ThisBuild ++= {
         "jline" % "jline" % "2.11",
         // Testing:
         "org.scalacheck" %% "scalacheck" % "1.11.4" % "test",
-        "org.scalatest" %% "scalatest" % "2.1.3" % "test"
+        "org.scalatest" %% "scalatest" % "2.2.0" % "test"
     ) ++
         // Parsing:
         parserCombinatorLibrary
