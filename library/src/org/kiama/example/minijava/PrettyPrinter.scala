@@ -37,7 +37,7 @@ object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
         super.pretty (show (t), 5)
 
     /**
-     * Convert a PicoJava AST node to a pretty-printing document.
+     * Convert a MiniJava AST node to a pretty-printing document.
      */
     def show (t : MiniJavaTree) : Doc =
         t match {
