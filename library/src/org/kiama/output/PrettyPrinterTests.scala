@@ -342,6 +342,32 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         assertResult ("[:\n.:\n=:\n]:") (pretty ((sterm (l, colon)), 3))
     }
 
+    test ("pretty-print hanging text") {
+        val words = "the hang combinator indents these words !".split (' ').toVector
+        val d = hang (fillsep (words.map (text)), 3)
+        assertResult ("the hang combinator\n   indents these\n   words !") (pretty (d, 15))
+    }
+
+    test ("pretty-print indented text") {
+        val d = indent ("hi" <+> ("nice" <@> "world"), 2)
+        assertResult ("  hi nice\n  world") (pretty (d, 5))
+    }
+
+    test ("pretty-print aligned text") {
+        val d = "hi" <+> ("nice" <%> "world")
+        assertResult ("hi nice\n   world") (pretty (d))
+    }
+
+    test ("pretty-print padded text") {
+        val d = padto (10, "hi nice" <@> "world")
+        assertResult ("hi nice\nworld     ") (pretty (d))
+    }
+
+    test ("pretty-print padded text - with linebreak") {
+        val d = padtobreak (4, "hi nice") <> padtobreak (10, "world")
+        assertResult ("hi nice\n    world     ") (pretty (d))
+    }
+
     val l1 = List (1, 2, 3)
 
     test ("pretty-print lists of simple values - non-wrap") {

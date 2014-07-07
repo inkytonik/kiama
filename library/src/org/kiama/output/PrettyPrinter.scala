@@ -107,6 +107,18 @@ trait PrettyPrinterBase {
         def <@@> (e : Doc) : Doc =
             this <> linebreak <> e
 
+        /**
+         * Align the argument below this document using a `line` separator.
+         */
+        def <%> (e : Doc) : Doc =
+            align (this <@> e)
+
+        /**
+         * Align the argument below this document using a `linebreak` separator.
+         */
+        def <%%> (e : Doc) : Doc =
+            align (this <@@> e)
+
     }
 
     /**
@@ -198,6 +210,18 @@ trait PrettyPrinterBase {
      * second here so that it can be given a default value.
      */
     def nest (d : Doc, j : Indent = defaultIndent) : Doc
+
+    /**
+     * Return the document produced by `f` when it is passed the column at which
+     * rendering is currently placed.
+     */
+    def column (f : Int => Doc) : Doc
+
+    /**
+     * Return the document produced by `f` when it is passed the nesting level
+     * (indentation) of the current line.
+     */
+    def nesting (f : Int => Doc) : Doc
 
     // Extended combinators that are implemented in terms of the basic
     // combinators and the representation-independent document operations.
@@ -488,6 +512,52 @@ trait PrettyPrinterBase {
      */
     def sterm (ds : Seq[Doc], term : Doc) : Doc =
         cat (ds map (_ <> term))
+
+    /**
+     * Return a document that is like `d` but whose second and subsequent lines
+     * have hanging indentation of `i` spaces (defaults to the deafult indentation).
+     * In other words, the first line is indented at the current nesting level
+     * and the remaining lines are indented `i` spaces more.
+     */
+    def hang (d : Doc, i : Indent = defaultIndent) : Doc =
+        align (nest (d, i))
+
+    /**
+     * Return a document that is `d` but with the first line indented by `i` more spaces.
+     */
+    def indent (d : Doc, i : Indent = defaultIndent) : Doc =
+        hang (spaces (i) <> d, i)
+
+    /**
+     * Return a document that renders `d` with the nesting level set to the
+     * current indentation column.
+     */
+    def align (d : Doc) : Doc =
+        column (k => nesting (i => nest (d, k - i)))
+
+    /**
+     * Return a document that renders `d` beside the document obtained by running
+     * `f` on the width of `d`.
+     */
+    def width (d : Doc, f : Int => Doc) : Doc =
+        column (k1 => d <> column (k2 => f (k2 - k1)))
+
+    /**
+     * Return a document that pads `d` out to a width of `p`. If `d` already has
+     * a width greater than or equal to `d`, don't add any padding. This combinator
+     * is called `fill` in the PPrint library.
+     */
+    def padto (p : Int, d : Doc) : Doc =
+        width (d, w => spaces (p - w))
+
+    /**
+     * As for `padto` but if the document width is already greater than or equal
+     * to `p`, insert a possible line break and new nesting level instead of not
+     * adding any padding. This combinator is called `fillBreak` in the PPrint
+     * library.
+     */
+    def padtobreak (p : Int, d : Doc) : Doc =
+        width (d, w => if (w > p) nest (linebreak, p) else spaces (p - w))
 
     /**
      * Return a document representing a value formatted using `toString` and
@@ -1001,6 +1071,29 @@ trait PrettyPrinter extends PrettyPrinterBase {
         new Doc ({
             case (i, w) =>
                 d ((i + j, w))
+        })
+
+    def column (f : Int => Doc) : Doc =
+        new Doc ({
+            case (i, w) =>
+                (c : TreeCont) =>
+                    Done (
+                        (p : PPosition, dq : Dq) =>
+                            Done (
+                                (r : Remaining) =>
+                                    for {
+                                        c1 <- f (w - r) (i, w) (c)
+                                        out <- c1 (p, dq)
+                                        buffer <- out (r)
+                                    } yield buffer
+                            )
+                    )
+        })
+
+    def nesting (f : Int => Doc) : Doc =
+        new Doc ({
+            case iw @ (i, _) =>
+                f (i) (iw)
         })
 
     // Obtaining output
