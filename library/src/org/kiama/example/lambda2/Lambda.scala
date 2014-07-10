@@ -70,7 +70,7 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
          * Print help about the available commands.
          */
         def help {
-            config.output.emitln ("""exp                  print the result of evaluating exp
+            output.emitln ("""exp                  print the result of evaluating exp
                 |:eval                list the available evaluation mechanisms
                 |:eval <mechanism>    change to using <mechanism> to evaluate""".stripMargin)
         }
