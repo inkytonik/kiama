@@ -80,7 +80,7 @@ class Config (args : Seq[String], val output : Emitter, val error : Emitter) ext
     /**
      * Logging option. If profiling and this is set, print out events as they are generated.
      */
-    val logging = opt[Boolean] ("logging", descr = "Print profile events dynamically)",
+    val logging = opt[Boolean] ("logging", descr = "Print profile events dynamically",
                                 default = Some (false))
 
     /**
