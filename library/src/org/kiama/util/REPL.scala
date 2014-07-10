@@ -88,6 +88,8 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
             config.output.emitln
         } else if (config.processWhitespaceLines () || (line.trim.length != 0))
             processlines (processline (line, config))
+        else
+            processlines (config)
     }
 
     /**
