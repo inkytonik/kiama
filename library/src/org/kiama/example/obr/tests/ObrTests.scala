@@ -82,7 +82,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
         val title = s"""$name processing $obrfile parameters ${params.mkString("(",", ",")")} expecting $expect"""
         test (title) {
             val emitter = new StringEmitter
-            val args = Seq ("-c", "string", params.mkString ("", "\n", "\n"),
+            val args = Seq ("--Kconsole", "string", params.mkString ("", "\n", "\n"),
                             "-e", dirname + obrfile)
             val config = createConfig (args, emitter)
             try {

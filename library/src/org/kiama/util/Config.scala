@@ -69,24 +69,38 @@ class Config (args : Seq[String], val output : Emitter, val error : Emitter) ext
      * contents, and a file console where the option value specifies the
      * file name.
      */
-    val console = opt[Console] ("console", descr = "Console for program input",
-                                default = Some (JLineConsole)) (consoleConverter)
+    val console = opt[Console] ("Kconsole", descr = "Console for program input",
+                                default = Some (JLineConsole),
+                                noshort = true,
+                                hidden = true) (consoleConverter)
 
     /**
      * Profiling dimensions.
      */
-    val profile = opt[String] ("profile", descr = "Profiling dimensions (comma-separated)")
+    val profile = opt[String] ("Kprofile",
+                               descr = "Profiling dimensions (comma-separated)",
+                               noshort = true,
+                               hidden = true)
 
     /**
      * Logging option. If profiling and this is set, print out events as they are generated.
      */
-    val logging = opt[Boolean] ("logging", descr = "Print profile events dynamically",
-                                default = Some (false))
+    val logging = toggle ("Klogging",
+                          descrYes = "Print profile events dynamically",
+                          descrNo = "Don't print profile events",
+                          default = Some (false),
+                          noshort = true,
+                          hidden = true)
 
     /**
      * Time option. If set, print out execution time report.
      */
-    val time = opt[Boolean] ("time", descr = "Report execution time")
+    val time = toggle ("Ktime",
+                       descrYes = "Report execution time",
+                       descrNo = "Don't report execution time",
+                       default = Some (false),
+                       noshort = true,
+                       hidden = true)
 
     /**
      * The zero or more filenames that were specified positionally after all of the options.
@@ -118,6 +132,10 @@ class REPLConfig (args : Seq[String], output : Emitter, error : Emitter) extends
      * Whitespace option. If set, pass input lines that are completely white space
      * to the REPL processing. By default, these lines are ignored.
      */
-    val processWhitespaceLines = opt[Boolean] ("processWhitespaceLines", 'w', descr = "Process whitespace lines")
+    val processWhitespaceLines = toggle ("KprocessWhitespaceLines",
+                                         descrYes = "Process whitespace lines",
+                                         descrNo = "Don't process whitespace lines",
+                                         default = Some (false),
+                                         hidden = true)
 
 }

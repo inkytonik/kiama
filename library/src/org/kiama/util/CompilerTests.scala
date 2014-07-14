@@ -178,9 +178,9 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
                 val inf = new File (ip)
                 val (consoleArgs, msg) =
                     if (inf.exists)
-                        (Seq ("-c", "file", ip), s" from input $it")
+                        (Seq ("--Kconsole", "file", ip), s" from input $it")
                     else
-                        (Seq ("-c", "string", indefault), s""" from string "$indefault"""")
+                        (Seq ("--Kconsole", "string", indefault), s""" from string "$indefault"""")
                 filetest (name, rp, consoleArgs ++ args :+ cp, r, msg)
             }
         }
