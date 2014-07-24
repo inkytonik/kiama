@@ -11,9 +11,9 @@ organization in ThisBuild := "com.googlecode.kiama"
 
 // Scala compiler settings
 
-scalaVersion in ThisBuild := "2.11.1"
+scalaVersion in ThisBuild := "2.11.2"
 
-crossScalaVersions := Seq ("2.11.1", "2.10.4")
+crossScalaVersions := Seq ("2.11.2", "2.10.4")
 
 scalacOptions in ThisBuild :=
     Seq (
