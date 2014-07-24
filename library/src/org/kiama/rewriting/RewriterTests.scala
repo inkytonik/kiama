@@ -1045,7 +1045,8 @@ class RewriterTests extends Tests with Generator {
         val arg1type = "org.kiama.example.imperative.ImperativeTree$Var"
         val arg2type = "org.kiama.example.imperative.ImperativeTree$Exp"
         val error = "(Num(42.0),Num(99.0)), expects 2"
-        val msg = "%s: %s(%s,%s) %s".format (base, method, arg1type, arg2type, error)
+        val hint = "Common cause: term classes are nested in another class, move them to the top level"
+        val msg = "%s: %s(%s,%s) %s\n%s".format (base, method, arg1type, arg2type, error, hint)
         assertResult (msg) (i.getMessage)
     }
 
