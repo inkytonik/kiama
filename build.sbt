@@ -49,7 +49,7 @@ libraryDependencies in ThisBuild ++= {
         if (scalaVersion.value.startsWith ("2.10"))
             Seq ()
         else
-            Seq ("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.1")
+            Seq ("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2")
     Seq (
         // Caching:
         "com.google.code.findbugs" % "jsr305" % "2.0.3",
