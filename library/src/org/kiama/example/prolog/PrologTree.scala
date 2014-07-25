@@ -54,10 +54,12 @@ object PrologTree {
 
     sealed abstract class Literal extends Term
 
-    case class Atom (s : String) extends Literal {
+    sealed abstract class NamedLiteral extends Literal
+
+    case class Atom (s : String) extends NamedLiteral {
         override def toString : String = s
     }
-    case class Pred (s : String, ts : Seq[Term]) extends Literal {
+    case class Pred (s : String, ts : Seq[Term]) extends NamedLiteral {
         override def toString : String = s + ts.mkString ("(", ", ", ")")
     }
     case class Cut () extends Literal {

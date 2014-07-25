@@ -139,14 +139,12 @@ class SemanticAnalyser {
      * have implemented the environments correctly, nothing can be unknown
      * since the first appearance is the defining ocurrence.
      */
-    val entity : PrologTree => Entity =
+    val entity : NamedLiteral => Entity =
         attr {
             case n @ Pred (s, ts) =>
                 lookup (n->env, s, UnknownEntity (), true)
             case n @ Atom (s) =>
                 lookup (n->env, s, UnknownEntity (), true)
-            case n =>
-                sys.error (s"n->entity called on $n")
         }
 
     /**
@@ -155,14 +153,12 @@ class SemanticAnalyser {
      * implied by the node itself.  Used for type checking since we don't want
      * to use information from this node to check this node (a circularity).
      */
-    val entityin : PrologTree => Entity =
+    val entityin : NamedLiteral => Entity =
         attr {
             case n @ Pred (s, ts) =>
                 lookup (n->envin, s, UnknownEntity (), true)
             case n @ Atom (s) =>
                 lookup (n->envin, s, UnknownEntity (), true)
-            case n =>
-                sys.error (s"n->entityin called on $n")
         }
 
     /**
