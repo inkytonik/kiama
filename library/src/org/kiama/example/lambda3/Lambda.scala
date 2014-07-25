@@ -145,10 +145,16 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         name ^^ Var
 
     lazy val name =
-        "[a-zA-Z]+".r ~ regexnows ("[0-9]*".r) ^^ {
-            case base ~ index =>
-                Name (base, if (index.isEmpty) None else Some (index.toInt))
-        }
+        "[a-zA-Z]+[0-9]+".r ^^ (
+            fullname => {
+                val (base, index) = fullname.span (_.isLetter)
+                Name (base, Some (index.toInt))
+            }
+        ) |
+        "[a-zA-Z]+".r ^^ (
+            base =>
+                Name (base, None)
+        )
 
 }
 

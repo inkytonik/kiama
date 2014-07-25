@@ -120,32 +120,6 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
         }
 
     /**
-     * Create a parser that matches a regex string, but doesn't skip whitespace
-     * first. This operation is useful if you want to recognise parts of a lexical
-     * symbol with different regular expressions so you can use the parts
-     * separately. Otherwise you have to parse with one regex and then split the
-     * resulting string to get at its parts. Based on `RegexParser.regex` in the
-     * Scala library.
-     */
-    def regexnows (r : Regex) : Parser[String] =
-        Parser { in =>
-            val source = in.source
-            val start = in.offset
-            (r findPrefixMatchOf (source.subSequence (start, source.length))) match {
-                case Some (matched) =>
-                   Success (source.subSequence (start, start + matched.end).toString,
-                            in.drop (matched.end))
-                case None =>
-                   val found =
-                       if (start == source.length ())
-                           "end of source"
-                       else
-                           s"`${source.charAt (start)}'"
-                   Failure (s"string matching regex `$r' expected but $found found", in)
-            }
-        }
-
-    /**
      * Convenience conversion to lift parsers that return 2-tilde-tuples to parsers
      * that return regular 2-tuples.
      */
