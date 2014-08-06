@@ -1,0 +1,16 @@
+* _pp.ob
+MODULE redeftrue;
+
+    VAR
+        TRUE : INTEGER;
+
+BEGIN
+    TRUE := 1
+END redeftrue.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_TRUE2;
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_TRUE2 = 1;
+[6]    return 0;
+[6]}

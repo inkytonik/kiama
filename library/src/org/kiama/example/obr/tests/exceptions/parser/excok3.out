@@ -1,0 +1,1 @@
+ObrInt(ExcOk3,List(IntParam(IdnDef(i))),List(TryStmt(TryBody(List(AssignStmt(IdnExp(IdnUse(Average)),SlashExp(IdnExp(IdnUse(Quantity)),IdnExp(IdnUse(Count)))), AssignStmt(IdnExp(IdnUse(Result)),StarExp(IdnExp(IdnUse(Average)),IdnExp(IdnUse(Frequency)))))),List(Catch(IdnUse(DivideByZero),List(AssignStmt(IdnExp(IdnUse(Result)),IntExp(0))))))),ExcOk3)

@@ -1,0 +1,50 @@
+MODULE badproc;
+
+VAR
+    avar1 : INTEGER;
+    avar2 : INTEGER;
+    abool : BOOLEAN;
+
+PROCEDURE avar1;
+
+END avar1;
+
+PROCEDURE proc1 (VAR a : INTEGER; b : BOOLEAN);
+
+CONST
+    c = a + 1;
+    
+PROCEDURE proc2;
+
+VAR
+    d : INTEGER;
+
+BEGIN
+    proc1 (d, TRUE)
+END proc2;
+
+BEGIN
+    proc1 (a, b)
+END proc;
+
+PROCEDURE redefparam1 (a : INTEGER; a : INTEGER);
+
+END redefparam1;
+
+PROCEDURE redefparam2 (a : INTEGER; b : INTEGER);
+
+VAR
+    b : BOOLEAN;
+    
+END redefparam2;
+
+BEGIN
+    abool (1);
+    proc1;
+    proc1 (1);
+    proc1 (1, 2, 3);
+    proc1 (abool, avar2);
+    Read (avar1, avar2);
+    Write;
+    WriteLn (avar1)
+END badproc.

@@ -1,0 +1,4 @@
+The Kiama team are pleased to bring you a minor release of the library.
+
+This release is functionally identical to version 1.5.2.
+The only changes are to move to Scala 2.11.0 and compatible libraries.

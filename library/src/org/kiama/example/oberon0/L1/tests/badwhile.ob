@@ -1,0 +1,10 @@
+MODULE badwhile;
+
+VAR
+    avar : INTEGER;
+
+BEGIN    
+    WHILE avar DO
+       avar := 42
+    END
+END badwhile.

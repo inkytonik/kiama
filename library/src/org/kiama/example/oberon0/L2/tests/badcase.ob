@@ -1,0 +1,20 @@
+MODULE badcase;
+
+VAR
+    avar : INTEGER;
+    bvar : BOOLEAN;
+
+BEGIN
+    CASE bvar OF
+        18 : avar := 19
+    END;
+
+    CASE 1 < 2 OF
+        avar : avar := 3
+      | avar + 1 .. avar + 10 : avar := 5
+    END;
+
+    CASE avar OF
+        3 DIV 0 : avar := 1
+    END
+END badcase.

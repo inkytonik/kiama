@@ -1,0 +1,18 @@
+MODULE assign;
+
+CONST
+    answer = 42;
+    aconst1 = 1 + 42;
+    aconst2 = aconst1 * 2;
+
+VAR
+    avar, xvar : INTEGER;
+    bvar : BOOLEAN;
+
+BEGIN
+    avar := 10;
+    avar := answer - avar MOD 4;
+    avar := (answer + avar) * 4;
+    bvar := TRUE;
+    bvar := bvar OR (bvar & FALSE) 
+END assign.

@@ -1,0 +1,5 @@
+[11.7] failure: `DO' expected but `R' found
+
+      Result := 0;
+
+      ^

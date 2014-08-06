@@ -1,0 +1,31 @@
+MODULE badarray;
+
+CONST
+    size = 5;
+
+TYPE
+    atype1 = ARRAY -1 OF INTEGER;
+    atype3 = ARRAY TRUE OF INTEGER;
+    atype4 = ARRAY 10 OF INTEGER;
+    
+VAR
+    array1 : atype4;
+    array2 : ARRAY 26 OF BOOLEAN;
+    array3 : ARRAY 3 DIV 0 OF INTEGER;
+    abool : BOOLEAN;
+    aint : INTEGER;
+    array4 : ARRAY aint OF INTEGER;
+
+BEGIN
+    array1 := 1;
+    array1[abool] := 1;
+    array1[array1] := 2;
+    array1[1] := abool;
+    array2[1] := 1;
+    array2[-2] := TRUE;
+    array2[100] := TRUE;
+    array2[1 < 2] := TRUE;
+    abool[3] := aint[4];
+    abool[3] := 4;
+    array2 := array2 + 1
+END badarray.
