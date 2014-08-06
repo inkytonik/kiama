@@ -55,8 +55,8 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("issubterm: a term is a subterm of itself") {
-        check ((t : Stmt) => optsame (Some (t), issubterm (t, t)))
-        check ((t : Exp) => optsame (Some (t), issubterm (t, t)))
+        check ((t : Stmt) => optsame (Some (t), issubterm ((t, t))))
+        check ((t : Exp) => optsame (Some (t), issubterm ((t, t))))
     }
 
     test ("issubterm: random descendants are subterms") {
@@ -96,59 +96,59 @@ class RewriterTests extends Tests with Generator {
                     t
             }
 
-        check ((t : Stmt) => optsame (Some (t), issubterm (pickdesc (t), t)))
-        check ((t : Exp) => optsame (Some (t), issubterm (pickdesc (t), t)))
+        check ((t : Stmt) => optsame (Some (t), issubterm ((pickdesc (t), t))))
+        check ((t : Exp) => optsame (Some (t), issubterm ((pickdesc (t), t))))
     }
 
     {
         val t = Add (Num (1), Num (2))
 
         test ("issubterm: selected subterms - fail") {
-            assertResult (None) (issubterm (Num (42), t))
+            assertResult (None) (issubterm ((Num (42), t)))
         }
 
         test ("issubterm: selected subterms - succeed sub") {
-            assertOptSame (Some (t)) (issubterm (Num (1), t))
+            assertOptSame (Some (t)) (issubterm ((Num (1), t)))
         }
 
         test ("issubterm: selected subterms - succeed self") {
-            assertOptSame (Some (t)) (issubterm (t, t))
+            assertOptSame (Some (t)) (issubterm ((t, t)))
         }
 
         test ("issubterm: selected proper subterms - fail") {
-            assertResult (None) (ispropersubterm (Num (42), t))
+            assertResult (None) (ispropersubterm ((Num (42), t)))
         }
 
         test ("issubterm: selected proper subterms - succeed sub") {
-            assertOptSame (Some (t)) (ispropersubterm (Num (1), t))
+            assertOptSame (Some (t)) (ispropersubterm ((Num (1), t)))
         }
 
         test ("issubterm: selected proper subterms - fail self") {
-            assertResult (None) (ispropersubterm (t, t))
+            assertResult (None) (ispropersubterm ((t, t)))
         }
 
         test ("issuperterm: selected superterms - fail") {
-            assertResult (None) (issuperterm (t, Num (42)))
+            assertResult (None) (issuperterm ((t, Num (42))))
         }
 
         test ("issuperterm: selected superterms - succeed sub") {
-            assertOptSame (Some (t)) (issuperterm (t, Num (1)))
+            assertOptSame (Some (t)) (issuperterm ((t, Num (1))))
         }
 
         test ("issuperterm: selected superterms - succeed self") {
-            assertOptSame (Some (t)) (issuperterm (t, t))
+            assertOptSame (Some (t)) (issuperterm ((t, t)))
         }
 
         test ("issuperterm: selected proper superterms - fail") {
-            assertResult (None) (ispropersuperterm (t, Num (42)))
+            assertResult (None) (ispropersuperterm ((t, Num (42))))
         }
 
         test ("issuperterm: selected proper superterms - succeed sub") {
-            assertOptSame (Some (t)) (ispropersuperterm (t, Num (1)))
+            assertOptSame (Some (t)) (ispropersuperterm ((t, Num (1))))
         }
 
         test ("issuperterm: selected proper superterms - fail self") {
-            assertResult (None) (ispropersuperterm (t, t))
+            assertResult (None) (ispropersuperterm ((t, t)))
         }
     }
 
@@ -1041,7 +1041,7 @@ class RewriterTests extends Tests with Generator {
                     dup (t, Seq (Num (42), Num (99)))
                 }
         val base = "dup illegal arguments"
-        val method = "public org.kiama.example.imperative.ImperativeTree$Asgn"
+        val method = s"public org.kiama.example.imperative.ImperativeTree$$Asgn"
         val arg1type = "org.kiama.example.imperative.ImperativeTree$Var"
         val arg2type = "org.kiama.example.imperative.ImperativeTree$Exp"
         val error = "(Num(42.0),Num(99.0)), expects 2"

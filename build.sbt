@@ -20,9 +20,10 @@ scalacOptions in ThisBuild :=
         "-deprecation",
         "-feature",
         "-sourcepath", baseDirectory.value.getAbsolutePath,
-        "-unchecked"
-        // "-Xfatal-warnings",
-        // "-Xlint"
+        "-unchecked",
+        "-Xfatal-warnings",
+        "-Xlint",
+        "-Xlint:-delayedinit-select"
     )
 
 // Dependency resolution

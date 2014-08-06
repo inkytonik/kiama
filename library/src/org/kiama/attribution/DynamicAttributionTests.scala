@@ -183,7 +183,7 @@ class DynamicAttributionTests extends Tests {
         val i = intercept[MatchError] {
                     sumleaf (Pair (Leaf (1), Leaf (2)))
                 }
-        assertResult ("Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+        assertResult (s"Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$$Pair)") (
             i.getMessage
         )
 
@@ -197,7 +197,7 @@ class DynamicAttributionTests extends Tests {
             val i = intercept[MatchError] {
                         sumleaf (Pair (Leaf (3), Leaf (1)))
                     }
-            assertResult ("Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+            assertResult (s"Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$$Pair)") (
                 i.getMessage
             )
         }
