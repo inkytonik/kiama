@@ -47,7 +47,8 @@ trait CompilerBase[T, C <: Config] extends Profiler {
 
     /**
      * Create the configuration for a particular run of the compiler.
-     * If supplied, use `emitter` instead of a standard output emitter.
+     * If supplied, use `output` instead of a standard output emitter,
+     * and/or `error` instead of a standard error emitter.
      */
     def createConfig (args : Seq[String],
                       output : Emitter = new OutputEmitter,
@@ -60,6 +61,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      */
     def driver (args : Seq[String]) {
         val config = createConfig (args)
+        config.afterInit ()
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
             profile (processfiles (config.filenames (), config), dimensions,
@@ -171,8 +173,11 @@ trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexPars
 trait Compiler[T] extends CompilerWithConfig[T,Config] {
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : Config =
-        new Config (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : Config =
+        new Config (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }

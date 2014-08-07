@@ -29,7 +29,7 @@ import scala.collection.immutable.Seq
 /**
  * Configuration for the Prolog REPL.
  */
-class PrologConfig (args : Seq[String], output : Emitter, error : Emitter) extends REPLConfig (args, output, error) {
+abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
@@ -59,8 +59,8 @@ class PrologConfig (args : Seq[String], output : Emitter, error : Emitter) exten
      * The program that represents the facts and clauses that will be made available
      * to the queries that are entered in the REPL.
      */
-    val database = opt[Program] ("database", descr = "Database of facts and clauses to use in queries",
-                                 required = true) (databaseConverter)
+    lazy val database = opt[Program] ("database", descr = "Database of facts and clauses to use in queries",
+                                      required = true) (databaseConverter)
 
 }
 
@@ -81,9 +81,12 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : PrologConfig =
-        new PrologConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : PrologConfig =
+        new PrologConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     /**
      * Helper function to create the database from the given filename or return

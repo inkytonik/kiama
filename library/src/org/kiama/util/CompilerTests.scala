@@ -33,9 +33,12 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     import org.scalatest.TestFailedException
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : Config =
-        new Config (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : Config =
+        new Config (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     def makeast (reader : Reader, filename : String, config : Config) : Either[Any,String] =
          Right ("Dummy")
@@ -43,6 +46,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
         val config = createConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
+        config.afterInit ()
         testdriver (config)
         val expectedMsg =
             if (System.getProperty("os.name").startsWith ("Windows"))
@@ -136,6 +140,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
             test (title) {
                 val emitter = new StringEmitter
                 val config = createConfig (cmd, emitter, emitter)
+                config.afterInit ()
                 try {
                     testdriver (config)
                 } catch {

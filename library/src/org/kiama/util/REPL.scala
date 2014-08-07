@@ -61,6 +61,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      */
     def driver (args : Seq[String]) {
         val config = createConfig (args)
+        config.afterInit ()
         config.output.emitln (banner)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
@@ -105,9 +106,12 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
 trait REPL extends REPLBase[REPLConfig] {
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : REPLConfig =
-        new REPLConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : REPLConfig =
+        new REPLConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }
 
@@ -161,9 +165,11 @@ trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T,C]
 trait ParsingREPL[T ] extends ParsingREPLWithConfig[T,REPLConfig] {
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : REPLConfig =
-        new REPLConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : REPLConfig =
+        new REPLConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }
-

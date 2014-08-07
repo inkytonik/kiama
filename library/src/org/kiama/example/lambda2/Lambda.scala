@@ -29,9 +29,9 @@ import scala.collection.immutable.Seq
 /**
  * Configuration for the Lambda REPL.
  */
-class LambdaConfig (args : Seq[String], output : Emitter, error : Emitter) extends REPLConfig (args, output, error) {
-    val mechanism = opt[String] ("mechanism", descr = "Evaluation mechanism",
-                                 default = Some ("reduce"))
+abstract class LambdaConfig (args : Seq[String]) extends REPLConfig (args) {
+    lazy val mechanism = opt[String] ("mechanism", descr = "Evaluation mechanism",
+                                      default = Some ("reduce"))
 }
 
 /**
@@ -51,9 +51,12 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
     import org.kiama.util.Messaging.report
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : LambdaConfig =
-        new LambdaConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : LambdaConfig =
+        new LambdaConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 

@@ -29,8 +29,8 @@ import scala.collection.immutable.Seq
 /**
  * Configuration for the PicoJava compiler.
  */
-class PicojavaConfig (args : Seq[String], output : Emitter, error : Emitter) extends Config (args, output, error) {
-    val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
+abstract class PicojavaConfig (args : Seq[String]) extends Config (args) {
+    lazy val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
 }
 
 object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalyser {
@@ -40,9 +40,12 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
     import org.kiama.util.Config
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : PicojavaConfig =
-        new PicojavaConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : PicojavaConfig =
+        new PicojavaConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     /**
      * Process a PicoJava program by checking for errors, optionally obfuscating and

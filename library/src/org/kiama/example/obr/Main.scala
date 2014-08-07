@@ -30,11 +30,11 @@ import scala.collection.immutable.Seq
 /**
  * Configuration for the Obr compiler.
  */
-class ObrConfig (args : Seq[String], output : Emitter, error : Emitter) extends Config (args, output, error) {
-    val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
-    val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
-    val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
-    val execute = opt[Boolean] ("execute", descr = "Execute the compiled code")
+abstract class ObrConfig (args : Seq[String]) extends Config (args) {
+    lazy val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
+    lazy val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
+    lazy val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
+    lazy val execute = opt[Boolean] ("execute", descr = "Execute the compiled code")
 }
 
 /**
@@ -50,9 +50,12 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
     import org.kiama.util.Messaging.report
 
     override def createConfig (args : Seq[String],
-                               output : Emitter = new OutputEmitter,
-                               error : Emitter = new ErrorEmitter) : ObrConfig =
-        new ObrConfig (args, output, error)
+                               out : Emitter = new OutputEmitter,
+                               err : Emitter = new ErrorEmitter) : ObrConfig =
+        new ObrConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {
 

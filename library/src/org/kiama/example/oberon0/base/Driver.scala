@@ -54,16 +54,16 @@ trait Driver {
  * of compiler share a configuration type, so some of these settings have no
  * effect for some of the drivers.
  */
-class Oberon0Config (args : Seq[String], output : Emitter, errors : Emitter, testPrettyPrint : Boolean = false) extends Config (args, output, errors) {
-    val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
-    val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
-    val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
-                                       default = Some (testPrettyPrint))
-    val intPrint = opt[Boolean] ("intPrint", 'i', descr = "Print the intermediate abstract syntax tree")
-    val intPrettyPrint = opt[Boolean] ("intPrettyPrint", 'I', descr = "Pretty-print the intermediate abstract syntax tree")
-    val cPrint = opt[Boolean] ("cPrint", 'c', descr = "Print the C abstract syntax tree")
-    val cPrettyPrint = opt[Boolean] ("cPrettyPrint", 'C', descr = "Pretty-print the C abstract syntax tree",
-                                     default = Some (testPrettyPrint))
+abstract class Oberon0Config (args : Seq[String], testPrettyPrint : Boolean = false) extends Config (args) {
+    lazy val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
+    lazy val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
+    lazy val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
+                                            default = Some (testPrettyPrint))
+    lazy val intPrint = opt[Boolean] ("intPrint", 'i', descr = "Print the intermediate abstract syntax tree")
+    lazy val intPrettyPrint = opt[Boolean] ("intPrettyPrint", 'I', descr = "Pretty-print the intermediate abstract syntax tree")
+    lazy val cPrint = opt[Boolean] ("cPrint", 'c', descr = "Print the C abstract syntax tree")
+    lazy val cPrettyPrint = opt[Boolean] ("cPrettyPrint", 'C', descr = "Pretty-print the C abstract syntax tree",
+                                          default = Some (testPrettyPrint))
 }
 
 /**
@@ -81,9 +81,12 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     import org.kiama.util.IO.{filereader, FileNotFoundException}
 
     override def createConfig (args : Seq[String],
-                               output : Emitter = new OutputEmitter,
-                               error : Emitter = new ErrorEmitter) : Oberon0Config =
-        new Oberon0Config (args, output, error)
+                               out : Emitter = new OutputEmitter,
+                               err : Emitter = new ErrorEmitter) : Oberon0Config =
+        new Oberon0Config (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     /**
      * Custom driver for section tagging and challenge mode for errors.  If

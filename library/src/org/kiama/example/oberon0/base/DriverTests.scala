@@ -132,8 +132,11 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
      * In the test configuration we pretty print the source and C ASTs by default.
      */
     override def createConfig (args : Seq[String],
-                               output : Emitter = new OutputEmitter,
-                               error : Emitter = new ErrorEmitter) : Oberon0Config =
-        new Oberon0Config (args, output, error, true)
+                               out : Emitter = new OutputEmitter,
+                               err : Emitter = new ErrorEmitter) : Oberon0Config =
+        new Oberon0Config (args, true) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }
