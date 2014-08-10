@@ -35,13 +35,6 @@ trait Environments {
     val nameCounter = new Counter (0)
 
     /**
-     * Reset the environment module.
-     */
-    def resetEnvironments () {
-        nameCounter.reset ()
-    }
-
-    /**
      * Support for unique ids for named things.
      */
     trait Named {

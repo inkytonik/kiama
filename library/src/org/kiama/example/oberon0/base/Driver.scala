@@ -145,7 +145,6 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
         val analyser = buildAnalyser (tree)
 
         // Perform semantic analysis
-        analyser.resetEnvironments
         val messages = analyser.errors (ast)
 
         if (messages.length == 0) {
