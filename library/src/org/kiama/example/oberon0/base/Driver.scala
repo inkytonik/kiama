@@ -75,7 +75,6 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     this : RegexParsers with source.SourcePrettyPrinter =>
 
     import java.io.File
-    import org.kiama.attribution.Attribution.resetMemo
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging.{report, sortmessages}
     import org.kiama.util.IO.{filereader, FileNotFoundException}
@@ -147,7 +146,6 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
 
         // Perform semantic analysis
         analyser.resetEnvironments
-        resetMemo
         val messages = analyser.errors (ast)
 
         if (messages.length == 0) {

@@ -205,13 +205,13 @@ class AttributionTests extends Tests {
         assertResult (2, "evaluation count") (count)
     }
 
-    test ("resetMemo resets the hasBeenComputedAt state") {
+    test ("reset resets the hasBeenComputedAt state") {
         val definitions = new Definitions
         import definitions._
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         maximum (t)
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
-        resetMemo ()
+        maximum.reset ()
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
     }
 
@@ -246,15 +246,6 @@ class AttributionTests extends Tests {
         import definitions._
         assertResult (10, "first value") (maximum (t))
         assertResult (10, "second value") (maximum (s))
-        assertResult (4, "evaluation count") (count)
-    }
-
-    test ("cached attributes can be reset") {
-        val definitions = new Definitions
-        import definitions._
-        assertResult (10, "first value") (maximum (t))
-        resetMemo
-        assertResult (10, "second value") (maximum (t))
         assertResult (4, "evaluation count") (count)
     }
 

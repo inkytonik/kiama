@@ -434,10 +434,8 @@ trait AttributionCore extends AttributionCommon with Memoiser {
         /**
          * Has the value of this attribute at `t` already been computed or not?
          */
-        override def hasBeenComputedAt (t : T) : Boolean = {
-            resetIfRequested ()
+        override def hasBeenComputedAt (t : T) : Boolean =
             computed contains t
-        }
 
     }
 

@@ -30,19 +30,6 @@ trait Memoiser {
     import com.google.common.cache.{Cache, CacheBuilder}
 
     /**
-     * The version number of the current memo tables.
-     */
-    private var memoVersion = 0
-
-    /**
-     * Lazily reset all memoisation tables. The actual resets will only happen
-     * the next time the value of each attribute is accessed.
-     */
-    def resetMemo () {
-        memoVersion += 1
-    }
-
-    /**
      * Common interface for encapsulation of memoisation for a single memoised
      * entity backed by a configurable cache.
      */
@@ -54,28 +41,20 @@ trait Memoiser {
         def memo : Cache[AnyRef,AnyRef]
 
         /**
-         * The version number of this entities memo table.
-         */
-        private var thisMemoVersion = 0
-
-        /**
          * Duplicate an entry if possible. If `t1` has a memoised value associated
          * with it, set the value associated with `t2` to the same value. If there
          * is no value associated with `t1`, set the value associated with `t2` to
          * `u`.
          */
         def dup (t1 : T, t2 : T, u : U) {
-            resetIfRequested ()
             put (t2, getWithDefault (t1, u))
         }
 
         /**
          * Return the value stored at key `t` as an option.
          */
-        def get (t : T) : Option[U] = {
-            resetIfRequested ()
+        def get (t : T) : Option[U] =
             Option (memo.getIfPresent (t).asInstanceOf[U])
-        }
 
         /**
          * Return the value stored at key `t` if there is one, otherwise
@@ -88,7 +67,6 @@ trait Memoiser {
          * Store the value `u` under the key `t`.
          */
         def put (t : T, u : U) {
-            resetIfRequested ()
             memo.put (t.asInstanceOf[AnyRef], u.asInstanceOf[AnyRef])
         }
 
@@ -97,7 +75,6 @@ trait Memoiser {
          * associated value.
          */
         def putIfNotPresent (t : T, u : U) {
-            resetIfRequested ()
             if (!hasBeenComputedAt (t))
                 put (t, u)
         }
@@ -122,17 +99,6 @@ trait Memoiser {
          */
         def hasBeenComputedAt (t : T) : Boolean =
             get (t) != None
-
-        /**
-         * Check to see if a reset has been requested via the common memo
-         * version, and if so, do it.
-         */
-        def resetIfRequested () {
-            if (thisMemoVersion != memoVersion) {
-                thisMemoVersion = memoVersion
-                reset ()
-            }
-        }
 
     }
 

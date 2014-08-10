@@ -81,7 +81,6 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
      * Run the compiler in test mode using the given configuration.
      */
     def testdriver (config : C) {
-        Attribution.resetMemo
         processfiles (config.filenames (), config)
     }
 
