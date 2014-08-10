@@ -56,7 +56,7 @@ object Relation extends RelationFactory[Relation] {
             val l = pending.remove (0)
             val cs = onestep (l)
             pending.appendAll (cs)
-            result.appendAll (onestep (l).map { case r => (l, r) })
+            result.appendAll (cs.map { case r => (l, r) })
         }
         result.toList
     }
