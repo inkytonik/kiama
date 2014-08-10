@@ -53,7 +53,7 @@ trait RelationLike[T,U,Repr[_,_]] {
 
     /**
      * Build a new relation by collecting pairs produced by the partial
-     * `f` wherever it is defined on pairs of this relation.
+     * function `f` wherever it is defined on pairs of this relation.
      */
     def collect[V,W] (f : ((T,U)) ==> (V,W)) : Repr[V,W] =
         companion.fromGraph (graph.collect (f))
