@@ -32,4 +32,4 @@ The Kiama team is pleased to bring you the next release of the library. This rel
 
 ### Other
 
-* Move to sbt 0.13.5, Scala 2.10.4/2.11.2, Scala parser combinators 1.0.2, ScalaTest 2.2.0
+* Move to sbt 0.13.5, Scala 2.10.4/2.11.2, Scala parser combinators 1.0.2, ScalaTest 2.2.0, JLine 2.12
