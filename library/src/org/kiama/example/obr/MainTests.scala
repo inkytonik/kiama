@@ -49,10 +49,6 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
         val title = s"$name processing $obrfile"
 
         test(title) {
-            // Initialise compiler state
-            SymbolTable.reset ()
-            RISCLabels.reset ()
-
             val filename = dirname + obrfile
             val config = createConfig (Seq (filename))
             config.afterInit ()
@@ -68,7 +64,8 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
                             report (messages, config.error)
                             fail (s"$title emitted a semantic error.")
                         } else {
-                            val transformer = new RISCTransformer (analyser)
+                            val labels = new RISCLabels
+                            val transformer = new RISCTransformer (analyser, labels)
                             tester (title, config.error, transformer.code (ast))
                         }
                     case Right (msg) =>

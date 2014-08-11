@@ -31,31 +31,13 @@ import org.kiama.util.Environments
 object SymbolTable extends Environments {
 
     import ObrTree._
-    import scala.collection.immutable.{Map, Seq}
-    import org.kiama.util.{Counter, Entity}
-
-    /**
-     * Counter for previously used location.
-     */
-    val prevLocCounter = new Counter (0)
-
-    /**
-     * Reset the symbol table.
-     */
-    def reset () {
-        prevLocCounter.reset ()
-    }
+    import scala.collection.immutable.Seq
+    import org.kiama.util.Entity
 
     /**
      * A variable entity of the given type.
      */
-    case class Variable (tipe : Type) extends Entity {
-        val locn = {
-            val loc = prevLocCounter.value
-            prevLocCounter.next (tipe.storage)
-            loc
-        }
-    }
+    case class Variable (tipe : Type) extends Entity
 
     /**
      * A constant integer entity with the given type and value.

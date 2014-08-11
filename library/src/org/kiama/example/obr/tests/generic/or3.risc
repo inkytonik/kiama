@@ -1,8 +1,8 @@
     ! Prologue
     movi $27, $0, 0
-    ! StW(Local(0),Read())
+    ! StW(Local(8),Read())
     rd $1
-    stw $1, $27, 0
+    stw $1, $27, 8
     ! Beq(Cond(IntDatum(0),IntDatum(1),IntDatum(1)),Label(1))
     movi $1, $0, 0
     cmpi $1, 0

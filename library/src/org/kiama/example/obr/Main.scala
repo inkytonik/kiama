@@ -61,10 +61,6 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
 
         super.process (filename, ast, config)
 
-        // Initialise compiler state
-        SymbolTable.reset ()
-        RISCLabels.reset ()
-
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree (ast)
         val analyser = new SemanticAnalyser (tree)
@@ -77,8 +73,11 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
                 config.output.emitln (analyser.env (ast))
             }
 
+            // Label generator for this run
+            val labels = new RISCLabels
+
             // Compile the source tree to a target tree
-            val transformer = new RISCTransformer (analyser)
+            val transformer = new RISCTransformer (analyser, labels)
             val targettree = transformer.code (ast)
 
             // Print out the target tree for debugging
@@ -87,7 +86,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
             }
 
             // Encode the target tree and emit the assembler or run if requested
-            val encoder = new RISCEncoder
+            val encoder = new RISCEncoder (labels)
             encoder.encode (targettree)
 
             if (config.riscPrint ()) {
@@ -130,9 +129,6 @@ class SemanticDriver extends Driver {
     import org.kiama.util.Messaging.report
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {
-
-        // Initialise compiler state
-        SymbolTable.reset ()
 
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree (ast)

@@ -25,16 +25,16 @@ package example.obr
 /**
  * Module implementing transformation from Obr to RISC tree code.
  */
-class RISCTransformer (analyser : SemanticAnalyser) {
+class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
 
     import analyser.{divideByZeroExn, entity, indexOutOfBoundsExn}
+    import labels.genlabelnum
     import ObrTree._
-    import RISCLabels.genlabelnum
     import RISCTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators
-    import org.kiama.util.Entity
+    import org.kiama.util.{Counter, Entity}
     import scala.collection.immutable.Seq
 
     val tree = analyser.tree
@@ -63,13 +63,22 @@ class RISCTransformer (analyser : SemanticAnalyser) {
         }
 
     /**
+     * Counter for previously used location.
+     */
+    val prevLocCounter = new Counter (0)
+
+    /**
      * Get the location of an entity. Only valid for variables,
      * but defined on all entities.
      */
-    def locn (e : Entity) : Int =
-        e match {
-            case v : Variable => v.locn
-            case _            => 0
+    val locn : Entity => Int =
+        attr {
+            case entity @ Variable (tipe) =>
+                val loc = prevLocCounter.value
+                prevLocCounter.next (tipe.storage)
+                loc
+            case _ =>
+                0
         }
 
     /**

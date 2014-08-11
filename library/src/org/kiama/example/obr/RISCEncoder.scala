@@ -29,9 +29,9 @@ import org.kiama.util.Emitter
  * generation (e.g., by allocating registers). The resulting code is
  * made available as a list of RISC machine instructions.
  */
-class RISCEncoder {
+class RISCEncoder (labels : RISCLabels) {
 
-    import RISCLabels.genlabelnum
+    import labels.genlabelnum
     import RISCTree._
     import org.kiama.example.RISC.RISCISA.{Label => RISCLabel, _}
     import org.kiama.attribution.Attribution._

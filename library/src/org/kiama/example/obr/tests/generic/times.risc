@@ -1,8 +1,8 @@
     ! Prologue
     movi $27, $0, 0
-    ! StW(Local(0),Read())
+    ! StW(Local(8),Read())
     rd $1
-    stw $1, $27, 0
+    stw $1, $27, 8
     ! Write(MulW(IntDatum(7),IntDatum(5)))
     movi $1, $0, 7
     movi $2, $0, 5
