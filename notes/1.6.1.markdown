@@ -1,0 +1,35 @@
+The Kiama team is pleased to bring you the next release of the library. This release has  significant enhancements in the pretty-printing library, but is otherwise a minor release. The release is cross-published for both Scala 2.10 and 2.11.
+
+### Enhancements
+
+* [Output](http://wiki.kiama.googlecode.com/hg/doc/1.6.1/api/index.html#org.kiama.output.package)
+
+    * The pretty-printing library now has combinators for _side-by-side_ pretty-printing based on similar features of Haskell libraries. Specifically, `column` and `nesting` allow pretty-printing documents to depend on the current printing column and nesting level, respectively. Built on these basic combinators are: `align` which sets the indentation for a nested document to the current column, `hang` and `indent` which allow fine-tuning of indentation, `width` which allows the pretty-printing of a document to depend on the width of another document, and `padto`/`padtobreak` which can be used to pad a document to a specific width. `<%>` and `<%%>` allow alignment to be used as an operator.
+
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.6.0/api/index.html#org.kiama.rewriting.package)
+
+    * The `dup` operation that is used to duplicate nodes during rewriting is more helpful when it fails by mentioning the common problem that rewritten classes cannot be nested inside another class.
+
+### Deletions
+
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.6.1/api/index.html#org.kiama.util.package)
+
+    * `ParserUtilities`: the `regexnows` method has been removed to avoid duplication of code from the parser combinators library. We are exploring ways to better support whitespace processing in that library instead.
+
+### Fixes
+
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.6.1/api/index.html#org.kiama.util.package)
+
+    * `ParenPrettyPrinter`: fixed doc of `noparens` method
+
+    * `REPL`: fixed bug where an empty line of input caused REPL to exit
+
+    * Kiama-specific command-line options are now all under `--K` so that user programs can use other letters for their purposes. E.g., the option to specify that console input should come from a string is `--KConsole` instead of `-c` and `--console`. Run a Kiama main program with `--help` to see the options.
+
+* Examples
+
+    * Minor fixes and documentation improvements in Lambda2, MiniJava, Obr and Prolog examples
+
+### Other
+
+* Move to sbt 0.13.5, Scala 2.10.4/2.11.2, Scala parser combinators 1.0.2, ScalaTest 2.2.0
