@@ -205,7 +205,7 @@ class SemanticAnalyser (val tree : ObrTree) {
         // otherwise use the entity appropriate for this definition.
         case n @ IdnDef (i) =>
             val entity =
-                if (isDefinedInScope (defenv.in (n), i))
+                if (isDefinedInScope (out (n), i))
                     MultipleEntity ()
                 else
                     defentity (n)
