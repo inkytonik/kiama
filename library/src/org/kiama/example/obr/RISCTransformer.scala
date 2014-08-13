@@ -178,14 +178,14 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
     val ditems : Declaration => Seq[Item] =
         attr {
 
-            /**
+            /*
              * An integer parameter translates into a Read instruction into
              * the location of the parameter.
              */
             case d @ IntParam (_) =>
                  Seq (StW (location (d), Read ()))
 
-            /**
+            /*
              * All other kinds of declaration generate no code.
              */
             case _ =>
@@ -200,21 +200,21 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
     val sitems : Statement => Seq[Item] =
         attr {
 
-            /**
+            /*
              * An assignment into an lvalue translates to a store of the rvalue
              * into the lvalue location.
              */
             case AssignStmt (e, exp) =>
                 Seq (StW (location (e), datum (exp)))
 
-            /**
+            /*
              * An EXIT statement translates into a jump to the exit label
              * of the current LOOP statement.
              */
             case s @ ExitStmt () =>
                 Seq (Jmp (Label (exitlab (s))))
 
-            /**
+            /*
              * A for statement first evaluates the minimum and maximum bounds,
              * storing one in the location of the loop control variable and
              * the other in a new temporary location.  Then the loop is ended
@@ -253,7 +253,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                 // ... and return our generated RISCTree code
                 result
 
-            /**
+            /*
              * A conditional statement translates into an evaluation of
              * the condition and branches to and around the appropriate
              * then and else parts.
@@ -267,7 +267,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                     elses.flatMap (sitems) ++
                     Seq (LabelDef (Label (lab2)))
 
-            /**
+            /*
              * A LOOP statement translates into a simple infinite loop
              * but we also have to keep track of the label to which an
              * EXIT statement should branch.  We need to save the label
@@ -283,7 +283,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                     Seq (Jmp (Label (lab1)),
                     LabelDef (Label (exitlab (s))))
 
-            /**
+            /*
              * A return statement translates into a Write instruction to
              * print the value being returned, then a Ret instruction to
              * terminate the program.
@@ -291,7 +291,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
             case ReturnStmt (exp) =>
                 Seq (Write (datum (exp)), Ret ())
 
-            /**
+            /*
              * A while statement translates into the standard evaluation
              * of the condition and branching to the body.
              */
@@ -302,7 +302,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                     body.flatMap (sitems) ++
                     Seq (LabelDef (Label (lab1)), Bne (datum (cond), Label (lab2)))
 
-            /**
+            /*
              * A TRY statement translates to the code generated from its body followed by
              * the code generated from each of its catch blocks. Between these we must also
              * provide a jump instruction to jump around the catch blocks, avoiding drop
@@ -325,7 +325,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                     cblocks.flatMap (cblock (_, tryexitlab)) ++
                     Seq (Jmp (Label (exnlabOuter (s))), LabelDef (Label (tryexitlab)))
 
-            /**
+            /*
              * A RAISE statement stores the integer associated with the specified
              * exception into a memory location reserved for the current exception
              * value and jumps to the exception handler (CATCH blocks) for the
@@ -375,44 +375,44 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
     val datum : Expression => Datum =
         attr {
 
-            /**
+            /*
              * A short-circuited AND expression turns into a conditional
              * operation of the form if (l) r else 0.
              */
             case AndExp (l, r) =>
                 Cond (datum (l), datum (r), IntDatum (0))
 
-            /**
+            /*
              * A true value translates into a one.
              */
             case BoolExp (true) =>
                 IntDatum (1)
 
-            /**
+            /*
              * A true value translates into a zero.
              */
             case BoolExp (false) =>
                 IntDatum (0)
 
-            /**
+            /*
              * An equality test turns into an equality operation.
              */
             case EqualExp (l, r) =>
                 CmpeqW (datum (l), datum (r))
 
-            /**
+            /*
              * A field expression is a load from the location of the field.
              */
             case e @ FieldExp (_, _) =>
                 LdW (location (e))
 
-            /**
+            /*
              * A greater than comparison turns into a greater than operation.
              */
             case GreaterExp (l, r) =>
                 CmpgtW (datum (l), datum (r))
 
-            /**
+            /*
              * An identifier use translates to either a) an integer datum if
              * the identifier denotes a constant, or b) a loads of the value
              * from the location at which the variable is stored.
@@ -423,33 +423,33 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                     case _               => LdW (location (e))
                 }
 
-            /**
+            /*
              * An index expression turns it a load from the location of the
              * array element that is being accessed.
              */
             case e @ IndexExp (_, _) =>
                 LdW (location (e))
 
-            /**
+            /*
              * An integer expression translates directly to a datum that returns
              * that integer.
              */
             case IntExp (n) =>
                 IntDatum (n)
 
-            /**
+            /*
              * A less than comparison turns into an less than operation.
              */
             case LessExp (l, r) =>
                 CmpltW (datum (l), datum (r))
 
-            /**
+            /*
              * A minus expression turns into a subtraction operation.
              */
             case MinusExp (l, r) =>
                 SubW (datum (l), datum (r))
 
-            /**
+            /*
              * A modulus expression turns into a remainder operation.
              * See the translation of SlashExps for more information.
              */
@@ -466,39 +466,39 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                 ,   RemW (datum (l), LdW (Local (tempintloc)))
                 )
 
-            /**
+            /*
              * A negation expression turns into a negation operation.
              */
             case NegExp (e) =>
                 NegW (datum (e))
 
-            /**
+            /*
              * A Boolean complement expressions turns into a complement
              * operation.
              */
             case NotExp (e) =>
                 Not (datum (e))
 
-            /**
+            /*
              * An inequality test turns into an inequality operation..
              */
             case NotEqualExp (l, r) =>
                 CmpneW (datum (l), datum (r))
 
-            /**
+            /*
              * A short-circuited OR expression turns into a conditional
              * operation of the form if (l) 1 else r.
              */
             case OrExp (l, r) =>
                 Cond (datum (l), IntDatum (1), datum (r))
 
-            /**
+            /*
              * A plus expression turns into an addition operation.
              */
             case PlusExp (l, r) =>
                 AddW (datum (l), datum (r))
 
-            /**
+            /*
              * A slash expression turns into a division operation.
              * However, we also need to check the second operand to
              * see if it is 0 and if it is we raise a DivideByZero
@@ -526,7 +526,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                     ,   DivW (datum (l), LdW (Local (tempintloc)))
                     )
 
-            /**
+            /*
              * A star expression turns into a multiplication operation.
              */
             case StarExp (l, r) =>

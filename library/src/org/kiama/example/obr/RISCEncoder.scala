@@ -161,7 +161,7 @@ class RISCEncoder (labels : RISCLabels) {
         // Tree for this RISC progarm
         val tree = new RISCTree (p)
 
-        /**
+        /*
          * Register allocation - we use an attribute grammar to implement
          * a stack style allocation of registers. Unless a specific node type
          * is handled by a special case, this attribution assumes that the
@@ -205,7 +205,7 @@ class RISCEncoder (labels : RISCLabels) {
         emit (Target (RISCLabel (exitlab)))
         emit (RET (0))
 
-        /**
+        /*
          * Encode an item.  All registers are free for each item.  I.e.,
          * no values are passed between items via registers.
          */
@@ -250,7 +250,7 @@ class RISCEncoder (labels : RISCLabels) {
             }
         }
 
-        /**
+        /*
          * Encode a comparison node
          */
         def compare (op : (RISCLabel) => Instr, l : Datum, r : Datum, d : Datum) {
@@ -264,7 +264,7 @@ class RISCEncoder (labels : RISCLabels) {
             emit (Target (RISCLabel (lab)))
         }
 
-        /**
+        /*
          * Encode a 1-parameter arithmetic operation
          */
         def arith1 (op : (RegNo, RegNo) => Instr, e : Datum, d : Datum) {
@@ -272,7 +272,7 @@ class RISCEncoder (labels : RISCLabels) {
             emit (op (reg (d), reg (e)))
         }
 
-        /**
+        /*
          * Encode a 2-parameter arithmetic operation
          */
         def arith2 (op : (RegNo, RegNo, RegNo) => Instr, l : Datum, r : Datum, d : Datum) {
@@ -281,13 +281,13 @@ class RISCEncoder (labels : RISCLabels) {
             emit (op (reg (d), reg (l), reg (r)))
         }
 
-        /**
+        /*
          * Encode a datum.
          */
         def datum (d : Datum) : Unit =
             d match {
 
-                /**
+                /*
                  * Arithmetic operations that correspond to a single RISC
                  * instruction.
                  */
@@ -318,7 +318,7 @@ class RISCEncoder (labels : RISCLabels) {
                 case RemW (l, r) =>
                     arith2 (MOD.apply _, l, r, d)
 
-                /**
+                /*
                  * Comparisons.
                  */
                 case CmpeqW (l, r) =>
@@ -333,7 +333,7 @@ class RISCEncoder (labels : RISCLabels) {
                 case CmpltW (l, r) =>
                     compare (BLT.apply _, l, r, d)
 
-                /**
+                /*
                  * Since there is no single instruction that implements the
                  * semantics of a CondDatum, we need to use a sequence of
                  * instructions.  This code is essentially the same as would
@@ -355,7 +355,7 @@ class RISCEncoder (labels : RISCLabels) {
                     emit (MOV (reg (d), 0, reg (f)))
                     emit (Target (RISCLabel (lab2)))
 
-                /**
+                /*
                  * An integer leaf seems a little bit more complicated
                  * than one might expect - but this is because we
                  * can only load constants into 32 bit registers in
@@ -370,7 +370,7 @@ class RISCEncoder (labels : RISCLabels) {
                         emit (ORI (reg (d), reg (d), num.toShort))
                     }
 
-                /**
+                /*
                  * A load leaf just turns into an evaluation of the memory address
                  * and a load from that address into the datum's register.
                  */
@@ -382,13 +382,13 @@ class RISCEncoder (labels : RISCLabels) {
                 case LdW (Local (offset)) =>
                     emit (LDW (reg (d), memreg, offset.toShort))
 
-                /**
+                /*
                  * Read an integer value from the terminal.
                  */
                 case Read () =>
                     emit (RD (reg (d)))
 
-                /**
+                /*
                  * Encode a compound sequence datum.
                  */
                 case SequenceDatum (insns, d) =>

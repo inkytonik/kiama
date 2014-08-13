@@ -102,7 +102,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
         // Pattern for a line marks with p, q and r
         val MarkedLine2 = """\[([0-9]+),([0-9]+),([0-9]+)\](.*)""".r
 
-        /**
+        /*
          * Include line in the output if it meets the criteria.
          */
         def processline (lines : Seq[String], line : String,

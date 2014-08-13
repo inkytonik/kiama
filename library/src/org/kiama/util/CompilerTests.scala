@@ -125,7 +125,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
 
         import java.io.FilenameFilter
 
-        /**
+        /*
          * Make a single file test processing using the command-line `cmd`,
          * expecting output as in the file `rp`.  The `extra` string is appended
          * to the normal test title. `name` is an identifying string used in
@@ -158,7 +158,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
             }
         }
 
-        /**
+        /*
          * Make a set of file tests to produce the result files in `dir`.  For
          * each such result file found, we create a test.  That test takes as
          * input the corresponding input file (with extension `inext`), if it

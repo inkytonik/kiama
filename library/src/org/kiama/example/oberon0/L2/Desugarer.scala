@@ -45,13 +45,13 @@ trait Desugarer extends L0.Desugarer {
      */
     override def transform (tree : SourceTree) : SourceTree = {
 
-        /**
+        /*
          * An analyser for the input tree.
          */
         val analyser = buildAnalyser (tree)
         import analyser.value
 
-        /**
+        /*
          * Desugar FOR statements into equivalent blocks containing a WHILE loop.
          * A new variable called "limit" is introduced in the block to hold the
          * upper limit of the FOR to protect against changes in the body.
@@ -99,7 +99,7 @@ trait Desugarer extends L0.Desugarer {
                     )
             }
 
-        /**
+        /*
          * Desugar CASE statements into equivalent blocks containing cascading IF
          * statements. A new variable called "casevar" is introduced in the block to
          * hold the selection value so that it does not need to be re-evaluated.
@@ -134,7 +134,7 @@ trait Desugarer extends L0.Desugarer {
                     )
             }
 
-        /**
+        /*
          * Return an IF cascade equivaleant to the given cases and optional else
          * block. The variable ce holds the selection value.
          * Specifically, these cases on ce
@@ -154,7 +154,7 @@ trait Desugarer extends L0.Desugarer {
          */
         def casesToIf (ce : IdnExp, cases : Seq[Case], optelse : Option[Block]) : IfStatement = {
 
-            /**
+            /*
              * Return an expression for a case condition. A value condition becomes
              * a simple equality and a min-max condition becomes a range test.
              */
@@ -165,7 +165,7 @@ trait Desugarer extends L0.Desugarer {
                                                         LeExp (deepclone (ce), e2))
                 }
 
-            /**
+            /*
              * Return a single expression for a sequence of conditions by
              * forming a disjunction of translating each one.
              */

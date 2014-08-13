@@ -70,7 +70,7 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
         // Shorthand access to the output emitter
         val output = config.output
 
-        /**
+        /*
          * Print help about the available commands.
          */
         def printHelp () {

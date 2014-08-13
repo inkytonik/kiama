@@ -91,7 +91,7 @@ class Interpreter {
         // earlier ones have priority.
         val clauses = program.cs.reverse
 
-        /**
+        /*
          * Return a list of the variables names used in the given term.
          */
         def varsof (t : Term) : Set[String] =
@@ -104,7 +104,7 @@ class Interpreter {
                 case _            => Set.empty
             }
 
-        /**
+        /*
          * Find the variables in the query.  These are the ones we want
          * to print.
          */
@@ -114,7 +114,7 @@ class Interpreter {
                     (v, Var (v))
                 }
 
-        /**
+        /*
          * The goal list stack.  Each entry is a list of goals that are to be
          * satisfied. We start with the query and the display goal.
          */
@@ -123,7 +123,7 @@ class Interpreter {
                 Seq (TermGoal (query), DisplayGoal (goalvars))
             )
 
-        /**
+        /*
          * Loop until the interpretation is done, indicated by an empty goal
          * list stack.
          */
@@ -139,7 +139,7 @@ class Interpreter {
             // Decide what to do based on the first goal in the top goal list
             gl (0) match {
 
-                /**
+                /*
                  * A term that we will try to unify against the heads of each of the
                  * clauses in the program.
                  */
@@ -150,7 +150,7 @@ class Interpreter {
                         glstack.push (UnifyGoal (l, c.hd) +: (bdygoals ++ gl.tail))
                     }
 
-                /**
+                /*
                  * A goal to unify the two terms and carry on with the tail of the
                  * goal list if the unification was successful.  Discard the current
                  * goal list if the unification fails.
@@ -163,14 +163,14 @@ class Interpreter {
                             // Do nothing
                     }
 
-                /**
+                /*
                  * The record of a successful unification.  Carry on with the tail
                  * of the goal list.
                  */
                 case MatchGoal (l, r) =>
                     glstack.push (gl.tail)
 
-                /**
+                /*
                  * Success! We're down to the display goal, so we've successfully
                  * satisfied the query.  The variables in the display goal can be
                  * printed to display the solution.  If there aren't any variables,

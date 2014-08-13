@@ -51,13 +51,13 @@ trait Desugarer extends base.Transformer {
      */
     def uniquifyNames (t : SourceTree) : SourceTree = {
 
-        /**
+        /*
          * An analyser for the input tree.
          */
         val analyser = buildAnalyser (t)
         import analyser.{entity, isBuiltin, Named}
 
-        /**
+        /*
          * The name to use for a particular name occurrence.  If the occurrence
          * denotes a named entity, use that entity's id, otherwise leave the
          * occurrence unchanged.
@@ -72,7 +72,7 @@ trait Desugarer extends base.Transformer {
                     i
             }
 
-        /**
+        /*
          * Rename any user-defined name to its id if it has one.
          */
         val renameNames =

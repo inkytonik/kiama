@@ -38,12 +38,12 @@ trait Lifter extends base.Transformer {
      */
     override def transform (tree : SourceTree) : SourceTree = {
 
-        /**
+        /*
          * The collected declarations.
          */
         val decls = Seq.newBuilder[Declaration]
 
-        /**
+        /*
          * Lift declarations from inner blocks to the top level by adding
          * them to the declarations buffer in a bottom-up fashion and
          * removing them from their blocks.

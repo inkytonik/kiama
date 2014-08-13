@@ -47,7 +47,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
     override def dimValue (record : Record, dim : Dimension) : Value =
         dim match {
 
-            /**
+            /*
              * The `name` dimension is the string that identifies either the
              * strategy or attribute that is being profiled. They are checked
              * in that order.
@@ -73,7 +73,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
                 } else
                     "no strategy or attribute dimension, so no name"
 
-            // /**
+            // /*
             //  * `location` dimension is the location of the evaluation's subject
             //  * in the tree: root, inner node or leaf. Relies on the node being
             //  * an Attributable.
@@ -91,7 +91,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
             //             "unknown location"
             //     }
 
-            /**
+            /*
              * `subjectHash` gives the hash code of the `subject` dimension
              * and is useful if you can't tell the different between subjects
              * from their `toString` representation.
@@ -102,7 +102,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
                         s.##
                 }
 
-            // /**
+            // /*
             //  * `depends-on` dimension is a summary of the direct dependencies
             //  * of an evaluation. Each dependence is summarised by the type of
             //  * the node where it was evaluated, the attribute that was evaluated
@@ -120,7 +120,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
             //             }).toSet.mkString (", ")
             //     }
 
-            /**
+            /*
              * Output dot file for the dependencies involved in this attribute
              * evaluation.
              */

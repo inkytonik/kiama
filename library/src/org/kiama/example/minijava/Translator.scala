@@ -45,14 +45,14 @@ class Translator (tree : MiniJavaTree) {
         // An instruction buffer for translating statements and expressions into
         val instructions = Seq.newBuilder[JVMInstr]
 
-        /**
+        /*
          * Generate an instruction by appending it to the instruction buffer.
          */
         def gen (instr : JVMInstr) {
             instructions += instr
         }
 
-        /**
+        /*
          * Return the number of arguments that the method containing an
          * node has, or zero if the node doesn't occur in a method.
          */
@@ -66,19 +66,19 @@ class Translator (tree : MiniJavaTree) {
                     0
             }
 
-        /**
+        /*
          * Counter of local variable locations used so far.
          */
         val varCounter = new Counter (0)
 
-        /**
+        /*
          * Reset the label count to zero.
          */
         def resetVarCount () {
             varCounter.reset ()
         }
 
-        /**
+        /*
          * The JVM local variable location number to use for the given variable.
          * or argument entity. Arguments also use local variable slots, so these
          * location numbers are offset after the argument slots. Thus, a location
@@ -91,7 +91,7 @@ class Translator (tree : MiniJavaTree) {
                     varCounter.next ()
             }
 
-        /**
+        /*
          * Return the local variable number to use for the given identifier
          * use, which can be assumed to be a use of a method argument or a
          * local variable.
@@ -111,19 +111,19 @@ class Translator (tree : MiniJavaTree) {
             }
         }
 
-        /**
+        /*
          * Counter of labels used so far.
          */
         val labelCounter = new Counter (0)
 
-        /**
+        /*
          * Reset the label count to zero.
          */
         def resetLabelCount () {
             labelCounter.reset ()
         }
 
-        /**
+        /*
          * Allocate a new unique label and return it. The labels will comprise
          * the string "L" followed by a unique count.
          */
@@ -131,7 +131,7 @@ class Translator (tree : MiniJavaTree) {
             s"L${labelCounter.next ()}"
         }
 
-        /**
+        /*
          * Translate the main class.
          */
         def translateMainClass (m : MainClass) : ClassFile = {
@@ -155,7 +155,7 @@ class Translator (tree : MiniJavaTree) {
 
         }
 
-        /**
+        /*
          * Translate a type into a JVM type.
          */
         def translateType (tipe : Type) : JVMType =
@@ -166,7 +166,7 @@ class Translator (tree : MiniJavaTree) {
                 case ClassType (IdnUse (idn)) => JVMClassType (idn)
             }
 
-        /**
+        /*
          * Translate the fields of a class.
          */
         def translateFields (fieldVars : Seq[Field]) : Seq[JVMField] =
@@ -175,7 +175,7 @@ class Translator (tree : MiniJavaTree) {
                     JVMField (idn, translateType (tipe))
             }
 
-        /**
+        /*
          * The method spec of a method comprising the string name of the
          * method, a list of its argument JVM types and its return JVM
          * type.
@@ -190,7 +190,7 @@ class Translator (tree : MiniJavaTree) {
             JVMMethodSpec (prefix+ method.name.idn, argTypes, retType)
         }
 
-        /**
+        /*
          * Translate a single method.
          */
         def translateMethod (method : Method) : JVMMethod = {
@@ -221,13 +221,13 @@ class Translator (tree : MiniJavaTree) {
 
         }
 
-        /**
+        /*
          * Translate the methods of a class.
          */
         def translateMethods (methods : Seq[Method]) : Seq[JVMMethod] =
             methods.map (translateMethod)
 
-        /**
+        /*
          * Translate a single normal (i.e., non-main) class.
          */
         def translateClass (cls : Class) : ClassFile = {
@@ -250,13 +250,13 @@ class Translator (tree : MiniJavaTree) {
 
         }
 
-        /**
+        /*
          * Is this a type or not (i.e., a reference type)?
          */
         def isIntegerType (tipe : Type) : Boolean =
             (tipe == IntType ()) || (tipe == BooleanType ())
 
-        /**
+        /*
          * Take an identifier use and translate into either a load of the
          * field that the identifier refers to, a load of the local
          * variable that corresponds to the identifier, or a load of the
@@ -293,7 +293,7 @@ class Translator (tree : MiniJavaTree) {
 
         }
 
-        /**
+        /*
          * Take an identifier use and translate into either a store to the
          * field that the identifier refers to, a store to the local
          * variable that corresponds to the identifier, or a store to the
@@ -332,7 +332,7 @@ class Translator (tree : MiniJavaTree) {
             }
         }
 
-        /**
+        /*
          * Append the translation of a statement to the instruction buffer.
          */
         def translateStmt (stmt : Statement) {
@@ -382,7 +382,7 @@ class Translator (tree : MiniJavaTree) {
             }
         }
 
-        /**
+        /*
          * Append the translation of a condition to the instruction buffer.
          * The label is the place to which to jump if the condition is
          * false. If the condition is true, control just falls through to
@@ -394,7 +394,7 @@ class Translator (tree : MiniJavaTree) {
             gen (Ifeq (falseLabel))
         }
 
-        /**
+        /*
          * Translate a call expression. First, we translate the base
          * expression on which the call is being made into code that
          * puts that object on the top of the operand stack.
@@ -422,7 +422,7 @@ class Translator (tree : MiniJavaTree) {
             }
         }
 
-        /**
+        /*
          * Append the translation of an expression to the instruction buffer.
          */
         def translateExp (exp : Expression) {

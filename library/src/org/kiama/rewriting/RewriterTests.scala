@@ -62,7 +62,7 @@ class RewriterTests extends Tests with Generator {
     test ("issubterm: random descendants are subterms") {
         val random = new scala.util.Random
 
-        /**
+        /*
          * Pick a random Term child of t, returning t if there are no
          * children or there are children but none of them are Terms.
          */
@@ -77,7 +77,7 @@ class RewriterTests extends Tests with Generator {
             }
         }
 
-        /**
+        /*
          * Pick a random descendant of t (including possibly t).
          */
         def pickdesc (t : Any) : Any =

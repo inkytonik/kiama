@@ -188,7 +188,7 @@ trait TypeAnalyser {
             case _         => true
         }
 
-    /**
+    /*
      * FIXME: need to do these at some point
      * Rewrite rules for replacing Use-nodes based on their declaration kind
      *

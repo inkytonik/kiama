@@ -113,7 +113,7 @@ object Comparison {
 
         import scala.collection.mutable.TreeSet
 
-        /**
+        /*
          * An ordering that says two elements are equal if `same` says they
          * are, otherwise uses the index (i.e., the position in `s`) so that
          * earlier elements are less than later ones.
