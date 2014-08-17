@@ -734,7 +734,6 @@ trait RewriterCore {
      * Implementation of `one` for `Rewritable` values.
      */
     def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
-        val numchildren = r.arity
         val children = r.deconstruct
         children.foldLeft (0) {
             case (i, ct) =>
