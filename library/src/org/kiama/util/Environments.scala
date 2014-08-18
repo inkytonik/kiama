@@ -101,8 +101,8 @@ trait Environments {
         }
 
     /**
-     * Define i to be e in the current scope of env, raising an error if the
-     * environment is empty.
+     * Define `i` to be `e` in the current scope of `env`, raising an error if
+     * the environment is empty.
      */
     def define (env : Environment, i : String, e : Entity) : Environment =
         env match {
@@ -111,7 +111,7 @@ trait Environments {
         }
 
     /**
-     * Say whether i is defined in the current scope of env.
+     * Say whether `i` is defined in the current scope of `env`.
      */
     def isDefinedInScope (env : Environment, i : String) : Boolean =
         env match {
@@ -120,19 +120,19 @@ trait Environments {
         }
 
     /**
-     * Say whether i is defined in the given scope.
+     * Say whether `i` is defined in the given scope.
      */
     def isDefinedInScope (scope : Scope, i : String) : Boolean =
         scope contains i
 
     /**
-     * Say whether i is defined in any scope of env.
+     * Say whether `i` is defined in any scope of `env`.
      */
     def isDefinedInEnv (env : Environment, i : String) : Boolean =
         env.exists (s => isDefinedInScope (s, i))
 
     /**
-     * Say whether i is defined in an innermost scope of env (i.e., in the
+     * Say whether `i` is defined in an innermost scope of `env` (i.e., in the
      * current scope).
      */
     def isDefinedInInner (env : Environment, i : String) : Boolean =
@@ -142,7 +142,7 @@ trait Environments {
         }
 
     /**
-     * Say whether i is defined in an outer scope of env (i.e., not in the
+     * Say whether `i` is defined in an outer scope of `env` (i.e., not in the
      * current scope).
      */
     def isDefinedInOuter (env : Environment, i : String) : Boolean =
@@ -152,9 +152,10 @@ trait Environments {
         }
 
     /**
-     * Look up i in env, returning the mapped Entity if there is one, otherwise
-     * return e.  If scope is true, just search the innermost scope, otherwise
-     * search outwards in all scopes, returning the first Entity found, if any.
+     * Look up `i` in `env`, returning the mapped Entity if there is one,
+     * otherwise return `e`.  If `scope` is true, just search the innermost
+     * scope, otherwise search outwards in all scopes, returning the first
+     * entity found, if any.
      */
     def lookup (env : Environment, i : String, e : Entity, scope : Boolean = false) : Entity =
         env match {
