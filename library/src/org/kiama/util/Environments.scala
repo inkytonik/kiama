@@ -153,14 +153,14 @@ trait Environments {
 
     /**
      * Look up `i` in `env`, returning the mapped Entity if there is one,
-     * otherwise return `e`.  If `scope` is true, just search the innermost
+     * otherwise return `e`.  If `local` is true, just search the innermost
      * scope, otherwise search outwards in all scopes, returning the first
      * entity found, if any.
      */
-    def lookup (env : Environment, i : String, e : Entity, scope : Boolean = false) : Entity =
+    def lookup (env : Environment, i : String, e : => Entity, local : Boolean = false) : Entity =
         env match {
             case s :: t =>
-                if (scope)
+                if (local)
                     s.getOrElse (i, e)
                 else if (isDefinedInScope (env, i))
                     s (i)
