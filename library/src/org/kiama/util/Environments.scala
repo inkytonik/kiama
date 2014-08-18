@@ -21,13 +21,14 @@
 package org.kiama
 package util
 
-import scala.collection.immutable
 
 /**
  * General implementation of environments as stacked scopes.  The objects
  * associated with names in environments are of type Entity.
  */
 trait Environments {
+
+    import scala.collection.immutable.{HashMap, Seq}
 
     /**
      * A counter to count generated names.
@@ -82,13 +83,13 @@ trait Environments {
      * the given bindings.
      */
     def rootenv (bindings : (String,Entity)*) : Environment =
-        List (immutable.HashMap (bindings : _*))
+        List (HashMap (bindings : _*))
 
     /**
      * Enter a new empty scope nested within the given environment.
      */
     def enter (env : Environment) : Environment =
-        (new immutable.HashMap[String,Entity]) :: env
+        (new HashMap[String,Entity]) :: env
 
     /**
      * Leave the outermost scope of the given environment, raising an error if
@@ -169,5 +170,29 @@ trait Environments {
             case _ =>
                 e
         }
+
+    /**
+     * Pretty-print the environment `env`.
+     */
+    def pretty (env : Environment) : String = {
+
+        import org.kiama.output.PrettyPrinter
+        import org.kiama.output.PrettyPrinter._
+
+        def prettyEntry (entry : (String,Entity)) : Doc =
+            dquotes (entry._1) <+> "->" <+> value (entry._2)
+
+        def prettyScope (s : Scope) : Doc =
+            "scope" <> nest (line <> vsep ((s map prettyEntry).toVector))
+
+        def pretty1 (env : Environment) : Doc =
+            vsep (env map prettyScope)
+
+        env match {
+            case Nil => "no scopes"
+            case ss  => PrettyPrinter.pretty (pretty1 (env))
+        }
+
+    }
 
 }
