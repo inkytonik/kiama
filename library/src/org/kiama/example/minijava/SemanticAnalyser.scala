@@ -152,12 +152,7 @@ class SemanticAnalyser (tree : MiniJavaTree) {
         // been defined in this scope. If so, change its entity to MultipleEntity,
         // otherwise use the entity appropriate for this definition.
         case n @ IdnDef (i) =>
-            val entity =
-                if (isDefinedInScope (out (n), i))
-                    MultipleEntity ()
-                else
-                    defentity (n)
-            define (out (n), i, entity)
+            defineIfNew (out (n), i, defentity (n))
 
     }
 
