@@ -73,3 +73,29 @@ trait GeneratingREPLBase[T] extends REPL {
  * syntax trees of type T and prints them to standard output.
  */
 trait GeneratingREPL[T] extends GeneratingREPLBase[T]
+
+/**
+ * Support for testing REPL drivers.
+ */
+trait TestREPLWithConfig[C <: REPLConfig] extends TestDriverWithConfig[C] {
+
+    self : REPLBase[C] =>
+
+    /**
+     * Run the REPL in test mode using the given configuration.
+     */
+    def testdriver (config : C) {
+        processfiles (config.filenames (), config)
+    }
+
+}
+
+/**
+ * Specialisation of `TestREPLWithConfig` that uses the default
+ * configuration type.
+ */
+trait TestREPL extends TestREPLWithConfig[REPLConfig] {
+
+    self : REPLBase[REPLConfig] =>
+
+}

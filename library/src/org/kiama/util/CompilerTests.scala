@@ -66,11 +66,9 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 }
 
 /**
- * Support for testing compiler drivers.
+ * Support for testing drivers.
  */
-trait TestCompilerWithConfig[T, C <: Config] extends Tests {
-
-    self : CompilerBase[T,C] =>
+trait TestDriverWithConfig[C <: Config] extends Tests {
 
     import java.io.File
     import org.kiama.attribution.Attribution
@@ -78,11 +76,17 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
     import scala.io.Source
 
     /**
-     * Run the compiler in test mode using the given configuration.
+     * Create the configuration for a particular run of the REPL. If supplied, use
+     * `emitter` instead of a standard output emitter.
      */
-    def testdriver (config : C) {
-        processfiles (config.filenames (), config)
-    }
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : C
+
+    /**
+     * Run the driver in test mode using the given configuration.
+     */
+    def testdriver (config : C)
 
     /**
      * Flag to decide whether to sanitise the output before comparison
@@ -211,6 +215,22 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
             }
         }
 
+    }
+
+}
+
+/**
+ * Support for testing compiler drivers.
+ */
+trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
+
+    self : CompilerBase[T,C] =>
+
+    /**
+     * Run the compiler in test mode using the given configuration.
+     */
+    def testdriver (config : C) {
+        processfiles (config.filenames (), config)
     }
 
 }

@@ -30,6 +30,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait REPLBase[C <: REPLConfig] extends Profiler {
 
     import scala.annotation.tailrec
+    import scala.io.Source
 
     /**
      * Banner message that is printed before the REPL starts.
@@ -60,8 +61,15 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * returns false. Call `prompt` each time input is about to be read.
      */
     def driver (args : Seq[String]) {
+
+        // Set up the configuration
         val config = createConfig (args)
         config.afterInit ()
+
+        // Process any filename arguments
+        processfiles (config.filenames (), config)
+
+        // Enter interactive phase
         config.output.emitln (banner)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
@@ -70,6 +78,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
             time (processlines (config))
         else
             processlines (config)
+
     }
 
     /**
@@ -97,6 +106,25 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * return a new configuration that will be used in subsequent processing.
      */
     def processline (line : String, config : C) : C
+
+    /**
+     * Process the files one by one.
+     */
+    def processfiles (filenames : Seq[String], config : C) {
+        for (filename <- filenames) {
+            processfile (filename, config)
+        }
+    }
+
+    /**
+     * Process a file argument by using passing its contents line-by-line to
+     * the `processline`.
+     */
+    def processfile (filename : String, config : C) {
+        for (line <- Source.fromFile (filename).getLines ()) {
+            processline (line, config)
+        }
+    }
 
 }
 
