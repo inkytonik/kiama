@@ -53,6 +53,19 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
                       error : Emitter = new ErrorEmitter) : C
 
     /**
+     * Create and initialise the configuration for a particular run of the REPL.
+     * If supplied, use `emitter` instead of a standard output emitter. Default:
+     * call `createConfig` and then initialise the resulting configuration.
+     */
+    def createAndInitConfig (args : Seq[String],
+                             output : Emitter = new OutputEmitter,
+                             error : Emitter = new ErrorEmitter) : C = {
+        val config = createConfig (args, output, error)
+        config.afterInit ()
+        config
+    }
+
+    /**
      * Driver for this REPL. First, use the argument list to create a
      * configuration for this execution. If the arguments parse ok, then
      * print the REPL banner. Read lines from the console and pass non-null ones
@@ -63,8 +76,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
     def driver (args : Seq[String]) {
 
         // Set up the configuration
-        val config = createConfig (args)
-        config.afterInit ()
+        val config = createAndInitConfig (args)
 
         // Process any filename arguments
         processfiles (config.filenames (), config)
@@ -121,8 +133,9 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * the `processline`.
      */
     def processfile (filename : String, config : C) {
-        for (line <- Source.fromFile (filename).getLines ()) {
-            processline (line, config)
+        Source.fromFile (filename).getLines ().foldLeft (config) {
+            case (conf, line) =>
+                processline (line, conf)
         }
     }
 

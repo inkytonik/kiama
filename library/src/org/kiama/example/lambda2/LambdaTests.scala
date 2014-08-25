@@ -21,7 +21,7 @@
 package org.kiama
 package example.lambda2
 
-import org.kiama.util.RegexParserTests
+import org.kiama.util.{RegexParserTests, TestREPLWithConfig}
 
 /**
  * Lambda calculus tests.
@@ -408,3 +408,15 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     }
 
 }
+
+/**
+ * Tests that check that the REPL produces appropriate output.
+ */
+class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
+
+    val path = "library/src/org/kiama/example/lambda2/tests"
+    filetests ("Lambda REPL", path, ".repl", ".replout")
+
+}
+
+

@@ -42,7 +42,7 @@ abstract class LambdaConfig (args : Seq[String]) extends REPLConfig (args) {
  * Visser, LDTA 2002 (published in Volume 65/3 of Electronic Notes in
  * Theoretical Computer Science, Elsevier).
  */
-object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyser {
+class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyser {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree.LambdaTree
@@ -95,7 +95,7 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
 
             case Command (Seq (":eval", mech)) =>
                 if (mechanisms contains mech)
-                    return createConfig (Seq ("-m", mech), output)
+                    return createAndInitConfig (Seq ("-m", mech), output)
                 else
                     output.emitln (s"unknown evaluation mechanism: $mech")
 
@@ -140,3 +140,9 @@ object Lambda extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyse
     }
 
 }
+
+/**
+ * Main object for Lambda REPL.
+ */
+object Lambda extends LambdaDriver
+

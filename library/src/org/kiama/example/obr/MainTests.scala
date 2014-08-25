@@ -50,8 +50,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
 
         test(title) {
             val filename = dirname + obrfile
-            val config = createConfig (Seq (filename))
-            config.afterInit ()
+            val config = createAndInitConfig (Seq (filename))
 
             try {
                 val reader = filereader (filename)

@@ -45,8 +45,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
-        val config = createConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
-        config.afterInit ()
+        val config = createAndInitConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
         testdriver (config)
         val expectedMsg =
             if (System.getProperty("os.name").startsWith ("Windows"))
@@ -82,6 +81,15 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
     def createConfig (args : Seq[String],
                       output : Emitter = new OutputEmitter,
                       error : Emitter = new ErrorEmitter) : C
+
+    /**
+     * Create and initialise the configuration for a particular run of the REPL.
+     * If supplied, use `emitter` instead of a standard output emitter. Default:
+     * call `createConfig` and then initialise the resulting configuration.
+     */
+    def createAndInitConfig (args : Seq[String],
+                             output : Emitter = new OutputEmitter,
+                             error : Emitter = new ErrorEmitter) : C
 
     /**
      * Run the driver in test mode using the given configuration.
@@ -142,8 +150,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
             val title = s"$name: $ct, expecting $rt$extra"
             test (title) {
                 val emitter = new StringEmitter
-                val config = createConfig (cmd, emitter, emitter)
-                config.afterInit ()
+                val config = createAndInitConfig (cmd, emitter, emitter)
                 try {
                     testdriver (config)
                 } catch {

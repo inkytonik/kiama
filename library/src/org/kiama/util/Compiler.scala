@@ -55,13 +55,25 @@ trait CompilerBase[T, C <: Config] extends Profiler {
                       error : Emitter = new ErrorEmitter) : C
 
     /**
+     * Create and initialise the configuration for a particular run of the REPL.
+     * If supplied, use `emitter` instead of a standard output emitter. Default:
+     * call `createConfig` and then initialise the resulting configuration.
+     */
+    def createAndInitConfig (args : Seq[String],
+                             output : Emitter = new OutputEmitter,
+                             error : Emitter = new ErrorEmitter) : C = {
+        val config = createConfig (args, output, error)
+        config.afterInit ()
+        config
+    }
+
+    /**
      * Driver for this compiler. First, use the argument list to create a
      * configuration for this execution. Then, use the configuration to
      * run the file processing in the appropriate way.
      */
     def driver (args : Seq[String]) {
-        val config = createConfig (args)
-        config.afterInit ()
+        val config = createAndInitConfig (args)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
             profile (processfiles (config.filenames (), config), dimensions,
