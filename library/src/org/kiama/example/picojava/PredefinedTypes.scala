@@ -29,12 +29,13 @@
 package org.kiama
 package example.picojava
 
+import org.kiama.attribution.Attribution
+
 trait PredefinedTypes {
 
-    self : NameResolution =>
+    self : Attribution with NameResolution =>
 
     import PicoJavaTree._
-    import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 
     /*

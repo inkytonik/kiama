@@ -30,7 +30,6 @@ import org.kiama.util.TestCompiler
 class DataflowTests extends Driver with TestCompiler[Stm] {
 
     import DataflowTree._
-    import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 
     /*

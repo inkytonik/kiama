@@ -27,12 +27,11 @@ package example.obr
  */
 class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
 
-    import analyser.{divideByZeroExn, entity, indexOutOfBoundsExn}
+    import analyser.{attr, divideByZeroExn, entity, indexOutOfBoundsExn}
     import labels.genlabelnum
     import ObrTree._
     import RISCTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators
     import org.kiama.util.{Counter, Entity}
     import scala.collection.immutable.Seq

@@ -26,7 +26,6 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
 
     import base.source.{Block, IdnDef, IdnUse, ModuleDecl, SourceNode}
     import decorators.down
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Entity
     import org.kiama.util.Messaging.{check, checkuse, message, Messages, noMessages}
     import source.{Call, FPSection, ProcDecl}

@@ -22,11 +22,11 @@ package org.kiama
 package example.oneohonecompanies
 
 import CompanyTree.CompanyTree
+import org.kiama.attribution.Attribution
 
-class Other (tree : CompanyTree) {
+class Other (tree : CompanyTree) extends Attribution {
 
     import CompanyTree._
-    import org.kiama.attribution.Attribution._
 
     /**
      * Number of employees in a company unit.

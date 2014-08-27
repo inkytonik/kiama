@@ -22,35 +22,15 @@ package org.kiama
 package example.dataflow
 
 import DataflowTree._
-import org.kiama.attribution.Attribution._
+import org.kiama.attribution.Attribution
 
-/**
- * Control flow interface.
- */
-trait ControlFlow {
+class Dataflow (val tree : DataflowTree) extends Attribution {
 
-    /**
-     * The tree with respect to compute the flow.
-     */
-    def tree : DataflowTree
+    // Control flow
 
     /**
      * Control flow successor relation.
      */
-    val succ : Stm => Set[Stm]
-
-    /**
-     * Control flow default successor relation.
-     */
-    val following : Stm => Set[Stm]
-
-}
-
-/**
- * Control flow implementation.
- */
-trait ControlFlowImpl extends ControlFlow {
-
     val succ : Stm => Set[Stm] =
         dynAttr {
             case If (_, s1, s2) =>
@@ -65,6 +45,9 @@ trait ControlFlowImpl extends ControlFlow {
                 following (s)
         }
 
+    /**
+     * Control flow default successor relation.
+     */
     val following : Stm => Set[Stm] =
         dynAttr {
             case tree.parent (t : If) =>
@@ -79,30 +62,11 @@ trait ControlFlowImpl extends ControlFlow {
                 Set ()
         }
 
-}
-
-/**
- * Variable use and definition interface.
- */
-trait Variables {
+    // Variable use and definition
 
     /**
      * Variable uses.
      */
-    val uses : Stm => Set[Var]
-
-    /**
-     * Variable definitions.
-     */
-    val defines : Stm => Set[Var]
-
-}
-
-/**
- * Variable use and definition implementation.
- */
-trait VariablesImpl extends Variables {
-
     val uses : Stm => Set[Var] =
         dynAttr {
             case If (v, _, _)  => Set (v)
@@ -112,38 +76,20 @@ trait VariablesImpl extends Variables {
             case _             => Set ()
         }
 
+    /**
+     * Variable definitions.
+     */
     val defines : Stm => Set[Var] =
         dynAttr {
             case Assign (v, _) => Set (v)
             case _             => Set ()
         }
 
-}
-
-/**
- * Variable liveness interface.
- */
-trait Liveness {
+    // Variable liveness
 
     /**
      * Variables "live" into a statement.
      */
-    val in : Stm => Set[Var]
-
-    /**
-     * Variables "live" out of a statement.
-     */
-    val out : Stm => Set[Var]
-
-}
-
-/**
- * Variable liveness implementation.
- */
-trait LivenessImpl extends Liveness {
-
-    self : Liveness with Variables with ControlFlow =>
-
     val in : Stm => Set[Var] =
         circular (Set[Var]()) (
             // Optimisation to not include vars used to calculate v
@@ -153,13 +99,12 @@ trait LivenessImpl extends Liveness {
             s => uses (s) ++ (out (s) -- defines (s))
         )
 
+    /**
+     * Variables "live" out of a statement.
+     */
     val out : Stm => Set[Var] =
         circular (Set[Var]()) (
             s => succ (s) flatMap (in)
         )
 
 }
-
-trait DataflowImpl extends LivenessImpl with VariablesImpl with ControlFlowImpl
-
-class Dataflow (val tree : DataflowTree) extends DataflowImpl

@@ -30,8 +30,11 @@ import org.kiama.relation.Tree
  */
 class Decorators[T <: Product,U <: T] (tree : Tree[T,U]) {
 
-    import org.kiama.attribution.Attribution._
+    import org.kiama.attribution.Attribution
     import scala.PartialFunction
+
+    val attribution = new Attribution
+    import attribution.{attr, CachedAttribute}
 
     /**
      * A decorator that progagates an attribute value down the tree. The

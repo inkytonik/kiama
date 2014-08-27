@@ -26,9 +26,7 @@ import org.kiama.util.Tests
 /**
  * Tests of dynamic attribution.
  */
-class DynamicAttributionTests extends Tests {
-
-    import Attribution._
+class DynamicAttributionTests extends Attribution with Tests {
 
     abstract class TestNode
     case class Pair (left : TestNode, right : TestNode) extends TestNode

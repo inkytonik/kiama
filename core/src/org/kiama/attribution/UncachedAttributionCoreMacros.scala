@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2008-2014 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2013-2014 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -21,14 +21,20 @@
 package org.kiama
 package attribution
 
-/**
- * An attribution module. Use an instance of this module to encapuslate
- * related attributes. You should ensure that more than one circular
- * attribute evaluation from a single module is not executing at the
- * same time because the current implementation has shared state between
- * related circular attributes. If your attributes are unrelated (i.e.,
- * can't possibly call each other) you should base them on different
- * attribution module instances and then it is safe for attributes from
- * different collections to execute in parallel.
- */
-class Attribution extends AttributionCore
+import org.kiama.util.Compat210._
+
+object UncachedAttributionCoreMacros {
+
+    import org.bitbucket.inkytonik.dsinfo.DSInfo.makeCallWithName
+
+    import scala.reflect.macros._
+
+    // Macros for the builder methods
+
+    def attrMacro[T,U,A] (c : blackbox.Context) (f : c.Expr[T => U]) : c.Expr[A] =
+        makeCallWithName (c, "this.attrWithName")
+
+    def paramAttrMacro[V,T,U,P] (c : blackbox.Context) (f : c.Expr[V => T => U]) : c.Expr[P] =
+        makeCallWithName (c, "this.paramAttrWithName")
+
+}

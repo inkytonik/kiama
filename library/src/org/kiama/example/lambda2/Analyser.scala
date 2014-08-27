@@ -22,6 +22,7 @@ package org.kiama
 package example.lambda2
 
 import LambdaTree.LambdaTree
+import org.kiama.attribution.Attribution
 import org.kiama.util.Messaging
 
 /**
@@ -31,11 +32,10 @@ import org.kiama.util.Messaging
  * from the AST, and one (tipe2) that represents names by references to the
  * nodes of their binding lambda expressions.
  */
-class Analyser (tree : LambdaTree) {
+class Analyser (tree : LambdaTree) extends Attribution {
 
     import LambdaTree._
     import PrettyPrinter._
-    import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.Messaging.{check, message, Messages}
     import scala.collection.immutable.Seq

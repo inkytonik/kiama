@@ -29,13 +29,13 @@
 package org.kiama
 package example.picojava
 
+import org.kiama.attribution.Attribution
 import PicoJavaTree.PicoJavaTree
 
-class ErrorCheck (val tree : PicoJavaTree) extends NameResolution with
-        TypeAnalyser with NullObjects with PredefinedTypes {
+class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
+        NameResolution with TypeAnalyser with NullObjects with PredefinedTypes {
 
     import PicoJavaTree._
-    import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.Messaging.message
     import scala.collection.immutable.Seq

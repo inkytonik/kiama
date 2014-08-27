@@ -25,7 +25,6 @@ package L3
 trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
     import base.source.{Expression, Identifier, IdnDef, IdnUse, SourceNode}
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Messaging.{check, message, Messages, noMessages}
     import scala.collection.immutable.Seq
     import source.{Call, Mode, ValMode, VarMode}

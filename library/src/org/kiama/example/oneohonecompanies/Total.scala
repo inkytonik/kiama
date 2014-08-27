@@ -21,11 +21,12 @@
 package org.kiama
 package example.oneohonecompanies
 
-object Total {
+import org.kiama.attribution.Attribution
+
+object Total extends Attribution {
 
     import CompanyTree._
     import org.kiama.==>
-    import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.everything
 
     /**

@@ -29,12 +29,13 @@
 package org.kiama
 package example.picojava
 
+import org.kiama.attribution.Attribution
+
 trait TypeAnalyser {
 
-    self : NameResolution with NullObjects with PredefinedTypes =>
+    self : Attribution with NameResolution with NullObjects with PredefinedTypes =>
 
     import PicoJavaTree._
-    import org.kiama.attribution.Attribution._
 
     /**
      * Is this declaration unknown?

@@ -114,13 +114,13 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
      * attribute value is cached so it will be computed at most once.
      */
     def attr[T,U] (f : T => U) : UncachedAttribute[T,U] =
-        macro AttributionMacros.attrMacro[T,U,UncachedAttribute[T,U]]
+        macro UncachedAttributionCoreMacros.attrMacro[T,U,UncachedAttribute[T,U]]
 
     /**
      * As for the other `attr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def attr[T,U] (name : String, f : T => U) : UncachedAttribute[T,U] =
+    def attrWithName[T,U] (name : String, f : T => U) : UncachedAttribute[T,U] =
         new UncachedAttribute (name, f)
 
     /**
@@ -130,13 +130,13 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
      * once.
      */
     def paramAttr[V,T,U] (f : V => T => U) : UncachedParamAttribute[V,T,U] =
-        macro AttributionMacros.paramAttrMacro[V,T,U,UncachedParamAttribute[V,T,U]]
+        macro UncachedAttributionCoreMacros.paramAttrMacro[V,T,U,UncachedParamAttribute[V,T,U]]
 
     /**
      * As for the other `paramAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def paramAttr[V,T,U] (name : String, f : V => T => U) : UncachedParamAttribute[V,T,U] =
+    def paramAttrWithName[V,T,U] (name : String, f : V => T => U) : UncachedParamAttribute[V,T,U] =
         new UncachedParamAttribute (name, f)
 
 }

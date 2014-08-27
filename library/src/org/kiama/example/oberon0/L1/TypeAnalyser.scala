@@ -25,7 +25,6 @@ package L1
 trait TypeAnalyser extends L0.TypeAnalyser {
 
     import base.source.Expression
-    import org.kiama.attribution.Attribution.attr
     import source.{IfStatement, WhileStatement}
 
     /**

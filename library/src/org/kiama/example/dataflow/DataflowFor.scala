@@ -22,13 +22,12 @@ package org.kiama
 package example.dataflow
 
 import DataflowTree._
-import org.kiama.attribution.Attribution._
 
 case class Foreach (cond : Var, body : Stm) extends Stm
 
 case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
 
-trait DataflowForImpl extends DataflowImpl {
+class DataflowFor (override val tree : DataflowTree) extends Dataflow (tree) {
 
     def addForAndForeachCases () {
 
@@ -64,6 +63,4 @@ trait DataflowForImpl extends DataflowImpl {
     }
 
 }
-
-class DataflowFor (val tree : DataflowTree) extends DataflowForImpl
 

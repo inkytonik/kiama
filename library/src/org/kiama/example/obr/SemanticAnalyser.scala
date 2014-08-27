@@ -23,12 +23,12 @@ package org.kiama
 package example.obr
 
 import ObrTree.ObrTree
+import org.kiama.attribution.Attribution
 
-class SemanticAnalyser (val tree : ObrTree) {
+class SemanticAnalyser (val tree : ObrTree) extends Attribution {
 
     import ObrTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution._
     import org.kiama.attribution.Decorators
     import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}

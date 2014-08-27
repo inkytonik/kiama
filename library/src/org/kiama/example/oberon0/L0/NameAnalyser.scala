@@ -27,7 +27,6 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
     import base.source.{Block, Expression, Identifier, IdnDef, IdnUse,
         ModuleDecl, SourceNode}
     import decorators.{chain, Chain}
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Messaging.{check, message, Messages}
     import source.{AddExp, Assignment, BinaryExpression, ConstDecl,

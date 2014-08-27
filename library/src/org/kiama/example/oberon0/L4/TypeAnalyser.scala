@@ -27,7 +27,6 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
     import base.source.{Expression, IdnDef, SourceNode}
     import L0.source.{Assignment, NamedType, TypeDef}
     import L3.source.{FPSection, ValMode}
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Entity
     import org.kiama.util.Messaging.{check, message, Messages}
     import scala.collection.immutable.Seq

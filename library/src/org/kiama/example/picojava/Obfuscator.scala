@@ -31,7 +31,6 @@ import org.kiama.rewriting.Rewriter
 class Obfuscator (analysis : NameResolution) extends Rewriter {
 
     import PicoJavaTree._
-    import org.kiama.attribution.Attribution._
 
     /**
      * Obfuscate a program by renaming variable and class identifiers.

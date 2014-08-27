@@ -25,7 +25,7 @@ package L0
 /**
  * C Code generator for the L0 language.
  */
-trait CCodeGenerator extends base.CCodeGenerator with SymbolTable with TypeAnalyser {
+trait CCodeGenerator extends TypeAnalyser with base.CCodeGenerator with SymbolTable {
 
     import base.c.{CDeclaration, CExpression, CIntExp, CIntType,
         CStatement, CType, CVarDecl}

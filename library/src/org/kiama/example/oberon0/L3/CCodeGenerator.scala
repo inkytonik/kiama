@@ -25,7 +25,7 @@ package L3
 /**
  * C Code generator for the L3 language.
  */
-trait CCodeGenerator extends L1.CCodeGenerator with SymbolTable with TypeAnalyser {
+trait CCodeGenerator extends TypeAnalyser with L1.CCodeGenerator with SymbolTable {
 
     import base.c.{CBlock, CDeclaration, CExpression, CFunctionDecl,
         CInclude, CProgram, CStatement, CVarDecl}

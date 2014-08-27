@@ -28,7 +28,6 @@ import org.kiama.util.Tests
  */
 class AttributionTests extends Tests {
 
-    import Attribution._
     import org.kiama.relation.Tree
     import scala.collection.GenSeq
 
@@ -56,7 +55,7 @@ class AttributionTests extends Tests {
      * them in a class so that each test can have its own instance of the
      * attributes so that there is no shared state.
      */
-    class Definitions {
+    class Definitions extends Attribution {
 
         var count = 0
 
@@ -250,12 +249,10 @@ class AttributionTests extends Tests {
     }
 
     test ("uncached attributes are evaluated each time") {
-        val definitions = new Definitions
-        import definitions._
-        import UncachedAttribution._
+        var count = 0
 
         lazy val maximum : TestTree => Int =
-            attr {
+            UncachedAttribution.attr {
                 case Pair (l,r) => count = count + 1; maximum (l).max (maximum (r))
                 case Leaf (v)   => v
             }
@@ -304,11 +301,10 @@ class AttributionTests extends Tests {
 
     test ("uncached parameterised attributes work") {
         val definitions = new Definitions
-        import definitions._
-        import UncachedAttribution._
+        import definitions.pattrDef
 
         lazy val pattr =
-            paramAttr (pattrDef)
+            UncachedAttribution.paramAttr (pattrDef)
 
         assertResult (0, "uncached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
@@ -321,6 +317,9 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for cached attributes") {
+        val definitions = new Definitions
+        import definitions._
+
         lazy val direct : TestTree => Int =
             attr (t => direct (t))
         lazy val indirect : TestTree => Int =
@@ -347,14 +346,12 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for uncached attributes") {
-        import UncachedAttribution._
-
         lazy val direct : TestTree => Int =
-            attr (t => direct (t))
+            UncachedAttribution.attr (t => direct (t))
         lazy val indirect : TestTree => Int =
-            attr (t => indirect2 (t))
+            UncachedAttribution.attr (t => indirect2 (t))
         lazy val indirect2 : TestTree => Int =
-            attr (t => indirect (t))
+            UncachedAttribution.attr (t => indirect (t))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
@@ -375,6 +372,9 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for parameterised attributes") {
+        val definitions = new Definitions
+        import definitions._
+
         lazy val direct : Int => TestTree => Int =
             paramAttr (i => (t => direct (i) (t)))
         lazy val indirect : Int => TestTree => Int =
@@ -401,14 +401,12 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for uncached parameterised attributes") {
-        import UncachedAttribution._
-
         lazy val direct : Int => TestTree => Int =
-            paramAttr (i => (t => direct (i) (t)))
+            UncachedAttribution.paramAttr (i => (t => direct (i) (t)))
         lazy val indirect : Int => TestTree => Int =
-            paramAttr (i => (t => indirect2 (i) (t)))
+            UncachedAttribution.paramAttr (i => (t => indirect2 (i) (t)))
         lazy val indirect2 : Int => TestTree => Int =
-            paramAttr (i => (t => indirect (i) (t)))
+            UncachedAttribution.paramAttr (i => (t => indirect (i) (t)))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
@@ -584,6 +582,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a circular attribute that never changes evaluates to initial value") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val zero : CircularAttribute[Num,Double] =
@@ -596,6 +597,9 @@ class AttributionTests extends Tests {
     }
 
     test ("two circular attributes that never change from initial value do converge") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : CircularAttribute[Num,Double] =
@@ -622,6 +626,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a directly circular attribute can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : CircularAttribute[Num,Double] =
@@ -639,6 +646,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a cycle of two circular attributes can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : Num => Double =
@@ -661,6 +671,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a cycle of three circular attributes can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : Num => Double =
@@ -692,6 +705,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a single circular attribute plus a cycle of two circular attributes can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val entry : Num => Double =
@@ -723,6 +739,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a single circular attribute plus a cycle of two trivial circular attributes converges") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val entry : Num => Double =

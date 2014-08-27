@@ -22,6 +22,7 @@
 package org.kiama
 package example.obr
 
+import org.kiama.attribution.Attribution
 import org.kiama.util.Emitter
 
 /**
@@ -29,12 +30,11 @@ import org.kiama.util.Emitter
  * generation (e.g., by allocating registers). The resulting code is
  * made available as a list of RISC machine instructions.
  */
-class RISCEncoder (labels : RISCLabels) {
+class RISCEncoder (labels : RISCLabels) extends Attribution {
 
     import labels.genlabelnum
     import RISCTree._
     import org.kiama.example.RISC.RISCISA.{Label => RISCLabel, _}
-    import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
     import scala.math.max
 

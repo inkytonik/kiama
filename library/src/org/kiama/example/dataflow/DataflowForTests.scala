@@ -29,8 +29,11 @@ import org.kiama.util.Tests
 class DataflowForTests extends Tests {
 
     import DataflowTree._
-    import org.kiama.attribution.Attribution._
+    import org.kiama.attribution.Attribution
     import scala.collection.immutable.Seq
+
+    val attribution = new Attribution
+    import attribution._
 
     /*
      * begin                 (prog)

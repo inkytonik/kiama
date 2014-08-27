@@ -29,12 +29,13 @@
 package org.kiama
 package example.picojava
 
+import org.kiama.attribution.Attribution
+
 trait NameResolution {
 
-    self : TypeAnalyser with NullObjects with PredefinedTypes =>
+    self : Attribution with TypeAnalyser with NullObjects with PredefinedTypes =>
 
     import PicoJavaTree._
-    import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 
     def tree : PicoJavaTree

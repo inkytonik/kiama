@@ -22,6 +22,7 @@ package org.kiama
 package example.grammar
 
 import GrammarTree.GrammarTree
+import org.kiama.attribution.Attribution
 
 /**
  * Perform name analysis checks for the grammar language. Also, define
@@ -30,11 +31,10 @@ import GrammarTree.GrammarTree
  * Reference Attributed Grammars - their Evaluation and Applications", by
  * Magnusson and Hedin from LDTA 2003.
  */
-class SemanticAnalyser (tree : GrammarTree) {
+class SemanticAnalyser (tree : GrammarTree) extends Attribution {
 
     import GrammarTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution._
     import org.kiama.attribution.Decorators
     import org.kiama.rewriting.Rewriter.{collect, collectall}
     import org.kiama.util.Message

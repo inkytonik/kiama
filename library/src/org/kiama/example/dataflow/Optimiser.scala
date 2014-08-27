@@ -29,7 +29,7 @@ import org.kiama.rewriting.Rewriter._
  * variables that are not live out of the assignment and b) remove empty
  * statements from sequences.
  */
-class Optimiser (val tree : DataflowTree) extends DataflowImpl {
+class Optimiser (override val tree : DataflowTree) extends Dataflow (tree) {
 
     import DataflowTree._
 

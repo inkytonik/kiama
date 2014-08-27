@@ -22,16 +22,16 @@ package org.kiama
 package example.minijava
 
 import MiniJavaTree.MiniJavaTree
+import org.kiama.attribution.Attribution
 
 /**
  * Semantic analysis module containing static checking of Minijava
  * semantic rules, most notably name analysis.
  */
-class SemanticAnalyser (tree : MiniJavaTree) {
+class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
 
     import MiniJavaTree._
     import org.kiama.==>
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators
     import org.kiama.rewriting.Rewriter.{collect, collectall}
     import org.kiama.util.Message

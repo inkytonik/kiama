@@ -22,9 +22,10 @@ package org.kiama
 package example.oberon0
 package base
 
-trait Analyser extends SymbolTable {
+import org.kiama.attribution.Attribution
 
-    import org.kiama.attribution.Attribution.attr
+trait Analyser extends Attribution with SymbolTable {
+
     import org.kiama.attribution.Decorators
     import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.Messaging.{Messages, noMessages}

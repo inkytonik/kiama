@@ -21,7 +21,7 @@
 package org.kiama
 package example.repmin
 
-import org.kiama.attribution.Attribution._
+import org.kiama.attribution.Attribution
 import org.kiama.relation.Tree
 
 /**
@@ -34,7 +34,7 @@ case class Leaf (value : Int) extends RepminTree
 /**
  * Repmin implementations must provide a repmin attribute.
  */
-trait RepminImpl {
+trait RepminImpl extends Attribution {
     val repmin : RepminTree => RepminTree
 }
 

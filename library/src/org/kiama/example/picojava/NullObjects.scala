@@ -29,14 +29,14 @@
 package org.kiama
 package example.picojava
 
+import org.kiama.attribution.Attribution
 import PicoJavaTree.PicoJavaTree
 
 trait NullObjects {
 
-    self : NameResolution =>
+    self : Attribution with NameResolution =>
 
     import PicoJavaTree._
-    import org.kiama.attribution.Attribution._
 
     /**
      * A declaration object representing an unknown entity.

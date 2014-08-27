@@ -25,7 +25,7 @@ package L4
 /**
  * C Code generator for the L4 language.
  */
-trait CCodeGenerator extends L3.CCodeGenerator with SymbolTable with TypeAnalyser {
+trait CCodeGenerator extends TypeAnalyser with L3.CCodeGenerator with SymbolTable {
 
     import base.source.{Declaration, Expression, IdnDef, IdnUse}
     import base.c.{CArrayType, CDeclaration, CExpression, CType, CVarDecl}

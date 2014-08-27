@@ -22,15 +22,15 @@ package org.kiama
 package example.minijava
 
 import MiniJavaTree.MiniJavaTree
+import org.kiama.attribution.Attribution
 
 /**
  * Translator from MiniJava source programs to JVM target programs.
  */
-class Translator (tree : MiniJavaTree) {
+class Translator (tree : MiniJavaTree) extends Attribution {
 
     import JVMTree._
     import MiniJavaTree._
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Counter
     import scala.collection.immutable.Seq
     import SymbolTable._

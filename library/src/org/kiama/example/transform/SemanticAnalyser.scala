@@ -21,6 +21,7 @@
 package org.kiama
 package example.transform
 
+import org.kiama.attribution.Attribution
 import TransformTree.TransformTree
 
 /**
@@ -29,10 +30,9 @@ import TransformTree.TransformTree
  * correctly represents the precedence of the operators.  Operators are
  * assumed to be left associative.
  */
-class SemanticAnalyser (tree : TransformTree) {
+class SemanticAnalyser (tree : TransformTree) extends Attribution {
 
     import TransformTree._
-    import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.Messaging.message
     import scala.collection.immutable.{HashMap, Seq}

@@ -24,11 +24,12 @@ package example.prolog
 import PrologTree.PrologTree
 import org.kiama.util.Messaging
 
-class SemanticAnalyser (tree : PrologTree) {
+import org.kiama.attribution.Attribution
+
+class SemanticAnalyser (tree : PrologTree) extends Attribution {
 
     import PrologTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution._
     import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.Message
     import org.kiama.util.Messaging.{check, message, Messages}
