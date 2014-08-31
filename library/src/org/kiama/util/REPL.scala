@@ -91,6 +91,8 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
         else
             processlines (config)
 
+        config.output.emitln
+
     }
 
     /**
@@ -101,43 +103,51 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
 
     /**
      * Process interactively entered lines, one by one, until end of file.
+     * Prompt with the given prompt.
+     */
+    def processlines (config : C) {
+        processconsole (config.console (), prompt, config)
+    }
+
+    /**
+     * Process the files one by one.
      */
     @tailrec
-    final def processlines (config : C) {
-        val line = config.console ().readLine (prompt)
+    final def processfiles (filenames : Seq[String], config : C) : C = {
+        filenames match {
+            case filename +: rest =>
+                processfiles (rest, processfile (filename, config))
+            case _ =>
+                config
+        }
+    }
+
+    /**
+     * Process a file argument by passing its contents line-by-line to
+     * `processline`.
+     */
+    def processfile (filename : String, config : C) : C =
+        processconsole (new FileConsole (filename), "", config)
+
+    /**
+     * Process interactively entered lines, one by one, until end of file.
+     */
+    @tailrec
+    final def processconsole (console : Console, prompt : String, config : C) : C = {
+        val line = console.readLine (prompt)
         if (line == null) {
-            config.output.emitln
+            config
         } else if (config.processWhitespaceLines () || (line.trim.length != 0))
-            processlines (processline (line, config))
+            processconsole (console, prompt, processline (line, console, config))
         else
-            processlines (config)
+            processconsole (console, prompt, config)
     }
 
     /**
      * Process a user input line. The return value allows the processing to
      * return a new configuration that will be used in subsequent processing.
      */
-    def processline (line : String, config : C) : C
-
-    /**
-     * Process the files one by one.
-     */
-    def processfiles (filenames : Seq[String], config : C) {
-        for (filename <- filenames) {
-            processfile (filename, config)
-        }
-    }
-
-    /**
-     * Process a file argument by using passing its contents line-by-line to
-     * the `processline`.
-     */
-    def processfile (filename : String, config : C) {
-        Source.fromFile (filename).getLines ().foldLeft (config) {
-            case (conf, line) =>
-                processline (line, conf)
-        }
-    }
+    def processline (line : String, console : Console, config : C) : C
 
 }
 
@@ -167,7 +177,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers 
      * then passing it to the `process` method. Returns the configuration
      * unchanged.
      */
-    def processline (line : String, config : C) : C = {
+    def processline (line : String, console : Console, config : C) : C = {
         parseAll (parser, line) match {
             case Success (e, in) if in.atEnd =>
                 process (e, config)

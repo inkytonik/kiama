@@ -47,7 +47,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree.LambdaTree
     import PrettyPrinter._
-    import org.kiama.util.Emitter
+    import org.kiama.util.{Emitter, Console}
     import org.kiama.util.Messaging.report
 
     def createConfig (args : Seq[String],
@@ -65,7 +65,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
      * update the evaluation mechanisms.  By default we just parse what
      * they type into an expression.
      */
-    override def processline (line : String, config : LambdaConfig) : LambdaConfig = {
+    override def processline (line : String, console : Console, config : LambdaConfig) : LambdaConfig = {
 
         // Shorthand access to the output emitter
         val output = config.output
@@ -101,7 +101,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
 
             // Otherwise it's an expression for evaluation
             case _ =>
-                super.processline (line, config)
+                super.processline (line, console, config)
         }
 
         config
