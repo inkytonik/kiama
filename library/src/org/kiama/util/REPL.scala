@@ -135,12 +135,10 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
     @tailrec
     final def processconsole (console : Console, prompt : String, config : C) : C = {
         val line = console.readLine (prompt)
-        if (line == null) {
+        if (line == null)
             config
-        } else if (config.processWhitespaceLines () || (line.trim.length != 0))
-            processconsole (console, prompt, processline (line, console, config))
         else
-            processconsole (console, prompt, config)
+            processconsole (console, prompt, processline (line, console, config))
     }
 
     /**
@@ -178,16 +176,21 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers 
      * unchanged.
      */
     def processline (line : String, console : Console, config : C) : C = {
-        parseAll (parser, line) match {
-            case Success (e, in) if in.atEnd =>
-                process (e, config)
-            case Success (_, in) =>
-                config.error.emitln (s"extraneous input at ${in.pos}")
-            case f =>
-                config.error.emitln (f)
+        if (config.processWhitespaceLines () || (line.trim.length != 0)) {
+            parseAll (parser, line) match {
+                case Success (e, in) if in.atEnd =>
+                    process (e, config)
+                case Success (_, in) =>
+                    config.error.emitln (s"extraneous input at ${in.pos}")
+                case f =>
+                    config.error.emitln (f)
+            }
         }
         config
     }
+
+
+// if (config.processWhitespaceLines () || (line.trim.length != 0))
 
     /**
      * The parser to use to convert user input lines into values.
