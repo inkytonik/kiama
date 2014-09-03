@@ -57,9 +57,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
             lazy val error = err
         }
 
-    override def process (filename : String, ast : ObrInt, config : ObrConfig) {
-
-        super.process (filename, ast, config)
+    def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree (ast)

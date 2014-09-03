@@ -194,8 +194,7 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with SyntaxAnalyser with Evalu
 
     override val prompt = "lambda> "
 
-    override def process (e : LambdaTree.Exp, config : REPLConfig) {
-        super.process (e, config)
+    def process (e : LambdaTree.Exp, config : REPLConfig) {
         val result =
             if (config.profile.get != None) {
                 val dimensions = parseProfileOption (config.profile ())

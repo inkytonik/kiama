@@ -51,9 +51,7 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
      * Process a PicoJava program by checking for errors, optionally obfuscating and
      * then printing any errors that were found.
      */
-    override def process (filename : String, program : Program, config : PicojavaConfig) {
-
-        super.process (filename, program, config)
+    def process (filename : String, program : Program, config : PicojavaConfig) {
 
         val tree = new PicoJavaTree (program)
         val analysis = new ErrorCheck (tree)

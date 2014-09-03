@@ -122,13 +122,11 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
      * Process the given abstract syntax tree.  Send output to emitter,
      * marking sections so that we can split things later.
      */
-    override def process (filename : String, ast : ModuleDecl, config : Oberon0Config) {
+    def process (filename : String, ast : ModuleDecl, config : Oberon0Config) {
 
         val output = config.output
 
         // Perform default processing
-        super.process (filename, ast, config)
-
         if (config.astPrint ()) {
             section (output, "ast")
             output.emitln (pretty_any (ast))

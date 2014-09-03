@@ -45,8 +45,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with Compiler[Program]
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.
      */
-    override def process (filename : String, ast : Program, config : Config) {
-        super.process (filename, ast, config)
+    def process (filename : String, ast : Program, config : Config) {
         val tree = new PrologTree (ast)
         val analyser = new SemanticAnalyser (tree)
         val messages = analyser.errors (ast)

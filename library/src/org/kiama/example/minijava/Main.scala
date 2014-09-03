@@ -50,9 +50,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
      * errors. If any messages are produced, print them. If all is ok,
      * translate the program and generate code for the translation.
      */
-    override def process (filename : String, ast : Program, config : Config) {
-
-        super.process (filename, ast, config)
+    def process (filename : String, ast : Program, config : Config) {
 
         // Pretty print the abstract syntax tree
         // config.output.emitln (pretty_any (ast))

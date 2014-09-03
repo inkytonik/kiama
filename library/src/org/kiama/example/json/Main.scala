@@ -34,9 +34,7 @@ class Driver extends SyntaxAnalyser with Compiler[JValue] {
     /**
      * Process the tree (currently just print it).
      */
-    override def process (filename : String, ast : JValue, config : Config) = {
-
-        super.process (filename, ast, config)
+    def process (filename : String, ast : JValue, config : Config) = {
 
         // Pretty-print tree as a product value
         config.output.emitln (pretty_any (ast))

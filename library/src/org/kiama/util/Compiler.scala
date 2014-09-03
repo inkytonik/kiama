@@ -132,11 +132,9 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * Function to process the input that was parsed. `filename` is the name
      * of the file from which the input came. `ast` is the abstract syntax tree
      * produced by the parser from that file. `config` provides access to all
-     * aspects of the configuration. The default implmentation does nothing.
+     * aspects of the configuration.
      */
-    def process (filename : String, ast : T, config : C) {
-        // Do nothing
-    }
+    def process (filename : String, ast : T, config : C)
 
     /**
      * Pretty-print an abstract syntax trees. Default: return an empty string.
@@ -167,14 +165,6 @@ trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexPars
             case f =>
                 Right (f.toString)
         }
-
-    /**
-     * Process the AST by performing any processing at the next level up
-     * and then initialising the AST for attribution.
-     */
-    override def process (filename : String, ast : T, config : C) {
-        super.process (filename, ast, config)
-    }
 
 }
 

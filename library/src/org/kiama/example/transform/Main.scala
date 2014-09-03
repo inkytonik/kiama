@@ -33,9 +33,7 @@ class Driver extends Parser with Compiler[Program] {
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
 
-    override def process (filename : String, program : Program, config : Config) {
-
-        super.process (filename, program, config)
+    def process (filename : String, program : Program, config : Config) {
 
         // Print original program and obtain "no priority" expression
         config.output.emitln (program)

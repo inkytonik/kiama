@@ -195,11 +195,9 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers 
     def parser : Parser[T]
 
     /**
-     * Process a user input value. By default, do nothing.
+     * Process a user input value in the given configuration.
      */
-    def process (t : T, config : C) {
-        // Do nothing
-    }
+    def process (t : T, config : C)
 
 }
 

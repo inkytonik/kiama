@@ -237,8 +237,7 @@ object Lambda extends ParsingREPL[LambdaTree.Query[_]] with SyntaxAnalyser {
 
     val evaluator = new Evaluator
 
-    override def process (q : LambdaTree.Query[_], config : REPLConfig) {
-        super.process (q, config)
+    def process (q : LambdaTree.Query[_], config : REPLConfig) {
         config.output.emitln (evaluator.execute (q))
     }
 

@@ -82,6 +82,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
         line match {
             case Command (Seq (":help")) =>
                 printHelp ()
+                config
 
             case Command (Seq (":eval")) =>
                 output.emitln ("Available evaluation mechanisms:")
@@ -92,19 +93,21 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
                     else
                         output.emitln
                 }
+                config
 
             case Command (Seq (":eval", mech)) =>
                 if (mechanisms contains mech)
-                    return createAndInitConfig (Seq ("-m", mech), output)
-                else
+                    createAndInitConfig (Seq ("-m", mech), output)
+                else {
                     output.emitln (s"unknown evaluation mechanism: $mech")
+                    config
+                }
 
             // Otherwise it's an expression for evaluation
             case _ =>
                 super.processline (line, console, config)
         }
 
-        config
     }
 
     /**
@@ -119,9 +122,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
     /**
      * Process an expression.
      */
-    override def process (e : Exp, config : LambdaConfig) {
-        super.process (e, config)
-
+    def process (e : Exp, config : LambdaConfig) {
         // Make an analyser for a tree for this expression
         val tree = new LambdaTree (e)
         val analyser = new Analyser (tree)

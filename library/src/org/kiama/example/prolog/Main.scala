@@ -139,7 +139,7 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
     /**
      * Process a query by passing it and the program to the interpreter.
      */
-    override def process (querytree : Literal, config : PrologConfig) {
+    def process (querytree : Literal, config : PrologConfig) {
         interpreter.interpret (querytree, config.database (), config.output)
     }
 

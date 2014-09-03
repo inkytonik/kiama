@@ -43,6 +43,10 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     def makeast (reader : Reader, filename : String, config : Config) : Either[Any,String] =
          Right ("Dummy")
 
+    def process (filename : String, ast : Any, config : Config) {
+        // Do nothing
+    }
+
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
         val config = createAndInitConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
