@@ -210,8 +210,8 @@ trait RegexParserTests extends Tests {
     def assertParseOk[T] (str : String, parser : Parser[T], expected : T) {
         assertParseCheck (str, parser) {
             result =>
-                if (result != expected)
-                    failExpectedTest (result, expected)
+                if (expected != result)
+                    failExpectedTest (expected, result)
         }
     }
 
