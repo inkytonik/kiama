@@ -245,7 +245,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * that it's not immediately followed by something that extends it.
      */
     def keywords (ext : Regex, kws : Seq[String]) : Parser[String] =
-        regex ("(%s)%s".format (kws.mkString ("|"), ext).r)
+        regex ("(%s)(%s|\\z)".format (kws.mkString ("|"), ext).r)
 
 }
 
