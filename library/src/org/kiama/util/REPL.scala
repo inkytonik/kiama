@@ -137,15 +137,23 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
         val line = console.readLine (prompt)
         if (line == null)
             config
-        else
-            processconsole (console, prompt, processline (line, console, config))
+        else {
+            processline (line, console, config) match {
+                case Some (newConfig) =>
+                    processconsole (console, prompt, newConfig)
+                case _ =>
+                    config
+            }
+        }
     }
 
     /**
      * Process a user input line. The return value allows the processing to
-     * return a new configuration that will be used in subsequent processing.
+     * optionally return a new configuration that will be used in subsequent
+     * processing. A return value of `None` indicates that no more lines
+     * from the current console should be processed.
      */
-    def processline (line : String, console : Console, config : C) : C
+    def processline (line : String, console : Console, config : C) : Option[C]
 
 }
 
@@ -175,7 +183,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers 
      * then passing it to the `process` method. Returns the configuration
      * unchanged.
      */
-    def processline (line : String, console : Console, config : C) : C = {
+    def processline (line : String, console : Console, config : C) : Option[C] = {
         if (config.processWhitespaceLines () || (line.trim.length != 0)) {
             parseAll (parser, line) match {
                 case Success (e, in) if in.atEnd =>
@@ -186,7 +194,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers 
                     config.error.emitln (f)
             }
         }
-        config
+        Some (config)
     }
 
 

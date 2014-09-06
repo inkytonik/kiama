@@ -65,7 +65,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
      * update the evaluation mechanisms.  By default we just parse what
      * they type into an expression.
      */
-    override def processline (line : String, console : Console, config : LambdaConfig) : LambdaConfig = {
+    override def processline (line : String, console : Console, config : LambdaConfig) : Option[LambdaConfig] = {
 
         // Shorthand access to the output emitter
         val output = config.output
@@ -76,13 +76,18 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
         def printHelp () {
             output.emitln ("""exp                  print the result of evaluating exp
                 |:eval                list the available evaluation mechanisms
-                |:eval <mechanism>    change to using <mechanism> to evaluate""".stripMargin)
+                |:eval <mechanism>    change to using <mechanism> to evaluate
+                |:help                print this help message
+                |:quit                quit this REPL""".stripMargin)
         }
 
         line match {
             case Command (Seq (":help")) =>
                 printHelp ()
-                config
+                Some (config)
+
+            case Command (Seq (":quit")) =>
+                None
 
             case Command (Seq (":eval")) =>
                 output.emitln ("Available evaluation mechanisms:")
@@ -93,14 +98,14 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
                     else
                         output.emitln
                 }
-                config
+                Some (config)
 
             case Command (Seq (":eval", mech)) =>
                 if (mechanisms contains mech)
-                    createAndInitConfig (Seq ("-m", mech), output)
+                    Some (createAndInitConfig (Seq ("-m", mech), output))
                 else {
                     output.emitln (s"unknown evaluation mechanism: $mech")
-                    config
+                    Some (config)
                 }
 
             // Otherwise it's an expression for evaluation
