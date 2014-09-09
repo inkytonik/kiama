@@ -84,7 +84,7 @@ object ErrorCheck {
      */
     val errors : PicoJavaTree => Messages =
         attr { collectmessages {
-            case a : AssignStmt if (!isSubtypeOf (a.Value->tipe) (a.Variable->tipe)) =>
+            case a : AssignStmt if (!isSubtypeOf (a.Variable->tipe) (a.Value->tipe)) =>
                 message (a, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
             case d : ClassDecl if (hasCycleOnSuperclassChain (d)) =>
                 message (d, s"Cyclic inheritance chain for class ${d.Name}")
