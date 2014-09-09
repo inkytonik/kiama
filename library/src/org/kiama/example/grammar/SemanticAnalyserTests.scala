@@ -26,7 +26,7 @@ import org.kiama.util.Tests
 /**
  * Tests of grammar semantic analysis.
  */
-class SemanticAnalysisTests extends Tests {
+class SemanticAnalyserTests extends Tests {
 
     import GrammarTree._
     import PrettyPrinter._
