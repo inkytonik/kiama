@@ -99,7 +99,7 @@ object TypeAnalyser {
         paramAttr {
             typedecl => {
                 case UnknownDecl (_) => true
-                case t               => t == typedecl
+                case t               => t eq typedecl
             }
         }
 
@@ -117,7 +117,7 @@ object TypeAnalyser {
             typedecl => {
                 case UnknownDecl (_) => true
                 case t : TypeDecl    =>
-                    (t == typedecl) || (typedecl->superClass != null) && (isSubtypeOf (typedecl->superClass) (t))
+                    (t eq typedecl) || (typedecl->superClass != null) && (isSubtypeOf (typedecl->superClass) (t))
             }
         }
 
