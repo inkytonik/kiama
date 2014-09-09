@@ -25,18 +25,17 @@ package base
 trait Analyser {
 
     import org.kiama.attribution.Attribution.attr
-    import org.kiama.rewriting.Rewriter.collectall
-    import org.kiama.util.Messaging.{Messages, noMessages}
+    import org.kiama.util.Messaging.{collectmessages, Messages, noMessages}
     import source.SourceTree
 
     /**
      * The semantic errors for a tree.
      */
-    val errors =
-        attr (collectall {
+    val errors : SourceTree => Messages =
+        attr { collectmessages {
             case n : SourceTree =>
                 errorsDef (n)
-        })
+        }}
 
     /**
      * The error checking for this level, overridden to extend at later

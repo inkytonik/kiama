@@ -35,16 +35,15 @@ class Analyser {
     import LambdaTree._
     import PrettyPrinter._
     import org.kiama.attribution.Attribution._
-    import org.kiama.rewriting.Rewriter.collectall
-    import org.kiama.util.Messaging.{check, message, Messages}
+    import org.kiama.util.Messaging.{check, collectmessages, Messages, message}
     import scala.collection.immutable.Seq
 
     /**
      * The semantic error messages for a given tree. This one uses the `tipe`
      * attribute.
      */
-    val errors =
-        attr (collectall {
+    val errors : Exp => Messages =
+        attr { collectmessages {
             case e : Exp =>
                 checkType (e, tipe) ++
                 check (e) {
@@ -56,14 +55,14 @@ class Analyser {
                     case Var (x) =>
                         message (e, s"'$x' unknown", e->tipe == UnknownType ())
                 }
-        })
+        }}
 
     /**
      * The semantic error messages for a given tree. This one uses the `tipe2`
      * attribute.
      */
-    val errors2 =
-        attr (collectall {
+    val errors2 : Exp => Messages =
+        attr { collectmessages {
             case e : Exp =>
                 checkType (e, tipe2) ++
                 check (e) {
@@ -75,7 +74,7 @@ class Analyser {
                     case Var (x) =>
                         message (e, s"'$x' unknown", e->tipe2 == UnknownType ())
                 }
-        })
+        }}
 
     /**
      * The variables that are free in the given expression.

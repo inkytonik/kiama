@@ -49,12 +49,12 @@ END badrecord.
 [3]    rec2 := rec1 + rec2;
 [3]
 [3]    ^
-[3][16.13] type error: got INTEGER, but expected RECORD h : INTEGER; r : RECORD i : INTEGER; j : BOOLEAN END END
+[3][16.13] type error: got arecord2, but expected INTEGER
 [3]
 [3]    rec2 := rec1 + rec2;
 [3]
 [3]            ^
-[3][16.13] type error: got arecord2, but expected INTEGER
+[3][16.13] type error: got INTEGER, but expected RECORD h : INTEGER; r : RECORD i : INTEGER; j : BOOLEAN END END
 [3]
 [3]    rec2 := rec1 + rec2;
 [3]

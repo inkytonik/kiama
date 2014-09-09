@@ -28,17 +28,16 @@ class SemanticAnalyser {
     import PrologTree._
     import SymbolTable._
     import org.kiama.attribution.Attribution._
-    import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.Message
-    import org.kiama.util.Messaging.{check, message, Messages}
+    import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
     import org.kiama.util.{Entity, UnknownEntity}
     import scala.collection.immutable.Seq
 
     /**
      * The semantic error messages for a given tree.
      */
-    val errors =
-        attr (collectall {
+    val errors : PrologTree => Messages =
+        attr { collectmessages {
             case n @ Pred (s, ts) =>
                 check (n->entity) {
                     case Predicate (argtypes) if argtypes.length != ts.length =>
@@ -59,7 +58,7 @@ class SemanticAnalyser {
 
             case n : Term =>
                 checktype (n)
-        })
+        }}
 
     /**
      * Check types: issue a message if n's type is not compatible with its

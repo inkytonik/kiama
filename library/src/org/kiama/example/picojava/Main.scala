@@ -39,6 +39,7 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
     import ErrorCheck.errors
     import PrettyPrinter.pretty
     import org.kiama.util.Config
+    import org.kiama.util.Messaging.report
 
     def createConfig (args : Seq[String],
                       output : Emitter = new OutputEmitter,
@@ -46,16 +47,17 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
         new PicojavaConfig (args, output, error)
 
     /**
-     * Process a picoJava program by checking for errors, optionally obfuscating and
-     * then printing any errors that were found.
+     * Process a picoJava program by checking for errors, printing them if any are
+     * found. If there are no errors, optionally obfuscate.
      */
     override def process (filename : String, program : Program, config : PicojavaConfig) {
 
         super.process (filename, program, config)
 
-        program->errors
-
-        if (config.obfuscate ()) {
+        val messages = program->errors
+        if (messages.length > 0)
+            report (messages)
+        else if (config.obfuscate ()) {
             config.output.emitln (pretty (program))
             config.output.emitln (pretty (obfuscate (program)))
         }

@@ -38,16 +38,16 @@ END badfor.
 [3]    FOR aconst := 1 TO 10 DO
 [3]
 [3]        ^
-[3][19.9] illegal FOR loop control variable atype
-[3]
-[3]    FOR atype := 1 TO 10 DO
-[3]
-[3]        ^
 [2][19.9] atype cannot be used in an expression
 [2]
 [2]    FOR atype := 1 TO 10 DO
 [2]
 [2]        ^
+[3][19.9] illegal FOR loop control variable atype
+[3]
+[3]    FOR atype := 1 TO 10 DO
+[3]
+[3]        ^
 [3][23.9] type error: got BOOLEAN, but expected INTEGER
 [3]
 [3]    FOR bvar := FALSE TO TRUE DO

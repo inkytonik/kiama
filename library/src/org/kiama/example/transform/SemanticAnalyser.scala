@@ -31,8 +31,7 @@ class SemanticAnalyser {
 
     import TransformTree._
     import org.kiama.attribution.Attribution._
-    import org.kiama.rewriting.Rewriter.collectall
-    import org.kiama.util.Messaging.message
+    import org.kiama.util.Messaging.{collectmessages, message, Messages}
     import scala.collection.immutable.{HashMap, Seq}
 
     lazy val prioenv : Program => Map[String,Int] =
@@ -116,10 +115,10 @@ class SemanticAnalyser {
      * are used but not declared.  Multiple declarations of the same
      * variable are ok.
      */
-    lazy val errors =
-        attr (collectall {
+    lazy val errors : TransformTree => Messages =
+        attr { collectmessages {
             case e @ Var (s) if e->lookup (s) == None =>
                 message (e, s"$s is not declared")
-        })
+        }}
 
 }

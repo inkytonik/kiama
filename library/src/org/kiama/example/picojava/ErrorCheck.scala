@@ -36,9 +36,9 @@ object ErrorCheck {
     import PredefinedTypes._
     import TypeAnalyser._
     import org.kiama.attribution.Attribution._
-    import org.kiama.rewriting.Rewriter.collectall
-    import org.kiama.util.Messaging.message
+    import org.kiama.util.Messaging.{collectmessages, Messages, message}
     import org.kiama.util.Patterns.HasParent
+    import org.kiama.util.Positions
     import scala.collection.immutable.Seq
 
     /**
@@ -82,25 +82,19 @@ object ErrorCheck {
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val errors =
-        attr (collectall {
-
-            case a : AssignStmt if !isSubtypeOf (a.Value->tipe) (a.Variable->tipe) =>
+    val errors : PicoJavaTree => Messages =
+        attr { collectmessages {
+            case a : AssignStmt if (!isSubtypeOf (a.Value->tipe) (a.Variable->tipe)) =>
                 message (a, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
-
-            case d : ClassDecl if hasCycleOnSuperclassChain (d) =>
+            case d : ClassDecl if (hasCycleOnSuperclassChain (d)) =>
                 message (d, s"Cyclic inheritance chain for class ${d.Name}")
-
-            case s : WhileStmt =>
-                message (s, "Condition must be a boolean expression",
-                        !isSubtypeOf (s.Condition->tipe) (booleanType (s))) ++
-                message (s, "Condition must be a value",
-                         !isValue (s.Condition))
-
-            case i : IdnUse if isUnknown (i->decl) && (!isQualified (i) || !isUnknown (i->qualifier->tipe)) =>
+            case s : WhileStmt if (!isSubtypeOf (s.Condition->tipe) (booleanType (s))) =>
+                    message (s, "Condition must be a boolean expression")
+            case s : WhileStmt if (!isValue (s.Condition)) =>
+                message (s, "Condition must be a value")
+            case i : IdnUse if (isUnknown (i->decl) && (!isQualified (i) || !isUnknown (i->qualifier->tipe))) =>
                 message (i, s"Unknown identifier ${i.Name}")
-
-        })
+        }}
 
     /**
      * Is this entity qualified?

@@ -31,9 +31,8 @@ class SemanticAnalyser {
     import org.kiama.==>
     import org.kiama.attribution.Attribution.attr
     import org.kiama.attribution.Decorators.{chain, Chain}
-    import org.kiama.rewriting.Rewriter.{collect, collectall}
     import org.kiama.util.Message
-    import org.kiama.util.Messaging.{check, checkuse, message, noMessages}
+    import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
@@ -42,8 +41,8 @@ class SemanticAnalyser {
     /**
      * The semantic error messages for a given tree.
      */
-    val errors =
-        attr (collectall {
+    val errors : MiniJavaTree => Messages =
+        attr { collectmessages {
             case d @ IdnDef (i) if d->entity == MultipleEntity () =>
                 message (d, s"$i is declared more than once")
 
@@ -84,7 +83,7 @@ class SemanticAnalyser {
                                 message (u, "illegal instance creation of non-class type")
                         }
                 }
-        })
+        }}
 
     /**
      * Are two types compatible?  If either of them are unknown then we
