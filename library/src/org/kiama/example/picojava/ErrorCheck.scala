@@ -35,8 +35,9 @@ object ErrorCheck {
     import PicoJavaTree._
     import PredefinedTypes._
     import TypeAnalyser._
+    import java.util.ArrayList
+    import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging.{collectmessages, Messages, message}
     import org.kiama.util.Patterns.HasParent
     import org.kiama.util.Positions
     import scala.collection.immutable.Seq
@@ -82,19 +83,42 @@ object ErrorCheck {
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val errors : PicoJavaTree => Messages =
-        attr { collectmessages {
+
+    def errors (p : Program) : ArrayList[String] = {
+        val c = new ArrayList[String]
+        collectErrors (p, c)
+        c
+    }
+
+    def error (c : ArrayList[String], s : String) {
+        c.add (s)
+    }
+
+    def collectErrors (p : Attributable, c : ArrayList[String]) {
+
+        // Collect error from p's children
+        val children = p.children
+        while (children.hasNext) {
+            collectErrors (children.next (), c)
+        }
+
+        // Collect errors from p
+        p match {
             case a : AssignStmt if (!isSubtypeOf (a.Variable->tipe) (a.Value->tipe)) =>
-                message (a, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
+                error (c, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
             case d : ClassDecl if (hasCycleOnSuperclassChain (d)) =>
-                message (d, s"Cyclic inheritance chain for class ${d.Name}")
+                error (c, s"Cyclic inheritance chain for class ${d.Name}")
             case s : WhileStmt if (!isSubtypeOf (s.Condition->tipe) (booleanType (s))) =>
-                    message (s, "Condition must be a boolean expression")
-            case s : WhileStmt if (!isValue (s.Condition)) =>
-                message (s, "Condition must be a value")
+                error (c, "Condition must be a boolean expression")
+            case s :  WhileStmt if (!isValue (s.Condition)) =>
+                error (c, "Condition must be a value")
             case i : IdnUse if (isUnknown (i->decl) && (!isQualified (i) || !isUnknown (i->qualifier->tipe))) =>
-                message (i, s"Unknown identifier ${i.Name}")
-        }}
+                error (c, s"Unknown identifier ${i.Name}")
+            case _ =>
+                // Do nothing
+        }
+
+    }
 
     /**
      * Is this entity qualified?

@@ -88,7 +88,7 @@ class CombinedTests extends Tests {
     }
 
     test ("combined test program has no errors") {
-        assertResult (Seq ()) (ast->errors)
+        assertResult (0) (errors (ast).size ())
     }
 
 }

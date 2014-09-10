@@ -54,10 +54,11 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
 
         super.process (filename, program, config)
 
-        val messages = program->errors
-        if (messages.length > 0)
-            report (messages)
-        else if (config.obfuscate ()) {
+        val messages = errors (program)
+        if (messages.size () > 0) {
+            // Note, prints array list, no coords
+            config.output.emitln (messages)
+        } else if (config.obfuscate ()) {
             config.output.emitln (pretty (program))
             config.output.emitln (pretty (obfuscate (program)))
         }
