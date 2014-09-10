@@ -142,8 +142,10 @@ object Messaging {
             def collect (t : Attributable) {
 
                 // Collect the messages of the children of t
-                for (child <- t.children)
-                    collect (child)
+                val children = t.children
+                while (children.hasNext) {
+                    collect (children.next ())
+                }
 
                 // Collect the messages at t
                 buffer.appendAll (check (t) (messages))
