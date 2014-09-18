@@ -98,7 +98,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
     /**
      * The nodes that occur in this tree.
      */
-    lazy val nodes : Seq[T] =
+    val nodes : Seq[T] =
         root +: (childGraph.map (_._2))
 
     /**
