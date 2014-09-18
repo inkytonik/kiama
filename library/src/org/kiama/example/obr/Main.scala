@@ -62,7 +62,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree (ast)
         val analyser = new SemanticAnalyser (tree)
-        val messages = analyser.errors (ast)
+        val messages = analyser.errors
         if (messages.length > 0) {
             report (messages, config.error)
         } else {
@@ -131,7 +131,7 @@ class SemanticDriver extends Driver {
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree (ast)
         val analyser = new SemanticAnalyser (tree)
-        val messages = analyser.errors (ast)
+        val messages = analyser.errors
         if (messages.length > 0)
             report (messages, config.error)
 

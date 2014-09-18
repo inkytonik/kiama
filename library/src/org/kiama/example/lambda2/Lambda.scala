@@ -134,7 +134,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
 
         // First conduct a semantic analysis check: compute the expression's
         // type and see if any errors occurred
-        val messages = analyser.errors (e)
+        val messages = analyser.errors
         if (messages.length == 0) {
             // If everything is OK, evaluate the expression
             val evaluator = evaluatorFor (config.mechanism ())

@@ -40,8 +40,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
      * Compute errors of `e` check to make sure the relevant message is reported. Use
      * `errors` to actually perform the check.
      */
-    def assertType (e : Exp, aname : String, errors : Exp => Messages, line : Int, col : Int, msg : String) {
-        val messages = errors (e)
+    def assertType (e : Exp, aname : String, messages : Messages, line : Int, col : Int, msg : String) {
         messages.length match {
             case 0 =>
                 fail (s"$aname: no messages produced, expected ($line,$col) $msg")
@@ -76,10 +75,10 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
             exp =>
                 val tree = new LambdaTree (exp)
                 val analyser = new Analyser (tree)
-                val messages = analyser.errors (exp)
+                val messages = analyser.errors
                 if (messages.length != 0)
                     fail (s"errors: no messages expected, got ${messages}")
-                val messages2 = analyser.errors2 (exp)
+                val messages2 = analyser.errors2
                 if (messages.length != 0)
                     fail (s"errors2: no messages expected, got ${messages2}")
             }
@@ -120,7 +119,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
                        "expected Int, found Int -> Int")
     }
 
-    test ("an Int -> Int cannot be passed to an Int (untyped") {
+    test ("an Int -> Int cannot be passed to an Int (untyped)") {
         assertNoMessage ("""(\x . x + x) (\y . y + 1)""")
     }
 

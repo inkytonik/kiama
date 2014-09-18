@@ -103,7 +103,7 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
                     // cnofig.error.emitln (pretty (product (dbtree)))
                     val tree = new PrologTree (dbtree)
                     val analyser = new SemanticAnalyser (tree)
-                    val messages = analyser.errors (dbtree)
+                    val messages = analyser.errors
                     if (messages.length > 0) {
                         val emitter = new StringEmitter
                         report (messages, emitter)

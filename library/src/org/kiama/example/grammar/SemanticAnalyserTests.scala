@@ -26,7 +26,7 @@ import org.kiama.util.Tests
 /**
  * Tests of grammar semantic analysis.
  */
-class SemanticAnalysisTests extends Tests {
+class SemanticAnalyserTests extends Tests {
 
     import GrammarTree._
     import PrettyPrinter._
@@ -106,7 +106,7 @@ class SemanticAnalysisTests extends Tests {
     val g3analyser = new SemanticAnalyser (tree3)
 
     test ("g1: has no semantic errors") {
-        assertResult (0) (g1analyser.errors (g1).length)
+        assertResult (0) (g1analyser.errors.length)
     }
 
     test ("g1: S is not nullable") {
@@ -158,7 +158,7 @@ class SemanticAnalysisTests extends Tests {
     }
 
     test ("g2: has no semantic errors") {
-        assertResult (0) (g2analyser.errors (g2).length)
+        assertResult (0) (g2analyser.errors.length)
     }
 
     test ("g2: S is not nullable") {
@@ -234,10 +234,10 @@ class SemanticAnalysisTests extends Tests {
     }
 
     test ("g3: has the expected semantic errors") {
-        assertMessages (g3analyser.errors (g3),
-            Message ("F is not declared"),
+        assertMessages (g3analyser.errors,
             Message ("E is defined more than once"),
-            Message ("E is defined more than once"))
+            Message ("E is defined more than once"),
+            Message ("F is not declared"))
     }
 
 }

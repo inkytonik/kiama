@@ -36,16 +36,15 @@ class Analyser (tree : LambdaTree) extends Attribution {
 
     import LambdaTree._
     import PrettyPrinter._
-    import org.kiama.rewriting.Rewriter.collectall
-    import org.kiama.util.Messaging.{check, message, Messages}
+    import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
     import scala.collection.immutable.Seq
 
     /**
-     * The semantic error messages for a given tree. This one uses the `tipe`
+     * The semantic error messages for the tree. This one uses the `tipe`
      * attribute.
      */
-    val errors =
-        attr (collectall {
+    lazy val errors : Messages =
+        collectmessages (tree) {
             case e : Exp =>
                 checkType (e, tipe) ++
                 check (e) {
@@ -57,14 +56,14 @@ class Analyser (tree : LambdaTree) extends Attribution {
                     case Var (x) =>
                         message (e, s"'$x' unknown", tipe (e) == UnknownType ())
                 }
-        })
+        }
 
     /**
-     * The semantic error messages for a given tree. This one uses the `tipe2`
+     * The semantic error messages for the tree. This one uses the `tipe2`
      * attribute.
      */
-    val errors2 =
-        attr (collectall {
+    lazy val errors2 : Messages =
+        collectmessages (tree) {
             case e : Exp =>
                 checkType (e, tipe2) ++
                 check (e) {
@@ -76,7 +75,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
                     case Var (x) =>
                         message (e, s"'$x' unknown", tipe2 (e) == UnknownType ())
                 }
-        })
+        }
 
     /**
      * The variables that are free in the given expression.
@@ -240,7 +239,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
      * For a given variable reference, return the lambda node that binds it if
      * there is one, otherwise return None.
      */
-    def lookup (name : Idn) : Exp => Option[Lam] =
+    def lookup (name : Idn) : ExpNode => Option[Lam] =
         attr {
             // Inside a lambda expression the bound variable is now visible
             // in addition to everything that is visible from above.  If

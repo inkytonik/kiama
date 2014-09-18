@@ -27,8 +27,7 @@ import org.kiama.attribution.Attribution
 trait Analyser extends Attribution with SymbolTable {
 
     import org.kiama.attribution.Decorators
-    import org.kiama.rewriting.Rewriter.collectall
-    import org.kiama.util.Messaging.{Messages, noMessages}
+    import org.kiama.util.Messaging.{collectmessages, Messages, noMessages}
     import source.SourceNode
     import source.SourceTree.SourceTree
 
@@ -43,13 +42,13 @@ trait Analyser extends Attribution with SymbolTable {
     lazy val decorators = new Decorators (tree)
 
     /**
-     * The semantic errors for a tree.
+     * The semantic errors for the tree.
      */
-    val errors =
-        attr (collectall {
-            case n : SourceNode =>
+    lazy val errors : Messages =
+        collectmessages (tree) {
+            case n =>
                 errorsDef (n)
-        })
+        }
 
     /**
      * The error checking for this level, overridden to extend at later

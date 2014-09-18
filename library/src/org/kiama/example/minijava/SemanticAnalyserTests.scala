@@ -618,7 +618,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     def runSemanticChecks (prog : Program, expected : Message*) : SemanticAnalyser = {
         val tree = new MiniJavaTree (prog)
         val analyser = new SemanticAnalyser (tree)
-        assertMessages (analyser.errors (prog), expected : _*)
+        assertMessages (analyser.errors, expected : _*)
         analyser
     }
 

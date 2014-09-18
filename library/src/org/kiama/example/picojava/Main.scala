@@ -55,9 +55,12 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
 
         val tree = new PicoJavaTree (program)
         val analysis = new ErrorCheck (tree)
-        analysis.errors (program)
+        val messages = analysis.errors
 
-        if (config.obfuscate ()) {
+        if (messages.size () > 0) {
+            // Note, prints array list, no coords
+            config.output.emitln (messages)
+        } else if (config.obfuscate ()) {
             val obfuscator = new Obfuscator (analysis)
             config.output.emitln (pretty (program))
             config.output.emitln (pretty (obfuscator.obfuscate (program)))

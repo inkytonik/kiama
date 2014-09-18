@@ -67,12 +67,12 @@ class ErrorTests extends RegexParserTests with SyntaxAnalyser {
             ast =>
                 val tree = new PicoJavaTree (ast)
                 val analyser = new ErrorCheck (tree)
-                assertMessages (analyser.errors (ast),
-                    Message ("Cyclic inheritance chain for class A", positionAt (3, 3)),
-                    Message ("Unknown identifier b", positionAt (5, 9)),
-                    Message ("Can not assign a variable of type boolean to a value of type A", positionAt (7, 5)),
-                    Message ("Cyclic inheritance chain for class B", positionAt (9, 3)),
-                    Message ("Can not assign a variable of type C to a value of type D", positionAt (17, 3)))
+                val messages = analyser.errors
+                assertResult ("Unknown identifier b") (messages.get (0))
+                assertResult ("Can not assign a variable of type boolean to a value of type A") (messages.get (1))
+                assertResult ("Cyclic inheritance chain for class A") (messages.get (2))
+                assertResult ("Cyclic inheritance chain for class B") (messages.get (3))
+                assertResult ("Can not assign a variable of type C to a value of type D") (messages.get (4))
         }
     }
 

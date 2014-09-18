@@ -36,8 +36,9 @@ class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
         NameResolution with TypeAnalyser with NullObjects with PredefinedTypes {
 
     import PicoJavaTree._
-    import org.kiama.rewriting.Rewriter.collectall
+    import java.util.ArrayList
     import org.kiama.util.Messaging.message
+    import org.kiama.util.Positions
     import scala.collection.immutable.Seq
 
     /**
@@ -81,25 +82,48 @@ class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
      *         error(c, "Unknown identifier " + getName());
      * }
      */
-    val errors =
-        attr (collectall {
 
-            case a : AssignStmt if !isSubtypeOf (tipe (a.Value)) (tipe (a.Variable)) =>
-                message (a, s"Can not assign a variable of type ${tipe (a.Variable).Name} to a value of type ${tipe (a.Value).Name}")
+    // lazy val errors : ArrayList[String] = {
+    def errors : ArrayList[String] = {
+        val c = new ArrayList[String]
+        collectErrors (tree.root, c)
+        c
+    }
 
-            case d : ClassDecl if hasCycleOnSuperclassChain (d) =>
-                message (d, s"Cyclic inheritance chain for class ${d.Name}")
+    def error (c : ArrayList[String], s : String) {
+        c.add (s)
+    }
 
-            case s : WhileStmt =>
-                message (s, "Condition must be a boolean expression",
-                        !isSubtypeOf (tipe (s.Condition)) (booleanType (s))) ++
-                message (s, "Condition must be a value",
-                         !isValue (s.Condition))
+    def collectErrors (p : Product, c : ArrayList[String]) {
 
-            case i : IdnUse if isUnknown (decl (i)) && (!isQualified (i) || !isUnknown (tipe (qualifier (i)))) =>
-                message (i, s"Unknown identifier ${i.Name}")
+        // Collect error from p's children
+        val children = p.productIterator
+        while (children.hasNext) {
+            children.next () match {
+                case cp : Product =>
+                    collectErrors (cp, c)
+                case _ =>
+                    // Do nothing
+            }
+        }
 
-        })
+        // Collect errors from p
+        p match {
+            case a : AssignStmt if (!isSubtypeOf (tipe (a.Variable)) (tipe (a.Value))) =>
+                error (c, s"Can not assign a variable of type ${tipe (a.Variable).Name} to a value of type ${tipe (a.Value).Name}")
+            case d : ClassDecl if (hasCycleOnSuperclassChain (d)) =>
+                error (c, s"Cyclic inheritance chain for class ${d.Name}")
+            case s : WhileStmt if (!isSubtypeOf (tipe (s.Condition)) (booleanType (s))) =>
+                error (c, "Condition must be a boolean expression")
+            case s :  WhileStmt if (!isValue (s.Condition)) =>
+                error (c, "Condition must be a value")
+            case i : IdnUse if (isUnknown (decl (i)) && (!isQualified (i) || !isUnknown (tipe (qualifier (i))))) =>
+                error (c, s"Unknown identifier ${i.Name}")
+            case _ =>
+                // Do nothing
+        }
+
+    }
 
     /**
      * Is this entity qualified?

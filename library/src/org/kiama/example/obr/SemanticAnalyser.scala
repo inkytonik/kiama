@@ -30,20 +30,19 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
     import ObrTree._
     import SymbolTable._
     import org.kiama.attribution.Decorators
-    import org.kiama.rewriting.Rewriter.collectall
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Message
-    import org.kiama.util.Messaging.{check, checkuse, message, noMessages}
+    import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
     import scala.collection.immutable.Seq
 
     val decorators = new Decorators (tree)
     import decorators.{chain, Chain}
 
     /**
-     * The semantic error messages for a given tree.
+     * The semantic error messages for the tree.
      */
-    val errors =
-        attr (collectall {
+    lazy val errors : Messages =
+        collectmessages (tree) {
             case p @ ObrInt (i1, ds, ss, i2) if i1 != i2 =>
                 message (p, s"identifier $i2 at end should be $i1")
 
@@ -112,7 +111,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
                 } ++
                 message (e, s"""type error: expected ${exptipe (e).mkString(" or ")} got ${tipe (e)}""",
                          ! (exptipe (e) exists ((_ : TypeBase) iscompatible tipe (e))))
-        })
+        }
 
     /**
      * Attribute to consecutively number enumeration constants.

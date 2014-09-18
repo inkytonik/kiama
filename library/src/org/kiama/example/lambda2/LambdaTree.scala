@@ -34,7 +34,12 @@ object LambdaTree {
     /**
      * Tree type for lambda calculus programs.
      */
-    type LambdaTree = Tree[Exp,Exp]
+    type LambdaTree = Tree[ExpNode,Exp]
+
+    /**
+     * Interface for all lambda calculus tree nodes.
+     */
+    sealed abstract class ExpNode extends Product
 
     /**
      * Identifiers are represented as strings.
@@ -44,7 +49,7 @@ object LambdaTree {
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends Product
+    sealed abstract class Exp extends ExpNode
 
     /**
      * Numeric expressions.
@@ -91,7 +96,7 @@ object LambdaTree {
     /**
      * Types.
      */
-    sealed abstract class Type extends Product
+    sealed abstract class Type extends ExpNode
 
     /**
      * Primitive integer type.
@@ -116,7 +121,7 @@ object LambdaTree {
     /**
      * Primitive binary operators.
      */
-    sealed abstract class Op {
+    sealed abstract class Op extends ExpNode {
         /**
          * Evaluate the oeprator on the given integer operands.
          */

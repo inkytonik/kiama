@@ -58,7 +58,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
         // Perform the semantic checks
         val tree = new MiniJavaTree (ast)
         val analyser = new SemanticAnalyser (tree)
-        val messages = analyser.errors (ast)
+        val messages = analyser.errors
 
         // Report any messages that were produced
         if (messages.length > 0) {

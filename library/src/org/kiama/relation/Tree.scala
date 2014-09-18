@@ -96,20 +96,17 @@ class Tree[T <: Product,+R <: T] (val root : R) {
     }
 
     /**
-     * The nodes that occur in the domain or range of this relation.
+     * The nodes that occur in this tree.
      */
-    lazy val domainNodes : Seq[Any] =
-        childGraph.foldRight (List[Any] ()) {
-            case ((t, u), l) =>
-                 t :: u :: l
-        }
+    lazy val nodes : Seq[T] =
+        root +: (childGraph.map (_._2))
 
     /**
      * If the tree contains node `u` return `v`, otherwise throw a
      * `NodeNotInTreeException`.
      */
     def whenContains[U,V] (u : U, v : V) : V =
-        if (same (u, root) || (contains (domainNodes, u)))
+        if (same (u, root) || (contains (nodes, u)))
             v
         else
             throw new NodeNotInTreeException (u)

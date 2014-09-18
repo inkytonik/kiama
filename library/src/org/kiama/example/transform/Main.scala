@@ -44,7 +44,7 @@ class Driver extends Parser with Compiler[Program] {
         // and error computation on that rep.
         val tree = new TransformTree (program)
         val analyser = new SemanticAnalyser (tree)
-        val messages = analyser.errors (expr)
+        val messages = analyser.errors
 
         // For testing, print the priority-correct representation
         config.output.emitln (analyser.ast (expr))

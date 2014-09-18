@@ -58,7 +58,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
                     case Left (ast) =>
                         val tree = new ObrTree (ast)
                         val analyser = new SemanticAnalyser (tree)
-                        val messages = analyser.errors (ast)
+                        val messages = analyser.errors
                         if (messages.length > 0) {
                             report (messages, config.error)
                             fail (s"$title emitted a semantic error.")

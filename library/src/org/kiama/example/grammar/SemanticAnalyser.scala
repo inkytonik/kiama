@@ -36,9 +36,8 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
     import GrammarTree._
     import SymbolTable._
     import org.kiama.attribution.Decorators
-    import org.kiama.rewriting.Rewriter.{collect, collectall}
-    import org.kiama.util.Message
-    import org.kiama.util.Messaging.message
+    import org.kiama.rewriting.Rewriter.collect
+    import org.kiama.util.Messaging.{collectmessages, Messages, message}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import scala.collection.immutable.{Seq, Set}
 
@@ -48,13 +47,13 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
     /**
      * The semantic error messages for a given tree.
      */
-    val errors =
-        attr (collectall {
+    lazy val errors : Messages =
+        collectmessages (tree) {
             case n @ NonTermDef (name) if entity (n) == MultipleEntity () =>
                 message (n, s"$name is defined more than once")
             case n @ NonTermUse (name) if entity (n) == UnknownEntity () =>
                 message (n, s"$name is not declared")
-        })
+        }
 
     /**
      * The `envin` contains the bindings that are defined "before" the given

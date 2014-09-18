@@ -56,6 +56,7 @@ case class Message (label : String, pos : Position = NoPosition) {
  */
 object Messaging {
 
+    import org.kiama.relation.Tree
     import org.kiama.util.{Entity, ErrorEntity}
     import scala.collection.immutable.{IndexedSeq, Seq}
 
@@ -127,5 +128,13 @@ object Messaging {
                 (msg1.line < msg2.line) ||
                 ((msg1.line == msg2.line) && (msg1.column < msg2.column))
         }
+
+
+    /**
+     * Recursively collect all messages in the given tree using the partial
+     * function `messages` at all nodes where it is defined.
+     */
+    def collectmessages[T <: Product,U <: T] (tree : Tree[T,U]) (messages : T ==> Messages) : Messages =
+        tree.nodes.flatMap (messages.orElse { case _ => noMessages })
 
 }
