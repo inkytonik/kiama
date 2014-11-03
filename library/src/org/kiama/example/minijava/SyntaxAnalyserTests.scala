@@ -615,4 +615,38 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                   Argument (IntType (), IdnDef ("c"))))
     }
 
+    // Input text recovery tests
+
+    test ("a standalone node has no input text") {
+        val t = Argument (IntType (), IdnDef ("a"))
+        assertResult (None) (textOf (t))
+    }
+
+    test ("input text from an identifier parse is the identifier") {
+        val t = assertParseReturn ("x", expression)
+        assertResult (Some ("x")) (textOf (t))
+    }
+
+    test ("input text from an operator expression parse is correct") {
+        val t = assertParseReturn ("  x   +  1 ", expression)
+        assertResult (Some ("  x   +  1")) (textOf (t))
+    }
+
+    test ("input text from a statement with comments is correct") {
+        val t = assertParseReturn ("""
+                    |// In
+                    |while (a < 1) { // In
+                    |    b = 1;
+                    |    // In
+                    |}
+                    |// Out
+                    |""".stripMargin, statement)
+        assertResult (Some ("""
+                    |// In
+                    |while (a < 1) { // In
+                    |    b = 1;
+                    |    // In
+                    |}""".stripMargin)) (textOf (t))
+    }
+
 }
