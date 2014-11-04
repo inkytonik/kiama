@@ -4,7 +4,7 @@ addSbtPlugin ("com.eed3si9n" % "sbt-unidoc" % "0.3.0")
 
 // Desirable plugins:
 
-addSbtPlugin ("com.typesafe.sbt" % "sbt-pgp" % "0.8.1")
+addSbtPlugin ("com.jsuereth" % "sbt-pgp" % "1.0.0")
 
 // Optional plugins:
 
