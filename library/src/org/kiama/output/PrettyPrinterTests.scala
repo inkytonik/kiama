@@ -394,11 +394,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
     val l3 = List (new PVal (1), new PVal (2), new PVal (3))
 
-    test ("pretty-print lists of structured prettyy-printable values - non-wrap") {
+    test ("pretty-print lists of structured pretty-printable values - non-wrap") {
         assertResult ("List(1!, 2!, 3!)") (pretty (plist (l3)))
     }
 
-    test ("pretty-print lists of structured prettyy-printable values - wrap") {
+    test ("pretty-print lists of structured pretty-printable values - wrap") {
         assertResult ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
     }
 

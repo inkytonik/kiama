@@ -26,7 +26,8 @@ package util
  */
 object Positions extends Memoiser {
 
-    import scala.util.parsing.input.{NoPosition, Position}
+    import java.lang.CharSequence
+    import scala.util.parsing.input.{NoPosition, OffsetPosition, Position}
 
     /**
      * Map between a value and a source code position.
@@ -39,6 +40,11 @@ object Positions extends Memoiser {
     private val startMap = new PositionMap
 
     /**
+     * Map between value and whitespace starting position.
+     */
+    private val startWhiteMap = new PositionMap
+
+    /**
      * Map between value and finishing position.
      */
     private val finishMap = new PositionMap
@@ -49,6 +55,13 @@ object Positions extends Memoiser {
      */
     def getStart[T] (t : T) : Position =
         startMap.getWithDefault (t, NoPosition)
+
+    /**
+     * Get the start whitespace position of `t`. If it doesn't have
+     * one, return `NoPosition`.
+     */
+    def getStartWhite[T] (t : T) : Position =
+        startWhiteMap.getWithDefault (t, NoPosition)
 
     /**
      * Get the finish position of `t`. If it doesn't have one, return
@@ -65,6 +78,14 @@ object Positions extends Memoiser {
     }
 
     /**
+     * Set the start whitespace position of `t` to `p` if it has not
+     * already been set.
+     */
+    def setStartWhite[T] (t : T, p : Position) {
+        startWhiteMap.putIfNotPresent (t, p)
+    }
+
+    /**
      * Set the `finish` position of `t` to `p` if it has not already been set.
      */
     def setFinish[T] (t : T, p : Position) {
@@ -77,6 +98,7 @@ object Positions extends Memoiser {
      */
     def dupPos[T] (a : Any, t : T) : T = {
         startMap.dup (a, t, NoPosition)
+        startWhiteMap.dup (a, t, NoPosition)
         finishMap.dup (a, t, NoPosition)
         t
     }
@@ -94,6 +116,14 @@ object Positions extends Memoiser {
             val lineContents = ""
         }
 
+    /**
+     * Get the source text associated with the subsequence of a source
+     * between given starting and finishing offset positions. The two
+     * positions are assumed to reference the same source.
+     */
+    def subSource (s : OffsetPosition, f : OffsetPosition) : CharSequence =
+        s.source.subSequence (s.offset, f.offset)
+
 }
 
 /**
@@ -101,6 +131,10 @@ object Positions extends Memoiser {
  * tracking start and finish positions for tree nodes.
  */
 trait PositionedParserUtilities extends ParserUtilities {
+
+    import Positions.{getFinish, getStart, getStartWhite,
+        setFinish, setStart, setStartWhite, subSource}
+    import scala.util.parsing.input.OffsetPosition
 
     /**
      * A marker of a position. Used as a placeholder when there are no
@@ -126,8 +160,9 @@ trait PositionedParserUtilities extends ParserUtilities {
             case res @ Success (t, in1) =>
                 val startoffset = handleWhiteSpace (in)
                 val newin = in.drop (startoffset - in.offset)
-                Positions.setStart (t, newin.pos)
-                Positions.setFinish (t, in1.pos)
+                setStart (t, newin.pos)
+                setStartWhite (t, in.pos)
+                setFinish (t, in1.pos)
                 res
             case res =>
                 res
@@ -153,6 +188,24 @@ trait PositionedParserUtilities extends ParserUtilities {
             def apply (in : Input) : ParseResult[T] =
                 parseAndPosition (f, in)
        }
+
+    /**
+     * If `t` has start and finish positions implemented by offset positions
+     * from the Scala parser combinator library, return the source text
+     * associated `t`. Otherwise, return `None`. If `includeWhiteSpace` is
+     * true (the default) then the starting position includes any preceding
+     * white space characters; otherwise it starts at the first non-whitespace
+     * character.
+     */
+    def textOf[T] (t : T, includeWhiteSpace : Boolean = true) : Option[String] = {
+        val start = if (includeWhiteSpace) getStartWhite (t) else getStart (t)
+        (start, getFinish (t)) match {
+            case (s : OffsetPosition, f : OffsetPosition) =>
+                Some (subSource (s, f).toString)
+            case _ =>
+                None
+        }
+    }
 
 }
 
