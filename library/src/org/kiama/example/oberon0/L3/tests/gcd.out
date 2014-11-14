@@ -1,0 +1,38 @@
+* _pp.ob
+MODULE GCD;
+
+    VAR
+        x : INTEGER;
+        y : INTEGER;
+
+BEGIN
+    Read (x);
+    Read (y);
+    WHILE x # y DO
+        IF x > y THEN
+            x := x - y
+        ELSE
+            y := y - x
+        END
+    END;
+    Write (x);
+    WriteLn
+END GCD.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_x2;
+[6]int ob_y3;
+[6]int main (int argc, char *argv[0]) {
+[6]    scanf ("%d", &ob_x2);
+[6]    scanf ("%d", &ob_y3);
+[6]    while (ob_x2 != ob_y3) {
+[6]        if (ob_x2 > ob_y3) {
+[6]            ob_x2 = ob_x2 - ob_y3;
+[6]        } else {
+[6]            ob_y3 = ob_y3 - ob_x2;
+[6]        }
+[6]    }
+[6]    printf (" %d", ob_x2);
+[6]    puts ("");
+[6]    return 0;
+[6]}

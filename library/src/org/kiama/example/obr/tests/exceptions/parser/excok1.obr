@@ -1,0 +1,9 @@
+(* Legal exception declaration *)
+
+PROGRAM ExcOk1 (i : INTEGER) : INTEGER;
+
+CONST
+   CountException : EXCEPTION;
+
+BEGIN
+END ExcOk1.

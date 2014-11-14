@@ -1,0 +1,34 @@
+The Kiama team are pleased to bring you the next release of the library.
+
+### New features
+* General
+    * The API methods that create rewriting strategies and attributes are now defined by macros. We use our [`dsinfo`](https://bitbucket.org/inkytonik/dsinfo) library to provide easy access to the names of these domain objects. Strategies and attributes now have a `name` member that can be used for debugging messages and profiling (see below).
+    * This new dependence on macros means that we do not support Kiama on Scala 2.9 any more.
+    * Kiama now uses our [`dsprofile`](https://bitbucket.org/inkytonik/dsprofile) library to provide domain-specific profiling reports about strategy and attribute evaluation. See the [Profiling wiki page](https://code.google.com/p/kiama/wiki/Profiling) for more information on Kiama's profiling support.
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.attribution.package)
+    * Circular attributes now support the same `reset` and `hasBeenComputedAt` interface as other cached attributes.
+    * Dynamic attributes can now be properly reset.
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.rewriting.package)
+    * The `apply` method of strategies is now common, so it is possible to easily customise the behaviour of all strategies.
+    * `MemoRewriter` is a new version of the `Rewriter` where every strategy memoises its results.
+    * The `Strategy` type is now defined externally to the `Rewriter` so it must be imported separately if you use it.
+* [Output](http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.output.package)
+    * There is now a `PrettyPrinter` module that can be used if you just want the default pretty-printer behaviour (e.g., just to print trees with no customisation).
+    * [Issue 57](https://code.google.com/p/kiama/issues/detail?id=57): Output filters have been added so that pretty-printed output can be filtered for display (e.g., to only show up to a maximum number of lines or up to particular indentation) (inspired by Lucas Sabatin).
+    * [Issue 58](https://code.google.com/p/kiama/issues/detail?id=58): `line (repl)` is exported from the pretty-printing library so that the replacement for an omitted line break can be customised (inspired by Lucas Sabatin).
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.util.package)
+    * A `ProfilingCompiler` variant of `Compiler` trait has been added to make it easier to define main programs that provide options for running profiles.
+    * Bug fixed in `Compiler` trait where only the first filename argument was passed on to the driver.
+    * The `Compiler.process` method is now also given the filename.
+* Examples
+    * Added a pretty-printer and obfuscation rewriting to the PicoJava example.
+    * The Lambda2 example now always allows type annotations to be omitted instead of using an interactive REPL command to switch type checking on and off.
+    * New MiniJava example that compiles a cut-down but non-trivial version of Java to JVM byte code.
+
+### Fixes
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package)
+    * [Issue 59](https://code.google.com/p/kiama/issues/detail?id=59): fix bug where `hasBeenComputedAt` on attributes didn't take account of memoisation table resets.
+
+### Other
+* The project uses a new structure with `core` and `kiama` sub-projects to support separate compilation needed for macros.
+* Some other minor fixes and code style improvements.

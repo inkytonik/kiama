@@ -1,0 +1,43 @@
+MODULE case;
+
+VAR
+    avar : INTEGER;
+
+BEGIN
+    CASE avar OF
+        1 : avar := 2
+    END;
+    
+    CASE avar OF
+        1 : avar := 2
+      | 3 : avar := 4
+    ELSE
+        avar := 5
+    END;
+
+    CASE 6 * avar OF
+        7 : avar := 8
+      | 9 : avar := 10; avar := 11
+      | 12 :
+      | 13 .. 14 : avar := 15
+    END;
+    
+    CASE avar OF
+        16 : avar := 17
+    ELSE
+    END;
+    
+    CASE avar - 1 OF
+        1 : CASE avar * 2 OF
+                3 : avar := 18
+              | 4 : avar := 19
+            ELSE
+                avar := 20
+            END
+    END;
+    
+    CASE avar OF
+        1, 2 .. 4, 5 : avar := 21
+      | 6, 7 : avar := 22
+    END
+END case.

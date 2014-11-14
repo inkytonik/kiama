@@ -1,0 +1,24 @@
+(* Obr factorial program *)
+
+PROGRAM Factorial (v : INTEGER) : INTEGER;
+
+CONST
+    limit = 7;
+
+VAR
+    c : INTEGER;
+    fact : INTEGER;
+
+BEGIN
+    IF (v < 0) OR (v > limit) THEN
+        RETURN -1;
+    ELSE
+        c := 0;
+        fact := 1;
+        WHILE c < v DO
+            c := c + 1;
+            fact := fact * c;
+        END
+        RETURN fact;
+    END
+END Factorial.

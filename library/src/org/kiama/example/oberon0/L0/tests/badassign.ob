@@ -1,0 +1,5 @@
+MODULE badassign;
+
+BEGIN
+    1 := 2
+END badassign.

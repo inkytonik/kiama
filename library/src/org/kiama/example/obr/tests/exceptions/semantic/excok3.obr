@@ -1,0 +1,32 @@
+(* Legal nested TRY statements *)
+
+PROGRAM ExcOk3 (i : INTEGER) : INTEGER;
+
+CONST
+   HaroldWasHere : EXCEPTION;
+   NoHeWasnt : EXCEPTION;
+
+VAR
+   A : INTEGER;
+   B : INTEGER;
+   C : INTEGER;
+
+BEGIN
+
+   TRY
+      A := B / C;
+      TRY
+         B := C / A;
+      CATCH DivideByZero DO
+         RAISE HaroldWasHere;
+      END
+   CATCH DivideByZero DO
+      TRY
+         B := A;
+      CATCH HaroldWasHere DO
+         RAISE NoHeWasnt;
+      END
+      B := C - A;
+   END
+   
+END ExcOk3.

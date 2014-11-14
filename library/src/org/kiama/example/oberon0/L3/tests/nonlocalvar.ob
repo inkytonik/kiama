@@ -1,0 +1,25 @@
+MODULE nonlocalvar;
+
+VAR
+    a : INTEGER;
+
+PROCEDURE proc1 (b : INTEGER);
+
+VAR
+    c : INTEGER;
+
+PROCEDURE proc2;
+
+BEGIN
+    a := 8;
+    b := 9;
+    c := 10
+END proc2;
+
+BEGIN
+    a := 11
+END proc1;
+
+BEGIN
+    proc1 (a)
+END nonlocalvar.

@@ -1,0 +1,14 @@
+(* Missing DO in CATCH *)
+
+PROGRAM ExErr3 (i : INTEGER) : INTEGER;
+
+BEGIN
+
+   TRY
+      Average := Quantity / Count;         
+      Result := Average * Frequency;
+   CATCH DivideByZero
+      Result := 0;
+   END
+   
+END ExErr3.

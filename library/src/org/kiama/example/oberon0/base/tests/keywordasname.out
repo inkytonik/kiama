@@ -1,0 +1,6 @@
+* errors
+[1.8] failure: ident expected
+
+MODULE END;
+
+       ^

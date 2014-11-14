@@ -1,0 +1,16 @@
+PROGRAM For3 (x : INTEGER) : INTEGER;
+
+VAR
+    a : INTEGER;
+    b : INTEGER;
+
+BEGIN
+    b := 1;
+    FOR a := 2 TO x DO
+        b := b * a;
+        IF a MOD 2 = 1 THEN 
+			b := b + 1; 
+		END
+    END
+    RETURN b;
+END For3.

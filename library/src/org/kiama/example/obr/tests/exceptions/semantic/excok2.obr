@@ -1,0 +1,29 @@
+(* Legal TRY statement (multiple handlers) *)
+
+PROGRAM ExcOk2 (i : INTEGER) : INTEGER;
+
+CONST
+   NegativeError : EXCEPTION;
+
+VAR
+   A : INTEGER;
+   B : INTEGER;
+   C : INTEGER;
+   
+BEGIN
+
+   TRY
+      A := B / C;
+      IF A < 0 THEN
+         RAISE NegativeError;
+      END
+   CATCH NegativeError DO
+      WHILE A # C DO
+         A := A + 1;
+      END
+   CATCH DivideByZero DO
+      A := 1;
+      B := C - A;
+   END
+   
+END ExcOk2.

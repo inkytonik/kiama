@@ -1,0 +1,15 @@
+// Find all factors of a given input number - J.R. Cordy August 2005
+// http://www.program-transformation.org/Sts/TILTrainingSet
+var n;
+write "Input n please";
+read n;
+write "The factors of n are";
+var f;
+f := 2;
+while n != 1 do
+    while (n / f) * f = n do
+        write f;
+        n := n / f;
+    end
+    f := f + 1;
+end

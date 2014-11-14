@@ -1,0 +1,26 @@
+MODULE array;
+
+CONST
+    aconst = 3;
+
+TYPE
+    atype1 = ARRAY 10 OF BOOLEAN;
+    atype2 = INTEGER;
+    atype3 = ARRAY aconst DIV 4 OF BOOLEAN;
+    
+VAR
+    avar1 : atype1;
+    avar2 : ARRAY aconst * 2 OF ARRAY 3 OF INTEGER;
+    avar3 : ARRAY 12 OF atype2;
+    avar4 : INTEGER;
+
+BEGIN
+    avar1[5] := TRUE;
+    avar1[avar4 * 3] := FALSE;
+    avar2[3][2] := 2;
+    avar3[avar3[0]] := avar3[1] * avar3[2];
+    CASE avar3[1] OF
+        1 : avar3[2] := avar3[2] + 1
+      | 2 .. 4 : avar3[1] := 1
+    END
+END array.

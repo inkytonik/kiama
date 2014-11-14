@@ -1,0 +1,17 @@
+(* A comment *)
+MODULE comment;
+   (* A multi
+     line comment
+       doo dee doo *)
+(* nesting (* in comments *) is fun *)
+BEGIN
+   (* a bit more (*
+      multi line 
+      nest (* and again *)
+      *)*)
+   (*(**)*)
+   (**)
+END(*a comment in line*)comment.
+  (*
+   a comment at the end
+  *)

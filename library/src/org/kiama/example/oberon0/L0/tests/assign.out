@@ -1,0 +1,35 @@
+* _pp.ob
+MODULE assign;
+
+    CONST
+        answer = 42;
+        aconst1 = 1 + 42;
+        aconst2 = aconst1 * 2;
+
+    VAR
+        avar, xvar : INTEGER;
+        bvar : BOOLEAN;
+
+BEGIN
+    avar := 10;
+    avar := answer - avar MOD 4;
+    avar := (answer + avar) * 4;
+    bvar := TRUE;
+    bvar := bvar OR bvar & FALSE
+END assign.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_answer2 = 42;
+[6]int ob_aconst13 = 43;
+[6]int ob_aconst24 = 86;
+[6]int ob_avar5;
+[6]int ob_xvar6;
+[6]int ob_bvar7;
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_avar5 = 10;
+[6]    ob_avar5 = ob_answer2 - ob_avar5 % 4;
+[6]    ob_avar5 = (ob_answer2 + ob_avar5) * 4;
+[6]    ob_bvar7 = 1;
+[6]    ob_bvar7 = ob_bvar7 || ob_bvar7 && 0;
+[6]    return 0;
+[6]}

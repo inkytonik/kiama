@@ -1,0 +1,66 @@
+{
+    "depts" : [ 
+        {
+            "type" : "department",
+            "name" : "Research",
+            "manager" : {
+                "name" : "Craig",
+                "address" : "Redmond",
+                "salary" : 123456
+            },
+            "subunits" : [
+                {
+                    "type" : "employee",
+                    "name" : "Erik",
+                    "address" : "Utrecht",
+                    "salary" : 12345
+                },
+                {
+                    "type" : "employee",
+                    "name" : "Ralf",
+                    "address" : "Koblenz",
+                    "salary" : 1234
+                }
+            ]
+        },
+        {
+            "type" : "department",
+            "name" : "Development",
+            "manager" : {
+                "name" : "Ray",
+                "address" : "Redmond",
+                "salary" : 234567
+            },
+            "subunits" : [
+                {
+                    "type" : "department",
+                    "name" : "Dev1",
+                    "manager" : {
+                        "name" : "Klaus",
+                        "address" : "Boston",
+                        "salary" : 23456
+                    },
+                    "subunits" : [
+                        {
+                            "type" : "department",
+                            "name" : "Dev1.1",
+                            "manager" : {
+                                "name" : "Karl",
+                                "address" : "Riga",
+                                "salary" : 2345
+                            },
+                            "subunits" : [
+                                {
+                                    "type" : "employee",
+                                    "name" : "Joe",
+                                    "address" : "Wifi City",
+                                    "salary" : 2344
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
