@@ -168,8 +168,8 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
     def rootconstexpDef : Expression => Boolean =
         (e =>
             e match {
-                case tree.parent (_ : ConstDecl)  => true
-                case _                               => false
+                case tree.parent (_ : ConstDecl) => true
+                case _                           => false
             })
 
     /**
