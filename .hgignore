@@ -13,3 +13,5 @@ target
 tags
 
 *.docset
+
+.SublimeSBT_history
