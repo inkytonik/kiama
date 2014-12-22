@@ -23,12 +23,13 @@ package example.oberon0
 package base
 
 /**
- * Interface for all translaters to C.
+ * Interface for all translators to C.
  */
 trait Translator {
 
     import c.{CDeclaration, CProgram, CStatement}
     import source.{Declaration, ModuleDecl, Statement}
+    import source.SourceTree.SourceTree
     import scala.collection.immutable.Seq
 
     /**
@@ -42,7 +43,7 @@ trait Translator {
     def translate (d : Declaration) : Seq[CDeclaration]
 
     /**
-     * Generate C equivalents of statements.
+     * Generate C equivalent of a statement.
      */
     def translate (s : Statement) : CStatement
 

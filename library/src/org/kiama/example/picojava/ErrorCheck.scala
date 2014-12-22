@@ -29,16 +29,15 @@
 package org.kiama
 package example.picojava
 
-object ErrorCheck {
+import org.kiama.attribution.Attribution
+import PicoJavaTree.PicoJavaTree
 
-    import NameResolution._
+class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
+        NameResolution with TypeAnalyser with NullObjects with PredefinedTypes {
+
     import PicoJavaTree._
-    import PredefinedTypes._
-    import TypeAnalyser._
     import java.util.ArrayList
-    import org.kiama.attribution.Attributable
-    import org.kiama.attribution.Attribution._
-    import org.kiama.util.Patterns.HasParent
+    import org.kiama.util.Messaging.message
     import org.kiama.util.Positions
     import scala.collection.immutable.Seq
 
@@ -84,9 +83,10 @@ object ErrorCheck {
      * }
      */
 
-    def errors (p : Program) : ArrayList[String] = {
+    // lazy val errors : ArrayList[String] = {
+    def errors : ArrayList[String] = {
         val c = new ArrayList[String]
-        collectErrors (p, c)
+        collectErrors (tree.root, c)
         c
     }
 
@@ -94,25 +94,30 @@ object ErrorCheck {
         c.add (s)
     }
 
-    def collectErrors (p : Attributable, c : ArrayList[String]) {
+    def collectErrors (p : Product, c : ArrayList[String]) {
 
         // Collect error from p's children
-        val children = p.children
+        val children = p.productIterator
         while (children.hasNext) {
-            collectErrors (children.next (), c)
+            children.next () match {
+                case cp : Product =>
+                    collectErrors (cp, c)
+                case _ =>
+                    // Do nothing
+            }
         }
 
         // Collect errors from p
         p match {
-            case a : AssignStmt if (!isSubtypeOf (a.Variable->tipe) (a.Value->tipe)) =>
-                error (c, s"Can not assign a variable of type ${(a.Variable->tipe).Name} to a value of type ${(a.Value->tipe).Name}")
+            case a : AssignStmt if (!isSubtypeOf (tipe (a.Variable)) (tipe (a.Value))) =>
+                error (c, s"Can not assign a variable of type ${tipe (a.Variable).Name} to a value of type ${tipe (a.Value).Name}")
             case d : ClassDecl if (hasCycleOnSuperclassChain (d)) =>
                 error (c, s"Cyclic inheritance chain for class ${d.Name}")
-            case s : WhileStmt if (!isSubtypeOf (s.Condition->tipe) (booleanType (s))) =>
+            case s : WhileStmt if (!isSubtypeOf (tipe (s.Condition)) (booleanType (s))) =>
                 error (c, "Condition must be a boolean expression")
             case s :  WhileStmt if (!isValue (s.Condition)) =>
                 error (c, "Condition must be a value")
-            case i : IdnUse if (isUnknown (i->decl) && (!isQualified (i) || !isUnknown (i->qualifier->tipe))) =>
+            case i : IdnUse if (isUnknown (decl (i)) && (!isQualified (i) || !isUnknown (tipe (qualifier (i))))) =>
                 error (c, s"Unknown identifier ${i.Name}")
             case _ =>
                 // Do nothing
@@ -131,8 +136,8 @@ object ErrorCheck {
      */
     val isQualified : IdnUse => Boolean =
         attr {
-            case HasParent (_, _ : Dot) => true
-            case _                      => false
+            case tree.parent (_ : Dot) => true
+            case _                        => false
         }
 
     /**
@@ -150,7 +155,7 @@ object ErrorCheck {
      */
     val qualifier : IdnUse => Access =
         attr {
-            case HasParent (_, Dot (o, _)) =>
+            case tree.parent (Dot (o, _)) =>
                 o
             case _ =>
                 sys.error ("Can not compute qualifier for non qualified names")

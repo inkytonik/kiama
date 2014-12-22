@@ -27,40 +27,43 @@ import org.kiama.util.{CompilerWithConfig, Config, Emitter, ErrorEmitter,
 import scala.collection.immutable.Seq
 
 /**
- * Configuration for the Picojava compiler.
+ * Configuration for the PicoJava compiler.
  */
-class PicojavaConfig (args : Seq[String], output : Emitter, error : Emitter) extends Config (args, output, error) {
-    val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
+abstract class PicojavaConfig (args : Seq[String]) extends Config (args) {
+    lazy val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
 }
 
 object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalyser {
 
-    import Obfuscator.obfuscate
-    import ErrorCheck.errors
+    import PicoJavaTree.PicoJavaTree
     import PrettyPrinter.pretty
     import org.kiama.util.Config
-    import org.kiama.util.Messaging.report
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : PicojavaConfig =
-        new PicojavaConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : PicojavaConfig =
+        new PicojavaConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     /**
-     * Process a picoJava program by checking for errors, printing them if any are
-     * found. If there are no errors, optionally obfuscate.
+     * Process a PicoJava program by checking for errors, optionally obfuscating and
+     * then printing any errors that were found.
      */
-    override def process (filename : String, program : Program, config : PicojavaConfig) {
+    def process (filename : String, program : Program, config : PicojavaConfig) {
 
-        super.process (filename, program, config)
+        val tree = new PicoJavaTree (program)
+        val analysis = new ErrorCheck (tree)
+        val messages = analysis.errors
 
-        val messages = errors (program)
         if (messages.size () > 0) {
             // Note, prints array list, no coords
             config.output.emitln (messages)
         } else if (config.obfuscate ()) {
+            val obfuscator = new Obfuscator (analysis)
             config.output.emitln (pretty (program))
-            config.output.emitln (pretty (obfuscate (program)))
+            config.output.emitln (pretty (obfuscator.obfuscate (program)))
         }
 
     }

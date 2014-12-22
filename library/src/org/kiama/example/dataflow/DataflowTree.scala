@@ -26,12 +26,14 @@ package example.dataflow
  */
 object DataflowTree {
 
-    import org.kiama.util.TreeNode
+    import org.kiama.relation.Tree
     import scala.collection.immutable.Seq
+
+    type DataflowTree = Tree[Stm,Stm]
 
     type Var = String
 
-    abstract class Stm extends TreeNode
+    abstract class Stm extends Product
 
     case class Assign (left : Var, right : Var) extends Stm
     case class While (cond : Var, body : Stm) extends Stm

@@ -28,14 +28,13 @@ import org.kiama.util.PositionedParserUtilities
  */
 object TILTree {
 
-    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
 
-    abstract class TilTree extends TreeNode
+    abstract class TilNode
 
-    case class Program (ss : Seq[Stat]) extends TilTree
+    case class Program (ss : Seq[Stat]) extends TilNode
 
-    sealed abstract class Stat extends TilTree
+    sealed abstract class Stat extends TilNode
 
     case class Decl (i : Id) extends Stat
 
@@ -50,9 +49,9 @@ object TILTree {
     case class Read (i : Id) extends Stat
     case class Write (e : Exp) extends Stat
 
-    sealed abstract class Exp extends TilTree
+    sealed abstract class Exp extends TilNode
 
-    case class Id (s : String) extends TilTree {
+    case class Id (s : String) extends TilNode {
         override def toString : String = s"""Id ("$s")"""
     }
 

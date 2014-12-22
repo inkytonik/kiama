@@ -26,8 +26,7 @@ import org.kiama.util.Tests
 
 class ObfuscationTests extends Tests {
 
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.Obfuscator.obfuscate
+    import org.kiama.example.picojava.{ErrorCheck, Obfuscator}
     import org.kiama.example.picojava.PicoJavaTree._
     import org.kiama.example.picojava.PrettyPrinter.pretty
     import scala.collection.immutable.Seq
@@ -106,12 +105,12 @@ class ObfuscationTests extends Tests {
                                     Use ("n7"),
                                     Dot (Use ("n8"), Use ("n2")))))))))
 
-    override def beforeAll () {
-        initTree (ast)
-    }
+    val tree = new PicoJavaTree (ast)
+    val analysis = new ErrorCheck (tree)
 
-    // The obfuscated tree
-    val obast = obfuscate (ast)
+    val obfuscator = new Obfuscator (analysis)
+
+    val obast = obfuscator.obfuscate (ast)
 
     test ("obfuscation produces correct program (pretty printed)") {
         assertResult (pretty (expobast)) (pretty (obast))

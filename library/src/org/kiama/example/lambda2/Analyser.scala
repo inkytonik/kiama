@@ -21,6 +21,8 @@
 package org.kiama
 package example.lambda2
 
+import LambdaTree.LambdaTree
+import org.kiama.attribution.Attribution
 import org.kiama.util.Messaging
 
 /**
@@ -30,51 +32,50 @@ import org.kiama.util.Messaging
  * from the AST, and one (tipe2) that represents names by references to the
  * nodes of their binding lambda expressions.
  */
-class Analyser {
+class Analyser (tree : LambdaTree) extends Attribution {
 
     import LambdaTree._
     import PrettyPrinter._
-    import org.kiama.attribution.Attribution._
-    import org.kiama.util.Messaging.{check, collectmessages, Messages, message}
+    import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
     import scala.collection.immutable.Seq
 
     /**
-     * The semantic error messages for a given tree. This one uses the `tipe`
+     * The semantic error messages for the tree. This one uses the `tipe`
      * attribute.
      */
-    val errors : Exp => Messages =
-        attr { collectmessages {
+    lazy val errors : Messages =
+        collectmessages (tree) {
             case e : Exp =>
                 checkType (e, tipe) ++
                 check (e) {
                     case App (e1, e2) =>
-                        check (e1->tipe) {
+                        check (tipe (e1)) {
                             case _ : IntType =>
                                 message (e1, "application of non-function")
                         }
                     case Var (x) =>
-                        message (e, s"'$x' unknown", e->tipe == UnknownType ())
+                        message (e, s"'$x' unknown", tipe (e) == UnknownType ())
                 }
-        }}
+        }
 
     /**
-     * The semantic error messages for a given tree. This one uses the `tipe2`
+     * The semantic error messages for the tree. This one uses the `tipe2`
      * attribute.
      */
-    val errors2 : Exp => Messages =
-        attr { collectmessages {
+    lazy val errors2 : Messages =
+        collectmessages (tree) {
             case e : Exp =>
                 checkType (e, tipe2) ++
                 check (e) {
                     case App (e1, e2) =>
-                        check (e1->tipe2) {
+                        check (tipe2 (e1)) {
                             case _ : IntType =>
                                 message (e1, "application of non-function")
                         }
                     case Var (x) =>
-                        message (e, s"'$x' unknown", e->tipe2 == UnknownType ())
+                        message (e, s"'$x' unknown", tipe2 (e) == UnknownType ())
                 }
-        }}
+        }
 
     /**
      * The variables that are free in the given expression.
@@ -99,27 +100,23 @@ class Analyser {
     val env : Exp => Seq[(Idn,Type)] =
         attr {
 
+            // Inside a lambda expression the bound variable is now visible
+            // in addition to everything that is visible from above. Note
+            // that an inner declaration of a var hides an outer declaration
+            // of the same var since we add inner bindings at the beginning
+            // of the env and we search the env list below in tipe from
+            // beginning to end
+            case tree.parent (p @ Lam (x, t, _)) =>
+                (x,t) +: env (p)
+
+            // Other expressions do not bind new identifiers so they just
+            // get their environment from their parent
+            case tree.parent (p : Exp) =>
+                env (p)
+
             // Nothing is visible at the root of the tree
-            case p if p.isRoot =>
+            case _ =>
                 Seq ()
-
-            // Othrewise, look at the context
-            case n =>
-                (n.parent) match {
-
-                    // Inside a lambda expression the bound variable is now visible
-                    // in addition to everything that is visible from above. Note
-                    // that an inner declaration of a var hides an outer declaration
-                    // of the same var since we add inner bindings at the beginning
-                    // of the env and we search the env list below in tipe from
-                    // beginning to end
-                    case p @ Lam (x, t, _) => (x,t) +: (p->env)
-
-                    // Other expressions do not bind new identifiers so they just
-                    // get their environment from their parent
-                    case p : Exp           => p->env
-
-                }
 
         }
 
@@ -149,7 +146,7 @@ class Analyser {
             // expression.  If we find it, then we use the type that we find.
             // Otherwise it's an error.
             case e @ Var (x) =>
-                (e->env).collectFirst {
+                env (e).collectFirst {
                     case (y, t) if x == y => t
                 }.getOrElse {
                     UnknownType ()
@@ -158,11 +155,11 @@ class Analyser {
             // A lambda expression is a function from the type of its argument
             // to the type of the body expression
             case Lam (_, t, e) =>
-                e->tipe
+                tipe (e)
                 if (t == NoType ())
                     NoType ()
                 else
-                    FunType (t, e->tipe)
+                    FunType (t, tipe (e))
 
             // For an application we first determine the type of the expression
             // being applied.  If it's a function then the application has type
@@ -170,9 +167,9 @@ class Analyser {
             // type is allowed. We check separately that only functions are
             // applied.
             case App (e1, e2) =>
-                e1->tipe match {
+                tipe (e1) match {
                     case FunType (t1, t2) =>
-                        if (e2->tipe == t1)
+                        if (tipe (e1) == t1)
                             t2
                         else
                             NoType ()
@@ -183,21 +180,21 @@ class Analyser {
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (e1, op, e2) =>
-                if ((e1->tipe == IntType ()) && (e2->tipe == IntType ()))
+                if ((tipe (e1) == IntType ()) && (tipe (e2) == IntType ()))
                     IntType ()
                 else
                     NoType ()
 
             // A let returns the type of the body expression
             case Let (i, t, e1, e2) =>
-                if (e1->tipe == t)
-                    e2->tipe
+                if (tipe (e1) == t)
+                    tipe (e2)
                 else
                     NoType ()
 
             // A parallel returns the type of the body expression
             case Letp (bs, e) =>
-                e->tipe
+                tipe (e)
         }
 
     /**
@@ -205,59 +202,60 @@ class Analyser {
      */
     val exptipe : Exp => Type =
         attr {
-            case e =>
-                (e.parent) match {
-                    // The applied expression is allowed to be anything. We check
-                    // separately that it's a function.
-                    case App (e1, _) if e eq e1 =>
-                        NoType ()
 
-                    // The argument is expected to be of the functions input type
-                    case App (e1, e2) if e eq e2 =>
-                        e1->tipe match {
-                            case FunType (t1, _) =>
-                                t1
-                            case _ =>
-                                NoType ()
-                        }
+            // An applied expression is allowed to be anything. We check
+            // elsewhere that it's a function.
+            case tree.parent.pair (e, App (e1, _)) if e eq e1 =>
+                NoType ()
 
-                    // The type of the bound expression must match the declared type
-                    case Let (_, t, e1, _) if e eq e1 =>
-                        t
-
-                    // The type of the body must match the context of the let
-                    case p @ Let (_, t, _, e2) if e eq e2 =>
-                        p->exptipe
-
-                    // The operands of an operation should be integers
-                    case Opn (_, _, _) =>
-                        IntType ()
-
-                    // Other expressions are allowed to be anything
+            // An argument is expected to be of the function's input type
+            case tree.parent.pair (e, App (e1, e2)) if e eq e2 =>
+                tipe (e1) match {
+                    case FunType (t1, _) =>
+                        t1
                     case _ =>
                         NoType ()
                 }
+
+            // The type of a let-bound expression must match the declared type
+            case tree.parent.pair (e, Let (_, t, e1, _)) if e eq e1 =>
+                t
+
+            // The type of let body must match the context of the let
+            case tree.parent.pair (e, p @ Let (_, t, _, e2)) if e eq e2 =>
+                exptipe (p)
+
+            // The operands of an operation should be integers
+            case tree.parent (Opn (_, _, _)) =>
+                IntType ()
+
+            // Other expressions are allowed to be anything
+            case _ =>
+                NoType ()
+
         }
 
     /**
      * For a given variable reference, return the lambda node that binds it if
      * there is one, otherwise return None.
      */
-    def lookup (name : Idn) : Exp => Option[Lam] =
+    def lookup (name : Idn) : ExpNode => Option[Lam] =
         attr {
             // Inside a lambda expression the bound variable is now visible
             // in addition to everything that is visible from above.  If
             // this lambda expression binds the name we are looking for, then
             // return this node.
-            case e @ Lam (x, t, _) if x == name => Some (e)
+            case e @ Lam (x, t, _) if x == name =>
+                Some (e)
+
+            // Other nested expressions do not bind new identifiers so they just
+            // get their environment from their parent
+            case tree.parent (p) =>
+                lookup (name) (p)
 
             // Nothing is visible at the root of the tree
-            case e if e.isRoot                  => None
-
-
-            // Other expressions do not bind new identifiers so they just
-            // get their environment from their parent
-            case e                              => e.parent[Exp]->lookup (name)
+            case _ =>
+                None
         }
 
     /**
@@ -276,7 +274,7 @@ class Analyser {
             // expression.  If we find it, then we use the type that we find.
             // Otherwise it's an error.
             case e @ Var (x) =>
-                (e->lookup (x)) match {
+                lookup (x) (e) match {
                     case Some (Lam (_, t, _)) =>
                         t
                     case None =>
@@ -286,11 +284,11 @@ class Analyser {
             // A lambda expression is a function from the type of its argument
             // to the type of the body expression
             case Lam (_, t, e) =>
-                e->tipe2
+                tipe2 (e)
                 if (t == NoType ())
                     NoType ()
                 else
-                    FunType (t, e->tipe2)
+                    FunType (t, tipe2 (e))
 
             // For an application we first determine the type of the expression
             // being applied.  If it's a function then the application has type
@@ -298,9 +296,9 @@ class Analyser {
             // type is allowed. We check separately that only functions are
             // applied.
             case App (e1, e2) =>
-                e1->tipe2 match {
+                tipe2 (e1) match {
                     case FunType (t1, t2) =>
-                        if (e2->tipe2 == t1)
+                        if (tipe2 (e2) == t1)
                             t2
                         else
                             NoType ()
@@ -311,21 +309,21 @@ class Analyser {
             // An operation must be applied to two integers and returns an
             // integer.
             case Opn (e1, op, e2) =>
-                if ((e1->tipe == IntType ()) && (e2->tipe == IntType ()))
+                if ((tipe (e1) == IntType ()) && (tipe (e2) == IntType ()))
                     IntType ()
                 else
                     NoType ()
 
             // A let returns the type of the body expression
             case Let (i, t, e1, e2) =>
-                if (e1->tipe2 == t)
-                    e2->tipe2
+                if (tipe2 (e1) == t)
+                    tipe2 (e2)
                 else
                     NoType ()
 
             // A parallel returns the type of the body expression
             case Letp (bs, e) =>
-                e->tipe2
+                tipe2 (e)
         }
 
     /**
@@ -333,7 +331,7 @@ class Analyser {
      */
     def decl : Var => Option[Lam] =
         attr {
-            case e @ Var (x) => e->lookup (x)
+            case e @ Var (x) => lookup (x) (e)
         }
 
 }

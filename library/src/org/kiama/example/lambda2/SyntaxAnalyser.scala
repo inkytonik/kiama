@@ -39,7 +39,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
 
     lazy val itype : PackratParser[Type] =
         ":" ~> ttype |
-        "" ^^^ NoType ()
+        "" ^^ (_ => NoType ())
 
     lazy val exp2 : PackratParser[Exp] =
         exp2 ~ op ~ exp1 ^^ Opn |
@@ -57,12 +57,12 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         ttype0
 
     lazy val ttype0 : PackratParser[Type] =
-        "Int" ^^^ IntType () |
+        "Int" ^^ (_ => IntType ()) |
         "(" ~> ttype <~ ")"
 
     lazy val op =
-        "+" ^^^ AddOp () |
-        "-" ^^^ SubOp ()
+        "+" ^^ (_ => AddOp ()) |
+        "-" ^^ (_ => SubOp ())
 
     lazy val idn =
         "[a-zA-Z][a-zA-Z0-9]*".r

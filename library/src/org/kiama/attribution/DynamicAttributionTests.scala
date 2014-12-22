@@ -26,15 +26,12 @@ import org.kiama.util.Tests
 /**
  * Tests of dynamic attribution.
  */
-class DynamicAttributionTests extends Tests {
+class DynamicAttributionTests extends Attribution with Tests {
 
-    import Attribution._
-    import org.kiama.util.TreeNode
-
-    abstract class TestTree extends TreeNode
-    case class Pair (left : TestTree, right : TestTree) extends TestTree
-    case class Leaf (value : Int) extends TestTree
-    case class Unused (b : Boolean) extends TestTree
+    abstract class TestNode
+    case class Pair (left : TestNode, right : TestNode) extends TestNode
+    case class Leaf (value : Int) extends TestNode
+    case class Unused (b : Boolean) extends TestNode
 
     /**
      * Definitions of the attributes that will be tested below. We package
@@ -45,7 +42,7 @@ class DynamicAttributionTests extends Tests {
 
         var count = 0
 
-        lazy val sumleaf : TestTree => Int =
+        lazy val sumleaf : TestNode => Int =
             dynAttr {
                 case Leaf (v) => count = count + 1; v
                 case _        => -1
@@ -88,12 +85,12 @@ class DynamicAttributionTests extends Tests {
         val definitions = new Definitions
         import definitions._
 
-        val newcase : TestTree ==> Int =
+        val newcase : TestNode ==> Int =
             {
                 case Leaf (88)   => 77
-                case Pair (l, r) => (l->sumleaf) + (r->sumleaf)
+                case Pair (l, r) => sumleaf (l) + sumleaf (r)
             }
-        val func : TestTree ==> Int =
+        val func : TestNode ==> Int =
             {
                 case Pair (l, r) => 99
             }
@@ -146,7 +143,7 @@ class DynamicAttributionTests extends Tests {
 
             sumleaf +=
                 {
-                    case Pair (l, r) => (l->sumleaf) + (r->sumleaf)
+                    case Pair (l, r) => sumleaf (l) + sumleaf (r)
                 }
 
             assertResult (4) (sumleaf (Leaf (4)))
@@ -175,7 +172,7 @@ class DynamicAttributionTests extends Tests {
 
     test ("using a dynamic attribute outside its domain raises an exception") {
 
-        val sumleafDef : TestTree ==> Int =
+        val sumleafDef : TestNode ==> Int =
             {
                 case Leaf (v) => v
             }
@@ -184,7 +181,7 @@ class DynamicAttributionTests extends Tests {
         val i = intercept[MatchError] {
                     sumleaf (Pair (Leaf (1), Leaf (2)))
                 }
-        assertResult ("Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+        assertResult (s"Pair(Leaf(1),Leaf(2)) (of class org.kiama.attribution.DynamicAttributionTests$$Pair)") (
             i.getMessage
         )
 
@@ -198,7 +195,7 @@ class DynamicAttributionTests extends Tests {
             val i = intercept[MatchError] {
                         sumleaf (Pair (Leaf (3), Leaf (1)))
                     }
-            assertResult ("Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$Pair)") (
+            assertResult (s"Pair(Leaf(3),Leaf(1)) (of class org.kiama.attribution.DynamicAttributionTests$$Pair)") (
                 i.getMessage
             )
         }
@@ -206,27 +203,27 @@ class DynamicAttributionTests extends Tests {
     }
 
     test ("circularities are detected for dynamic attributes") {
-        lazy val direct : TestTree => Int =
-            dynAttr (t => t->direct)
-        lazy val indirect : TestTree => Int =
-            dynAttr (t => t->indirect2)
-        lazy val indirect2 : TestTree => Int =
-            dynAttr (t => t->indirect)
+        lazy val direct : TestNode => Int =
+            dynAttr (t => direct (t))
+        lazy val indirect : TestNode => Int =
+            dynAttr (t => indirect2 (t))
+        lazy val indirect2 : TestNode => Int =
+            dynAttr (t => indirect (t))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                    t->direct
-                }
+                    direct (t)
+                 }
         assertResult ("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
-                     t->indirect
+                     indirect (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
-                     t->indirect2
+                     indirect2 (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }

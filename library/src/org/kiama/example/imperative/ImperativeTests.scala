@@ -206,7 +206,7 @@ object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
         arbStmt
 
     override def process (s : Stmt, config : REPLConfig) {
-        config.output.emitln (s)
+        super.process (s, config)
         config.output.emitln (pretty (s))
     }
 

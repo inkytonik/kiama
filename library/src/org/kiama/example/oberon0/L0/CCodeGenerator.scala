@@ -25,7 +25,7 @@ package L0
 /**
  * C Code generator for the L0 language.
  */
-trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
+trait CCodeGenerator extends TypeAnalyser with base.CCodeGenerator with SymbolTable {
 
     import base.c.{CDeclaration, CExpression, CIntExp, CIntType,
         CStatement, CType, CVarDecl}
@@ -60,11 +60,11 @@ trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
     def translate (d : Declaration) : Seq[CDeclaration] =
         d match {
             case ConstDecl (IdnDef (i), e) =>
-                Seq (CInitDecl (CVarDecl (mangle (i), CIntType ()), CIntExp (e->value)))
+                Seq (CInitDecl (CVarDecl (mangle (i), CIntType ()), CIntExp (value (e))))
             case TypeDecl (IdnDef (i), t) =>
-                Seq (CTypeDef (CVarDecl (mangle (i), translate (t->deftype))))
+                Seq (CTypeDef (CVarDecl (mangle (i), translate (deftype (t)))))
             case VarDecl (is, td) =>
-                val t = td->deftype
+                val t = deftype (td)
                 is map {
                     case IdnDef (i) => CVarDecl (mangle (i), translate (t))
                 }
@@ -103,7 +103,7 @@ trait CCodeGenerator extends base.CCodeGenerator with TypeAnalyser {
             case NotExp (e)    => CNotExp (translate (e))
             case IntExp (i)    => CIntExp (i)
             case IdnExp (u @ IdnUse (s)) =>
-                (u->entity) match {
+                entity (u) match {
                     case IntegerValue (_, _, v) => CIntExp (v)
                     case _                      => CIdnExp (mangle (s))
                 }

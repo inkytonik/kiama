@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2010-2014 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2014 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -19,13 +19,21 @@
  */
 
 package org.kiama
-package util
+package relation
 
-import org.kiama.attribution.Attributable
+import scala.language.higherKinds
 
 /**
- * General behaviour for tree nodes. Case classes that implement actual
- * tree node types should mix-in this trait.
+ * Interface for factories that can create relations. `Repr` is the
+ * representation type of the relations that the factory produces.
  */
-trait TreeNode extends Attributable
+trait RelationFactory[Repr[_,_]] {
 
+    import scala.collection.immutable.Seq
+
+    /**
+     * Make a relation from its graph.
+     */
+    def fromGraph[T,U] (graph : Seq[(T,U)]) : Repr[T,U]
+
+}

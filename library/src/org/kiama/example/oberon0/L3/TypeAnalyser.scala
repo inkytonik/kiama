@@ -24,27 +24,25 @@ package L3
 
 trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
-    import base.source.{Expression, Identifier, IdnDef, IdnUse, SourceTree}
-    import org.kiama.attribution.Attribution.attr
+    import base.source.{Expression, Identifier, IdnDef, IdnUse, SourceNode}
     import org.kiama.util.Messaging.{check, message, Messages, noMessages}
-    import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
     import source.{Call, Mode, ValMode, VarMode}
 
     /**
      * The error checking for this level.
      */
-    override def errorsDef (n : SourceTree) : Messages =
+    override def errorsDef (n : SourceNode) : Messages =
         super.errorsDef (n) ++
         check (n) {
             case Call (u @ IdnUse (i), cps) =>
-                check (u->numparams) {
+                check (numparams (u)) {
                     case Some (m) =>
                         message (u, s"wrong number of parameters in call of $i, expected $m, got ${cps.length}", m != cps.length)
                 }
 
-            case HasParent (e : Expression, Call (u, _)) =>
-                parammode (u, e.index) match {
+            case tree.parent.pair (e : Expression, Call (u, _)) =>
+                parammode (u, tree.index (e)) match {
                     case VarMode () if !isLvalue (e) =>
                         message (e, "illegal VAR parameter")
                     case _ =>
@@ -59,7 +57,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
     lazy val numparams : IdnUse => Option[Int] =
         attr (
             n =>
-                (n->entity) match {
+                entity (n) match {
                     case Procedure (_, ps) =>
                         Some (ps.params.foldRight (0) {
                                   case (fps, n) => fps.idndefs.length + n
@@ -80,13 +78,13 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
     lazy val parameters : Identifier => Option[Seq[ParamInfo]] =
         attr (
             n =>
-                (n->entity) match {
+                entity (n) match {
                     case b : BuiltinProc =>
                         Some (b.params)
                     case Procedure (_, pd) =>
                         val ps = for (fps <- pd.params; IdnDef (i) <- fps.idndefs)
                                      yield
-                                         ParamInfo (fps.mode, i, (fps.tipe)->deftype)
+                                         ParamInfo (fps.mode, i, deftype (fps.tipe))
                         Some (ps)
                     case _ =>
                         None
@@ -99,7 +97,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * return an unknown type.
      */
     def paramtype (u : IdnUse, i : Int) : Type =
-        (u->parameters) match {
+        parameters (u) match {
             case Some (ps) if i <= ps.length =>
                 ps (i - 1).tipe
             case _ =>
@@ -113,7 +111,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * actual parameter.
      */
     def parammode (u : IdnUse, i : Int) : Mode =
-        (u->parameters) match {
+        parameters (u) match {
             case Some (ps) if i <= ps.length =>
                 ps (i - 1).mode
             case _ =>
@@ -125,9 +123,9 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      */
     override def idntypeDef : IdnUse => Type =
         (u =>
-            u->entity match {
+            entity (u) match {
                 case Parameter (_, Variable (_, t)) =>
-                    t->deftype
+                    deftype (t)
                 case _ =>
                     super.idntypeDef (u)
             })
@@ -137,10 +135,11 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * at that position.
      */
     override def exptypeDef : Expression => Type =
-        (e =>
-            e.parent match {
-                case Call (u, _) => paramtype (u, e.index)
-                case _           => super.exptypeDef (e)
-            })
+        {
+            case tree.parent.pair (e, Call (u, _)) =>
+                paramtype (u, tree.index (e))
+            case e =>
+                super.exptypeDef (e)
+        }
 
 }

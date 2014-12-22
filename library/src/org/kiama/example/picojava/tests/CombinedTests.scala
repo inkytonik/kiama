@@ -36,8 +36,7 @@ import org.kiama.util.Tests
  */
 class CombinedTests extends Tests {
 
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.ErrorCheck.errors
+    import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
     import scala.collection.immutable.Seq
 
@@ -83,12 +82,12 @@ class CombinedTests extends Tests {
                                                 Use ("b"),
                                                 AssignStmt (Use ("b"), Use ("a"))))))))))))
 
-    override def beforeAll () {
-        initTree (ast)
-    }
+    val tree = new PicoJavaTree (ast)
+    val analyser = new ErrorCheck (tree)
+    import analyser._
 
     test ("combined test program has no errors") {
-        assertResult (0) (errors (ast).size ())
+        assertResult (0) (errors.size ())
     }
 
 }

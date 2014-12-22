@@ -33,16 +33,23 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     import org.scalatest.TestFailedException
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : Config =
-        new Config (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : Config =
+        new Config (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     def makeast (reader : Reader, filename : String, config : Config) : Either[Any,String] =
          Right ("Dummy")
 
+    def process (filename : String, ast : Any, config : Config) {
+        // Do nothing
+    }
+
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
-        val config = createConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
+        val config = createAndInitConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
         testdriver (config)
         val expectedMsg =
             if (System.getProperty("os.name").startsWith ("Windows"))
@@ -62,11 +69,9 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 }
 
 /**
- * Support for testing compiler drivers.
+ * Support for testing drivers.
  */
-trait TestCompilerWithConfig[T, C <: Config] extends Tests {
-
-    self : CompilerBase[T,C] =>
+trait TestDriverWithConfig[C <: Config] extends Tests {
 
     import java.io.File
     import org.kiama.attribution.Attribution
@@ -74,12 +79,26 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
     import scala.io.Source
 
     /**
-     * Run the compiler in test mode using the given configuration.
+     * Create the configuration for a particular run of the REPL. If supplied, use
+     * `emitter` instead of a standard output emitter.
      */
-    def testdriver (config : C) {
-        Attribution.resetMemo
-        processfiles (config.filenames (), config)
-    }
+    def createConfig (args : Seq[String],
+                      output : Emitter = new OutputEmitter,
+                      error : Emitter = new ErrorEmitter) : C
+
+    /**
+     * Create and initialise the configuration for a particular run of the REPL.
+     * If supplied, use `emitter` instead of a standard output emitter. Default:
+     * call `createConfig` and then initialise the resulting configuration.
+     */
+    def createAndInitConfig (args : Seq[String],
+                             output : Emitter = new OutputEmitter,
+                             error : Emitter = new ErrorEmitter) : C
+
+    /**
+     * Run the driver in test mode using the given configuration.
+     */
+    def testdriver (config : C)
 
     /**
      * Flag to decide whether to sanitise the output before comparison
@@ -122,7 +141,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
 
         import java.io.FilenameFilter
 
-        /**
+        /*
          * Make a single file test processing using the command-line `cmd`,
          * expecting output as in the file `rp`.  The `extra` string is appended
          * to the normal test title. `name` is an identifying string used in
@@ -135,7 +154,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
             val title = s"$name: $ct, expecting $rt$extra"
             test (title) {
                 val emitter = new StringEmitter
-                val config = createConfig (cmd, emitter, emitter)
+                val config = createAndInitConfig (cmd, emitter, emitter)
                 try {
                     testdriver (config)
                 } catch {
@@ -154,7 +173,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
             }
         }
 
-        /**
+        /*
          * Make a set of file tests to produce the result files in `dir`.  For
          * each such result file found, we create a test.  That test takes as
          * input the corresponding input file (with extension `inext`), if it
@@ -207,6 +226,22 @@ trait TestCompilerWithConfig[T, C <: Config] extends Tests {
             }
         }
 
+    }
+
+}
+
+/**
+ * Support for testing compiler drivers.
+ */
+trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
+
+    self : CompilerBase[T,C] =>
+
+    /**
+     * Run the compiler in test mode using the given configuration.
+     */
+    def testdriver (config : C) {
+        processfiles (config.filenames (), config)
     }
 
 }

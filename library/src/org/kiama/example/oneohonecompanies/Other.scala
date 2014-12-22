@@ -21,49 +21,51 @@
 package org.kiama
 package example.oneohonecompanies
 
-object Other {
+import CompanyTree.CompanyTree
+import org.kiama.attribution.Attribution
+
+class Other (tree : CompanyTree) extends Attribution {
 
     import CompanyTree._
-    import org.kiama.attribution.Attribution._
 
     /**
      * Number of employees in a company unit.
      */
-    lazy val numemp : CompanyTree => Int =
+    lazy val numemp : CompanyNode => Int =
         attr {
             case Company (ds)     => (ds map numemp).sum
             case Dept (_, _, sus) => 1 + (sus map numemp).sum
-            case DU (d)           => d->numemp
+            case DU (d)           => numemp (d)
             case _                => 1
         }
 
     /**
      * Total salary in a company unit.
      */
-    lazy val salary : CompanyTree => Double =
+    lazy val salary : CompanyNode => Double =
         attr {
             case Company (ds)       => (ds map salary).sum
             case Dept (_, m, sus)   => m.s + (sus map salary).sum
-            case PU (e)             => e->salary
-            case DU (d)             => d->salary
+            case PU (e)             => salary (e)
+            case DU (d)             => salary (d)
             case Employee (_, _, s) => s
         }
 
     /**
      * Average salary for a department or company.
      */
-    lazy val averagesalary : CompanyTree => Double =
+    lazy val averagesalary : CompanyNode => Double =
         attr {
             case n @ (_ : Company | _ : Dept) =>
-                (n->salary) / (n->numemp)
-            case n =>
-                (n.parent[CompanyTree])->averagesalary
+                salary (n) / numemp (n)
+            case tree.parent (p) =>
+                averagesalary (p)
         }
 
     lazy val aboveaverage : Employee => Boolean =
         attr {
             case e @ Employee (_, _, s) =>
-                s > (e->averagesalary)
+                s > averagesalary (e)
         }
 
 }

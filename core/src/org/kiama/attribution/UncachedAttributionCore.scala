@@ -114,13 +114,13 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
      * attribute value is cached so it will be computed at most once.
      */
     def attr[T,U] (f : T => U) : UncachedAttribute[T,U] =
-        macro AttributionMacros.attrMacro[T,U,UncachedAttribute[T,U]]
+        macro UncachedAttributionCoreMacros.attrMacro[T,U,UncachedAttribute[T,U]]
 
     /**
      * As for the other `attr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def attr[T,U] (name : String, f : T => U) : UncachedAttribute[T,U] =
+    def attrWithName[T,U] (name : String, f : T => U) : UncachedAttribute[T,U] =
         new UncachedAttribute (name, f)
 
     /**
@@ -130,28 +130,13 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
      * once.
      */
     def paramAttr[V,T,U] (f : V => T => U) : UncachedParamAttribute[V,T,U] =
-        macro AttributionMacros.paramAttrMacro[V,T,U,UncachedParamAttribute[V,T,U]]
+        macro UncachedAttributionCoreMacros.paramAttrMacro[V,T,U,UncachedParamAttribute[V,T,U]]
 
     /**
      * As for the other `paramAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def paramAttr[V,T,U] (name : String, f : V => T => U) : UncachedParamAttribute[V,T,U] =
+    def paramAttrWithName[V,T,U] (name : String, f : V => T => U) : UncachedParamAttribute[V,T,U] =
         new UncachedParamAttribute (name, f)
-
-    /**
-     * Define an uncached attribute of `T` nodes of type `U` by the function `f`,
-     * which takes the current node and its parent as its arguments. `T` must be
-     * a sub-type of `Attributable` so that parents can be accessed generically.
-     */
-    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : UncachedAttribute[T,U] =
-        macro AttributionMacros.childAttrMacro[T,U,UncachedAttribute[T,U]]
-
-    /**
-     * As for the other `childAttr` with the first argument specifying a name for
-     * the constructed attribute.
-     */
-    def childAttr[T <: Attributable,U] (name : String, f : T => Attributable => U) : UncachedAttribute[T,U] =
-        attr (name, (t : T) => f (t) (t.parent))
 
 }

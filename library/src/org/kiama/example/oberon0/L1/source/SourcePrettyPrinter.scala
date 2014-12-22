@@ -24,9 +24,9 @@ package L1.source
 
 trait SourcePrettyPrinter extends L0.source.SourcePrettyPrinter {
 
-    import base.source.{Block, Expression, SourceTree}
+    import base.source.{Block, Expression, SourceNode}
 
-    override def toDoc (n : SourceTree) : Doc =
+    override def toDoc (n : SourceNode) : Doc =
         n match {
             case s : IfStatement =>
                 ifToDoc (s)

@@ -36,7 +36,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         phrase (stmt)
 
     lazy val stmt : PackratParser[Stmt] =
-        ";" ^^^ Null () | sequence | asgnStmt | whileStmt
+        ";" ^^ (_ => Null ()) | sequence | asgnStmt | whileStmt
 
     lazy val asgnStmt =
         variable ~ ("=" ~> exp) <~ ";" ^^ Asgn

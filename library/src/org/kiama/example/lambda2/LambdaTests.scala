@@ -21,7 +21,7 @@
 package org.kiama
 package example.lambda2
 
-import org.kiama.util.RegexParserTests
+import org.kiama.util.{RegexParserTests, TestREPLWithConfig}
 
 /**
  * Lambda calculus tests.
@@ -31,7 +31,6 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     import LambdaTree._
     import Evaluators.{evaluatorFor, mechanisms}
     import PrettyPrinter._
-    import org.kiama.attribution.Attribution.initTree
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Messaging.Messages
@@ -41,8 +40,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
      * Compute errors of `e` check to make sure the relevant message is reported. Use
      * `errors` to actually perform the check.
      */
-    def assertType (e : Exp, aname : String, errors : Exp => Messages, line : Int, col : Int, msg : String) {
-        val messages = errors (e)
+    def assertType (e : Exp, aname : String, messages : Messages, line : Int, col : Int, msg : String) {
         messages.length match {
             case 0 =>
                 fail (s"$aname: no messages produced, expected ($line,$col) $msg")
@@ -62,8 +60,8 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     def assertMessage (term : String, line : Int, col : Int, msg : String) {
         assertParseCheck (term, parser) {
             exp =>
-                initTree (exp)
-                val analyser = new Analyser
+                val tree = new LambdaTree (exp)
+                val analyser = new Analyser (tree)
                 assertType (exp, "errors", analyser.errors, line, col, msg)
                 assertType (exp, "errors2", analyser.errors2, line, col, msg)
         }
@@ -75,12 +73,12 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     def assertNoMessage (term : String) {
         assertParseCheck (term, parser) {
             exp =>
-                initTree (exp)
-                val analyser = new Analyser
-                val messages = analyser.errors (exp)
+                val tree = new LambdaTree (exp)
+                val analyser = new Analyser (tree)
+                val messages = analyser.errors
                 if (messages.length != 0)
                     fail (s"errors: no messages expected, got ${messages}")
-                val messages2 = analyser.errors2 (exp)
+                val messages2 = analyser.errors2
                 if (messages.length != 0)
                     fail (s"errors2: no messages expected, got ${messages2}")
             }
@@ -121,7 +119,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
                        "expected Int, found Int -> Int")
     }
 
-    test ("an Int -> Int cannot be passed to an Int (untyped") {
+    test ("an Int -> Int cannot be passed to an Int (untyped)") {
         assertNoMessage ("""(\x . x + x) (\y . y + 1)""")
     }
 
@@ -149,10 +147,10 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
                     Var (e (n))
                 case Lam (n, t, b)      =>
                     val m = s"v${d.toString}"
-                    Lam (m, t, canonise (b, d + 1, e + (n->m)))
+                    Lam (m, t, canonise (b, d + 1, e + (n -> m)))
                 case Let (n, t, e2, e1) =>
                     val m = s"v${d.toString}"
-                    Let (m, t, canonise (e2, d + 1, e), canonise (e1, d + 1, e + (n->m)))
+                    Let (m, t, canonise (e2, d + 1, e), canonise (e1, d + 1, e + (n -> m)))
             } +
             all (canons (d, e))
         def canonise (x : Exp, d : Int, e : Map[Idn,Idn]) : Exp =
@@ -409,3 +407,15 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     }
 
 }
+
+/**
+ * Tests that check that the REPL produces appropriate output.
+ */
+class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
+
+    val path = "library/src/org/kiama/example/lambda2/tests"
+    filetests ("Lambda REPL", path, ".repl", ".replout")
+
+}
+
+

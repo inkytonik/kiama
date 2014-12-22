@@ -21,15 +21,20 @@
 package org.kiama
 package attribution
 
+import org.kiama.relation.Tree
+
 /**
  * Decorators are higher-order operations that provide common patterns of
- * tree attribution based on simple attributes or functions.
+ * tree attribution based on simple attributes or functions. A `Tree` must
+ * be supplied to give the decorators access to the tree structure.
  */
-object Decorators {
+class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
 
-    import org.kiama.attribution.Attribution._
-    import org.kiama.attribution.Attributable
+    import org.kiama.attribution.Attribution
     import scala.PartialFunction
+
+    val attribution = new Attribution
+    import attribution.{attr, CachedAttribute}
 
     /**
      * A decorator that progagates an attribute value down the tree. The
@@ -37,8 +42,8 @@ object Decorators {
      * the root. The value defined at the root will also be made available
      * at all other nodes.
      */
-    def atRoot[T <: Attributable,U] (a : T => U) : CachedAttribute[T,U] =
-        down[T,U] (a) (PartialFunction.empty)
+    def atRoot[U] (a : T => U) : CachedAttribute[T,U] =
+        down[U] (a) (PartialFunction.empty)
 
     /**
      * A decorator that propagates an attribute value down the tree. The
@@ -49,40 +54,39 @@ object Decorators {
      * If no node on the path to the root defines a value for the attribute,
      * then default applied to the root is returned.
      */
-    def down[T <: Attributable,U] (default : T => U) (a : T ==> U) : CachedAttribute[T,U] = {
+    def down[U] (default : T => U) (a : T ==> U) : CachedAttribute[T,U] = {
         lazy val dattr : CachedAttribute[T,U] =
-            attr (
-                t =>
-                    if (a.isDefinedAt (t))
-                        a (t)
-                    else if (t.parent == null)
-                        default (t)
-                    else
-                        dattr (t.parent[T])
-            )
+            attr {
+                case t if a.isDefinedAt (t) =>
+                    a (t)
+                case tree.parent (p) =>
+                    dattr (p)
+                case t =>
+                    default (t)
+            }
         dattr
     }
 
     /**
      * Variant of `down` that takes a default value instead of a default function.
      */
-    def down[T <: Attributable,U] (default : U) (a : T ==> U) : CachedAttribute[T,U] =
-        down[T,U] ((_ : T) => default) (a)
+    def down[U] (default : U) (a : T ==> U) : CachedAttribute[T,U] =
+        down[U] ((_ : T) => default) (a)
 
     /**
      * Variant of `down` that throws an error if `a` is not defined on the
      * path to the root of the tree.
      */
-    def downErr[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,U] =
-        down[T,U] ((_ : T) => sys.error ("downErr: function is not defined on path to root")) (a)
+    def downErr[U] (a : T ==> U) : CachedAttribute[T,U] =
+        down[U] ((_ : T) => sys.error ("downErr: function is not defined on path to root")) (a)
 
     /**
      * Variant of `down` that returns `None` if `a` is not defined on the
      * path to the root of the tree, otherwise it wraps the value that `a`
      * returns in `Some`.
      */
-    def downOpt[T <: Attributable,U] (a : T ==> U) : CachedAttribute[T,Option[U]] =
-        down[T,Option[U]] (None) (a andThen (Some (_)))
+    def downOpt[U] (a : T ==> U) : CachedAttribute[T,Option[U]] =
+        down[Option[U]] (None) (a andThen (Some (_)))
 
     /**
      * A pair of attributes that thread through a tree in a depth-first
@@ -90,7 +94,7 @@ object Decorators {
      * of the chain as it enters a node from above (leaves a node to the
      * above).
      */
-    case class Chain[T,U] (in : (T => U), out : (T => U)) extends (T => U) {
+    case class Chain[U] (in : (T => U), out : (T => U)) extends (T => U) {
         def apply (t : T) : U = out (t)
     }
 
@@ -98,7 +102,7 @@ object Decorators {
      * An identity function for chain updates. In other words, pass the value
      * of the chain through without making any changes.
      */
-    private def idf[T,U] : (T => U) => (T ==> U) =
+    private def idf[U] : (T => U) => (T ==> U) =
         f => { case t => f (t) }
 
     /**
@@ -115,10 +119,10 @@ object Decorators {
      * of the chain are reset to avoid errors for cyclic if the exception is
      * caught and they are subsequently evaluated again.
      */
-    def chain[T <: Attributable,U] (
-                 inupdate : (T => U) => (T ==> U) = idf[T,U],
-                 outupdate : (T => U) => (T ==> U) = idf[T,U]
-             ) : Chain[T,U] = {
+    def chain[U] (
+                 inupdate : (T => U) => (T ==> U) = idf[U],
+                 outupdate : (T => U) => (T ==> U) = idf[U]
+             ) : Chain[U] = {
 
         def error (t : T) : Nothing = {
             in.reset
@@ -127,48 +131,42 @@ object Decorators {
         }
 
         def indflt (t : T) : U =
-            if (t.isRoot)
-                error (t)
-            else if (t.isFirst)
-                in (t.parent[T])
-            else
-                out (t.prev[T])
+            t match {
+                case tree.prev (p) =>
+                    out (p)
+                case tree.parent (p) =>
+                    in (p)
+                case _ =>
+                    error (t)
+            }
 
         lazy val infunc = inupdate (indflt)
 
         lazy val in : CachedAttribute[T,U] =
-            attr (t => {
-                if (infunc.isDefinedAt (t))
+            attr {
+                case t if infunc.isDefinedAt (t) =>
                     infunc (t)
-                // inline indflt here to save call, really is
-                // else indflt (t)
-                else if (t.isRoot)
-                    error (t)
-                else if (t.isFirst)
-                    in (t.parent[T])
-                else
-                    out (t.prev[T])
-            })
+                case t =>
+                    indflt (t)
+            }
 
         def outdflt (t : T) : U =
-            if (t.hasChildren)
-                out (t.lastChild[T])
-            else
-                in (t)
+            t match {
+                case tree.lastChild (c) =>
+                    out (c)
+                case _ =>
+                    in (t)
+            }
 
         lazy val outfunc = outupdate (outdflt)
 
         lazy val out : CachedAttribute[T,U] =
-            attr (t => {
-                if (outfunc.isDefinedAt (t))
+            attr {
+                case t if outfunc.isDefinedAt (t) =>
                     outfunc (t)
-                // Inline outdflt here to save call, really is
-                // else outdflt (t)
-                else if (t.hasChildren)
-                    out (t.lastChild[T])
-                else
-                    in (t)
-            })
+                case t =>
+                    outdflt (t)
+            }
 
         Chain (in, out)
     }

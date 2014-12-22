@@ -21,7 +21,6 @@
 package org.kiama
 package util
 
-import scala.collection.immutable
 
 /**
  * General implementation of environments as stacked scopes.  The objects
@@ -29,17 +28,12 @@ import scala.collection.immutable
  */
 trait Environments {
 
+    import scala.collection.immutable.{HashMap, Seq}
+
     /**
      * A counter to count generated names.
      */
     val nameCounter = new Counter (0)
-
-    /**
-     * Reset the environment module.
-     */
-    def resetEnvironments () {
-        nameCounter.reset ()
-    }
 
     /**
      * Support for unique ids for named things.
@@ -89,13 +83,13 @@ trait Environments {
      * the given bindings.
      */
     def rootenv (bindings : (String,Entity)*) : Environment =
-        List (immutable.HashMap (bindings : _*))
+        List (HashMap (bindings : _*))
 
     /**
      * Enter a new empty scope nested within the given environment.
      */
     def enter (env : Environment) : Environment =
-        (new immutable.HashMap[String,Entity]) :: env
+        (new HashMap[String,Entity]) :: env
 
     /**
      * Leave the outermost scope of the given environment, raising an error if
@@ -108,8 +102,8 @@ trait Environments {
         }
 
     /**
-     * Define i to be e in the current scope of env, raising an error if the
-     * environment is empty.
+     * Define `i` to be `e` in the current scope of `env`, raising an error if
+     * the environment is empty.
      */
     def define (env : Environment, i : String, e : Entity) : Environment =
         env match {
@@ -118,7 +112,14 @@ trait Environments {
         }
 
     /**
-     * Say whether i is defined in the current scope of env.
+     * As for `define`, except if `i` is already defined in the innermost
+     * scope of `env`, define it to be `MultipleEntity` instead.
+     */
+    def defineIfNew (env : Environment, i : String, e : Entity) : Environment =
+        define (env, i, if (isDefinedInScope (env, i)) MultipleEntity () else e)
+
+    /**
+     * Say whether `i` is defined in the current scope of `env`.
      */
     def isDefinedInScope (env : Environment, i : String) : Boolean =
         env match {
@@ -127,19 +128,19 @@ trait Environments {
         }
 
     /**
-     * Say whether i is defined in the given scope.
+     * Say whether `i` is defined in the given scope.
      */
     def isDefinedInScope (scope : Scope, i : String) : Boolean =
         scope contains i
 
     /**
-     * Say whether i is defined in any scope of env.
+     * Say whether `i` is defined in any scope of `env`.
      */
     def isDefinedInEnv (env : Environment, i : String) : Boolean =
         env.exists (s => isDefinedInScope (s, i))
 
     /**
-     * Say whether i is defined in an innermost scope of env (i.e., in the
+     * Say whether `i` is defined in an innermost scope of `env` (i.e., in the
      * current scope).
      */
     def isDefinedInInner (env : Environment, i : String) : Boolean =
@@ -149,7 +150,7 @@ trait Environments {
         }
 
     /**
-     * Say whether i is defined in an outer scope of env (i.e., not in the
+     * Say whether `i` is defined in an outer scope of `env` (i.e., not in the
      * current scope).
      */
     def isDefinedInOuter (env : Environment, i : String) : Boolean =
@@ -159,14 +160,15 @@ trait Environments {
         }
 
     /**
-     * Look up i in env, returning the mapped Entity if there is one, otherwise
-     * return e.  If scope is true, just search the innermost scope, otherwise
-     * search outwards in all scopes, returning the first Entity found, if any.
+     * Look up `i` in `env`, returning the mapped Entity if there is one,
+     * otherwise return `e`.  If `local` is true, just search the innermost
+     * scope, otherwise search outwards in all scopes, returning the first
+     * entity found, if any.
      */
-    def lookup (env : Environment, i : String, e : Entity, scope : Boolean = false) : Entity =
+    def lookup (env : Environment, i : String, e : => Entity, local : Boolean = false) : Entity =
         env match {
             case s :: t =>
-                if (scope)
+                if (local)
                     s.getOrElse (i, e)
                 else if (isDefinedInScope (env, i))
                     s (i)
@@ -175,5 +177,29 @@ trait Environments {
             case _ =>
                 e
         }
+
+    /**
+     * Pretty-print the environment `env`.
+     */
+    def pretty (env : Environment) : String = {
+
+        import org.kiama.output.PrettyPrinter
+        import org.kiama.output.PrettyPrinter._
+
+        def prettyEntry (entry : (String,Entity)) : Doc =
+            dquotes (entry._1) <+> "->" <+> value (entry._2)
+
+        def prettyScope (s : Scope) : Doc =
+            "scope" <> nest (line <> vsep ((s map prettyEntry).toVector))
+
+        def pretty1 (env : Environment) : Doc =
+            vsep (env map prettyScope)
+
+        env match {
+            case Nil => "no scopes"
+            case ss  => PrettyPrinter.pretty (pretty1 (env))
+        }
+
+    }
 
 }

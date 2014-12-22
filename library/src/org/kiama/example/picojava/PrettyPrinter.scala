@@ -31,13 +31,13 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printed version of a node.
      */
-    def pretty (t : PicoJavaTree) : String =
+    def pretty (t : PicoJavaNode) : String =
         super.pretty (show (t))
 
     /**
      * Convert a PicoJava AST node to a pretty-printing document.
      */
-    def show (t : PicoJavaTree) : Doc =
+    def show (t : PicoJavaNode) : Doc =
         t match {
             case Program (b) =>
                 show (b)

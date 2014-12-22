@@ -28,12 +28,10 @@ import org.kiama.util.Tests
  */
 class AttributionTests extends Tests {
 
-    import Attribution._
-    import Decorators._
-    import org.kiama.util.TreeNode
+    import org.kiama.relation.Tree
     import scala.collection.GenSeq
 
-    abstract class TestTree extends TreeNode
+    abstract class TestTree extends Product
     case class Pair (left : TestTree, right : TestTree) extends TestTree
     case class Leaf (value : Int) extends TestTree
     case class Unused (b : Boolean) extends TestTree
@@ -57,7 +55,7 @@ class AttributionTests extends Tests {
      * them in a class so that each test can have its own instance of the
      * attributes so that there is no shared state.
      */
-    class Definitions {
+    class Definitions extends Attribution {
 
         var count = 0
 
@@ -88,7 +86,7 @@ class AttributionTests extends Tests {
 
         lazy val maximumDef : TestTree => Int =
             {
-                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
+                case Pair (l,r) => count = count + 1; maximum (l).max (maximum (r))
                 case Leaf (v)   => v
             }
 
@@ -104,24 +102,7 @@ class AttributionTests extends Tests {
         lazy val leafComputed =
             attr (leafComputedDef)
 
-        lazy val cattrDef : TestTree => Attributable => Int =
-            {
-                case Pair (l, r) => {
-                    case Pair (l, r) => 0
-                    case Leaf (v)    => 1
-                    case _           => 2
-                }
-                case Leaf (v) => {
-                    case Pair (l, r) => 3
-                    case Leaf (v)    => 4
-                    case _           => 5
-                }
-                case _ => {
-                    case _ => 6
-                }
-            }
-
-        lazy val pattrDef : String => Attributable => Int =
+        lazy val pattrDef : String => TestTree => Int =
             {
                 case "hello" => {
                     case Pair (l, r) => count = count + 1; 0
@@ -216,123 +197,69 @@ class AttributionTests extends Tests {
         val definitions = new Definitions
         import definitions._
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
-        assertResult (10, "first value") (t->maximum)
+        assertResult (10, "first value") (maximum (t))
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
-        assertResult (10, "second value") (t->maximum)
+        assertResult (10, "second value") (maximum (t))
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         assertResult (2, "evaluation count") (count)
     }
 
-    test ("resetMemo resets the hasBeenComputedAt state") {
+    test ("reset resets the hasBeenComputedAt state") {
         val definitions = new Definitions
         import definitions._
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
-        t->maximum
+        maximum (t)
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
-        resetMemo ()
+        maximum.reset ()
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
     }
 
     test ("hasBeenComputedAt returns false while an attribute is being evaluated") {
         val definitions = new Definitions
         import definitions._
-        assertResult (false, "hasBeenComputedAt during") (l->leafComputed)
+        assertResult (false, "hasBeenComputedAt during") (leafComputed (l))
         assertResult (true, "hasBeenComputedAt after") (leafComputed.hasBeenComputedAt (l))
     }
 
     test ("constant attributes are only evaluated once") {
         val definitions = new Definitions
         import definitions._
-        assertResult (42, "first value") (t->answer)
-        assertResult (42, "second value") (t->answer)
+        assertResult (42, "first value") (answer (t))
+        assertResult (42, "second value") (answer (t))
         assertResult (1, "evaluation count") (count)
     }
 
     test ("cached attributes are re-evaluated after a reset") {
         val definitions = new Definitions
         import definitions._
-        assertResult (10, "first value") (t->maximum)
-        assertResult (10, "first value") (t->maximum)
+        assertResult (10, "first value") (maximum (t))
+        assertResult (10, "first value") (maximum (t))
         assertResult (2, "evaluation count") (count)
         maximum.reset ()
-        assertResult (10, "second value") (t->maximum)
+        assertResult (10, "second value") (maximum (t))
         assertResult (4, "evaluation count") (count)
     }
 
     test ("cached attributes are distinct for nodes that are equal") {
         val definitions = new Definitions
         import definitions._
-        assertResult (10, "first value") (t->maximum)
-        assertResult (10, "second value") (s->maximum)
-        assertResult (4, "evaluation count") (count)
-    }
-
-    test ("cached attributes can be reset") {
-        val definitions = new Definitions
-        import definitions._
-        assertResult (10, "first value") (t->maximum)
-        resetMemo
-        assertResult (10, "second value") (t->maximum)
+        assertResult (10, "first value") (maximum (t))
+        assertResult (10, "second value") (maximum (s))
         assertResult (4, "evaluation count") (count)
     }
 
     test ("uncached attributes are evaluated each time") {
-        val definitions = new Definitions
-        import definitions._
-        import UncachedAttribution._
+        var count = 0
 
         lazy val maximum : TestTree => Int =
-            attr {
-                case Pair (l,r) => count = count + 1; (l->maximum).max (r->maximum)
+            UncachedAttribution.attr {
+                case Pair (l,r) => count = count + 1; maximum (l).max (maximum (r))
                 case Leaf (v)   => v
             }
 
-        assertResult (10, "first value") (t->maximum)
-        assertResult (10, "second value") (t->maximum)
+        assertResult (10, "first value") (maximum (t))
+        assertResult (10, "second value") (maximum (t))
         assertResult (4, "evaluation count") (count)
-    }
-
-    test ("cached child attributes work") {
-        val definitions = new Definitions
-        import definitions._
-
-        lazy val cattr =
-            childAttr (cattrDef)
-
-        val f = Leaf (4)
-        val e = Leaf (3)
-        val d = Leaf (2)
-        val c = Leaf (1)
-        val b = Pair (d, e)
-        val a = Pair (b, c)
-        initTree (a)
-
-        assertResult (0, "cached childAttr Pair Pair") (cattr (b))
-        assertResult (2, "cached childAttr Pair top") (cattr (a))
-        assertResult (3, "cached childAttr Leaf Pair") (cattr (c))
-        assertResult (5, "cached childAttr Leaf top") (cattr (f))
-    }
-
-    test ("uncached child attributes work") {
-        val definitions = new Definitions
-        import definitions._
-        import UncachedAttribution._
-
-        lazy val cattr : TestTree => Int =
-            childAttr (cattrDef)
-
-        val f = Leaf (4)
-        val e = Leaf (3)
-        val d = Leaf (2)
-        val c = Leaf (1)
-        val b = Pair (d, e)
-        val a = Pair (b, c)
-        initTree (a)
-
-        assertResult (0, "uncached childAttr Pair Pair") (cattr (b))
-        assertResult (2, "uncached childAttr Pair top") (cattr (a))
-        assertResult (3, "uncached childAttr Leaf Pair") (cattr (c))
-        assertResult (5, "uncached childAttr Leaf top") (cattr (f))
     }
 
     test ("cached parameterised attributes work") {
@@ -374,11 +301,10 @@ class AttributionTests extends Tests {
 
     test ("uncached parameterised attributes work") {
         val definitions = new Definitions
-        import definitions._
-        import UncachedAttribution._
+        import definitions.pattrDef
 
         lazy val pattr =
-            paramAttr (pattrDef)
+            UncachedAttribution.paramAttr (pattrDef)
 
         assertResult (0, "uncached paramAttr Pair hello") (
             pattr ("hello") (Pair (Leaf (1), Leaf (2)))
@@ -391,109 +317,111 @@ class AttributionTests extends Tests {
     }
 
     test ("circularities are detected for cached attributes") {
+        val definitions = new Definitions
+        import definitions._
+
         lazy val direct : TestTree => Int =
-            attr (t => t->direct)
+            attr (t => direct (t))
         lazy val indirect : TestTree => Int =
-            attr (t => t->indirect2)
+            attr (t => indirect2 (t))
         lazy val indirect2 : TestTree => Int =
-            attr (t => t->indirect)
+            attr (t => indirect (t))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                     t->direct
+                     direct (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
-                     t->indirect
+                     indirect (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
-                     t->indirect2
+                     indirect2 (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }
 
     test ("circularities are detected for uncached attributes") {
-        import UncachedAttribution._
-
         lazy val direct : TestTree => Int =
-            attr (t => t->direct)
+            UncachedAttribution.attr (t => direct (t))
         lazy val indirect : TestTree => Int =
-            attr (t => t->indirect2)
+            UncachedAttribution.attr (t => indirect2 (t))
         lazy val indirect2 : TestTree => Int =
-            attr (t => t->indirect)
+            UncachedAttribution.attr (t => indirect (t))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                     t->direct
+                     direct (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
-                     t->indirect
+                     indirect (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
-                     t->indirect2
+                     indirect2 (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }
 
     test ("circularities are detected for parameterised attributes") {
-        lazy val direct : Int => TreeNode => Int =
-            paramAttr (i => (t => t->direct (i)))
-        lazy val indirect : Int => TreeNode => Int =
-            paramAttr (i => (t => t->indirect2 (i)))
-        lazy val indirect2 : Int => TreeNode => Int =
-            paramAttr (i => (t => t->indirect (i)))
+        val definitions = new Definitions
+        import definitions._
+
+        lazy val direct : Int => TestTree => Int =
+            paramAttr (i => (t => direct (i) (t)))
+        lazy val indirect : Int => TestTree => Int =
+            paramAttr (i => (t => indirect2 (i) (t)))
+        lazy val indirect2 : Int => TestTree => Int =
+            paramAttr (i => (t => indirect (i) (t)))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                     t->direct (1)
+                     direct (1) (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
-                     t->indirect (8)
+                     indirect (8) (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
-                     t->indirect2 (9)
+                     indirect2 (9) (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }
 
     test ("circularities are detected for uncached parameterised attributes") {
-        import UncachedAttribution._
-
-        lazy val direct : Int => TreeNode => Int =
-            paramAttr (i => (t => t->direct (i)))
-        lazy val indirect : Int => TreeNode => Int =
-            paramAttr (i => (t => t->indirect2 (i)))
-        lazy val indirect2 : Int => TreeNode => Int =
-            paramAttr (i => (t => t->indirect (i)))
+        lazy val direct : Int => TestTree => Int =
+            UncachedAttribution.paramAttr (i => (t => direct (i) (t)))
+        lazy val indirect : Int => TestTree => Int =
+            UncachedAttribution.paramAttr (i => (t => indirect2 (i) (t)))
+        lazy val indirect2 : Int => TestTree => Int =
+            UncachedAttribution.paramAttr (i => (t => indirect (i) (t)))
 
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
 
         val i1 = intercept[IllegalStateException] {
-                     t->direct (1)
+                     direct (1) (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
 
         val i2 = intercept[IllegalStateException] {
-                     t->indirect (8)
+                     indirect (8) (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
         val i3 = intercept[IllegalStateException] {
-                     t->indirect2 (9)
+                     indirect2 (9) (t)
                  }
         assertResult ("Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
     }
@@ -530,312 +458,107 @@ class AttributionTests extends Tests {
         assert (!(k8 equals k6))
     }
 
-    test ("a normal child's properties are set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = Pair (c2, c3)
-        val t = Pair (c1, c4)
-        for (i <- 1 to 2) {
-
-            initTree (t)
-
-            val tchildren = t.children.toSeq
-            assertResult (2) (tchildren.length)
-            assertSame (c1) (tchildren (0))
-            assertSame (c4) (tchildren (1))
-            assertSame (c1) (t.firstChild)
-            assert (t.hasChildren)
-            assertResult (-1) (t.index)
-            assert (t.isFirst)
-            assert (t.isLast)
-            assert (t.isRoot)
-            assertSame (c4) (t.lastChild)
-            assertResult (null) (t.next)
-            assertResult (null) (t.parent)
-            assertResult (null) (t.prev)
-
-            val c1children = c1.children.toSeq
-            assertResult (0) (c1children.length)
-            assert (!c1.hasChildren)
-            assertResult (0) (c1.index)
-            assert (c1.isFirst)
-            assert (!c1.isLast)
-            assert (!c1.isRoot)
-            assertSame (c4) (c1.next)
-            assertSame (t) (c1.parent)
-            assertResult (null) (c1.prev)
-
-            val c2children = c2.children.toSeq
-            assertResult (0) (c2children.length)
-            assert (!c2.hasChildren)
-            assertResult (0) (c2.index)
-            assert (c2.isFirst)
-            assert (!c2.isLast)
-            assert (!c2.isRoot)
-            assertSame (c3) (c2.next)
-            assertSame (c4) (c2.parent)
-            assertResult (null) (c2.prev)
-
-            val c3children = c3.children.toSeq
-            assertResult (0) (c3children.length)
-            assert (!c3.hasChildren)
-            assertResult (1) (c3.index)
-            assert (!c3.isFirst)
-            assert (c3.isLast)
-            assert (!c3.isRoot)
-            assertResult (null) (c3.next)
-            assertSame (c4) (c3.parent)
-            assertSame (c2) (c3.prev)
-
-            val c4children = c4.children.toSeq
-            assertResult (2) (c4children.length)
-            assertSame (c2) (c4children (0))
-            assertSame (c3) (c4children (1))
-            assertSame (c2) (c4.firstChild)
-            assert (c4.hasChildren)
-            assertResult (1) (c4.index)
-            assert (!c4.isFirst)
-            assert (c4.isLast)
-            assert (!c4.isRoot)
-            assertSame (c3) (c4.lastChild)
-            assertResult (null) (c4.next)
-            assertSame (t) (c4.parent)
-            assertSame (c1) (c4.prev)
-
-        }
-    }
-
-    test ("an either child's parent property is set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Pair (c1, c2)
-        val t1 = EitherTree (Left (c3))
-        val c4 = Leaf (6)
-        val t2 = EitherTree (Right (c4))
-        initTree (t1)
-        assertSame (null) (t1.parent)
-        assertSame (t1) (c3.parent)
-        assertSame (c3) (c1.parent)
-        assertSame (c3) (c2.parent)
-        initTree (t2)
-        assertSame (null) (t2.parent)
-        assertSame (t2) (c4.parent)
-    }
-
-    test ("a list child's parent property is set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = ListTree (List (c2, c3))
-        val t = Pair (c1, c4)
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c4.parent)
-        assertSame (c4) (c2.parent)
-        assertSame (c4) (c3.parent)
-    }
-
-    test ("a set child's parent property is set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = SetTree (Set (c2, c3))
-        val t = Pair (c1, c4)
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c4.parent)
-        assertSame (c4) (c2.parent)
-        assertSame (c4) (c3.parent)
-    }
-
-    test ("a sequential vector child's parent property is set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = GenSeqTree (Vector (c2, c3))
-        val t = Pair (c1, c4)
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c4.parent)
-        assertSame (c4) (c2.parent)
-        assertSame (c4) (c3.parent)
-    }
-
-    test ("a parallel vector child's parent property is set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = GenSeqTree (Vector (c2, c3).par)
-        val t = Pair (c1, c4)
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c4.parent)
-        assertSame (c4) (c2.parent)
-        assertSame (c4) (c3.parent)
-    }
-
-    test ("a map's tuple parent properties are set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = Leaf (11)
-        val c5 = Leaf (12)
-        val c6 = MapTree (Map (c4 -> c5))
-        val t = MapTree (Map (c1 -> c2, c3 -> c6))
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c2.parent)
-        assertSame (t) (c3.parent)
-        assertSame (t) (c6.parent)
-        assertSame (c6) (c4.parent)
-        assertSame (c6) (c5.parent)
-    }
-
-    test ("a pair's component parent properties are set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = PairTree (c2, c3)
-        val t = PairTree (c1, c4)
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c4.parent)
-        assertSame (c4) (c2.parent)
-        assertSame (c4) (c3.parent)
-    }
-
-    test ("a triple's component parent properties are set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = Leaf (11)
-        val c5 = TripleTree (c2, c3, c4)
-        val t = PairTree (c5, c1)
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c5.parent)
-        assertSame (c5) (c2.parent)
-        assertSame (c5) (c4.parent)
-        assertSame (c5) (c4.parent)
-    }
-
-    test ("a quad's component parent properties are set correctly") {
-        val c1 = Leaf (3)
-        val c2 = Leaf (1)
-        val c3 = Leaf (10)
-        val c4 = Leaf (11)
-        val c5 = Leaf (12)
-        val c6 = QuadTree (c2, c3, c4, c5)
-        val t = PairTree (c1, c6)
-        initTree (t)
-        assertSame (null) (t.parent)
-        assertSame (t) (c1.parent)
-        assertSame (t) (c6.parent)
-        assertSame (c6) (c2.parent)
-        assertSame (c6) (c3.parent)
-        assertSame (c6) (c4.parent)
-        assertSame (c6) (c5.parent)
-    }
-
     {
         val t = Pair (Leaf (3), Pair (l, Leaf (10)))
-        initTree (t)
+
+        val tree = new Tree[TestTree,Pair] (t)
+        val decorators = new Decorators (tree)
+        import decorators._
 
         test ("a constant atRoot attribute returns the constant value") {
-            val rattr = atRoot[TestTree,Int] (_ => 99)
-            assertResult (99) (t->rattr)
-            assertResult (99) (l->rattr)
+            val rattr = atRoot[Int] (_ => 99)
+            assertResult (99) (rattr (t))
+            assertResult (99) (rattr (l))
         }
 
         test ("a variable atRoot attribute returns the value from the root") {
-            val rattr = atRoot[TestTree,Int] {
-                            case n if n.parent == null =>
-                                42
-                            case _ =>
+            val rattr = atRoot[Int] {
+                            case tree.parent (_) =>
                                 99
+                            case _ =>
+                                42
                         }
-            assertResult (42) (t->rattr)
-            assertResult (42) (l->rattr)
+            assertResult (42) (rattr (t))
+            assertResult (42) (rattr (l))
         }
 
         test ("a down attribute with default function returns the computed value") {
-            val dattr = down[TestTree,Int] (
+            val dattr = down[Int] (
                             (n : TestTree) =>
-                                if (n.parent == null) 42 else 66
+                                if (tree.parent (n) == Seq ()) 42 else 66
                         ) {
-                            case n if n.parent != null =>
+                            case tree.parent (_) =>
                                 99
                         }
-            assertResult (42) (t->dattr)
-            assertResult (99) (l->dattr)
+            assertResult (42) (dattr (t))
+            assertResult (99) (dattr (l))
         }
 
         test ("a down attribute that is defined returns the computed value") {
-            val dattr = down[TestTree,Int] (99) { case _ : Pair => 42 }
-            assertResult (42) (l->dattr)
+            val dattr = down[Int] (99) { case _ : Pair => 42 }
+            assertResult (42) (dattr (l))
         }
 
         test ("a down attribute that is not defined returns the default value") {
-            val dattr = down[TestTree,Int] (99) { case _ : Unused => 42 }
-            assertResult (99) (l->dattr)
+            val dattr = down[Int] (99) { case _ : Unused => 42 }
+            assertResult (99) (dattr (l))
         }
 
         test ("a downErr attribute that is defined returns the computed value") {
-            val dattr = downErr[TestTree,Int] { case _ : Pair => 42 }
-            assertResult (42) (l->dattr)
+            val dattr = downErr[Int] { case _ : Pair => 42 }
+            assertResult (42) (dattr (l))
         }
 
         test ("a downErr attribute that is not defined throws an error") {
-            val dattr = downErr[TestTree,Int] { case _ : Unused => 42 }
+            val dattr = downErr[Int] { case _ : Unused => 42 }
             val i = intercept[RuntimeException] {
-                        l->dattr
+                        dattr (l)
                     }
             assertResult ("downErr: function is not defined on path to root") (i.getMessage)
         }
 
         test ("a downOpt attribute that is defined returns Some of the computed value") {
-            val dattr = downOpt[TestTree,Int] { case _ : Pair => 42 }
-            assertResult (Some (42)) (l->dattr)
+            val dattr = downOpt[Int] { case _ : Pair => 42 }
+            assertResult (Some (42)) (dattr (l))
         }
 
         test ("a downOpt attribute that is not defined returns None") {
-            val dattr = downOpt[TestTree,Int] { case _ : Unused => 42 }
-            assertResult (None) (l->dattr)
+            val dattr = downOpt[Int] { case _ : Unused => 42 }
+            assertResult (None) (dattr (l))
         }
 
     }
 
     test ("a chain that is only defined at the root returns the root value") {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-        initTree (t)
+
+        val tree = new Tree[TestTree,Pair] (t)
+        val decorators = new Decorators (tree)
+        import decorators._
+
         def rootupd (in : TestTree => Int) : TestTree ==> Int = {
-            case n if n.isRoot => 42
+            case n if tree.isRoot (n) => 42
         }
         val rootchain = chain (rootupd)
-        assertResult (42) (t->(rootchain.in))
-        assertResult (42) (t->(rootchain.out))
+        assertResult (42) (rootchain.in (t))
+        assertResult (42) (rootchain.out (t))
     }
 
     test ("a chain with no updates throws appropriate exceptions") {
         val t = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
-        initTree (t)
+
+        val tree = new Tree[TestTree,Pair] (t)
+        val decorators = new Decorators (tree)
+        import decorators._
 
         // A chain with only identiy update functions
-        val idchain = chain[TreeNode,Int] ()
+        val idchain = chain [Int] ()
         val i1 = intercept[RuntimeException] {
-                     t->(idchain.in)
+                     idchain.in (t)
                  }
         assertResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i1.getMessage)
         val i2 = intercept[RuntimeException] {
-                     t->(idchain.out)
+                     idchain.out (t)
                  }
         assertResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i2.getMessage)
 
@@ -848,70 +571,20 @@ class AttributionTests extends Tests {
             }
         val refchain = chain (refuse)
         val i3 = intercept[RuntimeException] {
-                     t->(refchain.in)
+                     refchain.in (t)
                  }
         assertResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i3.getMessage)
         val i4 = intercept[RuntimeException] {
-                     t->(refchain.out)
+                     refchain.out (t)
                  }
         assertResult ("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))") (i4.getMessage)
 
     }
 
-    test ("deep cloning a term with sharing gives an equal but not eq term") {
-        import AttributableSupport.deepclone
-        import org.kiama.example.imperative.ImperativeTree._
-
-        val c = Add (Num (1), Num (2))
-        val d = Add (Num (1), Num (2))
-        val e = Add (Num (3), Num (4))
-        val t = Add (Mul (c,
-                          Sub (c,
-                               d)),
-                     Add (Add (e,
-                               Num (5)),
-                          e))
-        val u = Add (Mul (Add (Num (1), Num (2)),
-                          Sub (Add (Num (1), Num (2)),
-                               d)),
-                     Add (Add (Add (Num (3), Num (4)),
-                               Num (5)),
-                          Add (Num (3), Num (4))))
-
-        initTree (t)
-        val ct = deepclone (t)
-
-        // Must get the right answer (==)
-        assertResult (u) (ct)
-
-        // Must not get the original term (eq)
-        assertNotSame (t) (ct)
-
-        // Make sure that the parents proerpties are set correctly
-        // (for the top level)
-        def isTree (ast : Attributable) : Boolean =
-            ast.children.forall (c => (c.parent eq ast) && isTree (c))
-        assert (isTree (ct.asInstanceOf[Attributable]),
-                "deep cloned tree has invalid parent properties")
-
-        // Check the terms at the positions of the two c occurrences
-        // against each other, since they are eq to start but should
-        // not be after
-        val mul = ct.asInstanceOf[Add].l.asInstanceOf[Mul]
-        val c1 = mul.l
-        val mulsub = mul.r.asInstanceOf[Sub]
-        val c2 = mulsub.l
-        assertNotSame (c1) (c2)
-
-        // Check the terms at the positions of the two c ocurrences
-        // against the one at the position of the d occurrence (which
-        // is == but not eq to the two original c's)
-        val d1 = mulsub.r
-        assertNotSame (c1) (d1)
-        assertNotSame (c2) (d1)
-    }
-
     test ("a circular attribute that never changes evaluates to initial value") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val zero : CircularAttribute[Num,Double] =
@@ -924,6 +597,8 @@ class AttributionTests extends Tests {
     }
 
     test ("two circular attributes that never change from initial value do converge") {
+        val definitions = new Definitions
+        import definitions._
 
         import org.kiama.example.imperative.ImperativeTree.Num
 
@@ -951,6 +626,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a directly circular attribute can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : CircularAttribute[Num,Double] =
@@ -968,6 +646,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a cycle of two circular attributes can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : Num => Double =
@@ -990,6 +671,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a cycle of three circular attributes can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val counter : Num => Double =
@@ -1021,6 +705,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a single circular attribute plus a cycle of two circular attributes can count") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val entry : Num => Double =
@@ -1052,6 +739,9 @@ class AttributionTests extends Tests {
     }
 
     test ("a single circular attribute plus a cycle of two trivial circular attributes converges") {
+        val definitions = new Definitions
+        import definitions._
+
         import org.kiama.example.imperative.ImperativeTree.Num
 
         lazy val entry : Num => Double =

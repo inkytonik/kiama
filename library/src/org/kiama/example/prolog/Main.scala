@@ -29,7 +29,7 @@ import scala.collection.immutable.Seq
 /**
  * Configuration for the Prolog REPL.
  */
-class PrologConfig (args : Seq[String], output : Emitter, error : Emitter) extends REPLConfig (args, output, error) {
+abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
@@ -59,8 +59,8 @@ class PrologConfig (args : Seq[String], output : Emitter, error : Emitter) exten
      * The program that represents the facts and clauses that will be made available
      * to the queries that are entered in the REPL.
      */
-    val database = opt[Program] ("database", descr = "Database of facts and clauses to use in queries",
-                                 required = true) (databaseConverter)
+    lazy val database = opt[Program] ("database", descr = "Database of facts and clauses to use in queries",
+                                      required = true) (databaseConverter)
 
 }
 
@@ -74,17 +74,19 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
 
     import java.io.FileReader
     import java.io.FileNotFoundException
-    import org.kiama.attribution.Attribution.initTree
     import org.kiama.util.Messaging.report
     import org.kiama.util.{Emitter, ErrorEmitter, OutputEmitter, StringEmitter}
-    import PrologTree.Program
+    import PrologTree.{Program, PrologTree}
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : PrologConfig =
-        new PrologConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : PrologConfig =
+        new PrologConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     /**
      * Helper function to create the database from the given filename or return
@@ -99,9 +101,9 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
                 case Success (dbtree, _) =>
                     // Pretty print the source tree
                     // cnofig.error.emitln (pretty (product (dbtree)))
-                    val analyser = new SemanticAnalyser
-                    initTree (dbtree)
-                    val messages = analyser.errors (dbtree)
+                    val tree = new PrologTree (dbtree)
+                    val analyser = new SemanticAnalyser (tree)
+                    val messages = analyser.errors
                     if (messages.length > 0) {
                         val emitter = new StringEmitter
                         report (messages, emitter)
@@ -137,7 +139,7 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
     /**
      * Process a query by passing it and the program to the interpreter.
      */
-    override def process (querytree : Literal, config : PrologConfig) {
+    def process (querytree : Literal, config : PrologConfig) {
         interpreter.interpret (querytree, config.database (), config.output)
     }
 

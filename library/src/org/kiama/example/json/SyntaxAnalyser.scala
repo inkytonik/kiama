@@ -67,12 +67,12 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         }
 
     lazy val jtrue =
-        "true" ^^^ JTrue ()
+        "true" ^^ (_ => JTrue ())
 
     lazy val jfalse =
-        "false" ^^^ JFalse ()
+        "false" ^^ (_ => JFalse ())
 
     lazy val jnull =
-        "null" ^^^ JNull ()
+        "null" ^^ (_ => JNull ())
 
 }

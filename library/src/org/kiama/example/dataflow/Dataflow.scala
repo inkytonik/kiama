@@ -21,77 +21,52 @@
 package org.kiama
 package example.dataflow
 
-import org.kiama.attribution.Attribution._
 import DataflowTree._
+import org.kiama.attribution.Attribution
 
-/**
- * Control flow interface.
- */
-trait ControlFlow {
+class Dataflow (val tree : DataflowTree) extends Attribution {
+
+    // Control flow
 
     /**
      * Control flow successor relation.
      */
-    val succ : Stm => Set[Stm]
-
+    val succ : Stm => Set[Stm] =
+        dynAttr {
+            case If (_, s1, s2) =>
+                Set (s1, s2)
+            case t @ While (_, s) =>
+                following (t) + s
+            case Return (_) =>
+                Set ()
+            case Block (s :: _) =>
+                Set (s)
+            case s =>
+                following (s)
+        }
 
     /**
      * Control flow default successor relation.
      */
-    val following : Stm => Set[Stm]
-
-}
-
-/**
- * Control flow implementation.
- */
-trait ControlFlowImpl extends ControlFlow {
-
-    val succ : Stm => Set[Stm] =
+    val following : Stm => Set[Stm] =
         dynAttr {
-            case If (_, s1, s2)   => Set (s1, s2)
-            case t @ While (_, s) => t->following + s
-            case Return (_)       => Set ()
-            case Block (s :: _)   => Set (s)
-            case s                => s->following
+            case tree.parent (t : If) =>
+                following (t)
+            case tree.parent (t : While) =>
+                Set (t)
+            case tree.parent.pair (tree.next (n), _ : Block) =>
+                Set (n)
+            case tree.parent (b : Block) =>
+                following (b)
+            case _ =>
+                Set ()
         }
 
-    val following : Stm => Set[Stm] =
-        dynAttr (
-            (s : Stm) =>
-                s.parent match {
-                    case t @ If (_, _, _)      => t->following
-                    case t @ While (_, _)      => Set (t)
-                    case b : Block if s.isLast => b->following
-                    case Block (_)             => Set (s.next[Stm])
-                    case _                     => Set ()
-                }
-        )
-
-}
-
-/**
- * Variable use and definition interface.
- */
-trait Variables {
+    // Variable use and definition
 
     /**
      * Variable uses.
      */
-    val uses : Stm => Set[Var]
-
-    /**
-     * Variable definitions.
-     */
-    val defines : Stm => Set[Var]
-
-}
-
-/**
- * Variable use and definition implementation.
- */
-trait VariablesImpl extends Variables {
-
     val uses : Stm => Set[Var] =
         dynAttr {
             case If (v, _, _)  => Set (v)
@@ -101,38 +76,20 @@ trait VariablesImpl extends Variables {
             case _             => Set ()
         }
 
+    /**
+     * Variable definitions.
+     */
     val defines : Stm => Set[Var] =
         dynAttr {
             case Assign (v, _) => Set (v)
             case _             => Set ()
         }
 
-}
-
-/**
- * Variable liveness interface.
- */
-trait Liveness {
+    // Variable liveness
 
     /**
      * Variables "live" into a statement.
      */
-    val in : Stm => Set[Var]
-
-    /**
-     * Variables "live" out of a statement.
-     */
-    val out : Stm => Set[Var]
-
-}
-
-/**
- * Variable liveness implementation.
- */
-trait LivenessImpl extends Liveness {
-
-    self : Liveness with Variables with ControlFlow =>
-
     val in : Stm => Set[Var] =
         circular (Set[Var]()) (
             // Optimisation to not include vars used to calculate v
@@ -142,11 +99,12 @@ trait LivenessImpl extends Liveness {
             s => uses (s) ++ (out (s) -- defines (s))
         )
 
+    /**
+     * Variables "live" out of a statement.
+     */
     val out : Stm => Set[Var] =
         circular (Set[Var]()) (
-            s => (s->succ) flatMap (in)
+            s => succ (s) flatMap (in)
         )
 
 }
-
-trait Dataflow extends LivenessImpl with VariablesImpl with ControlFlowImpl

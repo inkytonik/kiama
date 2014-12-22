@@ -23,7 +23,6 @@ package org.kiama
 package example.obr
 
 import ObrTree.ObrInt
-import org.kiama.attribution.Attribution.initTree
 import org.kiama.util.{Console, CompilerWithConfig, Config, Emitter,
     ErrorEmitter, JLineConsole, OutputEmitter}
 import scala.collection.immutable.Seq
@@ -31,11 +30,11 @@ import scala.collection.immutable.Seq
 /**
  * Configuration for the Obr compiler.
  */
-class ObrConfig (args : Seq[String], output : Emitter, error : Emitter) extends Config (args, output, error) {
-    val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
-    val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
-    val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
-    val execute = opt[Boolean] ("execute", descr = "Execute the compiled code")
+abstract class ObrConfig (args : Seq[String]) extends Config (args) {
+    lazy val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
+    lazy val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
+    lazy val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
+    lazy val execute = opt[Boolean] ("execute", descr = "Execute the compiled code")
 }
 
 /**
@@ -43,6 +42,7 @@ class ObrConfig (args : Seq[String], output : Emitter, error : Emitter) extends 
  */
 class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
 
+    import ObrTree.ObrTree
     import org.kiama.example.obr.{RISCEncoder, RISCTransformer}
     import org.kiama.example.RISC.{RISC, RISCISA}
     import org.kiama.output.PrettyPrinter.pretty_any
@@ -50,21 +50,19 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
     import org.kiama.util.Messaging.report
 
     override def createConfig (args : Seq[String],
-                               output : Emitter = new OutputEmitter,
-                               error : Emitter = new ErrorEmitter) : ObrConfig =
-        new ObrConfig (args, output, error)
+                               out : Emitter = new OutputEmitter,
+                               err : Emitter = new ErrorEmitter) : ObrConfig =
+        new ObrConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
-    override def process (filename : String, ast : ObrInt, config : ObrConfig) {
-
-        super.process (filename, ast, config)
-
-        // Initialise compiler state
-        SymbolTable.reset ()
-        RISCLabels.reset ()
+    def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
         // Conduct semantic analysis and report any errors
-        val analyser = new SemanticAnalyser
-        val messages = analyser.errors (ast)
+        val tree = new ObrTree (ast)
+        val analyser = new SemanticAnalyser (tree)
+        val messages = analyser.errors
         if (messages.length > 0) {
             report (messages, config.error)
         } else {
@@ -73,10 +71,12 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
                 config.output.emitln (analyser.env (ast))
             }
 
+            // Label generator for this run
+            val labels = new RISCLabels
+
             // Compile the source tree to a target tree
-            val transformer = new RISCTransformer (analyser)
+            val transformer = new RISCTransformer (analyser, labels)
             val targettree = transformer.code (ast)
-            initTree (targettree)
 
             // Print out the target tree for debugging
             if (config.targetPrint ()) {
@@ -84,7 +84,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
             }
 
             // Encode the target tree and emit the assembler or run if requested
-            val encoder = new RISCEncoder
+            val encoder = new RISCEncoder (labels)
             encoder.encode (targettree)
 
             if (config.riscPrint ()) {
@@ -123,17 +123,15 @@ class ParserDriver extends Driver {
  */
 class SemanticDriver extends Driver {
 
+    import ObrTree.ObrTree
     import org.kiama.util.Messaging.report
 
     override def process (filename : String, ast : ObrInt, config : ObrConfig) {
 
-        // Initialise compiler state
-        SymbolTable.reset ()
-
         // Conduct semantic analysis and report any errors
-        val analyser = new SemanticAnalyser
-        initTree (ast)
-        val messages = analyser.errors (ast)
+        val tree = new ObrTree (ast)
+        val analyser = new SemanticAnalyser (tree)
+        val messages = analyser.errors
         if (messages.length > 0)
             report (messages, config.error)
 

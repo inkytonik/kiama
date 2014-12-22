@@ -33,10 +33,8 @@ import org.kiama.util.Tests
 
 class BasicNameResolutionTests extends Tests {
 
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.NameResolution._
+    import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
-    import org.kiama.example.picojava.TypeAnalyser._
     import scala.collection.immutable.Seq
 
     // For the actual program text, see BasicNameResolutionTests.pj
@@ -62,32 +60,32 @@ class BasicNameResolutionTests extends Tests {
                           AssignStmt (xInA, zInA),
                           AssignStmt (yInA, Use ("z"))))))))
 
-    override def beforeAll () {
-        initTree (ast)
-    }
+    val tree = new PicoJavaTree (ast)
+    val analyser = new ErrorCheck (tree)
+    import analyser._
 
     test ("bindings at the same nesting level are resolved") {
-        assertResult (declRx) (xInR->decl)
+        assertResult (declRx) (decl (xInR))
     }
 
     test ("bindings at an outer nesting level are resolved") {
-        assertResult (declRx) (xInA->decl)
+        assertResult (declRx) (decl (xInA))
     }
 
     test ("names can be declared after use") {
-        assertResult (declRz) (zInR->decl)
+        assertResult (declRz) (decl (zInR))
     }
 
     test ("a missing declaration for a top-level use is detected") {
-        assert (isUnknown (yInR->decl))
+        assert (isUnknown (decl (yInR)))
     }
 
     test ("a missing declaration for a nested use is detected") {
-        assert (isUnknown (yInA->decl))
+        assert (isUnknown (decl (yInA)))
     }
 
     test ("a local shadowing binding is resolved") {
-        assertResult (declAz) (zInA->decl)
+        assertResult (declAz) (decl (zInA))
     }
 
 }

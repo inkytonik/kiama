@@ -24,14 +24,14 @@ package L4
 
 trait NameAnalyser extends L3.NameAnalyser {
 
-    import base.source.{Expression, SourceTree}
+    import base.source.{Expression, SourceNode}
     import org.kiama.util.Messaging.{check, message, Messages}
     import source.{FieldExp, IndexExp, RecordTypeDef}
 
     /**
      * The error checking for this level.
      */
-    override def errorsDef (n : SourceTree) : Messages =
+    override def errorsDef (n : SourceNode) : Messages =
         super.errorsDef (n) ++
         check (n) {
             case n @ RecordTypeDef (fls) =>

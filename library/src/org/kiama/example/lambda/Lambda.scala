@@ -28,17 +28,20 @@ import org.kiama.util.{ParsingREPL, PositionedParserUtilities, Profiler}
  */
 object LambdaTree {
 
-    import org.kiama.util.TreeNode
-
     /**
      * Identifiers are represented as strings.
      */
     type Idn = String
 
     /**
+     * Base type for all lambda tree nodes.
+     */
+    sealed abstract class LambdaNode
+
+    /**
      * Expressions.
      */
-    sealed abstract class Exp extends TreeNode
+    sealed abstract class Exp extends LambdaNode
 
     /**
      * Numeric expressions.
@@ -191,8 +194,7 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with SyntaxAnalyser with Evalu
 
     override val prompt = "lambda> "
 
-    override def process (e : LambdaTree.Exp, config : REPLConfig) {
-        super.process (e, config)
+    def process (e : LambdaTree.Exp, config : REPLConfig) {
         val result =
             if (config.profile.get != None) {
                 val dimensions = parseProfileOption (config.profile ())

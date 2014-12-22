@@ -22,14 +22,21 @@ package org.kiama
 package example.oberon0
 package drivers
 
-trait A1Phases extends base.FrontEndDriver
-    with L2.SyntaxAnalyser
-    with L2.source.SourcePrettyPrinter
-    with L2.NameAnalyser {
+trait A1Phases extends L2.SyntaxAnalyser
+        with L2.source.SourcePrettyPrinter
+        with base.FrontEndDriver {
+
+    import base.source.SourceTree.SourceTree
 
     def artefact : String = "A1"
     def langlevel : Int = 2
     def tasklevel : Int = 2
+
+    def buildAnalyser (atree : SourceTree) : base.Analyser =
+        new L2.NameAnalyser {
+            val tree = atree
+        }
+
 }
 
 object A1 extends A1Phases

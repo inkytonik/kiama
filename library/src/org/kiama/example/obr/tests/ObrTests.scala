@@ -84,7 +84,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
             val emitter = new StringEmitter
             val args = Seq ("--Kconsole", "string", params.mkString ("", "\n", "\n"),
                             "-e", dirname + obrfile)
-            val config = createConfig (args, emitter)
+            val config = createAndInitConfig (args, emitter)
             try {
                 testdriver (config)
             } catch {

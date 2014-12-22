@@ -29,14 +29,16 @@
 package org.kiama
 package example.picojava
 
-object NameResolution {
+import org.kiama.attribution.Attribution
 
-    import NullObjects._
+trait NameResolution {
+
+    self : Attribution with TypeAnalyser with NullObjects with PredefinedTypes =>
+
     import PicoJavaTree._
-    import PredefinedTypes._
-    import TypeAnalyser._
-    import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
+
+    def tree : PicoJavaTree
 
     /**
      * decl refers to the appropriate declaration of the Access,
@@ -48,8 +50,8 @@ object NameResolution {
      */
     val decl : Access => Decl =
         attr {
-            case Dot (_, n) => n->decl
-            case u : IdnUse  => u->lookup (u.Name)
+            case Dot (_, n) => decl (n)
+            case u : IdnUse => lookup (u.Name) (u)
         }
 
     /**
@@ -84,35 +86,27 @@ object NameResolution {
      *    // Do a remote lookup on the object's type.
      *    getObjectReference().decl().type().remoteLookup(name);
      */
-    val lookup : String => PicoJavaTree => Decl =
+    val lookup : String => PicoJavaNode => Decl =
         paramAttr {
             name => {
-                case b : Block =>
-                    b.parent match {
-                        case p : Program   => p->localLookup (name)
-                        case c : ClassDecl =>
-                            if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
-                                c->superClass->remoteLookup (name)
-                            else
-                                c->lookup (name)
-                    }
-                case s : BlockStmt =>
-                    s.parent match {
-                        case b : Block =>
-                            val d = b->localLookup (name)
-                            if (isUnknown (d)) b->lookup (name) else d
-                        case p : PicoJavaTree =>
-                            p->lookup (name)
-                    }
-                case i : IdnUse =>
-                    i.parent match {
-                        case Dot (a, i2) if i eq i2 =>
-                            a->decl->tipe->remoteLookup (name)
-                        case p : PicoJavaTree =>
-                            p->lookup (name)
-                    }
-                case t =>
-                    t.parent[PicoJavaTree]->lookup (name)
+                case tree.parent.pair (_ : Block, p : Program) =>
+                    localLookup (name) (p)
+
+                case tree.parent.pair (_ : Block, c : ClassDecl) =>
+                    if ((superClass (c) != null) && (!isUnknown (remoteLookup (name) (superClass (c)))))
+                        remoteLookup (name) (superClass (c))
+                    else
+                        lookup (name) (c)
+
+                case tree.parent.pair (_ : BlockStmt, b : Block) =>
+                    val d = localLookup (name) (b)
+                    if (isUnknown (d)) lookup (name) (b) else d
+
+                case tree.parent.pair (i : IdnUse, Dot (a, i2)) if i eq i2 =>
+                    remoteLookup (name) (tipe (decl (a)))
+
+                case tree.parent (p) =>
+                    lookup (name) (p)
            }
        }
 
@@ -135,12 +129,15 @@ object NameResolution {
      *     return unknownDecl();
      * }
      */
-    val localLookup : String => PicoJavaTree => Decl =
+    val localLookup : String => PicoJavaNode => Decl =
         paramAttr {
             name => {
-                case p : Program => finddecl (p, name, p->getPredefinedTypeList)
-                case b : Block   => finddecl (b, name, b.BlockStmts)
-                case n           => n.parent[PicoJavaTree]->localLookup (name)
+                case p : Program =>
+                    finddecl (p, name, getPredefinedTypeList (p))
+                case b : Block =>
+                    finddecl (b, name, b.BlockStmts)
+                case tree.parent (p) =>
+                    localLookup (name) (p)
             }
         }
 
@@ -148,12 +145,12 @@ object NameResolution {
      * Search a sequence of block statements for a declaration matching a given name.
      * Return the matching declaration or the unknown declaration if not found.
      */
-    def finddecl (t : PicoJavaTree, name : String, blockstmts : Seq[BlockStmt]) : Decl =
+    def finddecl (t : PicoJavaNode, name : String, blockstmts : Seq[BlockStmt]) : Decl =
         blockstmts.collectFirst {
-            case blockstmt if blockstmt->declarationOf (name) != null =>
-                blockstmt->declarationOf (name)
+            case blockstmt if declarationOf (name) (blockstmt) != null =>
+                declarationOf (name) (blockstmt)
         }.getOrElse (
-            t->unknownDecl
+            unknownDecl (t)
         )
 
     /**
@@ -179,14 +176,14 @@ object NameResolution {
         paramAttr {
             name => {
                 case c : ClassDecl =>
-                    if (!isUnknown (c.Body->localLookup (name)))
-                        c.Body->localLookup (name)
-                    else if ((c->superClass != null) && (!isUnknown (c->superClass->remoteLookup (name))))
-                        c->superClass->remoteLookup (name)
+                    if (!isUnknown (localLookup (name) (c.Body)))
+                        localLookup (name) (c.Body)
+                    else if ((superClass (c) != null) && (!isUnknown (remoteLookup (name) (superClass (c)))))
+                        remoteLookup (name) (superClass (c))
                     else
-                        c->unknownDecl
+                        unknownDecl (c)
                 case t =>
-                    t->unknownDecl
+                    unknownDecl (t)
             }
         }
 

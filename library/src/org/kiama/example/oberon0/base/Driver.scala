@@ -23,8 +23,7 @@ package example.oberon0
 package base
 
 import source.ModuleDecl
-import org.kiama.attribution.Attribution.initTree
-import org.kiama.attribution.Attribution.resetMemo
+import source.SourceTree.SourceTree
 import org.kiama.util.{CompilerWithConfig, Config, Emitter, ErrorEmitter,
     OutputEmitter}
 import org.kiama.output.PrettyPrinter
@@ -36,21 +35,10 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait Driver {
 
-    this : SymbolTable =>
-
     /**
      * The name of this artefact.
      */
     def artefact : String
-
-    /**
-     * Perform initialisation of semantic analysis that is necessary before
-     * processing an AST.
-     */
-    def initialiseSemanticAnalysis {
-        resetEnvironments
-        resetMemo
-    }
 
     /**
      * Output a section heading so that the output can be split later.
@@ -66,16 +54,16 @@ trait Driver {
  * of compiler share a configuration type, so some of these settings have no
  * effect for some of the drivers.
  */
-class Oberon0Config (args : Seq[String], output : Emitter, errors : Emitter, testPrettyPrint : Boolean = false) extends Config (args, output, errors) {
-    val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
-    val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
-    val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
-                                       default = Some (testPrettyPrint))
-    val intPrint = opt[Boolean] ("intPrint", 'i', descr = "Print the intermediate abstract syntax tree")
-    val intPrettyPrint = opt[Boolean] ("intPrettyPrint", 'I', descr = "Pretty-print the intermediate abstract syntax tree")
-    val cPrint = opt[Boolean] ("cPrint", 'c', descr = "Print the C abstract syntax tree")
-    val cPrettyPrint = opt[Boolean] ("cPrettyPrint", 'C', descr = "Pretty-print the C abstract syntax tree",
-                                     default = Some (testPrettyPrint))
+abstract class Oberon0Config (args : Seq[String], testPrettyPrint : Boolean = false) extends Config (args) {
+    lazy val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
+    lazy val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
+    lazy val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
+                                            default = Some (testPrettyPrint))
+    lazy val intPrint = opt[Boolean] ("intPrint", 'i', descr = "Print the intermediate abstract syntax tree")
+    lazy val intPrettyPrint = opt[Boolean] ("intPrettyPrint", 'I', descr = "Pretty-print the intermediate abstract syntax tree")
+    lazy val cPrint = opt[Boolean] ("cPrint", 'c', descr = "Print the C abstract syntax tree")
+    lazy val cPrettyPrint = opt[Boolean] ("cPrettyPrint", 'C', descr = "Pretty-print the C abstract syntax tree",
+                                          default = Some (testPrettyPrint))
 }
 
 /**
@@ -84,8 +72,7 @@ class Oberon0Config (args : Seq[String], output : Emitter, errors : Emitter, tes
  */
 trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
-        with Analyser =>
+    this : RegexParsers with source.SourcePrettyPrinter =>
 
     import java.io.File
     import org.kiama.util.Emitter
@@ -93,9 +80,12 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     import org.kiama.util.IO.{filereader, FileNotFoundException}
 
     override def createConfig (args : Seq[String],
-                               output : Emitter = new OutputEmitter,
-                               error : Emitter = new ErrorEmitter) : Oberon0Config =
-        new Oberon0Config (args, output, error)
+                               out : Emitter = new OutputEmitter,
+                               err : Emitter = new ErrorEmitter) : Oberon0Config =
+        new Oberon0Config (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
     /**
      * Custom driver for section tagging and challenge mode for errors.  If
@@ -124,16 +114,19 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     }
 
     /**
+     * A builder of the analysis phase for this driver.
+     */
+    def buildAnalyser (tree : SourceTree) : Analyser
+
+    /**
      * Process the given abstract syntax tree.  Send output to emitter,
      * marking sections so that we can split things later.
      */
-    override def process (filename : String, ast : ModuleDecl, config : Oberon0Config) {
+    def process (filename : String, ast : ModuleDecl, config : Oberon0Config) {
 
         val output = config.output
 
         // Perform default processing
-        super.process (filename, ast, config)
-
         if (config.astPrint ()) {
             section (output, "ast")
             output.emitln (pretty_any (ast))
@@ -143,16 +136,22 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
             output.emitln (pretty (toDoc (ast)))
         }
 
+        // Make a tree for this program
+        val tree = new SourceTree (ast)
+
+        // Build the phases for this driver
+        val analyser = buildAnalyser (tree)
+
         // Perform semantic analysis
-        initialiseSemanticAnalysis
-        val messages = ast->errors
+        val messages = analyser.errors
+
         if (messages.length == 0) {
 
             // No semantic errors, go on to process the AST as appropriate
-            val nast = processast (ast, config)
+            val ntree = processast (tree, config)
 
             // Consume the processed AST (e.g., by generating code from it)
-            consumeast (nast, config)
+            consumeast (ntree, config)
 
         } else {
 
@@ -172,16 +171,16 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     }
 
     /**
-     * Process the AST, returning the new one.  By default, return the AST unchanged.
+     * Process a tree, returning the new one.  By default, return the tree unchanged.
      */
-    def processast (ast : ModuleDecl, config : Oberon0Config) : ModuleDecl =
-        ast
+    def processast (tree : SourceTree, config : Oberon0Config) : SourceTree =
+        tree
 
     /**
      * Consume the AST. For example, translate it to something else. By default, do
      * nothing.
      */
-    def consumeast (ast : ModuleDecl, config : Oberon0Config) {
+    def consumeast (tree : SourceTree, config : Oberon0Config) {
     }
 
 }
@@ -192,28 +191,31 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
  */
 trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
-        with Analyser with Transformer =>
+    this : RegexParsers with source.SourcePrettyPrinter =>
 
     /**
-     * Process the AST by transforming it.  Then apply higher-level transformations.
+     * A builder of the transformer phase for this driver.
      */
-    override def processast (ast : ModuleDecl, config : Oberon0Config) : ModuleDecl = {
+    def buildTransformer (tree : SourceTree) : Transformer
+
+    /**
+     * Process the AST by transforming it.
+     */
+    override def processast (tree : SourceTree, config : Oberon0Config) : SourceTree = {
         val output = config.output
-        initialiseSemanticAnalysis
-        val nast = transform (ast)
+        val transformer = buildTransformer (tree)
+        val ntree = transformer.transform (tree)
         if (config.intPrint ()) {
             section (output, "iast")
-            output.emitln (pretty_any (nast))
+            output.emitln (pretty_any (ntree.root))
         }
         if (config.challenge ())
             section (output, "_lifted.ob")
         else if (config.intPrettyPrint ())
             section (output, "_ipp.ob")
         if (config.intPrettyPrint () || config.challenge ())
-            output.emitln (pretty (toDoc (nast)))
-        initTree (nast)
-        nast
+            output.emitln (pretty (toDoc (ntree.root)))
+        ntree
     }
 
 }
@@ -224,23 +226,27 @@ trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDe
  */
 trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : RegexParsers with source.SourcePrettyPrinter with SymbolTable
-        with Analyser with Transformer with Translator with c.CPrettyPrinter =>
+    this : RegexParsers with source.SourcePrettyPrinter with c.CPrettyPrinter =>
+
+    /**
+     * A builder of the transformer phase for this driver.
+     */
+    def buildTranslator (tree : SourceTree) : Translator
 
     /**
      * Consume the AST by translating it to C.
      */
-    override def consumeast (ast : ModuleDecl, config : Oberon0Config) {
+    override def consumeast (tree : SourceTree, config : Oberon0Config) {
         val output = config.output
-        initialiseSemanticAnalysis
-        val nast = translate (ast)
+        val translator = buildTranslator (tree)
+        val cast = translator.translate (tree.root) // FIXME should be tree
         if (config.cPrint ()) {
             section (output, "cast")
-            output.emitln (pretty_any (nast))
+            output.emitln (pretty_any (cast))
         }
         if (config.cPrettyPrint () || config.challenge ()) {
             section (output, "c")
-            output.emitln (pretty (toDoc (nast)))
+            output.emitln (pretty (toDoc (cast)))
         }
     }
 

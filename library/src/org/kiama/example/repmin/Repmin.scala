@@ -21,20 +21,20 @@
 package org.kiama
 package example.repmin
 
-import org.kiama.util.TreeNode
-import org.kiama.attribution.Attribution._
+import org.kiama.attribution.Attribution
+import org.kiama.relation.Tree
 
 /**
  * AST for Repmin examples.
  */
-sealed abstract class RepminTree extends TreeNode
+sealed abstract class RepminTree extends Product
 case class Fork (left : RepminTree, right : RepminTree) extends RepminTree
 case class Leaf (value : Int) extends RepminTree
 
 /**
  * Repmin implementations must provide a repmin attribute.
  */
-trait RepminImpl {
+trait RepminImpl extends Attribution {
     val repmin : RepminTree => RepminTree
 }
 
@@ -45,14 +45,14 @@ trait RepminBase extends RepminImpl {
 
     val locmin : RepminTree => Int =
         attr {
-            case Fork (l, r) => (l->locmin) min (r->locmin)
+            case Fork (l, r) => locmin (l).min (locmin (r))
             case Leaf (v)    => v
         }
 
     val repmin : RepminTree => RepminTree =
         attr {
-            case Fork (l, r) => Fork (l->repmin, r->repmin)
-            case t : Leaf    => Leaf (t->globmin)
+            case Fork (l, r) => Fork (repmin (l), repmin (r))
+            case t : Leaf    => Leaf (globmin (t))
         }
 
     val globmin : RepminTree => Int
@@ -61,16 +61,18 @@ trait RepminBase extends RepminImpl {
 
 /**
  * Classic repmin problem defined in an "attributes first" style.
- * repmin is a Repmintree with the same structure as its argument Repmintree
+ * repmin is a RepminTree with the same structure as its argument RepminTree
  * but with all of the leaves replaced by leaves containing the
  * minimum leaf value from the input Repmintree.
  */
-trait Repmin extends RepminBase {
+class Repmin (tree : Tree[RepminTree,RepminTree]) extends RepminBase {
 
     val globmin : RepminTree => Int =
         attr {
-            case t if t.isRoot => t->locmin
-            case t             => t.parent[RepminTree]->globmin
+            case tree.parent (p) =>
+                globmin (p)
+            case t =>
+                locmin (t)
         }
 
 }
@@ -78,14 +80,13 @@ trait Repmin extends RepminBase {
 /**
  * Repmin problem defined using decorators.
  */
-trait RepminDec extends RepminBase {
+class RepminDec (tree : Tree[RepminTree,RepminTree]) extends RepminBase {
 
-    import org.kiama.attribution.Decorators._
+    import org.kiama.attribution.Decorators
+
+    val decorators = new Decorators (tree)
 
     val globmin : RepminTree => Int =
-        downErr[RepminTree,Int] {
-            case t if t.isRoot => t->locmin
-        }
+        decorators.atRoot (locmin)
 
 }
-

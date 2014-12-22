@@ -22,6 +22,13 @@ package org.kiama
 package attribution
 
 /**
- * Module for cached attributes.
+ * An attribution module. Use an instance of this module to encapuslate
+ * related attributes. You should ensure that more than one circular
+ * attribute evaluation from a single module is not executing at the
+ * same time because the current implementation has shared state between
+ * related circular attributes. If your attributes are unrelated (i.e.,
+ * can't possibly call each other) you should base them on different
+ * attribution module instances and then it is safe for attributes from
+ * different collections to execute in parallel.
  */
-object Attribution extends AttributionCore
+class Attribution extends AttributionCore

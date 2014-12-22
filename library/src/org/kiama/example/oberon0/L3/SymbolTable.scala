@@ -55,7 +55,7 @@ trait SymbolTable extends L0.SymbolTable {
     /**
      * A built-in procedure with its parameter information.
      */
-    case class BuiltinProc (ident : String, params : Seq[ParamInfo]) extends NamedEntity with Builtin
+    case class BuiltinProc (ident : String, params : Seq[ParamInfo]) extends Entity
 
     /**
      * The built-in Read procedure.
@@ -74,6 +74,12 @@ trait SymbolTable extends L0.SymbolTable {
      */
     lazy val writelnProc =
         BuiltinProc ("WriteLn", Nil)
+
+    /**
+     * Return true if the entity is a builtin, false otherwise.
+     */
+    override def isBuiltin (e : Entity) : Boolean =
+        super.isBuiltin (e) || e.isInstanceOf[BuiltinProc]
 
     /**
      * The default environment with pre-defined procedures added.

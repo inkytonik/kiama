@@ -34,9 +34,10 @@ import org.kiama.util.RegexParserTests
 
 class ErrorTests extends RegexParserTests with SyntaxAnalyser {
 
-    import java.util.ArrayList
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.ErrorCheck.errors
+    import org.kiama.example.picojava.ErrorCheck
+    import org.kiama.example.picojava.PicoJavaTree.PicoJavaTree
+    import org.kiama.util.Message
+    import org.kiama.util.Positions.positionAt
 
     /**
      * Parse the illegal program and make sure that the errors and their
@@ -64,8 +65,9 @@ class ErrorTests extends RegexParserTests with SyntaxAnalyser {
 """;
         assertParseCheck (text, program) {
             ast =>
-                initTree (ast)
-                val messages = errors (ast)
+                val tree = new PicoJavaTree (ast)
+                val analyser = new ErrorCheck (tree)
+                val messages = analyser.errors
                 assertResult ("Unknown identifier b") (messages.get (0))
                 assertResult ("Can not assign a variable of type boolean to a value of type A") (messages.get (1))
                 assertResult ("Cyclic inheritance chain for class A") (messages.get (2))

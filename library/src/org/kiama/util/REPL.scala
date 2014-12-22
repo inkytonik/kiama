@@ -21,7 +21,6 @@
 package org.kiama
 package util
 
-import org.kiama.attribution.Attributable
 import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
 
@@ -31,6 +30,7 @@ import scala.util.parsing.combinator.RegexParsers
 trait REPLBase[C <: REPLConfig] extends Profiler {
 
     import scala.annotation.tailrec
+    import scala.io.Source
 
     /**
      * Banner message that is printed before the REPL starts.
@@ -53,6 +53,19 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
                       error : Emitter = new ErrorEmitter) : C
 
     /**
+     * Create and initialise the configuration for a particular run of the REPL.
+     * If supplied, use `emitter` instead of a standard output emitter. Default:
+     * call `createConfig` and then initialise the resulting configuration.
+     */
+    def createAndInitConfig (args : Seq[String],
+                             output : Emitter = new OutputEmitter,
+                             error : Emitter = new ErrorEmitter) : C = {
+        val config = createConfig (args, output, error)
+        config.afterInit ()
+        config
+    }
+
+    /**
      * Driver for this REPL. First, use the argument list to create a
      * configuration for this execution. If the arguments parse ok, then
      * print the REPL banner. Read lines from the console and pass non-null ones
@@ -61,7 +74,14 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * returns false. Call `prompt` each time input is about to be read.
      */
     def driver (args : Seq[String]) {
-        val config = createConfig (args)
+
+        // Set up the configuration
+        val config = createAndInitConfig (args)
+
+        // Process any filename arguments
+        processfiles (config.filenames (), config)
+
+        // Enter interactive phase
         config.output.emitln (banner)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
@@ -70,6 +90,9 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
             time (processlines (config))
         else
             processlines (config)
+
+        config.output.emitln
+
     }
 
     /**
@@ -80,23 +103,57 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
 
     /**
      * Process interactively entered lines, one by one, until end of file.
+     * Prompt with the given prompt.
+     */
+    def processlines (config : C) {
+        processconsole (config.console (), prompt, config)
+    }
+
+    /**
+     * Process the files one by one.
      */
     @tailrec
-    final def processlines (config : C) {
-        val line = config.console ().readLine (prompt)
-        if (line == null) {
-            config.output.emitln
-        } else if (config.processWhitespaceLines () || (line.trim.length != 0))
-            processlines (processline (line, config))
-        else
-            processlines (config)
+    final def processfiles (filenames : Seq[String], config : C) : C = {
+        filenames match {
+            case filename +: rest =>
+                processfiles (rest, processfile (filename, config))
+            case _ =>
+                config
+        }
+    }
+
+    /**
+     * Process a file argument by passing its contents line-by-line to
+     * `processline`.
+     */
+    def processfile (filename : String, config : C) : C =
+        processconsole (new FileConsole (filename), "", config)
+
+    /**
+     * Process interactively entered lines, one by one, until end of file.
+     */
+    @tailrec
+    final def processconsole (console : Console, prompt : String, config : C) : C = {
+        val line = console.readLine (prompt)
+        if (line == null)
+            config
+        else {
+            processline (line, console, config) match {
+                case Some (newConfig) =>
+                    processconsole (console, prompt, newConfig)
+                case _ =>
+                    config
+            }
+        }
     }
 
     /**
      * Process a user input line. The return value allows the processing to
-     * return a new configuration that will be used in subsequent processing.
+     * optionally return a new configuration that will be used in subsequent
+     * processing. A return value of `None` indicates that no more lines
+     * from the current console should be processed.
      */
-    def processline (line : String, config : C) : C
+    def processline (line : String, console : Console, config : C) : Option[C]
 
 }
 
@@ -106,9 +163,12 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
 trait REPL extends REPLBase[REPLConfig] {
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : REPLConfig =
-        new REPLConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : REPLConfig =
+        new REPLConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }
 
@@ -116,26 +176,29 @@ trait REPL extends REPLBase[REPLConfig] {
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. Output is emitted using a configurable emitter.
  */
-trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] with RegexParsers {
-
-    import org.kiama.attribution.Attribution.initTree
+trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers {
 
     /**
      * Process a user input line by parsing it to get a value of type `T`,
      * then passing it to the `process` method. Returns the configuration
      * unchanged.
      */
-    def processline (line : String, config : C) : C = {
-        parseAll (parser, line) match {
-            case Success (e, in) if in.atEnd =>
-                process (e, config)
-            case Success (_, in) =>
-                config.error.emitln (s"extraneous input at ${in.pos}")
-            case f =>
-                config.error.emitln (f)
+    def processline (line : String, console : Console, config : C) : Option[C] = {
+        if (config.processWhitespaceLines () || (line.trim.length != 0)) {
+            parseAll (parser, line) match {
+                case Success (e, in) if in.atEnd =>
+                    process (e, config)
+                case Success (_, in) =>
+                    config.error.emitln (s"extraneous input at ${in.pos}")
+                case f =>
+                    config.error.emitln (f)
+            }
         }
-        config
+        Some (config)
     }
+
+
+// if (config.processWhitespaceLines () || (line.trim.length != 0))
 
     /**
      * The parser to use to convert user input lines into values.
@@ -143,11 +206,9 @@ trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] wi
     def parser : Parser[T]
 
     /**
-     * Process a user input value. By default, just initialise the tree.
+     * Process a user input value in the given configuration.
      */
-    def process (t : T, config : C) {
-        initTree (t)
-    }
+    def process (t : T, config : C)
 
 }
 
@@ -155,17 +216,20 @@ trait ParsingREPLBase[T <: Attributable, C <: REPLConfig] extends REPLBase[C] wi
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. `C` is the type of the configuration.
  */
-trait ParsingREPLWithConfig[T <: Attributable, C <: REPLConfig] extends ParsingREPLBase[T,C]
+trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T,C]
 
 /**
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. Output is emitted to standard output.
  */
-trait ParsingREPL[T <: Attributable] extends ParsingREPLWithConfig[T,REPLConfig] {
+trait ParsingREPL[T ] extends ParsingREPLWithConfig[T,REPLConfig] {
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : REPLConfig =
-        new REPLConfig (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : REPLConfig =
+        new REPLConfig (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }

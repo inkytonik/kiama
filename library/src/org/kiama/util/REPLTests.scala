@@ -51,12 +51,14 @@ trait GeneratingREPLBase[T] extends REPL {
      * Generate a new instance and print it, ignoring the input line. Return
      * the configuration unchanged.
      */
-    def processline (line : String, config : REPLConfig) : REPLConfig = {
+    def processline (line : String, console : Console, config : REPLConfig) : Option[REPLConfig] = {
         generator.arbitrary (Gen.Parameters.default) match {
-            case Some (t) => process (t, config)
-            case None     => config.output.emitln ("can't generate an instance")
+            case Some (t) =>
+                process (t, config)
+            case None =>
+                config.output.emitln ("can't generate an instance")
         }
-        config
+        Some (config)
     }
 
     /**
@@ -73,3 +75,29 @@ trait GeneratingREPLBase[T] extends REPL {
  * syntax trees of type T and prints them to standard output.
  */
 trait GeneratingREPL[T] extends GeneratingREPLBase[T]
+
+/**
+ * Support for testing REPL drivers.
+ */
+trait TestREPLWithConfig[C <: REPLConfig] extends TestDriverWithConfig[C] {
+
+    self : REPLBase[C] =>
+
+    /**
+     * Run the REPL in test mode using the given configuration.
+     */
+    def testdriver (config : C) {
+        processfiles (config.filenames (), config)
+    }
+
+}
+
+/**
+ * Specialisation of `TestREPLWithConfig` that uses the default
+ * configuration type.
+ */
+trait TestREPL extends TestREPLWithConfig[REPLConfig] {
+
+    self : REPLBase[REPLConfig] =>
+
+}

@@ -27,6 +27,8 @@ package util
  */
 class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
 
+    import scala.collection.immutable.Seq
+
     case class Node (i : Int)
     case class Tup2 (n1 : Node, n2 : Node)
     case class Tup3 (n1 : Node, n2 : Node, n3 : Node)
@@ -103,6 +105,22 @@ class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
         assertParseError ("foo", p, 1, 1, "MESSAGE", true)
         assertParseError ("   foo", p, 1, 4, "MESSAGE", true)
         assertParseError ("  \n  foo", p, 2, 3, "MESSAGE", true)
+    }
+
+    {
+        val p = keywords ("[^a-z]".r, Seq ("one", "two"))
+
+        test ("keywords parser works if whitespace is after the keyword") {
+            assertParseOk ("one ", p, "one ")
+        }
+
+        test ("keywords parser works if EOI is after the keyword") {
+            assertParseOk ("two", p, "two")
+        }
+
+        test ("keywords parser fails if keyword is just a prefix of input") {
+            assertParseError ("ones", p, 1, 1, """string matching regex `(one|two)([^a-z]|\z)' expected but `o' found""")
+        }
     }
 
 }

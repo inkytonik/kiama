@@ -24,14 +24,16 @@ package example.oneohonecompanies
 object Main {
 
     import org.kiama.util.OutputEmitter
+    import CompanyTree.CompanyTree
     import SampleCompany.company
 
     def main (args : Array[String]) {
         val output = new OutputEmitter
+        val tree = new CompanyTree (company)
         output.emitln (Total.total (company))
         output.emitln (Total.total (Cut.cut (company)))
         output.emitln (Depth.depth (company))
-        output.emitln (Precedence.precedence (company))
+        output.emitln (new Precedence (tree).precedence (company))
     }
 
 }

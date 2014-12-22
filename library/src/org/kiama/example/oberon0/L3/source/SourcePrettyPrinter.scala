@@ -24,10 +24,10 @@ package L3.source
 
 trait SourcePrettyPrinter extends L2.source.SourcePrettyPrinter {
 
-    import base.source.{IdnDef, IdnUse, SourceTree}
+    import base.source.{IdnDef, IdnUse, SourceNode}
     import scala.collection.immutable.Seq
 
-    override def toDoc (n : SourceTree) : Doc =
+    override def toDoc (n : SourceNode) : Doc =
         n match {
             case ProcDecl (IdnDef (i1), as, b, IdnUse (i2)) =>
                 "PROCEDURE" <+> i1 <> paramsToDoc (as map toDoc, semi) <> semi <@>

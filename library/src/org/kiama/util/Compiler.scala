@@ -22,7 +22,6 @@ package org.kiama
 package util
 
 import java.io.Reader
-import org.kiama.attribution.Attributable
 import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
 
@@ -48,11 +47,25 @@ trait CompilerBase[T, C <: Config] extends Profiler {
 
     /**
      * Create the configuration for a particular run of the compiler.
-     * If supplied, use `emitter` instead of a standard output emitter.
+     * If supplied, use `output` instead of a standard output emitter,
+     * and/or `error` instead of a standard error emitter.
      */
     def createConfig (args : Seq[String],
                       output : Emitter = new OutputEmitter,
                       error : Emitter = new ErrorEmitter) : C
+
+    /**
+     * Create and initialise the configuration for a particular run of the REPL.
+     * If supplied, use `emitter` instead of a standard output emitter. Default:
+     * call `createConfig` and then initialise the resulting configuration.
+     */
+    def createAndInitConfig (args : Seq[String],
+                             output : Emitter = new OutputEmitter,
+                             error : Emitter = new ErrorEmitter) : C = {
+        val config = createConfig (args, output, error)
+        config.afterInit ()
+        config
+    }
 
     /**
      * Driver for this compiler. First, use the argument list to create a
@@ -60,7 +73,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * run the file processing in the appropriate way.
      */
     def driver (args : Seq[String]) {
-        val config = createConfig (args)
+        val config = createAndInitConfig (args)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
             profile (processfiles (config.filenames (), config), dimensions,
@@ -119,11 +132,9 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * Function to process the input that was parsed. `filename` is the name
      * of the file from which the input came. `ast` is the abstract syntax tree
      * produced by the parser from that file. `config` provides access to all
-     * aspects of the configuration. The default implmentation does nothing.
+     * aspects of the configuration.
      */
-    def process (filename : String, ast : T, config : C) {
-        // Do nothing
-    }
+    def process (filename : String, ast : T, config : C)
 
     /**
      * Pretty-print an abstract syntax trees. Default: return an empty string.
@@ -134,14 +145,10 @@ trait CompilerBase[T, C <: Config] extends Profiler {
 }
 
 /**
- * A compiler that uses RegexParsers to produce Attributable ASTs. The AST
- * is initialised with `initTree` by `process`. Override it and call it
- * before performing specific attribution. `C` is the type of the compiler
- * configuration.
+ * A compiler that uses RegexParsers to produce ASTs. `C` is the type of the
+ * compiler configuration.
  */
-trait CompilerWithConfig[T <: Attributable, C <: Config] extends CompilerBase[T,C] with RegexParsers {
-
-    import org.kiama.attribution.Attribution.initTree
+trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexParsers {
 
     /**
      * The actual parser used to produce the AST.
@@ -159,26 +166,20 @@ trait CompilerWithConfig[T <: Attributable, C <: Config] extends CompilerBase[T,
                 Right (f.toString)
         }
 
-    /**
-     * Process the AST by performing any processing at the next level up
-     * and then initialising the AST for attribution.
-     */
-    override def process (filename : String, ast : T, config : C) {
-        super.process (filename, ast, config)
-        initTree (ast)
-    }
-
 }
 
 /**
  * Specialisation of `CompilerWithConfig` that uses the default configuration
  * type.
  */
-trait Compiler[T <: Attributable] extends CompilerWithConfig[T,Config] {
+trait Compiler[T] extends CompilerWithConfig[T,Config] {
 
     def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : Config =
-        new Config (args, output, error)
+                      out : Emitter = new OutputEmitter,
+                      err : Emitter = new ErrorEmitter) : Config =
+        new Config (args) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }

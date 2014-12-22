@@ -65,12 +65,12 @@ END type.
 [2]    avar2 : aconst2;
 [2]
 [2]            ^
-[2][28.5] atype1 cannot be used in an expression
+[2][28.5] illegal assignment
 [2]
 [2]    atype1 := 2;
 [2]
 [2]    ^
-[2][28.5] illegal assignment
+[2][28.5] atype1 cannot be used in an expression
 [2]
 [2]    atype1 := 2;
 [2]

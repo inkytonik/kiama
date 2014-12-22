@@ -27,7 +27,7 @@ package util
 trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{Dimension, Value}
-    import org.kiama.attribution.Attributable
+    // import org.kiama.attribution.Attributable
     import org.kiama.attribution.Attribute
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Counter
@@ -47,7 +47,7 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
     override def dimValue (record : Record, dim : Dimension) : Value =
         dim match {
 
-            /**
+            /*
              * The `name` dimension is the string that identifies either the
              * strategy or attribute that is being profiled. They are checked
              * in that order.
@@ -73,26 +73,25 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
                 } else
                     "no strategy or attribute dimension, so no name"
 
+            // /*
+            //  * `location` dimension is the location of the evaluation's subject
+            //  * in the tree: root, inner node or leaf. Relies on the node being
+            //  * an Attributable.
+            //  */
+            // case "location" =>
+            //     checkFor (record, dim, "", "subject") {
+            //         case a : Attributable =>
+            //             if (a.isRoot)
+            //                 "Root"
+            //             else if (a.hasChildren)
+            //                 "Inner"
+            //             else
+            //                 "Leaf"
+            //         case _ =>
+            //             "unknown location"
+            //     }
 
-            /**
-             * `location` dimension is the location of the evaluation's subject
-             * in the tree: root, inner node or leaf. Relies on the node being
-             * an Attributable.
-             */
-            case "location" =>
-                checkFor (record, dim, "", "subject") {
-                    case a : Attributable =>
-                        if (a.isRoot)
-                            "Root"
-                        else if (a.hasChildren)
-                            "Inner"
-                        else
-                            "Leaf"
-                    case _ =>
-                        "unknown location"
-                }
-
-            /**
+            /*
              * `subjectHash` gives the hash code of the `subject` dimension
              * and is useful if you can't tell the different between subjects
              * from their `toString` representation.
@@ -103,25 +102,25 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
                         s.##
                 }
 
-            /**
-             * `depends-on` dimension is a summary of the direct dependencies
-             * of an evaluation. Each dependence is summarised by the type of
-             * the node where it was evaluated, the attribute that was evaluated
-             * there and the step from the current node to that node.
-             */
-            case "depends-on" =>
-                checkFor (record, dim, "AttrEval", "subject") {
-                    case srcsubj =>
-                        record.dirDescs.map (dst =>
-                            checkFor (dst, dim, "AttrEval", "subject") {
-                                case dstsubj =>
-                                    val step = subjectsToStep (srcsubj, dstsubj)
-                                    Dep (step, dimValue (dst, "type"),
-                                         dimValue (dst, "name"))
-                        }).toSet.mkString (", ")
-                }
+            // /*
+            //  * `depends-on` dimension is a summary of the direct dependencies
+            //  * of an evaluation. Each dependence is summarised by the type of
+            //  * the node where it was evaluated, the attribute that was evaluated
+            //  * there and the step from the current node to that node.
+            //  */
+            // case "depends-on" =>
+            //     checkFor (record, dim, "AttrEval", "subject") {
+            //         case srcsubj =>
+            //             record.dirDescs.map (dst =>
+            //                 checkFor (dst, dim, "AttrEval", "subject") {
+            //                     case dstsubj =>
+            //                         val step = subjectsToStep (srcsubj, dstsubj)
+            //                         Dep (step, dimValue (dst, "type"),
+            //                              dimValue (dst, "name"))
+            //             }).toSet.mkString (", ")
+            //     }
 
-            /**
+            /*
              * Output dot file for the dependencies involved in this attribute
              * evaluation.
              */
@@ -280,29 +279,29 @@ trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
         override def toString = "?"
     }
 
-    /**
-     * Summarise the single step between two nodes at which attributes
-     * have been evaluated.
-     */
-    def subjectsToStep (src : Any, dst : Any) : Step =
-        if (src == dst)
-            Self
-        else
-            (src, dst) match {
-                case (srca : Attributable, dsta : Attributable) =>
-                    if (srca.parent eq dsta)
-                        Parent
-                    else if (srca.prev[Attributable] eq dsta)
-                        Prev
-                    else if (srca.next[Attributable] eq dsta)
-                        Next
-                    else
-                        srca.children.indexWhere (_ eq dsta) match {
-                            case -1 => Other
-                            case c  => Child (c)
-                        }
-                case _ =>
-                    Other
-            }
+    // /**
+    //  * Summarise the single step between two nodes at which attributes
+    //  * have been evaluated.
+    //  */
+    // def subjectsToStep (src : Any, dst : Any) : Step =
+    //     if (src == dst)
+    //         Self
+    //     else
+    //         (src, dst) match {
+    //             case (srca : Attributable, dsta : Attributable) =>
+    //                 if (srca.parent eq dsta)
+    //                     Parent
+    //                 else if (srca.prev[Attributable] eq dsta)
+    //                     Prev
+    //                 else if (srca.next[Attributable] eq dsta)
+    //                     Next
+    //                 else
+    //                     srca.children.indexWhere (_ eq dsta) match {
+    //                         case -1 => Other
+    //                         case c  => Child (c)
+    //                     }
+    //             case _ =>
+    //                 Other
+    //         }
 
 }

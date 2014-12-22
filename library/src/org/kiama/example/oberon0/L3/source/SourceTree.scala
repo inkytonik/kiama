@@ -22,7 +22,7 @@ package org.kiama
 package example.oberon0
 package L3.source
 
-import base.source.{Block, Declaration, Expression, IdnDef, IdnUse, SourceTree,
+import base.source.{Block, Declaration, Expression, IdnDef, IdnUse, SourceNode,
     Statement}
 import L0.source.TypeDef
 import scala.collection.immutable.Seq
@@ -36,7 +36,7 @@ case class ProcDecl (idndef : IdnDef, params : Seq[FPSection], body : Block,
 /**
  * Non-terminal type for parameter passing modes.
  */
-sealed abstract class Mode
+sealed abstract class Mode extends SourceNode
 
 /**
  * Pass by variable (reference) mode.
@@ -51,7 +51,7 @@ case class ValMode () extends Mode
 /**
  * Formal parameter sections.
  */
-case class FPSection (mode : Mode, idndefs : Seq[IdnDef], tipe : TypeDef) extends SourceTree
+case class FPSection (mode : Mode, idndefs : Seq[IdnDef], tipe : TypeDef) extends SourceNode
 
 /**
  * Call statements.

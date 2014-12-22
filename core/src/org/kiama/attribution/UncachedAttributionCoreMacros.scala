@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2008-2014 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2013-2014 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -21,26 +21,20 @@
 package org.kiama
 package attribution
 
-/**
- * Support for the `Attributable` class.
- */
-object AttributableSupport {
+import org.kiama.util.Compat210._
 
-    /**
-     * Deep clone the given `Attributable` tree.
-     */
-    def deepclone[T <: Attributable] (t : T) : T = {
+object UncachedAttributionCoreMacros {
 
-        import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
+    import org.bitbucket.inkytonik.dsinfo.DSInfo.makeCallWithName
 
-        val deepcloner =
-            everywherebu (rule[Attributable] {
-                case n if !n.hasChildren =>
-                    n.clone ()
-            })
+    import scala.reflect.macros._
 
-        rewrite (deepcloner) (t)
+    // Macros for the builder methods
 
-    }
+    def attrMacro[T,U,A] (c : blackbox.Context) (f : c.Expr[T => U]) : c.Expr[A] =
+        makeCallWithName (c, "this.attrWithName")
+
+    def paramAttrMacro[V,T,U,P] (c : blackbox.Context) (f : c.Expr[V => T => U]) : c.Expr[P] =
+        makeCallWithName (c, "this.paramAttrWithName")
 
 }

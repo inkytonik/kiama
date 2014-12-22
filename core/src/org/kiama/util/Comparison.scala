@@ -26,6 +26,8 @@ package util
  */
 object Comparison {
 
+    import scala.collection.immutable.Seq
+
     /**
      * Compare two arbitrary values. If they are both references, use
      * reference equality, otherwise use value equality.
@@ -52,6 +54,27 @@ object Comparison {
             }
 
     /**
+     * Compare two `Iterable` collections or options and tuples containing that kind of
+     * collection. Use `same` to compare the individual elements.
+     */
+    def samecollection (v1 : Any, v2 : Any) : Boolean =
+        if (v1 == null)
+            v2 == null
+        else if (v2 == null)
+            false
+        else
+            (v1, v2) match {
+                case (Some (s1), Some (s2)) =>
+                    samecollection (s1, s2)
+                case ((t1,t2), (t3,t4)) =>
+                    samecollection (t1, t3) && samecollection (t2, t4)
+                case (t1 : Iterable[_], t2 : Iterable[_]) =>
+                    (t1.size == t2.size) && (t1.zip (t2).forall (Function.tupled (samecollection)))
+                case _ =>
+                    same (v1, v2)
+            }
+
+    /**
      * As for `same`, except that if the two values are `Some` options
      * containing references, they are unwrapped first and the contents are
      * compared by reference.
@@ -68,5 +91,44 @@ object Comparison {
                 case _ =>
                     same (v1, v2)
             }
+
+    /**
+     * As for `same` but checks the elements of the two sequences pairwise.
+     */
+    def seqsame (s1 : Seq[Any], s2 : Seq[Any]) : Boolean =
+        (s1.size == s2.size) && (s1.zip (s2).forall (Function.tupled (same)))
+
+    /**
+     * Does the sequence `s` contain `t`? Equality is tested using `same`.
+     */
+    def contains[T] (s : Seq[T], t : T) : Boolean =
+        s.exists (same (_, t))
+
+    /**
+     * Return a sequence with only the distinct elements from `s`. "distinct"
+     * in this case means compare unequal using `same`. The first occurrence
+     * of each distinct element is kept.
+     */
+    def distinct[T] (s : Seq[T]) : Seq[T] = {
+
+        import scala.collection.mutable.TreeSet
+
+        /*
+         * An ordering that says two elements are equal if `same` says they
+         * are, otherwise uses the index (i.e., the position in `s`) so that
+         * earlier elements are less than later ones.
+         */
+        object TOrdering extends Ordering[(T,Int)] {
+
+              def compare (a : (T, Int), b : (T, Int)) : Int =
+                  if (same (a._1, b._1)) 0 else a._2 - b._2
+
+        }
+
+        val set = new TreeSet[(T,Int)] () (TOrdering)
+        set ++= (s.zipWithIndex)
+        set.toList.map (_._1)
+
+    }
 
 }

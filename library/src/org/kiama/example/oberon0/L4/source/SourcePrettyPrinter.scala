@@ -24,10 +24,10 @@ package L4.source
 
 trait SourcePrettyPrinter extends L3.source.SourcePrettyPrinter {
 
-    import base.source.{Expression, SourceTree}
+    import base.source.{Expression, SourceNode}
     import org.kiama.output.PrettyExpression
 
-    override def toDoc (n : SourceTree) : Doc =
+    override def toDoc (n : SourceNode) : Doc =
         n match {
             case ArrayTypeDef (s, t) =>
                 "ARRAY" <+> toDoc (s) <+> "OF" <+> toDoc (t)

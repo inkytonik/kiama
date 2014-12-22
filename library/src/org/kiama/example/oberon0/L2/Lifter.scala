@@ -25,24 +25,25 @@ package L2
 /**
  * Lifting transformation for L2.
  */
-trait Lifter extends base.Transformer with NameAnalyser {
+trait Lifter extends base.Transformer {
 
     import base.source.{Block, Declaration, ModuleDecl}
-    import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
+    import base.source.SourceTree.SourceTree
+    import org.kiama.rewriting.Rewriter.{everywherebu, rewriteTree, rule}
     import scala.collection.immutable.Seq
 
     /**
      * Lift inner declarations within the module to the top level.  Assumes
      * that identifiers are unique. Then call the next level of transformation.
      */
-    override def transform (m : ModuleDecl) : ModuleDecl = {
+    override def transform (tree : SourceTree) : SourceTree = {
 
-        /**
+        /*
          * The collected declarations.
          */
         val decls = Seq.newBuilder[Declaration]
 
-        /**
+        /*
          * Lift declarations from inner blocks to the top level by adding
          * them to the declarations buffer in a bottom-up fashion and
          * removing them from their blocks.
@@ -67,7 +68,7 @@ trait Lifter extends base.Transformer with NameAnalyser {
                 }
             )
 
-        super.transform (rewrite (liftBlocks) (m))
+        super.transform (rewriteTree (liftBlocks) (tree))
 
     }
 

@@ -28,46 +28,51 @@ object MiniJavaTree {
 
     import org.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
         PrettyBinaryExpression, PrettyExpression, PrettyUnaryExpression}
-    import org.kiama.util.TreeNode
+    import org.kiama.relation.Tree
     import scala.collection.immutable.Seq
+
+    /**
+     * Tree type for MiniJava programs.
+     */
+    type MiniJavaTree = Tree[MiniJavaNode,Program]
 
     /**
      * The common supertype of all source tree nodes.
      */
-    sealed abstract class MiniJavaTree extends TreeNode
+    sealed abstract class MiniJavaNode extends Product
 
     /**
      * A main program consisting of a main class and a possibly empty list of
      * other classes (defines the root scope).
      */
-    case class Program (main : MainClass, classes : Seq[Class]) extends MiniJavaTree
+    case class Program (main : MainClass, classes : Seq[Class]) extends MiniJavaNode
 
     /**
      * A main class with a given name and body given by a single statement.
      */
-    case class MainClass (name : IdnDef, stmt : Statement) extends MiniJavaTree
+    case class MainClass (name : IdnDef, stmt : Statement) extends MiniJavaNode
 
     /**
      * A general class with a given name, optional super class, possibly empty
      * list of instance variables, and a possibly empty list of methods.
      */
     case class Class (name : IdnDef, superclass : Option[IdnUse],
-                      body : ClassBody) extends MiniJavaTree
+                      body : ClassBody) extends MiniJavaNode
 
     /**
      * The body of a class.
      */
-    case class ClassBody (fields : Seq[Field], methods : Seq[Method]) extends MiniJavaTree
+    case class ClassBody (fields : Seq[Field], methods : Seq[Method]) extends MiniJavaNode
 
     /**
      * A class field with a given type and name.
      */
-    case class Field (tipe : Type, name : IdnDef) extends MiniJavaTree
+    case class Field (tipe : Type, name : IdnDef) extends MiniJavaNode
 
     /**
      * A variable with a given type and name.
      */
-    case class Var (tipe : Type, name : IdnDef) extends MiniJavaTree
+    case class Var (tipe : Type, name : IdnDef) extends MiniJavaNode
 
     /**
      * A method with a given return type, name, possibly empty list of arguments,
@@ -75,7 +80,7 @@ object MiniJavaTree {
      * that comprise the method body, and an expression whose value is to be
      * returned by the method.
      */
-    case class Method (name : IdnDef, body : MethodBody) extends MiniJavaTree
+    case class Method (name : IdnDef, body : MethodBody) extends MiniJavaNode
 
     /**
      * The body of a method.
@@ -83,17 +88,17 @@ object MiniJavaTree {
     case class MethodBody (tipe : Type, args : Seq[Argument],
                            vars : Seq[Var],
                            optStmts : Seq[Statement],
-                           result : Expression) extends MiniJavaTree
+                           result : Expression) extends MiniJavaNode
 
     /**
      * An argument with a given type and name.
      */
-    case class Argument (tipe : Type, name : IdnDef) extends MiniJavaTree
+    case class Argument (tipe : Type, name : IdnDef) extends MiniJavaNode
 
     /**
      * Common superclass for types.
      */
-    abstract class Type extends MiniJavaTree
+    abstract class Type extends MiniJavaNode
 
     /**
      * The basic integer type.
@@ -126,7 +131,7 @@ object MiniJavaTree {
     /**
      * Common superclass of statements.
      */
-    sealed abstract class Statement extends MiniJavaTree
+    sealed abstract class Statement extends MiniJavaNode
 
     /**
      * A block containing a possibly empty list of statements.
@@ -168,7 +173,7 @@ object MiniJavaTree {
     /**
      * Common superclass of expressions.
      */
-    abstract class Expression extends MiniJavaTree with PrettyExpression
+    abstract class Expression extends MiniJavaNode with PrettyExpression
 
     /**
      * Common interface for binary expressions.
@@ -287,7 +292,7 @@ object MiniJavaTree {
     /**
      * An identifier reference.
      */
-    abstract class IdnTree extends MiniJavaTree {
+    abstract class IdnTree extends MiniJavaNode {
         def idn : String
     }
 

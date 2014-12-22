@@ -25,20 +25,18 @@ package L1
 trait TypeAnalyser extends L0.TypeAnalyser {
 
     import base.source.Expression
-    import org.kiama.attribution.Attribution.attr
     import source.{IfStatement, WhileStatement}
 
     /**
      * The type expected of an expression as defined by its context.
      */
     override def exptypeDef : Expression => Type =
-        (n =>
-            n.parent match {
-                case _ : IfStatement | _ : WhileStatement =>
-                    booleanType
+        {
+            case tree.parent (_ : IfStatement | _ : WhileStatement) =>
+                booleanType
 
-                case _ =>
-                    super.exptypeDef (n)
-            })
+            case n =>
+                super.exptypeDef (n)
+        }
 
 }

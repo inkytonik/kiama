@@ -31,7 +31,7 @@ trait CPrettyPrinter extends ParenPrettyPrinter {
 
     import org.kiama.output.PrettyExpression
 
-    def toDoc (n : CTree) : Doc =
+    def toDoc (n : CNode) : Doc =
         n match {
             case CProgram (is, ds) =>
                 vsep (is map toDoc) <@>

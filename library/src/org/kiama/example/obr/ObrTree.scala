@@ -27,13 +27,18 @@ package example.obr
  */
 object ObrTree {
 
-    import org.kiama.util.TreeNode
+    import org.kiama.relation.Tree
     import scala.collection.immutable.Seq
+
+    /**
+     * Tree type for MiniJava programs.
+     */
+    type ObrTree = Tree[ObrNode,ObrInt]
 
     /**
      * Interface for all Obr tree nodes.
      */
-    sealed abstract class ObrTree extends TreeNode
+    sealed abstract class ObrNode extends Product
 
     /**
      * An Obr program consisting of the given declarations and statements and
@@ -41,12 +46,12 @@ object ObrTree {
      * must be the same.
      */
     case class ObrInt (idn1: Identifier, decls : Seq[Declaration],
-                       stmts : Seq[Statement], idn2 : Identifier) extends ObrTree
+                       stmts : Seq[Statement], idn2 : Identifier) extends ObrNode
 
     /**
      * Marker trait for all node types that have an entity.
      */
-    trait EntityTree extends ObrTree {
+    trait EntityTree extends ObrNode {
         def idn : IdnTree
     }
 
@@ -58,7 +63,7 @@ object ObrTree {
     /**
      * Superclass of all declaration classes.
      */
-    sealed abstract class Declaration extends ObrTree with EntityTree
+    sealed abstract class Declaration extends ObrNode with EntityTree
 
     /**
      * A declaration of an integer variable.
@@ -93,7 +98,7 @@ object ObrTree {
     /**
      * A declaration of an enumeration constant
      */
-    case class EnumConst (idn : IdnDef) extends ObrTree with EntityTree
+    case class EnumConst (idn : IdnDef) extends ObrNode with EntityTree
 
     /**
      * A declaration of an integer constant with the given value.
@@ -108,7 +113,7 @@ object ObrTree {
     /**
     * Superclass of all statement classes.
     */
-    sealed abstract class Statement extends ObrTree
+    sealed abstract class Statement extends ObrNode
 
     /**
     * A statement that evaluates its second expression and assigns it to the
@@ -160,13 +165,13 @@ object ObrTree {
      * A statement that is used to catch exception
      */
     case class TryStmt (body : TryBody, catches : Seq[Catch]) extends Statement
-    case class TryBody (stmts : Seq[Statement]) extends ObrTree
-    case class Catch (idn : IdnUse, stmts : Seq[Statement]) extends ObrTree
+    case class TryBody (stmts : Seq[Statement]) extends ObrNode
+    case class Catch (idn : IdnUse, stmts : Seq[Statement]) extends ObrNode
 
     /**
     * Superclass of all expression classes.
     */
-    abstract class Expression extends ObrTree
+    abstract class Expression extends ObrNode
 
     /**
      * An expression whose value is the logical AND of the values of two expressions.
@@ -262,7 +267,7 @@ object ObrTree {
     /**
      * An identifier reference.
      */
-    abstract class IdnTree extends ObrTree {
+    abstract class IdnTree extends ObrNode {
         def idn : String
     }
 

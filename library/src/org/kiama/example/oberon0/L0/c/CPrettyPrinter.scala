@@ -24,10 +24,10 @@ package L0.c
 
 trait CPrettyPrinter extends base.c.CPrettyPrinter {
 
-    import base.c.{CTree, CExpression, CType}
+    import base.c.{CExpression, CNode, CType}
     import org.kiama.output.PrettyExpression
 
-    override def toDoc (n : CTree) : Doc =
+    override def toDoc (n : CNode) : Doc =
         n match {
             case CNamedType (s) =>
                 s

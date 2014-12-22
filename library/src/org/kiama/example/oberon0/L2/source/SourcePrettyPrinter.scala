@@ -24,10 +24,10 @@ package L2.source
 
 trait SourcePrettyPrinter extends L1.source.SourcePrettyPrinter {
 
-    import base.source.SourceTree
+    import base.source.SourceNode
     import scala.collection.immutable.Seq
 
-    override def toDoc (n : SourceTree) : Doc =
+    override def toDoc (n : SourceNode) : Doc =
         n match {
             case s : ForStatement =>
                 forToDoc (s)

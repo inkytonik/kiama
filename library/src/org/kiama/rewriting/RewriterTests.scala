@@ -55,14 +55,14 @@ class RewriterTests extends Tests with Generator {
     }
 
     test ("issubterm: a term is a subterm of itself") {
-        check ((t : Stmt) => optsame (Some (t), issubterm (t, t)))
-        check ((t : Exp) => optsame (Some (t), issubterm (t, t)))
+        check ((t : Stmt) => optsame (Some (t), issubterm ((t, t))))
+        check ((t : Exp) => optsame (Some (t), issubterm ((t, t))))
     }
 
     test ("issubterm: random descendants are subterms") {
         val random = new scala.util.Random
 
-        /**
+        /*
          * Pick a random Term child of t, returning t if there are no
          * children or there are children but none of them are Terms.
          */
@@ -77,7 +77,7 @@ class RewriterTests extends Tests with Generator {
             }
         }
 
-        /**
+        /*
          * Pick a random descendant of t (including possibly t).
          */
         def pickdesc (t : Any) : Any =
@@ -96,59 +96,59 @@ class RewriterTests extends Tests with Generator {
                     t
             }
 
-        check ((t : Stmt) => optsame (Some (t), issubterm (pickdesc (t), t)))
-        check ((t : Exp) => optsame (Some (t), issubterm (pickdesc (t), t)))
+        check ((t : Stmt) => optsame (Some (t), issubterm ((pickdesc (t), t))))
+        check ((t : Exp) => optsame (Some (t), issubterm ((pickdesc (t), t))))
     }
 
     {
         val t = Add (Num (1), Num (2))
 
         test ("issubterm: selected subterms - fail") {
-            assertResult (None) (issubterm (Num (42), t))
+            assertResult (None) (issubterm ((Num (42), t)))
         }
 
         test ("issubterm: selected subterms - succeed sub") {
-            assertOptSame (Some (t)) (issubterm (Num (1), t))
+            assertOptSame (Some (t)) (issubterm ((Num (1), t)))
         }
 
         test ("issubterm: selected subterms - succeed self") {
-            assertOptSame (Some (t)) (issubterm (t, t))
+            assertOptSame (Some (t)) (issubterm ((t, t)))
         }
 
         test ("issubterm: selected proper subterms - fail") {
-            assertResult (None) (ispropersubterm (Num (42), t))
+            assertResult (None) (ispropersubterm ((Num (42), t)))
         }
 
         test ("issubterm: selected proper subterms - succeed sub") {
-            assertOptSame (Some (t)) (ispropersubterm (Num (1), t))
+            assertOptSame (Some (t)) (ispropersubterm ((Num (1), t)))
         }
 
         test ("issubterm: selected proper subterms - fail self") {
-            assertResult (None) (ispropersubterm (t, t))
+            assertResult (None) (ispropersubterm ((t, t)))
         }
 
         test ("issuperterm: selected superterms - fail") {
-            assertResult (None) (issuperterm (t, Num (42)))
+            assertResult (None) (issuperterm ((t, Num (42))))
         }
 
         test ("issuperterm: selected superterms - succeed sub") {
-            assertOptSame (Some (t)) (issuperterm (t, Num (1)))
+            assertOptSame (Some (t)) (issuperterm ((t, Num (1))))
         }
 
         test ("issuperterm: selected superterms - succeed self") {
-            assertOptSame (Some (t)) (issuperterm (t, t))
+            assertOptSame (Some (t)) (issuperterm ((t, t)))
         }
 
         test ("issuperterm: selected proper superterms - fail") {
-            assertResult (None) (ispropersuperterm (t, Num (42)))
+            assertResult (None) (ispropersuperterm ((t, Num (42))))
         }
 
         test ("issuperterm: selected proper superterms - succeed sub") {
-            assertOptSame (Some (t)) (ispropersuperterm (t, Num (1)))
+            assertOptSame (Some (t)) (ispropersuperterm ((t, Num (1))))
         }
 
         test ("issuperterm: selected proper superterms - fail self") {
-            assertResult (None) (ispropersuperterm (t, t))
+            assertResult (None) (ispropersuperterm ((t, t)))
         }
     }
 
@@ -1041,7 +1041,7 @@ class RewriterTests extends Tests with Generator {
                     dup (t, Seq (Num (42), Num (99)))
                 }
         val base = "dup illegal arguments"
-        val method = "public org.kiama.example.imperative.ImperativeTree$Asgn"
+        val method = s"public org.kiama.example.imperative.ImperativeTree$$Asgn"
         val arg1type = "org.kiama.example.imperative.ImperativeTree$Var"
         val arg2type = "org.kiama.example.imperative.ImperativeTree$Exp"
         val error = "(Num(42.0),Num(99.0)), expects 2"
@@ -1851,6 +1851,49 @@ class RewriterTests extends Tests with Generator {
             val s = everywheretd (r)
             assertResult (Some (u)) (s (t))
             assertResult (Seq (1, 2, 3, 4, 5)) (l)
+        }
+    }
+
+    // Cloning tests
+
+    test ("deep cloning a term with sharing gives an equal but not eq term") {
+        import org.kiama.example.imperative.ImperativeTree._
+        import org.kiama.relation.Tree
+
+        val t = Add (Mul (Add (Num (1), Num (2)),
+                          Sub (Add (Num (1), Num (2)),
+                               Add (Num (1), Num (2)))),
+                     Add (Add (Add (Num (3), Num (4)),
+                               Num (5)),
+                          Add (Num (3), Num (4))))
+        val u = Add (Mul (Add (Num (1), Num (2)),
+                          Sub (Add (Num (1), Num (2)),
+                               Add (Num (1), Num (2)))),
+                     Add (Add (Add (Num (3), Num (4)),
+                               Num (5)),
+                          Add (Num (3), Num (4))))
+
+        val ttree = new Tree[Exp,Exp] (t)
+        val ct : Add = deepclone (t)
+
+        // Must get the right answer (==)
+        assertResult (u) (ct)
+
+        // Must not get the original term (eq)
+        // Check root and one level down in case we just clone root
+        assertNotSame (t) (ct)
+        assertNotSame (t.l) (ct.l)
+        assertNotSame (t.r) (ct.r)
+
+        // println ("is")
+
+        // Make sure that the new term is actually a tree. If it's not, trying
+        // to make a Tree from it will throw a RuntimeException.
+        try {
+            new Tree[Exp,Exp] (ct)
+        } catch {
+            case e : RuntimeException =>
+                fail (s"deepclone didn't produce a tree: $ct")
         }
     }
 

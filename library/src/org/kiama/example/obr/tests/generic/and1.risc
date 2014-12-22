@@ -1,28 +1,28 @@
     ! Prologue
     movi $27, $0, 0
-    ! StW(Local(0),Read())
+    ! StW(Local(8),Read())
     rd $1
-    stw $1, $27, 0
-    ! Beq(Cond(IntDatum(0),CmpeqW(SequenceDatum(List(StW(Local(4),IntDatum(0)), Bne(LdW(Local(4)),Label(3)), StW(Local(8),IntDatum(0)), Jmp(Label(4)), LabelDef(Label(3))),DivW(IntDatum(1),LdW(Local(4)))),IntDatum(1)),IntDatum(0)),Label(1))
+    stw $1, $27, 8
+    ! Beq(Cond(IntDatum(0),CmpeqW(SequenceDatum(List(StW(Local(0),IntDatum(0)), Bne(LdW(Local(0)),Label(3)), StW(Local(4),IntDatum(0)), Jmp(Label(4)), LabelDef(Label(3))),DivW(IntDatum(1),LdW(Local(0)))),IntDatum(1)),IntDatum(0)),Label(1))
     movi $1, $0, 0
     cmpi $1, 0
     beq label6
-    ! StW(Local(4),IntDatum(0))
-    movi $2, $0, 0
-    stw $2, $27, 4
-    ! Bne(LdW(Local(4)),Label(3))
-    ldw $1, $27, 4
+    ! StW(Local(0),IntDatum(0))
+    movi $1, $0, 0
+    stw $1, $27, 0
+    ! Bne(LdW(Local(0)),Label(3))
+    ldw $1, $27, 0
     cmpi $1, 0
     bne label3
-    ! StW(Local(8),IntDatum(0))
+    ! StW(Local(4),IntDatum(0))
     movi $1, $0, 0
-    stw $1, $27, 8
+    stw $1, $27, 4
     ! Jmp(Label(4))
     br label4
     ! LabelDef(Label(3))
 label3:
     movi $1, $0, 1
-    ldw $2, $27, 4
+    ldw $2, $27, 0
     div $1, $1, $2
     movi $2, $0, 1
     cmp $1, $2

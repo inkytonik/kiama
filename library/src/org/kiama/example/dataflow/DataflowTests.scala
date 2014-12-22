@@ -27,10 +27,9 @@ import org.kiama.util.TestCompiler
 /**
  * Tests of data flow attribution.
  */
-class DataflowTests extends Driver with Dataflow with TestCompiler[Stm] {
+class DataflowTests extends Driver with TestCompiler[Stm] {
 
     import DataflowTree._
-    import org.kiama.attribution.Attribution._
     import scala.collection.immutable.Seq
 
     /*
@@ -55,11 +54,11 @@ class DataflowTests extends Driver with Dataflow with TestCompiler[Stm] {
     val s5 = Return ("x")
     val prog = Block (Seq (s1, s2, s3, s4, s5))
 
-    val outAttr = out.asInstanceOf[CircularAttribute[Stm,Set[Var]]]
+    val tree = new DataflowTree (prog)
+    val dataflow = new Dataflow (tree)
+    import dataflow._
 
-    override def beforeAll () {
-        initTree (prog)
-    }
+    val outAttr = out.asInstanceOf[CircularAttribute[Stm,Set[Var]]]
 
     test ("in - s1") {
         assertResult (Set ("w", "v")) (in (s1))

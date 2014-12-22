@@ -33,10 +33,8 @@ import org.kiama.util.Tests
 
 class DotNameResolutionTests extends Tests {
 
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.NameResolution._
+    import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
-    import org.kiama.example.picojava.TypeAnalyser._
     import scala.collection.immutable.Seq
 
     // For the actual program text, see DotNameResolutionTests.pj
@@ -61,24 +59,24 @@ class DotNameResolutionTests extends Tests {
                           declAA,
                           declBB))))))
 
-    override def beforeAll () {
-        initTree (ast)
-    }
+    val tree = new PicoJavaTree (ast)
+    val analyser = new ErrorCheck (tree)
+    import analyser._
 
     test ("class members are resolved") {
-        assertResult (declAAx) (axInA->decl)
+        assertResult (declAAx) (decl (axInA))
     }
 
     test ("nested classes are resolved") {
-        assertResult (declBB) (BBinBB->decl)
+        assertResult (declBB) (decl (BBinBB))
     }
 
     test ("nested names hide outer ones") {
-        assertResult (declAAx) (bxInBB->decl)
+        assertResult (declAAx) (decl (bxInBB))
     }
 
     test ("non-members in scope are not resolved as members") {
-        assert (isUnknown (byInBB->decl))
+        assert (isUnknown (decl (byInBB)))
     }
 
 }

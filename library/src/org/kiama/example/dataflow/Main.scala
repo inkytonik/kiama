@@ -35,9 +35,10 @@ class Driver extends SyntaxAnalyser with Compiler[Stm] {
     /**
      * Process the tree by optimising it, then print optimised tree.
      */
-    override def process (filename : String, ast : Stm, config : Config) {
-        super.process (filename, ast, config)
-        val optast = Optimiser.run (ast)
+    def process (filename : String, ast : Stm, config : Config) {
+        val tree = new DataflowTree (ast)
+        val optimiser = new Optimiser (tree)
+        val optast = optimiser.run (ast)
         config.output.emitln (optast)
     }
 

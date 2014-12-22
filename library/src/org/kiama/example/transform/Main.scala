@@ -29,12 +29,11 @@ import org.kiama.util.Compiler
  */
 class Driver extends Parser with Compiler[Program] {
 
+    import TransformTree.TransformTree
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
 
-    override def process (filename : String, program : Program, config : Config) {
-
-        super.process (filename, program, config)
+    def process (filename : String, program : Program, config : Config) {
 
         // Print original program and obtain "no priority" expression
         config.output.emitln (program)
@@ -43,8 +42,9 @@ class Driver extends Parser with Compiler[Program] {
         // Check for semantic errors on the original expression.  This
         // will cause a translation to a priority-correct representation
         // and error computation on that rep.
-        val analyser = new SemanticAnalyser
-        val messages = analyser.errors (expr)
+        val tree = new TransformTree (program)
+        val analyser = new SemanticAnalyser (tree)
+        val messages = analyser.errors
 
         // For testing, print the priority-correct representation
         config.output.emitln (analyser.ast (expr))

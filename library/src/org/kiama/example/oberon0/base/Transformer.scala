@@ -28,14 +28,13 @@ package base
  */
 trait Transformer {
 
-    import source.{ModuleDecl, SourceTree}
-    import org.kiama.rewriting.Rewriter.{everywherebu, rewrite, rule}
+    import source.SourceTree.SourceTree
 
     /**
-     * Transform a module in some way, returning a new module.  By default,
-     * just return the given module.
+     * Transform a module tree in some way, returning a new module tree.
+     * By default, just return the given module.
      */
-    def transform (m : ModuleDecl) : ModuleDecl =
-        m
+    def transform (tree : SourceTree) : SourceTree =
+        tree
 
 }

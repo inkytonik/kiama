@@ -24,9 +24,9 @@ package L1.c
 
 trait CPrettyPrinter extends L0.c.CPrettyPrinter {
 
-    import base.c.CTree
+    import base.c.CNode
 
-    override def toDoc (n : CTree) : Doc =
+    override def toDoc (n : CNode) : Doc =
         n match {
             case CIfStatement (c, ts) =>
                 "if" <+> parens (toParenDoc (c)) <+> toDoc (ts)

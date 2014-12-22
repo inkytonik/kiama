@@ -21,22 +21,24 @@
 package org.kiama
 package example.repmin
 
+import org.kiama.relation.Tree
 import org.kiama.util.Tests
 
-trait RepminTestsBase extends Tests {
+class RepminTests extends Tests {
 
-    self : RepminImpl =>
+    val t = Fork (Leaf (3), Fork (Leaf (1), Leaf (10)))
+    val u = Fork (Leaf (1), Fork (Leaf (1), Leaf (1)))
 
-    import org.kiama.attribution.Attribution.initTree
+    test ("repmin actually reps and mins (traditional)") {
+        val tree = new Tree[RepminTree,RepminTree] (t)
+        val repmin = new Repmin (tree)
+        assertResult (u) (repmin.repmin (t))
+    }
 
-    test ("repmin actually reps and mins") {
-        val t = Fork (Leaf (3), Fork (Leaf (1), Leaf (10)))
-        initTree (t)
-        assertResult (Fork (Leaf (1), Fork (Leaf (1), Leaf (1)))) (t->repmin)
+    test ("repmin actually reps and mins (decorator)") {
+        val tree = new Tree[RepminTree,RepminTree] (t)
+        val repmin = new RepminDec (tree)
+        assertResult (u) (repmin.repmin (t))
     }
 
 }
-
-class RepminTests extends Repmin with RepminTestsBase
-
-class RepminDecTests extends RepminDec with RepminTestsBase

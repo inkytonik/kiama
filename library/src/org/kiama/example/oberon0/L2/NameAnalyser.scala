@@ -25,14 +25,13 @@ package L2
 trait NameAnalyser extends L0.NameAnalyser {
 
     import base.source.Expression
-    import org.kiama.util.Patterns.HasParent
     import source.{ForStatement, MinMaxCond, ValCond}
 
     override def rootconstexpDef : Expression => Boolean =
         {
-            case HasParent (e1, ForStatement (_, _, _, Some (e2), _)) if e1 == e2 =>
+            case tree.parent.pair (e1, ForStatement (_, _, _, Some (e2), _)) if e1 == e2 =>
                 true
-            case HasParent (_, _ : ValCond | _ : MinMaxCond) =>
+            case tree.parent (_ : ValCond | _ : MinMaxCond) =>
                 true
             case e =>
                 super.rootconstexpDef (e)

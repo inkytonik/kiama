@@ -35,7 +35,7 @@ object CodeGenerator {
      */
     def generate (isTest : Boolean, classfile : ClassFile, emitter : Emitter) {
 
-        /**
+        /*
          * If it's a test use the provided emitter for output, otheriwse make
          * a file emitter that is based on the the class name and use that.
          */
@@ -66,19 +66,19 @@ object CodeGenerator {
         // Output the methods
         classfile.methods.map (generateMethod)
 
-        /**
+        /*
          * Generate a declaration for a field.
          */
         def generateField (field : JVMField) {
             codeEmitter.emitln (s".field public ${field.name} ${field.tipe}")
         }
 
-        /**
+        /*
          * Generate a declaration of a method including its code.
          */
         def generateMethod (method : JVMMethod) {
 
-            /**
+            /*
              * Calculate the maximum location number used in the method by going
              * through the instructions checking all loads and stores. The fold
              * propagates the maximum so far.
@@ -95,7 +95,7 @@ object CodeGenerator {
                         }
                 }
 
-            /**
+            /*
              * Calculate the maximum stack depth by going through the instructions
              * simulating the effect that each instruction has on the stack size.
              * The fold propagates the maximum so far and the current stack depth.
@@ -117,7 +117,7 @@ object CodeGenerator {
             method.instrs.map (generateInstr)
             codeEmitter.emitln (".end method")
 
-            /**
+            /*
              * Close up the file if we are using one.
              */
             if (!isTest)
@@ -125,7 +125,7 @@ object CodeGenerator {
 
         }
 
-        /**
+        /*
          * Generate an intstruction. Instructions that are not label declarations
          * are output using the name of their class converted to lower case. Each
          * argument is output in the order that it appears in the instruction

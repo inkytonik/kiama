@@ -24,7 +24,7 @@ package L4.c
 
 trait CPrettyPrinter extends L3.c.CPrettyPrinter {
 
-    import base.c.{CExpression, CTree, CType}
+    import base.c.{CExpression, CType}
     import L3.c.CDerefExp
     import org.kiama.output.PrettyExpression
 

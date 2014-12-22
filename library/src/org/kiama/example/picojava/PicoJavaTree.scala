@@ -34,16 +34,21 @@ package example.picojava
  */
 object PicoJavaTree {
 
-    import org.kiama.util.TreeNode
+    import org.kiama.relation.Tree
     import scala.collection.immutable.Seq
 
+    /**
+     * Tree type for PicoJava programs.
+     */
+    type PicoJavaTree = Tree[PicoJavaNode,Program]
+
     // Created by parser
-    sealed trait PicoJavaTree extends TreeNode
+    sealed trait PicoJavaNode extends Product
 
-    case class Program (Block : Block) extends PicoJavaTree
+    case class Program (Block : Block) extends PicoJavaNode
 
-    case class Block (BlockStmts : Seq[BlockStmt]) extends PicoJavaTree
-    sealed abstract class BlockStmt extends PicoJavaTree
+    case class Block (BlockStmts : Seq[BlockStmt]) extends PicoJavaNode
+    sealed abstract class BlockStmt extends PicoJavaNode
 
     sealed abstract class Decl (val Name : String) extends BlockStmt
     sealed abstract class TypeDecl (Name : String) extends Decl (Name)
@@ -54,7 +59,7 @@ object PicoJavaTree {
     case class AssignStmt (Variable : Access, Value : Exp) extends Stmt
     case class WhileStmt (Condition : Exp, Body : Stmt) extends Stmt
 
-    sealed abstract class Exp extends PicoJavaTree
+    sealed abstract class Exp extends PicoJavaNode
     sealed abstract class Access extends Exp
     sealed abstract class IdnUse (val Name : String) extends Access
 

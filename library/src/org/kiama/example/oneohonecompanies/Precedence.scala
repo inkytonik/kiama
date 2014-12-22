@@ -21,29 +21,33 @@
 package org.kiama
 package example.oneohonecompanies
 
-object Precedence {
+import CompanyTree.CompanyTree
 
-    import CompanyTree.{Company,Dept,Employee,CompanyTree,Salary}
-    import Other.salary
-    import org.kiama.attribution.Decorators.down
+class Precedence (tree : CompanyTree) {
+
+    import CompanyTree.{Company,CompanyNode,Dept,Employee,Salary}
+    import org.kiama.attribution.Decorators
     import org.kiama.rewriting.Rewriter.everything
+
+    val decorators = new Decorators (tree)
+    import decorators.down
+
+    val other = new Other (tree)
+    import other.salary
 
     /**
      * Return the salary of the boss of a particular part of a company,
      * or Float.MaxValue if there is no such boss.
      */
-    val bosssalary : CompanyTree => Salary =
-        down[CompanyTree,Salary] (Float.MaxValue) {
+    val bosssalary : CompanyNode => Salary =
+        down[Salary] (Float.MaxValue) {
             case Dept (_, m, _) =>
-                m->salary
-            case e : Employee =>
-                e.parent[CompanyTree] match {
-                    case p @ Dept (_, m, _) if m eq e =>
-                        // Avoid comparing manager's salary with itself
-                        p.parent[CompanyTree]->bosssalary
-                    case p =>
-                        p->bosssalary
-                }
+                salary (m)
+            case tree.parent.pair (e : Employee, tree.parent.pair (Dept (_, m, _), p)) if m eq e =>
+                // Avoid comparing manager's salary with itself
+                bosssalary (p)
+            case tree.parent.pair (_ : Employee, p) =>
+                bosssalary (p)
         }
 
     /**
@@ -52,7 +56,8 @@ object Precedence {
      */
     def precedence (c : Company) : Boolean =
         everything (true) (_ && _) {
-            case e : Employee => e->bosssalary >= e->salary
+            case e : Employee =>
+                bosssalary (e) >= salary (e)
         } (c)
 
 }

@@ -32,13 +32,13 @@ trait PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printed version of a node.
      */
-    def pretty (t : GrammarTree) : String =
+    def pretty (t : GrammarNode) : String =
         super.pretty (show (t))
 
     /**
      * Convert a grammar node to a pretty-printing document.
      */
-    def show (t : GrammarTree) : Doc =
+    def show (t : GrammarNode) : Doc =
         t match {
             case Grammar (r, rs) =>
                 "Start rule:" <@> show (r) <@>

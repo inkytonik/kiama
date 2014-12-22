@@ -21,14 +21,16 @@
 package org.kiama
 package example.minijava
 
+import MiniJavaTree.MiniJavaTree
+import org.kiama.attribution.Attribution
+
 /**
  * Translator from MiniJava source programs to JVM target programs.
  */
-object Translator {
+class Translator (tree : MiniJavaTree) extends Attribution {
 
     import JVMTree._
     import MiniJavaTree._
-    import org.kiama.attribution.Attribution.attr
     import org.kiama.util.Counter
     import scala.collection.immutable.Seq
     import SymbolTable._
@@ -43,40 +45,40 @@ object Translator {
         // An instruction buffer for translating statements and expressions into
         val instructions = Seq.newBuilder[JVMInstr]
 
-        /**
+        /*
          * Generate an instruction by appending it to the instruction buffer.
          */
         def gen (instr : JVMInstr) {
             instructions += instr
         }
 
-        /**
+        /*
          * Return the number of arguments that the method containing an
          * node has, or zero if the node doesn't occur in a method.
          */
-        lazy val argCount : MiniJavaTree => Int =
+        lazy val argCount : MiniJavaNode => Int =
             attr {
-                case n if n.isRoot =>
-                    0
                 case methodBody : MethodBody =>
                     methodBody.args.length
-                case n =>
-                    (n.parent[MiniJavaTree])->argCount
+                case tree.parent (p) =>
+                    argCount (p)
+                case _ =>
+                    0
             }
 
-        /**
+        /*
          * Counter of local variable locations used so far.
          */
         val varCounter = new Counter (0)
 
-        /**
+        /*
          * Reset the label count to zero.
          */
         def resetVarCount () {
             varCounter.reset ()
         }
 
-        /**
+        /*
          * The JVM local variable location number to use for the given variable.
          * or argument entity. Arguments also use local variable slots, so these
          * location numbers are offset after the argument slots. Thus, a location
@@ -89,16 +91,16 @@ object Translator {
                     varCounter.next ()
             }
 
-        /**
+        /*
          * Return the local variable number to use for the given identifier
          * use, which can be assumed to be a use of a method argument or a
          * local variable.
          */
         def locnum (idnuse : IdnUse) : Int = {
-            val numargs = idnuse->argCount
+            val numargs = argCount (idnuse)
             analyser.entity (idnuse) match {
                 case ArgumentEntity (decl) =>
-                    decl.index
+                    tree.index (decl)
 
                 case varEntity : VariableEntity =>
                     numargs + varnum (varEntity)
@@ -109,19 +111,19 @@ object Translator {
             }
         }
 
-        /**
+        /*
          * Counter of labels used so far.
          */
         val labelCounter = new Counter (0)
 
-        /**
+        /*
          * Reset the label count to zero.
          */
         def resetLabelCount () {
             labelCounter.reset ()
         }
 
-        /**
+        /*
          * Allocate a new unique label and return it. The labels will comprise
          * the string "L" followed by a unique count.
          */
@@ -129,7 +131,7 @@ object Translator {
             s"L${labelCounter.next ()}"
         }
 
-        /**
+        /*
          * Translate the main class.
          */
         def translateMainClass (m : MainClass) : ClassFile = {
@@ -153,7 +155,7 @@ object Translator {
 
         }
 
-        /**
+        /*
          * Translate a type into a JVM type.
          */
         def translateType (tipe : Type) : JVMType =
@@ -164,7 +166,7 @@ object Translator {
                 case ClassType (IdnUse (idn)) => JVMClassType (idn)
             }
 
-        /**
+        /*
          * Translate the fields of a class.
          */
         def translateFields (fieldVars : Seq[Field]) : Seq[JVMField] =
@@ -173,7 +175,7 @@ object Translator {
                     JVMField (idn, translateType (tipe))
             }
 
-        /**
+        /*
          * The method spec of a method comprising the string name of the
          * method, a list of its argument JVM types and its return JVM
          * type.
@@ -188,7 +190,7 @@ object Translator {
             JVMMethodSpec (prefix+ method.name.idn, argTypes, retType)
         }
 
-        /**
+        /*
          * Translate a single method.
          */
         def translateMethod (method : Method) : JVMMethod = {
@@ -219,13 +221,13 @@ object Translator {
 
         }
 
-        /**
+        /*
          * Translate the methods of a class.
          */
         def translateMethods (methods : Seq[Method]) : Seq[JVMMethod] =
             methods.map (translateMethod)
 
-        /**
+        /*
          * Translate a single normal (i.e., non-main) class.
          */
         def translateClass (cls : Class) : ClassFile = {
@@ -248,13 +250,13 @@ object Translator {
 
         }
 
-        /**
+        /*
          * Is this a type or not (i.e., a reference type)?
          */
         def isIntegerType (tipe : Type) : Boolean =
             (tipe == IntType ()) || (tipe == BooleanType ())
 
-        /**
+        /*
          * Take an identifier use and translate into either a load of the
          * field that the identifier refers to, a load of the local
          * variable that corresponds to the identifier, or a load of the
@@ -264,11 +266,13 @@ object Translator {
         def translateIdnLoad (idnuse : IdnUse) {
 
             def loadField (field : Field) {
-                val cls = field.parent[ClassBody].parent[Class]
-                val className = cls.name.idn
-                val fieldName = field.name.idn
-                gen (Aload (0))
-                gen (GetField (s"$className/$fieldName", translateType (field.tipe)))
+                field match {
+                    case tree.parent (tree.parent (cls : Class)) =>
+                        val className = cls.name.idn
+                        val fieldName = field.name.idn
+                        gen (Aload (0))
+                        gen (GetField (s"$className/$fieldName", translateType (field.tipe)))
+                }
             }
 
             def loadLocal (tipe : Type) {
@@ -289,7 +293,7 @@ object Translator {
 
         }
 
-        /**
+        /*
          * Take an identifier use and translate into either a store to the
          * field that the identifier refers to, a store to the local
          * variable that corresponds to the identifier, or a store to the
@@ -300,12 +304,14 @@ object Translator {
         def translateIdnStore (idnuse : IdnUse, exp : Expression) {
 
             def storeField (field : Field) {
-                val cls = field.parent[ClassBody].parent[Class]
-                val className = cls.name.idn
-                val fieldName = field.name.idn
-                gen (Aload (0))
-                translateExp (exp)
-                gen (PutField (s"$className/$fieldName", translateType (field.tipe)))
+                field match {
+                    case tree.parent (tree.parent (cls : Class)) =>
+                        val className = cls.name.idn
+                        val fieldName = field.name.idn
+                        gen (Aload (0))
+                        translateExp (exp)
+                        gen (PutField (s"$className/$fieldName", translateType (field.tipe)))
+                }
             }
 
             def storeLocal (tipe : Type) {
@@ -326,7 +332,7 @@ object Translator {
             }
         }
 
-        /**
+        /*
          * Append the translation of a statement to the instruction buffer.
          */
         def translateStmt (stmt : Statement) {
@@ -376,7 +382,7 @@ object Translator {
             }
         }
 
-        /**
+        /*
          * Append the translation of a condition to the instruction buffer.
          * The label is the place to which to jump if the condition is
          * false. If the condition is true, control just falls through to
@@ -388,7 +394,7 @@ object Translator {
             gen (Ifeq (falseLabel))
         }
 
-        /**
+        /*
          * Translate a call expression. First, we translate the base
          * expression on which the call is being made into code that
          * puts that object on the top of the operand stack.
@@ -416,7 +422,7 @@ object Translator {
             }
         }
 
-        /**
+        /*
          * Append the translation of an expression to the instruction buffer.
          */
         def translateExp (exp : Expression) {

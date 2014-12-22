@@ -30,7 +30,7 @@ import org.kiama.util.RegexParserTests
 class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     import MiniJavaTree._
-    import org.kiama.attribution.Attribution.initTree
+    import SymbolTable.pretty
     import org.kiama.util.{Message, Messaging}
     import org.kiama.util.Positions.positionAt
     import scala.collection.immutable.Seq
@@ -577,6 +577,24 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             Message ("type error: expected int got boolean", positionAt (5, 16)))
     }
 
+    // Pretty-printing of environments
+
+    test ("The pretty-print of an environment at an expression contains the correct scopes") {
+        val exp = IntExp (42)
+        val vars = Seq (Var (IntType (), IdnDef ("v")))
+        val prog = embedExpression (exp, IntType (), vars)
+        val tree = new MiniJavaTree (prog)
+        val analyser = new SemanticAnalyser (tree)
+        assertResult ("""scope
+            |    "v" -> VariableEntity(Var(int,IdnDef(v)))
+            |scope
+            |    "m" -> MethodEntity(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),IntExp(42))))
+            |scope
+            |    "Dummy" -> MainClassEntity(MainClass(IdnDef(Dummy),Println(IntExp(0))))
+            |    "Test" -> ClassEntity(Class(IdnDef(Test),None,ClassBody(List(),List(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),IntExp(42)))))))""".stripMargin
+        ) (pretty (analyser.env (exp)))
+    }
+
     /**
      * Parse some test input as a program, run the semantic analyser
      * over the resulting tree (if the parse succeeds) and check that
@@ -598,9 +616,9 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
      * Run the semantic checks on the given program.
      */
     def runSemanticChecks (prog : Program, expected : Message*) : SemanticAnalyser = {
-        initTree (prog)
-        val analyser = new SemanticAnalyser
-        assertMessages (analyser.errors (prog), expected : _*)
+        val tree = new MiniJavaTree (prog)
+        val analyser = new SemanticAnalyser (tree)
+        assertMessages (analyser.errors, expected : _*)
         analyser
     }
 

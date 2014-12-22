@@ -26,10 +26,15 @@ package example.imperative
  */
 object ImperativeTree {
 
+    import org.kiama.relation.Tree
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
-    import org.kiama.util.TreeNode
     import scala.collection.immutable.Seq
+
+    /**
+     * Tree type for imperative programs.
+     */
+    type ImperativeTree = Tree[ImperativeNode,ImperativeNode]
 
     /**
      * Identifiers are represented as strings.
@@ -39,12 +44,12 @@ object ImperativeTree {
     /**
      * Superclass of all imperative language tree node types.
      */
-    trait ImperativeTree extends TreeNode
+    trait ImperativeNode extends Product
 
     /**
      * Expressions.
      */
-    sealed abstract class Exp extends ImperativeTree {
+    sealed abstract class Exp extends ImperativeNode {
 
         /**
          * The numeric value of the expression.
@@ -156,7 +161,7 @@ object ImperativeTree {
     /**
      * Statements.
      */
-    sealed abstract class Stmt extends ImperativeTree {
+    sealed abstract class Stmt extends ImperativeNode {
 
         /**
          * The set of all variable references in the statement.

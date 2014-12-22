@@ -21,6 +21,7 @@
 package org.kiama
 package example.dataflow
 
+import DataflowTree.DataflowTree
 import org.kiama.rewriting.Rewriter._
 
 /**
@@ -28,7 +29,7 @@ import org.kiama.rewriting.Rewriter._
  * variables that are not live out of the assignment and b) remove empty
  * statements from sequences.
  */
-object Optimiser extends Dataflow {
+class Optimiser (override val tree : DataflowTree) extends Dataflow (tree) {
 
     import DataflowTree._
 
@@ -39,7 +40,7 @@ object Optimiser extends Dataflow {
 
     lazy val elimDeadAssign =
         alltd (rule[Stm] {
-            case s @ Assign (v, _) if ! (s->out contains v) =>
+            case s @ Assign (v, _) if ! (out (s) contains v) =>
                 Empty ()
         })
 

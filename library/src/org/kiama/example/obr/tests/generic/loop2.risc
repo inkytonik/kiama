@@ -1,30 +1,30 @@
     ! Prologue
     movi $27, $0, 0
-    ! StW(Local(0),Read())
+    ! StW(Local(8),Read())
     rd $1
-    stw $1, $27, 0
-    ! StW(Local(4),IntDatum(0))
+    stw $1, $27, 8
+    ! StW(Local(12),IntDatum(0))
     movi $1, $0, 0
-    stw $1, $27, 4
+    stw $1, $27, 12
     ! LabelDef(Label(1))
 label1:
-    ! StW(Local(4),AddW(LdW(Local(4)),IntDatum(1)))
-    ldw $1, $27, 4
+    ! StW(Local(12),AddW(LdW(Local(12)),IntDatum(1)))
+    ldw $1, $27, 12
     movi $2, $0, 1
     add $1, $1, $2
-    stw $1, $27, 4
-    ! StW(Local(8),IntDatum(0))
+    stw $1, $27, 12
+    ! StW(Local(16),IntDatum(0))
     movi $1, $0, 0
-    stw $1, $27, 8
+    stw $1, $27, 16
     ! LabelDef(Label(2))
 label2:
-    ! StW(Local(8),AddW(LdW(Local(8)),IntDatum(1)))
-    ldw $1, $27, 8
+    ! StW(Local(16),AddW(LdW(Local(16)),IntDatum(1)))
+    ldw $1, $27, 16
     movi $2, $0, 1
     add $1, $1, $2
-    stw $1, $27, 8
-    ! Beq(CmpeqW(LdW(Local(8)),IntDatum(3)),Label(3))
-    ldw $1, $27, 8
+    stw $1, $27, 16
+    ! Beq(CmpeqW(LdW(Local(16)),IntDatum(3)),Label(3))
+    ldw $1, $27, 16
     movi $2, $0, 3
     cmp $1, $2
     movi $1, $0, 1
@@ -41,17 +41,17 @@ label11:
 label3:
     ! LabelDef(Label(4))
 label4:
-    ! StW(Local(8),AddW(LdW(Local(8)),IntDatum(1)))
-    ldw $1, $27, 8
+    ! StW(Local(16),AddW(LdW(Local(16)),IntDatum(1)))
+    ldw $1, $27, 16
     movi $2, $0, 1
     add $1, $1, $2
-    stw $1, $27, 8
+    stw $1, $27, 16
     ! Jmp(Label(2))
     br label2
     ! LabelDef(Label(5))
 label5:
-    ! Beq(CmpeqW(LdW(Local(4)),IntDatum(5)),Label(6))
-    ldw $1, $27, 4
+    ! Beq(CmpeqW(LdW(Local(12)),IntDatum(5)),Label(6))
+    ldw $1, $27, 12
     movi $2, $0, 5
     cmp $1, $2
     movi $1, $0, 1
@@ -68,18 +68,18 @@ label12:
 label6:
     ! LabelDef(Label(7))
 label7:
-    ! StW(Local(4),AddW(LdW(Local(4)),IntDatum(1)))
-    ldw $1, $27, 4
+    ! StW(Local(12),AddW(LdW(Local(12)),IntDatum(1)))
+    ldw $1, $27, 12
     movi $2, $0, 1
     add $1, $1, $2
-    stw $1, $27, 4
+    stw $1, $27, 12
     ! Jmp(Label(1))
     br label1
     ! LabelDef(Label(8))
 label8:
-    ! Write(AddW(LdW(Local(4)),LdW(Local(8))))
-    ldw $1, $27, 4
-    ldw $2, $27, 8
+    ! Write(AddW(LdW(Local(12)),LdW(Local(16))))
+    ldw $1, $27, 12
+    ldw $2, $27, 16
     add $1, $1, $2
     wrd $1
     wrl

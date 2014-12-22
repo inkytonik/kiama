@@ -24,7 +24,7 @@ package L2
 
 trait TypeAnalyser extends L1.TypeAnalyser {
 
-    import base.source.{Expression, IdnUse, SourceTree}
+    import base.source.{Expression, IdnUse, SourceNode}
     import L0.source.IdnExp
     import org.kiama.util.Messaging.{check, message, Messages}
     import source.{CaseStatement, ForStatement}
@@ -32,21 +32,20 @@ trait TypeAnalyser extends L1.TypeAnalyser {
     /**
      * The error checking for this level.
      */
-    override def errorsDef (n : SourceTree) : Messages =
+    override def errorsDef (n : SourceNode) : Messages =
         super.errorsDef (n) ++
         check (n) {
-            case ForStatement (IdnExp (u @ IdnUse (i)), _, _, _, _) if !isVariable (u->entity) =>
+            case ForStatement (IdnExp (u @ IdnUse (i)), _, _, _, _) if !isVariable (entity (u)) =>
                 message (u, s"illegal FOR loop control variable $i")
         }
 
     override def exptypeDef : Expression => Type =
-        (n =>
-            n.parent match {
-                case _ : ForStatement | _ : CaseStatement =>
-                    integerType
+        {
+            case tree.parent (_ : ForStatement | _ : CaseStatement) =>
+                integerType
 
-                case _ =>
-                    super.exptypeDef (n)
-            })
+            case n =>
+                super.exptypeDef (n)
+        }
 
 }

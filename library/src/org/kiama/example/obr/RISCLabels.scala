@@ -22,9 +22,9 @@ package org.kiama
 package example.obr
 
 /**
- * Common source of label numbers for transformation and encoding.
+ * Source of label numbers for transformation and encoding.
  */
-object RISCLabels {
+class RISCLabels {
 
     import org.kiama.util.Counter
 

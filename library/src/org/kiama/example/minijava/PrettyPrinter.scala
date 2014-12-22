@@ -33,13 +33,13 @@ object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
     /**
      * Return a pretty-printed version of a node.
      */
-    def pretty (t : MiniJavaTree) : String =
+    def pretty (t : MiniJavaNode) : String =
         super.pretty (show (t), 5)
 
     /**
      * Convert a MiniJava AST node to a pretty-printing document.
      */
-    def show (t : MiniJavaTree) : Doc =
+    def show (t : MiniJavaNode) : Doc =
         t match {
             case Program (m, cs) =>
                 show (m) <> ssep (cs map show, line <> line)

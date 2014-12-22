@@ -22,39 +22,44 @@
 package org.kiama
 package example.obr
 
-class SemanticAnalyser {
+import ObrTree.ObrTree
+import org.kiama.attribution.Attribution
+
+class SemanticAnalyser (val tree : ObrTree) extends Attribution {
 
     import ObrTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution._
-    import org.kiama.attribution.Decorators.{chain, Chain}
+    import org.kiama.attribution.Decorators
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Message
     import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
     import scala.collection.immutable.Seq
 
+    val decorators = new Decorators (tree)
+    import decorators.{chain, Chain}
+
     /**
-     * The semantic error messages for a given tree.
+     * The semantic error messages for the tree.
      */
-    val errors : ObrTree => Messages =
-        attr { collectmessages {
+    lazy val errors : Messages =
+        collectmessages (tree) {
             case p @ ObrInt (i1, ds, ss, i2) if i1 != i2 =>
                 message (p, s"identifier $i2 at end should be $i1")
 
-            case d @ IdnDef (i) if d->entity == MultipleEntity () =>
+            case d @ IdnDef (i) if entity (d) == MultipleEntity () =>
                 message (d, s"$i is declared more than once")
 
-            case u @ IdnUse (i) if u->entity == UnknownEntity () =>
+            case u @ IdnUse (i) if entity (u) == UnknownEntity () =>
                 message (u, s"$i is not declared")
 
-            case n @ AssignStmt (l, r) if !(l->assignable) =>
+            case n @ AssignStmt (l, r) if !assignable (l) =>
                 message (l, "illegal assignment")
 
-            case n @ ExitStmt () if !(n->isinloop) =>
+            case n @ ExitStmt () if !isinloop (n) =>
                 message (n, "an EXIT statement must be inside a LOOP statement")
 
             case ForStmt (n @ IdnUse (i), e1, e2, ss) =>
-                checkuse (n->entity) {
+                checkuse (entity (n)) {
                     case ent =>
                         val t = enttipe (ent)
                         message (n, s"for loop variable $i must be integer",
@@ -63,7 +68,7 @@ class SemanticAnalyser {
 
             // Check a RAISE statement to make sure its parameter is an exception constant.
             case n @ RaiseStmt (v @ IdnUse (i)) =>
-                checkuse (v->entity) {
+                checkuse (entity (v)) {
                     case ent =>
                         val t = enttipe (ent)
                         message (n, s"raise parameter $i must be an exception constant",
@@ -72,7 +77,7 @@ class SemanticAnalyser {
 
             // Check a CATCH clause to make sure its parameter is an exception constant.
             case n @ Catch (v @ IdnUse (i), ss) =>
-                checkuse (v->entity) {
+                checkuse (entity (v)) {
                     case ent =>
                         val t = enttipe (ent)
                         message (n, s"catch clause parameter $i must be an exception constant",
@@ -80,7 +85,7 @@ class SemanticAnalyser {
                 }
 
             case RecordVar (n @ IdnDef (i), _) =>
-                checkuse (n->entity) {
+                checkuse (entity (n)) {
                      case Variable (RecordType (fs)) =>
                          message (n, s"$i contains duplicate field(s)",
                                   fs.distinct.length != fs.length)
@@ -89,7 +94,7 @@ class SemanticAnalyser {
             case e : Expression =>
                 check (e) {
                     case IndexExp (v @ IdnUse (a), r) =>
-                        check (enttipe (v->entity)) {
+                        check (enttipe (entity (v))) {
                             case ArrayType (_) | UnknownType () =>
                                 noMessages
                             case _ =>
@@ -97,24 +102,26 @@ class SemanticAnalyser {
                         }
 
                     case FieldExp (v @ IdnUse (r), f) =>
-                        check (enttipe (v->entity)) {
+                        check (enttipe (entity (v))) {
                             case RecordType (fs) =>
                                 message (v, s"$f is not a field of $r", ! (fs contains f))
                             case _ =>
                                 message (v, s"attempt to access field of non-record $r")
                         }
                 } ++
-                message (e, s"""type error: expected ${(e->exptipe).mkString(" or ")} got ${e->tipe}""",
-                         ! (e->exptipe exists ((_ : TypeBase) iscompatible e->tipe)))
-        }}
+                message (e, s"""type error: expected ${exptipe (e).mkString(" or ")} got ${tipe (e)}""",
+                         ! (exptipe (e) exists ((_ : TypeBase) iscompatible tipe (e))))
+        }
 
     /**
      * Attribute to consecutively number enumeration constants.
      */
-    val enumconstnum : EnumConst => Int =
+    val enumconstnum : ObrNode => Int =
         attr {
-            case c if c.index == 1 => 0
-            case c                 => (c.prev[EnumConst]->enumconstnum) + 1
+            case tree.prev (p) =>
+                enumconstnum (p) + 1
+            case _ =>
+                0
         }
 
     /**
@@ -127,14 +134,15 @@ class SemanticAnalyser {
     /**
      * Attribute to consecutively number exception constants
      */
-    val exnconstnum : Declaration => Int =
+    val exnconstnum : ObrNode => Int =
         attr {
-            case c if c.isFirst => userExn
-            case c =>
-                c.prev[Declaration] match {
-                    case d : ExnConst   => (d->exnconstnum) + 1
-                    case d              => d->exnconstnum
+            case tree.prev (p) =>
+                p match {
+                    case d : ExnConst   => exnconstnum (d) + 1
+                    case d              => exnconstnum (d)
                 }
+            case _ =>
+                userExn
         }
 
     /**
@@ -152,8 +160,8 @@ class SemanticAnalyser {
      */
     lazy val defentity : IdnDef => Entity =
         attr {
-            case n =>
-                n.parent match {
+            case tree.parent (p) =>
+                p match {
                     case _ : IntParam | _ : IntVar =>
                         Variable (IntType ())
                     case _ : BoolVar =>
@@ -164,11 +172,10 @@ class SemanticAnalyser {
                         Variable (RecordType (fs))
                     case EnumVar (IdnDef (i), _) =>
                         Variable (EnumType (i))
-                    case p @ EnumConst (IdnDef (i)) =>
-                        val EnumVar (IdnDef (pi), _) = p.parent[EnumVar]
-                        Constant (EnumType (pi), p->enumconstnum)
+                    case tree.parent.pair (p @ EnumConst (IdnDef (i)), EnumVar (IdnDef (pi), _)) =>
+                        Constant (EnumType (pi), enumconstnum (p))
                     case p : ExnConst =>
-                        Constant (ExnType (), p->exnconstnum)
+                        Constant (ExnType (), exnconstnum (p))
                     case IntConst (_, v) =>
                         Constant (IntType (), v)
                     case _ =>
@@ -179,10 +186,10 @@ class SemanticAnalyser {
     /**
      * The environment containing bindings for things that are being defined.
      */
-    lazy val defenv : Chain[ObrTree,Environment] =
+    lazy val defenv : Chain[Environment] =
         chain (defenvin, defenvout)
 
-    def defenvin (in : ObrTree => Environment) : ObrTree ==> Environment = {
+    def defenvin (in : ObrNode => Environment) : ObrNode ==> Environment = {
 
         // At the root, get the initial environment
         case n : ObrInt =>
@@ -190,38 +197,33 @@ class SemanticAnalyser {
 
     }
 
-    def defenvout (out : ObrTree => Environment) : ObrTree ==> Environment = {
+    def defenvout (out : ObrNode => Environment) : ObrNode ==> Environment = {
 
         // At a defining occurrence of an identifier, check to see if it's already
         // been defined in this scope. If so, change its entity to MultipleEntity,
         // otherwise use the entity appropriate for this definition.
         case n @ IdnDef (i) =>
-            val entity =
-                if (isDefinedInScope (n->(defenv.in), i))
-                    MultipleEntity ()
-                else
-                    n->defentity
-            define (out (n), i, entity)
+            defineIfNew (out (n), i, defentity (n))
 
     }
 
     /**
      * The environment to use to lookup names at a node.
      */
-    lazy val env : ObrTree => Environment =
+    lazy val env : ObrNode => Environment =
         attr {
 
             // At a scope-introducing node, get the final value of the
             // defining environment, so that all of the definitions of
             // that scope are present.
-            case n : ObrInt =>
-                (n.lastChild[ObrTree])->defenv
+            case tree.lastChild.pair (n : ObrInt, c) =>
+                defenv (c)
 
             // Otherwise, ask our parent so we work out way up to the
             // nearest scope node ancestor (which represents the smallest
             // enclosing scope).
-            case n =>
-                (n.parent[ObrTree])->env
+            case tree.parent (p) =>
+                env (p)
 
         }
 
@@ -234,7 +236,7 @@ class SemanticAnalyser {
             // Just look the identifier up in the environment at the node.
             // Return `UnknownEntity` if the identifier is not defined.
             case n =>
-                lookup (n->env, n.idn, UnknownEntity ())
+                lookup (env (n), n.idn, UnknownEntity ())
 
         }
 
@@ -248,7 +250,7 @@ class SemanticAnalyser {
             case EqualExp (l, r)    => BoolType ()
             case FieldExp (r, f)    => IntType ()
             case GreaterExp (l, r)  => BoolType ()
-            case IdnExp (n)         => enttipe (n->entity)
+            case IdnExp (n)         => enttipe (entity (n))
             case IndexExp (l, r)    => IntType ()
             case IntExp (i)         => IntType ()
             case LessExp (l, r)     => BoolType ()
@@ -268,12 +270,12 @@ class SemanticAnalyser {
      * the context impose on it.  Returns UnknownType () if any type will do.
      */
     val exptipe : Expression => Set[TypeBase] =
-        attr (
-            e =>
-                (e.parent) match {
+        attr {
+            case tree.parent.pair (e, p) =>
+                p match {
                     case AssignStmt (IndexExp (_, _), e1) if e eq e1    => Set (IntType ())
                     case AssignStmt (FieldExp (_, _), e1) if e eq e1    => Set (IntType ())
-                    case AssignStmt (IdnExp (v), e1) if e eq e1         => Set (enttipe (v->entity))
+                    case AssignStmt (IdnExp (v), e1) if e eq e1         => Set (enttipe (entity (v)))
 
                     case ForStmt (_, _, _, _)                           => Set (IntType ())
                     case IfStmt (_, _, _)                               => Set (BoolType ())
@@ -281,14 +283,14 @@ class SemanticAnalyser {
                     case WhileStmt (_, _)                               => Set (BoolType ())
 
                     case AndExp (_, _)                                  => Set (BoolType ())
-                    case EqualExp (l, e1) if e eq e1                    => Set (l->tipe)
+                    case EqualExp (l, e1) if e eq e1                    => Set (tipe (l))
 
                     // The left operand of a GreaterExp must be an integer or an enumeration value
                     case GreaterExp (e1, _) if e eq e1                  => Set (IntType (), EnumTypes ())
                     // The left and right operands of a GreaterExp must have the same type
                     case GreaterExp (l, e1) if e eq e1                  =>
-                        if ((l->tipe == IntType ()) || ((l->tipe).isInstanceOf[EnumType]))
-                            Set (l->tipe)
+                        if ((tipe (l) == IntType ()) || (tipe (l).isInstanceOf[EnumType]))
+                            Set (tipe (l))
                         else
                             Set (UnknownType ())
 
@@ -298,15 +300,15 @@ class SemanticAnalyser {
                     case LessExp (e1, _) if e eq e1                     => Set (IntType (), EnumTypes ())
                     // The left and right operands of a LessExp must have the same type
                     case LessExp (l, e1) if e eq e1                     =>
-                        if ((l->tipe == IntType ()) || ((l->tipe).isInstanceOf[EnumType]))
-                            Set (l->tipe)
+                        if ((tipe (l) == IntType ()) || (tipe (l).isInstanceOf[EnumType]))
+                            Set (tipe (l))
                         else
                             Set (UnknownType ())
 
                     case MinusExp (_, _)                                => Set (IntType ())
                     case ModExp (_, _)                                  => Set (IntType ())
                     case NegExp (_)                                     => Set (IntType ())
-                    case NotEqualExp (l, e1) if e eq e1                 => Set (l->tipe)
+                    case NotEqualExp (l, e1) if e eq e1                 => Set (tipe (l))
                     case NotExp (_)                                     => Set (BoolType ())
                     case OrExp (_, _)                                   => Set (BoolType ())
                     case PlusExp (_, _)                                 => Set (IntType ())
@@ -315,14 +317,14 @@ class SemanticAnalyser {
 
                     case _                                              => Set (UnknownType ())
                 }
-        )
+        }
 
     /**
      * Is the expression something that can be assigned to?
      */
     val assignable : Expression => Boolean =
         attr {
-            case IdnExp (n)      => isassignable (n->entity)
+            case IdnExp (n)      => isassignable (entity (n))
             case IndexExp (_, _) => true
             case FieldExp (_, _) => true
             case _               => false
@@ -341,14 +343,15 @@ class SemanticAnalyser {
      * Is this statement inside a LOOP statement?  Used to
      * check that EXIT statements are placed appropriately.
      */
-    val isinloop : Statement => Boolean =
-        attr (
-            s => (s.parent) match {
-                case _ : ObrInt    => false
-                case LoopStmt (_)  => true
-                case p : Statement => p->isinloop
-            }
-        )
+    val isinloop : ObrNode => Boolean =
+        attr {
+            case tree.parent (_ : LoopStmt) =>
+                true
+            case tree.parent (p) =>
+                isinloop (p)
+            case _ =>
+                false
+        }
 
     /**
      * The type of an entity.

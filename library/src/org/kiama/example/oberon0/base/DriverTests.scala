@@ -32,7 +32,7 @@ import source.ModuleDecl
  */
 trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : SymbolTable with CompilerBase[ModuleDecl,Oberon0Config] =>
+    this : CompilerBase[ModuleDecl,Oberon0Config] =>
 
     import scala.collection.immutable.Seq
 
@@ -102,7 +102,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
         // Pattern for a line marks with p, q and r
         val MarkedLine2 = """\[([0-9]+),([0-9]+),([0-9]+)\](.*)""".r
 
-        /**
+        /*
          * Include line in the output if it meets the criteria.
          */
         def processline (lines : Seq[String], line : String,
@@ -132,8 +132,11 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
      * In the test configuration we pretty print the source and C ASTs by default.
      */
     override def createConfig (args : Seq[String],
-                               output : Emitter = new OutputEmitter,
-                               error : Emitter = new ErrorEmitter) : Oberon0Config =
-        new Oberon0Config (args, output, error, true)
+                               out : Emitter = new OutputEmitter,
+                               err : Emitter = new ErrorEmitter) : Oberon0Config =
+        new Oberon0Config (args, true) {
+            lazy val output = out
+            lazy val error = err
+        }
 
 }

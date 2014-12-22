@@ -22,7 +22,7 @@ package org.kiama
 package example.oberon0
 package L0.source
 
-import base.source.{Declaration, Expression, IdnDef, IdnUse, SourceTree,
+import base.source.{Declaration, Expression, IdnDef, IdnUse, SourceNode,
     Statement}
 import org.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
     PrettyBinaryExpression, PrettyUnaryExpression}
@@ -46,7 +46,7 @@ case class TypeDecl (idndef : IdnDef, tipe: TypeDef) extends Declaration
 /**
  * Non-terminal type for type definitions.
  */
-abstract class TypeDef extends SourceTree
+abstract class TypeDef extends SourceNode
 
 /**
  * Types defined by naming another type.

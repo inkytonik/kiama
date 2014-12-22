@@ -59,7 +59,7 @@ trait SyntaxAnalyser extends WhitespacePositionedParserUtilities {
 
     lazy val statements =
         "BEGIN" ~> statementSequence <~ "END" |
-        "END" ^^^ Block (Nil, Nil)
+        "END" ^^ (_ => Block (Nil, Nil))
 
     lazy val statementSequence =
         rep1sep (statement, ";") ^^ {

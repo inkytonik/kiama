@@ -25,7 +25,7 @@ package L3
 /**
  * C Code generator for the L3 language.
  */
-trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
+trait CCodeGenerator extends TypeAnalyser with L1.CCodeGenerator with SymbolTable {
 
     import base.c.{CBlock, CDeclaration, CExpression, CFunctionDecl,
         CInclude, CProgram, CStatement, CVarDecl}
@@ -62,7 +62,7 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
      * Translate the formal parameters of a particular defined procedure.
      */
     def translateFormalParams (p : IdnDef): Seq[CDeclaration] =
-        (p->parameters).get.map {
+        parameters (p).get.map {
             case ParamInfo (m, i, t) =>
                 translateFormalParam (m, i, t)
         }
@@ -83,7 +83,7 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
         s match {
             case Call (u @ IdnUse (s), ps) =>
                 val cps = translateActualParams (u, ps)
-                (u->entity) match {
+                entity (u) match {
                     case _ : BuiltinProc =>
                         s match {
                             case "Read" =>
@@ -135,7 +135,7 @@ trait CCodeGenerator extends L1.CCodeGenerator with TypeAnalyser {
         e match {
             case IdnExp (u @ IdnUse (s)) =>
                 val te = super.translate (e)
-                (u->entity) match {
+                entity (u) match {
                     case Parameter (VarMode (), v) => CDerefExp (te)
                     case _                         => te
                 }

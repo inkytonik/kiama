@@ -434,10 +434,8 @@ trait AttributionCore extends AttributionCommon with Memoiser {
         /**
          * Has the value of this attribute at `t` already been computed or not?
          */
-        override def hasBeenComputedAt (t : T) : Boolean = {
-            resetIfRequested ()
+        override def hasBeenComputedAt (t : T) : Boolean =
             computed contains t
-        }
 
     }
 
@@ -447,13 +445,13 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * attribute value is cached so it will be computed at most once.
      */
     def attr[T,U] (f : T => U) : CachedAttribute[T,U] =
-        macro AttributionMacros.attrMacro[T,U,CachedAttribute[T,U]]
+        macro AttributionCoreMacros.attrMacro[T,U,CachedAttribute[T,U]]
 
     /**
      * As for the other `attr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def attr[T,U] (name : String, f : T => U) : CachedAttribute[T,U] =
+    def attrWithName[T,U] (name : String, f : T => U) : CachedAttribute[T,U] =
         new CachedAttribute (name, f)
 
     /**
@@ -462,13 +460,13 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * The computed attribute value is cached so it will be computed at most once.
      */
     def dynAttr[T,U] (f : T => U) : CachedDynamicAttribute[T,U] =
-        macro AttributionMacros.dynAttrMacro[T,U,CachedDynamicAttribute[T,U]]
+        macro AttributionCoreMacros.dynAttrMacro[T,U,CachedDynamicAttribute[T,U]]
 
     /**
      * As for the other `dynAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def dynAttr[T,U] (name : String, f : T => U) : CachedDynamicAttribute[T,U] =
+    def dynAttrWithName[T,U] (name : String, f : T => U) : CachedDynamicAttribute[T,U] =
         new CachedDynamicAttribute (name, f)
 
     /**
@@ -478,50 +476,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * once.
      */
     def paramAttr[V,T,U] (f : V => T => U) : CachedParamAttribute[V,T,U] =
-        macro AttributionMacros.paramAttrMacro[V,T,U,CachedParamAttribute[V,T,U]]
+        macro AttributionCoreMacros.paramAttrMacro[V,T,U,CachedParamAttribute[V,T,U]]
 
     /**
      * As for the other `paramAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def paramAttr[V,T,U] (name : String, f : V => T => U) : CachedParamAttribute[V,T,U] =
+    def paramAttrWithName[V,T,U] (name : String, f : V => T => U) : CachedParamAttribute[V,T,U] =
         new CachedParamAttribute (name, f)
-
-    /**
-     * Define an attribute of `T` nodes of type `U` by the function `f`, which
-     * takes the current node and its parent as its arguments. `T` must be
-     * a sub-type of `Attributable` so that parents can be accessed generically.
-     */
-    def childAttr[T <: Attributable,U] (f : T => Attributable => U) : CachedAttribute[T,U] =
-        macro AttributionMacros.childAttrMacro[T,U,CachedAttribute[T,U]]
-
-    /**
-     * As for the other `childAttr` with the first argument specifying a name for
-     * the constructed attribute.
-     */
-    def childAttr[T <: Attributable,U] (name : String, f : T => Attributable => U) : CachedAttribute[T,U] =
-        attr (name, (t : T) => f (t) (t.parent))
-
-    /**
-     * Define an optionally named attribute as per `attr`, except that the
-     * attribute must have a tree value and will be spliced into the tree to
-     * have the same parent as the node on which it is defined.  This kind of
-     * attribute is used to generate new trees that must share context
-     * with the node on which they are defined.
-     */
-    def tree[T <: Attributable,U <: Attributable] (f : T => U) : CachedAttribute[T,U] =
-        macro AttributionMacros.treeMacro[T,U,CachedAttribute[T,U]]
-
-    /**
-     * As for the other `tree` with the first argument specifying a name for
-     * the constructed attribute.
-     */
-    def tree[T <: Attributable,U <: Attributable] (name : String, f : T => U) : CachedAttribute[T,U] =
-        attr (name, (t : T) => {
-                        val u = f (t)
-                        u.parent = t.parent
-                        u
-                    })
 
     /**
      * Implicitly converts functions to dynamic attributes. This conversion allows us
@@ -543,13 +505,13 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * circular attributes on which it depends).  The final value is cached.
      */
     def circular[T,U] (init : U) (f : T => U) : CircularAttribute[T,U] =
-        macro AttributionMacros.circularMacro[T,U,CircularAttribute[T,U]]
+        macro AttributionCoreMacros.circularMacro[T,U,CircularAttribute[T,U]]
 
     /**
      * As for the other `circular` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def circular[T,U] (name : String, init : U) (f : T => U) : CircularAttribute[T,U] =
+    def circularWithName[T,U] (name : String, init : U) (f : T => U) : CircularAttribute[T,U] =
         new CircularAttribute (name, init, f)
 
 }

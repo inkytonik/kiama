@@ -21,6 +21,9 @@
 package org.kiama
 package example.grammar
 
+import GrammarTree.GrammarTree
+import org.kiama.attribution.Attribution
+
 /**
  * Perform name analysis checks for the grammar language. Also, define
  * auxiliary properties nullability, first and follow for grammar symbols.
@@ -28,55 +31,60 @@ package example.grammar
  * Reference Attributed Grammars - their Evaluation and Applications", by
  * Magnusson and Hedin from LDTA 2003.
  */
-class SemanticAnalyser {
+class SemanticAnalyser (tree : GrammarTree) extends Attribution {
 
     import GrammarTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution._
-    import org.kiama.attribution.Decorators.downErr
+    import org.kiama.attribution.Decorators
     import org.kiama.rewriting.Rewriter.collect
     import org.kiama.util.Messaging.{collectmessages, Messages, message}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import scala.collection.immutable.{Seq, Set}
 
+    val decorators = new Decorators (tree)
+    import decorators._
+
     /**
      * The semantic error messages for a given tree.
      */
-    val errors : GrammarTree => Messages =
-        attr { collectmessages {
-            case n @ NonTermDef (name) if n->entity == MultipleEntity () =>
+    lazy val errors : Messages =
+        collectmessages (tree) {
+            case n @ NonTermDef (name) if entity (n) == MultipleEntity () =>
                 message (n, s"$name is defined more than once")
-            case n @ NonTermUse (name) if n->entity == UnknownEntity () =>
+            case n @ NonTermUse (name) if entity (n) == UnknownEntity () =>
                 message (n, s"$name is not declared")
-        }}
+        }
 
     /**
      * The `envin` contains the bindings that are defined "before" the given
      * node. There are none at the top of the tree and at the first rule.
      * Each other rule gets the `defenv` of the preceding rule.
      */
-    val envin : GrammarTree => Environment =
+    val envin : GrammarNode => Environment =
         attr {
-            case p : Grammar    => rootenv ()
-            case n if n.isFirst => (n.parent[GrammarTree])->envin
-            case n              => (n.prev[GrammarTree])->defenv
+            case tree.prev (p) =>
+                defenv (p)
+            case tree.parent (p) =>
+                envin (p)
+            case _ =>
+                rootenv ()
         }
 
     /**
      * The `defenv` is the environment that extends `envin` with the bindings
      * (if any) that are defined at this node.
      */
-    val defenv : GrammarTree => Environment =
+    val defenv : GrammarNode => Environment =
         attr {
             case r @ Rule (NonTermDef (s), _) =>
                 val entity =
-                    if (isDefinedInEnv (r->envin, s))
+                    if (isDefinedInEnv (envin (r), s))
                         MultipleEntity ()
                     else
                         NonTerminal (r)
-                define (r->envin, s, entity)
+                define (envin (r), s, entity)
             case n =>
-                n->envin
+                envin (n)
         }
 
     /**
@@ -85,9 +93,9 @@ class SemanticAnalyser {
      * are visible anywhere.
      */
     val env =
-        downErr[GrammarTree,Environment] {
-            case g : Grammar =>
-                (g.lastChild[Rule])->defenv
+        downErr[Environment] {
+            case tree.lastChild.pair (g : Grammar, c) =>
+                defenv (c)
         }
 
     /**
@@ -97,7 +105,7 @@ class SemanticAnalyser {
     val entity : NonTerm => Entity =
         attr {
             case nt =>
-                lookup (nt->env, nt.name, UnknownEntity ())
+                lookup (env (nt), nt.name, UnknownEntity ())
         }
 
     // Auxiliary properties
@@ -106,7 +114,7 @@ class SemanticAnalyser {
      * The grammar that contains a node.
      */
     val grammar =
-        downErr[GrammarTree,Grammar] {
+        downErr[Grammar] {
             case g : Grammar =>
                 g
         }
@@ -115,7 +123,7 @@ class SemanticAnalyser {
      * The rule that contains a node.
      */
     val rule =
-        downErr[GrammarTree,Rule] {
+        downErr[Rule] {
             case r : Rule =>
                 r
         }
@@ -127,7 +135,7 @@ class SemanticAnalyser {
     val decl : NonTermUse => Option[Rule] =
         attr {
             case n =>
-                n->entity match {
+                entity (n) match {
                     case NonTerminal (r) => Some (r)
                     case _               => None
                 }
@@ -140,7 +148,7 @@ class SemanticAnalyser {
     val uses : NonTermDef => Seq[NonTermUse] =
         attr {
             case n @ NonTermDef (name) =>
-                (n->grammar->ntuses).filter (_.name == name)
+                ntuses (grammar (n)).filter (_.name == name)
         }
 
     /**
@@ -157,30 +165,30 @@ class SemanticAnalyser {
     /**
      * Nullability (i.e., can derive the empty sequence).
      */
-    val nullable : GrammarTree => Boolean =
+    val nullable : GrammarNode => Boolean =
         circular (false) {
 
             // nullable of the start rule
             case Grammar (r, _) =>
-                r->nullable
+                nullable (r)
 
             // nullable of the right-hand side of the rule
             case Rule (_, rhs) =>
-                rhs->nullable
+                nullable (rhs)
 
             // nullable of the component productions
             case EmptyProdList () =>
                 false
             case NonEmptyProdList (h, t) =>
-                h->nullable || t->nullable
+                nullable (h) || nullable (t)
 
             // nullable of the component symbol lists
             case Prod (ss) =>
-                ss->nullable
+                nullable (ss)
             case EmptySymbolList () =>
                 true
             case NonEmptySymbolList (h, t) =>
-                h->nullable && t->nullable
+                nullable (h) && nullable (t)
 
             // terminals are not nullable
             case TermSym (_) =>
@@ -190,11 +198,11 @@ class SemanticAnalyser {
             // are defined is nullable. Uses are nullable if their associated
             // declaration is nullable.
             case NonTermSym (n) =>
-                n->nullable
-            case n : NonTermDef =>
-                (n.parent[Rule])->nullable
+                nullable (n)
+            case tree.parent.pair (n : NonTermDef, p) =>
+                nullable (p)
             case n : NonTermUse =>
-                (n->decl).map (nullable).getOrElse (false)
+                decl (n).map (nullable).getOrElse (false)
 
         }
 
@@ -202,24 +210,24 @@ class SemanticAnalyser {
      * FIRST set (i.e., which terminals can appear at the start of a sentence
      * derived from a non-terminal.
      */
-    val first : GrammarTree => Set[TermSym] =
+    val first : GrammarNode => Set[TermSym] =
         circular (Set[TermSym] ()) {
 
             // FIRST of the start rule
             case Grammar (r, _) =>
-                r->first
+                first (r)
 
             // FIRST of the right-hand side of the rule
             case Rule (_, rhs) =>
-                rhs->first
+                first (rhs)
 
             // FIRST of the component productions
             case EmptyProdList () =>
                 Set ()
             case NonEmptyProdList (h, t) =>
-                (h->first) union (t->first)
+                first (h) union (first (t))
             case Prod (ss) =>
-                ss->first
+                first (ss)
 
             // empty symbol lists have no first symbols
             case EmptySymbolList () =>
@@ -228,7 +236,7 @@ class SemanticAnalyser {
             // non-empty symbol lists get the first of their head, and if the
             // head is nullable the first of their tail as well
             case NonEmptySymbolList (h, t) =>
-                if (h->nullable) (h->first) union (t->first) else h->first
+                if (nullable (h)) (first (h)) union (first (t)) else first (h)
 
             // FIRST of a terminal is that terminal
             case n : TermSym =>
@@ -238,11 +246,11 @@ class SemanticAnalyser {
             // which it appears. first of a use is the first of their associated
             // declaration
             case NonTermSym (n) =>
-                n->first
-            case n : NonTermDef =>
-                (n.parent[Rule])->first
+                first (n)
+            case tree.parent.pair (n : NonTermDef, p) =>
+                first (p)
             case n : NonTermUse =>
-                (n->decl).map (first).getOrElse (Set ())
+                decl (n).map (first).getOrElse (Set ())
 
         }
 
@@ -255,17 +263,16 @@ class SemanticAnalyser {
 
             // FOLLOW of all uses of this defined non-terminal
             case n : NonTermDef =>
-                (n->uses).flatMap (follow).toSet
+                uses (n).flatMap (follow).toSet
 
             // FIRST of the following symbol list, plus if the following symbol list
             // is NULLABLE, then also the FOLLOW of the LHS of the rule in which
             // this use appears
-            case n : NonTermUse =>
-                val suffix = n.parent.next[SymbolList]
-                if (suffix->nullable)
-                    (suffix->first).union ((n->rule).lhs->follow)
+            case tree.parent.pair (n : NonTermUse, tree.next (suffix)) =>
+                if (nullable (suffix))
+                    first (suffix).union (follow (rule (n).lhs))
                 else
-                    suffix->first
+                    first (suffix)
 
         }
 

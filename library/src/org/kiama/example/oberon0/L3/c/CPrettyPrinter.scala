@@ -24,10 +24,10 @@ package L3.c
 
 trait CPrettyPrinter extends L1.c.CPrettyPrinter {
 
-    import base.c.{CExpression, CTree, CType}
+    import base.c.{CExpression, CNode, CType}
     import org.kiama.output.PrettyExpression
 
-    override def toDoc (n : CTree) : Doc =
+    override def toDoc (n : CNode) : Doc =
         n match {
             case CCall (s, ps) =>
                 s <+> parens (hsep (ps map toParenDoc, comma)) <> semi

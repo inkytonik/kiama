@@ -21,15 +21,13 @@
 package org.kiama
 package example.dataflow
 
-import org.kiama.attribution.Attribution._
-import org.kiama.util.Patterns.HasParent
 import DataflowTree._
 
 case class Foreach (cond : Var, body : Stm) extends Stm
 
 case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
 
-trait DataflowFor extends Dataflow {
+class DataflowFor (override val tree : DataflowTree) extends Dataflow (tree) {
 
     def addForAndForeachCases () {
 
@@ -41,7 +39,7 @@ trait DataflowFor extends Dataflow {
 
         following +=
             {
-                case HasParent (t, parent : Foreach) =>
+                case tree.parent (parent : Foreach) =>
                     following (parent) + parent.body
             }
 
@@ -53,7 +51,7 @@ trait DataflowFor extends Dataflow {
 
         following +=
             {
-                case HasParent (s, parent : For) =>
+                case tree.parent.pair (s, parent : For) =>
                     parent match {
                         case t @ For (s1, c, _, _) if s eq s1 => Set (c)
                         case t @ For (_, s1, _, b) if s eq s1 => following (t) + b
@@ -65,3 +63,4 @@ trait DataflowFor extends Dataflow {
     }
 
 }
+

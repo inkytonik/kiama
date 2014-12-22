@@ -31,6 +31,8 @@ package rewriting
  */
 trait Rewriter extends RewriterCore {
 
+    import org.kiama.relation.Tree
+    import org.kiama.relation.Tree.isLeaf
     import scala.collection.generic.CanBuildFrom
     import scala.language.higherKinds
     import scala.collection.immutable.Seq
@@ -43,6 +45,20 @@ trait Rewriter extends RewriterCore {
         s (t) match {
             case Some (t1) =>
                 t1.asInstanceOf[T]
+            case None =>
+                t
+        }
+    }
+
+    /**
+     * Rewrite a tree.  Apply the strategy `s` to the root of a tree returning the
+     * a tree formed from the result term if `s` succeeds, otherwise return the
+     * original tree.
+     */
+    def rewriteTree[T <: Product,U <: T] (s : Strategy) (t : Tree[T,U]) : Tree[T,U] = {
+        s (t.root) match {
+            case Some (t1) =>
+                new Tree[T,U] (t1.asInstanceOf[U])
             case None =>
                 t
         }
@@ -661,6 +677,24 @@ trait Rewriter extends RewriterCore {
     def everything[T] (name : String, v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T = {
         val collector = collectWithName[List,T] (name, g)
         collector (t).foldLeft (v) (f)
+    }
+
+    // Other higher-level operations
+
+    /**
+     * Deep clone the term `t`. Only applicable if the base type of the tree is
+     * a `Product`.
+     */
+    def deepclone[T <: Product] (t : T) : T = {
+
+        val deepcloner =
+            everywherebu (rule[T] {
+                case n if isLeaf (n) =>
+                    copy (n)
+            })
+
+        rewrite (deepcloner) (t)
+
     }
 
 }

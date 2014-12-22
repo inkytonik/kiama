@@ -23,28 +23,41 @@ package example.oberon0
 package base.source
 
 import org.kiama.output.PrettyExpression
-import org.kiama.util.TreeNode
 import scala.collection.immutable.Seq
+
+/**
+ * Module for common source tree definitions.
+ */
+object SourceTree {
+
+    import org.kiama.relation.Tree
+
+    /**
+     * Type for Oberon0 program trees.
+     */
+    type SourceTree = Tree[SourceNode,ModuleDecl]
+
+}
 
 /**
  * Root type of all source abstract syntax tree nodes.
  */
-abstract class SourceTree extends TreeNode
+abstract class SourceNode extends Product
 
 /**
  * Non-terminal type for declarations.
  */
-abstract class Declaration extends SourceTree
+abstract class Declaration extends SourceNode
 
 /**
  * Module declarations.
  */
-case class ModuleDecl (idndef : IdnDef, block : Block, idnuse : IdnUse) extends SourceTree
+case class ModuleDecl (idndef : IdnDef, block : Block, idnuse : IdnUse) extends SourceNode
 
 /**
  * Non-terminal type for statements.
  */
-abstract class Statement extends SourceTree
+abstract class Statement extends SourceNode
 
 /**
  * Block of declarations and statements.
@@ -59,12 +72,12 @@ case class EmptyStmt () extends Statement
 /**
  * Non-terminal type for expressions.
  */
-abstract class Expression extends SourceTree with PrettyExpression
+abstract class Expression extends SourceNode with PrettyExpression
 
 /**
  * Common interface for all identifier occurrences.
  */
-abstract class Identifier extends SourceTree {
+abstract class Identifier extends SourceNode {
     def ident : String
 }
 

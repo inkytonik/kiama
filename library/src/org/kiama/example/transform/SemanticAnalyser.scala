@@ -21,16 +21,18 @@
 package org.kiama
 package example.transform
 
+import org.kiama.attribution.Attribution
+import TransformTree.TransformTree
+
 /**
  * Operator priority resolution and name analysis for transformation compiler.
  * Transform the generic operator tree from the parser into one that
  * correctly represents the precedence of the operators.  Operators are
  * assumed to be left associative.
  */
-class SemanticAnalyser {
+class SemanticAnalyser (tree : TransformTree) extends Attribution {
 
     import TransformTree._
-    import org.kiama.attribution.Attribution._
     import org.kiama.util.Messaging.{collectmessages, message, Messages}
     import scala.collection.immutable.{HashMap, Seq}
 
@@ -39,35 +41,35 @@ class SemanticAnalyser {
             p => HashMap (p.ops : _*)
         )
 
-    lazy val prio : String => TransformTree => Int =
+    lazy val prio : String => TransformNode => Int =
         paramAttr (
             op => {
-                case p : Program => (p->prioenv) getOrElse (op, 0)
-                case e           => (e.parent[TransformTree])->prio (op)
+                case tree.parent (p) =>
+                    prio (op) (p)
+                case p : Program =>
+                    prioenv (p) getOrElse (op, 0)
             }
         )
 
     lazy val op_tree : ExpR => Exp =
         attr {
             case BinExpR (_, _, e1) =>
-                e1->op_tree
+                op_tree (e1)
             case e1 @ Factor (e)    =>
-                val (optor, opnd) = e1->ops
-                val (_, es) = e1->eval_top (optor, "", e +: opnd)
+                val (optor, opnd) = ops (e1)
+                val (_, es) = eval_top (optor, "", e +: opnd) (e1)
                 es.head
         }
 
     type Stacks = (Seq[String], Seq[Exp])
 
     lazy val ops : ExpR => Stacks =
-        childAttr {
-            case e1 => {
-                case _ : Program             =>
-                    (Nil, Nil)
-                case e0 @ BinExpR (e, op, _) =>
-                    val (optor, opnd) = e0->ops
-                    e0->eval_top (optor, op, e +: opnd)
-            }
+        {
+            case tree.parent (e0 @ BinExpR (e, op, _)) =>
+                val (optor, opnd) = ops (e0)
+                eval_top (optor, op, e +: opnd) (e0)
+            case _ =>
+                (Nil, Nil)
         }
 
     lazy val eval_top : ((Seq[String], String, Seq[Exp])) => ExpR => Stacks =
@@ -78,11 +80,11 @@ class SemanticAnalyser {
             )
             case (top_op :: rest_ops, op, opnd) => (
                 e =>
-                    if (e->prio (top_op) < e->prio (op))
+                    if (prio (top_op) (e) < prio (op) (e))
                         (op :: top_op :: rest_ops, opnd)
                     else {
                         val o1 :: o2 :: rest = opnd
-                        e->eval_top (rest_ops, op, BinExp (o2, top_op, o1) :: rest)
+                        eval_top (rest_ops, op, BinExp (o2, top_op, o1) :: rest) (e)
                     }
             )
         }
@@ -92,11 +94,13 @@ class SemanticAnalyser {
      * containing the associated declaration or None if there no
      * such declaration.
      */
-    lazy val lookup : String => TransformTree => Option[VarDecl] =
+    lazy val lookup : String => TransformNode => Option[VarDecl] =
         paramAttr {
             s => {
-                case p : Program => p.vars.find (_.name == s)
-                case e           => e.parent[TransformTree]->lookup (s)
+                case tree.parent (p) =>
+                    lookup (s) (p)
+                case p : Program =>
+                    p.vars.find (_.name == s)
             }
         }
 
@@ -106,19 +110,17 @@ class SemanticAnalyser {
      * ExpR are forwarded to op_tree.
      */
     implicit val ast : ExpR => Exp =
-        tree (
-            e => e->op_tree
-        )
+        op_tree
 
     /**
      * Report errors in an expression.  Currently only variables that
      * are used but not declared.  Multiple declarations of the same
      * variable are ok.
      */
-    lazy val errors : TransformTree => Messages =
-        attr { collectmessages {
-            case e @ Var (s) if e->lookup (s) == None =>
+    lazy val errors : Messages =
+        collectmessages (tree) {
+            case e @ Var (s) if lookup (s) (e) == None =>
                 message (e, s"$s is not declared")
-        }}
+        }
 
 }

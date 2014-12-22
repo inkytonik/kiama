@@ -26,18 +26,23 @@ package example.transform
  */
 object TransformTree {
 
-    import org.kiama.util.TreeNode
+    import org.kiama.relation.Tree
     import scala.collection.immutable.Seq
 
     /**
-     * All AST nodes.
+     * Tree type for transform trees.
      */
-    sealed abstract class TransformTree extends TreeNode
+    type TransformTree = Tree[TransformNode,Program]
+
+    /**
+     * Abstract syntax for transform tree nodes.
+     */
+    sealed abstract class TransformNode extends Product
 
     /**
      * Nodes that have entities associated with them.
      */
-    sealed trait EntityNode extends TransformTree
+    sealed trait EntityNode extends TransformNode
 
     /**
      * A program is a map from operator names to priorities, a right recursive
@@ -45,17 +50,17 @@ object TransformTree {
      * correct operator structure which is filled in after parsing.
      */
     case class Program (ops : Seq[(String,Int)], vars : Seq[VarDecl],
-                        expr : ExpR) extends TransformTree
+                        expr : ExpR) extends TransformNode
 
     /**
      * A variable declaration.
      */
-    case class VarDecl (name : String) extends TransformTree
+    case class VarDecl (name : String) extends TransformNode
 
     /**
      * Right recursive expression syntax class.
      */
-    sealed abstract class ExpR extends TransformTree
+    sealed abstract class ExpR extends TransformNode
 
     /**
      * Right recursive binary operator expression.
@@ -70,7 +75,7 @@ object TransformTree {
     /**
      * Unrestricted expression syntax class.
      */
-    sealed abstract class Exp extends TransformTree
+    sealed abstract class Exp extends TransformNode
 
     /**
      * Binary operator expression with arbitrary expression children.

@@ -21,52 +21,56 @@
 package org.kiama
 package example.minijava
 
+import MiniJavaTree.MiniJavaTree
+import org.kiama.attribution.Attribution
+
 /**
  * Semantic analysis module containing static checking of Minijava
  * semantic rules, most notably name analysis.
  */
-class SemanticAnalyser {
+class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
 
     import MiniJavaTree._
     import org.kiama.==>
-    import org.kiama.attribution.Attribution.attr
-    import org.kiama.attribution.Decorators.{chain, Chain}
+    import org.kiama.attribution.Decorators
     import org.kiama.util.Message
     import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
-    import org.kiama.util.Patterns.HasParent
     import scala.collection.immutable.Seq
     import SymbolTable._
 
+    val decorators = new Decorators (tree)
+    import decorators._
+
     /**
-     * The semantic error messages for a given tree.
+     * The semantic error messages for the tree.
      */
-    val errors : MiniJavaTree => Messages =
-        attr { collectmessages {
-            case d @ IdnDef (i) if d->entity == MultipleEntity () =>
+    lazy val errors : Messages =
+        collectmessages (tree) {
+            case d @ IdnDef (i) if entity (d) == MultipleEntity () =>
                 message (d, s"$i is declared more than once")
 
-            case u @ IdnUse (i) if u->entity == UnknownEntity () =>
+            case u @ IdnUse (i) if entity (u) == UnknownEntity () =>
                 message (u, s"$i is not declared")
 
             case VarAssign (u, _) =>
-                checkuse (u->entity) {
+                checkuse (entity (u)) {
                     case _ : ClassEntity | _ : MethodEntity =>
                         message (u, "illegal assignment to non-variable, non-argument")
                 }
 
             case e : Expression =>
-                message (e, s"type error: expected ${e->exptipe} got ${e->tipe}",
-                         !iscompatible (e->tipe, e->exptipe)) ++
+                message (e, s"type error: expected ${exptipe (e)} got ${tipe (e)}",
+                         !iscompatible (tipe (e), exptipe (e))) ++
                 check (e) {
                     case IdnExp (u) =>
-                        checkuse (u->entity) {
+                        checkuse (entity (u)) {
                             case _ : MethodEntity =>
                                 message (u, "can't refer to methods directly")
                         }
 
                     case CallExp (_, u, args) =>
-                        checkuse (u->entity) {
+                        checkuse (entity (u)) {
                             case MethodEntity (decl) =>
                                 val expargnum = decl.body.args.length
                                 message (u, s"wrong number of arguments, got ${args.length} but expected $expargnum",
@@ -76,14 +80,14 @@ class SemanticAnalyser {
                         }
 
                     case NewExp (u) =>
-                        checkuse (u->entity) {
+                        checkuse (entity (u)) {
                             case _ : ClassEntity =>
                                 noMessages
                             case _ =>
                                 message (u, "illegal instance creation of non-class type")
                         }
                 }
-        }}
+        }
 
     /**
      * Are two types compatible?  If either of them are unknown then we
@@ -100,8 +104,8 @@ class SemanticAnalyser {
      */
     lazy val defentity : IdnDef => Entity =
         attr {
-            case n =>
-                n.parent match {
+            case tree.parent (p) =>
+                p match {
                     case decl : MainClass => MainClassEntity (decl)
                     case decl : Class     => ClassEntity (decl)
                     case decl : Field     => FieldEntity (decl)
@@ -120,10 +124,10 @@ class SemanticAnalyser {
      * are used to (optionally) update attribute value as it proceeds through
      * the tree.
      */
-    lazy val defenv : Chain[MiniJavaTree,Environment] =
+    lazy val defenv : Chain[Environment] =
         chain (defenvin, defenvout)
 
-    def defenvin (in : MiniJavaTree => Environment) : MiniJavaTree ==> Environment = {
+    def defenvin (in : MiniJavaNode => Environment) : MiniJavaNode ==> Environment = {
 
         // At the root, get a new empty environment
         case n : Program =>
@@ -136,7 +140,7 @@ class SemanticAnalyser {
 
     }
 
-    def defenvout (out : MiniJavaTree => Environment) : MiniJavaTree ==> Environment = {
+    def defenvout (out : MiniJavaNode => Environment) : MiniJavaNode ==> Environment = {
 
         // When leaving a nested scope region, remove the innermost scope from
         // the environment
@@ -147,12 +151,7 @@ class SemanticAnalyser {
         // been defined in this scope. If so, change its entity to MultipleEntity,
         // otherwise use the entity appropriate for this definition.
         case n @ IdnDef (i) =>
-            val entity =
-                if (isDefinedInScope (n->(defenv.in), i))
-                    MultipleEntity ()
-                else
-                    n->defentity
-            define (out (n), i, entity)
+            defineIfNew (out (n), i, defentity (n))
 
     }
 
@@ -160,20 +159,20 @@ class SemanticAnalyser {
      * The environment to use to lookup names at a node. Defined to be the
      * completed defining environment for the smallest enclosing scope.
      */
-    lazy val env : MiniJavaTree => Environment =
+    lazy val env : MiniJavaNode => Environment =
         attr {
 
             // At a scope-introducing node, get the final value of the
             // defining environment, so that all of the definitions of
             // that scope are present.
-            case n @ (_ : Program | _ : Class | _ : Method) =>
-                (n.lastChild[MiniJavaTree])->defenv
+            case tree.lastChild.pair (_ : Program | _ : Class | _ : Method, c) =>
+                defenv (c)
 
             // Otherwise, ask our parent so we work out way up to the
             // nearest scope node ancestor (which represents the smallest
             // enclosing scope).
-            case n =>
-                (n.parent[MiniJavaTree])->env
+            case tree.parent (p) =>
+                env (p)
 
         }
 
@@ -187,8 +186,8 @@ class SemanticAnalyser {
             // we need to look it up in the environment of the class of
             // the object it is being called on. E.g., `o.m` needs to
             // look for `m` in the class of `o`, not in local environment.
-            case HasParent (n @ IdnUse (i), CallExp (base, _, _)) =>
-                (base->tipe) match {
+            case tree.parent.pair (IdnUse (i), CallExp (base, _, _)) =>
+                tipe (base) match {
                     case ReferenceType (decl) =>
                         findMethod (decl, i)
                     case t =>
@@ -199,7 +198,7 @@ class SemanticAnalyser {
             // at the node. Return `UnknownEntity` if the identifier is
             // not defined.
             case n =>
-                lookup (n->env, n.idn, UnknownEntity ())
+                lookup (env (n), n.idn, UnknownEntity ())
 
         }
 
@@ -211,14 +210,14 @@ class SemanticAnalyser {
      * the unknown entity.
      */
     def findMethod (decl : Class, i : String) : Entity =
-        lookup (decl->env, i, UnknownEntity ()) match {
+        lookup (env (decl), i, UnknownEntity ()) match {
 
             case UnknownEntity () =>
                 // It's not in decl's env so see if there's a superclass.
                 // If so, find the superclass decl and recursively look there.
                 decl.superclass match {
                     case Some (superidn) =>
-                        (superidn->entity) match {
+                        entity (superidn) match {
                             case ClassEntity (superdecl) =>
                                 // Superclass *is* a class
                                 findMethod (superdecl, i)
@@ -245,7 +244,7 @@ class SemanticAnalyser {
     def actualTypeOf (t : Type) : Type =
         t match {
             case ClassType (idn) =>
-                (idn->entity) match {
+                entity (idn) match {
                     case ClassEntity (decl) =>
                         ReferenceType (decl)
                     case _ =>
@@ -271,7 +270,7 @@ class SemanticAnalyser {
 
             // Rule 6
             case IdnExp (i) =>
-                (i->entity) match {
+                entity (i) match {
                     case ClassEntity (decl) =>
                         ReferenceType (decl)
                     case FieldEntity (decl) =>
@@ -310,7 +309,7 @@ class SemanticAnalyser {
 
             // Rule 16
             case CallExp (_, i, _) =>
-                (i->entity) match {
+                entity (i) match {
                     case MethodEntity (decl) =>
                         actualTypeOf (decl.body.tipe)
                     case _ =>
@@ -319,7 +318,7 @@ class SemanticAnalyser {
 
             // Rule 17
             case e : ThisExp =>
-                e->thistype
+                thistype (e)
 
             // Rule 18
             case _ : NewArrayExp =>
@@ -327,7 +326,7 @@ class SemanticAnalyser {
 
             // Rule 19:
             case NewExp (i) =>
-                (i->entity) match {
+                entity (i) match {
                     case ClassEntity (decl) =>
                         ReferenceType (decl)
                     case _ =>
@@ -344,22 +343,22 @@ class SemanticAnalyser {
      * The type of the normal class in which this node occurs.
      * Rule 17
      */
-    lazy val thistype : MiniJavaTree => Type =
+    lazy val thistype : MiniJavaNode => Type =
         attr {
-
-            // We got to the root without seeing a normal class, so
-            // we don't know the type
-            case n if n.isRoot =>
-                UnknownType ()
 
             // We've reached a normal class node, so `this` is a
             // reference to that class
             case decl : Class =>
                 ReferenceType (decl)
 
-            // Otherwise, ask our parent
-            case n =>
-                (n.parent[MiniJavaTree])->thistype
+            // Ask our parent if there is one
+            case tree.parent (p) =>
+                thistype (p)
+
+            // Otherwise, we got to the root without seeing a normal class, so
+            // we don't know the type
+            case _ =>
+                UnknownType ()
 
         }
 
@@ -387,93 +386,88 @@ class SemanticAnalyser {
      */
     lazy val exptipe : Expression => Type =
         attr {
-            case e =>
-                (e.parent) match {
+            // Rule 7
+            case tree.parent (_ : If | _ : While) =>
+                BooleanType ()
 
-                    // Rule 7
-                    case _ : If | _ : While =>
-                        BooleanType ()
-
-                    // Rule 9
-                    case VarAssign (lhs, _) =>
-                        (lhs->entity) match {
-                            case FieldEntity (Field (t, _)) =>
-                                actualTypeOf (t)
-                            case VariableEntity (Var (t, _)) =>
-                                actualTypeOf (t)
-                            case ArgumentEntity (Argument (t, _)) =>
-                                actualTypeOf (t)
-                            case _ =>
-                                UnknownType ()
-                        }
-
-                    // Rule 10
-                    case ArrayAssign (base, _, _) if base eq e =>
-                        IntArrayType ()
-
-                    // Rule 10
-                    case ArrayAssign (_, index, _) if index eq e =>
-                        IntType ()
-
-                    // Rule 10
-                    case ArrayAssign (_, _, elem) if elem eq e =>
-                        IntType ()
-
-                    // Rule 10
-                    case IndExp (base, _) if base eq e =>
-                        IntArrayType ()
-
-                    // Rule 10
-                    case IndExp (_, index) if index eq e =>
-                        IntType ()
-
-                    // Rule 11
-                    case _ : PlusExp | _ : MinusExp | _ : StarExp =>
-                        IntType ()
-
-                    // Rule 12
-                    case _ : AndExp =>
-                        BooleanType ()
-
-                    // Rule 13
-                    case _ : NotExp =>
-                        BooleanType ()
-
-                    // Rule 14
-                    case _ : LessExp =>
-                        IntType ()
-
-                    // Rule 15
-                    case _ : LengthExp =>
-                        IntArrayType ()
-
-                    // Rule 16
-                    case CallExp (base, u, _) if base eq e =>
-                        UnknownType ()
-
-                    case CallExp (_, u, _) =>
-                        (u->entity) match {
-                            case MethodEntity (decl) =>
-                                expTypeOfArg (decl, e.index)
-
-                            case _ =>
-                                // No idea what is being called, so no type constraint
-                                UnknownType ()
-                        }
-
-                    // Rule 18
-                    case _ : NewArrayExp =>
-                        IntType ()
-
-                    // Rule 20
-                    case MethodBody (t, _, _, _, _) =>
+            // Rule 9
+            case tree.parent (VarAssign (lhs, _)) =>
+                entity (lhs) match {
+                    case FieldEntity (Field (t, _)) =>
                         actualTypeOf (t)
-
-                    // In all other cases, we don't care
+                    case VariableEntity (Var (t, _)) =>
+                        actualTypeOf (t)
+                    case ArgumentEntity (Argument (t, _)) =>
+                        actualTypeOf (t)
                     case _ =>
                         UnknownType ()
-
                 }
+
+            // Rule 10
+            case tree.parent.pair (e, ArrayAssign (base, _, _)) if base eq e =>
+                IntArrayType ()
+
+            // Rule 10
+            case tree.parent.pair (e, ArrayAssign (_, index, _)) if index eq e =>
+                IntType ()
+
+            // Rule 10
+            case tree.parent.pair (e, ArrayAssign (_, _, elem)) if elem eq e =>
+                IntType ()
+
+            // Rule 10
+            case tree.parent.pair (e, IndExp (base, _)) if base eq e =>
+                IntArrayType ()
+
+            // Rule 10
+            case tree.parent.pair (e, IndExp (_, index)) if index eq e =>
+                IntType ()
+
+            // Rule 11
+            case tree.parent (_ : PlusExp | _ : MinusExp | _ : StarExp) =>
+                IntType ()
+
+            // Rule 12
+            case tree.parent (_ : AndExp) =>
+                BooleanType ()
+
+            // Rule 13
+            case tree.parent (_ : NotExp) =>
+                BooleanType ()
+
+            // Rule 14
+            case tree.parent (_ : LessExp) =>
+                IntType ()
+
+            // Rule 15
+            case tree.parent (_ : LengthExp) =>
+                IntArrayType ()
+
+            // Rule 16
+            case tree.parent.pair (e, CallExp (base, u, _)) if base eq e =>
+                UnknownType ()
+
+            case tree.parent.pair (e, CallExp (_, u, _)) =>
+                entity (u) match {
+                    case MethodEntity (decl) =>
+                        expTypeOfArg (decl, tree.index (e))
+
+                    case _ =>
+                        // No idea what is being called, so no type constraint
+                        UnknownType ()
+                }
+
+            // Rule 18
+            case tree.parent (_ : NewArrayExp) =>
+                IntType ()
+
+            // Rule 20
+            case tree.parent (MethodBody (t, _, _, _, _)) =>
+                actualTypeOf (t)
+
+            // In all other cases, we don't care
+            case _ =>
+                UnknownType ()
         }
 
 }

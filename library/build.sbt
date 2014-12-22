@@ -49,10 +49,6 @@ connectInput in run := true
 
 outputStrategy in run := Some (StdoutOutput)
 
-// Don't run tests in parallel because some bits are not thread safe yet
-
-parallelExecution in Test := false
-
 // Some useful imports for demos and testing in console
 
 initialCommands in console := """

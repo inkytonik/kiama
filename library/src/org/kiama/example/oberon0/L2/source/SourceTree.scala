@@ -22,7 +22,7 @@ package org.kiama
 package example.oberon0
 package L2.source
 
-import base.source.{Block, Expression, SourceTree, Statement}
+import base.source.{Block, Expression, SourceNode, Statement}
 import L0.source.IdnExp
 import scala.collection.immutable.Seq
 
@@ -47,7 +47,7 @@ case class Case (conds : Seq[Condition], block : Block) extends Statement
 /**
  * Non-terminal type for case conditions.
  */
-abstract class Condition extends SourceTree
+abstract class Condition extends SourceNode
 
 /**
  * A condition that matches a single value.

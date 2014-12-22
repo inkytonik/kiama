@@ -31,14 +31,14 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printed version of a node.
      */
-    def pretty (t : ImperativeTree) : String =
+    def pretty (t : ImperativeNode) : String =
         super.pretty (show (t))
 
     /**
      * Convert an imperative node to a pretty-printing document in
      * fully-parenthesised C style.
      */
-    def show (t : ImperativeTree) : Doc =
+    def show (t : ImperativeNode) : Doc =
         t match {
             case Num (d)      => value (d)
             case Var (s)      => s
@@ -56,7 +56,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
-    def showbin (l : ImperativeTree, op : String, r : ImperativeTree) : Doc =
+    def showbin (l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
         parens (show (l) <+> op <+> show (r))
 
 }

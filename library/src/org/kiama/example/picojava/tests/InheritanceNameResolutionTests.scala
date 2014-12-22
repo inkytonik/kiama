@@ -33,8 +33,7 @@ import org.kiama.util.Tests
 
 class InheritanceNameResolutionTests extends Tests {
 
-    import org.kiama.attribution.Attribution.initTree
-    import org.kiama.example.picojava.NameResolution._
+    import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
     import scala.collection.immutable.Seq
 
@@ -80,44 +79,44 @@ class InheritanceNameResolutionTests extends Tests {
                                    AssignStmt (aInBB, Use ("d")),
                                    AssignStmt (eInBB, fInBB))))))))))
 
-    override def beforeAll () {
-        initTree (ast)
-    }
+    val tree = new PicoJavaTree (ast)
+    val analyser = new ErrorCheck (tree)
+    import analyser._
 
     test ("members are resolved in nested classes") {
-        assertResult (declAa) (aInAA->decl)
+        assertResult (declAa) (decl (aInAA))
     }
 
     test ("nested members shadow outer members") {
-        assertResult (declAAb) (bInAA->decl)
+        assertResult (declAAb) (decl (bInAA))
     }
 
     test ("class names are resolved in extends clauses") {
-        assertResult (declA) (AinB->decl)
+        assertResult (declA) (decl (AinB))
     }
 
     test ("inherited members are resolved") {
-        assertResult (declAa) (aInB->decl)
+        assertResult (declAa) (decl (aInB))
     }
 
     test ("local members hide inherited ones") {
-        assertResult (declBc) (cInB->decl)
+        assertResult (declBc) (decl (cInB))
     }
 
     test ("inherited inner classes are resolved") {
-        assertResult (declAA) (AAinBB->decl)
+        assertResult (declAA) (decl (AAinBB))
     }
 
     test ("inner references to members of outer class are resolved") {
-        assertResult (declBf) (fInBB->decl)
+        assertResult (declBf) (decl (fInBB))
     }
 
     test ("inner references to inherited members of outer class are resolved") {
-        assertResult (declAa) (aInBB->decl)
+        assertResult (declAa) (decl (aInBB))
     }
 
     test ("inherited members shadow outer occurrences of the same name") {
-        assertResult (declAAe) (eInBB->decl)
+        assertResult (declAAe) (decl (eInBB))
     }
 
 }

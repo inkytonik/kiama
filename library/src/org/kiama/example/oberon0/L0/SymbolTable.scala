@@ -55,18 +55,13 @@ trait SymbolTable extends base.SymbolTable {
     case class UserType (ident : String, tipe : TypeDecl) extends Type with Named
 
     /**
-     * Marker trait for all built-in entities.
-     */
-    trait Builtin extends Named {
-        this : Entity =>
-    }
-
-    /**
      * A built-in type with an implicit definition that the compiler must have
      * special knowledge about. This mechanism is necessary since the built-in
      * types cannot be defined using source concepts.
      */
-    case class BuiltinType (ident : String) extends Type with Named with Builtin
+    case class BuiltinType (ident : String) extends Type {
+        override def toString () = ident
+    }
 
     /**
      * A type that is unknown, eg because the typed thing is erroneously
@@ -90,7 +85,7 @@ trait SymbolTable extends base.SymbolTable {
      * cannot be defined using a constant declaration so the compiler has to
      * have special knowledge of them.
      */
-    case class IntegerValue (ident : String, tipe : Type, value : Int) extends NamedEntity with Builtin
+    case class IntegerValue (ident : String, tipe : Type, value : Int) extends Entity
 
     /**
      * Built-in true constant.
@@ -115,6 +110,12 @@ trait SymbolTable extends base.SymbolTable {
             "TRUE" -> trueConstant,
             "FALSE" -> falseConstant
         )
+
+    /**
+     * Return true if the entity is a builtin, false otherwise.
+     */
+    def isBuiltin (e : Entity) : Boolean =
+        e.isInstanceOf[BuiltinType] || e.isInstanceOf[IntegerValue]
 
     /**
      * Return true if the entity is an error, false otherwise.

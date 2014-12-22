@@ -28,22 +28,22 @@ import scala.collection.immutable.Seq
 /**
  * Root type of all C abstract syntax tree nodes.
  */
-abstract class CTree
+abstract class CNode
 
 /**
  * C programs.
  */
-case class CProgram (includes : Seq[CInclude], decls : Seq[CDeclaration]) extends CTree
+case class CProgram (includes : Seq[CInclude], decls : Seq[CDeclaration]) extends CNode
 
 /**
  * C include directive.
  */
-case class CInclude (s : String) extends CTree
+case class CInclude (s : String) extends CNode
 
 /**
  * Non-terminal type of C declarations.
  */
-abstract class CDeclaration extends CTree
+abstract class CDeclaration extends CNode
 
 /**
  * C variable declarations.
@@ -64,7 +64,7 @@ case class CBlock (decls : Seq[CDeclaration], stmts : Seq[CStatement]) extends C
 /**
  * Non-terminal type for C types.
  */
-abstract class CType extends CTree
+abstract class CType extends CNode
 
 /**
  * C integer type (int).
@@ -84,7 +84,7 @@ case class CArrayType (size : Int, elemtype : CType) extends CType
 /**
  * Non-terminal type for C statements.
  */
-abstract class CStatement extends CTree
+abstract class CStatement extends CNode
 
 /**
  * C empty statements.
@@ -99,7 +99,7 @@ case class CReturn (e : CExpression) extends CStatement
 /**
  * Non-terminal type for C expressions.
  */
-abstract class CExpression extends CTree with PrettyExpression
+abstract class CExpression extends CNode with PrettyExpression
 
 /**
  * C integer expressions.

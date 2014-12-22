@@ -56,7 +56,7 @@ case class Message (label : String, pos : Position = NoPosition) {
  */
 object Messaging {
 
-    import org.kiama.attribution.Attributable
+    import org.kiama.relation.Tree
     import org.kiama.util.{Entity, ErrorEntity}
     import scala.collection.immutable.{IndexedSeq, Seq}
 
@@ -129,31 +129,12 @@ object Messaging {
                 ((msg1.line == msg2.line) && (msg1.column < msg2.column))
         }
 
+
     /**
-     * Recursively collect all messages in the `Attributable` tree rooted at `p`
-     * using the partial function `messages` at all nodes where it is defined.
+     * Recursively collect all messages in the given tree using the partial
+     * function `messages` at all nodes where it is defined.
      */
-    def collectmessages (messages : Attributable ==> Messages) : Attributable => Messages =
-        (r : Attributable) => {
-            import scala.collection.mutable.ListBuffer
-
-            val buffer = ListBuffer[Message] ()
-
-            def collect (t : Attributable) {
-
-                // Collect the messages of the children of t
-                val children = t.children
-                while (children.hasNext) {
-                    collect (children.next ())
-                }
-
-                // Collect the messages at t
-                buffer.appendAll (check (t) (messages))
-
-            }
-
-            collect (r)
-            buffer.result ()
-        }
+    def collectmessages[T <: Product,U <: T] (tree : Tree[T,U]) (messages : T ==> Messages) : Messages =
+        tree.nodes.flatMap (messages.orElse { case _ => noMessages })
 
 }

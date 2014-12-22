@@ -21,14 +21,15 @@
 package org.kiama
 package example.prolog
 
+import PrologTree.PrologTree
 import org.kiama.util.Messaging
 
-class SemanticAnalyser {
+import org.kiama.attribution.Attribution
+
+class SemanticAnalyser (tree : PrologTree) extends Attribution {
 
     import PrologTree._
     import SymbolTable._
-    import org.kiama.attribution.Attribution._
-    import org.kiama.util.Message
     import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
     import org.kiama.util.{Entity, UnknownEntity}
     import scala.collection.immutable.Seq
@@ -36,10 +37,10 @@ class SemanticAnalyser {
     /**
      * The semantic error messages for a given tree.
      */
-    val errors : PrologTree => Messages =
-        attr { collectmessages {
+    lazy val errors : Messages =
+        collectmessages (tree) {
             case n @ Pred (s, ts) =>
-                check (n->entity) {
+                check (entity (n)) {
                     case Predicate (argtypes) if argtypes.length != ts.length =>
                         message (n, s"$s should have ${argtypes.length} arguments but has ${ts.length}")
                     case UnknownEntity () =>
@@ -48,7 +49,7 @@ class SemanticAnalyser {
                 checktype (n)
 
             case n @ Atom (s) =>
-                check (n->entity) {
+                check (entity (n)) {
                     case Predicate (argtypes) if argtypes.length != 0 =>
                         message (n, s"$s should have ${argtypes.length} arguments but has 0")
                     case UnknownEntity () =>
@@ -58,16 +59,16 @@ class SemanticAnalyser {
 
             case n : Term =>
                 checktype (n)
-        }}
+        }
 
     /**
      * Check types: issue a message if n's type is not compatible with its
      * expected type.  The unknown type is compatible with any other type.
      */
     def checktype (n : Term) : Messages =
-        message (n, s"argument ${n->tipe} found, ${n->exptipe} expected",
-                 (n->tipe != UnknownType ()) && (n->exptipe != UnknownType ()) &&
-                    (n->tipe != n->exptipe))
+        message (n, s"argument ${tipe (n)} found, ${exptipe (n)} expected",
+                 (tipe (n) != UnknownType ()) && (exptipe (n) != UnknownType ()) &&
+                    (tipe (n) != exptipe (n)))
 
     /**
      * Default environment.  Contains entities for the pre-defined
@@ -85,11 +86,14 @@ class SemanticAnalyser {
      * node for its environment, including any definitions there.  If
      * we are the first in a sequence or not in a sequence, ask the parent.
      */
-    val envin : PrologTree => Environment =
+    val envin : PrologNode => Environment =
         attr {
-            case p : Program     => defenv
-            case n if !n.isFirst => (n.prev[PrologTree])->env
-            case n               => (n.parent[PrologTree])->envin
+            case tree.prev (p) =>
+                env (p)
+            case tree.parent (p) =>
+                envin (p)
+            case _ =>
+                defenv
         }
 
     /**
@@ -106,11 +110,11 @@ class SemanticAnalyser {
      * we use only those argument types for which we don't know
      * anything already.
      */
-    val env : PrologTree => Environment =
+    val env : PrologNode => Environment =
         attr {
             case n @ Pred (s, ts) =>
                 val argtypes = ts map tipe
-                lookup (n->envin, s, UnknownEntity (), true) match {
+                lookup (envin (n), s, UnknownEntity (), true) match {
                     case Predicate (oldargtypes) =>
                         val extargtypes = argtypes.padTo (oldargtypes.length, UnknownType ())
                         val newargtypes =
@@ -120,16 +124,16 @@ class SemanticAnalyser {
                                 case (oldtipe, _) =>
                                     oldtipe
                             }
-                        define (n->envin, s, Predicate (newargtypes))
+                        define (envin (n), s, Predicate (newargtypes))
                     case _ =>
-                        define (n->envin, s, Predicate (argtypes))
+                        define (envin (n), s, Predicate (argtypes))
                 }
-            case n @ Atom (s) if ! isDefinedInEnv (n->envin, s) =>
-                define (n->envin, s, Predicate (Nil))
-            case n if n.hasChildren =>
-                (n.lastChild[PrologTree])->env
+            case n @ Atom (s) if ! isDefinedInEnv (envin (n), s) =>
+                define (envin (n), s, Predicate (Nil))
+            case tree.lastChild (c) =>
+                env (c)
             case n =>
-                n->envin
+                envin (n)
         }
 
     /**
@@ -141,9 +145,9 @@ class SemanticAnalyser {
     val entity : NamedLiteral => Entity =
         attr {
             case n @ Pred (s, ts) =>
-                lookup (n->env, s, UnknownEntity (), true)
+                lookup (env (n), s, UnknownEntity (), true)
             case n @ Atom (s) =>
-                lookup (n->env, s, UnknownEntity (), true)
+                lookup (env (n), s, UnknownEntity (), true)
         }
 
     /**
@@ -155,9 +159,9 @@ class SemanticAnalyser {
     val entityin : NamedLiteral => Entity =
         attr {
             case n @ Pred (s, ts) =>
-                lookup (n->envin, s, UnknownEntity (), true)
+                lookup (envin (n), s, UnknownEntity (), true)
             case n @ Atom (s) =>
-                lookup (n->envin, s, UnknownEntity (), true)
+                lookup (envin (n), s, UnknownEntity (), true)
         }
 
     /**
@@ -165,11 +169,14 @@ class SemanticAnalyser {
      * gets reset for each clause since the variables of one clause are not
      * related to those in the next clause.
      */
-    val varsin : PrologTree => Environment =
+    val varsin : PrologNode => Environment =
         attr {
-            case c : Clause      => rootenv ()
-            case n if !n.isFirst => (n.prev[PrologTree])->vars
-            case n               => (n.parent[PrologTree])->varsin
+            case c : Clause =>
+                rootenv ()
+            case tree.prev (p) =>
+                vars (p)
+            case tree.parent (p) =>
+                varsin (p)
         }
 
     /**
@@ -181,21 +188,21 @@ class SemanticAnalyser {
      * type for the context.  Otherwise, the variable has been seen before and
      * already has a type constraint, so we don't change anything.
      */
-    val vars : PrologTree => Environment =
+    val vars : PrologNode => Environment =
         attr {
             case n @ Var (s) =>
-                lookup (n->varsin, s, UnknownEntity (), true) match {
+                lookup (varsin (n), s, UnknownEntity (), true) match {
                     case Variable (UnknownType ()) =>
-                        define (n->varsin, s, Variable (n->exptipe))
+                        define (varsin (n), s, Variable (exptipe (n)))
                     case Variable (_) =>
-                        n->varsin
+                        varsin (n)
                     case UnknownEntity () =>
-                        define (n->varsin, s, Variable (n->exptipe))
+                        define (varsin (n), s, Variable (exptipe (n)))
                 }
-            case n if n.hasChildren =>
-                (n.lastChild[PrologTree])->vars
+            case tree.lastChild (c) =>
+                vars (c)
             case n =>
-                n->varsin
+                varsin (n)
         }
 
     /**
@@ -205,7 +212,7 @@ class SemanticAnalyser {
     val varentity : Var => Entity =
         attr {
             case n @ Var (s) =>
-                lookup (n->varsin, s, UnknownEntity (), true)
+                lookup (varsin (n), s, UnknownEntity (), true)
         }
 
     /**
@@ -218,7 +225,7 @@ class SemanticAnalyser {
             case Pred ("cons", _) => ListType ()
             case Pred ("nil", _)  => ListType ()
             case n @ Var (s) =>
-                (n->varentity) match {
+                varentity (n) match {
                     case Variable (t) => t
                     case _            => UnknownType ()
                 }
@@ -234,22 +241,20 @@ class SemanticAnalyser {
      * argument list.
      */
     val exptipe : Term => Type =
-        attr (
-            n =>
-                n.parent match {
-                    case p @ Pred (s, _) =>
-                        (p->entityin) match {
-                            case Predicate (argtypes) =>
-                                if (n.index < argtypes.length)
-                                    argtypes (n.index)
-                                else
-                                    UnknownType ()
-                            case _ =>
-                                UnknownType ()
-                        }
+        attr {
+            case tree.parent.pair (n, p : Pred) =>
+                entityin (p) match {
+                    case Predicate (argtypes) =>
+                        val i = tree.index (n)
+                        if (i < argtypes.length)
+                            argtypes (i)
+                        else
+                            UnknownType ()
                     case _ =>
                         UnknownType ()
                 }
-        )
+            case _ =>
+                UnknownType ()
+        }
 
 }

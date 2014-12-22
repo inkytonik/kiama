@@ -116,12 +116,12 @@ END badarray.
 [3]    array2 := array2 + 1
 [3]
 [3]    ^
-[3][30.15] type error: got ARRAY 26 OF BOOLEAN, but expected INTEGER
+[3][30.15] type error: got INTEGER, but expected ARRAY 26 OF BOOLEAN
 [3]
 [3]    array2 := array2 + 1
 [3]
 [3]              ^
-[3][30.15] type error: got INTEGER, but expected ARRAY 26 OF BOOLEAN
+[3][30.15] type error: got ARRAY 26 OF BOOLEAN, but expected INTEGER
 [3]
 [3]    array2 := array2 + 1
 [3]

@@ -28,4 +28,3 @@ import org.kiama.util.Environments
  * Basic symbol table definitions.
  */
 trait SymbolTable extends Environments
-

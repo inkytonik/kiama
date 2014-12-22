@@ -47,7 +47,7 @@ trait SyntaxAnalyser extends L2.SyntaxAnalyser {
         optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection
 
     lazy val optvar =
-        "VAR" ^^^ VarMode () |
+        "VAR" ^^ (_ => VarMode ()) |
         result (ValMode ())
 
     override def statementDef : PackratParser[Statement] =

@@ -23,7 +23,7 @@ package attribution
 
 import org.kiama.util.Compat210._
 
-object AttributionMacros {
+object AttributionCoreMacros {
 
     import org.bitbucket.inkytonik.dsinfo.DSInfo.makeCallWithName
 
@@ -31,22 +31,16 @@ object AttributionMacros {
 
     // Macros for the builder methods
 
-    def attrMacro[T,U,A] (c : blackbox.Context) (f : c.Expr[T => U]): c.Expr[A] =
-        makeCallWithName (c)
+    def attrMacro[T,U,A] (c : blackbox.Context) (f : c.Expr[T => U]) : c.Expr[A] =
+        makeCallWithName (c, "this.attrWithName")
 
-    def childAttrMacro[T <: Attributable,U,A] (c : blackbox.Context) (f : c.Expr[T => Attributable => U]): c.Expr[A] =
-        makeCallWithName (c)
+    def circularMacro[T,U,A] (c : blackbox.Context) (init : c.Expr[U]) (f : c.Expr[T => U]) : c.Expr[A] =
+        makeCallWithName (c, "this.circularWithName")
 
-    def circularMacro[T,U,A] (c : blackbox.Context) (init : c.Expr[U]) (f : c.Expr[T => U]): c.Expr[A] =
-        makeCallWithName (c)
+    def dynAttrMacro[T,U,A] (c : blackbox.Context) (f : c.Expr[T => U]) : c.Expr[A] =
+        makeCallWithName (c, "this.dynAttrWithName")
 
-    def dynAttrMacro[T,U,A] (c : blackbox.Context) (f : c.Expr[T => U]): c.Expr[A] =
-        makeCallWithName (c)
-
-    def paramAttrMacro[V,T,U,P] (c : blackbox.Context) (f : c.Expr[V => T => U]): c.Expr[P] =
-        makeCallWithName (c)
-
-    def treeMacro[T <: Attributable,U,A] (c : blackbox.Context) (f : c.Expr[T => U]): c.Expr[A] =
-        makeCallWithName (c)
+    def paramAttrMacro[V,T,U,P] (c : blackbox.Context) (f : c.Expr[V => T => U]) : c.Expr[P] =
+        makeCallWithName (c, "this.paramAttrWithName")
 
 }

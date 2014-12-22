@@ -47,7 +47,7 @@ class UniplateTests extends Tests with Generator {
     val varexp = Div (Mul (Var ("var1"), Var ("var2")), Var ("var1"))
 
     test ("collection of variable references: direct style") {
-        /**
+        /*
          *  Direct style: local management of the collection.
          */
         def variables (e : Exp) : Set[String] = {

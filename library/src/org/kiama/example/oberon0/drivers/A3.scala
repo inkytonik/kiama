@@ -22,17 +22,29 @@ package org.kiama
 package example.oberon0
 package drivers
 
-trait A3Phases extends base.TransformingDriver
-    with L3.SyntaxAnalyser
-    with L3.source.SourcePrettyPrinter
-    with L3.NameAnalyser
-    with L3.TypeAnalyser
-    with L2.Lifter
-    with L2.Desugarer {
+trait A3Phases extends L3.SyntaxAnalyser
+        with L3.source.SourcePrettyPrinter
+        with base.TransformingDriver {
+
+    phases =>
+
+    import base.source.SourceTree.SourceTree
 
     def artefact : String = "A3"
     def langlevel : Int = 3
     def tasklevel : Int = 3
+
+    def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
+        new L3.NameAnalyser with L3.TypeAnalyser {
+            val tree = atree
+        }
+
+    def buildTransformer (atree : SourceTree) : base.Transformer =
+        new L2.Lifter with L2.Desugarer {
+            val tree = atree
+            def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
+                phases.buildAnalyser (atree)
+        }
 
 }
 

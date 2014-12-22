@@ -31,8 +31,8 @@ import org.kiama.util.TestCompilerWithConfig
  */
 trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
+    import ObrTree.ObrTree
     import RISCTree._
-    import org.kiama.attribution.Attribution.initTree
     import org.kiama.example.obr.RISCTransformer
     import org.kiama.util.{Config, Emitter}
     import org.kiama.util.Messaging.report
@@ -45,29 +45,26 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * the resulting target tree.
      */
     def targettreetest (name : String, dirname : String, obrfile : String,
-                        tester : (String, Emitter, RISCTree) => Unit) {
+                        tester : (String, Emitter, RISCNode) => Unit) {
         val title = s"$name processing $obrfile"
 
         test(title) {
-            // Initialise compiler state
-            SymbolTable.reset ()
-            RISCLabels.reset ()
-
             val filename = dirname + obrfile
-            val config = createConfig (Seq (filename))
+            val config = createAndInitConfig (Seq (filename))
 
             try {
                 val reader = filereader (filename)
                 makeast (reader, filename, config) match {
                     case Left (ast) =>
-                        val analyser = new SemanticAnalyser
-                        initTree (ast)
-                        val messages = analyser.errors (ast)
+                        val tree = new ObrTree (ast)
+                        val analyser = new SemanticAnalyser (tree)
+                        val messages = analyser.errors
                         if (messages.length > 0) {
                             report (messages, config.error)
                             fail (s"$title emitted a semantic error.")
                         } else {
-                            val transformer = new RISCTransformer (analyser)
+                            val labels = new RISCLabels
+                            val transformer = new RISCTransformer (analyser, labels)
                             tester (title, config.error, transformer.code (ast))
                         }
                     case Right (msg) =>
@@ -87,9 +84,9 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * Test a target tree by collecting together its IntDatum leaves and checking the resulting
      * sequence of integers to see if it contains an expected sequence of integers as a slice.
      */
-    def checkintdatums (expected : Seq[Int]) (title : String, emitter : Emitter, code : RISCTree) {
+    def checkintdatums (expected : Seq[Int]) (title : String, emitter : Emitter, code : RISCNode) {
         val realised = Seq.newBuilder[Int]
-        bottomup (query[RISCTree] {
+        bottomup (query[RISCNode] {
             case IntDatum(num) =>
                 realised += num
             case n : RISCProg  =>

@@ -448,6 +448,13 @@ trait RewriterCore {
         Duplicator (t, children)
 
     /**
+     * Copy a product node by creating a new node of the same class type
+     * using the same children.
+     */
+    def copy[T <: Product] (t : T) : T =
+        Duplicator (t, t.productIterator.map (makechild).toVector)
+
+    /**
      * Make an arbitrary value `c` into a term child, checking that it worked
      * properly. Object references will be returned unchanged; other values
      * will be boxed.
@@ -727,7 +734,6 @@ trait RewriterCore {
      * Implementation of `one` for `Rewritable` values.
      */
     def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
-        val numchildren = r.arity
         val children = r.deconstruct
         children.foldLeft (0) {
             case (i, ct) =>

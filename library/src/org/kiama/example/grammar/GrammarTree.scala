@@ -26,28 +26,33 @@ package example.grammar
  */
 object GrammarTree {
 
-    import org.kiama.util.TreeNode
+    import org.kiama.relation.Tree
     import scala.collection.immutable.Seq
+
+    /**
+     * Tree type for grammars.
+     */
+    type GrammarTree = Tree[GrammarNode,Grammar]
 
     /**
      * Abstract syntax tree nodes.
      */
-    sealed abstract class GrammarTree extends TreeNode
+    sealed abstract class GrammarNode extends Product
 
     /**
      * Grammars.
      */
-    case class Grammar (startRule : Rule, rules : Seq[Rule]) extends GrammarTree
+    case class Grammar (startRule : Rule, rules : Seq[Rule]) extends GrammarNode
 
     /**
      * Production rules.
      */
-    case class Rule (lhs : NonTermDef, rhs : ProdList) extends GrammarTree
+    case class Rule (lhs : NonTermDef, rhs : ProdList) extends GrammarNode
 
     /**
      * Production lists.
      */
-    sealed abstract class ProdList extends GrammarTree
+    sealed abstract class ProdList extends GrammarNode
 
     /**
      * Empty symbol list.
@@ -62,12 +67,12 @@ object GrammarTree {
     /**
      * Production.
      */
-    case class Prod (symbols : SymbolList) extends GrammarTree
+    case class Prod (symbols : SymbolList) extends GrammarNode
 
     /**
      * Symbol lists.
      */
-    sealed abstract class SymbolList extends GrammarTree
+    sealed abstract class SymbolList extends GrammarNode
 
     /**
      * Empty symbol list.
@@ -82,7 +87,7 @@ object GrammarTree {
     /**
      * Grammar symbols.
      */
-    sealed abstract class Symbol extends GrammarTree
+    sealed abstract class Symbol extends GrammarNode
 
     /**
      * Terminal symbol.
@@ -97,7 +102,7 @@ object GrammarTree {
     /**
      * A non-terminal reference.
      */
-    sealed abstract class NonTerm extends GrammarTree {
+    sealed abstract class NonTerm extends GrammarNode {
         def name : String
     }
 

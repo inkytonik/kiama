@@ -24,7 +24,6 @@ package example.oneohonecompanies
 object SampleCompany {
 
     import CompanyTree._
-    import org.kiama.attribution.Attribution.initTree
     import scala.collection.immutable.Seq
 
     val craig = Employee ("Craig", "Redmond", 123456)
@@ -40,10 +39,6 @@ object SampleCompany {
     val dev1  = Dept ("Dev1", klaus, Seq (DU (dev11)))
     val dev   = Dept ("Development", ray, Seq (DU (dev1)))
 
-    val company = {
-        val c = Company (Seq (research, dev))
-        initTree (c)
-        c
-    }
+    val company = Company (Seq (research, dev))
 
 }

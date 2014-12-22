@@ -22,7 +22,7 @@ package org.kiama
 package example.oberon0
 package L4.source
 
-import base.source.{Expression, SourceTree}
+import base.source.{Expression, SourceNode}
 import L0.source.TypeDef
 import scala.collection.immutable.Seq
 
@@ -44,7 +44,7 @@ case class RecordTypeDef (fields : Seq[FieldList]) extends TypeDef
 /**
  * Record field lists.
  */
-case class FieldList (idndefs : Seq[String], tipe : TypeDef) extends SourceTree
+case class FieldList (idndefs : Seq[String], tipe : TypeDef) extends SourceNode
 
 /**
  * Record field access expressions.
@@ -56,4 +56,4 @@ case class FieldExp (base : Expression, fieldname : FieldIdn) extends Expression
  * the same kind of name analysis on them. Fields only need to be looked up
  * in the appropriate record type, not have the full scope handling performed.
  */
-case class FieldIdn (ident : String) extends SourceTree
+case class FieldIdn (ident : String) extends SourceNode

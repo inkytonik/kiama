@@ -25,7 +25,7 @@ package L4
 /**
  * C Code generator for the L4 language.
  */
-trait CCodeGenerator extends L3.CCodeGenerator with TypeAnalyser {
+trait CCodeGenerator extends TypeAnalyser with L3.CCodeGenerator with SymbolTable {
 
     import base.source.{Declaration, Expression, IdnDef, IdnUse}
     import base.c.{CArrayType, CDeclaration, CExpression, CType, CVarDecl}
@@ -45,7 +45,8 @@ trait CCodeGenerator extends L3.CCodeGenerator with TypeAnalyser {
                 CArrayType (s, translate (et))
             case RecordType (fls) =>
                 val vs = fls map {
-                             case Field (i, t) => CVarDecl (i, translate (t))
+                             case Field (i, t) =>
+                                 CVarDecl (i, translate (t))
                          }
                 CRecordType (vs)
             case _ =>
@@ -58,7 +59,7 @@ trait CCodeGenerator extends L3.CCodeGenerator with TypeAnalyser {
     override def translate (e : Expression) : CExpression =
         e match {
             case IdnExp (u @ IdnUse (s)) =>
-                if (isNotArray (e->basetype))
+                if (isNotArray (basetype (e)))
                     super.translate (e)
                 else
                     CIdnExp (mangle (s))
@@ -86,7 +87,7 @@ trait CCodeGenerator extends L3.CCodeGenerator with TypeAnalyser {
      * addressing operations for VAR.
      */
     override def translateActualParam (p : Expression, mode : Mode) : CExpression =
-        if (isNotArray (p->basetype))
+        if (isNotArray (basetype (p)))
             super.translateActualParam (p, mode)
         else
             translate (p)
