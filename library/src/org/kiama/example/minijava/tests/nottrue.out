@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/tests/nottrue.java
+.source src/org/kiama/example/minijava/tests/nottrue.java
 .class public NotTrue
 .super java/lang/Object
 

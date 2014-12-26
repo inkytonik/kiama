@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/tests/notfalse.java
+.source src/org/kiama/example/minijava/tests/notfalse.java
 .class public NotFalse
 .super java/lang/Object
 

@@ -61,9 +61,9 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 
     test ("filetests using a directory that doesn't exist fails") {
         val i = intercept[IllegalArgumentException] {
-                    filetests ("Compiler", "library/src/org/kiama/util/IDoNotExist", ".src", ".out")
+                    filetests ("Compiler", "src/org/kiama/util/IDoNotExist", ".src", ".out")
                 }
-        assertResult ("bad test file path library/src/org/kiama/util/IDoNotExist") (i.getMessage)
+        assertResult ("bad test file path src/org/kiama/util/IDoNotExist") (i.getMessage)
     }
 
 }

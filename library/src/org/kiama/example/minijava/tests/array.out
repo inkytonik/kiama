@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/tests/array.java
+.source src/org/kiama/example/minijava/tests/array.java
 .class public Array
 .super java/lang/Object
 
@@ -21,7 +21,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
-.source library/src/org/kiama/example/minijava/tests/array.java
+.source src/org/kiama/example/minijava/tests/array.java
 .class public ArrayClass
 .super java/lang/Object
 

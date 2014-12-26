@@ -413,7 +413,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
  */
 class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
 
-    val path = "library/src/org/kiama/example/lambda2/tests"
+    val path = "src/org/kiama/example/lambda2/tests"
     filetests ("Lambda REPL", path, ".repl", ".replout")
 
 }

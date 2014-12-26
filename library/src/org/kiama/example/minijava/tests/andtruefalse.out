@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/tests/andtruefalse.java
+.source src/org/kiama/example/minijava/tests/andtruefalse.java
 .class public AndTrueFalse
 .super java/lang/Object
 

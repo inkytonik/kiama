@@ -32,7 +32,7 @@ import scala.collection.immutable.Seq
  */
 class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
-    filetests ("ObrRegression", "library/src/org/kiama/example/obr/tests/generic", ".obr", ".risc",
+    filetests ("ObrRegression", "src/org/kiama/example/obr/tests/generic", ".obr", ".risc",
                argslist = Seq (Seq ("-a")))
 
 }
@@ -42,8 +42,8 @@ class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt,ObrCo
  */
 class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
-    filetests ("ObrParserEnum", "library/src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
-    filetests ("ObrParserException", "library/src/org/kiama/example/obr/tests/exceptions/parser", ".obr", ".out")
+    filetests ("ObrParserEnum", "src/org/kiama/example/obr/tests/enum/parser", ".obr", ".out")
+    filetests ("ObrParserException", "src/org/kiama/example/obr/tests/exceptions/parser", ".obr", ".out")
 
 }
 
@@ -52,8 +52,8 @@ class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrInt,Obr
  */
 class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
-    filetests ("ObrSemanticEnum", "library/src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
-    filetests ("ObrSemanticException", "library/src/org/kiama/example/obr/tests/exceptions/semantic", ".obr", ".out")
+    filetests ("ObrSemanticEnum", "src/org/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
+    filetests ("ObrSemanticException", "src/org/kiama/example/obr/tests/exceptions/semantic", ".obr", ".out")
 
 }
 
@@ -64,7 +64,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
 
     import org.kiama.util.{Config, StringEmitter}
 
-    filetests ("ObrExec", "library/src/org/kiama/example/obr/tests/generic", ".obr", ".out",
+    filetests ("ObrExec", "src/org/kiama/example/obr/tests/generic", ".obr", ".out",
                Some (".in"), "0", Seq (Seq ("-e")))
 
     /*
@@ -99,7 +99,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
     }
 
     // Execution tests for FOR loops
-    val forExecDir = "library/src/org/kiama/example/obr/tests/for/codegen/"
+    val forExecDir = "src/org/kiama/example/obr/tests/for/codegen/"
     val forExecTests = Seq (
             ("for.obr", Seq (0, 0), 0)
         ,   ("for.obr", Seq (5, 0), 0)
@@ -120,7 +120,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
 
     // Execution tests for code involving enumeration values.
 
-    val enumExecDir = "library/src/org/kiama/example/obr/tests/enum/codegen/"
+    val enumExecDir = "src/org/kiama/example/obr/tests/enum/codegen/"
     val enumExecTests = Seq (
             ("enumtest.obr", Seq (-1), 0)
         ,   ("enumtest.obr", Seq (0), 1)
@@ -136,7 +136,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
 
     // Execution tests for code involving exception handling.
 
-    val exceptionsExecDir = "library/src/org/kiama/example/obr/tests/exceptions/codegen/"
+    val exceptionsExecDir = "src/org/kiama/example/obr/tests/exceptions/codegen/"
     val exceptionsExecTests = Seq (
             ("except1a.obr", Seq (0), -1)
 
@@ -235,9 +235,9 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
  */
 class ObrNumberingTests extends TreeTestDriver {
 
-    targettreetest("ObrNumbering", "library/src/org/kiama/example/obr/tests/exceptions/codegen/",
+    targettreetest("ObrNumbering", "src/org/kiama/example/obr/tests/exceptions/codegen/",
                    "except8.obr", checkintdatums (Seq (3,1,4,0,2)))
-    targettreetest("ObrNumbering", "library/src/org/kiama/example/obr/tests/enum/codegen/",
+    targettreetest("ObrNumbering", "src/org/kiama/example/obr/tests/enum/codegen/",
                    "enumtest2.obr", checkintdatums (Seq (1,3,1,0,2,2,1,0,1)))
 
 }

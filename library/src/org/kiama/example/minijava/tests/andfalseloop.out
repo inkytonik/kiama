@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/tests/andfalseloop.java
+.source src/org/kiama/example/minijava/tests/andfalseloop.java
 .class public AndFalseLoop
 .super java/lang/Object
 
@@ -27,7 +27,7 @@ L2:
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
-.source library/src/org/kiama/example/minijava/tests/andfalseloop.java
+.source src/org/kiama/example/minijava/tests/andfalseloop.java
 .class public LoopClass
 .super java/lang/Object
 

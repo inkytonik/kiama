@@ -49,7 +49,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll with
      */
     override def suiteName = {
         val filename = getClass.getName.replaceAllLiterally (".", "/")
-        s"${super.suiteName} in library/src/$filename"
+        s"${super.suiteName} in src/$filename"
     }
 
     /**

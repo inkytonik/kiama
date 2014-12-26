@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/tests/sub.java
+.source src/org/kiama/example/minijava/tests/sub.java
 .class public Sub
 .super java/lang/Object
 

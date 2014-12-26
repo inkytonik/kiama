@@ -1,4 +1,4 @@
-.source library/src/org/kiama/example/minijava/tests/mul.java
+.source src/org/kiama/example/minijava/tests/mul.java
 .class public Mul
 .super java/lang/Object
 

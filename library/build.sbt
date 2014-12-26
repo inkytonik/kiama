@@ -40,10 +40,19 @@ unmanagedResources in Test := {
     (s ** (-"*.scala" && -HiddenFileFilter)).get
 }
 
-// Fork the runs and connect sbt's input and output to the forked process so
-// that we are immune to version clashes with the JLine library used by sbt
+// Java settings for forked JVMs
 
-fork in run := true
+javaOptions ++=
+    Seq (
+        "-Xss8M"
+    )
+
+// Fork runs and tests
+
+fork := true
+
+// Connect sbt's input and output to the forked process so that we are
+// immune to version clashes with the JLine library used by sbt
 
 connectInput in run := true
 
