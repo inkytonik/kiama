@@ -895,8 +895,8 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                             for {
                                                 o2 <- out (h) (o1)
                                                 o3 <- grp (h) (o2)
-                                            } yield o3)
-                                        )
+                                            } yield o3
+                                        ))
                     prune (c) (p + l, dq.init :+ n)
                 }
         )
