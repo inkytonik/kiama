@@ -274,10 +274,10 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         assertResult ("'\n, .\n, '\n") (pretty (group (lsep2 (List (squote, dot, squote), comma)), 3))
     }
 
-    val l = List (lbracket, dot, equal, rbracket)
+    val l = List (langle, dot, equal, rangle)
 
     test ("pretty-print non-empty lsep sequence - wrap") {
-        assertResult ("\n[,\n.,\n=,\n]") (pretty (group (lsep (l, comma)), 3))
+        assertResult ("\n<,\n.,\n=,\n>") (pretty (group (lsep (l, comma)), 3))
     }
 
     test ("pretty-print empty cat sequence") {
@@ -285,11 +285,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
 
     test ("pretty-print non-empty cat sequence - non-wrap") {
-        assertResult ("[.=]") (pretty (cat (l)))
+        assertResult ("<.=>") (pretty (cat (l)))
     }
 
     test ("pretty-print non-empty cat sequence - wrap") {
-        assertResult ("[\n.\n=\n]") (pretty (group (cat (l)), 3))
+        assertResult ("<\n.\n=\n>") (pretty (group (cat (l)), 3))
     }
 
     test ("pretty-print empty hcat sequence") {
@@ -297,11 +297,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
 
     test ("pretty-print non-empty hcat sequence - non-wrap") {
-        assertResult ("[.=]") (pretty (hcat (l)))
+        assertResult ("<.=>") (pretty (hcat (l)))
     }
 
     test ("pretty-print non-empty hcat sequence - wrap") {
-        assertResult ("[.=]") (pretty (group (hcat (l)), 3))
+        assertResult ("<.=>") (pretty (group (hcat (l)), 3))
     }
 
     test ("pretty-print empty vcat sequence") {
@@ -309,25 +309,25 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
 
     test ("pretty-print non-empty vcat sequence - non-wrap") {
-        assertResult ("[\n.\n=\n]") (pretty (vcat (l)))
+        assertResult ("<\n.\n=\n>") (pretty (vcat (l)))
     }
 
     test ("pretty-print non-empty vcat sequence - wrap") {
-        assertResult ("[\n.\n=\n]") (pretty (group (vcat (l)), 3))
+        assertResult ("<\n.\n=\n>") (pretty (group (vcat (l)), 3))
     }
 
     test ("pretty-print empty fillcat sequence") {
         assertResult ("") (pretty (fillcat (List ())))
     }
 
-    val m = List (lbracket, dot, equal, dot, equal, dot, equal, rbracket)
+    val m = List (langle, dot, equal, dot, equal, dot, equal, rangle)
 
     test ("pretty-print non-empty fillcat sequence - non-wrap") {
-        assertResult ("[.=.=.=]") (pretty (fillcat (m)))
+        assertResult ("<.=.=.=>") (pretty (fillcat (m)))
     }
 
     test ("pretty-print non-empty fillcat sequence - wrap") {
-        assertResult ("[.=\n.=.\n=]") (pretty (fillcat (m), 3))
+        assertResult ("<.=\n.=.\n=>") (pretty (fillcat (m), 3))
     }
 
     test ("pretty-print empty sterm sequence") {
@@ -335,11 +335,11 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
 
     test ("pretty-print non-empty sterm sequence - non-wrap") {
-        assertResult ("[:.:=:]:") (pretty (sterm (l, colon)))
+        assertResult ("<:.:=:>:") (pretty (sterm (l, colon)))
     }
 
     test ("pretty-print non-empty sterm sequence - wrap") {
-        assertResult ("[:\n.:\n=:\n]:") (pretty ((sterm (l, colon)), 3))
+        assertResult ("<:\n.:\n=:\n>:") (pretty ((sterm (l, colon)), 3))
     }
 
     test ("pretty-print hanging text") {
