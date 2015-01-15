@@ -500,11 +500,11 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that concatenates the documents in the given sequence
-     * horizontally with `<>` as long as they fit the output width, then
-     * inserts a `linebreak` and continues to the end of the sequence.
+     * horizontally with `<>` until they don't fit the output width, then
+     * inserts a line break and continues to the end of the sequence.
      */
     def fillcat (ds : Seq[Doc]) : Doc =
-        folddoc (ds, (_ <\> _))
+        folddoc (ds, (l : Doc, r : Doc) => (l <> group (linebreak <> r)))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -1019,6 +1019,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
     def line (repl : Layout) : Doc =
         new Doc ({
             case (i, w) =>
+                val width = repl.length
                 val outLine =
                     (h : Horizontal) => (c : Out) =>
                         Done (
@@ -1026,7 +1027,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                 if (h)
                                     More (() =>
                                         for {
-                                            buffer <- c (r - repl.length)
+                                            buffer <- c (r - width)
                                         } yield repl +: buffer
                                     )
                                 else
@@ -1036,7 +1037,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                         } yield "\n" +: (" " * i) +: buffer
                                     )
                         )
-                scan (1, outLine)
+                scan (width, outLine)
         })
 
     def line : Doc =

@@ -118,7 +118,7 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         }
 
         test ("pretty-print empty line break separators - grouped, wrap") {
-            assertResult ("a\nb\nc") (pretty (group (linesepdoc), 3))
+            assertResult ("a\nb\nc") (pretty (group (linesepdoc), 2))
         }
 
     }

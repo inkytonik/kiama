@@ -91,9 +91,7 @@ class ImperativeTests extends Tests {
           |            Var ("i"),
           |            Seqn (
           |                List (
-          |                    Asgn (
-          |                        Var ("count"),
-          |                        Add (Var ("count"), Num (1.0))),
+          |                    Asgn (Var ("count"), Add (Var ("count"), Num (1.0))),
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
     test ("pretty-print non-trivial imperative program (default width)") {
