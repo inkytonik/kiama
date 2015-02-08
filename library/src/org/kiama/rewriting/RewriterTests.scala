@@ -1885,8 +1885,6 @@ class RewriterTests extends Tests with Generator {
         assertNotSame (t.l) (ct.l)
         assertNotSame (t.r) (ct.r)
 
-        // println ("is")
-
         // Make sure that the new term is actually a tree. If it's not, trying
         // to make a Tree from it will throw a RuntimeException.
         try {
