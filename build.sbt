@@ -53,8 +53,8 @@ libraryDependencies in ThisBuild ++= {
             Seq ("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3")
     Seq (
         // Caching:
-        "com.google.code.findbugs" % "jsr305" % "2.0.3",
-        "com.google.guava" % "guava" % "17.0",
+        "com.google.code.findbugs" % "jsr305" % "3.0.0",
+        "com.google.guava" % "guava" % "18.0",
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
@@ -66,8 +66,8 @@ libraryDependencies in ThisBuild ++= {
         // REPLs:
         "jline" % "jline" % "2.12",
         // Testing:
-        "org.scalacheck" %% "scalacheck" % "1.11.5" % "test",
-        "org.scalatest" %% "scalatest" % "2.2.1" % "test"
+        "org.scalacheck" %% "scalacheck" % "1.12.2" % "test",
+        "org.scalatest" %% "scalatest" % "2.2.4" % "test"
     ) ++
         // Parsing:
         parserCombinatorLibrary
