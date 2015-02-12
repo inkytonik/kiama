@@ -133,7 +133,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
         }
         if (config.astPrettyPrint ()) {
             section (output, "_pp.ob")
-            output.emitln (pretty (toDoc (ast)))
+            output.emitln (layout (toDoc (ast)))
         }
 
         // Make a tree for this program
@@ -214,7 +214,7 @@ trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDe
         else if (config.intPrettyPrint ())
             section (output, "_ipp.ob")
         if (config.intPrettyPrint () || config.challenge ())
-            output.emitln (pretty (toDoc (ntree.root)))
+            output.emitln (layout (toDoc (ntree.root)))
         ntree
     }
 
@@ -246,7 +246,7 @@ trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[Modul
         }
         if (config.cPrettyPrint () || config.challenge ()) {
             section (output, "c")
-            output.emitln (pretty (toDoc (cast)))
+            output.emitln (layout (toDoc (cast)))
         }
     }
 

@@ -24,14 +24,15 @@ package example.imperative
 /**
  * Abstract syntax tree pretty-printing for the imperative language.
  */
-object PrettyPrinter extends org.kiama.output.PrettyPrinter {
+class PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
     import ImperativeTree._
+    import org.kiama.output.PrettyPrinterTypes.Document
 
     /**
      * Format an imperative node.
      */
-    def format (t : ImperativeNode) : String =
+    def format (t : ImperativeNode) : Document =
         pretty (toDoc (t))
 
     /**
@@ -60,3 +61,8 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
         parens (toDoc (l) <+> op <+> toDoc (r))
 
 }
+
+/**
+ * Abstract syntax tree pretty-printing for the imperative language.
+ */
+object PrettyPrinter extends PrettyPrinter

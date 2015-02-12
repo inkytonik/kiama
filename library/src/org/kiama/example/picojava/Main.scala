@@ -36,6 +36,7 @@ abstract class PicojavaConfig (args : Seq[String]) extends Config (args) {
 object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalyser {
 
     import PicoJavaTree.PicoJavaTree
+    import org.kiama.output.PrettyPrinterTypes.Document
     import org.kiama.util.Config
 
     def createConfig (args : Seq[String],
@@ -70,7 +71,7 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
     /**
      * Pretty printer to use to print minijava ASTs.
      */
-    override def format (ast : Program) : String =
+    override def format (ast : Program) : Document =
         PrettyPrinter.format (ast)
 
 }

@@ -27,13 +27,14 @@ package example.json
 trait PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
     import JSONTree._
+    import org.kiama.output.PrettyPrinterTypes.Document
 
     override val defaultIndent = 1
 
     /**
      * Format a JSON node.
      */
-    def format (t : JValue) : String =
+    def format (t : JValue) : Document =
         pretty (toDoc (t))
 
     /**

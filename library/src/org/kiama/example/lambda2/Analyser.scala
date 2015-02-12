@@ -35,7 +35,7 @@ import org.kiama.util.Messaging
 class Analyser (tree : LambdaTree) extends Attribution {
 
     import LambdaTree._
-    import PrettyPrinter._
+    import PrettyPrinter.formattedLayout
     import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
     import scala.collection.immutable.Seq
 
@@ -126,7 +126,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
      */
     def checkType (e : Exp, tipe : Exp => Type) : Messages = {
         val expectedType = exptipe (e)
-        message (e, s"expected ${format (expectedType)}, found ${format (tipe (e))}",
+        message (e, s"expected ${formattedLayout (expectedType)}, found ${formattedLayout (tipe (e))}",
                  tipe (e) != NoType () && tipe (e) != UnknownType () &&
                      expectedType != NoType () && tipe (e) != expectedType)
     }

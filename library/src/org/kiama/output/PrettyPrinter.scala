@@ -24,15 +24,9 @@ package output
 import scala.language.implicitConversions
 
 /**
- * The interface of a pretty printer using combinators from Swierstra and
- * Chitil (Linear, bounded, functional pretty-printing, Journal of Functional
- * Programming, 19 (1), 2009) and Leijen's PPrint library.  The latter
- * is a version of Wadler's library which was inspired by an earlier
- * library by Hughes.
+ * Common type definitions for all pretty-printers.
  */
-trait PrettyPrinterBase {
-
-    import scala.collection.immutable.Seq
+object PrettyPrinterTypes {
 
     /**
      * Indentation is expressed as integer space units.
@@ -48,6 +42,47 @@ trait PrettyPrinterBase {
      * The final layout of a document as a string.
      */
     type Layout = String
+
+    /**
+     * A map between values and ranges. Used for the representation
+     * of mappings between pretty-printed values and their printed
+     * representations. See also `Document`.
+     */
+    type Positions  = Map[Any,Range]
+
+    /**
+     * A pretty-printed document, consisting of layout for the
+     * pretty-printed representation and associated positions.
+     * The position information maps pretty-printed values to the
+     * offset ranges at which their printed representation occurs
+     * in the layout. In other words, for a given value `v` the
+     * start of the position range will be the offset at which the
+     * pretty-printed representation of `v` starts in the layout.
+     * The end of the range is where that representation finishes.
+     * See the `positioned` combinator for information on how to
+     * specify the association between a value and the document
+     * that represents it.
+     */
+    case class Document (layout : Layout, positions : Positions)
+
+    /**
+     * An empty pretty-printed document.
+     */
+    val emptyDocument = Document ("", Map.empty)
+
+}
+
+/**
+ * The interface of a pretty printer using combinators from Swierstra and
+ * Chitil (Linear, bounded, functional pretty-printing, Journal of Functional
+ * Programming, 19 (1), 2009) and Leijen's PPrint library.  The latter
+ * is a version of Wadler's library which was inspired by an earlier
+ * library by Hughes.
+ */
+trait PrettyPrinterBase {
+
+    import PrettyPrinterTypes.{Document, Indent, Layout, Positions, Width}
+    import scala.collection.immutable.Seq
 
     /**
      * Default indentation is four spaces.
@@ -133,7 +168,19 @@ trait PrettyPrinterBase {
      * the width is the first parameter, but here we put it second so we can provide
      * a default value.
      */
-    def pretty (d : Doc, w : Width = defaultWidth) : Layout
+    def pretty (d : Doc, w : Width = defaultWidth) : Document
+
+    /**
+     * Pretty-printe a document as per `pretty` but just return the layout.
+     */
+    def layout (d : Doc, w : Width = defaultWidth) : Layout =
+        pretty (d, w).layout
+
+    /**
+     * Pretty-printe a document as per `pretty` but just return the position map.
+     */
+    def positions (d : Doc, w : Width = defaultWidth) : Positions =
+        pretty (d, w).positions
 
     // Basic combinators.  Thse need to be implemented for a specific
     // instantiation of `Doc`.
@@ -191,6 +238,16 @@ trait PrettyPrinterBase {
      * (indentation) of the current line.
      */
     def nesting (f : Int => Doc) : Doc
+
+    // Positioned documents
+
+    /**
+     * Return a document that prints as `d` but also records the fact that the
+     * printed representation of `d` corresponds to `n`. The positions of that
+     * pretty-printed representation can be retrieved via the position
+     * information in the `Document` returned by `pretty`.
+     */
+    def positioned (n : Any, d : Doc) : Doc
 
     // Extended combinators that are implemented in terms of the basic
     // combinators and the representation-independent document operations.
@@ -276,26 +333,27 @@ trait PrettyPrinterBase {
      * `Vector`, `Map`, `List` or `Product`, print it in a prefix list style,
      * with the exception that `Nil` prints as `Nil`. Tuples are pretty-printed
      * using arrow notation. Strings are pretty-printed surrounded by double
-     * quotes. If none of these cases apply, use the `toDoc` method on `a`.
-     * `null` prints as `null`.
+     * quotes. If none of these cases apply, use `value` on `a`. `null` prints
+     * as `null`.
      */
     def any (a : Any) : Doc =
-        if (a == null)
-            "null"
-        else
-            a match {
-                case v : Vector[_] => list (v.toList, "Vector ", any)
-                case m : Map[_,_]  => list (m.toList, "Map ", any)
-                case Nil           => "Nil"
-                case l : List[_]   => list (l, "List ", any)
-                case (l, r)        => any (l) <+> "->" <+> any (r)
-                case None          => "None"
-                case p : Product   => list (p.productIterator.toList,
-                                            s"${p.productPrefix} ",
-                                            any)
-                case s : String    => dquotes (text (s))
-                case _             => value (a)
-            }
+        positioned (a,
+            if (a == null)
+                "null"
+            else
+                a match {
+                    case v : Vector[_] => list (v.toList, "Vector ", any)
+                    case m : Map[_,_]  => list (m.toList, "Map ", any)
+                    case Nil           => "Nil"
+                    case l : List[_]   => list (l, "List ", any)
+                    case (l, r)        => any (l) <+> "->" <+> any (r)
+                    case None          => "None"
+                    case p : Product   => list (p.productIterator.toList,
+                                                s"${p.productPrefix} ",
+                                                any)
+                    case s : String    => dquotes (text (s))
+                    case _             => value (a)
+                })
 
     @deprecated ("Use PrettyPrinter.any instead.", "1.2.1")
     def product (p : Any) : Doc =
@@ -797,15 +855,24 @@ trait PrettyPrinterBase {
  */
 trait PrettyPrinter extends PrettyPrinterBase {
 
+    import org.kiama.util.Positions.{getStart, getFinish}
     import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
+    import PrettyPrinterTypes.{Document, Indent, Layout, Positions, Width}
     import scala.collection.immutable.{Queue, Seq}
     import scala.collection.immutable.Queue.{empty => emptyDq}
+    import scala.collection.mutable.StringBuilder
 
     // Internal data types
 
+    sealed abstract class Entry
+    case class Finish (n : Any) extends Entry
+    case class Start (n : Any) extends Entry
+    case class Text (s : String) extends Entry
+
     type Remaining  = Int
     type Horizontal = Boolean
-    type Buffer     = Seq[String]
+    type Buffer     = Seq[Entry]
+    type Effect     = Buffer => Buffer
     type Out        = Remaining => Trampoline[Buffer]
     type OutGroup   = Horizontal => Out => Trampoline[Out]
     type PPosition  = Int
@@ -906,10 +973,30 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 c (p, dq.init.init :+ n)
             }
 
+    def output (o : Out, r : Int, entry : Entry) : More[Buffer] =
+        More (() =>
+            for {
+                buffer <- o (r)
+            } yield entry +: buffer
+        )
+
+    def insert (len : Int, entry : Entry) : Doc =
+        new Doc (
+            (iw : IW) => {
+                val out =
+                    (_ : Horizontal) => (o : Out) =>
+                        Done (
+                            (r : Remaining) =>
+                                output (o, r - len, entry)
+                        )
+                scan (len, out)
+            }
+        )
+
     /**
      * Continuation representation of documents.
      */
-    class Doc (f : DocCont) extends DocCont with DocOps {
+    class Doc (val f : DocCont) extends DocCont with DocOps {
 
         // Forward function operations to the function
 
@@ -938,43 +1025,20 @@ trait PrettyPrinter extends PrettyPrinterBase {
         if (t == "")
             empty
         else
-            new Doc (
-                (iw : IW) => {
-                    val l = t.length
-                    val outText =
-                        (_ : Horizontal) => (o : Out) =>
-                            Done (
-                                (r : Remaining) =>
-                                    More (() =>
-                                        for {
-                                            buffer <- o (r - l)
-                                        } yield t +: buffer
-                                    )
-                            )
-                    scan (l, outText)
-                }
-            )
+            insert (t.length, Text (t))
 
     def line (repl : Layout) : Doc =
         new Doc ({
             case (i, w) =>
                 val width = repl.length
                 val outLine =
-                    (h : Horizontal) => (c : Out) =>
+                    (h : Horizontal) => (o : Out) =>
                         Done (
                             (r : Remaining) =>
                                 if (h)
-                                    More (() =>
-                                        for {
-                                            buffer <- c (r - width)
-                                        } yield repl +: buffer
-                                    )
+                                    output (o, r - width, Text (repl))
                                 else
-                                    More (() =>
-                                        for {
-                                            buffer <- c (w - i)
-                                        } yield "\n" +: (" " * i) +: buffer
-                                    )
+                                    output (o, w - i, Text ("\n" + " " * i))
                         )
                 scan (width, outLine)
         })
@@ -1024,8 +1088,8 @@ trait PrettyPrinter extends PrettyPrinterBase {
                                     for {
                                         c1 <- f (w - r) (i, w) (c)
                                         out <- c1 (p, dq)
-                                        buffer <- out (r)
-                                    } yield buffer
+                                        bp <- out (r)
+                                    } yield bp
                             )
                     )
         })
@@ -1036,10 +1100,16 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 f (i) (iw)
         })
 
+    // Positioning combinators
+
+    def positioned (n : Any, d : Doc) : Doc =
+        insert (0, Start (n)) <> d <> insert (0, Finish (n))
+
     // Obtaining output
 
-    def pretty (d : Doc, w : Width = defaultWidth) : Layout = {
-        val initBuffer = Seq[String] ()
+    def pretty (d : Doc, w : Width = defaultWidth) : Document = {
+
+        val initBuffer = Seq[Entry] ()
         val cend =
             (p : PPosition, dq : Dq) =>
                 Done ((r : Remaining) => Done (initBuffer))
@@ -1050,7 +1120,22 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 buffer <- o (w)
             } yield buffer
         val finalBuffer = finalBufferComputation.runT
-        finalBuffer.mkString
+
+        val (finalMap, _, _, finalBuilder) =
+            finalBuffer.foldLeft ((Map[Any,Range](), List[Int] (), 0, new StringBuilder ())) {
+                case ((m, s, p, o), e) =>
+                    e match {
+                        case Start (a) =>
+                            (m, p :: s, p, o)
+                        case Finish (a) =>
+                            (m + (a -> Range (s.head, p + 1)), s.tail, p, o)
+                        case Text (t) =>
+                            (m, s, p + t.length, o.append (t))
+                    }
+            }
+
+        Document (finalBuilder.result (), finalMap)
+
     }
 
 }

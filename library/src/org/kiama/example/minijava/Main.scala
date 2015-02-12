@@ -33,6 +33,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
     import PrettyPrinter.{any => ppany, pretty}
+    import org.kiama.output.PrettyPrinterTypes.Document
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
 
@@ -85,7 +86,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
     /**
      * Pretty printer to use to print minijava ASTs.
      */
-    override def format (ast : Program) : String =
+    override def format (ast : Program) : Document =
         PrettyPrinter.format (ast)
 
 }

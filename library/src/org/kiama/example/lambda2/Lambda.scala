@@ -46,7 +46,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
 
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree.LambdaTree
-    import PrettyPrinter._
+    import PrettyPrinter.formattedLayout
     import org.kiama.util.{Emitter, Console}
     import org.kiama.util.Messaging.report
 
@@ -138,7 +138,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
         if (messages.length == 0) {
             // If everything is OK, evaluate the expression
             val evaluator = evaluatorFor (config.mechanism ())
-            config.output.emitln (format (evaluator.eval (e)))
+            config.output.emitln (formattedLayout (evaluator.eval (e)))
         } else {
             // Otherwise report the errors and reset for next expression
             report (messages, config.error)

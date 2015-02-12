@@ -183,7 +183,6 @@ trait Environments {
      */
     def format (env : Environment) : String = {
 
-        import org.kiama.output.PrettyPrinter
         import org.kiama.output.PrettyPrinter._
 
         def entryToDoc (entry : (String,Entity)) : Doc =
@@ -196,7 +195,7 @@ trait Environments {
             case Nil =>
                 "no scopes"
             case ss  =>
-                PrettyPrinter.pretty (vsep (ss map scopeToDoc))
+                layout (vsep (ss map scopeToDoc))
         }
 
     }

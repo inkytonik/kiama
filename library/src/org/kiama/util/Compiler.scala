@@ -34,6 +34,7 @@ import scala.util.parsing.combinator.RegexParsers
  */
 trait CompilerBase[T, C <: Config] extends Profiler {
 
+    import org.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.kiama.util.{Console, Emitter, StringEmitter}
     import org.kiama.util.IO.{filereader, FileNotFoundException}
     import scala.io.Source
@@ -137,10 +138,10 @@ trait CompilerBase[T, C <: Config] extends Profiler {
     def process (filename : String, ast : T, config : C)
 
     /**
-     * Format an abstract syntax tree for printing. Default: return an empty string.
+     * Format an abstract syntax tree for printing. Default: return an empty document.
      */
-    def format (ast : T) : String =
-        ""
+    def format (ast : T) : Document =
+        emptyDocument
 
 }
 

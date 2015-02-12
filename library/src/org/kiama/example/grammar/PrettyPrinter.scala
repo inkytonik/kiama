@@ -27,12 +27,13 @@ package example.grammar
 trait PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
     import GrammarTree._
+    import org.kiama.output.PrettyPrinterTypes.Document
     import scala.collection.immutable.Seq
 
     /**
      * Format a grammar node.
      */
-    def format (t : GrammarNode) : String =
+    def format (t : GrammarNode) : Document =
         pretty (toDoc (t))
 
     /**

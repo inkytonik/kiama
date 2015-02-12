@@ -24,14 +24,15 @@ package example.picojava
 /**
  * Abstract syntax tree pretty-printing for PicoJava.
  */
-object PrettyPrinter extends org.kiama.output.PrettyPrinter {
+class PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
     import PicoJavaTree._
+    import org.kiama.output.PrettyPrinterTypes.Document
 
     /**
      * Format a PicoJava node.
      */
-    def format (t : PicoJavaNode) : String =
+    def format (t : PicoJavaNode) : Document =
         pretty (toDoc (t))
 
     /**
@@ -68,3 +69,8 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
         }
 
 }
+
+/**
+ * Abstract syntax tree pretty-printing for PicoJava.
+ */
+object PrettyPrinter extends PrettyPrinter

@@ -276,7 +276,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
             s.change (t)
             if (debug) {
                 val d = name <> '.' <> s.sname <+> ":=" </> nest (ppvalue (s))
-                emitter.emitln (pretty (d))
+                emitter.emitln (layout (d))
             }
         }
 
@@ -315,7 +315,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
             if (debug) {
                 val d = name <> '.' <> s.sname <> '(' <> ppvalue (t) <> ')' <+>
                             ":=" </> nest (ppvalue (u))
-                emitter.emitln (pretty (d))
+                emitter.emitln (layout (d))
             }
         }
 

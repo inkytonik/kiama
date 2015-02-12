@@ -21,21 +21,37 @@
 package org.kiama
 package example.lambda2
 
-object PrettyPrinter extends org.kiama.output.PrettyPrinter {
+/**
+ * Lambda calculus pretty printing.
+ */
+class PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
     import LambdaTree._
+    import org.kiama.output.PrettyPrinterTypes.Document
 
     /**
      * Format a lambda expression.
      */
-    def format (t : Exp) : String =
+    def format (t : Exp) : Document =
         pretty (toDoc (t))
+
+    /**
+     * The layout from formatting a lambda expression.
+     */
+    def formattedLayout (t : Exp) : String =
+        format (t).layout
 
     /**
      * Format a type.
      */
-    def format (t : Type) : String =
+    def format (t : Type) : Document =
         pretty (typeToDoc (t))
+
+    /**
+     * The layout from formatting a type.
+     */
+    def formattedLayout (t : Type) : String =
+        format (t).layout
 
     /**
      * Convert an expression node to a pretty-printing document in
@@ -91,3 +107,8 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
         parens (toDoc (l) <+> op <+> toDoc (r))
 
 }
+
+/**
+ * Lambda calculus pretty printing.
+ */
+object PrettyPrinter extends PrettyPrinter

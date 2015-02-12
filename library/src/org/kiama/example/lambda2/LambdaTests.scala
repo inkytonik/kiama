@@ -30,7 +30,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
 
     import LambdaTree._
     import Evaluators.{evaluatorFor, mechanisms}
-    import PrettyPrinter._
+    import PrettyPrinter.formattedLayout
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Messaging.Messages
@@ -324,7 +324,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     def assertPrettyS (term : String, expected : String) {
         assertParseCheck (term, parser) {
             exp =>
-                val result = format (exp)
+                val result = formattedLayout (exp)
                 if (result != expected)
                     fail (s"pretty-print of $term expected $expected, got $result")
         }
@@ -333,10 +333,10 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     /**
      * Pretty-print term then compare to result.
      */
-    def assertPrettyE (term : Exp, result : String) {
-        val r = format (term)
-        if (r != result)
-            fail (s"pretty-print of $term expected $result, got $r")
+    def assertPrettyE (term : Exp, expected : String) {
+        val result = formattedLayout (term)
+        if (result != expected)
+            fail (s"pretty-print of $term expected $expected, got $result")
     }
 
     test ("pretty-print lambda expression, simple operation") {

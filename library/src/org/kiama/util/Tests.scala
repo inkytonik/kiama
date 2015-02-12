@@ -21,6 +21,7 @@
 package org.kiama
 package util
 
+import org.kiama.output.PrettyPrinter
 import org.scalatest.prop.Checkers
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSuiteLike}
 import scala.util.parsing.combinator.RegexParsers
@@ -274,4 +275,28 @@ trait TransformerTests extends RegexParserTests {
 
 }
 
+/**
+ * Useful test routines for pretty-printers.
+ */
 
+trait PrettyPrinterTests extends Tests {
+
+    self : PrettyPrinter =>
+
+    import org.kiama.output.PrettyPrinterTypes.{Document, Layout, Positions}
+
+    /**
+     * Assert that a doc when pretty-printed has the given layout.
+     */
+    def assertLayout (expected : Layout) (document : Document) {
+        assertResult (expected) (document.layout)
+    }
+
+    /**
+     * Assert that a doc when pretty-printed has the given source position map.
+     */
+    def assertPositions (expected : Positions) (document : Document) {
+        assertResult (expected) (document.positions)
+    }
+
+}

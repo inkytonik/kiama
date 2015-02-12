@@ -22,24 +22,28 @@ package org.kiama
 package example.minijava
 
 /**
- * Abstract syntax tree pretty-printing for Miniava.
+ * Abstract syntax tree pretty-printing for Minijava.
  */
-object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
+class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
 
     import MiniJavaTree._
     import org.kiama.output.PrettyExpression
+    import org.kiama.output.PrettyPrinterTypes.Document
     import scala.collection.immutable.Seq
 
     /**
      * Format a MiniJava node.
      */
-    def format (t : MiniJavaNode) : String =
+    def format (t : MiniJavaNode) : Document =
         pretty (toDoc (t), 5)
 
     /**
      * Convert a MiniJava AST node to a pretty-printing document.
      */
     def toDoc (t : MiniJavaNode) : Doc =
+        positioned (t, toDocPositioned (t))
+
+    def toDocPositioned (t : MiniJavaNode) : Doc =
         t match {
             case Program (m, cs) =>
                 toDoc (m) <> ssep (cs map toDoc, line <> line)
@@ -135,6 +139,9 @@ object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
         "return" <+> toDoc (r) <> semi
 
     override def toParenDoc (e : PrettyExpression) : Doc =
+        positioned (e, toParenDocPositioned (e))
+
+    def toParenDocPositioned (e : PrettyExpression) : Doc =
         e match {
             case IndExp (b, e) =>
                 toDoc (b) <> brackets (toDoc (e))
@@ -161,3 +168,8 @@ object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
         }
 
 }
+
+/**
+ * Abstract syntax tree pretty-printing for Minijava.
+ */
+object PrettyPrinter extends PrettyPrinter

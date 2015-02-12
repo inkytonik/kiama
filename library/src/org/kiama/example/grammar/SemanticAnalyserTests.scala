@@ -29,7 +29,6 @@ import org.kiama.util.Tests
 class SemanticAnalyserTests extends Tests {
 
     import GrammarTree._
-    import PrettyPrinter._
     import org.kiama.util.{Message, Messaging}
     import scala.collection.immutable.Seq
 

@@ -22,34 +22,33 @@ package org.kiama
 package example.imperative
 
 import ImperativeTree._
-import org.kiama.util.{GeneratingREPL, Tests}
+import org.kiama.util.{GeneratingREPL, PrettyPrinterTests}
 
 /**
  * Imperative language tests pretty-printer tests.
  * Quite a few of the tests of other modules also use the imperative
  * language.
  */
-class ImperativeTests extends Tests {
+class ImperativeTests extends PrettyPrinter with PrettyPrinterTests {
 
-    import PrettyPrinter._
     import scala.collection.immutable.Seq
 
     test ("pretty-print imperative variable") {
-        assertResult ("xyz123") (format (Var ("xyz123")))
+        assertLayout ("xyz123") (format (Var ("xyz123")))
     }
 
     test ("pretty-print imperative variable - product") {
-        assertResult ("""Var ("xyz123")""") (pretty (any (Var ("xyz123"))))
+        assertLayout ("""Var ("xyz123")""") (pretty (any (Var ("xyz123"))))
     }
 
     test ("pretty-print imperative assignment") {
-        assertResult ("i = (0.0 * j);") (
+        assertLayout ("i = (0.0 * j);") (
             format (Asgn (Var ("i"), Mul (Num (0), Var ("j"))))
         )
     }
 
     test ("pretty-print imperative assignment - product") {
-        assertResult ("""Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))""") (
+        assertLayout ("""Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))""") (
             pretty (any (Asgn (Var ("i"), Mul (Num (0), Var ("j")))))
         )
     }
@@ -95,15 +94,15 @@ class ImperativeTests extends Tests {
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
     test ("pretty-print non-trivial imperative program (default width)") {
-        assertResult (pp1) (format (p))
+        assertLayout (pp1) (format (p))
     }
 
     test ("pretty-print non-trivial imperative program (narrow)") {
-        assertResult (pp2) (pretty (group (toDoc (p)), 40))
+        assertLayout (pp2) (pretty (group (toDoc (p)), 40))
     }
 
     test ("pretty-print non-trivial imperative program (product)") {
-        assertResult (ppp) (pretty (any (p)))
+        assertLayout (ppp) (pretty (any (p)))
     }
 
 }
