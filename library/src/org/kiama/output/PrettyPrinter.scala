@@ -326,7 +326,7 @@ trait PrettyPrinterBase {
                 elemToDoc : T => Doc = (x : T) => value (x),
                 sep : Doc = comma,
                 sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
+        text (prefix) <+> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
      * Generic pretty-printer document for any type of value. If `a` is a
@@ -342,14 +342,14 @@ trait PrettyPrinterBase {
                 "null"
             else
                 a match {
-                    case v : Vector[_] => list (v.toList, "Vector ", any)
-                    case m : Map[_,_]  => list (m.toList, "Map ", any)
+                    case v : Vector[_] => list (v.toList, "Vector", any)
+                    case m : Map[_,_]  => list (m.toList, "Map", any)
                     case Nil           => "Nil"
-                    case l : List[_]   => list (l, "List ", any)
+                    case l : List[_]   => list (l, "List", any)
                     case (l, r)        => any (l) <+> "->" <+> any (r)
                     case None          => "None"
                     case p : Product   => list (p.productIterator.toList,
-                                                s"${p.productPrefix} ",
+                                                s"${p.productPrefix}",
                                                 any)
                     case s : String    => dquotes (text (s))
                     case _             => value (a)

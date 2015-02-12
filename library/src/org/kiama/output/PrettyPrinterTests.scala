@@ -355,22 +355,22 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     val l1 = List (1, 2, 3)
 
     test ("pretty-print lists of simple values - non-wrap") {
-        assertResult ("List(1, 2, 3)") (layout (list (l1)))
+        assertResult ("List (1, 2, 3)") (layout (list (l1)))
     }
 
     test ("pretty-print lists of simple values - wrap") {
-        assertResult ("List(\n    1,\n    2,\n    3)") (layout (list (l1), 3))
+        assertResult ("List (\n    1,\n    2,\n    3)") (layout (list (l1), 3))
     }
 
     case class Val (i : Int)
     val l2 = List (Val (1), Val (2), Val (3))
 
     test ("pretty-print lists of structured values - non-wrap") {
-        assertResult ("List(Val(1), Val(2), Val(3))") (layout (list (l2)))
+        assertResult ("List (Val(1), Val(2), Val(3))") (layout (list (l2)))
     }
 
     test ("pretty-print lists of structured values - wrap") {
-        assertResult ("List(\n    Val(1),\n    Val(2),\n    Val(3))") (layout (list (l2), 3))
+        assertResult ("List (\n    Val(1),\n    Val(2),\n    Val(3))") (layout (list (l2), 3))
     }
 
     test ("pretty any-print empty vector") {
