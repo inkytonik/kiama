@@ -135,32 +135,6 @@ trait PrettyPrinterBase {
      */
     def pretty (d : Doc, w : Width = defaultWidth) : Layout
 
-    /**
-     * Pretty-print a pretty-printable value.  If the value passed is not a
-     * pretty-printable document, it will be converted to one using the implicit
-     * conversion `anyToPrettyPrintable`.
-     */
-    def pretty (p : PrettyPrintable) : Layout =
-        pretty (p.toDoc)
-
-
-    /**
-     * Interface for pretty-printable values.  The default `toDoc` implementation
-     * just uses the `value` combinator on the receiver.
-     */
-    trait PrettyPrintable {
-        def toDoc : Doc = value (this)
-    }
-
-    /**
-     * Convert any value into a pretty-printable value.  The value will
-     * be pretty-printed using the `value` combinator.
-     */
-    implicit def anyToPrettyPrintable (a : Any) : PrettyPrintable =
-        new PrettyPrintable {
-            override def toDoc : Doc = value (a)
-        }
-
     // Basic combinators.  Thse need to be implemented for a specific
     // instantiation of `Doc`.
 
@@ -298,36 +272,6 @@ trait PrettyPrinterBase {
         text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
-     * Return a document that pretty-prints a list of pretty-printables
-     * in Scala notation, inserting line breaks between elements as necessary.
-     * The `prefix` string can be changed from the default `"List"`.
-     * The `elemToDoc` argument can be used to alter the way each element
-     * is converted to a document (default: call the element's `toDoc`
-     * method).
-     * `sep` defaults to a `comma`.
-     */
-    def plist (l : List[PrettyPrintable], prefix : String = "List",
-               elemToDoc : PrettyPrintable => Doc = _.toDoc,
-               sep : Doc = comma,
-               sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        pseq (l, prefix, elemToDoc, sep, sepfn)
-
-    /**
-     * Return a document that pretty-prints a sequence of pretty-printables
-     * in Scala notation, inserting line breaks between elements as necessary.
-     * The `prefix` string can be changed from the default `"Seq"`.
-     * The `elemToDoc` argument can be used to alter the way each element
-     * is converted to a document (default: call the element's `toDoc`
-     * method).
-     * `sep` defaults to a `comma`.
-     */
-    def pseq (l : Seq[PrettyPrintable], prefix : String = "Seq",
-              elemToDoc : PrettyPrintable => Doc = _.toDoc,
-              sep : Doc = comma,
-              sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        text (prefix) <> parens (group (nest (sepfn (l map elemToDoc, sep))))
-
-    /**
      * Generic pretty-printer document for any type of value. If `a` is a
      * `Vector`, `Map`, `List` or `Product`, print it in a prefix list style,
      * with the exception that `Nil` prints as `Nil`. Tuples are pretty-printed
@@ -350,7 +294,7 @@ trait PrettyPrinterBase {
                                             s"${p.productPrefix} ",
                                             any)
                 case s : String    => dquotes (text (s))
-                case _             => a.toDoc
+                case _             => value (a)
             }
 
     @deprecated ("Use PrettyPrinter.any instead.", "1.2.1")

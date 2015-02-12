@@ -152,10 +152,6 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         assertResult ("\"\"") (pretty (any ("")))
     }
 
-    test ("pretty-print empty list") {
-        assertResult ("List()") (pretty (Nil))
-    }
-
     test ("pretty any-print empty list") {
         assertResult ("Nil") (pretty (any (Nil)))
     }
@@ -164,16 +160,8 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         assertResult ("null") (pretty (any (null)))
     }
 
-    test ("pretty-print None") {
-        assertResult ("None") (pretty (None))
-    }
-
     test ("pretty any-print None") {
         assertResult ("None") (pretty (any (None)))
-    }
-
-    test ("pretty-print Some") {
-        assertResult ("Some(1)") (pretty (Some (1)))
     }
 
     test ("pretty any-print Some") {
@@ -186,10 +174,6 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
 
     test ("pretty any-print identifier") {
         assertResult ("\"hello\"") (pretty (any ("hello")))
-    }
-
-    test ("pretty-print integer") {
-        assertResult ("1234") (pretty (1234))
     }
 
     test ("pretty any-print integer") {
@@ -387,19 +371,6 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
 
     test ("pretty-print lists of structured values - wrap") {
         assertResult ("List(\n    Val(1),\n    Val(2),\n    Val(3))") (pretty (list (l2), 3))
-    }
-
-    class PVal (i : Int) extends PrettyPrintable {
-        override def toDoc : Doc = value (i) <> text ("!")
-    }
-    val l3 = List (new PVal (1), new PVal (2), new PVal (3))
-
-    test ("pretty-print lists of structured pretty-printable values - non-wrap") {
-        assertResult ("List(1!, 2!, 3!)") (pretty (plist (l3)))
-    }
-
-    test ("pretty-print lists of structured pretty-printable values - wrap") {
-        assertResult ("List(\n    1!,\n    2!,\n    3!)") (pretty (plist (l3), 3))
     }
 
     test ("pretty_-print empty vector") {

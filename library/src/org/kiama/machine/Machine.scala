@@ -48,6 +48,13 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
     def debug : Boolean = false
 
     /**
+     * Alias for prettyprinter's `value` method since the internals of this
+     * class use `value` for something else.
+     */
+    def ppvalue (v : Any) : Doc =
+        super.value (v)
+
+    /**
      * A scalar item of abstract state machine state holding a value of
      * type `T` and called `sname`.
      */
@@ -268,7 +275,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
         def perform () {
             s.change (t)
             if (debug) {
-                val d = name <> '.' <> s.sname <+> ":=" </> nest (s.toDoc)
+                val d = name <> '.' <> s.sname <+> ":=" </> nest (ppvalue (s))
                 emitter.emitln (pretty (d))
             }
         }
@@ -306,8 +313,8 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
         def perform () {
             s.change (t, u)
             if (debug) {
-                val d = name <> '.' <> s.sname <> '(' <> t.toDoc <> ')' <+>
-                            ":=" </> nest (u.toDoc)
+                val d = name <> '.' <> s.sname <> '(' <> ppvalue (t) <> ')' <+>
+                            ":=" </> nest (ppvalue (u))
                 emitter.emitln (pretty (d))
             }
         }
