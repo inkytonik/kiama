@@ -803,20 +803,20 @@ trait PrettyPrinter extends PrettyPrinterBase {
 
     // Internal data types
 
-    private type Remaining  = Int
-    private type Horizontal = Boolean
-    private type Buffer     = Seq[String]
-    private type Out        = Remaining => Trampoline[Buffer]
-    private type OutGroup   = Horizontal => Out => Trampoline[Out]
-    private type PPosition  = Int
-    private type Dq         = Queue[(PPosition,OutGroup)]
-    private type TreeCont   = (PPosition,Dq) => Trampoline[Out]
-    private type IW         = (Indent,Width)
-    private type DocCont    = IW => TreeCont => Trampoline[TreeCont]
+    type Remaining  = Int
+    type Horizontal = Boolean
+    type Buffer     = Seq[String]
+    type Out        = Remaining => Trampoline[Buffer]
+    type OutGroup   = Horizontal => Out => Trampoline[Out]
+    type PPosition  = Int
+    type Dq         = Queue[(PPosition,OutGroup)]
+    type TreeCont   = (PPosition,Dq) => Trampoline[Out]
+    type IW         = (Indent,Width)
+    type DocCont    = IW => TreeCont => Trampoline[TreeCont]
 
     // Helper functions
 
-    private def scan (l : Width, out : OutGroup) (c : TreeCont) : Trampoline[TreeCont] =
+    def scan (l : Width, out : OutGroup) (c : TreeCont) : Trampoline[TreeCont] =
         step (
             (p : PPosition, dq : Dq) =>
                 if (dq.isEmpty) {
@@ -840,7 +840,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 }
         )
 
-    private def prune (c1 : TreeCont) : TreeCont =
+    def prune (c1 : TreeCont) : TreeCont =
         (p : PPosition, dq : Dq) =>
             Done (
                 (r : Remaining) =>
@@ -872,7 +872,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                     }
             )
 
-    private def leave (c : TreeCont) : TreeCont =
+    def leave (c : TreeCont) : TreeCont =
         (p : PPosition, dq : Dq) =>
             if (dq.isEmpty) {
                 c (p, emptyDq)
