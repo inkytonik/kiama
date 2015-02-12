@@ -28,7 +28,7 @@ object Main extends Driver
 
 class Driver extends SyntaxAnalyser with Compiler[JValue] {
 
-    import PrettyPrinter.{pretty_any, pretty}
+    import PrettyPrinter.{any => ppany, pretty}
     import org.kiama.util.Config
 
     /**
@@ -37,7 +37,7 @@ class Driver extends SyntaxAnalyser with Compiler[JValue] {
     def process (filename : String, ast : JValue, config : Config) = {
 
         // Pretty-print tree as a product value
-        config.output.emitln (pretty_any (ast))
+        config.output.emitln (pretty (ppany (ast)))
 
         // Pretty-print tree as a JSON value
         config.output.emitln (pretty (ast))

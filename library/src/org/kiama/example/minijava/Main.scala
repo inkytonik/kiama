@@ -32,7 +32,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
 
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
-    import PrettyPrinter.{pretty, pretty_any}
+    import PrettyPrinter.pretty
     import org.kiama.output.PrettyPrinter
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report

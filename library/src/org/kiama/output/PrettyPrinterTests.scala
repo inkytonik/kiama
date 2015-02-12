@@ -148,52 +148,52 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
         assertResult ("   ") (pretty (spaces (3)))
     }
 
-    test ("pretty_any-print empty string") {
-        assertResult ("\"\"") (pretty_any (""))
+    test ("pretty any-print empty string") {
+        assertResult ("\"\"") (pretty (any ("")))
     }
 
     test ("pretty-print empty list") {
         assertResult ("List()") (pretty (Nil))
     }
 
-    test ("pretty_any-print empty list") {
-        assertResult ("Nil") (pretty_any (Nil))
+    test ("pretty any-print empty list") {
+        assertResult ("Nil") (pretty (any (Nil)))
     }
 
-    test ("pretty_any-print null") {
-        assertResult ("null") (pretty_any (null))
+    test ("pretty any-print null") {
+        assertResult ("null") (pretty (any (null)))
     }
 
     test ("pretty-print None") {
         assertResult ("None") (pretty (None))
     }
 
-    test ("pretty_any-print None") {
-        assertResult ("None") (pretty_any (None))
+    test ("pretty any-print None") {
+        assertResult ("None") (pretty (any (None)))
     }
 
     test ("pretty-print Some") {
         assertResult ("Some(1)") (pretty (Some (1)))
     }
 
-    test ("pretty_any-print Some") {
-        assertResult ("Some (1)") (pretty_any (Some (1)))
+    test ("pretty any-print Some") {
+        assertResult ("Some (1)") (pretty (any (Some (1))))
     }
 
     test ("pretty-print identifier") {
         assertResult ("hello") (pretty ("hello"))
     }
 
-    test ("pretty_any-print identifier") {
-        assertResult ("\"hello\"") (pretty_any ("hello"))
+    test ("pretty any-print identifier") {
+        assertResult ("\"hello\"") (pretty (any ("hello")))
     }
 
     test ("pretty-print integer") {
         assertResult ("1234") (pretty (1234))
     }
 
-    test ("pretty_any-print integer") {
-        assertResult ("1234") (pretty_any (1234))
+    test ("pretty any-print integer") {
+        assertResult ("1234") (pretty (any (1234)))
     }
 
     test ("pretty-print angles") {
@@ -403,28 +403,28 @@ class PrettyPrinterTests extends Tests with PrettyPrinter {
     }
 
     test ("pretty_-print empty vector") {
-        assertResult ("Vector ()") (pretty_any (Vector ()))
+        assertResult ("Vector ()") (pretty (any (Vector ())))
     }
 
-    test ("pretty_any-print singleton vector") {
-        assertResult ("Vector (1)") (pretty_any (Vector (1)))
+    test ("pretty any-print singleton vector") {
+        assertResult ("Vector (1)") (pretty (any (Vector (1))))
     }
 
-    test ("pretty_any-print multiple-element vector") {
-        assertResult ("Vector (1, 2, 3)") (pretty_any (Vector (1, 2, 3)))
+    test ("pretty any-print multiple-element vector") {
+        assertResult ("Vector (1, 2, 3)") (pretty (any (Vector (1, 2, 3))))
     }
 
-    test ("pretty_any-print empty map") {
-        assertResult ("Map ()") (pretty_any (Map ()))
+    test ("pretty any-print empty map") {
+        assertResult ("Map ()") (pretty (any (Map ())))
     }
 
-    test ("pretty_any-print singleton map") {
-        assertResult ("Map (1 -> \"One\")") (pretty_any (Map (1 -> "One")))
+    test ("pretty any-print singleton map") {
+        assertResult ("Map (1 -> \"One\")") (pretty (any (Map (1 -> "One"))))
     }
 
-    test ("pretty_any-print multiple-element map") {
+    test ("pretty any-print multiple-element map") {
         assertResult ("Map (1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")") (
-            pretty_any (Map (1 -> "One", 2 -> "Two", 3 -> "Three"))
+            pretty (any (Map (1 -> "One", 2 -> "Two", 3 -> "Three")))
         )
     }
 

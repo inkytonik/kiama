@@ -45,7 +45,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
     import ObrTree.ObrTree
     import org.kiama.example.obr.{RISCEncoder, RISCTransformer}
     import org.kiama.example.RISC.{RISC, RISCISA}
-    import org.kiama.output.PrettyPrinter.pretty_any
+    import org.kiama.output.PrettyPrinter.{any => ppany, pretty}
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging.report
 
@@ -80,7 +80,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
 
             // Print out the target tree for debugging
             if (config.targetPrint ()) {
-                config.output.emitln (pretty_any (targettree))
+                config.output.emitln (pretty (ppany (targettree)))
             }
 
             // Encode the target tree and emit the assembler or run if requested

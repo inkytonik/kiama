@@ -129,7 +129,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
         // Perform default processing
         if (config.astPrint ()) {
             section (output, "ast")
-            output.emitln (pretty_any (ast))
+            output.emitln (pretty (any (ast)))
         }
         if (config.astPrettyPrint ()) {
             section (output, "_pp.ob")
@@ -207,7 +207,7 @@ trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDe
         val ntree = transformer.transform (tree)
         if (config.intPrint ()) {
             section (output, "iast")
-            output.emitln (pretty_any (ntree.root))
+            output.emitln (pretty (any (ntree.root)))
         }
         if (config.challenge ())
             section (output, "_lifted.ob")
@@ -242,7 +242,7 @@ trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[Modul
         val cast = translator.translate (tree.root) // FIXME should be tree
         if (config.cPrint ()) {
             section (output, "cast")
-            output.emitln (pretty_any (cast))
+            output.emitln (pretty (any (cast)))
         }
         if (config.cPrettyPrint () || config.challenge ()) {
             section (output, "c")

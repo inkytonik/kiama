@@ -39,7 +39,7 @@ class ImperativeTests extends Tests {
     }
 
     test ("pretty-print imperative variable - product") {
-        assertResult ("""Var ("xyz123")""") (pretty_any (Var ("xyz123")))
+        assertResult ("""Var ("xyz123")""") (pretty (any (Var ("xyz123"))))
     }
 
     test ("pretty-print imperative assignment") {
@@ -50,7 +50,7 @@ class ImperativeTests extends Tests {
 
     test ("pretty-print imperative assignment - product") {
         assertResult ("""Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))""") (
-            pretty_any (Asgn (Var ("i"), Mul (Num (0), Var ("j"))))
+            pretty (any (Asgn (Var ("i"), Mul (Num (0), Var ("j")))))
         )
     }
 
@@ -103,7 +103,7 @@ class ImperativeTests extends Tests {
     }
 
     test ("pretty-print non-trivial imperative program (product)") {
-        assertResult (ppp) (pretty_any (p))
+        assertResult (ppp) (pretty (any (p)))
     }
 
 }

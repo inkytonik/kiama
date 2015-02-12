@@ -143,11 +143,6 @@ trait PrettyPrinterBase {
     def pretty (p : PrettyPrintable) : Layout =
         pretty (p.toDoc)
 
-    /**
-     * Pretty-print any value using the `any` method.
-     */
-    def pretty_any (a : Any) : Layout =
-        pretty (any (a))
 
     /**
      * Interface for pretty-printable values.  The default `toDoc` implementation
