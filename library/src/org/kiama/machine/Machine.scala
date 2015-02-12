@@ -118,7 +118,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
             _value match {
                 case None     => "** undefined **"
                 case Some (t) => t.toString
-             }
+            }
 
     }
 
