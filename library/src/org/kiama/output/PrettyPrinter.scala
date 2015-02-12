@@ -355,10 +355,6 @@ trait PrettyPrinterBase {
                     case _             => value (a)
                 })
 
-    @deprecated ("Use PrettyPrinter.any instead.", "1.2.1")
-    def product (p : Any) : Doc =
-        any (p)
-
     // Extended combinator set
 
     /**
