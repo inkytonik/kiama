@@ -40,7 +40,7 @@ class Driver extends SyntaxAnalyser with Compiler[JValue] {
         config.output.emitln (pretty (ppany (ast)))
 
         // Pretty-print tree as a JSON value
-        config.output.emitln (pretty (ast))
+        config.output.emitln (format (ast))
 
     }
 

@@ -30,7 +30,7 @@ import org.kiama.util.RegexParserTests
 class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     import MiniJavaTree._
-    import SymbolTable.pretty
+    import SymbolTable.format
     import org.kiama.util.{Message, Messaging}
     import org.kiama.util.Positions.positionAt
     import scala.collection.immutable.Seq
@@ -592,7 +592,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |scope
             |    "Dummy" -> MainClassEntity(MainClass(IdnDef(Dummy),Println(IntExp(0))))
             |    "Test" -> ClassEntity(Class(IdnDef(Test),None,ClassBody(List(),List(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),IntExp(42)))))))""".stripMargin
-        ) (pretty (analyser.env (exp)))
+        ) (format (analyser.env (exp)))
     }
 
     /**

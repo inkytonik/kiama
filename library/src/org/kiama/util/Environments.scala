@@ -181,23 +181,22 @@ trait Environments {
     /**
      * Pretty-print the environment `env`.
      */
-    def pretty (env : Environment) : String = {
+    def format (env : Environment) : String = {
 
         import org.kiama.output.PrettyPrinter
         import org.kiama.output.PrettyPrinter._
 
-        def prettyEntry (entry : (String,Entity)) : Doc =
+        def entryToDoc (entry : (String,Entity)) : Doc =
             dquotes (entry._1) <+> "->" <+> value (entry._2)
 
-        def prettyScope (s : Scope) : Doc =
-            "scope" <> nest (line <> vsep ((s map prettyEntry).toVector))
-
-        def pretty1 (env : Environment) : Doc =
-            vsep (env map prettyScope)
+        def scopeToDoc (s : Scope) : Doc =
+            "scope" <> nest (line <> vsep ((s map entryToDoc).toVector))
 
         env match {
-            case Nil => "no scopes"
-            case ss  => PrettyPrinter.pretty (pretty1 (env))
+            case Nil =>
+                "no scopes"
+            case ss  =>
+                PrettyPrinter.pretty (vsep (ss map scopeToDoc))
         }
 
     }

@@ -126,7 +126,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
      */
     def checkType (e : Exp, tipe : Exp => Type) : Messages = {
         val expectedType = exptipe (e)
-        message (e, s"expected ${pretty (expectedType)}, found ${pretty (tipe (e))}",
+        message (e, s"expected ${format (expectedType)}, found ${format (tipe (e))}",
                  tipe (e) != NoType () && tipe (e) != UnknownType () &&
                      expectedType != NoType () && tipe (e) != expectedType)
     }

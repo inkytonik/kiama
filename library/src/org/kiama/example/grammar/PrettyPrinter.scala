@@ -30,35 +30,35 @@ trait PrettyPrinter extends org.kiama.output.PrettyPrinter {
     import scala.collection.immutable.Seq
 
     /**
-     * Return a pretty-printed version of a node.
+     * Format a grammar node.
      */
-    def pretty (t : GrammarNode) : String =
-        super.pretty (show (t))
+    def format (t : GrammarNode) : String =
+        pretty (toDoc (t))
 
     /**
      * Convert a grammar node to a pretty-printing document.
      */
-    def show (t : GrammarNode) : Doc =
+    def toDoc (t : GrammarNode) : Doc =
         t match {
             case Grammar (r, rs) =>
-                "Start rule:" <@> show (r) <@>
-                "Other rules:" <@> cat (rs map show)
+                "Start rule:" <@> toDoc (r) <@>
+                "Other rules:" <@> cat (rs map toDoc)
             case Rule (lhs, rhs) =>
-                show (lhs) <+> "->" <+> show (rhs)
+                toDoc (lhs) <+> "->" <+> toDoc (rhs)
             case EmptyProdList () =>
                 empty
             case NonEmptyProdList (h, EmptyProdList ()) =>
-                show (h)
+                toDoc (h)
             case NonEmptyProdList (h, t) =>
-                show (h) <+> "|" <+> show (t)
+                toDoc (h) <+> "|" <+> toDoc (t)
             case Prod (ss) =>
-                show (ss)
+                toDoc (ss)
             case EmptySymbolList () =>
                 "epsilon"
             case NonEmptySymbolList (h, EmptySymbolList ()) =>
-                show (h)
+                toDoc (h)
             case NonEmptySymbolList (h, t) =>
-                show (h) <+> show (t)
+                toDoc (h) <+> toDoc (t)
             case nt : NonTerm =>
                 nt.name
             case TermSym (s) =>

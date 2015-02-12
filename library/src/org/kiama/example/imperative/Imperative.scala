@@ -31,7 +31,7 @@ import org.kiama.util.ParsingREPL
 object Imperative extends ParsingREPL[Stmt] with SyntaxAnalyser {
 
     import org.kiama.util.REPLConfig
-    import PrettyPrinter.pretty
+    import PrettyPrinter.format
 
     val banner = "Enter imperative language programs for parsing."
 
@@ -39,7 +39,7 @@ object Imperative extends ParsingREPL[Stmt] with SyntaxAnalyser {
 
     def process (s : Stmt, config : REPLConfig) {
         config.output.emitln (s)
-        config.output.emitln (pretty (s))
+        config.output.emitln (format (s))
     }
 
 }

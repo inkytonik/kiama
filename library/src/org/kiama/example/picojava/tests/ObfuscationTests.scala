@@ -28,7 +28,7 @@ class ObfuscationTests extends Tests {
 
     import org.kiama.example.picojava.{ErrorCheck, Obfuscator}
     import org.kiama.example.picojava.PicoJavaTree._
-    import org.kiama.example.picojava.PrettyPrinter.pretty
+    import org.kiama.example.picojava.PrettyPrinter.format
     import scala.collection.immutable.Seq
 
     // For the actual program text, see ObfuscationTest.pj
@@ -113,7 +113,7 @@ class ObfuscationTests extends Tests {
     val obast = obfuscator.obfuscate (ast)
 
     test ("obfuscation produces correct program (pretty printed)") {
-        assertResult (pretty (expobast)) (pretty (obast))
+        assertResult (format (expobast)) (format (obast))
     }
 
     test ("obfuscation produces correct program") {

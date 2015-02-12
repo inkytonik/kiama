@@ -26,60 +26,60 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     import LambdaTree._
 
     /**
-     * Return a pretty-printed version of an expression.
+     * Format a lambda expression.
      */
-    def pretty (t : Exp) : String =
-        super.pretty (show (t))
+    def format (t : Exp) : String =
+        pretty (toDoc (t))
 
     /**
-     * Return a pretty-printed version of a type.
+     * Format a type.
      */
-    def pretty (t : Type) : String =
-        super.pretty (showtype (t))
+    def format (t : Type) : String =
+        pretty (typeToDoc (t))
 
     /**
      * Convert an expression node to a pretty-printing document in
      * fully-parenthesised style.
      */
-    def show (t : Exp) : Doc =
+    def toDoc (t : Exp) : Doc =
         t match {
             case Num (d)       => value (d)
             case Var (i)       => i
             case Lam (i, t, e) => parens ('\\' <> i <>
-                                          showtypedecl (t) <+> '.' <+>
-                                          group (nest (show (e))))
-            case App (e1, e2)  => parens (show (e1) <+> show (e2))
+                                          typedeclToDoc (t) <+> '.' <+>
+                                          group (nest (toDoc (e))))
+            case App (e1, e2)  => parens (toDoc (e1) <+> toDoc (e2))
 
-            case Opn (l, AddOp (), r) => showbin (l, "+", r)
-            case Opn (l, SubOp (), r) => showbin (l, "-", r)
+            case Opn (l, AddOp (), r) => binToDoc (l, "+", r)
+            case Opn (l, SubOp (), r) => binToDoc (l, "-", r)
 
             case Let (i, t, e1, e2) =>
-                parens ("let" <+> i <> showtypedecl (t) <+> '=' <>
-                        nest (line <> show (e1)) <+> "in" <>
-                        nest (line <> show (e2)))
+                parens ("let" <+> i <> typedeclToDoc (t) <+> '=' <>
+                        nest (line <> toDoc (e1)) <+> "in" <>
+                        nest (line <> toDoc (e2)))
             case Letp (bs, e) =>
                 parens ("letp" <>
-                        nest (line <> vsep (bs.map (b => b.i <+> '=' <+> show (b.e)))) <+>
+                        nest (line <> vsep (bs.map (b => b.i <+> '=' <+> toDoc (b.e)))) <+>
                         "in" <>
-                        nest (line <> show (e)))
+                        nest (line <> toDoc (e)))
         }
 
     /**
      * Return a pretty-printing document for an instance of a type declaration.
      */
-    def showtypedecl (t : Type) : Doc =
+    def typedeclToDoc (t : Type) : Doc =
         if (t == NoType ())
             empty
         else
-            space <> ':' <+> showtype (t)
+            space <> ':' <+> typeToDoc (t)
 
     /**
      * Return a pretty-printing document for an instance of a type.
      */
-    def showtype (t : Type) : Doc =
+    def typeToDoc (t : Type) : Doc =
         t match {
             case IntType ()       => "Int"
-            case FunType (t1, t2) => showtype (t1) <+> "->" <+> showtype (t2)
+            case FunType (t1, t2) => typeToDoc (t1) <+> "->" <+> typeToDoc (t2)
             case NoType ()        => "No" // Not used
             case UnknownType ()   => "Unknown" // Not used
         }
@@ -87,7 +87,7 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
-    def showbin (l : Exp, op : String, r : Exp) : Doc =
-        parens (show (l) <+> op <+> show (r))
+    def binToDoc (l : Exp, op : String, r : Exp) : Doc =
+        parens (toDoc (l) <+> op <+> toDoc (r))
 
 }

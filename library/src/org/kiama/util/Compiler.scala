@@ -137,9 +137,9 @@ trait CompilerBase[T, C <: Config] extends Profiler {
     def process (filename : String, ast : T, config : C)
 
     /**
-     * Pretty-print an abstract syntax trees. Default: return an empty string.
+     * Format an abstract syntax tree for printing. Default: return an empty string.
      */
-    def prettyprint (ast : T) : String =
+    def format (ast : T) : String =
         ""
 
 }

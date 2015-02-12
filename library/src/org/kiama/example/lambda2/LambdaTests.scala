@@ -324,7 +324,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     def assertPrettyS (term : String, expected : String) {
         assertParseCheck (term, parser) {
             exp =>
-                val result = pretty (exp)
+                val result = format (exp)
                 if (result != expected)
                     fail (s"pretty-print of $term expected $expected, got $result")
         }
@@ -334,7 +334,7 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
      * Pretty-print term then compare to result.
      */
     def assertPrettyE (term : Exp, result : String) {
-        val r = pretty (term)
+        val r = format (term)
         if (r != result)
             fail (s"pretty-print of $term expected $result, got $r")
     }

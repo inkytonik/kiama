@@ -29,34 +29,34 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     import ImperativeTree._
 
     /**
-     * Return a pretty-printed version of a node.
+     * Format an imperative node.
      */
-    def pretty (t : ImperativeNode) : String =
-        super.pretty (show (t))
+    def format (t : ImperativeNode) : String =
+        pretty (toDoc (t))
 
     /**
      * Convert an imperative node to a pretty-printing document in
      * fully-parenthesised C style.
      */
-    def show (t : ImperativeNode) : Doc =
+    def toDoc (t : ImperativeNode) : Doc =
         t match {
             case Num (d)      => value (d)
             case Var (s)      => s
-            case Neg (e)      => parens ("-" <> show (e))
-            case Add (l, r)   => showbin (l, "+", r)
-            case Sub (l, r)   => showbin (l, "-", r)
-            case Mul (l, r)   => showbin (l, "*", r)
-            case Div (l, r)   => showbin (l, "/", r)
+            case Neg (e)      => parens ("-" <> toDoc (e))
+            case Add (l, r)   => binToDoc (l, "+", r)
+            case Sub (l, r)   => binToDoc (l, "-", r)
+            case Mul (l, r)   => binToDoc (l, "*", r)
+            case Div (l, r)   => binToDoc (l, "/", r)
             case Null ()      => semi
-            case Seqn (ss)    => group (braces (nest (line <> ssep (ss map show, line)) <> line))
-            case Asgn (v, e)  => show (v) <+> "=" <+> show (e) <> semi
-            case While (e, b) => "while" <+> parens (show (e)) <> group (nest (line <> show (b)))
+            case Seqn (ss)    => group (braces (nest (line <> ssep (ss map toDoc, line)) <> line))
+            case Asgn (v, e)  => toDoc (v) <+> "=" <+> toDoc (e) <> semi
+            case While (e, b) => "while" <+> parens (toDoc (e)) <> group (nest (line <> toDoc (b)))
         }
 
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
-    def showbin (l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
-        parens (show (l) <+> op <+> show (r))
+    def binToDoc (l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
+        parens (toDoc (l) <+> op <+> toDoc (r))
 
 }

@@ -31,26 +31,26 @@ object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
     import scala.collection.immutable.Seq
 
     /**
-     * Return a pretty-printed version of a node.
+     * Format a MiniJava node.
      */
-    def pretty (t : MiniJavaNode) : String =
-        super.pretty (show (t), 5)
+    def format (t : MiniJavaNode) : String =
+        pretty (toDoc (t), 5)
 
     /**
      * Convert a MiniJava AST node to a pretty-printing document.
      */
-    def show (t : MiniJavaNode) : Doc =
+    def toDoc (t : MiniJavaNode) : Doc =
         t match {
             case Program (m, cs) =>
-                show (m) <> ssep (cs map show, line <> line)
+                toDoc (m) <> ssep (cs map toDoc, line <> line)
             case MainClass (i, s) =>
-                "class" <+> show (i) <+> braces (
+                "class" <+> toDoc (i) <+> braces (
                     nest (
                         line <>
                         "public static void main ()" <+> braces (
                             nest (
                                 line <>
-                                show (s)
+                                toDoc (s)
                             ) <>
                             line
                         )
@@ -60,88 +60,88 @@ object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
                 line <>
                 line
             case Class (i, optsc, b) =>
-                val ext = optsc.map (n => "extends" <+> show (n)).getOrElse (empty)
-                "class" <+> show (i) <> ext <+> braces (
+                val ext = optsc.map (n => "extends" <+> toDoc (n)).getOrElse (empty)
+                "class" <+> toDoc (i) <> ext <+> braces (
                     nest (
                         line <>
-                        show (b)
+                        toDoc (b)
                     ) <>
                     line
                 ) <>
                 line <>
                 line
             case ClassBody (fs, ms) =>
-                vsep (fs map show) <@> vsep (ms map show)
+                vsep (fs map toDoc) <@> vsep (ms map toDoc)
             case Field (t, i) =>
-                show (t) <+> show (i) <> semi
+                toDoc (t) <+> toDoc (i) <> semi
             case Var (t, i) =>
-                show (t) <+> show (i) <> semi
+                toDoc (t) <+> toDoc (i) <> semi
             case Method (i, b) =>
-                line <> "public" <+> show (b.tipe) <+> show (i) <+> show (b)
+                line <> "public" <+> toDoc (b.tipe) <+> toDoc (i) <+> toDoc (b)
             case MethodBody (_, as, vs, ss, r) =>
-                parens (hsep (as map show, comma)) <>
+                parens (hsep (as map toDoc, comma)) <>
                     line <>
                     braces (
-                        nest (showbody (vs, ss, r)) <>
+                        nest (bodyToDoc (vs, ss, r)) <>
                         line
                     )
             case Argument (t, i) =>
-                show (t) <+> show (i)
+                toDoc (t) <+> toDoc (i)
             case t : Type =>
                 t.toString ()
             case Block (ss) =>
                 braces (
                     nest (
                         line <>
-                        vsep (ss map show)
+                        vsep (ss map toDoc)
                     ) <>
                     line
                 )
             case If (e, s1, s2) =>
-                "if" <+> parens (show (e)) <>
+                "if" <+> parens (toDoc (e)) <>
                     nest (
                         line <>
-                        show (s1)
+                        toDoc (s1)
                     ) <>
                     line <>
                     "else" <>
                     nest (
                         line <>
-                        show (s2)
+                        toDoc (s2)
                     )
             case While (e, s) =>
-                "while" <+> parens (show (e)) <+> show (s)
+                "while" <+> parens (toDoc (e)) <+> toDoc (s)
             case Println (e) =>
-                "System.out.println" <+> parens (show (e)) <> semi
+                "System.out.println" <+> parens (toDoc (e)) <> semi
             case VarAssign (i, e) =>
-                show (i) <+> equal <+> show (e) <> semi
+                toDoc (i) <+> equal <+> toDoc (e) <> semi
             case ArrayAssign (i, e1, e2) =>
-                show (i) <> brackets (show (e1)) <+> equal <+> show (e2) <> semi
+                toDoc (i) <> brackets (toDoc (e1)) <+> equal <+> toDoc (e2) <> semi
             case n : IdnTree =>
                 n.idn
             case e : PrettyExpression =>
                 toParenDoc (e)
         }
 
-    def showbody (vs : Seq[Var], ss : Seq[Statement], r : Expression) : Doc =
+    def bodyToDoc (vs : Seq[Var], ss : Seq[Statement], r : Expression) : Doc =
         (if (vs.isEmpty)
              empty
          else
              line <>
-             vsep (vs map show)<>
+             vsep (vs map toDoc)<>
              line) <>
         line <>
-        vsep (ss map show) <@>
-        "return" <+> show (r) <> semi
+        vsep (ss map toDoc) <@>
+        "return" <+> toDoc (r) <> semi
 
     override def toParenDoc (e : PrettyExpression) : Doc =
         e match {
             case IndExp (b, e) =>
-                show (b) <> brackets (show (e))
+                toDoc (b) <> brackets (toDoc (e))
             case LengthExp (e) =>
-                show (e) <> dot <> "length"
+                toDoc (e) <> dot <> "length"
             case CallExp (b, i, as) =>
-                show (b) <> dot <> show (i) <+> parens (hsep (as map show, comma))
+                toDoc (b) <> dot <> toDoc (i) <+> parens (hsep (as map toDoc, comma))
             case IntExp (v) =>
                 value (v)
             case TrueExp () =>
@@ -149,13 +149,13 @@ object PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
             case FalseExp () =>
                 "false"
             case IdnExp (i) =>
-                show (i)
+                toDoc (i)
             case ThisExp () =>
                 "this"
             case NewArrayExp (e) =>
-                "new" <+> "int" <> brackets (show (e))
+                "new" <+> "int" <> brackets (toDoc (e))
             case NewExp (i) =>
-                "new" <+> show (i) <+> "()"
+                "new" <+> toDoc (i) <+> "()"
             case _ =>
                 super.toParenDoc (e)
         }

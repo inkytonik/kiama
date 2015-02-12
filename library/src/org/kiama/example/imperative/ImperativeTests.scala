@@ -35,7 +35,7 @@ class ImperativeTests extends Tests {
     import scala.collection.immutable.Seq
 
     test ("pretty-print imperative variable") {
-        assertResult ("xyz123") (pretty (Var ("xyz123")))
+        assertResult ("xyz123") (format (Var ("xyz123")))
     }
 
     test ("pretty-print imperative variable - product") {
@@ -44,7 +44,7 @@ class ImperativeTests extends Tests {
 
     test ("pretty-print imperative assignment") {
         assertResult ("i = (0.0 * j);") (
-            pretty (Asgn (Var ("i"), Mul (Num (0), Var ("j"))))
+            format (Asgn (Var ("i"), Mul (Num (0), Var ("j"))))
         )
     }
 
@@ -95,11 +95,11 @@ class ImperativeTests extends Tests {
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
     test ("pretty-print non-trivial imperative program (default width)") {
-        assertResult (pp1) (pretty (p))
+        assertResult (pp1) (format (p))
     }
 
     test ("pretty-print non-trivial imperative program (narrow)") {
-        assertResult (pp2) (pretty (group (show (p)), 40))
+        assertResult (pp2) (pretty (group (toDoc (p)), 40))
     }
 
     test ("pretty-print non-trivial imperative program (product)") {
@@ -198,14 +198,14 @@ object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
 
     import org.kiama.util.REPLConfig
     import org.scalacheck.Arbitrary
-    import PrettyPrinter.pretty
+    import PrettyPrinter.format
 
     def generator : Arbitrary[Stmt] =
         arbStmt
 
     override def process (s : Stmt, config : REPLConfig) {
         super.process (s, config)
-        config.output.emitln (pretty (s))
+        config.output.emitln (format (s))
     }
 
 }

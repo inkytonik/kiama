@@ -85,8 +85,8 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
     /**
      * Pretty printer to use to print minijava ASTs.
      */
-    override def prettyprint (ast : Program) : String =
-        pretty (ast)
+    override def format (ast : Program) : String =
+        PrettyPrinter.format (ast)
 
 }
 

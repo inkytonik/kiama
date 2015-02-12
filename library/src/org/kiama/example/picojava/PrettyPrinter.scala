@@ -29,33 +29,36 @@ object PrettyPrinter extends org.kiama.output.PrettyPrinter {
     import PicoJavaTree._
 
     /**
-     * Return a pretty-printed version of a node.
+     * Format a PicoJava node.
      */
-    def pretty (t : PicoJavaNode) : String =
-        super.pretty (show (t))
+    def format (t : PicoJavaNode) : String =
+        pretty (toDoc (t))
 
     /**
      * Convert a PicoJava AST node to a pretty-printing document.
      */
-    def show (t : PicoJavaNode) : Doc =
+    def toDoc (t : PicoJavaNode) : Doc =
         t match {
             case Program (b) =>
-                show (b)
+                toDoc (b)
             case Block (bs) =>
-                braces (nest (line <> ssep (bs map show, line)) <> line)
+                braces (nest (line <> ssep (bs map toDoc, line)) <> line)
             case ClassDecl (n, sc, b) =>
-                val scshow = sc.map { case idn => " extends" <+> show (idn)}.getOrElse (empty)
-                "class" <+> n <> scshow <+> show (b)
+                val scshow = sc.map {
+                                 case idn =>
+                                     " extends" <+> toDoc (idn)
+                             }.getOrElse (empty)
+                "class" <+> n <> scshow <+> toDoc (b)
             case VarDecl (t, n) =>
-                show (t) <+> n <> semi
+                toDoc (t) <+> n <> semi
             case AssignStmt (v, e) =>
-                show (v) <+> equal <+> show (e) <> semi
+                toDoc (v) <+> equal <+> toDoc (e) <> semi
             case WhileStmt (c, b) =>
-                "while" <+> parens (show (c)) <> show (b)
+                "while" <+> parens (toDoc (c)) <> toDoc (b)
             case Use (n) =>
                 n
             case Dot (or, i) =>
-                show (or) <> "." <> show (i)
+                toDoc (or) <> "." <> toDoc (i)
             case BooleanLiteral (v) =>
                 v
             case PrimitiveDecl (n) =>

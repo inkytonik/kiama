@@ -24,22 +24,22 @@ package example.json
 /**
  * Abstract syntax tree pretty-printing for JSON.
  */
-trait PrettyPrinting extends org.kiama.output.PrettyPrinter {
+trait PrettyPrinter extends org.kiama.output.PrettyPrinter {
 
     import JSONTree._
 
     override val defaultIndent = 1
 
     /**
-     * Return a pretty-printed version of a node.
+     * Format a JSON node.
      */
-    def pretty (t : JValue) : String =
-        super.pretty (show (t))
+    def format (t : JValue) : String =
+        pretty (toDoc (t))
 
     /**
      * Convert a JSON value node to a pretty-printing document.
      */
-    def show (t : JValue) : Doc =
+    def toDoc (t : JValue) : Doc =
         t match {
             case JNull ()     => "null"
             case JTrue ()     => "true"
@@ -47,21 +47,21 @@ trait PrettyPrinting extends org.kiama.output.PrettyPrinter {
             case JNumber (d)  => value (if (d.isWhole) d.toInt else d)
             case JString (s)  => dquotes (value (s))
             case JArray (vs)  =>
-                brackets (group (nest (line <> ssep (vs map show, comma <> line)) <> line))
+                brackets (group (nest (line <> ssep (vs map toDoc, comma <> line)) <> line))
             case JObject (ps) =>
-                braces (group (nest (line <> ssep (ps map showPair, comma <> line)) <> line))
+                braces (group (nest (line <> ssep (ps map pairToDoc, comma <> line)) <> line))
         }
 
     /**
      * Return a pretty-printer document for an object pair.
      */
-    def showPair (p : (JName,JValue)) : Doc =
-        dquotes (p._1.s) <+> colon <+> show (p._2)
+    def pairToDoc (p : (JName,JValue)) : Doc =
+        dquotes (p._1.s) <+> colon <+> toDoc (p._2)
 
 }
 
 /**
  * Abstract syntax tree pretty-printing for JSON.
  */
-object PrettyPrinter extends PrettyPrinting
+object PrettyPrinter extends PrettyPrinter
 

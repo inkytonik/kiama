@@ -36,7 +36,6 @@ abstract class PicojavaConfig (args : Seq[String]) extends Config (args) {
 object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalyser {
 
     import PicoJavaTree.PicoJavaTree
-    import PrettyPrinter.pretty
     import org.kiama.util.Config
 
     def createConfig (args : Seq[String],
@@ -62,10 +61,16 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
             config.output.emitln (messages)
         } else if (config.obfuscate ()) {
             val obfuscator = new Obfuscator (analysis)
-            config.output.emitln (pretty (program))
-            config.output.emitln (pretty (obfuscator.obfuscate (program)))
+            config.output.emitln (format (program))
+            config.output.emitln (format (obfuscator.obfuscate (program)))
         }
 
     }
+
+    /**
+     * Pretty printer to use to print minijava ASTs.
+     */
+    override def format (ast : Program) : String =
+        PrettyPrinter.format (ast)
 
 }
