@@ -246,6 +246,11 @@ trait PrettyPrinterBase {
      * printed representation of `d` corresponds to `n`. The positions of that
      * pretty-printed representation can be retrieved via the position
      * information in the `Document` returned by `pretty`.
+     *
+     * The position information is keyed to `n` and at most one position will be
+     * associated with `n`. If you need to be able to tell the difference between
+     * the positions of equal, but conceptually different, values, you should
+     * use a reference for `n`.
      */
     def positioned (n : Any, d : Doc) : Doc
 
