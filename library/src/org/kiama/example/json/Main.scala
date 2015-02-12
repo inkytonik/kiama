@@ -29,6 +29,7 @@ object Main extends Driver
 class Driver extends SyntaxAnalyser with Compiler[JValue] {
 
     import PrettyPrinter.{any => ppany, pretty}
+    import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.kiama.util.Config
 
     /**
@@ -43,5 +44,8 @@ class Driver extends SyntaxAnalyser with Compiler[JValue] {
         config.output.emitln (format (ast))
 
     }
+
+    def format (ast : JValue) : Document =
+        emptyDocument
 
 }

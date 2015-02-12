@@ -30,6 +30,7 @@ import org.kiama.util.Compiler
  */
 class Driver extends SyntaxAnalyser with Compiler[Stm] {
 
+    import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.kiama.util.Config
 
     /**
@@ -41,6 +42,9 @@ class Driver extends SyntaxAnalyser with Compiler[Stm] {
         val optast = optimiser.run (ast)
         config.output.emitln (optast)
     }
+
+    def format (ast : Stm) : Document =
+        emptyDocument
 
 }
 

@@ -46,6 +46,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
     import org.kiama.example.obr.{RISCEncoder, RISCTransformer}
     import org.kiama.example.RISC.{RISC, RISCISA}
     import org.kiama.output.PrettyPrinter.{any => ppany, pretty}
+    import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging.report
 
@@ -99,6 +100,9 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
         }
 
     }
+
+    def format (ast : ObrInt) : Document =
+        emptyDocument
 
 }
 

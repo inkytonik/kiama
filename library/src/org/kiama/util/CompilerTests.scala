@@ -30,6 +30,7 @@ import scala.collection.immutable.Seq
 class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompiler[Any] {
 
     import java.io.Reader
+    import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.scalatest.TestFailedException
 
     def createConfig (args : Seq[String],
@@ -46,6 +47,9 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     def process (filename : String, ast : Any, config : Config) {
         // Do nothing
     }
+
+    def format (m : Any) : Document =
+        emptyDocument
 
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter

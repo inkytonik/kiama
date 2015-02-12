@@ -30,6 +30,7 @@ import org.kiama.util.Compiler
 class Driver extends Parser with Compiler[Program] {
 
     import TransformTree.TransformTree
+    import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
 
@@ -54,6 +55,9 @@ class Driver extends Parser with Compiler[Program] {
             report (messages, config.error)
 
     }
+
+    def format (ast : Program) : Document =
+        emptyDocument
 
 }
 

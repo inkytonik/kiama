@@ -140,8 +140,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
     /**
      * Format an abstract syntax tree for printing. Default: return an empty document.
      */
-    def format (ast : T) : Document =
-        emptyDocument
+    def format (ast : T) : Document
 
 }
 

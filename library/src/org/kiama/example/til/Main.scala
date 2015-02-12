@@ -30,11 +30,15 @@ import org.kiama.util.{Compiler, Config}
  */
 trait ParsingMain extends Compiler[Program] {
 
+    import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.kiama.util.Emitter
 
     def process (filename : String, ast : Program, config : Config) {
         config.output.emitln (ast)
     }
+
+    def format (ast : Program) : Document =
+        emptyDocument
 
 }
 

@@ -30,7 +30,11 @@ import org.kiama.output.ParenPrettyPrinter
 trait SourcePrettyPrinter extends ParenPrettyPrinter {
 
     import org.kiama.output.PrettyExpression
+    import org.kiama.output.PrettyPrinterTypes.Document
     import scala.collection.immutable.Seq
+
+    def format (m : ModuleDecl) : Document =
+        pretty (toDoc (m))
 
     def declsection (d : Declaration) : String =
         ""

@@ -32,6 +32,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with Compiler[Program]
         with TestCompiler[Program] {
 
     import PrologTree.PrologTree
+    import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
 
@@ -52,5 +53,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with Compiler[Program]
         if (messages.length > 0)
             report (messages, config.error)
     }
+
+    def format (m : Program) : Document =
+        emptyDocument
 
 }
