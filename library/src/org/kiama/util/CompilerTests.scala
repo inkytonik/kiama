@@ -199,7 +199,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
                     if (inf.exists)
                         (Seq ("--Kconsole", "file", ip), s" from input $it")
                     else
-                        (Seq ("--Kconsole", "string", indefault), s""" from string "$indefault"""")
+                        (Seq ("--Kconsole", "string", indefault), s" from string '$indefault'")
                 filetest (name, rp, consoleArgs ++ args :+ cp, r, msg)
             }
         }
