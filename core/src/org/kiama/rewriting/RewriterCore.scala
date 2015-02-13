@@ -414,28 +414,53 @@ trait RewriterCore {
 
         import com.google.common.base.Function
         import com.google.common.cache.{CacheBuilder, CacheLoader}
-        import java.lang.Class
+        import java.lang.{Class, IllegalArgumentException, NoSuchFieldException}
         import java.lang.reflect.Constructor
 
-        val cache =
-            CacheBuilder.newBuilder ().weakKeys ().build (
-                CacheLoader.from (
-                    new Function[Class[_],Constructor[_]] {
-                        def apply (clazz : Class[_]) : Constructor[_] =
-                            clazz.getConstructors () (0)
-                    }
-                )
-            )
+        type Duper = (Any, Seq[AnyRef]) => Any
+
+        object MakeDuper extends Function[Class[_],Duper] {
+
+            def apply (clazz : Class[_]) : Duper =
+                try {
+                    // See if this class has a MODULE$ field. This field is used by Scala
+                    // to hold a singleton instance and is only present in singleton classes
+                    // (e.g., ones arising from object declarations or case objects). If we
+                    // are trying to duplicate one of these then we want to return the same
+                    // singleton so we use an identity duper.
+                    clazz.getField ("MODULE$")
+                    (t : Any, children : Seq[AnyRef]) =>
+                        t
+                } catch {
+                    // Otherwise, this is a normal class, so we try to make a
+                    // duper that uses the first constructor.
+                    case _ : NoSuchFieldException =>
+                        val ctors = clazz.getConstructors ()
+                        if (ctors.length == 0)
+                            sys.error (s"dup no constructors for ${clazz.getName ()}")
+                        else
+                            (t : Any, children : Seq[AnyRef]) =>
+                                makeInstance (ctors (0), children)
+                }
+
+            def makeInstance (ctor : Constructor[_], children : Seq[AnyRef]) : Any =
+                try {
+                    ctor.newInstance (children : _*)
+                } catch {
+                    case e : IllegalArgumentException =>
+                        sys.error (s"""dup illegal arguments: $ctor (${children.mkString (",")}), expects ${ctor.getParameterTypes.length}
+                                    |Common cause: term classes are nested in another class, move them to the top level""".stripMargin)
+                }
+
+        }
+
+        val cache = CacheBuilder.newBuilder ().weakKeys ().build (
+                        CacheLoader.from (MakeDuper)
+                    )
 
         def apply[T <: Product] (t : T, children : Seq[AnyRef]) : T = {
-            val ctor = cache.get (t.getClass)
-            try {
-                ctor.newInstance (children : _*).asInstanceOf[T]
-            } catch {
-                case e : IllegalArgumentException =>
-                    sys.error (s"""dup illegal arguments: $ctor (${children.mkString (",")}), expects ${ctor.getParameterTypes.length}
-                                |Common cause: term classes are nested in another class, move them to the top level""".stripMargin)
-            }
+            val duper = cache.get (t.getClass)
+            duper (t, children).asInstanceOf[T]
         }
 
     }

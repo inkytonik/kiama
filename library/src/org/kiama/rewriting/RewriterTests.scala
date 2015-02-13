@@ -25,12 +25,37 @@ import org.kiama.example.imperative.Generator
 import org.kiama.util.Tests
 
 /**
+ * Support for rewriting tests.
+ */
+object RewriterTests {
+
+    import java.lang.IndexOutOfBoundsException
+
+    /**
+     * A user-defined singleton case object.
+     */
+    case object SingleCaseObject
+
+    /**
+     * A user-defined singleton object that is a product. Essentially
+     * this is similar to `Nil`.
+     */
+    object SingleObject extends Product {
+        def canEqual (that : Any) = true
+        def productArity = 0
+        def productElement (n : Int) = throw new IndexOutOfBoundsException (n.toString)
+    }
+
+}
+
+/**
  * Rewriting tests.
  */
 class RewriterTests extends Tests with Generator {
 
     import org.kiama.example.imperative.ImperativeTree._
     import org.kiama.util.Comparison.optsame
+    import RewriterTests.{SingleCaseObject, SingleObject}
     import scala.collection.immutable.Seq
 
     /**
@@ -1035,6 +1060,118 @@ class RewriterTests extends Tests with Generator {
         assertResult (2) (count)
     }
 
+    {
+        val t = SingleCaseObject
+
+        test ("a copy of a singleton case object doesn't copy", FocusTest) {
+            val u = copy (t)
+            assertResult (t) (u)
+            assertSame (t) (u)
+        }
+
+        test ("a dup of a singleton case object doesn't dup", FocusTest) {
+            val u = dup (t, Seq ())
+            assertResult (t) (u)
+            assertSame (t) (u)
+        }
+    }
+
+    {
+        val t = SingleObject
+
+        test ("a copy of a singleton object doesn't copy", FocusTest) {
+            val u = copy (t)
+            assertResult (t) (u)
+            assertSame (t) (u)
+        }
+
+        test ("a dup of a singleton object doesn't dup", FocusTest) {
+            val u = dup (t, Seq ())
+            assertResult (t) (u)
+            assertSame (t) (u)
+        }
+    }
+
+    {
+        val t = Nil
+
+        test ("a copy of Nil doesn't copy", FocusTest) {
+            val u = copy (t)
+            assertResult (t) (u)
+            assertSame (t) (u)
+        }
+
+        test ("a dup of Nil doesn't dup", FocusTest) {
+            val u = dup (t, Seq ())
+            assertResult (t) (u)
+            assertSame (t) (u)
+        }
+    }
+
+    {
+        val t = Null ()
+
+        test ("a copy of a no-children instance copies", FocusTest) {
+            val u = copy (t)
+            assertResult (t) (u)
+            assertNotSame (t) (u)
+        }
+
+        test ("a dup of a no-children instance dups", FocusTest) {
+            val u = dup (t, Seq ())
+            assertResult (t) (u)
+            assertNotSame (t) (u)
+        }
+    }
+
+    {
+        val t = Var ("i")
+
+        test ("a copy of a node with a child copies", FocusTest) {
+            val u = copy (t)
+            assertResult (t) (u)
+            assertNotSame (t) (u)
+        }
+
+        test ("a dup of a node with a child dups", FocusTest) {
+            val u = dup (t, Seq ("j"))
+            assertResult (Var ("j")) (u)
+            assertNotSame (t) (u)
+        }
+    }
+
+    {
+        val t = Add (Num (1), Num (2))
+
+        test ("a copy of a node with multiple children copies", FocusTest) {
+            val u = copy (t)
+            assertResult (t) (u)
+            assertNotSame (t) (u)
+        }
+
+        test ("a dup of a node with multiple children dups", FocusTest) {
+            val u = dup (t, Seq (Num (3), Num (4)))
+            assertResult (Add (Num (3), Num (4))) (u)
+            assertNotSame (t) (u)
+        }
+    }
+
+    {
+        val t = List (Var ("i"), Num (1))
+
+        test ("a copy of a non-empty sequence copies", FocusTest) {
+            val u = copy (t)
+            assertResult (t) (u)
+            assertNotSame (t) (u)
+        }
+
+        test ("a dup of a non-empty sequence dups", FocusTest) {
+            val u = dup (t, Seq (Var ("j"), List (Num (2))))
+            assertResult (List (Var ("j"), Num (2))) (u)
+            assertNotSame (t) (u)
+        }
+    }
+
     test ("an illegal dup throws an appropriate exception") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         val i = intercept[RuntimeException] {
@@ -1856,43 +1993,64 @@ class RewriterTests extends Tests with Generator {
 
     // Cloning tests
 
-    test ("deep cloning a term with sharing gives an equal but not eq term") {
+    {
         import org.kiama.example.imperative.ImperativeTree._
         import org.kiama.relation.Tree
 
-        val t = Add (Mul (Add (Num (1), Num (2)),
-                          Sub (Add (Num (1), Num (2)),
-                               Add (Num (1), Num (2)))),
-                     Add (Add (Add (Num (3), Num (4)),
-                               Num (5)),
-                          Add (Num (3), Num (4))))
-        val u = Add (Mul (Add (Num (1), Num (2)),
-                          Sub (Add (Num (1), Num (2)),
-                               Add (Num (1), Num (2)))),
-                     Add (Add (Add (Num (3), Num (4)),
-                               Num (5)),
-                          Add (Num (3), Num (4))))
+        def assertCloned[T <: Product,R <: T] (t : R, ct : R) {
 
-        val ttree = new Tree[Exp,Exp] (t)
-        val ct : Add = deepclone (t)
+            // Must get the right answer (==)
+            assertResult (t) (ct)
 
-        // Must get the right answer (==)
-        assertResult (u) (ct)
+            // Make sure that the new term is actually a tree. If it's not, trying
+            // to make a Tree from it will throw a RuntimeException.
+            try {
+                new Tree[T,R] (ct)
+            } catch {
+                case e : RuntimeException =>
+                    fail (s"deepclone didn't produce a tree: $ct")
+            }
 
-        // Must not get the original term (eq)
-        // Check root and one level down in case we just clone root
-        assertNotSame (t) (ct)
-        assertNotSame (t.l) (ct.l)
-        assertNotSame (t.r) (ct.r)
-
-        // Make sure that the new term is actually a tree. If it's not, trying
-        // to make a Tree from it will throw a RuntimeException.
-        try {
-            new Tree[Exp,Exp] (ct)
-        } catch {
-            case e : RuntimeException =>
-                fail (s"deepclone didn't produce a tree: $ct")
         }
+
+        test ("deep cloning a term gives an equal but not eq term") {
+            val t = Add (Mul (Add (Num (1), Num (2)),
+                              Sub (Add (Num (1), Num (2)),
+                                   Add (Num (1), Num (2)))),
+                         Add (Add (Add (Num (3), Num (4)),
+                                   Num (5)),
+                              Add (Num (3), Num (4))))
+
+            val ttree = new Tree[Exp,Exp] (t)
+            val ct : Add = deepclone (t)
+
+            assertCloned[Exp,Exp] (t, ct)
+
+            assertNotSame (t) (ct)
+            assertNotSame (t.l) (ct.l)
+            assertNotSame (t.r) (ct.r)
+
+        }
+
+        test ("deep cloning a term containing a sequence works", FocusTest) {
+
+            val t = Seqn (List (Asgn (Var ("a"), Num (1)),
+                                Asgn (Var ("b"), Num (2)),
+                                Asgn (Var ("c"), Num (3))))
+
+            val ttree = new Tree[ImperativeNode,Seqn] (t)
+            val ct : Seqn = deepclone (t)
+
+            assertCloned[ImperativeNode,Seqn] (t, ct)
+
+            assertNotSame (t) (ct)
+            assertNotSame (t.ss) (ct.ss)
+            assertNotSame (t.ss (0)) (ct.ss (0))
+            assertNotSame (t.ss (1)) (ct.ss (1))
+            assertNotSame (t.ss (2)) (ct.ss (2))
+
+        }
+
     }
 
     // Strategy naming tests
