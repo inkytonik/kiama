@@ -353,24 +353,61 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     val l1 = List (1, 2, 3)
+    val l2 = List ('a', 'b')
 
     test ("pretty-print lists of simple values - non-wrap") {
         assertResult ("List (1, 2, 3)") (layout (list (l1)))
     }
 
+    test ("pretty-print simple value arguments - non-wrap") {
+        assertResult ("(a, b)") (layout (arguments (l2)))
+    }
+
     test ("pretty-print lists of simple values - wrap") {
-        assertResult ("List (\n    1,\n    2,\n    3)") (layout (list (l1), 3))
+        assertResult ("List (\n    a,\n    b)") (layout (list (l2), 3))
+    }
+
+    test ("pretty-print simple value arguments - wrap") {
+        assertResult ("(\n    1,\n    2,\n    3)") (layout (arguments (l1), 3))
+    }
+
+    test ("pretty-print lists of simple values - wrap, non-default") {
+        assertResult ("Foo (\n    +;\n    +;\n    +;)") (
+            layout (list (l1, "Foo", (_ : Int) => plus, semi, lterm), 3)
+        )
+    }
+
+    test ("pretty-print simple value arguments  - wrap, non-default") {
+        assertResult ("(=\n    . =\n    )") (
+            layout (arguments (l2, (_ : Char) => equal, dot, lsep2), 3)
+        )
+    }
+
+    test ("pretty-print sequences of simple values - non-wrap") {
+        assertResult ("Seq (1, 2, 3)") (layout (seq (l1)))
+    }
+
+    test ("pretty-print sequences of simple values - wrap") {
+        assertResult ("Seq (\n    1,\n    2,\n    3)") (layout (seq (l1), 3))
     }
 
     case class Val (i : Int)
-    val l2 = List (Val (1), Val (2), Val (3))
+    val l3 = List (Val (1), Val (2), Val (3))
 
     test ("pretty-print lists of structured values - non-wrap") {
-        assertResult ("List (Val(1), Val(2), Val(3))") (layout (list (l2)))
+        assertResult ("List (Val(1), Val(2), Val(3))") (layout (list (l3)))
     }
 
     test ("pretty-print lists of structured values - wrap") {
-        assertResult ("List (\n    Val(1),\n    Val(2),\n    Val(3))") (layout (list (l2), 3))
+        assertResult ("List (\n    Val(1),\n    Val(2),\n    Val(3))") (layout (list (l3), 3))
+    }
+
+    test ("pretty-print sequences of structured values - non-wrap") {
+        assertResult ("Seq (Val(1), Val(2), Val(3))") (layout (seq (l3)))
+    }
+
+    test ("pretty-print sequences of structured values - wrap") {
+        assertResult ("Seq (\n    Val(1),\n    Val(2),\n    Val(3))") (layout (seq (l3), 3))
     }
 
     test ("pretty any-print empty vector") {

@@ -307,11 +307,9 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that pretty-prints a list in Scala notation,
-     * inserting line breaks between elements as necessary.
-     * The `prefix` string can be changed from the default `"List"`.
-     * The `elemToDoc` argument can be used to alter the way each element
-     * is converted to a document (default: use the `value` combinator).
-     * `sep` defaults to `comma`.
+     * inserting line breaks between elements as necessary. The same
+     * as calling `seq` with a prefix of `"List"` and passing all
+     * other arguments through.
      */
     def list[T] (l : Seq[T], prefix : String = "List",
                  elemToDoc : T => Doc = (x : T) => value (x),
@@ -321,17 +319,29 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that pretty-prints a sequence in Scala notation,
-     * inserting line breaks between elements as necessary.
-     * The `prefix` string can be changed from the default `"Seq"`.
-     * The `elemToDoc` argument can be used to alter the way each element
-     * is converted to a document (default: use the `value` combinator).
-     * `sep` defaults to `comma`.
+     * inserting line breaks between elements as necessary. The same
+     * as pretty-printing the prefix followed by a space, then using
+     * `arguments` to pretty-print the content of the sequence, passing
+     * all other arguments through.
      */
     def seq[T] (l : Seq[T], prefix : String = "Seq",
                 elemToDoc : T => Doc = (x : T) => value (x),
                 sep : Doc = comma,
                 sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        text (prefix) <+> parens (group (nest (sepfn (l map elemToDoc, sep))))
+        text (prefix) <+> arguments (l, elemToDoc, sep, sepfn)
+
+    /**
+     * Return a document that pretty-prints a sequence as a Scala argument
+     * list. The arguments are parenthesized and pretty-printed using
+     * `sepfn` (default: `lsep`). Each element of the list is pretty-printed
+     * using `elemToDoc` (default: `value`). The separator defaults to a
+     * comma.
+     */
+    def arguments[T] (l : Seq[T],
+                      elemToDoc : T => Doc = (x : T) => value (x),
+                      sep : Doc = comma,
+                      sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+        parens (group (nest (sepfn (l map elemToDoc, sep))))
 
     /**
      * Generic pretty-printer document for any type of value. If `a` is a
