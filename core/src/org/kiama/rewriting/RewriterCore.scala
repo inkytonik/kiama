@@ -870,7 +870,7 @@ trait RewriterCore {
      * If `s` succeeds on any of the children, then succeed,
      * forming a new term from the constructor of the original term and the result
      * of `s` for each succeeding child, with other children unchanged.  In the event
-     * that the strategy fails on all children, then fail. If there are no
+     * that `s` fails on all children, then fail. If there are no
      * children, fail.  If `s` succeeds on children producing the same terms (by `eq`
      * for references and by `==` for other values), then the overall strategy
      * returns the subject term.
