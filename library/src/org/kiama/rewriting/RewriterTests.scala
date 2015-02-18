@@ -184,12 +184,12 @@ class RewriterTests extends Tests with Generator {
 
     test ("strategies that have no effect: some terms to themselves") {
         val noopstmt = everywherebu (rule[Asgn] { case a => a })
-        check ((t : Stmt) => Some (t) == noopstmt (t))
-        check ((t : Exp) => Some (t) == noopstmt (t))
+        check ((t : Stmt) => optsame (Some (t), noopstmt (t)))
+        check ((t : Exp) => optsame (Some (t), noopstmt (t)))
 
         val noopexp = everywherebu (rule[Num] { case n => n })
-        check ((t : Stmt) => Some (t) == noopexp (t))
-        check ((t : Exp) => Some (t) == noopexp (t))
+        check ((t : Stmt) => optsame (Some (t), noopexp (t)))
+        check ((t : Exp) => optsame (Some (t), noopexp (t)))
     }
 
     test ("strategies that fail immediately") {
