@@ -1063,13 +1063,13 @@ class RewriterTests extends Tests with Generator {
     {
         val t = SingleCaseObject
 
-        test ("a copy of a singleton case object doesn't copy", FocusTest) {
+        test ("a copy of a singleton case object doesn't copy") {
             val u = copy (t)
             assertResult (t) (u)
             assertSame (t) (u)
         }
 
-        test ("a dup of a singleton case object doesn't dup", FocusTest) {
+        test ("a dup of a singleton case object doesn't dup") {
             val u = dup (t, Seq ())
             assertResult (t) (u)
             assertSame (t) (u)
@@ -1079,13 +1079,13 @@ class RewriterTests extends Tests with Generator {
     {
         val t = SingleObject
 
-        test ("a copy of a singleton object doesn't copy", FocusTest) {
+        test ("a copy of a singleton object doesn't copy") {
             val u = copy (t)
             assertResult (t) (u)
             assertSame (t) (u)
         }
 
-        test ("a dup of a singleton object doesn't dup", FocusTest) {
+        test ("a dup of a singleton object doesn't dup") {
             val u = dup (t, Seq ())
             assertResult (t) (u)
             assertSame (t) (u)
@@ -1095,13 +1095,13 @@ class RewriterTests extends Tests with Generator {
     {
         val t = Nil
 
-        test ("a copy of Nil doesn't copy", FocusTest) {
+        test ("a copy of Nil doesn't copy") {
             val u = copy (t)
             assertResult (t) (u)
             assertSame (t) (u)
         }
 
-        test ("a dup of Nil doesn't dup", FocusTest) {
+        test ("a dup of Nil doesn't dup") {
             val u = dup (t, Seq ())
             assertResult (t) (u)
             assertSame (t) (u)
@@ -1111,13 +1111,13 @@ class RewriterTests extends Tests with Generator {
     {
         val t = Null ()
 
-        test ("a copy of a no-children instance copies", FocusTest) {
+        test ("a copy of a no-children instance copies") {
             val u = copy (t)
             assertResult (t) (u)
             assertNotSame (t) (u)
         }
 
-        test ("a dup of a no-children instance dups", FocusTest) {
+        test ("a dup of a no-children instance dups") {
             val u = dup (t, Seq ())
             assertResult (t) (u)
             assertNotSame (t) (u)
@@ -1127,13 +1127,13 @@ class RewriterTests extends Tests with Generator {
     {
         val t = Var ("i")
 
-        test ("a copy of a node with a child copies", FocusTest) {
+        test ("a copy of a node with a child copies") {
             val u = copy (t)
             assertResult (t) (u)
             assertNotSame (t) (u)
         }
 
-        test ("a dup of a node with a child dups", FocusTest) {
+        test ("a dup of a node with a child dups") {
             val u = dup (t, Seq ("j"))
             assertResult (Var ("j")) (u)
             assertNotSame (t) (u)
@@ -1143,13 +1143,13 @@ class RewriterTests extends Tests with Generator {
     {
         val t = Add (Num (1), Num (2))
 
-        test ("a copy of a node with multiple children copies", FocusTest) {
+        test ("a copy of a node with multiple children copies") {
             val u = copy (t)
             assertResult (t) (u)
             assertNotSame (t) (u)
         }
 
-        test ("a dup of a node with multiple children dups", FocusTest) {
+        test ("a dup of a node with multiple children dups") {
             val u = dup (t, Seq (Num (3), Num (4)))
             assertResult (Add (Num (3), Num (4))) (u)
             assertNotSame (t) (u)
@@ -1159,13 +1159,13 @@ class RewriterTests extends Tests with Generator {
     {
         val t = List (Var ("i"), Num (1))
 
-        test ("a copy of a non-empty sequence copies", FocusTest) {
+        test ("a copy of a non-empty sequence copies") {
             val u = copy (t)
             assertResult (t) (u)
             assertNotSame (t) (u)
         }
 
-        test ("a dup of a non-empty sequence dups", FocusTest) {
+        test ("a dup of a non-empty sequence dups") {
             val u = dup (t, Seq (Var ("j"), List (Num (2))))
             assertResult (List (Var ("j"), Num (2))) (u)
             assertNotSame (t) (u)
@@ -2032,7 +2032,7 @@ class RewriterTests extends Tests with Generator {
 
         }
 
-        test ("deep cloning a term containing a sequence works", FocusTest) {
+        test ("deep cloning a term containing a sequence works") {
 
             val t = Seqn (List (Asgn (Var ("a"), Num (1)),
                                 Asgn (Var ("b"), Num (2)),
