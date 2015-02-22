@@ -251,8 +251,8 @@ object Tree {
     def isLeaf[T <: Product] (t : T) : Boolean = {
         for (desc <- t.productIterator) {
             desc match {
-                case _ : Option[_] | _ : Either[_,_] | _ : Tuple2[_,_] |
-                     _ : Tuple3[_,_,_] | _ : Tuple4[_,_,_,_] =>
+                case _ : Option[_] | _ : Either[_,_] | _ : Tuple1[_] |
+                     _ : Tuple2[_,_] | _ : Tuple3[_,_,_] | _ : Tuple4[_,_,_,_] =>
                     // Do nothing
                 case _ : Product =>
                     return false
@@ -285,6 +285,8 @@ object Tree {
                 case Right (r) =>
                     pending.prepend (r)
 
+                case Tuple1 (a) =>
+                    pending.prepend (a)
                 case (a, b) =>
                     pending.prepend (a, b)
                 case (a, b, c) =>

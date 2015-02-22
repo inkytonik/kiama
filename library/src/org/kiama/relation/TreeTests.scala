@@ -53,19 +53,24 @@ class TreeTests extends Tests with RelationTestSupport {
     val s4 = While (e4, s3)
     val s5 = Null ()
 
-    val nulls = Vector.fill (16) (Null ())
+    val nulls = Vector.fill (24) (Null ())
 
     case class Program (u : Stmt, as : List[Stmt], v : Stmt, optb1 : Option[Stmt],
                         optb2 : Option[Stmt], w : Stmt, eitherc1 : Either[Stmt,Stmt],
-                        eitherc2 : Either[Stmt,Stmt], x : Stmt, t2 : (Stmt,Stmt),
+                        eitherc2 : Either[Stmt,Stmt], x : Stmt,
+                        t1 : Tuple1[Stmt], t2 : (Stmt,Stmt), t3 : (Stmt,Stmt,Stmt),
+                        t4 : (Stmt,Stmt,Stmt,Stmt),
                         y : Stmt, listopts : List[Option[Stmt]], z : Stmt,
                         vec : Vector[Stmt], map : Map[Int,Stmt]) extends ImperativeNode
 
     val p = Program (s1, List (s2, s4), s5, Some (nulls (0)), None, nulls (1),
-                     Left (nulls (2)), Right (nulls (3)), nulls (4), (nulls (5), nulls (6)),
-                     nulls (7), List (Some (nulls (8)), Some (nulls (9))), nulls (10),
-                     Vector (nulls (11), nulls (12), nulls (13)),
-                     Map (1 ->  nulls (14), 2 -> nulls (15)))
+                     Left (nulls (2)), Right (nulls (3)), nulls (4),
+                     Tuple1 (nulls(5)), (nulls (6), nulls (7)),
+                     (nulls (8), nulls (9), nulls (10)),
+                     (nulls (11), nulls (12), nulls (13), nulls (14)),
+                     nulls (15), List (Some (nulls (16)), Some (nulls (17))), nulls (18),
+                     Vector (nulls (19), nulls (20), nulls (21)),
+                     Map (1 ->  nulls (22), 2 -> nulls (23)))
 
     val pchildren = Seq (s1, s2, s4, s5) ++ nulls
 
@@ -420,7 +425,7 @@ class TreeTests extends Tests with RelationTestSupport {
     }
 
     test ("lastChild of a node with a list component is correct") {
-        assertResult (Some (nulls (10))) (lastChild.unapply (p))
+        assertResult (Some (nulls (17))) (lastChild.unapply (p))
     }
 
     test ("lastChild of non-node throws an exception") {
@@ -460,8 +465,8 @@ class TreeTests extends Tests with RelationTestSupport {
         assertImage (next, s3)
     }
 
-    test ("next of a last child is not defined (nulls (15))") {
-        assertImage (next, nulls (15))
+    test ("next of a last child is not defined (nulls (23))") {
+        assertImage (next, nulls (23))
     }
 
     test ("next of a non-last child is correct (n1)") {
@@ -599,28 +604,80 @@ class TreeTests extends Tests with RelationTestSupport {
         assertImage (parent, nulls (4), Seq (p))
     }
 
-    test ("parent of node in left of tuple of Program is the program") {
+    test ("parent of node in tuple 1 of Program is the program") {
         assertImage (parent, nulls (5), Seq (p))
     }
 
-    test ("parent of node in right of tuple of Program is the program") {
+    test ("parent of node in tuple 2 of Program is the program (first)") {
         assertImage (parent, nulls (6), Seq (p))
     }
 
-    test ("parent of node after tuple field of Program is the program") {
+    test ("parent of node in tuple 2 of Program is the program (second)") {
         assertImage (parent, nulls (7), Seq (p))
     }
 
-    test ("parent of node in list of Somes of Program is the program (first)") {
+    test ("parent of node in tuple 3 of Program is the program (first)") {
         assertImage (parent, nulls (8), Seq (p))
     }
 
-    test ("parent of node in list of Somes of Program is the program (second)") {
+    test ("parent of node in tuple 3 of Program is the program (second)") {
         assertImage (parent, nulls (9), Seq (p))
     }
 
-    test ("parent of last field of Program is the program") {
+    test ("parent of node in tuple 3 of Program is the program (third)") {
         assertImage (parent, nulls (10), Seq (p))
+    }
+
+    test ("parent of node in tuple 4 of Program is the program (first)") {
+        assertImage (parent, nulls (11), Seq (p))
+    }
+
+    test ("parent of node in tuple 4 of Program is the program (second)") {
+        assertImage (parent, nulls (12), Seq (p))
+    }
+
+    test ("parent of node in tuple 4 of Program is the program (third)") {
+        assertImage (parent, nulls (13), Seq (p))
+    }
+
+    test ("parent of node in tuple 4 of Program is the program (fourth)") {
+        assertImage (parent, nulls (14), Seq (p))
+    }
+
+    test ("parent of node after tuple 4 field of Program is the program") {
+        assertImage (parent, nulls (15), Seq (p))
+    }
+
+    test ("parent of node in list of Somes of Program is the program (first)") {
+        assertImage (parent, nulls (16), Seq (p))
+    }
+
+    test ("parent of node in list of Somes of Program is the program (second)") {
+        assertImage (parent, nulls (17), Seq (p))
+    }
+
+    test ("parent of middle field of Program is the program") {
+        assertImage (parent, nulls (18), Seq (p))
+    }
+
+    test ("parent of node in Vector field of Program is the program (first)") {
+        assertImage (parent, nulls (19), Seq (p))
+    }
+
+    test ("parent of node in Vector field of Program is the program (second)") {
+        assertImage (parent, nulls (20), Seq (p))
+    }
+
+    test ("parent of node in Vector field of Program is the program (third)") {
+        assertImage (parent, nulls (21), Seq (p))
+    }
+
+    test ("parent of node in Map field of Program is the program (first)") {
+        assertImage (parent, nulls (22), Seq (p))
+    }
+
+    test ("parent of node in Map field of Program is the program (second)") {
+        assertImage (parent, nulls (23), Seq (p))
     }
 
     test ("parent of non-node throws an exception") {
