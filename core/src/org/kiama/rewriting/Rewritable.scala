@@ -38,15 +38,15 @@ trait Rewritable {
     def arity : Int
 
     /**
-     * Return a sequence containing the components of this value.
+     * Return a finite sequence containing the components of this value.
      */
     def deconstruct : Seq[Any]
 
     /**
      * Return a new value constructed from the given original value and
-     * the given new components.  In most cases, the new value should be
-     * of the same type as the original with the new components, but
-     * this is not required.  This method should throw an
+     * the given a finite sequence of the new components. In most cases,
+     * the new value should be of the same type as the original with the
+     * new components, but this is not required.  This method should throw an
      * IllegalArgumentException if any of the components are not
      * appropriate (e.g., there is the wrong number of them or they are
      * of the wrong type).
@@ -57,7 +57,7 @@ trait Rewritable {
      * Helper function that can be called by implementations of reconstruct
      * to report an error.  desc is a description of the structure that
      * was being constructed, argtypes is a string describing the expected
-     * types of the arguments and args is the argument array that was
+     * types of the arguments and args is the argument sequence that was
      * provided.  An IllegalArgumentException containing a description
      * of the problem is thrown.
      */
