@@ -93,13 +93,7 @@ object Comparison {
             }
 
     /**
-     * As for `same` but checks the elements of the two sequences pairwise.
-     */
-    def seqsame (s1 : Seq[Any], s2 : Seq[Any]) : Boolean =
-        (s1.size == s2.size) && (s1.zip (s2).forall (Function.tupled (same)))
-
-    /**
-     * Does the sequence `s` contain `t`? Equality is tested using `same`.
+     * Does the finite sequence `s` contain `t`? Equality is tested using `same`.
      */
     def contains[T] (s : Seq[T], t : T) : Boolean =
         s.exists (same (_, t))
