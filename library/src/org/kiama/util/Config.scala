@@ -22,14 +22,13 @@ package org.kiama
 package util
 
 import org.rogach.scallop.ScallopConf
-import scala.collection.immutable.Seq
 
 /**
  * Configurations for Kiama programs. `args` gives the command-line
  * arguments that are used to determine many of the configuration
  * settings.
  */
-abstract class Config (args : Seq[String]) extends ScallopConf (args) {
+abstract class Config (args : Array[String]) extends ScallopConf (args) {
 
     import org.kiama.util.{FileConsole, JLineConsole, StringConsole}
     import org.rogach.scallop.{ArgType, ValueConverter}
@@ -132,7 +131,7 @@ abstract class Config (args : Seq[String]) extends ScallopConf (args) {
  * Configurations for Kiama REPLS. Adds some options to the default
  * set that all Kiama programs support.
  */
-abstract class REPLConfig (args : Seq[String]) extends Config (args) {
+abstract class REPLConfig (args : Array[String]) extends Config (args) {
 
     /**
      * Whitespace option. If set, pass input lines that are completely white space

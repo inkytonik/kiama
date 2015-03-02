@@ -38,7 +38,6 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
     import org.kiama.util.Messaging.report
     import org.kiama.util.IO.{filereader, FileNotFoundException}
     import org.kiama.rewriting.Rewriter._
-    import scala.collection.immutable.Seq
 
     /**
      * Method to compile an Obr program and to apply a specified test to
@@ -50,7 +49,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
 
         test(title) {
             val filename = dirname + obrfile
-            val config = createAndInitConfig (Seq (filename))
+            val config = createAndInitConfig (Array (filename))
 
             try {
                 val reader = filereader (filename)
@@ -84,8 +83,8 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * Test a target tree by collecting together its IntDatum leaves and checking the resulting
      * sequence of integers to see if it contains an expected sequence of integers as a slice.
      */
-    def checkintdatums (expected : Seq[Int]) (title : String, emitter : Emitter, code : RISCNode) {
-        val realised = Seq.newBuilder[Int]
+    def checkintdatums (expected : List[Int]) (title : String, emitter : Emitter, code : RISCNode) {
+        val realised = List.newBuilder[Int]
         bottomup (query[RISCNode] {
             case IntDatum(num) =>
                 realised += num

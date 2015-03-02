@@ -25,12 +25,11 @@ package example.obr
 import ObrTree.ObrInt
 import org.kiama.util.{Console, CompilerWithConfig, Config, Emitter,
     ErrorEmitter, JLineConsole, OutputEmitter}
-import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Obr compiler.
  */
-abstract class ObrConfig (args : Seq[String]) extends Config (args) {
+abstract class ObrConfig (args : Array[String]) extends Config (args) {
     lazy val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
     lazy val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
     lazy val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
@@ -50,7 +49,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
     import org.kiama.util.Emitter
     import org.kiama.util.Messaging.report
 
-    override def createConfig (args : Seq[String],
+    override def createConfig (args : Array[String],
                                out : Emitter = new OutputEmitter,
                                err : Emitter = new ErrorEmitter) : ObrConfig =
         new ObrConfig (args) {

@@ -34,8 +34,6 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
 
     this : CompilerBase[ModuleDecl,Oberon0Config] =>
 
-    import scala.collection.immutable.Seq
-
     /**
      * The language level of this program.  The levels are:
      *   base: basic module structure; empty statements
@@ -105,8 +103,8 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
         /*
          * Include line in the output if it meets the criteria.
          */
-        def processline (lines : Seq[String], line : String,
-                         p : Int, q : Int = 0, r : Int = maxlanglevel) : Seq[String] =
+        def processline (lines : List[String], line : String,
+                         p : Int, q : Int = 0, r : Int = maxlanglevel) : List[String] =
             if ((p <= tasklevel) && (langlevel >= q) && (langlevel <= r))
                 lines :+ line
             else
@@ -115,7 +113,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
         // Fold over all possible output lines, checking them if they are
         // marked. Unmarked lines are always included.
         val lines =
-            s.lines.foldLeft (Seq.empty[String]) {
+            s.lines.foldLeft (List[String] ()) {
                 case (lines, MarkedLine1 (ps, line)) =>
                     processline (lines, line, ps.toInt)
                 case (lines, MarkedLine2 (ps, qs, rs, line)) =>
@@ -131,7 +129,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
     /**
      * In the test configuration we pretty print the source and C ASTs by default.
      */
-    override def createConfig (args : Seq[String],
+    override def createConfig (args : Array[String],
                                out : Emitter = new OutputEmitter,
                                err : Emitter = new ErrorEmitter) : Oberon0Config =
         new Oberon0Config (args, true) {

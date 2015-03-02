@@ -24,12 +24,11 @@ package example.lambda2
 import LambdaTree.Exp
 import org.kiama.util.{Emitter, ErrorEmitter, OutputEmitter,
     ParsingREPLWithConfig, REPLConfig}
-import scala.collection.immutable.Seq
 
 /**
  * Configuration for the Lambda REPL.
  */
-abstract class LambdaConfig (args : Seq[String]) extends REPLConfig (args) {
+abstract class LambdaConfig (args : Array[String]) extends REPLConfig (args) {
     lazy val mechanism = opt[String] ("mechanism", descr = "Evaluation mechanism",
                                       default = Some ("reduce"))
 }
@@ -50,7 +49,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
     import org.kiama.util.{Emitter, Console}
     import org.kiama.util.Messaging.report
 
-    def createConfig (args : Seq[String],
+    def createConfig (args : Array[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : LambdaConfig =
         new LambdaConfig (args) {
@@ -82,14 +81,14 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
         }
 
         line match {
-            case Command (Seq (":help")) =>
+            case Command (Array (":help")) =>
                 printHelp ()
                 Some (config)
 
-            case Command (Seq (":quit")) =>
+            case Command (Array (":quit")) =>
                 None
 
-            case Command (Seq (":eval")) =>
+            case Command (Array (":eval")) =>
                 output.emitln ("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
                     output.emit (s"  $mech")
@@ -100,9 +99,9 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
                 }
                 Some (config)
 
-            case Command (Seq (":eval", mech)) =>
+            case Command (Array (":eval", mech)) =>
                 if (mechanisms contains mech)
-                    Some (createAndInitConfig (Seq ("-m", mech), output))
+                    Some (createAndInitConfig (Array ("-m", mech), output))
                 else {
                     output.emitln (s"unknown evaluation mechanism: $mech")
                     Some (config)
@@ -119,8 +118,8 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
      * Extractor for commands, splits the line into separate words.
      */
     object Command {
-        def unapply (line : String) : Option[Seq[String]] = {
-            Some ((line split ' ').toIndexedSeq)
+        def unapply (line : String) : Option[Array[String]] = {
+            Some (line split ' ')
         }
     }
 

@@ -22,7 +22,6 @@ package org.kiama
 package util
 
 import java.io.Reader
-import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
 
 /**
@@ -43,7 +42,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * The entry point for this compiler.
      */
     def main (args : Array[String]) {
-        driver (args.toIndexedSeq)
+        driver (args)
     }
 
     /**
@@ -51,7 +50,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * If supplied, use `output` instead of a standard output emitter,
      * and/or `error` instead of a standard error emitter.
      */
-    def createConfig (args : Seq[String],
+    def createConfig (args : Array[String],
                       output : Emitter = new OutputEmitter,
                       error : Emitter = new ErrorEmitter) : C
 
@@ -60,7 +59,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Seq[String],
+    def createAndInitConfig (args : Array[String],
                              output : Emitter = new OutputEmitter,
                              error : Emitter = new ErrorEmitter) : C = {
         val config = createConfig (args, output, error)
@@ -73,7 +72,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * configuration for this execution. Then, use the configuration to
      * run the file processing in the appropriate way.
      */
-    def driver (args : Seq[String]) {
+    def driver (args : Array[String]) {
         val config = createAndInitConfig (args)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
@@ -88,7 +87,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
     /**
      * Process the files one by one.
      */
-    def processfiles (filenames : Seq[String], config : C) {
+    def processfiles (filenames : List[String], config : C) {
         for (filename <- filenames) {
             processfile (filename, config)
         }
@@ -174,7 +173,7 @@ trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexPars
  */
 trait Compiler[T] extends CompilerWithConfig[T,Config] {
 
-    def createConfig (args : Seq[String],
+    def createConfig (args : Array[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : Config =
         new Config (args) {

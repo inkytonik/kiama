@@ -21,7 +21,6 @@
 package org.kiama
 package util
 
-import scala.collection.immutable.Seq
 import scala.util.parsing.combinator.RegexParsers
 
 /**
@@ -41,14 +40,14 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * The entry point for this REPL.
      */
     def main (args : Array[String]) {
-        driver (args.toIndexedSeq)
+        driver (args)
     }
 
     /**
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Seq[String],
+    def createConfig (args : Array[String],
                       output : Emitter = new OutputEmitter,
                       error : Emitter = new ErrorEmitter) : C
 
@@ -57,7 +56,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Seq[String],
+    def createAndInitConfig (args : Array[String],
                              output : Emitter = new OutputEmitter,
                              error : Emitter = new ErrorEmitter) : C = {
         val config = createConfig (args, output, error)
@@ -73,7 +72,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * contain just whitespace, otherwise do. Continue until `processline`
      * returns false. Call `prompt` each time input is about to be read.
      */
-    def driver (args : Seq[String]) {
+    def driver (args : Array[String]) {
 
         // Set up the configuration
         val config = createAndInitConfig (args)
@@ -113,7 +112,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * Process the files one by one.
      */
     @tailrec
-    final def processfiles (filenames : Seq[String], config : C) : C = {
+    final def processfiles (filenames : List[String], config : C) : C = {
         filenames match {
             case filename +: rest =>
                 processfiles (rest, processfile (filename, config))
@@ -162,7 +161,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
  */
 trait REPL extends REPLBase[REPLConfig] {
 
-    def createConfig (args : Seq[String],
+    def createConfig (args : Array[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : REPLConfig =
         new REPLConfig (args) {
@@ -221,7 +220,7 @@ trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T,C]
  */
 trait ParsingREPL[T ] extends ParsingREPLWithConfig[T,REPLConfig] {
 
-    def createConfig (args : Seq[String],
+    def createConfig (args : Array[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : REPLConfig =
         new REPLConfig (args) {
