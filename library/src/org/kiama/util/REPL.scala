@@ -197,9 +197,6 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers 
         Some (config)
     }
 
-
-// if (config.processWhitespaceLines () || (line.trim.length != 0))
-
     /**
      * The parser to use to convert user input lines into values.
      */
