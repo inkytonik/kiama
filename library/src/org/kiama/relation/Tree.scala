@@ -21,8 +21,6 @@
 package org.kiama
 package relation
 
-import scala.collection.immutable.Seq
-
 /**
  * Exception thrown if a `TreeRelation` operation tries to use a node that
  * is not in the tree to which the relation applies.
@@ -71,7 +69,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      * that the `image` operation throws a `NodeNotInTreeException` exception if
      * it is applied to a node that is not in this tree.
      */
-    class TreeRelation[V,W] (val graph : Seq[(V,W)]) extends RelationLike[V,W,TreeRelation] {
+    class TreeRelation[V,W] (val graph : List[(V,W)]) extends RelationLike[V,W,TreeRelation] {
 
         val companion = TreeRelationFactory
 
@@ -80,7 +78,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
          * except that it throws `NodeNotInTreeException` if the node is not
          * actually in the tree on which this relation is defined.
          */
-        override def image (v : V) : Seq[W] =
+        override def image (v : V) : List[W] =
             tree.whenContains (v, super.image (v))
 
     }
@@ -90,7 +88,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     object TreeRelationFactory extends RelationFactory[TreeRelation] {
 
-        def fromGraph[V,W] (graph : Seq[(V,W)]) : TreeRelation[V,W] =
+        def fromGraph[V,W] (graph : List[(V,W)]) : TreeRelation[V,W] =
             new TreeRelation[V,W] (graph)
 
     }
@@ -98,8 +96,8 @@ class Tree[T <: Product,+R <: T] (val root : R) {
     /**
      * The nodes that occur in this tree.
      */
-    val nodes : Seq[T] =
-        root +: (childGraph.map (_._2))
+    val nodes : List[T] =
+        root :: (childGraph.map (_._2))
 
     /**
      * If the tree contains node `u` return `v`, otherwise throw a
@@ -166,7 +164,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     lazy val next : TreeRelation[T,T] = {
 
-        def nextPairs (ts : Seq[T]) : Seq[(T,T)] =
+        def nextPairs (ts : List[T]) : List[(T,T)] =
             ts match {
                 case t1 +: (rest @ (t2 +: _)) =>
                     (t1, t2) +: nextPairs (rest)
@@ -199,7 +197,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     lazy val siblings : TreeRelation[T,T] =
         new TreeRelation[T,T] (
-            Seq ((root, root))) union (child.compose (parent)
+            List ((root, root))) union (child.compose (parent)
         )
 
     // Predicates derived from the relations
@@ -210,8 +208,8 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     def index (t : T) : Int =
         siblings.withDomain (t).index (t) match {
-            case Seq (i) => i
-            case is      => sys.error (s"index: non-singleton index $is for $t")
+            case List (i) => i
+            case is       => sys.error (s"index: non-singleton index $is for $t")
         }
 
     /**
@@ -264,12 +262,12 @@ object Tree {
     }
 
     /**
-     * Return a sequence of the children of `t`, skipping values that do not
+     * Return a list of the children of `t`, skipping values that do not
      * contribute directly to the tree structure. See the documentation of the
      * `Tree` class for a detailed explanation of values that are skipped by
      * this method.
      */
-    def treeChildren[T <: Product] (t : T) : Seq[T] = {
+    def treeChildren[T <: Product] (t : T) : List[T] = {
         val pending = ListBuffer[Any] (t.productIterator)
         val result = ListBuffer[T] ()
         while (!pending.isEmpty) {

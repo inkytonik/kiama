@@ -21,14 +21,12 @@
 package org.kiama
 package relation
 
-import scala.collection.immutable.Seq
-
 /**
  * A binary relation between values of type `T` and values of type `U`.
- * Constructed from a sequence of pairs that constitute the relation's
+ * Constructed from a list of pairs that constitute the relation's
  * graph.
  */
-class Relation[T,U] (val graph : Seq[(T,U)]) extends RelationLike[T,U,Relation] {
+class Relation[T,U] (val graph : List[(T,U)]) extends RelationLike[T,U,Relation] {
     val companion = Relation
 }
 
@@ -42,14 +40,14 @@ object Relation extends RelationFactory[Relation] {
     /**
      * Make a binary relation from its graph.
      */
-    def fromGraph[T,U] (graph : Seq[(T,U)]) : Relation[T,U] =
+    def fromGraph[T,U] (graph : List[(T,U)]) : Relation[T,U] =
         new Relation[T,U] (graph)
 
     /**
      * Make a graph from the repeated application of `onestep` to `t` and
      * the results that it produces.
      */
-    def fromOneStepGraph[T] (t : T, onestep : T => Seq[T]) : Seq[(T,T)] = {
+    def fromOneStepGraph[T] (t : T, onestep : T => List[T]) : List[(T,T)] = {
         val pending = ListBuffer[T] (t)
         val result = ListBuffer[(T,T)] ()
         while (!pending.isEmpty) {
@@ -65,7 +63,7 @@ object Relation extends RelationFactory[Relation] {
      * Make a binary relation using the graph produced by `fromOneStepGraph`
      * applied to `t` and `onestep`.
      */
-    def fromOneStep[T] (t : T, onestep : T => Seq[T]) : Relation[T,T] =
+    def fromOneStep[T] (t : T, onestep : T => List[T]) : Relation[T,T] =
         new Relation[T,T] (fromOneStepGraph (t, onestep))
 
 }

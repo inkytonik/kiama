@@ -105,11 +105,11 @@ object Comparison {
         s.exists (same (_, t))
 
     /**
-     * Return a sequence with only the distinct elements from `s`. "distinct"
-     * in this case means compare unequal using `same`. The first occurrence
-     * of each distinct element is kept.
+     * Return a list with only the distinct elements from the list `s`.
+     * "distinct" in this case means compare unequal using `same`. The
+     * first occurrence of each distinct element is kept.
      */
-    def distinct[T] (s : Seq[T]) : Seq[T] = {
+    def distinct[T] (s : List[T]) : List[T] = {
 
         import scala.collection.mutable.TreeSet
 

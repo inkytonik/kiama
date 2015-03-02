@@ -30,7 +30,7 @@ class TreeTests extends Tests with RelationTestSupport {
 
     import org.kiama.example.imperative.ImperativeTree._
     import org.kiama.relation.Tree.isLeaf
-    import scala.collection.immutable.{Seq, Set}
+    import scala.collection.immutable.Set
 
     // Test tree
 
@@ -72,7 +72,7 @@ class TreeTests extends Tests with RelationTestSupport {
                      Vector (nulls (19), nulls (20), nulls (21)),
                      Map (1 ->  nulls (22), 2 -> nulls (23)))
 
-    val pchildren = Seq (s1, s2, s4, s5) ++ nulls
+    val pchildren = List (s1, s2, s4, s5) ++ nulls
 
     val ptree = new ImperativeTree (p)
     import ptree._
@@ -115,27 +115,27 @@ class TreeTests extends Tests with RelationTestSupport {
     }
 
     test ("child of interior node is its children (e1)") {
-        assertImage (child, e1, Seq (n1, n2))
+        assertImage (child, e1, List (n1, n2))
     }
 
     test ("child of interior node is its children (e2)") {
-        assertImage (child, e2, Seq (e1, v1))
+        assertImage (child, e2, List (e1, v1))
     }
 
     test ("child of interior node is its children (e3)") {
-        assertImage (child, e3, Seq (n3))
+        assertImage (child, e3, List (n3))
     }
 
     test ("child of interior node is its children (s1)") {
-        assertImage (child, s1, Seq (v2, e2))
+        assertImage (child, s1, List (v2, e2))
     }
 
     test ("child of interior node is its children (v3)") {
-        assertImage (child, s3, Seq (v3, e3))
+        assertImage (child, s3, List (v3, e3))
     }
 
     test ("child of interior node is its children (s4)") {
-        assertImage (child, s4, Seq (e4, s3))
+        assertImage (child, s4, List (e4, s3))
     }
 
     test ("child of Program ignores its non ImperativeTree fields") {
@@ -470,40 +470,40 @@ class TreeTests extends Tests with RelationTestSupport {
     }
 
     test ("next of a non-last child is correct (n1)") {
-        assertImage (next, n1, Seq (n2))
+        assertImage (next, n1, List (n2))
     }
 
     test ("next of a non-last child is correct (e1)") {
-        assertImage (next, e1, Seq (v1))
+        assertImage (next, e1, List (v1))
     }
 
     test ("next of a non-last child is correct (v2)") {
-        assertImage (next, v2, Seq (e2))
+        assertImage (next, v2, List (e2))
     }
 
     test ("next of a non-last child is correct (v3)") {
-        assertImage (next, v3, Seq (e3))
+        assertImage (next, v3, List (e3))
     }
 
     test ("next of a non-last child is correct (e4)") {
-        assertImage (next, e4, Seq (s3))
+        assertImage (next, e4, List (s3))
     }
 
     test ("next of a non-last child is correct (s1)") {
-        assertImage (next, s1, Seq (s2))
+        assertImage (next, s1, List (s2))
     }
 
     test ("next of a non-last child is correct (s2)") {
-        assertImage (next, s2, Seq (s4))
+        assertImage (next, s2, List (s4))
     }
 
     test ("next of a non-last child is correct (s4)") {
-        assertImage (next, s4, Seq (s5))
+        assertImage (next, s4, List (s5))
     }
 
     for (i <- 0 to nulls.size - 2) {
         test ("next of nulls (" + i + ") is nulls (" + (i + 1) + ")") {
-            assertImage (next, nulls (i), Seq (nulls (i + 1)))
+            assertImage (next, nulls (i), List (nulls (i + 1)))
         }
     }
 
@@ -521,163 +521,163 @@ class TreeTests extends Tests with RelationTestSupport {
     }
 
     test ("parent of leaf is its parent (n1)") {
-        assertImage (parent, n1, Seq (e1))
+        assertImage (parent, n1, List (e1))
     }
 
     test ("parent of leaf is its parent (n2)") {
-        assertImage (parent, n2, Seq (e1))
+        assertImage (parent, n2, List (e1))
     }
 
     test ("parent of leaf is its parent (n3)") {
-        assertImage (parent, n3, Seq (e3))
+        assertImage (parent, n3, List (e3))
     }
 
     test ("parent of leaf is its parent (v1)") {
-        assertImage (parent, v1, Seq (e2))
+        assertImage (parent, v1, List (e2))
     }
 
     test ("parent of leaf is its parent (v2)") {
-        assertImage (parent, v2, Seq (s1))
+        assertImage (parent, v2, List (s1))
     }
 
     test ("parent of leaf is its parent (v3)") {
-        assertImage (parent, v3, Seq (s3))
+        assertImage (parent, v3, List (s3))
     }
 
     test ("parent of leaf is its parent (e4)") {
-        assertImage (parent, e4, Seq (s4))
+        assertImage (parent, e4, List (s4))
     }
 
     test ("parent of interior node is its parent (e1)") {
-        assertImage (parent, e1, Seq (e2))
+        assertImage (parent, e1, List (e2))
     }
 
     test ("parent of interior node is its parent (e2)") {
-        assertImage (parent, e2, Seq (s1))
+        assertImage (parent, e2, List (s1))
     }
 
     test ("parent of interior node is its parent (e3)") {
-        assertImage (parent, e3, Seq (s3))
+        assertImage (parent, e3, List (s3))
     }
 
     test ("parent of interior node is its parent (e4)") {
-        assertImage (parent, e4, Seq (s4))
+        assertImage (parent, e4, List (s4))
     }
 
     test ("parent of interior node is its parent (s3)") {
-        assertImage (parent, s3, Seq (s4))
+        assertImage (parent, s3, List (s4))
     }
 
     test ("parent of node in Program is the program (s1)") {
-        assertImage (parent, s1, Seq (p))
+        assertImage (parent, s1, List (p))
     }
 
     test ("parent of node in Program is the program (s2)") {
-        assertImage (parent, s2, Seq (p))
+        assertImage (parent, s2, List (p))
     }
 
     test ("parent of node in Program is the program (s4)") {
-        assertImage (parent, s4, Seq (p))
+        assertImage (parent, s4, List (p))
     }
 
     test ("parent of node in Program is the program (s5)") {
-        assertImage (parent, s5, Seq (p))
+        assertImage (parent, s5, List (p))
     }
 
     test ("parent of node in Option field of Program is the program") {
-        assertImage (parent, nulls (0), Seq (p))
+        assertImage (parent, nulls (0), List (p))
     }
 
     test ("parent of node after Option field of Program is the program") {
-        assertImage (parent, nulls (1), Seq (p))
+        assertImage (parent, nulls (1), List (p))
     }
 
     test ("parent of node in Left field of Program is the program") {
-        assertImage (parent, nulls (2), Seq (p))
+        assertImage (parent, nulls (2), List (p))
     }
 
     test ("parent of node in Right field of Program is the program") {
-        assertImage (parent, nulls (3), Seq (p))
+        assertImage (parent, nulls (3), List (p))
     }
 
     test ("parent of node after Either fields of Program is the program") {
-        assertImage (parent, nulls (4), Seq (p))
+        assertImage (parent, nulls (4), List (p))
     }
 
     test ("parent of node in tuple 1 of Program is the program") {
-        assertImage (parent, nulls (5), Seq (p))
+        assertImage (parent, nulls (5), List (p))
     }
 
     test ("parent of node in tuple 2 of Program is the program (first)") {
-        assertImage (parent, nulls (6), Seq (p))
+        assertImage (parent, nulls (6), List (p))
     }
 
     test ("parent of node in tuple 2 of Program is the program (second)") {
-        assertImage (parent, nulls (7), Seq (p))
+        assertImage (parent, nulls (7), List (p))
     }
 
     test ("parent of node in tuple 3 of Program is the program (first)") {
-        assertImage (parent, nulls (8), Seq (p))
+        assertImage (parent, nulls (8), List (p))
     }
 
     test ("parent of node in tuple 3 of Program is the program (second)") {
-        assertImage (parent, nulls (9), Seq (p))
+        assertImage (parent, nulls (9), List (p))
     }
 
     test ("parent of node in tuple 3 of Program is the program (third)") {
-        assertImage (parent, nulls (10), Seq (p))
+        assertImage (parent, nulls (10), List (p))
     }
 
     test ("parent of node in tuple 4 of Program is the program (first)") {
-        assertImage (parent, nulls (11), Seq (p))
+        assertImage (parent, nulls (11), List (p))
     }
 
     test ("parent of node in tuple 4 of Program is the program (second)") {
-        assertImage (parent, nulls (12), Seq (p))
+        assertImage (parent, nulls (12), List (p))
     }
 
     test ("parent of node in tuple 4 of Program is the program (third)") {
-        assertImage (parent, nulls (13), Seq (p))
+        assertImage (parent, nulls (13), List (p))
     }
 
     test ("parent of node in tuple 4 of Program is the program (fourth)") {
-        assertImage (parent, nulls (14), Seq (p))
+        assertImage (parent, nulls (14), List (p))
     }
 
     test ("parent of node after tuple 4 field of Program is the program") {
-        assertImage (parent, nulls (15), Seq (p))
+        assertImage (parent, nulls (15), List (p))
     }
 
     test ("parent of node in list of Somes of Program is the program (first)") {
-        assertImage (parent, nulls (16), Seq (p))
+        assertImage (parent, nulls (16), List (p))
     }
 
     test ("parent of node in list of Somes of Program is the program (second)") {
-        assertImage (parent, nulls (17), Seq (p))
+        assertImage (parent, nulls (17), List (p))
     }
 
     test ("parent of middle field of Program is the program") {
-        assertImage (parent, nulls (18), Seq (p))
+        assertImage (parent, nulls (18), List (p))
     }
 
     test ("parent of node in Vector field of Program is the program (first)") {
-        assertImage (parent, nulls (19), Seq (p))
+        assertImage (parent, nulls (19), List (p))
     }
 
     test ("parent of node in Vector field of Program is the program (second)") {
-        assertImage (parent, nulls (20), Seq (p))
+        assertImage (parent, nulls (20), List (p))
     }
 
     test ("parent of node in Vector field of Program is the program (third)") {
-        assertImage (parent, nulls (21), Seq (p))
+        assertImage (parent, nulls (21), List (p))
     }
 
     test ("parent of node in Map field of Program is the program (first)") {
-        assertImage (parent, nulls (22), Seq (p))
+        assertImage (parent, nulls (22), List (p))
     }
 
     test ("parent of node in Map field of Program is the program (second)") {
-        assertImage (parent, nulls (23), Seq (p))
+        assertImage (parent, nulls (23), List (p))
     }
 
     test ("parent of non-node throws an exception") {
@@ -722,44 +722,44 @@ class TreeTests extends Tests with RelationTestSupport {
     }
 
     test ("prev of a non-first child is correct (n2)") {
-        assertImage (prev, n2, Seq (n1))
+        assertImage (prev, n2, List (n1))
     }
 
     test ("prev of a non-first child is correct (v1)") {
-        assertImage (prev, v1, Seq (e1))
+        assertImage (prev, v1, List (e1))
     }
 
     test ("prev of a non-first child is correct (e2)") {
-        assertImage (prev, e2, Seq (v2))
+        assertImage (prev, e2, List (v2))
     }
 
     test ("prev of a non-first child is correct (e3)") {
-        assertImage (prev, e3, Seq (v3))
+        assertImage (prev, e3, List (v3))
     }
 
     test ("prev of a non-first child is correct (s3)") {
-        assertImage (prev, s3, Seq (e4))
+        assertImage (prev, s3, List (e4))
     }
 
     test ("prev of a non-first child is correct (s2)") {
-        assertImage (prev, s2, Seq (s1))
+        assertImage (prev, s2, List (s1))
     }
 
     test ("prev of a non-first child is correct (s4)") {
-        assertImage (prev, s4, Seq (s2))
+        assertImage (prev, s4, List (s2))
     }
 
     test ("prev of a non-first child is correct (s5)") {
-        assertImage (prev, s5, Seq (s4))
+        assertImage (prev, s5, List (s4))
     }
 
     test ("prev of a nulls (0) is correct") {
-        assertImage (prev, nulls (0), Seq (s5))
+        assertImage (prev, nulls (0), List (s5))
     }
 
     for (i <- 1 to nulls.size - 1) {
         test ("prev of nulls (" + i + ") is nulls (" + (i - 1) + ")") {
-            assertImage (prev, nulls (i), Seq (nulls (i - 1)))
+            assertImage (prev, nulls (i), List (nulls (i - 1)))
         }
     }
 
@@ -773,47 +773,47 @@ class TreeTests extends Tests with RelationTestSupport {
     // siblings
 
     test ("root has itself as a sibling") {
-        assertImage (siblings, p, Seq (p))
+        assertImage (siblings, p, List (p))
     }
 
     test ("an only child has itself as a sibling (n3)") {
-        assertImage (siblings, n3, Seq (n3))
+        assertImage (siblings, n3, List (n3))
     }
 
     test ("a child of a normal node has the expected siblings (n1)") {
-        assertImage (siblings, n1, Seq (n1, n2))
+        assertImage (siblings, n1, List (n1, n2))
     }
 
     test ("a child of a normal node has the expected siblings (n2)") {
-        assertImage (siblings, n2, Seq (n1, n2))
+        assertImage (siblings, n2, List (n1, n2))
     }
 
     test ("a child of a normal node has the expected siblings (e1)") {
-        assertImage (siblings, e1, Seq (e1, v1))
+        assertImage (siblings, e1, List (e1, v1))
     }
 
     test ("a child of a normal node has the expected siblings (e2)") {
-        assertImage (siblings, e2, Seq (v2, e2))
+        assertImage (siblings, e2, List (v2, e2))
     }
 
     test ("a child of a normal node has the expected siblings (v2)") {
-        assertImage (siblings, v2, Seq (v2, e2))
+        assertImage (siblings, v2, List (v2, e2))
     }
 
     test ("a child of a normal node has the expected siblings (e3)") {
-        assertImage (siblings, e3, Seq (v3, e3))
+        assertImage (siblings, e3, List (v3, e3))
     }
 
     test ("a child of a normal node has the expected siblings (v3)") {
-        assertImage (siblings, v3, Seq (v3, e3))
+        assertImage (siblings, v3, List (v3, e3))
     }
 
     test ("a child of a normal node has the expected siblings (e4)") {
-        assertImage (siblings, e4, Seq (e4, s3))
+        assertImage (siblings, e4, List (e4, s3))
     }
 
     test ("a child of a normal node has the expected siblings (s3)") {
-        assertImage (siblings, s3, Seq (e4, s3))
+        assertImage (siblings, s3, List (e4, s3))
     }
 
     test ("a child of a node with a list component has the expected siblings (s1") {

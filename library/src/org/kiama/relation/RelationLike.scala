@@ -32,7 +32,6 @@ import scala.language.higherKinds
 trait RelationLike[T,U,Repr[_,_]] {
 
     import org.kiama.util.Comparison.{contains, distinct, same}
-    import scala.collection.immutable.Seq
 
     /**
      * A companion object that provides factory methods for this kind of
@@ -43,12 +42,12 @@ trait RelationLike[T,U,Repr[_,_]] {
     /**
      * The graph of this relation.
      */
-    def graph : Seq[(T,U)]
+    def graph : List[(T,U)]
 
     /**
      * Apply this relation (same as `image`).
      */
-    def apply (t : T) : Seq[U] =
+    def apply (t : T) : List[U] =
         image (t)
 
     /**
@@ -82,14 +81,14 @@ trait RelationLike[T,U,Repr[_,_]] {
     /**
      * The domain of this relation.
      */
-    lazy val domain : Seq[T] =
+    lazy val domain : List[T] =
         distinct (graph.map (_._1))
 
     /**
      * The image of a value of the relation's domain is a set of the
      * values in the range that are related to that domain value.
      */
-    def image (t : T) : Seq[U] =
+    def image (t : T) : List[U] =
         graph.collect { case (t1, u) if same (t, t1) => u }
 
     /**
@@ -122,8 +121,8 @@ trait RelationLike[T,U,Repr[_,_]] {
 
         def unapply (t : T) : Option[(T,U)] =
             image (t) match {
-                case Seq (u) => Some ((t, u))
-                case _       => None
+                case List (u) => Some ((t, u))
+                case _        => None
             }
 
     }
@@ -132,7 +131,7 @@ trait RelationLike[T,U,Repr[_,_]] {
      * The preImage of a value of the relation's range is a set of the
      * values in the domain that are related to that range value.
      */
-    def preImage (u : U) : Seq[T] =
+    def preImage (u : U) : List[T] =
         graph.collect { case (t, u1) if same (u, u1) => t }
 
     /**
@@ -146,20 +145,20 @@ trait RelationLike[T,U,Repr[_,_]] {
      * Domain projection, i.e., form a relation that relates each
      * value in the domain to all of the related values in the range.
      */
-    lazy val projDomain : Repr[T,Seq[U]] =
+    lazy val projDomain : Repr[T,List[U]] =
         companion.fromGraph (domain.map (t => (t, image (t))))
 
     /**
      * Range projection, i.e., form a relation that relates each
      * value in the range to all of the related values in the domain.
      */
-    lazy val projRange : Repr[U,Seq[T]] =
+    lazy val projRange : Repr[U,List[T]] =
         companion.fromGraph (range.map (u => (u, preImage (u))))
 
     /**
      * The range of this relation.
      */
-    lazy val range : Seq[U] =
+    lazy val range : List[U] =
         distinct (graph.map (_._2))
 
     /**
@@ -169,15 +168,15 @@ trait RelationLike[T,U,Repr[_,_]] {
      */
     def unapply (t : T) : Option[U] =
         image (t) match {
-            case Seq (u) => Some (u)
-            case _       => None
+            case List (u) => Some (u)
+            case _        => None
         }
 
     /**
      * A relation can be used as an extractor that returns the image for a
      * given domain value `t`. Fails if `t` is not in the domain.
      */
-    def unapplySeq (t : T) : Option[Seq[U]] = {
+    def unapplySeq (t : T) : Option[List[U]] = {
         val ti  = image (t)
         if (ti.isEmpty)
             None
@@ -193,14 +192,14 @@ trait RelationLike[T,U,Repr[_,_]] {
 
     /**
      * Return the sub-relation of this relation that contains just those
-     * pairs that have `t` has their domain element.
+     * pairs that have `t` as their domain element.
      */
     def withDomain (t : T) : Repr[T,U] =
         companion.fromGraph (graph.filter { case (t1, _) => same (t, t1) })
 
     /**
      * Return the sub-relation of this relation that contains just those
-     * pairs that have `u` has their range element.
+     * pairs that have `u` as their range element.
      */
     def withRange (u : U) : Repr[T,U] =
         companion.fromGraph (graph.filter { case (_, u1) => same (u, u1) })

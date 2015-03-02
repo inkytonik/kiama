@@ -29,11 +29,9 @@ import scala.language.higherKinds
  */
 trait RelationFactory[Repr[_,_]] {
 
-    import scala.collection.immutable.Seq
-
     /**
      * Make a relation from its graph.
      */
-    def fromGraph[T,U] (graph : Seq[(T,U)]) : Repr[T,U]
+    def fromGraph[T,U] (graph : List[(T,U)]) : Repr[T,U]
 
 }
