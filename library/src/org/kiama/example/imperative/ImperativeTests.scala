@@ -31,8 +31,6 @@ import org.kiama.util.{GeneratingREPL, PrettyPrinterTests}
  */
 class ImperativeTests extends PrettyPrinter with PrettyPrinterTests {
 
-    import scala.collection.immutable.Seq
-
     test ("pretty-print imperative variable") {
         assertLayout ("xyz123") (format (Var ("xyz123")))
     }
@@ -55,11 +53,11 @@ class ImperativeTests extends PrettyPrinter with PrettyPrinterTests {
 
     // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
     val p =
-        Seqn (Seq (
+        Seqn (List (
             Asgn (Var ("i"), Num (10)),
             Asgn (Var ("count"), Num (0)),
             While (Var ("i"),
-                Seqn (Seq (
+                Seqn (List (
                     Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                     Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
 

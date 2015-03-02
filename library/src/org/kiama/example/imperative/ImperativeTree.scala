@@ -29,7 +29,6 @@ object ImperativeTree {
     import org.kiama.relation.Tree
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
-    import scala.collection.immutable.Seq
 
     /**
      * Tree type for imperative programs.
@@ -178,7 +177,7 @@ object ImperativeTree {
     /**
      * Statement sequences.
      */
-    case class Seqn (ss : Seq[Stmt]) extends Stmt {
+    case class Seqn (ss : List[Stmt]) extends Stmt {
         override def vars : Set[Idn] = Set (ss flatMap (_.vars) : _*)
     }
 

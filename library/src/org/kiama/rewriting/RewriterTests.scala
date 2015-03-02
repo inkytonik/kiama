@@ -946,21 +946,21 @@ class RewriterTests extends Tests with Generator {
     {
         // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
         val p =
-            Seqn (Seq (
+            Seqn (List (
                 Asgn (Var ("i"), Num (10)),
                 Asgn (Var ("count"), Num (0)),
                 While (Var ("i"),
-                    Seqn (Seq (
+                    Seqn (List (
                         Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                         Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
 
         // { i = 0; count = 0; while (i) { count = bob + 1; i = 0 + i; } }
         val q =
-            Seqn (Seq (
+            Seqn (List (
                 Asgn (Var ("i"), Num (0)),
                 Asgn (Var ("count"), Num (0)),
                 While (Var ("i"),
-                    Seqn (Seq (
+                    Seqn (List (
                         Asgn (Var ("count"), Add (Var ("bob"), Num (1))),
                         Asgn (Var ("i"), Add (Num (0), Var ("i"))))))))
 
