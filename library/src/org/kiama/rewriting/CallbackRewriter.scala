@@ -78,7 +78,7 @@ trait CallbackRewriter extends Rewriter {
     /**
      * Product duplication with callback notification.
      */
-    override def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T =
+    override def dup[T <: Product] (t : T, children : Array[AnyRef]) : T =
         rewriting (t, super.dup (t, children))
 
 }

@@ -417,7 +417,7 @@ trait RewriterCore {
         import java.lang.{Class, IllegalArgumentException, NoSuchFieldException}
         import java.lang.reflect.Constructor
 
-        type Duper = (Any, Seq[AnyRef]) => Any
+        type Duper = (Any, Array[AnyRef]) => Any
 
         object MakeDuper extends Function[Class[_],Duper] {
 
@@ -429,7 +429,7 @@ trait RewriterCore {
                     // are trying to duplicate one of these then we want to return the same
                     // singleton so we use an identity duper.
                     clazz.getField ("MODULE$")
-                    (t : Any, children : Seq[AnyRef]) =>
+                    (t : Any, children : Array[AnyRef]) =>
                         t
                 } catch {
                     // Otherwise, this is a normal class, so we try to make a
@@ -439,11 +439,11 @@ trait RewriterCore {
                         if (ctors.length == 0)
                             sys.error (s"dup no constructors for ${clazz.getName ()}")
                         else
-                            (t : Any, children : Seq[AnyRef]) =>
+                            (t : Any, children : Array[AnyRef]) =>
                                 makeInstance (ctors (0), children)
                 }
 
-            def makeInstance (ctor : Constructor[_], children : Seq[AnyRef]) : Any =
+            def makeInstance (ctor : Constructor[_], children : Array[AnyRef]) : Any =
                 try {
                     ctor.newInstance (children : _*)
                 } catch {
@@ -458,7 +458,7 @@ trait RewriterCore {
                         CacheLoader.from (MakeDuper)
                     )
 
-        def apply[T <: Product] (t : T, children : Seq[AnyRef]) : T = {
+        def apply[T <: Product] (t : T, children : Array[AnyRef]) : T = {
             val duper = cache.get (t.getClass)
             duper (t, children).asInstanceOf[T]
         }
@@ -469,7 +469,7 @@ trait RewriterCore {
      * The duplicator used by the generic traversals. Needs to be defined
      * as a method so we can override it in other rewriting modules.
      */
-    def dup[T <: Product] (t : T, children : Seq[AnyRef]) : T =
+    def dup[T <: Product] (t : T, children : Array[AnyRef]) : T =
         Duplicator (t, children)
 
     /**
@@ -477,7 +477,7 @@ trait RewriterCore {
      * using the same children.
      */
     def copy[T <: Product] (t : T) : T =
-        Duplicator (t, t.productIterator.map (makechild).toVector)
+        Duplicator (t, t.productIterator.map (makechild).toArray)
 
     /**
      * Make an arbitrary value `c` into a term child, checking that it worked
@@ -534,7 +534,7 @@ trait RewriterCore {
                 case Some (ti) =>
                     val newchildren = p.productIterator.toArray.map (makechild)
                     newchildren (i - 1) = makechild (ti)
-                    val ret = dup (p, newchildren.toIndexedSeq)
+                    val ret = dup (p, newchildren)
                     Some (ret)
                 case None =>
                     None
@@ -642,7 +642,7 @@ trait RewriterCore {
         if (numchildren == 0)
             Some (p)
         else {
-            val newchildren = Seq.newBuilder[AnyRef]
+            val newchildren = Array.newBuilder[AnyRef]
             val changed =
                 p.productIterator.foldLeft (false) {
                     case (changed, ct) =>
@@ -789,7 +789,7 @@ trait RewriterCore {
                     case Some (ti) =>
                         val newchildren = p.productIterator.toArray.map (makechild)
                         newchildren (i) = makechild (ti)
-                        val ret = dup (p, newchildren.toIndexedSeq)
+                        val ret = dup (p, newchildren)
                         return Some (ret)
                     case None =>
                         i + 1
@@ -941,7 +941,7 @@ trait RewriterCore {
         if (numchildren == 0)
             None
         else {
-            val newchildren = Seq.newBuilder[AnyRef]
+            val newchildren = Array.newBuilder[AnyRef]
             val (success, changed) =
                 p.productIterator.foldLeft (false, false) {
                     case ((success, changed), ct) =>
@@ -1063,7 +1063,7 @@ trait RewriterCore {
     def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
        val numchildren = p.productArity
        if (numchildren == ss.length) {
-           val newchildren = Seq.newBuilder[AnyRef]
+           val newchildren = Array.newBuilder[AnyRef]
            val (changed, _) =
                p.productIterator.foldLeft (false, 0) {
                    case ((changed, i), ct) =>
@@ -1093,7 +1093,7 @@ trait RewriterCore {
 
         /**
          * Generic term deconstruction. An extractor that decomposes `Product`
-         * or `Rewritable` values into the value itself and a sequence of its
+         * or `Rewritable` values into the value itself and a list of its
          * children.  Terms that are not `Product` or `Rewritable` are not
          * decomposable (i.e., the list of children will be empty).
          */
@@ -1105,7 +1105,7 @@ trait RewriterCore {
                     val cs = for (i <- 0 until p.productArity) yield p.productElement (i)
                     Some ((p, cs))
                 case _ =>
-                    Some ((t, Nil))
+                    Some ((t, Seq.empty))
             }
         }
 

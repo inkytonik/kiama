@@ -1070,7 +1070,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("a dup of a singleton case object doesn't dup") {
-            val u = dup (t, Seq ())
+            val u = dup (t, Array ())
             assertResult (t) (u)
             assertSame (t) (u)
         }
@@ -1086,7 +1086,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("a dup of a singleton object doesn't dup") {
-            val u = dup (t, Seq ())
+            val u = dup (t, Array ())
             assertResult (t) (u)
             assertSame (t) (u)
         }
@@ -1102,7 +1102,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("a dup of Nil doesn't dup") {
-            val u = dup (t, Seq ())
+            val u = dup (t, Array ())
             assertResult (t) (u)
             assertSame (t) (u)
         }
@@ -1118,7 +1118,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("a dup of a no-children instance dups") {
-            val u = dup (t, Seq ())
+            val u = dup (t, Array ())
             assertResult (t) (u)
             assertNotSame (t) (u)
         }
@@ -1134,7 +1134,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("a dup of a node with a child dups") {
-            val u = dup (t, Seq ("j"))
+            val u = dup (t, Array ("j"))
             assertResult (Var ("j")) (u)
             assertNotSame (t) (u)
         }
@@ -1150,7 +1150,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("a dup of a node with multiple children dups") {
-            val u = dup (t, Seq (Num (3), Num (4)))
+            val u = dup (t, Array (Num (3), Num (4)))
             assertResult (Add (Num (3), Num (4))) (u)
             assertNotSame (t) (u)
         }
@@ -1166,7 +1166,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("a dup of a non-empty sequence dups") {
-            val u = dup (t, Seq (Var ("j"), List (Num (2))))
+            val u = dup (t, Array (Var ("j"), List (Num (2))))
             assertResult (List (Var ("j"), Num (2))) (u)
             assertNotSame (t) (u)
         }
@@ -1175,7 +1175,7 @@ class RewriterTests extends Tests with Generator {
     test ("an illegal dup throws an appropriate exception") {
         val t = Asgn (Var ("i"), Add (Num (1), Var ("i")))
         val i = intercept[RuntimeException] {
-                    dup (t, Seq (Num (42), Num (99)))
+                    dup (t, Array (Num (42), Num (99)))
                 }
         val base = "dup illegal arguments"
         val method = s"public org.kiama.example.imperative.ImperativeTree$$Asgn"
