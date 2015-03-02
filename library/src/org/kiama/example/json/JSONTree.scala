@@ -26,8 +26,6 @@ package example.json
  */
 object JSONTree {
 
-    import scala.collection.immutable.Seq
-
     /**
      * Base type for all JSON tree nodes.
      */
@@ -41,7 +39,7 @@ object JSONTree {
     /**
      * A JSON object.
      */
-    case class JObject (fields : Seq[(JName,JValue)]) extends JValue
+    case class JObject (fields : List[(JName,JValue)]) extends JValue
 
     /**
      * The name of a JSON field.
@@ -51,7 +49,7 @@ object JSONTree {
     /**
      * A JSON array.
      */
-    case class JArray (values : Seq[JValue]) extends JValue
+    case class JArray (values : List[JValue]) extends JValue
 
     /**
      * A JSON string value.

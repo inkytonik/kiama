@@ -30,7 +30,6 @@ import org.kiama.util.RegexParserTests
 class SyntaxAnalyserTests extends RegexParserTests with SyntaxAnalyser {
 
     import JSONTree._
-    import scala.collection.immutable.Seq
 
     test ("parsing true works") {
         assertParseOk ("true", jtrue, JTrue ())
@@ -124,30 +123,30 @@ class SyntaxAnalyserTests extends RegexParserTests with SyntaxAnalyser {
 
     test ("empty array parses") {
         assertParseOk ("[]", jarray,
-            JArray (Seq.empty))
+            JArray (Nil))
     }
 
     test ("single element array parses") {
         assertParseOk ("[ 1 ]", jarray,
-            JArray (Seq (JNumber (1))))
+            JArray (List (JNumber (1))))
     }
 
     test ("multiple element array parses") {
         assertParseOk ("[ \"a\", null, true ]", jarray,
-            JArray (Seq (JString ("a"), JNull (), JTrue ())))
+            JArray (List (JString ("a"), JNull (), JTrue ())))
     }
 
     test ("nested array parses") {
         assertParseOk ("[ false, [ 10, 20 ], 30 ]", jarray,
-            JArray (Seq (JFalse (),
-                         JArray (Seq (JNumber (10), JNumber (20))),
+            JArray (List (JFalse (),
+                         JArray (List (JNumber (10), JNumber (20))),
                          JNumber (30))))
     }
 
     test ("object inside array parses") {
         assertParseOk ("[ false, { \"f\" : 10, \"g\" : 20 }, 30 ]", jarray,
-            JArray (Seq (JFalse (),
-                         JObject (Seq (JName ("f") -> JNumber (10),
+            JArray (List (JFalse (),
+                         JObject (List (JName ("f") -> JNumber (10),
                                         JName ("g") -> JNumber (20))),
                          JNumber (30))))
     }
@@ -161,28 +160,28 @@ class SyntaxAnalyserTests extends RegexParserTests with SyntaxAnalyser {
 
     test ("single pair object parses") {
         assertParseOk ("{ \"one\" : 1 }", jobject,
-            JObject (Seq (JName ("one") -> JNumber (1))))
+            JObject (List (JName ("one") -> JNumber (1))))
     }
 
     test ("multiple pair object parses") {
         assertParseOk ("{ \"a\" : \"a\", \"b\" : null, \"c\" : true }", jobject,
-            JObject (Seq (JName ("a") -> JString ("a"),
+            JObject (List (JName ("a") -> JString ("a"),
                           JName ("b") -> JNull (),
                           JName ("c") -> JTrue ())))
     }
 
     test ("nested object parses") {
         assertParseOk ("{ \"e\" : false, \"f\" : { \"g\" : 10, \"h\" : 20 }, \"i\" : 30 }", jobject,
-            JObject (Seq (JName ("e") -> JFalse (),
-                          JName ("f") -> JObject (Seq (JName ("g") -> JNumber (10),
+            JObject (List (JName ("e") -> JFalse (),
+                          JName ("f") -> JObject (List (JName ("g") -> JNumber (10),
                                                         JName ("h") -> JNumber (20))),
                           JName ("i") -> JNumber (30))))
     }
 
     test ("array inside object parses") {
         assertParseOk ("{ \"e\" : false, \"f\" : [ 10, 20 ], \"i\" : 30 }", jobject,
-            JObject (Seq (JName ("e") -> JFalse (),
-                          JName ("f") -> JArray (Seq (JNumber (10), JNumber (20))),
+            JObject (List (JName ("e") -> JFalse (),
+                          JName ("f") -> JArray (List (JNumber (10), JNumber (20))),
                           JName ("i") -> JNumber (30))))
     }
 

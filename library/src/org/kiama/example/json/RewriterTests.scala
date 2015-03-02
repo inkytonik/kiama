@@ -30,14 +30,13 @@ class RewriterTests extends Tests {
 
     import JSONTree._
     import Rewriter._
-    import scala.collection.immutable.Seq
 
     /**
      * Some components of company test data to refer to by name.
      */
     val ralf =
         JObject (
-          Seq (
+          List (
             JName ("type") -> JString ("employee"),
             JName ("name") -> JString ("Ralf"),
             JName ("address") -> JString ("Koblenz"),
@@ -45,7 +44,7 @@ class RewriterTests extends Tests {
 
     val klaus =
         JObject (
-          Seq (
+          List (
             JName ("name") -> JString ("Klaus"),
             JName ("address") -> JString ("Boston"),
             JName ("salary") -> JNumber (23456.0)))
@@ -55,56 +54,56 @@ class RewriterTests extends Tests {
      */
     val company : JValue =
         JObject (
-          Seq (
+          List (
             JName ("depts") -> JArray (
-              Seq (
+              List (
                 JObject (
-                  Seq (
+                  List (
                     JName ("name") -> JString ("Research"),
                     JName ("manager") -> JObject (
-                      Seq (
+                      List (
                         JName ("name") -> JString ("Craig"),
                         JName ("address") -> JString ("Redmond"),
                         JName ("salary") -> JNumber (123456.0))),
                     JName ("subunits") -> JArray (
-                      Seq (
+                      List (
                         JObject (
-                          Seq (
+                          List (
                             JName ("type") -> JString ("employee"),
                             JName ("name") -> JString ("Erik"),
                             JName ("address") -> JString ("Utrecht"),
                             JName ("salary") -> JNumber (12345.0))),
                         ralf)))),
                 JObject (
-                  Seq (
+                  List (
                     JName ("name") -> JString ("Development"),
                     JName ("manager") -> JObject (
-                      Seq (
+                      List (
                         JName ("name") -> JString ("Ray"),
                         JName ("address") -> JString ("Redmond"),
                         JName ("salary") -> JNumber (234567.0))),
                     JName ("subunits") -> JArray (
-                      Seq (
+                      List (
                         JObject (
-                          Seq (
+                          List (
                             JName ("type") -> JString ("department"),
                             JName ("name") -> JString ("Dev1"),
                             JName ("manager") -> klaus,
                             JName ("subunits") -> JArray (
-                              Seq (
+                              List (
                                 JObject (
-                                  Seq (
+                                  List (
                                     JName ("type") -> JString ("department"),
                                     JName ("name") -> JString ("Dev1.1"),
                                     JName ("manager") -> JObject (
-                                      Seq (
+                                      List (
                                         JName ("name") -> JString ("Karl"),
                                         JName ("address") -> JString ("Riga"),
                                         JName ("salary") -> JNumber (2345.0))),
                                     JName ("subunits") -> JArray (
-                                      Seq (
+                                      List (
                                         JObject (
-                                          Seq (
+                                          List (
                                             JName ("type") -> JString ("employee"),
                                             JName ("name") -> JString ("Joe"),
                                             JName ("address") -> JString (
@@ -118,65 +117,65 @@ class RewriterTests extends Tests {
     test ("halvng salaries in company works") {
         val newcompany =
             JObject (
-              Seq (
+              List (
                 JName ("depts") -> JArray (
-                  Seq (
+                  List (
                     JObject (
-                      Seq (
+                      List (
                         JName ("name") -> JString ("Research"),
                         JName ("manager") -> JObject (
-                          Seq (
+                          List (
                             JName ("name") -> JString ("Craig"),
                             JName ("address") -> JString ("Redmond"),
                             JName ("salary") -> JNumber (61728.0))),
                         JName ("subunits") -> JArray (
-                          Seq (
+                          List (
                             JObject (
-                              Seq (
+                              List (
                                 JName ("type") -> JString ("employee"),
                                 JName ("name") -> JString ("Erik"),
                                 JName ("address") -> JString ("Utrecht"),
                                 JName ("salary") -> JNumber (6172.5))),
                             JObject (
-                              Seq (
+                              List (
                                 JName ("type") -> JString ("employee"),
                                 JName ("name") -> JString ("Ralf"),
                                 JName ("address") -> JString ("Koblenz"),
                                 JName ("salary") -> JNumber (617.0))))))),
                     JObject (
-                      Seq (
+                      List (
                         JName ("name") -> JString ("Development"),
                         JName ("manager") -> JObject (
-                          Seq (
+                          List (
                             JName ("name") -> JString ("Ray"),
                             JName ("address") -> JString ("Redmond"),
                             JName ("salary") -> JNumber (117283.5))),
                         JName ("subunits") -> JArray (
-                          Seq (
+                          List (
                             JObject (
-                              Seq (
+                              List (
                                 JName ("type") -> JString ("department"),
                                 JName ("name") -> JString ("Dev1"),
                                 JName ("manager") -> JObject (
-                                  Seq (
+                                  List (
                                     JName ("name") -> JString ("Klaus"),
                                     JName ("address") -> JString ("Boston"),
                                     JName ("salary") -> JNumber (11728.0))),
                                 JName ("subunits") -> JArray (
-                                  Seq (
+                                  List (
                                     JObject (
-                                      Seq (
+                                      List (
                                         JName ("type") -> JString ("department"),
                                         JName ("name") -> JString ("Dev1.1"),
                                         JName ("manager") -> JObject (
-                                          Seq (
+                                          List (
                                             JName ("name") -> JString ("Karl"),
                                             JName ("address") -> JString ("Riga"),
                                             JName ("salary") -> JNumber (1172.5))),
                                         JName ("subunits") -> JArray (
-                                          Seq (
+                                          List (
                                             JObject (
-                                              Seq (
+                                              List (
                                                 JName ("type") -> JString ("employee"),
                                                 JName ("name") -> JString ("Joe"),
                                                 JName ("address") -> JString (
