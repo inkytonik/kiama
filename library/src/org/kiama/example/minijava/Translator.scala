@@ -140,7 +140,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
             instructions.clear ()
             translateStmt (m.stmt)
             gen (Return ())
-            val instrs = instructions.result ()
+            val instrs = instructions.result
 
             // Make a main method containing the statement from this class
             val mainMethod =
@@ -215,7 +215,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
             }
 
             // Gather all of the method's instructions
-            val instrs = instructions.result ()
+            val instrs = instructions.result
 
             JVMMethod (methodSpec ("", method), false, instrs)
 

@@ -626,7 +626,7 @@ trait Rewriter extends RewriterCore {
             val b = cbf ()
             def add (u : U) { b += u }
             (everywhere (query (f andThen add))) (t)
-            b.result ()
+            b.result
         }
 
     /**
@@ -640,7 +640,7 @@ trait Rewriter extends RewriterCore {
             val b = cbf ()
             def addall (us : CC[U]) { b ++= us }
             (everywhere (query (f andThen addall))) (t)
-            b.result ()
+            b.result
         }
 
     /**

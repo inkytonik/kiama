@@ -33,10 +33,10 @@ class RelationTests extends Tests with RelationTestSupport {
 
     // Empty relations
 
-    val emptyIntBool = new Relation[Int,Boolean] (List ())
-    val emptyNumInt  = new Relation[Num,Int] (List ())
-    val emptyBoolNum = new Relation[Boolean,Num] (List ())
-    val emptyNumNum  = new Relation[Num,Num] (List ())
+    val emptyIntBool = new Relation[Int,Boolean] (Nil)
+    val emptyNumInt  = new Relation[Num,Int] (Nil)
+    val emptyBoolNum = new Relation[Boolean,Num] (Nil)
+    val emptyNumNum  = new Relation[Num,Num] (Nil)
 
     // Singleton relations
 
@@ -881,22 +881,22 @@ class RelationTests extends Tests with RelationTestSupport {
     // union
 
     test ("an empty relation union an empty relation is empty (value-value)") {
-        val r = new Relation[Int,Boolean] (List ())
+        val r = new Relation[Int,Boolean] (Nil)
         assertResult (true) (emptyIntBool.union (r).isEmpty)
     }
 
     test ("an empty relation union an empty relation is empty (ref-value)") {
-        val r = new Relation[Num,Int] (List ())
+        val r = new Relation[Num,Int] (Nil)
         assertResult (true) (emptyNumInt.union (r).isEmpty)
     }
 
     test ("an empty relation union an empty relation is empty (value-ref)") {
-        val r = new Relation[Boolean,Num] (List ())
+        val r = new Relation[Boolean,Num] (Nil)
         assertResult (true) (emptyBoolNum.union (r).isEmpty)
     }
 
     test ("an empty relation union an empty relation is empty (ref-ref)") {
-        val r = new Relation[Num,Num] (List ())
+        val r = new Relation[Num,Num] (Nil)
         assertResult (true) (emptyNumNum.union (r).isEmpty)
     }
 
@@ -979,7 +979,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of singleton value-value relation of non-element is empty") {
-        assertResult (List ()) (singleIntBool.withDomain (2).domain)
+        assertResult (Nil) (singleIntBool.withDomain (2).domain)
     }
 
     test ("withDomain of singleton ref-value relation of element has correct domain") {
@@ -991,7 +991,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of singleton ref-value relation of non-element is empty") {
-        assertResult (List ()) (singleNumInt.withDomain (num3).domain)
+        assertResult (Nil) (singleNumInt.withDomain (num3).domain)
     }
 
     test ("withDomain of singleton value-ref relation of element has correct domain") {
@@ -1003,7 +1003,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of singleton value-ref relation of non-element is empty") {
-        assertResult (List ()) (singleBoolNum.withDomain (true).domain)
+        assertResult (Nil) (singleBoolNum.withDomain (true).domain)
     }
 
     test ("withDomain of singleton ref-ref relation of element has correct domain") {
@@ -1015,7 +1015,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of singleton ref-ref relation of non-element is empty") {
-        assertResult (List ()) (singleNumNum.withDomain (num5).domain)
+        assertResult (Nil) (singleNumNum.withDomain (num5).domain)
     }
 
     test ("withDomain of multiple element value-value relation of first element has correct domain") {
@@ -1035,7 +1035,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of multiple element value-value relation of non-element is empty") {
-        assertResult (List ()) (multiIntBool.withDomain (3).domain)
+        assertResult (Nil) (multiIntBool.withDomain (3).domain)
     }
 
     test ("withDomain of multiple element ref-value relation of first element has correct domain") {
@@ -1055,7 +1055,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of multiple element ref-value relation of non-element is empty") {
-        assertResult (List ()) (multiNumInt.withDomain (num4).domain)
+        assertResult (Nil) (multiNumInt.withDomain (num4).domain)
     }
 
     test ("withDomain of multiple element value-ref relation of first element has correct domain") {
@@ -1083,7 +1083,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of multiple element ref-ref relation of non-element is empty") {
-        assertSameCollection (List ()) (multiNumNum.withDomain (num5).domain)
+        assertSameCollection (Nil) (multiNumNum.withDomain (num5).domain)
     }
 
     // withRange
@@ -1113,7 +1113,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withRange of singleton value-value relation of non-element is empty") {
-        assertResult (List ()) (singleIntBool.withRange (false).domain)
+        assertResult (Nil) (singleIntBool.withRange (false).domain)
     }
 
     test ("withRange of singleton ref-value relation of element has correct domain") {
@@ -1125,7 +1125,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withRange of singleton ref-value relation of non-element is empty") {
-        assertResult (List ()) (singleNumInt.withRange (3).domain)
+        assertResult (Nil) (singleNumInt.withRange (3).domain)
     }
 
     test ("withRange of singleton value-ref relation of element has correct domain") {
@@ -1137,7 +1137,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withRange of singleton value-ref relation of non-element is empty") {
-        assertResult (List ()) (singleBoolNum.withRange (num2).domain)
+        assertResult (Nil) (singleBoolNum.withRange (num2).domain)
     }
 
     test ("withRange of singleton ref-ref relation of element has correct domain") {
@@ -1149,7 +1149,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withRange of singleton ref-ref relation of non-element is empty") {
-        assertResult (List ()) (singleNumNum.withRange (num4).domain)
+        assertResult (Nil) (singleNumNum.withRange (num4).domain)
     }
 
     test ("withRange of multiple element value-value relation of first element has correct domain") {
@@ -1185,7 +1185,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withRange of multiple element ref-value relation of non-element is empty") {
-        assertResult (List ()) (multiNumInt.withRange (4).domain)
+        assertResult (Nil) (multiNumInt.withRange (4).domain)
     }
 
     test ("withRange of multiple element value-ref relation of first element has correct domain") {
@@ -1213,7 +1213,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withRange of multiple element ref-ref relation of non-element is empty") {
-        assertSameCollection (List ()) (multiNumNum.withRange (num4).domain)
+        assertSameCollection (Nil) (multiNumNum.withRange (num4).domain)
     }
 
 }
@@ -1231,7 +1231,7 @@ trait RelationTestSupport {
      * Assert that a relation has a given image at `t`. By default, the expected
      * image is empty, so we are checking if the relation is not defined at `t`.
      */
-    def assertImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : List[T] = List ()) {
+    def assertImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : List[T] = Nil) {
         assertSameCollection (expected) (v.image (t))
     }
 
@@ -1240,7 +1240,7 @@ trait RelationTestSupport {
      * expected image is empty, so we are checking if the relation is defined at
      * `t`.
      */
-    def assertNotImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : List[T] = List ()) {
+    def assertNotImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : List[T] = Nil) {
         assertNotSameCollection (expected) (v.image (t))
     }
 

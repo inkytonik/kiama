@@ -108,7 +108,7 @@ trait Memoiser {
     trait Memoised[T,U] extends MemoisedBase[T,U] {
 
         val memo : Cache[AnyRef,AnyRef] =
-            CacheBuilder.newBuilder ().build ()
+            CacheBuilder.newBuilder.build ()
 
     }
 
@@ -119,7 +119,7 @@ trait Memoiser {
     trait IdMemoised[T,U] extends MemoisedBase[T,U] {
 
         val memo : Cache[AnyRef,AnyRef] =
-            CacheBuilder.newBuilder ().weakKeys ().build ()
+            CacheBuilder.newBuilder.weakKeys.build ()
 
     }
 

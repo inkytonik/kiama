@@ -113,7 +113,7 @@ abstract class Config (args : Seq[String]) extends ScallopConf (args) {
      */
     lazy val filenames = trailArg[List[String]] ("files", descr = "Input files",
                                                  required = false,
-                                                 default = Some (List ()))
+                                                 default = Some (Nil))
 
     /**
      * Handle errors by printing them, then printing the help message, then

@@ -33,7 +33,7 @@ class WeakIdentityHashSet[T] {
      * Cache of the current set contents.
      */
     val cache : Cache[AnyRef,AnyRef] =
-        CacheBuilder.newBuilder ().weakKeys ().build ()
+        CacheBuilder.newBuilder.weakKeys.build ()
 
     /**
      * Add the value `t` to the set.

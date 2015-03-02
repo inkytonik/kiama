@@ -92,7 +92,7 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
             case Argument (t, i) =>
                 toDoc (t) <+> toDoc (i)
             case t : Type =>
-                t.toString ()
+                t.toString
             case Block (ss) =>
                 braces (
                     nest (

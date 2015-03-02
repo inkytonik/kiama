@@ -60,7 +60,7 @@ trait SymbolTable extends base.SymbolTable {
      * types cannot be defined using source concepts.
      */
     case class BuiltinType (ident : String) extends Type {
-        override def toString () = ident
+        override def toString = ident
     }
 
     /**

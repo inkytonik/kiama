@@ -193,7 +193,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty sep sequence") {
-        assertResult ("") (layout (sep (List ())))
+        assertResult ("") (layout (sep (Nil)))
     }
 
     test ("pretty-print non-empty sep sequence - non-wrap") {
@@ -205,7 +205,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty hsep sequence") {
-        assertResult ("") (layout (hsep (List ())))
+        assertResult ("") (layout (hsep (Nil)))
     }
 
     test ("pretty-print non-empty hsep sequence - non-wrap") {
@@ -217,7 +217,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty fillsep sequence") {
-        assertResult ("") (layout (fillsep (List ())))
+        assertResult ("") (layout (fillsep (Nil)))
     }
 
     test ("pretty-print non-empty fillsep sequence - non-wrap") {
@@ -229,7 +229,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty fillsep sequence with sep") {
-        assertResult ("") (layout (fillsep (List (), comma)))
+        assertResult ("") (layout (fillsep (Nil, comma)))
     }
 
     test ("pretty-print non-empty fillsep sequence with sep - non-wrap") {
@@ -243,7 +243,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty lsep sequence") {
-        assertResult ("") (layout (lsep (List (), comma)))
+        assertResult ("") (layout (lsep (Nil, comma)))
     }
 
     test ("pretty-print non-empty lsep sequence - non-wrap") {
@@ -251,7 +251,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty lsep2 sequence") {
-        assertResult ("") (layout (lsep2 (List (), comma)))
+        assertResult ("") (layout (lsep2 (Nil, comma)))
     }
 
     test ("pretty-print non-empty lsep2 sequence - non-wrap") {
@@ -265,7 +265,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty cat sequence") {
-        assertResult ("") (layout (cat (List ())))
+        assertResult ("") (layout (cat (Nil)))
     }
 
     test ("pretty-print non-empty cat sequence - non-wrap") {
@@ -277,7 +277,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty hcat sequence") {
-        assertResult ("") (layout (hcat (List ())))
+        assertResult ("") (layout (hcat (Nil)))
     }
 
     test ("pretty-print non-empty hcat sequence - non-wrap") {
@@ -289,7 +289,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty vcat sequence") {
-        assertResult ("") (layout (vcat (List ())))
+        assertResult ("") (layout (vcat (Nil)))
     }
 
     test ("pretty-print non-empty vcat sequence - non-wrap") {
@@ -301,7 +301,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty fillcat sequence") {
-        assertResult ("") (layout (fillcat (List ())))
+        assertResult ("") (layout (fillcat (Nil)))
     }
 
     val m = List (langle, dot, equal, dot, equal, dot, equal, rangle)
@@ -315,7 +315,7 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
     }
 
     test ("pretty-print empty sterm sequence") {
-        assertResult ("") (layout (sterm (List (), colon)))
+        assertResult ("") (layout (sterm (Nil, colon)))
     }
 
     test ("pretty-print non-empty sterm sequence - non-wrap") {

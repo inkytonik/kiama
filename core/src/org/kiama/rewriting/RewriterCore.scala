@@ -183,7 +183,7 @@ trait RewriterCore {
         lazy val strat = s
 
         val cache =
-            CacheBuilder.newBuilder ().build (
+            CacheBuilder.newBuilder.build (
                 CacheLoader.from (
                     new Function[AnyRef,Option[Any]] {
                         def apply (t : AnyRef) : Option[Any] =
@@ -435,9 +435,9 @@ trait RewriterCore {
                     // Otherwise, this is a normal class, so we try to make a
                     // duper that uses the first constructor.
                     case _ : NoSuchFieldException =>
-                        val ctors = clazz.getConstructors ()
+                        val ctors = clazz.getConstructors
                         if (ctors.length == 0)
-                            sys.error (s"dup no constructors for ${clazz.getName ()}")
+                            sys.error (s"dup no constructors for ${clazz.getName}")
                         else
                             (t : Any, children : Array[AnyRef]) =>
                                 makeInstance (ctors (0), children)
@@ -454,7 +454,7 @@ trait RewriterCore {
 
         }
 
-        val cache = CacheBuilder.newBuilder ().weakKeys ().build (
+        val cache = CacheBuilder.newBuilder.weakKeys.build (
                         CacheLoader.from (MakeDuper)
                     )
 
@@ -627,7 +627,7 @@ trait RewriterCore {
                         }
                 }
             if (changed) {
-                val ret = r.reconstruct (newchildren.result ())
+                val ret = r.reconstruct (newchildren.result)
                 Some (ret)
             } else
                 Some (r)
@@ -924,7 +924,7 @@ trait RewriterCore {
                 }
             if (success)
                 if (changed) {
-                    val ret = r.reconstruct (newchildren.result ())
+                    val ret = r.reconstruct (newchildren.result)
                     Some (ret)
                 } else
                     Some (r)

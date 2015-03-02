@@ -1133,7 +1133,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
         val finalBuffer = finalBufferComputation.runT
 
         val (finalMap, _, _, finalBuilder) =
-            finalBuffer.foldLeft ((Map[Any,Range](), List[Int] (), 0, new StringBuilder ())) {
+            finalBuffer.foldLeft ((Map[Any,Range](), List[Int] (), 0, new StringBuilder)) {
                 case ((m, s, p, o), e) =>
                     e match {
                         case Start (a) =>
@@ -1145,7 +1145,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                     }
             }
 
-        Document (finalBuilder.result (), finalMap)
+        Document (finalBuilder.result, finalMap)
 
     }
 

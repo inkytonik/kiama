@@ -87,7 +87,7 @@ object JLineConsole extends Console {
     lazy val reader =
         usingTerminal {
             t =>
-                val consoleReader = new ConsoleReader ()
+                val consoleReader = new ConsoleReader
                 consoleReader.setExpandEvents (false)
                 consoleReader.setBellEnabled( false)
                 consoleReader

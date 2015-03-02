@@ -39,7 +39,7 @@ trait TIL2_3 extends TIL1_1 with TransformingMain {
                     ss
             })
         val Program (stmts) = rewrite (getandremovedecls) (ast)
-        Program (decls.result () ++ stmts)
+        Program (decls.result ++ stmts)
     }
 
 }
