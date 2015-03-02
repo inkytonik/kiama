@@ -141,7 +141,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      */
     def filetests (name : String, path : String, srcext : String, resext : String,
                    optinext : Option[String] = None, indefault : String = "",
-                   argslist : Seq[Seq[String]] = Seq (Seq ())) {
+                   argslist : List[List[String]] = List (Nil)) {
 
         import java.io.FilenameFilter
 
@@ -152,7 +152,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          * messages. If the compilation fails, `rp` is assumed to contain the
          * expected messages. `rt` is a version of `rp` to use in the test title.
          */
-        def filetest (name : String, rp : String, cmd : Seq[String], rt : String,
+        def filetest (name : String, rp : String, cmd : List[String], rt : String,
                       extra : String = "") {
             val ct = cmd.mkString (" ").replaceAllLiterally ("kiama/src/org/kiama/", "")
             val title = s"$name: $ct, expecting $rt$extra"
@@ -186,7 +186,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          * command line args to use.
          */
         def infiletests (c : String, dir : File, inext : String,
-                         args : Seq[String]) {
+                         args : List[String]) {
             val resfilter =
                 new FilenameFilter {
                     def accept (dir : File, name : String) : Boolean = {
@@ -201,9 +201,9 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
                 val inf = new File (ip)
                 val (consoleArgs, msg) =
                     if (inf.exists)
-                        (Seq ("--Kconsole", "file", ip), s" from input $it")
+                        (List ("--Kconsole", "file", ip), s" from input $it")
                     else
-                        (Seq ("--Kconsole", "string", indefault), s" from string '$indefault'")
+                        (List ("--Kconsole", "string", indefault), s" from string '$indefault'")
                 filetest (name, rp, consoleArgs ++ args :+ cp, r, msg)
             }
         }
