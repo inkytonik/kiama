@@ -30,7 +30,6 @@ import org.kiama.util.TestCompiler
 class DataflowTests extends Driver with TestCompiler[Stm] {
 
     import DataflowTree._
-    import scala.collection.immutable.Seq
 
     /*
      * {                     (prog)
@@ -49,10 +48,10 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
     val s3 = Assign ("x", "v")
     val s411 = Assign ("x", "w")
     val s412 = Assign ("x", "v")
-    val s41 = Block (Seq (s411, s412))
+    val s41 = Block (List (s411, s412))
     val s4 = While ("x", s41)
     val s5 = Return ("x")
-    val prog = Block (Seq (s1, s2, s3, s4, s5))
+    val prog = Block (List (s1, s2, s3, s4, s5))
 
     val tree = new DataflowTree (prog)
     val dataflow = new Dataflow (tree)

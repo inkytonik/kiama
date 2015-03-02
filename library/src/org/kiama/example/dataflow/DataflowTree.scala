@@ -27,7 +27,6 @@ package example.dataflow
 object DataflowTree {
 
     import org.kiama.relation.Tree
-    import scala.collection.immutable.Seq
 
     type DataflowTree = Tree[Stm,Stm]
 
@@ -38,7 +37,7 @@ object DataflowTree {
     case class Assign (left : Var, right : Var) extends Stm
     case class While (cond : Var, body : Stm) extends Stm
     case class If (cond : Var, tru : Stm, fls : Stm) extends Stm
-    case class Block (stms : Seq[Stm]) extends Stm
+    case class Block (stms : List[Stm]) extends Stm
     case class Return (ret : Var) extends Stm
     case class Empty () extends Stm
 

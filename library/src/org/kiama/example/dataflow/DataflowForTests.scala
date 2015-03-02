@@ -30,7 +30,6 @@ class DataflowForTests extends Tests {
 
     import DataflowTree._
     import org.kiama.attribution.Attribution
-    import scala.collection.immutable.Seq
 
     val attribution = new Attribution
     import attribution._
@@ -52,10 +51,10 @@ class DataflowForTests extends Tests {
     val s3 = Assign ("x", "v")
     val s411 = Assign ("x", "w")
     val s412 = Assign ("x", "v")
-    val s41 = Block (Seq (s411, s412))
+    val s41 = Block (List (s411, s412))
     val s4 = Foreach ("x", s41)
     val s5 = Return ("x")
-    val prog = Block (Seq (s1, s2, s3, s4, s5))
+    val prog = Block (List (s1, s2, s3, s4, s5))
 
     val tree = new DataflowTree (prog)
     val dataflowfor = new DataflowFor (tree)
