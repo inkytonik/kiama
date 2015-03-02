@@ -27,7 +27,6 @@ package example.grammar
 object GrammarTree {
 
     import org.kiama.relation.Tree
-    import scala.collection.immutable.Seq
 
     /**
      * Tree type for grammars.
@@ -42,7 +41,7 @@ object GrammarTree {
     /**
      * Grammars.
      */
-    case class Grammar (startRule : Rule, rules : Seq[Rule]) extends GrammarNode
+    case class Grammar (startRule : Rule, rules : List[Rule]) extends GrammarNode
 
     /**
      * Production rules.
@@ -127,13 +126,13 @@ object GrammarTree {
      * Smart constructor for rules.
      */
     def mkRule (lhs : NonTermDef, prods : Prod*) : Rule =
-        Rule (lhs, mkProdList (prods.toIndexedSeq))
+        Rule (lhs, mkProdList (prods.toList))
 
     /**
      * Smart constructor for production lists.
      */
-    def mkProdList (prods : Seq[Prod]) : ProdList =
-        if (prods == Seq ())
+    def mkProdList (prods : List[Prod]) : ProdList =
+        if (prods == Nil)
             EmptyProdList ()
         else
             NonEmptyProdList (prods.head, mkProdList (prods.tail))
@@ -142,13 +141,13 @@ object GrammarTree {
      * Smart constructor for productions.
      */
     def mkProd (rhs : Symbol*) : Prod =
-        Prod (mkSymbolList (rhs.toIndexedSeq))
+        Prod (mkSymbolList (rhs.toList))
 
     /**
      * Smart constructor for symbol lists.
      */
-    def mkSymbolList (symbols : Seq[Symbol]) : SymbolList =
-        if (symbols == Seq ())
+    def mkSymbolList (symbols : List[Symbol]) : SymbolList =
+        if (symbols == Nil)
             EmptySymbolList ()
         else
             NonEmptySymbolList (symbols.head, mkSymbolList (symbols.tail))

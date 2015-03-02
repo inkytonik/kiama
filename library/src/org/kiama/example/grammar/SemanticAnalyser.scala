@@ -39,7 +39,7 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
     import org.kiama.rewriting.Rewriter.collect
     import org.kiama.util.Messaging.{collectmessages, Messages, message}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
-    import scala.collection.immutable.{Seq, Set}
+    import scala.collection.immutable.Set
 
     val decorators = new Decorators (tree)
     import decorators._
@@ -145,7 +145,7 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      * Non-terminal uses that are applied occurrences of a given defining
      * occurrence.
      */
-    val uses : NonTermDef => Seq[NonTermUse] =
+    val uses : NonTermDef => List[NonTermUse] =
         attr {
             case n @ NonTermDef (name) =>
                 ntuses (grammar (n)).filter (_.name == name)

@@ -29,7 +29,6 @@ import org.kiama.util.PositionedParserUtilities
 class SyntaxAnalyser extends PositionedParserUtilities {
 
     import DataflowTree._
-    import scala.collection.immutable.Seq
     import scala.language.postfixOps
 
     lazy val parser =
@@ -60,6 +59,6 @@ class SyntaxAnalyser extends PositionedParserUtilities {
         not (keyword) ~> "[a-zA-Z]+".r
 
     lazy val keyword =
-        keywords ("[^a-zA-Z]".r, Seq ("if", "return", "while"))
+        keywords ("[^a-zA-Z]".r, List ("if", "return", "while"))
 
 }
