@@ -26,8 +26,6 @@ package util
  */
 object Comparison {
 
-    import scala.collection.immutable.Seq
-
     /**
      * Compare two arbitrary values. If they are both references, use
      * reference equality, otherwise use value equality.
@@ -93,9 +91,9 @@ object Comparison {
             }
 
     /**
-     * Does the finite sequence `s` contain `t`? Equality is tested using `same`.
+     * Does the list `s` contain `t`? Equality is tested using `same`.
      */
-    def contains[T] (s : Seq[T], t : T) : Boolean =
+    def contains[T] (s : List[T], t : T) : Boolean =
         s.exists (same (_, t))
 
     /**
