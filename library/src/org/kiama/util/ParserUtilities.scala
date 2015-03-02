@@ -244,7 +244,7 @@ trait ParserUtilities extends RegexParsers with PackratParsers {
      * This parser succeeds if any of the keywords is present, provided
      * that it's not immediately followed by something that extends it.
      */
-    def keywords (ext : Regex, kws : List[String]) : Parser[String] =
+    def keywords (ext : Regex, kws : Seq[String]) : Parser[String] =
         regex ("(%s)(%s|\\z)".format (kws.mkString ("|"), ext).r)
 
 }
