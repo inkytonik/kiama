@@ -58,23 +58,22 @@ object Messaging {
 
     import org.kiama.relation.Tree
     import org.kiama.util.{Entity, ErrorEntity}
-    import scala.collection.immutable.{IndexedSeq, Seq}
 
     /**
      * The type of a sequence of messages.
      */
-    type Messages = Seq[Message]
+    type Messages = Vector[Message]
 
     /**
      * A value representing no messages.
      */
-    val noMessages = IndexedSeq.empty
+    val noMessages = Vector.empty
 
     /**
      * Make a sequence of messages from a single message.
      */
     def aMessage (message : Message) =
-        IndexedSeq (message)
+        Vector (message)
 
     /**
      * If `f` is defined at `t` apply it and return the resulting sequence
@@ -135,6 +134,6 @@ object Messaging {
      * function `messages` at all nodes where it is defined.
      */
     def collectmessages[T <: Product,U <: T] (tree : Tree[T,U]) (messages : T ==> Messages) : Messages =
-        tree.nodes.flatMap (messages.orElse { case _ => noMessages })
+        tree.nodes.flatMap (messages.orElse { case _ => noMessages }).toVector
 
 }

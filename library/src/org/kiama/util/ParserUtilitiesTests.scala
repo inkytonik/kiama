@@ -27,8 +27,6 @@ package util
  */
 class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
 
-    import scala.collection.immutable.Seq
-
     case class Node (i : Int)
     case class Tup2 (n1 : Node, n2 : Node)
     case class Tup3 (n1 : Node, n2 : Node, n3 : Node)
@@ -108,7 +106,7 @@ class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
     }
 
     {
-        val p = keywords ("[^a-z]".r, Seq ("one", "two"))
+        val p = keywords ("[^a-z]".r, List ("one", "two"))
 
         test ("keywords parser works if whitespace is after the keyword") {
             assertParseOk ("one ", p, "one ")

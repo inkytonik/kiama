@@ -28,7 +28,7 @@ package util
  */
 trait Environments {
 
-    import scala.collection.immutable.{HashMap, Seq}
+    import scala.collection.immutable.HashMap
 
     /**
      * A counter to count generated names.

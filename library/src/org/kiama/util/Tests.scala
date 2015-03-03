@@ -34,7 +34,6 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll with
     import Comparison.{optsame, same, samecollection}
     import Messaging.Messages
     import org.scalatest.Tag
-    import scala.collection.immutable.Seq
 
     /**
      * ScalaTest by default only shows the unqualified class name when
