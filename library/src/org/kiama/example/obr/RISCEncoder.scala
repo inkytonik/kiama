@@ -35,13 +35,12 @@ class RISCEncoder (labels : RISCLabels) extends Attribution {
     import labels.genlabelnum
     import RISCTree._
     import org.kiama.example.RISC.RISCISA.{Label => RISCLabel, _}
-    import scala.collection.immutable.Seq
     import scala.math.max
 
     /**
      * The code sequence that is being assembled.
      */
-    val code = Seq.newBuilder[Assembler]
+    val code = Vector.newBuilder[Assembler]
 
     /**
      * Emit a RISC instruction.
@@ -91,7 +90,7 @@ class RISCEncoder (labels : RISCLabels) extends Attribution {
 
         // Pass 2: remove pseudo instructions, add displacements to labels
         val (newcode, _) =
-            instrs.foldLeft (Seq.empty[Instr], 0) {
+            instrs.foldLeft (Vector.empty[Instr], 0) {
                 case ((newcode, currloc), instr) =>
                     instr match {
                         case b : Branch =>

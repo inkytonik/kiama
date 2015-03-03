@@ -31,7 +31,7 @@ class SyntaxAnalyser extends PositionedParserUtilities {
 
     import ObrTree._
     import org.kiama.util.Positions.dupPos
-    import scala.collection.immutable.{HashSet, Seq}
+    import scala.collection.immutable.HashSet
     import scala.language.postfixOps
 
     override val whiteSpace = """(\s|\(\*(?:.|[\n\r])*?\*\))+""".r
@@ -58,17 +58,17 @@ class SyntaxAnalyser extends PositionedParserUtilities {
     lazy val parameterdecl : Parser[Declaration] =
         idndef <~ ":" <~ "INTEGER" ^^ IntParam
 
-    lazy val declarations : Parser[Seq[Declaration]] =
+    lazy val declarations : Parser[List[Declaration]] =
         constantdecls ~ variabledecls ^^ { case cs ~ vs => cs ++ vs }
 
-    lazy val constantdecls : Parser[Seq[Declaration]] =
+    lazy val constantdecls : Parser[List[Declaration]] =
         opt ("CONST" ~> rep1 (constantdecl <~ ";")) ^^
             {
                 case None     => Nil
                 case Some (l) => l
             }
 
-    lazy val variabledecls : Parser[Seq[Declaration]] =
+    lazy val variabledecls : Parser[List[Declaration]] =
         opt ("VAR" ~> rep1 (variabledecl <~ ";")) ^^
             {
                 case None     => Nil
@@ -91,7 +91,7 @@ class SyntaxAnalyser extends PositionedParserUtilities {
     lazy val fielddecl : Parser[Identifier] =
         ident <~ ":" <~ "INTEGER" <~ ";"
 
-    lazy val statementseq : Parser[Seq[Statement]] =
+    lazy val statementseq : Parser[List[Statement]] =
         statement*
 
     lazy val statement : Parser[Statement] =
@@ -107,7 +107,7 @@ class SyntaxAnalyser extends PositionedParserUtilities {
     lazy val conditional : Parser[IfStmt] =
         "IF" ~> expression ~ ("THEN" ~> statementseq) ~ optelseend ^^ IfStmt
 
-    lazy val optelseend : Parser[Seq[Statement]] =
+    lazy val optelseend : Parser[List[Statement]] =
         "ELSE" ~> statementseq <~ "END" |
         "END" ^^^ Nil
 

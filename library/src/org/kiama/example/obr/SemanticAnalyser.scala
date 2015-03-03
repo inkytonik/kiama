@@ -33,7 +33,6 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Message
     import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
-    import scala.collection.immutable.Seq
 
     val decorators = new Decorators (tree)
     import decorators.{chain, Chain}

@@ -32,13 +32,13 @@ object RISCISA {
     /**
      * A machine code sequence.
      */
-    type Code = Seq[Instr]
+    type Code = Vector[Instr]
 
     /**
      * An assembler code sequence.
      * Includes comments and labels.
      */
-    type AssemCode = Seq[Assembler]
+    type AssemCode = Vector[Assembler]
 
     /**
      * Operand types

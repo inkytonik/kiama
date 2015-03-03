@@ -31,7 +31,6 @@ import org.kiama.util.Environments
 object SymbolTable extends Environments {
 
     import ObrTree._
-    import scala.collection.immutable.Seq
     import org.kiama.util.Entity
 
     /**
@@ -99,7 +98,7 @@ object SymbolTable extends Environments {
     /**
      * A record type with the given fields.
      */
-    case class RecordType (fields : Seq[Identifier]) extends Type {
+    case class RecordType (fields : List[Identifier]) extends Type {
         override val storage = WORDSIZE * fields.length
         override def toString : String = "record"
     }
