@@ -32,7 +32,6 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
     import SymbolTable._
     import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
     import org.kiama.util.{Entity, UnknownEntity}
-    import scala.collection.immutable.Seq
 
     /**
      * The semantic error messages for a given tree.
@@ -75,8 +74,8 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      * predicates for lists: cons and nil.
      */
     val defenv : Environment =
-        rootenv ("nil" -> Predicate (Seq ()),
-                 "cons" -> Predicate (Seq (UnknownType (), ListType ())))
+        rootenv ("nil" -> Predicate (List ()),
+                 "cons" -> Predicate (List (UnknownType (), ListType ())))
 
     /**
      * The environment containing all bindings visible at a particular

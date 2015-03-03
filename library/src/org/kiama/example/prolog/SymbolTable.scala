@@ -31,12 +31,11 @@ object SymbolTable extends Environments {
 
     import org.kiama.util.Entity
     import PrologTree._
-    import scala.collection.immutable.Seq
 
     /**
      * A predicate entity and its argument type constraints.
      */
-    case class Predicate (argtypes : Seq[Type]) extends Entity
+    case class Predicate (argtypes : List[Type]) extends Entity
 
     /**
      * A variable entity including the type constraint that we know so far.

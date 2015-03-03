@@ -30,7 +30,6 @@ import org.kiama.util.RegexParserTests
 class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     import PrologTree._
-    import scala.collection.immutable.Seq
 
     test ("parsing an atom as an atom works") {
         assertParseOk ("albert", atom, "albert")
@@ -46,7 +45,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a predicate literal produces the correct tree") {
         assertParseOk ("likes(X,nigel)", literal,
-            Pred ("likes", Seq (Var ("X"), Atom ("nigel"))))
+            Pred ("likes", List (Var ("X"), Atom ("nigel"))))
     }
 
     // Additional tests:
@@ -83,28 +82,28 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a single clause works") {
         assertParseOk ("female(mary).", program,
-            Program (Seq (Fact (Pred ("female", Seq (Atom ("mary")))))))
+            Program (List (Fact (Pred ("female", List (Atom ("mary")))))))
     }
 
     test ("parsing multiple clauses works") {
         assertParseOk ("female(mary).\nmale (john).\nmale (luke).", program,
-            Program (Seq (Fact (Pred ("female", Seq (Atom ("mary")))),
-                           Fact (Pred ("male", Seq (Atom ("john")))),
-                           Fact (Pred ("male", Seq (Atom ("luke")))))))
+            Program (List (Fact (Pred ("female", List (Atom ("mary")))),
+                           Fact (Pred ("male", List (Atom ("john")))),
+                           Fact (Pred ("male", List (Atom ("luke")))))))
     }
 
     // Clause tests
 
     test ("parsing a rule works") {
         assertParseOk ("likes(john,X) :- likes(X,wine), likes(X,food).", clause,
-            Rule (Pred ("likes", Seq (Atom ("john"), Var ("X"))),
-                  Seq (Pred ("likes", Seq (Var ("X"), Atom ("wine"))),
-                        Pred ("likes", Seq (Var ("X"), Atom ("food"))))))
+            Rule (Pred ("likes", List (Atom ("john"), Var ("X"))),
+                  List (Pred ("likes", List (Var ("X"), Atom ("wine"))),
+                        Pred ("likes", List (Var ("X"), Atom ("food"))))))
     }
 
     test ("parsing a fact works") {
         assertParseOk ("bodgie (boo).", clause,
-            Fact (Pred ("bodgie", Seq (Atom ("boo")))))
+            Fact (Pred ("bodgie", List (Atom ("boo")))))
     }
 
     // Literal tests
@@ -123,18 +122,18 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a predicate literal with one argument works") {
         assertParseOk ("likes (X)", literal,
-            Pred ("likes", Seq (Var ("X"))))
+            Pred ("likes", List (Var ("X"))))
     }
 
     test ("parsing a predicate literal with many argument works") {
         assertParseOk ("likes (X, at, VAR)", literal,
-            Pred ("likes", Seq (Var ("X"), Atom ("at"), Var ("VAR"))))
+            Pred ("likes", List (Var ("X"), Atom ("at"), Var ("VAR"))))
     }
 
     test ("parsing a predicate literal with a predicate argument works") {
         assertParseOk ("likes (X, likes (Y, Z), W)", literal,
-            Pred ("likes", Seq (Var ("X"),
-                                 Pred ("likes", Seq (Var ("Y"), Var ("Z"))),
+            Pred ("likes", List (Var ("X"),
+                                 Pred ("likes", List (Var ("Y"), Var ("Z"))),
                                  Var ("W"))))
     }
 
@@ -144,9 +143,9 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a literal list containg a cut works") {
         assertParseOk ("likes (X), !, male (Y)", literals,
-            Seq (Pred ("likes", Seq (Var ("X"))),
+            List (Pred ("likes", List (Var ("X"))),
                   Cut (),
-                  Pred ("male", Seq (Var ("Y")))))
+                  Pred ("male", List (Var ("Y")))))
     }
 
     test ("parsing a nested cut fails") {
@@ -162,14 +161,14 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a singleton literal list works") {
         assertParseOk ("nonny (harold)", literals,
-            Seq (Pred ("nonny", Seq (Atom ("harold")))))
+            List (Pred ("nonny", List (Atom ("harold")))))
     }
 
     test ("parsing multiple literal list works") {
         assertParseOk ("nonny (harold), ninny (tony), nanny (jane)", literals,
-            Seq (Pred ("nonny", Seq (Atom ("harold"))),
-                  Pred ("ninny", Seq (Atom ("tony"))),
-                  Pred ("nanny", Seq (Atom ("jane")))))
+            List (Pred ("nonny", List (Atom ("harold"))),
+                  Pred ("ninny", List (Atom ("tony"))),
+                  Pred ("nanny", List (Atom ("jane")))))
     }
 
     // Integer tests
@@ -203,14 +202,14 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     }
 
     test ("parsing a singleton list works") {
-        assertParseOk ("[a]", list, Pred ("cons", Seq (Atom ("a"), Pred ("nil", Nil))))
+        assertParseOk ("[a]", list, Pred ("cons", List (Atom ("a"), Pred ("nil", Nil))))
     }
 
     test ("parsing a muliple-element list works") {
         assertParseOk ("[a,b,c]", list,
-            Pred ("cons", Seq (Atom ("a"),
-                Pred ("cons", Seq (Atom ("b"),
-                    Pred ("cons", Seq (Atom ("c"),
+            Pred ("cons", List (Atom ("a"),
+                Pred ("cons", List (Atom ("b"),
+                    Pred ("cons", List (Atom ("c"),
                         Pred ("nil" , Nil))))))))
     }
 

@@ -27,23 +27,22 @@ package example.prolog
 object PrologTree {
 
     import org.kiama.relation.Tree
-    import scala.collection.immutable.Seq
 
     type PrologTree = Tree[PrologNode,Program]
 
     sealed abstract class PrologNode extends Product
 
-    case class Program (cs : Seq[Clause]) extends PrologNode
+    case class Program (cs : List[Clause]) extends PrologNode
 
     sealed abstract class Clause extends PrologNode {
         def hd : Term
-        def bdy : Seq[Term]
+        def bdy : List[Term]
     }
 
     case class Fact (hd : Term) extends Clause {
-        def bdy : Seq[Term] = Nil
+        def bdy : List[Term] = Nil
     }
-    case class Rule (hd : Term, bdy : Seq[Term]) extends Clause
+    case class Rule (hd : Term, bdy : List[Term]) extends Clause
 
     sealed abstract class Term extends PrologNode
 
@@ -61,7 +60,7 @@ object PrologTree {
     case class Atom (s : String) extends NamedLiteral {
         override def toString : String = s
     }
-    case class Pred (s : String, ts : Seq[Term]) extends NamedLiteral {
+    case class Pred (s : String, ts : List[Term]) extends NamedLiteral {
         override def toString : String = s + ts.mkString ("(", ", ", ")")
     }
     case class Cut () extends Literal {
