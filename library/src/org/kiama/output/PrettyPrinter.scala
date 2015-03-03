@@ -311,7 +311,7 @@ trait PrettyPrinterBase {
      * as calling `seq` with a prefix of `"List"` and passing all
      * other arguments through.
      */
-    def list[T] (l : Seq[T], prefix : String = "List",
+    def list[T] (l : List[T], prefix : String = "List",
                  elemToDoc : T => Doc = (x : T) => value (x),
                  sep : Doc = comma,
                  sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
