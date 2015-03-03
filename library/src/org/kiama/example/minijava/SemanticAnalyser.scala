@@ -36,7 +36,6 @@ class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
     import org.kiama.util.Message
     import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
-    import scala.collection.immutable.Seq
     import SymbolTable._
 
     val decorators = new Decorators (tree)

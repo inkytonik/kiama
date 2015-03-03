@@ -27,8 +27,6 @@ package example.minijava
  */
 object JVMTree {
 
-    import scala.collection.immutable.Seq
-
     /**
      * A class file defining a JVM class. `source` gives the name of the source
      * file from which this class file comes. `name` gives the name of the class
@@ -36,7 +34,7 @@ object JVMTree {
      * of this class. `fields` and `methods` define the components of the class.
      */
     case class ClassFile (source : String, name : String, superclassname : String,
-                          fields : Seq[JVMField], methods : Seq[JVMMethod])
+                          fields : List[JVMField], methods : List[JVMMethod])
 
     /**
      * Base class for JVM types.
@@ -94,12 +92,12 @@ object JVMTree {
      * A method in the class.
      */
     case class JVMMethod (spec : JVMMethodSpec, isStatic : Boolean,
-                          instrs : Seq[JVMInstr])
+                          instrs : Vector[JVMInstr])
 
     /**
      * A method specification.
      */
-    case class JVMMethodSpec (name : String, argTypes : Seq[JVMType], retType : JVMType) {
+    case class JVMMethodSpec (name : String, argTypes : List[JVMType], retType : JVMType) {
         override def toString = name + argTypes.mkString ("(", "", ")") + retType
     }
 

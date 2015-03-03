@@ -33,7 +33,6 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     import SymbolTable.format
     import org.kiama.util.{Message, Messaging}
     import org.kiama.util.Positions.positionAt
-    import scala.collection.immutable.Seq
 
     // Tests of definition uniqueness (Rule 1)
 
@@ -145,14 +144,14 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("the condition of an if statement can have Boolean type") {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
-        val stmts = Seq (If (cond, Block (Nil), Block (Nil)))
+        val stmts = List (If (cond, Block (Nil), Block (Nil)))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the condition of an if statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
-        val stmts = Seq (If (cond, Block (Nil), Block (Nil)))
+        val stmts = List (If (cond, Block (Nil), Block (Nil)))
         semanticTest (
             embedExpression (exp, IntType (), Nil, stmts),
             Message ("type error: expected boolean got int"))
@@ -161,14 +160,14 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("the condition of a while statement can have Boolean type") {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
-        val stmts = Seq (While (cond, Block (Nil)))
+        val stmts = List (While (cond, Block (Nil)))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the condition of a while statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
-        val stmts = Seq (While (cond, Block (Nil)))
+        val stmts = List (While (cond, Block (Nil)))
         semanticTest (
             embedExpression (exp, IntType (), Nil, stmts),
             Message ("type error: expected boolean got int"))
@@ -179,28 +178,28 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("the expression in a println statement can be of Boolean type") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val stmts = Seq (Println (exp1))
+        val stmts = List (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of integer type") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val stmts = Seq (Println (exp1))
+        val stmts = List (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of integer array type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewArrayExp (IntExp (42))
-        val stmts = Seq (Println (exp1))
+        val stmts = List (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
     test ("the expression in a println statement can be of reference type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewExp (IdnUse ("Test"))
-        val stmts = Seq (Println (exp1))
+        val stmts = List (Println (exp1))
         semanticTest (embedExpression (exp, IntType (), Nil, stmts))
     }
 
@@ -209,8 +208,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("a method name cannot be assigned to") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = Seq ()
-        val stmts = Seq (VarAssign (IdnUse ("m"), exp1))
+        val vars = List ()
+        val stmts = List (VarAssign (IdnUse ("m"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts),
             Message ("illegal assignment to non-variable, non-argument"))
     }
@@ -220,16 +219,16 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("an integer expression is assignment compatible with an integer var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = Seq (Var (IntType (), IdnDef ("v")))
-        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
+        val vars = List (Var (IntType (), IdnDef ("v")))
+        val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("a Boolean expression is not assignment compatible with an integer var") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val vars = Seq (Var (IntType (), IdnDef ("v")))
-        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
+        val vars = List (Var (IntType (), IdnDef ("v")))
+        val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             Message ("type error: expected int got boolean"))
@@ -238,16 +237,16 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("a Boolean expression is assignment compatible with a Boolean var") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val vars = Seq (Var (BooleanType (), IdnDef ("v")))
-        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
+        val vars = List (Var (BooleanType (), IdnDef ("v")))
+        val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with a Boolean var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = Seq (Var (BooleanType (), IdnDef ("v")))
-        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
+        val vars = List (Var (BooleanType (), IdnDef ("v")))
+        val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             Message ("type error: expected boolean got int"))
@@ -256,16 +255,16 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("an integer array expression is assignment compatible with an integer array var") {
         val exp = IntExp (0) // dummy
         val exp1 = NewArrayExp (IntExp (42))
-        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
+        val vars = List (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with an integer array var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = Seq (VarAssign (IdnUse ("v"), exp1))
+        val vars = List (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             Message ("type error: expected int[] got int"))
@@ -277,8 +276,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
         val exp2 = IntExp (99)
-        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = Seq (ArrayAssign (IdnUse ("v"), exp1, exp2))
+        val vars = List (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
@@ -286,8 +285,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
         val exp2 = FalseExp ()
-        val vars = Seq (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = Seq (ArrayAssign (IdnUse ("v"), exp1, exp2))
+        val vars = List (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
             Message ("type error: expected int got boolean"),
@@ -535,7 +534,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("The name used in a new expression must refer to a class") {
         val exp = NewExp (IdnUse ("v"))
-        val vars = Seq (Var (IntType (), IdnDef ("v")))
+        val vars = List (Var (IntType (), IdnDef ("v")))
         semanticTest (
             embedExpression (exp, IntType (), vars),
             Message ("illegal instance creation of non-class type"))
@@ -581,7 +580,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("The pretty-print of an environment at an expression contains the correct scopes") {
         val exp = IntExp (42)
-        val vars = Seq (Var (IntType (), IdnDef ("v")))
+        val vars = List (Var (IntType (), IdnDef ("v")))
         val prog = embedExpression (exp, IntType (), vars)
         val tree = new MiniJavaTree (prog)
         val analyser = new SemanticAnalyser (tree)
@@ -633,14 +632,14 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
      */
     def embedExpression (exp : Expression,
                          retType : Type = IntType (),
-                         vars : Seq[Var] = Nil,
-                         stmts : Seq[Statement] = Nil) =
+                         vars : List[Var] = Nil,
+                         stmts : List[Statement] = Nil) =
         Program (MainClass (IdnDef ("Dummy"), Println (IntExp (0))),
-            Seq(
+            List(
                 Class (IdnDef ("Test"), None,
                     ClassBody (
                         Nil,
-                        Seq (
+                        List (
                             Method (IdnDef ("m"),
                                 MethodBody (
                                     retType,

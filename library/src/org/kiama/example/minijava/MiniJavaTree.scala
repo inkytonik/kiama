@@ -29,7 +29,6 @@ object MiniJavaTree {
     import org.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
         PrettyBinaryExpression, PrettyExpression, PrettyUnaryExpression}
     import org.kiama.relation.Tree
-    import scala.collection.immutable.Seq
 
     /**
      * Tree type for MiniJava programs.
@@ -45,7 +44,7 @@ object MiniJavaTree {
      * A main program consisting of a main class and a possibly empty list of
      * other classes (defines the root scope).
      */
-    case class Program (main : MainClass, classes : Seq[Class]) extends MiniJavaNode
+    case class Program (main : MainClass, classes : List[Class]) extends MiniJavaNode
 
     /**
      * A main class with a given name and body given by a single statement.
@@ -62,7 +61,7 @@ object MiniJavaTree {
     /**
      * The body of a class.
      */
-    case class ClassBody (fields : Seq[Field], methods : Seq[Method]) extends MiniJavaNode
+    case class ClassBody (fields : List[Field], methods : List[Method]) extends MiniJavaNode
 
     /**
      * A class field with a given type and name.
@@ -85,9 +84,9 @@ object MiniJavaTree {
     /**
      * The body of a method.
      */
-    case class MethodBody (tipe : Type, args : Seq[Argument],
-                           vars : Seq[Var],
-                           optStmts : Seq[Statement],
+    case class MethodBody (tipe : Type, args : List[Argument],
+                           vars : List[Var],
+                           optStmts : List[Statement],
                            result : Expression) extends MiniJavaNode
 
     /**
@@ -136,7 +135,7 @@ object MiniJavaTree {
     /**
      * A block containing a possibly empty list of statements.
      */
-    case class Block (stmts : Seq[Statement]) extends Statement
+    case class Block (stmts : List[Statement]) extends Statement
 
     /**
      * A conditional statement that tests the given expression, choosing `stmt1`
@@ -245,7 +244,7 @@ object MiniJavaTree {
      * given argument expressions.
      */
     case class CallExp (base : Expression, name : IdnUse,
-                        args : Seq[Expression]) extends Expression
+                        args : List[Expression]) extends Expression
 
     /**
      * Integer value expression.

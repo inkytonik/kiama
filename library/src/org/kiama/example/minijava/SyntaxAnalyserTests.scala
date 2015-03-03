@@ -30,7 +30,6 @@ import org.kiama.util.RegexParserTests
 class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     import MiniJavaTree._
-    import scala.collection.immutable.Seq
 
     // Tests of parsing terminals
 
@@ -111,12 +110,12 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a method call expression produces the correct tree (one arg)") {
         assertParseOk ("a.m (1)", expression,
-            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), Seq (IntExp (1))))
+            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), List (IntExp (1))))
     }
 
     test ("parsing a method call expression produces the correct tree (many args)") {
         assertParseOk ("a.m (1, 2, 3)", expression,
-            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), Seq (IntExp (1), IntExp (2), IntExp (3))))
+            CallExp (IdnExp (IdnUse ("a")), IdnUse ("m"), List (IntExp (1), IntExp (2), IntExp (3))))
     }
 
     test ("parsing an integer expression produces the correct tree") {
@@ -264,13 +263,13 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a block produces the correct tree (one statement)") {
         assertParseOk ("{ a = 1; }", statement,
-            Block (Seq (
+            Block (List (
                 VarAssign (IdnUse ("a"), IntExp (1)))))
     }
 
     test ("parsing a block produces the correct tree (many statements)") {
         assertParseOk ("{ a = 1; b = 2; c = 3; }", statement,
-            Block (Seq (
+            Block (List (
                 VarAssign (IdnUse ("a"), IntExp (1)),
                 VarAssign (IdnUse ("b"), IntExp (2)),
                 VarAssign (IdnUse ("c"), IntExp (3)))))
@@ -329,7 +328,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             program,
             Program (
                 MainClass (IdnDef ("Main"), VarAssign (IdnUse ("a"), IntExp (1))),
-                Seq (
+                List (
                     Class (IdnDef ("Normal1"), None, ClassBody (Nil, Nil)))))
     }
 
@@ -342,7 +341,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             program,
             Program (
                 MainClass (IdnDef ("Main"), VarAssign (IdnUse ("a"), IntExp (1))),
-                Seq (
+                List (
                     Class (IdnDef ("Normal1"), None, ClassBody (Nil, Nil)),
                     Class (IdnDef ("Normal2"), None, ClassBody (Nil, Nil)))))
     }
@@ -377,7 +376,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("a class with just a var declaration parses") {
         assertParseOk ("class Foo { int a; }", classDeclaration,
             Class (IdnDef ("Foo"), None,
-                ClassBody (Seq (Field (IntType (), IdnDef ("a"))),
+                ClassBody (List (Field (IntType (), IdnDef ("a"))),
                            Nil)))
     }
 
@@ -386,7 +385,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             classDeclaration,
             Class (IdnDef ("Foo"), None,
                 ClassBody (
-                    Seq (Field (IntType (), IdnDef ("a")),
+                    List (Field (IntType (), IdnDef ("a")),
                           Field (IntType (), IdnDef ("b")),
                           Field (IntType (), IdnDef ("c"))),
                     Nil)))
@@ -401,7 +400,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             Class (IdnDef ("Foo"), None,
                 ClassBody (
                     Nil,
-                    Seq (Method (IdnDef ("m1"),
+                    List (Method (IdnDef ("m1"),
                             MethodBody (
                                 IntType (),
                                 Nil,
@@ -421,7 +420,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             Class (IdnDef ("Foo"), None,
                 ClassBody (
                     Nil,
-                    Seq (Method (IdnDef ("m1"),
+                    List (Method (IdnDef ("m1"),
                               MethodBody (
                                   IntType (),
                                   Nil,
@@ -455,10 +454,10 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             classDeclaration,
             Class (IdnDef ("Foo"), None,
                 ClassBody (
-                    Seq (Field (IntType (), IdnDef ("a")),
+                    List (Field (IntType (), IdnDef ("a")),
                           Field (IntType (), IdnDef ("b")),
                           Field (IntType (), IdnDef ("c"))),
-                    Seq (Method (IdnDef ("m1"),
+                    List (Method (IdnDef ("m1"),
                               MethodBody (
                                   IntType (),
                                   Nil,
@@ -530,7 +529,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                 MethodBody (
                     IntType (),
                     Nil,
-                    Seq (Var (IntType (), IdnDef ("a"))),
+                    List (Var (IntType (), IdnDef ("a"))),
                     Nil,
                     IntExp (1))))
     }
@@ -543,7 +542,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                     IntType (),
                     Nil,
                     Nil,
-                    Seq (VarAssign (IdnUse ("a"), IntExp (1))),
+                    List (VarAssign (IdnUse ("a"), IntExp (1))),
                     IntExp (1))))
     }
 
@@ -554,9 +553,9 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                 MethodBody (
                     IntType (),
                     Nil,
-                    Seq (Var (IntType (), IdnDef ("a")),
+                    List (Var (IntType (), IdnDef ("a")),
                           Var (IntType (), IdnDef ("b"))),
-                    Seq (VarAssign (IdnUse ("a"), IntExp (1)),
+                    List (VarAssign (IdnUse ("a"), IntExp (1)),
                           VarAssign (IdnUse ("b"), IntExp (1))),
                     IntExp (1))))
     }
@@ -579,7 +578,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             Method (IdnDef ("m"),
                 MethodBody (
                     IntType (),
-                    Seq (Argument (IntType (), IdnDef ("a"))),
+                    List (Argument (IntType (), IdnDef ("a"))),
                     Nil,
                     Nil,
                     IntExp (1))))
@@ -591,7 +590,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             Method (IdnDef ("m"),
                 MethodBody (
                     IntType (),
-                    Seq (Argument (IntType (), IdnDef ("a")),
+                    List (Argument (IntType (), IdnDef ("a")),
                           Argument (IntType (), IdnDef ("b")),
                           Argument (IntType (), IdnDef ("c"))),
                     Nil,
@@ -605,12 +604,12 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("a singleton argument list parses") {
         assertParseOk ("int a", arguments,
-            Seq (Argument (IntType (), IdnDef ("a"))))
+            List (Argument (IntType (), IdnDef ("a"))))
     }
 
     test ("an argument list with many arguments parses") {
         assertParseOk ("int a, int b, int c", arguments,
-            Seq (Argument (IntType (), IdnDef ("a")),
+            List (Argument (IntType (), IdnDef ("a")),
                   Argument (IntType (), IdnDef ("b")),
                   Argument (IntType (), IdnDef ("c"))))
     }

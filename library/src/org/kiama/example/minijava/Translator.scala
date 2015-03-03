@@ -32,7 +32,6 @@ class Translator (tree : MiniJavaTree) extends Attribution {
     import JVMTree._
     import MiniJavaTree._
     import org.kiama.util.Counter
-    import scala.collection.immutable.Seq
     import SymbolTable._
 
     /**
@@ -40,10 +39,10 @@ class Translator (tree : MiniJavaTree) extends Attribution {
      * MiniJava program which came from the given source file. Return
      * one class file for each class in the MiniJava program.
      */
-    def translate (sourcetree : Program, sourceFilename : String, analyser : SemanticAnalyser) : Seq[ClassFile] = {
+    def translate (sourcetree : Program, sourceFilename : String, analyser : SemanticAnalyser) : List[ClassFile] = {
 
         // An instruction buffer for translating statements and expressions into
-        val instructions = Seq.newBuilder[JVMInstr]
+        val instructions = Vector.newBuilder[JVMInstr]
 
         /*
          * Generate an instruction by appending it to the instruction buffer.
@@ -145,13 +144,13 @@ class Translator (tree : MiniJavaTree) extends Attribution {
             // Make a main method containing the statement from this class
             val mainMethod =
                 JVMMethod (JVMMethodSpec ("main",
-                                          Seq (JVMArrayType (JVMStringType ())),
+                                          List (JVMArrayType (JVMStringType ())),
                                           JVMVoidType ()),
                            true,
                            instrs)
 
             ClassFile (sourceFilename, m.name.idn, "java/lang/Object",
-                       Nil, Seq (mainMethod))
+                       Nil, List (mainMethod))
 
         }
 
@@ -169,7 +168,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
         /*
          * Translate the fields of a class.
          */
-        def translateFields (fieldVars : Seq[Field]) : Seq[JVMField] =
+        def translateFields (fieldVars : List[Field]) : List[JVMField] =
             fieldVars.map {
                 case Field (tipe, IdnDef (idn)) =>
                     JVMField (idn, translateType (tipe))
@@ -224,7 +223,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
         /*
          * Translate the methods of a class.
          */
-        def translateMethods (methods : Seq[Method]) : Seq[JVMMethod] =
+        def translateMethods (methods : List[Method]) : List[JVMMethod] =
             methods.map (translateMethod)
 
         /*
@@ -364,7 +363,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                     translateExp (exp)
                     gen (
                         InvokeVirtual (JVMMethodSpec ("java/io/PrintStream/println",
-                                                      Seq (JVMIntType ()),
+                                                      List (JVMIntType ()),
                                                       JVMVoidType ())))
 
                 case VarAssign (idnuse, exp) =>

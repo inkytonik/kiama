@@ -29,7 +29,6 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
     import MiniJavaTree._
     import org.kiama.output.PrettyExpression
     import org.kiama.output.PrettyPrinterTypes.Document
-    import scala.collection.immutable.Seq
 
     /**
      * Format a MiniJava node.
@@ -127,7 +126,7 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
                 toParenDoc (e)
         }
 
-    def bodyToDoc (vs : Seq[Var], ss : Seq[Statement], r : Expression) : Doc =
+    def bodyToDoc (vs : List[Var], ss : List[Statement], r : Expression) : Doc =
         (if (vs.isEmpty)
              empty
          else
