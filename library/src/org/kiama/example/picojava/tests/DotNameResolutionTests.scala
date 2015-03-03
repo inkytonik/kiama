@@ -35,7 +35,6 @@ class DotNameResolutionTests extends Tests {
 
     import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
-    import scala.collection.immutable.Seq
 
     // For the actual program text, see DotNameResolutionTests.pj
 
@@ -44,20 +43,20 @@ class DotNameResolutionTests extends Tests {
     val bxInBB  = Use ("x")
     val byInBB  = Use ("y")
     val BBinBB  = Use ("BB")
-    val declAA  = ClassDecl ("AA", None, Block (Seq (declAAx)))
+    val declAA  = ClassDecl ("AA", None, Block (List (declAAx)))
     val declBB  = ClassDecl ("BB", Some (Use ("AA")), Block (
-                      Seq (VarDecl (BBinBB, "b"),
-                           AssignStmt (Dot (Use ("b"), byInBB),
-                                       Dot (Use ("b"), bxInBB)))))
+                      List (VarDecl (BBinBB, "b"),
+                            AssignStmt (Dot (Use ("b"), byInBB),
+                                        Dot (Use ("b"), bxInBB)))))
 
     val ast =
         Program (Block (
-            Seq (ClassDecl ("A", None, Block (
-                     Seq (VarDecl (Use ("int"), "y"),
-                          VarDecl (Use ("AA"), "a"),
-                          AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
-                          declAA,
-                          declBB))))))
+            List (ClassDecl ("A", None, Block (
+                List (VarDecl (Use ("int"), "y"),
+                      VarDecl (Use ("AA"), "a"),
+                      AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
+                      declAA,
+                      declBB))))))
 
     val tree = new PicoJavaTree (ast)
     val analyser = new ErrorCheck (tree)

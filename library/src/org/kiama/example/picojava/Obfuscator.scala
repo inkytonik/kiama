@@ -79,7 +79,7 @@ class Obfuscator (analysis : NameResolution) extends Rewriter {
         /*
          * Sequence of names that we do not want to replace.
          */
-        val predefinedNames = Seq ("boolean", "int")
+        val predefinedNames = List ("boolean", "int")
 
         /*
          * Rule that detects pre-defined identifiers and leaves them unchanged

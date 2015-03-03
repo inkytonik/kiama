@@ -39,7 +39,6 @@ class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
     import java.util.ArrayList
     import org.kiama.util.Messaging.message
     import org.kiama.util.Positions
-    import scala.collection.immutable.Seq
 
     /**
      * All of the error messages for a program.

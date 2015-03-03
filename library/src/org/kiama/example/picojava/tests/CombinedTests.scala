@@ -38,7 +38,6 @@ class CombinedTests extends Tests {
 
     import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
-    import scala.collection.immutable.Seq
 
     // For the actual program text, see CombinedTests.pj
 

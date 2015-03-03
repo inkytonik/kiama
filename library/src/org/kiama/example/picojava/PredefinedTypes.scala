@@ -36,7 +36,6 @@ trait PredefinedTypes {
     self : Attribution with NameResolution =>
 
     import PicoJavaTree._
-    import scala.collection.immutable.Seq
 
     /*
      * A list of declarations of primitive types.
@@ -47,11 +46,11 @@ trait PredefinedTypes {
      *        add(new PrimitiveDecl("boolean"));
      * }
      */
-    val getPredefinedTypeList : Program => Seq[TypeDecl] =
+    val getPredefinedTypeList : Program => List[TypeDecl] =
         constant {
-            Seq (UnknownDecl ("$unknown"),
-                 PrimitiveDecl ("boolean"),
-                 PrimitiveDecl ("int"))
+            List (UnknownDecl ("$unknown"),
+                  PrimitiveDecl ("boolean"),
+                  PrimitiveDecl ("int"))
         }
 
     /**

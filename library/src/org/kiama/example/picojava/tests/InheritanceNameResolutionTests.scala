@@ -35,7 +35,6 @@ class InheritanceNameResolutionTests extends Tests {
 
     import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
-    import scala.collection.immutable.Seq
 
     // For the actual program text, see InheritanceNameResolutionTests.pj
 
@@ -55,27 +54,27 @@ class InheritanceNameResolutionTests extends Tests {
     val declBf  = VarDecl (Use ("int"), "f")
 
     val declAA = ClassDecl ("AA", None, Block(
-                     Seq (declAAb,
+                     List (declAAb,
                           VarDecl (Use ("int"), "d"),
                           declAAe,
                           AssignStmt (aInAA, bInAA))))
 
     val declA = ClassDecl ("A", None, Block(
-                    Seq (declAa,
+                    List (declAa,
                          VarDecl (Use ("int"), "b"),
                          VarDecl (Use ("int"), "c"),
                          declAA)))
 
     val ast =
         Program (Block (
-            Seq (declA,
+            List (declA,
                  ClassDecl ("B", Some (AinB), Block (
-                     Seq (declBc,
+                     List (declBc,
                           VarDecl (Use ("int"), "e"),
                           declBf,
                           AssignStmt (aInB, cInB),
                           ClassDecl ("BB", Some (AAinBB), Block (
-                              Seq (VarDecl (Use ("int"), "d"),
+                              List (VarDecl (Use ("int"), "d"),
                                    AssignStmt (aInBB, Use ("d")),
                                    AssignStmt (eInBB, fInBB))))))))))
 

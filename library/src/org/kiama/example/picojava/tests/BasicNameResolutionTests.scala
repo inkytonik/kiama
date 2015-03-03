@@ -35,7 +35,6 @@ class BasicNameResolutionTests extends Tests {
 
     import org.kiama.example.picojava.ErrorCheck
     import org.kiama.example.picojava.PicoJavaTree._
-    import scala.collection.immutable.Seq
 
     // For the actual program text, see BasicNameResolutionTests.pj
 
@@ -51,14 +50,14 @@ class BasicNameResolutionTests extends Tests {
 
     val ast =
         Program (Block (
-            Seq (declRx,
-                 AssignStmt (xInR, zInR),
-                 declRz,
-                 AssignStmt (yInR, Use ("x")),
-                 ClassDecl ("A", None, Block (
-                     Seq (declAz,
-                          AssignStmt (xInA, zInA),
-                          AssignStmt (yInA, Use ("z"))))))))
+            List (declRx,
+                  AssignStmt (xInR, zInR),
+                  declRz,
+                  AssignStmt (yInR, Use ("x")),
+                  ClassDecl ("A", None, Block (
+                      List (declAz,
+                            AssignStmt (xInA, zInA),
+                            AssignStmt (yInA, Use ("z"))))))))
 
     val tree = new PicoJavaTree (ast)
     val analyser = new ErrorCheck (tree)
