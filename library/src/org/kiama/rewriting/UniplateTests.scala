@@ -34,7 +34,6 @@ class UniplateTests extends Tests with Generator {
     import org.kiama.rewriting.Rewriter._
     import org.scalacheck._
     import org.scalacheck.Prop.{collect => _, _}
-    import scala.collection.immutable.Seq
 
     /**
      * A simple numeric test expression.
@@ -68,9 +67,9 @@ class UniplateTests extends Tests with Generator {
 
         test ("singleton collection of variable references: indirect style on sets and lists") {
             assertResult (Set ()) (variabless (numexp))
-            assertResult (Seq ()) (variablesl (numexp))
+            assertResult (Nil) (variablesl (numexp))
             assertResult (Set ("var1", "var2")) (variabless (varexp))
-            assertResult (Seq ("var1", "var2", "var1")) (variablesl (varexp))
+            assertResult (List ("var1", "var2", "var1")) (variablesl (varexp))
         }
     }
 
@@ -85,9 +84,9 @@ class UniplateTests extends Tests with Generator {
 
         test ("all collection of variable references: indirect style on sets and lists") {
             assertResult (Set ()) (variabless (numexp))
-            assertResult (Seq ()) (variablesl (numexp))
+            assertResult (Nil) (variablesl (numexp))
             assertResult (Set ("var1", "var2")) (variabless (varexp))
-            assertResult (Seq ("var1", "var2", "var1")) (variablesl (varexp))
+            assertResult (List ("var1", "var2", "var1")) (variablesl (varexp))
         }
     }
 

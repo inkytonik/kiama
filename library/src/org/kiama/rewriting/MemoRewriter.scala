@@ -30,7 +30,6 @@ import org.kiama.util.Memoiser
 trait MemoRewriter extends Rewriter with Memoiser {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
-    import scala.collection.immutable.Seq
 
     /*
      * Any-rewriting strategies that memoise their results by identity on
@@ -52,16 +51,16 @@ trait MemoRewriter extends Rewriter with Memoiser {
          * it depends on itself.
          */
         override def apply (r : Any) : Option[Any] = {
-            val i = start (Seq ("event" -> "StratEval", "strategy" -> this,
-                                "subject" -> r, "subjectHash" -> r.##))
+            val i = start (List ("event" -> "StratEval", "strategy" -> this,
+                                 "subject" -> r, "subjectHash" -> r.##))
             get (r) match {
                 case None =>
                     val u = body (r)
                     put (r, u)
-                    finish (i, Seq ("cached" -> false, "result" -> u))
+                    finish (i, List ("cached" -> false, "result" -> u))
                     u
                 case Some (u) =>
-                    finish (i, Seq ("cached" -> true, "result" -> u))
+                    finish (i, List ("cached" -> true, "result" -> u))
                     u
             }
         }

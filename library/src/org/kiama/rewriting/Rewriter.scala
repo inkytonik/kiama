@@ -35,7 +35,6 @@ trait Rewriter extends RewriterCore {
     import org.kiama.relation.Tree.isLeaf
     import scala.collection.generic.CanBuildFrom
     import scala.language.higherKinds
-    import scala.collection.immutable.Seq
 
     /**
      * Rewrite a term.  Apply the strategy `s` to a term returning the result term

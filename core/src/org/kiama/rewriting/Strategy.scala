@@ -36,7 +36,6 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
     p =>
 
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
-    import scala.collection.immutable.Seq
     import scala.language.experimental.macros
 
     /**
@@ -59,10 +58,10 @@ abstract class Strategy (val name : String) extends (Any => Option[Any]) {
      * body wrapped in profiling.
      */
     def apply (r : Any) : Option[Any] = {
-        val i = start (Seq ("event" -> "StratEval", "strategy" -> this,
-                           "subject" -> r))
+        val i = start (List ("event" -> "StratEval", "strategy" -> this,
+                             "subject" -> r))
         val result = body (r)
-        finish (i, Seq ("result" -> result))
+        finish (i, List ("result" -> result))
         result
     }
 

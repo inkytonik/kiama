@@ -1097,15 +1097,15 @@ trait RewriterCore {
          * children.  Terms that are not `Product` or `Rewritable` are not
          * decomposable (i.e., the list of children will be empty).
          */
-        def unapply (t : Any) : Option[(Any,Seq[Any])] = {
+        def unapply (t : Any) : Option[(Any,List[Any])] = {
             t match {
                 case r : Rewritable =>
-                    Some ((r, r.deconstruct))
+                    Some ((r, r.deconstruct.toList))
                 case p : Product =>
                     val cs = for (i <- 0 until p.productArity) yield p.productElement (i)
-                    Some ((p, cs))
+                    Some ((p, cs.toList))
                 case _ =>
-                    Some ((t, Seq.empty))
+                    Some ((t, Nil))
             }
         }
 
@@ -1324,10 +1324,10 @@ trait RewriterCore {
     def loopnot (r : Strategy, s : Strategy) : Strategy =
         macro RewriterCoreMacros.loopnotMacro
     /**
-     * Construct a strategy that applies `s` to each element of a sequence,
-     * returning a new sequence of the results if all of the applications
-     * succeed, otherwise fail.  If all of the applications succeed
-     * without change, return the input sequence.
+     * Construct a strategy that applies `s` to each element of a finite
+     * sequence (type `Seq`) returning a new sequence of the results if
+     * all of the applications succeed, otherwise fail.  If all of the
+     * applications succeed without change, return the input sequence.
      */
     def map (s : Strategy) : Strategy =
         macro RewriterCoreMacros.mapMacro
