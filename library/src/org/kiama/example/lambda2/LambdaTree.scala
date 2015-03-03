@@ -29,7 +29,6 @@ object LambdaTree {
     import org.kiama.relation.Tree
     import org.kiama.rewriting.Rewriter.{congruence, rulefs}
     import org.kiama.rewriting.Strategy
-    import scala.collection.immutable.Seq
 
     /**
      * Tree type for lambda calculus programs.
@@ -84,7 +83,7 @@ object LambdaTree {
     /**
      * Parallel bindings in body.
      */
-    case class Letp (bs : Seq[Bind], e : Exp) extends Exp
+    case class Letp (bs : List[Bind], e : Exp) extends Exp
 
     /**
      * A single binding from a set of parallel bindings (Letp).  No type

@@ -37,7 +37,6 @@ class Analyser (tree : LambdaTree) extends Attribution {
     import LambdaTree._
     import PrettyPrinter.formattedLayout
     import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
-    import scala.collection.immutable.Seq
 
     /**
      * The semantic error messages for the tree. This one uses the `tipe`
@@ -97,7 +96,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
      * The environment of an expression is the list of variable names that
      * are visible in that expression and their types.
      */
-    val env : Exp => Seq[(Idn,Type)] =
+    val env : Exp => List[(Idn,Type)] =
         attr {
 
             // Inside a lambda expression the bound variable is now visible
@@ -107,7 +106,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
             // of the env and we search the env list below in tipe from
             // beginning to end
             case tree.parent (p @ Lam (x, t, _)) =>
-                (x,t) +: env (p)
+                (x,t) :: env (p)
 
             // Other expressions do not bind new identifiers so they just
             // get their environment from their parent
@@ -116,7 +115,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
 
             // Nothing is visible at the root of the tree
             case _ =>
-                Seq ()
+                Nil
 
         }
 

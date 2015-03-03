@@ -28,7 +28,6 @@ trait Par extends ReduceSubst {
 
     import LambdaTree._
     import org.kiama.rewriting.Rewriter._
-    import scala.collection.immutable.Seq
 
     /**
      * Reusable strategy for reduction with explicit term-level substitution.
@@ -43,8 +42,8 @@ trait Par extends ReduceSubst {
         rule[Exp] {
             case App (Lam (x, t, e1), e2) =>
                 val y = freshVar ()
-                Letp (Seq (Bind (y, e2)),
-                      Letp (Seq (Bind (x, Var (y))), e1))
+                Letp (List (Bind (y, e2)),
+                      Letp (List (Bind (x, Var (y))), e1))
         }
 
     /**
@@ -58,7 +57,7 @@ trait Par extends ReduceSubst {
     /**
      * Lookup a binding for a name in a list of bindings.
      */
-    def lookupb (x : Idn, ds : Seq[Bind]) : Option[Exp] =
+    def lookupb (x : Idn, ds : List[Bind]) : Option[Exp] =
         ds.collectFirst {
             case Bind (y, e) if x == y =>
                 e
@@ -89,7 +88,7 @@ trait Par extends ReduceSubst {
         rule[Exp] {
             case Letp (ds, Lam (x, t, e)) =>
                 val y = freshVar ()
-                Lam (y, t, Letp (ds, Letp (Seq (Bind (x, Var (y))), e)))
+                Lam (y, t, Letp (ds, Letp (List (Bind (x, Var (y))), e)))
         }
 
     /**

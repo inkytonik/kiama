@@ -34,7 +34,6 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Messaging.Messages
-    import scala.collection.immutable.Seq
 
     /**
      * Compute errors of `e` check to make sure the relevant message is reported. Use
@@ -385,13 +384,13 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
 
     test ("pretty-printed parallel lets") {
         assertPrettyE (
-            Letp (Seq (Bind ("a", Num (1)),
+            Letp (List (Bind ("a", Num (1)),
                         Bind ("b", Num (1)),
-                        Bind ("c", Letp (Seq (Bind ("d", Num (1)),
-                                            Bind ("e", Num (1))),
+                        Bind ("c", Letp (List (Bind ("d", Num (1)),
+                                               Bind ("e", Num (1))),
                                         Num (1)))),
-                  Letp (Seq (Bind ("f", Num (1)),
-                                Bind ("g", Num (1))),
+                  Letp (List (Bind ("f", Num (1)),
+                              Bind ("g", Num (1))),
                         Num (1))),
 """(letp
     a = 1
