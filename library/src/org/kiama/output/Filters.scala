@@ -31,8 +31,6 @@ package output
  */
  trait Filters {
 
-    import scala.collection.immutable.Seq
-
     /**
      * A filter that limits the string `s` to at most `n` characters.
      */
@@ -80,7 +78,7 @@ package output
      */
     def keepMaxIndent (n : Int, s : String,
                        mkrepl : (Int, String) => String = indentedEllipsis) : String = {
-        s.linesWithSeparators.toSeq.foldLeft ((Seq[String] (), true)) {
+        s.linesWithSeparators.toSeq.foldLeft ((Vector[String] (), true)) {
             case ((result, first), l) =>
                 if (indentOf (l) >= n)
                     if (first)
