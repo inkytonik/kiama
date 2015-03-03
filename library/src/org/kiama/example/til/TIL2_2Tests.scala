@@ -26,19 +26,18 @@ import org.kiama.util.TransformerTests
 class TIL2_2Tests extends TIL2_2 with TransformerTests {
 
     import TILTree._
-    import scala.collection.immutable.Seq
 
     test ("transform a single for loop") {
         val input = "for x := 1 to n do write x; end"
         val x = Id ("x")
         val upperx = Id ("Upperx")
         val tree =
-            Program (Seq (
+            Program (List (
                 Decl (x),
                 Assign (x, Num (1)),
                 Decl (upperx),
                 Assign (upperx, Add (Var (Id ("n")), Num (1))),
-                While (Sub (Var (x), Var (upperx)), Seq (
+                While (Sub (Var (x), Var (upperx)), List (
                     Write (Var (x)),
                     Assign (x, Add (Var (x), Num (1)))))))
         assertTransformOk (input, parser, transform, tree)
@@ -51,17 +50,17 @@ class TIL2_2Tests extends TIL2_2 with TransformerTests {
         val j = Id ("j")
         val upperj = Id ("Upperj")
         val tree =
-            Program (Seq (
+            Program (List (
                 Decl (i),
                 Assign (i, Num (1)),
                 Decl (upperi),
                 Assign (upperi, Add (Num (9), Num (1))),
-                While (Sub (Var (i), Var (upperi)), Seq (
+                While (Sub (Var (i), Var (upperi)), List (
                     Decl (j),
                     Assign (j, Num (1)),
                     Decl (upperj),
                     Assign (upperj, Add (Num (10), Num (1))),
-                    While (Sub (Var (j), Var (upperj)), Seq (
+                    While (Sub (Var (j), Var (upperj)), List (
                         Write (Mul (Var (i), Var (j))),
                         Assign (j, Add (Var (j), Num (1))))),
                     Assign (i, Add (Var (i), Num (1)))))))

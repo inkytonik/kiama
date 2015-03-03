@@ -26,7 +26,6 @@ import org.kiama.util.TransformerTests
 class TIL2_3Tests extends TIL2_3 with TransformerTests {
 
     import TILTree._
-    import scala.collection.immutable.Seq
 
     test ("transform a program with many nested declarations") {
         val input = """
@@ -78,7 +77,7 @@ end
         val x = Id ("x")
         val y = Id ("y")
         val z = Id ("z")
-        val tree = Program (Seq (
+        val tree = Program (List (
             Decl (d),
             Decl (r),
             Decl (y),
@@ -96,11 +95,11 @@ end
             Assign (r, Num (5)),
             Read (y),
             Read (z),
-            While (Ne (Var (y), Num (0)), Seq (
+            While (Ne (Var (y), Num (0)), List (
                 Assign (x, Add (Var (y), Var (z))),
                 Assign (a, Num (3)),
                 Assign (j, Num (1)),
-                While (Ne (Var (j), Num (100)), Seq (
+                While (Ne (Var (j), Num (100)), List (
                     Assign (k, Add (Var (a), Var (z))),
                     Assign (b, Mul (Var (j), Var (z))),
                     Assign (d, Mul (Add (Var (y), Var (z)), Var (d))),

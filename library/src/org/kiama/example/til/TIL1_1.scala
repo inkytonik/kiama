@@ -28,11 +28,9 @@ import org.kiama.util.PositionedParserUtilities
  */
 object TILTree {
 
-    import scala.collection.immutable.Seq
-
     abstract class TilNode
 
-    case class Program (ss : Seq[Stat]) extends TilNode
+    case class Program (ss : List[Stat]) extends TilNode
 
     sealed abstract class Stat extends TilNode
 
@@ -40,11 +38,11 @@ object TILTree {
 
     case class Assign (i : Id, e : Exp) extends Stat
 
-    case class IfThen (e : Exp, t : Seq[Stat]) extends Stat
-    case class IfElse (e : Exp, t : Seq[Stat], f : Seq[Stat]) extends Stat
+    case class IfThen (e : Exp, t : List[Stat]) extends Stat
+    case class IfElse (e : Exp, t : List[Stat], f : List[Stat]) extends Stat
 
-    case class While (e : Exp, b : Seq[Stat]) extends Stat
-    case class For (i : Id, f : Exp, t : Exp, b : Seq[Stat]) extends Stat
+    case class While (e : Exp, b : List[Stat]) extends Stat
+    case class For (i : Id, f : Exp, t : Exp, b : List[Stat]) extends Stat
 
     case class Read (i : Id) extends Stat
     case class Write (e : Exp) extends Stat
@@ -78,7 +76,6 @@ trait TIL1_1 extends PositionedParserUtilities {
 
     import TILTree._
     import scala.language.postfixOps
-    import scala.collection.immutable.Seq
 
     type Root = Program
 
@@ -132,8 +129,8 @@ trait TIL1_1 extends PositionedParserUtilities {
 
     lazy val keyword =
         keywords ("[^a-zA-Z0-9]".r,
-                  Seq ("var", "if", "then", "else", "while", "do",
-                       "for", "read", "write"))
+                  List ("var", "if", "then", "else", "while", "do",
+                        "for", "read", "write"))
 
     lazy val identifier =
         not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r ^^ Id

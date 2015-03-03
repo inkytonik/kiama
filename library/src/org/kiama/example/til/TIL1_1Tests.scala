@@ -26,7 +26,6 @@ import org.kiama.util.RegexParserTests
 class TIL1_1Tests extends TIL1_1 with RegexParserTests {
 
     import TILTree._
-    import scala.collection.immutable.Seq
 
     val n = Id ("n")
     val f = Id ("f")
@@ -50,14 +49,14 @@ write "\n";"""
         val fact = Id ("fact")
         val tree =
             Program (
-                Seq (
+                List (
                     Decl (n),
                     Read (n),
                     Decl (x),
                     Decl (fact),
                     Assign (fact, Num (1)),
                     For (x, Num (1), Var (n),
-                        Seq (
+                        List (
                             Assign (fact, Mul (Var (x), Var (fact))))),
                     Write (Str ("\"factorial of \"")),
                     Write (Var (n)),
@@ -84,7 +83,7 @@ while n != 1 do
 end"""
         val tree =
             Program (
-                Seq (
+                List (
                     Decl (n),
                     Write (Str ("\"Input n please\"")),
                     Read (n),
@@ -92,9 +91,9 @@ end"""
                     Decl (f),
                     Assign (f, Num (2)),
                     While (Ne (Var (n), Num (1)),
-                        Seq (
+                        List (
                             While (Eq (Mul (Div (Var (n), Var (f)), Var (f)), Var (n)),
-                                Seq (
+                                List (
                                     Write (Var (f)),
                                     Assign (n, Div (Var (n), Var (f))))),
                             Assign (f, Add (Var (f), Num (1)))))))
@@ -113,11 +112,11 @@ end
         val j = Id ("j")
         val tree =
             Program (
-                Seq (
+                List (
                     For (i, Num (1), Num (9),
-                        Seq (
+                        List (
                             For (j, Num (1), Num (10),
-                                Seq (Write (Mul (Var (i), Var (j)))))))))
+                                List (Write (Mul (Var (i), Var (j)))))))))
         assertParseOk (input, parser, tree)
     }
 
