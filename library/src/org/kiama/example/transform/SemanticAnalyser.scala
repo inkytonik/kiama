@@ -34,7 +34,7 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
 
     import TransformTree._
     import org.kiama.util.Messaging.{collectmessages, message, Messages}
-    import scala.collection.immutable.{HashMap, Seq}
+    import scala.collection.immutable.HashMap
 
     lazy val prioenv : Program => Map[String,Int] =
         attr (
@@ -61,7 +61,7 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
                 es.head
         }
 
-    type Stacks = (Seq[String], Seq[Exp])
+    type Stacks = (List[String], List[Exp])
 
     lazy val ops : ExpR => Stacks =
         {
@@ -72,11 +72,11 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
                 (Nil, Nil)
         }
 
-    lazy val eval_top : ((Seq[String], String, Seq[Exp])) => ExpR => Stacks =
+    lazy val eval_top : ((List[String], String, List[Exp])) => ExpR => Stacks =
         paramAttr {
             case (Nil, op, opnd) => (
                 _ =>
-                    (Seq (op), opnd)
+                    (List (op), opnd)
             )
             case (top_op :: rest_ops, op, opnd) => (
                 e =>

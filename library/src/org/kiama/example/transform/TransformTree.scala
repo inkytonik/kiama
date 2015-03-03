@@ -27,7 +27,6 @@ package example.transform
 object TransformTree {
 
     import org.kiama.relation.Tree
-    import scala.collection.immutable.Seq
 
     /**
      * Tree type for transform trees.
@@ -49,7 +48,7 @@ object TransformTree {
      * expression using those operators, and an equivalent expression with
      * correct operator structure which is filled in after parsing.
      */
-    case class Program (ops : Seq[(String,Int)], vars : Seq[VarDecl],
+    case class Program (ops : List[(String,Int)], vars : List[VarDecl],
                         expr : ExpR) extends TransformNode
 
     /**
