@@ -30,7 +30,6 @@ import org.kiama.util.Memoiser
 trait AttributionCore extends AttributionCommon with Memoiser {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
-    import scala.collection.immutable.Seq
     import scala.language.experimental.macros
     import scala.language.implicitConversions
 
@@ -49,12 +48,12 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * it depends on itself.
          */
         def apply (t : T) : U = {
-            val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
-                                "attribute" -> this, "parameter" -> None,
-                                "circular" -> false))
+            val i = start (List ("event" -> "AttrEval", "subject" -> t,
+                                 "attribute" -> this, "parameter" -> None,
+                                 "circular" -> false))
             get (t) match {
                 case Some (Some (u)) =>
-                    finish (i, Seq ("value" -> u, "cached" -> true))
+                    finish (i, List ("value" -> u, "cached" -> true))
                     u
                 case Some (None) =>
                     reportCycle (t)
@@ -62,7 +61,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     put (t, None)
                     val u = f (t)
                     put (t, Some (u))
-                    finish (i, Seq ("value" -> u, "cached" -> false))
+                    finish (i, List ("value" -> u, "cached" -> false))
                     u
             }
         }
@@ -97,13 +96,13 @@ trait AttributionCore extends AttributionCommon with Memoiser {
             new Attribute[T,U] (name) {
 
                 def apply (t : T) : U = {
-                    val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
-                                        "attribute" -> this, "parameter" -> Some (arg),
-                                        "circular" -> false))
+                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
+                                         "attribute" -> this, "parameter" -> Some (arg),
+                                         "circular" -> false))
                     val key = new ParamAttributeKey (arg, t)
                     get (key) match {
                         case Some (Some (u)) =>
-                            finish (i, Seq ("value" -> u, "cached" -> true))
+                            finish (i, List ("value" -> u, "cached" -> true))
                             u
                         case Some (None) =>
                             reportCycle (t)
@@ -111,7 +110,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                             put (key, None)
                             val u = f (arg) (t)
                             put (key, Some (u))
-                            finish (i, Seq ("value" -> u, "cached" -> false))
+                            finish (i, List ("value" -> u, "cached" -> false))
                             u
                     }
                 }
@@ -303,10 +302,10 @@ trait AttributionCore extends AttributionCommon with Memoiser {
 
                 // We have previously computed this attribute occurrence so fetch it from the cache.
 
-                val i = start (Seq ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
-                                    "parameter" -> None, "circular" -> true, "phase" -> "computed"))
+                val i = start (List ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
+                                     "parameter" -> None, "circular" -> true, "phase" -> "computed"))
                 val u = value (t)
-                finish (i, Seq ("value" -> u, "cached" -> true, "phase" -> "computed"))
+                finish (i, List ("value" -> u, "cached" -> true, "phase" -> "computed"))
                 u
 
             } else if (!IN_CIRCLE) {
@@ -324,16 +323,16 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     // we are done, since it and all dependent occurrences have stabilised.
                     // If the values are different, cache the new one and repeat.
 
-                    val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
-                                        "attribute" -> this, "parameter" -> None,
-                                        "circular" -> true, "phase" -> "iterate"))
+                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
+                                         "attribute" -> this, "parameter" -> None,
+                                         "circular" -> true, "phase" -> "iterate"))
                     CHANGE = false
                     val u = value (t)
                     val newu = safef (t)
                     if (u == newu) {
-                        finish (i, Seq ("value" -> u, "cached" -> false, "phase" -> "iteratenochange"))
+                        finish (i, List ("value" -> u, "cached" -> false, "phase" -> "iteratenochange"))
                     } else {
-                        finish (i, Seq ("value" -> newu, "cached" -> false, "phase" -> "iteratechange"))
+                        finish (i, List ("value" -> newu, "cached" -> false, "phase" -> "iteratechange"))
                         CHANGE = true
                         put (t, newu)
                     }
@@ -387,18 +386,18 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     // above, if the value changes, note that something has changed on the cycle,
                     // and cache the new value.
 
-                    val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
-                                        "attribute" -> this, "parameter" -> None,
-                                        "circular" -> true, "phase" -> "notvisited"))
+                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
+                                         "attribute" -> this, "parameter" -> None,
+                                         "circular" -> true, "phase" -> "notvisited"))
                     visited.add (t)
                     val u = value (t)
                     val newu = safef (t)
                     visited.remove (t)
                     if (u == newu) {
-                        finish (i, Seq ("value" -> u, "cached" -> false, "phase" -> "notvisitednochange"))
+                        finish (i, List ("value" -> u, "cached" -> false, "phase" -> "notvisitednochange"))
                         u
                     } else {
-                        finish (i, Seq ("value" -> newu, "cached" -> false, "phase" -> "notvisitedchange"))
+                        finish (i, List ("value" -> newu, "cached" -> false, "phase" -> "notvisitedchange"))
                         CHANGE = true
                         put (t, newu)
                         newu
@@ -413,11 +412,11 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 // return the cached value since that is our view of the value of this attribute
                 // so far.
 
-                val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
-                                    "attribute" -> this, "parameter" -> None,
-                                    "circular" -> true, "phase" -> "default"))
+                val i = start (List ("event" -> "AttrEval", "subject" -> t,
+                                     "attribute" -> this, "parameter" -> None,
+                                     "circular" -> true, "phase" -> "default"))
                 val u = value (t)
-                finish (i, Seq ("value" -> u, "cached" -> false, "phase" -> "default"))
+                finish (i, List ("value" -> u, "cached" -> false, "phase" -> "default"))
                 u
 
             }

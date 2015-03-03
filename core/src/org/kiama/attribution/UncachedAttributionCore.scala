@@ -29,7 +29,6 @@ import org.kiama.util.Memoiser
  */
 trait UncachedAttributionCore extends AttributionCommon with Memoiser {
 
-    import scala.collection.immutable.Seq
     import scala.language.experimental.macros
 
     /**
@@ -49,9 +48,9 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
          * it depends on itself.
          */
         def apply (t : T) : U = {
-            val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
-                                "attribute" -> this, "parameter" -> None,
-                                "circular" -> false))
+            val i = start (List ("event" -> "AttrEval", "subject" -> t,
+                                 "attribute" -> this, "parameter" -> None,
+                                 "circular" -> false))
             get (t) match {
                 case Some (()) =>
                     reportCycle (t)
@@ -59,7 +58,7 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
                     put (t, ())
                     val u = f (t)
                     resetAt (t)
-                    finish (i, Seq ("value" -> u, "cached" -> false))
+                    finish (i, List ("value" -> u, "cached" -> false))
                     u
             }
 
@@ -85,9 +84,9 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
             new Attribute[T,U] (name) {
 
                 def apply (t : T) : U = {
-                    val i = start (Seq ("event" -> "AttrEval", "subject" -> t,
-                                        "attribute" -> this, "parameter" -> Some (arg),
-                                        "circular" -> false))
+                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
+                                         "attribute" -> this, "parameter" -> Some (arg),
+                                         "circular" -> false))
                     val key = new ParamAttributeKey (arg, t)
                     get (key) match {
                         case Some (()) =>
@@ -96,7 +95,7 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
                             put (key, ())
                             val u = f (arg) (t)
                             resetAt (key)
-                            finish (i, Seq ("value" -> u, "cached" -> false))
+                            finish (i, List ("value" -> u, "cached" -> false))
                             u
                     }
                 }

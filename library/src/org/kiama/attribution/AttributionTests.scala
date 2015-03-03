@@ -485,7 +485,7 @@ class AttributionTests extends Tests {
         test ("a down attribute with default function returns the computed value") {
             val dattr = down[Int] (
                             (n : TestTree) =>
-                                if (tree.parent (n) == Seq ()) 42 else 66
+                                if (tree.parent (n) == Nil) 42 else 66
                         ) {
                             case tree.parent (_) =>
                                 99
