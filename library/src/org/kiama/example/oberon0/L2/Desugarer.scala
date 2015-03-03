@@ -35,7 +35,6 @@ trait Desugarer extends L0.Desugarer {
     import L1.source.{IfStatement, WhileStatement}
     import org.kiama.rewriting.Rewriter.{deepclone, everywhere,
         rewriteTree, rule}
-    import scala.collection.immutable.Seq
     import source.{Case, CaseStatement, Condition, ForStatement,
         MinMaxCond, ValCond}
 
@@ -82,11 +81,11 @@ trait Desugarer extends L0.Desugarer {
                                else
                                    GeExp (idnexp, limexp)
                     Block (
-                        Seq (
-                            VarDecl (Seq (IdnDef (limvarname)),
+                        List (
+                            VarDecl (List (IdnDef (limvarname)),
                                            NamedType (IdnUse ("INTEGER")))
                         ),
-                        Seq (
+                        List (
                             Assignment (deepclone (idnexp), lower),
                             Assignment (deepclone (limexp), upper),
                             WhileStatement (cond,
@@ -123,11 +122,11 @@ trait Desugarer extends L0.Desugarer {
                     val casevarname = "_caseval"
                     val caseexp = IdnExp (IdnUse (casevarname))
                     Block (
-                        Seq (
-                            VarDecl (Seq (IdnDef (casevarname)),
+                        List (
+                            VarDecl (List (IdnDef (casevarname)),
                                            NamedType (IdnUse ("INTEGER")))
                         ),
-                        Seq (
+                        List (
                             Assignment (caseexp, exp),
                             casesToIf (caseexp, cases, optelse)
                         )
@@ -152,7 +151,7 @@ trait Desugarer extends L0.Desugarer {
          * If a case has more than one condition then they are combined with Or
          * operators.
          */
-        def casesToIf (ce : IdnExp, cases : Seq[Case], optelse : Option[Block]) : IfStatement = {
+        def casesToIf (ce : IdnExp, cases : List[Case], optelse : Option[Block]) : IfStatement = {
 
             /*
              * Return an expression for a case condition. A value condition becomes
@@ -169,7 +168,7 @@ trait Desugarer extends L0.Desugarer {
              * Return a single expression for a sequence of conditions by
              * forming a disjunction of translating each one.
              */
-            def condsToExp (ns : Seq[Condition]) : Expression = {
+            def condsToExp (ns : List[Condition]) : Expression = {
                 val es = ns.map (condToExp)
                 es.tail.foldLeft (es.head) (OrExp)
             }

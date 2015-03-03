@@ -29,7 +29,6 @@ trait SyntaxAnalyser extends L3.SyntaxAnalyser {
 
     import base.source.Expression
     import L0.source.TypeDef
-    import scala.collection.immutable.Seq
     import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
         RecordTypeDef}
 
@@ -58,7 +57,7 @@ trait SyntaxAnalyser extends L3.SyntaxAnalyser {
     lazy val fldidn =
         ident ^^ FieldIdn
 
-    override def keywordStrings : Seq[String] =
+    override def keywordStrings : List[String] =
         "ARRAY" +: "OF" +: "RECORD" +: super.keywordStrings
 
 }

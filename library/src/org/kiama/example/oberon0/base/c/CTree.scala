@@ -23,7 +23,6 @@ package example.oberon0
 package base.c
 
 import org.kiama.output.PrettyExpression
-import scala.collection.immutable.Seq
 
 /**
  * Root type of all C abstract syntax tree nodes.
@@ -33,7 +32,7 @@ abstract class CNode
 /**
  * C programs.
  */
-case class CProgram (includes : Seq[CInclude], decls : Seq[CDeclaration]) extends CNode
+case class CProgram (includes : List[CInclude], decls : List[CDeclaration]) extends CNode
 
 /**
  * C include directive.
@@ -53,13 +52,13 @@ case class CVarDecl (ident : String, tipe : CType) extends CDeclaration
 /**
  * C function declarations.
  */
-case class CFunctionDecl (decl : CVarDecl, args : Seq[CDeclaration],
+case class CFunctionDecl (decl : CVarDecl, args : List[CDeclaration],
                           body : CBlock) extends CDeclaration
 
 /**
  * C blocks.
  */
-case class CBlock (decls : Seq[CDeclaration], stmts : Seq[CStatement]) extends CStatement
+case class CBlock (decls : List[CDeclaration], stmts : List[CStatement]) extends CStatement
 
 /**
  * Non-terminal type for C types.

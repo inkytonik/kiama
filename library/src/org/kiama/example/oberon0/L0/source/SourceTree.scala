@@ -26,7 +26,6 @@ import base.source.{Declaration, Expression, IdnDef, IdnUse, SourceNode,
     Statement}
 import org.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
     PrettyBinaryExpression, PrettyUnaryExpression}
-import scala.collection.immutable.Seq
 
 /**
  * Constant declarations.
@@ -36,7 +35,7 @@ case class ConstDecl (idndef : IdnDef, exp: Expression) extends Declaration
 /**
  * Variable declarations.
  */
-case class VarDecl (idndefs : Seq[IdnDef], tipe: TypeDef) extends Declaration
+case class VarDecl (idndefs : List[IdnDef], tipe: TypeDef) extends Declaration
 
 /**
  * Type declarations.

@@ -25,7 +25,6 @@ package L4
 trait SymbolTable extends L3.SymbolTable {
 
     import org.kiama.util.Entity
-    import scala.collection.immutable.Seq
 
     /**
      * An array type with the given size and element type.  Setting size
@@ -39,7 +38,7 @@ trait SymbolTable extends L3.SymbolTable {
     /**
      * A record with the given fields.
      */
-    case class RecordType (fields : Seq[Field]) extends Type {
+    case class RecordType (fields : List[Field]) extends Type {
         override def toString : String = s"RECORD ${fields.mkString ("; ")} END"
     }
 

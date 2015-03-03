@@ -30,7 +30,6 @@ trait Translator {
     import c.{CDeclaration, CProgram, CStatement}
     import source.{Declaration, ModuleDecl, Statement}
     import source.SourceTree.SourceTree
-    import scala.collection.immutable.Seq
 
     /**
      * Generate C equivalent of a module.
@@ -40,7 +39,7 @@ trait Translator {
     /**
      * Generate C equivalent of a declaration.
      */
-    def translate (d : Declaration) : Seq[CDeclaration]
+    def translate (d : Declaration) : List[CDeclaration]
 
     /**
      * Generate C equivalent of a statement.

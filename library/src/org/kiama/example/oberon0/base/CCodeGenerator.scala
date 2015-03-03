@@ -29,7 +29,6 @@ trait CCodeGenerator extends Translator {
 
     import c.{CArrayType, CBlock, CDeclaration, CEmptyStmt, CFunctionDecl,
         CIntExp, CIntType, CProgram, CReturn, CStatement, CStrType, CVarDecl}
-    import scala.collection.immutable.Seq
     import source.{Block, Declaration, EmptyStmt, ModuleDecl, Statement}
 
     /**
@@ -39,18 +38,18 @@ trait CCodeGenerator extends Translator {
         val ModuleDecl (_, Block (ds, ss), _) = m
         val main =
             CFunctionDecl (CVarDecl ("main", CIntType ()),
-                           Seq (CVarDecl ("argc", CIntType ()),
+                           List (CVarDecl ("argc", CIntType ()),
                                  CVarDecl ("argv", CArrayType (0, CStrType ()))),
                            CBlock (Nil,
                                    (ss map translate) :+
                                         CReturn (CIntExp (0))))
-        CProgram (Nil, (ds map translate).flatten ++ Seq (main))
+        CProgram (Nil, (ds map translate).flatten ++ List (main))
     }
 
     /**
      * Interface to C translation of declarations.
      */
-    def translate (d : Declaration) : Seq[CDeclaration]
+    def translate (d : Declaration) : List[CDeclaration]
 
     /**
      * Generate C equivalent of a statement.

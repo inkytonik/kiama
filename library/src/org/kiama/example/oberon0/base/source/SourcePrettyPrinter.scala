@@ -31,7 +31,6 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
 
     import org.kiama.output.PrettyExpression
     import org.kiama.output.PrettyPrinterTypes.Document
-    import scala.collection.immutable.Seq
 
     def format (m : ModuleDecl) : Document =
         pretty (toDoc (m))
@@ -73,7 +72,7 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
      * Pretty-print a nested list of nodes separated by sep (default: semi
      * colon) and line breaks.
      */
-    def semisep (l : Seq[SourceNode], sep : Doc = semi) : Doc =
+    def semisep (l : List[SourceNode], sep : Doc = semi) : Doc =
         nest (lsep (l map toDoc, sep))
 
 }

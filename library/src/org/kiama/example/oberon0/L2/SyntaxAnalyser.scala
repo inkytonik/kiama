@@ -29,7 +29,6 @@ trait SyntaxAnalyser extends L1.SyntaxAnalyser {
 
     import base.source.Statement
     import L0.source.IdnExp
-    import scala.collection.immutable.Seq
     import source.{Case, CaseStatement, ForStatement, MinMaxCond, ValCond}
 
     override def statementDef : PackratParser[Statement] =
@@ -65,7 +64,7 @@ trait SyntaxAnalyser extends L1.SyntaxAnalyser {
         expression ~ (".." ~> expression) ^^ MinMaxCond |
         expression ^^ ValCond
 
-    override def keywordStrings : Seq[String] =
+    override def keywordStrings : List[String] =
         "BY" +: "CASE" +: "FOR" +: "OF" +: "STEP" +: "TO" +: super.keywordStrings
 
 }

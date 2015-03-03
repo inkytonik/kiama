@@ -23,7 +23,6 @@ package example.oberon0
 package base.source
 
 import org.kiama.output.PrettyExpression
-import scala.collection.immutable.Seq
 
 /**
  * Module for common source tree definitions.
@@ -62,7 +61,7 @@ abstract class Statement extends SourceNode
 /**
  * Block of declarations and statements.
  */
-case class Block (decls : Seq[Declaration], stmts: Seq[Statement]) extends Statement
+case class Block (decls : List[Declaration], stmts: List[Statement]) extends Statement
 
 /**
  * Empty statements.

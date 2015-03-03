@@ -31,7 +31,6 @@ trait CCodeGenerator extends L0.CCodeGenerator {
     import base.source.{Block, Expression, Statement}
     import c.{CIfElseStatement, CIfStatement, CWhileStatement}
     import source.{IfStatement, WhileStatement}
-    import scala.collection.immutable.Seq
 
     /**
      * Add translation of IF and WHILE statements.
@@ -52,7 +51,7 @@ trait CCodeGenerator extends L0.CCodeGenerator {
      * Translation of expression, block pairs from an IF statement into
      * cascading C IFs.
      */
-    def translate (eis : Seq[(Expression,Block)], oe : Option[Block]) : CStatement = {
+    def translate (eis : List[(Expression,Block)], oe : Option[Block]) : CStatement = {
         val (e, ss) = eis.last
         val te = translate (e)
         val tss = translate (ss)

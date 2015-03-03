@@ -24,7 +24,6 @@ package L4.source
 
 import base.source.{Expression, SourceNode}
 import L0.source.TypeDef
-import scala.collection.immutable.Seq
 
 /**
  * Array type definitions.
@@ -39,12 +38,12 @@ case class IndexExp (base : Expression, exp : Expression) extends Expression
 /**
  * Record type definitions.
  */
-case class RecordTypeDef (fields : Seq[FieldList]) extends TypeDef
+case class RecordTypeDef (fields : List[FieldList]) extends TypeDef
 
 /**
  * Record field lists.
  */
-case class FieldList (idndefs : Seq[String], tipe : TypeDef) extends SourceNode
+case class FieldList (idndefs : List[String], tipe : TypeDef) extends SourceNode
 
 /**
  * Record field access expressions.

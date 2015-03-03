@@ -26,7 +26,6 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
     import base.source.{Expression, Identifier, IdnDef, IdnUse, SourceNode}
     import org.kiama.util.Messaging.{check, message, Messages, noMessages}
-    import scala.collection.immutable.Seq
     import source.{Call, Mode, ValMode, VarMode}
 
     /**
@@ -75,7 +74,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * work it out from the declaration.  Returns None if the entity is
      * not a procedure.
      */
-    lazy val parameters : Identifier => Option[Seq[ParamInfo]] =
+    lazy val parameters : Identifier => Option[List[ParamInfo]] =
         attr (
             n =>
                 entity (n) match {

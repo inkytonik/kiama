@@ -28,17 +28,16 @@ package L0
 trait SyntaxAnalyser extends base.SyntaxAnalyser {
 
     import base.source.{Declaration, Expression, Statement}
-    import scala.collection.immutable.Seq
     import scala.language.postfixOps
     import source.{AddExp, AndExp, Assignment, ConstDecl, DivExp, EqExp,
         GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp, MulExp,
         NamedType, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl,
         TypeDef, VarDecl}
 
-    override def declarationsDef : PackratParser[Seq[Declaration]] =
+    override def declarationsDef : PackratParser[List[Declaration]] =
         (constdeclsection?) ~ (typedeclsection?) ~ (vardeclsection?) ^^ {
             case oc ~ ot ~ ov =>
-                Seq (oc, ot, ov).flatten.flatten
+                List (oc, ot, ov).flatten.flatten
         }
 
     lazy val constdeclsection =
@@ -117,7 +116,7 @@ trait SyntaxAnalyser extends base.SyntaxAnalyser {
     lazy val intexp =
         constrainedInt ^^ IntExp
 
-    override def keywordStrings : Seq[String] =
+    override def keywordStrings : List[String] =
         "CONST" +: "DIV" +: "MOD" +: "OR" +: "TYPE" +: "VAR" +: super.keywordStrings
 
 }

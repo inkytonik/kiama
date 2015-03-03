@@ -25,7 +25,6 @@ package L3.source
 trait SourcePrettyPrinter extends L2.source.SourcePrettyPrinter {
 
     import base.source.{IdnDef, IdnUse, SourceNode}
-    import scala.collection.immutable.Seq
 
     override def toDoc (n : SourceNode) : Doc =
         n match {
@@ -44,7 +43,7 @@ trait SourcePrettyPrinter extends L2.source.SourcePrettyPrinter {
                 super.toDoc (n)
         }
 
-    def paramsToDoc (ds : Seq[Doc], sep : Doc) : Doc =
+    def paramsToDoc (ds : List[Doc], sep : Doc) : Doc =
         ds match {
             case Nil => empty
             case _   => space <> parens (hsep (ds, sep))

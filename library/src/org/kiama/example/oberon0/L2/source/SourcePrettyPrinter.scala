@@ -25,7 +25,6 @@ package L2.source
 trait SourcePrettyPrinter extends L1.source.SourcePrettyPrinter {
 
     import base.source.SourceNode
-    import scala.collection.immutable.Seq
 
     override def toDoc (n : SourceNode) : Doc =
         n match {
@@ -51,7 +50,7 @@ trait SourcePrettyPrinter extends L1.source.SourcePrettyPrinter {
         s.optelse.map (b => "ELSE" <> semisep (b.stmts) <> line).getOrElse (empty) <>
         "END"
 
-    def casesToDoc (l : Seq[Case]) : Doc = {
+    def casesToDoc (l : List[Case]) : Doc = {
 
         def condToDoc (cond : Condition) : Doc =
             cond match {
@@ -61,7 +60,7 @@ trait SourcePrettyPrinter extends L1.source.SourcePrettyPrinter {
                     toDoc (min) <+> ".." <+> toDoc (max)
             }
 
-        def condsToDoc (conds : Seq[Condition]) : Doc =
+        def condsToDoc (conds : List[Condition]) : Doc =
             hsep (conds map condToDoc, comma)
 
         def singleCaseToDoc (kase : Case) : Doc =

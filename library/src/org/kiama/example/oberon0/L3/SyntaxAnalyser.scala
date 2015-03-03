@@ -29,9 +29,8 @@ trait SyntaxAnalyser extends L2.SyntaxAnalyser {
 
     import base.source.{Declaration, Statement}
     import source.{Call, FPSection, ProcDecl, ValMode, VarMode}
-    import scala.collection.immutable.Seq
 
-    override def declarationsDef : PackratParser[Seq[Declaration]] =
+    override def declarationsDef : PackratParser[List[Declaration]] =
         super.declarationsDef ~ rep (procedureDeclaration <~ ";") ^^ {
             case ds ~ pds => ds ++ pds
         }
@@ -39,7 +38,7 @@ trait SyntaxAnalyser extends L2.SyntaxAnalyser {
     lazy val procedureDeclaration =
         ("PROCEDURE" ~> idndef) ~ (optformalParameters <~ ";") ~ block ~ idnuse ^^ ProcDecl
 
-    lazy val optformalParameters : PackratParser[Seq[FPSection]] =
+    lazy val optformalParameters : PackratParser[List[FPSection]] =
         "(" ~> repsep (fpsection, ";") <~ ")" |
         result (Nil)
 
@@ -61,7 +60,7 @@ trait SyntaxAnalyser extends L2.SyntaxAnalyser {
         "(" ~> repsep (expression, ",") <~ ")" |
         guard (";" | "ELSE" | "END") ^^^ Nil
 
-    override def keywordStrings : Seq[String] =
+    override def keywordStrings : List[String] =
         "PROCEDURE" +: super.keywordStrings
 
 }

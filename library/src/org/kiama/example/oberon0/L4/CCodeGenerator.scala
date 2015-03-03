@@ -33,7 +33,6 @@ trait CCodeGenerator extends TypeAnalyser with L3.CCodeGenerator with SymbolTabl
     import L0.source.IdnExp
     import L0.c.CIdnExp
     import L3.source.Mode
-    import scala.collection.immutable.Seq
     import source.{FieldExp, FieldIdn, IndexExp}
 
     /**

@@ -26,7 +26,6 @@ trait SymbolTable extends L0.SymbolTable {
 
     import org.kiama.util.Entity
     import source.{Mode, ProcDecl, ValMode, VarMode}
-    import scala.collection.immutable.Seq
 
     /**
      * A procedure entity represented by a procedure declaration.
@@ -55,19 +54,19 @@ trait SymbolTable extends L0.SymbolTable {
     /**
      * A built-in procedure with its parameter information.
      */
-    case class BuiltinProc (ident : String, params : Seq[ParamInfo]) extends Entity
+    case class BuiltinProc (ident : String, params : List[ParamInfo]) extends Entity
 
     /**
      * The built-in Read procedure.
      */
     lazy val readProc =
-        BuiltinProc ("Read", Seq (ParamInfo (VarMode (), "ReadParam", integerType)))
+        BuiltinProc ("Read", List (ParamInfo (VarMode (), "ReadParam", integerType)))
 
     /**
      * The built-in Write procedure.
      */
     lazy val writeProc =
-        BuiltinProc ("Write", Seq (ParamInfo (ValMode (), "WriteParam", integerType)))
+        BuiltinProc ("Write", List (ParamInfo (ValMode (), "WriteParam", integerType)))
 
     /**
      * The built-in WriteLn procedure.
@@ -84,8 +83,8 @@ trait SymbolTable extends L0.SymbolTable {
     /**
      * The default environment with pre-defined procedures added.
      */
-    override def defenvPairs : Seq[(String,Entity)] =
-        Seq (
+    override def defenvPairs : List[(String,Entity)] =
+        List (
             "Read"    -> readProc,
             "Write"   -> writeProc,
             "WriteLn" -> writelnProc

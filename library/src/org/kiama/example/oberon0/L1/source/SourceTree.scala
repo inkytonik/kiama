@@ -23,14 +23,13 @@ package example.oberon0
 package L1.source
 
 import base.source.{Block, Expression, Statement}
-import scala.collection.immutable.Seq
 
 /**
  * Conditional statements containing a main expression and then block, zero
  * or more else if blocks, and an optional else block.
  */
 case class IfStatement (cond : Expression, block : Block,
-                        elsifs : Seq[(Expression,Block)],
+                        elsifs : List[(Expression,Block)],
                         optelse : Option[Block]) extends Statement
 
 /**

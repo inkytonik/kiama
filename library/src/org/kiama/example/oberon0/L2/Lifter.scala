@@ -30,7 +30,6 @@ trait Lifter extends base.Transformer {
     import base.source.{Block, Declaration, ModuleDecl}
     import base.source.SourceTree.SourceTree
     import org.kiama.rewriting.Rewriter.{everywherebu, rewriteTree, rule}
-    import scala.collection.immutable.Seq
 
     /**
      * Lift inner declarations within the module to the top level.  Assumes
@@ -41,7 +40,7 @@ trait Lifter extends base.Transformer {
         /*
          * The collected declarations.
          */
-        val decls = Seq.newBuilder[Declaration]
+        val decls = List.newBuilder[Declaration]
 
         /*
          * Lift declarations from inner blocks to the top level by adding

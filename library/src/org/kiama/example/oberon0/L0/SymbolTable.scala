@@ -26,7 +26,6 @@ trait SymbolTable extends base.SymbolTable {
 
     import base.source.ModuleDecl
     import org.kiama.util.{Entity, ErrorEntity}
-    import scala.collection.immutable.{Seq, Stack}
     import source.{ConstDecl, TypeDecl, TypeDef}
 
     /**
@@ -103,8 +102,8 @@ trait SymbolTable extends base.SymbolTable {
     def defenv : Environment =
         rootenv (defenvPairs : _*)
 
-    def defenvPairs : Seq[(String,Entity)] =
-        Seq (
+    def defenvPairs : List[(String,Entity)] =
+        List (
             "INTEGER" -> integerType,
             "BOOLEAN" -> booleanType,
             "TRUE" -> trueConstant,

@@ -28,7 +28,6 @@ package L1
 trait SyntaxAnalyser extends L0.SyntaxAnalyser {
 
     import base.source.{Block, Expression, Statement}
-    import scala.collection.immutable.Seq
     import source.{IfStatement, WhileStatement}
 
     override def statementDef : PackratParser[Statement]=
@@ -54,7 +53,7 @@ trait SyntaxAnalyser extends L0.SyntaxAnalyser {
         "WHILE" ~> expression ~ ("DO" ~> statementSequence <~ "END") ^^
         WhileStatement
 
-    override def keywordStrings : Seq[String] =
+    override def keywordStrings : List[String] =
         "DO" +: "ELSE" +: "ELSIF" +: "IF" +: "THEN" +: "WHILE" +: super.keywordStrings
 
 }
