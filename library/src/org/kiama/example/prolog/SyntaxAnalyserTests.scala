@@ -195,7 +195,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             "string matching regex `[0-9]+' expected but `(' found")
     }
 
-    // Seq terms
+    // List terms
 
     test ("parsing an empty list works") {
         assertParseOk ("[]", list, Pred ("nil", Nil))
