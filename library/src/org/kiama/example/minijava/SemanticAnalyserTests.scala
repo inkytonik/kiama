@@ -208,7 +208,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("a method name cannot be assigned to") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = List ()
+        val vars = Nil
         val stmts = List (VarAssign (IdnUse ("m"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts),
             Message ("illegal assignment to non-variable, non-argument"))

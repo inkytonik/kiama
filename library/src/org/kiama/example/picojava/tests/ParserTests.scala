@@ -81,7 +81,7 @@ class ParserTests extends SyntaxAnalyser with RegexParserTests {
     }
 
     test ("parse an empty block") {
-        assertParseOk ("{}", program, Program (Block (List ())))
+        assertParseOk ("{}", program, Program (Block (Nil)))
     }
 
     test ("generate a parse error for an empty program") {
@@ -94,12 +94,12 @@ class ParserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parse an empty class declaration") {
         assertParseOk ("{ class A { } }", program,
-            Program (Block (List (ClassDecl ("A", None, Block (List ()))))))
+            Program (Block (List (ClassDecl ("A", None, Block (Nil))))))
     }
 
     test ("parse an empty class declaration with an extends clause") {
         assertParseOk ("{ class A extends B { } }", program,
-            Program (Block (List (ClassDecl ("A", Some (Use ("B")), Block (List ()))))))
+            Program (Block (List (ClassDecl ("A", Some (Use ("B")), Block (Nil))))))
     }
 
     test ("generate a parse error for a class declaration with a qualified extends clause") {
@@ -109,7 +109,7 @@ class ParserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parse a nested class") {
         assertParseOk ("{ class A { class B { } } }", program,
-            Program (Block (List (ClassDecl ("A", None, Block (List (ClassDecl ("B", None, Block (List ())))))))))
+            Program (Block (List (ClassDecl ("A", None, Block (List (ClassDecl ("B", None, Block (Nil)))))))))
     }
 
     test ("parse a variable declaration with a simple type") {

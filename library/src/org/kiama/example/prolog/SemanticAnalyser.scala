@@ -74,7 +74,7 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      * predicates for lists: cons and nil.
      */
     val defenv : Environment =
-        rootenv ("nil" -> Predicate (List ()),
+        rootenv ("nil" -> Predicate (Nil),
                  "cons" -> Predicate (List (UnknownType (), ListType ())))
 
     /**
