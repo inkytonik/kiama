@@ -24,21 +24,20 @@ package example.oneohonecompanies
 object SampleCompany {
 
     import CompanyTree._
-    import scala.collection.immutable.Seq
 
     val craig = Employee ("Craig", "Redmond", 123456)
     val erik  = Employee ("Erik", "Utrecht", 12345)
     val ralf  = Employee ("Ralf", "Koblenz", 1234)
-    val research = Dept ("Research", craig, Seq (PU (erik), PU (ralf)))
+    val research = Dept ("Research", craig, List (PU (erik), PU (ralf)))
 
     val klaus = Employee ("Klaus", "Boston", 23456)
     val ray   = Employee ("Ray", "Redmond", 234567)
     val karl  = Employee ("Karl", "Riga", 2345)
     val joe   = Employee ("Joe", "Wifi City", 2344)
-    val dev11 = Dept ("Dev1.1", karl, Seq (PU (joe)))
-    val dev1  = Dept ("Dev1", klaus, Seq (DU (dev11)))
-    val dev   = Dept ("Development", ray, Seq (DU (dev1)))
+    val dev11 = Dept ("Dev1.1", karl, List (PU (joe)))
+    val dev1  = Dept ("Dev1", klaus, List (DU (dev11)))
+    val dev   = Dept ("Development", ray, List (DU (dev1)))
 
-    val company = Company (Seq (research, dev))
+    val company = Company (List (research, dev))
 
 }

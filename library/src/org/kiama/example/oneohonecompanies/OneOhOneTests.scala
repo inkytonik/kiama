@@ -30,7 +30,6 @@ class OneOhOneTests extends Tests {
     import Total._
     import Cut.cut
     import Depth.depth
-    import scala.collection.immutable.Seq
 
     {
         val empty = Company (Nil)
@@ -67,7 +66,7 @@ class OneOhOneTests extends Tests {
     }
 
     {
-        val onlymanager = Company (Seq (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
+        val onlymanager = Company (List (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
 
         val tree = new CompanyTree (onlymanager)
         val othermod = new Other (tree)
@@ -205,8 +204,8 @@ class OneOhOneTests extends Tests {
     }
 
     {
-        val d = Company (Seq (Dept ("D1", Employee ("An", "Emp", 100),
-                                    Seq (PU (Employee ("Another", "Emp", 500))))))
+        val d = Company (List (Dept ("D1", Employee ("An", "Emp", 100),
+                                     List (PU (Employee ("Another", "Emp", 500))))))
 
         val tree = new CompanyTree (d)
         val precedencemod = new Precedence (tree)
@@ -219,9 +218,9 @@ class OneOhOneTests extends Tests {
 
     {
         val d1 = Dept ("D2", Employee ("The", "Emp", 100),
-                       Seq (PU (Employee ("That", "Emp", 50))))
-        val d2 = Company (Seq (Dept ("D3", Employee ("TheOther", "Emp", 25),
-                               Seq (DU (d1)))))
+                       List (PU (Employee ("That", "Emp", 50))))
+        val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25),
+                                List (DU (d1)))))
 
         val tree = new CompanyTree (d2)
         val precedencemod = new Precedence (tree)
