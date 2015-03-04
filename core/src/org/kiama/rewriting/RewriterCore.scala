@@ -532,7 +532,7 @@ trait RewriterCore {
                 case Some (ti) if same (ct, ti) =>
                     Some (p)
                 case Some (ti) =>
-                    val newchildren = p.productIterator.toArray.map (makechild)
+                    val newchildren = p.productIterator.map (makechild).toArray
                     newchildren (i - 1) = makechild (ti)
                     val ret = dup (p, newchildren)
                     Some (ret)

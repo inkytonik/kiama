@@ -78,7 +78,7 @@ package output
      */
     def keepMaxIndent (n : Int, s : String,
                        mkrepl : (Int, String) => String = indentedEllipsis) : String = {
-        s.linesWithSeparators.toSeq.foldLeft ((Vector[String] (), true)) {
+        s.linesWithSeparators.foldLeft ((Vector[String] (), true)) {
             case ((result, first), l) =>
                 if (indentOf (l) >= n)
                     if (first)
