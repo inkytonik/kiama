@@ -1,5 +1,4 @@
 -J-Xms2G
 -J-Xmx2G
 -J-XX:+CMSClassUnloadingEnabled
--J-XX:MaxPermSize=512M
 -J-XX:+UseParallelGC
