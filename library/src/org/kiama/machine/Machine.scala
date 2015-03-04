@@ -37,7 +37,6 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
         extends PrettyPrinter {
 
     import scala.annotation.tailrec
-    import scala.collection.immutable.Seq
     import scala.collection.mutable.{Map => MutableMap}
     import scala.language.implicitConversions
 
@@ -96,7 +95,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          * state value only becomes defined when this latter process happens.
          */
         def := (t : T) {
-            updates = new ScalarUpdate (this, t) +: updates
+            updates = new ScalarUpdate (this, t) :: updates
         }
 
         /**
@@ -147,7 +146,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          * state value only becomes defined when this latter process happens.
          */
         def := (u : U) {
-            updates = new ParamUpdate (state, t, u) +: updates
+            updates = new ParamUpdate (state, t, u) :: updates
         }
 
         /**
@@ -343,7 +342,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
     /**
      * The updates for the current step of execution of this machine.
      */
-    private var updates : Seq[Update] = Nil
+    private var updates : List[Update] = Nil
 
     /**
      * Initialise the state of this machine.  This routine is called
@@ -435,5 +434,5 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
  * that performed the update, `updates` is all of the updates for the key
  * that was updated inconsistently.
  */
-class InconsistentUpdateException (m : Machine, updates : Seq[Machine#Update])
+class InconsistentUpdateException (m : Machine, updates : List[Machine#Update])
     extends Exception (s"Machine = ${m.name}, updates = $updates")
