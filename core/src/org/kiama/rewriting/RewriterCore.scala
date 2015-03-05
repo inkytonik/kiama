@@ -513,9 +513,12 @@ trait RewriterCore {
             lazy val strat = s
             t =>
                 t match {
-                    case p : Product => childProduct (strat, i, p)
-                    case t : Seq[_]  => childSeq (strat, i, t.asInstanceOf[Seq[Any]])
-                    case _           => None
+                    case p : Product =>
+                        childProduct (strat, i, p)
+                    case t : Seq[_] =>
+                        childSeq (strat, i, t.asInstanceOf[Seq[Any]])
+                    case _ =>
+                        None
                 }
         })
 
@@ -534,8 +537,7 @@ trait RewriterCore {
                 case Some (ti) =>
                     val newchildren = p.productIterator.map (makechild).toArray
                     newchildren (i - 1) = makechild (ti)
-                    val ret = dup (p, newchildren)
-                    Some (ret)
+                    Some (dup (p, newchildren))
                 case None =>
                     None
             }
@@ -598,11 +600,16 @@ trait RewriterCore {
             lazy val strat = s
             t =>
                 t match {
-                    case r : Rewritable     => allRewritable (strat, r)
-                    case p : Product        => allProduct (strat, p)
-                    case m : Map[_,_]       => allMap (strat, m.asInstanceOf[Map[Any,Any]])
-                    case t : Traversable[_] => allTraversable (strat, t.asInstanceOf[Traversable[Any]])
-                    case _                  => Some (t)
+                    case r : Rewritable =>
+                        allRewritable (strat, r)
+                    case p : Product =>
+                        allProduct (strat, p)
+                    case m : Map[_,_] =>
+                        allMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] =>
+                        allTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                    case _ =>
+                        Some (t)
                 }
         })
 
@@ -626,10 +633,9 @@ trait RewriterCore {
                                 return None
                         }
                 }
-            if (changed) {
-                val ret = r.reconstruct (newchildren.result)
-                Some (ret)
-            } else
+            if (changed)
+                Some (r.reconstruct (newchildren.result))
+            else
                 Some (r)
         }
     }
@@ -654,10 +660,9 @@ trait RewriterCore {
                                 return None
                         }
                 }
-            if (changed) {
-                val ret = dup (p, newchildren.result)
-                Some (ret)
-            } else
+            if (changed)
+                Some (dup (p, newchildren.result))
+            else
                 Some (p)
         }
     }
@@ -747,11 +752,16 @@ trait RewriterCore {
             lazy val strat = s
             t =>
                 t match {
-                    case r : Rewritable     => oneRewritable (strat, r)
-                    case p : Product        => oneProduct (strat, p)
-                    case m : Map[_,_]       => oneMap (strat, m.asInstanceOf[Map[Any,Any]])
-                    case t : Traversable[_] => oneTraversable (strat, t.asInstanceOf[Traversable[Any]])
-                    case _                  => None
+                    case r : Rewritable =>
+                        oneRewritable (strat, r)
+                    case p : Product =>
+                        oneProduct (strat, p)
+                    case m : Map[_,_] =>
+                        oneMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] =>
+                        oneTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                    case _  =>
+                        None
                 }
         })
 
@@ -767,8 +777,7 @@ trait RewriterCore {
                         return Some (r)
                     case Some (ti) =>
                         val newchildren = children.updated (i, ti)
-                        val ret = r.reconstruct (newchildren)
-                        return Some (ret)
+                        return Some (r.reconstruct (newchildren))
                     case None =>
                         i + 1
                 }
@@ -789,8 +798,7 @@ trait RewriterCore {
                     case Some (ti) =>
                         val newchildren = p.productIterator.toArray.map (makechild)
                         newchildren (i) = makechild (ti)
-                        val ret = dup (p, newchildren)
-                        return Some (ret)
+                        return Some (dup (p, newchildren))
                     case None =>
                         i + 1
                 }
@@ -893,11 +901,16 @@ trait RewriterCore {
             lazy val strat = s
             t =>
                 t match {
-                    case r : Rewritable     => someRewritable (strat, r)
-                    case p : Product        => someProduct (strat, p)
-                    case m : Map[_,_]       => someMap (strat, m.asInstanceOf[Map[Any,Any]])
-                    case t : Traversable[_] => someTraversable (strat, t.asInstanceOf[Traversable[Any]])
-                    case _                  => None
+                    case r : Rewritable =>
+                        someRewritable (strat, r)
+                    case p : Product =>
+                        someProduct (strat, p)
+                    case m : Map[_,_] =>
+                        someMap (strat, m.asInstanceOf[Map[Any,Any]])
+                    case t : Traversable[_] =>
+                        someTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                    case _ =>
+                        None
                 }
         })
 
@@ -923,10 +936,9 @@ trait RewriterCore {
                         }
                 }
             if (success)
-                if (changed) {
-                    val ret = r.reconstruct (newchildren.result)
-                    Some (ret)
-                } else
+                if (changed)
+                    Some (r.reconstruct (newchildren.result))
+                else
                     Some (r)
             else
                 None
@@ -955,10 +967,9 @@ trait RewriterCore {
                         }
                 }
             if (success)
-                if (changed) {
-                    val ret = dup (p, newchildren.result)
-                    Some (ret)
-                } else
+                if (changed)
+                    Some (dup (p, newchildren.result))
+                else
                     Some (p)
             else
                 None
@@ -1052,8 +1063,10 @@ trait RewriterCore {
         mkStrategy (name,
             t =>
                 t match {
-                    case p : Product => congruenceProduct (p, ss : _*)
-                    case _           => Some (t)
+                    case p : Product =>
+                        congruenceProduct (p, ss : _*)
+                    case _ =>
+                        Some (t)
                 }
         )
 
@@ -1075,10 +1088,9 @@ trait RewriterCore {
                                return None
                        }
                }
-           if (changed) {
-               val ret = dup (p, newchildren.result)
-               Some (ret)
-           } else
+           if (changed)
+               Some (dup (p, newchildren.result))
+           else
                Some (p)
        } else
            None
