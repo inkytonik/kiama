@@ -47,8 +47,7 @@ class Counter (init : Int = -1) {
         }
 
     /**
-     * Return zero if this is the first time this method has been called.
-     * Otherwise increment the stored value and return its new value.
+     * Increment the stored value of the counter and return its new value.
      * `inc` is the amount to increment by (default: 1).
      */
     def next (inc : Int = 1) : Int = {
