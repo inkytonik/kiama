@@ -47,7 +47,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       output : Emitter = new OutputEmitter,
                       error : Emitter = new ErrorEmitter) : C
 
@@ -56,7 +56,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Array[String],
+    def createAndInitConfig (args : Seq[String],
                              output : Emitter = new OutputEmitter,
                              error : Emitter = new ErrorEmitter) : C = {
         val config = createConfig (args, output, error)
@@ -72,13 +72,13 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
      * contain just whitespace, otherwise do. Continue until `processline`
      * returns false. Call `prompt` each time input is about to be read.
      */
-    def driver (args : Array[String]) {
+    def driver (args : Seq[String]) {
 
         // Set up the configuration
         val config = createAndInitConfig (args)
 
         // Process any filename arguments
-        processfiles (config.filenames (), config)
+        processfiles (config)
 
         // Enter interactive phase
         config.output.emitln (banner)
@@ -109,16 +109,22 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
     }
 
     /**
-     * Process the files one by one.
+     * Process the files one by one, allowing config to be updated each time
+     * and updated config to be used by the next file.
      */
-    @tailrec
-    final def processfiles (filenames : List[String], config : C) : C = {
-        filenames match {
-            case filename +: rest =>
-                processfiles (rest, processfile (filename, config))
-            case _ =>
-                config
-        }
+    final def processfiles (config : C) : C = {
+
+        @tailrec
+        def loop (filenames : List[String], config : C) : C =
+            filenames match {
+                case filename +: rest =>
+                    loop (rest, processfile (filename, config))
+                case _ =>
+                    config
+            }
+
+        loop (config.filenames (), config)
+
     }
 
     /**
@@ -161,7 +167,7 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
  */
 trait REPL extends REPLBase[REPLConfig] {
 
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : REPLConfig =
         new REPLConfig (args) {
@@ -220,7 +226,7 @@ trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T,C]
  */
 trait ParsingREPL[T ] extends ParsingREPLWithConfig[T,REPLConfig] {
 
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : REPLConfig =
         new REPLConfig (args) {

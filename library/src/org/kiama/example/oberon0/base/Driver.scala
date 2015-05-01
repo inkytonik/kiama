@@ -53,7 +53,7 @@ trait Driver {
  * of compiler share a configuration type, so some of these settings have no
  * effect for some of the drivers.
  */
-abstract class Oberon0Config (args : Array[String], testPrettyPrint : Boolean = false) extends Config (args) {
+abstract class Oberon0Config (args : Seq[String], testPrettyPrint : Boolean = false) extends Config (args) {
     lazy val challenge = opt[Boolean] ("challenge", 'x', descr = "Run in LDTA challenge mode")
     lazy val astPrint = opt[Boolean] ("astPrint", 'a', descr = "Print the abstract syntax tree")
     lazy val astPrettyPrint = opt[Boolean] ("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
@@ -78,7 +78,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
     import org.kiama.util.Messaging.{report, sortmessages}
     import org.kiama.util.IO.{filereader, FileNotFoundException}
 
-    override def createConfig (args : Array[String],
+    override def createConfig (args : Seq[String],
                                out : Emitter = new OutputEmitter,
                                err : Emitter = new ErrorEmitter) : Oberon0Config =
         new Oberon0Config (args) {

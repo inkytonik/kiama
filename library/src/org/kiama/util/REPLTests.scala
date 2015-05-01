@@ -36,7 +36,7 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Generating REPLs insist on processing whitespace.
      */
-    override def createConfig (args : Array[String],
+    override def createConfig (args : Seq[String],
                                output : Emitter = new OutputEmitter,
                                error : Emitter = new ErrorEmitter) : REPLConfig =
         super.createConfig ("-w" +: args, output, error)
@@ -86,7 +86,7 @@ trait TestREPLWithConfig[C <: REPLConfig] extends TestDriverWithConfig[C] {
      * Run the REPL in test mode using the given configuration.
      */
     def testdriver (config : C) {
-        processfiles (config.filenames (), config)
+        processfiles (config)
     }
 
 }

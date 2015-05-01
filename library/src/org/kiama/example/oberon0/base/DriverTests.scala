@@ -129,7 +129,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
     /**
      * In the test configuration we pretty print the source and C ASTs by default.
      */
-    override def createConfig (args : Array[String],
+    override def createConfig (args : Seq[String],
                                out : Emitter = new OutputEmitter,
                                err : Emitter = new ErrorEmitter) : Oberon0Config =
         new Oberon0Config (args, true) {

@@ -32,7 +32,7 @@ import org.kiama.util.TestCompilerWithConfig
 class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
 
     filetests ("ObrRegression", "src/org/kiama/example/obr/tests/generic", ".obr", ".risc",
-               argslist = List (Array ("-a")))
+               argslist = List (Seq ("-a")))
 
 }
 
@@ -81,8 +81,8 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] 
         val title = s"""$name processing $obrfile parameters ${params.mkString("(",", ",")")} expecting $expect"""
         test (title) {
             val emitter = new StringEmitter
-            val args = Array ("--Kconsole", "string", params.mkString ("", "\n", "\n"),
-                              "-e", dirname + obrfile)
+            val args = Seq ("--Kconsole", "string", params.mkString ("", "\n", "\n"),
+                            "-e", dirname + obrfile)
             val config = createAndInitConfig (args, emitter)
             try {
                 testdriver (config)

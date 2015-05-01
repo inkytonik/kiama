@@ -28,7 +28,7 @@ import org.kiama.util.{Emitter, ErrorEmitter, OutputEmitter,
 /**
  * Configuration for the Lambda REPL.
  */
-abstract class LambdaConfig (args : Array[String]) extends REPLConfig (args) {
+abstract class LambdaConfig (args : Seq[String]) extends REPLConfig (args) {
     lazy val mechanism = opt[String] ("mechanism", descr = "Evaluation mechanism",
                                       default = Some ("reduce"))
 }
@@ -49,7 +49,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
     import org.kiama.util.{Emitter, Console}
     import org.kiama.util.Messaging.report
 
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : LambdaConfig =
         new LambdaConfig (args) {

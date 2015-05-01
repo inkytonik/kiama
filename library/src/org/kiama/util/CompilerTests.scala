@@ -31,7 +31,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.scalatest.TestFailedException
 
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : Config =
         new Config (args) {
@@ -51,7 +51,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
-        val config = createAndInitConfig (Array ("IDoNotExist.txt"), emitter, emitter)
+        val config = createAndInitConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
         testdriver (config)
         val expectedMsg =
             if (System.getProperty("os.name").startsWith ("Windows"))
@@ -84,7 +84,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       output : Emitter = new OutputEmitter,
                       error : Emitter = new ErrorEmitter) : C
 
@@ -93,7 +93,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Array[String],
+    def createAndInitConfig (args : Seq[String],
                              output : Emitter = new OutputEmitter,
                              error : Emitter = new ErrorEmitter) : C
 
@@ -139,7 +139,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      */
     def filetests (name : String, path : String, srcext : String, resext : String,
                    optinext : Option[String] = None, indefault : String = "",
-                   argslist : List[Array[String]] = List (Array ())) {
+                   argslist : List[Seq[String]] = List (Seq ())) {
 
         import java.io.FilenameFilter
 
@@ -150,7 +150,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          * messages. If the compilation fails, `rp` is assumed to contain the
          * expected messages. `rt` is a version of `rp` to use in the test title.
          */
-        def filetest (name : String, rp : String, args : Array[String], rt : String,
+        def filetest (name : String, rp : String, args : Seq[String], rt : String,
                       extra : String = "") {
             val ct = args.mkString (" ").replaceAllLiterally ("kiama/src/org/kiama/", "")
             val title = s"$name: $ct, expecting $rt$extra"
@@ -184,7 +184,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          * command line args to use.
          */
         def infiletests (c : String, dir : File, inext : String,
-                         args : Array[String]) {
+                         args : Seq[String]) {
             val resfilter =
                 new FilenameFilter {
                     def accept (dir : File, name : String) : Boolean = {
@@ -243,7 +243,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
      * Run the compiler in test mode using the given configuration.
      */
     def testdriver (config : C) {
-        processfiles (config.filenames (), config)
+        processfiles (config)
     }
 
 }

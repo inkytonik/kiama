@@ -50,7 +50,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * If supplied, use `output` instead of a standard output emitter,
      * and/or `error` instead of a standard error emitter.
      */
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       output : Emitter = new OutputEmitter,
                       error : Emitter = new ErrorEmitter) : C
 
@@ -59,7 +59,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Array[String],
+    def createAndInitConfig (args : Seq[String],
                              output : Emitter = new OutputEmitter,
                              error : Emitter = new ErrorEmitter) : C = {
         val config = createConfig (args, output, error)
@@ -72,23 +72,22 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * configuration for this execution. Then, use the configuration to
      * run the file processing in the appropriate way.
      */
-    def driver (args : Array[String]) {
+    def driver (args : Seq[String]) {
         val config = createAndInitConfig (args)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption (config.profile ())
-            profile (processfiles (config.filenames (), config), dimensions,
-                                   config.logging ())
+            profile (processfiles (config), dimensions, config.logging ())
         } else if (config.time ())
-            time (processfiles (config.filenames (), config))
+            time (processfiles (config))
         else
-            processfiles (config.filenames (), config)
+            processfiles (config)
     }
 
     /**
      * Process the files one by one.
      */
-    def processfiles (filenames : List[String], config : C) {
-        for (filename <- filenames) {
+    def processfiles (config : C) {
+        for (filename <- config.filenames ()) {
             processfile (filename, config)
         }
     }
@@ -173,7 +172,7 @@ trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexPars
  */
 trait Compiler[T] extends CompilerWithConfig[T,Config] {
 
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : Config =
         new Config (args) {

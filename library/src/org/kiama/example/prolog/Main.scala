@@ -28,7 +28,7 @@ import org.kiama.util.{Emitter, REPLConfig, ParsingREPLWithConfig}
 /**
  * Configuration for the Prolog REPL.
  */
-abstract class PrologConfig (args : Array[String]) extends REPLConfig (args) {
+abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
@@ -79,7 +79,7 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : PrologConfig =
         new PrologConfig (args) {

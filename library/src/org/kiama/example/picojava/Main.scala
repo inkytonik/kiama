@@ -28,7 +28,7 @@ import org.kiama.util.{CompilerWithConfig, Config, Emitter, ErrorEmitter,
 /**
  * Configuration for the PicoJava compiler.
  */
-abstract class PicojavaConfig (args : Array[String]) extends Config (args) {
+abstract class PicojavaConfig (args : Seq[String]) extends Config (args) {
     lazy val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
 }
 
@@ -38,7 +38,7 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
     import org.kiama.output.PrettyPrinterTypes.Document
     import org.kiama.util.Config
 
-    def createConfig (args : Array[String],
+    def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
                       err : Emitter = new ErrorEmitter) : PicojavaConfig =
         new PicojavaConfig (args) {
