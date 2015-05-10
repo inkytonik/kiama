@@ -37,6 +37,7 @@ class TreeTests extends Tests with RelationTestSupport {
     val n1 = Num (1) // these are deliberately ==, but not same
     val n2 = Num (1)
     val n3 = Num (1)
+    val n4 = Num (1)
 
     val v1 = Var ("a")
     val v2 = Var ("b")
@@ -61,7 +62,8 @@ class TreeTests extends Tests with RelationTestSupport {
                         t1 : Tuple1[Stmt], t2 : (Stmt,Stmt), t3 : (Stmt,Stmt,Stmt),
                         t4 : (Stmt,Stmt,Stmt,Stmt),
                         y : Stmt, listopts : List[Option[Stmt]], z : Stmt,
-                        vec : Vector[Stmt], map : Map[Int,Stmt]) extends ImperativeNode
+                        vec : Vector[Stmt], map : Map[Int,Stmt],
+                        cross : Bridge[Num]) extends ImperativeNode
 
     val p = Program (s1, List (s2, s4), s5, Some (nulls (0)), None, nulls (1),
                      Left (nulls (2)), Right (nulls (3)), nulls (4),
@@ -70,7 +72,8 @@ class TreeTests extends Tests with RelationTestSupport {
                      (nulls (11), nulls (12), nulls (13), nulls (14)),
                      nulls (15), List (Some (nulls (16)), Some (nulls (17))), nulls (18),
                      Vector (nulls (19), nulls (20), nulls (21)),
-                     Map (1 ->  nulls (22), 2 -> nulls (23)))
+                     Map (1 ->  nulls (22), 2 -> nulls (23)),
+                     Bridge (n4))
 
     val pchildren = List (s1, s2, s4, s5) ++ nulls
 
