@@ -32,6 +32,12 @@ package relation
 case class NodeNotInTreeException[T] (t : T)  extends Exception (s"node not in tree: $t")
 
 /**
+ * A bridge node in a tree structure which connects to another structure.
+ * Bridges are not traversed when determining the tree structure.
+ */
+case class Bridge[T] (cross : T)
+
+/**
  * Relational representations of trees built out of hierarchical `Product`
  * instances. Typically, the nodes are instances of case classes.
  *
@@ -273,6 +279,9 @@ object Tree {
         while (!pending.isEmpty) {
             val l = pending.remove (0)
             l match {
+                case _ : Bridge[_] =>
+                    // ignore
+
                 case Some (n) =>
                     pending.prepend (n)
                 case None =>
