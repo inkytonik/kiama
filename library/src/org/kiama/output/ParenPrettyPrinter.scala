@@ -79,6 +79,11 @@ trait PrettyOperatorExpression extends PrettyExpression {
 }
 
 /**
+ * N-ary infix expressions that are to be pretty-printed.
+ */
+trait PrettyNaryExpression extends PrettyOperatorExpression
+
+/**
  * Binary expressions that are to be pretty-printed. `left` and `right`
  * give the two operand expressions and `op` the string that is to be
  * used as the output of the operator.
@@ -109,54 +114,52 @@ trait PrettyUnaryExpression extends PrettyOperatorExpression {
  */
 trait ParenPrettyPrinter extends PrettyPrinter {
 
+    /**
+     * Pretty-print a recursive child reference, parenthesizing if necessary.
+     */
+    def recursiveToDoc (outer : PrettyOperatorExpression, inner : PrettyExpression, side : Side) : Doc =
+        inner match {
+            case l : PrettyOperatorExpression =>
+                bracket (outer, l, side)
+            case l =>
+                toParenDoc (l)
+        }
+
+    /**
+     * Pretty-print a unary, binary or nary expression.
+     */
     def toParenDoc (e : PrettyExpression) : Doc =
         e match {
+
             case b : PrettyBinaryExpression =>
-                val ld =
-                    b.left match {
-                        case l : PrettyOperatorExpression =>
-                            bracket (l, b, LeftAssoc)
-                        case l =>
-                            toParenDoc (l)
-                    }
-                val rd =
-                    b.right match {
-                        case r : PrettyOperatorExpression =>
-                            bracket (r, b, RightAssoc)
-                        case r =>
-                            toParenDoc (r)
-                    }
+                val ld = recursiveToDoc (b, b.left, LeftAssoc)
+                val rd = recursiveToDoc (b, b.right, RightAssoc)
                 ld <+> text (b.op) <+> rd
 
             case u : PrettyUnaryExpression =>
-                val ed =
-                    u.exp match {
-                        case e : PrettyOperatorExpression =>
-                            bracket (e, u, NonAssoc)
-                        case e =>
-                            toParenDoc (e)
-                    }
+                val ed = recursiveToDoc (u, u.exp, NonAssoc)
                 if (u.fixity == Prefix)
                     text (u.op) <> ed
                 else
                     ed <> text (u.op)
+
         }
 
     /**
      * Optionally parenthesise an operator expression based on the precedence relation
      * with an outer expression's operator.
      */
-    def bracket (inner : PrettyOperatorExpression, outer : PrettyOperatorExpression,
+    def bracket (outer : PrettyOperatorExpression, inner : PrettyOperatorExpression,
                  side : Side) : Doc = {
         val d = toParenDoc (inner)
-        if (noparens (inner, outer, side)) d else parens (d)
+        if (noparens (outer, inner, side)) d else parens (d)
     }
 
     /**
      * Return true if the inner expression should not be parenthesised when appearing
      * on the given side with the outer expression.
      */
-    def noparens (inner : PrettyOperatorExpression, outer : PrettyOperatorExpression,
+    def noparens (outer : PrettyOperatorExpression, inner : PrettyOperatorExpression,
                   side : Side) : Boolean = {
         val pi = inner.priority
         val po = outer.priority

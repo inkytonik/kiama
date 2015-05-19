@@ -476,395 +476,722 @@ class ParenPrettyPrinterTests extends Tests with ParenPrettyPrinter {
 
     abstract class Exp extends PrettyExpression
 
-    case class InOp (left : Exp, right : Exp, prio : Int, fix : Side) extends Exp with PrettyBinaryExpression {
-        def priority : Int = prio
-        def fixity : Fixity = Infix (fix)
-        def op : String = "*"
-    }
-
     case class PostOp (exp : Exp, prio : Int) extends Exp with PrettyUnaryExpression {
-        def priority : Int = prio
-        def fixity : Fixity = Postfix
-        def op : String = "++"
+        def priority = prio
+        def fixity = Postfix
+        def op = "++"
     }
 
     case class PreOp (exp : Exp, prio : Int) extends Exp with PrettyUnaryExpression {
-        def priority : Int = prio
-        def fixity : Fixity = Prefix
-        def op : String = "--"
+        def priority = prio
+        def fixity = Prefix
+        def op = "--"
+    }
+
+    case class BinOp (left : Exp, right : Exp, prio : Int, fix : Side) extends Exp with PrettyBinaryExpression {
+        def priority = prio
+        def fixity = Infix (fix)
+        def op = "*"
+    }
+
+    case class If (condExp : Exp, thenExp : Exp, elseExp : Exp, prio : Int, fix : Side) extends Exp with PrettyNaryExpression {
+        def priority = prio
+        def fixity = Infix (fix)
+    }
+
+    case class Fi (condExp : Exp, thenExp : Exp, elseExp : Exp, prio : Int, fix : Side) extends Exp with PrettyNaryExpression {
+        def priority = prio
+        def fixity = Infix (fix)
     }
 
     case class Leaf (i : Int) extends Exp
 
+    def toDoc (e : Exp) : Doc =
+        toParenDoc (e)
+
     override def toParenDoc (e : PrettyExpression) : Doc =
         e match {
-            case Leaf (i) => value (i)
-            case _        => super.toParenDoc (e)
+            case Leaf (i) =>
+                value (i)
+            case ei @ If (c, th, el, _, _) =>
+                "if" <+> toDoc (c) <+> "then" <+> toDoc (th) <+> "else" <+>
+                    recursiveToDoc (ei, el, RightAssoc)
+            case ef @ Fi (c, th, el, _, _) =>
+                recursiveToDoc (ef, c, LeftAssoc) <+> "then" <+> toDoc (th) <+>
+                    "else" <+> toDoc (el) <+> "fi"
+            case _ =>
+                super.toParenDoc (e)
         }
+
+    def toLayout (e : Exp) : String =
+        layout (toDoc (e))
 
     // Postfix and prefix operators
 
-    test ("pretty-printing a lower priority postop on the left of an left assoc infix doesn't use parens") {
-        val e = InOp (PostOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
-        assertResult ("1++ * 2") (layout (toParenDoc (e)))
+    test ("pretty-printing a lower priority postop on the left of a left assoc infix doesn't use parens") {
+        val e = BinOp (PostOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
+        assertResult ("1++ * 2") (toLayout (e))
     }
 
     test ("pretty-printing a higher priority postop on the left of an infix doesn't use parens") {
-        val e = InOp (PostOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
-        assertResult ("1++ * 2") (layout (toParenDoc (e)))
+        val e = BinOp (PostOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
+        assertResult ("1++ * 2") (toLayout (e))
     }
 
     test ("pretty-printing a lower priority preop on the left of an infix uses parens") {
-        val e = InOp (PreOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
-        assertResult ("(--1) * 2") (layout (toParenDoc (e)))
+        val e = BinOp (PreOp (Leaf (1), 4), Leaf (2), 3, LeftAssoc)
+        assertResult ("(--1) * 2") (toLayout (e))
     }
 
     test ("pretty-printing a higher priority preop on the left of an infix doesn't use parens") {
-        val e = InOp (PreOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
-        assertResult ("--1 * 2") (layout (toParenDoc (e)))
+        val e = BinOp (PreOp (Leaf (1), 2), Leaf (2), 3, LeftAssoc)
+        assertResult ("--1 * 2") (toLayout (e))
     }
 
-    test ("pretty-printing a lower priority postop on the left of an infix uses parens") {
-        val e = InOp (Leaf (2), PostOp (Leaf (1), 4), 3, LeftAssoc)
-        assertResult ("2 * (1++)") (layout (toParenDoc (e)))
+    test ("pretty-printing a lower priority postop on the right of an infix uses parens") {
+        val e = BinOp (Leaf (2), PostOp (Leaf (1), 4), 3, LeftAssoc)
+        assertResult ("2 * (1++)") (toLayout (e))
     }
 
     test ("pretty-printing a higher priority postop on the right of an infix doesn't use parens") {
-        val e = InOp (Leaf (2), PostOp (Leaf (1), 2), 3, LeftAssoc)
-        assertResult ("2 * 1++") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (2), PostOp (Leaf (1), 2), 3, LeftAssoc)
+        assertResult ("2 * 1++") (toLayout (e))
     }
 
     test ("pretty-printing a lower priority preop on the right of an infix doesn't use parens") {
-        val e = InOp (Leaf (2), PreOp (Leaf (1), 4), 3, LeftAssoc)
-        assertResult ("2 * --1") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (2), PreOp (Leaf (1), 4), 3, LeftAssoc)
+        assertResult ("2 * --1") (toLayout (e))
     }
 
     test ("pretty-printing a higher priority preop on the right of an infix doesn't use parens") {
-        val e = InOp (Leaf (2), PreOp (Leaf (1), 2), 3, LeftAssoc)
-        assertResult ("2 * --1") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (2), PreOp (Leaf (1), 2), 3, LeftAssoc)
+        assertResult ("2 * --1") (toLayout (e))
     }
 
-    test ("pretty-printing a lower priority postop on the left of an right assoc infix doesn't use parens") {
-        val e = InOp (PostOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
-        assertResult ("1++ * 2") (layout (toParenDoc (e)))
+    test ("pretty-printing a lower priority postop on the left of a right assoc infix doesn't use parens") {
+        val e = BinOp (PostOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
+        assertResult ("1++ * 2") (toLayout (e))
     }
 
-    test ("pretty-printing a higher priority postop on the left of an right assoc infix doesn't use parens") {
-        val e = InOp (PostOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
-        assertResult ("1++ * 2") (layout (toParenDoc (e)))
+    test ("pretty-printing a higher priority postop on the left of a right assoc infix doesn't use parens") {
+        val e = BinOp (PostOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
+        assertResult ("1++ * 2") (toLayout (e))
     }
 
-    test ("pretty-printing a lower priority preop on the left of an right assoc infix uses parens") {
-        val e = InOp (PreOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
-        assertResult ("(--1) * 2") (layout (toParenDoc (e)))
+    test ("pretty-printing a lower priority preop on the left of a right assoc infix uses parens") {
+        val e = BinOp (PreOp (Leaf (1), 4), Leaf (2), 3, RightAssoc)
+        assertResult ("(--1) * 2") (toLayout (e))
     }
 
-    test ("pretty-printing a higher priority preop on the left of an right assoc infix doesn't use parens") {
-        val e = InOp (PreOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
-        assertResult ("--1 * 2") (layout (toParenDoc (e)))
+    test ("pretty-printing a higher priority preop on the left of a right assoc infix doesn't use parens") {
+        val e = BinOp (PreOp (Leaf (1), 2), Leaf (2), 3, RightAssoc)
+        assertResult ("--1 * 2") (toLayout (e))
     }
 
-    test ("pretty-printing a lower priority postop on the right of an right assoc infix uses parens") {
-        val e = InOp (Leaf (2), PostOp (Leaf (1), 4), 3, RightAssoc)
-        assertResult ("2 * (1++)") (layout (toParenDoc (e)))
+    test ("pretty-printing a lower priority postop on the right of a right assoc infix uses parens") {
+        val e = BinOp (Leaf (2), PostOp (Leaf (1), 4), 3, RightAssoc)
+        assertResult ("2 * (1++)") (toLayout (e))
     }
 
-    test ("pretty-printing a higher priority postop on the right of an right assoc infix doesn't use parens") {
-        val e = InOp (Leaf (2), PostOp (Leaf (1), 2), 3, RightAssoc)
-        assertResult ("2 * 1++") (layout (toParenDoc (e)))
+    test ("pretty-printing a higher priority postop on the right of a right assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (2), PostOp (Leaf (1), 2), 3, RightAssoc)
+        assertResult ("2 * 1++") (toLayout (e))
     }
 
-    test ("pretty-printing a lower priority preop on the right of an right assoc infix doesn't use parens") {
-        val e = InOp (Leaf (2), PreOp (Leaf (1), 4), 3, RightAssoc)
-        assertResult ("2 * --1") (layout (toParenDoc (e)))
+    test ("pretty-printing a lower priority preop on the right of a right assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (2), PreOp (Leaf (1), 4), 3, RightAssoc)
+        assertResult ("2 * --1") (toLayout (e))
     }
 
-    test ("pretty-printing a higher priority preop on the right of an right assoc infix doesn't use parens") {
-        val e = InOp (Leaf (2), PreOp (Leaf (1), 2), 3, RightAssoc)
-        assertResult ("2 * --1") (layout (toParenDoc (e)))
+    test ("pretty-printing a higher priority preop on the right of a right assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (2), PreOp (Leaf (1), 2), 3, RightAssoc)
+        assertResult ("2 * --1") (toLayout (e))
     }
 
     // Right associative infix operator on right of other infix operators
 
     test ("pretty-printing a lower-priority right assoc infix on the right of a right assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the right of a right assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, RightAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, RightAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the right of a right assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, RightAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, RightAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the right of a left assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, LeftAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, LeftAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the right of a left assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, LeftAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, LeftAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the right of a left assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, LeftAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, LeftAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the right of a non assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, NonAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, NonAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the right of a non assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, NonAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 3, NonAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the right of a non assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, NonAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, RightAssoc), 4, NonAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     // Left associative infix operator on right of other infix operators
 
     test ("pretty-printing a lower-priority left assoc infix on the right of a right assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, RightAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the right of a right assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, RightAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, RightAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the right of a right assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, RightAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, RightAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the right of a left assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, LeftAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, LeftAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the right of a left assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, LeftAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, LeftAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the right of a left assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, LeftAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, LeftAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the right of a non assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, NonAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, NonAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the right of a non assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, NonAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, NonAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the right of a non assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, NonAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, NonAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     // Non associative infix operator on right of other infix operators
 
     test ("pretty-printing a lower-priority non assoc infix on the right of a right assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, RightAssoc), 2, RightAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 2, RightAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the right of a right assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, RightAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 3, RightAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the right of a right assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, RightAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 4, RightAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the right of a left assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, LeftAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 2, LeftAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the right of a left assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, LeftAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 3, LeftAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the right of a left assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, LeftAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 4, LeftAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the right of a non assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 2, NonAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 2, NonAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the right of a non assoc infix uses parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 3, NonAssoc)
-        assertResult ("1 * (2 * 3)") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 3, NonAssoc)
+        assertResult ("1 * (2 * 3)") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the right of a non assoc infix doesn't use parens") {
-        val e = InOp (Leaf (1), InOp (Leaf (2), Leaf (3), 3, LeftAssoc), 4, NonAssoc)
-        assertResult ("1 * 2 * 3") (layout (toParenDoc (e)))
+        val e = BinOp (Leaf (1), BinOp (Leaf (2), Leaf (3), 3, NonAssoc), 4, NonAssoc)
+        assertResult ("1 * 2 * 3") (toLayout (e))
     }
 
     // Right associative infix operator on left of other infix operators
 
     test ("pretty-printing a lower-priority right assoc infix on the left of a right assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the left of a right assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, RightAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, RightAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the left of a right assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, RightAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, RightAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the left of a left assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, LeftAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, LeftAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the left of a left assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, LeftAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, LeftAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the left of a left assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, LeftAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, LeftAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority right assoc infix on the left of a non assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, NonAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, NonAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority right assoc infix on the left of a non assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, NonAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 3, NonAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority right assoc infix on the left of a non assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, NonAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 4, NonAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     // Left associative infix operator on left of other infix operators
 
     test ("pretty-printing a lower-priority left assoc infix on the left of a right assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, RightAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the left of a right assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, RightAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, RightAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the left of a right assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, RightAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, RightAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the left of a left assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, LeftAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, LeftAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the left of a left assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, LeftAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, LeftAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the left of a left assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, LeftAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, LeftAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority left assoc infix on the left of a non assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, NonAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, NonAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority left assoc infix on the left of a non assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, NonAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, NonAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority left assoc infix on the left of a non assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, NonAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, NonAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     // Non associative infix operator on left of other infix operators
 
     test ("pretty-printing a lower-priority non assoc infix on the left of a right assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, RightAssoc), Leaf (1), 2, RightAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 2, RightAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the left of a right assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, RightAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 3, RightAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the left of a right assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, RightAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 4, RightAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the left of a left assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, LeftAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 2, LeftAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
-    test ("pretty-printing an equal priority non assoc infix on the left of a left assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, LeftAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+    test ("pretty-printing an equal priority non assoc infix on the left of a left assoc infix uses parens") {
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 3, LeftAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the left of a left assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, LeftAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 4, LeftAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
     }
 
     test ("pretty-printing a lower-priority non assoc infix on the left of a non assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 2, NonAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 2, NonAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing an equal priority non assoc infix on the left of a non assoc infix uses parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 3, NonAssoc)
-        assertResult ("(2 * 3) * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 3, NonAssoc)
+        assertResult ("(2 * 3) * 1") (toLayout (e))
     }
 
     test ("pretty-printing a higher-priority non assoc infix on the left of a non assoc infix doesn't use parens") {
-        val e = InOp (InOp (Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (1), 4, NonAssoc)
-        assertResult ("2 * 3 * 1") (layout (toParenDoc (e)))
+        val e = BinOp (BinOp (Leaf (2), Leaf (3), 3, NonAssoc), Leaf (1), 4, NonAssoc)
+        assertResult ("2 * 3 * 1") (toLayout (e))
+    }
+
+    // Right associative nary operators on the left of other operators
+
+    test ("pretty-printing a lower-priority right assoc nary infix on left of a right assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 2, RightAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority right assoc nary infix on left of a right assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 3, RightAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority right assoc nary infix on left of a right assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 4, RightAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority right assoc nary infix on left of a left assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 2, LeftAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority right assoc nary infix on left of a left assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 3, LeftAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority right assoc nary infix on left of a left assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 4, LeftAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority right assoc nary infix on left of a non assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 2, NonAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority right assoc nary infix on left of a non assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 3, NonAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority right assoc nary infix on left of a non assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, RightAssoc), Leaf (4), 4, NonAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    // Right associative nary operators on the right of other operators
+
+    test ("pretty-printing a lower-priority right assoc nary infix on right of a right assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 2, RightAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority right assoc nary infix on right of a right assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 3, RightAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority right assoc nary infix on right of a right assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 4, RightAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority right assoc nary infix on right of a left assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 2, LeftAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority right assoc nary infix on right of a left assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 3, LeftAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority right assoc nary infix on right of a left assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 4, LeftAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority right assoc nary infix on right of a non assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 2, NonAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority right assoc nary infix on right of a non assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 3, NonAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority right assoc nary infix on right of a non assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, RightAssoc), 4, NonAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    // Left associative nary operators on the left of other operators
+
+    test ("pretty-printing a lower-priority left assoc nary infix on left of a right assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 2, RightAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority left assoc nary infix on left of a right assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 3, RightAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority left assoc nary infix on left of a right assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 4, RightAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority left assoc nary infix on left of a left assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 2, LeftAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority left assoc nary infix on left of a left assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 3, LeftAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority left assoc nary infix on left of a left assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 4, LeftAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority left assoc nary infix on left of a non assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 2, NonAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority left assoc nary infix on left of a non assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 3, NonAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority left assoc nary infix on left of a non assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, LeftAssoc), Leaf (4), 4, NonAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    // Left associative nary operators on the right of other operators
+
+    test ("pretty-printing a lower-priority left assoc nary infix on right of a right assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 2, RightAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority left assoc nary infix on right of a right assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 3, RightAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority left assoc nary infix on right of a right assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 4, RightAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority left assoc nary infix on right of a left assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 2, LeftAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority left assoc nary infix on right of a left assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 3, LeftAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority left assoc nary infix on right of a left assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 4, LeftAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority left assoc nary infix on right of a non assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 2, NonAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority left assoc nary infix on right of a non assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 3, NonAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority left assoc nary infix on right of a non assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, LeftAssoc), 4, NonAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    // Non associative nary operators on the left of other operators
+
+    test ("pretty-printing a lower-priority non assoc nary infix on left of a right assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 2, RightAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority non assoc nary infix on left of a right assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 3, RightAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority non assoc nary infix on left of a right assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 4, RightAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority non assoc nary infix on left of a left assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 2, LeftAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority non assoc nary infix on left of a left assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 3, LeftAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority non assoc nary infix on left of a left assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 4, LeftAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority non assoc nary infix on left of a non assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 2, NonAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority non assoc nary infix on left of a non assoc infix uses parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 3, NonAssoc)
+        assertResult ("(if 1 then 2 else 3) * 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority non assoc nary infix on left of a non assoc infix doesn't use parens") {
+        val e = BinOp (If (Leaf (1), Leaf (2), Leaf (3), 3, NonAssoc), Leaf (4), 4, NonAssoc)
+        assertResult ("if 1 then 2 else 3 * 4") (toLayout (e))
+    }
+
+    // Non associative nary operators on the right of other operators
+
+    test ("pretty-printing a lower-priority non assoc nary infix on right of a right assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 2, RightAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority non assoc nary infix on right of a right assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 3, RightAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority non assoc nary infix on right of a right assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 4, RightAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority non assoc nary infix on right of a left assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 2, LeftAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority non assoc nary infix on right of a left assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 3, LeftAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority non assoc nary infix on right of a left assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 4, LeftAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower-priority non assoc nary infix on right of a non assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 2, NonAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing an equal priority non assoc nary infix on right of a non assoc infix uses parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 3, NonAssoc)
+        assertResult ("1 * (if 2 then 3 else 4)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher-priority non assoc nary infix on right of a non assoc infix doesn't use parens") {
+        val e = BinOp (Leaf (1), If (Leaf (2), Leaf (3), Leaf (4), 3, NonAssoc), 4, NonAssoc)
+        assertResult ("1 * if 2 then 3 else 4") (toLayout (e))
+    }
+
+    // nary infix with pre and post-components
+
+    test ("pretty-printing a lower priority postop on the right of an nary infix uses parens") {
+        val e = If (Leaf (2), Leaf (3), PostOp (Leaf (1), 4), 3, NonAssoc)
+        assertResult ("if 2 then 3 else (1++)") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher priority postop on the right of an nary infix doesn't use parens") {
+        val e = If (Leaf (2), Leaf (3), PostOp (Leaf (1), 2), 3, NonAssoc)
+        assertResult ("if 2 then 3 else 1++") (toLayout (e))
+    }
+
+    test ("pretty-printing a lower priority preop on the left of an nary infix uses parens") {
+        val e = Fi (PreOp (Leaf (1), 4), Leaf (2), Leaf (3), 3, NonAssoc)
+        assertResult ("(--1) then 2 else 3 fi") (toLayout (e))
+    }
+
+    test ("pretty-printing a higher priority postop on the left of an nary infix doesn't use parens") {
+        val e = Fi (PreOp (Leaf (1), 2), Leaf (2), Leaf (3), 3, NonAssoc)
+        assertResult ("--1 then 2 else 3 fi") (toLayout (e))
     }
 
 }
-
