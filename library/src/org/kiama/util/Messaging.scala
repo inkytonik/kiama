@@ -56,6 +56,8 @@ case class Message (label : String, pos : Position = NoPosition) {
  */
 object Messaging {
 
+    import java.io.File.separatorChar
+    import java.lang.System.getProperty
     import org.kiama.relation.Tree
     import org.kiama.util.{Entity, ErrorEntity}
 
@@ -135,5 +137,37 @@ object Messaging {
      */
     def collectmessages[T <: Product,U <: T] (tree : Tree[T,U]) (messages : T ==> Messages) : Messages =
         tree.nodes.flatMap (messages.orElse { case _ => noMessages }).toVector
+
+    /**
+     * Return a simplified filename where a string has been dropped if it
+     * occurs as a prefix of the given filename. The system separator
+     * character is also dropped if it occurs immediately after the prefix.
+     */
+    def dropPrefix (filename : String, prefix : String) : String = {
+
+        def dropIgnoreSep (i : Int) : String =
+            if (i == 0)
+                filename
+            else if (i < filename.length)
+                filename.drop (if (filename (i) == separatorChar) i + 1 else i)
+            else
+                ""
+
+        for (i <- 0 until prefix.length) {
+            if (i == filename.length)
+                return ""
+            else if (filename (i) != prefix (i))
+                return dropIgnoreSep (i)
+        }
+        dropIgnoreSep (prefix.length)
+
+    }
+
+    /**
+     * Return a simplified filename where the current path has been dropped
+     * if it occurs as a prefix of the given filename.
+     */
+    def dropCurrentPath (filename : String) : String =
+        dropPrefix (filename, getProperty ("user.dir"))
 
 }
