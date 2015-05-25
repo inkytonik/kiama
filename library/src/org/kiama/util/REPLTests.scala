@@ -39,7 +39,7 @@ trait GeneratingREPLBase[T] extends REPL {
     override def createConfig (args : Seq[String],
                                output : Emitter = new OutputEmitter,
                                error : Emitter = new ErrorEmitter) : REPLConfig =
-        super.createConfig ("-w" +: args, output, error)
+        super.createConfig ("--KprocessWhitespaceLines" +: args, output, error)
 
     /**
      * The generator to use to make values of type T.
