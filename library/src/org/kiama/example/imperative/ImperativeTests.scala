@@ -202,7 +202,7 @@ object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
 
     override def process (s : Stmt, config : REPLConfig) {
         super.process (s, config)
-        config.output.emitln (format (s))
+        config.output.emitln (format (s).layout)
     }
 
 }
