@@ -26,7 +26,7 @@ class BBS{
     }
 
 
-    // Sort array of integers using Bublesort method
+    // Sort array of integers using Bubblesort method
     public int Sort(){
     int nt ;
     int i ;
