@@ -280,8 +280,6 @@ trait TransformerTests extends RegexParserTests {
 
 trait PrettyPrinterTests extends Tests {
 
-    self : PrettyPrinter =>
-
     import org.kiama.output.PrettyPrinterTypes.{Document, Layout, Positions}
 
     /**
