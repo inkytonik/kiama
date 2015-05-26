@@ -32,7 +32,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
 
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
-    import PrettyPrinter.{any => ppany, pretty}
+    import PrettyPrinter.{any => ppany, layout}
     import org.kiama.output.PrettyPrinterTypes.Document
     import org.kiama.util.Config
     import org.kiama.util.Messaging.report
@@ -53,7 +53,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
     def process (filename : String, ast : Program, config : Config) {
 
         // Pretty print the abstract syntax tree
-        // config.output.emitln (pretty (ppany (ast)))
+        // config.output.emitln (layout (ppany (ast)))
 
         // Perform the semantic checks
         val tree = new MiniJavaTree (ast)
@@ -74,7 +74,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
             val targettree = translator.translate (ast, filename, analyser)
 
             // Pretty print the target tree
-            // config.output.emitln (pretty (ppany (targettree)))
+            // config.output.emitln (layout (ppany (targettree)))
 
             // Output code for the target tree
             targettree.map (generate (isTest, _, config.output))
