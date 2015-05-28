@@ -24,9 +24,8 @@ package example.minijava
 /**
  * Code generator that prints JVM target trees to Jasmine assembler files.
  */
-object CodeGenerator {
+object CodeGenerator extends org.kiama.output.PrettyPrinter {
 
-    import java.io.{BufferedWriter, FileWriter, PrintWriter}
     import JVMTree._
     import org.kiama.util.{Emitter, FileEmitter}
 
@@ -35,116 +34,115 @@ object CodeGenerator {
      */
     def generate (isTest : Boolean, classfile : ClassFile, emitter : Emitter) {
 
-        /*
-         * If it's a test use the provided emitter for output, otheriwse make
-         * a file emitter that is based on the the class name and use that.
-         */
+        // If it's a test use the provided emitter for output, otherwise make
+        // a file emitter that is based on the the class name and use that.
         val codeEmitter =
             if (isTest)
                 emitter
             else
                 new FileEmitter (s"${classfile.name}.j")
 
-        // Output header
-        codeEmitter.emitln (s".source ${classfile.source}")
-        codeEmitter.emitln (s".class public ${classfile.name}")
-        codeEmitter.emitln (s".super ${classfile.superclassname}")
+        val header =
+            ".source" <+> classfile.source <@>
+            ".class public" <+> classfile.name <@>
+            ".super" <+> classfile.superclassname
 
-        // Output the fields
-        classfile.fields.map (generateField)
+        val defaultConstructor =
+            line <>
+            ".method <init>()V" <@>
+            ".limit stack 1" <@>
+            ".limit locals 1" <@>
+            "    aload_0" <@>
+            "    invokespecial" <+> classfile.superclassname <> "/<init>()V" <@>
+            "    return" <@>
+            ".end method" <>
+            line
 
-        // Output the default constructor
-        codeEmitter.emitln
-        codeEmitter.emitln (".method <init>()V")
-        codeEmitter.emitln (".limit stack 1")
-        codeEmitter.emitln (".limit locals 1")
-        codeEmitter.emitln ("    aload_0")
-        codeEmitter.emitln (s"    invokespecial ${classfile.superclassname}/<init>()V")
-        codeEmitter.emitln ("    return")
-        codeEmitter.emitln (".end method")
+        // The full document for the file
+        val codeDoc =
+            header <>
+            hcat (classfile.fields.map (fieldToDoc)) <@>
+            defaultConstructor <>
+            hcat (classfile.methods.map (methodToDoc))
 
-        // Output the methods
-        classfile.methods.map (generateMethod)
+        // Pretty-print and emit
+        codeEmitter.emit (pretty (codeDoc).layout)
 
-        /*
-         * Generate a declaration for a field.
-         */
-        def generateField (field : JVMField) {
-            codeEmitter.emitln (s".field public ${field.name} ${field.tipe}")
-        }
-
-        /*
-         * Generate a declaration of a method including its code.
-         */
-        def generateMethod (method : JVMMethod) {
-
-            /*
-             * Calculate the maximum location number used in the method by going
-             * through the instructions checking all loads and stores. The fold
-             * propagates the maximum so far.
-             */
-            val maxloc =
-                method.instrs.foldLeft (method.spec.argTypes.length) {
-                    case (maxsofar, instr) =>
-                        instr match {
-                            case Iload (loc)  => maxsofar.max (loc)
-                            case Istore (loc) => maxsofar.max (loc)
-                            case Aload (loc)  => maxsofar.max (loc)
-                            case Astore (loc) => maxsofar.max (loc)
-                            case _            => maxsofar
-                        }
-                }
-
-            /*
-             * Calculate the maximum stack depth by going through the instructions
-             * simulating the effect that each instruction has on the stack size.
-             * The fold propagates the maximum so far and the current stack depth.
-             */
-            val (maxstack, _) =
-                method.instrs.foldLeft ((0, 0)) {
-                    case ((maxsofar, depth), instr) =>
-                        val newdepth = depth + instr.stackChange
-                        (maxsofar.max (newdepth), newdepth)
-                }
-
-            codeEmitter.emitln
-            codeEmitter.emit (".method public ")
-            if (method.isStatic)
-                codeEmitter.emit ("static ")
-            codeEmitter.emitln (method.spec)
-            codeEmitter.emitln (s".limit stack $maxstack")
-            codeEmitter.emitln (s".limit locals ${maxloc + 1}")
-            method.instrs.map (generateInstr)
-            codeEmitter.emitln (".end method")
-
-            /*
-             * Close up the file if we are using one.
-             */
-            if (!isTest)
-                codeEmitter.close ()
-
-        }
-
-        /*
-         * Generate an intstruction. Instructions that are not label declarations
-         * are output using the name of their class converted to lower case. Each
-         * argument is output in the order that it appears in the instruction
-         * instance. Thus, this code does not have to be extended when new
-         * instruction types are added.
-         */
-        def generateInstr (instr : JVMInstr) {
-            instr match {
-                case Label (label) =>
-                    codeEmitter.emitln (s"$label:")
-                case _ =>
-                    codeEmitter.emit (s"    ${instr.productPrefix.toLowerCase}")
-                    for (arg <- instr.productIterator) {
-                        codeEmitter.emit (s" $arg")
-                    }
-                    codeEmitter.emitln
-            }
-        }
+        // Close up the file if we are using one.
+        if (!isTest)
+            codeEmitter.close ()
 
     }
+
+    /*
+     * Generate a declaration for a field.
+     */
+    def fieldToDoc (field : JVMField) : Doc =
+        line <> ".field public" <+> field.name <+> value (field.tipe)
+
+    /*
+     * Generate a declaration of a method including its code.
+     */
+    def methodToDoc (method : JVMMethod) : Doc = {
+
+        // Calculate the maximum location number used in the method by going
+        // through the instructions checking all loads and stores. The fold
+        // propagates the maximum so far.
+        val maxloc =
+            method.instrs.foldLeft (method.spec.argTypes.length) {
+                case (maxsofar, instr) =>
+                    instr match {
+                        case Iload (loc)  => maxsofar.max (loc)
+                        case Istore (loc) => maxsofar.max (loc)
+                        case Aload (loc)  => maxsofar.max (loc)
+                        case Astore (loc) => maxsofar.max (loc)
+                        case _            => maxsofar
+                    }
+            }
+
+        /*
+         * Calculate the maximum stack depth by going through the instructions
+         * simulating the effect that each instruction has on the stack size.
+         * The fold propagates the maximum so far and the current stack depth.
+         */
+        val (maxstack, _) =
+            method.instrs.foldLeft ((0, 0)) {
+                case ((maxsofar, depth), instr) =>
+                    val newdepth = depth + instr.stackChange
+                    (maxsofar.max (newdepth), newdepth)
+            }
+
+        line <>
+        ".method public" <+>
+            (if (method.isStatic) "static " else empty) <>
+            value (method.spec) <@>
+        ".limit stack" <+> value (maxstack) <@>
+        ".limit locals" <+> value (maxloc + 1) <>
+        hcat (method.instrs.map (instrToDoc)) <@>
+        ".end method" <>
+        line
+
+    }
+
+    /*
+     * Generate an instruction. Instructions that are not label declarations
+     * are output using the name of their class converted to lower case. Each
+     * argument is output in the order that it appears in the instruction
+     * instance. Thus, this code does not have to be extended when new
+     * instruction types are added.
+     */
+    def instrToDoc (instr : JVMInstr) : Doc =
+        instr match {
+            case Label (label) =>
+                line <> label <> colon
+            case _ =>
+                nest (
+                    line <>
+                    instr.productPrefix.toLowerCase <>
+                        hcat (instr.productIterator.toVector.map {
+                                 case arg => space <> value (arg)
+                              })
+                )
+        }
 
 }
