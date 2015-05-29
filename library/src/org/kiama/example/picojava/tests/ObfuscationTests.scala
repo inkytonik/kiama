@@ -22,13 +22,13 @@
 package org.kiama
 package example.picojava.tests
 
-import org.kiama.util.Tests
+import org.kiama.util.PrettyPrinterTests
 
-class ObfuscationTests extends Tests {
+class ObfuscationTests extends PrettyPrinterTests {
 
     import org.kiama.example.picojava.{ErrorCheck, Obfuscator}
     import org.kiama.example.picojava.PicoJavaTree._
-    import org.kiama.example.picojava.PrettyPrinter.format
+    import org.kiama.example.picojava.PrettyPrinter.{format, layout}
 
     // For the actual program text, see ObfuscationTest.pj
 
@@ -112,7 +112,7 @@ class ObfuscationTests extends Tests {
     val obast = obfuscator.obfuscate (ast)
 
     test ("obfuscation produces correct program (pretty printed)") {
-        assertResult (format (expobast)) (format (obast))
+        assertLayout (format (expobast).layout) (format (obast))
     }
 
     test ("obfuscation produces correct program") {

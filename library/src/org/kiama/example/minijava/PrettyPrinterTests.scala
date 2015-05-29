@@ -32,8 +32,8 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
 
     val mul = IdnDef ("Mul")
     val five = IntExp (5)
-    val eight = IntExp (8)
-    val starexp = StarExp (five, eight)
+    val otherfive = IntExp (5)
+    val starexp = StarExp (five, otherfive)
     val println = Println (starexp)
     val mainclass = MainClass (mul, println)
     val nil = Nil
@@ -42,21 +42,19 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
     test ("a simple MiniJava program pretty-prints with the correct positions using any") {
 
         // Program (
-        //     MainClass (IdnDef ("Mul"), Println (StarExp (IntExp (5), IntExp (8)))),
+        //     MainClass (IdnDef ("Mul"), Println (StarExp (IntExp (5), IntExp (5)))),
         //     Nil)
 
-        assertPositions (
-            Map (
+        assertLinks (
+            List (
                 program -> Range (0, 95),
                 mainclass -> Range (14, 85),
                 mul -> Range (25, 40),
                 println -> Range (41, 84),
                 starexp -> Range (50, 83),
                 five -> Range (59, 70),
-                eight -> Range (71, 82),
+                otherfive -> Range (71, 82),
                 nil -> Range (90, 94),
-                5 -> Range (67, 69),
-                8 -> Range (79, 81),
                 "Mul" -> Range (33, 39)
             )
         ) (pretty (any (program)))
@@ -67,19 +65,19 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
 
         // class Mul {
         //     public static void main () {
-        //         System.out.println (5 * 8);
+        //         System.out.println (5 * 5);
         //     }
         // }
 
-        assertPositions (
-            Map (
+        assertLinks (
+            List (
                 program -> Range (0, 91),
                 mainclass -> Range (0, 91),
                 mul -> Range (6, 10),
                 println -> Range (53, 81),
                 starexp -> Range (73, 79),
                 five -> Range (73, 75),
-                eight -> Range (77, 79)
+                otherfive -> Range (77, 79)
             )
         ) (pretty (toDoc (program)))
 

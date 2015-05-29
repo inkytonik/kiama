@@ -64,6 +64,13 @@ trait Memoiser {
             get (t).getOrElse (u)
 
         /**
+         * Has the value of this attribute at `t` already been computed or not?
+         * By default, does the memo table contain a value for `t`?
+         */
+        def hasBeenComputedAt (t : T) : Boolean =
+            get (t) != None
+
+        /**
          * Store the value `u` under the key `t`.
          */
         def put (t : T, u : U) {
@@ -94,11 +101,10 @@ trait Memoiser {
         }
 
         /**
-         * Has the value of this attribute at `t` already been computed or not?
-         * By default, does the memo table contain a value for `t`?
+         * The number of entries in the memo table.
          */
-        def hasBeenComputedAt (t : T) : Boolean =
-            get (t) != None
+        def size () : Long =
+            memo.size
 
     }
 

@@ -21,12 +21,13 @@
 package org.kiama
 package output
 
+import org.kiama.util.Memoiser
 import scala.language.implicitConversions
 
 /**
  * Common type definitions for all pretty-printers.
  */
-object PrettyPrinterTypes {
+object PrettyPrinterTypes extends Memoiser {
 
     /**
      * Indentation is expressed as integer space units.
@@ -44,31 +45,34 @@ object PrettyPrinterTypes {
     type Layout = String
 
     /**
-     * A map between values and ranges. Used for the representation
+     * Links between values and ranges. Used for the representation
      * of mappings between pretty-printed values and their printed
      * representations. See also `Document`.
      */
-    type Positions  = Map[Any,Range]
+    class Links extends IdMemoised[AnyRef,Range]
 
     /**
      * A pretty-printed document, consisting of layout for the
-     * pretty-printed representation and associated positions.
-     * The position information maps pretty-printed values to the
+     * pretty-printed representation and associated links.
+     * The link information maps pretty-printed values to the
      * offset ranges at which their printed representation occurs
      * in the layout. In other words, for a given value `v` the
      * start of the position range will be the offset at which the
      * pretty-printed representation of `v` starts in the layout.
      * The end of the range is where that representation finishes.
-     * See the `positioned` combinator for information on how to
+     * It is possible for a value to be linked to more than one
+     * range.
+     *
+     * See the `link` combinator for information on how to
      * specify the association between a value and the document
      * that represents it.
      */
-    case class Document (layout : Layout, positions : Positions)
+    case class Document (layout : Layout, links : Links)
 
     /**
      * An empty pretty-printed document.
      */
-    val emptyDocument = Document ("", Map.empty)
+    val emptyDocument = Document ("", new Links {})
 
 }
 
@@ -81,7 +85,7 @@ object PrettyPrinterTypes {
  */
 trait PrettyPrinterBase {
 
-    import PrettyPrinterTypes.{Document, Indent, Layout, Positions, Width}
+    import PrettyPrinterTypes.{Document, Indent, Layout, Links, Width}
     import scala.collection.immutable.Seq
 
     /**
@@ -177,10 +181,10 @@ trait PrettyPrinterBase {
         pretty (d, w).layout
 
     /**
-     * Pretty-printe a document as per `pretty` but just return the position map.
+     * Pretty-printed a document as per `pretty` but just return the links.
      */
-    def positions (d : Doc, w : Width = defaultWidth) : Positions =
-        pretty (d, w).positions
+    def links (d : Doc, w : Width = defaultWidth) : Links =
+        pretty (d, w).links
 
     // Basic combinators.  Thse need to be implemented for a specific
     // instantiation of `Doc`.
@@ -243,16 +247,11 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that prints as `d` but also records the fact that the
-     * printed representation of `d` corresponds to `n`. The positions of that
+     * printed representation of `d` is linked to `n`. The positions of that
      * pretty-printed representation can be retrieved via the position
-     * information in the `Document` returned by `pretty`.
-     *
-     * The position information is keyed to `n` and at most one position will be
-     * associated with `n`. If you need to be able to tell the difference between
-     * the positions of equal, but conceptually different, values, you should
-     * use a reference for `n`.
+     * information in the `Document` returned when this `Doc` is pretty-printed.
      */
-    def positioned (n : Any, d : Doc) : Doc
+    def link (n : AnyRef, d : Doc) : Doc
 
     // Extended combinators that are implemented in terms of the basic
     // combinators and the representation-independent document operations.
@@ -352,7 +351,7 @@ trait PrettyPrinterBase {
      * as `null`.
      */
     def any (a : Any) : Doc =
-        positioned (a,
+        link (a.asInstanceOf[AnyRef],
             if (a == null)
                 "null"
             else
@@ -868,17 +867,34 @@ trait PrettyPrinter extends PrettyPrinterBase {
 
     import org.kiama.util.Positions.{getStart, getFinish}
     import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
-    import PrettyPrinterTypes.{Document, Indent, Layout, Positions, Width}
+    import PrettyPrinterTypes.{Document, Indent, Layout, Links, Width}
     import scala.collection.immutable.{Queue, Seq}
     import scala.collection.immutable.Queue.{empty => emptyDq}
     import scala.collection.mutable.StringBuilder
 
     // Internal data types
 
+    /**
+     * An entry in the final output stream.
+     */
     sealed abstract class Entry
-    case class Finish (n : Any) extends Entry
-    case class Start (n : Any) extends Entry
+
+    /**
+     * An output entry for a piece of the pretty-printed text.
+     */
     case class Text (s : String) extends Entry
+
+    /**
+     * An output entry that indicates the finish of a document linked with `n`.
+     */
+    case class Start (n : AnyRef) extends Entry
+
+    /**
+     * An output entry that indicates the finish of a document linked with `n`.
+     */
+    case class Finish (n : AnyRef) extends Entry
+
+    // As per Swierstra and Chitil with addition of trampolines
 
     type Remaining  = Int
     type Horizontal = Boolean
@@ -1111,9 +1127,9 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 f (i) (iw)
         })
 
-    // Positioning combinators
+    // Linking combinator
 
-    def positioned (n : Any, d : Doc) : Doc =
+    def link (n : AnyRef, d : Doc) : Doc =
         insert (0, Start (n)) <> d <> insert (0, Finish (n))
 
     // Obtaining output
@@ -1132,20 +1148,22 @@ trait PrettyPrinter extends PrettyPrinterBase {
             } yield buffer
         val finalBuffer = finalBufferComputation.runT
 
-        val (finalMap, _, _, finalBuilder) =
-            finalBuffer.foldLeft ((Map[Any,Range](), List[Int] (), 0, new StringBuilder)) {
+        val (links, _, _, stringBuilder) =
+            finalBuffer.foldLeft ((new Links, List[Int] (), 0, new StringBuilder)) {
                 case ((m, s, p, o), e) =>
                     e match {
                         case Start (a) =>
                             (m, p :: s, p, o)
                         case Finish (a) =>
-                            (m + (a -> Range (s.head, p + 1)), s.tail, p, o)
+                            if (a != null)
+                                m.put (a, Range (s.head, p + 1))
+                            (m, s.tail, p, o)
                         case Text (t) =>
                             (m, s, p + t.length, o.append (t))
                     }
             }
 
-        Document (finalBuilder.result, finalMap)
+        Document (stringBuilder.result, links)
 
     }
 

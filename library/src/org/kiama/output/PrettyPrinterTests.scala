@@ -438,31 +438,9 @@ class PrettyPrinterTests extends org.kiama.util.PrettyPrinterTests with PrettyPr
 
     // Position map
 
-    test ("pretty-printing a doc with no positioned nodes yields an empty position map") {
+    test ("pretty-printing a doc with no linked nodes yields an empty position map") {
         val d = indent ("hi" <+> ("nice" <@> "world"), 2)
-        assertPositions (Map.empty) (pretty (d))
-    }
-
-    test ("pretty any-print multiple-element map yields correct position map") {
-
-        // Map (1 -> "One", 2 -> "Two", 3 -> "Three")
-
-        val map = Map (1 -> "One", 2 -> "Two", 3 -> "Three")
-        assertPositions (
-            Map (
-                map -> Range (0, 43),
-                (1, "One") -> Range (5, 16),
-                (2, "Two") -> Range (17, 28),
-                (3, "Three") -> Range (29, 42),
-                1 -> Range (5, 7),
-                2 -> Range (17, 19),
-                3 -> Range (29, 31),
-                "One" -> Range (10, 16),
-                "Two" -> Range (22, 28),
-                "Three" -> Range (34, 42)
-            )
-        ) (pretty (any (map)))
-
+        assertResult (0) (pretty (d).links.size)
     }
 
 }

@@ -280,7 +280,7 @@ trait TransformerTests extends RegexParserTests {
 
 trait PrettyPrinterTests extends Tests {
 
-    import org.kiama.output.PrettyPrinterTypes.{Document, Layout, Positions}
+    import org.kiama.output.PrettyPrinterTypes.{Document, Layout, Links}
 
     /**
      * Assert that a doc when pretty-printed has the given layout.
@@ -290,10 +290,19 @@ trait PrettyPrinterTests extends Tests {
     }
 
     /**
-     * Assert that a doc when pretty-printed has the given source position map.
+     * Assert that a doc when pretty-printed has the given links.
      */
-    def assertPositions (expected : Positions) (document : Document) {
-        assertResult (expected) (document.positions)
+    def assertLinks (expected : List[(AnyRef,Range)]) (document : Document) {
+        for ((v, r) <- expected) {
+            assertLink (r) (document.links, v)
+        }
+    }
+
+    /**
+     * Assert that a value has a given link in a links map.
+     */
+    def assertLink (expected : Range) (links : Links, value : AnyRef) {
+        assertResult (Some (expected), s"for value $value") (links.get (value))
     }
 
 }

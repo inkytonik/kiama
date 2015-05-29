@@ -40,9 +40,9 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
      * Convert a MiniJava AST node to a pretty-printing document.
      */
     def toDoc (t : MiniJavaNode) : Doc =
-        positioned (t, toDocNoPos (t))
+        link (t, toDocNoLink (t))
 
-    def toDocNoPos (t : MiniJavaNode) : Doc =
+    def toDocNoLink (t : MiniJavaNode) : Doc =
         t match {
             case Program (m, cs) =>
                 toDoc (m) <> ssep (cs map toDoc, line <> line)
@@ -138,9 +138,9 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
         "return" <+> toDoc (r) <> semi
 
     override def toParenDoc (e : PrettyExpression) : Doc =
-        positioned (e, toParenDocNoPos (e))
+        link (e, toParenDocNoLink (e))
 
-    def toParenDocNoPos (e : PrettyExpression) : Doc =
+    def toParenDocNoLink (e : PrettyExpression) : Doc =
         e match {
             case IndExp (b, e) =>
                 toDoc (b) <> brackets (toDoc (e))
