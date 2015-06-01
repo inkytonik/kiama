@@ -22,6 +22,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
+
 .source src/org/kiama/example/minijava/tests/binarysearch.java
 .class public BS
 .super java/lang/Object
@@ -430,3 +431,4 @@ L2:
     iconst_0
     ireturn
 .end method
+

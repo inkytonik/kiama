@@ -42,8 +42,22 @@ object CodeGenerator extends org.kiama.output.PrettyPrinter {
             else
                 new FileEmitter (s"${classfile.name}.j")
 
+        // Pretty-print and emit
+        codeEmitter.emit (pretty (classFileToDoc (classfile)).layout)
+
+        // Close up the file if we are using one.
+        if (!isTest)
+            codeEmitter.close ()
+
+    }
+
+    /**
+     * Generate a file document for a classfile.
+     */
+    def classFileToDoc (classfile : ClassFile) : Doc = {
+
         val header =
-            ".source" <+> classfile.source <@>
+            ".source" <+> classfile.filename <@>
             ".class public" <+> classfile.name <@>
             ".super" <+> classfile.superclassname
 
@@ -58,19 +72,12 @@ object CodeGenerator extends org.kiama.output.PrettyPrinter {
             ".end method" <>
             line
 
-        // The full document for the file
-        val codeDoc =
+        link (classfile.source,
             header <>
             hcat (classfile.fields.map (fieldToDoc)) <@>
             defaultConstructor <>
-            hcat (classfile.methods.map (methodToDoc))
-
-        // Pretty-print and emit
-        codeEmitter.emit (pretty (codeDoc).layout)
-
-        // Close up the file if we are using one.
-        if (!isTest)
-            codeEmitter.close ()
+            hcat (classfile.methods.map (methodToDoc))) <>
+        line
 
     }
 
@@ -78,7 +85,7 @@ object CodeGenerator extends org.kiama.output.PrettyPrinter {
      * Generate a declaration for a field.
      */
     def fieldToDoc (field : JVMField) : Doc =
-        line <> ".field public" <+> field.name <+> value (field.tipe)
+        line <> link (field, ".field public" <+> field.name <+> value (field.tipe))
 
     /*
      * Generate a declaration of a method including its code.
@@ -86,12 +93,12 @@ object CodeGenerator extends org.kiama.output.PrettyPrinter {
     def methodToDoc (method : JVMMethod) : Doc = {
 
         // Calculate the maximum location number used in the method by going
-        // through the instructions checking all loads and stores. The fold
+        // through the operations checking all loads and stores. The fold
         // propagates the maximum so far.
         val maxloc =
             method.instrs.foldLeft (method.spec.argTypes.length) {
-                case (maxsofar, instr) =>
-                    instr match {
+                case (maxsofar, JVMInstr (op, _)) =>
+                    op match {
                         case Iload (loc)  => maxsofar.max (loc)
                         case Istore (loc) => maxsofar.max (loc)
                         case Aload (loc)  => maxsofar.max (loc)
@@ -102,24 +109,25 @@ object CodeGenerator extends org.kiama.output.PrettyPrinter {
 
         /*
          * Calculate the maximum stack depth by going through the instructions
-         * simulating the effect that each instruction has on the stack size.
+         * simulating the effect that each operation has on the stack size.
          * The fold propagates the maximum so far and the current stack depth.
          */
         val (maxstack, _) =
             method.instrs.foldLeft ((0, 0)) {
-                case ((maxsofar, depth), instr) =>
-                    val newdepth = depth + instr.stackChange
+                case ((maxsofar, depth), JVMInstr (op, _)) =>
+                    val newdepth = depth + op.stackChange
                     (maxsofar.max (newdepth), newdepth)
             }
 
         line <>
-        ".method public" <+>
-            (if (method.isStatic) "static " else empty) <>
-            value (method.spec) <@>
-        ".limit stack" <+> value (maxstack) <@>
-        ".limit locals" <+> value (maxloc + 1) <>
-        hcat (method.instrs.map (instrToDoc)) <@>
-        ".end method" <>
+        link (method.source,
+            ".method public" <+>
+                (if (method.isStatic) "static " else empty) <>
+                value (method.spec) <@>
+            ".limit stack" <+> value (maxstack) <@>
+            ".limit locals" <+> value (maxloc + 1) <>
+            hcat (method.instrs.map (instrToDoc)) <@>
+            ".end method") <>
         line
 
     }
@@ -132,16 +140,17 @@ object CodeGenerator extends org.kiama.output.PrettyPrinter {
      * instruction types are added.
      */
     def instrToDoc (instr : JVMInstr) : Doc =
-        instr match {
+        instr.op match {
             case Label (label) =>
-                line <> label <> colon
-            case _ =>
+                line <> link (instr.source, label <> colon)
+            case op =>
                 nest (
                     line <>
-                    instr.productPrefix.toLowerCase <>
-                        hcat (instr.productIterator.toVector.map {
+                    link (instr.source,
+                        op.productPrefix.toLowerCase <>
+                        hcat (op.productIterator.toVector.map {
                                  case arg => space <> value (arg)
-                              })
+                              }))
                 )
         }
 

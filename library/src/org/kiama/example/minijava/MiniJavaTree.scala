@@ -49,7 +49,12 @@ object MiniJavaTree {
     /**
      * A main class with a given name and body given by a single statement.
      */
-    case class MainClass (name : IdnDef, stmt : Statement) extends MiniJavaNode
+    case class MainClass (name : IdnDef, main : MainMethod) extends MiniJavaNode
+
+    /**
+     * A main method consisting of a single statement.
+     */
+    case class MainMethod (stmt: Statement) extends MiniJavaNode
 
     /**
      * A general class with a given name, optional super class, possibly empty
@@ -87,12 +92,17 @@ object MiniJavaTree {
     case class MethodBody (tipe : Type, args : List[Argument],
                            vars : List[Var],
                            optStmts : List[Statement],
-                           result : Expression) extends MiniJavaNode
+                           result : Result) extends MiniJavaNode
 
     /**
      * An argument with a given type and name.
      */
     case class Argument (tipe : Type, name : IdnDef) extends MiniJavaNode
+
+    /**
+     * A result being returned from a method body.
+     */
+    case class Result (exp : Expression) extends MiniJavaNode
 
     /**
      * Common superclass for types.

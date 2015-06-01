@@ -38,9 +38,11 @@ class SyntaxAnalyser extends PositionedParserUtilities {
         mainClass ~ (classDeclaration*) ^^ Program
 
     lazy val mainClass : PackratParser[MainClass] =
-        (("class" ~> idndef) <~
-            ("{" <~ "public" <~ "static" <~ "void" <~ "main" <~ "(" <~ ")" <~ "{")) ~
-                (statement <~ "}" <~ "}") ^^ MainClass
+        ("class" ~> idndef) ~ ("{" ~> mainMethod <~ "}") ^^ MainClass
+
+    lazy val mainMethod : PackratParser[MainMethod] =
+        "public" ~> "static" ~> "void" ~> "main" ~> "(" ~> ")" ~>
+            ("{" ~> statement <~ "}") ^^ MainMethod
 
     lazy val classDeclaration : PackratParser[Class] =
         ("class" ~> idndef) ~ (("extends" ~> idnuse)?) ~
@@ -62,8 +64,8 @@ class SyntaxAnalyser extends PositionedParserUtilities {
     lazy val varDeclaration : PackratParser[Var] =
         tipe ~ idndef <~ ";" ^^ Var
 
-    lazy val result : PackratParser[Expression] =
-        "return" ~> expression <~ ";"
+    lazy val result : PackratParser[Result] =
+        "return" ~> expression <~ ";" ^^ Result
 
     lazy val arguments : PackratParser[List[Argument]] =
         repsep (argument, ",")

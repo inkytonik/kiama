@@ -46,22 +46,24 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
         t match {
             case Program (m, cs) =>
                 toDoc (m) <> ssep (cs map toDoc, line <> line)
-            case MainClass (i, s) =>
+            case MainClass (i, m) =>
                 "class" <+> toDoc (i) <+> braces (
                     nest (
                         line <>
-                        "public static void main ()" <+> braces (
-                            nest (
-                                line <>
-                                toDoc (s)
-                            ) <>
-                            line
-                        )
+                        toDoc (m)
                     ) <>
                     line
                 ) <>
                 line <>
                 line
+            case MainMethod (s) =>
+                "public static void main ()" <+> braces (
+                    nest (
+                        line <>
+                        toDoc (s)
+                    ) <>
+                    line
+                )
             case Class (i, optsc, b) =>
                 val ext = optsc.map (n => "extends" <+> toDoc (n)).getOrElse (empty)
                 "class" <+> toDoc (i) <> ext <+> braces (
@@ -90,6 +92,8 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
                     )
             case Argument (t, i) =>
                 toDoc (t) <+> toDoc (i)
+            case Result (e) =>
+                "return" <+> toDoc (e)
             case t : Type =>
                 t.toString
             case Block (ss) =>
@@ -126,7 +130,7 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
                 toParenDoc (e)
         }
 
-    def bodyToDoc (vs : List[Var], ss : List[Statement], r : Expression) : Doc =
+    def bodyToDoc (vs : List[Var], ss : List[Statement], r : Result) : Doc =
         (if (vs.isEmpty)
              empty
          else
@@ -135,7 +139,7 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
              line) <>
         line <>
         vsep (ss map toDoc) <@>
-        "return" <+> toDoc (r) <> semi
+        toDoc (r) <> semi
 
     override def toParenDoc (e : PrettyExpression) : Doc =
         link (e, toParenDocNoLink (e))

@@ -41,14 +41,16 @@ class Translator (tree : MiniJavaTree) extends Attribution {
      */
     def translate (sourcetree : Program, sourceFilename : String, analyser : SemanticAnalyser) : List[ClassFile] = {
 
-        // An instruction buffer for translating statements and expressions into
+        // An instruction buffer for translating statements and expressions.
         val instructions = Vector.newBuilder[JVMInstr]
 
         /*
-         * Generate an instruction by appending it to the instruction buffer.
+         * Generate instructions by appending the operations and the associated
+         * source node to the instruction buffer.
          */
-        def gen (instr : JVMInstr) {
-            instructions += instr
+        def gen (source : MiniJavaNode, ops : JVMOp*) {
+            for (op <- ops)
+                instructions += JVMInstr (op, source)
         }
 
         /*
@@ -137,19 +139,20 @@ class Translator (tree : MiniJavaTree) extends Attribution {
 
             // Translate the main class's statement
             instructions.clear ()
-            translateStmt (m.stmt)
-            gen (Return ())
+            translateStmt (m.main.stmt)
+            gen (m.main.stmt, Return ())
             val instrs = instructions.result
 
             // Make a main method containing the statement from this class
             val mainMethod =
-                JVMMethod (JVMMethodSpec ("main",
+                JVMMethod (m.main,
+                           JVMMethodSpec ("main",
                                           List (JVMArrayType (JVMStringType ())),
                                           JVMVoidType ()),
                            true,
                            instrs)
 
-            ClassFile (sourceFilename, m.name.idn, "java/lang/Object",
+            ClassFile (m, sourceFilename, m.name.idn, "java/lang/Object",
                        Nil, List (mainMethod))
 
         }
@@ -203,20 +206,21 @@ class Translator (tree : MiniJavaTree) extends Attribution {
             method.body.optStmts.map (translateStmt)
 
             // Emit the code to compute the return value
-            translateExp (method.body.result)
+            translateExp (method.body.result.exp)
 
             // Emit the right return instruction
-            method.body.tipe match {
-                case _ : IntType | _ : BooleanType =>
-                    gen (Ireturn ())
-                case _ =>
-                    gen (Areturn ())
-            }
+            gen (method.body.result,
+                 method.body.tipe match {
+                     case _ : IntType | _ : BooleanType =>
+                         Ireturn ()
+                     case _ =>
+                         Areturn ()
+                 })
 
             // Gather all of the method's instructions
             val instrs = instructions.result
 
-            JVMMethod (methodSpec ("", method), false, instrs)
+            JVMMethod (method, methodSpec ("", method), false, instrs)
 
         }
 
@@ -244,7 +248,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
             // Translate the methods
             val methods = translateMethods (cls.body.methods)
 
-            ClassFile (sourceFilename, cls.name.idn, superclassName,
+            ClassFile (cls, sourceFilename, cls.name.idn, superclassName,
                        fields, methods)
 
         }
@@ -269,16 +273,18 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                     case tree.parent (tree.parent (cls : Class)) =>
                         val className = cls.name.idn
                         val fieldName = field.name.idn
-                        gen (Aload (0))
-                        gen (GetField (s"$className/$fieldName", translateType (field.tipe)))
+                        gen (idnuse,
+                             Aload (0),
+                             GetField (s"$className/$fieldName", translateType (field.tipe)))
                 }
             }
 
             def loadLocal (tipe : Type) {
-                if (isIntegerType (tipe))
-                    gen (Iload (locnum (idnuse)))
-                else
-                    gen (Aload (locnum (idnuse)))
+                gen (idnuse,
+                     if (isIntegerType (tipe))
+                         Iload (locnum (idnuse))
+                     else
+                         Aload (locnum (idnuse)))
             }
 
             analyser.entity (idnuse) match {
@@ -300,25 +306,26 @@ class Translator (tree : MiniJavaTree) extends Attribution {
          * on which of these cases apply. The expression argument is the
          * thing that computes the value to be stored.
          */
-        def translateIdnStore (idnuse : IdnUse, exp : Expression) {
+        def translateIdnStore (stmt : Statement, idnuse : IdnUse, exp : Expression) {
 
             def storeField (field : Field) {
                 field match {
                     case tree.parent (tree.parent (cls : Class)) =>
                         val className = cls.name.idn
                         val fieldName = field.name.idn
-                        gen (Aload (0))
+                        gen (idnuse, Aload (0))
                         translateExp (exp)
-                        gen (PutField (s"$className/$fieldName", translateType (field.tipe)))
+                        gen (stmt, PutField (s"$className/$fieldName", translateType (field.tipe)))
                 }
             }
 
             def storeLocal (tipe : Type) {
                 translateExp (exp)
-                if (isIntegerType (tipe))
-                    gen (Istore (locnum (idnuse)))
-                else
-                    gen (Astore (locnum (idnuse)))
+                gen (stmt,
+                     if (isIntegerType (tipe))
+                         Istore (locnum (idnuse))
+                     else
+                         Astore (locnum (idnuse)))
             }
 
             analyser.entity (idnuse) match {
@@ -341,7 +348,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                     translateIdnLoad (idnuse)
                     translateExp (ind)
                     translateExp (exp)
-                    gen (Iastore ())
+                    gen (exp, Iastore ())
 
                 case Block (stmts) =>
                     stmts.map (translateStmt)
@@ -349,34 +356,32 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                 case If (cond, stmt1, stmt2) =>
                     val label1 = makeLabel ()
                     val label2 = makeLabel ()
-                    translateCond (cond, label1)
+                    translateCond (stmt, cond, label1)
                     translateStmt (stmt1)
-                    gen (Goto (label2))
-                    gen (Label (label1))
+                    gen (stmt, Goto (label2), Label (label1))
                     translateStmt (stmt2)
-                    gen (Label (label2))
+                    gen (stmt, Label (label2))
 
                 case Println (exp) =>
-                    gen (
-                        GetStatic ("java/lang/System/out",
-                                   JVMClassType ("java/io/PrintStream")))
+                    gen (stmt,
+                         GetStatic ("java/lang/System/out",
+                                    JVMClassType ("java/io/PrintStream")))
                     translateExp (exp)
-                    gen (
-                        InvokeVirtual (JVMMethodSpec ("java/io/PrintStream/println",
-                                                      List (JVMIntType ()),
-                                                      JVMVoidType ())))
+                    gen (stmt,
+                         InvokeVirtual (JVMMethodSpec ("java/io/PrintStream/println",
+                                                       List (JVMIntType ()),
+                                                       JVMVoidType ())))
 
                 case VarAssign (idnuse, exp) =>
-                    translateIdnStore (idnuse, exp)
+                    translateIdnStore (stmt, idnuse, exp)
 
-                case While (cond, stmt) =>
+                case While (cond, body) =>
                     val label1 = makeLabel ()
                     val label2 = makeLabel ()
-                    gen (Label (label1))
-                    translateCond (cond, label2)
-                    translateStmt (stmt)
-                    gen (Goto (label1))
-                    gen (Label (label2))
+                    gen (stmt, Label (label1))
+                    translateCond (stmt, cond, label2)
+                    translateStmt (body)
+                    gen (stmt, Goto (label1), Label (label2))
 
             }
         }
@@ -388,9 +393,9 @@ class Translator (tree : MiniJavaTree) extends Attribution {
          * the next instruction after the comparison. In the translation
          * of MiniJava Booleans zero is false and one is true.
          */
-        def translateCond (cond : Expression, falseLabel : String) {
+        def translateCond (stmt : Statement, cond : Expression, falseLabel : String) {
             translateExp (cond)
-            gen (Ifeq (falseLabel))
+            gen (stmt, Ifeq (falseLabel))
         }
 
         /*
@@ -414,7 +419,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                     val MethodEntity (method) = analyser.entity (exp.name)
 
                     // Generate an invocation of the correct method spec
-                    gen (InvokeVirtual (methodSpec (className, method)))
+                    gen (exp, InvokeVirtual (methodSpec (className, method)))
 
                 case tipe =>
                     sys.error (s"translateCall: non-reference base type for call: $tipe")
@@ -431,18 +436,15 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                     val label1 = makeLabel ()
                     val label2 = makeLabel ()
                     translateExp (left)
-                    gen (Ifeq (label1))
+                    gen (exp, Ifeq (label1))
                     translateExp (right)
-                    gen (Goto (label2))
-                    gen (Label (label1))
-                    gen (Iconst_0 ())
-                    gen (Label (label2))
+                    gen (exp, Goto (label2), Label (label1), Iconst_0 (), Label (label2))
 
                 case callexp : CallExp =>
                     translateCall (callexp)
 
                 case FalseExp () =>
-                    gen (Iconst_0 ())
+                    gen (exp, Iconst_0 ())
 
                 case IdnExp (idnuse) =>
                     translateIdnLoad (idnuse)
@@ -450,81 +452,73 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                 case IndExp (base, ind) =>
                     translateExp (base)
                     translateExp (ind)
-                    gen (Iaload ())
+                    gen (exp, Iaload ())
 
                 case IntExp (i) =>
-                    i match {
-                        case -1 => gen (Iconst_m1 ())
-                        case  0 => gen (Iconst_0 ())
-                        case  1 => gen (Iconst_1 ())
-                        case  2 => gen (Iconst_2 ())
-                        case  3 => gen (Iconst_3 ())
-                        case  4 => gen (Iconst_4 ())
-                        case  5 => gen (Iconst_5 ())
-                        case _ =>
-                            if ((i >= -128) && (i < 128))
-                                gen (Bipush (i))
-                            else
-                                gen (Ldc (i))
-                    }
+                    gen (exp,
+                         i match {
+                             case -1 => Iconst_m1 ()
+                             case  0 => Iconst_0 ()
+                             case  1 => Iconst_1 ()
+                             case  2 => Iconst_2 ()
+                             case  3 => Iconst_3 ()
+                             case  4 => Iconst_4 ()
+                             case  5 => Iconst_5 ()
+                             case _ =>
+                                 if ((i >= -128) && (i < 128))
+                                     Bipush (i)
+                                 else
+                                     Ldc (i)
+                         })
 
                 case LengthExp (base) =>
                     translateExp (base)
-                    gen (ArrayLength ())
+                    gen (exp, ArrayLength ())
 
                 case LessExp (left, right) =>
                     val label1 = makeLabel ()
                     val label2 = makeLabel ()
                     translateExp (left)
                     translateExp (right)
-                    gen (If_icmpge (label1))
-                    gen (Iconst_1 ())
-                    gen (Goto (label2))
-                    gen (Label (label1))
-                    gen (Iconst_0 ())
-                    gen (Label (label2))
+                    gen (exp, If_icmpge (label1), Iconst_1 (), Goto (label2),
+                              Label (label1), Iconst_0 (), Label (label2))
 
                 case MinusExp (left, right) =>
                     translateExp (left)
                     translateExp (right)
-                    gen (Isub ())
+                    gen (exp, Isub ())
 
                 case NewExp (IdnUse (idn)) =>
-                    gen (New (idn))
-                    gen (Dup ())
-                    gen (InvokeSpecial (JVMMethodSpec (s"$idn/<init>", Nil,
-                                                       JVMVoidType ())))
+                    gen (exp, New (idn), Dup (),
+                              InvokeSpecial (JVMMethodSpec (s"$idn/<init>", Nil,
+                                                            JVMVoidType ())))
 
-                case NewArrayExp (exp) =>
-                    translateExp (exp)
-                    gen (NewArray ("int"))
+                case NewArrayExp (size) =>
+                    translateExp (size)
+                    gen (exp, NewArray ("int"))
 
-                case NotExp (exp) =>
+                case NotExp (sub) =>
                     val label1 = makeLabel ()
                     val label2 = makeLabel ()
-                    translateExp (exp)
-                    gen (Ifeq (label1))
-                    gen (Iconst_0 ())
-                    gen (Goto (label2))
-                    gen (Label (label1))
-                    gen (Iconst_1 ())
-                    gen (Label (label2))
+                    translateExp (sub)
+                    gen (exp, Ifeq (label1), Iconst_0 (), Goto (label2),
+                              Label (label1), Iconst_1 (), Label (label2))
 
                 case PlusExp (left, right) =>
                     translateExp (left)
                     translateExp (right)
-                    gen (Iadd ())
+                    gen (exp, Iadd ())
 
                 case StarExp (left, right) =>
                     translateExp (left)
                     translateExp (right)
-                    gen (Imul ())
+                    gen (exp, Imul ())
 
                 case ThisExp () =>
-                    gen (Aload (0))
+                    gen (exp, Aload (0))
 
                 case TrueExp () =>
-                    gen (Iconst_1 ())
+                    gen (exp, Iconst_1 ())
 
             }
         }

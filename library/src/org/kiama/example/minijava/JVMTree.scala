@@ -27,14 +27,17 @@ package example.minijava
  */
 object JVMTree {
 
+    import MiniJavaTree.MiniJavaNode
+
     /**
      * A class file defining a JVM class. `source` gives the name of the source
      * file from which this class file comes. `name` gives the name of the class
      * that is being defined, and `superClass` is the name of the super class
      * of this class. `fields` and `methods` define the components of the class.
      */
-    case class ClassFile (source : String, name : String, superclassname : String,
-                          fields : List[JVMField], methods : List[JVMMethod])
+    case class ClassFile (source : MiniJavaNode, filename : String, name : String,
+                          superclassname : String, fields : List[JVMField],
+                          methods : List[JVMMethod])
 
     /**
      * Base class for JVM types.
@@ -91,7 +94,7 @@ object JVMTree {
     /**
      * A method in the class.
      */
-    case class JVMMethod (spec : JVMMethodSpec, isStatic : Boolean,
+    case class JVMMethod (source : MiniJavaNode, spec : JVMMethodSpec, isStatic : Boolean,
                           instrs : Vector[JVMInstr])
 
     /**
@@ -101,173 +104,178 @@ object JVMTree {
         override def toString = name + argTypes.mkString ("(", "", ")") + retType
     }
 
+    /*
+     * An instruction and its associated MiniJava construct.
+     */
+    case class JVMInstr (op : JVMOp, source : MiniJavaNode)
+
     /**
-     * Base class for JVM instructions. `stackChange` records the number of
-     * elements by which the stack changes after execution of an instruction
+     * Base class for JVM operations. `stackChange` records the number of
+     * elements by which the stack changes after execution of an operation
      * of this type. Thus, zero means no change, a positive value means an
      * increase in stack size, and a negative value means a decrease in stack
      * size.
      */
-    sealed abstract class JVMInstr extends Product {
+    sealed abstract class JVMOp extends Product {
         def stackChange : Int
     }
 
     /**
-     * JVM instructions. See JVM documentation for descriptions.
+     * JVM operations. See JVM documentation for descriptions.
      *
-     * This list does not include all available instructions. To add a new one,
-     * just add it as a case class whose name is the instruction name with at
+     * This list does not include all available operations. To add a new one,
+     * just add it as a case class whose name is the operation name with at
      * least a starting capital letter.
      *
-     * The arguments of the case class should be the instruction operands in the
-     * order in which they must appear in an instruction instance.
+     * The arguments of the case class should be the operation operands in the
+     * order in which they must appear in an operation instance.
      *
      * The `stackChange` value must be the net change in stack elements when an
-     * instance of this instruction runs. E.g., zero means there is no change,
+     * instance of this operation runs. E.g., zero means there is no change,
      * whereas a stack change of one means that there is one more element on
-     * the operand stack after the instruction has executed than there is
+     * the operand stack after the operation has executed than there is
      * before.
      */
 
-    case class Aload (loc : Int) extends JVMInstr {
+    case class Aload (loc : Int) extends JVMOp {
         override val stackChange = 1
     }
 
-    case class ArrayLength () extends JVMInstr {
+    case class ArrayLength () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Areturn () extends JVMInstr {
+    case class Areturn () extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Astore (loc : Int) extends JVMInstr {
+    case class Astore (loc : Int) extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Bipush (num : Int) extends JVMInstr {
+    case class Bipush (num : Int) extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Dup () extends JVMInstr {
+    case class Dup () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class GetField (name : String, tipe : JVMType) extends JVMInstr {
+    case class GetField (name : String, tipe : JVMType) extends JVMOp {
         override val stackChange = 1
     }
 
-    case class GetStatic (name : String, tipe : JVMType) extends JVMInstr {
+    case class GetStatic (name : String, tipe : JVMType) extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Goto (label : String) extends JVMInstr {
+    case class Goto (label : String) extends JVMOp {
         override val stackChange = 0
     }
 
-    case class Iadd () extends JVMInstr {
+    case class Iadd () extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Iload (loc : Int) extends JVMInstr {
+    case class Iload (loc : Int) extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Iaload () extends JVMInstr {
+    case class Iaload () extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Iastore () extends JVMInstr {
+    case class Iastore () extends JVMOp {
         override val stackChange = -3
     }
 
-    case class Iconst_m1 () extends JVMInstr {
+    case class Iconst_m1 () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Iconst_0 () extends JVMInstr {
+    case class Iconst_0 () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Iconst_1 () extends JVMInstr {
+    case class Iconst_1 () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Iconst_2 () extends JVMInstr {
+    case class Iconst_2 () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Iconst_3 () extends JVMInstr {
+    case class Iconst_3 () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Iconst_4 () extends JVMInstr {
+    case class Iconst_4 () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class Iconst_5 () extends JVMInstr {
+    case class Iconst_5 () extends JVMOp {
         override val stackChange = 1
     }
 
-    case class If_icmpge (label : String) extends JVMInstr {
+    case class If_icmpge (label : String) extends JVMOp {
         override val stackChange = -2
     }
 
-    case class Ifeq (label : String) extends JVMInstr {
+    case class Ifeq (label : String) extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Ifne (label : String) extends JVMInstr {
+    case class Ifne (label : String) extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Ireturn () extends JVMInstr {
+    case class Ireturn () extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Istore (loc : Int) extends JVMInstr {
+    case class Istore (loc : Int) extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Isub () extends JVMInstr {
+    case class Isub () extends JVMOp {
         override val stackChange = -1
     }
 
-    case class Imul () extends JVMInstr {
+    case class Imul () extends JVMOp {
         override val stackChange = -1
     }
 
-    case class InvokeSpecial (spec : JVMMethodSpec) extends JVMInstr {
+    case class InvokeSpecial (spec : JVMMethodSpec) extends JVMOp {
         override val stackChange =
             (if (spec.retType == JVMVoidType ()) 0 else 1) -
                 (1 + spec.argTypes.length)
 
     }
 
-    case class InvokeVirtual (spec : JVMMethodSpec) extends JVMInstr {
+    case class InvokeVirtual (spec : JVMMethodSpec) extends JVMOp {
         override val stackChange =
             (if (spec.retType == JVMVoidType ()) 0 else 1) -
                 (1 + spec.argTypes.length)
 
     }
 
-    case class Ldc (num : Int) extends JVMInstr {
+    case class Ldc (num : Int) extends JVMOp {
         override val stackChange = 1
     }
 
-    case class New (className : String) extends JVMInstr {
+    case class New (className : String) extends JVMOp {
         override val stackChange = 1
     }
 
-    case class NewArray (elemtype : String) extends JVMInstr {
+    case class NewArray (elemtype : String) extends JVMOp {
         override val stackChange = 0
     }
 
-    case class PutField (name : String, tipe : JVMType) extends JVMInstr {
+    case class PutField (name : String, tipe : JVMType) extends JVMOp {
         override val stackChange = -2
     }
 
-    case class Return () extends JVMInstr {
+    case class Return () extends JVMOp {
         override val stackChange = 0
     }
 
@@ -276,7 +284,7 @@ object JVMTree {
      * output symbolically by the compiler but then replaced with offsets by
      * the assembler.
      */
-    case class Label (label : String) extends JVMInstr {
+    case class Label (label : String) extends JVMOp {
         override val stackChange = 0
     }
 

@@ -21,6 +21,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
+
 .source src/org/kiama/example/minijava/tests/iftrue.java
 .class public IfTrueClass
 .super java/lang/Object
@@ -48,3 +49,4 @@ L2:
     iload 1
     ireturn
 .end method
+

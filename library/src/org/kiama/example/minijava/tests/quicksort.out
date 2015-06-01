@@ -22,6 +22,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
+
 .source src/org/kiama/example/minijava/tests/quicksort.java
 .class public QS
 .super java/lang/Object
@@ -349,3 +350,4 @@ L2:
     iconst_0
     ireturn
 .end method
+

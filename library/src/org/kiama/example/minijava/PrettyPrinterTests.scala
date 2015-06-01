@@ -35,27 +35,31 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
     val otherfive = IntExp (5)
     val starexp = StarExp (five, otherfive)
     val println = Println (starexp)
-    val mainclass = MainClass (mul, println)
+    val mainmethod = MainMethod (println)
+    val mainclass = MainClass (mul, mainmethod)
     val nil = Nil
     val program = Program (mainclass, nil)
 
     test ("a simple MiniJava program pretty-prints with the correct positions using any") {
 
         // Program (
-        //     MainClass (IdnDef ("Mul"), Println (StarExp (IntExp (5), IntExp (5)))),
+        //     MainClass (
+        //         IdnDef ("Mul"),
+        //         MainMethod (Println (StarExp (IntExp (5), IntExp (5))))),
         //     Nil)
 
         assertLinks (
             List (
-                program -> Range (0, 95),
-                mainclass -> Range (14, 85),
-                mul -> Range (25, 40),
-                println -> Range (41, 84),
-                starexp -> Range (50, 83),
-                five -> Range (59, 70),
-                otherfive -> Range (71, 82),
-                nil -> Range (90, 94),
-                "Mul" -> Range (33, 39)
+                program -> Range (0, 125),
+                mainclass -> Range (14, 115),
+                mainmethod -> Range (58, 114),
+                mul -> Range (34, 49),
+                println -> Range (70, 113),
+                starexp -> Range (79, 112),
+                five -> Range (88, 99),
+                otherfive -> Range (100, 111),
+                nil -> Range (120, 124),
+                "Mul" -> Range (42, 48)
             )
         ) (pretty (any (program)))
 
@@ -73,6 +77,7 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
             List (
                 program -> Range (0, 91),
                 mainclass -> Range (0, 91),
+                mainmethod -> Range (16, 87),
                 mul -> Range (6, 10),
                 println -> Range (53, 81),
                 starexp -> Range (73, 79),

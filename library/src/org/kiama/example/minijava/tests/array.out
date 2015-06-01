@@ -21,6 +21,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
+
 .source src/org/kiama/example/minijava/tests/array.java
 .class public ArrayClass
 .super java/lang/Object
@@ -66,3 +67,4 @@ L2:
     iaload
     ireturn
 .end method
+

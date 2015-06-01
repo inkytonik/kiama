@@ -316,7 +316,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             """,
             program,
             Program (
-                MainClass (IdnDef ("Main"), VarAssign (IdnUse ("a"), IntExp (1))),
+                MainClass (IdnDef ("Main"), MainMethod (VarAssign (IdnUse ("a"), IntExp (1)))),
                 Nil))
     }
 
@@ -327,7 +327,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             """,
             program,
             Program (
-                MainClass (IdnDef ("Main"), VarAssign (IdnUse ("a"), IntExp (1))),
+                MainClass (IdnDef ("Main"), MainMethod (VarAssign (IdnUse ("a"), IntExp (1)))),
                 List (
                     Class (IdnDef ("Normal1"), None, ClassBody (Nil, Nil)))))
     }
@@ -340,7 +340,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             """,
             program,
             Program (
-                MainClass (IdnDef ("Main"), VarAssign (IdnUse ("a"), IntExp (1))),
+                MainClass (IdnDef ("Main"), MainMethod (VarAssign (IdnUse ("a"), IntExp (1)))),
                 List (
                     Class (IdnDef ("Normal1"), None, ClassBody (Nil, Nil)),
                     Class (IdnDef ("Normal2"), None, ClassBody (Nil, Nil)))))
@@ -351,7 +351,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("a main class parses correctly") {
         assertParseOk ("class Bob { public static void main () { a = 1; } }",
             mainClass,
-            MainClass (IdnDef ("Bob"), VarAssign (IdnUse ("a"), IntExp (1))))
+            MainClass (IdnDef ("Bob"), MainMethod (VarAssign (IdnUse ("a"), IntExp (1)))))
     }
 
     test ("a main class with more than one statement doesn't parse") {
@@ -406,7 +406,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                                 Nil,
                                 Nil,
                                 Nil,
-                                IntExp (1)))))))
+                                Result (IntExp (1))))))))
     }
 
     test ("a class with many methods parses") {
@@ -426,21 +426,21 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                                   Nil,
                                   Nil,
                                   Nil,
-                                  IntExp (1))),
+                                  Result (IntExp (1)))),
                           Method (IdnDef ("m2"),
                               MethodBody (
                                   IntType (),
                                   Nil,
                                   Nil,
                                   Nil,
-                                  IntExp (2))),
+                                  Result (IntExp (2)))),
                           Method (IdnDef ("m3"),
                               MethodBody (
                                   IntType (),
                                   Nil,
                                   Nil,
                                   Nil,
-                                  IntExp (3)))))))
+                                  Result (IntExp (3))))))))
     }
 
     test ("a class with many variable declarations and many methods parses") {
@@ -463,21 +463,21 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                                   Nil,
                                   Nil,
                                   Nil,
-                                  IntExp (1))),
+                                  Result (IntExp (1)))),
                           Method (IdnDef ("m2"),
                               MethodBody (
                                   IntType (),
                                   Nil,
                                   Nil,
                                   Nil,
-                                  IntExp (2))),
+                                  Result (IntExp (2)))),
                           Method (IdnDef ("m3"),
                               MethodBody (
                                   IntType (),
                                   Nil,
                                   Nil,
                                   Nil,
-                                  IntExp (3)))))))
+                                  Result (IntExp (3))))))))
     }
 
     // Variable declaration and type tests
@@ -519,7 +519,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                     Nil,
                     Nil,
                     Nil,
-                    IntExp (1))))
+                    Result (IntExp (1)))))
     }
 
     test ("a method with one variable declaration parses") {
@@ -531,7 +531,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                     Nil,
                     List (Var (IntType (), IdnDef ("a"))),
                     Nil,
-                    IntExp (1))))
+                    Result (IntExp (1)))))
     }
 
     test ("a method with one statement parses") {
@@ -543,7 +543,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                     Nil,
                     Nil,
                     List (VarAssign (IdnUse ("a"), IntExp (1))),
-                    IntExp (1))))
+                    Result (IntExp (1)))))
     }
 
     test ("a method with mutliple variables and statements parses") {
@@ -557,7 +557,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                           Var (IntType (), IdnDef ("b"))),
                     List (VarAssign (IdnUse ("a"), IntExp (1)),
                           VarAssign (IdnUse ("b"), IntExp (1))),
-                    IntExp (1))))
+                    Result (IntExp (1)))))
     }
 
     test ("a method with no arguments parses") {
@@ -569,7 +569,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                     Nil,
                     Nil,
                     Nil,
-                    IntExp (1))))
+                    Result (IntExp (1)))))
     }
 
     test ("a method with one argument parses") {
@@ -581,7 +581,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                     List (Argument (IntType (), IdnDef ("a"))),
                     Nil,
                     Nil,
-                    IntExp (1))))
+                    Result (IntExp (1)))))
     }
 
     test ("a method with many arguments parses") {
@@ -595,7 +595,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                           Argument (IntType (), IdnDef ("c"))),
                     Nil,
                     Nil,
-                    IntExp (1))))
+                    Result (IntExp (1)))))
     }
 
     test ("an empty argument list parses") {

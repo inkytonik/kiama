@@ -461,7 +461,7 @@ class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
                 IntType ()
 
             // Rule 20
-            case tree.parent (MethodBody (t, _, _, _, _)) =>
+            case tree.parent.pair (_, tree.parent.pair (_ : Result, MethodBody (t, _, _, _, _))) =>
                 actualTypeOf (t)
 
             // In all other cases, we don't care

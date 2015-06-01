@@ -22,6 +22,7 @@
     invokevirtual java/io/PrintStream/println(I)V
     return
 .end method
+
 .source src/org/kiama/example/minijava/tests/factorial.java
 .class public Fac
 .super java/lang/Object
@@ -62,3 +63,4 @@ L2:
     iload 2
     ireturn
 .end method
+

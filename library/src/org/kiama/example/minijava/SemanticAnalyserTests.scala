@@ -587,10 +587,10 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         assertResult ("""scope
             |    "v" -> VariableEntity(Var(int,IdnDef(v)))
             |scope
-            |    "m" -> MethodEntity(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),IntExp(42))))
+            |    "m" -> MethodEntity(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),Result(IntExp(42)))))
             |scope
-            |    "Dummy" -> MainClassEntity(MainClass(IdnDef(Dummy),Println(IntExp(0))))
-            |    "Test" -> ClassEntity(Class(IdnDef(Test),None,ClassBody(List(),List(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),IntExp(42)))))))""".stripMargin
+            |    "Dummy" -> MainClassEntity(MainClass(IdnDef(Dummy),MainMethod(Println(IntExp(0)))))
+            |    "Test" -> ClassEntity(Class(IdnDef(Test),None,ClassBody(List(),List(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),Result(IntExp(42))))))))""".stripMargin
         ) (format (analyser.env (exp)))
     }
 
@@ -634,7 +634,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                          retType : Type = IntType (),
                          vars : List[Var] = Nil,
                          stmts : List[Statement] = Nil) =
-        Program (MainClass (IdnDef ("Dummy"), Println (IntExp (0))),
+        Program (MainClass (IdnDef ("Dummy"), MainMethod (Println (IntExp (0)))),
             List(
                 Class (IdnDef ("Test"), None,
                     ClassBody (
@@ -646,6 +646,6 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
                                     Nil,
                                     vars,
                                     stmts,
-                                    exp)))))))
+                                    Result (exp))))))))
 
 }
