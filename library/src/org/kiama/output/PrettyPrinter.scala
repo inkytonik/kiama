@@ -27,7 +27,7 @@ import scala.language.implicitConversions
 /**
  * Common type definitions for all pretty-printers.
  */
-object PrettyPrinterTypes extends Memoiser {
+object PrettyPrinterTypes {
 
     /**
      * Indentation is expressed as integer space units.
@@ -45,11 +45,21 @@ object PrettyPrinterTypes extends Memoiser {
     type Layout = String
 
     /**
-     * Links between values and ranges. Used for the representation
+     * A link between a value and a range. Used for the representation
      * of mappings between pretty-printed values and their printed
-     * representations. See also `Document`.
+     * representations.
      */
-    class Links extends IdMemoised[AnyRef,Range]
+    case class Link (value : AnyRef, range : Range)
+
+    /**
+     * A collection of link.s.
+     */
+    type Links = List[Link]
+
+    /**
+     * An empty links mapping.
+     */
+    val emptyLinks = List[Link] ()
 
     /**
      * A pretty-printed document, consisting of layout for the
@@ -72,7 +82,7 @@ object PrettyPrinterTypes extends Memoiser {
     /**
      * An empty pretty-printed document.
      */
-    val emptyDocument = Document ("", new Links {})
+    val emptyDocument = Document ("", emptyLinks)
 
 }
 
@@ -867,7 +877,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
 
     import org.kiama.util.Positions.{getStart, getFinish}
     import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
-    import PrettyPrinterTypes.{Document, Indent, Layout, Links, Width}
+    import PrettyPrinterTypes.{Document, emptyLinks, Indent, Layout, Link, Links, Width}
     import scala.collection.immutable.{Queue, Seq}
     import scala.collection.immutable.Queue.{empty => emptyDq}
     import scala.collection.mutable.StringBuilder
@@ -1149,15 +1159,13 @@ trait PrettyPrinter extends PrettyPrinterBase {
         val finalBuffer = finalBufferComputation.runT
 
         val (links, _, _, stringBuilder) =
-            finalBuffer.foldLeft ((new Links, List[Int] (), 0, new StringBuilder)) {
+            finalBuffer.foldLeft ((emptyLinks, List[Int] (), 0, new StringBuilder)) {
                 case ((m, s, p, o), e) =>
                     e match {
                         case Start (a) =>
                             (m, p :: s, p, o)
                         case Finish (a) =>
-                            if (a != null)
-                                m.put (a, Range (s.head, p + 1))
-                            (m, s.tail, p, o)
+                            (Link (a, Range (s.head, p + 1)) :: m, s.tail, p, o)
                         case Text (t) =>
                             (m, s, p + t.length, o.append (t))
                     }

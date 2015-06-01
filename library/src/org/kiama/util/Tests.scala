@@ -280,7 +280,7 @@ trait TransformerTests extends RegexParserTests {
 
 trait PrettyPrinterTests extends Tests {
 
-    import org.kiama.output.PrettyPrinterTypes.{Document, Layout, Links}
+    import org.kiama.output.PrettyPrinterTypes.{Document, Layout, Link, Links}
 
     /**
      * Assert that a doc when pretty-printed has the given layout.
@@ -302,7 +302,16 @@ trait PrettyPrinterTests extends Tests {
      * Assert that a value has a given link in a links map.
      */
     def assertLink (expected : Range) (links : Links, value : AnyRef) {
-        assertResult (Some (expected), s"for value $value") (links.get (value))
+        val optRange = links.collectFirst {
+                                 case Link (k, v) if k eq value =>
+                                     v
+                             }
+        optRange match {
+            case Some (r) =>
+                assertResult (expected, s"for value $value") (r)
+            case None =>
+                fail (s"link for $value not found")
+        }
     }
 
 }
