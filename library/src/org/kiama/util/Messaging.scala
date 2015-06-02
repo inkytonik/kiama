@@ -24,21 +24,33 @@ package util
 import scala.util.parsing.input.{Position, NoPosition}
 
 /**
- * A message record consisting of a position and a label string. If the
- * position is not specified, it defaults to `NoPosition`.
+ * A message record consisting of a label string and an optional value.
  */
-case class Message (label : String, pos : Position = NoPosition) {
+case class Message (label : String, optvalue : Option[AnyRef] = None) {
+
+    /**
+     * The message's position as determined from the starting position of
+     * `value` or `NoPosition` if that value is not present or does not
+     * have a position.
+     */
+    lazy val pos : Position =
+        optvalue match {
+            case Some (v) =>
+                Positions.getStart (v)
+            case None =>
+                NoPosition
+        }
 
     /**
      * Return the start line of this message's position.
      */
-    def line : Int =
+    val line : Int =
         pos.line
 
     /**
      * Return the start column of this message's position.
      */
-    def column : Int =
+    val column : Int =
         pos.column
 
     /**
@@ -46,7 +58,7 @@ case class Message (label : String, pos : Position = NoPosition) {
      * position and the label, followed by lines containing the input
      * text and a pointer to the message location.
      */
-    def format : String =
+    val format : String =
         s"[${pos}] $label\n\n${pos.longString}"
 
 }
@@ -72,10 +84,14 @@ object Messaging {
     val noMessages = Vector.empty
 
     /**
-     * Make a sequence of messages from a single message.
+     * Make a message containing a message with the given label and position.
+     * The message will be associated with no value. The position defaults
+     * to `NoPosition`.
      */
-    def aMessage (message : Message) =
-        Vector (message)
+    def aMessage (label : String, position : Position = NoPosition) : Message =
+        new Message (label, None) {
+            override lazy val pos = position
+        }
 
     /**
      * If `f` is defined at `t` apply it and return the resulting sequence
@@ -102,13 +118,13 @@ object Messaging {
 
     /**
      * If `cond` is true make a singleton message list that associates the
-     * message `msg` with the start position recorded for `value` (if any).
-     * `cond` can be omitted and defaults to true. Any `finish` position
-     * that is recorded for `value` is ignored at present.
+     * label with the start position recorded for `value` (if any). `cond`
+     * can be omitted and defaults to true. Any `finish` position that is
+     * recorded for `value` is ignored at present.
      */
-    def message[T] (value : T, msg : String, cond : Boolean = true) : Messages =
+    def message[T <: AnyRef] (value : T, label : String, cond : Boolean = true) : Messages =
         if (cond)
-            aMessage (Message (msg, Positions.getStart (value)))
+            Vector (Message (label, Some (value)))
         else
             noMessages
 

@@ -31,7 +31,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     import MiniJavaTree._
     import SymbolTable.format
-    import org.kiama.util.{Message, Messaging}
+    import org.kiama.util.Message
+    import org.kiama.util.Messaging.aMessage
     import org.kiama.util.Positions.positionAt
 
     // Tests of definition uniqueness (Rule 1)
@@ -41,8 +42,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |class Main { public static void main () { System.out.println (0); } }
             |class Main { }
             """.stripMargin,
-            Message ("Main is declared more than once", positionAt (2, 7)),
-            Message ("Main is declared more than once", positionAt (3, 7)))
+            aMessage ("Main is declared more than once", positionAt (2, 7)),
+            aMessage ("Main is declared more than once", positionAt (3, 7)))
     }
 
     test ("two declarations of same name in same class is an error") {
@@ -53,8 +54,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    int mult;
             |}
             """.stripMargin,
-           Message ("mult is declared more than once", positionAt (4, 9)),
-           Message ("mult is declared more than once", positionAt (5, 9)))
+           aMessage ("mult is declared more than once", positionAt (4, 9)),
+           aMessage ("mult is declared more than once", positionAt (5, 9)))
     }
 
     test ("two declarations of same name in different scopes is ok") {
@@ -82,7 +83,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("notdecl is not declared", positionAt (5, 9)))
+            aMessage ("notdecl is not declared", positionAt (5, 9)))
     }
 
     test ("use of a name that is declared in wrong scope is an error") {
@@ -99,7 +100,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("notdecl is not declared", positionAt (9, 9)))
+            aMessage ("notdecl is not declared", positionAt (9, 9)))
     }
 
     // Test type of integer expression (Rule 4)
@@ -136,7 +137,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("can't refer to methods directly", positionAt (6, 16)))
+            aMessage ("can't refer to methods directly", positionAt (6, 16)))
     }
 
     // Test type of condition in if and while statements (Rule 7)
@@ -154,7 +155,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val stmts = List (If (cond, Block (Nil), Block (Nil)))
         semanticTest (
             embedExpression (exp, IntType (), Nil, stmts),
-            Message ("type error: expected boolean got int"))
+            aMessage ("type error: expected boolean got int"))
     }
 
     test ("the condition of a while statement can have Boolean type") {
@@ -170,7 +171,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val stmts = List (While (cond, Block (Nil)))
         semanticTest (
             embedExpression (exp, IntType (), Nil, stmts),
-            Message ("type error: expected boolean got int"))
+            aMessage ("type error: expected boolean got int"))
     }
 
     // Test type of expression in println statement can be of any type (Rule 8)
@@ -211,7 +212,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val vars = Nil
         val stmts = List (VarAssign (IdnUse ("m"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts),
-            Message ("illegal assignment to non-variable, non-argument"))
+            aMessage ("illegal assignment to non-variable, non-argument"))
     }
 
     // Test that assignment RHSes have compatible types with LHS (Rule 9)
@@ -231,7 +232,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            Message ("type error: expected int got boolean"))
+            aMessage ("type error: expected int got boolean"))
     }
 
     test ("a Boolean expression is assignment compatible with a Boolean var") {
@@ -249,7 +250,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            Message ("type error: expected boolean got int"))
+            aMessage ("type error: expected boolean got int"))
     }
 
     test ("an integer array expression is assignment compatible with an integer array var") {
@@ -267,7 +268,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val stmts = List (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            Message ("type error: expected int[] got int"))
+            aMessage ("type error: expected int[] got int"))
     }
 
     // Test types in array assignments (Rule 10)
@@ -289,8 +290,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            Message ("type error: expected int got boolean"),
-            Message ("type error: expected int got boolean"))
+            aMessage ("type error: expected int got boolean"),
+            aMessage ("type error: expected int got boolean"))
     }
 
     // Test type of plus expressions (Rule 11)
@@ -305,8 +306,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp),
-                Message ("type error: expected int got boolean"),
-                Message ("type error: expected int got boolean"))
+                aMessage ("type error: expected int got boolean"),
+                aMessage ("type error: expected int got boolean"))
         assertResult (IntType ()) (analysis.tipe (exp))
     }
 
@@ -322,8 +323,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp, BooleanType ()),
-                Message ("type error: expected boolean got int"),
-                Message ("type error: expected boolean got int"))
+                aMessage ("type error: expected boolean got int"),
+                aMessage ("type error: expected boolean got int"))
         assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
@@ -339,7 +340,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp, BooleanType ()),
-                Message ("type error: expected boolean got int"))
+                aMessage ("type error: expected boolean got int"))
         assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
@@ -355,8 +356,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp, BooleanType ()),
-                Message ("type error: expected int got boolean"),
-                Message ("type error: expected int got boolean"))
+                aMessage ("type error: expected int got boolean"),
+                aMessage ("type error: expected int got boolean"))
         assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
@@ -372,7 +373,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp),
-                Message ("type error: expected int[] got int"))
+                aMessage ("type error: expected int[] got int"))
         assertResult (IntType ()) (analysis.tipe (exp))
     }
 
@@ -388,7 +389,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("illegal call to non-method", positionAt (6, 21)))
+            aMessage ("illegal call to non-method", positionAt (6, 21)))
     }
 
     test ("a superclass method can be called") {
@@ -438,7 +439,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("type error: expected int got boolean", positionAt (9, 13)))
+            aMessage ("type error: expected int got boolean", positionAt (9, 13)))
     }
 
     test ("the numbers of arguments in a call can match the declaration") {
@@ -467,7 +468,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("wrong number of arguments, got 1 but expected 2", positionAt (8, 21)))
+            aMessage ("wrong number of arguments, got 1 but expected 2", positionAt (8, 21)))
     }
 
     test ("the types of arguments in a call must match the declaration") {
@@ -482,8 +483,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("type error: expected boolean got int", positionAt (8, 24)),
-            Message ("type error: expected int[] got int", positionAt (8, 28)))
+            aMessage ("type error: expected boolean got int", positionAt (8, 24)),
+            aMessage ("type error: expected int[] got int", positionAt (8, 28)))
     }
 
     test ("forward references to methods work") {
@@ -527,7 +528,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val exp = NewArrayExp (TrueExp ())
         semanticTest (
             embedExpression (exp, IntArrayType ()),
-            Message ("type error: expected int got boolean"))
+            aMessage ("type error: expected int got boolean"))
     }
 
     // Test the use of names in new expressions (rule 19)
@@ -537,7 +538,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val vars = List (Var (IntType (), IdnDef ("v")))
         semanticTest (
             embedExpression (exp, IntType (), vars),
-            Message ("illegal instance creation of non-class type"))
+            aMessage ("illegal instance creation of non-class type"))
     }
 
     test ("The type of a new expression is a reference to the created class") {
@@ -573,7 +574,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            Message ("type error: expected int got boolean", positionAt (5, 16)))
+            aMessage ("type error: expected int got boolean", positionAt (5, 16)))
     }
 
     // Pretty-printing of environments
