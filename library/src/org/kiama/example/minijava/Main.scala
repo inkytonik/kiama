@@ -67,7 +67,7 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
 
         } else {
 
-            // Make a translatof for this tree
+            // Make a translator for this tree
             val translator = new Translator (tree)
 
             // Translate the source tree to JVM
