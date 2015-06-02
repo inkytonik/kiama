@@ -348,7 +348,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                     translateIdnLoad (idnuse)
                     translateExp (ind)
                     translateExp (exp)
-                    gen (exp, Iastore ())
+                    gen (stmt, Iastore ())
 
                 case Block (stmts) =>
                     stmts.map (translateStmt)
