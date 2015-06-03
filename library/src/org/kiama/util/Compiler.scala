@@ -36,6 +36,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
     import org.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.kiama.util.{Console, Emitter, StringEmitter}
     import org.kiama.util.IO.{filereader, FileNotFoundException}
+    import org.kiama.util.Messaging.{formats, Messages}
     import scala.io.Source
 
     /**
@@ -111,8 +112,8 @@ trait CompilerBase[T, C <: Config] extends Profiler {
             makeast (reader, filename, config) match {
                 case Left (ast) =>
                     process (filename, ast, config)
-                case Right (msg) =>
-                    config.error.emitln (msg)
+                case Right (msgs) =>
+                    config.error.emitln (formats (msgs))
             }
         } catch {
             case e : FileNotFoundException =>
@@ -125,7 +126,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      * `Left`.  Returns `Right` with an error message if an AST cannot be made.
      * `config` provides access to all aspects of the configuration.
      */
-    def makeast (reader : Reader, filename : String, config : C) : Either[T,String]
+    def makeast (reader : Reader, filename : String, config : C) : Either[T,Messages]
 
     /**
      * Function to process the input that was parsed. `filename` is the name
@@ -148,21 +149,40 @@ trait CompilerBase[T, C <: Config] extends Profiler {
  */
 trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexParsers {
 
+    import org.kiama.util.Messaging.{message, Messages}
+
     /**
      * The actual parser used to produce the AST.
      */
     def parser : Parser[T]
 
     /**
-     * Make an AST by running the parser, reporting errors if the parse fails.
+     * Make an AST by running the parser, returning messages instead if the parse fails.
      */
-    def makeast (reader : Reader, filename : String, config : C) : Either[T,String] =
+    def makeast (reader : Reader, filename : String, config : C) : Either[T,Messages] =
         parseAll (parser, reader) match {
             case Success (ast, _) =>
                 Left (ast)
-            case f =>
-                Right (f.toString)
+            case f : NoSuccess =>
+                Right (parseFailureMessages (f))
         }
+
+    /**
+     * Objects to stand as the value that produced a parse error.
+     */
+    case class ParseError ()
+
+    /**
+     * Make messages for the given parse failure. By default a single message
+     * is produced referring to a dummy object whose start position is set to
+     * the location of the failure.
+     */
+    def parseFailureMessages (f : NoSuccess) : Messages = {
+        val error = ParseError ()
+        Positions.setStart (error, f.next.pos)
+        Positions.setFinish (error, f.next.pos)
+        message (error, f.msg)
+    }
 
 }
 

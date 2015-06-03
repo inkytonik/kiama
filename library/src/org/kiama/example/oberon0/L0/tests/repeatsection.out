@@ -1,5 +1,5 @@
 * errors
-[6.1] failure: `END' expected but `C' found
+[6.1] `END' expected but `C' found
 
 CONST
 

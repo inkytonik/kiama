@@ -1,4 +1,4 @@
-[6.19] failure: string matching regex `[a-zA-Z][a-zA-Z0-9]*' expected but `8' found
+[6.19] string matching regex `[a-zA-Z][a-zA-Z0-9]*' expected but `8' found
 
     x : ( harold, 802 );
 

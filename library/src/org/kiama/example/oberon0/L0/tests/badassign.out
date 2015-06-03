@@ -1,5 +1,5 @@
 * errors
-[4.5] failure: `END' expected but `1' found
+[4.5] `END' expected but `1' found
 
     1 := 2
 

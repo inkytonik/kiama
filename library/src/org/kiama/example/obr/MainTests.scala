@@ -35,7 +35,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
     import RISCTree._
     import org.kiama.example.obr.RISCTransformer
     import org.kiama.util.{Config, Emitter}
-    import org.kiama.util.Messaging.report
+    import org.kiama.util.Messaging.{formats, report}
     import org.kiama.util.IO.{filereader, FileNotFoundException}
     import org.kiama.rewriting.Rewriter._
 
@@ -66,8 +66,8 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
                             val transformer = new RISCTransformer (analyser, labels)
                             tester (title, config.error, transformer.code (ast))
                         }
-                    case Right (msg) =>
-                        config.error.emitln (msg)
+                    case Right (msgs) =>
+                        config.error.emitln (formats (msgs))
                         fail (s"$title emitted a parse error.")
                 }
             } catch {

@@ -1,4 +1,4 @@
-[10.17] failure: `:=' expected but `D' found
+[10.17] `:=' expected but `D' found
 
    DivideByZero DO
 

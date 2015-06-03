@@ -29,6 +29,7 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
 
     import java.io.Reader
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
+    import org.kiama.util.Messaging.{aMessage, Messages}
     import org.scalatest.TestFailedException
 
     def createConfig (args : Seq[String],
@@ -39,8 +40,8 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
             lazy val error = err
         }
 
-    def makeast (reader : Reader, filename : String, config : Config) : Either[Any,String] =
-         Right ("Dummy")
+    def makeast (reader : Reader, filename : String, config : Config) : Either[Any,Messages] =
+         Right (Vector (aMessage ("Dummy")))
 
     def process (filename : String, ast : Any, config : Config) {
         // Do nothing

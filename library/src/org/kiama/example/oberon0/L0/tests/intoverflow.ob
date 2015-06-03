@@ -4,6 +4,6 @@ VAR
     avar : INTEGER;
 
 BEGIN
-    avar := 2147483647;    
-    avar := 2147483648    
+    avar := 2147483647;
+    avar := 2147483648
 END intoverflow.

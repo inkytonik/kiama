@@ -1,4 +1,4 @@
-[11.7] failure: keyword "DO" found where variable name expected
+[11.7] keyword "DO" found where variable name expected
 
       Result := 0;
 

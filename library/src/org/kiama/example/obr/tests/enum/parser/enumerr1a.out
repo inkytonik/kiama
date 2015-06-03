@@ -1,4 +1,4 @@
-[6.11] failure: string matching regex `[a-zA-Z][a-zA-Z0-9]*' expected but `)' found
+[6.11] string matching regex `[a-zA-Z][a-zA-Z0-9]*' expected but `)' found
 
     x : ( );
 

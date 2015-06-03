@@ -1,5 +1,5 @@
 * errors
-[1.8] failure: ident expected
+[1.8] ident expected
 
 MODULE VAR;
 

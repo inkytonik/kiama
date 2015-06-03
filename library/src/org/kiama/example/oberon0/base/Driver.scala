@@ -75,7 +75,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
 
     import java.io.File
     import org.kiama.util.Emitter
-    import org.kiama.util.Messaging.{report, sortmessages}
+    import org.kiama.util.Messaging.{formats, report, sortmessages}
     import org.kiama.util.IO.{filereader, FileNotFoundException}
 
     override def createConfig (args : Seq[String],
@@ -98,13 +98,13 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
             makeast (reader, filename, config) match {
                 case Left (ast) =>
                     process (filename, ast, config)
-                case Right (msg) =>
+                case Right (msgs) =>
                     if (config.challenge ()) {
                         section (output, "stdout")
                         output.emitln ("parse failed")
                     }
                     section (output, "errors")
-                    output.emitln (msg)
+                    output.emitln (formats (msgs))
             }
         } catch {
             case e : FileNotFoundException =>

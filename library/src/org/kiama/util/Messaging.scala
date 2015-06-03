@@ -117,6 +117,13 @@ object Messaging {
         }
 
     /**
+     * Return a string containing all the given messages formatted separated
+     * by newlines.
+     */
+    def formats (messages : Messages) : String =
+        messages.map (_.format).mkString ("\n")
+
+    /**
      * If `cond` is true make a singleton message list that associates the
      * label with the start position recorded for `value` (if any). `cond`
      * can be omitted and defaults to true. Any `finish` position that is

@@ -1,6 +1,6 @@
 * errors
-[8.13] error: integer will not fit into 32 bits
+[8.13] integer will not fit into 32 bits
 
-    avar := 2147483648    
+    avar := 2147483648
 
             ^
