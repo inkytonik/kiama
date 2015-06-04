@@ -33,41 +33,49 @@ object SymbolTable extends Environments {
     import org.kiama.util.Entity
 
     /**
+     * Superclass of all MiniJava entities. Provides generic access to
+     * the declaration node of the entity.
+     */
+    sealed abstract class MiniJavaEntity extends Entity with Product {
+        def decl : MiniJavaNode
+    }
+
+    /**
      * A main class entity (i.e., the one that is used to start a program).
      * The `decl` field gives us access back to the declaration from the
      * entity.
      */
-    case class MainClassEntity (decl : MainClass) extends Entity
+    case class MainClassEntity (decl : MainClass) extends MiniJavaEntity
 
     /**
      * A normal class entity (i.e., all the non-main classes). The `decl`
      * field gives us access back to the declaration from the entity.
      */
-    case class ClassEntity (decl : Class) extends Entity
+    case class ClassEntity (decl : Class) extends MiniJavaEntity
 
     /**
      * A method entity. The `decl` field gives us access back to the
      * declaration from the entity.
      */
-    case class MethodEntity (decl : Method) extends Entity
+    case class MethodEntity (decl : Method) extends MiniJavaEntity
 
     /**
      * An entity representing an argument to a method. The `decl` field
      * gives us access back to the declaration from the entity.
      */
-    case class ArgumentEntity (decl : Argument) extends Entity
+    case class ArgumentEntity (decl : Argument) extends MiniJavaEntity
 
     /**
      * A instance variable (field) entity. The `decl` field gives us access
      * back to the declaration from the entity.
      */
-    case class FieldEntity (decl : Field) extends Entity
+    case class FieldEntity (decl : Field) extends MiniJavaEntity
 
     /**
      * A local variable entity. The `decl` field gives us access back
      * to the declaration from the entity.
      */
-    case class VariableEntity (decl : Var) extends Entity
+    case class VariableEntity (decl : Var) extends MiniJavaEntity
 
     // Internal types, not created from user programs by the parser but
     // used to represent some types internally to the semantic analysis.
