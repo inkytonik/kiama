@@ -65,7 +65,7 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
                     line
                 )
             case Class (i, optsc, b) =>
-                val ext = optsc.map (n => "extends" <+> toDoc (n)).getOrElse (empty)
+                val ext = optsc.map (n => space <> "extends" <+> toDoc (n)).getOrElse (empty)
                 "class" <+> toDoc (i) <> ext <+> braces (
                     nest (
                         line <>
