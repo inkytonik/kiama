@@ -166,13 +166,13 @@ and companies.
 
 * YourKit
 
-<a href="http://www.yourkit.com"><img src="http://www.yourkit.com/images/yk_logo.png"/></a>
+[![YourKit](http://www.yourkit.com/images/yk_logo.png)](http://www.yourkit.com)
 
 YourKit is kindly supporting open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of innovative and intelligent tools for profiling Java and .NET applications. Take a look at YourKit's leading software products: [YourKit Java Profiler](http://www.yourkit.com/java/profiler/index.jsp) and [YourKit .NET Profiler](http://www.yourkit.com/dotnet/index.jsp).
 
 * CloudBees
 
-<a href="http://cloudbees.com"><img src="http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png"/></a>
+[![CloudBees](http://www.cloudbees.com/sites/default/files/Button-Built-on-CB-1.png)](http://cloudbees.com)
 
 CloudBees provides [generous support to FOSS projects](http://www.cloudbees.com/foss/index.cb) for continuous builds and other services, for which we are very grateful. [nightly builds](https://inkytonik.ci.cloudbees.com/job/Kiama Kiama) are built on a CloudBees Jenkins instance, part of their DEV@cloud service.
 
