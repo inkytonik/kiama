@@ -141,7 +141,7 @@ File: [org.kiama.example.imperative.Imperative.scala](https://code.google.com/p/
 Kiama provides some basic facilities to make it easy to define
 [read-eval-print loops (REPLs)](ReadEvalPrintLoops.md). In the imperative
 example the main REPL parses program text and prints the resulting
-tree representations. (See [#Running](#Running.md) for an example execution.)
+tree representations. (See [Running](#markdown-header-running) for an example execution.)
 
 ```
 object Imperative extends ParsingREPL[Stmt] with Parser {
@@ -195,7 +195,7 @@ def genAsgn (sz : Int) =
 ```
 
 There is also a REPL that generates random imperative programs and
-prints them.  (See [#Running](#Running.md) for an example execution.)
+prints them.  (See [Running](#markdown-header-running) for an example execution.)
 
 ```
 object ImperativeGen extends GeneratingREPL[AST.Stmt] with Generator with PrettyPrinter {

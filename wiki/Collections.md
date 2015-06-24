@@ -54,7 +54,7 @@ support to parallel collections.
 ## Collections and `Attributable` node properties
 
 Collections interact in a special way with the node properties provided
-by the [Attributable](Attribution#Attributable.md) class. Specifically,
+by the [Attributable](Attribution.md#markdown-header-attributable) class. Specifically,
 if a collection is present in the tree structure, it will be ignored
 when it comes to determining node parents and children. The motivation
 is that usually you don't want to attach attributes to the collections

@@ -389,7 +389,7 @@ def not[T] (p : => Parser[T]) : Parser[Unit]
 
 A common usage of `not` is to ensure that identifiers are not allowed
 to have the same form as keywords, as described above in
-[#Identifiers](#Identifiers.md).
+[Identifiers](#markdown-header-identifiers).
 
 ## Left recursion and memoisation
 

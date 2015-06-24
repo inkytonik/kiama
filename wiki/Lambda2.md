@@ -15,7 +15,7 @@ with a user-selected mechanism.
 File: [org.kiama.example.lambda2.LambdaTree.scala](https://code.google.com/p/kiama/source/browse/library/src/org/kiama/example/lambda2/LambdaTree.scala)
 
 Programs for this example consist of expressions represented by the
-`Exp` type. `Exp` extends [Attributable](Attribution#Attributable.md)
+`Exp` type. `Exp` extends [Attributable](Attribution.md#markdown-header-attributable)
 so that later we can define attributes for expressions.
 
 ```
@@ -272,7 +272,7 @@ declared and their types.
 We define the `env` attribute of an expression to be a list of the
 variables that are in scope at that expression and their types. `env`
 depends on the context of the expression, so it is defined by a
-[childAttr](Attribution#Attribute_definitions.md) definition.
+[childAttr](Attribution.md#markdown-header-attribute-definitions) definition.
 
 ```
 val env : Exp => List[(Idn,Type)] =

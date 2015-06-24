@@ -516,7 +516,7 @@ Cloning is particularly important if you are going to perform
 are associated with nodes. If a node appears more than once in
 the structure it will have the same attributes at each place,
 which is probably not what you want. Kiama's
-[Attributable](Attribution#Attributable.md) trait provides
+[Attributable](Attribution.md#markdown-header-attributable) trait provides
 `clone` and `deepclone` operations that can be used to avoid
 this problem.
 

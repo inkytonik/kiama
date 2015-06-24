@@ -104,7 +104,7 @@ the JastAdd example to allow comparison between the two approaches.
 An interpreted implementation of a simple dialect of the Prolog logic
 programming language.
 
-**[Repmin](Attribution#Repmin.md)**
+**[Repmin](Attribution.md#markdown-header-repmin)**
 
 An implementation of the classic Repmin problem that is often used to
 illustrate the basic capabilities of attribute grammar systems and was

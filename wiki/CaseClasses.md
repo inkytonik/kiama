@@ -168,14 +168,14 @@ abstract class Stmt extends Product
 ```
 
 You may want to obtain more generic support for your tree nodes. The
-[Attributable](Attribution#Attributable.md) class and object in Kiama's
+[Attributable](Attribution.md#markdown-header-attributable) class and object in Kiama's
 attribution module provides some useful facilities for this purpose.
 
 ## Positions
 
 It is common to want to attach position (coordinate) information to
 your structure to help with producing sensible messages. See
-[ParserCombs#Positions](ParserCombs#Positions.md) for a discussion of how to do this when using
+[the Positions section of the Parser Combinator page](ParserCombs.md#markdown-header-positions) for a discussion of how to do this when using
 Scala parser combinators and [Messaging](Messaging.md) for information on how the
 positions can be used.
 
