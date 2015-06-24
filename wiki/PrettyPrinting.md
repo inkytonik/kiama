@@ -509,7 +509,7 @@ depending on line width.
 ## Functional pretty printing: the Imperative language
 
 As a more complex example, consider
-[pretty printing](https://code.google.com/p/kiama/source/browse/library/src/org/kiama/example/imperative/PrettyPrinter.scala)
+[pretty printing](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/imperative/PrettyPrinter.scala)
 for the [Imperative](Imperative.md) language. We implement a function `show` that
 converts any imperative language abstract syntax tree node into a
 document. `show` uses `showbin` that abstracts documents for
