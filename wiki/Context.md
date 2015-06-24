@@ -1,6 +1,6 @@
 # Description of the context in which Kiama operates
 
-Up: UserManual, Next: [Parsing](Parsing.md)
+Up: [User Manual](UserManual.md), Next: [Parsing](Parsing.md)
 
 The Kiama library operates on structured information, often
 representing text. An in-memory form of the information is the central
@@ -39,4 +39,4 @@ As another example, if you have a collection that contains values of
 some non-case class Scala type, you will need to provide special support for
 the non-collection parts.
 
-Up: UserManual, Next: [Parsing](Parsing.md)
+Up: [User Manual](UserManual.md), Next: [Parsing](Parsing.md)

@@ -1,6 +1,6 @@
 # Profiling Kiama-based programs
 
-Up: UserManual, Prev: [ReadEvalPrintLoops](ReadEvalPrintLoops.md)
+Up: [User Manual](UserManual.md), Prev: [Read-eval-print Loops](ReadEvalPrintLoops.md)
 
 This page briefly describes Kiama's support of profiling the execution of
 Kiama-based programs.
@@ -227,4 +227,4 @@ See the PicoJava example for details of how to use the trait.
 The `ProfilingCompiler` trait illustrates how to interface with the
 `dsprofile` library if you wish to do so directly.
 
-Up: UserManual, Prev: [ReadEvalPrintLoops](ReadEvalPrintLoops.md)
+Up: [User Manual](UserManual.md), Prev: [Read-eval-print Loops](ReadEvalPrintLoops.md)

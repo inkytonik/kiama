@@ -1,6 +1,6 @@
 # Processing collections with Kiama
 
-Up: [Context](Context.md), Prev: CaseClasses, Next: [Rewritable](Rewritable.md)
+Up: [Context](Context.md), Prev: [Case Classes](CaseClasses.md), Next: [Rewritable](Rewritable.md)
 
 It is often the case that data to be processed by Kiama is formed using Scala
 [collection classes](http://www.scala-lang.org/docu/files/collections-api/collections.html),
@@ -67,4 +67,4 @@ the `C` nodes, even though the list is actually holding them. The `C` nodes
 will have their `parent` properties set to the `P` node, not the list.
 Similarly, the `P` node will have the `C` nodes in its `children` property.
 
-Up: [Context](Context.md), Prev: CaseClasses, Next: [Rewritable](Rewritable.md)
+Up: [Context](Context.md), Prev: [Case Classes](CaseClasses.md), Next: [Rewritable](Rewritable.md)

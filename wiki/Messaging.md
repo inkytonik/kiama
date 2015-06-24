@@ -1,6 +1,6 @@
 # Producing error messages using Kiama
 
-Up: UserManual, Prev: PrettyPrinting, Next: ReadEvalPrintLoops
+Up: [User Manual](UserManual.md), Prev: [Pretty-printing](PrettyPrinting.md), Next: [Read-eval-print Loops](ReadEvalPrintLoops.md)
 
 Kiama provides a simple messaging module to enable error messages to
 be produced during an analysis, stored and then processed at a later
@@ -69,4 +69,4 @@ as `line.column`.
 3.43: application of non-function
 ```
 
-Up: UserManual, Prev: PrettyPrinting, Next: ReadEvalPrintLoops
+Up: [User Manual](UserManual.md), Prev: [Pretty-printing](PrettyPrinting.md), Next: [Read-eval-print Loops](ReadEvalPrintLoops.md)

@@ -8,7 +8,7 @@ Kiama.
 Rewriting is more problematic because Kiama needs to have access to
 the components of a value in order to be able to rewrite it in a
 generic fashion. Kiama has built-in support for rewriting of `Product`
-values (see [CaseClasses](CaseClasses.md)), and `GenTraversable` or `Map` collections
+values (see [Case Classes](CaseClasses.md)), and `GenTraversable` or `Map` collections
 (see [Collections](Collections.md)), since the Scala library provides mechanisms for
 accessing their components.
 
@@ -44,4 +44,4 @@ See Kiama's `imperative` example (file
 [ASTNonCase.scala](https://code.google.com/p/kiama/source/browse/library/src/org/kiama/example/imperative/ASTNonCase.scala))
 for an example of how to define `Rewritable` instances.
 
-Up: [Context](Context.md), Prev: [CaseClasses](CaseClasses.md)
+Up: [Context](Context.md), Prev: [Case Classes](CaseClasses.md)

@@ -1,6 +1,6 @@
 # Overview of Kiama's support for attribute grammars
 
-Up: UserManual, Prev: [Rewriting](Rewriting.md), Next: [Machines](Machines.md)
+Up: [User Manual](UserManual.md), Prev: [Rewriting](Rewriting.md), Next: [Machines](Machines.md)
 
 This page provides an overview of Kiama's support for
 _attribute grammars_. For the context in which this part of the library
@@ -605,4 +605,4 @@ is also updated at blocks to define nested scopes. Finally, it is
 accessed at identifier use nodes in order to check those uses against
 the environment at that point.
 
-Up: UserManual, Prev: [Rewriting](Rewriting.md), Next: [Machines](Machines.md)
+Up: [User Manual](UserManual.md), Prev: [Rewriting](Rewriting.md), Next: [Machines](Machines.md)

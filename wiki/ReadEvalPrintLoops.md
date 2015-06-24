@@ -1,6 +1,6 @@
 # How to write read-eval-print loops using Kiama
 
-Up: UserManual, Prev: [Messaging](Messaging.md), Next: [Profiling](Profiling.md)
+Up: [User Manual](UserManual.md), Prev: [Messaging](Messaging.md), Next: [Profiling](Profiling.md)
 
 Some language processors operate most naturally as interactive
 software that reads user input, turns that input into a structured
@@ -117,4 +117,4 @@ connectInput in run := true
 outputStrategy in run := Some (StdoutOutput)
 ```
 
-Up: UserManual, Prev: [Messaging](Messaging.md)
+Up: [User Manual](UserManual.md), Prev: [Messaging](Messaging.md)

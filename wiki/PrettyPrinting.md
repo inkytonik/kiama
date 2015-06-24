@@ -1,6 +1,6 @@
 # Overview of Kiama's support for pretty printing
 
-Up: UserManual, Prev: [Machines](Machines.md), Next: [Messaging](Messaging.md)
+Up: [User Manual](UserManual.md), Prev: [Machines](Machines.md), Next: [Messaging](Messaging.md)
 
 This page provides an overview of Kiama's support for _pretty
 printing_. Pretty printing is used in the following examples.
@@ -678,4 +678,4 @@ indented by `n` spaces. Thus, `keepMaxIndent` can be used to summarise `s` by
 omitting information nested below a certain level. An optional extra argument
 can be used to specify alternatives to `"..."`.
 
-Up: UserManual, Prev: [Machines](Machines.md), Next: [Messaging](Messaging.md)
+Up: [User Manual](UserManual.md), Prev: [Machines](Machines.md), Next: [Messaging](Messaging.md)

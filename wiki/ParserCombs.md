@@ -1,6 +1,6 @@
 # Constructing parsers using combinators
 
-Up: [Parsing](Parsing.md), Prev: ParserInput
+Up: [Parsing](Parsing.md), Prev: [Parser input](ParserInput.md)
 
 Like any combinator-based approach to parsing, Scala's library starts
 with simple parsers and uses functions to combine them into more
@@ -453,8 +453,8 @@ of true packrat parsers.
 ## Positions
 
 Often it is useful to attach position (coordinate) information to the
-results of a parse. E.g., you might want to [Messaging produce error
-or warning messages] during semantic analysis and you want the
+results of a parse. E.g., you might want to [produce error
+or warning messages](Messaging.md) during semantic analysis and you want the
 messages to point to meaningful places in the code.
 
 The Scala parser combinator library provides the `positioned`
@@ -583,4 +583,4 @@ implicit def parseResultToTuple2[A,B] (p : Parser[A ~ B]) : PackratParser[(A,B)]
     p ^^ { case a ~ b => (a,b) }
 ```
 
-Up: [Parsing](Parsing.md), Prev: ParserInput
+Up: [Parsing](Parsing.md), Prev: [Parser input](ParserInput.md)

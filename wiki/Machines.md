@@ -1,6 +1,6 @@
 # Overview of Kiama's support for abstract state machines
 
-Up: UserManual, Prev: [Attribution](Attribution.md), Next: PrettyPrinting
+Up: [User Manual](UserManual.md), Prev: [Attribution](Attribution.md), Next: [Pretty-printing](PrettyPrinting.md)
 
 This page provides an overview of Kiama's support for abstract state
 machines. Abstract state machines are used in the following examples.
@@ -408,4 +408,4 @@ RISC exec: RD(1)
 RISC.R(28) := 3
 ```
 
-Up: UserManual, Prev: [Attribution](Attribution.md), Next: PrettyPrinting
+Up: [User Manual](UserManual.md), Prev: [Attribution](Attribution.md), Next: [Pretty-printing](PrettyPrinting.md)

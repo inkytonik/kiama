@@ -1,6 +1,6 @@
 # Overview of Kiama's support for strategy-based rewriting
 
-Up: UserManual, Prev: [Parsing](Parsing.md), Next: [Attribution](Attribution.md)
+Up: [User Manual](UserManual.md), Prev: [Parsing](Parsing.md), Next: [Attribution](Attribution.md)
 
 This page provides an overview of Kiama's support for _strategy-based
 rewriting_. For the context in which this part of the library
@@ -573,4 +573,4 @@ The `PositionalRewriter` extension of `CallbackRewriter` defines the
 terms. Terms that implement `scala.util.parsing.input.Positional` are
 recognised as having positions by this operation.
 
-Up: UserManual, Prev: [Parsing](Parsing.md), Next: [Attribution](Attribution.md)
+Up: [User Manual](UserManual.md), Prev: [Parsing](Parsing.md), Next: [Attribution](Attribution.md)
