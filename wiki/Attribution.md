@@ -276,7 +276,7 @@ that uses the Kiama [Rewriting](Rewriting.md) library and `clone` to clone a
 whole `Attributable` tree.
 
 (Kiama also provides a
-[Patterns](doc/1.4.0/api/index.html#org.kiama.util.Patterns$)
+[Patterns](doc/1.8.0/api/org/kiama/util/Patterns$.html)
 utility module that provides extractor objects which are useful for
 dealing with node properties. For example, `HasParent` can be used
 to match on both a node and its parent at the same time.)

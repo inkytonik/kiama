@@ -89,8 +89,8 @@ them manually when building from source.
 
   * [Version 1.5.2](http://kiama.googlecode.com/files/kiama_2.10-1.5.2.jar) (December 22, 2013)
     * [Release notes](doc/1.5.2/notes.html)
-    * [1.5.2 API documentation](doc/1.5.2/api/index.html) ([Dash docset](doc/1.5.2/Kiama.docset.zip))
-    * [1.5.2 Example and test API documentation](doc/1.5.2/test-api/index.html) ([Dash docset](doc/1.5.2/KiamaTest.docset.zip))
+    * [1.5.2 API documentation](doc/1.5.2/api/index.html)
+    * [1.5.2 Example and test API documentation](doc/1.5.2/test-api/index.html)
     * Compatible tools and libraries:
       * Scala 2.10.x (http://www.scala-lang.org)
       * dsinfo 0.2.0 (https://bitbucket.org/inkytonik/dsinfo)
@@ -105,8 +105,8 @@ them manually when building from source.
 
   * [Version 1.5.1](http://kiama.googlecode.com/files/kiama_2.10-1.5.1.jar) (July 5, 2013)
     * [Release notes](doc/1.5.1/notes.html)
-    * [1.5.1 API documentation](doc/1.5.1/api/index.html) ([Dash docset](doc/1.5.1/Kiama.docset.zip))
-    * [1.5.1 Example and test API documentation](doc/1.5.1/test-api/index.html) ([Dash docset](doc/1.5.1/KiamaTest.docset.zip))
+    * [1.5.1 API documentation](doc/1.5.1/api/index.html)
+    * [1.5.1 Example and test API documentation](doc/1.5.1/test-api/index.html)
     * Compatible tools and libraries:
       * Scala 2.10.x (http://www.scala-lang.org)
       * dsinfo 0.2.0 (https://bitbucket.org/inkytonik/dsinfo)
@@ -119,8 +119,8 @@ them manually when building from source.
 
   * [Version 1.5.0](http://kiama.googlecode.com/files/kiama_2.10-1.5.0.jar) (May 14, 2013)
     * [Release notes](doc/1.5.0/notes.html)
-    * [1.5.0 API documentation](doc/1.5.0/api/index.html) ([Dash docset](doc/1.5.0/Kiama.docset.zip))
-    * [1.5.0 Example and test API documentation](doc/1.5.0/test-api/index.html) ([Dash docset](doc/1.5.0/KiamaTest.docset.zip))
+    * [1.5.0 API documentation](doc/1.5.0/api/index.html)
+    * [1.5.0 Example and test API documentation](doc/1.5.0/test-api/index.html)
     * Compatible tools and libraries:
       * Scala 2.10.x (http://www.scala-lang.org)
       * dsinfo 0.2.0 (https://bitbucket.org/inkytonik/dsinfo)
@@ -133,8 +133,8 @@ them manually when building from source.
 
   * [Version 1.4.0 for Scala 2.9.2](http://kiama.googlecode.com/files/kiama_2.9.2-1.4.0.jar) [Version 1.4.0 for Scala 2.10](http://kiama.googlecode.com/files/kiama_2.10-1.4.0.jar) (January 2, 2013)
     * [Release notes](doc/1.4.0/notes.html)
-    * [1.4.0 API documentation](doc/1.4.0/api/index.html) ([Dash docset](doc/1.4.0/Kiama.docset.zip))
-    * [1.4.0 Example and test API documentation](doc/1.4.0/test-api/index.html) ([Dash docset](doc/1.4.0/KiamaTest.docset.zip))
+    * [1.4.0 API documentation](doc/1.4.0/api/index.html)
+    * [1.4.0 Example and test API documentation](doc/1.4.0/test-api/index.html)
     * Compatible tools and libraries:
       * Scala 2.9.2, 2.10.0 (http://www.scala-lang.org)
       * To use the read-eval-print loops:
@@ -145,8 +145,8 @@ them manually when building from source.
 
   * [Version 1.3.0](http://kiama.googlecode.com/files/kiama_2.9.2-1.3.0.jar) (July 12, 2012)
     * [Release notes](doc/1.3.0/notes.html)
-    * [1.3.0 API documentation](doc/1.3.0/api/index.html) ([Dash docset](doc/1.3.0/Kiama.docset.zip))
-    * [1.3.0 Example and test API documentation](doc/1.3.0/test-api/index.html) ([Dash docset](doc/1.3.0/KiamaTest.docset.zip))
+    * [1.3.0 API documentation](doc/1.3.0/api/index.html)
+    * [1.3.0 Example and test API documentation](doc/1.3.0/test-api/index.html)
     * Compatible tools and libraries:
       * Scala 2.9.2 (http://www.scala-lang.org)
       * To use the read-eval-print loops:

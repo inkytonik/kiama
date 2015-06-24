@@ -56,7 +56,7 @@ More research-oriented material in the form of papers, talks and slides can be
 found on the [Research](Research.md) page.
 
 See the
-[API documentation](doc/1.4.0/api/index.html)
+[API documentation](doc/1.8.0/api/index.html)
 for details about classes and methods provided in Kiama releases.
 
 Up: [Documentation](Documentation.md), Next: [Examples](Examples.md)
