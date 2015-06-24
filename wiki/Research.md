@@ -14,7 +14,7 @@ Sloane, A. M. Lightweight Language Processing in Kiama and Scala.  Presentation 
 
 Sloane, A. M. [Lightweight Language Processing in Kiama](http://link.springer.com/chapter/10.1007/978-3-642-18023-1_12).  Tutorial at [3rd Summer School on Generative and Transformational Techniques in Software Engineering (GTTSE 2009)](http://gttse.wikidot.com/2009), July 2009. [Slides](https://speakerdeck.com/inkytonik/lightweight-language-processing-in-kiama).
 
-Sloane, A. M. [Experiences with domain-specific language embedding in Scala](http://wiki.kiama.googlecode.com/hg/papers/dspd08.pdf). In Proceedings of the [2nd International Workshop on Domain-Speciﬁc Program Development (DSPD 2008)](http://www.labri.fr/perso/reveille/DSPD/2008/), J. Lawall and L. Reveillere, Eds.
+Sloane, A. M. [Experiences with domain-specific language embedding in Scala](papers/dspd08.pdf). In Proceedings of the [2nd International Workshop on Domain-Speciﬁc Program Development (DSPD 2008)](http://www.labri.fr/perso/reveille/DSPD/2008/), J. Lawall and L. Reveillere, Eds.
 
 ## Attribute grammars
 
@@ -22,13 +22,13 @@ Sloane, A. M., Roberts, M. and Hamey L. G. C. [Respect Your Parents: How Attribu
 
 Sloane, A. M. and Roberts, M. [Domain-specific program profiling and its application to attribute grammars and term rewriting](http://www.sciencedirect.com/science/article/pii/S0167642314000628). ([Free access](http://authors.elsevier.com/a/1Pvc-c7X4aqZq) until Dec 11, 2014.) Science of Computer Programming 96 (2014) 488-510.
 
-Sloane, A. M. [Profile-based Abstraction and Analysis of Attribute Grammar Evaluation](http://wiki.kiama.googlecode.com/hg/papers/SLE12.pdf). In [Proceedings](http://link.springer.com/chapter/10.1007%2F978-3-642-36089-3_3#) of the [5th Conference on Software Language Engineering (SLE 2012)](http://planet-sl.org/sle2012), K. Czarnecki and G. Hedin, Eds. [Slides](https://speakerdeck.com/inkytonik/profile-based-abstraction-and-analysis-of-attribute-grammar-evaluation).
+Sloane, A. M. [Profile-based Abstraction and Analysis of Attribute Grammar Evaluation](papers/SLE12.pdf). In [Proceedings](http://link.springer.com/chapter/10.1007%2F978-3-642-36089-3_3#) of the [5th Conference on Software Language Engineering (SLE 2012)](http://planet-sl.org/sle2012), K. Czarnecki and G. Hedin, Eds. [Slides](https://speakerdeck.com/inkytonik/profile-based-abstraction-and-analysis-of-attribute-grammar-evaluation).
 
-Sloane, A. M., Kats, L. C. L., and Visser, E. A pure embedding of attribute grammars. Science of Computer Programming, 78(10), October 2013. [ScienceDirect](http://dx.doi.org/10.1016/j.scico.2011.11.005). [Pre-print](http://wiki.kiama.googlecode.com/hg/papers/SCP11.pdf). This paper is a heavily revised and extended version of the LDTA 2009 workshop paper.
+Sloane, A. M., Kats, L. C. L., and Visser, E. A pure embedding of attribute grammars. Science of Computer Programming, 78(10), October 2013. [ScienceDirect](http://dx.doi.org/10.1016/j.scico.2011.11.005). [Pre-print](papers/SCP11.pdf). This paper is a heavily revised and extended version of the LDTA 2009 workshop paper.
 
-Sloane, A. M., Kats, L. C. L., and Visser, E. [A pure object-oriented embedding of attribute grammars](http://wiki.kiama.googlecode.com/hg/papers/LDTA09.pdf). In Proceedings of the [9th Workshop on Language Descriptions, Tools and Applications (LDTA 2009)](http://ldta.info/), J. Vinju and T. Ekman, Eds. Electronic Notes in Theoretical Computer Science, 253(7), September 2010, 205--219, Elsevier.  [Slides](https://speakerdeck.com/inkytonik/a-pure-object-oriented-embedding-of-attribute-grammars).
+Sloane, A. M., Kats, L. C. L., and Visser, E. [A pure object-oriented embedding of attribute grammars](papers/LDTA09.pdf). In Proceedings of the [9th Workshop on Language Descriptions, Tools and Applications (LDTA 2009)](http://ldta.info/), J. Vinju and T. Ekman, Eds. Electronic Notes in Theoretical Computer Science, 253(7), September 2010, 205--219, Elsevier.  [Slides](https://speakerdeck.com/inkytonik/a-pure-object-oriented-embedding-of-attribute-grammars).
 
-Kats, L., Sloane, A. M., and Visser, E. [Decorated attribute grammars: Attribute evaluation meets strategic programming](http://wiki.kiama.googlecode.com/hg/papers/cc09.pdf). In Proceedings of the [International Conference on Compiler Construction (CC 2009)](http://www.springerlink.com/content/nx3513j15450/?p=5e78bd327083477caea2aaf4ffe75954&pi=11), no. 5501 in Lecture Notes in Computer Science, Springer-Verlag, pp. 142–157.
+Kats, L., Sloane, A. M., and Visser, E. [Decorated attribute grammars: Attribute evaluation meets strategic programming](papers/cc09.pdf). In Proceedings of the [International Conference on Compiler Construction (CC 2009)](http://www.springerlink.com/content/nx3513j15450/?p=5e78bd327083477caea2aaf4ffe75954&pi=11), no. 5501 in Lecture Notes in Computer Science, Springer-Verlag, pp. 142–157.
 
 ## Rewriting
 

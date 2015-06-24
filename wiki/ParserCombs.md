@@ -9,7 +9,7 @@ covered here. See the Scala library API documentation for `Parsers`
 and `Parsers.Parser` for a complete list.
 
 Kiama contains a
-[parser utilities trait](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.util.ParserUtilities)
+[parser utilities trait](doc/1.4.0/api/index.html#org.kiama.util.ParserUtilities)
 that provides useful operations to augment the ones provided by the
 Scala library. We mention those facilities at the end of this page.
 
@@ -97,7 +97,7 @@ customise the definition of white space by overriding the `whiteSpace`
 regular expression from `RegexParsers`.
 
 (Kiama also provides a
-[WhitespaceParser](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.util.WhitespaceParser)
+[WhitespaceParser](doc/1.4.0/api/index.html#org.kiama.util.WhitespaceParser)
 utility trait that allows white space to be defined using
 a parser instead of just a regular expression. Using a parser means that some
 forms of white space, such as nested comments, are easier to define. See the
@@ -487,7 +487,7 @@ automatically.
 ## `ParserUtilities`
 
 Kiama's
-[parser utilities trait](http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.util.ParserUtilities)
+[parser utilities trait](doc/1.4.0/api/index.html#org.kiama.util.ParserUtilities)
 provides operations to make it easier to write a parser
 using `RegexParsers` and `PackratParsers`.
 Some of them are described here, but see the API documentation for
