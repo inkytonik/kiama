@@ -1178,8 +1178,8 @@ class RewriterTests extends Tests with Generator {
                 }
         val base = "dup illegal arguments"
         val method = s"public org.kiama.example.imperative.ImperativeTree$$Asgn"
-        val arg1type = "org.kiama.example.imperative.ImperativeTree$Var"
-        val arg2type = "org.kiama.example.imperative.ImperativeTree$Exp"
+        val arg1type = s"org.kiama.example.imperative.ImperativeTree$$Var"
+        val arg2type = s"org.kiama.example.imperative.ImperativeTree$$Exp"
         val error = "(Num(42.0),Num(99.0)), expects 2"
         val hint = "Common cause: term classes are nested in another class, move them to the top level"
         val msg = "%s: %s(%s,%s) %s\n%s".format (base, method, arg1type, arg2type, error, hint)

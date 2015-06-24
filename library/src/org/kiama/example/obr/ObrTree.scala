@@ -50,14 +50,14 @@ object ObrTree {
     /**
      * Marker trait for all node types that have an entity.
      */
-    trait EntityTree extends ObrNode {
+    sealed trait EntityTree extends ObrNode {
         def idn : IdnTree
     }
 
     /**
      * Marker trait for all expression node types that can be assigned.
      */
-    trait AssignTree extends Expression with EntityTree
+    sealed trait AssignTree extends Expression with EntityTree
 
     /**
      * Superclass of all declaration classes.
@@ -170,7 +170,7 @@ object ObrTree {
     /**
     * Superclass of all expression classes.
     */
-    abstract class Expression extends ObrNode
+    sealed abstract class Expression extends ObrNode
 
     /**
      * An expression whose value is the logical AND of the values of two expressions.
@@ -266,7 +266,7 @@ object ObrTree {
     /**
      * An identifier reference.
      */
-    abstract class IdnTree extends ObrNode {
+    sealed abstract class IdnTree extends ObrNode {
         def idn : String
     }
 
