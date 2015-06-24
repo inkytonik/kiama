@@ -1,0 +1,596 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>trait TIL1_1 in kiama.example.til</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.7.final)" name="generator"></meta><link href="../../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../../script.js"></script>
+        </head>
+        <body onload="init()">
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.9.0 API</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+        
+      <div class="entity">
+        <a href="../../../kiama/example/til$package.html" target="_self">kiama.example.til</a>
+        <br></br>
+        <span class="entity">trait  TIL1_1</span>
+      </div><hr></hr>
+      <div class="source">
+        [source: <a href="" class="kiama/example/til/TIL1_1"><code>kiama/example/til/TIL1_1.scala</code></a>]
+      </div><hr></hr>
+      <a name="TIL1_1"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>trait</code>
+        <em>TIL1_1</em>
+      </dt>
+      <dd><code> extends </code><a href="../../../kiama/example/til/ParsingMain.html" target="_self">ParsingMain</a></dd>
+    </dl>
+      <dl><dd>Parser for the basic Tiny Imperative Language.</dd></dl>
+      <dl></dl>
+    <dl>
+      <dt style="margin:10px 0 0 20px;"><b>Direct Known Subclasses:</b></dt>
+      <dd><a href="../../../kiama/example/til/TIL2_3.html" target="_self">TIL2_3</a>, <a href="../../../kiama/example/til/TIL1_1Main$object.html" target="_self">TIL1_1Main</a>, <a href="../../../kiama/example/til/TIL2_2.html" target="_self">TIL2_2</a>, <a href="../../../kiama/example/til/TIL2_1.html" target="_self">TIL2_1</a></dd>
+      </dl><hr></hr>
+      
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Type Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> type</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#Root" target="_self">Root</a></em>
+        
+        
+        <div>The root type of the AST being processed.</div>
+      </td>
+    </tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Value Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#assignment_statement" target="_self">assignment_statement</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Assign.html" target="_self">Assign</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#comment" target="_self">comment</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/Char.html" target="_self">Char</a>]]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#declaration" target="_self">declaration</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Decl.html" target="_self">Decl</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#endofline" target="_self">endofline</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#expression" target="_self">expression</a></em>
+         : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#factor" target="_self">factor</a></em>
+         : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#for_statement" target="_self">for_statement</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.For.html" target="_self">For</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#identifier" target="_self">identifier</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Id.html" target="_self">Id</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#if_statement" target="_self">if_statement</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="scala/Product">scala.Product</a><code> with </code><a href="../../../kiama/example/til/AST$object.Stat.html" target="_self">Stat</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#integer" target="_self">integer</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Num.html" target="_self">Num</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#keyword" target="_self">keyword</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>override lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#layout" target="_self">layout</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/Nothing.html" target="_self">Nothing</a>]]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#parse" target="_self">parse</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Program.html" target="_self">Program</a>]
+        
+        <div>Parse a file, returning an AST.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#primary" target="_self">primary</a></em>
+         : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#program" target="_self">program</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Program.html" target="_self">Program</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#read_statement" target="_self">read_statement</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Read.html" target="_self">Read</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#statement" target="_self">statement</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Stat.html" target="_self">Stat</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#string" target="_self">string</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Str.html" target="_self">Str</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#term" target="_self">term</a></em>
+         : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#while_statement" target="_self">while_statement</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.While.html" target="_self">While</a>]
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> lazy val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../kiama/example/til/TIL1_1.html#write_statement" target="_self">write_statement</a></em>
+         : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Write.html" target="_self">Write</a>]
+        
+        
+      </td>
+    </tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Values and Variables inherited from <a href="../../../kiama/parsing/CharParsers.html" target="_self">CharParsers</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/parsing/CharParsers.html#whitespace" target="_self">whitespace</a>, <a href="../../../kiama/parsing/CharParsers.html#digit" target="_self">digit</a>, <a href="../../../kiama/parsing/CharParsers.html#letter" target="_self">letter</a>, <a href="../../../kiama/parsing/CharParsers.html#letterOrDigit" target="_self">letterOrDigit</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Values and Variables inherited from <a href="../../../kiama/parsing/PackratParsers.html" target="_self">PackratParsers</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/parsing/PackratParsers.html#heads" target="_self">heads</a>, <a href="../../../kiama/parsing/PackratParsers.html#LRStack" target="_self">LRStack</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Values and Variables inherited from <a href="../../../kiama/parsing/Parsers.html" target="_self">Parsers</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/parsing/Parsers.html#any" target="_self">any</a>
+        </td></tr>
+      </table>
+<table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="../../../kiama/example/til/ParsingMain.html" target="_self">ParsingMain</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/example/til/ParsingMain.html#process%28java.io.Reader%29" target="_self">process</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="../../../kiama/parsing/CharParsers.html" target="_self">CharParsers</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/parsing/CharParsers.html#token%28CharParsers.this.Parser%5BT%5D%29" target="_self">token</a>, <a href="../../../kiama/parsing/CharParsers.html#phrase%28%3D%3ECharParsers.this.Parser%5BT%5D%29" target="_self">phrase</a>, <a href="../../../kiama/parsing/CharParsers.html#literal%28String%29" target="_self">literal</a>, <a href="../../../kiama/parsing/CharParsers.html#regex%28scala.util.matching.Regex%29" target="_self">regex</a>, <a href="../../../kiama/parsing/CharParsers.html#parse%28%3D%3ECharParsers.this.Parser%5BT%5D%2CCharParsers.this.Input%29" target="_self">parse</a>, <a href="../../../kiama/parsing/CharParsers.html#parse%28%3D%3ECharParsers.this.Parser%5BT%5D%2Cjava.lang.CharSequence%29" target="_self">parse</a>, <a href="../../../kiama/parsing/CharParsers.html#parse%28%3D%3ECharParsers.this.Parser%5BT%5D%2Cjava.io.Reader%29" target="_self">parse</a>, <a href="../../../kiama/parsing/CharParsers.html#parseAll%28%3D%3ECharParsers.this.Parser%5BT%5D%2CCharParsers.this.Input%29" target="_self">parseAll</a>, <a href="../../../kiama/parsing/CharParsers.html#parseAll%28%3D%3ECharParsers.this.Parser%5BT%5D%2Cjava.io.Reader%29" target="_self">parseAll</a>, <a href="../../../kiama/parsing/CharParsers.html#parseAll%28%3D%3ECharParsers.this.Parser%5BT%5D%2Cjava.lang.CharSequence%29" target="_self">parseAll</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="../../../kiama/parsing/PackratParsers.html" target="_self">PackratParsers</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/parsing/PackratParsers.html#rep1%28%3D%3EPackratParsers.this.MemoParser%5BT%5D%29" target="_self">rep1</a>, <a href="../../../kiama/parsing/PackratParsers.html#memo%28%3D%3EPackratParsers.this.Parser%5BT%5D%29" target="_self">memo</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="../../../kiama/parsing/Parsers.html" target="_self">Parsers</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/parsing/Parsers.html#Parser%28%28Parsers.this.Input%29%3D%3EParsers.this.ParseResult%5BT%5D%29" target="_self">Parser</a>, <a href="../../../kiama/parsing/Parsers.html#success%28T%29" target="_self">success</a>, <a href="../../../kiama/parsing/Parsers.html#failure%28String%29" target="_self">failure</a>, <a href="../../../kiama/parsing/Parsers.html#accept%28Parsers.this.Elem%29" target="_self">accept</a>, <a href="../../../kiama/parsing/Parsers.html#acceptIf%28%28Parsers.this.Elem%29%3D%3EBoolean%29" target="_self">acceptIf</a>, <a href="../../../kiama/parsing/Parsers.html#opt%28%3D%3EParsers.this.Parser%5BT%5D%29" target="_self">opt</a>, <a href="../../../kiama/parsing/Parsers.html#rep%28%3D%3EParsers.this.Parser%5BT%5D%29" target="_self">rep</a>, <a href="../../../kiama/parsing/Parsers.html#rep1%28%3D%3EParsers.this.Parser%5BT%5D%29" target="_self">rep1</a>, <a href="../../../kiama/parsing/Parsers.html#repN%28Int%2C%3D%3EParsers.this.Parser%5BT%5D%29" target="_self">repN</a>, <a href="../../../kiama/parsing/Parsers.html#repsep%28%3D%3EParsers.this.Parser%5BT%5D%2C%3D%3EParsers.this.Parser%5BU%5D%29" target="_self">repsep</a>, <a href="../../../kiama/parsing/Parsers.html#rep1sep%28%3D%3EParsers.this.Parser%5BT%5D%2C%3D%3EParsers.this.Parser%5BU%5D%29" target="_self">rep1sep</a>, <a href="../../../kiama/parsing/Parsers.html#and%28%3D%3EParsers.this.Parser%5BT%5D%29" target="_self">and</a>, <a href="../../../kiama/parsing/Parsers.html#not%28%3D%3EParsers.this.Parser%5BT%5D%29" target="_self">not</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="../../../kiama/example/til/Main.html" target="_self">Main</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="../../../kiama/example/til/Main.html#main%28Array%5BString%5D%29" target="_self">main</a>, <a href="../../../kiama/example/til/Main.html#test%28String%2CT%29" target="_self">test</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#toString%28%29" target="_self">toString</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
+        </td></tr>
+      </table>
+
+
+      
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Type Details</td></tr>
+        </table><div><a name="Root"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>type</code>
+        <em>Root</em>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>The root type of the AST being processed.</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Value Details</td></tr>
+        </table><div><a name="parse"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>parse</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Program.html" target="_self">Program</a>]
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Parse a file, returning an AST.</dd></dl>
+      <dl></dl>
+    <dl>
+        <dt style="margin:10px 0 0 20px;">
+          <b>Overrides</b>
+        </dt>
+        <dd>
+        <a href="../../../kiama/example/til/ParsingMain.html" target="_self">ParsingMain</a>.<a href="../../../kiama/example/til/ParsingMain.html#parse" target="_self">parse</a>
+        </dd>
+      </dl><hr></hr>
+<a name="program"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>program</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Program.html" target="_self">Program</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="statement"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>statement</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Stat.html" target="_self">Stat</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="declaration"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>declaration</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Decl.html" target="_self">Decl</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="assignment_statement"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>assignment_statement</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Assign.html" target="_self">Assign</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="if_statement"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>if_statement</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="scala/Product">scala.Product</a><code> with </code><a href="../../../kiama/example/til/AST$object.Stat.html" target="_self">Stat</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="while_statement"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>while_statement</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.While.html" target="_self">While</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="for_statement"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>for_statement</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.For.html" target="_self">For</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="read_statement"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>read_statement</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Read.html" target="_self">Read</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="write_statement"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>write_statement</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Write.html" target="_self">Write</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="expression"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>expression</em> : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="term"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>term</em> : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="factor"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>factor</em> : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="primary"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>primary</em> : <a href="../../../kiama/parsing/PackratParsers.MemoParser.html" target="_self">MemoParser</a>[<a href="../../../kiama/example/til/AST$object.Exp.html" target="_self">Exp</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="keyword"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>keyword</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="identifier"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>identifier</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Id.html" target="_self">Id</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="integer"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>integer</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Num.html" target="_self">Num</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="string"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>string</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="../../../kiama/example/til/AST$object.Str.html" target="_self">Str</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="comment"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>comment</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/Char.html" target="_self">Char</a>]]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="endofline"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>lazy val</code>
+        <em>endofline</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="layout"></a><dl>
+      <dt>
+        
+        <code>override</code>
+        <code>lazy val</code>
+        <em>layout</em> : <a href="../../../kiama/parsing/Parsers.Parser.html" target="_self">Parser</a>[<a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/Nothing.html" target="_self">Nothing</a>]]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr></div>
+
+
+
+    <hr></hr>
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.9.0 API</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+      </body>
+      </html>

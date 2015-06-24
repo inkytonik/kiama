@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>org.kiama.example.repmin</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../../lib/template.css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body onload="sh_highlightDocument('../lib/', '.min.js');" class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a name="org" class="extype" href="../../../package.html">org</a>.<a name="org.kiama" class="extype" href="../../package.html">kiama</a>.<a name="org.kiama.example" class="extype" href="../package.html">example</a></p>
+        <h1>repmin</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">repmin</span>
+      </span>
+      </h4>
+      
+      <div class="fullcommenttop" id="comment"></div>
+    
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="org.kiama.example.repmin.Fork" data-isabs="false">
+      <a id="Fork:Fork"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Fork.html"><span class="name">Fork</span></a><span class="params">(<span name="left">left: Tree</span>, <span name="right">right: Tree</span>)</span><span class="result"> extends Tree with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.repmin.Leaf" data-isabs="false">
+      <a id="Leaf:Leaf"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Leaf.html"><span class="name">Leaf</span></a><span class="params">(<span name="value">value: Int</span>)</span><span class="result"> extends Tree with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.repmin.Repmin" data-isabs="true">
+      <a id="Repmin:Repmin"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Repmin.html"><span class="name">Repmin</span></a><span class="result"> extends RepminBase</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Classic repmin problem defined in an &quot;attributes first&quot; style.</p>
+    </li><li visbl="pub" name="org.kiama.example.repmin.RepminBase" data-isabs="true">
+      <a id="RepminBase:RepminBase"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RepminBase.html"><span class="name">RepminBase</span></a><span class="result"> extends RepminImpl</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Common base for Repmin implementations.</p>
+    </li><li visbl="pub" name="org.kiama.example.repmin.RepminDec" data-isabs="true">
+      <a id="RepminDec:RepminDec"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RepminDec.html"><span class="name">RepminDec</span></a><span class="result"> extends RepminBase</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Repmin problem defined using decorators.</p>
+    </li><li visbl="pub" name="org.kiama.example.repmin.RepminDecTests" data-isabs="false">
+      <a id="RepminDecTests:RepminDecTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RepminDecTests.html"><span class="name">RepminDecTests</span></a><span class="result"> extends RepminDec with RepminTestsBase</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@RunWith</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.repmin.RepminImpl" data-isabs="true">
+      <a id="RepminImpl:RepminImpl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RepminImpl.html"><span class="name">RepminImpl</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Repmin implementations must provide a repmin attribute.</p>
+    </li><li visbl="pub" name="org.kiama.example.repmin.RepminTests" data-isabs="false">
+      <a id="RepminTests:RepminTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RepminTests.html"><span class="name">RepminTests</span></a><span class="result"> extends Repmin with RepminTestsBase</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Annotations</dt><dd>
+                <span class="name">@RunWith</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.repmin.RepminTestsBase" data-isabs="true">
+      <a id="RepminTestsBase:RepminTestsBase"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RepminTestsBase.html"><span class="name">RepminTestsBase</span></a><span class="result"> extends Tests</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.repmin.Tree" data-isabs="true">
+      <a id="Tree:Tree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Tree.html"><span class="name">Tree</span></a><span class="result"> extends Attributable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">AST for Repmin examples.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -1,0 +1,896 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>org.kiama.example.iswim.secd.SECDBase</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../../../lib/template.css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <a title="Go to companion" href="SECDBase.html"><img src="../../../../../lib/object_to_class_big.png" /></a>
+        <p id="owner"><a name="org" class="extype" href="../../../../package.html">org</a>.<a name="org.kiama" class="extype" href="../../../package.html">kiama</a>.<a name="org.kiama.example" class="extype" href="../../package.html">example</a>.<a name="org.kiama.example.iswim" class="extype" href="../package.html">iswim</a>.<a name="org.kiama.example.iswim.secd" class="extype" href="package.html">secd</a></p>
+        <h1><a title="Go to companion" href="SECDBase.html">SECDBase</a></h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <span class="name">SECDBase</span>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+          <div class="fullcommenttop" id="comment"><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent">AnyRef, <span name="scala.Any" class="extype">Any</span></div>
+        </div></div>
+        
+
+      <div id="template">
+
+        <div id="mbrsel">
+          <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+          <div id="order">
+                <span class="filtertype">Ordering</span>
+                <ol><li class="alpha in"><span>Alphabetic</span></li><li class="inherit out"><span>By inheritance</span></li></ol>
+              </div>
+          <div id="ancestors">
+                <span class="filtertype">Inherited</span>
+                <ol><li class="hideall out"><span>Hide All</span></li>
+                <li class="showall in"><span>Show all</span></li></ol>
+                <ol id="linearization"><li name="org.kiama.example.iswim.secd.SECDBase" class="in"><span>SECDBase</span></li><li name="scala.AnyRef" class="in"><span>AnyRef</span></li><li name="scala.Any" class="in"><span>Any</span></li></ol>
+              </div>
+          <div id="visbl">
+              <span class="filtertype">Visibility</span>
+              <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+            </div>
+        </div>
+
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.App" data-isabs="false">
+      <a id="App:App"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$App.html"><span class="name">App</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.AppCC" data-isabs="false">
+      <a id="AppCC:AppCC"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$AppCC.html"><span class="name">AppCC</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Continuation handling</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.BindPrims" data-isabs="false">
+      <a id="BindPrims:BindPrims"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$BindPrims.html"><span class="name">BindPrims</span></a>
+        
+        <span class="params">(<span name="nms">nms: List[Name]</span>)</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ByteCode" data-isabs="true">
+      <a id="ByteCode:ByteCode"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$ByteCode.html"><span class="name">ByteCode</span></a>
+        
+        <span class="result"> extends ByteCodeBase with Attributable with Positional</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>abstract </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ByteCodeBase" data-isabs="true">
+      <a id="ByteCodeBase:ByteCodeBase"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$ByteCodeBase.html"><span class="name">ByteCodeBase</span></a>
+        
+        <span class="result"> extends PrettyPrintable</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>abstract </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#Code" data-isabs="false">
+      <a id="Code:Code"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Code</span>
+        
+        <span class="result"> = <span name="scala.collection.immutable.List" class="extype">List</span>[<a name="org.kiama.example.iswim.secd.SECDBase.Instruction" class="extype" href="SECDBase$$Instruction.html">Instruction</a>]</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.CodeSegment" data-isabs="false">
+      <a id="CodeSegment:CodeSegment"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$CodeSegment.html"><span class="name">CodeSegment</span></a>
+        
+        <span class="params">(<span name="code">code: Code</span>)</span><span class="result"> extends ByteCode with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.CodeTree" data-isabs="false">
+      <a id="CodeTree:CodeTree"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$CodeTree.html"><span class="name">CodeTree</span></a>
+        
+        <span class="result"> extends ByteCodeBase</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Code segments (sequences).</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.Enter" data-isabs="false">
+      <a id="Enter:Enter"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$Enter.html"><span class="name">Enter</span></a>
+        
+        <span class="params">(<span name="nms">nms: List[Name]</span>)</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ExceptionValue" data-isabs="true">
+      <a id="ExceptionValue:ExceptionValue"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$ExceptionValue.html"><span class="name">ExceptionValue</span></a>
+        
+        <span class="result"> extends Value with Positional</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Exception types
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.Exit" data-isabs="false">
+      <a id="Exit:Exit"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$Exit.html"><span class="name">Exit</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.FunctionSpec" data-isabs="false">
+      <a id="FunctionSpec:FunctionSpec"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$FunctionSpec.html"><span class="name">FunctionSpec</span></a>
+        
+        <span class="params">(<span name="fn">fn: Option[Name]</span>, <span name="pn">pn: Name</span>, <span name="bdy">bdy: CodeSegment</span>)</span><span class="result"> extends ByteCode with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Function closures and calls
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.GetType" data-isabs="false">
+      <a id="GetType:GetType"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$GetType.html"><span class="name">GetType</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Get the type of the value on the top of the stack
+as an integer.</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.Instruction" data-isabs="true">
+      <a id="Instruction:Instruction"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$Instruction.html"><span class="name">Instruction</span></a>
+        
+        <span class="result"> extends ByteCode</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>abstract </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.Lookup" data-isabs="false">
+      <a id="Lookup:Lookup"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$Lookup.html"><span class="name">Lookup</span></a>
+        
+        <span class="params">(<span name="nm">nm: Name</span>)</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Lookup named variable in the environment
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.MachineExceptionValue" data-isabs="true">
+      <a id="MachineExceptionValue:MachineExceptionValue"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$MachineExceptionValue.html"><span class="name">MachineExceptionValue</span></a>
+        
+        <span class="result"> extends ExceptionValue</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>abstract </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.MkClosures" data-isabs="false">
+      <a id="MkClosures:MkClosures"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$MkClosures.html"><span class="name">MkClosures</span></a>
+        
+        <span class="params">(<span name="fss">fss: List[FunctionSpec]</span>)</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.MkUserException" data-isabs="false">
+      <a id="MkUserException:MkUserException"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$MkUserException.html"><span class="name">MkUserException</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Make a new exception object from a string object and
+push it on the stack
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#Name" data-isabs="false">
+      <a id="Name:Name"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Name</span>
+        
+        <span class="result"> = <span name="java.lang.String" class="extype">String</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Type aliases for code sequences and names
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.PushEmpty" data-isabs="false">
+      <a id="PushEmpty:PushEmpty"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$PushEmpty.html"><span class="name">PushEmpty</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Push empty value / machine exception / type value onto the stack.</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.PushMachineException" data-isabs="false">
+      <a id="PushMachineException:PushMachineException"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$PushMachineException.html"><span class="name">PushMachineException</span></a>
+        
+        <span class="params">(<span name="me">me: MachineExceptionValue</span>)</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.PushType" data-isabs="false">
+      <a id="PushType:PushType"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$PushType.html"><span class="name">PushType</span></a>
+        
+        <span class="params">(<span name="ty">ty: TypeValue</span>)</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.RaiseException" data-isabs="false">
+      <a id="RaiseException:RaiseException"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$RaiseException.html"><span class="name">RaiseException</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Raise the exception on the top of the stack
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.Resume" data-isabs="false">
+      <a id="Resume:Resume"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$Resume.html"><span class="name">Resume</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ResumeFromDump" data-isabs="false">
+      <a id="ResumeFromDump:ResumeFromDump"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$ResumeFromDump.html"><span class="name">ResumeFromDump</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.TailApp" data-isabs="false">
+      <a id="TailApp:TailApp"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$TailApp.html"><span class="name">TailApp</span></a>
+        
+        <span class="params">()</span><span class="result"> extends Instruction with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.TypeValue" data-isabs="true">
+      <a id="TypeValue:TypeValue"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$TypeValue.html"><span class="name">TypeValue</span></a>
+        
+        <span class="result"> extends Value</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Type values
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.Value" data-isabs="true">
+      <a id="Value:Value"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$Value.html"><span class="name">Value</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Base class for SECD values.</p>
+    </li></ol>
+            </div>
+        
+        
+
+        <div class="values members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="scala.AnyRef#!=" data-isabs="false">
+      <a id="!=(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">!=</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="scala.Any#!=" data-isabs="false">
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">!=</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef###" data-isabs="false">
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">##</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#==" data-isabs="false">
+      <a id="==(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">==</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="scala.Any#==" data-isabs="false">
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">==</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ClosureTypeValue" data-isabs="false">
+      <a id="ClosureTypeValue:ClosureTypeValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$ClosureTypeValue$.html"><span class="name">ClosureTypeValue</span></a>
+        
+        <span class="result"> extends TypeValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.CodeSegment" data-isabs="false">
+      <a id="CodeSegment:CodeSegment"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$CodeSegment$.html"><span class="name">CodeSegment</span></a>
+        
+        <span class="result"> extends Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.CodeTree" data-isabs="false">
+      <a id="CodeTree:CodeTree"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$CodeTree$.html"><span class="name">CodeTree</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ContTypeValue" data-isabs="false">
+      <a id="ContTypeValue:ContTypeValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$ContTypeValue$.html"><span class="name">ContTypeValue</span></a>
+        
+        <span class="result"> extends TypeValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.DumpEmpty" data-isabs="false">
+      <a id="DumpEmpty:DumpEmpty"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$DumpEmpty$.html"><span class="name">DumpEmpty</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.EmptyTypeValue" data-isabs="false">
+      <a id="EmptyTypeValue:EmptyTypeValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$EmptyTypeValue$.html"><span class="name">EmptyTypeValue</span></a>
+        
+        <span class="result"> extends TypeValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ExceptionTypeValue" data-isabs="false">
+      <a id="ExceptionTypeValue:ExceptionTypeValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$ExceptionTypeValue$.html"><span class="name">ExceptionTypeValue</span></a>
+        
+        <span class="result"> extends TypeValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.MalformedInstruction" data-isabs="false">
+      <a id="MalformedInstruction:MalformedInstruction"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$MalformedInstruction$.html"><span class="name">MalformedInstruction</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.MatchError" data-isabs="false">
+      <a id="MatchError:MatchError"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$MatchError$.html"><span class="name">MatchError</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.NonExistentPrimitive" data-isabs="false">
+      <a id="NonExistentPrimitive:NonExistentPrimitive"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$NonExistentPrimitive$.html"><span class="name">NonExistentPrimitive</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.PrimTypeValue" data-isabs="false">
+      <a id="PrimTypeValue:PrimTypeValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$PrimTypeValue$.html"><span class="name">PrimTypeValue</span></a>
+        
+        <span class="result"> extends TypeValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.StackUnderflow" data-isabs="false">
+      <a id="StackUnderflow:StackUnderflow"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$StackUnderflow$.html"><span class="name">StackUnderflow</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.TypeError" data-isabs="false">
+      <a id="TypeError:TypeError"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$TypeError$.html"><span class="name">TypeError</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.TypeTypeValue" data-isabs="false">
+      <a id="TypeTypeValue:TypeTypeValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$TypeTypeValue$.html"><span class="name">TypeTypeValue</span></a>
+        
+        <span class="result"> extends TypeValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.UnboundVariable" data-isabs="false">
+      <a id="UnboundVariable:UnboundVariable"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$UnboundVariable$.html"><span class="name">UnboundVariable</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.UnexpectedExit" data-isabs="false">
+      <a id="UnexpectedExit:UnexpectedExit"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$UnexpectedExit$.html"><span class="name">UnexpectedExit</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.UnexpectedTermination" data-isabs="false">
+      <a id="UnexpectedTermination:UnexpectedTermination"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$$UnexpectedTermination$.html"><span class="name">UnexpectedTermination</span></a>
+        
+        <span class="result"> extends MachineExceptionValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="scala.Any#asInstanceOf" data-isabs="false">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">asInstanceOf</span>
+        <span class="tparams">[<span name="T0">T0</span>]</span>
+        <span class="result">: T0</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="prt" name="scala.AnyRef#clone" data-isabs="false">
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">clone</span>
+        
+        <span class="params">()</span><span class="result">: AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a name="java.lang" class="extype" href="../../../../../java/lang/package.html">lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#eq" data-isabs="false">
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">eq</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#equals" data-isabs="false">
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">equals</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="prt" name="scala.AnyRef#finalize" data-isabs="false">
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">finalize</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a name="java.lang" class="extype" href="../../../../../java/lang/package.html">lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#getClass" data-isabs="false">
+      <a id="getClass():java.lang.Class[_]"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">getClass</span>
+        
+        <span class="params">()</span><span class="result">: java.lang.Class[_]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#hashCode" data-isabs="false">
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">hashCode</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#instNumber" data-isabs="false">
+      <a id="instNumber:(ByteCode) ⇒ Int"></a>
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol"> 
+        <span class="name">instNumber</span>
+        
+        <span class="result">: (<a name="org.kiama.example.iswim.secd.SECDBase.ByteCode" class="extype" href="SECDBase$$ByteCode.html">ByteCode</a>) ⇒ <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Attribute mechanism for automatically numbering bytecode instructions
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#instToCodeTree" data-isabs="false">
+      <a id="instToCodeTree(Instruction):CodeTree"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">instToCodeTree</span>
+        
+        <span class="params">(<span name="inst">inst: <a name="org.kiama.example.iswim.secd.SECDBase.Instruction" class="extype" href="SECDBase$$Instruction.html">Instruction</a></span>)</span><span class="result">: <a name="org.kiama.example.iswim.secd.SECDBase.CodeTree" class="extype" href="SECDBase$$CodeTree.html">CodeTree</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.Any#isInstanceOf" data-isabs="false">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">isInstanceOf</span>
+        <span class="tparams">[<span name="T0">T0</span>]</span>
+        <span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#ne" data-isabs="false">
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">ne</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#nextInstNumber" data-isabs="false">
+      <a id="nextInstNumber:(ByteCode) ⇒ Int"></a>
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol"> 
+        <span class="name">nextInstNumber</span>
+        
+        <span class="result">: (<a name="org.kiama.example.iswim.secd.SECDBase.ByteCode" class="extype" href="SECDBase$$ByteCode.html">ByteCode</a>) ⇒ <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="scala.AnyRef#notify" data-isabs="false">
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">notify</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#notifyAll" data-isabs="false">
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">notifyAll</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#positionBlock" data-isabs="false">
+      <a id="positionBlock[T](Position)(⇒ T):T"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">positionBlock</span>
+        <span class="tparams">[<span name="T">T</span>]</span>
+        <span class="params">(<span name="newPos">newPos: <span name="scala.util.parsing.input.Position" class="extype">Position</span></span>)</span><span class="params">(<span name="code">code: ⇒ T</span>)</span><span class="result">: T</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="scala.AnyRef#synchronized" data-isabs="false">
+      <a id="synchronized[T0](⇒ T0):T0"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">synchronized</span>
+        <span class="tparams">[<span name="T0">T0</span>]</span>
+        <span class="params">(<span name="arg0">arg0: ⇒ T0</span>)</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#toCodeSegment" data-isabs="false">
+      <a id="toCodeSegment(ByteCodeBase):CodeSegment"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">toCodeSegment</span>
+        
+        <span class="params">(<span name="bcb">bcb: <a name="org.kiama.example.iswim.secd.SECDBase.ByteCodeBase" class="extype" href="SECDBase$$ByteCodeBase.html">ByteCodeBase</a></span>)</span><span class="result">: <a name="org.kiama.example.iswim.secd.SECDBase.CodeSegment" class="extype" href="SECDBase$$CodeSegment.html">CodeSegment</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Annotations</dt><dd>
+                <span class="name">@inline</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#toString" data-isabs="false">
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">toString</span>
+        
+        <span class="params">()</span><span class="result">: <span name="java.lang.String" class="extype">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#wait" data-isabs="false">
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">wait</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#wait" data-isabs="false">
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">wait</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Long" class="extype">Long</span></span>, <span name="arg1">arg1: <span name="scala.Int" class="extype">Int</span></span>)</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#wait" data-isabs="false">
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">wait</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Long" class="extype">Long</span></span>)</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div name="scala.AnyRef" class="parent">
+              <h3>Inherited from AnyRef</h3>
+            </div><div name="scala.Any" class="parent">
+              <h3>Inherited from <span name="scala.Any" class="extype">Any</span></h3>
+            </div>
+
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
+      </html>

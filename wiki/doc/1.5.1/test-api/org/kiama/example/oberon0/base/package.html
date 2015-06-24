@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>base - org.kiama.example.oberon0.base</title>
+          <meta name="description" content="base - org.kiama.example.oberon0.base" />
+          <meta name="keywords" content="base org.kiama.example.oberon0.base" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../index.html';
+            var hash = 'org.kiama.example.oberon0.base.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../package.html" class="extype" name="org">org</a>.<a href="../../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../../package.html" class="extype" name="org.kiama.example">example</a>.<a href="../package.html" class="extype" name="org.kiama.example.oberon0">oberon0</a></p>
+        <h1>base</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">base</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.oberon0.base.Analyser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AnalyserextendsAnyRef"></a>
+      <a id="Analyser:Analyser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Analyser.html"><span class="name">Analyser</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.oberon0.base.CCodeGenerator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CCodeGeneratorextendsTranslator"></a>
+      <a id="CCodeGenerator:CCodeGenerator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CCodeGenerator.html"><span class="name">CCodeGenerator</span></a><span class="result"> extends <a href="Translator.html" class="extype" name="org.kiama.example.oberon0.base.Translator">Translator</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C Code generator for the base language.</p>
+    </li><li name="org.kiama.example.oberon0.base.CompilerDriver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CompilerDriverextendsCompiler[org.kiama.example.oberon0.base.source.ModuleDecl]withPrettyPrinter"></a>
+      <a id="CompilerDriver:CompilerDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CompilerDriver.html"><span class="name">CompilerDriver</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.Compiler">Compiler</span>[<a href="source/ModuleDecl.html" class="extype" name="org.kiama.example.oberon0.base.source.ModuleDecl">ModuleDecl</a>] with <span class="extype" name="org.kiama.output.PrettyPrinter">PrettyPrinter</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A driver for an artefact that parses, pretty prints and performs semantic
+analysis.</p>
+    </li><li name="org.kiama.example.oberon0.base.Driver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="DriverextendsCompilerDriverwithProfilingCompiler[org.kiama.example.oberon0.base.source.ModuleDecl]"></a>
+      <a id="Driver:Driver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Driver.html"><span class="name">Driver</span></a><span class="result"> extends <a href="CompilerDriver.html" class="extype" name="org.kiama.example.oberon0.base.CompilerDriver">CompilerDriver</a> with <span class="extype" name="org.kiama.util.ProfilingCompiler">ProfilingCompiler</span>[<a href="source/ModuleDecl.html" class="extype" name="org.kiama.example.oberon0.base.source.ModuleDecl">ModuleDecl</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">The entry point Oberon0 compiler driver with profiling support.</p>
+    </li><li name="org.kiama.example.oberon0.base.Parser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ParserextendsWhitespacePositionedParserUtilities"></a>
+      <a id="Parser:Parser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Parser.html"><span class="name">Parser</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.WhitespacePositionedParserUtilities">WhitespacePositionedParserUtilities</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Parsers for base language.</p>
+    </li><li name="org.kiama.example.oberon0.base.SymbolTable" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SymbolTableextendsEnvironments"></a>
+      <a id="SymbolTable:SymbolTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SymbolTable.html"><span class="name">SymbolTable</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.Environments">Environments</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Basic symbol table definitions.</p>
+    </li><li name="org.kiama.example.oberon0.base.TestDriver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TestDriverextendsTestCompiler[org.kiama.example.oberon0.base.source.ModuleDecl]"></a>
+      <a id="TestDriver:TestDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TestDriver.html"><span class="name">TestDriver</span></a><span class="result"> extends <a href="../../../util/TestCompiler.html" class="extype" name="org.kiama.util.TestCompiler">TestCompiler</a>[<a href="source/ModuleDecl.html" class="extype" name="org.kiama.example.oberon0.base.source.ModuleDecl">ModuleDecl</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A driver for testing.</p>
+    </li><li name="org.kiama.example.oberon0.base.Transformer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TransformerextendsAnyRef"></a>
+      <a id="Transformer:Transformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Transformer.html"><span class="name">Transformer</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Interface for all transformers.</p>
+    </li><li name="org.kiama.example.oberon0.base.TransformingDriver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TransformingDriverextendsDriver"></a>
+      <a id="TransformingDriver:TransformingDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TransformingDriver.html"><span class="name">TransformingDriver</span></a><span class="result"> extends <a href="Driver.html" class="extype" name="org.kiama.example.oberon0.base.Driver">Driver</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A driver for an artefact that parses, pretty prints, performs semantic
+analysis and transforms.</p>
+    </li><li name="org.kiama.example.oberon0.base.TranslatingDriver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TranslatingDriverextendsTransformingDriver"></a>
+      <a id="TranslatingDriver:TranslatingDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TranslatingDriver.html"><span class="name">TranslatingDriver</span></a><span class="result"> extends <a href="TransformingDriver.html" class="extype" name="org.kiama.example.oberon0.base.TransformingDriver">TransformingDriver</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A driver for an artefact that parses, pretty prints, performs semantic
+analysis, transforms and translates.</p>
+    </li><li name="org.kiama.example.oberon0.base.TranslatingTestDriver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TranslatingTestDriverextendsTestDriver"></a>
+      <a id="TranslatingTestDriver:TranslatingTestDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TranslatingTestDriver.html"><span class="name">TranslatingTestDriver</span></a><span class="result"> extends <a href="TestDriver.html" class="extype" name="org.kiama.example.oberon0.base.TestDriver">TestDriver</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Driver for testing a translator.</p>
+    </li><li name="org.kiama.example.oberon0.base.Translator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TranslatorextendsAnyRef"></a>
+      <a id="Translator:Translator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Translator.html"><span class="name">Translator</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Interface for all translaters to C.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.kiama.example.oberon0.base.c" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="c"></a>
+      <a id="c:c"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="c/package.html"><span class="name">c</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.oberon0.base.source" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="source"></a>
+      <a id="source:source"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="source/package.html"><span class="name">source</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../../lib/template.js"></script>
+    </body>
+      </html>

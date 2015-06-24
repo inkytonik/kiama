@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>class ComposedPartialFunction in kiama.attribution.DynamicAttribution</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.7.final)" name="generator"></meta><link href="../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../script.js"></script>
+        </head>
+        <body onload="init()">
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.9.0 API</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+        
+      <div class="entity">
+        <a href="../../kiama/attribution/DynamicAttribution.html" target="_self">kiama.attribution.DynamicAttribution</a>
+        <br></br>
+        <span class="entity">class  ComposedPartialFunction</span>
+      </div><hr></hr>
+      <div class="source">
+        [source: <a href="" class="kiama/attribution/DynamicAttribution"><code>kiama/attribution/DynamicAttribution.scala</code></a>]
+      </div><hr></hr>
+      <a name="ComposedPartialFunction"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>class</code>
+        <em>ComposedPartialFunction</em>[<em>T</em>, <em>U</em>](<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>])
+      </dt>
+      <dd><code> extends </code><a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>]</dd>
+    </dl>
+      <dl><dd>A partial function composed of an ordered, mutable buffer of
+     PartialFunction instances.</dd></dl>
+      <dl></dl>
+    
+      
+
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Value Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#functions" target="_self">functions</a></em>
+         : <a href="" target="contentFrame" class="scala/collection/mutable/ArrayBuffer">scala.collection.mutable.ArrayBuffer</a>[<a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>]]
+        
+        
+      </td>
+    </tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Method Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#%2B%3D%28DynamicAttribution.this.%3D%3D%3E%5BT%2CU%5D%29" target="_self">+=</a></em>
+        (<em>g</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>]) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#-%3D%28DynamicAttribution.this.%3D%3D%3E%5BT%2CU%5D%29" target="_self">-=</a></em>
+        (<em>g</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>]) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#apply%28T%29" target="_self">apply</a></em>
+        (<em>t</em> : <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>) : <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#isDefinedAt%28T%29" target="_self">isDefinedAt</a></em>
+        (<em>i</em> : <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+        
+        
+      </td>
+    </tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="#orElse" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction.orElse</a>, <a href="#andThen" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction.andThen</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="" target="contentFrame" class="scala/Function1">scala.Function1</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="#toString" target="contentFrame" class="scala/Function1">scala.Function1.toString</a>, <a href="#compose" target="contentFrame" class="scala/Function1">scala.Function1.compose</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
+        </td></tr>
+      </table>
+
+
+      
+
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Value Details</td></tr>
+        </table><div><a name="functions"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>functions</em> : <a href="" target="contentFrame" class="scala/collection/mutable/ArrayBuffer">scala.collection.mutable.ArrayBuffer</a>[<a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>]]
+      </dt>
+      <dd></dd>
+    </dl><hr></hr></div>
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Method Details</td></tr>
+        </table><div><a name="isDefinedAt%28T%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>isDefinedAt</em>(<em>i</em> : <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+      </dt>
+      <dd></dd>
+    </dl><dl>
+        <dt style="margin:10px 0 0 20px;">
+          <b>Overrides</b>
+        </dt>
+        <dd>
+        <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>.<a href="#isDefinedAt" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction.isDefinedAt</a>
+        </dd>
+      </dl><hr></hr>
+<a name="apply%28T%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>apply</em>(<em>t</em> : <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>) : <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="%2B%3D%28DynamicAttribution.this.%3D%3D%3E%5BT%2CU%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>+=</em>(<em>g</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>]) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl><hr></hr>
+<a name="-%3D%28DynamicAttribution.this.%3D%3D%3E%5BT%2CU%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>-=</em>(<em>g</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#T" target="_self">T</a>, <a href="../../kiama/attribution/DynamicAttribution.ComposedPartialFunction.html#U" target="_self">U</a>]) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl><hr></hr></div>
+
+
+    <hr></hr>
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.9.0 API</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+      </body>
+      </html>

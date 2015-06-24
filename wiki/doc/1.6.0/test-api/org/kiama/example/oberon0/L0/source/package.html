@@ -1,0 +1,474 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>source - org.kiama.example.oberon0.L0.source</title>
+          <meta name="description" content="source - org.kiama.example.oberon0.L0.source" />
+          <meta name="keywords" content="source org.kiama.example.oberon0.L0.source" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../index.html';
+            var hash = 'org.kiama.example.oberon0.L0.source.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../../../package.html" class="extype" name="org.kiama.example">example</a>.<a href="../../package.html" class="extype" name="org.kiama.example.oberon0">oberon0</a>.<a href="../package.html" class="extype" name="org.kiama.example.oberon0.L0">L0</a></p>
+        <h1>source</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">source</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.oberon0.L0.source.AddExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AddExpextendsSumExpressionwithProductwithSerializable"></a>
+      <a id="AddExp:AddExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="AddExp.html"><span class="name">AddExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="SumExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.SumExpression">SumExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Addition expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.AndExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AndExpextendsProdExpressionwithProductwithSerializable"></a>
+      <a id="AndExp:AndExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="AndExp.html"><span class="name">AndExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="ProdExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.ProdExpression">ProdExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">And expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.Assignment" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AssignmentextendsStatementwithProductwithSerializable"></a>
+      <a id="Assignment:Assignment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Assignment.html"><span class="name">Assignment</span></a><span class="params">(<span name="desig">desig: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="exp">exp: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="../../base/source/Statement.html" class="extype" name="org.kiama.example.oberon0.base.source.Statement">Statement</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Assignment statements.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.BinaryExpression" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BinaryExpressionextendsExpressionwithPrettyBinaryExpression"></a>
+      <a id="BinaryExpression:BinaryExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="BinaryExpression.html"><span class="name">BinaryExpression</span></a><span class="result"> extends <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a> with <span class="extype" name="org.kiama.output.PrettyBinaryExpression">PrettyBinaryExpression</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Common interface for binary expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.ConstDecl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ConstDeclextendsDeclarationwithProductwithSerializable"></a>
+      <a id="ConstDecl:ConstDecl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ConstDecl.html"><span class="name">ConstDecl</span></a><span class="params">(<span name="idndef">idndef: <a href="../../base/source/IdnDef.html" class="extype" name="org.kiama.example.oberon0.base.source.IdnDef">IdnDef</a></span>, <span name="exp">exp: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="../../base/source/Declaration.html" class="extype" name="org.kiama.example.oberon0.base.source.Declaration">Declaration</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Constant declarations.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.DivExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DivExpextendsProdExpressionwithProductwithSerializable"></a>
+      <a id="DivExp:DivExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="DivExp.html"><span class="name">DivExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="ProdExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.ProdExpression">ProdExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Division expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.EqExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="EqExpextendsRelationalExpressionwithProductwithSerializable"></a>
+      <a id="EqExp:EqExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="EqExp.html"><span class="name">EqExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="RelationalExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.RelationalExpression">RelationalExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Equality expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.GeExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GeExpextendsRelationalExpressionwithProductwithSerializable"></a>
+      <a id="GeExp:GeExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GeExp.html"><span class="name">GeExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="RelationalExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.RelationalExpression">RelationalExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Greater-than or equal expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.GtExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="GtExpextendsRelationalExpressionwithProductwithSerializable"></a>
+      <a id="GtExp:GtExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="GtExp.html"><span class="name">GtExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="RelationalExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.RelationalExpression">RelationalExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Greater-than expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.IdnExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="IdnExpextendsExpressionwithProductwithSerializable"></a>
+      <a id="IdnExp:IdnExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="IdnExp.html"><span class="name">IdnExp</span></a><span class="params">(<span name="idnuse">idnuse: <a href="../../base/source/IdnUse.html" class="extype" name="org.kiama.example.oberon0.base.source.IdnUse">IdnUse</a></span>)</span><span class="result"> extends <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Identifier expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.IntExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="IntExpextendsExpressionwithProductwithSerializable"></a>
+      <a id="IntExp:IntExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="IntExp.html"><span class="name">IntExp</span></a><span class="params">(<span name="v">v: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Integer expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.LeExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LeExpextendsRelationalExpressionwithProductwithSerializable"></a>
+      <a id="LeExp:LeExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LeExp.html"><span class="name">LeExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="RelationalExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.RelationalExpression">RelationalExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Less-than or equal expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.LtExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LtExpextendsRelationalExpressionwithProductwithSerializable"></a>
+      <a id="LtExp:LtExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="LtExp.html"><span class="name">LtExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="RelationalExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.RelationalExpression">RelationalExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Less-than expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.ModExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModExpextendsProdExpressionwithProductwithSerializable"></a>
+      <a id="ModExp:ModExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModExp.html"><span class="name">ModExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="ProdExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.ProdExpression">ProdExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Modulus expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.MulExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MulExpextendsProdExpressionwithProductwithSerializable"></a>
+      <a id="MulExp:MulExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="MulExp.html"><span class="name">MulExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="ProdExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.ProdExpression">ProdExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Multiplication expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.NamedType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NamedTypeextendsTypeDefwithProductwithSerializable"></a>
+      <a id="NamedType:NamedType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="NamedType.html"><span class="name">NamedType</span></a><span class="params">(<span name="idnuse">idnuse: <a href="../../base/source/IdnUse.html" class="extype" name="org.kiama.example.oberon0.base.source.IdnUse">IdnUse</a></span>)</span><span class="result"> extends <a href="TypeDef.html" class="extype" name="org.kiama.example.oberon0.L0.source.TypeDef">TypeDef</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Types defined by naming another type.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.NeExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NeExpextendsRelationalExpressionwithProductwithSerializable"></a>
+      <a id="NeExp:NeExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="NeExp.html"><span class="name">NeExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="RelationalExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.RelationalExpression">RelationalExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Ineuality expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.NegExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NegExpextendsUnaryExpressionwithProductwithSerializable"></a>
+      <a id="NegExp:NegExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="NegExp.html"><span class="name">NegExp</span></a><span class="params">(<span name="exp">exp: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="UnaryExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.UnaryExpression">UnaryExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Negation expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.NotExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NotExpextendsUnaryExpressionwithProductwithSerializable"></a>
+      <a id="NotExp:NotExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="NotExp.html"><span class="name">NotExp</span></a><span class="params">(<span name="exp">exp: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="UnaryExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.UnaryExpression">UnaryExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Complement expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.OrExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="OrExpextendsSumExpressionwithProductwithSerializable"></a>
+      <a id="OrExp:OrExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="OrExp.html"><span class="name">OrExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="SumExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.SumExpression">SumExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Or expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.ProdExpression" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ProdExpressionextendsBinaryExpression"></a>
+      <a id="ProdExpression:ProdExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ProdExpression.html"><span class="name">ProdExpression</span></a><span class="result"> extends <a href="BinaryExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.BinaryExpression">BinaryExpression</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Common interface for product expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.RelationalExpression" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="RelationalExpressionextendsBinaryExpression"></a>
+      <a id="RelationalExpression:RelationalExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RelationalExpression.html"><span class="name">RelationalExpression</span></a><span class="result"> extends <a href="BinaryExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.BinaryExpression">BinaryExpression</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Common interface for relational expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.SourcePrettyPrinter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SourcePrettyPrinterextendsSourcePrettyPrinter"></a>
+      <a id="SourcePrettyPrinter:SourcePrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SourcePrettyPrinter.html"><span class="name">SourcePrettyPrinter</span></a><span class="result"> extends <a href="../../base/source/SourcePrettyPrinter.html" class="extype" name="org.kiama.example.oberon0.base.source.SourcePrettyPrinter">base.source.SourcePrettyPrinter</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.oberon0.L0.source.SubExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SubExpextendsSumExpressionwithProductwithSerializable"></a>
+      <a id="SubExp:SubExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SubExp.html"><span class="name">SubExp</span></a><span class="params">(<span name="left">left: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>, <span name="right">right: <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a></span>)</span><span class="result"> extends <a href="SumExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.SumExpression">SumExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Subtraction expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.SumExpression" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SumExpressionextendsBinaryExpression"></a>
+      <a id="SumExpression:SumExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SumExpression.html"><span class="name">SumExpression</span></a><span class="result"> extends <a href="BinaryExpression.html" class="extype" name="org.kiama.example.oberon0.L0.source.BinaryExpression">BinaryExpression</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Common interface for sum expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.TypeDecl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TypeDeclextendsDeclarationwithProductwithSerializable"></a>
+      <a id="TypeDecl:TypeDecl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="TypeDecl.html"><span class="name">TypeDecl</span></a><span class="params">(<span name="idndef">idndef: <a href="../../base/source/IdnDef.html" class="extype" name="org.kiama.example.oberon0.base.source.IdnDef">IdnDef</a></span>, <span name="tipe">tipe: <a href="TypeDef.html" class="extype" name="org.kiama.example.oberon0.L0.source.TypeDef">TypeDef</a></span>)</span><span class="result"> extends <a href="../../base/source/Declaration.html" class="extype" name="org.kiama.example.oberon0.base.source.Declaration">Declaration</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Type declarations.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.TypeDef" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TypeDefextendsSourceTree"></a>
+      <a id="TypeDef:TypeDef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="TypeDef.html"><span class="name">TypeDef</span></a><span class="result"> extends <a href="../../base/source/SourceTree.html" class="extype" name="org.kiama.example.oberon0.base.source.SourceTree">SourceTree</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type for type definitions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.UnaryExpression" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="UnaryExpressionextendsExpressionwithPrettyUnaryExpression"></a>
+      <a id="UnaryExpression:UnaryExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="UnaryExpression.html"><span class="name">UnaryExpression</span></a><span class="result"> extends <a href="../../base/source/Expression.html" class="extype" name="org.kiama.example.oberon0.base.source.Expression">Expression</a> with <span class="extype" name="org.kiama.output.PrettyUnaryExpression">PrettyUnaryExpression</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Common interface for unary expressions.</p>
+    </li><li name="org.kiama.example.oberon0.L0.source.VarDecl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="VarDeclextendsDeclarationwithProductwithSerializable"></a>
+      <a id="VarDecl:VarDecl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="VarDecl.html"><span class="name">VarDecl</span></a><span class="params">(<span name="idndefs">idndefs: <span class="extype" name="scala.collection.immutable.Seq">Seq</span>[<a href="../../base/source/IdnDef.html" class="extype" name="org.kiama.example.oberon0.base.source.IdnDef">IdnDef</a>]</span>, <span name="tipe">tipe: <a href="TypeDef.html" class="extype" name="org.kiama.example.oberon0.L0.source.TypeDef">TypeDef</a></span>)</span><span class="result"> extends <a href="../../base/source/Declaration.html" class="extype" name="org.kiama.example.oberon0.base.source.Declaration">Declaration</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Variable declarations.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

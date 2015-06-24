@@ -1,0 +1,398 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>trait Attributable in kiama.attribution</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.7.final)" name="generator"></meta><link href="../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../script.js"></script>
+        </head>
+        <body onload="init()">
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.9.0 API</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+        
+      <div class="entity">
+        <a href="../../kiama/attribution$package.html" target="_self">kiama.attribution</a>
+        <br></br>
+        <span class="entity">trait  Attributable</span>
+      </div><hr></hr>
+      <div class="source">
+        [source: <a href="" class="kiama/attribution/Attributable"><code>kiama/attribution/Attributable.scala</code></a>]
+      </div><hr></hr>
+      <a name="Attributable"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>trait</code>
+        <em>Attributable</em>
+      </dt>
+      <dd><code> extends </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a><code> with </code><a href="" target="contentFrame" class="scala/util/parsing/input/Positional">scala.util.parsing.input.Positional</a></dd>
+    </dl>
+      <dl><dd>Common functionality for all classes that are to be attributed.  This
+ trait must be extended by all classes for which the node properties
+ such as parent and the attribute shorthand notation <code>-></code>
+ are desired.</dd></dl>
+      <dl></dl>
+    <dl>
+      <dt style="margin:10px 0 0 20px;"><b>Direct Known Subclasses:</b></dt>
+      <dd><a href="../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">AST.Exp</a>, <a href="../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">AST.Statement</a>, <a href="../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">AST.Declaration</a>, <a href="../../kiama/example/oberon0/compiler/AST$object.Type.html" target="_self">AST.Type</a>, <a href="../../kiama/example/lambda2/AST$object.Exp.html" target="_self">AST.Exp</a>, <a href="../../kiama/example/dataflow/DataflowAST$object.Program.html" target="_self">DataflowAST.Program</a>, <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">DataflowAST.Stm</a>, <a href="../../kiama/example/picojava/AbstractSyntax$object.Program.html" target="_self">AbstractSyntax.Program</a>, <a href="../../kiama/example/picojava/AbstractSyntax$object.Block.html" target="_self">AbstractSyntax.Block</a>, <a href="../../kiama/example/picojava/AbstractSyntax$object.BlockStmt.html" target="_self">AbstractSyntax.BlockStmt</a>, <a href="../../kiama/example/picojava/AbstractSyntax$object.Exp.html" target="_self">AbstractSyntax.Exp</a>, <a href="../../kiama/example/repmin/Tree.html" target="_self">Tree</a></dd>
+      </dl><hr></hr>
+      
+
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Value Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> var</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#_next" target="_self">_next</a></em>
+         : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+        
+        <div>Private field backing next to make the types work correctly.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> var</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#index" target="_self">index</a></em>
+         : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
+        
+        <div>If this node is in a sequence, which child number is it
+     (counting from zero)?  Otherwise, zero.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> var</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#parent" target="_self">parent</a></em>
+         : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+        
+        <div>A link to the parent Attributable node of this node or null if this
+     node has no parent.  Note that this link will skip intervening 
+     non-Attributable ancestors, such as <code>Option</code> or
+     <code>Seq</code> nodes.</div>
+      </td>
+    </tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Values and Variables inherited from <a href="" target="contentFrame" class="scala/util/parsing/input/Positional">scala.util.parsing.input.Positional</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="#pos" target="contentFrame" class="scala/util/parsing/input/Positional">scala.util.parsing.input.Positional.pos</a>
+        </td></tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Method Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code>final def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#-%3E%28%28Attributable.this.type%29%3D%3ET%29" target="_self">-&gt;</a></em>
+        [<em>T</em>](<em>attr</em> : (<a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>) =&gt; <a href="../../kiama/attribution/Attributable.html#-%3E%28%28Attributable.this.type%29%3D%3ET%29#T" target="_self">T</a>) : <a href="../../kiama/attribution/Attributable.html#-%3E%28%28Attributable.this.type%29%3D%3ET%29#T" target="_self">T</a>
+        
+        <div>Reference an attribute or function that can be applied to this node.
+     <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#children" target="_self">children</a></em>
+         : <a href="" target="contentFrame" class="scala/Iterator">scala.Iterator</a>[<a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>]
+        
+        <div>This node's attributable children in left-to-right order.  Children
+     that are not Attributable are ignored, except for sequences (<code>Seq[_]</code>)
+     and optional children (<code>Option[_]</code>).  In the case of sequences and
+     options, their contents are processed and any immediate Attributable
+     contents are included in the sequence.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#isFirst" target="_self">isFirst</a></em>
+         : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+        
+        <div>If this node is in a sequence, is it the first element?
+     Otherwise, true.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#isLast" target="_self">isLast</a></em>
+         : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+        
+        <div>If this node is in a sequence, is it the last element?
+     Otherwise, true.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#isRoot" target="_self">isRoot</a></em>
+         : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+        
+        <div>Is this node the root of the hierarchy?</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#next" target="_self">next</a></em>
+         : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+        
+        <div>If this node is a member of a sequence, a link to the next
+     node in the sequence.  Null if this is the first node of the
+     sequence, or if it is not a member of a sequence.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#parent" target="_self">parent</a></em>
+        [<em>T</em>] : <a href="../../kiama/attribution/Attributable.html#parent#T" target="_self">T</a>
+        
+        <div>A short-hand for parent.asInstanceOf[T], which is useful in cases
+     a T-specific operation is applied to the parent, which otherwise
+     would be Attributable.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/attribution/Attributable.html#prev" target="_self">prev</a></em>
+         : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+        
+        <div>If this node is a member of a sequence, a link to the previous
+     node in the sequence.  Null if this is the first node of the
+     sequence, or if it is not a member of a sequence.</div>
+      </td>
+    </tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="" target="contentFrame" class="scala/util/parsing/input/Positional">scala.util.parsing.input.Positional</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="#setPos" target="contentFrame" class="scala/util/parsing/input/Positional">scala.util.parsing.input.Positional.setPos</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="#productElement" target="contentFrame" class="scala/Product">scala.Product.productElement</a> (abstract), <a href="#productArity" target="contentFrame" class="scala/Product">scala.Product.productArity</a> (abstract), <a href="#productPrefix" target="contentFrame" class="scala/Product">scala.Product.productPrefix</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#toString%28%29" target="_self">toString</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
+        </td></tr>
+      </table>
+
+
+      
+
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Value Details</td></tr>
+        </table><div><a name="parent"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>var</code>
+        <em>parent</em> : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>A link to the parent Attributable node of this node or null if this
+     node has no parent.  Note that this link will skip intervening 
+     non-Attributable ancestors, such as <code>Option</code> or
+     <code>Seq</code> nodes.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="_next"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>var</code>
+        <em>_next</em> : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Private field backing next to make the types work correctly.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="index"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>var</code>
+        <em>index</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>If this node is in a sequence, which child number is it
+     (counting from zero)?  Otherwise, zero.</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Method Details</td></tr>
+        </table><div><a name="parent"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>parent</em>[<em>T</em>] : <a href="../../kiama/attribution/Attributable.html#parent#T" target="_self">T</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>A short-hand for parent.asInstanceOf[T], which is useful in cases
+     a T-specific operation is applied to the parent, which otherwise
+     would be Attributable.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="isRoot"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>isRoot</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Is this node the root of the hierarchy?</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="prev"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>prev</em> : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>If this node is a member of a sequence, a link to the previous
+     node in the sequence.  Null if this is the first node of the
+     sequence, or if it is not a member of a sequence.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="next"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>next</em> : <a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>If this node is a member of a sequence, a link to the next
+     node in the sequence.  Null if this is the first node of the
+     sequence, or if it is not a member of a sequence.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="isFirst"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>isFirst</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>If this node is in a sequence, is it the first element?
+     Otherwise, true.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="isLast"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>isLast</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>If this node is in a sequence, is it the last element?
+     Otherwise, true.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="children"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>children</em> : <a href="" target="contentFrame" class="scala/Iterator">scala.Iterator</a>[<a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>]
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>This node's attributable children in left-to-right order.  Children
+     that are not Attributable are ignored, except for sequences (<code>Seq[_]</code>)
+     and optional children (<code>Option[_]</code>).  In the case of sequences and
+     options, their contents are processed and any immediate Attributable
+     contents are included in the sequence.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="-%3E%28%28Attributable.this.type%29%3D%3ET%29"></a><dl>
+      <dt>
+        @<a href="" target="contentFrame" class="scala/inline">scala.inline</a><br></br>
+        <code>final</code>
+        <code>def</code>
+        <em>-&gt;</em>[<em>T</em>](<em>attr</em> : (<a href="../../kiama/attribution/Attributable.html" target="_self">Attributable</a>) =&gt; <a href="../../kiama/attribution/Attributable.html#-%3E%28%28Attributable.this.type%29%3D%3ET%29#T" target="_self">T</a>) : <a href="../../kiama/attribution/Attributable.html#-%3E%28%28Attributable.this.type%29%3D%3ET%29#T" target="_self">T</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Reference an attribute or function that can be applied to this node.
+     <code>this->attribute</code> is equivalent to <code>attribute(this)</code>.</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+
+
+    <hr></hr>
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.9.0 API</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+      </body>
+      </html>

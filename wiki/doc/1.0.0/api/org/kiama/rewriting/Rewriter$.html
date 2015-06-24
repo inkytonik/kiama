@@ -1,0 +1,2183 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>Scaladoc for org.kiama.rewriting.Rewriter</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		      <script type="text/javascript" src="../../../lib/jquery.js"></script>
+          
+      <link href="../../../lib/template.css" rel="stylesheet" type="text/css" media="screen" />
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body class="value">
+
+      <p id="owner"><a href="../../package.html" class="extype" name="org">org</a>.<a href="../package.html" class="extype" name="org.kiama">kiama</a>.<a href="package.html" class="extype" name="org.kiama.rewriting">rewriting</a></p>
+
+      <div id="definition">
+        <img src="../../../lib/object_big.png" />
+        <h1>Rewriter</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">object</span>
+      <span class="symbol">
+        <span class="name">Rewriter</span><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment" id="comment"><div class="comment cmt"><p>Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).
+The implementation here is partially based on the semantics given in &quot;Program
+Transformation with Scoped Dynamic Rewrite Rules&quot;, by Bravenboer, van Dam, Olmos
+and Visser, Fundamenta Informaticae, 69, 2005. The library strategies are mostly
+based on the Stratego library, but also on combinators found in the Scrap Your
+Boilerplate and Uniplate libraries for Haskell.
+</p></div>
+            
+            
+            
+            
+          </div>
+      
+      <div id="template">
+
+        <div id="mbrsel">
+          <div id="ancestors">
+                <span class="filtertype">Inherited</span>
+                <ol><li class="hideall">Hide All</li><li class="showall">Show all</li></ol>
+                <ol id="linearization"><li class="in" name="scala.AnyRef">AnyRef</li><li class="in" name="scala.Any">Any</li></ol>
+              </div>
+          <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in">Public</li><li class="all out">All</li></ol>
+          </div>
+        </div>
+        
+                
+        
+        <div class="members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="org.kiama.rewriting.Rewriter.PlusStrategy">
+      <h4 class="signature"><a href="Rewriter$$PlusStrategy.html">
+      <span class="kind">class</span>
+      <span class="symbol">
+        <span class="name">PlusStrategy</span><span class="result"> extends Strategy</span>
+      </span>
+      </a></h4>
+      <p class="comment cmt">Helper class to contain commonality of choice in non-deterministic
+choice operator and then-else part of a conditional choice.</p>
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter.Strategy">
+      <h4 class="signature"><a href="Rewriter$$Strategy.html">
+      <span class="kind">class</span>
+      <span class="symbol">
+        <span class="name">Strategy</span><span class="result"> extends (AnyRef) ⇒ Option[AnyRef]</span>
+      </span>
+      </a></h4>
+      <p class="comment cmt">Term-rewriting strategies.</p>
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#Term">
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol">
+        <span class="name">Term</span><span class="result"> = AnyRef</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">The type of terms that can be rewritten.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>The type of terms that can be rewritten.  Any type of object value is
+acceptable but generic traversals will only work on Products (e.g.,
+instances of case classes).  We use AnyRef here so that non-Product
+values can be present in rewritten structures.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li></ol>
+            </div>
+        
+        <div class="members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="scala.AnyRef#!=">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">!=</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.Any#!=">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o != arg0</code> is the same as <code>!(o == (arg0))</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o != arg0</code> is the same as <code>!(o == (arg0))</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for dis-equality.</p></dd><dt>returns</dt><dd class="cmt"><p><code>false</code> if the receiver object is equivalent to the argument; <code>true</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef###">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef → Any
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#$asInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">$asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">()</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#$isInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">$isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#==">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">==</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o == arg0</code> is the same as <code>if (o eq null) arg0 eq null else o.equals(arg0)</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o == arg0</code> is the same as <code>if (o eq null) arg0 eq null else o.equals(arg0)</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality.</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#==">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o == arg0</code> is the same as <code>o.equals(arg0)</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o == arg0</code> is the same as <code>o.equals(arg0)</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality.</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter.Term">
+      <h4 class="signature"><a href="Rewriter$$Term$.html">
+      <span class="kind">object</span>
+      <span class="symbol">
+        <span class="name">Term</span><span class="result"> extends AnyRef</span>
+      </span>
+      </a></h4>
+      <p class="comment cmt">Generic term deconstruction.</p>
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#all">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">all</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Traversal to all children.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Traversal to all children.  Construct a strategy that applies s to all
+term children of the subject term in left-to-right order.  If s succeeds
+on all of the children, then succeed, forming a new term from the constructor
+of the original term and the result of s for each child.  If s fails on any
+child, fail.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#alldownup2">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">alldownup2</span><span class="params">(<span name="s1">s1: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s2">s2: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s1 in a top-down, prefix fashion
+stopping at a frontier where s succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s1 in a top-down, prefix fashion
+stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+postfix fashion to the result.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#alltd">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">alltd</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a top-down fashion, stopping
+at a frontier where s succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a top-down fashion, stopping
+at a frontier where s succeeds.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#alltdfold">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">alltdfold</span><span class="params">(<span name="s1">s1: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s2">s2: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s1 in a top-down, prefix fashion
+stopping at a frontier where s succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s1 in a top-down, prefix fashion
+stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+postfix fashion to the results of the recursive calls.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#and">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">and</span><span class="params">(<span name="s1">s1: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s2">s2: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">and (s1, s2) applies s1 and s2 to the current
+term and succeeds if both succeed.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>and (s1, s2) applies s1 and s2 to the current
+term and succeeds if both succeed. s2 will always
+be applied, i.e., and is *not* a short-circuit
+operator
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#asInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to cast the receiver object to be of type <code>T0</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to cast the receiver object to be of type <code>T0</code>.</p><p>Note that the success of a cast at runtime is modulo Scala's erasure semantics.  Therefore the expression<code>1.asInstanceOf[String]</code> will throw a <code>ClassCastException</code> at runtime, while the expression<code>List(1).asInstanceOf[List[String]]</code> will not.  In the latter example, because the type argument is erased as
+part of compilation it is not possible to check whether the contents of the list are of the requested typed.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the receiver object.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#attempt">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">attempt</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s, yielding the result of s if it
+succeeds, otherwise leave the original subject term unchanged.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s, yielding the result of s if it
+succeeds, otherwise leave the original subject term unchanged.  In
+Stratego library this strategy is called &quot;try&quot;.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#bottomup">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">bottomup</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a bottom-up, postfix fashion
+to the subject term.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a bottom-up, postfix fashion
+to the subject term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#bottomupS">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">bottomupS</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="stop">stop: (<a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a>) ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a bottom-up, postfix fashion
+to the subject term but stops when stop succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a bottom-up, postfix fashion
+to the subject term but stops when stop succeeds.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#breadthfirst">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">breadthfirst</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in breadth first order.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in breadth first order.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#child">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">child</span><span class="params">(<span name="i">i: <span class="extype" name="scala.Int">Int</span></span>, <span name="s">s: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Traversal to a single child.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Traversal to a single child.  Construct a strategy that applies s to
+the ith child of the subject term (counting from one).  If s succeeds on
+the ith child producing t, then succeed, forming a new term that is the
+same as the original term except that the ith child is now t.  If s fails
+on the ith child or the subject term does not have an ith child, then fail.
+child (i, s) is equivalent to Stratego's i(s) operator.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="prt" name="scala.AnyRef#clone">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: AnyRef</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method creates and returns a copy of the receiver object.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method creates and returns a copy of the receiver object.</p><p>The default implementation of the <code>clone</code> method is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a copy of the receiver object.</p></dd></dl><div class="block">
+          attributes: protected 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#collectl">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">collectl</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[AnyRef, T]</span>)</span><span class="result">: (AnyRef) ⇒ <span class="extype" name="scala.collection.immutable.List">List</span>[T]</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Collect query results in a list.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Collect query results in a list.  Run the function f as a top-down
+query on the subject term.  Accumulate the values produced by the
+function in a list and return the final value of the list.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#collects">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">collects</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[AnyRef, T]</span>)</span><span class="result">: (AnyRef) ⇒ <span class="extype" name="scala.collection.immutable.Set">Set</span>[T]</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Collect query results in a set.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Collect query results in a set.  Run the function f as a top-down
+query on the subject term.  Accumulate the values produced by the
+function in a set and return the final value of the set.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#congruence">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">congruence</span><span class="params">(<span name="ss">ss: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a>*</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Make a strategy that applies the elements of ss pairwise to the
+children of the subject term, returning a new term if all of the
+strategies succeed, otherwise failing.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Make a strategy that applies the elements of ss pairwise to the
+children of the subject term, returning a new term if all of the
+strategies succeed, otherwise failing.  The contructor of the new
+term is the same as that of the original term and the children
+are the results of the strategies.  If the length of ss is not
+the same as the number of children, then congruence (ss) fails.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#count">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">count</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[AnyRef, <span class="extype" name="scala.Int">Int</span>]</span>)</span><span class="result">: (AnyRef) ⇒ <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Count function results.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Count function results.  Run the function f as a top-down query on
+the subject term.  Sum the integer values returned by f from all
+applications.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#debug">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">debug</span><span class="params">(<span name="s">s: <span class="extype" name="java.lang.String">String</span></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">A strategy that always succeeds with the subject term unchanged (i.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>A strategy that always succeeds with the subject term unchanged (i.e.,
+this is the identity strategy) with the side-effect that the subject
+term is printed to standard output, prefixed by the string s.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#doloop">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">doloop</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="c">c: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s at least once and then repeats s
+while c succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s at least once and then repeats s
+while c succeeds.  This operator is called &quot;do-while&quot; in the Stratego
+library.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#dontstop">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">dontstop</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">A unit for topdownS, bottomupS and downupS.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>A unit for topdownS, bottomupS and downupS.  For example, topdown (s)
+is equivalent to topdownS (s, dontstop).
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#downup">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">downup</span><span class="params">(<span name="s1">s1: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s2">s2: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s1 in a top-down, prefix fashion
+and s2 in a bottom-up, postfix fashion to the subject term.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s1 in a top-down, prefix fashion
+and s2 in a bottom-up, postfix fashion to the subject term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#downup">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">downup</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a combined top-down and
+bottom-up fashion (i.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a combined top-down and
+bottom-up fashion (i.e., both prefix and postfix) to the subject
+term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#downupS">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">downupS</span><span class="params">(<span name="s1">s1: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s2">s2: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="stop">stop: (<a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a>) ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s1 in a top-down, prefix fashion
+and s2 in a bottom-up, postfix fashion to the subject term but stops
+when stop succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s1 in a top-down, prefix fashion
+and s2 in a bottom-up, postfix fashion to the subject term but stops
+when stop succeeds.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#downupS">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">downupS</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="stop">stop: (<a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a>) ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a combined top-down and
+bottom-up fashion (i.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a combined top-down and
+bottom-up fashion (i.e., both prefix and postfix) to the subject
+term but stops when stop succeeds.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#eq">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to test whether the argument (<code>arg0</code>) is a reference to the
+receiver object (<code>this</code>).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to test whether the argument (<code>arg0</code>) is a reference to the
+receiver object (<code>this</code>).</p><p>The <code>eq</code> method implements an [http://en.wikipedia.org/wiki/Equivalence_relation equivalence relation] on
+non-null instances of <code>AnyRef</code>:
+ * It is reflexive: for any non-null instance <code>x</code> of type <code>AnyRef</code>, <code>x.eq(x)</code> returns <code>true</code>.
+ * It is symmetric: for any non-null instances <code>x</code> and <code>y</code> of type <code>AnyRef</code>, <code>x.eq(y)</code> returns <code>true</code> if and
+   only if <code>y.eq(x)</code> returns <code>true</code>.
+ * It is transitive: for any non-null instances <code>x</code>, <code>y</code>, and <code>z</code> of type <code>AnyRef</code> if <code>x.eq(y)</code> returns <code>true</code>   and <code>y.eq(z)</code> returns <code>true</code>, then <code>x.eq(z)</code> returns <code>true</code>.</p><p>Additionally, the <code>eq</code> method has three other properties.
+ * It is consistent: for any non-null instances <code>x</code> and <code>y</code> of type <code>AnyRef</code>, multiple invocations of
+   <code>x.eq(y)</code> consistently returns <code>true</code> or consistently returns <code>false</code>.
+ * For any non-null instance <code>x</code> of type <code>AnyRef</code>, <code>x.eq(null)</code> and <code>null.eq(x)</code> returns <code>false</code>.
+ * <code>null.eq(null)</code> returns <code>true</code>.</p><p>When overriding the <code>equals</code> or <code>hashCode</code> methods, it is important to ensure that their behavior is
+consistent with reference equality.  Therefore, if two objects are references to each other (<code>o1 eq o2</code>), they
+should be equal to each other (<code>o1 == o2</code>) and they should hash to the same value (<code>o1.hashCode == o2.hashCode</code>).
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for reference equality.</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the argument is a reference to the receiver object; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#eq">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that tests whether the two sub-terms of a
+pair of terms are equal.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that tests whether the two sub-terms of a
+pair of terms are equal.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#equal">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">equal</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that tests whether the two sub-terms of a
+pair of terms are equal.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that tests whether the two sub-terms of a
+pair of terms are equal. Synonym for eq.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#equals">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to compare the receiver object (<code>this</code>) with the argument object (<code>arg0</code>) for equivalence.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to compare the receiver object (<code>this</code>) with the argument object (<code>arg0</code>) for equivalence.</p><p>The default implementations of this method is an [http://en.wikipedia.org/wiki/Equivalence_relation equivalence
+relation]:
+ * It is reflexive: for any instance <code>x</code> of type <code>Any</code>, <code>x.equals(x)</code> should return <code>true</code>.
+ * It is symmetric: for any instances <code>x</code> and <code>y</code> of type <code>Any</code>, <code>x.equals(y)</code> should return <code>true</code> if and
+   only if <code>y.equals(x)</code> returns <code>true</code>.
+ * It is transitive: for any instances <code>x</code>, <code>y</code>, and <code>z</code> of type <code>AnyRef</code> if <code>x.equals(y)</code> returns <code>true</code> and
+   <code>y.equals(z)</code> returns <code>true</code>, then <code>x.equals(z)</code> should return <code>true</code>.</p><p>If you override this method, you should verify that your implementation remains an equivalence relation.
+Additionally, when overriding this method it is often necessary to override <code>hashCode</code> to ensure that objects
+that are &quot;equal&quot; (<code>o1.equals(o2)</code> returns <code>true</code>) hash to the same 
+scala.Int
+(<code>o1.hashCode.equals(o2.hashCode)</code>).
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for equality.</p></dd><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is equivalent to the argument; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#everywherebu">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">everywherebu</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s at every term in a bottom-up fashion
+regardless of failure.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s at every term in a bottom-up fashion
+regardless of failure.  (Sub-)terms for which the strategy fails are left
+unchanged.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#everywheretd">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">everywheretd</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s at every term in a top-down fashion
+regardless of failure.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s at every term in a top-down fashion
+regardless of failure.  (Sub-)terms for which the strategy fails are left
+unchanged.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#fail">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">fail</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">A strategy that always fails.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>A strategy that always fails.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="prt" name="scala.AnyRef#finalize">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is called by the garbage collector on the receiver object when garbage collection determines that
+there are no more references to the object.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is called by the garbage collector on the receiver object when garbage collection determines that
+there are no more references to the object.</p><p>The details of when and if the <code>finalize</code> method are invoked, as well as the interaction between <code>finalize</code>and non-local returns and exceptions, are all platform dependent.</p></div><div class="block">
+          attributes: protected 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#getClass">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: java.lang.Class[_]</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a representation that corresponds to the dynamic class of the receiver object.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a representation that corresponds to the dynamic class of the receiver object.</p><p>The nature of the representation is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a representation that corresponds to the dynamic class of the receiver object.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#hashCode">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a hash code value for the object.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a hash code value for the object.</p><p>The default hashing algorithm is platform dependent.</p><p>Note that it is allowed for two objects to have identical hash codes (<code>o1.hashCode.equals(o2.hashCode)</code>) yet
+not be equal (<code>o1.equals(o2)</code> returns <code>false</code>).  A degenerate implementation could always return <code>0</code>.
+However, it is required that if two objects are equal (<code>o1.equals(o2)</code> returns <code>true</code>) that they have
+identical hash codes (<code>o1.hashCode.equals(o2.hashCode)</code>).  Therefore, when overriding this method, be sure
+to verify that the behavior is consistent with the <code>equals</code> method.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>the hash code value for the object.</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#id">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">id</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">A strategy that always succeeds with the subject term unchanged (i.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>A strategy that always succeeds with the subject term unchanged (i.e.,
+this is the identity strategy).
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#innermost">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">innermost</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s repeatedly to the innermost
+(i.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s repeatedly to the innermost
+(i.e., lowest and left-most) (sub-)term to which it applies.
+Stop with the current term if s doesn't apply anywhere.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#innermost2">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">innermost2</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">An alternative version of innermost.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>An alternative version of innermost.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#ior">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">ior</span><span class="params">(<span name="s1">s1: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s2">s2: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">ior (s1, s2) implements 'inclusive or', that is, the
+inclusive choice of s1 and s2.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>ior (s1, s2) implements 'inclusive or', that is, the
+inclusive choice of s1 and s2. It first tries s1, if
+that fails it applies s2 (just like s1 &lt;+ s2). However,
+when s1 succeeds it also tries to apply s2.
+The results of the transformations are returned.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.Any#isInstanceOf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">This method is used to test whether the dynamic type of the receiver object is <code>T0</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>This method is used to test whether the dynamic type of the receiver object is <code>T0</code>.</p><p>Note that the test result of the test is modulo Scala's erasure semantics.  Therefore the expression<code>1.isInstanceOf[String]</code> will return <code>false</code>, while the expression <code>List(1).isInstanceOf[List[String]]</code> will
+return <code>true</code>.  In the latter example, because the type argument is erased as part of compilation it is not
+possible to check whether the contents of the list are of the requested typed.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p><code>true</code> if the receiver object is an instance of erasure of type <code>T0</code>; <code>false</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#isinnernode">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">isinnernode</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that succeeds if the current term has at
+least one direct subterm.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that succeeds if the current term has at
+least one direct subterm.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#isleaf">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">isleaf</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that succeeds if the current term has no
+direct subterms.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that succeeds if the current term has no
+direct subterms.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#ispropersubterm">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">ispropersubterm</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a sub-term of y but is not equal to y.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a sub-term of y but is not equal to y.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#ispropersuperterm">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">ispropersuperterm</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a super-term of y but is not equal to y.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a super-term of y but is not equal to y.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#issubterm">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">issubterm</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a sub-term of y.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a sub-term of y.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#issuperterm">
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol">
+        <span class="name">issuperterm</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a superterm of y.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that succeeds when applied to a pair (x,y)
+if x is a superterm of y.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#lastly">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">lastly</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="f">f: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Applies s followed by f whether s failed or not.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Applies s followed by f whether s failed or not.
+This operator is called &quot;finally&quot; in the Stratego library.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#leaves">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">leaves</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="isleaf">isleaf: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="skip">skip: (<a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a>) ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies to all of the leaves of the
+current term, using isleaf as the leaf predicate, skipping
+subterms for which skip succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies to all of the leaves of the
+current term, using isleaf as the leaf predicate, skipping
+subterms for which skip succeeds.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#leaves">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">leaves</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="isleaf">isleaf: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies to all of the leaves of the
+current term, using isleaf as the leaf predicate.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies to all of the leaves of the
+current term, using isleaf as the leaf predicate.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#loop">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">loop</span><span class="params">(<span name="c">c: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that while c succeeds applies s.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that while c succeeds applies s.  This operator
+is called &quot;while&quot; in the Stratego library.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#loopiter">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">loopiter</span><span class="params">(<span name="s">s: (<span class="extype" name="scala.Int">Int</span>) ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="low">low: <span class="extype" name="scala.Int">Int</span></span>, <span name="up">up: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s (i) for each integer i from low to
+up (inclusive).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s (i) for each integer i from low to
+up (inclusive).  This operator is called &quot;for&quot; in the Stratego library.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#loopiter">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">loopiter</span><span class="params">(<span name="i">i: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="c">c: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that repeats application of s while c fails, after
+initialization with i.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that repeats application of s while c fails, after
+initialization with i.  This operator is called &quot;for&quot; in the Stratego
+library.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#loopnot">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">loopnot</span><span class="params">(<span name="c">c: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that while c does not succeed applies s.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that while c does not succeed applies s.  This
+operator is called &quot;while-not&quot; in the Stratego library.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#manybu">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">manybu</span><span class="params">(<span name="s">s: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s as many times as possible, but
+at least once, in bottom up order.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s as many times as possible, but
+at least once, in bottom up order.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#manytd">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">manytd</span><span class="params">(<span name="s">s: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s as many times as possible, but
+at least once, in top down order.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s as many times as possible, but
+at least once, in top down order.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#map">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">map</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s to each element of a list,
+returning a new list of the results if all of the applications
+succeed, otherwise fail.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s to each element of a list,
+returning a new list of the results if all of the applications
+succeed, otherwise fail.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#memo">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">memo</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Return a strategy that behaves as s does, but memoises its arguments and
+results.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Return a strategy that behaves as s does, but memoises its arguments and
+results.  In other words, if memo (s) is called on a term t twice, the
+second time will return the same result as the first, without having to
+invoke s.  For best results, it is important that s should have no side
+effects.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#ne">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt"><code>o.ne(arg0)</code> is the same as <code>!(o.eq(arg0))</code>.</p>
+            <div class="fullcomment"><div class="comment cmt"><p><code>o.ne(arg0)</code> is the same as <code>!(o.eq(arg0))</code>.
+</p></div><dl class="paramcmts block"><dt class="param">arg0</dt><dd class="cmt"><p>the object to compare against this object for reference dis-equality.</p></dd><dt>returns</dt><dd class="cmt"><p><code>false</code> if the argument is not a reference to the receiver object; <code>true</code> otherwise.</p></dd></dl><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#not">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">not</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s, then fails if s succeeded or, if s
+failed, succeeds with the subject term unchanged,  I.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s, then fails if s succeeded or, if s
+failed, succeeds with the subject term unchanged,  I.e., it tests if
+s applies, but has no effect on the subject term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#notify">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Wakes up a single thread that is waiting on the receiver object's monitor.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Wakes up a single thread that is waiting on the receiver object's monitor.</p></div><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#notifyAll">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Wakes up all threads that are waiting on the receiver object's monitor.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Wakes up all threads that are waiting on the receiver object's monitor.</p></div><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#oncebu">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">oncebu</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a bottom-up fashion to one
+subterm at each level, stopping as soon as it succeeds once (at
+any level).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a bottom-up fashion to one
+subterm at each level, stopping as soon as it succeeds once (at
+any level).
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#oncetd">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">oncetd</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a top-down fashion to one
+subterm at each level, stopping as soon as it succeeds once (at
+any level).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a top-down fashion to one
+subterm at each level, stopping as soon as it succeeds once (at
+any level).
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#one">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">one</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Traversal to one child.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Traversal to one child.  Construct a strategy that applies s to the term
+children of the subject term in left-to-right order.  Assume that c is the
+first child on which s succeeds.  Then stop applying s to the children and
+succeed, forming a new term from the constructor of the original term and
+the original children, except that c is replaced by the result of applying
+s to c.  In the event that the strategy fails on all children, then fail.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#optionToStrategy">
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol">
+        <span class="name">optionToStrategy</span><span class="params">(<span name="o">o: <span class="extype" name="scala.Option">Option</span>[AnyRef]</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">(Implicitly) construct a strategy from an option value.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>(Implicitly) construct a strategy from an option value.  The
+strategy succeeds or fails depending on whether the option is
+a Some or None, respectively.
+</p></div><div class="block">
+          attributes: implicit 
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#or">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">or</span><span class="params">(<span name="s1">s1: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="s2">s2: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">or (s1, s2) is similar to ior (s1,s2), but the application
+of the strategies is only tested.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>or (s1, s2) is similar to ior (s1,s2), but the application
+of the strategies is only tested.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#outermost">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">outermost</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s repeatedly in a top-down fashion
+stopping each time as soon as it succeeds once (at any level).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s repeatedly in a top-down fashion
+stopping each time as soon as it succeeds once (at any level). The
+outermost fails when s fails to apply to any (sub-)term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#para">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">para</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="scala.Any">Any</span>, <span class="extype" name="scala.collection.Seq">Seq</span>[T]) ⇒ T</span>)</span><span class="result">: (<span class="extype" name="scala.Any">Any</span>) ⇒ T</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Perform a paramorphism over a value.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Perform a paramorphism over a value.  This is a fold in which the
+recursive step may refer to the recursive component of the value
+and the results of folding over the children.  When the function f
+is called, the first parameter is the value and the second is a
+sequence of the values that f has returned for the children.  This
+will work on any value, but will only decompose Products.  This
+operation is similar to that used in the Uniplate library.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#query">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">query</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[AnyRef, T]</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Define a term query.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Define a term query.  Construct a strategy that always succeeds with no
+effect on the subject term but applies a given partial function f to the
+subject term.  In other words, the strategy runs f for its side-effects.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#queryf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">queryf</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: (AnyRef) ⇒ T</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Define a term query.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Define a term query.  Construct a strategy that always succeeds with no
+effect on the subject term but applies a given (possibly partial)
+function f to the subject term.  In other words, the strategy runs f
+for its side-effects.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#reduce">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">reduce</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s repeatedly to subterms
+until it fails on all of them.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s repeatedly to subterms
+until it fails on all of them.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#repeat">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">repeat</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="n">n: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s repeatedly exactly n times.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s repeatedly exactly n times. If
+s fails at some point during the n applications, the entire strategy
+fails. The result of the strategy is that of the nth application of s.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#repeat">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">repeat</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="c">c: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that repeatedly applies s until it fails and
+then terminates with application of c.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that repeatedly applies s until it fails and
+then terminates with application of c.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#repeat">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">repeat</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s repeatedly until it fails.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s repeatedly until it fails.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#repeat1">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">repeat1</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that repeatedly applies s (at least once).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that repeatedly applies s (at least once).
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#repeat1">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">repeat1</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="c">c: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that repeatedly applies s (at least once) and
+terminates with application of c.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that repeatedly applies s (at least once) and
+terminates with application of c.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#repeatuntil">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">repeatuntil</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="c">c: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that repeatedly applies s until c succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that repeatedly applies s until c succeeds.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#restore">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">restore</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="rest">rest: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Apply restoring action 'rest' if s fails, and then fail.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Apply restoring action 'rest' if s fails, and then fail.
+Typically useful if s performs side effects that should be
+restored/undone in case s fails.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#restorealways">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">restorealways</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="rest">rest: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Apply restoring action 'rest' after s terminates, and preserve
+success/failure behaviour of s.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Apply restoring action 'rest' after s terminates, and preserve
+success/failure behaviour of s.
+Typically useful if s performs side effects that should be
+restored always, e.g., when maintaining scope information.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#rewrite">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">rewrite</span><span class="tparams">[<span name="T">T &lt;: AnyRef</span>]</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="params">(<span name="t">t: T</span>)</span><span class="result">: T</span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Rewrite a term.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Rewrite a term.  Apply the strategy s to a term returning the result term
+if s succeeds, otherwise return the original term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#rule">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">rule</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[AnyRef, AnyRef]</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Define a rewrite rule using a partial function.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Define a rewrite rule using a partial function.  If the function is
+defined at the current term, then the strategy succeeds with the return
+value of the function applied to the current term.  Otherwise the
+strategy fails.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#rulef">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">rulef</span><span class="params">(<span name="f">f: (AnyRef) ⇒ AnyRef</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Define a rewrite rule using a function that returns a term.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Define a rewrite rule using a function that returns a term.  The rule
+always succeeds with the return value of the function.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#rulefs">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">rulefs</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[AnyRef, <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a>]</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Define a rewrite rule using a function that returns a strategy.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Define a rewrite rule using a function that returns a strategy.  The
+rule applies the function to the subject term to get a strategy which
+is then applied again to the subject term.  In other words, the function
+is only used for side-effects such as pattern matching.  The whole thing
+also fails if f is not defined at the term in the first place.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#some">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">some</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Traversal to as many children as possible, but at least one.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Traversal to as many children as possible, but at least one.  Construct a
+strategy that applies s to the term children of the subject term in
+left-to-right order.  If s succeeds on any of the children, then succeed,
+forming a new term from the constructor of the original term and the result
+of s for each succeeding child, with other children unchanged.  In the event
+that the strategy fails on all children, then fail.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#somebu">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">somebu</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a bottom-up fashion to some
+subterms at each level, stopping as soon as it succeeds once (at
+any level).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a bottom-up fashion to some
+subterms at each level, stopping as soon as it succeeds once (at
+any level).
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#somedownup">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">somedownup</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a top-down, prefix fashion
+stopping at a frontier where s succeeds on some children.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a top-down, prefix fashion
+stopping at a frontier where s succeeds on some children.  s is then
+applied in a bottom-up, postfix fashion to the result.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#sometd">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">sometd</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a top-down fashion to some
+subterms at each level, stopping as soon as it succeeds once (at
+any level).</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a top-down fashion to some
+subterms at each level, stopping as soon as it succeeds once (at
+any level).
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#strategy">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">strategy</span><span class="params">(<span name="f">f: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[AnyRef, <span class="extype" name="scala.Option">Option</span>[AnyRef]]</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Make a strategy from a partial function.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Make a strategy from a partial function.  If the function is
+defined at the current term, then the function return value
+when applied to the current term determines whether the strategy
+succeeds or fails.  If the function is not defined at the current
+term, the strategy fails.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#strategyf">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">strategyf</span><span class="params">(<span name="f">f: (AnyRef) ⇒ <span class="extype" name="scala.Option">Option</span>[AnyRef]</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Make a strategy from a function.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Make a strategy from a function.  The function return value determines
+whether the strategy succeeds or fails.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#synchronized">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: T0</span>)</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#term">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">term</span><span class="params">(<span name="t">t: AnyRef</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that succeeds only if the subject term matches
+a given term.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that succeeds only if the subject term matches
+a given term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#termToStrategy">
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol">
+        <span class="name">termToStrategy</span><span class="params">(<span name="t">t: AnyRef</span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">(Implicitly) construct a strategy that always succeeds, changing
+the subject term to a given term.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>(Implicitly) construct a strategy that always succeeds, changing
+the subject term to a given term.
+</p></div><div class="block">
+          attributes: implicit 
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#test">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">test</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that tests whether strategy s succeeds,
+restoring the original term on success.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that tests whether strategy s succeeds,
+restoring the original term on success.  A synonym for where.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#toString">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Returns a string representation of the object.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Returns a string representation of the object.</p><p>The default representation is platform dependent.
+</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>a string representation of the object.</p></dd></dl><div class="block">
+          definition classes: AnyRef → Any
+        </div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#topdown">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">topdown</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a top-down, prefix fashion
+to the subject term.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a top-down, prefix fashion
+to the subject term.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#topdownS">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">topdownS</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>, <span name="stop">stop: (<a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a>) ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that applies s in a top-down, prefix fashion
+to the subject term but stops when stop succeeds.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that applies s in a top-down, prefix fashion
+to the subject term but stops when stop succeeds.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="scala.AnyRef#wait">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      
+            
+            <div class="fullcomment"><div class="block">
+          attributes: final 
+        </div><div class="block">
+          definition classes: AnyRef
+        </div></div>
+          
+    </li><li visbl="pub" name="org.kiama.rewriting.Rewriter#where">
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol">
+        <span class="name">where</span><span class="params">(<span name="s">s: ⇒ <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>)</span><span class="result">: <a href="Rewriter$$Strategy.html" class="extype" name="org.kiama.rewriting.Rewriter.Strategy">Strategy</a></span>
+      </span>
+      </h4>
+      
+            <p class="shortcomment cmt">Construct a strategy that tests whether strategy s succeeds,
+restoring the original term on success.</p>
+            <div class="fullcomment"><div class="comment cmt"><p>Construct a strategy that tests whether strategy s succeeds,
+restoring the original term on success.  This is similar
+to Stratego's &quot;where&quot;, except that in this version any effects on
+bindings are not visible outside s.
+</p></div>
+            
+            
+            
+            
+          </div>
+          
+    </li></ol>
+            </div>
+                
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
+      </html>

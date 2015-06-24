@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>All classes and objects in kiama.parsing</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.5.final)" name="generator"></meta><link href="../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../script.js"></script>
+        </head>
+        <body onload="init()"><div class="page-title"><div>kiama 0.8</div></div><p><div>This document is the API specification for kiama 0.8 API Documentation</div></p><table summary="" cellpadding="3" class="member">
+        <tr><td class="title" colspan="2">Class Summary</td></tr>
+        <tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../kiama/parsing/CharPackratParsers.html" target="_self">CharPackratParsers</a></em>
+        <code> extends </code><a href="../kiama/parsing/PackratParsers.html" target="_self">PackratParsers</a><code> with </code><a href="../kiama/parsing/CharParsers.html" target="_self">CharParsers</a>
+        
+        <div>Packrat parsers that operate on character input.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../kiama/parsing/CharParsers.html" target="_self">CharParsers</a></em>
+        <code> extends </code><a href="../kiama/parsing/Parsers.html" target="_self">Parsers</a>
+        
+        <div>Parsers that operate on character input.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../kiama/parsing/PackratParsers.html" target="_self">PackratParsers</a></em>
+        <code> extends </code><a href="../kiama/parsing/Parsers.html" target="_self">Parsers</a>
+        
+        <div>Parsers that use the packrat parsing approach to memoise parsing
+ results, including support for left recursive grammar rules.
+
+ The algorithms used here are from "Packrat parsers can support left
+ recursion" by Warth, Douglass and Millstein, ACM SIGPLAN Symposium on
+ Partial Evaluation and Semantics-based Program Manipulation, 2008.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../kiama/parsing/PackratParsersTests.html" target="_self">PackratParsersTests</a></em>
+        <code> extends </code><a href="" target="contentFrame" class="org/scalatest/junit/JUnit3Suite">org.scalatest.junit.JUnit3Suite</a><code> with </code><a href="" target="contentFrame" class="org/scalatest/prop/Checkers">org.scalatest.prop.Checkers</a><code> with </code><a href="../kiama/parsing/CharPackratParsers.html" target="_self">CharPackratParsers</a><code> with </code><a href="../kiama/example/imperative/TestBase.html" target="_self">TestBase</a>
+        
+        <div>Packrat parsing test cases.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../kiama/parsing/Parsers.html" target="_self">Parsers</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Parser combinator library modelled on the Scala parser combinator
+ library, and through it on various versions of parser combinator
+ libraries for Haskell.</div>
+      </td>
+    </tr>        
+        </table>
+</body>
+      </html>

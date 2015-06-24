@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>object Encoder in kiama.example.oberon0.compiler</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.5.final)" name="generator"></meta><link href="../../../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../../../script.js"></script>
+        </head>
+        <body onload="init()">
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+        
+      <div class="entity">
+        <a href="../../../../kiama/example/oberon0/compiler$package.html" target="_self">kiama.example.oberon0.compiler</a>
+        <br></br>
+        <span class="entity">object  Encoder</span>
+      </div><hr></hr>
+      <div class="source">
+        [source: <a href="" class="kiama/example/oberon0/compiler/Encoder"><code>kiama/example/oberon0/compiler/Encoder.scala</code></a>]
+      </div><hr></hr>
+      <a name="Encoder"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>object</code>
+        <em>Encoder</em>
+      </dt>
+      <dd><code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a></dd>
+    </dl>
+      <dl><dd>Build the assembly/RISC code for the program</dd></dl>
+      <dl></dl>
+    
+      
+
+
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Method Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeAssignment%28kiama.example.oberon0.compiler.AST.Desig%2Ckiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeAssignment</a></em>
+        (<em>targetdes</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Desig.html" target="_self">Desig</a>, <em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>EncodeAssignment</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeIfStmt%28kiama.example.oberon0.compiler.AST.Exp%2CList%5Bkiama.example.oberon0.compiler.AST.Statement%5D%2CList%5Bkiama.example.oberon0.compiler.AST.Statement%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeIfStmt</a></em>
+        (<em>condexp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>thenstmts</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>], <em>elsestmts</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>EncodeIfStmt</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeModule%28kiama.example.oberon0.compiler.AST.ModuleDecl%29" target="_self">EncodeModule</a></em>
+        (<em>md</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.ModuleDecl.html" target="_self">ModuleDecl</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>Encode a module</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeProc%28kiama.example.oberon0.compiler.AST.ProcDecl%29" target="_self">EncodeProc</a></em>
+        (<em>pd</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.ProcDecl.html" target="_self">ProcDecl</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>Encode a procedure</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeProcedureCall%28kiama.example.oberon0.compiler.AST.Exp%2CList%5Bkiama.example.oberon0.compiler.AST.Exp%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeProcedureCall</a></em>
+        (<em>desig</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>aps</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>EncodeProcedureCall</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeRead%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeRead</a></em>
+        (<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>EncodeRead</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeStatement%28kiama.example.oberon0.compiler.AST.Statement%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeStatement</a></em>
+        (<em>stmt</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>Encode a statement</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeWhileStmt%28kiama.example.oberon0.compiler.AST.Exp%2CList%5Bkiama.example.oberon0.compiler.AST.Statement%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeWhileStmt</a></em>
+        (<em>condexp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>bodystmts</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>EncodeWhileStmt</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeWrite%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeWrite</a></em>
+        (<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>EncodeWrite</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#EncodeWriteLn%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">EncodeWriteLn</a></em>
+        (<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>EncodeWriteLn</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#ProcessActualParams%28List%5Bkiama.example.oberon0.compiler.AST.Declaration%5D%2CList%5Bkiama.example.oberon0.compiler.AST.Exp%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">ProcessActualParams</a></em>
+        (<em>fps</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>], <em>aps</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>Encode procedure actual parameters</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#processArrayDesig%28kiama.example.oberon0.compiler.AST.ArrayDesig%2Ckiama.example.oberon0.compiler.AST.Desig%2Ckiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">processArrayDesig</a></em>
+        (<em>ad</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.ArrayDesig.html" target="_self">ArrayDesig</a>, <em>left</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Desig.html" target="_self">Desig</a>, <em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="../../../../kiama/example/oberon0/compiler/Encoder$object.desigResult.html" target="_self">desigResult</a>
+        
+        <div>Process an array designator</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#processBoolExp%28kiama.example.oberon0.compiler.AST.Exp%2CInt%2CBoolean%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">processBoolExp</a></em>
+        (<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>truelbl</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>negate</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+        
+        <div>processBoolExp (saying where to go if true)</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#processDesig%28kiama.example.oberon0.compiler.AST.Desig%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">processDesig</a></em>
+        (<em>des</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Desig.html" target="_self">Desig</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="../../../../kiama/example/oberon0/compiler/Encoder$object.desigResult.html" target="_self">desigResult</a>
+        
+        <div>Resolve a designation into a memory address (register contents + offset)</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#processIdent%28kiama.example.oberon0.compiler.AST.Ident%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">processIdent</a></em>
+        (<em>id</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Ident.html" target="_self">Ident</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="../../../../kiama/example/oberon0/compiler/Encoder$object.desigResult.html" target="_self">desigResult</a>
+        
+        <div>Process an ident designator</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#processNumExp%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29" target="_self">processNumExp</a></em>
+        (<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>
+        
+        <div>Resolve a numeric expression into a register number</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.html#setByteOffsets%28kiama.attribution.Attribution.Attributable%2CInt%29" target="_self">setByteOffsets</a></em>
+        (<em>obj</em> : <a href="../../../../kiama/attribution/Attributable.html" target="_self">Attributable</a>, <em>byteOffset</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
+        
+        <div>For objects which require memory (VarDecls, RefVarDecls and FieldDecls), set byteOffset
+     For module and proc decls, set the total byteSize (re how much stack space required)
+     For procs, also assign a label</div>
+      </td>
+    </tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#toString%28%29" target="_self">toString</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
+        </td></tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Class Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/compiler/Encoder$object.desigResult.html" target="_self">desigResult</a></em>
+        (<code>val </code><em>regno</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>offset</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Return-value of processDesig procedure</div>
+      </td>
+    </tr>
+      </table>
+
+      
+
+
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Method Details</td></tr>
+        </table><div><a name="setByteOffsets%28kiama.attribution.Attribution.Attributable%2CInt%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>setByteOffsets</em>(<em>obj</em> : <a href="../../../../kiama/attribution/Attributable.html" target="_self">Attributable</a>, <em>byteOffset</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>For objects which require memory (VarDecls, RefVarDecls and FieldDecls), set byteOffset
+     For module and proc decls, set the total byteSize (re how much stack space required)
+     For procs, also assign a label</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeStatement%28kiama.example.oberon0.compiler.AST.Statement%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeStatement</em>(<em>stmt</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Encode a statement</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeModule%28kiama.example.oberon0.compiler.AST.ModuleDecl%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeModule</em>(<em>md</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.ModuleDecl.html" target="_self">ModuleDecl</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Encode a module</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeProc%28kiama.example.oberon0.compiler.AST.ProcDecl%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeProc</em>(<em>pd</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.ProcDecl.html" target="_self">ProcDecl</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Encode a procedure</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="processIdent%28kiama.example.oberon0.compiler.AST.Ident%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>processIdent</em>(<em>id</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Ident.html" target="_self">Ident</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="../../../../kiama/example/oberon0/compiler/Encoder$object.desigResult.html" target="_self">desigResult</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Process an ident designator</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="processArrayDesig%28kiama.example.oberon0.compiler.AST.ArrayDesig%2Ckiama.example.oberon0.compiler.AST.Desig%2Ckiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>processArrayDesig</em>(<em>ad</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.ArrayDesig.html" target="_self">ArrayDesig</a>, <em>left</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Desig.html" target="_self">Desig</a>, <em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="../../../../kiama/example/oberon0/compiler/Encoder$object.desigResult.html" target="_self">desigResult</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Process an array designator</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="processDesig%28kiama.example.oberon0.compiler.AST.Desig%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>processDesig</em>(<em>des</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Desig.html" target="_self">Desig</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="../../../../kiama/example/oberon0/compiler/Encoder$object.desigResult.html" target="_self">desigResult</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Resolve a designation into a memory address (register contents + offset)</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="processNumExp%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>processNumExp</em>(<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Resolve a numeric expression into a register number</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="processBoolExp%28kiama.example.oberon0.compiler.AST.Exp%2CInt%2CBoolean%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>processBoolExp</em>(<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>truelbl</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>negate</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>processBoolExp (saying where to go if true)</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeAssignment%28kiama.example.oberon0.compiler.AST.Desig%2Ckiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeAssignment</em>(<em>targetdes</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Desig.html" target="_self">Desig</a>, <em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>EncodeAssignment</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeIfStmt%28kiama.example.oberon0.compiler.AST.Exp%2CList%5Bkiama.example.oberon0.compiler.AST.Statement%5D%2CList%5Bkiama.example.oberon0.compiler.AST.Statement%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeIfStmt</em>(<em>condexp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>thenstmts</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>], <em>elsestmts</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>EncodeIfStmt</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeWhileStmt%28kiama.example.oberon0.compiler.AST.Exp%2CList%5Bkiama.example.oberon0.compiler.AST.Statement%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeWhileStmt</em>(<em>condexp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>bodystmts</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Statement.html" target="_self">Statement</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>EncodeWhileStmt</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeWrite%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeWrite</em>(<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>EncodeWrite</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeWriteLn%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeWriteLn</em>(<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>EncodeWriteLn</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeRead%28kiama.example.oberon0.compiler.AST.Exp%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeRead</em>(<em>exp</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>EncodeRead</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="ProcessActualParams%28List%5Bkiama.example.oberon0.compiler.AST.Declaration%5D%2CList%5Bkiama.example.oberon0.compiler.AST.Exp%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>ProcessActualParams</em>(<em>fps</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>], <em>aps</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Encode procedure actual parameters</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="EncodeProcedureCall%28kiama.example.oberon0.compiler.AST.Exp%2CList%5Bkiama.example.oberon0.compiler.AST.Exp%5D%2Ckiama.example.oberon0.compiler.AST.Declaration%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>EncodeProcedureCall</em>(<em>desig</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>, <em>aps</em> : <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../../../kiama/example/oberon0/compiler/AST$object.Exp.html" target="_self">Exp</a>], <em>procOrModDecl</em> : <a href="../../../../kiama/example/oberon0/compiler/AST$object.Declaration.html" target="_self">Declaration</a>) : <a href="http://www.scala-lang.org/docu/files/api/scala/Unit.html" target="_self">Unit</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>EncodeProcedureCall</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+
+
+    <hr></hr>
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+      </body>
+      </html>

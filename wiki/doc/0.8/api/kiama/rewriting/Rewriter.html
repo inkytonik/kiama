@@ -1,0 +1,2195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>trait Rewriter in kiama.rewriting</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.5.final)" name="generator"></meta><link href="../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../script.js"></script>
+        </head>
+        <body onload="init()">
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+        
+      <div class="entity">
+        <a href="../../kiama/rewriting$package.html" target="_self">kiama.rewriting</a>
+        <br></br>
+        <span class="entity">trait  Rewriter</span>
+      </div><hr></hr>
+      <div class="source">
+        [source: <a href="" class="kiama/rewriting/Rewriter"><code>kiama/rewriting/Rewriter.scala</code></a>]
+      </div><hr></hr>
+      <a name="Rewriter"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>trait</code>
+        <em>Rewriter</em>
+      </dt>
+      <dd><code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a></dd>
+    </dl>
+      <dl><dd>Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).
+ The implementation here is partially based on the semantics given in "Program
+ Transformation with Scoped Dynamic Rewrite Rules", by Bravenboer, van Dam, Olmos
+ and Visser, Fundamenta Informaticae, 69, 2005. The library strategies are mostly
+ based on the Stratego library, but also on combinators found in the Scrap Your
+ Boilerplate and Uniplate libraries for Haskell.</dd></dl>
+      <dl></dl>
+    <dl>
+      <dt style="margin:10px 0 0 20px;"><b>Direct Known Subclasses:</b></dt>
+      <dd><a href="../../kiama/example/lambda/Evaluator.html" target="_self">Evaluator</a>, <a href="../../kiama/example/lambda2/Evaluator.html" target="_self">Evaluator</a>, <a href="../../kiama/example/lambda2/LambdaTests.html" target="_self">LambdaTests</a>, <a href="../../kiama/example/til/TransformingMain.html" target="_self">TransformingMain</a>, <a href="../../kiama/rewriting/RewriterTests.html" target="_self">RewriterTests</a>, <a href="../../kiama/rewriting/UniplateTests.html" target="_self">UniplateTests</a></dd>
+      </dl><hr></hr>
+      
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Type Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> type</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#Term" target="_self">Term</a></em>
+        
+        
+        <div>The type of terms that can be rewritten.  Any type of object value is
+     acceptable but generic traversals will only work on Products (e.g.,
+     instances of case classes).  We use AnyRef here so that non-Product
+     values can be present in rewritten structures.</div>
+      </td>
+    </tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Value Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#eq" target="_self">eq</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that tests whether the two sub-terms of a
+     pair of terms are equal.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#equal" target="_self">equal</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that tests whether the two sub-terms of a
+     pair of terms are equal. Synonym for eq.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#failure" target="_self">failure</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>A strategy that always fails.  Stratego's fail is avoided here to
+     avoid a clash with JUnit's method of the same name.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#id" target="_self">id</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>A strategy that always succeeds with the subject term unchanged (i.e.,
+     this is the identity strategy).</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#isinnernode" target="_self">isinnernode</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that succeeds if the current term has at
+     least one direct subterm.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#isleaf" target="_self">isleaf</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that succeeds if the current term has no
+     direct subterms.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#ispropersubterm" target="_self">ispropersubterm</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a sub-term of y but is not equal to y.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#ispropersuperterm" target="_self">ispropersuperterm</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a super-term of y but is not equal to y.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#issubterm" target="_self">issubterm</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a sub-term of y.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> val</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#issuperterm" target="_self">issuperterm</a></em>
+         : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a superterm of y.</div>
+      </td>
+    </tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Method Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#all%28%3D%3ERewriter.this.Strategy%29" target="_self">all</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Traversal to all children.  Construct a strategy that applies s to all
+     term children of the subject term in left-to-right order.  If s succeeds
+     on all of the children, then succeed, forming a new term from the constructor
+     of the original term and the result of s for each child.  If s fails on any
+     child, fail.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#alldownup2%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">alldownup2</a></em>
+        (<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s1 in a top-down, prefix fashion
+     stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     postfix fashion to the result.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#alltd%28%3D%3ERewriter.this.Strategy%29" target="_self">alltd</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a top-down fashion, stopping
+     at a frontier where s succeeds.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#alltdfold%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">alltdfold</a></em>
+        (<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s1 in a top-down, prefix fashion
+     stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     postfix fashion to the results of the recursive calls.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#and%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">and</a></em>
+        (<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>and (s1, s2) applies s1 and s2 to the current
+     term and succeeds if both succeed. s2 will always
+     be applied, i.e., and is *not* a short-circuit
+     operator</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#attempt%28%3D%3ERewriter.this.Strategy%29" target="_self">attempt</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s, yielding the result of s if it
+     succeeds, otherwise leave the original subject term unchanged.  In
+     Stratego library this strategy is called "try".</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#bottomup%28%3D%3ERewriter.this.Strategy%29" target="_self">bottomup</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a bottom-up, postfix fashion
+     to the subject term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#bottomupS%28%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29" target="_self">bottomupS</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a bottom-up, postfix fashion
+     to the subject term but stops when stop succeeds.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#breadthfirst%28%3D%3ERewriter.this.Strategy%29" target="_self">breadthfirst</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in breadth first order.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#child%28Int%2CRewriter.this.Strategy%29" target="_self">child</a></em>
+        (<em>i</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>s</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Traversal to a single child.  Construct a strategy that applies s to
+     the ith child of the subject term (counting from one).  If s succeeds on
+     the ith child producing t, then succeed, forming a new term that is the
+     same as the original term except that the ith child is now t.  If s fails
+     on the ith child or the subject term does not have an ith child, then fail.
+     child (i, s) is equivalent to Stratego's i(s) operator.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#collectl%28PartialFunction%5BRewriter.this.Term%2CT%5D%29" target="_self">collectl</a></em>
+        [<em>T</em>](<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="../../kiama/rewriting/Rewriter.html#collectl%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]) : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../kiama/rewriting/Rewriter.html#collectl%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]
+        
+        <div>Collect query results in a list.  Run the function f as a top-down
+     query on the subject term.  Accumulate the values produced by the
+     function in a list and return the final value of the list.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#collects%28PartialFunction%5BRewriter.this.Term%2CT%5D%29" target="_self">collects</a></em>
+        [<em>T</em>](<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="../../kiama/rewriting/Rewriter.html#collects%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]) : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/collection/immutable/Set">scala.collection.immutable.Set</a>[<a href="../../kiama/rewriting/Rewriter.html#collects%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]
+        
+        <div>Collect query results in a set.  Run the function f as a top-down
+     query on the subject term.  Accumulate the values produced by the
+     function in a set and return the final value of the set.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#count%28PartialFunction%5BRewriter.this.Term%2CInt%5D%29" target="_self">count</a></em>
+        (<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>]) : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
+        
+        <div>Count function results.  Run the function f as a top-down query on
+     the subject term.  Sum the integer values returned by f from all
+     applications.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#debug" target="_self">debug</a></em>
+         : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+        
+        <div>Debug flag. Set this to true in sub-classes or objects to obtain
+     tracing information during rewriting.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#doloop%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">doloop</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s at least once and then repeats s
+     while c succeeds.  This operator is called "do-while" in the Stratego
+     library.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#dontstop%28%3D%3ERewriter.this.Strategy%29" target="_self">dontstop</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>A unit for topdownS, bottomupS and downupS.  For example, topdown (s)
+     is equivalent to topdownS (s, dontstop).</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#downup%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">downup</a></em>
+        (<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s1 in a top-down, prefix fashion
+     and s2 in a bottom-up, postfix fashion to the subject term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#downup%28%3D%3ERewriter.this.Strategy%29" target="_self">downup</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a combined top-down and
+     bottom-up fashion (i.e., both prefix and postfix) to the subject
+     term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#downupS%28%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29" target="_self">downupS</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a combined top-down and
+     bottom-up fashion (i.e., both prefix and postfix) to the subject
+     term but stops when stop succeeds.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#downupS%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29" target="_self">downupS</a></em>
+        (<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s1 in a top-down, prefix fashion
+     and s2 in a bottom-up, postfix fashion to the subject term but stops
+     when stop succeeds.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#everywherebu%28%3D%3ERewriter.this.Strategy%29" target="_self">everywherebu</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s at every term in a bottom-up fashion
+     regardless of failure.  (Sub-)terms for which the strategy fails are left unchanged.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#everywheretd%28%3D%3ERewriter.this.Strategy%29" target="_self">everywheretd</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s at every term in a top-down fashion regardless
+     of failure.  (Sub-)terms for which the strategy fails are left unchanged.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#innermost%28%3D%3ERewriter.this.Strategy%29" target="_self">innermost</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s repeatedly to the innermost
+     (i.e., lowest and left-most) (sub-)term to which it applies.
+     Stop with the current term if s doesn't apply anywhere.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#innermost2%28%3D%3ERewriter.this.Strategy%29" target="_self">innermost2</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>An alternative version of innermost.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#ior%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">ior</a></em>
+        (<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>ior (s1, s2) implements 'inclusive or', that is, the
+     inclusive choice of s1 and s2. It first tries s1, if
+     that fails it applies s2 (just like s1 <+ s2). However,
+     when s1 succeeds it also tries to apply s2.
+     The results of the transformations are returned.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#lastly%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">lastly</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>f</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Applies s followed by f whether s failed or not.
+     This operator is called "finally" in the Stratego library.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#leaves%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">leaves</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>isleaf</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies to all of the leaves of the
+     current term, using isleaf as the leaf predicate.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#leaves%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29" target="_self">leaves</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>isleaf</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>skip</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies to all of the leaves of the
+     current term, using isleaf as the leaf predicate, skipping
+     subterms for which skip succeeds.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#loop%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">loop</a></em>
+        (<em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that while c succeeds applies s.  This operator
+     is called "while" in the Stratego library.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#loopiter%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">loopiter</a></em>
+        (<em>i</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that repeats application of s while c fails, after
+     initialization with i.  This operator is called "for" in the Stratego
+     library.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#loopiter%28%28Int%29%3D%3ERewriter.this.Strategy%2CInt%2CInt%29" target="_self">loopiter</a></em>
+        (<em>s</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>low</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>up</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s (i) for each integer i from low to
+     up (inclusive).  This operator is called "for" in the Stratego library.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#loopnot%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">loopnot</a></em>
+        (<em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that while c does not succeed applies s.  This
+     operator is called "while-not" in the Stratego library.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#manybu%28Rewriter.this.Strategy%29" target="_self">manybu</a></em>
+        (<em>s</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s as many times as possible, but
+     at least once, in bottom up order.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#manytd%28Rewriter.this.Strategy%29" target="_self">manytd</a></em>
+        (<em>s</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s as many times as possible, but
+     at least once, in top down order.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#not%28%3D%3ERewriter.this.Strategy%29" target="_self">not</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s, then fails if s succeeded or, if s
+     failed, succeeds with the subject term unchanged,  I.e., it tests if
+     s applies, but has no effect on the subject term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#oncebu%28%3D%3ERewriter.this.Strategy%29" target="_self">oncebu</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a bottom-up fashion to one
+     subterm at each level, stopping as soon as it succeeds once (at
+     any level).</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#oncetd%28%3D%3ERewriter.this.Strategy%29" target="_self">oncetd</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a top-down fashion to one
+     subterm at each level, stopping as soon as it succeeds once (at
+     any level).</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#one%28%3D%3ERewriter.this.Strategy%29" target="_self">one</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Traversal to one child.  Construct a strategy that applies s to the term
+     children of the subject term in left-to-right order.  Assume that c is the
+     first child on which s succeeds.  Then stop applying s to the children and
+     succeed, forming a new term from the constructor of the original term and
+     the original children, except that c is replaced by the result of applying
+     s to c.  In the event that the strategy fails on all children, then fail.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#or%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">or</a></em>
+        (<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>or (s1, s2) is similar to ior (s1,s2), but the application
+     of the strategies is only tested.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#outermost%28%3D%3ERewriter.this.Strategy%29" target="_self">outermost</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s repeatedly in a top-down fashion
+     stopping each time as soon as it succeeds once (at any level). The
+     outermost fails when s fails to apply to any (sub-)term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29" target="_self">para</a></em>
+        [<em>T</em>](<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>, <a href="" target="contentFrame" class="scala/Seq">scala.Seq</a>[<a href="../../kiama/rewriting/Rewriter.html#para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29#T" target="_self">T</a>]) =&gt; <a href="../../kiama/rewriting/Rewriter.html#para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29#T" target="_self">T</a>) : (<a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.html#para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29#T" target="_self">T</a>
+        
+        <div>Perform a paramorphism over a value.  This is a fold in which the
+     recursive step may refer to the recursive component of the value
+     and the results of folding over the children.  When the function f
+     is called, the first parameter is the value and the second is a
+     sequence of the values that f has returned for the children.  This
+     will work on any value, but will only decompose Products.  This
+     operation is similar to that used in the Uniplate library.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#query%28PartialFunction%5BRewriter.this.Term%2CT%5D%29" target="_self">query</a></em>
+        [<em>T</em>](<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="../../kiama/rewriting/Rewriter.html#query%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Define a term query.  Construct a strategy that always succeeds with no
+     effect on the subject term but applies a given partial function f to the
+     subject term.  In other words, the strategy runs f for its side-effects.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#queryf%28%28Rewriter.this.Term%29%3D%3ET%29" target="_self">queryf</a></em>
+        [<em>T</em>](<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.html#queryf%28%28Rewriter.this.Term%29%3D%3ET%29#T" target="_self">T</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Define a term query.  Construct a strategy that always succeeds with no
+     effect on the subject term but applies a given (possibly partial)
+     function f to the subject term.  In other words, the strategy runs f
+     for its side-effects.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#reduce%28%3D%3ERewriter.this.Strategy%29" target="_self">reduce</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s repeatedly to subterms
+     until it fails on all of them.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#repeat%28%3D%3ERewriter.this.Strategy%2CInt%29" target="_self">repeat</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>n</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s repeatedly exactly n times. If
+     s fails at some point during the n applications, the entire strategy
+     fails. The result of the strategy is that of the nth application of s.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#repeat%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">repeat</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that repeatedly applies s until it fails and
+     then terminates with application of c.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#repeat%28%3D%3ERewriter.this.Strategy%29" target="_self">repeat</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s repeatedly until it fails.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#repeat1%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">repeat1</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that repeatedly applies s (at least once) and
+     terminates with application of c.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#repeat1%28%3D%3ERewriter.this.Strategy%29" target="_self">repeat1</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that repeatedly applies s (at least once).</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#repeatuntil%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">repeatuntil</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that repeatedly applies s until c succeeds.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#restore%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">restore</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>rest</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Apply restoring action 'rest' if s fails, and then fail.
+    Typically useful if s performs side effects that should be
+    restored/undone in case s fails.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#restorealways%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29" target="_self">restorealways</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>rest</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Apply restoring action 'rest' after s terminates, and preserve
+     success/failure behaviour of s.
+     Typically useful if s performs side effects that should be
+     restored always, e.g., when maintaining scope information.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#rewrite%28%3D%3ERewriter.this.Strategy%29" target="_self">rewrite</a></em>
+        [<em>T</em> &lt;: <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>](<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>)(<em>t</em> : <a href="../../kiama/rewriting/Rewriter.html#rewrite%28%3D%3ERewriter.this.Strategy%29#T" target="_self">T</a>) : <a href="../../kiama/rewriting/Rewriter.html#rewrite%28%3D%3ERewriter.this.Strategy%29#T" target="_self">T</a>
+        
+        <div>Rewrite a term.  Apply the strategy s to a term returning the result term
+     if s succeeds, otherwise return the original term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#rule%28PartialFunction%5BRewriter.this.Term%2CRewriter.this.Term%5D%29" target="_self">rule</a></em>
+        (<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Define a rewrite rule using a partial function.  If the function is
+     defined at the current term, then the strategy succeeds with the return
+     value of the function applied to the current term.  Otherwise the
+     strategy fails.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#rulef%28%28Rewriter.this.Term%29%3D%3ERewriter.this.Term%29" target="_self">rulef</a></em>
+        (<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Define a rewrite rule using a function.  The rule always succeeds
+     with the return value of the function.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#some%28%3D%3ERewriter.this.Strategy%29" target="_self">some</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Traversal to as many children as possible, but at least one.  Construct a
+     strategy that applies s to the term children of the subject term in
+     left-to-right order.  If s succeeds on any of the children, then succeed,
+     forming a new term from the constructor of the original term and the result
+     of s for each succeeding child, with other children unchanged.  In the event
+     that the strategy fails on all children, then fail.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#somebu%28%3D%3ERewriter.this.Strategy%29" target="_self">somebu</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a bottom-up fashion to some
+     subterms at each level, stopping as soon as it succeeds once (at
+     any level).</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#somedownup%28%3D%3ERewriter.this.Strategy%29" target="_self">somedownup</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s1 in a top-down, prefix fashion
+     stopping at a frontier where s succeeds on some children.  s2 is applied in a bottom-up,
+     postfix fashion to the subject term the result.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#sometd%28%3D%3ERewriter.this.Strategy%29" target="_self">sometd</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a top-down fashion to some
+     subterms at each level, stopping as soon as it succeeds once (at
+     any level).</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#strategy%28PartialFunction%5BRewriter.this.Term%2COption%5BRewriter.this.Term%5D%5D%29" target="_self">strategy</a></em>
+        (<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Make a strategy from a partial function.  If the function is
+     defined at the current term, then the function return value
+     when applied to the current term determines whether the strategy
+     succeeds or fails.  If the function is not defined at the current
+     term, the strategy fails.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#strategyf%28%28Rewriter.this.Term%29%3D%3EOption%5BRewriter.this.Term%5D%29" target="_self">strategyf</a></em>
+        (<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Make a strategy from a function.  The function return value determines
+     whether the strategy succeeds or fails.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#term%28Rewriter.this.Term%29" target="_self">term</a></em>
+        (<em>t</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that succeeds only if the subject term matches
+     a given term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>implicit def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#termToStrategy%28Rewriter.this.Term%29" target="_self">termToStrategy</a></em>
+        (<em>t</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>(Implicitly) construct a strategy that always succeeds, changing
+     the subject term to a given term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#test%28%3D%3ERewriter.this.Strategy%29" target="_self">test</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that tests whether strategy s succeeds,
+     restoring the original term on success.  A synonym for where.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#topdown%28%3D%3ERewriter.this.Strategy%29" target="_self">topdown</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a top-down, prefix fashion
+     to the subject term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#topdownS%28%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29" target="_self">topdownS</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that applies s in a top-down, prefix fashion
+     to the subject term but stops when stop succeeds.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.html#where%28%3D%3ERewriter.this.Strategy%29" target="_self">where</a></em>
+        (<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Construct a strategy that tests whether strategy s succeeds,
+     restoring the original term on success.  This is similar
+     to Stratego's "where", except that in this version any effects on
+     bindings are not visible outside s.</div>
+      </td>
+    </tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#toString%28%29" target="_self">toString</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
+        </td></tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Class Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.PlusStrategy.html" target="_self">PlusStrategy</a></em>
+        (<em>p</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>q</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>)<code> extends </code><a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Helper class to contain commonality of choice in non-deterministic
+     choice operator and then-else part of a conditional choice.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>abstract class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a></em>
+        <code> extends </code>(<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]
+        
+        <div>Term-rewriting strategies.</div>
+      </td>
+    </tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Object Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.Term$object.html" target="_self">Term</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Generic term deconstruction.</div>
+      </td>
+    </tr>
+      </table>
+      
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Type Details</td></tr>
+        </table><div><a name="Term"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>type</code>
+        <em>Term</em>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>The type of terms that can be rewritten.  Any type of object value is
+     acceptable but generic traversals will only work on Products (e.g.,
+     instances of case classes).  We use AnyRef here so that non-Product
+     values can be present in rewritten structures.</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Value Details</td></tr>
+        </table><div><a name="failure"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>failure</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>A strategy that always fails.  Stratego's fail is avoided here to
+     avoid a clash with JUnit's method of the same name.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="id"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>id</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>A strategy that always succeeds with the subject term unchanged (i.e.,
+     this is the identity strategy).</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="eq"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>eq</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that tests whether the two sub-terms of a
+     pair of terms are equal.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="equal"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>equal</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that tests whether the two sub-terms of a
+     pair of terms are equal. Synonym for eq.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="issubterm"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>issubterm</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a sub-term of y.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="ispropersubterm"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>ispropersubterm</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a sub-term of y but is not equal to y.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="issuperterm"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>issuperterm</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a superterm of y.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="ispropersuperterm"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>ispropersuperterm</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that succeeds when applied to a pair (x,y)
+     if x is a super-term of y but is not equal to y.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="isleaf"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>isleaf</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that succeeds if the current term has no
+     direct subterms.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="isinnernode"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>val</code>
+        <em>isinnernode</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that succeeds if the current term has at
+     least one direct subterm.</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Method Details</td></tr>
+        </table><div><a name="debug"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>debug</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Boolean.html" target="_self">Boolean</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Debug flag. Set this to true in sub-classes or objects to obtain
+     tracing information during rewriting.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="strategyf%28%28Rewriter.this.Term%29%3D%3EOption%5BRewriter.this.Term%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>strategyf</em>(<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Make a strategy from a function.  The function return value determines
+     whether the strategy succeeds or fails.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="strategy%28PartialFunction%5BRewriter.this.Term%2COption%5BRewriter.this.Term%5D%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>strategy</em>(<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Make a strategy from a partial function.  If the function is
+     defined at the current term, then the function return value
+     when applied to the current term determines whether the strategy
+     succeeds or fails.  If the function is not defined at the current
+     term, the strategy fails.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="rulef%28%28Rewriter.this.Term%29%3D%3ERewriter.this.Term%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>rulef</em>(<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Define a rewrite rule using a function.  The rule always succeeds
+     with the return value of the function.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="rule%28PartialFunction%5BRewriter.this.Term%2CRewriter.this.Term%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>rule</em>(<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Define a rewrite rule using a partial function.  If the function is
+     defined at the current term, then the strategy succeeds with the return
+     value of the function applied to the current term.  Otherwise the
+     strategy fails.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="termToStrategy%28Rewriter.this.Term%29"></a><dl>
+      <dt>
+        
+        <code>implicit</code>
+        <code>def</code>
+        <em>termToStrategy</em>(<em>t</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>(Implicitly) construct a strategy that always succeeds, changing
+     the subject term to a given term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="queryf%28%28Rewriter.this.Term%29%3D%3ET%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>queryf</em>[<em>T</em>](<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.html#queryf%28%28Rewriter.this.Term%29%3D%3ET%29#T" target="_self">T</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Define a term query.  Construct a strategy that always succeeds with no
+     effect on the subject term but applies a given (possibly partial)
+     function f to the subject term.  In other words, the strategy runs f
+     for its side-effects.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="query%28PartialFunction%5BRewriter.this.Term%2CT%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>query</em>[<em>T</em>](<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="../../kiama/rewriting/Rewriter.html#query%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Define a term query.  Construct a strategy that always succeeds with no
+     effect on the subject term but applies a given partial function f to the
+     subject term.  In other words, the strategy runs f for its side-effects.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="term%28Rewriter.this.Term%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>term</em>(<em>t</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that succeeds only if the subject term matches
+     a given term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>para</em>[<em>T</em>](<em>f</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>, <a href="" target="contentFrame" class="scala/Seq">scala.Seq</a>[<a href="../../kiama/rewriting/Rewriter.html#para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29#T" target="_self">T</a>]) =&gt; <a href="../../kiama/rewriting/Rewriter.html#para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29#T" target="_self">T</a>) : (<a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.html#para%28%28Any%2CSeq%5BT%5D%29%3D%3ET%29#T" target="_self">T</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Perform a paramorphism over a value.  This is a fold in which the
+     recursive step may refer to the recursive component of the value
+     and the results of folding over the children.  When the function f
+     is called, the first parameter is the value and the second is a
+     sequence of the values that f has returned for the children.  This
+     will work on any value, but will only decompose Products.  This
+     operation is similar to that used in the Uniplate library.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="child%28Int%2CRewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>child</em>(<em>i</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>s</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Traversal to a single child.  Construct a strategy that applies s to
+     the ith child of the subject term (counting from one).  If s succeeds on
+     the ith child producing t, then succeed, forming a new term that is the
+     same as the original term except that the ith child is now t.  If s fails
+     on the ith child or the subject term does not have an ith child, then fail.
+     child (i, s) is equivalent to Stratego's i(s) operator.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="all%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>all</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Traversal to all children.  Construct a strategy that applies s to all
+     term children of the subject term in left-to-right order.  If s succeeds
+     on all of the children, then succeed, forming a new term from the constructor
+     of the original term and the result of s for each child.  If s fails on any
+     child, fail.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="one%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>one</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Traversal to one child.  Construct a strategy that applies s to the term
+     children of the subject term in left-to-right order.  Assume that c is the
+     first child on which s succeeds.  Then stop applying s to the children and
+     succeed, forming a new term from the constructor of the original term and
+     the original children, except that c is replaced by the result of applying
+     s to c.  In the event that the strategy fails on all children, then fail.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="some%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>some</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Traversal to as many children as possible, but at least one.  Construct a
+     strategy that applies s to the term children of the subject term in
+     left-to-right order.  If s succeeds on any of the children, then succeed,
+     forming a new term from the constructor of the original term and the result
+     of s for each succeeding child, with other children unchanged.  In the event
+     that the strategy fails on all children, then fail.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="rewrite%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>rewrite</em>[<em>T</em> &lt;: <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>](<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>)(<em>t</em> : <a href="../../kiama/rewriting/Rewriter.html#rewrite%28%3D%3ERewriter.this.Strategy%29#T" target="_self">T</a>) : <a href="../../kiama/rewriting/Rewriter.html#rewrite%28%3D%3ERewriter.this.Strategy%29#T" target="_self">T</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Rewrite a term.  Apply the strategy s to a term returning the result term
+     if s succeeds, otherwise return the original term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="collects%28PartialFunction%5BRewriter.this.Term%2CT%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>collects</em>[<em>T</em>](<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="../../kiama/rewriting/Rewriter.html#collects%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]) : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/collection/immutable/Set">scala.collection.immutable.Set</a>[<a href="../../kiama/rewriting/Rewriter.html#collects%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Collect query results in a set.  Run the function f as a top-down
+     query on the subject term.  Accumulate the values produced by the
+     function in a set and return the final value of the set.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="collectl%28PartialFunction%5BRewriter.this.Term%2CT%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>collectl</em>[<em>T</em>](<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="../../kiama/rewriting/Rewriter.html#collectl%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]) : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/List">scala.List</a>[<a href="../../kiama/rewriting/Rewriter.html#collectl%28PartialFunction%5BRewriter.this.Term%2CT%5D%29#T" target="_self">T</a>]
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Collect query results in a list.  Run the function f as a top-down
+     query on the subject term.  Accumulate the values produced by the
+     function in a list and return the final value of the list.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="count%28PartialFunction%5BRewriter.this.Term%2CInt%5D%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>count</em>(<em>f</em> : <a href="" target="contentFrame" class="scala/PartialFunction">scala.PartialFunction</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>]) : (<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Count function results.  Run the function f as a top-down query on
+     the subject term.  Sum the integer values returned by f from all
+     applications.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="attempt%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>attempt</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s, yielding the result of s if it
+     succeeds, otherwise leave the original subject term unchanged.  In
+     Stratego library this strategy is called "try".</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="repeat%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>repeat</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s repeatedly until it fails.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="repeat%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>repeat</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that repeatedly applies s until it fails and
+     then terminates with application of c.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="repeat%28%3D%3ERewriter.this.Strategy%2CInt%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>repeat</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>n</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s repeatedly exactly n times. If
+     s fails at some point during the n applications, the entire strategy
+     fails. The result of the strategy is that of the nth application of s.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="repeat1%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>repeat1</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that repeatedly applies s (at least once) and
+     terminates with application of c.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="repeat1%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>repeat1</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that repeatedly applies s (at least once).</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="repeatuntil%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>repeatuntil</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that repeatedly applies s until c succeeds.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="loop%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>loop</em>(<em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that while c succeeds applies s.  This operator
+     is called "while" in the Stratego library.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="loopnot%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>loopnot</em>(<em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that while c does not succeed applies s.  This
+     operator is called "while-not" in the Stratego library.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="doloop%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>doloop</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s at least once and then repeats s
+     while c succeeds.  This operator is called "do-while" in the Stratego
+     library.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="loopiter%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>loopiter</em>(<em>i</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>c</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that repeats application of s while c fails, after
+     initialization with i.  This operator is called "for" in the Stratego
+     library.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="loopiter%28%28Int%29%3D%3ERewriter.this.Strategy%2CInt%2CInt%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>loopiter</em>(<em>s</em> : (<a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>low</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <em>up</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s (i) for each integer i from low to
+     up (inclusive).  This operator is called "for" in the Stratego library.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="not%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>not</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s, then fails if s succeeded or, if s
+     failed, succeeds with the subject term unchanged,  I.e., it tests if
+     s applies, but has no effect on the subject term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="where%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>where</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that tests whether strategy s succeeds,
+     restoring the original term on success.  This is similar
+     to Stratego's "where", except that in this version any effects on
+     bindings are not visible outside s.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="test%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>test</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that tests whether strategy s succeeds,
+     restoring the original term on success.  A synonym for where.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="breadthfirst%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>breadthfirst</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in breadth first order.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="topdown%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>topdown</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a top-down, prefix fashion
+     to the subject term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="topdownS%28%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>topdownS</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a top-down, prefix fashion
+     to the subject term but stops when stop succeeds.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="bottomup%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>bottomup</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a bottom-up, postfix fashion
+     to the subject term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="bottomupS%28%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>bottomupS</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a bottom-up, postfix fashion
+     to the subject term but stops when stop succeeds.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="downup%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>downup</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a combined top-down and
+     bottom-up fashion (i.e., both prefix and postfix) to the subject
+     term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="downup%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>downup</em>(<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s1 in a top-down, prefix fashion
+     and s2 in a bottom-up, postfix fashion to the subject term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="downupS%28%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>downupS</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a combined top-down and
+     bottom-up fashion (i.e., both prefix and postfix) to the subject
+     term but stops when stop succeeds.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="downupS%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>downupS</em>(<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>stop</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s1 in a top-down, prefix fashion
+     and s2 in a bottom-up, postfix fashion to the subject term but stops
+     when stop succeeds.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="dontstop%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>dontstop</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>A unit for topdownS, bottomupS and downupS.  For example, topdown (s)
+     is equivalent to topdownS (s, dontstop).</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="oncetd%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>oncetd</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a top-down fashion to one
+     subterm at each level, stopping as soon as it succeeds once (at
+     any level).</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="oncebu%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>oncebu</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a bottom-up fashion to one
+     subterm at each level, stopping as soon as it succeeds once (at
+     any level).</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="sometd%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>sometd</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a top-down fashion to some
+     subterms at each level, stopping as soon as it succeeds once (at
+     any level).</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="somebu%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>somebu</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a bottom-up fashion to some
+     subterms at each level, stopping as soon as it succeeds once (at
+     any level).</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="outermost%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>outermost</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s repeatedly in a top-down fashion
+     stopping each time as soon as it succeeds once (at any level). The
+     outermost fails when s fails to apply to any (sub-)term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="innermost%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>innermost</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s repeatedly to the innermost
+     (i.e., lowest and left-most) (sub-)term to which it applies.
+     Stop with the current term if s doesn't apply anywhere.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="innermost2%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>innermost2</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>An alternative version of innermost.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="reduce%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>reduce</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s repeatedly to subterms
+     until it fails on all of them.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="alltd%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>alltd</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s in a top-down fashion, stopping
+     at a frontier where s succeeds.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="alldownup2%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>alldownup2</em>(<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s1 in a top-down, prefix fashion
+     stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     postfix fashion to the result.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="alltdfold%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>alltdfold</em>(<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s1 in a top-down, prefix fashion
+     stopping at a frontier where s succeeds.  s2 is applied in a bottom-up,
+     postfix fashion to the results of the recursive calls.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="somedownup%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>somedownup</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s1 in a top-down, prefix fashion
+     stopping at a frontier where s succeeds on some children.  s2 is applied in a bottom-up,
+     postfix fashion to the subject term the result.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="manybu%28Rewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>manybu</em>(<em>s</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s as many times as possible, but
+     at least once, in bottom up order.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="manytd%28Rewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>manytd</em>(<em>s</em> : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s as many times as possible, but
+     at least once, in top down order.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="leaves%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>leaves</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>isleaf</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies to all of the leaves of the
+     current term, using isleaf as the leaf predicate.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="leaves%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%2C%28Rewriter.this.Strategy%29%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>leaves</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>isleaf</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>skip</em> : (<a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies to all of the leaves of the
+     current term, using isleaf as the leaf predicate, skipping
+     subterms for which skip succeeds.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="everywherebu%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>everywherebu</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s at every term in a bottom-up fashion
+     regardless of failure.  (Sub-)terms for which the strategy fails are left unchanged.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="everywheretd%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>everywheretd</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Construct a strategy that applies s at every term in a top-down fashion regardless
+     of failure.  (Sub-)terms for which the strategy fails are left unchanged.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="restore%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>restore</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>rest</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Apply restoring action 'rest' if s fails, and then fail.
+    Typically useful if s performs side effects that should be
+    restored/undone in case s fails.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="restorealways%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>restorealways</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>rest</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Apply restoring action 'rest' after s terminates, and preserve
+     success/failure behaviour of s.
+     Typically useful if s performs side effects that should be
+     restored always, e.g., when maintaining scope information.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="lastly%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>lastly</em>(<em>s</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>f</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Applies s followed by f whether s failed or not.
+     This operator is called "finally" in the Stratego library.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="ior%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>ior</em>(<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>ior (s1, s2) implements 'inclusive or', that is, the
+     inclusive choice of s1 and s2. It first tries s1, if
+     that fails it applies s2 (just like s1 <+ s2). However,
+     when s1 succeeds it also tries to apply s2.
+     The results of the transformations are returned.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="or%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>or</em>(<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>or (s1, s2) is similar to ior (s1,s2), but the application
+     of the strategies is only tested.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="and%28%3D%3ERewriter.this.Strategy%2C%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>and</em>(<em>s1</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>, <em>s2</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>and (s1, s2) applies s1 and s2 to the current
+     term and succeeds if both succeed. s2 will always
+     be applied, i.e., and is *not* a short-circuit
+     operator</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+
+
+    <hr></hr>
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+      </body>
+      </html>

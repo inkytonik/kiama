@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>org.kiama.util</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../lib/template.css" />
+      <script type="text/javascript" src="../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body onload="sh_highlightDocument('../lib/', '.min.js');" class="value">
+      <div id="definition">
+        <img src="../../../lib/package_big.png" />
+        <p id="owner"><a name="org" class="extype" href="../../package.html">org</a>.<a name="org.kiama" class="extype" href="../package.html">kiama</a></p>
+        <h1>util</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">util</span>
+      </span>
+      </h4>
+      
+      <div class="fullcommenttop" id="comment"></div>
+    
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="org.kiama.util.Compiler" data-isabs="true">
+      <a id="Compiler:Compiler[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Compiler.html"><span class="name">Compiler</span></a><span class="tparams">[<span name="T">T &lt;: Attributable</span>]</span><span class="result"> extends RegexCompiler[T]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A compiler that uses RegexParser to produce Attributable ASTs.</p>
+    </li><li visbl="pub" name="org.kiama.util.CompilerBase" data-isabs="true">
+      <a id="CompilerBase:CompilerBase[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CompilerBase.html"><span class="name">CompilerBase</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Trait to provide basic functionality for a compiler-like program
+constructed from phases.</p>
+    </li><li visbl="pub" name="org.kiama.util.Console" data-isabs="false">
+      <a id="Console:Console"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Console.html"><span class="name">Console</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A console using which input data can be read from standard input.</p>
+    </li><li visbl="pub" name="org.kiama.util.Emitter" data-isabs="false">
+      <a id="Emitter:Emitter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Emitter.html"><span class="name">Emitter</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Class of objects that can emit arbitrary output.</p>
+    </li><li visbl="pub" name="org.kiama.util.Environments" data-isabs="true">
+      <a id="Environments:Environments"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Environments.html"><span class="name">Environments</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">General implementation of environments as stacked scopes.</p>
+    </li><li visbl="pub" name="org.kiama.util.FileConsole" data-isabs="false">
+      <a id="FileConsole:FileConsole"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="FileConsole.html"><span class="name">FileConsole</span></a><span class="result"> extends Console with ReaderConsole</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A console that reads from the given UTF-8 encoded file.</p>
+    </li><li visbl="pub" name="org.kiama.util.FileEmitter" data-isabs="false">
+      <a id="FileEmitter:FileEmitter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="FileEmitter.html"><span class="name">FileEmitter</span></a><span class="result"> extends StringEmitter</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A string emitter that also provides a <code>close</code> method to send the
+result to the named UTF-8 encoded file.</p>
+    </li><li visbl="pub" name="org.kiama.util.ParserUtilities" data-isabs="true">
+      <a id="ParserUtilities:ParserUtilities"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ParserUtilities.html"><span class="name">ParserUtilities</span></a><span class="result"> extends RegexParsers with PackratParsers</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Useful utilities for defining regular expression packrat parsers.</p>
+    </li><li visbl="pub" name="org.kiama.util.ParsingREPL" data-isabs="true">
+      <a id="ParsingREPL:ParsingREPL[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ParsingREPL.html"><span class="name">ParsingREPL</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends REPL with RegexParsers</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A REPL that parses its input lines into a value (such as an abstract syntax
+tree), then processes them.</p>
+    </li><li visbl="pub" name="org.kiama.util.Positioned" data-isabs="true">
+      <a id="Positioned:Positioned"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Positioned.html"><span class="name">Positioned</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Class to keep track of line and column positions.</p>
+    </li><li visbl="pub" name="org.kiama.util.PositionedParserUtilities" data-isabs="true">
+      <a id="PositionedParserUtilities:PositionedParserUtilities"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PositionedParserUtilities.html"><span class="name">PositionedParserUtilities</span></a><span class="result"> extends ParserUtilities</span>
+      </span>
+      </h4>
+      <p class="comment cmt">An extension of <code>ParserUtilities</code> that has support for automatically
+tracking start and finish positions for tree nodes.</p>
+    </li><li visbl="pub" name="org.kiama.util.REPL" data-isabs="true">
+      <a id="REPL:REPL"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="REPL.html"><span class="name">REPL</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">General support for applications that implement read-eval-print loops (REPLs).</p>
+    </li><li visbl="pub" name="org.kiama.util.ReaderConsole" data-isabs="true">
+      <a id="ReaderConsole:ReaderConsole"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ReaderConsole.html"><span class="name">ReaderConsole</span></a><span class="result"> extends Console</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A console that reads from a given buffered reader.</p>
+    </li><li visbl="pub" name="org.kiama.util.RegexCompiler" data-isabs="true">
+      <a id="RegexCompiler:RegexCompiler[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RegexCompiler.html"><span class="name">RegexCompiler</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends CompilerBase[T]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A compiler that uses a Scala combinator character-level parser.</p>
+    </li><li visbl="pub" name="org.kiama.util.StringConsole" data-isabs="false">
+      <a id="StringConsole:StringConsole"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="StringConsole.html"><span class="name">StringConsole</span></a><span class="result"> extends Console with ReaderConsole</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A console that returns from a specified string.</p>
+    </li><li visbl="pub" name="org.kiama.util.StringEmitter" data-isabs="false">
+      <a id="StringEmitter:StringEmitter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="StringEmitter.html"><span class="name">StringEmitter</span></a><span class="result"> extends Emitter</span>
+      </span>
+      </h4>
+      <p class="comment cmt">An emitter that records the output in a string that can be accessed
+via the result method.</p>
+    </li><li visbl="pub" name="org.kiama.util.WhitespaceParser" data-isabs="true">
+      <a id="WhitespaceParser:WhitespaceParser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="WhitespaceParser.html"><span class="name">WhitespaceParser</span></a><span class="result"> extends ParserUtilities</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Support for defining the form of whitespace using a parser, rather than a
+regular expression.</p>
+    </li><li visbl="pub" name="org.kiama.util.WhitespacePositionedParserUtilities" data-isabs="true">
+      <a id="WhitespacePositionedParserUtilities:WhitespacePositionedParserUtilities"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="WhitespacePositionedParserUtilities.html"><span class="name">WhitespacePositionedParserUtilities</span></a><span class="result"> extends WhitespaceParser with PositionedParserUtilities</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Combination of positioned parsing utilities and whitespace handling with a
+parser.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div class="values members" id="values">
+              <h3>Value Members</h3>
+              <ol><li visbl="pub" name="org.kiama.util.IO" data-isabs="false">
+      <a id="IO:IO"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="IO$.html"><span class="name">IO</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Utility wrapper for I/O to isolate Kiama code from some Java I/O details.</p>
+    </li><li visbl="pub" name="org.kiama.util.JLineConsole" data-isabs="false">
+      <a id="JLineConsole:JLineConsole"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="JLineConsole$.html"><span class="name">JLineConsole</span></a><span class="result"> extends Console</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A console that provides line editing using JLine.</p>
+    </li><li visbl="pub" name="org.kiama.util.Messaging" data-isabs="false">
+      <a id="Messaging:Messaging"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Messaging$.html"><span class="name">Messaging</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Facility for buffering of messages associated with positioned values.</p>
+    </li><li visbl="pub" name="org.kiama.util.Patterns" data-isabs="false">
+      <a id="Patterns:Patterns"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Patterns$.html"><span class="name">Patterns</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Patterns that are useful when processing trees.</p>
+    </li></ol>
+            </div>
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

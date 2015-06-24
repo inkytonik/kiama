@@ -1,0 +1,286 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>rewriting - org.kiama.rewriting</title>
+          <meta name="description" content="rewriting - org.kiama.rewriting" />
+          <meta name="keywords" content="rewriting org.kiama.rewriting" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'org.kiama.rewriting.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="org">org</a>.<a href="../package.html" class="extype" name="org.kiama">kiama</a></p>
+        <h1>rewriting</h1> <span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">rewriting</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.rewriting.CallbackRewriter" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="CallbackRewriterextendsRewriter"></a>
+      <a id="CallbackRewriter:CallbackRewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CallbackRewriter.html"><span class="name">CallbackRewriter</span></a><span class="result"> extends <a href="Rewriter.html" class="extype" name="org.kiama.rewriting.Rewriter">Rewriter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@CallbackRewriterextendsRewriter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Strategy-based term rewriting with callbacks.</p><div class="fullcomment"><div class="comment cmt"><p>Strategy-based term rewriting with callbacks. Clients can register
+functions that are called whenever a rewrite operation has happened.
+See the <code>Rewriter</code> class documentation for more detail on the methods
+defined here.
+</p></div></div>
+    </li><li name="org.kiama.rewriting.MemoRewriter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="MemoRewriterextendsRewriterwithMemoiser"></a>
+      <a id="MemoRewriter:MemoRewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="MemoRewriter.html"><span class="name">MemoRewriter</span></a><span class="result"> extends <a href="Rewriter.html" class="extype" name="org.kiama.rewriting.Rewriter">Rewriter</a> with <span class="extype" name="org.kiama.util.Memoiser">Memoiser</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@MemoRewriterextendsRewriterwithMemoiser" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Strategy-based term rewriting where all strategy results are memoised
+by identity on the subject term.</p>
+    </li><li name="org.kiama.rewriting.NominalRewriter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NominalRewriterextendsRewriter"></a>
+      <a id="NominalRewriter:NominalRewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="NominalRewriter.html"><span class="name">NominalRewriter</span></a><span class="result"> extends <a href="Rewriter.html" class="extype" name="org.kiama.rewriting.Rewriter">Rewriter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@NominalRewriterextendsRewriter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An extension of strategy-based term rewriting with special support for
+nominal rewriting along the lines of FreshML and the FreshLib library
+for Haskell.</p><div class="fullcomment"><div class="comment cmt"><p>An extension of strategy-based term rewriting with special support for
+nominal rewriting along the lines of FreshML and the FreshLib library
+for Haskell. See Scrap your Nameplate, James Cheney, ICFP 2005 for a
+description of the ideas and the FreshLib library.
+</p></div></div>
+    </li><li name="org.kiama.rewriting.PositionedRewriter" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="PositionedRewriterextendsCallbackRewriter"></a>
+      <a id="PositionedRewriter:PositionedRewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PositionedRewriter.html"><span class="name">PositionedRewriter</span></a><span class="result"> extends <a href="CallbackRewriter.html" class="extype" name="org.kiama.rewriting.CallbackRewriter">CallbackRewriter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@PositionedRewriterextendsCallbackRewriter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Strategy-based term rewriting that copies positions to rewritten terms.</p><div class="fullcomment"><div class="comment cmt"><p>Strategy-based term rewriting that copies positions to rewritten terms.
+The positions are stored in the Kiama <code>Positions</code> object.</p><p>Specifically, this kind of rewriter will record positions of nodes
+when they are (a) rewrittten as part of a generic traversal (e.g.,
+<code>all</code>), or (b) rewritten as part of a <code>rule</code> or similar (e.g., <code>rulefs</code>).</p><p>In each case both the start and finish positions of the old node are
+copied across to the new node into which it is rewritten. In case (b)
+no attempt is made to assign positions to nodes that represent sub-terms
+of the term that results from a successful application of the rule.
+Override the <code>rewriting</code> method to add more specific behaviour.
+</p></div></div>
+    </li><li name="org.kiama.rewriting.Rewriter" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="RewriterextendsRewriterCore"></a>
+      <a id="Rewriter:Rewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Rewriter.html"><span class="name">Rewriter</span></a><span class="result"> extends <span class="extype" name="org.kiama.rewriting.RewriterCore">RewriterCore</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@RewriterextendsRewriterCore" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).</p><div class="fullcomment"><div class="comment cmt"><p>Strategy-based term rewriting in the style of Stratego (http://strategoxt.org/).
+The implementation here is partially based on the semantics given in &quot;Program
+Transformation with Scoped Dynamic Rewrite Rules&quot;, by Bravenboer, van Dam, Olmos
+and Visser, Fundamenta Informaticae, 69, 2005. The library strategies are mostly
+based on the Stratego library, but also on combinators found in the Scrap Your
+Boilerplate and Uniplate libraries for Haskell.
+</p></div></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.kiama.rewriting.MemoRewriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MemoRewriter"></a>
+      <a id="MemoRewriter:MemoRewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="MemoRewriter$.html"><span class="name">MemoRewriter</span></a><span class="result"> extends <a href="MemoRewriter.html" class="extype" name="org.kiama.rewriting.MemoRewriter">MemoRewriter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@MemoRewriter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Memoising strategy-based term rewriting for arbitrary terms.</p>
+    </li><li name="org.kiama.rewriting.NominalTree" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NominalTree"></a>
+      <a id="NominalTree:NominalTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NominalTree$.html"><span class="name">NominalTree</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@NominalTree" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Abstract syntax constructs that are common to all nominal rewriters.</p><div class="fullcomment"><div class="comment cmt"><p>Abstract syntax constructs that are common to all nominal rewriters.
+These definitions need to be separate from the NominalRewriter class
+so that the classes here don't get an outer field referring to an
+instance of that class.
+</p></div></div>
+    </li><li name="org.kiama.rewriting.PositionedRewriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PositionedRewriter"></a>
+      <a id="PositionedRewriter:PositionedRewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PositionedRewriter$.html"><span class="name">PositionedRewriter</span></a><span class="result"> extends <a href="PositionedRewriter.html" class="extype" name="org.kiama.rewriting.PositionedRewriter">PositionedRewriter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@PositionedRewriter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Strategy-based term rewriting for Kiama <code>Positioned</code> terms.</p>
+    </li><li name="org.kiama.rewriting.Rewriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Rewriter"></a>
+      <a id="Rewriter:Rewriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Rewriter$.html"><span class="name">Rewriter</span></a><span class="result"> extends <a href="Rewriter.html" class="extype" name="org.kiama.rewriting.Rewriter">Rewriter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.rewriting.package@Rewriter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Strategy-based term rewriting for arbitrary terms.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

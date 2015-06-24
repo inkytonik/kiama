@@ -1,0 +1,1291 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>SymbolTable - org.kiama.example.oberon0.L3.SymbolTable</title>
+          <meta name="description" content="SymbolTable - org.kiama.example.oberon0.L3.SymbolTable" />
+          <meta name="keywords" content="SymbolTable org.kiama.example.oberon0.L3.SymbolTable" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../index.html';
+            var hash = 'org.kiama.example.oberon0.L3.SymbolTable';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="type">
+      <div id="definition">
+        <img src="../../../../../lib/trait_big.png" />
+        <p id="owner"><a href="../../../../package.html" class="extype" name="org">org</a>.<a href="../../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../../package.html" class="extype" name="org.kiama.example">example</a>.<a href="../package.html" class="extype" name="org.kiama.example.oberon0">oberon0</a>.<a href="package.html" class="extype" name="org.kiama.example.oberon0.L3">L3</a></p>
+        <h1>SymbolTable</h1> <span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <span class="name">SymbolTable</span><span class="result"> extends <a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">L0.SymbolTable</a></span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">L0.SymbolTable</a>, <a href="../base/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.base.SymbolTable">base.SymbolTable</a>, <span class="extype" name="org.kiama.util.Environments">Environments</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div><div class="toggleContainer block">
+            <span class="toggle">Known Subclasses</span>
+            <div class="subClasses hiddenContent"><a href="../drivers/A2a$.html" class="extype" name="org.kiama.example.oberon0.drivers.A2a">A2a</a>, <a href="../drivers/A2aPhases.html" class="extype" name="org.kiama.example.oberon0.drivers.A2aPhases">A2aPhases</a>, <a href="../drivers/A2aTests.html" class="extype" name="org.kiama.example.oberon0.drivers.A2aTests">A2aTests</a>, <a href="../drivers/A3$.html" class="extype" name="org.kiama.example.oberon0.drivers.A3">A3</a>, <a href="../drivers/A3Phases.html" class="extype" name="org.kiama.example.oberon0.drivers.A3Phases">A3Phases</a>, <a href="../drivers/A3Tests.html" class="extype" name="org.kiama.example.oberon0.drivers.A3Tests">A3Tests</a>, <a href="../drivers/A4$.html" class="extype" name="org.kiama.example.oberon0.drivers.A4">A4</a>, <a href="../drivers/A4Phases.html" class="extype" name="org.kiama.example.oberon0.drivers.A4Phases">A4Phases</a>, <a href="../drivers/A4Tests.html" class="extype" name="org.kiama.example.oberon0.drivers.A4Tests">A4Tests</a>, <a href="../L4/CCodeGenerator.html" class="extype" name="org.kiama.example.oberon0.L4.CCodeGenerator">CCodeGenerator</a>, <a href="CCodeGenerator.html" class="extype" name="org.kiama.example.oberon0.L3.CCodeGenerator">CCodeGenerator</a>, <a href="../L4/NameAnalyser.html" class="extype" name="org.kiama.example.oberon0.L4.NameAnalyser">NameAnalyser</a>, <a href="NameAnalyser.html" class="extype" name="org.kiama.example.oberon0.L3.NameAnalyser">NameAnalyser</a>, <a href="../L4/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L4.SymbolTable">SymbolTable</a>, <a href="../L4/TypeAnalyser.html" class="extype" name="org.kiama.example.oberon0.L4.TypeAnalyser">TypeAnalyser</a>, <a href="TypeAnalyser.html" class="extype" name="org.kiama.example.oberon0.L3.TypeAnalyser">TypeAnalyser</a></div>
+          </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="org.kiama.example.oberon0.L3.SymbolTable"><span>SymbolTable</span></li><li class="in" name="org.kiama.example.oberon0.L0.SymbolTable"><span>SymbolTable</span></li><li class="in" name="org.kiama.example.oberon0.base.SymbolTable"><span>SymbolTable</span></li><li class="in" name="org.kiama.util.Environments"><span>Environments</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.oberon0.L0.SymbolTable.Builtin" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="BuiltinextendsSymbolTable.this.Named"></a>
+      <a id="Builtin:Builtin"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$Builtin.html"><span class="name">Builtin</span></a><span class="result"> extends <a href="../L0/SymbolTable.html#NamedextendsAnyRef" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Named">Named</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@BuiltinextendsSymbolTable.this.Named" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Marker trait for all built-in entities.</p><div class="fullcomment"><div class="comment cmt"><p>Marker trait for all built-in entities.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable.BuiltinProc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BuiltinProcextendsEntitywithSymbolTable.this.NamedEntitywithSymbolTable.this.BuiltinwithProductwithSerializable"></a>
+      <a id="BuiltinProc:BuiltinProc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SymbolTable$BuiltinProc.html"><span class="name">BuiltinProc</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="params">params: <span class="extype" name="scala.collection.immutable.Seq">Seq</span>[<a href="SymbolTable$ParamInfo.html" class="extype" name="org.kiama.example.oberon0.L3.SymbolTable.ParamInfo">ParamInfo</a>]</span>)</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <a href="#NamedEntityextendsEntitywithEnvironments.this.Named" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.NamedEntity">NamedEntity</a> with <a href="#BuiltinextendsSymbolTable.this.Named" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Builtin">Builtin</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@BuiltinProcextendsEntitywithSymbolTable.this.NamedEntitywithSymbolTable.this.BuiltinwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A built-in procedure with its parameter information.</p>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable.BuiltinType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="BuiltinTypeextendsSymbolTable.this.TypewithSymbolTable.this.NamedwithSymbolTable.this.BuiltinwithProductwithSerializable"></a>
+      <a id="BuiltinType:BuiltinType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$BuiltinType.html"><span class="name">BuiltinType</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="../L0/SymbolTable$Type.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable.Type">Type</a> with <a href="../L0/SymbolTable.html#NamedextendsAnyRef" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Named">Named</a> with <a href="../L0/SymbolTable$Builtin.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable.Builtin">Builtin</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@BuiltinTypeextendsSymbolTable.this.TypewithSymbolTable.this.NamedwithSymbolTable.this.BuiltinwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A built-in type with an implicit definition that the compiler must have
+special knowledge about.</p><div class="fullcomment"><div class="comment cmt"><p>A built-in type with an implicit definition that the compiler must have
+special knowledge about. This mechanism is necessary since the built-in
+types cannot be defined using source concepts.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable.Constant" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ConstantextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable"></a>
+      <a id="Constant:Constant"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$Constant.html"><span class="name">Constant</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="decl">decl: <a href="../L0/source/ConstDecl.html" class="extype" name="org.kiama.example.oberon0.L0.source.ConstDecl">ConstDecl</a></span>)</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <a href="../L0/SymbolTable.html#NamedEntityextendsEntitywithEnvironments.this.Named" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.NamedEntity">NamedEntity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@ConstantextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A user-defined constant entity represented by a constant declaration.</p><div class="fullcomment"><div class="comment cmt"><p>A user-defined constant entity represented by a constant declaration.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.util.Environments.Environment" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Environment=List[Environments.this.Scope]"></a>
+      <a id="Environment:Environment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Environment</span><span class="result"> = <span class="extype" name="scala.collection.immutable.List">List</span>[<a href="#Scope=Map[String,org.kiama.util.Entity]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Scope">Scope</a>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@Environment=List[Environments.this.Scope]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable.IntegerValue" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="IntegerValueextendsEntitywithSymbolTable.this.NamedEntitywithSymbolTable.this.BuiltinwithProductwithSerializable"></a>
+      <a id="IntegerValue:IntegerValue"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$IntegerValue.html"><span class="name">IntegerValue</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tipe">tipe: <a href="../L0/SymbolTable$Type.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable.Type">Type</a></span>, <span name="value">value: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <a href="../L0/SymbolTable.html#NamedEntityextendsEntitywithEnvironments.this.Named" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.NamedEntity">NamedEntity</a> with <a href="../L0/SymbolTable$Builtin.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable.Builtin">Builtin</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@IntegerValueextendsEntitywithSymbolTable.this.NamedEntitywithSymbolTable.this.BuiltinwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A built-in value of some type that is represented by a particular integer
+value.</p><div class="fullcomment"><div class="comment cmt"><p>A built-in value of some type that is represented by a particular integer
+value. The type does not have to be INTEGER. In other words, this value
+cannot be defined using a constant declaration so the compiler has to
+have special knowledge of them.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable.Module" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ModuleextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable"></a>
+      <a id="Module:Module"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$Module.html"><span class="name">Module</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="decl">decl: <a href="../base/source/ModuleDecl.html" class="extype" name="org.kiama.example.oberon0.base.source.ModuleDecl">ModuleDecl</a></span>)</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <a href="../L0/SymbolTable.html#NamedEntityextendsEntitywithEnvironments.this.Named" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.NamedEntity">NamedEntity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@ModuleextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A user-defined module represented by a module declaration.</p><div class="fullcomment"><div class="comment cmt"><p>A user-defined module represented by a module declaration.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.util.Environments.Named" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="NamedextendsAnyRef"></a>
+      <a id="Named:Named"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Named</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@NamedextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments.NamedEntity" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="NamedEntityextendsEntitywithEnvironments.this.Named"></a>
+      <a id="NamedEntity:NamedEntity"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <span class="name">NamedEntity</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <span class="extype" name="org.kiama.util.Environments.Named">Named</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@NamedEntityextendsEntitywithEnvironments.this.Named" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable.ParamInfo" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ParamInfoextendsProductwithSerializable"></a>
+      <a id="ParamInfo:ParamInfo"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SymbolTable$ParamInfo.html"><span class="name">ParamInfo</span></a><span class="params">(<span name="mode">mode: <a href="source/Mode.html" class="extype" name="org.kiama.example.oberon0.L3.source.Mode">Mode</a></span>, <span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tipe">tipe: <a href="#TypeextendsEntity" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Type">SymbolTable.Type</a></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@ParamInfoextendsProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Information about a particular parameter.</p><div class="fullcomment"><div class="comment cmt"><p>Information about a particular parameter.  Similar to Parameter but the type
+has been replaced with its definition.
+</p></div></div>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable.Parameter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ParameterextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable"></a>
+      <a id="Parameter:Parameter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SymbolTable$Parameter.html"><span class="name">Parameter</span></a><span class="params">(<span name="mode">mode: <a href="source/Mode.html" class="extype" name="org.kiama.example.oberon0.L3.source.Mode">Mode</a></span>, <span name="varr">varr: <a href="#VariableextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Variable">SymbolTable.Variable</a></span>)</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <a href="#NamedEntityextendsEntitywithEnvironments.this.Named" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.NamedEntity">NamedEntity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@ParameterextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A parameter is a variable augmented with a passing mode.</p>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable.Procedure" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ProcedureextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable"></a>
+      <a id="Procedure:Procedure"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="SymbolTable$Procedure.html"><span class="name">Procedure</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="decl">decl: <a href="source/ProcDecl.html" class="extype" name="org.kiama.example.oberon0.L3.source.ProcDecl">ProcDecl</a></span>)</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <a href="#NamedEntityextendsEntitywithEnvironments.this.Named" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.NamedEntity">NamedEntity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@ProcedureextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A procedure entity represented by a procedure declaration.</p>
+    </li><li name="org.kiama.util.Environments.Scope" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Scope=Map[String,org.kiama.util.Entity]"></a>
+      <a id="Scope:Scope"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">Scope</span><span class="result"> = <span class="extype" name="scala.collection.immutable.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="org.kiama.util.Entity">Entity</span>]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@Scope=Map[String,org.kiama.util.Entity]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable.Type" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="TypeextendsEntity"></a>
+      <a id="Type:Type"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$Type.html"><span class="name">Type</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@TypeextendsEntity" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An entity representing by a user-provided type declaration.</p><div class="fullcomment"><div class="comment cmt"><p>An entity representing by a user-provided type declaration.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable.UserType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="UserTypeextendsSymbolTable.this.TypewithSymbolTable.this.NamedwithProductwithSerializable"></a>
+      <a id="UserType:UserType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$UserType.html"><span class="name">UserType</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tipe">tipe: <a href="../L0/source/TypeDecl.html" class="extype" name="org.kiama.example.oberon0.L0.source.TypeDecl">TypeDecl</a></span>)</span><span class="result"> extends <a href="../L0/SymbolTable$Type.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable.Type">Type</a> with <a href="../L0/SymbolTable.html#NamedextendsAnyRef" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Named">Named</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@UserTypeextendsSymbolTable.this.TypewithSymbolTable.this.NamedwithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A user-defined type.</p><div class="fullcomment"><div class="comment cmt"><p>A user-defined type.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable.Variable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="VariableextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable"></a>
+      <a id="Variable:Variable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="../L0/SymbolTable$Variable.html"><span class="name">Variable</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tipe">tipe: <a href="../L0/source/TypeDef.html" class="extype" name="org.kiama.example.oberon0.L0.source.TypeDef">TypeDef</a></span>)</span><span class="result"> extends <span class="extype" name="org.kiama.util.Entity">Entity</span> with <a href="../L0/SymbolTable.html#NamedEntityextendsEntitywithEnvironments.this.Named" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.NamedEntity">NamedEntity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L0.SymbolTable@VariableextendsEntitywithSymbolTable.this.NamedEntitywithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A variable entity including a reference to its types' definition.</p><div class="fullcomment"><div class="comment cmt"><p>A variable entity including a reference to its types' definition.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="!=(x$1:Any):Boolean"></a>
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $bang$eq" class="name">!=</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@!=(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef###" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="##():Int"></a>
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $hash$hash" class="name">##</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@##():Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#==" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="==(x$1:Any):Boolean"></a>
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span title="gt4s: $eq$eq" class="name">==</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@==(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">asInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Any.asInstanceOf.T0">T0</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@asInstanceOf[T0]:T0" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#booleanType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="booleanType:SymbolTable.this.BuiltinType"></a>
+      <a id="booleanType:BuiltinType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">booleanType</span><span class="result">: <a href="#BuiltinTypeextendsSymbolTable.this.TypewithSymbolTable.this.NamedwithSymbolTable.this.BuiltinwithProductwithSerializable" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.BuiltinType">BuiltinType</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@booleanType:SymbolTable.this.BuiltinType" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Built-in Boolean type.</p><div class="fullcomment"><div class="comment cmt"><p>Built-in Boolean type.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="clone():Object"></a>
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">clone</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@clone():Object" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.CloneNotSupportedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#defenv" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="defenv:SymbolTable.this.Environment"></a>
+      <a id="defenv:Environment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">defenv</span><span class="result">: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@defenv:SymbolTable.this.Environment" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The default environment.</p><div class="fullcomment"><div class="comment cmt"><p>The default environment.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable#defenvPairs" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="defenvPairs:scala.collection.immutable.Seq[(String,org.kiama.util.Entity)]"></a>
+      <a id="defenvPairs:Seq[(String,Entity)]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">defenvPairs</span><span class="result">: <span class="extype" name="scala.collection.immutable.Seq">Seq</span>[(<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="org.kiama.util.Entity">Entity</span>)]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@defenvPairs:scala.collection.immutable.Seq[(String,org.kiama.util.Entity)]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The default environment with pre-defined procedures added.</p><div class="fullcomment"><div class="comment cmt"><p>The default environment with pre-defined procedures added.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.kiama.example.oberon0.L3.SymbolTable">SymbolTable</a> → <a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.util.Environments#define" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="define(env:Environments.this.Environment,i:String,e:org.kiama.util.Entity):Environments.this.Environment"></a>
+      <a id="define(Environment,String,Entity):Environment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">define</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>, <span name="i">i: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="e">e: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>)</span><span class="result">: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@define(env:Environments.this.Environment,i:String,e:org.kiama.util.Entity):Environments.this.Environment" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#enter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="enter(env:Environments.this.Environment):Environments.this.Environment"></a>
+      <a id="enter(Environment):Environment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">enter</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>)</span><span class="result">: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@enter(env:Environments.this.Environment):Environments.this.Environment" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="eq(x$1:AnyRef):Boolean"></a>
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">eq</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@eq(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#equals" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="equals(x$1:Any):Boolean"></a>
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@equals(x$1:Any):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#falseConstant" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="falseConstant:SymbolTable.this.IntegerValue"></a>
+      <a id="falseConstant:IntegerValue"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">falseConstant</span><span class="result">: <a href="#IntegerValueextendsEntitywithSymbolTable.this.NamedEntitywithSymbolTable.this.BuiltinwithProductwithSerializable" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.IntegerValue">IntegerValue</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@falseConstant:SymbolTable.this.IntegerValue" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Built-in false constant.</p><div class="fullcomment"><div class="comment cmt"><p>Built-in false constant.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="finalize():Unit"></a>
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">finalize</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@finalize():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a href="../../../../../java$lang.html" class="extype" name="java.lang">java.lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="symbol">classOf[java.lang.Throwable]</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="getClass():Class[_]"></a>
+      <a id="getClass():Class[_]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">getClass</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.Class">Class</span>[_]</span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@getClass():Class[_]" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="scala.AnyRef#hashCode" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="hashCode():Int"></a>
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@hashCode():Int" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#integerType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="integerType:SymbolTable.this.BuiltinType"></a>
+      <a id="integerType:BuiltinType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">integerType</span><span class="result">: <a href="#BuiltinTypeextendsSymbolTable.this.TypewithSymbolTable.this.NamedwithSymbolTable.this.BuiltinwithProductwithSerializable" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.BuiltinType">BuiltinType</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@integerType:SymbolTable.this.BuiltinType" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Built-in integer type.</p><div class="fullcomment"><div class="comment cmt"><p>Built-in integer type.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#isBoolean" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isBoolean(e:SymbolTable.this.Type):Boolean"></a>
+      <a id="isBoolean(Type):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isBoolean</span><span class="params">(<span name="e">e: <a href="#TypeextendsEntity" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Type">Type</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isBoolean(e:SymbolTable.this.Type):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Return true if the given type is Boolean or an unknown type.</p><div class="fullcomment"><div class="comment cmt"><p>Return true if the given type is Boolean or an unknown type.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#isConstant" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isConstant(e:org.kiama.util.Entity):Boolean"></a>
+      <a id="isConstant(Entity):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isConstant</span><span class="params">(<span name="e">e: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isConstant(e:org.kiama.util.Entity):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Return true if the entity is erroneous or is a constant.</p><div class="fullcomment"><div class="comment cmt"><p>Return true if the entity is erroneous or is a constant.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.util.Environments#isDefinedInEnv" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isDefinedInEnv(env:Environments.this.Environment,i:String):Boolean"></a>
+      <a id="isDefinedInEnv(Environment,String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isDefinedInEnv</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>, <span name="i">i: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isDefinedInEnv(env:Environments.this.Environment,i:String):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#isDefinedInInner" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isDefinedInInner(env:Environments.this.Environment,i:String):Boolean"></a>
+      <a id="isDefinedInInner(Environment,String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isDefinedInInner</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>, <span name="i">i: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isDefinedInInner(env:Environments.this.Environment,i:String):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#isDefinedInOuter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isDefinedInOuter(env:Environments.this.Environment,i:String):Boolean"></a>
+      <a id="isDefinedInOuter(Environment,String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isDefinedInOuter</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>, <span name="i">i: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isDefinedInOuter(env:Environments.this.Environment,i:String):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#isDefinedInScope" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isDefinedInScope(scope:Environments.this.Scope,i:String):Boolean"></a>
+      <a id="isDefinedInScope(Scope,String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isDefinedInScope</span><span class="params">(<span name="scope">scope: <a href="#Scope=Map[String,org.kiama.util.Entity]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Scope">Scope</a></span>, <span name="i">i: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isDefinedInScope(scope:Environments.this.Scope,i:String):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#isDefinedInScope" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isDefinedInScope(env:Environments.this.Environment,i:String):Boolean"></a>
+      <a id="isDefinedInScope(Environment,String):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isDefinedInScope</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>, <span name="i">i: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isDefinedInScope(env:Environments.this.Environment,i:String):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#isError" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isError(e:org.kiama.util.Entity):Boolean"></a>
+      <a id="isError(Entity):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isError</span><span class="params">(<span name="e">e: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isError(e:org.kiama.util.Entity):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Return true if the entity is an error, false otherwise.</p><div class="fullcomment"><div class="comment cmt"><p>Return true if the entity is an error, false otherwise.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInstanceOf</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isInstanceOf[T0]:Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#isInteger" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isInteger(e:SymbolTable.this.Type):Boolean"></a>
+      <a id="isInteger(Type):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isInteger</span><span class="params">(<span name="e">e: <a href="#TypeextendsEntity" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.Type">Type</a></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isInteger(e:SymbolTable.this.Type):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Return true if the given type is integer or an unknown type.</p><div class="fullcomment"><div class="comment cmt"><p>Return true if the given type is integer or an unknown type.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#isModule" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isModule(e:org.kiama.util.Entity):Boolean"></a>
+      <a id="isModule(Entity):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isModule</span><span class="params">(<span name="e">e: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isModule(e:org.kiama.util.Entity):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Return true if the entity is erroneous or is a module.</p><div class="fullcomment"><div class="comment cmt"><p>Return true if the entity is erroneous or is a module.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#isType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isType(e:org.kiama.util.Entity):Boolean"></a>
+      <a id="isType(Entity):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isType</span><span class="params">(<span name="e">e: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isType(e:org.kiama.util.Entity):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Return true if the entity is erroneous or is a type.</p><div class="fullcomment"><div class="comment cmt"><p>Return true if the entity is erroneous or is a type.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable#isVariable" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="isVariable(e:org.kiama.util.Entity):Boolean"></a>
+      <a id="isVariable(Entity):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">isVariable</span><span class="params">(<span name="e">e: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@isVariable(e:org.kiama.util.Entity):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Parameters are variables too.</p><div class="fullcomment"><div class="comment cmt"><p>Parameters are variables too.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="org.kiama.example.oberon0.L3.SymbolTable">SymbolTable</a> → <a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.util.Environments#leave" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="leave(env:Environments.this.Environment):Environments.this.Environment"></a>
+      <a id="leave(Environment):Environment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">leave</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>)</span><span class="result">: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@leave(env:Environments.this.Environment):Environments.this.Environment" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#lookup" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="lookup(env:Environments.this.Environment,i:String,e:org.kiama.util.Entity,scope:Boolean):org.kiama.util.Entity"></a>
+      <a id="lookup(Environment,String,Entity,Boolean):Entity"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">lookup</span><span class="params">(<span name="env">env: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>, <span name="i">i: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="e">e: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>, <span name="scope">scope: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result">: <span class="extype" name="org.kiama.util.Entity">Entity</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@lookup(env:Environments.this.Environment,i:String,e:org.kiama.util.Entity,scope:Boolean):org.kiama.util.Entity" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#nameCounter" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="nameCounter:org.kiama.util.Counter"></a>
+      <a id="nameCounter:Counter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">nameCounter</span><span class="result">: <span class="extype" name="org.kiama.util.Counter">Counter</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@nameCounter:org.kiama.util.Counter" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ne(x$1:AnyRef):Boolean"></a>
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">ne</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.AnyRef">AnyRef</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@ne(x$1:AnyRef):Boolean" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notify" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notify():Unit"></a>
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notify</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@notify():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#notifyAll" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="notifyAll():Unit"></a>
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">notifyAll</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@notifyAll():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable#readProc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="readProc:SymbolTable.this.BuiltinProc"></a>
+      <a id="readProc:BuiltinProc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">readProc</span><span class="result">: <a href="SymbolTable$BuiltinProc.html" class="extype" name="org.kiama.example.oberon0.L3.SymbolTable.BuiltinProc">BuiltinProc</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@readProc:SymbolTable.this.BuiltinProc" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The built-in Read procedure.</p>
+    </li><li name="org.kiama.util.Environments#resetEnvironments" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="resetEnvironments():Unit"></a>
+      <a id="resetEnvironments():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">resetEnvironments</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@resetEnvironments():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="org.kiama.util.Environments#rootenv" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="rootenv(bindings:(String,org.kiama.util.Entity)*):Environments.this.Environment"></a>
+      <a id="rootenv((String,Entity)*):Environment"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">rootenv</span><span class="params">(<span name="bindings">bindings: (<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="org.kiama.util.Entity">Entity</span>)*</span>)</span><span class="result">: <a href="#Environment=List[Environments.this.Scope]" class="extmbr" name="org.kiama.example.oberon0.L3.SymbolTable.Environment">Environment</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@rootenv(bindings:(String,org.kiama.util.Entity)*):Environments.this.Environment" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Environments</dd></dl></div>
+    </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
+      <a id="synchronized[T0](⇒T0):T0"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">synchronized</span><span class="tparams">[<span name="T0">T0</span>]</span><span class="params">(<span name="arg0">arg0: ⇒ <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>)</span><span class="result">: <span class="extype" name="java.lang.AnyRef.synchronized.T0">T0</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@synchronized[T0](x$1:=&gt;T0):T0" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toString():String"></a>
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@toString():String" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#trueConstant" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="trueConstant:SymbolTable.this.IntegerValue"></a>
+      <a id="trueConstant:IntegerValue"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">trueConstant</span><span class="result">: <a href="#IntegerValueextendsEntitywithSymbolTable.this.NamedEntitywithSymbolTable.this.BuiltinwithProductwithSerializable" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.IntegerValue">IntegerValue</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@trueConstant:SymbolTable.this.IntegerValue" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Built-in true constant.</p><div class="fullcomment"><div class="comment cmt"><p>Built-in true constant.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L0.SymbolTable#unknownType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="unknownType:SymbolTable.this.BuiltinType"></a>
+      <a id="unknownType:BuiltinType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">unknownType</span><span class="result">: <a href="#BuiltinTypeextendsSymbolTable.this.TypewithSymbolTable.this.NamedwithSymbolTable.this.BuiltinwithProductwithSerializable" class="extmbr" name="org.kiama.example.oberon0.L0.SymbolTable.BuiltinType">BuiltinType</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@unknownType:SymbolTable.this.BuiltinType" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A type that is unknown, eg because the typed thing is erroneously
+defined.</p><div class="fullcomment"><div class="comment cmt"><p>A type that is unknown, eg because the typed thing is erroneously
+defined.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">SymbolTable</a></dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait():Unit"></a>
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@wait():Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long,x$2:Int):Unit"></a>
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>, <span name="arg1">arg1: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@wait(x$1:Long,x$2:Int):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="wait(x$1:Long):Unit"></a>
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">wait</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@wait(x$1:Long):Unit" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">(<span>
+      
+      <span class="defval" name="classOf[java.lang.InterruptedException]">...</span>
+    </span>)</span>
+              
+        </dd></dl></div>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable#writeProc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="writeProc:SymbolTable.this.BuiltinProc"></a>
+      <a id="writeProc:BuiltinProc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writeProc</span><span class="result">: <a href="SymbolTable$BuiltinProc.html" class="extype" name="org.kiama.example.oberon0.L3.SymbolTable.BuiltinProc">BuiltinProc</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@writeProc:SymbolTable.this.BuiltinProc" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The built-in Write procedure.</p>
+    </li><li name="org.kiama.example.oberon0.L3.SymbolTable#writelnProc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="writelnProc:SymbolTable.this.BuiltinProc"></a>
+      <a id="writelnProc:BuiltinProc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">lazy val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">writelnProc</span><span class="result">: <a href="SymbolTable$BuiltinProc.html" class="extype" name="org.kiama.example.oberon0.L3.SymbolTable.BuiltinProc">BuiltinProc</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../../index.html#org.kiama.example.oberon0.L3.SymbolTable@writelnProc:SymbolTable.this.BuiltinProc" title="Permalink" target="_top">
+        <img src="../../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The built-in WriteLn procedure.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="org.kiama.example.oberon0.L0.SymbolTable">
+              <h3>Inherited from <a href="../L0/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.L0.SymbolTable">L0.SymbolTable</a></h3>
+            </div><div class="parent" name="org.kiama.example.oberon0.base.SymbolTable">
+              <h3>Inherited from <a href="../base/SymbolTable.html" class="extype" name="org.kiama.example.oberon0.base.SymbolTable">base.SymbolTable</a></h3>
+            </div><div class="parent" name="org.kiama.util.Environments">
+              <h3>Inherited from <span class="extype" name="org.kiama.util.Environments">Environments</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -1,0 +1,66 @@
+<p>The Kiama team are pleased to bring you the next release of the library.</p>
+
+<h3 id="breaking-changes">Breaking changes</h3>
+<ul>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package">Attribution</a>
+    <ul>
+      <li>Integrate dynamic attributes with the other attributes and simplify their interface (see new <code>Attribution.dynattr</code> attribute builders).</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="new-features">New features</h3>
+<ul>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package">Attribution</a>
+    <ul>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=55">Issue 55</a>: Add variants of attribute builders that take a name argument which is used to print the attribute when reporting dependence cycles. E.g., <code>attr ("name") { ... }</code>.</li>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=56">Issue 56</a>: Make <code>Attribution</code> a trait as well as an object so it can be reused.</li>
+      <li>Add <code>hasBeenComputedAt(n)</code> method to cached attributes that tells you if they&#8217;ve already been evaluated at a particular node <code>n</code>.</li>
+      <li>Make <code>Attributable</code> node property setting skip <code>Either</code> nodes as it already did for options, traversables, tuples etc.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.rewriting.package">Rewriting</a>
+    <ul>
+      <li>Make <code>Rewriter</code> class into a trait so it can be mixed in.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.output.package">Output</a>
+    <ul>
+      <li>Add more ASCII symbol printers (e.g., tilde, exclamation) to the pretty printing library.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.util.package">Utilities</a>
+    <ul>
+      <li>Add <code>keywords</code> method to parser utilities to make it easier to define parsers that match one of a list of keywords.</li>
+      <li>Generalise file reading and writing to allow the character encoding to be specified and to buffer writing.</li>
+    </ul>
+  </li>
+  <li>Examples
+    <ul>
+      <li>Add simple Prolog implementation example.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fixes">Fixes</h3>
+<ul>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package">Attribution</a>
+    <ul>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=54">Issue 54</a>: Make <code>Attribution.initTree</code> idempotent.</li>
+      <li>Don&#8217;t unnecessarily re-evaluate attribute definitions in the <code>down</code> decorator.</li>
+    </ul>
+  </li>
+  <li>General
+    <ul>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=53">Issue 53</a>: Move back to JLine 1.0 to regain compatibility with sbt. This fixes a bug where echo was lost when exiting a REPL back to the sbt prompt.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="other">Other</h3>
+<ul>
+  <li>Publish for both Scala 2.9.2 and 2.10.0.</li>
+  <li>Move to Scalatest 1.9.1 and ScalaCheck 1.10.0.</li>
+  <li>Remove dependencies on JUnit and Argot.</li>
+  <li>Many other minor bug fixes and code style improvements.</li>
+</ul>

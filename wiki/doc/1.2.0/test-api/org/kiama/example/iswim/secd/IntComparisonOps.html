@@ -1,0 +1,1448 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>org.kiama.example.iswim.secd.IntComparisonOps</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../../../lib/template.css" />
+      <script type="text/javascript" src="../../../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body class="type">
+      <div id="definition">
+        <a title="Go to companion" href="IntComparisonOps$.html"><img src="../../../../../lib/trait_to_object_big.png" /></a>
+        <p id="owner"><a name="org" class="extype" href="../../../../package.html">org</a>.<a name="org.kiama" class="extype" href="../../../package.html">kiama</a>.<a name="org.kiama.example" class="extype" href="../../package.html">example</a>.<a name="org.kiama.example.iswim" class="extype" href="../package.html">iswim</a>.<a name="org.kiama.example.iswim.secd" class="extype" href="package.html">secd</a></p>
+        <h1><a title="Go to companion" href="IntComparisonOps$.html">IntComparisonOps</a></h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <span class="name">IntComparisonOps</span>
+        
+        <span class="result"> extends <a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a> with <a name="org.kiama.example.iswim.secd.IntegerOps" class="extype" href="IntegerOps.html">IntegerOps</a> with <a name="org.kiama.example.iswim.secd.BooleanOps" class="extype" href="BooleanOps.html">BooleanOps</a></span>
+      </span>
+      </h4>
+      
+          <div class="fullcommenttop" id="comment"><div class="comment cmt"><p>Trait implementing this SECD machine extension
+</p></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><a name="org.kiama.example.iswim.secd.BooleanOps" class="extype" href="BooleanOps.html">BooleanOps</a>, <a name="org.kiama.example.iswim.secd.IntegerOps" class="extype" href="IntegerOps.html">IntegerOps</a>, <a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a>, <span name="org.kiama.machine.Machine" class="extype">Machine</span>, <span name="org.kiama.output.PrettyPrinter" class="extype">PrettyPrinter</span>, <span name="org.kiama.output.PrettyPrinterBase" class="extype">PrettyPrinterBase</span>, AnyRef, <span name="scala.Any" class="extype">Any</span></div>
+        </div><div class="toggleContainer block">
+          <span class="toggle">Known Subclasses</span>
+          <div class="subClasses hiddenContent"><a name="org.kiama.example.iswim.driver.SECD" class="extype" href="../driver/SECD.html">SECD</a></div>
+        </div></div>
+        
+
+      <div id="template">
+
+        <div id="mbrsel">
+          <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+          <div id="order">
+                <span class="filtertype">Ordering</span>
+                <ol><li class="alpha in"><span>Alphabetic</span></li><li class="inherit out"><span>By inheritance</span></li></ol>
+              </div>
+          <div id="ancestors">
+                <span class="filtertype">Inherited</span>
+                <ol><li class="hideall out"><span>Hide All</span></li>
+                <li class="showall in"><span>Show all</span></li></ol>
+                <ol id="linearization"><li name="org.kiama.example.iswim.secd.IntComparisonOps" class="in"><span>IntComparisonOps</span></li><li name="org.kiama.example.iswim.secd.BooleanOps" class="in"><span>BooleanOps</span></li><li name="org.kiama.example.iswim.secd.IntegerOps" class="in"><span>IntegerOps</span></li><li name="org.kiama.example.iswim.secd.SECDBase" class="in"><span>SECDBase</span></li><li name="org.kiama.machine.Machine" class="in"><span>Machine</span></li><li name="org.kiama.output.PrettyPrinter" class="in"><span>PrettyPrinter</span></li><li name="org.kiama.output.PrettyPrinterBase" class="in"><span>PrettyPrinterBase</span></li><li name="scala.AnyRef" class="in"><span>AnyRef</span></li><li name="scala.Any" class="in"><span>Any</span></li></ol>
+              </div>
+          <div id="visbl">
+              <span class="filtertype">Visibility</span>
+              <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+            </div>
+        </div>
+
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="org.kiama.example.iswim.secd.BooleanOps.BooleanValue" data-isabs="true">
+      <a id="BooleanValue:BooleanValue"></a>
+      <h4 class="signature">
+      <span class="kind">class</span>
+      <span class="symbol"> 
+        <a href="BooleanOps$BooleanValue.html"><span class="name">BooleanValue</span></a>
+        
+        <span class="result"> extends Value</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Extra value types which come with this extension.</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ClosureValue" data-isabs="false">
+      <a id="ClosureValue:ClosureValue"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$ClosureValue.html"><span class="name">ClosureValue</span></a>
+        
+        <span class="params">(<span name="pn">pn: Name</span>, <span name="bdy">bdy: Code</span>, <span name="envir">envir: Environment</span>)</span><span class="result"> extends Value with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Closure values</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.ContValue" data-isabs="false">
+      <a id="ContValue:ContValue"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$ContValue.html"><span class="name">ContValue</span></a>
+        
+        <span class="params">(<span name="s">s: Stack</span>, <span name="e">e: Environment</span>, <span name="c">c: Code</span>, <span name="d">d: Dump</span>)</span><span class="result"> extends Value with Continuation with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.Continuation" data-isabs="true">
+      <a id="Continuation:Continuation"></a>
+      <h4 class="signature">
+      <span class="kind">trait</span>
+      <span class="symbol"> 
+        <a href="SECDBase$Continuation.html"><span class="name">Continuation</span></a>
+        
+        <span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Continuation values
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#Dump" data-isabs="false">
+      <a id="Dump:Dump"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Dump</span>
+        
+        <span class="result"> = <a name="org.kiama.example.iswim.secd.SECDBase.Continuation" class="extype" href="SECDBase$Continuation.html">Continuation</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#Environment" data-isabs="false">
+      <a id="Environment:Environment"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Environment</span>
+        
+        <span class="result"> = <span name="scala.collection.immutable.Map" class="extype">Map</span>[Name, <a name="org.kiama.example.iswim.secd.SECDBase.Value" class="extype" href="SECDBase$$Value.html">Value</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Type alias for environments, stacks and so forth
+</p><div class="fullcomment"><div class="comment cmt"><p>Type alias for environments, stacks and so forth
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#Indent" data-isabs="false">
+      <a id="Indent:Indent"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Indent</span>
+        
+        <span class="result"> = <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.IntegerOps.IntValue" data-isabs="false">
+      <a id="IntValue:IntValue"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="IntegerOps$IntValue.html"><span class="name">IntValue</span></a>
+        
+        <span class="params">(<span name="n">n: Int</span>)</span><span class="result"> extends Value with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Extra value types which come with this extension.</p>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#Layout" data-isabs="false">
+      <a id="Layout:Layout"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Layout</span>
+        
+        <span class="result"> = <span name="java.lang.String" class="extype">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.PrimValue" data-isabs="false">
+      <a id="PrimValue:PrimValue"></a>
+      <h4 class="signature">
+      <span class="kind">case class</span>
+      <span class="symbol"> 
+        <a href="SECDBase$PrimValue.html"><span class="name">PrimValue</span></a>
+        
+        <span class="params">(<span name="bdy">bdy: Code</span>)</span><span class="result"> extends Value with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Primitives - values which contain simple code segments.</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#Stack" data-isabs="false">
+      <a id="Stack:Stack"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Stack</span>
+        
+        <span class="result"> = <span name="scala.collection.immutable.List" class="extype">List</span>[<a name="org.kiama.example.iswim.secd.SECDBase.Value" class="extype" href="SECDBase$$Value.html">Value</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#Width" data-isabs="false">
+      <a id="Width:Width"></a>
+      <h4 class="signature">
+      <span class="kind">type</span>
+      <span class="symbol"> 
+        <span class="name">Width</span>
+        
+        <span class="result"> = <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li></ol>
+            </div>
+        
+        <div class="values members" id="values">
+              <h3>Abstract Value Members</h3>
+              <ol><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#primTable" data-isabs="true">
+      <a id="primTable:Map[Name, Value]"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">primTable</span>
+        
+        <span class="result">: Map[Name, <a name="org.kiama.example.iswim.secd.SECDBase.Value" class="extype" href="SECDBase$$Value.html">Value</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Table of builtin primitives for this machine.</p><div class="fullcomment"><div class="comment cmt"><p>Table of builtin primitives for this machine.
+These named values may be loaded into the environment
+using the BindPrims(nms) bytecode.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>abstract </dd><dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li></ol>
+            </div>
+
+        <div class="values members" id="values">
+              <h3>Concrete Value Members</h3>
+              <ol><li visbl="pub" name="scala.AnyRef#!=" data-isabs="false">
+      <a id="!=(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">!=</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="scala.Any#!=" data-isabs="false">
+      <a id="!=(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">!=</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef###" data-isabs="false">
+      <a id="##():Int"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">##</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#==" data-isabs="false">
+      <a id="==(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">==</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="scala.Any#==" data-isabs="false">
+      <a id="==(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">==</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.EmptyCont" data-isabs="false">
+      <a id="EmptyCont:EmptyCont"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$EmptyCont$.html"><span class="name">EmptyCont</span></a>
+        
+        <span class="result"> extends Continuation with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase.EmptyValue" data-isabs="false">
+      <a id="EmptyValue:EmptyValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="SECDBase$EmptyValue$.html"><span class="name">EmptyValue</span></a>
+        
+        <span class="result"> extends Value with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Base machine value types
+Null value
+</p>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.BooleanOps.FalseValue" data-isabs="false">
+      <a id="FalseValue:FalseValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="BooleanOps$FalseValue$.html"><span class="name">FalseValue</span></a>
+        
+        <span class="result"> extends BooleanValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.BooleanOps.TrueValue" data-isabs="false">
+      <a id="TrueValue:TrueValue"></a>
+      <h4 class="signature">
+      <span class="kind">object</span>
+      <span class="symbol"> 
+        <a href="BooleanOps$TrueValue$.html"><span class="name">TrueValue</span></a>
+        
+        <span class="result"> extends BooleanValue with Product with Serializable</span>
+      </span>
+      </h4>
+      
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#angles" data-isabs="false">
+      <a id="angles(Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">angles</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#anyToPrettyPrintable" data-isabs="false">
+      <a id="anyToPrettyPrintable(Any):PrettyPrintable"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">anyToPrettyPrintable</span>
+        
+        <span class="params">(<span name="a">a: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinterBase.PrettyPrintable" class="extype">PrettyPrintable</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.Any#asInstanceOf" data-isabs="false">
+      <a id="asInstanceOf[T0]:T0"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">asInstanceOf</span>
+        <span class="tparams">[<span name="T0">T0</span>]</span>
+        <span class="result">: T0</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#backslash" data-isabs="false">
+      <a id="backslash:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">backslash</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#braces" data-isabs="false">
+      <a id="braces(Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">braces</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#brackets" data-isabs="false">
+      <a id="brackets(Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">brackets</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#cat" data-isabs="false">
+      <a id="cat(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">cat</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#char" data-isabs="false">
+      <a id="char(Char):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">char</span>
+        
+        <span class="params">(<span name="c">c: <span name="scala.Char" class="extype">Char</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="prt" name="scala.AnyRef#clone" data-isabs="false">
+      <a id="clone():AnyRef"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">clone</span>
+        
+        <span class="params">()</span><span class="result">: AnyRef</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a name="java.lang" class="extype" href="../../../../../java/lang/package.html">lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#colon" data-isabs="false">
+      <a id="colon:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">colon</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#comma" data-isabs="false">
+      <a id="comma:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">comma</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#control" data-isabs="false">
+      <a id="control:State[Code] { def toDoc: IntComparisonOps.this.Doc }"></a>
+      <h4 class="signature">
+      <span class="kind">lazy val</span>
+      <span class="symbol"> 
+        <span class="name">control</span>
+        
+        <span class="result">: <span name="org.kiama.machine.Machine.State" class="extype">State</span>[Code] { def toDoc: IntComparisonOps.this.Doc }</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#debug" data-isabs="false">
+      <a id="debug:Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">debug</span>
+        
+        <span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#defaultIndent" data-isabs="false">
+      <a id="defaultIndent:Int"></a>
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol"> 
+        <span class="name">defaultIndent</span>
+        
+        <span class="result">: <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#defaultWidth" data-isabs="false">
+      <a id="defaultWidth:Int"></a>
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol"> 
+        <span class="name">defaultWidth</span>
+        
+        <span class="result">: <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#dot" data-isabs="false">
+      <a id="dot:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">dot</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#dquote" data-isabs="false">
+      <a id="dquote:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">dquote</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#dquotes" data-isabs="false">
+      <a id="dquotes(Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">dquotes</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#dump" data-isabs="false">
+      <a id="dump:State[Dump]"></a>
+      <h4 class="signature">
+      <span class="kind">lazy val</span>
+      <span class="symbol"> 
+        <span class="name">dump</span>
+        
+        <span class="result">: <span name="org.kiama.machine.Machine.State" class="extype">State</span>[Dump]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinter#empty" data-isabs="false">
+      <a id="empty:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">empty</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinter → PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#enclose" data-isabs="false">
+      <a id="enclose(Doc,Doc,Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">enclose</span>
+        
+        <span class="params">(<span name="l">l: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="r">r: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#envir" data-isabs="false">
+      <a id="envir:State[Environment] { def toDoc: IntComparisonOps.this.Doc }"></a>
+      <h4 class="signature">
+      <span class="kind">lazy val</span>
+      <span class="symbol"> 
+        <span class="name">envir</span>
+        
+        <span class="result">: <span name="org.kiama.machine.Machine.State" class="extype">State</span>[Environment] { def toDoc: IntComparisonOps.this.Doc }</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#eq" data-isabs="false">
+      <a id="eq(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">eq</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#equal" data-isabs="false">
+      <a id="equal:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">equal</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#equals" data-isabs="false">
+      <a id="equals(Any):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">equals</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.IntComparisonOps#evalInst" data-isabs="false">
+      <a id="evalInst:$eq$eq$greater[Code, Unit]"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">evalInst</span>
+        
+        <span class="result">: $eq$eq$greater[Code, <span name="scala.Unit" class="extype">Unit</span>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Extend the partial function to evaluate a single instruction
+to handle our new instructions.</p><div class="fullcomment"><div class="comment cmt"><p>Extend the partial function to evaluate a single instruction
+to handle our new instructions.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.IntComparisonOps" class="extype" href="">IntComparisonOps</a> → <a name="org.kiama.example.iswim.secd.BooleanOps" class="extype" href="BooleanOps.html">BooleanOps</a> → <a name="org.kiama.example.iswim.secd.IntegerOps" class="extype" href="IntegerOps.html">IntegerOps</a> → <a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="prt" name="org.kiama.example.iswim.secd.SECDBase#execSrcPos" data-isabs="false">
+      <a id="execSrcPos:Position"></a>
+      <h4 class="signature">
+      <span class="kind">var</span>
+      <span class="symbol"> 
+        <span class="name">execSrcPos</span>
+        
+        <span class="result">: <span name="scala.util.parsing.input.Position" class="extype">Position</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Rule to execute one step of this machine.</p><div class="fullcomment"><div class="comment cmt"><p>Rule to execute one step of this machine.
+</p></div><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#fillcat" data-isabs="false">
+      <a id="fillcat(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">fillcat</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#fillsep" data-isabs="false">
+      <a id="fillsep(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">fillsep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#fillsep" data-isabs="false">
+      <a id="fillsep(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">fillsep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="prt" name="scala.AnyRef#finalize" data-isabs="false">
+      <a id="finalize():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">finalize</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected[<a name="java.lang" class="extype" href="../../../../../java/lang/package.html">lang</a>] </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#finit" data-isabs="false">
+      <a id="finit:Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">finit</span>
+        
+        <span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#forwslash" data-isabs="false">
+      <a id="forwslash:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">forwslash</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#getClass" data-isabs="false">
+      <a id="getClass():java.lang.Class[_]"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">getClass</span>
+        
+        <span class="params">()</span><span class="result">: java.lang.Class[_]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinter#group" data-isabs="false">
+      <a id="group(Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">group</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinter → PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#hashCode" data-isabs="false">
+      <a id="hashCode():Int"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">hashCode</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Int" class="extype">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#hcat" data-isabs="false">
+      <a id="hcat(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">hcat</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#hsep" data-isabs="false">
+      <a id="hsep(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">hsep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#hsep" data-isabs="false">
+      <a id="hsep(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">hsep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#init" data-isabs="false">
+      <a id="init:Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">init</span>
+        
+        <span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="scala.Any#isInstanceOf" data-isabs="false">
+      <a id="isInstanceOf[T0]:Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">isInstanceOf</span>
+        <span class="tparams">[<span name="T0">T0</span>]</span>
+        <span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#langle" data-isabs="false">
+      <a id="langle:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">langle</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#lbrace" data-isabs="false">
+      <a id="lbrace:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">lbrace</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#lbracket" data-isabs="false">
+      <a id="lbracket:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">lbracket</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinter#line" data-isabs="false">
+      <a id="line:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">line</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinter → PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinter#linebreak" data-isabs="false">
+      <a id="linebreak:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">linebreak</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinter → PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#list" data-isabs="false">
+      <a id="list[T](List[T],String,(T) ⇒ Doc,Doc,(Seq[Doc], Doc) ⇒ Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">list</span>
+        <span class="tparams">[<span name="T">T</span>]</span>
+        <span class="params">(<span name="l">l: List[T]</span>, <span name="prefix">prefix: String</span>, <span name="elemToDoc">elemToDoc: (T) ⇒ <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="sepfn">sepfn: (Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>], <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>) ⇒ <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#lparen" data-isabs="false">
+      <a id="lparen:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">lparen</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#lsep" data-isabs="false">
+      <a id="lsep(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">lsep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#lsep2" data-isabs="false">
+      <a id="lsep2(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">lsep2</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#lterm" data-isabs="false">
+      <a id="lterm(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">lterm</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="term">term: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#main" data-isabs="false">
+      <a id="main():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">main</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a> → Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#name" data-isabs="false">
+      <a id="name:String"></a>
+      <h4 class="signature">
+      <span class="kind">val</span>
+      <span class="symbol"> 
+        <span class="name">name</span>
+        
+        <span class="result">: String</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#ne" data-isabs="false">
+      <a id="ne(AnyRef):Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">ne</span>
+        
+        <span class="params">(<span name="arg0">arg0: AnyRef</span>)</span><span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinter#nest" data-isabs="false">
+      <a id="nest(Doc,Indent):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">nest</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="j">j: Indent</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinter → PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#notify" data-isabs="false">
+      <a id="notify():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">notify</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#notifyAll" data-isabs="false">
+      <a id="notifyAll():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">notifyAll</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#paramUpdaterToU" data-isabs="false">
+      <a id="paramUpdaterToU[T, U, V&gt;:U](ParamUpdater[T, U]):V"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">paramUpdaterToU</span>
+        <span class="tparams">[<span name="T">T</span>, <span name="U">U</span>, <span name="V">V &gt;: U</span>]</span>
+        <span class="params">(<span name="up">up: <span name="org.kiama.machine.Machine.ParamUpdater" class="extype">ParamUpdater</span>[T, U]</span>)</span><span class="result">: V</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#parens" data-isabs="false">
+      <a id="parens(Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">parens</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#performUpdates" data-isabs="false">
+      <a id="performUpdates:Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">performUpdates</span>
+        
+        <span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#plist" data-isabs="false">
+      <a id="plist(List[PrettyPrintable],String,(PrettyPrintable) ⇒ Doc,Doc,(Seq[Doc], Doc) ⇒ Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">plist</span>
+        
+        <span class="params">(<span name="l">l: List[<span name="org.kiama.output.PrettyPrinterBase.PrettyPrintable" class="extype">PrettyPrintable</span>]</span>, <span name="prefix">prefix: String</span>, <span name="elemToDoc">elemToDoc: (<span name="org.kiama.output.PrettyPrinterBase.PrettyPrintable" class="extype">PrettyPrintable</span>) ⇒ <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="sepfn">sepfn: (Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>], <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>) ⇒ <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinter#pretty" data-isabs="false">
+      <a id="pretty(Doc,Width):Layout"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">pretty</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="w">w: Width</span>)</span><span class="result">: Layout</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinter → PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#pretty" data-isabs="false">
+      <a id="pretty(PrettyPrintable):Layout"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">pretty</span>
+        
+        <span class="params">(<span name="p">p: <span name="org.kiama.output.PrettyPrinterBase.PrettyPrintable" class="extype">PrettyPrintable</span></span>)</span><span class="result">: Layout</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#product" data-isabs="false">
+      <a id="product(Any):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">product</span>
+        
+        <span class="params">(<span name="p">p: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#raiseException" data-isabs="false">
+      <a id="raiseException(ExceptionValue):Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">raiseException</span>
+        
+        <span class="params">(<span name="ex">ex: <a name="org.kiama.example.iswim.secd.SECDBase.ExceptionValue" class="extype" href="SECDBase$$ExceptionValue.html">ExceptionValue</a></span>)</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Raise a machine exception</p><div class="fullcomment"><div class="comment cmt"><p>Raise a machine exception</p><p>This particular error handler assumes that the environment
+contains a binding of the name '@exnHandler' to a reference value
+containing a continuation. This continuation is resumed with
+the exception value passed to this function as its parameter.</p><p>If '@exnHandler' is unbound in the environment or is bound to a
+value that is not a refernce to a continuation then this function
+reports a machine panic and stops the machine.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#rangle" data-isabs="false">
+      <a id="rangle:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">rangle</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#rbrace" data-isabs="false">
+      <a id="rbrace:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">rbrace</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#rbracket" data-isabs="false">
+      <a id="rbracket:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">rbracket</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#reset" data-isabs="false">
+      <a id="reset:Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">reset</span>
+        
+        <span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#rparen" data-isabs="false">
+      <a id="rparen:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">rparen</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#run" data-isabs="false">
+      <a id="run:Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">run</span>
+        
+        <span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#semi" data-isabs="false">
+      <a id="semi:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">semi</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#sep" data-isabs="false">
+      <a id="sep(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">sep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#softbreak" data-isabs="false">
+      <a id="softbreak:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">softbreak</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#softline" data-isabs="false">
+      <a id="softline:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">softline</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#space" data-isabs="false">
+      <a id="space:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">space</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#spaces" data-isabs="false">
+      <a id="spaces(Int):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">spaces</span>
+        
+        <span class="params">(<span name="n">n: <span name="scala.Int" class="extype">Int</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#squote" data-isabs="false">
+      <a id="squote:Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">squote</span>
+        
+        <span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#squotes" data-isabs="false">
+      <a id="squotes(Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">squotes</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#ssep" data-isabs="false">
+      <a id="ssep(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">ssep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.example.iswim.secd.SECDBase#stack" data-isabs="false">
+      <a id="stack:State[Stack] { def toDoc: IntComparisonOps.this.Doc }"></a>
+      <h4 class="signature">
+      <span class="kind">lazy val</span>
+      <span class="symbol"> 
+        <span class="name">stack</span>
+        
+        <span class="result">: <span name="org.kiama.machine.Machine.State" class="extype">State</span>[Stack] { def toDoc: IntComparisonOps.this.Doc }</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Machine registers</p><div class="fullcomment"><div class="comment cmt"><p>Machine registers</p><p>A little work is needed here to ensure that these
+registers are printed in a reasonable way when we
+turn on debugging.
+</p></div><dl class="attributes block"> <dt>Definition Classes</dt><dd><a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#stateTToT" data-isabs="false">
+      <a id="stateTToT[T, U&gt;:T](State[T]):U"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">stateTToT</span>
+        <span class="tparams">[<span name="T">T</span>, <span name="U">U &gt;: T</span>]</span>
+        <span class="params">(<span name="t">t: <span name="org.kiama.machine.Machine.State" class="extype">State</span>[T]</span>)</span><span class="result">: U</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#step" data-isabs="false">
+      <a id="step:Boolean"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">step</span>
+        
+        <span class="result">: <span name="scala.Boolean" class="extype">Boolean</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.machine.Machine#steps" data-isabs="false">
+      <a id="steps:Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">steps</span>
+        
+        <span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Machine</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#sterm" data-isabs="false">
+      <a id="sterm(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">sterm</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="term">term: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#string" data-isabs="false">
+      <a id="string(String):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">string</span>
+        
+        <span class="params">(<span name="s">s: String</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#surround" data-isabs="false">
+      <a id="surround(Doc,Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">surround</span>
+        
+        <span class="params">(<span name="d">d: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>, <span name="b">b: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#synchronized" data-isabs="false">
+      <a id="synchronized[T0](⇒ T0):T0"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">synchronized</span>
+        <span class="tparams">[<span name="T0">T0</span>]</span>
+        <span class="params">(<span name="arg0">arg0: ⇒ T0</span>)</span><span class="result">: T0</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinter#text" data-isabs="false">
+      <a id="text(String):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">implicit def</span>
+      <span class="symbol"> 
+        <span class="name">text</span>
+        
+        <span class="params">(<span name="t">t: String</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>implicit </dd><dt>Definition Classes</dt><dd>PrettyPrinter → PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#toString" data-isabs="false">
+      <a id="toString():String"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">toString</span>
+        
+        <span class="params">()</span><span class="result">: <span name="java.lang.String" class="extype">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#value" data-isabs="false">
+      <a id="value(Any):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">value</span>
+        
+        <span class="params">(<span name="v">v: <span name="scala.Any" class="extype">Any</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#vcat" data-isabs="false">
+      <a id="vcat(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">vcat</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#vsep" data-isabs="false">
+      <a id="vsep(Seq[Doc],Doc):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">vsep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>, <span name="sep">sep: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="org.kiama.output.PrettyPrinterBase#vsep" data-isabs="false">
+      <a id="vsep(Seq[Doc]):Doc"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">vsep</span>
+        
+        <span class="params">(<span name="ds">ds: Seq[<span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span>]</span>)</span><span class="result">: <span name="org.kiama.output.PrettyPrinter.Doc" class="extype">Doc</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>PrettyPrinterBase</dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#wait" data-isabs="false">
+      <a id="wait():Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">wait</span>
+        
+        <span class="params">()</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#wait" data-isabs="false">
+      <a id="wait(Long,Int):Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">wait</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Long" class="extype">Long</span></span>, <span name="arg1">arg1: <span name="scala.Int" class="extype">Int</span></span>)</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li><li visbl="pub" name="scala.AnyRef#wait" data-isabs="false">
+      <a id="wait(Long):Unit"></a>
+      <h4 class="signature">
+      <span class="kind">def</span>
+      <span class="symbol"> 
+        <span class="name">wait</span>
+        
+        <span class="params">(<span name="arg0">arg0: <span name="scala.Long" class="extype">Long</span></span>)</span><span class="result">: <span name="scala.Unit" class="extype">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>final </dd><dt>Definition Classes</dt><dd>AnyRef</dd><dt>Annotations</dt><dd>
+                <span class="name">@throws</span><span class="args">()</span>
+              
+        </dd></dl></div>
+    </li></ol>
+            </div>
+
+        
+
+        <div name="org.kiama.example.iswim.secd.BooleanOps" class="parent">
+              <h3>Inherited from <a name="org.kiama.example.iswim.secd.BooleanOps" class="extype" href="BooleanOps.html">BooleanOps</a></h3>
+            </div><div name="org.kiama.example.iswim.secd.IntegerOps" class="parent">
+              <h3>Inherited from <a name="org.kiama.example.iswim.secd.IntegerOps" class="extype" href="IntegerOps.html">IntegerOps</a></h3>
+            </div><div name="org.kiama.example.iswim.secd.SECDBase" class="parent">
+              <h3>Inherited from <a name="org.kiama.example.iswim.secd.SECDBase" class="extype" href="SECDBase.html">SECDBase</a></h3>
+            </div><div name="org.kiama.machine.Machine" class="parent">
+              <h3>Inherited from <span name="org.kiama.machine.Machine" class="extype">Machine</span></h3>
+            </div><div name="org.kiama.output.PrettyPrinter" class="parent">
+              <h3>Inherited from <span name="org.kiama.output.PrettyPrinter" class="extype">PrettyPrinter</span></h3>
+            </div><div name="org.kiama.output.PrettyPrinterBase" class="parent">
+              <h3>Inherited from <span name="org.kiama.output.PrettyPrinterBase" class="extype">PrettyPrinterBase</span></h3>
+            </div><div name="scala.AnyRef" class="parent">
+              <h3>Inherited from AnyRef</h3>
+            </div><div name="scala.Any" class="parent">
+              <h3>Inherited from <span name="scala.Any" class="extype">Any</span></h3>
+            </div>
+
+      </div>
+      
+      <div id="tooltip"></div>
+      
+    </body>
+      </html>

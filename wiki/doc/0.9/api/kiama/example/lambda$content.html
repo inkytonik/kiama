@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>All classes and objects in kiama.example.lambda</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.7.final)" name="generator"></meta><link href="../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../script.js"></script>
+        </head>
+        <body onload="init()"><div class="page-title"><div>kiama 0.9.0 API</div></div><p><div>This document is the API specification for kiama 0.9.0 API</div></p><table summary="" cellpadding="3" class="member">
+        <tr><td class="title" colspan="2">Class Summary</td></tr>
+        <tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda/Evaluator.html" target="_self">Evaluator</a></em>
+        <code> extends </code><a href="../../kiama/rewriting/Rewriter.html" target="_self">Rewriter</a>
+        
+        <div>Lambda calculus evaluator following Rose's \xgc, ie with explicit
+ substitutions and garbage collection.  See "Explicit Substitution
+ - Tutorial and Survey, Kristoffer H. Rose, BRICS LS-96-3, October
+ 1996.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda/Generator.html" target="_self">Generator</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>ScalaCheck generators for programs in the lambda language.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda/Parser.html" target="_self">Parser</a></em>
+        <code> extends </code><a href="../../kiama/parsing/CharPackratParsers.html" target="_self">CharPackratParsers</a><code> with </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Parser to AST.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda/TestBase.html" target="_self">TestBase</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda/Parser.html" target="_self">Parser</a><code> with </code><a href="../../kiama/example/lambda/Generator.html" target="_self">Generator</a><code> with </code><a href="../../kiama/example/lambda/Evaluator.html" target="_self">Evaluator</a>
+        
+        <div>Basis for tests using the lambda calculus language.  Includes access to the
+ parser, generator and evaluator.</div>
+      </td>
+    </tr>        
+        </table>
+<table summary="" cellpadding="3" class="member">
+        <tr><td class="title" colspan="2">Object Summary</td></tr>
+        <tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda/AST$object.html" target="_self">AST</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>A simple lambda calculus.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda/Lambda$object.html" target="_self">Lambda</a></em>
+        <code> extends </code><a href="../../kiama/util/ParsingREPL.html" target="_self">ParsingREPL</a>[<a href="../../kiama/example/lambda/AST$object.Exp.html" target="_self">Exp</a>]<code> with </code><a href="../../kiama/example/lambda/Parser.html" target="_self">Parser</a><code> with </code><a href="../../kiama/example/lambda/Evaluator.html" target="_self">Evaluator</a>
+        
+        <div>A read-eval-print loop for evaluation of lambda calculus expressions.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda/LambdaGen$object.html" target="_self">LambdaGen</a></em>
+        <code> extends </code><a href="../../kiama/util/GeneratingREPL.html" target="_self">GeneratingREPL</a>[<a href="../../kiama/example/lambda/AST$object.Exp.html" target="_self">Exp</a>]<code> with </code><a href="../../kiama/example/lambda/Generator.html" target="_self">Generator</a>
+        
+        <div>A read-eval-print loop for generating random expressions.</div>
+      </td>
+    </tr>        
+        </table></body>
+      </html>

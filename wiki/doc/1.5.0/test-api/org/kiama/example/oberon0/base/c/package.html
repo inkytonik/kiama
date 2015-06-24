@@ -1,0 +1,332 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>c - org.kiama.example.oberon0.base.c</title>
+          <meta name="description" content="c - org.kiama.example.oberon0.base.c" />
+          <meta name="keywords" content="c org.kiama.example.oberon0.base.c" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../../../index.html';
+            var hash = 'org.kiama.example.oberon0.base.c.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../../../package.html" class="extype" name="org">org</a>.<a href="../../../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../../../package.html" class="extype" name="org.kiama.example">example</a>.<a href="../../package.html" class="extype" name="org.kiama.example.oberon0">oberon0</a>.<a href="../package.html" class="extype" name="org.kiama.example.oberon0.base">base</a></p>
+        <h1>c</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">c</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.oberon0.base.c.CASTNode" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CASTNodeextendsAnyRef"></a>
+      <a id="CASTNode:CASTNode"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CASTNode.html"><span class="name">CASTNode</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Root type of all C abstract syntax tree nodes.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CArrayType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CArrayTypeextendsCTypewithProductwithSerializable"></a>
+      <a id="CArrayType:CArrayType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CArrayType.html"><span class="name">CArrayType</span></a><span class="params">(<span name="size">size: <span class="extype" name="scala.Int">Int</span></span>, <span name="elemtype">elemtype: <a href="CType.html" class="extype" name="org.kiama.example.oberon0.base.c.CType">CType</a></span>)</span><span class="result"> extends <a href="CType.html" class="extype" name="org.kiama.example.oberon0.base.c.CType">CType</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C array types.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CBlock" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CBlockextendsCStatementwithProductwithSerializable"></a>
+      <a id="CBlock:CBlock"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CBlock.html"><span class="name">CBlock</span></a><span class="params">(<span name="decls">decls: <span class="extype" name="scala.List">List</span>[<a href="CDeclaration.html" class="extype" name="org.kiama.example.oberon0.base.c.CDeclaration">CDeclaration</a>]</span>, <span name="stmts">stmts: <span class="extype" name="scala.List">List</span>[<a href="CStatement.html" class="extype" name="org.kiama.example.oberon0.base.c.CStatement">CStatement</a>]</span>)</span><span class="result"> extends <a href="CStatement.html" class="extype" name="org.kiama.example.oberon0.base.c.CStatement">CStatement</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C blocks.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CDeclaration" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CDeclarationextendsCASTNode"></a>
+      <a id="CDeclaration:CDeclaration"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CDeclaration.html"><span class="name">CDeclaration</span></a><span class="result"> extends <a href="CASTNode.html" class="extype" name="org.kiama.example.oberon0.base.c.CASTNode">CASTNode</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type of C declarations.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CEmptyStmt" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CEmptyStmtextendsCStatementwithProductwithSerializable"></a>
+      <a id="CEmptyStmt:CEmptyStmt"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CEmptyStmt.html"><span class="name">CEmptyStmt</span></a><span class="params">()</span><span class="result"> extends <a href="CStatement.html" class="extype" name="org.kiama.example.oberon0.base.c.CStatement">CStatement</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C empty statements.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CExpression" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CExpressionextendsCASTNodewithPrettyExpression"></a>
+      <a id="CExpression:CExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CExpression.html"><span class="name">CExpression</span></a><span class="result"> extends <a href="CASTNode.html" class="extype" name="org.kiama.example.oberon0.base.c.CASTNode">CASTNode</a> with <span class="extype" name="org.kiama.output.PrettyExpression">PrettyExpression</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type for C expressions.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CFunctionDecl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CFunctionDeclextendsCDeclarationwithProductwithSerializable"></a>
+      <a id="CFunctionDecl:CFunctionDecl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CFunctionDecl.html"><span class="name">CFunctionDecl</span></a><span class="params">(<span name="decl">decl: <a href="CVarDecl.html" class="extype" name="org.kiama.example.oberon0.base.c.CVarDecl">CVarDecl</a></span>, <span name="args">args: <span class="extype" name="scala.List">List</span>[<a href="CDeclaration.html" class="extype" name="org.kiama.example.oberon0.base.c.CDeclaration">CDeclaration</a>]</span>, <span name="body">body: <a href="CBlock.html" class="extype" name="org.kiama.example.oberon0.base.c.CBlock">CBlock</a></span>)</span><span class="result"> extends <a href="CDeclaration.html" class="extype" name="org.kiama.example.oberon0.base.c.CDeclaration">CDeclaration</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C function declarations.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CInclude" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CIncludeextendsCASTNodewithProductwithSerializable"></a>
+      <a id="CInclude:CInclude"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CInclude.html"><span class="name">CInclude</span></a><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="CASTNode.html" class="extype" name="org.kiama.example.oberon0.base.c.CASTNode">CASTNode</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C include directive.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CIntExp" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CIntExpextendsCExpressionwithProductwithSerializable"></a>
+      <a id="CIntExp:CIntExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CIntExp.html"><span class="name">CIntExp</span></a><span class="params">(<span name="v">v: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="CExpression.html" class="extype" name="org.kiama.example.oberon0.base.c.CExpression">CExpression</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C integer expressions.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CIntType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CIntTypeextendsCTypewithProductwithSerializable"></a>
+      <a id="CIntType:CIntType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CIntType.html"><span class="name">CIntType</span></a><span class="params">()</span><span class="result"> extends <a href="CType.html" class="extype" name="org.kiama.example.oberon0.base.c.CType">CType</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C integer type (int).</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CPrettyPrinter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CPrettyPrinterextendsParenPrettyPrinter"></a>
+      <a id="CPrettyPrinter:CPrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CPrettyPrinter.html"><span class="name">CPrettyPrinter</span></a><span class="result"> extends <span class="extype" name="org.kiama.output.ParenPrettyPrinter">ParenPrettyPrinter</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Interface for all C pretty-printers.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CProgram" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CProgramextendsCASTNodewithProductwithSerializable"></a>
+      <a id="CProgram:CProgram"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CProgram.html"><span class="name">CProgram</span></a><span class="params">(<span name="includes">includes: <span class="extype" name="scala.List">List</span>[<a href="CInclude.html" class="extype" name="org.kiama.example.oberon0.base.c.CInclude">CInclude</a>]</span>, <span name="decls">decls: <span class="extype" name="scala.List">List</span>[<a href="CDeclaration.html" class="extype" name="org.kiama.example.oberon0.base.c.CDeclaration">CDeclaration</a>]</span>)</span><span class="result"> extends <a href="CASTNode.html" class="extype" name="org.kiama.example.oberon0.base.c.CASTNode">CASTNode</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C programs.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CReturn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CReturnextendsCStatementwithProductwithSerializable"></a>
+      <a id="CReturn:CReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CReturn.html"><span class="name">CReturn</span></a><span class="params">(<span name="e">e: <a href="CExpression.html" class="extype" name="org.kiama.example.oberon0.base.c.CExpression">CExpression</a></span>)</span><span class="result"> extends <a href="CStatement.html" class="extype" name="org.kiama.example.oberon0.base.c.CStatement">CStatement</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C return statements.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CStatement" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CStatementextendsCASTNode"></a>
+      <a id="CStatement:CStatement"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CStatement.html"><span class="name">CStatement</span></a><span class="result"> extends <a href="CASTNode.html" class="extype" name="org.kiama.example.oberon0.base.c.CASTNode">CASTNode</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type for C statements.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CStrType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CStrTypeextendsCTypewithProductwithSerializable"></a>
+      <a id="CStrType:CStrType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CStrType.html"><span class="name">CStrType</span></a><span class="params">()</span><span class="result"> extends <a href="CType.html" class="extype" name="org.kiama.example.oberon0.base.c.CType">CType</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C string type (char *).</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CType" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CTypeextendsCASTNode"></a>
+      <a id="CType:CType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CType.html"><span class="name">CType</span></a><span class="result"> extends <a href="CASTNode.html" class="extype" name="org.kiama.example.oberon0.base.c.CASTNode">CASTNode</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type for C types.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.CVarDecl" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CVarDeclextendsCDeclarationwithProductwithSerializable"></a>
+      <a id="CVarDecl:CVarDecl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CVarDecl.html"><span class="name">CVarDecl</span></a><span class="params">(<span name="ident">ident: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="tipe">tipe: <a href="CType.html" class="extype" name="org.kiama.example.oberon0.base.c.CType">CType</a></span>)</span><span class="result"> extends <a href="CDeclaration.html" class="extype" name="org.kiama.example.oberon0.base.c.CDeclaration">CDeclaration</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">C variable declarations.</p>
+    </li><li name="org.kiama.example.oberon0.base.c.PrettyPrinter" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="PrettyPrinterextendsCPrettyPrinter"></a>
+      <a id="PrettyPrinter:PrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyPrinter.html"><span class="name">PrettyPrinter</span></a><span class="result"> extends <a href="CPrettyPrinter.html" class="extype" name="org.kiama.example.oberon0.base.c.CPrettyPrinter">CPrettyPrinter</a></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

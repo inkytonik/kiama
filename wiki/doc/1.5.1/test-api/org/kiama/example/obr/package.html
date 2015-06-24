@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>obr - org.kiama.example.obr</title>
+          <meta name="description" content="obr - org.kiama.example.obr" />
+          <meta name="keywords" content="obr org.kiama.example.obr" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'org.kiama.example.obr.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="org">org</a>.<a href="../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../package.html" class="extype" name="org.kiama.example">example</a></p>
+        <h1>obr</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">obr</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.obr.Driver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DriverextendsSyntaxAnalysiswithCompiler[org.kiama.example.obr.ObrTree.ObrInt]"></a>
+      <a id="Driver:Driver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Driver.html"><span class="name">Driver</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.obr.SyntaxAnalysis">SyntaxAnalysis</a> with <span class="extype" name="org.kiama.util.Compiler">Compiler</span>[<a href="ObrTree$$ObrInt.html" class="extype" name="org.kiama.example.obr.ObrTree.ObrInt">ObrInt</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Obr language implementation compiler driver.</p>
+    </li><li name="org.kiama.example.obr.ParserDriver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ParserDriverextendsSyntaxAnalysiswithCompiler[org.kiama.example.obr.ObrTree.ObrInt]"></a>
+      <a id="ParserDriver:ParserDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ParserDriver.html"><span class="name">ParserDriver</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.obr.SyntaxAnalysis">SyntaxAnalysis</a> with <span class="extype" name="org.kiama.util.Compiler">Compiler</span>[<a href="ObrTree$$ObrInt.html" class="extype" name="org.kiama.example.obr.ObrTree.ObrInt">ObrInt</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">The next driver simply spills the abstract syntax tree to the console.</p>
+    </li><li name="org.kiama.example.obr.SPARCEncoder" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SPARCEncoderextendsAnyRef"></a>
+      <a id="SPARCEncoder:SPARCEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SPARCEncoder.html"><span class="name">SPARCEncoder</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Translate SPARC programs into SPARC assembly code.</p>
+    </li><li name="org.kiama.example.obr.SemanticDriver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SemanticDriverextendsSyntaxAnalysiswithCompiler[org.kiama.example.obr.ObrTree.ObrInt]"></a>
+      <a id="SemanticDriver:SemanticDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SemanticDriver.html"><span class="name">SemanticDriver</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.obr.SyntaxAnalysis">SyntaxAnalysis</a> with <span class="extype" name="org.kiama.util.Compiler">Compiler</span>[<a href="ObrTree$$ObrInt.html" class="extype" name="org.kiama.example.obr.ObrTree.ObrInt">ObrInt</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A driver which parses a program file and runs the semantic analyser.</p>
+    </li><li name="org.kiama.example.obr.SyntaxAnalysis" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SyntaxAnalysisextendsPositionedParserUtilities"></a>
+      <a id="SyntaxAnalysis:SyntaxAnalysis"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SyntaxAnalysis.html"><span class="name">SyntaxAnalysis</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.PositionedParserUtilities">PositionedParserUtilities</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Module containing parsers for the Obr language.</p>
+    </li><li name="org.kiama.example.obr.TreeTestDriver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TreeTestDriverextendsDriverwithTestCompiler[org.kiama.example.obr.ObrTree.ObrInt]"></a>
+      <a id="TreeTestDriver:TreeTestDriver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="TreeTestDriver.html"><span class="name">TreeTestDriver</span></a><span class="result"> extends <a href="Driver.html" class="extype" name="org.kiama.example.obr.Driver">Driver</a> with <a href="../../util/TestCompiler.html" class="extype" name="org.kiama.util.TestCompiler">TestCompiler</a>[<a href="ObrTree$$ObrInt.html" class="extype" name="org.kiama.example.obr.ObrTree.ObrInt">ObrInt</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A driver which compiles a file and allows a test to be run on the resulting
+target tree.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.kiama.example.obr.Main" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Main"></a>
+      <a id="Main:Main"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Main$.html"><span class="name">Main</span></a><span class="result"> extends <a href="Driver.html" class="extype" name="org.kiama.example.obr.Driver">Driver</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Obr language implementation main program.</p>
+    </li><li name="org.kiama.example.obr.ObrTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ObrTree"></a>
+      <a id="ObrTree:ObrTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ObrTree$.html"><span class="name">ObrTree</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Module containing structures for representing Obr programs.</p>
+    </li><li name="org.kiama.example.obr.RISCEncoder" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RISCEncoder"></a>
+      <a id="RISCEncoder:RISCEncoder"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RISCEncoder$.html"><span class="name">RISCEncoder</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Translate RISC programs into RISC assembly code.</p>
+    </li><li name="org.kiama.example.obr.RISCTransformation" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RISCTransformation"></a>
+      <a id="RISCTransformation:RISCTransformation"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RISCTransformation$.html"><span class="name">RISCTransformation</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Module implementing transformation from Obr to RISC tree code.</p>
+    </li><li name="org.kiama.example.obr.RISCTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RISCTree"></a>
+      <a id="RISCTree:RISCTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RISCTree$.html"><span class="name">RISCTree</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Module containing structures for representing RISC machine programs.</p>
+    </li><li name="org.kiama.example.obr.SPARCTransformation" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SPARCTransformation"></a>
+      <a id="SPARCTransformation:SPARCTransformation"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SPARCTransformation$.html"><span class="name">SPARCTransformation</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Module implementing transformation from Obr to SPARC assembler.</p>
+    </li><li name="org.kiama.example.obr.SPARCTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SPARCTree"></a>
+      <a id="SPARCTree:SPARCTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SPARCTree$.html"><span class="name">SPARCTree</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Module containing structures for representing SPARC machine programs.</p>
+    </li><li name="org.kiama.example.obr.SemanticAnalysis" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SemanticAnalysis"></a>
+      <a id="SemanticAnalysis:SemanticAnalysis"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SemanticAnalysis$.html"><span class="name">SemanticAnalysis</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.obr.SymbolTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SymbolTable"></a>
+      <a id="SymbolTable:SymbolTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SymbolTable$.html"><span class="name">SymbolTable</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Symbol table module containing facilities for creating and
+manipulating Obr language symbol information.</p>
+    </li><li name="org.kiama.example.obr.tests" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="tests"></a>
+      <a id="tests:tests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="tests/package.html"><span class="name">tests</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../../lib/template.js"></script>
+    </body>
+      </html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>All classes and objects in kiama.example.dataflow</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.5.final)" name="generator"></meta><link href="../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../script.js"></script>
+        </head>
+        <body onload="init()"><div class="page-title"><div>kiama 0.8</div></div><p><div>This document is the API specification for kiama 0.8 API Documentation</div></p><table summary="" cellpadding="3" class="member">
+        <tr><td class="title" colspan="2">Class Summary</td></tr>
+        <tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/ControlFlow.html" target="_self">ControlFlow</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Control flow interface.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/ControlFlowImpl.html" target="_self">ControlFlowImpl</a></em>
+        <code> extends </code><a href="../../kiama/example/dataflow/ControlFlow.html" target="_self">ControlFlow</a><code> with </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Control flow implementation.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/DataflowForTests.html" target="_self">DataflowForTests</a></em>
+        <code> extends </code><a href="" target="contentFrame" class="org/scalatest/junit/JUnit3Suite">org.scalatest.junit.JUnit3Suite</a>
+        
+        <div>Tests of extended data flow attribution.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/DataflowTests.html" target="_self">DataflowTests</a></em>
+        <code> extends </code><a href="" target="contentFrame" class="org/scalatest/junit/JUnit3Suite">org.scalatest.junit.JUnit3Suite</a>
+        
+        <div>Tests of data flow attribution.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/For.html" target="_self">For</a></em>
+        (<code>val </code><em>init</em> : <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>, <code>val </code><em>c</em> : <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>, <code>val </code><em>inc</em> : <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>, <code>val </code><em>body</em> : <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>)<code> extends </code><a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/Foreach.html" target="_self">Foreach</a></em>
+        (<code>val </code><em>cond</em> : <a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <code>val </code><em>body</em> : <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>)<code> extends </code><a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/Liveness.html" target="_self">Liveness</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Variable liveness interface.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/LivenessImpl.html" target="_self">LivenessImpl</a></em>
+        <code> extends </code><a href="../../kiama/example/dataflow/Liveness.html" target="_self">Liveness</a><code> with </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Variable liveness implementation.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/Variables.html" target="_self">Variables</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Variable use and definition interface.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/VariablesImpl.html" target="_self">VariablesImpl</a></em>
+        <code> extends </code><a href="../../kiama/example/dataflow/Variables.html" target="_self">Variables</a><code> with </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Variable use and definition implementation.</div>
+      </td>
+    </tr>        
+        </table>
+<table summary="" cellpadding="3" class="member">
+        <tr><td class="title" colspan="2">Object Summary</td></tr>
+        <tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/Dataflow$object.html" target="_self">Dataflow</a></em>
+        <code> extends </code><a href="../../kiama/example/dataflow/LivenessImpl.html" target="_self">LivenessImpl</a><code> with </code><a href="../../kiama/example/dataflow/VariablesImpl.html" target="_self">VariablesImpl</a><code> with </code><a href="../../kiama/example/dataflow/ControlFlowImpl.html" target="_self">ControlFlowImpl</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/DataflowAST$object.html" target="_self">DataflowAST</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Imperative language AST for dataflow example.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/DataflowFor$object.html" target="_self">DataflowFor</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/DataflowForeach$object.html" target="_self">DataflowForeach</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/For$object.html" target="_self">For</a></em>
+        <code> extends </code>(<a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>, <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>, <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>, <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>) =&gt; <a href="../../kiama/example/dataflow/For.html" target="_self">For</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/dataflow/Foreach$object.html" target="_self">Foreach</a></em>
+        <code> extends </code>(<a href="" target="contentFrame" class="java/lang/String">java.lang.String</a>, <a href="../../kiama/example/dataflow/DataflowAST$object.Stm.html" target="_self">Stm</a>) =&gt; <a href="../../kiama/example/dataflow/Foreach.html" target="_self">Foreach</a>
+        
+        
+      </td>
+    </tr>        
+        </table></body>
+      </html>

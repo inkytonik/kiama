@@ -1,0 +1,590 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>object RISCISA in kiama.example.oberon0.machine</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.5.final)" name="generator"></meta><link href="../../../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../../../script.js"></script>
+        </head>
+        <body onload="init()">
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+        
+      <div class="entity">
+        <a href="../../../../kiama/example/oberon0/machine$package.html" target="_self">kiama.example.oberon0.machine</a>
+        <br></br>
+        <span class="entity">object  RISCISA</span>
+      </div><hr></hr>
+      <div class="source">
+        [source: <a href="" class="kiama/example/oberon0/machine/RISCISA"><code>kiama/example/oberon0/machine/RISCISA.scala</code></a>]
+      </div><hr></hr>
+      <a name="RISCISA"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>object</code>
+        <em>RISCISA</em>
+      </dt>
+      <dd><code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a></dd>
+    </dl>
+      <dl><dd>Instruction set architecture for a simple RISC machine.</dd></dl>
+      <dl></dl>
+    
+      
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Type Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> type</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.html#Code" target="_self">Code</a></em>
+        
+        
+        <div>A code sequence.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> type</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.html#RegNo" target="_self">RegNo</a></em>
+        
+        
+        <div>Register numbers (0-31).  Program counter is R28.</div>
+      </td>
+    </tr>
+      </table>
+
+<table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#toString%28%29" target="_self">toString</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
+        </td></tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Class Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.ADD.html" target="_self">ADD</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Add the values in registers b and c, store the result in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.ADDI.html" target="_self">ADDI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Add the value in register b and the value im, store the result
+     in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BEQ.html" target="_self">BEQ</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>If the Z condition code is set, set the program counter to its
+     value plus four times disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BGE.html" target="_self">BGE</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>If the N condition code is clear, set the program counter to its
+     value plus four times disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BGT.html" target="_self">BGT</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>If both of the Z and N condition codes are clear, set the program
+     counter to its value plus four times disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BLE.html" target="_self">BLE</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>If either of the Z or N condition codes is set, set the program
+     counter to its value plus four times disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BLT.html" target="_self">BLT</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>If the N condition code is set, set the program counter to its
+     value plus four times disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BNE.html" target="_self">BNE</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>If the Z condition code is clear, set the program counter to its
+     value plus four times disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BR.html" target="_self">BR</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Set the program counter to its value plus disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.BSR.html" target="_self">BSR</a></em>
+        (<code>val </code><em>label</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Set R31 to the value of the program counter plus one. Set the
+     program counter to its value plus disp.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>abstract class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Branch.html" target="_self">Branch</a></em>
+        <code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a>
+        
+        <div>Abstract interface for all branch instructions.  Branches are
+     created using symbolic labels. The assembler sets the disp
+     field once the symbolic label has been resolved to an offset.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.CHKI.html" target="_self">CHKI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>If register a contains a value that is negative or greater than
+     or equal to the value im, set register a to zero.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.CMP.html" target="_self">CMP</a></em>
+        (<code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Set the Z condition code if the contents of registers b and c
+     are equal.  Set the N condition code if the content of register
+     b is less than the content of register c.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.CMPI.html" target="_self">CMPI</a></em>
+        (<code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Set the Z condition code if the content of register b and the
+     value im are equal, otherwise clear Z.  Set the N condition code
+     if the content of register b is less than the value im, otherwise
+     clear N.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.DIV.html" target="_self">DIV</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Divide the values in registers b and c, store the (integer) result in
+     register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.DIVI.html" target="_self">DIVI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Divide the value in register b and the value im, store the (integer)
+     result in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>abstract class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Machine instructions.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.LDB.html" target="_self">LDB</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Load register a with the byte value stored in memory at the
+     address given by the contents of register b plus the value im.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.LDW.html" target="_self">LDW</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Load register a with the word value stored in memory at the
+     address given by the contents of register b plus the value im.
+     The lowest two bits of the address are ignored.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MOD.html" target="_self">MOD</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Divide the values in registers b and c, store the (integer) remainder
+     in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MODI.html" target="_self">MODI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Divide the value in registers b and the value im, store the (integer)
+     remainder in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MOV.html" target="_self">MOV</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Shift the value in register c by b and store the result in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MOVI.html" target="_self">MOVI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Shift the value im by b and store the result in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MUL.html" target="_self">MUL</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Muliply the values in registers b and c, store the result in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MULI.html" target="_self">MULI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Multiply the value in register b and the value im, store the result
+     in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MVN.html" target="_self">MVN</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Shift the value in register c by b and store the negation of the result
+     in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.MVNI.html" target="_self">MVNI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Shift the value im by b and store the negation of the result in
+     register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.POP.html" target="_self">POP</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Load register a with the word value stored in register b.  The
+     lowest two bits of the address are ignored. Subtract (???) im from
+     the contents of register b and store the result in register b.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.PSH.html" target="_self">PSH</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Add im to the contents of register b and store the
+     result in register b.  Store the value in register a into
+     memory at the address given by the contents of register b.
+     The lowest two bits of the address are ignored.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.RD.html" target="_self">RD</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Read an integer variable from standard input and store the value
+     in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.RET.html" target="_self">RET</a></em>
+        (<code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Set the program counter to the value in register c.  If that
+     value is zero, halt the machine.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.STB.html" target="_self">STB</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Store the least-significant byte of the contents of register a to
+     memory at the address given by the contents of register b plus the
+     value im.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.STW.html" target="_self">STW</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Store the contents of register a to memory at the address given
+     by the contents of register b plus the value im.  The lowest two
+     bits of the address are ignored.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.SUB.html" target="_self">SUB</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Subtract the values in registers b and c, store the result in
+     register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.SUBI.html" target="_self">SUBI</a></em>
+        (<code>val </code><em>a</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>b</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>, <code>val </code><em>im</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Int.html" target="_self">Int</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Subtract the value in register b and the value im, store the result
+     in register a.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.WRD.html" target="_self">WRD</a></em>
+        (<code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Write a decimal representation of the value in register c to
+     standard output.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>case class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.WRH.html" target="_self">WRH</a></em>
+        (<code>val </code><em>c</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/Byte.html" target="_self">Byte</a>)<code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Write a hexadecimal representation of the value in register c to
+     standard output.</div>
+      </td>
+    </tr>
+      </table>
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Object Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code>case object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.WRL$object.html" target="_self">WRL</a></em>
+        <code> extends </code><a href="../../../../kiama/example/oberon0/machine/RISCISA$object.Instr.html" target="_self">Instr</a><code> with </code><a href="" target="contentFrame" class="scala/Product">scala.Product</a>
+        
+        <div>Write a newline to standard output.</div>
+      </td>
+    </tr>
+      </table>
+      
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Type Details</td></tr>
+        </table><div><a name="Code"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>type</code>
+        <em>Code</em>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>A code sequence.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="RegNo"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>type</code>
+        <em>RegNo</em>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Register numbers (0-31).  Program counter is R28.</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+
+
+
+
+    <hr></hr>
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+      </body>
+      </html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>class Strategy in kiama.rewriting.Rewriter</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.5.final)" name="generator"></meta><link href="../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../script.js"></script>
+        </head>
+        <body onload="init()">
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+        
+      <div class="entity">
+        <a href="../../kiama/rewriting/Rewriter.html" target="_self">kiama.rewriting.Rewriter</a>
+        <br></br>
+        <span class="entity">class  Strategy</span>
+      </div><hr></hr>
+      <div class="source">
+        [source: <a href="" class="kiama/rewriting/Rewriter"><code>kiama/rewriting/Rewriter.scala</code></a>]
+      </div><hr></hr>
+      <a name="Strategy"></a><dl>
+      <dt>
+        
+        <code>abstract</code>
+        <code>class</code>
+        <em>Strategy</em>
+      </dt>
+      <dd><code> extends </code>(<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) =&gt; <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]</dd>
+    </dl>
+      <dl><dd>Term-rewriting strategies.</dd></dl>
+      <dl></dl>
+    <dl>
+      <dt style="margin:10px 0 0 20px;"><b>Direct Known Subclasses:</b></dt>
+      <dd><a href="../../kiama/rewriting/Rewriter.PlusStrategy.html" target="_self">Rewriter.PlusStrategy</a></dd>
+      </dl><hr></hr>
+      
+
+
+<table summary="" cellpadding="3" class="member">
+      <tr><td class="title" colspan="2">Method Summary</td></tr>
+      <tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.Strategy.html#%2B%28%3D%3ERewriter.this.Strategy%29" target="_self">+</a></em>
+        (<em>q</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.PlusStrategy.html" target="_self">PlusStrategy</a>
+        
+        <div>Non-deterministic choice.  Construct a strategy that first applies
+         either this strategy or the given strategy.  If it succeeds,
+         succeed with the resulting term. Otherwise, apply q.
+         Currently implemented as deterministic choice, but this behaviour
+         should not be relied upon.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.Strategy.html#%3C%28%3D%3ERewriter.this.PlusStrategy%29" target="_self">&lt;</a></em>
+        (<em>lr</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.PlusStrategy.html" target="_self">PlusStrategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Conditional choice: c < l + r.
+         Construct a strategy that first applies this
+         strategy (c). If it succeeds, apply l to the resulting term,
+         otherwise apply r to the original subject term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.Strategy.html#%3C*%28%3D%3ERewriter.this.Strategy%29" target="_self">&lt;*</a></em>
+        (<em>q</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Sequential composition.  Construct a strategy that first applies
+         this strategy. If it succeeds, then apply q to the new subject
+         term.  Otherwise fail.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.Strategy.html#%3C%2B%28%3D%3ERewriter.this.Strategy%29" target="_self">&lt;+</a></em>
+        (<em>q</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+        
+        <div>Deterministic choice.  Construct a strategy that first applies
+         this strategy.  If it succeeds, succeed with the resulting term.
+         Otherwise, apply q to the original subject term.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code>abstract def</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/rewriting/Rewriter.Strategy.html#apply%28Rewriter.this.Term%29" target="_self">apply</a></em>
+        (<em>r</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]
+        
+        <div>Apply this strategy to a term, producing either a transformed term
+         or None, representing a rewriting failure.</div>
+      </td>
+    </tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="" target="contentFrame" class="scala/Function1">scala.Function1</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="#toString" target="contentFrame" class="scala/Function1">scala.Function1.toString</a>, <a href="#compose" target="contentFrame" class="scala/Function1">scala.Function1.compose</a>, <a href="#andThen" target="contentFrame" class="scala/Function1">scala.Function1.andThen</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#getClass%28%29" target="_self">getClass</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#hashCode%28%29" target="_self">hashCode</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#equals%28Any%29" target="_self">equals</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#clone%28%29" target="_self">clone</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notify%28%29" target="_self">notify</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#notifyAll%28%29" target="_self">notifyAll</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28Long%2CInt%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#wait%28%29" target="_self">wait</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#finalize%28%29" target="_self">finalize</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%3D%3D%28AnyRef%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#%21%3D%28AnyRef%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#eq%28AnyRef%29" target="_self">eq</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#ne%28AnyRef%29" target="_self">ne</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html#synchronized%28T0%29" target="_self">synchronized</a>
+        </td></tr>
+      </table><table summary="" cellpadding="3" class="inherited">
+        <tr><td class="title" colspan="2">
+          Methods inherited from <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html" target="_self">Any</a>
+        </td></tr>
+        <tr><td class="signature" colspan="2">
+          <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%3D%3D%28Any%29" target="_self">==</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#%21%3D%28Any%29" target="_self">!=</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#isInstanceOf" target="_self">isInstanceOf</a>, <a href="http://www.scala-lang.org/docu/files/api/scala/Any.html#asInstanceOf" target="_self">asInstanceOf</a>
+        </td></tr>
+      </table>
+
+
+      
+
+
+<table summary="" cellpadding="3" class="member-detail">
+          <tr><td class="title">Method Details</td></tr>
+        </table><div><a name="apply%28Rewriter.this.Term%29"></a><dl>
+      <dt>
+        
+        <code>abstract</code>
+        <code>def</code>
+        <em>apply</em>(<em>r</em> : <a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>) : <a href="" target="contentFrame" class="scala/Option">scala.Option</a>[<a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>]
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Apply this strategy to a term, producing either a transformed term
+         or None, representing a rewriting failure.</dd></dl>
+      <dl></dl>
+    <dl>
+        <dt style="margin:10px 0 0 20px;">
+          <b>Overrides</b>
+        </dt>
+        <dd>
+        <a href="" target="contentFrame" class="scala/Function1">scala.Function1</a>.<a href="#apply" target="contentFrame" class="scala/Function1">scala.Function1.apply</a>
+        </dd>
+      </dl><hr></hr>
+<a name="%3C*%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>&lt;*</em>(<em>q</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Sequential composition.  Construct a strategy that first applies
+         this strategy. If it succeeds, then apply q to the new subject
+         term.  Otherwise fail.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="%3C%2B%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>&lt;+</em>(<em>q</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Deterministic choice.  Construct a strategy that first applies
+         this strategy.  If it succeeds, succeed with the resulting term.
+         Otherwise, apply q to the original subject term.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="%2B%28%3D%3ERewriter.this.Strategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>+</em>(<em>q</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>) : <a href="../../kiama/rewriting/Rewriter.PlusStrategy.html" target="_self">PlusStrategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Non-deterministic choice.  Construct a strategy that first applies
+         either this strategy or the given strategy.  If it succeeds,
+         succeed with the resulting term. Otherwise, apply q.
+         Currently implemented as deterministic choice, but this behaviour
+         should not be relied upon.</dd></dl>
+      <dl></dl>
+    <hr></hr>
+<a name="%3C%28%3D%3ERewriter.this.PlusStrategy%29"></a><dl>
+      <dt>
+        
+        <code></code>
+        <code>def</code>
+        <em>&lt;</em>(<em>lr</em> : =&gt; <a href="../../kiama/rewriting/Rewriter.PlusStrategy.html" target="_self">PlusStrategy</a>) : <a href="../../kiama/rewriting/Rewriter.Strategy.html" target="_self">Strategy</a>
+      </dt>
+      <dd></dd>
+    </dl>
+      <dl><dd>Conditional choice: c < l + r.
+         Construct a strategy that first applies this
+         strategy (c). If it succeeds, apply l to the resulting term,
+         otherwise apply r to the original subject term.</dd></dl>
+      <dl></dl>
+    <hr></hr></div>
+
+
+    <hr></hr>
+        <table summary="" class="navigation">
+        <tr>
+          <td class="navigation-links" valign="top">
+            <!-- <table><tr></tr></table> -->
+          </td>
+          <td align="right" valign="top" style="white-space:nowrap;" rowspan="2">
+            <div class="doctitle-larger">kiama 0.8 API Documentation</div>
+          </td>
+        </tr>
+        <tr><td></td></tr>
+      </table>
+      </body>
+      </html>

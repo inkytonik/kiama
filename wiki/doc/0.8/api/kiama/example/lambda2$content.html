@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+        <head><title>All classes and objects in kiama.example.lambda2</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF8"></meta><meta content="scaladoc (version 2.7.5.final)" name="generator"></meta><link href="../../style.css" type="text/css" rel="stylesheet"></link><script type="text/javascript" src="../../script.js"></script>
+        </head>
+        <body onload="init()"><div class="page-title"><div>kiama 0.8</div></div><p><div>This document is the API specification for kiama 0.8 API Documentation</div></p><table summary="" cellpadding="3" class="member">
+        <tr><td class="title" colspan="2">Class Summary</td></tr>
+        <tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/EagerSubst.html" target="_self">EagerSubst</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ReduceSubst.html" target="_self">ReduceSubst</a>
+        
+        <div>Eager evaluation of lambda calculus with term-level substitution and
+ arithmetic operations.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/EagerSubstEvaluator.html" target="_self">EagerSubstEvaluator</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/EagerSubst.html" target="_self">EagerSubst</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/Evaluator.html" target="_self">Evaluator</a></em>
+        <code> extends </code><a href="../../kiama/rewriting/Rewriter.html" target="_self">Rewriter</a>
+        
+        <div>Interface for an individual rewriting-based lambda2 evaluator.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/InnermostSubst.html" target="_self">InnermostSubst</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ReduceSubst.html" target="_self">ReduceSubst</a>
+        
+        <div>Evaluation of lambda calculus using an non-memoising innermost evaluation
+ with term-level substitution and arithmetic operations.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/InnermostSubstEvaluator.html" target="_self">InnermostSubstEvaluator</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ReduceSubst.html" target="_self">ReduceSubst</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/LambdaTests.html" target="_self">LambdaTests</a></em>
+        <code> extends </code><a href="" target="contentFrame" class="org/scalatest/junit/JUnit3Suite">org.scalatest.junit.JUnit3Suite</a><code> with </code><a href="" target="contentFrame" class="org/scalatest/prop/Checkers">org.scalatest.prop.Checkers</a><code> with </code><a href="../../kiama/example/lambda2/Parser.html" target="_self">Parser</a><code> with </code><a href="../../kiama/rewriting/Rewriter.html" target="_self">Rewriter</a>
+        
+        <div>Lambda calculus tests.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/LazySubst.html" target="_self">LazySubst</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/EagerSubst.html" target="_self">EagerSubst</a>
+        
+        <div>Evaluation of lambda calculus using lazy evaluation with
+ term-level substitution and arithmetic operations.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/LazySubstEvaluator.html" target="_self">LazySubstEvaluator</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/LazySubst.html" target="_self">LazySubst</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/ParEagerSubst.html" target="_self">ParEagerSubst</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ReduceSubst.html" target="_self">ReduceSubst</a>
+        
+        <div>Eager evaluation of lambda calculus with parallel term-level substitution
+ and arithmetic operations.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/ParEagerSubstEvaluator.html" target="_self">ParEagerSubstEvaluator</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ParEagerSubst.html" target="_self">ParEagerSubst</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/ParLazySubst.html" target="_self">ParLazySubst</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ParEagerSubst.html" target="_self">ParEagerSubst</a>
+        
+        <div>Lazy evaluation of lambda calculus with parallel term-level substitution
+ and arithmetic operations.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/ParLazySubstEvaluator.html" target="_self">ParLazySubstEvaluator</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ParLazySubst.html" target="_self">ParLazySubst</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/Parser.html" target="_self">Parser</a></em>
+        <code> extends </code><a href="../../kiama/parsing/CharPackratParsers.html" target="_self">CharPackratParsers</a><code> with </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Parser to AST.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/Reduce.html" target="_self">Reduce</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/Evaluator.html" target="_self">Evaluator</a>
+        
+        <div>Evaluation of lambda calculus using global beta reduction with meta-level
+ substitution and arithmetic operations.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/ReduceEvaluator.html" target="_self">ReduceEvaluator</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/Reduce.html" target="_self">Reduce</a>
+        
+        
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> trait</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/ReduceSubst.html" target="_self">ReduceSubst</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/Reduce.html" target="_self">Reduce</a>
+        
+        <div>Evaluation of lambda calculus using global beta reduction with
+ term-level substitution and arithmetic operations.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> class</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/ReduceSubstEvaluator.html" target="_self">ReduceSubstEvaluator</a></em>
+        <code> extends </code><a href="../../kiama/example/lambda2/ReduceSubst.html" target="_self">ReduceSubst</a>
+        
+        
+      </td>
+    </tr>        
+        </table>
+<table summary="" cellpadding="3" class="member">
+        <tr><td class="title" colspan="2">Object Summary</td></tr>
+        <tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/AST$object.html" target="_self">AST</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>A simple lambda calculus abstract syntax.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/Analysis$object.html" target="_self">Analysis</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Name and type analysis for typed lambda calculus expressions.  There are
+ two versions here: one (tipe) that constructs an explicit environment separate
+ from the AST, and one (tipe2) that represents names by references to the
+ nodes of their binding lambda expressions.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/Evaluators$object.html" target="_self">Evaluators</a></em>
+        <code> extends </code><a href="http://www.scala-lang.org/docu/files/api/scala/AnyRef.html" target="_self">AnyRef</a>
+        
+        <div>Interface to switchable evaluators for the lambda2 language.  Enables
+ a client to select an evaluation mechanism by name and access the
+ evaluator for that mechanism.</div>
+      </td>
+    </tr>
+<tr>
+      <td class="modifiers" valign="top"> 
+        <code> object</code>
+      </td>
+      <td class="signature">
+        <em><a href="../../kiama/example/lambda2/Lambda$object.html" target="_self">Lambda</a></em>
+        <code> extends </code><a href="../../kiama/util/ParsingREPL.html" target="_self">ParsingREPL</a>[<a href="../../kiama/example/lambda2/AST$object.Exp.html" target="_self">Exp</a>]<code> with </code><a href="../../kiama/example/lambda2/Parser.html" target="_self">Parser</a>
+        
+        <div>A simple typed lambda calculus read-eval-print-loop that offers
+ choice from among multiple evaluation mechanisms.  The lambda calculus
+ supported and the strategies used are heavily based on "Building
+ Interpreters with Rewriting Strategies", Eelco Dolstra and Eelco
+ Visser, LDTA 2002 (published in Volume 65/3 of Electronic Notes in
+ Theoretical Computer Science, Elsevier).</div>
+      </td>
+    </tr>        
+        </table></body>
+      </html>

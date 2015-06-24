@@ -1,0 +1,446 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>output - org.kiama.output</title>
+          <meta name="description" content="output - org.kiama.output" />
+          <meta name="keywords" content="output org.kiama.output" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'org.kiama.output.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="org">org</a>.<a href="../package.html" class="extype" name="org.kiama">kiama</a></p>
+        <h1>output</h1> <span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">output</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.output.Filters" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="FiltersextendsAnyRef"></a>
+      <a id="Filters:Filters"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Filters.html"><span class="name">Filters</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@FiltersextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A collection of useful string filters.</p><div class="fullcomment"><div class="comment cmt"><p>A collection of useful string filters. They are particularly intended
+to be filters for pretty-printer output so that the output can be
+tailored for a restricted setting in which it will be put. E.g., a
+program might be pretty-printed to show in a GUI window of a particular
+size, or lines indented greater than a certain amount might be omitted
+to show an overview.
+</p></div></div>
+    </li><li name="org.kiama.output.Fixity" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FixityextendsAnyRef"></a>
+      <a id="Fixity:Fixity"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Fixity.html"><span class="name">Fixity</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@FixityextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The possible fixities of operators.</p>
+    </li><li name="org.kiama.output.Infix" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="InfixextendsFixitywithProductwithSerializable"></a>
+      <a id="Infix:Infix"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Infix.html"><span class="name">Infix</span></a><span class="params">(<span name="side">side: <a href="Side.html" class="extype" name="org.kiama.output.Side">Side</a></span>)</span><span class="result"> extends <a href="Fixity.html" class="extype" name="org.kiama.output.Fixity">Fixity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@InfixextendsFixitywithProductwithSerializable" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The binary operator occurs in infix position (i.e., between its two operands).</p>
+    </li><li name="org.kiama.output.ParenPrettyPrinter" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="ParenPrettyPrinterextendsPrettyPrinter"></a>
+      <a id="ParenPrettyPrinter:ParenPrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ParenPrettyPrinter.html"><span class="name">ParenPrettyPrinter</span></a><span class="result"> extends <a href="PrettyPrinter.html" class="extype" name="org.kiama.output.PrettyPrinter">PrettyPrinter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@ParenPrettyPrinterextendsPrettyPrinter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A pretty-printer with support for pretty-printing expressions with minimal
+parenthesisation.</p><div class="fullcomment"><div class="comment cmt"><p>A pretty-printer with support for pretty-printing expressions with minimal
+parenthesisation.</p><p>Based on algorithm in &quot;Unparsing expressions with prefix and postfix operators&quot;,
+Ramsey, SP&amp;E, 28 (12), October 1998.  We have not implemented support for
+arbitrary arity infix operators.
+</p></div></div>
+    </li><li name="org.kiama.output.PrettyBinaryExpression" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="PrettyBinaryExpressionextendsPrettyOperatorExpression"></a>
+      <a id="PrettyBinaryExpression:PrettyBinaryExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyBinaryExpression.html"><span class="name">PrettyBinaryExpression</span></a><span class="result"> extends <a href="PrettyOperatorExpression.html" class="extype" name="org.kiama.output.PrettyOperatorExpression">PrettyOperatorExpression</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@PrettyBinaryExpressionextendsPrettyOperatorExpression" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Binary expressions that are to be pretty-printed.</p><div class="fullcomment"><div class="comment cmt"><p>Binary expressions that are to be pretty-printed. <code>left</code> and <code>right</code>
+give the two operand expressions and <code>op</code> the string that is to be
+used as the output of the operator.
+</p></div></div>
+    </li><li name="org.kiama.output.PrettyExpression" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="PrettyExpressionextendsAnyRef"></a>
+      <a id="PrettyExpression:PrettyExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyExpression.html"><span class="name">PrettyExpression</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@PrettyExpressionextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Super type of all expressions that are to be pretty-printed.</p>
+    </li><li name="org.kiama.output.PrettyOperatorExpression" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="PrettyOperatorExpressionextendsPrettyExpression"></a>
+      <a id="PrettyOperatorExpression:PrettyOperatorExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyOperatorExpression.html"><span class="name">PrettyOperatorExpression</span></a><span class="result"> extends <a href="PrettyExpression.html" class="extype" name="org.kiama.output.PrettyExpression">PrettyExpression</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@PrettyOperatorExpressionextendsPrettyExpression" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">An expression that contains an operator.</p><div class="fullcomment"><div class="comment cmt"><p>An expression that contains an operator.  Defines <code>priority</code> to relate
+the operator to other operators (lower number is higher priority, no
+default). Also defines <code>fixity</code> to specify the relationship between the
+operator and its operand(s) (no default).
+</p></div></div>
+    </li><li name="org.kiama.output.PrettyPrinter" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="PrettyPrinterextendsPrettyPrinterBase"></a>
+      <a id="PrettyPrinter:PrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyPrinter.html"><span class="name">PrettyPrinter</span></a><span class="result"> extends <a href="PrettyPrinterBase.html" class="extype" name="org.kiama.output.PrettyPrinterBase">PrettyPrinterBase</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@PrettyPrinterextendsPrettyPrinterBase" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A pretty-printer implemented using the continuation-based approach
+from Section 3.3 of Swierstra, S., and Chitil, O.</p><div class="fullcomment"><div class="comment cmt"><p>A pretty-printer implemented using the continuation-based approach
+from Section 3.3 of Swierstra, S., and Chitil, O. Linear, bounded,
+functional pretty-printing. Journal of Functional Programming 19, 01
+(2008), 1–16.</p><p><code>defaultIndent</code> specifies the indentation to use if none is specified in
+uses of the <code>nest</code> method (default: 4). <code>defaultWidth</code> specifies the
+default output width (default: 75).
+</p></div></div>
+    </li><li name="org.kiama.output.PrettyPrinterBase" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="PrettyPrinterBaseextendsAnyRef"></a>
+      <a id="PrettyPrinterBase:PrettyPrinterBase"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyPrinterBase.html"><span class="name">PrettyPrinterBase</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@PrettyPrinterBaseextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The interface of a pretty printer using combinators from Swierstra and
+Chitil (Linear, bounded, functional pretty-printing, Journal of Functional
+Programming, 19 (1), 2009) and Leijen's PPrint library.</p><div class="fullcomment"><div class="comment cmt"><p>The interface of a pretty printer using combinators from Swierstra and
+Chitil (Linear, bounded, functional pretty-printing, Journal of Functional
+Programming, 19 (1), 2009) and Leijen's PPrint library.  The latter
+is a version of Wadler's library which was inspired by an earlier
+library by Hughes.
+</p></div></div>
+    </li><li name="org.kiama.output.PrettyUnaryExpression" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="PrettyUnaryExpressionextendsPrettyOperatorExpression"></a>
+      <a id="PrettyUnaryExpression:PrettyUnaryExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyUnaryExpression.html"><span class="name">PrettyUnaryExpression</span></a><span class="result"> extends <a href="PrettyOperatorExpression.html" class="extype" name="org.kiama.output.PrettyOperatorExpression">PrettyOperatorExpression</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@PrettyUnaryExpressionextendsPrettyOperatorExpression" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Unary expressions that are to be pretty-printed.</p><div class="fullcomment"><div class="comment cmt"><p>Unary expressions that are to be pretty-printed. <code>exp</code> gives the operand
+expressions and <code>op</code> the string that is to be used as the output of the
+operator.
+</p></div></div>
+    </li><li name="org.kiama.output.Side" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SideextendsAnyRef"></a>
+      <a id="Side:Side"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Side.html"><span class="name">Side</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@SideextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The sides that an expression may appear on inside another expression
+or associativities that infix operators can have.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.kiama.output.Filters" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Filters"></a>
+      <a id="Filters:Filters"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Filters$.html"><span class="name">Filters</span></a><span class="result"> extends <a href="Filters.html" class="extype" name="org.kiama.output.Filters">Filters</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@Filters" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A collection of useful string filters.</p>
+    </li><li name="org.kiama.output.LeftAssoc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LeftAssoc"></a>
+      <a id="LeftAssoc:LeftAssoc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LeftAssoc$.html"><span class="name">LeftAssoc</span></a><span class="result"> extends <a href="Side.html" class="extype" name="org.kiama.output.Side">Side</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@LeftAssoc" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The left side or left associativitiy of an infix operator.</p>
+    </li><li name="org.kiama.output.NonAssoc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NonAssoc"></a>
+      <a id="NonAssoc:NonAssoc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NonAssoc$.html"><span class="name">NonAssoc</span></a><span class="result"> extends <a href="Side.html" class="extype" name="org.kiama.output.Side">Side</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@NonAssoc" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">No side or non-associativitiy of an infix operator.</p>
+    </li><li name="org.kiama.output.Postfix" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Postfix"></a>
+      <a id="Postfix:Postfix"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Postfix$.html"><span class="name">Postfix</span></a><span class="result"> extends <a href="Fixity.html" class="extype" name="org.kiama.output.Fixity">Fixity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@Postfix" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The unary operator occurs in postfix position (i.e., after its operand).</p>
+    </li><li name="org.kiama.output.Prefix" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Prefix"></a>
+      <a id="Prefix:Prefix"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Prefix$.html"><span class="name">Prefix</span></a><span class="result"> extends <a href="Fixity.html" class="extype" name="org.kiama.output.Fixity">Fixity</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@Prefix" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The unary operator occurs in prefix position (i.e., before its operand).</p>
+    </li><li name="org.kiama.output.PrettyPrinter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PrettyPrinter"></a>
+      <a id="PrettyPrinter:PrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyPrinter$.html"><span class="name">PrettyPrinter</span></a><span class="result"> extends <a href="PrettyPrinter.html" class="extype" name="org.kiama.output.PrettyPrinter">PrettyPrinter</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@PrettyPrinter" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Default pretty printer.</p>
+    </li><li name="org.kiama.output.RightAssoc" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RightAssoc"></a>
+      <a id="RightAssoc:RightAssoc"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="RightAssoc$.html"><span class="name">RightAssoc</span></a><span class="result"> extends <a href="Side.html" class="extype" name="org.kiama.output.Side">Side</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../index.html#org.kiama.output.package@RightAssoc" title="Permalink" target="_top">
+        <img src="../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">The right side or right associativitiy of an infix operator.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

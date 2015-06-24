@@ -1,0 +1,273 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>minijava - org.kiama.example.minijava</title>
+          <meta name="description" content="minijava - org.kiama.example.minijava" />
+          <meta name="keywords" content="minijava org.kiama.example.minijava" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'org.kiama.example.minijava.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="org">org</a>.<a href="../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../package.html" class="extype" name="org.kiama.example">example</a></p>
+        <h1>minijava</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">minijava</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.minijava.CodeGenerationTests" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CodeGenerationTestsextendsSyntaxAnalysiswithDriverwithTestCompiler[org.kiama.example.minijava.MiniJavaTree.Program]"></a>
+      <a id="CodeGenerationTests:CodeGenerationTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CodeGenerationTests.html"><span class="name">CodeGenerationTests</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.minijava.SyntaxAnalysis">SyntaxAnalysis</a> with <a href="Driver.html" class="extype" name="org.kiama.example.minijava.Driver">Driver</a> with <a href="../../util/TestCompiler.html" class="extype" name="org.kiama.util.TestCompiler">TestCompiler</a>[<a href="MiniJavaTree$$Program.html" class="extype" name="org.kiama.example.minijava.MiniJavaTree.Program">Program</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Tests that check that the code generator produces the expected byte code.</p>
+    </li><li name="org.kiama.example.minijava.Driver" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="DriverextendsSyntaxAnalysiswithCompiler[org.kiama.example.minijava.MiniJavaTree.Program]"></a>
+      <a id="Driver:Driver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Driver.html"><span class="name">Driver</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.minijava.SyntaxAnalysis">SyntaxAnalysis</a> with <span class="extype" name="org.kiama.util.Compiler">Compiler</span>[<a href="MiniJavaTree$$Program.html" class="extype" name="org.kiama.example.minijava.MiniJavaTree.Program">Program</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Conduct syntax analysis on the MiniJava program in the file given as the
+first command-line argument and print out the result source program tree.</p>
+    </li><li name="org.kiama.example.minijava.ParsingTests" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ParsingTestsextendsSyntaxAnalysiswithFunSuite"></a>
+      <a id="ParsingTests:ParsingTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ParsingTests.html"><span class="name">ParsingTests</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.minijava.SyntaxAnalysis">SyntaxAnalysis</a> with <span class="extype" name="org.scalatest.FunSuite">FunSuite</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Tests that check that the parser works correctly.</p>
+    </li><li name="org.kiama.example.minijava.SemanticTests" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SemanticTestsextendsFunSuite"></a>
+      <a id="SemanticTests:SemanticTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SemanticTests.html"><span class="name">SemanticTests</span></a><span class="result"> extends <span class="extype" name="org.scalatest.FunSuite">FunSuite</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Tests that check that the parser works correctly.</p>
+    </li><li name="org.kiama.example.minijava.SyntaxAnalysis" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SyntaxAnalysisextendsPositionedParserUtilities"></a>
+      <a id="SyntaxAnalysis:SyntaxAnalysis"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="SyntaxAnalysis.html"><span class="name">SyntaxAnalysis</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.PositionedParserUtilities">PositionedParserUtilities</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Module containing parsers for MiniJava.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.kiama.example.minijava.CodeGenerator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CodeGenerator"></a>
+      <a id="CodeGenerator:CodeGenerator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CodeGenerator$.html"><span class="name">CodeGenerator</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Code generator that prints JVM target trees to Jasmine assembler files.</p>
+    </li><li name="org.kiama.example.minijava.JVMTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="JVMTree"></a>
+      <a id="JVMTree:JVMTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="JVMTree$.html"><span class="name">JVMTree</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Module containing tree structures for representing JVM programs.</p>
+    </li><li name="org.kiama.example.minijava.Main" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Main"></a>
+      <a id="Main:Main"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Main$.html"><span class="name">Main</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.minijava.SyntaxAnalysis">SyntaxAnalysis</a> with <a href="Driver.html" class="extype" name="org.kiama.example.minijava.Driver">Driver</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Main program for MiniJava compiler.</p>
+    </li><li name="org.kiama.example.minijava.MiniJavaTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="MiniJavaTree"></a>
+      <a id="MiniJavaTree:MiniJavaTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="MiniJavaTree$.html"><span class="name">MiniJavaTree</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Module containing tree structures for representing MiniJava programs.</p>
+    </li><li name="org.kiama.example.minijava.SemanticAnalysis" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SemanticAnalysis"></a>
+      <a id="SemanticAnalysis:SemanticAnalysis"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SemanticAnalysis$.html"><span class="name">SemanticAnalysis</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Semantic analysis module containing static checking of Minijava
+semantic rules, most notably name analysis.</p>
+    </li><li name="org.kiama.example.minijava.SemanticTestParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SemanticTestParser"></a>
+      <a id="SemanticTestParser:SemanticTestParser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SemanticTestParser$.html"><span class="name">SemanticTestParser</span></a><span class="result"> extends <a href="SyntaxAnalysis.html" class="extype" name="org.kiama.example.minijava.SyntaxAnalysis">SyntaxAnalysis</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Parser to use for semantic tests.</p>
+    </li><li name="org.kiama.example.minijava.SymbolTable" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SymbolTable"></a>
+      <a id="SymbolTable:SymbolTable"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="SymbolTable$.html"><span class="name">SymbolTable</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.Environments">Environments</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Symbol table module containing facilities for creating and
+manipulating MiniJava language symbol information.</p>
+    </li><li name="org.kiama.example.minijava.Translator" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Translator"></a>
+      <a id="Translator:Translator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Translator$.html"><span class="name">Translator</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Translator from MiniJava source programs to JVM target programs.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>dataflow - org.kiama.example.dataflow</title>
+          <meta name="description" content="dataflow - org.kiama.example.dataflow" />
+          <meta name="keywords" content="dataflow org.kiama.example.dataflow" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'org.kiama.example.dataflow.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="org">org</a>.<a href="../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../package.html" class="extype" name="org.kiama.example">example</a></p>
+        <h1>dataflow</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dataflow</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.dataflow.ControlFlow" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ControlFlowextendsObject"></a>
+      <a id="ControlFlow:ControlFlow"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ControlFlow.html"><span class="name">ControlFlow</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Control flow interface.</p>
+    </li><li name="org.kiama.example.dataflow.ControlFlowImpl" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ControlFlowImplextendsControlFlow"></a>
+      <a id="ControlFlowImpl:ControlFlowImpl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ControlFlowImpl.html"><span class="name">ControlFlowImpl</span></a><span class="result"> extends <a href="ControlFlow.html" class="extype" name="org.kiama.example.dataflow.ControlFlow">ControlFlow</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Control flow implementation.</p>
+    </li><li name="org.kiama.example.dataflow.DataflowForTests" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataflowForTestsextendsTests"></a>
+      <a id="DataflowForTests:DataflowForTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="DataflowForTests.html"><span class="name">DataflowForTests</span></a><span class="result"> extends <a href="../../util/Tests.html" class="extype" name="org.kiama.util.Tests">Tests</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Tests of extended data flow attribution.</p>
+    </li><li name="org.kiama.example.dataflow.DataflowTests" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataflowTestsextendsDriverwithTestCompiler[org.kiama.example.dataflow.DataflowAST.Stm]"></a>
+      <a id="DataflowTests:DataflowTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="DataflowTests.html"><span class="name">DataflowTests</span></a><span class="result"> extends <a href="Driver.html" class="extype" name="org.kiama.example.dataflow.Driver">Driver</a> with <a href="../../util/TestCompiler.html" class="extype" name="org.kiama.util.TestCompiler">TestCompiler</a>[<a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Tests of data flow attribution.</p>
+    </li><li name="org.kiama.example.dataflow.Driver" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DriverextendsParserwithCompiler[org.kiama.example.dataflow.DataflowAST.Stm]"></a>
+      <a id="Driver:Driver"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Driver.html"><span class="name">Driver</span></a><span class="result"> extends <a href="Parser.html" class="extype" name="org.kiama.example.dataflow.Parser">Parser</a> with <span class="extype" name="org.kiama.util.Compiler">Compiler</span>[<a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Parse a simple imperative language program, calculate its dataflow
+relations and use them to remove dead assignments.</p>
+    </li><li name="org.kiama.example.dataflow.For" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ForextendsDataflowAST.StmwithProductwithSerializable"></a>
+      <a id="For:For"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="For.html"><span class="name">For</span></a><span class="params">(<span name="init">init: <a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a></span>, <span name="c">c: <a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a></span>, <span name="inc">inc: <a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a></span>, <span name="body">body: <a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a></span>)</span><span class="result"> extends <a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.dataflow.Foreach" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ForeachextendsDataflowAST.StmwithProductwithSerializable"></a>
+      <a id="Foreach:Foreach"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Foreach.html"><span class="name">Foreach</span></a><span class="params">(<span name="cond">cond: <a href="DataflowAST$.html#Var=String" class="extmbr" name="org.kiama.example.dataflow.DataflowAST.Var">Var</a></span>, <span name="body">body: <a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a></span>)</span><span class="result"> extends <a href="DataflowAST$$Stm.html" class="extype" name="org.kiama.example.dataflow.DataflowAST.Stm">Stm</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.dataflow.Liveness" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="LivenessextendsObject"></a>
+      <a id="Liveness:Liveness"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Liveness.html"><span class="name">Liveness</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Variable liveness interface.</p>
+    </li><li name="org.kiama.example.dataflow.LivenessImpl" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="LivenessImplextendsLiveness"></a>
+      <a id="LivenessImpl:LivenessImpl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="LivenessImpl.html"><span class="name">LivenessImpl</span></a><span class="result"> extends <a href="Liveness.html" class="extype" name="org.kiama.example.dataflow.Liveness">Liveness</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Variable liveness implementation.</p>
+    </li><li name="org.kiama.example.dataflow.Parser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ParserextendsPositionedParserUtilities"></a>
+      <a id="Parser:Parser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Parser.html"><span class="name">Parser</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.PositionedParserUtilities">PositionedParserUtilities</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Syntax analyser for simple imperative dataflow language.</p>
+    </li><li name="org.kiama.example.dataflow.Variables" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="VariablesextendsObject"></a>
+      <a id="Variables:Variables"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Variables.html"><span class="name">Variables</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Variable use and definition interface.</p>
+    </li><li name="org.kiama.example.dataflow.VariablesImpl" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="VariablesImplextendsVariables"></a>
+      <a id="VariablesImpl:VariablesImpl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="VariablesImpl.html"><span class="name">VariablesImpl</span></a><span class="result"> extends <a href="Variables.html" class="extype" name="org.kiama.example.dataflow.Variables">Variables</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Variable use and definition implementation.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.kiama.example.dataflow.Dataflow" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Dataflow"></a>
+      <a id="Dataflow:Dataflow"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Dataflow$.html"><span class="name">Dataflow</span></a><span class="result"> extends <a href="LivenessImpl.html" class="extype" name="org.kiama.example.dataflow.LivenessImpl">LivenessImpl</a> with <a href="VariablesImpl.html" class="extype" name="org.kiama.example.dataflow.VariablesImpl">VariablesImpl</a> with <a href="ControlFlowImpl.html" class="extype" name="org.kiama.example.dataflow.ControlFlowImpl">ControlFlowImpl</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.dataflow.DataflowAST" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataflowAST"></a>
+      <a id="DataflowAST:DataflowAST"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DataflowAST$.html"><span class="name">DataflowAST</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Imperative language AST for dataflow example.</p>
+    </li><li name="org.kiama.example.dataflow.DataflowFor" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataflowFor"></a>
+      <a id="DataflowFor:DataflowFor"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DataflowFor$.html"><span class="name">DataflowFor</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.dataflow.DataflowForeach" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataflowForeach"></a>
+      <a id="DataflowForeach:DataflowForeach"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="DataflowForeach$.html"><span class="name">DataflowForeach</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="org.kiama.example.dataflow.Main" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Main"></a>
+      <a id="Main:Main"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Main$.html"><span class="name">Main</span></a><span class="result"> extends <a href="Driver.html" class="extype" name="org.kiama.example.dataflow.Driver">Driver</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Dataflow language implementation main program.</p>
+    </li><li name="org.kiama.example.dataflow.Optimise" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Optimise"></a>
+      <a id="Optimise:Optimise"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Optimise$.html"><span class="name">Optimise</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Optimise a dataflow program.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>org.kiama.example.oberon0.base.c</title>
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link type="text/css" media="screen" rel="stylesheet" href="../../../../../../lib/template.css" />
+      <script type="text/javascript" src="../../../../../../lib/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../../../lib/tools.tooltip.js"></script>
+    
+        </head>
+        <body onload="sh_highlightDocument('../lib/', '.min.js');" class="value">
+      <div id="definition">
+        <img src="../../../../../../lib/package_big.png" />
+        <p id="owner"><a name="org" class="extype" href="../../../../../package.html">org</a>.<a name="org.kiama" class="extype" href="../../../../package.html">kiama</a>.<a name="org.kiama.example" class="extype" href="../../../package.html">example</a>.<a name="org.kiama.example.oberon0" class="extype" href="../../package.html">oberon0</a>.<a name="org.kiama.example.oberon0.base" class="extype" href="../package.html">base</a></p>
+        <h1>c</h1>
+      </div>
+
+      <h4 class="signature" id="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">c</span>
+      </span>
+      </h4>
+      
+      <div class="fullcommenttop" id="comment"></div>
+    
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input accesskey="/" type="text" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div class="types members" id="types">
+              <h3>Type Members</h3>
+              <ol><li visbl="pub" name="org.kiama.example.oberon0.base.c.CASTNode" data-isabs="true">
+      <a id="CASTNode:CASTNode"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CASTNode.html"><span class="name">CASTNode</span></a><span class="result"> extends AnyRef</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Root type of all C abstract syntax tree nodes.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CArrayType" data-isabs="false">
+      <a id="CArrayType:CArrayType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CArrayType.html"><span class="name">CArrayType</span></a><span class="params">(<span name="size">size: Int</span>, <span name="elemtype">elemtype: CType</span>)</span><span class="result"> extends CType with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C array types.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CBlock" data-isabs="false">
+      <a id="CBlock:CBlock"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CBlock.html"><span class="name">CBlock</span></a><span class="params">(<span name="decls">decls: List[CDeclaration]</span>, <span name="stmts">stmts: List[CStatement]</span>)</span><span class="result"> extends CStatement with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C blocks.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CDeclaration" data-isabs="true">
+      <a id="CDeclaration:CDeclaration"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CDeclaration.html"><span class="name">CDeclaration</span></a><span class="result"> extends CASTNode</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type of C declarations.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CEmptyStmt" data-isabs="false">
+      <a id="CEmptyStmt:CEmptyStmt"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CEmptyStmt.html"><span class="name">CEmptyStmt</span></a><span class="params">()</span><span class="result"> extends CStatement with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C empty statements.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CExpression" data-isabs="true">
+      <a id="CExpression:CExpression"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CExpression.html"><span class="name">CExpression</span></a><span class="result"> extends CASTNode with PrettyExpression</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type for C expressions.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CFunctionDecl" data-isabs="false">
+      <a id="CFunctionDecl:CFunctionDecl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CFunctionDecl.html"><span class="name">CFunctionDecl</span></a><span class="params">(<span name="decl">decl: CVarDecl</span>, <span name="args">args: List[CDeclaration]</span>, <span name="body">body: CBlock</span>)</span><span class="result"> extends CDeclaration with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C function declarations.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CInclude" data-isabs="false">
+      <a id="CInclude:CInclude"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CInclude.html"><span class="name">CInclude</span></a><span class="params">(<span name="s">s: String</span>)</span><span class="result"> extends CASTNode with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C include directive.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CIntExp" data-isabs="false">
+      <a id="CIntExp:CIntExp"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CIntExp.html"><span class="name">CIntExp</span></a><span class="params">(<span name="v">v: Int</span>)</span><span class="result"> extends CExpression with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C integer expressions.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CIntType" data-isabs="false">
+      <a id="CIntType:CIntType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CIntType.html"><span class="name">CIntType</span></a><span class="params">()</span><span class="result"> extends CType with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C integer type (int).</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CPrettyPrinter" data-isabs="true">
+      <a id="CPrettyPrinter:CPrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CPrettyPrinter.html"><span class="name">CPrettyPrinter</span></a><span class="result"> extends ParenPrettyPrinter</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Interface for all C pretty-printers.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CProgram" data-isabs="false">
+      <a id="CProgram:CProgram"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CProgram.html"><span class="name">CProgram</span></a><span class="params">(<span name="includes">includes: List[CInclude]</span>, <span name="decls">decls: List[CDeclaration]</span>)</span><span class="result"> extends CASTNode with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C programs.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CReturn" data-isabs="false">
+      <a id="CReturn:CReturn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CReturn.html"><span class="name">CReturn</span></a><span class="params">(<span name="e">e: CExpression</span>)</span><span class="result"> extends CStatement with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C return statements.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CStatement" data-isabs="true">
+      <a id="CStatement:CStatement"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CStatement.html"><span class="name">CStatement</span></a><span class="result"> extends CASTNode</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type for C statements.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CStrType" data-isabs="false">
+      <a id="CStrType:CStrType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CStrType.html"><span class="name">CStrType</span></a><span class="params">()</span><span class="result"> extends CType with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C string type (char *).</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CType" data-isabs="true">
+      <a id="CType:CType"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CType.html"><span class="name">CType</span></a><span class="result"> extends CASTNode</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Non-terminal type for C types.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.CVarDecl" data-isabs="false">
+      <a id="CVarDecl:CVarDecl"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CVarDecl.html"><span class="name">CVarDecl</span></a><span class="params">(<span name="ident">ident: String</span>, <span name="tipe">tipe: CType</span>)</span><span class="result"> extends CDeclaration with Product with Serializable</span>
+      </span>
+      </h4>
+      <p class="comment cmt">C variable declarations.</p>
+    </li><li visbl="pub" name="org.kiama.example.oberon0.base.c.PrettyPrinter" data-isabs="true">
+      <a id="PrettyPrinter:PrettyPrinter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PrettyPrinter.html"><span class="name">PrettyPrinter</span></a><span class="result"> extends CPrettyPrinter</span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html >
+<html>
+        <head>
+          <title>lambda - org.kiama.example.lambda</title>
+          <meta name="description" content="lambda - org.kiama.example.lambda" />
+          <meta name="keywords" content="lambda org.kiama.example.lambda" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'org.kiama.example.lambda.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="org">org</a>.<a href="../../package.html" class="extype" name="org.kiama">kiama</a>.<a href="../package.html" class="extype" name="org.kiama.example">example</a></p>
+        <h1>lambda</h1> <span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">lambda</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="org.kiama.example.lambda.Evaluator" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="EvaluatorextendsAnyRef"></a>
+      <a id="Evaluator:Evaluator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Evaluator.html"><span class="name">Evaluator</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package@EvaluatorextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Lambda calculus evaluator following Rose's \xgc, ie with explicit
+substitutions and garbage collection.</p><div class="fullcomment"><div class="comment cmt"><p>Lambda calculus evaluator following Rose's \xgc, ie with explicit
+substitutions and garbage collection.  See &quot;Explicit Substitution
+- Tutorial and Survey&quot;, Kristoffer H. Rose, BRICS LS-96-3, October
+1996.
+</p></div></div>
+    </li><li name="org.kiama.example.lambda.Generator" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="GeneratorextendsAnyRef"></a>
+      <a id="Generator:Generator"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Generator.html"><span class="name">Generator</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package@GeneratorextendsAnyRef" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">ScalaCheck generators for programs in the lambda language.</p>
+    </li><li name="org.kiama.example.lambda.LambdaTests" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LambdaTestsextendsRegexParserTestswithSyntaxAnalyserwithEvaluatorwithGenerator"></a>
+      <a id="LambdaTests:LambdaTests"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="LambdaTests.html"><span class="name">LambdaTests</span></a><span class="result"> extends <a href="../../util/RegexParserTests.html" class="extype" name="org.kiama.util.RegexParserTests">RegexParserTests</a> with <a href="SyntaxAnalyser.html" class="extype" name="org.kiama.example.lambda.SyntaxAnalyser">SyntaxAnalyser</a> with <a href="Evaluator.html" class="extype" name="org.kiama.example.lambda.Evaluator">Evaluator</a> with <a href="Generator.html" class="extype" name="org.kiama.example.lambda.Generator">Generator</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package@LambdaTestsextendsRegexParserTestswithSyntaxAnalyserwithEvaluatorwithGenerator" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Lambda calculus tests.</p>
+    </li><li name="org.kiama.example.lambda.SyntaxAnalyser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SyntaxAnalyserextendsPositionedParserUtilities"></a>
+      <a id="SyntaxAnalyser:SyntaxAnalyser"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="SyntaxAnalyser.html"><span class="name">SyntaxAnalyser</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.PositionedParserUtilities">PositionedParserUtilities</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package@SyntaxAnalyserextendsPositionedParserUtilities" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">Parser to abstract syntax tree for simple lambda calculus.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="org.kiama.example.lambda.Lambda" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Lambda"></a>
+      <a id="Lambda:Lambda"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Lambda$.html"><span class="name">Lambda</span></a><span class="result"> extends <span class="extype" name="org.kiama.util.ParsingREPL">ParsingREPL</span>[<a href="LambdaTree$$Exp.html" class="extype" name="org.kiama.example.lambda.LambdaTree.Exp">Exp</a>] with <a href="SyntaxAnalyser.html" class="extype" name="org.kiama.example.lambda.SyntaxAnalyser">SyntaxAnalyser</a> with <a href="Evaluator.html" class="extype" name="org.kiama.example.lambda.Evaluator">Evaluator</a> with <span class="extype" name="org.kiama.util.Profiler">Profiler</span></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package@Lambda" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A read-eval-print loop for evaluation of lambda calculus expressions.</p>
+    </li><li name="org.kiama.example.lambda.LambdaGen" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LambdaGen"></a>
+      <a id="LambdaGen:LambdaGen"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LambdaGen$.html"><span class="name">LambdaGen</span></a><span class="result"> extends <a href="../../util/GeneratingREPL.html" class="extype" name="org.kiama.util.GeneratingREPL">GeneratingREPL</a>[<a href="LambdaTree$$Exp.html" class="extype" name="org.kiama.example.lambda.LambdaTree.Exp">Exp</a>] with <a href="Generator.html" class="extype" name="org.kiama.example.lambda.Generator">Generator</a></span>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package@LambdaGen" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A read-eval-print loop for generating random expressions.</p>
+    </li><li name="org.kiama.example.lambda.LambdaTree" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LambdaTree"></a>
+      <a id="LambdaTree:LambdaTree"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="LambdaTree$.html"><span class="name">LambdaTree</span></a>
+      </span>
+      </h4><span class="permalink">
+      <a href="../../../../index.html#org.kiama.example.lambda.package@LambdaTree" title="Permalink" target="_top">
+        <img src="../../../../lib/permalink.png" />
+      </a>
+    </span>
+      <p class="shortcomment cmt">A simple lambda calculus.</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>
