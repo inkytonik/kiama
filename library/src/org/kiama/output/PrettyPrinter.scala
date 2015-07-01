@@ -373,8 +373,7 @@ trait PrettyPrinterBase {
                     case (l, r)        => any (l) <+> "->" <+> any (r)
                     case None          => "None"
                     case p : Product   => list (p.productIterator.toList,
-                                                s"${p.productPrefix}",
-                                                any)
+                                                p.productPrefix, any)
                     case s : String    => dquotes (text (s))
                     case _             => value (a)
                 })
