@@ -1,14 +1,12 @@
 4
-[1.1] 'x' unknown
-
+1:1: 'x' unknown
 x
 ^
 9
 5
 3
 5
-[1.21] expected Int, found Int -> Int
-
+1:21: expected Int, found Int -> Int
 (\x : Int . x + 1) (\y : Int . y + 1)
                     ^
 exp                  print the result of evaluating exp

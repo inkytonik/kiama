@@ -113,7 +113,7 @@ trait CompilerBase[T, C <: Config] extends Profiler {
                 case Left (ast) =>
                     process (filename, ast, config)
                 case Right (msgs) =>
-                    config.error.emitln (formats (msgs))
+                    config.error.emit (formats (msgs))
             }
         } catch {
             case e : FileNotFoundException =>
@@ -174,8 +174,8 @@ trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexPars
 
     /**
      * Make messages for the given parse failure. By default a single message
-     * is produced referring to a dummy object whose start position is set to
-     * the location of the failure.
+     * is produced referring to a dummy object whose position is set to the
+     * location of the failure.
      */
     def parseFailureMessages (f : NoSuccess) : Messages = {
         val error = ParseError ()

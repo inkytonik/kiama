@@ -17,7 +17,7 @@ BEGIN
     IF ~bvar THEN
         avar := 2
     END;
-    
+
     IF bvar & ~bvar THEN
         avar := 3;
         avar := 4
@@ -25,7 +25,7 @@ BEGIN
         avar := 5;
         avar := 6
     END;
-    
+
     IF bvar THEN
         avar := 7
     ELSIF bvar THEN
@@ -37,9 +37,9 @@ BEGIN
     ELSIF bvar THEN
         avar := 10
     ELSE
-        avar := 11        
+        avar := 11
     END;
-    
+
     IF bvar THEN
         avar := 12
     ELSIF bvar THEN
@@ -51,9 +51,9 @@ BEGIN
         avar := 16;
         avar := 17
     ELSE
-        avar := 18        
+        avar := 18
     END;
-    
+
     IF bvar THEN
         IF bvar THEN
             avar := 19
@@ -61,7 +61,7 @@ BEGIN
             avar := 20
         END
     END;
-        
+
     IF bvar THEN
         IF bvar THEN
             avar := 21

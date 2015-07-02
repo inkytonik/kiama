@@ -104,7 +104,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
                         output.emitln ("parse failed")
                     }
                     section (output, "errors")
-                    output.emitln (formats (msgs))
+                    output.emit (formats (msgs))
             }
         } catch {
             case e : FileNotFoundException =>

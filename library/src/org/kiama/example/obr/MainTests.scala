@@ -67,7 +67,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
                             tester (title, config.error, transformer.code (ast))
                         }
                     case Right (msgs) =>
-                        config.error.emitln (formats (msgs))
+                        config.error.emit (formats (msgs))
                         fail (s"$title emitted a parse error.")
                 }
             } catch {

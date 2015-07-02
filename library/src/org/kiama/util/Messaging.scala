@@ -55,11 +55,11 @@ case class Message (label : String, optvalue : Option[AnyRef] = None) {
 
     /**
      * Format the message for reporting as a line containing the start
-     * position and the label, followed by lines containing the input
+     * line and the label, followed by lines containing the input
      * text and a pointer to the message location.
      */
     val format : String =
-        s"[${pos}] $label\n\n${pos.longString}"
+        s"$line:$column: $label\n${pos.longString}\n"
 
 }
 
@@ -117,11 +117,10 @@ object Messaging {
         }
 
     /**
-     * Return a string containing all the given messages formatted separated
-     * by newlines.
+     * Return a string containing all the given messages sorted and formatted.
      */
     def formats (messages : Messages) : String =
-        messages.map (_.format).mkString ("\n")
+        sortmessages (messages).map (_.format).mkString ("")
 
     /**
      * If `cond` is true make a singleton message list that associates the
@@ -140,7 +139,7 @@ object Messaging {
      * defaults to standard error.
      */
     def report (messages : Messages, emitter : Emitter = new ErrorEmitter) {
-        sortmessages (messages).map (msg => emitter.emitln (msg.format))
+        emitter.emit (formats (messages))
     }
 
     /**

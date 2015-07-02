@@ -1,5 +1,4 @@
-[6.18] `)' expected but `b' found
-
+6:18: `)' expected but `b' found
     x : ( harold bob );
 
                  ^
