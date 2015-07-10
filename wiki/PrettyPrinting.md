@@ -467,12 +467,11 @@ See the [API documentation](http://code.google.com/p/kiama/wiki/Releases)
 for your Kiama release for detailed descriptions of `lsep` and
 `lsep2`.
 
-## Products
+## Pretty-printing any value
 
-The `product` combinator provides a convenient way to pretty print any
-`Product` value, most commonly instances of case classes. (`product`
-also has some support for printing collection classes such as maps
-and vectors in a nice way.)
+The `any` combinator provides a convenient way to pretty print any
+value, most commonly instances of case classes, but also common
+data structures such as tuples, vectors, and maps.
 
 For example, given the classes
 
@@ -485,7 +484,7 @@ case class Add (l : Exp, r : Exp) extends Exp
 the document
 
 ```
-product (Add (Num (1), Num (2)))
+any (Add (Num (1), Num (2)))
 ```
 
 might be pretty-printed as
