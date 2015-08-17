@@ -64,8 +64,8 @@ trait Memoiser {
             get (t).getOrElse (u)
 
         /**
-         * Has the value of this attribute at `t` already been computed or not?
-         * By default, does the memo table contain a value for `t`?
+         * Has the value at `t` already been computed or not? By default, does
+         * the memo table contain a value for `t`?
          */
         def hasBeenComputedAt (t : T) : Boolean =
             get (t) != None
