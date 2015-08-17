@@ -122,6 +122,7 @@ class AttributionTests extends Tests {
     test ("attributes of a value type are correctly evaluated") {
         val definitions = new Definitions
         import definitions._
+
         assertResult (false, "hasBeenComputedAt") (inc.hasBeenComputedAt (1))
         assertResult (false, "hasBeenComputedAt") (inc.hasBeenComputedAt (2))
         assertResult (0, "evaluation count") (count)
@@ -196,6 +197,7 @@ class AttributionTests extends Tests {
     test ("cached attributes are correctly evaluated") {
         val definitions = new Definitions
         import definitions._
+
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         assertResult (10, "first value") (maximum (t))
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
@@ -207,6 +209,7 @@ class AttributionTests extends Tests {
     test ("reset resets the hasBeenComputedAt state") {
         val definitions = new Definitions
         import definitions._
+
         assertResult (false, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
         maximum (t)
         assertResult (true, "hasBeenComputedAt") (maximum.hasBeenComputedAt (t))
@@ -217,6 +220,7 @@ class AttributionTests extends Tests {
     test ("hasBeenComputedAt returns false while an attribute is being evaluated") {
         val definitions = new Definitions
         import definitions._
+
         assertResult (false, "hasBeenComputedAt during") (leafComputed (l))
         assertResult (true, "hasBeenComputedAt after") (leafComputed.hasBeenComputedAt (l))
     }
@@ -224,6 +228,7 @@ class AttributionTests extends Tests {
     test ("constant attributes are only evaluated once") {
         val definitions = new Definitions
         import definitions._
+
         assertResult (42, "first value") (answer (t))
         assertResult (42, "second value") (answer (t))
         assertResult (1, "evaluation count") (count)
@@ -232,6 +237,7 @@ class AttributionTests extends Tests {
     test ("cached attributes are re-evaluated after a reset") {
         val definitions = new Definitions
         import definitions._
+
         assertResult (10, "first value") (maximum (t))
         assertResult (10, "first value") (maximum (t))
         assertResult (2, "evaluation count") (count)
@@ -243,6 +249,7 @@ class AttributionTests extends Tests {
     test ("cached attributes are distinct for nodes that are equal") {
         val definitions = new Definitions
         import definitions._
+
         assertResult (10, "first value") (maximum (t))
         assertResult (10, "second value") (maximum (s))
         assertResult (4, "evaluation count") (count)
@@ -769,4 +776,3 @@ class AttributionTests extends Tests {
     }
 
 }
-
