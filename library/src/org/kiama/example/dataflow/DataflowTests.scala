@@ -59,6 +59,38 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
 
     val outAttr = out.asInstanceOf[CircularAttribute[Stm,Set[Var]]]
 
+    test ("succ - s1") {
+        assertSameCollection (Set (s2)) (succ (s1))
+    }
+
+    test ("succ - s2") {
+        assertSameCollection (Set (s3)) (succ (s2))
+    }
+
+    test ("succ - s3") {
+        assertSameCollection (Set (s4)) (succ (s3))
+    }
+
+    test ("succ - s4") {
+        assertSameCollection (Set (s5, s41)) (succ (s4))
+    }
+
+    test ("succ - s41") {
+        assertSameCollection (Set (s411)) (succ (s41))
+    }
+
+    test ("succ - s411") {
+        assertSameCollection (Set (s412)) (succ (s411))
+    }
+
+    test ("succ - s412") {
+        assertSameCollection (Set (s4)) (succ (s412))
+    }
+
+    test ("succ - s5") {
+        assertSameCollection (Set ()) (succ (s5))
+    }
+
     test ("in - s1") {
         assertResult (Set ("w", "v")) (in (s1))
     }
