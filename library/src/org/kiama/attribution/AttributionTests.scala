@@ -35,14 +35,6 @@ class AttributionTests extends Tests {
     case class Pair (left : TestTree, right : TestTree) extends TestTree
     case class Leaf (value : Int) extends TestTree
     case class Unused (b : Boolean) extends TestTree
-    case class EitherTree (e : Either[Pair,Leaf]) extends TestTree
-    case class ListTree (l : List[TestTree]) extends TestTree
-    case class SetTree (s : Set[TestTree]) extends TestTree
-    case class GenSeqTree (v : GenSeq[TestTree]) extends TestTree
-    case class MapTree (m : Map[TestTree,TestTree]) extends TestTree
-    case class PairTree (p : (TestTree,TestTree)) extends TestTree
-    case class TripleTree (p : (TestTree,TestTree,TestTree)) extends TestTree
-    case class QuadTree (p : (TestTree,TestTree,TestTree,TestTree)) extends TestTree
 
     val l = Leaf (3)
     val s = Pair (Leaf (3), Pair (Leaf (1), Leaf (10)))
