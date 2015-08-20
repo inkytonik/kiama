@@ -27,7 +27,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
     import base.source.{Block, IdnDef, IdnUse, ModuleDecl, SourceNode}
     import decorators.down
     import org.kiama.util.Entity
-    import org.kiama.util.Messaging.{check, checkuse, message, Messages, noMessages}
+    import org.kiama.util.Messaging.{check, checkUse, message, Messages, noMessages}
     import source.{Call, FPSection, ProcDecl}
 
     /**
@@ -43,7 +43,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
                 checkNonLocalVarAccess (u)
 
             case Call (u @ IdnUse (i), cps) =>
-                checkuse (entity (u)) {
+                checkUse (entity (u)) {
                     case _: BuiltinProc | _ : Procedure =>
                         noMessages
                     case _ =>
@@ -57,7 +57,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
      * at the top level.  Non-local procedure accesses are just disallowed.
      */
     def checkNonLocalVarAccess (u : IdnUse) : Messages =
-        checkuse (entity (u)) {
+        checkUse (entity (u)) {
             case Procedure (i, p) =>
                 message (u, s"non-local procedure access to $i is not allowed", level (u) > level (p))
 

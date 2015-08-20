@@ -29,23 +29,21 @@
 package org.kiama
 package example.picojava
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * PicoJava parser
  */
-trait SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import PicoJavaTree._
     import scala.language.postfixOps
 
-    lazy val parser =
-        phrase (program)
-
     lazy val program =
         block ^^ Program
 
-    lazy val block : PackratParser[Block] =
+    lazy val block : Parser[Block] =
         "{" ~> (block_stmt*) <~ "}" ^^ Block
     lazy val block_stmt =
         class_decl | var_decl | stmt
@@ -57,7 +55,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
     lazy val var_decl =
         name ~ IDENTIFIER <~ ";" ^^ VarDecl
 
-    lazy val stmt : PackratParser[Stmt] =
+    lazy val stmt : Parser[Stmt] =
         assign_stmt | while_stmt
     lazy val assign_stmt =
         name ~ ("=" ~> exp <~ ";") ^^ AssignStmt
@@ -77,7 +75,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
     lazy val IDENTIFIER =
         "[a-zA-Z][a-zA-Z0-9]*".r
 
-    override val whiteSpace =
-        """(\s|(//.*\n))+""".r
+    override val whitespace : Parser[String] =
+        """(\s|(//.*\n))*""".r
 
 }

@@ -23,9 +23,14 @@ package example.til
 
 import org.kiama.util.TransformerTests
 
-class TIL2_3Tests extends TIL2_3 with TransformerTests {
+class TIL2_3Tests extends TransformerTests {
 
     import TILTree._
+
+    val til2_3 = new TIL2_3
+    val parsers = til2_3.parsers
+    import parsers.program
+    import til2_3.transform
 
     test ("transform a program with many nested declarations") {
         val input = """
@@ -110,7 +115,7 @@ end
                     Assign (n, Mul (Var (r), Var (y))),
                     Write (Var (n)),
                     Assign (y, Sub (Var (y), Num (1)))))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
 }

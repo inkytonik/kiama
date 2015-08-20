@@ -353,17 +353,22 @@ class RewriterTests extends Tests with Generator {
         }
 
         {
-            val l1 = List (Num (1), Num (2), Num (3))
-            val r1 = List (Num (2), Num (3), Num (4))
-            val l2 = List (Num (1), Var ("i"), Num (3))
-            val l3 = List (Num (1))
+            val ll1 = List (Num (1), Num (2), Num (3))
+            val lr1 = List (Num (2), Num (3), Num (4))
+            val ll2 = List (Num (1), Var ("i"), Num (3))
+            val ll3 = List (Num (1))
+
+            val vl1 = Vector (Num (1), Num (2), Num (3))
+            val vr1 = Vector (Num (2), Num (3), Num (4))
+            val vl2 = Vector (Num (1), Var ("i"), Num (3))
+            val vl3 = Vector (Num (1))
 
             test ("map fail over a nil list gives nil") {
                 assertResult (Some (Nil)) (map (rwfail) (Nil))
             }
 
             test ("map fail over a non-nil list fails") {
-                assertResult (None) (map (rwfail) (l1))
+                assertResult (None) (map (rwfail) (ll1))
             }
 
             test ("map id over a nil list gives nil") {
@@ -371,7 +376,23 @@ class RewriterTests extends Tests with Generator {
             }
 
             test ("map id over a non-nil list gives that list") {
-                assertOptSame (Some (l1)) (map (id) (l1))
+                assertOptSame (Some (ll1)) (map (id) (ll1))
+            }
+
+            test ("map fail over an empty vector gives an empty vector") {
+                assertResult (Some (Vector ())) (map (rwfail) (Vector ()))
+            }
+
+            test ("map fail over a non-empty vector fails") {
+                assertResult (None) (map (rwfail) (vl1))
+            }
+
+            test ("map id over an empty vector gives an empty vector") {
+                assertResult (Some (Vector ())) (map (id) (Vector ()))
+            }
+
+            test ("map id over a non-empty vector gives that vector") {
+                assertOptSame (Some (vl1)) (map (id) (vl1))
             }
 
             {
@@ -381,8 +402,16 @@ class RewriterTests extends Tests with Generator {
                     assertResult (Some (Nil)) (map (inc) (Nil))
                 }
 
-                test ("map double inc over a non-nil Num list fails") {
-                    assertResult (None) (map (inc) (l1))
+                test ("map double inc over a non-nil list fails") {
+                    assertResult (None) (map (inc) (ll1))
+                }
+
+                test ("map double inc over an empty vector gives an empty vector") {
+                    assertResult (Some (Vector ())) (map (inc) (Vector ()))
+                }
+
+                test ("map double inc over a non-empty vector fails") {
+                    assertResult (None) (map (inc) (vl1))
                 }
             }
 
@@ -394,15 +423,31 @@ class RewriterTests extends Tests with Generator {
                 }
 
                 test ("map isnum over a list with one num succeeds with same list") {
-                    assertOptSame (Some (l3)) (map (isnum) (l3))
+                    assertOptSame (Some (ll3)) (map (isnum) (ll3))
                 }
 
                 test ("map isnum over a list with more than one num succeeds with same list") {
-                    assertOptSame (Some (l1)) (map (isnum) (l1))
+                    assertOptSame (Some (ll1)) (map (isnum) (ll1))
                 }
 
                 test ("map isnum over a list with non-num fails") {
-                    assertResult (None) (map (isnum) (l2))
+                    assertResult (None) (map (isnum) (ll2))
+                }
+
+                test ("map isnum over an empty vector gives an empty vector") {
+                    assertResult (Some (Vector ())) (map (isnum) (Vector ()))
+                }
+
+                test ("map isnum over a vector with one num succeeds with same vector") {
+                    assertOptSame (Some (vl3)) (map (isnum) (vl3))
+                }
+
+                test ("map isnum over a vector with more than one num succeeds with same vector") {
+                    assertOptSame (Some (vl1)) (map (isnum) (vl1))
+                }
+
+                test ("map isnum over a vector with non-num fails") {
+                    assertResult (None) (map (isnum) (vl2))
                 }
 
             }
@@ -415,11 +460,23 @@ class RewriterTests extends Tests with Generator {
                 }
 
                 test ("map isnuminc over a list with only nums succeeds with incremented list") {
-                    assertResult (Some (r1)) (map (isnuminc) (l1))
+                    assertResult (Some (lr1)) (map (isnuminc) (ll1))
                 }
 
                 test ("map isnuminc over a list with non-num fails") {
-                    assertResult (None) (map (isnuminc) (l2))
+                    assertResult (None) (map (isnuminc) (ll2))
+                }
+
+                test ("map isnuminc over an empty vector gives an empty vector") {
+                    assertResult (Some (Vector ())) (map (isnuminc) (Vector ()))
+                }
+
+                test ("map isnuminc over a vector with only nums succeeds with incremented vector") {
+                    assertResult (Some (vr1)) (map (isnuminc) (vl1))
+                }
+
+                test ("map isnuminc over a vector with non-num fails") {
+                    assertResult (None) (map (isnuminc) (vl2))
                 }
 
             }
@@ -579,22 +636,64 @@ class RewriterTests extends Tests with Generator {
             assertResult (None) ((incodd) (List (2, 4, 6)))
         }
 
-        val l = List (List (1, 2), List (3), List (4, 5, 6))
+        val ll = List (List (1, 2), List (3), List (4, 5, 6))
 
         test ("rewrite list: nested increment all numbers") {
-            assertResult (Some (List (List (2, 3), List (4), List (5, 6, 7)))) ((incall) (l))
+            assertResult (Some (List (List (2, 3), List (4), List (5, 6, 7)))) ((incall) (ll))
         }
 
         test ("rewrite list: nested increment first number") {
-            assertResult (Some (List (List (2, 2), List (3), List (4, 5, 6)))) ((incfirst) (l))
+            assertResult (Some (List (List (2, 2), List (3), List (4, 5, 6)))) ((incfirst) (ll))
         }
 
         test ("rewrite list: nested increment odd numbers - succeed") {
-            assertResult (Some (List (List (2, 2), List (4), List (4, 6, 6)))) ((incodd) (l))
+            assertResult (Some (List (List (2, 2), List (4), List (4, 6, 6)))) ((incodd) (ll))
         }
 
         test ("rewrite list: nested increment odd numbers - fail") {
             assertResult (None) ((incodd) (List (List (2, 2), List (4), List (4, 6, 6))))
+        }
+
+        test ("rewrite vector: increment all numbers - non-empty") {
+            assertResult (Some (Vector (2, 3, 4))) ((incall) (Vector (1, 2, 3)))
+        }
+
+        test ("rewrite vector: increment all numbers - empty") {
+            assertResult (Some (Vector ())) ((incall) (Vector ()))
+        }
+
+        test ("rewrite vector: increment first number - non-empty") {
+            assertResult (Some (Vector (2, 2, 3))) ((incfirst) (Vector (1, 2, 3)))
+        }
+
+        test ("rewrite vector: increment first number - empty") {
+            assertResult (None) ((incfirst) (Vector ()))
+        }
+
+        test ("rewrite vector: increment odd numbers - succeed") {
+            assertResult (Some (Vector (2, 2, 4))) ((incodd) (Vector (1, 2, 3)))
+        }
+
+        test ("rewrite vector: increment odd numbers - fail") {
+            assertResult (None) ((incodd) (Vector (2, 4, 6)))
+        }
+
+        val vl = Vector (Vector (1, 2), Vector (3), Vector (4, 5, 6))
+
+        test ("rewrite vector: nested increment all numbers") {
+            assertResult (Some (Vector (Vector (2, 3), Vector (4), Vector (5, 6, 7)))) ((incall) (vl))
+        }
+
+        test ("rewrite vector: nested increment first number") {
+            assertResult (Some (Vector (Vector (2, 2), Vector (3), Vector (4, 5, 6)))) ((incfirst) (vl))
+        }
+
+        test ("rewrite vector: nested increment odd numbers - succeed") {
+            assertResult (Some (Vector (Vector (2, 2), Vector (4), Vector (4, 6, 6)))) ((incodd) (vl))
+        }
+
+        test ("rewrite vector: nested increment odd numbers - fail") {
+            assertResult (None) ((incodd) (Vector (Vector (2, 2), Vector (4), Vector (4, 6, 6))))
         }
     }
 
@@ -651,6 +750,24 @@ class RewriterTests extends Tests with Generator {
 
         val strat = rule[Double] { case _ => 0 }
         val basemsg = "rewrite list: doubles to zero in non-primitive list"
+
+        travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
+        travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (l), Same)
+        travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (ll), NotSame)
+        travtest (basemsg, "some, topdown", sometd (strat) (l), Some (r))
+        travtest (basemsg, "some, bottomup", somebu (strat) (l), Some (r))
+        travtest (basemsg, "one, topdown", oncetd (strat) (l), Some (s))
+        travtest (basemsg, "one, bottomup", oncebu (strat) (l), Some (s))
+    }
+
+    {
+        val l = Vector (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+        val ll = Vector (Sub (Num (2), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+        val r = Vector (Sub (Num (0), Var ("one")), Add (Num (0), Num (0)), Var ("two"))
+        val s = Vector (Sub (Num (0), Var ("one")), Add (Num (4), Num (5)), Var ("two"))
+
+        val strat = rule[Double] { case _ => 0 }
+        val basemsg = "rewrite vector: doubles to zero in non-primitive vector"
 
         travtest (basemsg, "all, topdown", alltd (strat) (l), Some (r))
         travtest (basemsg, "all, bottomup", allbu (strat) (l), Some (l), Same)
@@ -803,16 +920,16 @@ class RewriterTests extends Tests with Generator {
         val m1 = Map (Set (1, 3) -> 0, Set (2, 4, 6) -> 0)
         val m2 = Map (Set (12, 16) -> 0, Set (23) -> 0)
 
-        // List of the maps
-        val l = List (m1, m2)
-        val ll = List (Map (Set (1, 3) -> 0, Set (2, 4, 6) -> 0),
-                       Map (Set (12, 16) -> 0, Set (23) -> 0))
+        // Collection of the maps
+        val l = Vector (m1, m2)
+        val ll = Vector (Map (Set (1, 3) -> 0, Set (2, 4, 6) -> 0),
+                         Map (Set (12, 16) -> 0, Set (23) -> 0))
 
         {
-            val r = List (Map (Set (2, 4) -> 1, Set (3, 5, 7) -> 1),
-                          Map (Set (13, 17) -> 1, Set (24) -> 1))
-            val s = List (Map (Set (2, 3) -> 0, Set (2, 4, 6) -> 0),
-                          Map (Set (12, 16) -> 0, Set (23) -> 0))
+            val r = Vector (Map (Set (2, 4) -> 1, Set (3, 5, 7) -> 1),
+                            Map (Set (13, 17) -> 1, Set (24) -> 1))
+            val s = Vector (Map (Set (2, 3) -> 0, Set (2, 4, 6) -> 0),
+                            Map (Set (12, 16) -> 0, Set (23) -> 0))
 
             val basemsg = "rewrite set: heterogeneous collection: inc integers"
             val strat = rule[Int] { case i => i + 1 }
@@ -827,10 +944,10 @@ class RewriterTests extends Tests with Generator {
         }
 
         {
-            val r = List (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 3),
-                          Map (Set (12, 16) -> 2, Set (23) -> 1))
-            val s = List (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 0),
-                          Map (Set (12, 16) -> 0, Set (23) -> 0))
+            val r = Vector (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 3),
+                            Map (Set (12, 16) -> 2, Set (23) -> 1))
+            val s = Vector (Map (Set (1, 3) -> 2, Set (2, 4, 6) -> 0),
+                            Map (Set (12, 16) -> 0, Set (23) -> 0))
 
             val basemsg = "rewrite set: heterogeneous collection: set to size"
             val strat = rule[(Set[_], Int)] { case (s, _) => (s, s.size) }
@@ -895,7 +1012,6 @@ class RewriterTests extends Tests with Generator {
     {
         // The type used here should be a finite immutable sequence that is not
         // implemented using case classes or other Products (which rules out lists).
-        import scala.collection.immutable.Vector
 
         val incint = rule[Int] { case i => i + 1 }
         val inczerothchild = child (0, incint)
@@ -945,26 +1061,26 @@ class RewriterTests extends Tests with Generator {
     {
         // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
         val p =
-            Seqn (List (
+            Seqn (Vector (
                 Asgn (Var ("i"), Num (10)),
                 Asgn (Var ("count"), Num (0)),
                 While (Var ("i"),
-                    Seqn (List (
-                        Asgn (Var ("count"), Add (Var ("count"), Num (1))),
-                        Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
+                       Seqn (Vector (
+                       Asgn (Var ("count"), Add (Var ("count"), Num (1))),
+                       Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
 
         // { i = 0; count = 0; while (i) { count = bob + 1; i = 0 + i; } }
         val q =
-            Seqn (List (
+            Seqn (Vector (
                 Asgn (Var ("i"), Num (0)),
                 Asgn (Var ("count"), Num (0)),
                 While (Var ("i"),
-                    Seqn (List (
+                    Seqn (Vector (
                         Asgn (Var ("count"), Add (Var ("bob"), Num (1))),
                         Asgn (Var ("i"), Add (Num (0), Var ("i"))))))))
 
         val incint = rule[Int] { case i => i + 1 }
-        val clearlist = rule[List[_]] { case _ => Nil }
+        val clearvector = rule[Vector[_]] { case _ => Vector () }
         val zeronumsbreakadds =
             alltd (Num (rule[Double] { case _ => 0}) +
                    Add (rule[Var] { case _ => Var ("bob")}, id))
@@ -974,7 +1090,7 @@ class RewriterTests extends Tests with Generator {
         }
 
         test ("rewrite by congruence: top-level correct congruence") {
-            assertResult (Some (Seqn (Nil))) (Seqn (clearlist) (p))
+            assertResult (Some (Seqn (Vector ()))) (Seqn (clearvector) (p))
         }
 
         test ("rewrite by congruence: multi-level") {
@@ -2033,7 +2149,7 @@ class RewriterTests extends Tests with Generator {
 
         test ("deep cloning a term containing a sequence works") {
 
-            val t = Seqn (List (Asgn (Var ("a"), Num (1)),
+            val t = Seqn (Vector (Asgn (Var ("a"), Num (1)),
                                 Asgn (Var ("b"), Num (2)),
                                 Asgn (Var ("c"), Num (3))))
 

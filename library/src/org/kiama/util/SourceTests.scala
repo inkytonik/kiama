@@ -22,12 +22,19 @@ package org.kiama
 package util
 
 /**
- * Tests of messaging utility routiines. Most tests of messaging
- * are in the examples.
+ * Tests of source utility routiines.
  */
-class MessagingTests extends Tests {
+class SourceTests extends Tests {
 
-    import Messaging.dropPrefix
+    import Source.dropPrefix
+
+    test ("dropPrefix copes with empty filename") {
+        assertResult ("") (dropPrefix ("", "/foo/bar"))
+    }
+
+    test ("dropPrefix correctly drops nothing if prefix is empty") {
+        assertResult ("/foo/bar/ble.txt") (dropPrefix ("/foo/bar/ble.txt", ""))
+    }
 
     test ("dropPrefix correctly drops prefix that is there") {
         assertResult ("ble.txt") (dropPrefix ("/foo/bar/ble.txt", "/foo/bar"))
@@ -52,11 +59,5 @@ class MessagingTests extends Tests {
     test ("dropPrefix correctly deals with empty prefix") {
         assertResult ("/foo/bar/ble.txt") (dropPrefix ("/foo/bar/ble.txt", ""))
     }
-
-// FIXME:
-// empty path
-// empty prefix
-// path == prefix
-// path shorter than prefix
 
 }

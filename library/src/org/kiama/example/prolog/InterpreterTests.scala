@@ -21,17 +21,19 @@
 package org.kiama
 package example.prolog
 
-import org.kiama.util.RegexParserTests
+import org.kiama.util.ParseTests
 
 /**
  * Tests that check that the queries run correctly. I.e., given a base
  * Prolog file containing definitions, that running specific queries
  * over those definitions give the expected results.
  */
-class InterpreterTests extends SyntaxAnalyser with RegexParserTests {
+class InterpreterTests extends ParseTests {
 
     import org.kiama.util.StringEmitter
     import scala.io.Source
+
+    val parsers = new SyntaxAnalyser (positions)
 
     /**
      * Create an interpreter test. The file name `fn` is the one that should be
@@ -43,9 +45,9 @@ class InterpreterTests extends SyntaxAnalyser with RegexParserTests {
     def querytest (fn : String, q : String, exp : String) {
         val filename = s"src/org/kiama/example/prolog/tests/$fn"
         test (s"$q on $filename") {
-            assertParseCheck (Source.fromFile (filename).mkString, program) {
+            assertParseCheck (Source.fromFile (filename).mkString, parsers.program) {
                 programtree =>
-                    assertParseCheck (q, query) {
+                    assertParseCheck (q, parsers.query) {
                         querytree =>
                             val interpreter = new Interpreter
                             val emitter = new StringEmitter

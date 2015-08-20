@@ -93,14 +93,19 @@ class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
         c.add (s)
     }
 
-    def collectErrors (p : Product, c : ArrayList[String]) {
+    def collectErrors (p : PicoJavaNode, c : ArrayList[String]) {
 
         // Collect error from p's children
         val children = p.productIterator
         while (children.hasNext) {
             children.next () match {
-                case cp : Product =>
+                case cp : PicoJavaNode =>
                     collectErrors (cp, c)
+                case v : Vector[_] =>
+                    v.collect {
+                        case cp : PicoJavaNode =>
+                            collectErrors (cp, c)
+                    }
                 case _ =>
                     // Do nothing
             }

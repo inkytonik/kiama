@@ -21,15 +21,15 @@
 package org.kiama
 package util
 
-import scala.util.parsing.combinator.RegexParsers
+import org.kiama.parsing.Parsers
 
 /**
  * General support for applications that implement read-eval-print loops (REPLs).
  */
-trait REPLBase[C <: REPLConfig] extends Profiler {
+trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profiler {
 
     import scala.annotation.tailrec
-    import scala.io.Source
+    import org.kiama.util.{Source, StringSource}
 
     /**
      * Banner message that is printed before the REPL starts.
@@ -143,7 +143,8 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
         if (line == null)
             config
         else {
-            processline (line, console, config) match {
+            val source = new StringSource (line)
+            processline (source, console, config) match {
                 case Some (newConfig) =>
                     processconsole (console, prompt, newConfig)
                 case _ =>
@@ -153,12 +154,12 @@ trait REPLBase[C <: REPLConfig] extends Profiler {
     }
 
     /**
-     * Process a user input line. The return value allows the processing to
-     * optionally return a new configuration that will be used in subsequent
-     * processing. A return value of `None` indicates that no more lines
-     * from the current console should be processed.
+     * Process user input from the given source. The return value allows the
+     * processing to optionally return a new configuration that will be used
+     * in subsequent processing. A return value of `None` indicates that no
+     * more lines from the current console should be processed.
      */
-    def processline (line : String, console : Console, config : C) : Option[C]
+    def processline (source : Source, console : Console, config : C) : Option[C]
 
 }
 
@@ -181,36 +182,47 @@ trait REPL extends REPLBase[REPLConfig] {
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. Output is emitted using a configurable emitter.
  */
-trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] with RegexParsers {
+trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
+
+    import org.kiama.parsing.{Failure, ParsersBase, Success}
+    import org.kiama.util.Messaging.message
+    import org.kiama.util.Source
+
+    /**
+     * The suite of parsers that is used by this compiler.
+     */
+    val parsers : ParsersBase
+
+    /**
+     * The particular parser used to parse this compiler's input.
+     */
+    val parser : parsers.Parser[T]
 
     /**
      * Process a user input line by parsing it to get a value of type `T`,
      * then passing it to the `process` method. Returns the configuration
      * unchanged.
      */
-    def processline (line : String, console : Console, config : C) : Option[C] = {
-        if (config.processWhitespaceLines () || (line.trim.length != 0)) {
-            parseAll (parser, line) match {
-                case Success (e, in) if in.atEnd =>
-                    process (e, config)
-                case Success (_, in) =>
-                    config.error.emitln (s"extraneous input at ${in.pos}")
-                case f =>
-                    config.error.emitln (f)
+    def processline (source : Source, console : Console, config : C) : Option[C] = {
+        if (config.processWhitespaceLines () || (source.content.trim.length != 0)) {
+            parsers.parseAll (parser, source) match {
+                case Success (e, _) =>
+                    process (source, e, config)
+                case f @ Failure (label, next) =>
+                    val pos = next.position
+                    positions.setStart (f, pos)
+                    positions.setFinish (f, pos)
+                    val messages = message (f, label)
+                    report (messages, config.error)
             }
         }
         Some (config)
     }
 
     /**
-     * The parser to use to convert user input lines into values.
-     */
-    def parser : Parser[T]
-
-    /**
      * Process a user input value in the given configuration.
      */
-    def process (t : T, config : C)
+    def process (source : Source, t : T, config : C)
 
 }
 
@@ -224,7 +236,7 @@ trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T,C]
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. Output is emitted to standard output.
  */
-trait ParsingREPL[T ] extends ParsingREPLWithConfig[T,REPLConfig] {
+trait ParsingREPL[T] extends ParsingREPLWithConfig[T,REPLConfig] {
 
     def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,

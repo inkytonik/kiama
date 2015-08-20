@@ -874,7 +874,6 @@ trait PrettyPrinterBase {
  */
 trait PrettyPrinter extends PrettyPrinterBase {
 
-    import org.kiama.util.Positions.{getStart, getFinish}
     import org.kiama.util.Trampolines.{Done, More, step, Trampoline}
     import PrettyPrinterTypes.{Document, emptyLinks, Indent, Layout, Link, Links, Width}
     import scala.collection.immutable.{Queue, Seq}

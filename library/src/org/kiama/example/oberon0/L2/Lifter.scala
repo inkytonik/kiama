@@ -40,7 +40,7 @@ trait Lifter extends base.Transformer {
         /*
          * The collected declarations.
          */
-        val decls = List.newBuilder[Declaration]
+        val decls = Vector.newBuilder[Declaration]
 
         /*
          * Lift declarations from inner blocks to the top level by adding
@@ -54,14 +54,14 @@ trait Lifter extends base.Transformer {
                     // Add this block's decls to the buffer, clear them
                     case Block (ds, ss) =>
                         decls ++= ds
-                        Block (Nil, ss)
+                        Block (Vector (), ss)
 
                 } <+ rule[ModuleDecl] {
 
                     // The module declarations will have been added to the
                     // buffer already. Create a new module with all of the
                     // accumulated declarations.
-                    case ModuleDecl (i1, Block (Nil, ss), i2) =>
+                    case ModuleDecl (i1, Block (Vector (), ss), i2) =>
                         ModuleDecl (i1, Block (decls.result, ss), i2)
 
                 }

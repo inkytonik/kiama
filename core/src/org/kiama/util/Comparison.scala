@@ -91,17 +91,17 @@ object Comparison {
             }
 
     /**
-     * Does the list `s` contain `t`? Equality is tested using `same`.
+     * Does the sequence `s` contain `t`? Equality is tested using `same`.
      */
-    def contains[T] (s : List[T], t : T) : Boolean =
+    def contains[T] (s : Seq[T], t : T) : Boolean =
         s.exists (same (_, t))
 
     /**
-     * Return a list with only the distinct elements from the list `s`.
+     * Return a vector with only the distinct elements from the sequence `s`.
      * "distinct" in this case means compare unequal using `same`. The
      * first occurrence of each distinct element is kept.
      */
-    def distinct[T] (s : List[T]) : List[T] = {
+    def distinct[T] (s : Seq[T]) : Vector[T] = {
 
         import scala.collection.mutable.TreeSet
 
@@ -119,7 +119,7 @@ object Comparison {
 
         val set = new TreeSet[(T,Int)] () (TOrdering)
         set ++= (s.zipWithIndex)
-        set.toList.map (_._1)
+        set.toVector.map (_._1)
 
     }
 

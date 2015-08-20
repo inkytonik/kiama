@@ -43,10 +43,10 @@ trait SourcePrettyPrinter extends L2.source.SourcePrettyPrinter {
                 super.toDoc (n)
         }
 
-    def paramsToDoc (ds : List[Doc], sep : Doc) : Doc =
+    def paramsToDoc (ds : Vector[Doc], sep : Doc) : Doc =
         ds match {
-            case Nil => empty
-            case _   => space <> parens (hsep (ds, sep))
+            case Vector () => empty
+            case _         => space <> parens (hsep (ds, sep))
         }
 
 }

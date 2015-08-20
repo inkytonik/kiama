@@ -22,16 +22,18 @@ package org.kiama
 package example.oberon0
 package L2
 
+import org.kiama.util.Positions
+
 /**
  * Parsers for L2 language.
  */
-trait SyntaxAnalyser extends L1.SyntaxAnalyser {
+class SyntaxAnalyser (positions : Positions) extends L1.SyntaxAnalyser (positions) {
 
     import base.source.Statement
     import L0.source.IdnExp
     import source.{Case, CaseStatement, ForStatement, MinMaxCond, ValCond}
 
-    override def statementDef : PackratParser[Statement] =
+    override def statementDef : Parser[Statement] =
         forStatement |
         caseStatement |
         super.statementDef

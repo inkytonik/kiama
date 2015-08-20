@@ -22,10 +22,12 @@ package org.kiama
 package example.oberon0
 package L0
 
+import org.kiama.util.Positions
+
 /**
  * Parsers for L0 language.
  */
-trait SyntaxAnalyser extends base.SyntaxAnalyser {
+class SyntaxAnalyser (positions : Positions) extends base.SyntaxAnalyser (positions) {
 
     import base.source.{Declaration, Expression, Statement}
     import scala.language.postfixOps
@@ -34,10 +36,10 @@ trait SyntaxAnalyser extends base.SyntaxAnalyser {
         NamedType, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl,
         TypeDef, VarDecl}
 
-    override def declarationsDef : PackratParser[List[Declaration]] =
+    override def declarationsDef : Parser[Vector[Declaration]] =
         (constdeclsection?) ~ (typedeclsection?) ~ (vardeclsection?) ^^ {
             case oc ~ ot ~ ov =>
-                List (oc, ot, ov).flatten.flatten
+                Vector (oc, ot, ov).flatten.flatten
         }
 
     lazy val constdeclsection =
@@ -64,13 +66,13 @@ trait SyntaxAnalyser extends base.SyntaxAnalyser {
     lazy val typedef =
         typedefDef
 
-    def typedefDef : PackratParser[TypeDef] =
+    def typedefDef : Parser[TypeDef] =
         namedtypedef
 
     lazy val namedtypedef =
         idnuse ^^ NamedType
 
-    override def statementDef : PackratParser[Statement] =
+    override def statementDef : Parser[Statement] =
         assignment |
         super.statementDef
 
@@ -83,7 +85,7 @@ trait SyntaxAnalyser extends base.SyntaxAnalyser {
     def lhsDef : PackratParser[Expression] =
         idnuse ^^ IdnExp
 
-    lazy val expression =
+    lazy val expression : PackratParser[Expression] =
         simpexp ~ ("=" ~> simpexp) ^^ EqExp |
         simpexp ~ ("#" ~> simpexp) ^^ NeExp |
         simpexp ~ ("<" ~> simpexp) ^^ LtExp |
@@ -111,7 +113,8 @@ trait SyntaxAnalyser extends base.SyntaxAnalyser {
         "+" ~> factor |
         "-" ~> factor ^^ NegExp |
         "~" ~> factor ^^ NotExp |
-        "(" ~> expression <~ ")"
+        "(" ~> expression <~ ")" |
+        failure ("expression expected")
 
     lazy val intexp =
         constrainedInt ^^ IntExp

@@ -24,7 +24,7 @@ package example.obr
 
 import ObrTree.ObrInt
 import org.kiama.util.{Console, CompilerWithConfig, Config, Emitter,
-    ErrorEmitter, JLineConsole, OutputEmitter}
+    ErrorEmitter, JLineConsole, OutputEmitter, Messaging, Source}
 
 /**
  * Configuration for the Obr compiler.
@@ -39,15 +39,13 @@ abstract class ObrConfig (args : Seq[String]) extends Config (args) {
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
+class Driver extends CompilerWithConfig[ObrInt,ObrConfig] {
 
     import ObrTree.ObrTree
     import org.kiama.example.obr.{RISCEncoder, RISCTransformer}
     import org.kiama.example.RISC.{RISC, RISCISA}
-    import org.kiama.output.PrettyPrinter.{any => ppany, pretty}
+    import org.kiama.output.PrettyPrinter.{any, pretty}
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.kiama.util.Emitter
-    import org.kiama.util.Messaging.report
 
     override def createConfig (args : Seq[String],
                                out : Emitter = new OutputEmitter,
@@ -57,7 +55,10 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
             lazy val error = err
         }
 
-    def process (filename : String, ast : ObrInt, config : ObrConfig) {
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.program
+
+    def process (source : Source, ast : ObrInt, config : ObrConfig) {
 
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree (ast)
@@ -80,7 +81,7 @@ class Driver extends SyntaxAnalyser with CompilerWithConfig[ObrInt,ObrConfig] {
 
             // Print out the target tree for debugging
             if (config.targetPrint ()) {
-                config.output.emitln (pretty (ppany (targettree)))
+                config.output.emitln (pretty (any (targettree)))
             }
 
             // Encode the target tree and emit the assembler or run if requested
@@ -115,7 +116,7 @@ object Main extends Driver
  */
 class ParserDriver extends Driver {
 
-    override def process (filename : String, ast : ObrInt, config : ObrConfig) {
+    override def process (source : Source, ast : ObrInt, config : ObrConfig) {
         config.output.emitln (ast.toString)
     }
 
@@ -124,12 +125,11 @@ class ParserDriver extends Driver {
 /**
  * A driver which parses a program file and runs the semantic analyser.
  */
-class SemanticDriver extends Driver {
+class SemanticDriver extends Driver with Messaging {
 
     import ObrTree.ObrTree
-    import org.kiama.util.Messaging.report
 
-    override def process (filename : String, ast : ObrInt, config : ObrConfig) {
+    override def process (source : Source, ast : ObrInt, config : ObrConfig) {
 
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree (ast)

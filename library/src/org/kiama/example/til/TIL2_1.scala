@@ -25,10 +25,13 @@ package example.til
  * Rewrite TILs for loops that automatically declare the control variable
  * adding an explicit declaration of the variable.
  */
-trait TIL2_1 extends TIL1_1 with TransformingMain {
+class TIL2_1 extends TransformingMain {
 
     import TILTree._
     import org.kiama.rewriting.Rewriter._
+
+    val parsers = new TIL1_1Parsers (positions)
+    val parser = parsers.program
 
     def transform (ast : Program) : Program =
         rewrite (declareforvars) (ast)

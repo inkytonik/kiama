@@ -27,7 +27,7 @@ import org.kiama.attribution.Attribution
 trait Analyser extends Attribution with SymbolTable {
 
     import org.kiama.attribution.Decorators
-    import org.kiama.util.Messaging.{collectmessages, Messages, noMessages}
+    import org.kiama.util.Messaging.{collectMessages, Messages, noMessages}
     import source.SourceNode
     import source.SourceTree.SourceTree
 
@@ -45,7 +45,7 @@ trait Analyser extends Attribution with SymbolTable {
      * The semantic errors for the tree.
      */
     lazy val errors : Messages =
-        collectmessages (tree) {
+        collectMessages (tree) {
             case n =>
                 errorsDef (n)
         }

@@ -50,12 +50,12 @@ class BasicNameResolutionTests extends Tests {
 
     val ast =
         Program (Block (
-            List (declRx,
+            Vector (declRx,
                   AssignStmt (xInR, zInR),
                   declRz,
                   AssignStmt (yInR, Use ("x")),
                   ClassDecl ("A", None, Block (
-                      List (declAz,
+                      Vector (declAz,
                             AssignStmt (xInA, zInA),
                             AssignStmt (yInA, Use ("z"))))))))
 

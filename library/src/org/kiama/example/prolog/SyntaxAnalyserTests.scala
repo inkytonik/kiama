@@ -21,15 +21,18 @@
 package org.kiama
 package example.prolog
 
-import org.kiama.util.RegexParserTests
+import org.kiama.util.ParseTests
 
 /**
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
+class SyntaxAnalyserTests extends ParseTests {
 
     import PrologTree._
+
+    val parsers = new SyntaxAnalyser (positions)
+    import parsers._
 
     test ("parsing an atom as an atom works") {
         assertParseOk ("albert", atom, "albert")
@@ -45,7 +48,7 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a predicate literal produces the correct tree") {
         assertParseOk ("likes(X,nigel)", literal,
-            Pred ("likes", List (Var ("X"), Atom ("nigel"))))
+            Pred ("likes", Vector (Var ("X"), Atom ("nigel"))))
     }
 
     // Additional tests:
@@ -82,28 +85,28 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a single clause works") {
         assertParseOk ("female(mary).", program,
-            Program (List (Fact (Pred ("female", List (Atom ("mary")))))))
+            Program (Vector (Fact (Pred ("female", Vector (Atom ("mary")))))))
     }
 
     test ("parsing multiple clauses works") {
         assertParseOk ("female(mary).\nmale (john).\nmale (luke).", program,
-            Program (List (Fact (Pred ("female", List (Atom ("mary")))),
-                           Fact (Pred ("male", List (Atom ("john")))),
-                           Fact (Pred ("male", List (Atom ("luke")))))))
+            Program (Vector (Fact (Pred ("female", Vector (Atom ("mary")))),
+                             Fact (Pred ("male", Vector (Atom ("john")))),
+                             Fact (Pred ("male", Vector (Atom ("luke")))))))
     }
 
     // Clause tests
 
     test ("parsing a rule works") {
         assertParseOk ("likes(john,X) :- likes(X,wine), likes(X,food).", clause,
-            Rule (Pred ("likes", List (Atom ("john"), Var ("X"))),
-                  List (Pred ("likes", List (Var ("X"), Atom ("wine"))),
-                        Pred ("likes", List (Var ("X"), Atom ("food"))))))
+            Rule (Pred ("likes", Vector (Atom ("john"), Var ("X"))),
+                  Vector (Pred ("likes", Vector (Var ("X"), Atom ("wine"))),
+                          Pred ("likes", Vector (Var ("X"), Atom ("food"))))))
     }
 
     test ("parsing a fact works") {
         assertParseOk ("bodgie (boo).", clause,
-            Fact (Pred ("bodgie", List (Atom ("boo")))))
+            Fact (Pred ("bodgie", Vector (Atom ("boo")))))
     }
 
     // Literal tests
@@ -122,19 +125,19 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a predicate literal with one argument works") {
         assertParseOk ("likes (X)", literal,
-            Pred ("likes", List (Var ("X"))))
+            Pred ("likes", Vector (Var ("X"))))
     }
 
     test ("parsing a predicate literal with many argument works") {
         assertParseOk ("likes (X, at, VAR)", literal,
-            Pred ("likes", List (Var ("X"), Atom ("at"), Var ("VAR"))))
+            Pred ("likes", Vector (Var ("X"), Atom ("at"), Var ("VAR"))))
     }
 
     test ("parsing a predicate literal with a predicate argument works") {
         assertParseOk ("likes (X, likes (Y, Z), W)", literal,
-            Pred ("likes", List (Var ("X"),
-                                 Pred ("likes", List (Var ("Y"), Var ("Z"))),
-                                 Var ("W"))))
+            Pred ("likes", Vector (Var ("X"),
+                                   Pred ("likes", Vector (Var ("Y"), Var ("Z"))),
+                                   Var ("W"))))
     }
 
     test ("parsing a cut works") {
@@ -143,9 +146,9 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a literal list containg a cut works") {
         assertParseOk ("likes (X), !, male (Y)", literals,
-            List (Pred ("likes", List (Var ("X"))),
-                  Cut (),
-                  Pred ("male", List (Var ("Y")))))
+            Vector (Pred ("likes", Vector (Var ("X"))),
+                    Cut (),
+                    Pred ("male", Vector (Var ("Y")))))
     }
 
     test ("parsing a nested cut fails") {
@@ -161,14 +164,14 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
 
     test ("parsing a singleton literal list works") {
         assertParseOk ("nonny (harold)", literals,
-            List (Pred ("nonny", List (Atom ("harold")))))
+            Vector (Pred ("nonny", Vector (Atom ("harold")))))
     }
 
     test ("parsing multiple literal list works") {
         assertParseOk ("nonny (harold), ninny (tony), nanny (jane)", literals,
-            List (Pred ("nonny", List (Atom ("harold"))),
-                  Pred ("ninny", List (Atom ("tony"))),
-                  Pred ("nanny", List (Atom ("jane")))))
+            Vector (Pred ("nonny", Vector (Atom ("harold"))),
+                    Pred ("ninny", Vector (Atom ("tony"))),
+                    Pred ("nanny", Vector (Atom ("jane")))))
     }
 
     // Integer tests
@@ -198,19 +201,21 @@ class SyntaxAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     // List terms
 
     test ("parsing an empty list works") {
-        assertParseOk ("[]", list, Pred ("nil", Nil))
+        assertParseOk ("[]", list, Pred ("nil", Vector ()))
     }
 
     test ("parsing a singleton list works") {
-        assertParseOk ("[a]", list, Pred ("cons", List (Atom ("a"), Pred ("nil", Nil))))
+        assertParseOk ("[a]", list,
+            Pred ("cons", Vector (Atom ("a"),
+                Pred ("nil", Vector ()))))
     }
 
-    test ("parsing a muliple-element list works") {
+    test ("parsing a multiple-element list works") {
         assertParseOk ("[a,b,c]", list,
-            Pred ("cons", List (Atom ("a"),
-                Pred ("cons", List (Atom ("b"),
-                    Pred ("cons", List (Atom ("c"),
-                        Pred ("nil" , Nil))))))))
+            Pred ("cons", Vector (Atom ("a"),
+                Pred ("cons", Vector (Atom ("b"),
+                    Pred ("cons", Vector (Atom ("c"),
+                        Pred ("nil" , Vector ()))))))))
     }
 
 }

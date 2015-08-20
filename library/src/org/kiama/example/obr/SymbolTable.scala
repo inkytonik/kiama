@@ -98,7 +98,7 @@ object SymbolTable extends Environments {
     /**
      * A record type with the given fields.
      */
-    case class RecordType (fields : List[Identifier]) extends Type {
+    case class RecordType (fields : Vector[Identifier]) extends Type {
         override val storage = WORDSIZE * fields.length
         override def toString : String = "record"
     }

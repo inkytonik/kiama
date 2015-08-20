@@ -24,7 +24,6 @@ package base
 
 import org.kiama.util.{CompilerBase, Emitter, ErrorEmitter, OutputEmitter,
     TestCompilerWithConfig, Tests}
-import scala.util.parsing.combinator.RegexParsers
 import source.ModuleDecl
 
 /**

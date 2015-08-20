@@ -46,11 +46,6 @@ libraryDependencies in ThisBuild ++= {
             "0.3.0"
         else
             "0.4.0"
-    val parserCombinatorLibrary =
-        if (scalaVersion.value.startsWith ("2.10"))
-            Seq ()
-        else
-            Seq ("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3")
     Seq (
         // Caching:
         "com.google.code.findbugs" % "jsr305" % "3.0.0",
@@ -68,9 +63,7 @@ libraryDependencies in ThisBuild ++= {
         // Testing:
         "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
         "org.scalatest" %% "scalatest" % "2.2.5" % "test"
-    ) ++
-        // Parsing:
-        parserCombinatorLibrary
+    )
 }
 
 // Turn on incremental compilation based on name hashing

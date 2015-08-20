@@ -22,8 +22,7 @@ package org.kiama
 package example.oberon0
 package drivers
 
-trait A4Phases extends L4.SyntaxAnalyser
-        with L4.source.SourcePrettyPrinter
+trait A4Phases extends L4.source.SourcePrettyPrinter
         with L4.c.CPrettyPrinter
         with base.TranslatingDriver {
 
@@ -34,6 +33,9 @@ trait A4Phases extends L4.SyntaxAnalyser
     def artefact : String = "A4"
     def langlevel : Int = 4
     def tasklevel : Int = 6
+
+    val parsers = new L4.SyntaxAnalyser (positions)
+    val parser = parsers.moduledecl
 
     def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
         new L4.NameAnalyser with L4.TypeAnalyser {

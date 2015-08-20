@@ -35,7 +35,7 @@ case class ConstDecl (idndef : IdnDef, exp: Expression) extends Declaration
 /**
  * Variable declarations.
  */
-case class VarDecl (idndefs : List[IdnDef], tipe: TypeDef) extends Declaration
+case class VarDecl (idndefs : Vector[IdnDef], tipe: TypeDef) extends Declaration
 
 /**
  * Type declarations.

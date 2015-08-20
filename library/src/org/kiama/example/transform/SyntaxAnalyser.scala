@@ -21,22 +21,20 @@
 package org.kiama
 package example.transform
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * Parse the input.
  */
-trait Parser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import TransformTree._
-
-    lazy val parser =
-        phrase (program)
 
     lazy val program =
         rep (opdecl) ~ rep (vardecl) ~ exp ^^ Program
 
-    lazy val opdecl : PackratParser[(String,Int)] =
+    lazy val opdecl : Parser[(String,Int)] =
         ("op" ~> op) ~ integer
 
     lazy val op =
@@ -45,7 +43,7 @@ trait Parser extends PositionedParserUtilities {
     lazy val vardecl =
         "var" ~> ident ^^ VarDecl
 
-    lazy val exp : PackratParser[ExpR] =
+    lazy val exp : Parser[ExpR] =
         factor ~ op ~ exp ^^ BinExpR |
         factor ^^ Factor
 
@@ -59,9 +57,7 @@ trait Parser extends PositionedParserUtilities {
     lazy val ident =
         regex ("[a-zA-Z]+".r)
 
-    override protected val whiteSpace =
-        """(\s|(/\*(?:.|[\n\r])*?\*/))+""".r
+    override val whitespace : Parser[String] =
+        """(\s|(/\*(?:.|[\n\r])*?\*/))*""".r
 
 }
-
-

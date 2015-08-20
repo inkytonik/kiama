@@ -29,8 +29,8 @@ object CompanyTree {
 
     abstract class CompanyNode extends Product
 
-    case class Company (depts : List[Dept]) extends CompanyNode
-    case class Dept (n : Name, m : Manager, su : List[SubUnit]) extends CompanyNode
+    case class Company (depts : Vector[Dept]) extends CompanyNode
+    case class Dept (n : Name, m : Manager, su : Vector[SubUnit]) extends CompanyNode
 
     type Manager = Employee
     case class Employee (n : Name, a : Address, s : Salary) extends CompanyNode

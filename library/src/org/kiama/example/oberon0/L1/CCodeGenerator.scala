@@ -51,7 +51,7 @@ trait CCodeGenerator extends L0.CCodeGenerator {
      * Translation of expression, block pairs from an IF statement into
      * cascading C IFs.
      */
-    def translate (eis : List[(Expression,Block)], oe : Option[Block]) : CStatement = {
+    def translate (eis : Vector[(Expression,Block)], oe : Option[Block]) : CStatement = {
         val (e, ss) = eis.last
         val te = translate (e)
         val tss = translate (ss)

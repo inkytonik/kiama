@@ -46,7 +46,7 @@ object PicoJavaTree {
 
     case class Program (Block : Block) extends PicoJavaNode
 
-    case class Block (BlockStmts : List[BlockStmt]) extends PicoJavaNode
+    case class Block (BlockStmts : Vector[BlockStmt]) extends PicoJavaNode
     sealed abstract class BlockStmt extends PicoJavaNode
 
     sealed abstract class Decl (val Name : String) extends BlockStmt

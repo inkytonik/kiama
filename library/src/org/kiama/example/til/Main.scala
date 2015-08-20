@@ -22,7 +22,7 @@ package org.kiama
 package example.til
 
 import TILTree.Program
-import org.kiama.util.{Compiler, Config}
+import org.kiama.util.{Compiler, Config, Source}
 
 /**
  * Main program for TIL chairmarks that just parse and print their ASTs
@@ -33,7 +33,7 @@ trait ParsingMain extends Compiler[Program] {
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.kiama.util.Emitter
 
-    def process (filename : String, ast : Program, config : Config) {
+    def process (source : Source, ast : Program, config : Config) {
         config.output.emitln (ast)
     }
 
@@ -49,9 +49,9 @@ trait TransformingMain extends ParsingMain {
 
     def transform (ast : Program) : Program
 
-    override def process (filename : String, ast : Program, config : Config) {
+    override def process (source : Source, ast : Program, config : Config) {
         val newast = transform (ast)
-        super.process (filename, newast, config)
+        super.process (source, newast, config)
     }
 
 }

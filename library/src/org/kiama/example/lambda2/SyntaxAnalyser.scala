@@ -21,23 +21,21 @@
 package org.kiama
 package example.lambda2
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * Parser to abstract syntax for optionally typed lambda calculus.
  */
-trait SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import LambdaTree._
 
-    lazy val parser =
-        exp
-
-    lazy val exp : PackratParser[Exp] =
+    lazy val exp : Parser[Exp] =
         "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam |
         exp2
 
-    lazy val itype : PackratParser[Type] =
+    lazy val itype =
         ":" ~> ttype |
         "" ^^ (_ => NoType ())
 
@@ -49,14 +47,14 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         exp1 ~ exp0 ^^ App |
         exp0
 
-    lazy val exp0 : PackratParser[Exp] =
+    lazy val exp0 =
         number | idn ^^ Var | "(" ~> exp <~ ")"
 
-    lazy val ttype : PackratParser[Type] =
+    lazy val ttype : Parser[Type] =
         ttype0 ~ ("->" ~> ttype) ^^ FunType |
         ttype0
 
-    lazy val ttype0 : PackratParser[Type] =
+    lazy val ttype0 : Parser[Type] =
         "Int" ^^ (_ => IntType ()) |
         "(" ~> ttype <~ ")"
 

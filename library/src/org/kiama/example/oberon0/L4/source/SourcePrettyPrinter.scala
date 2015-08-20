@@ -32,13 +32,13 @@ trait SourcePrettyPrinter extends L3.source.SourcePrettyPrinter {
             case ArrayTypeDef (s, t) =>
                 "ARRAY" <+> toDoc (s) <+> "OF" <+> toDoc (t)
 
-            case RecordTypeDef (Nil) =>
+            case RecordTypeDef (Vector ()) =>
                 "RECORD" <+> "END"
 
             case RecordTypeDef (fs) =>
                 "RECORD" <+> hsep (fs map toDoc, semi) <+> "END"
 
-            case FieldList (ids, t) =>
+            case Fields (ids, t) =>
                 (hsep (ids map text, comma)) <+> colon <+> toDoc (t)
 
             case _ =>

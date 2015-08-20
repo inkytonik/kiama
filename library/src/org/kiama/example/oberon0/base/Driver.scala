@@ -24,10 +24,10 @@ package base
 
 import source.ModuleDecl
 import source.SourceTree.SourceTree
+import org.kiama.parsing.Parsers
+import org.kiama.output.PrettyPrinter
 import org.kiama.util.{CompilerWithConfig, Config, Emitter, ErrorEmitter,
     OutputEmitter}
-import org.kiama.output.PrettyPrinter
-import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Common functionality for all forms of Oberon0 driver.
@@ -71,12 +71,10 @@ abstract class Oberon0Config (args : Seq[String], testPrettyPrint : Boolean = fa
  */
 trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : RegexParsers with source.SourcePrettyPrinter =>
+    this : source.SourcePrettyPrinter =>
 
     import java.io.File
-    import org.kiama.util.Emitter
-    import org.kiama.util.Messaging.{formats, report, sortmessages}
-    import org.kiama.util.IO.{filereader, FileNotFoundException}
+    import org.kiama.util.{Emitter, FileSource, Source}
 
     override def createConfig (args : Seq[String],
                                out : Emitter = new OutputEmitter,
@@ -92,23 +90,18 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
      * standard output, otherwise send the message to the errors file.
      */
     override def processfile (filename : String, config : Oberon0Config) {
-        try {
-            val output = config.output
-            val reader = filereader (filename)
-            makeast (reader, filename, config) match {
-                case Left (ast) =>
-                    process (filename, ast, config)
-                case Right (msgs) =>
-                    if (config.challenge ()) {
-                        section (output, "stdout")
-                        output.emitln ("parse failed")
-                    }
-                    section (output, "errors")
-                    output.emit (formats (msgs))
-            }
-        } catch {
-            case e : FileNotFoundException =>
-                config.error.emitln (e.getMessage)
+        val output = config.output
+        val source = FileSource (filename)
+        makeast (source, config) match {
+            case Left (ast) =>
+                process (source, ast, config)
+            case Right (msgs) =>
+                if (config.challenge ()) {
+                    section (output, "stdout")
+                    output.emitln ("parse failed")
+                }
+                section (output, "errors")
+                output.emit (formatMessages (msgs))
         }
     }
 
@@ -121,7 +114,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
      * Process the given abstract syntax tree.  Send output to emitter,
      * marking sections so that we can split things later.
      */
-    def process (filename : String, ast : ModuleDecl, config : Oberon0Config) {
+    def process (source : Source, ast : ModuleDecl, config : Oberon0Config) {
 
         val output = config.output
 
@@ -159,8 +152,8 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
             // to errors file.
             if (config.challenge ()) {
                 section (output, "stdout")
-                val line = sortmessages (messages).head.line
-                output.emitln (s"line $line")
+                val l = line (messages.sorted.head)
+                output.emitln (s"line $l")
             }
             section (output, "errors")
             report (messages, output)
@@ -190,7 +183,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl,Oberon0Co
  */
 trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : RegexParsers with source.SourcePrettyPrinter =>
+    this : source.SourcePrettyPrinter =>
 
     /**
      * A builder of the transformer phase for this driver.
@@ -225,7 +218,7 @@ trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDe
  */
 trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[ModuleDecl,Oberon0Config] {
 
-    this : RegexParsers with source.SourcePrettyPrinter with c.CPrettyPrinter =>
+    this : source.SourcePrettyPrinter with c.CPrettyPrinter =>
 
     /**
      * A builder of the transformer phase for this driver.

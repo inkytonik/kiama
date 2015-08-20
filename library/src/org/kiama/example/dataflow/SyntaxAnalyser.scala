@@ -21,20 +21,18 @@
 package org.kiama
 package example.dataflow
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.ListParsers
+import org.kiama.util.Positions
 
 /**
  * Syntax analyser for simple imperative dataflow language.
  */
-class SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends ListParsers (positions) {
 
     import DataflowTree._
     import scala.language.postfixOps
 
-    lazy val parser =
-        phrase (stm)
-
-    lazy val stm : PackratParser[Stm] =
+    lazy val stm : Parser[Stm] =
         asgnStm | whileStm | ifStm | blockStm | returnStm
 
     lazy val asgnStm =

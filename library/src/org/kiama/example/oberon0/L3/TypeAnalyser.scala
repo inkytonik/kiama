@@ -74,7 +74,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      * work it out from the declaration.  Returns None if the entity is
      * not a procedure.
      */
-    lazy val parameters : Identifier => Option[List[ParamInfo]] =
+    lazy val parameters : Identifier => Option[Vector[ParamInfo]] =
         attr (
             n =>
                 entity (n) match {

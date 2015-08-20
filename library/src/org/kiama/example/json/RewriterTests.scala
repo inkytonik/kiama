@@ -36,7 +36,7 @@ class RewriterTests extends Tests {
      */
     val ralf =
         JObject (
-          List (
+          Vector (
             JName ("type") -> JString ("employee"),
             JName ("name") -> JString ("Ralf"),
             JName ("address") -> JString ("Koblenz"),
@@ -44,7 +44,7 @@ class RewriterTests extends Tests {
 
     val klaus =
         JObject (
-          List (
+          Vector (
             JName ("name") -> JString ("Klaus"),
             JName ("address") -> JString ("Boston"),
             JName ("salary") -> JNumber (23456.0)))
@@ -54,56 +54,56 @@ class RewriterTests extends Tests {
      */
     val company : JValue =
         JObject (
-          List (
+          Vector (
             JName ("depts") -> JArray (
-              List (
+              Vector (
                 JObject (
-                  List (
+                  Vector (
                     JName ("name") -> JString ("Research"),
                     JName ("manager") -> JObject (
-                      List (
+                      Vector (
                         JName ("name") -> JString ("Craig"),
                         JName ("address") -> JString ("Redmond"),
                         JName ("salary") -> JNumber (123456.0))),
                     JName ("subunits") -> JArray (
-                      List (
+                      Vector (
                         JObject (
-                          List (
+                          Vector (
                             JName ("type") -> JString ("employee"),
                             JName ("name") -> JString ("Erik"),
                             JName ("address") -> JString ("Utrecht"),
                             JName ("salary") -> JNumber (12345.0))),
                         ralf)))),
                 JObject (
-                  List (
+                  Vector (
                     JName ("name") -> JString ("Development"),
                     JName ("manager") -> JObject (
-                      List (
+                      Vector (
                         JName ("name") -> JString ("Ray"),
                         JName ("address") -> JString ("Redmond"),
                         JName ("salary") -> JNumber (234567.0))),
                     JName ("subunits") -> JArray (
-                      List (
+                      Vector (
                         JObject (
-                          List (
+                          Vector (
                             JName ("type") -> JString ("department"),
                             JName ("name") -> JString ("Dev1"),
                             JName ("manager") -> klaus,
                             JName ("subunits") -> JArray (
-                              List (
+                              Vector (
                                 JObject (
-                                  List (
+                                  Vector (
                                     JName ("type") -> JString ("department"),
                                     JName ("name") -> JString ("Dev1.1"),
                                     JName ("manager") -> JObject (
-                                      List (
+                                      Vector (
                                         JName ("name") -> JString ("Karl"),
                                         JName ("address") -> JString ("Riga"),
                                         JName ("salary") -> JNumber (2345.0))),
                                     JName ("subunits") -> JArray (
-                                      List (
+                                      Vector (
                                         JObject (
-                                          List (
+                                          Vector (
                                             JName ("type") -> JString ("employee"),
                                             JName ("name") -> JString ("Joe"),
                                             JName ("address") -> JString (
@@ -117,65 +117,65 @@ class RewriterTests extends Tests {
     test ("halvng salaries in company works") {
         val newcompany =
             JObject (
-              List (
+              Vector (
                 JName ("depts") -> JArray (
-                  List (
+                  Vector (
                     JObject (
-                      List (
+                      Vector (
                         JName ("name") -> JString ("Research"),
                         JName ("manager") -> JObject (
-                          List (
+                          Vector (
                             JName ("name") -> JString ("Craig"),
                             JName ("address") -> JString ("Redmond"),
                             JName ("salary") -> JNumber (61728.0))),
                         JName ("subunits") -> JArray (
-                          List (
+                          Vector (
                             JObject (
-                              List (
+                              Vector (
                                 JName ("type") -> JString ("employee"),
                                 JName ("name") -> JString ("Erik"),
                                 JName ("address") -> JString ("Utrecht"),
                                 JName ("salary") -> JNumber (6172.5))),
                             JObject (
-                              List (
+                              Vector (
                                 JName ("type") -> JString ("employee"),
                                 JName ("name") -> JString ("Ralf"),
                                 JName ("address") -> JString ("Koblenz"),
                                 JName ("salary") -> JNumber (617.0))))))),
                     JObject (
-                      List (
+                      Vector (
                         JName ("name") -> JString ("Development"),
                         JName ("manager") -> JObject (
-                          List (
+                          Vector (
                             JName ("name") -> JString ("Ray"),
                             JName ("address") -> JString ("Redmond"),
                             JName ("salary") -> JNumber (117283.5))),
                         JName ("subunits") -> JArray (
-                          List (
+                          Vector (
                             JObject (
-                              List (
+                              Vector (
                                 JName ("type") -> JString ("department"),
                                 JName ("name") -> JString ("Dev1"),
                                 JName ("manager") -> JObject (
-                                  List (
+                                  Vector (
                                     JName ("name") -> JString ("Klaus"),
                                     JName ("address") -> JString ("Boston"),
                                     JName ("salary") -> JNumber (11728.0))),
                                 JName ("subunits") -> JArray (
-                                  List (
+                                  Vector (
                                     JObject (
-                                      List (
+                                      Vector (
                                         JName ("type") -> JString ("department"),
                                         JName ("name") -> JString ("Dev1.1"),
                                         JName ("manager") -> JObject (
-                                          List (
+                                          Vector (
                                             JName ("name") -> JString ("Karl"),
                                             JName ("address") -> JString ("Riga"),
                                             JName ("salary") -> JNumber (1172.5))),
                                         JName ("subunits") -> JArray (
-                                          List (
+                                          Vector (
                                             JObject (
-                                              List (
+                                              Vector (
                                                 JName ("type") -> JString ("employee"),
                                                 JName ("name") -> JString ("Joe"),
                                                 JName ("address") -> JString (

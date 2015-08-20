@@ -41,13 +41,12 @@ abstract class LambdaConfig (args : Seq[String]) extends REPLConfig (args) {
  * Visser, LDTA 2002 (published in Volume 65/3 of Electronic Notes in
  * Theoretical Computer Science, Elsevier).
  */
-class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAnalyser {
+class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree.LambdaTree
     import PrettyPrinter.formattedLayout
-    import org.kiama.util.{Emitter, Console}
-    import org.kiama.util.Messaging.report
+    import org.kiama.util.{Console, Emitter, Source}
 
     def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
@@ -59,12 +58,15 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
 
     val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.exp
+
     /**
      * Process a user input line by intercepting meta-level commands to
      * update the evaluation mechanisms.  By default we just parse what
      * they type into an expression.
      */
-    override def processline (line : String, console : Console, config : LambdaConfig) : Option[LambdaConfig] = {
+    override def processline (source : Source, console : Console, config : LambdaConfig) : Option[LambdaConfig] = {
 
         // Shorthand access to the output emitter
         val output = config.output
@@ -80,7 +82,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
                 |:quit                quit this REPL""".stripMargin)
         }
 
-        line match {
+        source.content match {
             case Command (Array (":help")) =>
                 printHelp ()
                 Some (config)
@@ -109,7 +111,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
 
             // Otherwise it's an expression for evaluation
             case _ =>
-                super.processline (line, console, config)
+                super.processline (source, console, config)
         }
 
     }
@@ -126,7 +128,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
     /**
      * Process an expression.
      */
-    def process (e : Exp, config : LambdaConfig) {
+    def process (source : Source, e : Exp, config : LambdaConfig) {
         // Make an analyser for a tree for this expression
         val tree = new LambdaTree (e)
         val analyser = new Analyser (tree)
@@ -139,7 +141,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp,LambdaConfig] with SyntaxAn
             val evaluator = evaluatorFor (config.mechanism ())
             config.output.emitln (formattedLayout (evaluator.eval (e)))
         } else {
-            // Otherwise report the errors and reset for next expression
+            // Otherwise report the errors
             report (messages, config.error)
         }
     }

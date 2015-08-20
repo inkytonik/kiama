@@ -32,11 +32,11 @@ abstract class PicojavaConfig (args : Seq[String]) extends Config (args) {
     lazy val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
 }
 
-object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalyser {
+object Main extends CompilerWithConfig[Program,PicojavaConfig] {
 
     import PicoJavaTree.PicoJavaTree
     import org.kiama.output.PrettyPrinterTypes.Document
-    import org.kiama.util.Config
+    import org.kiama.util.{Config, Source}
 
     def createConfig (args : Seq[String],
                       out : Emitter = new OutputEmitter,
@@ -46,11 +46,14 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] with SyntaxAnalys
             lazy val error = err
         }
 
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.program
+
     /**
      * Process a PicoJava program by checking for errors, optionally obfuscating and
      * then printing any errors that were found.
      */
-    def process (filename : String, program : Program, config : PicojavaConfig) {
+    def process (source : Source, program : Program, config : PicojavaConfig) {
 
         val tree = new PicoJavaTree (program)
         val analysis = new ErrorCheck (tree)

@@ -35,7 +35,7 @@ object SymbolTable extends Environments {
     /**
      * A predicate entity and its argument type constraints.
      */
-    case class Predicate (argtypes : List[Type]) extends Entity
+    case class Predicate (argtypes : Vector[Type]) extends Entity
 
     /**
      * A variable entity including the type constraint that we know so far.

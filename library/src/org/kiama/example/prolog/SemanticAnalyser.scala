@@ -30,14 +30,14 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
 
     import PrologTree._
     import SymbolTable._
-    import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
+    import org.kiama.util.Messaging.{check, collectMessages, message, Messages}
     import org.kiama.util.{Entity, UnknownEntity}
 
     /**
      * The semantic error messages for a given tree.
      */
     lazy val errors : Messages =
-        collectmessages (tree) {
+        collectMessages (tree) {
             case n @ Pred (s, ts) =>
                 check (entity (n)) {
                     case Predicate (argtypes) if argtypes.length != ts.length =>
@@ -74,8 +74,8 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      * predicates for lists: cons and nil.
      */
     val defenv : Environment =
-        rootenv ("nil" -> Predicate (Nil),
-                 "cons" -> Predicate (List (UnknownType (), ListType ())))
+        rootenv ("nil" -> Predicate (Vector ()),
+                 "cons" -> Predicate (Vector (UnknownType (), ListType ())))
 
     /**
      * The environment containing all bindings visible at a particular
@@ -128,7 +128,7 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
                         define (envin (n), s, Predicate (argtypes))
                 }
             case n @ Atom (s) if ! isDefinedInEnv (envin (n), s) =>
-                define (envin (n), s, Predicate (Nil))
+                define (envin (n), s, Predicate (Vector ()))
             case tree.lastChild (c) =>
                 env (c)
             case n =>

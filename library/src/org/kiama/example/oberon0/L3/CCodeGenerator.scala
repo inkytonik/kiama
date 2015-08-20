@@ -46,13 +46,13 @@ trait CCodeGenerator extends TypeAnalyser with L1.CCodeGenerator with SymbolTabl
     /**
      * Add translation of procedure declarations.
      */
-    override def translate (d : Declaration) : List[CDeclaration] =
+    override def translate (d : Declaration) : Vector[CDeclaration] =
         d match {
             case ProcDecl (p @ IdnDef (i), ps, Block (ds, ss), _) =>
-                List (CFunctionDecl (CVarDecl (mangle (i), CVoidType ()),
-                                     translateFormalParams (p),
-                                     CBlock (ds flatMap translate,
-                                             ss map translate)))
+                Vector (CFunctionDecl (CVarDecl (mangle (i), CVoidType ()),
+                                       translateFormalParams (p),
+                                       CBlock (ds flatMap translate,
+                                               ss map translate)))
             case _ =>
                 super.translate (d)
         }
@@ -60,7 +60,7 @@ trait CCodeGenerator extends TypeAnalyser with L1.CCodeGenerator with SymbolTabl
     /**
      * Translate the formal parameters of a particular defined procedure.
      */
-    def translateFormalParams (p : IdnDef): List[CDeclaration] =
+    def translateFormalParams (p : IdnDef): Vector[CDeclaration] =
         parameters (p).get.map {
             case ParamInfo (m, i, t) =>
                 translateFormalParam (m, i, t)
@@ -90,7 +90,7 @@ trait CCodeGenerator extends TypeAnalyser with L1.CCodeGenerator with SymbolTabl
                             case "Write" =>
                                 CCall ("printf", CStrExp (" %d") +: cps)
                             case "WriteLn" =>
-                                CCall ("puts", List (CStrExp ("")))
+                                CCall ("puts", Vector (CStrExp ("")))
                         }
                     case _ =>
                         CCall (mangle (s), cps)
@@ -103,11 +103,11 @@ trait CCodeGenerator extends TypeAnalyser with L1.CCodeGenerator with SymbolTabl
      * Translate the actual parameters of a procedure call. Assumes that the
      * right number of parameters are present.
      */
-    def translateActualParams (u : IdnUse, ps : List[Expression]) : List[CExpression] =
+    def translateActualParams (u : IdnUse, ps : Vector[Expression]) : Vector[CExpression] =
         (for (i <- 0 until ps.length)
             yield
                 translateActualParam (ps (i), parammode (u, i + 1))
-         ).toList
+         ).toVector
 
     /**
      * Compute an expression for a given actual parameter, inserting an

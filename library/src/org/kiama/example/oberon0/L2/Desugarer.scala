@@ -71,7 +71,7 @@ trait Desugarer extends L0.Desugarer {
          */
         lazy val desugarFor =
             rule[Statement] {
-                case ForStatement (idnexp, lower, upper, optby, Block (Nil, stmts)) =>
+                case ForStatement (idnexp, lower, upper, optby, Block (Vector (), stmts)) =>
                     val limvarname = "_limit"
                     val limexp = IdnExp (IdnUse (limvarname))
                     val incval = optby.map (value).getOrElse (1)
@@ -81,16 +81,16 @@ trait Desugarer extends L0.Desugarer {
                                else
                                    GeExp (idnexp, limexp)
                     Block (
-                        List (
-                            VarDecl (List (IdnDef (limvarname)),
-                                           NamedType (IdnUse ("INTEGER")))
+                        Vector (
+                            VarDecl (Vector (IdnDef (limvarname)),
+                                             NamedType (IdnUse ("INTEGER")))
                         ),
-                        List (
+                        Vector (
                             Assignment (deepclone (idnexp), lower),
                             Assignment (deepclone (limexp), upper),
                             WhileStatement (cond,
                                 Block (
-                                    Nil,
+                                    Vector (),
                                     stmts :+
                                     Assignment (deepclone (idnexp),
                                                 AddExp (deepclone (idnexp), rincval))))
@@ -122,11 +122,11 @@ trait Desugarer extends L0.Desugarer {
                     val casevarname = "_caseval"
                     val caseexp = IdnExp (IdnUse (casevarname))
                     Block (
-                        List (
-                            VarDecl (List (IdnDef (casevarname)),
-                                           NamedType (IdnUse ("INTEGER")))
+                        Vector (
+                            VarDecl (Vector (IdnDef (casevarname)),
+                                             NamedType (IdnUse ("INTEGER")))
                         ),
-                        List (
+                        Vector (
                             Assignment (caseexp, exp),
                             casesToIf (caseexp, cases, optelse)
                         )
@@ -151,7 +151,7 @@ trait Desugarer extends L0.Desugarer {
          * If a case has more than one condition then they are combined with Or
          * operators.
          */
-        def casesToIf (ce : IdnExp, cases : List[Case], optelse : Option[Block]) : IfStatement = {
+        def casesToIf (ce : IdnExp, cases : Vector[Case], optelse : Option[Block]) : IfStatement = {
 
             /*
              * Return an expression for a case condition. A value condition becomes
@@ -168,13 +168,13 @@ trait Desugarer extends L0.Desugarer {
              * Return a single expression for a sequence of conditions by
              * forming a disjunction of translating each one.
              */
-            def condsToExp (ns : List[Condition]) : Expression = {
+            def condsToExp (ns : Vector[Condition]) : Expression = {
                 val es = ns.map (condToExp)
                 es.tail.foldLeft (es.head) (OrExp)
             }
 
             // Extract the first (f) and rest (tl) cases.
-            val f :: tl = cases
+            val f +: tl = cases
 
             // Produce an IF which implements the first case in the THEN branch,
             // the other cases as the ELSE-IFs, and the optional ELSE.

@@ -23,10 +23,10 @@ package relation
 
 /**
  * A binary relation between values of type `T` and values of type `U`.
- * Constructed from a list of pairs that constitute the relation's
+ * Constructed from a vector of pairs that constitute the relation's
  * graph.
  */
-class Relation[T,U] (val graph : List[(T,U)]) extends RelationLike[T,U,Relation] {
+class Relation[T,U] (val graph : Vector[(T,U)]) extends RelationLike[T,U,Relation] {
     val companion = Relation
 }
 
@@ -35,35 +35,41 @@ class Relation[T,U] (val graph : List[(T,U)]) extends RelationLike[T,U,Relation]
  */
 object Relation extends RelationFactory[Relation] {
 
-    import scala.collection.mutable.ListBuffer
+    import scala.annotation.tailrec
+    import scala.collection.immutable.Queue
 
     /**
      * Make a binary relation from its graph.
      */
-    def fromGraph[T,U] (graph : List[(T,U)]) : Relation[T,U] =
+    def fromGraph[T,U] (graph : Vector[(T,U)]) : Relation[T,U] =
         new Relation[T,U] (graph)
 
     /**
      * Make a graph from the repeated application of `onestep` to `t` and
      * the results that it produces.
      */
-    def fromOneStepGraph[T] (t : T, onestep : T => List[T]) : List[(T,T)] = {
-        val pending = ListBuffer[T] (t)
-        val result = ListBuffer[(T,T)] ()
-        while (!pending.isEmpty) {
-            val l = pending.remove (0)
-            val cs = onestep (l)
-            pending.appendAll (cs)
-            result.appendAll (cs.map { case r => (l, r) })
-        }
-        result.toList
+    def fromOneStepGraph[T] (t : T, onestep : T => Vector[T]) : Vector[(T,T)] = {
+
+        @tailrec
+        def loop (pending : Queue[T], graph : Vector[(T,T)]) : Vector[(T,T)] =
+            pending.dequeueOption match {
+                case Some ((l, rest)) =>
+                    val next = onestep (l)
+                    val pairs = next.map { case r => (l, r) }
+                    loop (rest ++ next, graph ++ pairs)
+                case None =>
+                    graph
+            }
+
+        loop (Queue (t), Vector ())
+
     }
 
     /**
      * Make a binary relation using the graph produced by `fromOneStepGraph`
      * applied to `t` and `onestep`.
      */
-    def fromOneStep[T] (t : T, onestep : T => List[T]) : Relation[T,T] =
+    def fromOneStep[T] (t : T, onestep : T => Vector[T]) : Relation[T,T] =
         new Relation[T,T] (fromOneStepGraph (t, onestep))
 
 }

@@ -32,7 +32,7 @@ abstract class CNode
 /**
  * C programs.
  */
-case class CProgram (includes : List[CInclude], decls : List[CDeclaration]) extends CNode
+case class CProgram (includes : Vector[CInclude], decls : Vector[CDeclaration]) extends CNode
 
 /**
  * C include directive.
@@ -52,13 +52,13 @@ case class CVarDecl (ident : String, tipe : CType) extends CDeclaration
 /**
  * C function declarations.
  */
-case class CFunctionDecl (decl : CVarDecl, args : List[CDeclaration],
+case class CFunctionDecl (decl : CVarDecl, args : Vector[CDeclaration],
                           body : CBlock) extends CDeclaration
 
 /**
  * C blocks.
  */
-case class CBlock (decls : List[CDeclaration], stmts : List[CStatement]) extends CStatement
+case class CBlock (decls : Vector[CDeclaration], stmts : Vector[CStatement]) extends CStatement
 
 /**
  * Non-terminal type for C types.

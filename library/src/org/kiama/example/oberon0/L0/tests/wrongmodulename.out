@@ -2,7 +2,6 @@
 MODULE aname;
 END anothername.
 * errors
-3:5: end module name 'anothername' should be 'aname'
+src/org/kiama/example/oberon0/L0/tests/wrongmodulename.ob:3:5: end module name 'anothername' should be 'aname'
 END anothername.
-
     ^

@@ -28,15 +28,15 @@ import org.kiama.util.Compiler
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
-class Driver extends SyntaxAnalyser with Compiler[Stm] {
+class Driver extends Compiler[Stm] {
 
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.kiama.util.Config
+    import org.kiama.util.{Config, Source}
 
-    /**
-     * Process the tree by optimising it, then print optimised tree.
-     */
-    def process (filename : String, ast : Stm, config : Config) {
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.stm
+
+    def process (source : Source, ast : Stm, config : Config) {
         val tree = new DataflowTree (ast)
         val optimiser = new Optimiser (tree)
         val optast = optimiser.run (ast)

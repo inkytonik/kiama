@@ -27,7 +27,7 @@ import base.c.{CDeclaration, CExpression, CType, CVarDecl}
 /**
  * C record types.
  */
-case class CRecordType (fields : List[CVarDecl]) extends CType
+case class CRecordType (fields : Vector[CVarDecl]) extends CType
 
 /**
  * C array index expressions.

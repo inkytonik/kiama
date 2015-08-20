@@ -21,15 +21,19 @@
 package org.kiama
 package example.lambda
 
-import org.kiama.util.{GeneratingREPL, RegexParserTests}
+import org.kiama.util.ParseTests
+import org.kiama.util.GeneratingREPL
 
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends RegexParserTests with SyntaxAnalyser with Evaluator with Generator {
+class LambdaTests extends ParseTests with Evaluator with Generator {
 
     import LambdaTree._
     import org.scalacheck.Prop._
+
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.exp
 
     /**
      * Parse and evaluate `term` then compare to `expected`.
@@ -71,6 +75,10 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser with Evaluator wi
 
     test ("a numeric parameter is passed and substituted") {
         assertEval ("""(\x.x) 42""", Num (42))
+    }
+
+    test ("recursive application works") {
+        assertEval ("""(\y.y) (\x.x) 42""", Num (42))
     }
 
     test ("name capturing is avoided (1)") {

@@ -69,12 +69,11 @@ abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
  * interactive read-eval-print loop (REPL) to read queries.  For each
  * query, call the interpreter to evaluate it.
  */
-object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConfig] with PrettyPrinter {
+object Main extends ParsingREPLWithConfig[Literal,PrologConfig] with PrettyPrinter {
 
-    import java.io.FileReader
-    import java.io.FileNotFoundException
-    import org.kiama.util.Messaging.report
-    import org.kiama.util.{Emitter, ErrorEmitter, OutputEmitter, StringEmitter}
+    import org.kiama.parsing.{Failure, Success}
+    import org.kiama.util.{Emitter, ErrorEmitter, FileSource, OutputEmitter, Source,
+        StringEmitter}
     import PrologTree.{Program, PrologTree}
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
@@ -87,19 +86,22 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
             lazy val error = err
         }
 
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.query
+
     /**
      * Helper function to create the database from the given filename or return
      * a command-line error.
      */
     def makeDatabase (filename : String) : Either[String,Option[Program]] =
         try {
-            val reader = new FileReader (filename)
             // Parse the file
-            parse (program, reader) match {
+            val source = FileSource (filename)
+            parsers.parseAll (parsers.program, source) match {
                 // If parse worked, we get a source tree, check it
                 case Success (dbtree, _) =>
                     // Pretty print the source tree
-                    // cnofig.error.emitln (pretty (product (dbtree)))
+                    // config.error.emitln (pretty (any (dbtree)))
                     val tree = new PrologTree (dbtree)
                     val analyser = new SemanticAnalyser (tree)
                     val messages = analyser.errors
@@ -115,15 +117,9 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
                     Left (s"error parsing $filename: $f")
             }
         } catch {
-            case e : FileNotFoundException =>
+            case e : java.io.FileNotFoundException =>
                 Left (e.getMessage)
         }
-
-    /**
-     * The parser to use to parse each line of interactive input. We will
-     * read queries, which are just literals followed by a period.
-     */
-    override val parser = query
 
     /**
      * The prompt to print before each line of input is read.
@@ -138,7 +134,7 @@ object Main extends SyntaxAnalyser with ParsingREPLWithConfig[Literal,PrologConf
     /**
      * Process a query by passing it and the program to the interpreter.
      */
-    def process (querytree : Literal, config : PrologConfig) {
+    def process (source : Source, querytree : Literal, config : PrologConfig) {
         interpreter.interpret (querytree, config.database (), config.output)
     }
 

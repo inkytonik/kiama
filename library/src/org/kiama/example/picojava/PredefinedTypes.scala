@@ -46,11 +46,11 @@ trait PredefinedTypes {
      *        add(new PrimitiveDecl("boolean"));
      * }
      */
-    val getPredefinedTypeList : Program => List[TypeDecl] =
+    val getPredefinedTypeList : Program => Vector[TypeDecl] =
         constant {
-            List (UnknownDecl ("$unknown"),
-                  PrimitiveDecl ("boolean"),
-                  PrimitiveDecl ("int"))
+            Vector (UnknownDecl ("$unknown"),
+                    PrimitiveDecl ("boolean"),
+                    PrimitiveDecl ("int"))
         }
 
     /**

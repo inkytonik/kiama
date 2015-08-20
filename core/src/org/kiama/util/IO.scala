@@ -23,7 +23,6 @@ package util
 
 /**
  * Utility wrapper for I/O to isolate Kiama code from some Java I/O details.
- * Ultimately this will be replaced by code using the new scala.io.
  */
 object IO {
 
@@ -32,26 +31,16 @@ object IO {
                     Reader, StringReader, Writer}
 
     /**
-     * Exception thrown when a requested file cannot be found.
-     */
-    case class FileNotFoundException (message : String) extends java.lang.Exception (message)
-
-    /**
      * Return a new buffered reader on the file with the given name.
      * The `encoding` argument gives the character encoding of the
-     * file (default: UTF-8). Throw `FileNotFoundException` if the
-     * file cannot be found.
+     * file (default: UTF-8). Throw `java.io.FileNotFoundException`
+     * if the file cannot be found.
      */
     def filereader (name : String, encoding : String = "UTF-8") : BufferedReader =
-        try {
-            new BufferedReader (
-                new InputStreamReader (
-                    new FileInputStream (name),
-                    encoding))
-        } catch {
-            case e : java.io.FileNotFoundException =>
-                throw FileNotFoundException (e.getMessage)
-        }
+        new BufferedReader (
+            new InputStreamReader (
+                new FileInputStream (name),
+                encoding))
 
     /**
      * Return a new writer reader on the file with the given name.

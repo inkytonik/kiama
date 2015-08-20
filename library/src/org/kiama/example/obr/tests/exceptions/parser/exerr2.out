@@ -1,4 +1,3 @@
-11:7: keyword "DO" found where variable name expected
+src/org/kiama/example/obr/tests/exceptions/parser/exerr2.obr:11:7: keyword "DO" found where variable name expected
       Result := 0;
-
       ^

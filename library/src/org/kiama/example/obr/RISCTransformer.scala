@@ -51,7 +51,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
             case p @ ObrInt (_, decls, stmts, _) =>
                 val dbody = decls.flatMap (ditems)
                 val sbody = stmts.flatMap (sitems)
-                val sepilogue = List (
+                val sepilogue = Vector (
                         Write (IntDatum (0))
                     ,   Ret ()
                     ,   LabelDef (Label (exnlab (p)))
@@ -92,7 +92,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                     Local (locn (entity (v))),
                     MulW (
                         SequenceDatum(
-                            List (
+                            Vector (
                                 StW (Local (tempintloc), SubW (datum (i), IntDatum(1))),
                                 Bne (CmpltW (LdW (Local (tempintloc)), IntDatum (0)), Label (lab1)),
                                 Beq (CmpltW (
@@ -173,7 +173,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
      * The RISC tree items that are the translation of the given
      * Obr language declaration.
      */
-    val ditems : Declaration => List[Item] =
+    val ditems : Declaration => Vector[Item] =
         attr {
 
             /*
@@ -181,13 +181,13 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
              * the location of the parameter.
              */
             case d @ IntParam (_) =>
-                 List (StW (location (d), Read ()))
+                 Vector (StW (location (d), Read ()))
 
             /*
              * All other kinds of declaration generate no code.
              */
             case _ =>
-                 Nil
+                 Vector ()
 
         }
 
@@ -195,7 +195,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
      * The RISC tree items that are the translation of the given
      * Obr language statement.
      */
-    val sitems : Statement => List[Item] =
+    val sitems : Statement => Vector[Item] =
         attr {
 
             /*
@@ -203,14 +203,14 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
              * into the lvalue location.
              */
             case AssignStmt (e, exp) =>
-                List (StW (location (e), datum (exp)))
+                Vector (StW (location (e), datum (exp)))
 
             /*
              * An EXIT statement translates into a jump to the exit label
              * of the current LOOP statement.
              */
             case s @ ExitStmt () =>
-                List (Jmp (Label (exitlab (s))))
+                Vector (Jmp (Label (exitlab (s))))
 
             /*
              * A for statement first evaluates the minimum and maximum bounds,
@@ -235,7 +235,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                 val maxloc = locn (Variable (IntType ()))
                 // generate RISCTree code
                 val result =
-                    List (StW (eloc, datum (min)),
+                    Vector (StW (eloc, datum (min)),
                          StW (Local (maxloc), datum (max)),
                          Bne (CmpgtW (LdW (eloc), LdW (Local (maxloc))), Label (lab2)),
                          Jmp (Label (lab1)),
@@ -243,7 +243,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                          StW (eloc, AddW (LdW (eloc), IntDatum (1))),
                          LabelDef (Label (lab1))) ++
                     body.flatMap (sitems) ++
-                    List (Bne (CmpltW (LdW (eloc), LdW (Local (maxloc))), Label (lab3)),
+                    Vector (Bne (CmpltW (LdW (eloc), LdW (Local (maxloc))), Label (lab3)),
                           LabelDef (Label (lab2)))
                 // restore value of first unallocated location
                 // thereby deallocating our temporary.
@@ -259,11 +259,11 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
             case IfStmt (cond, thens, elses) =>
                 val lab1 = genlabelnum ()
                 val lab2 = genlabelnum ()
-                List (Beq (datum (cond), Label (lab1))) ++
+                Vector (Beq (datum (cond), Label (lab1))) ++
                     thens.flatMap (sitems) ++
-                    List (Jmp (Label (lab2)), LabelDef (Label (lab1))) ++
+                    Vector (Jmp (Label (lab2)), LabelDef (Label (lab1))) ++
                     elses.flatMap (sitems) ++
-                    List (LabelDef (Label (lab2)))
+                    Vector (LabelDef (Label (lab2)))
 
             /*
              * A LOOP statement translates into a simple infinite loop
@@ -276,9 +276,9 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                 // Generate label for top of loop body
                 val lab1 = genlabelnum ()
                 // Construct loop code
-                List (LabelDef (Label (lab1))) ++
+                Vector (LabelDef (Label (lab1))) ++
                     body.flatMap (sitems) ++
-                    List (Jmp (Label (lab1)),
+                    Vector (Jmp (Label (lab1)),
                     LabelDef (Label (exitlab (s))))
 
             /*
@@ -287,7 +287,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
              * terminate the program.
              */
             case ReturnStmt (exp) =>
-                List (Write (datum (exp)), Ret ())
+                Vector (Write (datum (exp)), Ret ())
 
             /*
              * A while statement translates into the standard evaluation
@@ -296,9 +296,9 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
             case WhileStmt (cond, body) =>
                 val lab1 = genlabelnum ()
                 val lab2 = genlabelnum ()
-                List (Jmp (Label (lab1)), LabelDef (Label (lab2))) ++
+                Vector (Jmp (Label (lab1)), LabelDef (Label (lab2))) ++
                     body.flatMap (sitems) ++
-                    List (LabelDef (Label (lab1)), Bne (datum (cond), Label (lab2)))
+                    Vector (LabelDef (Label (lab1)), Bne (datum (cond), Label (lab2)))
 
             /*
              * A TRY statement translates to the code generated from its body followed by
@@ -319,9 +319,9 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                 val tbody = body.flatMap (sitems)
                 // Translate the catch clauses, append the resulting RISC code to that for
                 // the body and return
-                tbody ++ List (Jmp (Label (tryexitlab)), LabelDef (Label (exnlab (s)))) ++
+                tbody ++ Vector (Jmp (Label (tryexitlab)), LabelDef (Label (exnlab (s)))) ++
                     cblocks.flatMap (cblock (_, tryexitlab)) ++
-                    List (Jmp (Label (exnlabOuter (s))), LabelDef (Label (tryexitlab)))
+                    Vector (Jmp (Label (exnlabOuter (s))), LabelDef (Label (tryexitlab)))
 
             /*
              * A RAISE statement stores the integer associated with the specified
@@ -338,7 +338,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                 // Generate code to store that vale as the current exception number
                 // and then to jump to the entry point of the exception handler currently
                 // in scope.
-                List (StW (Local (exnloc), exnconst), Jmp (Label (exnlab (s))))
+                Vector (StW (Local (exnloc), exnconst), Jmp (Label (exnlab (s))))
 
         }
 
@@ -347,7 +347,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
      * to a test of the value of the current exception followed by code which
      * executed if that test succeeds.
      */
-    def cblock (clause : Catch, exitlab : Int) : List[Item] =
+    def cblock (clause : Catch, exitlab : Int) : Vector[Item] =
         clause match {
 
             case Catch (n, stmts) =>
@@ -360,9 +360,9 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
                 }
                 // Generate code for statements in the catch body, guarded by a
                 // conditional branch to test the exception value thrown.
-                List (Beq (CmpeqW (LdW (Local (exnloc)), exnconst), Label (lab1))) ++
+                Vector (Beq (CmpeqW (LdW (Local (exnloc)), exnconst), Label (lab1))) ++
                     stmts.flatMap (sitems) ++
-                    List (Jmp (Label (exitlab)), LabelDef (Label (lab1)))
+                    Vector (Jmp (Label (exitlab)), LabelDef (Label (lab1)))
 
         }
 
@@ -454,7 +454,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
             case e @ ModExp (l, r) =>
                 val lab1 = genlabelnum ()
                 SequenceDatum (
-                    List (
+                    Vector (
                             StW (Local (tempintloc), datum (r))
                         ,   Bne (LdW (Local (tempintloc)), Label (lab1))
                         ,   StW (Local (exnloc), IntDatum (divideByZeroExn))
@@ -505,7 +505,7 @@ class RISCTransformer (analyser : SemanticAnalyser, labels : RISCLabels) {
             case e @ SlashExp (l, r) =>
                 val lab1 = genlabelnum ()
                 SequenceDatum (
-                        List (
+                        Vector (
                                 // Calculate value of right operand and store result
                                 // in the memory location reserved for temporaries.
                                 StW (Local (tempintloc), datum (r))

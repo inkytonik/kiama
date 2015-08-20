@@ -21,7 +21,8 @@
 package org.kiama
 package example.lambda
 
-import org.kiama.util.{ParsingREPL, PositionedParserUtilities, Profiler}
+import org.kiama.parsing.Parsers
+import org.kiama.util.{ParsingREPL, Positions, Profiler}
 
 /**
  * A simple lambda calculus.
@@ -81,12 +82,9 @@ object LambdaTree {
 /**
  * Parser to abstract syntax tree for simple lambda calculus.
  */
-trait SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import LambdaTree._
-
-    lazy val parser =
-        phrase (exp)
 
     lazy val exp : PackratParser[Exp] =
         exp ~ factor ^^ App |
@@ -94,7 +92,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         factor |
         failure ("expression expected")
 
-    lazy val factor : PackratParser[Exp] =
+    lazy val factor =
         integer | variable | "(" ~> exp <~ ")"
 
     lazy val integer =
@@ -186,15 +184,18 @@ trait Evaluator {
 /**
  * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-object Lambda extends ParsingREPL[LambdaTree.Exp] with SyntaxAnalyser with Evaluator with Profiler {
+object Lambda extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
 
-    import org.kiama.util.REPLConfig
+    import org.kiama.util.{REPLConfig, Source}
 
     val banner = "Enter lambda calculus expressions for evaluation."
 
     override val prompt = "lambda> "
 
-    def process (e : LambdaTree.Exp, config : REPLConfig) {
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.exp
+
+    def process (source : Source, e : LambdaTree.Exp, config : REPLConfig) {
         val result =
             if (config.profile.get != None) {
                 val dimensions = parseProfileOption (config.profile ())

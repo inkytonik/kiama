@@ -43,11 +43,12 @@ trait Memoiser {
         /**
          * Duplicate an entry if possible. If `t1` has a memoised value associated
          * with it, set the value associated with `t2` to the same value. If there
-         * is no value associated with `t1`, set the value associated with `t2` to
-         * `u`.
+         * is no value associated with `t1`, do nothing.
          */
-        def dup (t1 : T, t2 : T, u : U) {
-            put (t2, getWithDefault (t1, u))
+        def dup (t1 : T, t2 : T) {
+            val u = memo.getIfPresent (t1).asInstanceOf[U]
+            if (u != null)
+                put (t2, u)
         }
 
         /**

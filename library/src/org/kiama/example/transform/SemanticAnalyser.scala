@@ -33,7 +33,7 @@ import TransformTree.TransformTree
 class SemanticAnalyser (tree : TransformTree) extends Attribution {
 
     import TransformTree._
-    import org.kiama.util.Messaging.{collectmessages, message, Messages}
+    import org.kiama.util.Messaging.{collectMessages, message, Messages}
     import scala.collection.immutable.HashMap
 
     lazy val prioenv : Program => Map[String,Int] =
@@ -118,7 +118,7 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
      * variable are ok.
      */
     lazy val errors : Messages =
-        collectmessages (tree) {
+        collectMessages (tree) {
             case e @ Var (s) if lookup (s) (e) == None =>
                 message (e, s"$s is not declared")
         }

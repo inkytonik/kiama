@@ -28,14 +28,16 @@ import org.kiama.util.Compiler
  * Compile the MiniJava program in the file given as the first command-line
  * argument.
  */
-trait Driver extends SyntaxAnalyser with Compiler[Program] {
+trait Driver extends Compiler[Program] {
 
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
-    import PrettyPrinter.{any => ppany, layout}
+    import PrettyPrinter.{any, layout}
     import org.kiama.output.PrettyPrinterTypes.Document
-    import org.kiama.util.Config
-    import org.kiama.util.Messaging.report
+    import org.kiama.util.{Config, Source}
+
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.program
 
     /**
      * Whether this is a test run or not. Test runs generate all of their
@@ -50,10 +52,10 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
      * errors. If any messages are produced, print them. If all is ok,
      * translate the program and generate code for the translation.
      */
-    def process (filename : String, ast : Program, config : Config) {
+    def process (source : Source, ast : Program, config : Config) {
 
         // Pretty print the abstract syntax tree
-        // config.output.emitln (layout (ppany (ast)))
+        // config.output.emitln (layout (any (ast)))
 
         // Perform the semantic checks
         val tree = new MiniJavaTree (ast)
@@ -71,10 +73,11 @@ trait Driver extends SyntaxAnalyser with Compiler[Program] {
             val translator = new Translator (tree)
 
             // Translate the source tree to JVM
+            val filename = source.optName.getOrElse ("")
             val targettree = translator.translate (ast, filename, analyser)
 
             // Pretty print the target tree
-            // config.output.emitln (layout (ppany (targettree)))
+            // config.output.emitln (layout (any (targettree)))
 
             // Output code for the target tree
             targettree.map (generate (isTest, _, config.output))

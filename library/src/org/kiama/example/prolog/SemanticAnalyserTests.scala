@@ -28,25 +28,21 @@ import org.kiama.util.{Compiler, TestCompiler}
  * Tests that check that the semantic analyser works correctly.  I.e., it correctly
  * diagnoses errors where they are present, and passes correct code.
  */
-class SemanticAnalyserTests extends SyntaxAnalyser with Compiler[Program]
-        with TestCompiler[Program] {
+class SemanticAnalyserTests extends Compiler[Program] with TestCompiler[Program] {
 
-    import PrologTree.PrologTree
+    import PrologTree.{PrologTree, Program}
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.kiama.util.Config
-    import org.kiama.util.Messaging.report
+    import org.kiama.util.{Config, Source}
 
     filetests ("Prolog", "src/org/kiama/example/prolog/tests", ".pl", ".sem")
 
-    /**
-     * For the purposes of tests, the parser we want is the program one.
-     */
-    val parser = program
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.program
 
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.
      */
-    def process (filename : String, ast : Program, config : Config) {
+    def process (source : Source, ast : Program, config : Config) {
         val tree = new PrologTree (ast)
         val analyser = new SemanticAnalyser (tree)
         val messages = analyser.errors

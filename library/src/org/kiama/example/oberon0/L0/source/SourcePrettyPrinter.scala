@@ -35,13 +35,13 @@ trait SourcePrettyPrinter extends base.source.SourcePrettyPrinter {
     override def blockToDoc (b : Block, beginend : Boolean = false) : Doc = {
         val ss = super.blockToDoc (b, beginend)
         b.decls match {
-            case Nil => line <> ss
-            case ds  => declsToDoc (ds) <@> ss
+            case Vector () => line <> ss
+            case ds        => declsToDoc (ds) <@> ss
         }
     }
 
-    def declsToDoc (ds : List[Declaration]) : Doc =
-        if (ds == Nil)
+    def declsToDoc (ds : Vector[Declaration]) : Doc =
+        if (ds.isEmpty)
             empty
         else {
             val m = ds.groupBy (declsection)
@@ -59,11 +59,14 @@ trait SourcePrettyPrinter extends base.source.SourcePrettyPrinter {
             case _             => super.declsection (d)
         }
 
-    def optSectionToDoc (section : String, optds : Option[List[Declaration]]) : Doc =
+    def optSectionToDoc (section : String, optds : Option[Vector[Declaration]]) : Doc =
         (section, optds) match {
-            case (_, None)       => empty
-            case ("", Some (ds)) => nest (line <> vsep (ds map toDoc, line)) <> line
-            case (s, Some (ds))  => nest (line <> s <> semisep (ds, empty)) <> line
+            case (_, None) =>
+                empty
+            case ("", Some (ds)) =>
+                nest (line <> vsep (ds map toDoc, line)) <> line
+            case (s, Some (ds)) =>
+                nest (line <> s <> semisep (ds, empty)) <> line
         }
 
     override def toDoc (n : SourceNode) : Doc =
@@ -93,7 +96,7 @@ trait SourcePrettyPrinter extends base.source.SourcePrettyPrinter {
                 super.toDoc (n)
         }
 
-    def idlistToDoc (ids : List[IdnDef]) : Doc =
+    def idlistToDoc (ids : Vector[IdnDef]) : Doc =
         hsep (ids map toDoc, comma)
 
     override def toParenDoc (e : PrettyExpression) : Doc =

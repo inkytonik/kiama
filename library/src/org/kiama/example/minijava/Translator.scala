@@ -39,7 +39,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
      * MiniJava program which came from the given source file. Return
      * one class file for each class in the MiniJava program.
      */
-    def translate (sourcetree : Program, sourceFilename : String, analyser : SemanticAnalyser) : List[ClassFile] = {
+    def translate (sourcetree : Program, sourceFilename : String, analyser : SemanticAnalyser) : Vector[ClassFile] = {
 
         // An instruction buffer for translating statements and expressions.
         val instructions = Vector.newBuilder[JVMInstr]
@@ -147,13 +147,13 @@ class Translator (tree : MiniJavaTree) extends Attribution {
             val mainMethod =
                 JVMMethod (m.main,
                            JVMMethodSpec ("main",
-                                          List (JVMArrayType (JVMStringType ())),
+                                          Vector (JVMArrayType (JVMStringType ())),
                                           JVMVoidType ()),
                            true,
                            instrs)
 
             ClassFile (m, sourceFilename, m.name.idn, "java/lang/Object",
-                       Nil, List (mainMethod))
+                       Vector (), Vector (mainMethod))
 
         }
 
@@ -171,7 +171,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
         /*
          * Translate the fields of a class.
          */
-        def translateFields (fieldVars : List[Field]) : List[JVMField] =
+        def translateFields (fieldVars : Vector[Field]) : Vector[JVMField] =
             fieldVars.map {
                 case Field (tipe, IdnDef (idn)) =>
                     JVMField (idn, translateType (tipe))
@@ -227,7 +227,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
         /*
          * Translate the methods of a class.
          */
-        def translateMethods (methods : List[Method]) : List[JVMMethod] =
+        def translateMethods (methods : Vector[Method]) : Vector[JVMMethod] =
             methods.map (translateMethod)
 
         /*
@@ -369,7 +369,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
                     translateExp (exp)
                     gen (stmt,
                          InvokeVirtual (JVMMethodSpec ("java/io/PrintStream/println",
-                                                       List (JVMIntType ()),
+                                                       Vector (JVMIntType ()),
                                                        JVMVoidType ())))
 
                 case VarAssign (idnuse, exp) =>
@@ -490,7 +490,7 @@ class Translator (tree : MiniJavaTree) extends Attribution {
 
                 case NewExp (IdnUse (idn)) =>
                     gen (exp, New (idn), Dup (),
-                              InvokeSpecial (JVMMethodSpec (s"$idn/<init>", Nil,
+                              InvokeSpecial (JVMMethodSpec (s"$idn/<init>", Vector (),
                                                             JVMVoidType ())))
 
                 case NewArrayExp (size) =>

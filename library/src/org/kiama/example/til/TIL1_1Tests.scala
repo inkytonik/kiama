@@ -21,11 +21,15 @@
 package org.kiama
 package example.til
 
-import org.kiama.util.RegexParserTests
+import org.kiama.util.ParseTests
 
-class TIL1_1Tests extends TIL1_1 with RegexParserTests {
+class TIL1_1Tests extends ParseTests {
 
     import TILTree._
+
+    val til1_1 = new TIL1_1
+    val parsers = til1_1.parsers
+    import parsers.program
 
     val n = Id ("n")
     val f = Id ("f")
@@ -63,7 +67,7 @@ write "\n";"""
                     Write (Str ("\" is \"")),
                     Write (Var (fact)),
                     Write (Str ("\"\\n\""))))
-        assertParseOk (input, parser, tree)
+        assertParseOk (input, program, tree)
     }
 
     test ("parse factors program") {
@@ -97,7 +101,7 @@ end"""
                                     Write (Var (f)),
                                     Assign (n, Div (Var (n), Var (f))))),
                             Assign (f, Add (Var (f), Num (1)))))))
-        assertParseOk (input, parser, tree)
+        assertParseOk (input, program, tree)
     }
 
     test ("parse multiples program") {
@@ -117,7 +121,7 @@ end
                         List (
                             For (j, Num (1), Num (10),
                                 List (Write (Mul (Var (i), Var (j)))))))))
-        assertParseOk (input, parser, tree)
+        assertParseOk (input, program, tree)
     }
 
 }

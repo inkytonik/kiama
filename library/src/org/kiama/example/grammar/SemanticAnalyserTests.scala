@@ -29,7 +29,7 @@ import org.kiama.util.Tests
 class SemanticAnalyserTests extends Tests {
 
     import GrammarTree._
-    import org.kiama.util.{Message, Messaging}
+    import org.kiama.util.Message
 
     def S = NonTermSym (NonTermUse ("S"))
     def E = NonTermSym (NonTermUse ("E"))
@@ -59,7 +59,7 @@ class SemanticAnalyserTests extends Tests {
     val g1r4 = mkRule (NonTermDef ("F"),  mkProd (lparen, E, rparen),
                                           mkProd (id))
 
-    val g1 = Grammar (g1r1, List (g1r2, g1r3, g1r4))
+    val g1 = Grammar (g1r1, Vector (g1r2, g1r3, g1r4))
 
     val tree1 = new GrammarTree (g1)
     val g1analyser = new SemanticAnalyser (tree1)
@@ -83,7 +83,7 @@ class SemanticAnalyserTests extends Tests {
     val g2r6 = mkRule (NonTermDef ("F"),  mkProd (lparen, E, rparen),
                                           mkProd (id))
 
-    val g2 = Grammar (g2r1, List (g2r2, g2r3, g2r4, g2r5, g2r6))
+    val g2 = Grammar (g2r1, Vector (g2r2, g2r3, g2r4, g2r5, g2r6))
 
     val tree2 = new GrammarTree (g2)
     val g2analyser = new SemanticAnalyser (tree2)
@@ -98,7 +98,7 @@ class SemanticAnalyserTests extends Tests {
     val g3r2 = mkRule (NonTermDef ("E"),  mkProd (plus))
     val g3r3 = mkRule (NonTermDef ("E"),  mkProd (star))
 
-    val g3 = Grammar (g3r1, List (g3r2, g3r3))
+    val g3 = Grammar (g3r1, Vector (g3r2, g3r3))
 
     val tree3 = new GrammarTree (g3)
     val g3analyser = new SemanticAnalyser (tree3)
@@ -233,9 +233,9 @@ class SemanticAnalyserTests extends Tests {
 
     test ("g3: has the expected semantic errors") {
         assertMessages (g3analyser.errors,
-            Message ("E is defined more than once"),
-            Message ("E is defined more than once"),
-            Message ("F is not declared"))
+            Message (g3, "E is defined more than once"),
+            Message (g3, "E is defined more than once"),
+            Message (g3, "F is not declared"))
     }
 
 }

@@ -18,47 +18,36 @@ BEGIN
     END
 END while.
 * errors
-4:11: bvar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:4:11: bvar is not declared
     WHILE bvar DO
-
           ^
-7:11: bvar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:7:11: bvar is not declared
     WHILE bvar DO
-
           ^
-8:9: avar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:8:9: avar is not declared
         avar := 1
-
         ^
-11:11: bvar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:11:11: bvar is not declared
     WHILE bvar DO
-
           ^
-12:9: avar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:12:9: avar is not declared
         avar := 2;
-
         ^
-15:12: avar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:15:12: avar is not declared
     WHILE (avar > 1) & (avar > 0) DO
-
            ^
-15:25: avar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:15:25: avar is not declared
     WHILE (avar > 1) & (avar > 0) DO
-
                         ^
-16:9: avar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:16:9: avar is not declared
         avar := avar + 4;
-
         ^
-16:17: avar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:16:17: avar is not declared
         avar := avar + 4;
-
                 ^
-17:9: bvar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:17:9: bvar is not declared
         bvar := avar < 5
-
         ^
-17:17: avar is not declared
+src/org/kiama/example/oberon0/L1/tests/whilename.ob:17:17: avar is not declared
         bvar := avar < 5
-
                 ^

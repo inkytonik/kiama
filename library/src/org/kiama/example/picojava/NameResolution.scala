@@ -144,7 +144,7 @@ trait NameResolution {
      * Search a sequence of block statements for a declaration matching a given name.
      * Return the matching declaration or the unknown declaration if not found.
      */
-    def finddecl (t : PicoJavaNode, name : String, blockstmts : List[BlockStmt]) : Decl =
+    def finddecl (t : PicoJavaNode, name : String, blockstmts : Vector[BlockStmt]) : Decl =
         blockstmts.collectFirst {
             case blockstmt if declarationOf (name) (blockstmt) != null =>
                 declarationOf (name) (blockstmt)

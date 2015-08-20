@@ -61,7 +61,7 @@ abstract class Statement extends SourceNode
 /**
  * Block of declarations and statements.
  */
-case class Block (decls : List[Declaration], stmts: List[Statement]) extends Statement
+case class Block (decls : Vector[Declaration], stmts: Vector[Statement]) extends Statement
 
 /**
  * Empty statements.

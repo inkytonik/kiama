@@ -53,11 +53,11 @@ class ImperativeTests extends PrettyPrinter with PrettyPrinterTests {
 
     // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
     val p =
-        Seqn (List (
+        Seqn (Vector (
             Asgn (Var ("i"), Num (10)),
             Asgn (Var ("count"), Num (0)),
             While (Var ("i"),
-                Seqn (List (
+                Seqn (Vector (
                     Asgn (Var ("count"), Add (Var ("count"), Num (1))),
                     Asgn (Var ("i"), Add (Num (1), Var ("i"))))))))
 
@@ -81,13 +81,13 @@ class ImperativeTests extends PrettyPrinter with PrettyPrinterTests {
 
     val ppp =
         """Seqn (
-          |    List (
+          |    Vector (
           |        Asgn (Var ("i"), Num (10.0)),
           |        Asgn (Var ("count"), Num (0.0)),
           |        While (
           |            Var ("i"),
           |            Seqn (
-          |                List (
+          |                Vector (
           |                    Asgn (Var ("count"), Add (Var ("count"), Num (1.0))),
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
@@ -156,7 +156,7 @@ trait Generator {
 
     def genSeqn (sz : Int) : Gen[Seqn] =
         for { len <- Gen.choose (1,sz)
-              ss <- Gen.containerOfN[List,Stmt] (len, genStmt (sz / len)) }
+              ss <- Gen.containerOfN[Vector,Stmt] (len, genStmt (sz / len)) }
             yield Seqn (ss)
 
     implicit def arbSeqn : Arbitrary[Seqn] =
@@ -193,15 +193,15 @@ trait Generator {
  */
 object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
 
-    import org.kiama.util.REPLConfig
+    import org.kiama.util.{REPLConfig, Source}
     import org.scalacheck.Arbitrary
     import PrettyPrinter.format
 
     def generator : Arbitrary[Stmt] =
         arbStmt
 
-    override def process (s : Stmt, config : REPLConfig) {
-        super.process (s, config)
+    override def process (source : Source, s : Stmt, config : REPLConfig) {
+        super.process (source, s, config)
         config.output.emitln (format (s).layout)
     }
 

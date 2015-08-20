@@ -6,7 +6,6 @@ MODULE typenodecl;
 
 END typenodecl.
 * errors
-4:12: NOTYPE is not declared
+src/org/kiama/example/oberon0/L0/tests/typenodecl.ob:4:12: NOTYPE is not declared
     avar : NOTYPE;
-
            ^

@@ -56,16 +56,17 @@ trait CCodeGenerator extends TypeAnalyser with base.CCodeGenerator with SymbolTa
     /**
      * Generate C equivalent of a declaration.
      */
-    def translate (d : Declaration) : List[CDeclaration] =
+    def translate (d : Declaration) : Vector[CDeclaration] =
         d match {
             case ConstDecl (IdnDef (i), e) =>
-                List (CInitDecl (CVarDecl (mangle (i), CIntType ()), CIntExp (value (e))))
+                Vector (CInitDecl (CVarDecl (mangle (i), CIntType ()), CIntExp (value (e))))
             case TypeDecl (IdnDef (i), t) =>
-                List (CTypeDef (CVarDecl (mangle (i), translate (deftype (t)))))
+                Vector (CTypeDef (CVarDecl (mangle (i), translate (deftype (t)))))
             case VarDecl (is, td) =>
                 val t = deftype (td)
                 is map {
-                    case IdnDef (i) => CVarDecl (mangle (i), translate (t))
+                    case IdnDef (i) =>
+                        CVarDecl (mangle (i), translate (t))
                 }
         }
 

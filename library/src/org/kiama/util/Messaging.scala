@@ -21,55 +21,17 @@
 package org.kiama
 package util
 
-import scala.util.parsing.input.{Position, NoPosition}
-
 /**
- * A message record consisting of a label string and an optional value.
+ * A message record consisting of a value with which the message is associated
+ * and a label string.
  */
-case class Message (label : String, optvalue : Option[AnyRef] = None) {
-
-    /**
-     * The message's position as determined from the starting position of
-     * `value` or `NoPosition` if that value is not present or does not
-     * have a position.
-     */
-    lazy val pos : Position =
-        optvalue match {
-            case Some (v) =>
-                Positions.getStart (v)
-            case None =>
-                NoPosition
-        }
-
-    /**
-     * Return the start line of this message's position.
-     */
-    val line : Int =
-        pos.line
-
-    /**
-     * Return the start column of this message's position.
-     */
-    val column : Int =
-        pos.column
-
-    /**
-     * Format the message for reporting as a line containing the start
-     * line and the label, followed by lines containing the input
-     * text and a pointer to the message location.
-     */
-    val format : String =
-        s"$line:$column: $label\n${pos.longString}\n"
-
-}
+case class Message (value : AnyRef, label : String)
 
 /**
- * Facility for building messages associated with positioned values.
+ * Shared definitions for all messaging.
  */
 object Messaging {
 
-    import java.io.File.separatorChar
-    import java.lang.System.getProperty
     import org.kiama.relation.Tree
     import org.kiama.util.{Entity, ErrorEntity}
 
@@ -79,19 +41,9 @@ object Messaging {
     type Messages = Vector[Message]
 
     /**
-     * A value representing no messages.
+     * Return a value representing no messages.
      */
-    val noMessages = Vector.empty
-
-    /**
-     * Make a message containing a message with the given label and position.
-     * The message will be associated with no value. The position defaults
-     * to `NoPosition`.
-     */
-    def aMessage (label : String, position : Position = NoPosition) : Message =
-        new Message (label, None) {
-            override lazy val pos = position
-        }
+    def noMessages = Vector[Message] ()
 
     /**
      * If `f` is defined at `t` apply it and return the resulting sequence
@@ -108,7 +60,7 @@ object Messaging {
      * Otherwise, if `f` is defined at `e` return the messages that `f (e)`
      * evaluates to. If `f` is not defined at `e`, keep silent.
      */
-    def checkuse (e : Entity) (f : Entity ==> Messages) : Messages =
+    def checkUse (e : Entity) (f : Entity ==> Messages) : Messages =
         e match {
             case _ : ErrorEntity =>
                 noMessages
@@ -117,79 +69,90 @@ object Messaging {
         }
 
     /**
-     * Return a string containing all the given messages sorted and formatted.
+     * Recursively collect all messages in the given tree using the partial
+     * function `messages` at all nodes where it is defined.
      */
-    def formats (messages : Messages) : String =
-        sortmessages (messages).map (_.format).mkString ("")
+    def collectMessages[T <: Product,U <: T] (tree : Tree[T,U]) (messages : T ==> Messages) : Messages =
+        tree.nodes.flatMap (messages.orElse { case _ => noMessages }).toVector
 
     /**
      * If `cond` is true make a singleton message list that associates the
      * label with the start position recorded for `value` (if any). `cond`
-     * can be omitted and defaults to true. Any `finish` position that is
-     * recorded for `value` is ignored at present.
+     * can be omitted and defaults to true.
      */
-    def message[T <: AnyRef] (value : T, label : String, cond : Boolean = true) : Messages =
+    def message (value : AnyRef, label : String, cond : Boolean = true) : Messages =
         if (cond)
-            Vector (Message (label, Some (value)))
+            Vector (Message (value, label))
         else
             noMessages
+
+}
+
+/**
+ * General facility for processing messages relative to positioned values.
+ */
+trait Messaging {
+
+    self : PositionStore =>
+
+    import org.kiama.util.Messaging._
+    import scala.math.Ordering._
+
+    /**
+     * An ordering on messages that prioritises line over column.
+     */
+    implicit object messageOrdering extends Ordering[Message] {
+        def compare (m1 : Message, m2 : Message) =
+            Ordering[(Option[Int],Option[Int])].compare ((line (m1), column (m1)),
+                                                         (line (m2), column (m2)))
+    }
+
+    /**
+     * Return the optional column number of a message.
+     */
+    def column (message : Message) : Option[Int] =
+        positionOf (message).map (_.column)
+
+    /**
+     * Format the message for reporting as a line containing the position
+     * and label, the input text line and line(s) containing the context
+     * of the position. If no position is associated with this message
+     * just format as a line containing the label.
+     */
+    def formatMessage (message : Message) : String =
+        positionOf (message) match {
+            case Some (pos) =>
+                val context = pos.optContext.getOrElse ("")
+                s"${pos.format} ${message.label}\n$context\n"
+            case None =>
+                s"${message.label}\n"
+        }
+
+    /**
+     * Return a string containing all the given messages sorted and formatted.
+     */
+    def formatMessages (messages : Messages) : String =
+        messages.sorted.map (formatMessage).mkString ("")
+
+    /**
+     * Return the optional line number of a message.
+     */
+    def line (message : Message) : Option[Int] =
+        positionOf (message).map (_.line)
+
+    /**
+     * A message's starting position as determined from the starting position
+     * of the message's value. Will be `None` if the value has no position.
+     */
+    def positionOf (message : Message) : Option[Position] =
+        positions.getStart (message.value)
 
     /**
      * Output the messages in order of position using the given emitter, which
      * defaults to standard error.
      */
     def report (messages : Messages, emitter : Emitter = new ErrorEmitter) {
-        emitter.emit (formats (messages))
+        emitter.emit (formatMessages (messages))
     }
-
-    /**
-     * Sort the messages by increasing position.
-     */
-    def sortmessages (messages : Messages) : Messages =
-        messages.sortWith {
-            case (msg1, msg2) =>
-                (msg1.line < msg2.line) ||
-                ((msg1.line == msg2.line) && (msg1.column < msg2.column))
-        }
-
-
-    /**
-     * Recursively collect all messages in the given tree using the partial
-     * function `messages` at all nodes where it is defined.
-     */
-    def collectmessages[T <: Product,U <: T] (tree : Tree[T,U]) (messages : T ==> Messages) : Messages =
-        tree.nodes.flatMap (messages.orElse { case _ => noMessages }).toVector
-
-    /**
-     * Return a simplified filename where a string has been dropped if it
-     * occurs as a prefix of the given filename. The system separator
-     * character is also dropped if it occurs immediately after the prefix.
-     */
-    def dropPrefix (filename : String, prefix : String) : String = {
-
-        def dropIgnoreSep (i : Int) : String =
-            if (i == 0)
-                filename
-            else if (i < filename.length)
-                filename.drop (if (filename (i) == separatorChar) i + 1 else i)
-            else
-                ""
-
-        for (i <- 0 until prefix.length) {
-            if (i == filename.length)
-                return ""
-            else if (filename (i) != prefix (i))
-                return dropIgnoreSep (i)
-        }
-        dropIgnoreSep (prefix.length)
-
-    }
-
-    /**
-     * Return a simplified filename where the current path has been dropped
-     * if it occurs as a prefix of the given filename.
-     */
-    def dropCurrentPath (filename : String) : String =
-        dropPrefix (filename, getProperty ("user.dir"))
 
 }

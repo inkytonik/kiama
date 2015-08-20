@@ -43,20 +43,20 @@ class DotNameResolutionTests extends Tests {
     val bxInBB  = Use ("x")
     val byInBB  = Use ("y")
     val BBinBB  = Use ("BB")
-    val declAA  = ClassDecl ("AA", None, Block (List (declAAx)))
+    val declAA  = ClassDecl ("AA", None, Block (Vector (declAAx)))
     val declBB  = ClassDecl ("BB", Some (Use ("AA")), Block (
-                      List (VarDecl (BBinBB, "b"),
-                            AssignStmt (Dot (Use ("b"), byInBB),
-                                        Dot (Use ("b"), bxInBB)))))
+                      Vector (VarDecl (BBinBB, "b"),
+                              AssignStmt (Dot (Use ("b"), byInBB),
+                                          Dot (Use ("b"), bxInBB)))))
 
     val ast =
         Program (Block (
-            List (ClassDecl ("A", None, Block (
-                List (VarDecl (Use ("int"), "y"),
-                      VarDecl (Use ("AA"), "a"),
-                      AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
-                      declAA,
-                      declBB))))))
+            Vector (ClassDecl ("A", None, Block (
+                Vector (VarDecl (Use ("int"), "y"),
+                        VarDecl (Use ("AA"), "a"),
+                        AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
+                        declAA,
+                        declBB))))))
 
     val tree = new PicoJavaTree (ast)
     val analyser = new ErrorCheck (tree)

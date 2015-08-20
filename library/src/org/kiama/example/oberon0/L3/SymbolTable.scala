@@ -54,25 +54,25 @@ trait SymbolTable extends L0.SymbolTable {
     /**
      * A built-in procedure with its parameter information.
      */
-    case class BuiltinProc (ident : String, params : List[ParamInfo]) extends Entity
+    case class BuiltinProc (ident : String, params : Vector[ParamInfo]) extends Entity
 
     /**
      * The built-in Read procedure.
      */
     lazy val readProc =
-        BuiltinProc ("Read", List (ParamInfo (VarMode (), "ReadParam", integerType)))
+        BuiltinProc ("Read", Vector (ParamInfo (VarMode (), "ReadParam", integerType)))
 
     /**
      * The built-in Write procedure.
      */
     lazy val writeProc =
-        BuiltinProc ("Write", List (ParamInfo (ValMode (), "WriteParam", integerType)))
+        BuiltinProc ("Write", Vector (ParamInfo (ValMode (), "WriteParam", integerType)))
 
     /**
      * The built-in WriteLn procedure.
      */
     lazy val writelnProc =
-        BuiltinProc ("WriteLn", Nil)
+        BuiltinProc ("WriteLn", Vector ())
 
     /**
      * Return true if the entity is a builtin, false otherwise.

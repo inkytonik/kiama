@@ -21,20 +21,18 @@
 package org.kiama
 package example.imperative
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * Parser to abstract syntax tree for the imperative language.
  */
-trait SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import ImperativeTree._
     import scala.language.postfixOps
 
-    lazy val parser =
-        phrase (stmt)
-
-    lazy val stmt : PackratParser[Stmt] =
+    lazy val stmt : Parser[Stmt] =
         ";" ^^ (_ => Null ()) | sequence | asgnStmt | whileStmt
 
     lazy val asgnStmt =
@@ -46,17 +44,17 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
     lazy val sequence =
         "{" ~> (stmt*) <~ "}" ^^ Seqn
 
-    lazy val exp : PackratParser[Exp] =
+    lazy val exp : Parser[Exp] =
         exp ~ ("+" ~> term) ^^ Add |
         exp ~ ("-" ~> term) ^^ Sub |
         term
 
-    lazy val term : PackratParser[Exp] =
+    lazy val term : Parser[Exp] =
         term ~ ("*" ~> factor) ^^ Mul |
         term ~ ("/" ~> factor) ^^ Div |
         factor
 
-    lazy val factor : PackratParser[Exp] =
+    lazy val factor : Parser[Exp] =
         double | integer | variable | "-" ~> exp ^^ Neg | "(" ~> exp <~ ")"
 
     lazy val double =

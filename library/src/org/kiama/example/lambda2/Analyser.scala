@@ -36,14 +36,14 @@ class Analyser (tree : LambdaTree) extends Attribution {
 
     import LambdaTree._
     import PrettyPrinter.formattedLayout
-    import org.kiama.util.Messaging.{check, collectmessages, message, Messages}
+    import org.kiama.util.Messaging.{check, collectMessages, message, Messages}
 
     /**
      * The semantic error messages for the tree. This one uses the `tipe`
      * attribute.
      */
     lazy val errors : Messages =
-        collectmessages (tree) {
+        collectMessages (tree) {
             case e : Exp =>
                 checkType (e, tipe) ++
                 check (e) {
@@ -62,7 +62,7 @@ class Analyser (tree : LambdaTree) extends Attribution {
      * attribute.
      */
     lazy val errors2 : Messages =
-        collectmessages (tree) {
+        collectMessages (tree) {
             case e : Exp =>
                 checkType (e, tipe2) ++
                 check (e) {

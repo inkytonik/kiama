@@ -29,7 +29,7 @@ import base.source.{Block, Expression, Statement}
  * or more else if blocks, and an optional else block.
  */
 case class IfStatement (cond : Expression, block : Block,
-                        elsifs : List[(Expression,Block)],
+                        elsifs : Vector[(Expression,Block)],
                         optelse : Option[Block]) extends Statement
 
 /**

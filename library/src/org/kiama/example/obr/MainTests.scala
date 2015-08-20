@@ -34,9 +34,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
     import ObrTree.ObrTree
     import RISCTree._
     import org.kiama.example.obr.RISCTransformer
-    import org.kiama.util.{Config, Emitter}
-    import org.kiama.util.Messaging.{formats, report}
-    import org.kiama.util.IO.{filereader, FileNotFoundException}
+    import org.kiama.util.{Config, Emitter, FileSource}
     import org.kiama.rewriting.Rewriter._
 
     /**
@@ -50,31 +48,23 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
         test(title) {
             val filename = dirname + obrfile
             val config = createAndInitConfig (Array (filename))
-
-            try {
-                val reader = filereader (filename)
-                makeast (reader, filename, config) match {
-                    case Left (ast) =>
-                        val tree = new ObrTree (ast)
-                        val analyser = new SemanticAnalyser (tree)
-                        val messages = analyser.errors
-                        if (messages.length > 0) {
-                            report (messages, config.error)
-                            fail (s"$title emitted a semantic error.")
-                        } else {
-                            val labels = new RISCLabels
-                            val transformer = new RISCTransformer (analyser, labels)
-                            tester (title, config.error, transformer.code (ast))
-                        }
-                    case Right (msgs) =>
-                        config.error.emit (formats (msgs))
-                        fail (s"$title emitted a parse error.")
-                }
-            } catch {
-                case e : FileNotFoundException =>
-                    config.error.emitln (e.getMessage)
-                    info (s"$title failed with an exception.")
-                    throw (e)
+            val source = FileSource (filename)
+            makeast (source, config) match {
+                case Left (ast) =>
+                    val tree = new ObrTree (ast)
+                    val analyser = new SemanticAnalyser (tree)
+                    val messages = analyser.errors
+                    if (messages.length > 0) {
+                        report (messages, config.error)
+                        fail (s"$title emitted a semantic error.")
+                    } else {
+                        val labels = new RISCLabels
+                        val transformer = new RISCTransformer (analyser, labels)
+                        tester (title, config.error, transformer.code (ast))
+                    }
+                case Right (msgs) =>
+                    config.error.emit (formatMessages (msgs))
+                    fail (s"$title emitted a parse error.")
             }
         }
     }

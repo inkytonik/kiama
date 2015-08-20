@@ -22,8 +22,7 @@ package org.kiama
 package example.oberon0
 package drivers
 
-trait A1Phases extends L2.SyntaxAnalyser
-        with L2.source.SourcePrettyPrinter
+trait A1Phases extends L2.source.SourcePrettyPrinter
         with base.FrontEndDriver {
 
     import base.source.SourceTree.SourceTree
@@ -31,6 +30,9 @@ trait A1Phases extends L2.SyntaxAnalyser
     def artefact : String = "A1"
     def langlevel : Int = 2
     def tasklevel : Int = 2
+
+    val parsers = new L2.SyntaxAnalyser (positions)
+    val parser = parsers.moduledecl
 
     def buildAnalyser (atree : SourceTree) : base.Analyser =
         new L2.NameAnalyser {

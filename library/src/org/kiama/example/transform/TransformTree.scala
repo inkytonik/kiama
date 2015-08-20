@@ -48,7 +48,7 @@ object TransformTree {
      * expression using those operators, and an equivalent expression with
      * correct operator structure which is filled in after parsing.
      */
-    case class Program (ops : List[(String,Int)], vars : List[VarDecl],
+    case class Program (ops : Vector[(String,Int)], vars : Vector[VarDecl],
                         expr : ExpR) extends TransformNode
 
     /**

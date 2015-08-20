@@ -27,14 +27,16 @@ import org.kiama.util.Compiler
 /**
  * Main program for transformation compiler.
  */
-class Driver extends Parser with Compiler[Program] {
+class Driver extends Compiler[Program] {
 
     import TransformTree.TransformTree
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.kiama.util.Config
-    import org.kiama.util.Messaging.report
+    import org.kiama.util.{Config, Source}
 
-    def process (filename : String, program : Program, config : Config) {
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.program
+
+    def process (source : Source, program : Program, config : Config) {
 
         // Print original program and obtain "no priority" expression
         config.output.emitln (program)

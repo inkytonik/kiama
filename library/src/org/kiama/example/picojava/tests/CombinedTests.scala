@@ -44,24 +44,24 @@ class CombinedTests extends Tests {
     val ast =
         Program (
             Block (
-                List (
+                Vector (
                     ClassDecl (
                         "A",
                         None,
                         Block (
-                            List (
+                            Vector (
                                 VarDecl (Use ("boolean"), "a"),
                                 AssignStmt (Use ("a"), BooleanLiteral ("true")),
                                 ClassDecl (
                                     "AA",
                                     None,
                                     Block (
-                                        List (VarDecl (Use ("boolean"), "aa"))))))),
+                                        Vector (VarDecl (Use ("boolean"), "aa"))))))),
                     ClassDecl (
                         "B",
                         Some (Use ("A")),
                         Block (
-                            List (
+                            Vector (
                                 VarDecl (Use ("boolean"), "b"),
                                 AssignStmt (Use ("b"), Use ("a")),
                                 VarDecl (Use ("A"), "refA"),
@@ -74,7 +74,7 @@ class CombinedTests extends Tests {
                                     "BB",
                                     Some (Use ("AA")),
                                     Block (
-                                        List (
+                                        Vector (
                                             VarDecl (Use ("boolean"), "bb"),
                                             AssignStmt (Use ("bb"), Use ("aa")),
                                             WhileStmt (

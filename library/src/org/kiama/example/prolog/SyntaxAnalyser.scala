@@ -21,27 +21,28 @@
 package org.kiama
 package example.prolog
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * Module containing parsers for Prolog.
  */
-class SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import PrologTree._
     import scala.language.postfixOps
 
     lazy val program =
-        phrase ((clause+) ^^ Program)
+        (clause+) ^^ Program
 
     lazy val query =
-        phrase (literal <~ ".")
+        literal <~ "."
 
     lazy val clause =
         literal ~ (":-" ~> literals) <~ "." ^^ Rule |
         literal <~ "." ^^ Fact
 
-    lazy val literal : PackratParser[Literal] =
+    lazy val literal : Parser[Literal] =
         atom ~ ("(" ~> terms <~ ")") ^^ Pred |
         atom ^^ Atom
 
@@ -61,15 +62,15 @@ class SyntaxAnalyser extends PositionedParserUtilities {
         list
 
     lazy val list =
-        "[" ~> "]" ^^ { case _ => Pred ("nil", Nil) } |
+        "[" ~> "]" ^^ { case _ => Pred ("nil", Vector ()) } |
         "[" ~> listterms <~ "]"
 
-    lazy val listterms : PackratParser[Literal] =
+    lazy val listterms : Parser[Literal] =
         term ~ ("," ~> listterms) ^^ {
-            case h ~ t => Pred ("cons", List (h, t))
+            case h ~ t => Pred ("cons", Vector (h, t))
         } |
         term ^^ {
-            case h => Pred ("cons", List (h, Pred ("nil", Nil)))
+            case h => Pred ("cons", Vector (h, Pred ("nil", Vector ())))
         }
 
     lazy val atom =

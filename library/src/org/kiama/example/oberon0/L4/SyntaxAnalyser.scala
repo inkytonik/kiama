@@ -22,17 +22,18 @@ package org.kiama
 package example.oberon0
 package L4
 
+import org.kiama.util.Positions
+
 /**
  * Parsers for L4 language.
  */
-trait SyntaxAnalyser extends L3.SyntaxAnalyser {
+class SyntaxAnalyser (positions: Positions) extends L3.SyntaxAnalyser (positions) {
 
     import base.source.Expression
     import L0.source.TypeDef
-    import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
-        RecordTypeDef}
+    import source.{ArrayTypeDef, FieldExp, FieldIdn, Fields, IndexExp, RecordTypeDef}
 
-    override def typedefDef : PackratParser[TypeDef] =
+    override def typedefDef : Parser[TypeDef] =
         ("ARRAY" ~> expression) ~ ("OF" ~> typedef) ^^ ArrayTypeDef |
         "RECORD" ~> fieldlists <~ "END" ^^ RecordTypeDef |
         super.typedefDef
@@ -42,9 +43,9 @@ trait SyntaxAnalyser extends L3.SyntaxAnalyser {
 
     lazy val fieldlist =
         (idnlist <~ ":") ~ typedef ^^ {
-            case is ~ t => Some (FieldList (is, t))
+            case is ~ t => Some (Fields (is, t))
         } |
-        result (None)
+        success (None)
 
     lazy val idnlist =
         rep1sep (ident, ",")

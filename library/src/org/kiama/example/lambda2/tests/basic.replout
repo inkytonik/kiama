@@ -2,6 +2,9 @@
 1:1: 'x' unknown
 x
 ^
+1:4: `(' expected but end of source found
+4 +
+   ^
 9
 5
 3

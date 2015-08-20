@@ -32,7 +32,7 @@ class OneOhOneTests extends Tests {
     import Depth.depth
 
     {
-        val empty = Company (Nil)
+        val empty = Company (Vector ())
 
         val tree = new CompanyTree (empty)
         val othermod = new Other (tree)
@@ -66,7 +66,7 @@ class OneOhOneTests extends Tests {
     }
 
     {
-        val onlymanager = Company (List (Dept ("D0", Employee ("A", "Manager", 100), Nil)))
+        val onlymanager = Company (Vector (Dept ("D0", Employee ("A", "Manager", 100), Vector ())))
 
         val tree = new CompanyTree (onlymanager)
         val othermod = new Other (tree)
@@ -204,8 +204,8 @@ class OneOhOneTests extends Tests {
     }
 
     {
-        val d = Company (List (Dept ("D1", Employee ("An", "Emp", 100),
-                                     List (PU (Employee ("Another", "Emp", 500))))))
+        val d = Company (Vector (Dept ("D1", Employee ("An", "Emp", 100),
+                                     Vector (PU (Employee ("Another", "Emp", 500))))))
 
         val tree = new CompanyTree (d)
         val precedencemod = new Precedence (tree)
@@ -218,9 +218,9 @@ class OneOhOneTests extends Tests {
 
     {
         val d1 = Dept ("D2", Employee ("The", "Emp", 100),
-                       List (PU (Employee ("That", "Emp", 50))))
-        val d2 = Company (List (Dept ("D3", Employee ("TheOther", "Emp", 25),
-                                List (DU (d1)))))
+                       Vector (PU (Employee ("That", "Emp", 50))))
+        val d2 = Company (Vector (Dept ("D3", Employee ("TheOther", "Emp", 25),
+                                Vector (DU (d1)))))
 
         val tree = new CompanyTree (d2)
         val precedencemod = new Precedence (tree)

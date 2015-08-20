@@ -38,7 +38,7 @@ trait SymbolTable extends L3.SymbolTable {
     /**
      * A record with the given fields.
      */
-    case class RecordType (fields : List[Field]) extends Type {
+    case class RecordType (fields : Vector[Field]) extends Type {
         override def toString : String = s"RECORD ${fields.mkString ("; ")} END"
     }
 

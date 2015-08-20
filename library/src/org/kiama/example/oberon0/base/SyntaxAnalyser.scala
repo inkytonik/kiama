@@ -22,18 +22,15 @@ package org.kiama
 package example.oberon0
 package base
 
-import org.kiama.util.WhitespacePositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * Parsers for base language.
  */
-trait SyntaxAnalyser extends WhitespacePositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
-    import source.{Block, Declaration, EmptyStmt, IdnDef, IdnUse,
-        ModuleDecl, Statement}
-
-    lazy val parser =
-        phrase (moduledecl)
+    import source.{Block, Declaration, EmptyStmt, IdnDef, IdnUse, ModuleDecl, Statement}
 
     lazy val moduledecl =
         "MODULE" ~> (idndef <~ ";") ~ block ~ (idnuse <~ ".") ^^ ModuleDecl
@@ -53,24 +50,24 @@ trait SyntaxAnalyser extends WhitespacePositionedParserUtilities {
     lazy val declarations =
         declarationsDef
 
-    def declarationsDef : PackratParser[List[Declaration]]
-        "" ^^^ Nil
+    def declarationsDef : Parser[Vector[Declaration]] =
+        "" ^^^ Vector ()
 
     lazy val statements =
         "BEGIN" ~> statementSequence <~ "END" |
-        "END" ^^ (_ => Block (Nil, Nil))
+        "END" ^^ (_ => Block (Vector (), Vector ()))
 
     lazy val statementSequence =
         rep1sep (statement, ";") ^^ {
             case ss =>
-                Block (Nil, ss)
+                Block (Vector (), ss)
         }
 
     lazy val statement =
         statementDef
 
-    def statementDef : PackratParser[Statement] =
-        result (EmptyStmt ())
+    def statementDef : Parser[Statement] =
+        success (EmptyStmt ())
 
     lazy val idndef =
         ident ^^ IdnDef
@@ -88,10 +85,10 @@ trait SyntaxAnalyser extends WhitespacePositionedParserUtilities {
         not (keyword) ~> "[a-zA-Z_][a-zA-Z0-9]*".r |
         failure ("ident expected")
 
-    lazy val whitespaceParser : PackratParser[Any] =
-        rep (whiteSpace | comment)
+    override val whitespace =
+        rep ("""\s+""".r | comment)
 
-    lazy val comment : PackratParser[Any] =
+    lazy val comment : Parser[Any] =
         "(*" ~ rep (not ("*)") ~ (comment | any)) ~ "*)"
 
 }

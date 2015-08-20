@@ -39,7 +39,7 @@ object JSONTree {
     /**
      * A JSON object.
      */
-    case class JObject (fields : List[(JName,JValue)]) extends JValue
+    case class JObject (fields : Vector[(JName,JValue)]) extends JValue
 
     /**
      * The name of a JSON field.
@@ -49,7 +49,7 @@ object JSONTree {
     /**
      * A JSON array.
      */
-    case class JArray (values : List[JValue]) extends JValue
+    case class JArray (values : Vector[JValue]) extends JValue
 
     /**
      * A JSON string value.

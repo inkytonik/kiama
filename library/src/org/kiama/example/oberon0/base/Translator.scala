@@ -39,7 +39,7 @@ trait Translator {
     /**
      * Generate C equivalent of a declaration.
      */
-    def translate (d : Declaration) : List[CDeclaration]
+    def translate (d : Declaration) : Vector[CDeclaration]
 
     /**
      * Generate C equivalent of a statement.

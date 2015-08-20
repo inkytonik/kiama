@@ -23,17 +23,31 @@ package util
 
 import org.kiama.output.PrettyPrinter
 import org.scalatest.prop.Checkers
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSuiteLike}
-import scala.util.parsing.combinator.RegexParsers
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, BeforeAndAfterEach, FunSuiteLike}
 
 /**
- * General test support.
+ * General test support designed to be mixed in to compilers or drivers.
  */
-trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll with Checkers {
+trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
+        with BeforeAndAfterEach with Checkers with PositionStore with Messaging {
 
     import Comparison.{optsame, same, samecollection}
     import Messaging.Messages
     import org.scalatest.Tag
+
+    /**
+     * Initialise positions before next test. By default, the positions are reset.
+     */
+    def initialisePositions () {
+        positions.reset ()
+    }
+
+    /**
+     * Set up before each test.
+     */
+    override def beforeEach () {
+        initialisePositions ()
+    }
 
     /**
      * ScalaTest by default only shows the unqualified class name when
@@ -139,8 +153,8 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll with
      */
     def assertMessage (received : Message, index : Int, expected : Message) {
         assertResult (expected.label, s"wrong text in message $index") (received.label)
-        assertResult (expected.line, s"wrong line number in message $index") (received.line)
-        assertResult (expected.column, s"wrong column number in message $index") (received.column)
+        assertResult (line (expected), s"wrong line number in message $index") (line (received))
+        assertResult (column (expected), s"wrong column number in message $index") (column (received))
     }
 
     /**
@@ -155,31 +169,30 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll with
 }
 
 /**
- * Useful test routines for RegexParsers.
+ * Infrastructure for writing parser tests.
  */
-trait RegexParserTests extends Tests {
+trait ParseTests extends Tests {
 
-    self : RegexParsers =>
+    import org.kiama.parsing.{Failure, Input, ParsersBase, Success}
+    import org.kiama.util.StringSource
+
+    /**
+     * The suite of parsers that is used by these tests.
+     */
+    val parsers : ParsersBase
 
     /**
      * Fail a test with a message about reaching the end of the input.
      */
     def failInputEnd (in : Input) {
-        fail (s"input remaining at ${in.pos}")
-    }
-
-    /**
-     * Fail a test with a message detailing a parse error.
-     */
-    def failParseError (error : Error) {
-        fail (s"parse error: $error")
+        fail (s"input remaining at ${in.position}")
     }
 
     /**
      * Fail a test with a message detailing a parse failure.
      */
     def failParseFailure (failure : Failure) {
-        fail (s"parse faiure: $failure")
+        fail (s"parse faiure: ${failure.message}")
     }
 
     /**
@@ -190,15 +203,16 @@ trait RegexParserTests extends Tests {
      * from `assertParseCheck`. Fail if the parse succeeds but doesn't consume
      * all of `str` or if the parse fails.
      */
-    def assertParseCheck[T,U] (str : String, parser : Parser[T]) (func : T => U) : U =
-        parseAll (parser, str) match {
+    def assertParseCheck[T,U] (str : String, parser : parsers.Parser[T]) (func : T => U) : U = {
+        parsers.parseAll (parser, StringSource (str)) match {
             case Success (value, in) if in.atEnd =>
                 func (value)
             case Success (_, in) =>
-                fail (s"extraneous input at ${in.pos}: $str")
-            case f =>
-                fail (s"parse failure: $f")
+                fail (s"extraneous input at ${in.position}: $str")
+            case Failure (message, _) =>
+                fail (s"parse failure: $message")
         }
+    }
 
     /**
      * Assert that a parsing operation should be performed correctly.
@@ -207,7 +221,7 @@ trait RegexParserTests extends Tests {
      * produce the expected value or if `parser` doesn't consume all of the
      * input.
      */
-    def assertParseOk[T] (str : String, parser : Parser[T], expected : T) {
+    def assertParseOk[T] (str : String, parser : parsers.Parser[T], expected : T) {
         assertParseCheck (str, parser) {
             result =>
                 if (expected != result)
@@ -224,19 +238,16 @@ trait RegexParserTests extends Tests {
      * fails, but the error or failure is not indicated at the given `line`
      * and `column` location or doesn't contain the given message `msg`.
      */
-    def assertParseError[T] (str : String, parser : Parser[T], line : Int,
+    def assertParseError[T] (str : String, parser : parsers.Parser[T], line : Int,
                              column : Int, msg : String, iserr : Boolean = false) {
-        parseAll (parser, str) match {
+        parsers.parseAll (parser, StringSource (str)) match {
             case Success (r, _) =>
                 fail ("expected to find parse error in %s but it succeeded with %s".format (str, r))
-            case e : NoSuccess =>
-                if (iserr && e.isInstanceOf[Failure])
-                    fail ("got parse failure when expecting parse error")
-                else if (!iserr & e.isInstanceOf[Error])
-                    fail ("got parse error when expecting parse failure")
-                assertResult (msg, "wrong message in error") (e.msg)
-                assertResult (line, "wrong line number in error") (e.next.pos.line)
-                assertResult (column, "wrong column number in error") (e.next.pos.column)
+            case Failure (message, next) =>
+                val pos = next.position
+                assertResult (msg, "wrong message in error") (message)
+                assertResult (line, "wrong line number in error") (pos.line)
+                assertResult (column, "wrong column number in error") (pos.column)
         }
     }
 
@@ -245,7 +256,7 @@ trait RegexParserTests extends Tests {
      * `str` is the string to be parsed and `parser` is the parser to parse it
      * with.
      */
-    def assertParseReturn[T] (str : String, parser : Parser[T]) : T =
+    def assertParseReturn[T] (str : String, parser : parsers.Parser[T]) : T =
         assertParseCheck (str, parser) (identity)
 
 }
@@ -253,9 +264,7 @@ trait RegexParserTests extends Tests {
 /**
  * Useful test routines for transformers.
  */
-trait TransformerTests extends RegexParserTests {
-
-    self : RegexParsers =>
+trait TransformerTests extends ParseTests {
 
     /**
      * Assert that a transformation should be performed correctly. Try to parse
@@ -264,7 +273,7 @@ trait TransformerTests extends RegexParserTests {
      * `trans` transformation function. Fail the test if the value produced by
      * the transformation is not `expected`.
      */
-    def assertTransformOk[T] (str : String, parser : Parser[T], trans : T => T, expected : T) {
+    def assertTransformOk[T] (str : String, parser : parsers.Parser[T], trans : T => T, expected : T) {
         assertParseCheck (str, parser) {
             result =>
                 val transformed = trans (result)

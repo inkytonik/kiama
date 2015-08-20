@@ -32,6 +32,6 @@ trait RelationFactory[Repr[_,_]] {
     /**
      * Make a relation from its graph.
      */
-    def fromGraph[T,U] (graph : List[(T,U)]) : Repr[T,U]
+    def fromGraph[T,U] (graph : Vector[(T,U)]) : Repr[T,U]
 
 }

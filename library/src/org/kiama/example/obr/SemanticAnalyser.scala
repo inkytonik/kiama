@@ -32,7 +32,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
     import org.kiama.attribution.Decorators
     import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.kiama.util.Message
-    import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
+    import org.kiama.util.Messaging.{check, checkUse, collectMessages, Messages, message, noMessages}
 
     val decorators = new Decorators (tree)
     import decorators.{chain, Chain}
@@ -41,7 +41,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      * The semantic error messages for the tree.
      */
     lazy val errors : Messages =
-        collectmessages (tree) {
+        collectMessages (tree) {
             case p @ ObrInt (i1, ds, ss, i2) if i1 != i2 =>
                 message (p, s"identifier $i2 at end should be $i1")
 
@@ -58,7 +58,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
                 message (n, "an EXIT statement must be inside a LOOP statement")
 
             case ForStmt (n @ IdnUse (i), e1, e2, ss) =>
-                checkuse (entity (n)) {
+                checkUse (entity (n)) {
                     case ent =>
                         val t = enttipe (ent)
                         message (n, s"for loop variable $i must be integer",
@@ -67,7 +67,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
 
             // Check a RAISE statement to make sure its parameter is an exception constant.
             case n @ RaiseStmt (v @ IdnUse (i)) =>
-                checkuse (entity (v)) {
+                checkUse (entity (v)) {
                     case ent =>
                         val t = enttipe (ent)
                         message (n, s"raise parameter $i must be an exception constant",
@@ -76,7 +76,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
 
             // Check a CATCH clause to make sure its parameter is an exception constant.
             case n @ Catch (v @ IdnUse (i), ss) =>
-                checkuse (entity (v)) {
+                checkUse (entity (v)) {
                     case ent =>
                         val t = enttipe (ent)
                         message (n, s"catch clause parameter $i must be an exception constant",
@@ -84,7 +84,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
                 }
 
             case RecordVar (n @ IdnDef (i), _) =>
-                checkuse (entity (n)) {
+                checkUse (entity (n)) {
                      case Variable (RecordType (fs)) =>
                          message (n, s"$i contains duplicate field(s)",
                                   fs.distinct.length != fs.length)

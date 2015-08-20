@@ -21,19 +21,25 @@
 package org.kiama
 package example.minijava
 
-import org.kiama.util.RegexParserTests
+import org.kiama.util.ParseTests
 
 /**
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
+class SemanticAnalyserTests extends ParseTests {
 
     import MiniJavaTree._
     import SymbolTable.format
     import org.kiama.util.Message
-    import org.kiama.util.Messaging.aMessage
-    import org.kiama.util.Positions.positionAt
+    import org.kiama.util.{Position, StringSource}
+
+    val parsers = new SyntaxAnalyser (positions)
+
+    /**
+     * Wrapper for data checked by MiniJava semantic tests.
+     */
+    case class MiniJavaMessage (label : String, line : Int = 0, column : Int = 0)
 
     // Tests of definition uniqueness (Rule 1)
 
@@ -42,8 +48,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |class Main { public static void main () { System.out.println (0); } }
             |class Main { }
             """.stripMargin,
-            aMessage ("Main is declared more than once", positionAt (2, 7)),
-            aMessage ("Main is declared more than once", positionAt (3, 7)))
+            MiniJavaMessage ("Main is declared more than once", 2, 7),
+            MiniJavaMessage ("Main is declared more than once", 3, 7))
     }
 
     test ("two declarations of same name in same class is an error") {
@@ -54,8 +60,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    int mult;
             |}
             """.stripMargin,
-           aMessage ("mult is declared more than once", positionAt (4, 9)),
-           aMessage ("mult is declared more than once", positionAt (5, 9)))
+            MiniJavaMessage ("mult is declared more than once", 4, 9),
+            MiniJavaMessage ("mult is declared more than once", 5, 9))
     }
 
     test ("two declarations of same name in different scopes is ok") {
@@ -83,7 +89,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("notdecl is not declared", positionAt (5, 9)))
+            MiniJavaMessage ("notdecl is not declared", 5, 9))
     }
 
     test ("use of a name that is declared in wrong scope is an error") {
@@ -100,7 +106,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("notdecl is not declared", positionAt (9, 9)))
+            MiniJavaMessage ("notdecl is not declared", 9, 9))
     }
 
     // Test type of integer expression (Rule 4)
@@ -137,7 +143,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("can't refer to methods directly", positionAt (6, 16)))
+            MiniJavaMessage ("can't refer to methods directly", 6, 16))
     }
 
     // Test type of condition in if and while statements (Rule 7)
@@ -145,33 +151,33 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("the condition of an if statement can have Boolean type") {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
-        val stmts = List (If (cond, Block (Nil), Block (Nil)))
-        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
+        val stmts = Vector (If (cond, Block (Vector ()), Block (Vector ())))
+        semanticTest (embedExpression (exp, IntType (), Vector (), stmts))
     }
 
     test ("the condition of an if statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
-        val stmts = List (If (cond, Block (Nil), Block (Nil)))
+        val stmts = Vector (If (cond, Block (Vector ()), Block (Vector ())))
         semanticTest (
-            embedExpression (exp, IntType (), Nil, stmts),
-            aMessage ("type error: expected boolean got int"))
+            embedExpression (exp, IntType (), Vector (), stmts),
+            MiniJavaMessage ("type error: expected boolean got int"))
     }
 
     test ("the condition of a while statement can have Boolean type") {
         val exp = IntExp (0) // dummy
         val cond = TrueExp ()
-        val stmts = List (While (cond, Block (Nil)))
-        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
+        val stmts = Vector (While (cond, Block (Vector ())))
+        semanticTest (embedExpression (exp, IntType (), Vector (), stmts))
     }
 
     test ("the condition of a while statement cannot have integer type") {
         val exp = IntExp (0) // dummy
         val cond = IntExp (42)
-        val stmts = List (While (cond, Block (Nil)))
+        val stmts = Vector (While (cond, Block (Vector ())))
         semanticTest (
-            embedExpression (exp, IntType (), Nil, stmts),
-            aMessage ("type error: expected boolean got int"))
+            embedExpression (exp, IntType (), Vector (), stmts),
+            MiniJavaMessage ("type error: expected boolean got int"))
     }
 
     // Test type of expression in println statement can be of any type (Rule 8)
@@ -179,29 +185,29 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("the expression in a println statement can be of Boolean type") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val stmts = List (Println (exp1))
-        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
+        val stmts = Vector (Println (exp1))
+        semanticTest (embedExpression (exp, IntType (), Vector (), stmts))
     }
 
     test ("the expression in a println statement can be of integer type") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val stmts = List (Println (exp1))
-        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
+        val stmts = Vector (Println (exp1))
+        semanticTest (embedExpression (exp, IntType (), Vector (), stmts))
     }
 
     test ("the expression in a println statement can be of integer array type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewArrayExp (IntExp (42))
-        val stmts = List (Println (exp1))
-        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
+        val stmts = Vector (Println (exp1))
+        semanticTest (embedExpression (exp, IntType (), Vector (), stmts))
     }
 
     test ("the expression in a println statement can be of reference type") {
         val exp = IntExp (0) // dummy
         val exp1 = NewExp (IdnUse ("Test"))
-        val stmts = List (Println (exp1))
-        semanticTest (embedExpression (exp, IntType (), Nil, stmts))
+        val stmts = Vector (Println (exp1))
+        semanticTest (embedExpression (exp, IntType (), Vector (), stmts))
     }
 
     // Test that we can't assign to a non-variable or argument (Rule 9)
@@ -209,10 +215,10 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("a method name cannot be assigned to") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = Nil
-        val stmts = List (VarAssign (IdnUse ("m"), exp1))
+        val vars = Vector ()
+        val stmts = Vector (VarAssign (IdnUse ("m"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts),
-            aMessage ("illegal assignment to non-variable, non-argument"))
+            MiniJavaMessage ("illegal assignment to non-variable, non-argument"))
     }
 
     // Test that assignment RHSes have compatible types with LHS (Rule 9)
@@ -220,55 +226,55 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
     test ("an integer expression is assignment compatible with an integer var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = List (Var (IntType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Vector (Var (IntType (), IdnDef ("v")))
+        val stmts = Vector (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("a Boolean expression is not assignment compatible with an integer var") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val vars = List (Var (IntType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Vector (Var (IntType (), IdnDef ("v")))
+        val stmts = Vector (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            aMessage ("type error: expected int got boolean"))
+            MiniJavaMessage ("type error: expected int got boolean"))
     }
 
     test ("a Boolean expression is assignment compatible with a Boolean var") {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
-        val vars = List (Var (BooleanType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Vector (Var (BooleanType (), IdnDef ("v")))
+        val stmts = Vector (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with a Boolean var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = List (Var (BooleanType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Vector (Var (BooleanType (), IdnDef ("v")))
+        val stmts = Vector (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            aMessage ("type error: expected boolean got int"))
+            MiniJavaMessage ("type error: expected boolean got int"))
     }
 
     test ("an integer array expression is assignment compatible with an integer array var") {
         val exp = IntExp (0) // dummy
         val exp1 = NewArrayExp (IntExp (42))
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Vector (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Vector (VarAssign (IdnUse ("v"), exp1))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
     test ("an integer expression is not assignment compatible with an integer array var") {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (VarAssign (IdnUse ("v"), exp1))
+        val vars = Vector (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Vector (VarAssign (IdnUse ("v"), exp1))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            aMessage ("type error: expected int[] got int"))
+            MiniJavaMessage ("type error: expected int[] got int"))
     }
 
     // Test types in array assignments (Rule 10)
@@ -277,8 +283,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val exp = IntExp (0) // dummy
         val exp1 = IntExp (42)
         val exp2 = IntExp (99)
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
+        val vars = Vector (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Vector (ArrayAssign (IdnUse ("v"), exp1, exp2))
         semanticTest (embedExpression (exp, IntType (), vars, stmts))
     }
 
@@ -286,12 +292,12 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val exp = IntExp (0) // dummy
         val exp1 = TrueExp ()
         val exp2 = FalseExp ()
-        val vars = List (Var (IntArrayType (), IdnDef ("v")))
-        val stmts = List (ArrayAssign (IdnUse ("v"), exp1, exp2))
+        val vars = Vector (Var (IntArrayType (), IdnDef ("v")))
+        val stmts = Vector (ArrayAssign (IdnUse ("v"), exp1, exp2))
         semanticTest (
             embedExpression (exp, IntType (), vars, stmts),
-            aMessage ("type error: expected int got boolean"),
-            aMessage ("type error: expected int got boolean"))
+            MiniJavaMessage ("type error: expected int got boolean"),
+            MiniJavaMessage ("type error: expected int got boolean"))
     }
 
     // Test type of plus expressions (Rule 11)
@@ -306,8 +312,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp),
-                aMessage ("type error: expected int got boolean"),
-                aMessage ("type error: expected int got boolean"))
+                MiniJavaMessage ("type error: expected int got boolean"),
+                MiniJavaMessage ("type error: expected int got boolean"))
         assertResult (IntType ()) (analysis.tipe (exp))
     }
 
@@ -323,8 +329,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp, BooleanType ()),
-                aMessage ("type error: expected boolean got int"),
-                aMessage ("type error: expected boolean got int"))
+                MiniJavaMessage ("type error: expected boolean got int"),
+                MiniJavaMessage ("type error: expected boolean got int"))
         assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
@@ -340,7 +346,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp, BooleanType ()),
-                aMessage ("type error: expected boolean got int"))
+                MiniJavaMessage ("type error: expected boolean got int"))
         assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
@@ -356,8 +362,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp, BooleanType ()),
-                aMessage ("type error: expected int got boolean"),
-                aMessage ("type error: expected int got boolean"))
+                MiniJavaMessage ("type error: expected int got boolean"),
+                MiniJavaMessage ("type error: expected int got boolean"))
         assertResult (BooleanType ()) (analysis.tipe (exp))
     }
 
@@ -373,7 +379,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val analysis =
             semanticTest (
                 embedExpression (exp),
-                aMessage ("type error: expected int[] got int"))
+                MiniJavaMessage ("type error: expected int[] got int"))
         assertResult (IntType ()) (analysis.tipe (exp))
     }
 
@@ -389,7 +395,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("illegal call to non-method", positionAt (6, 21)))
+            MiniJavaMessage ("illegal call to non-method", 6, 21))
     }
 
     test ("a superclass method can be called") {
@@ -439,7 +445,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("type error: expected int got boolean", positionAt (9, 13)))
+            MiniJavaMessage ("type error: expected int got boolean", 9, 13))
     }
 
     test ("the numbers of arguments in a call can match the declaration") {
@@ -468,7 +474,7 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("wrong number of arguments, got 1 but expected 2", positionAt (8, 21)))
+            MiniJavaMessage ("wrong number of arguments, got 1 but expected 2", 8, 21))
     }
 
     test ("the types of arguments in a call must match the declaration") {
@@ -483,8 +489,8 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("type error: expected boolean got int", positionAt (8, 24)),
-            aMessage ("type error: expected int[] got int", positionAt (8, 28)))
+            MiniJavaMessage ("type error: expected boolean got int", 8, 24),
+            MiniJavaMessage ("type error: expected int[] got int", 8, 28))
     }
 
     test ("forward references to methods work") {
@@ -528,17 +534,17 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
         val exp = NewArrayExp (TrueExp ())
         semanticTest (
             embedExpression (exp, IntArrayType ()),
-            aMessage ("type error: expected int got boolean"))
+            MiniJavaMessage ("type error: expected int got boolean"))
     }
 
     // Test the use of names in new expressions (rule 19)
 
     test ("The name used in a new expression must refer to a class") {
         val exp = NewExp (IdnUse ("v"))
-        val vars = List (Var (IntType (), IdnDef ("v")))
+        val vars = Vector (Var (IntType (), IdnDef ("v")))
         semanticTest (
             embedExpression (exp, IntType (), vars),
-            aMessage ("illegal instance creation of non-class type"))
+            MiniJavaMessage ("illegal instance creation of non-class type"))
     }
 
     test ("The type of a new expression is a reference to the created class") {
@@ -574,24 +580,24 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
             |    }
             |}
             """.stripMargin,
-            aMessage ("type error: expected int got boolean", positionAt (5, 16)))
+            MiniJavaMessage ("type error: expected int got boolean", 5, 16))
     }
 
     // Pretty-printing of environments
 
     test ("The pretty-print of an environment at an expression contains the correct scopes") {
         val exp = IntExp (42)
-        val vars = List (Var (IntType (), IdnDef ("v")))
+        val vars = Vector (Var (IntType (), IdnDef ("v")))
         val prog = embedExpression (exp, IntType (), vars)
         val tree = new MiniJavaTree (prog)
         val analyser = new SemanticAnalyser (tree)
         assertResult ("""scope
             |    "v" -> VariableEntity(Var(int,IdnDef(v)))
             |scope
-            |    "m" -> MethodEntity(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),Result(IntExp(42)))))
+            |    "m" -> MethodEntity(Method(IdnDef(m),MethodBody(int,Vector(),Vector(Var(int,IdnDef(v))),Vector(),Result(IntExp(42)))))
             |scope
             |    "Dummy" -> MainClassEntity(MainClass(IdnDef(Dummy),MainMethod(Println(IntExp(0)))))
-            |    "Test" -> ClassEntity(Class(IdnDef(Test),None,ClassBody(List(),List(Method(IdnDef(m),MethodBody(int,List(),List(Var(int,IdnDef(v))),List(),Result(IntExp(42))))))))""".stripMargin
+            |    "Test" -> ClassEntity(Class(IdnDef(Test),None,ClassBody(Vector(),Vector(Method(IdnDef(m),MethodBody(int,Vector(),Vector(Var(int,IdnDef(v))),Vector(),Result(IntExp(42))))))))""".stripMargin
         ) (format (analyser.env (exp)))
     }
 
@@ -601,24 +607,33 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
      * the expected messages are produced. Returns the analysis object
      * so that more tests can be performed by caller.
      */
-    def semanticTest (str : String, expected : Message*) : SemanticAnalyser =
-        runSemanticChecks (assertParseReturn (str, parser), expected : _*)
+    def semanticTest (str : String, expected : MiniJavaMessage*) : SemanticAnalyser =
+        runSemanticChecks (assertParseReturn (str, parsers.program), expected : _*)
 
     /**
      * Run the semantic analyser over a given tree and check that the
      * expected messages are produced. Returns the analysis object
      * so that more tests can be performed by caller.
      */
-    def semanticTest (prog : Program, expected : Message*) : SemanticAnalyser =
+    def semanticTest (prog : Program, expected : MiniJavaMessage*) : SemanticAnalyser =
         runSemanticChecks (prog, expected : _*)
 
     /**
      * Run the semantic checks on the given program.
      */
-    def runSemanticChecks (prog : Program, expected : Message*) : SemanticAnalyser = {
+    def runSemanticChecks (prog : Program, expected : MiniJavaMessage*) : SemanticAnalyser = {
         val tree = new MiniJavaTree (prog)
         val analyser = new SemanticAnalyser (tree)
-        assertMessages (analyser.errors, expected : _*)
+        val source = new StringSource ("dummy")
+        val expectedMessages = expected.map {
+                                  case m @ MiniJavaMessage (label, l, c) =>
+                                      if (l != 0) {
+                                          val pos = Position (l, c, source)
+                                          positions.setStart (m, pos)
+                                      }
+                                      Message (m, label)
+                               }
+        assertMessages (analyser.errors, expectedMessages : _*)
         analyser
     }
 
@@ -633,18 +648,18 @@ class SemanticAnalyserTests extends SyntaxAnalyser with RegexParserTests {
      */
     def embedExpression (exp : Expression,
                          retType : Type = IntType (),
-                         vars : List[Var] = Nil,
-                         stmts : List[Statement] = Nil) =
+                         vars : Vector[Var] = Vector (),
+                         stmts : Vector[Statement] = Vector ()) =
         Program (MainClass (IdnDef ("Dummy"), MainMethod (Println (IntExp (0)))),
-            List(
+            Vector (
                 Class (IdnDef ("Test"), None,
                     ClassBody (
-                        Nil,
-                        List (
+                        Vector (),
+                        Vector (
                             Method (IdnDef ("m"),
                                 MethodBody (
                                     retType,
-                                    Nil,
+                                    Vector (),
                                     vars,
                                     stmts,
                                     Result (exp))))))))

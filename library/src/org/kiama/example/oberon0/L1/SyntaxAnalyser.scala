@@ -22,15 +22,17 @@ package org.kiama
 package example.oberon0
 package L1
 
+import org.kiama.util.Positions
+
 /**
  * Parsers for L1 language.
  */
-trait SyntaxAnalyser extends L0.SyntaxAnalyser {
+class SyntaxAnalyser (positions : Positions) extends L0.SyntaxAnalyser (positions) {
 
     import base.source.{Block, Expression, Statement}
     import source.{IfStatement, WhileStatement}
 
-    override def statementDef : PackratParser[Statement]=
+    override def statementDef : Parser[Statement]=
         ifStatement |
         whileStatement |
         super.statementDef
@@ -42,7 +44,7 @@ trait SyntaxAnalyser extends L0.SyntaxAnalyser {
     lazy val elsifs =
         rep (elsif)
 
-    lazy val elsif : PackratParser[(Expression, Block)] =
+    lazy val elsif : Parser[(Expression, Block)] =
         ("ELSIF" ~> expression) ~ ("THEN" ~> statementSequence)
 
     lazy val optelse =

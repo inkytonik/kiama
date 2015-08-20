@@ -38,12 +38,12 @@ case class IndexExp (base : Expression, exp : Expression) extends Expression
 /**
  * Record type definitions.
  */
-case class RecordTypeDef (fields : List[FieldList]) extends TypeDef
+case class RecordTypeDef (fields : Vector[Fields]) extends TypeDef
 
 /**
- * Record field lists.
+ * Record fields.
  */
-case class FieldList (idndefs : List[String], tipe : TypeDef) extends SourceNode
+case class Fields (idndefs : Vector[String], tipe : TypeDef) extends SourceNode
 
 /**
  * Record field access expressions.

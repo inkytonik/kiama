@@ -83,7 +83,7 @@ object LambdaTree {
     /**
      * Parallel bindings in body.
      */
-    case class Letp (bs : List[Bind], e : Exp) extends Exp
+    case class Letp (bs : Vector[Bind], e : Exp) extends Exp
 
     /**
      * A single binding from a set of parallel bindings (Letp).  No type

@@ -75,7 +75,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      * that the `image` operation throws a `NodeNotInTreeException` exception if
      * it is applied to a node that is not in this tree.
      */
-    class TreeRelation[V,W] (val graph : List[(V,W)]) extends RelationLike[V,W,TreeRelation] {
+    class TreeRelation[V,W] (val graph : Vector[(V,W)]) extends RelationLike[V,W,TreeRelation] {
 
         val companion = TreeRelationFactory
 
@@ -84,7 +84,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
          * except that it throws `NodeNotInTreeException` if the node is not
          * actually in the tree on which this relation is defined.
          */
-        override def image (v : V) : List[W] =
+        override def image (v : V) : Vector[W] =
             tree.whenContains (v, super.image (v))
 
     }
@@ -94,7 +94,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     object TreeRelationFactory extends RelationFactory[TreeRelation] {
 
-        def fromGraph[V,W] (graph : List[(V,W)]) : TreeRelation[V,W] =
+        def fromGraph[V,W] (graph : Vector[(V,W)]) : TreeRelation[V,W] =
             new TreeRelation[V,W] (graph)
 
     }
@@ -102,8 +102,8 @@ class Tree[T <: Product,+R <: T] (val root : R) {
     /**
      * The nodes that occur in this tree.
      */
-    val nodes : List[T] =
-        root :: (childGraph.map (_._2))
+    val nodes : Vector[T] =
+        root +: (childGraph.map (_._2))
 
     /**
      * If the tree contains node `u` return `v`, otherwise throw a
@@ -170,12 +170,12 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     lazy val next : TreeRelation[T,T] = {
 
-        def nextPairs (ts : List[T]) : List[(T,T)] =
+        def nextPairs (ts : Vector[T]) : Vector[(T,T)] =
             ts match {
                 case t1 +: (rest @ (t2 +: _)) =>
                     (t1, t2) +: nextPairs (rest)
                 case _ =>
-                    Nil
+                    Vector ()
             }
 
         new TreeRelation (
@@ -203,7 +203,7 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     lazy val siblings : TreeRelation[T,T] =
         new TreeRelation[T,T] (
-            List ((root, root))) union (child.compose (parent)
+            Vector ((root, root))) union (child.compose (parent)
         )
 
     // Predicates derived from the relations
@@ -214,8 +214,10 @@ class Tree[T <: Product,+R <: T] (val root : R) {
      */
     def index (t : T) : Int =
         siblings.withDomain (t).index (t) match {
-            case List (i) => i
-            case is       => sys.error (s"index: non-singleton index $is for $t")
+            case Vector (i) =>
+                i
+            case is =>
+                sys.error (s"index: non-singleton index $is for $t")
         }
 
     /**
@@ -247,7 +249,8 @@ class Tree[T <: Product,+R <: T] (val root : R) {
  */
 object Tree {
 
-    import scala.collection.mutable.ListBuffer
+    import scala.annotation.tailrec
+    import scala.collection.immutable.Queue
 
     /**
      * Return whether this node is a leaf node or not.
@@ -268,50 +271,58 @@ object Tree {
     }
 
     /**
-     * Return a list of the children of `t`, skipping values that do not
+     * Return a vector of the children of `t`, skipping values that do not
      * contribute directly to the tree structure. See the documentation of the
      * `Tree` class for a detailed explanation of values that are skipped by
      * this method.
      */
-    def treeChildren[T <: Product] (t : T) : List[T] = {
-        val pending = ListBuffer[Any] (t.productIterator)
-        val result = ListBuffer[T] ()
-        while (!pending.isEmpty) {
-            val l = pending.remove (0)
-            l match {
-                case _ : Bridge[_] =>
-                    // ignore
+    def treeChildren[T <: Product] (t : T) : Vector[T] = {
 
-                case Some (n) =>
-                    pending.prepend (n)
+        @tailrec
+        def loop (pending : Queue[Any], children : Vector[T]) : Vector[T] =
+            pending.dequeueOption match {
+                case Some ((candidate, rest)) =>
+                    candidate match {
+                        case _ : Bridge[_] =>
+                            // ignore
+                            loop (rest, children)
+
+                        case Some (n) =>
+                            loop (n +: rest, children)
+                        case None =>
+                            // ignore
+                            loop (rest, children)
+
+                        case Left (l) =>
+                            loop (l +: rest, children)
+                        case Right (r) =>
+                            loop (r +: rest, children)
+
+                        case Tuple1 (a) =>
+                            loop (a +: rest, children)
+                        case (a, b) =>
+                            loop (List (a, b) ++: rest, children)
+                        case (a, b, c) =>
+                            loop (List (a, b, c) ++: rest, children)
+                        case (a, b, c, d) =>
+                            loop (List (a, b, c, d) ++: rest, children)
+
+                        case s : TraversableOnce[_] =>
+                            loop (s ++: rest, children)
+
+                        case p : Product =>
+                            loop (rest, children :+ (p.asInstanceOf[T]))
+
+                        case _ =>
+                            // ignore
+                            loop (rest, children)
+                    }
                 case None =>
-                    // ignore
-
-                case Left (l) =>
-                    pending.prepend (l)
-                case Right (r) =>
-                    pending.prepend (r)
-
-                case Tuple1 (a) =>
-                    pending.prepend (a)
-                case (a, b) =>
-                    pending.prepend (a, b)
-                case (a, b, c) =>
-                    pending.prepend (a, b, c)
-                case (a, b, c, d) =>
-                    pending.prepend (a, b, c, d)
-
-                case s : TraversableOnce[_] =>
-                    pending.prependAll (s)
-
-                case p : Product =>
-                    result.append (p.asInstanceOf[T])
-
-                case _ =>
-                    // ignore
+                    children
             }
-        }
-        result.toList
+
+        loop (Queue (t.productIterator), Vector ())
+
     }
 
 }

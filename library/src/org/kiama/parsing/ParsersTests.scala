@@ -19,13 +19,17 @@
  */
 
 package org.kiama
-package util
+package parsing
+
+import org.kiama.util.ParseTests
 
 /**
- * Basic tests of parser utilities module.  Many cases are already tested
- * in the examples, so we only test for coverage here.
+ * Basic tests of parsers.  Many cases are already tested in the examples, so
+ * we only test for coverage here.
  */
-class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
+class ParsersTests extends ParseTests {
+
+    import org.kiama.util.Positions
 
     case class Node (i : Int)
     case class Tup2 (n1 : Node, n2 : Node)
@@ -33,6 +37,9 @@ class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
     case class Tup4 (n1 : Node, n2 : Node, n3 : Node, n4 : Node)
     case class Tup5 (n1 : Node, n2 : Node, n3 : Node, n4 : Node, n5 : Node)
     case class Tup6 (n1 : Node, n2 : Node, n3 : Node, n4 : Node, n5 : Node, n6 : Node)
+
+    val parsers = new Parsers (positions)
+    import parsers._
 
     lazy val node = "[0-9]+".r ^^ (s => Node (s.toInt))
 
@@ -62,31 +69,31 @@ class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
     }
 
     test ("arity 2 tuples can be created by parsers without explicit actions") {
-        val p : PackratParser[(Node,Node)] =
+        val p : Parser[(Node,Node)] =
             node ~ node
         assertParseOk ("1 2", p, (Node (1), Node (2)))
     }
 
     test ("arity 3 tuples can be created by parsers without explicit actions") {
-        val p : PackratParser[(Node,Node,Node)] =
+        val p : Parser[(Node,Node,Node)] =
             node ~ node ~ node
         assertParseOk ("1 2 3", p, (Node (1), Node (2), Node (3)))
     }
 
     test ("arity 4 tuples can be created by parsers without explicit actions") {
-        val p : PackratParser[(Node,Node,Node,Node)] =
+        val p : Parser[(Node,Node,Node,Node)] =
             node ~ node ~ node ~ node
         assertParseOk ("1 2 3 4", p, (Node (1), Node (2), Node (3), Node (4)))
     }
 
     test ("arity 5 tuples can be created by parsers without explicit actions") {
-        val p : PackratParser[(Node,Node,Node,Node,Node)] =
+        val p : Parser[(Node,Node,Node,Node,Node)] =
             node ~ node ~ node ~ node ~ node
         assertParseOk ("1 2 3 4 5", p, (Node (1), Node (2), Node (3), Node (4), Node (5)))
     }
 
     test ("arity 6 tuples can be created by parsers without explicit actions") {
-        val p : PackratParser[(Node,Node,Node,Node,Node,Node)] =
+        val p : Parser[(Node,Node,Node,Node,Node,Node)] =
             node ~ node ~ node ~ node ~ node ~ node
         assertParseOk ("1 2 3 4 5 6", p, (Node (1), Node (2), Node (3), Node (4), Node (5), Node (6)))
     }
@@ -96,13 +103,6 @@ class ParserUtilitiesTests extends RegexParserTests with ParserUtilities {
         assertParseError ("foo", p, 1, 1, "MESSAGE")
         assertParseError ("   foo", p, 1, 4, "MESSAGE")
         assertParseError ("  \n  foo", p, 2, 3, "MESSAGE")
-    }
-
-    test ("err parser combinator skips whitespace and gives correct error") {
-        val p = err ("MESSAGE")
-        assertParseError ("foo", p, 1, 1, "MESSAGE", true)
-        assertParseError ("   foo", p, 1, 4, "MESSAGE", true)
-        assertParseError ("  \n  foo", p, 2, 3, "MESSAGE", true)
     }
 
     {

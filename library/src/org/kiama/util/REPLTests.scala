@@ -50,10 +50,10 @@ trait GeneratingREPLBase[T] extends REPL {
      * Generate a new instance and print it, ignoring the input line. Return
      * the configuration unchanged.
      */
-    def processline (line : String, console : Console, config : REPLConfig) : Option[REPLConfig] = {
+    def processline (source : Source, console : Console, config : REPLConfig) : Option[REPLConfig] = {
         generator.arbitrary (Gen.Parameters.default) match {
             case Some (t) =>
-                process (t, config)
+                process (source, t, config)
             case None =>
                 config.output.emitln ("can't generate an instance")
         }
@@ -63,7 +63,7 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Process a generated value.  Default: print it.
      */
-    def process (t : T, config : REPLConfig) {
+    def process (source : Source, t : T, config : REPLConfig) {
         config.output.emitln (t)
     }
 

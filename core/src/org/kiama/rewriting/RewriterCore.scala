@@ -1105,19 +1105,20 @@ trait RewriterCore {
 
         /**
          * Generic term deconstruction. An extractor that decomposes `Product`
-         * or `Rewritable` values into the value itself and a list of its
-         * children.  Terms that are not `Product` or `Rewritable` are not
-         * decomposable (i.e., the list of children will be empty).
+         * `Rewritable` or `Seq` values into the value itself and a vector of
+         * its children.  Terms that are not of these types are not decomposable
+         * (i.e., the children will be empty).
          */
-        def unapply (t : Any) : Option[(Any,List[Any])] = {
+        def unapply (t : Any) : Option[(Any,Vector[Any])] = {
             t match {
                 case r : Rewritable =>
-                    Some ((r, r.deconstruct.toList))
+                    Some ((r, r.deconstruct.toVector))
                 case p : Product =>
-                    val cs = for (i <- 0 until p.productArity) yield p.productElement (i)
-                    Some ((p, cs.toList))
+                    Some ((p, p.productIterator.toVector))
+                case s : Seq[_] =>
+                    Some ((s, s.toVector))
                 case _ =>
-                    Some ((t, Nil))
+                    Some ((t, Vector ()))
             }
         }
 

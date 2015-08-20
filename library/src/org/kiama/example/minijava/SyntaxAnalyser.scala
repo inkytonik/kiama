@@ -21,65 +21,63 @@
 package org.kiama
 package example.minijava
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * Module containing parsers for MiniJava.
  */
-class SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import MiniJavaTree._
     import scala.language.postfixOps
 
-    lazy val parser : PackratParser[Program] =
-        phrase (program)
-
-    lazy val program : PackratParser[Program] =
+    lazy val program =
         mainClass ~ (classDeclaration*) ^^ Program
 
-    lazy val mainClass : PackratParser[MainClass] =
+    lazy val mainClass =
         ("class" ~> idndef) ~ ("{" ~> mainMethod <~ "}") ^^ MainClass
 
-    lazy val mainMethod : PackratParser[MainMethod] =
+    lazy val mainMethod =
         "public" ~> "static" ~> "void" ~> "main" ~> "(" ~> ")" ~>
             ("{" ~> statement <~ "}") ^^ MainMethod
 
-    lazy val classDeclaration : PackratParser[Class] =
+    lazy val classDeclaration =
         ("class" ~> idndef) ~ (("extends" ~> idnuse)?) ~
             ("{" ~> (fieldDeclaration*)) ~ ((methodDeclaration*) <~ "}") ^^ {
                 case n ~ oe ~ vds ~ mds =>
                     Class (n, oe, ClassBody (vds, mds))
             }
 
-    lazy val fieldDeclaration : PackratParser[Field] =
+    lazy val fieldDeclaration =
         tipe ~ idndef <~ ";" ^^ Field
 
-    lazy val methodDeclaration : PackratParser[Method] =
+    lazy val methodDeclaration =
         ("public" ~> tipe) ~ idndef ~ ("(" ~> arguments <~ ")") ~
             ("{" ~> (varDeclaration*)) ~ (statement*) ~ (result <~ "}") ^^ {
                 case t ~ n ~ as ~ vds ~ ss ~ rs =>
                     Method (n, MethodBody (t, as, vds, ss, rs))
             }
 
-    lazy val varDeclaration : PackratParser[Var] =
+    lazy val varDeclaration =
         tipe ~ idndef <~ ";" ^^ Var
 
-    lazy val result : PackratParser[Result] =
+    lazy val result =
         "return" ~> expression <~ ";" ^^ Result
 
-    lazy val arguments : PackratParser[List[Argument]] =
+    lazy val arguments =
         repsep (argument, ",")
 
-    lazy val argument : PackratParser[Argument] =
+    lazy val argument =
         tipe ~ idndef ^^ Argument
 
-    lazy val tipe : PackratParser[Type] =
+    lazy val tipe =
         "int" ~ "[" ~ "]" ^^ (_ => IntArrayType ()) |
         "int" ^^ (_ => IntType ()) |
         "boolean" ^^ (_ => BooleanType ()) |
         not ("return") ~> idnuse ^^ ClassType
 
-    lazy val statement : PackratParser[Statement] =
+    lazy val statement : Parser[Statement] =
         "{" ~> (statement*) <~ "}" ^^ Block |
         "if" ~> ("(" ~> expression <~ ")") ~ statement ~ ("else" ~> statement) ^^ If |
         "while" ~> ("(" ~> expression <~ ")") ~ statement ^^ While |
@@ -121,22 +119,22 @@ class SyntaxAnalyser extends PositionedParserUtilities {
         "!" ~> expression ^^ NotExp |
         "(" ~> expression <~ ")"
 
-    lazy val expressionList : PackratParser[List[Expression]] =
+    lazy val expressionList =
         repsep (expression, ",")
 
-    lazy val integer : PackratParser[String] =
+    lazy val integer =
         regex ("[0-9]+".r)
 
-    lazy val idndef : PackratParser[IdnDef] =
+    lazy val idndef =
         identifier ^^ IdnDef
 
-    lazy val idnuse : PackratParser[IdnUse] =
+    lazy val idnuse =
         identifier ^^ IdnUse
 
-    lazy val identifier : PackratParser[String] =
+    lazy val identifier =
         regex ("[a-zA-Z][a-zA-Z0-9_]*".r)
 
-    override val whiteSpace =
-        """(\s|(//.*\n))+""".r
+    override val whitespace : Parser[String] =
+        """(\s|(//.*\n))*""".r
 
 }

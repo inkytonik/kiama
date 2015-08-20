@@ -25,25 +25,19 @@ package util
  * Basic tests of compiler module.  Normal usage is tested by many of
  * the examples.
  */
-class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompiler[Any] {
+class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
 
-    import java.io.Reader
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.kiama.util.Messaging.{aMessage, Messages}
-    import org.scalatest.TestFailedException
+    import org.kiama.parsing.Parsers
+    import org.kiama.util.Source
 
-    def createConfig (args : Seq[String],
-                      out : Emitter = new OutputEmitter,
-                      err : Emitter = new ErrorEmitter) : Config =
-        new Config (args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    object parsers extends Parsers (positions) {
+        val dummy : Parser[String] = "dummy".r
+    }
 
-    def makeast (reader : Reader, filename : String, config : Config) : Either[Any,Messages] =
-         Right (Vector (aMessage ("Dummy")))
+    val parser = parsers.dummy
 
-    def process (filename : String, ast : Any, config : Config) {
+    def process (source : Source, ast : Any, config : Config) {
         // Do nothing
     }
 
@@ -53,12 +47,12 @@ class CompilerTests extends Tests with CompilerBase[Any,Config] with TestCompile
     test ("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
         val config = createAndInitConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
-        testdriver (config)
         val expectedMsg =
             if (System.getProperty("os.name").startsWith ("Windows"))
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
+        testdriver (config)
         assertResult (s"IDoNotExist.txt ($expectedMsg)\n") (emitter.result)
     }
 
@@ -158,6 +152,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
             test (title) {
                 val emitter = new StringEmitter
                 val config = createAndInitConfig (args, emitter, emitter)
+                positions.reset ()
                 try {
                     testdriver (config)
                 } catch {

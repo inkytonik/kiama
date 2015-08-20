@@ -51,7 +51,7 @@ object RISCTree {
     /**
      * A stack program consisting of the given statements.
      */
-    case class RISCProg (insns : List[Item]) extends RISCNode
+    case class RISCProg (insns : Vector[Item]) extends RISCNode
 
     /**
      * Superclass of all item constructs, ie. target constructs that do
@@ -189,7 +189,7 @@ object RISCTree {
      * A compound datum, consisting of a sequence of items to execute
      * followed by a datum whose value is evaluated and returned.
      */
-    case class SequenceDatum (insns : List[Item], d : Datum) extends Datum
+    case class SequenceDatum (insns : Vector[Item], d : Datum) extends Datum
 
     /**
      * Memory addresses that can be stored to or loaded from.

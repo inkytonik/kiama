@@ -1,3 +1,3 @@
-2:1: string matching regex `[a-zA-Z]+' expected but end of source found
+src/org/kiama/example/dataflow/tests/test4.dataerr:2:1: string matching regex `[a-zA-Z]+' expected but end of source found
 
 ^

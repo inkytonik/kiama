@@ -33,10 +33,10 @@ class RelationTests extends Tests with RelationTestSupport {
 
     // Empty relations
 
-    val emptyIntBool = new Relation[Int,Boolean] (Nil)
-    val emptyNumInt  = new Relation[Num,Int] (Nil)
-    val emptyBoolNum = new Relation[Boolean,Num] (Nil)
-    val emptyNumNum  = new Relation[Num,Num] (Nil)
+    val emptyIntBool = new Relation[Int,Boolean] (Vector ())
+    val emptyNumInt  = new Relation[Num,Int] (Vector ())
+    val emptyBoolNum = new Relation[Boolean,Num] (Vector ())
+    val emptyNumNum  = new Relation[Num,Num] (Vector ())
 
     // Singleton relations
 
@@ -45,17 +45,17 @@ class RelationTests extends Tests with RelationTestSupport {
     val num4 = Num (4)
     val num5 = Num (5)
 
-    val singleIntBool = new Relation[Int,Boolean] (List ((1, true)))
-    val singleNumInt  = new Relation[Num,Int] (List ((num2, 2)))
-    val singleBoolNum = new Relation[Boolean,Num] (List ((false, num3)))
-    val singleNumNum  = new Relation[Num,Num] (List ((num4, num5)))
+    val singleIntBool = new Relation[Int,Boolean] (Vector ((1, true)))
+    val singleNumInt  = new Relation[Num,Int] (Vector ((num2, 2)))
+    val singleBoolNum = new Relation[Boolean,Num] (Vector ((false, num3)))
+    val singleNumNum  = new Relation[Num,Num] (Vector ((num4, num5)))
 
     // Multiple element relations
 
-    val multiIntBool = new Relation[Int,Boolean] (List ((1, true), (2, false), (1, true)))
-    val multiNumInt  = new Relation[Num,Int] (List ((num2, 2), (num3, 3)))
-    val multiBoolNum = new Relation[Boolean,Num] (List ((false, num3), (false, num4), (true, num4)))
-    val multiNumNum  = new Relation[Num,Num] (List ((num4, num5), (num4, num5)))
+    val multiIntBool = new Relation[Int,Boolean] (Vector ((1, true), (2, false), (1, true)))
+    val multiNumInt  = new Relation[Num,Int] (Vector ((num2, 2), (num3, 3)))
+    val multiBoolNum = new Relation[Boolean,Num] (Vector ((false, num3), (false, num4), (true, num4)))
+    val multiNumNum  = new Relation[Num,Num] (Vector ((num4, num5), (num4, num5)))
 
     // collect
 
@@ -64,23 +64,23 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("collect same type on an singleton relation produces correct singleton relation") {
-        assertResult (List ((true, num3))) (singleBoolNum.collect { case (b, n) => (!b, n) }.graph)
+        assertResult (Vector ((true, num3))) (singleBoolNum.collect { case (b, n) => (!b, n) }.graph)
     }
 
     test ("collect new type on an singleton relation produces correct singleton relation") {
-        assertResult (List ((num3, true))) (singleBoolNum.collect { case (b, n) => (n, !b) }.graph)
+        assertResult (Vector ((num3, true))) (singleBoolNum.collect { case (b, n) => (n, !b) }.graph)
     }
 
     test ("collect same type on a multiple relation produces correct multiple relation (same Nums)") {
-        assertResult (List ((num2, 3), (num3, 4))) (multiNumInt.collect { case (n, i) => (n, i + 1) }.graph)
+        assertResult (Vector ((num2, 3), (num3, 4))) (multiNumInt.collect { case (n, i) => (n, i + 1) }.graph)
     }
 
     test ("collect same type on a multiple relation produces correct multiple relation (new Nums)") {
-        assertResult (List ((Num (3), 3), (Num (3), 4))) (multiNumInt.collect { case (Num (i), j) => (Num (i + 1), j + 1) }.graph)
+        assertResult (Vector ((Num (3), 3), (Num (3), 4))) (multiNumInt.collect { case (Num (i), j) => (Num (i + 1), j + 1) }.graph)
     }
 
     test ("collect new type on a multiple relation produces correct multiple relation") {
-        assertResult (List ((false, "bob"), (true, "bob"), (false, "bob"))) (multiIntBool.collect { case (i, b) => (!b, "bob") }.graph)
+        assertResult (Vector ((false, "bob"), (true, "bob"), (false, "bob"))) (multiIntBool.collect { case (i, b) => (!b, "bob") }.graph)
     }
 
     // compose
@@ -98,11 +98,11 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("compose a singleton relation with a mu;tiple relation produces the correct pairs") {
-        assertResult (List ((num2, false))) (multiIntBool.compose (singleNumInt).graph)
+        assertResult (Vector ((num2, false))) (multiIntBool.compose (singleNumInt).graph)
     }
 
     test ("compose of two multiple relations produces the correct pairs") {
-        assertResult (List ((1, num4), (2, num3), (2, num4), (1, num4))) (multiBoolNum.compose (multiIntBool).graph)
+        assertResult (Vector ((1, num4), (2, num3), (2, num4), (1, num4))) (multiBoolNum.compose (multiIntBool).graph)
     }
 
     // containsInDomain
@@ -272,35 +272,35 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("domain of singleton value-value relation is correct") {
-        assertResult (List (1)) (singleIntBool.domain)
+        assertResult (Vector (1)) (singleIntBool.domain)
     }
 
     test ("domain of singleton ref-value relation is correct") {
-        assertSameCollection (List (num2)) (singleNumInt.domain)
+        assertSameCollection (Vector (num2)) (singleNumInt.domain)
     }
 
     test ("domain of singleton value-ref relation is correct") {
-        assertResult (List (false)) (singleBoolNum.domain)
+        assertResult (Vector (false)) (singleBoolNum.domain)
     }
 
     test ("domain of singleton ref-ref relation is correct") {
-        assertSameCollection (List (num4)) (singleNumNum.domain)
+        assertSameCollection (Vector (num4)) (singleNumNum.domain)
     }
 
     test ("domain of multiple element value-value relation is correct") {
-        assertResult (List (1, 2)) (multiIntBool.domain)
+        assertResult (Vector (1, 2)) (multiIntBool.domain)
     }
 
     test ("domain of multiple element ref-value relation is correct") {
-        assertSameCollection (List (num2, num3)) (multiNumInt.domain)
+        assertSameCollection (Vector (num2, num3)) (multiNumInt.domain)
     }
 
     test ("domain of multiple element value-ref relation is correct") {
-        assertResult (List (false, true)) (multiBoolNum.domain)
+        assertResult (Vector (false, true)) (multiBoolNum.domain)
     }
 
     test ("domain of multiple element ref-ref relation is correct") {
-        assertSameCollection (List (num4)) (multiNumNum.domain)
+        assertSameCollection (Vector (num4)) (multiNumNum.domain)
     }
 
     // image
@@ -322,7 +322,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("image of singleton value-value relation is correct (present)") {
-        assertResult (List (true)) (singleIntBool.image (1))
+        assertResult (Vector (true)) (singleIntBool.image (1))
     }
 
     test ("image of singleton value-value relation is empty (not present)") {
@@ -330,7 +330,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("image of singleton ref-value relation is correct (present)") {
-        assertResult (List (2)) (singleNumInt.image (num2))
+        assertResult (Vector (2)) (singleNumInt.image (num2))
     }
 
     test ("image of singleton ref-value relation is empty (not present)") {
@@ -338,7 +338,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("image of singleton value-ref relation is correct (present)") {
-        assertSameCollection (List (num3)) (singleBoolNum.image (false))
+        assertSameCollection (Vector (num3)) (singleBoolNum.image (false))
     }
 
     test ("image of singleton value-ref relation is empty (not present)") {
@@ -346,7 +346,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("image of singleton ref-ref relation is correct (present)") {
-        assertSameCollection (List (num5)) (singleNumNum.image (num4))
+        assertSameCollection (Vector (num5)) (singleNumNum.image (num4))
     }
 
     test ("image of singleton ref-ref relation is empty (not present)") {
@@ -354,11 +354,11 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("image of multiple element value-value relation is correct (present 1)") {
-        assertResult (List (true, true)) (multiIntBool.image (1))
+        assertResult (Vector (true, true)) (multiIntBool.image (1))
     }
 
     test ("image of multiple element value-value relation is correct (present 2)") {
-        assertResult (List (false)) (multiIntBool.image (2))
+        assertResult (Vector (false)) (multiIntBool.image (2))
     }
 
     test ("image of multiple element value-value relation is empty (not present)") {
@@ -366,7 +366,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("image of multiple element ref-value relation is correct (present)") {
-        assertResult (List (2)) (multiNumInt.image (num2))
+        assertResult (Vector (2)) (multiNumInt.image (num2))
     }
 
     test ("image of multiple element ref-value relation is empty (not present)") {
@@ -374,15 +374,15 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("image of multiple element value-ref relation is correct (present 1)") {
-        assertSameCollection (List (num3, num4)) (multiBoolNum.image (false))
+        assertSameCollection (Vector (num3, num4)) (multiBoolNum.image (false))
     }
 
     test ("image of multiple element value-ref relation is correct (present 2)") {
-        assertSameCollection (List (num4)) (multiBoolNum.image (true))
+        assertSameCollection (Vector (num4)) (multiBoolNum.image (true))
     }
 
     test ("image of multiple element ref-ref relation is correct (present)") {
-        assertSameCollection (List (num5, num5)) (multiNumNum.image (num4))
+        assertSameCollection (Vector (num5, num5)) (multiNumNum.image (num4))
     }
 
     test ("image of multiple element ref-ref relation is empty (not present)") {
@@ -408,35 +408,35 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("index of singleton value-value relation is correct") {
-        assertResult (List ((true, 0))) (singleIntBool.index.graph)
+        assertResult (Vector ((true, 0))) (singleIntBool.index.graph)
     }
 
     test ("index of singleton ref-value relation is correct") {
-        assertResult (List ((2, 0))) (singleNumInt.index.graph)
+        assertResult (Vector ((2, 0))) (singleNumInt.index.graph)
     }
 
     test ("index of singleton value-ref relation is correct") {
-        assertSameCollection (List ((num3, 0))) (singleBoolNum.index.graph)
+        assertSameCollection (Vector ((num3, 0))) (singleBoolNum.index.graph)
     }
 
     test ("index of singleton ref-ref relation is correct (present)") {
-        assertSameCollection (List ((num5, 0))) (singleNumNum.index.graph)
+        assertSameCollection (Vector ((num5, 0))) (singleNumNum.index.graph)
     }
 
     test ("index of multiple element value-value relation is correct") {
-        assertResult (List ((true, 0), (false, 1), (true, 2))) (multiIntBool.index.graph)
+        assertResult (Vector ((true, 0), (false, 1), (true, 2))) (multiIntBool.index.graph)
     }
 
     test ("index of multiple element ref-value relation is correct") {
-        assertResult (List ((2, 0), (3, 1))) (multiNumInt.index.graph)
+        assertResult (Vector ((2, 0), (3, 1))) (multiNumInt.index.graph)
     }
 
     test ("index of multiple element value-ref relation is correct") {
-        assertSameCollection (List ((num3, 0), (num4, 1), (num4, 2))) (multiBoolNum.index.graph)
+        assertSameCollection (Vector ((num3, 0), (num4, 1), (num4, 2))) (multiBoolNum.index.graph)
     }
 
     test ("index of multiple element ref-ref relation is correct") {
-        assertSameCollection (List ((num5, 0), (num5, 1))) (multiNumNum.index.graph)
+        assertSameCollection (Vector ((num5, 0), (num5, 1))) (multiNumNum.index.graph)
     }
 
     // inverse
@@ -446,11 +446,11 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("inverting a singleton relation yields the correct singleton relation") {
-        assertResult (List ((true, 1))) (singleIntBool.inverse.graph)
+        assertResult (Vector ((true, 1))) (singleIntBool.inverse.graph)
     }
 
     test ("inverting a multiple relation yields the correct multiple relation") {
-        assertResult (List ((num3, false), (num4, false), (num4, true))) (multiBoolNum.inverse.graph)
+        assertResult (Vector ((num3, false), (num4, false), (num4, true))) (multiBoolNum.inverse.graph)
     }
 
     // preImage
@@ -472,7 +472,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preImage of singleton value-value relation is correct (present)") {
-        assertResult (List (1)) (singleIntBool.preImage (true))
+        assertResult (Vector (1)) (singleIntBool.preImage (true))
     }
 
     test ("preImage of singleton value-value relation is empty (not present)") {
@@ -480,7 +480,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preImage of singleton ref-value relation is correct (present)") {
-        assertSameCollection (List (num2)) (singleNumInt.preImage (2))
+        assertSameCollection (Vector (num2)) (singleNumInt.preImage (2))
     }
 
     test ("preImage of singleton ref-value relation is empty (not present)") {
@@ -488,7 +488,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preImage of singleton value-ref relation is correct (present)") {
-        assertResult (List (false)) (singleBoolNum.preImage (num3))
+        assertResult (Vector (false)) (singleBoolNum.preImage (num3))
     }
 
     test ("preImage of singleton value-ref relation is empty (not present)") {
@@ -496,7 +496,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preImage of singleton ref-ref relation is correct (present)") {
-        assertSameCollection (List (num4)) (singleNumNum.preImage (num5))
+        assertSameCollection (Vector (num4)) (singleNumNum.preImage (num5))
     }
 
     test ("preImage of singleton ref-ref relation is empty (not present)") {
@@ -504,15 +504,15 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preImage of multiple element value-value relation is correct (present 1)") {
-        assertResult (List (1, 1)) (multiIntBool.preImage (true))
+        assertResult (Vector (1, 1)) (multiIntBool.preImage (true))
     }
 
     test ("preImage of multiple element value-value relation is correct (present 2)") {
-        assertResult (List (2)) (multiIntBool.preImage (false))
+        assertResult (Vector (2)) (multiIntBool.preImage (false))
     }
 
     test ("preImage of multiple element ref-value relation is correct (present)") {
-        assertSameCollection (List (num2)) (multiNumInt.preImage (2))
+        assertSameCollection (Vector (num2)) (multiNumInt.preImage (2))
     }
 
     test ("preImage of multiple element ref-value relation is empty (not present)") {
@@ -520,11 +520,11 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preImage of multiple element value-ref relation is correct (present 1)") {
-        assertResult (List (false)) (multiBoolNum.preImage (num3))
+        assertResult (Vector (false)) (multiBoolNum.preImage (num3))
     }
 
     test ("preImage of multiple element value-ref relation is correct (present 2)") {
-        assertResult (List (false, true)) (multiBoolNum.preImage (num4))
+        assertResult (Vector (false, true)) (multiBoolNum.preImage (num4))
     }
 
     test ("preImage of multiple element value-ref relation is empty (not present)") {
@@ -532,7 +532,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preImage of multiple element ref-ref relation is correct (present)") {
-        assertSameCollection (List (num4, num4)) (multiNumNum.preImage (num5))
+        assertSameCollection (Vector (num4, num4)) (multiNumNum.preImage (num5))
     }
 
     test ("preImage of multiple element ref-ref relation is empty (not present)") {
@@ -558,35 +558,35 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("preIndex of singleton value-value relation is correct") {
-        assertResult (List ((1, 0))) (singleIntBool.preIndex.graph)
+        assertResult (Vector ((1, 0))) (singleIntBool.preIndex.graph)
     }
 
     test ("preIndex of singleton ref-value relation is correct") {
-        assertSameCollection (List ((num2, 0))) (singleNumInt.preIndex.graph)
+        assertSameCollection (Vector ((num2, 0))) (singleNumInt.preIndex.graph)
     }
 
     test ("preIndex of singleton value-ref relation is correct") {
-        assertResult (List ((false, 0))) (singleBoolNum.preIndex.graph)
+        assertResult (Vector ((false, 0))) (singleBoolNum.preIndex.graph)
     }
 
     test ("preIndex of singleton ref-ref relation is correct (present)") {
-        assertSameCollection (List ((num4, 0))) (singleNumNum.preIndex.graph)
+        assertSameCollection (Vector ((num4, 0))) (singleNumNum.preIndex.graph)
     }
 
     test ("preIndex of multiple element value-value relation is correct") {
-        assertResult (List ((1, 0), (2, 1), (1, 2))) (multiIntBool.preIndex.graph)
+        assertResult (Vector ((1, 0), (2, 1), (1, 2))) (multiIntBool.preIndex.graph)
     }
 
     test ("preIndex of multiple element ref-value relation is correct") {
-        assertSameCollection (List ((num2, 0), (num3, 1))) (multiNumInt.preIndex.graph)
+        assertSameCollection (Vector ((num2, 0), (num3, 1))) (multiNumInt.preIndex.graph)
     }
 
     test ("preIndex of multiple element value-ref relation is correct") {
-        assertResult (List ((false, 0), (false, 1), (true, 2))) (multiBoolNum.preIndex.graph)
+        assertResult (Vector ((false, 0), (false, 1), (true, 2))) (multiBoolNum.preIndex.graph)
     }
 
     test ("preIndex of multiple element ref-ref relation is correct") {
-        assertSameCollection (List ((num4, 0), (num4, 1))) (multiNumNum.preIndex.graph)
+        assertSameCollection (Vector ((num4, 0), (num4, 1))) (multiNumNum.preIndex.graph)
     }
 
     // projDomain
@@ -608,35 +608,35 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("projDomain of singleton value-value relation is correct") {
-        assertResult (List ((1, List (true)))) (singleIntBool.projDomain.graph)
+        assertResult (Vector ((1, Vector (true)))) (singleIntBool.projDomain.graph)
     }
 
     test ("projDomain of singleton ref-value relation is correct") {
-        assertSameCollection (List ((num2, List (2)))) (singleNumInt.projDomain.graph)
+        assertSameCollection (Vector ((num2, Vector (2)))) (singleNumInt.projDomain.graph)
     }
 
     test ("projDomain of singleton value-ref relation is correct") {
-        assertSameCollection (List ((false, List (num3)))) (singleBoolNum.projDomain.graph)
+        assertSameCollection (Vector ((false, Vector (num3)))) (singleBoolNum.projDomain.graph)
     }
 
     test ("projDomain of singleton ref-ref relation is correct") {
-        assertSameCollection (List ((num4, List (num5)))) (singleNumNum.projDomain.graph)
+        assertSameCollection (Vector ((num4, Vector (num5)))) (singleNumNum.projDomain.graph)
     }
 
     test ("projDomain of multiple element value-value relation is correct") {
-        assertResult (List ((1, List (true, true)), (2, List (false)))) (multiIntBool.projDomain.graph)
+        assertResult (Vector ((1, Vector (true, true)), (2, Vector (false)))) (multiIntBool.projDomain.graph)
     }
 
     test ("projDomain of multiple element ref-value relation is correct") {
-        assertSameCollection (List ((num2, List (2)), (num3, List (3)))) (multiNumInt.projDomain.graph)
+        assertSameCollection (Vector ((num2, Vector (2)), (num3, Vector (3)))) (multiNumInt.projDomain.graph)
     }
 
     test ("projDomain of multiple element value-ref relation is correct") {
-        assertSameCollection (List ((false, List (num3, num4)), (true, List (num4)))) (multiBoolNum.projDomain.graph)
+        assertSameCollection (Vector ((false, Vector (num3, num4)), (true, Vector (num4)))) (multiBoolNum.projDomain.graph)
     }
 
     test ("projDomain of multiple element ref-ref relation is correct") {
-        assertSameCollection (List ((num4, List (num5, num5)))) (multiNumNum.projDomain.graph)
+        assertSameCollection (Vector ((num4, Vector (num5, num5)))) (multiNumNum.projDomain.graph)
     }
 
     // projRange
@@ -658,35 +658,35 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("projRange of singleton value-value relation is correct") {
-        assertResult (List ((true, List (1)))) (singleIntBool.projRange.graph)
+        assertResult (Vector ((true, Vector (1)))) (singleIntBool.projRange.graph)
     }
 
     test ("projRange of singleton ref-value relation is correct") {
-        assertSameCollection (List ((2, List (num2)))) (singleNumInt.projRange.graph)
+        assertSameCollection (Vector ((2, Vector (num2)))) (singleNumInt.projRange.graph)
     }
 
     test ("projRange of singleton value-ref relation is correct") {
-        assertSameCollection (List ((num3, List (false)))) (singleBoolNum.projRange.graph)
+        assertSameCollection (Vector ((num3, Vector (false)))) (singleBoolNum.projRange.graph)
     }
 
     test ("projRange of singleton ref-ref relation is correct") {
-        assertSameCollection (List ((num5, List (num4)))) (singleNumNum.projRange.graph)
+        assertSameCollection (Vector ((num5, Vector (num4)))) (singleNumNum.projRange.graph)
     }
 
     test ("projRange of multiple element value-value relation is correct") {
-        assertResult (List ((true, List (1, 1)), (false, List (2)))) (multiIntBool.projRange.graph)
+        assertResult (Vector ((true, Vector (1, 1)), (false, Vector (2)))) (multiIntBool.projRange.graph)
     }
 
     test ("projRange of multiple element ref-value relation is correct") {
-        assertSameCollection (List ((2, List (num2)), (3, List (num3)))) (multiNumInt.projRange.graph)
+        assertSameCollection (Vector ((2, Vector (num2)), (3, Vector (num3)))) (multiNumInt.projRange.graph)
     }
 
     test ("projRange of multiple element value-ref relation is correct") {
-        assertSameCollection (List ((num3, List (false)), (num4, List (false, true)))) (multiBoolNum.projRange.graph)
+        assertSameCollection (Vector ((num3, Vector (false)), (num4, Vector (false, true)))) (multiBoolNum.projRange.graph)
     }
 
     test ("projRange of multiple element ref-ref relation is correct") {
-        assertSameCollection (List ((num5, List (num4, num4)))) (multiNumNum.projRange.graph)
+        assertSameCollection (Vector ((num5, Vector (num4, num4)))) (multiNumNum.projRange.graph)
     }
 
     // range
@@ -708,35 +708,35 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("range of singleton value-value relation is correct") {
-        assertResult (List (true)) (singleIntBool.range)
+        assertResult (Vector (true)) (singleIntBool.range)
     }
 
     test ("range of singleton ref-value relation is correct") {
-        assertResult (List (2)) (singleNumInt.range)
+        assertResult (Vector (2)) (singleNumInt.range)
     }
 
     test ("range of singleton value-ref relation is correct") {
-        assertSameCollection (List (num3)) (singleBoolNum.range)
+        assertSameCollection (Vector (num3)) (singleBoolNum.range)
     }
 
     test ("range of singleton ref-ref relation is correct") {
-        assertSameCollection (List (num5)) (singleNumNum.range)
+        assertSameCollection (Vector (num5)) (singleNumNum.range)
     }
 
     test ("range of multiple element value-value relation is correct") {
-        assertResult (List (true, false)) (multiIntBool.range)
+        assertResult (Vector (true, false)) (multiIntBool.range)
     }
 
     test ("range of multiple element ref-value relation is correct") {
-        assertResult (List (2, 3)) (multiNumInt.range)
+        assertResult (Vector (2, 3)) (multiNumInt.range)
     }
 
     test ("range of multiple element value-ref relation is correct") {
-        assertSameCollection (List (num3, num4)) (multiBoolNum.range)
+        assertSameCollection (Vector (num3, num4)) (multiBoolNum.range)
     }
 
     test ("range of multiple element ref-ref relation is correct") {
-        assertSameCollection (List (num5)) (multiNumNum.range)
+        assertSameCollection (Vector (num5)) (multiNumNum.range)
     }
 
     // unapply
@@ -863,7 +863,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("unapplySeq of a singleton relation is correct (present)") {
-        assertSameCollection (Option (List (2))) (singleNumInt.unapplySeq (num2))
+        assertSameCollection (Option (Vector (2))) (singleNumInt.unapplySeq (num2))
     }
 
     test ("unapplySeq of a singleton relation fails (not present)") {
@@ -871,7 +871,7 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("unapplySeq of a multiple relation is correct (present)") {
-        assertSameCollection (Option (List (true, true))) (multiIntBool.unapplySeq (1))
+        assertSameCollection (Option (Vector (true, true))) (multiIntBool.unapplySeq (1))
     }
 
     test ("unapplySeq of a multiple relation fails (not present)") {
@@ -881,75 +881,75 @@ class RelationTests extends Tests with RelationTestSupport {
     // union
 
     test ("an empty relation union an empty relation is empty (value-value)") {
-        val r = new Relation[Int,Boolean] (Nil)
+        val r = new Relation[Int,Boolean] (Vector ())
         assertResult (true) (emptyIntBool.union (r).isEmpty)
     }
 
     test ("an empty relation union an empty relation is empty (ref-value)") {
-        val r = new Relation[Num,Int] (Nil)
+        val r = new Relation[Num,Int] (Vector ())
         assertResult (true) (emptyNumInt.union (r).isEmpty)
     }
 
     test ("an empty relation union an empty relation is empty (value-ref)") {
-        val r = new Relation[Boolean,Num] (Nil)
+        val r = new Relation[Boolean,Num] (Vector ())
         assertResult (true) (emptyBoolNum.union (r).isEmpty)
     }
 
     test ("an empty relation union an empty relation is empty (ref-ref)") {
-        val r = new Relation[Num,Num] (Nil)
+        val r = new Relation[Num,Num] (Vector ())
         assertResult (true) (emptyNumNum.union (r).isEmpty)
     }
 
     test ("an empty relation union a non-empty relation has correct graph (value-value)") {
-        assertResult (List ((1, true))) (emptyIntBool.union (singleIntBool).graph)
+        assertResult (Vector ((1, true))) (emptyIntBool.union (singleIntBool).graph)
     }
 
     test ("a non-empty relation union an empty relation has correct graph (value-value)") {
-        assertResult (List ((1, true))) (singleIntBool.union (emptyIntBool).graph)
+        assertResult (Vector ((1, true))) (singleIntBool.union (emptyIntBool).graph)
     }
 
     test ("an empty relation union a non-empty relation has correct graph (ref-value)") {
-        assertSameCollection (List ((num2, 2))) (emptyNumInt.union (singleNumInt).graph)
+        assertSameCollection (Vector ((num2, 2))) (emptyNumInt.union (singleNumInt).graph)
     }
 
     test ("a non-empty relation union an empty relation has correct graph (ref-value)") {
-        assertSameCollection (List ((num2, 2))) (singleNumInt.union (emptyNumInt).graph)
+        assertSameCollection (Vector ((num2, 2))) (singleNumInt.union (emptyNumInt).graph)
     }
 
     test ("an empty relation union a non-empty relation has correct graph (value-ref)") {
-        assertSameCollection (List ((false, num3))) (emptyBoolNum.union (singleBoolNum).graph)
+        assertSameCollection (Vector ((false, num3))) (emptyBoolNum.union (singleBoolNum).graph)
     }
 
     test ("a non-empty relation union an empty relation has correct graph (value-ref)") {
-        assertSameCollection (List ((false, num3))) (singleBoolNum.union (emptyBoolNum).graph)
+        assertSameCollection (Vector ((false, num3))) (singleBoolNum.union (emptyBoolNum).graph)
     }
 
     test ("an empty relation union a non-empty relation has correct graph (ref-ref)") {
-        assertSameCollection (List ((num4, num5))) (emptyNumNum.union (singleNumNum).graph)
+        assertSameCollection (Vector ((num4, num5))) (emptyNumNum.union (singleNumNum).graph)
     }
 
     test ("a non-empty relation union an empty relation has correct graph (ref-ref)") {
-        assertSameCollection (List ((num4, num5))) (singleNumNum.union (emptyNumNum).graph)
+        assertSameCollection (Vector ((num4, num5))) (singleNumNum.union (emptyNumNum).graph)
     }
 
     test ("union of non-empty relations has correct graph (value-value)") {
-        val r = new Relation[Int,Boolean] (List ((42, false), (99, true)))
-        assertResult (List ((1, true), (2, false), (1, true), (42, false), (99, true))) (multiIntBool.union (r).graph)
+        val r = new Relation[Int,Boolean] (Vector ((42, false), (99, true)))
+        assertResult (Vector ((1, true), (2, false), (1, true), (42, false), (99, true))) (multiIntBool.union (r).graph)
     }
 
     test ("union of non-empty relations has correct graph (ref-value)") {
-        val r = new Relation[Num,Int] (List ((num4, 42)))
-        assertSameCollection (List ((num2, 2), (num3, 3), (num4, 42))) (multiNumInt.union (r).graph)
+        val r = new Relation[Num,Int] (Vector ((num4, 42)))
+        assertSameCollection (Vector ((num2, 2), (num3, 3), (num4, 42))) (multiNumInt.union (r).graph)
     }
 
     test ("union of non-empty relations has correct graph (value-ref)") {
-        val r = new Relation[Boolean,Num] (List ((false, num3), (true, num2)))
-        assertSameCollection (List ((false, num3), (false, num4), (true, num4), (false, num3), (true, num2))) (multiBoolNum.union (r).graph)
+        val r = new Relation[Boolean,Num] (Vector ((false, num3), (true, num2)))
+        assertSameCollection (Vector ((false, num3), (false, num4), (true, num4), (false, num3), (true, num2))) (multiBoolNum.union (r).graph)
     }
 
     test ("union of non-empty relations has correct graph (ref-ref)") {
-        val r = new Relation[Num,Num] (List ((num2, num3), (num2, num3)))
-        assertSameCollection (List ((num4, num5), (num4, num5), (num2, num3), (num2, num3))) (multiNumNum.union (r).graph)
+        val r = new Relation[Num,Num] (Vector ((num2, num3), (num2, num3)))
+        assertSameCollection (Vector ((num4, num5), (num4, num5), (num2, num3), (num2, num3))) (multiNumNum.union (r).graph)
     }
 
     // withDomain
@@ -971,119 +971,119 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withDomain of singleton value-value relation of element has correct domain") {
-        assertResult (List (1)) (singleIntBool.withDomain (1).domain)
+        assertResult (Vector (1)) (singleIntBool.withDomain (1).domain)
     }
 
     test ("withDomain of singleton value-value relation of element has correct range") {
-        assertResult (List (true)) (singleIntBool.withDomain (1).range)
+        assertResult (Vector (true)) (singleIntBool.withDomain (1).range)
     }
 
     test ("withDomain of singleton value-value relation of non-element is empty") {
-        assertResult (Nil) (singleIntBool.withDomain (2).domain)
+        assertResult (Vector ()) (singleIntBool.withDomain (2).domain)
     }
 
     test ("withDomain of singleton ref-value relation of element has correct domain") {
-        assertSameCollection (List (num2)) (singleNumInt.withDomain (num2).domain)
+        assertSameCollection (Vector (num2)) (singleNumInt.withDomain (num2).domain)
     }
 
     test ("withDomain of singleton ref-value relation of element has correct range") {
-        assertResult (List (2)) (singleNumInt.withDomain (num2).range)
+        assertResult (Vector (2)) (singleNumInt.withDomain (num2).range)
     }
 
     test ("withDomain of singleton ref-value relation of non-element is empty") {
-        assertResult (Nil) (singleNumInt.withDomain (num3).domain)
+        assertResult (Vector ()) (singleNumInt.withDomain (num3).domain)
     }
 
     test ("withDomain of singleton value-ref relation of element has correct domain") {
-        assertResult (List (false)) (singleBoolNum.withDomain (false).domain)
+        assertResult (Vector (false)) (singleBoolNum.withDomain (false).domain)
     }
 
     test ("withDomain of singleton value-ref relation of element has correct range") {
-        assertSameCollection (List (num3)) (singleBoolNum.withDomain (false).range)
+        assertSameCollection (Vector (num3)) (singleBoolNum.withDomain (false).range)
     }
 
     test ("withDomain of singleton value-ref relation of non-element is empty") {
-        assertResult (Nil) (singleBoolNum.withDomain (true).domain)
+        assertResult (Vector ()) (singleBoolNum.withDomain (true).domain)
     }
 
     test ("withDomain of singleton ref-ref relation of element has correct domain") {
-        assertSameCollection (List (num4)) (singleNumNum.withDomain (num4).domain)
+        assertSameCollection (Vector (num4)) (singleNumNum.withDomain (num4).domain)
     }
 
     test ("withDomain of singleton ref-ref relation of element has correct range") {
-        assertSameCollection (List (num5)) (singleNumNum.withDomain (num4).range)
+        assertSameCollection (Vector (num5)) (singleNumNum.withDomain (num4).range)
     }
 
     test ("withDomain of singleton ref-ref relation of non-element is empty") {
-        assertResult (Nil) (singleNumNum.withDomain (num5).domain)
+        assertResult (Vector ()) (singleNumNum.withDomain (num5).domain)
     }
 
     test ("withDomain of multiple element value-value relation of first element has correct domain") {
-        assertResult (List (1)) (multiIntBool.withDomain (1).domain)
+        assertResult (Vector (1)) (multiIntBool.withDomain (1).domain)
     }
 
     test ("withDomain of multiple element value-value relation of second element has correct domain") {
-        assertResult (List (2)) (multiIntBool.withDomain (2).domain)
+        assertResult (Vector (2)) (multiIntBool.withDomain (2).domain)
     }
 
     test ("withDomain of multiple element value-value relation of first element has correct range") {
-        assertResult (List (true)) (multiIntBool.withDomain (1).range)
+        assertResult (Vector (true)) (multiIntBool.withDomain (1).range)
     }
 
     test ("withDomain of multiple element value-value relation of second element has correct range") {
-        assertResult (List (false)) (multiIntBool.withDomain (2).range)
+        assertResult (Vector (false)) (multiIntBool.withDomain (2).range)
     }
 
     test ("withDomain of multiple element value-value relation of non-element is empty") {
-        assertResult (Nil) (multiIntBool.withDomain (3).domain)
+        assertResult (Vector ()) (multiIntBool.withDomain (3).domain)
     }
 
     test ("withDomain of multiple element ref-value relation of first element has correct domain") {
-        assertSameCollection (List (num2)) (multiNumInt.withDomain (num2).domain)
+        assertSameCollection (Vector (num2)) (multiNumInt.withDomain (num2).domain)
     }
 
     test ("withDomain of multiple element ref-value relation of second element has correct domain") {
-        assertSameCollection (List (num3)) (multiNumInt.withDomain (num3).domain)
+        assertSameCollection (Vector (num3)) (multiNumInt.withDomain (num3).domain)
     }
 
     test ("withDomain of multiple element ref-value relation of first element has correct range") {
-        assertResult (List (2)) (multiNumInt.withDomain (num2).range)
+        assertResult (Vector (2)) (multiNumInt.withDomain (num2).range)
     }
 
     test ("withDomain of multiple element ref-value relation of second element has correct range") {
-        assertResult (List (3)) (multiNumInt.withDomain (num3).range)
+        assertResult (Vector (3)) (multiNumInt.withDomain (num3).range)
     }
 
     test ("withDomain of multiple element ref-value relation of non-element is empty") {
-        assertResult (Nil) (multiNumInt.withDomain (num4).domain)
+        assertResult (Vector ()) (multiNumInt.withDomain (num4).domain)
     }
 
     test ("withDomain of multiple element value-ref relation of first element has correct domain") {
-        assertResult (List (false)) (multiBoolNum.withDomain (false).domain)
+        assertResult (Vector (false)) (multiBoolNum.withDomain (false).domain)
     }
 
     test ("withDomain of multiple element value-ref relation of second element has correct domain") {
-        assertResult (List (true)) (multiBoolNum.withDomain (true).domain)
+        assertResult (Vector (true)) (multiBoolNum.withDomain (true).domain)
     }
 
     test ("withDomain of multiple element value-ref relation of first element has correct range") {
-        assertSameCollection (List (num3, num4)) (multiBoolNum.withDomain (false).range)
+        assertSameCollection (Vector (num3, num4)) (multiBoolNum.withDomain (false).range)
     }
 
     test ("withDomain of multiple element value-ref relation of second element has correct range") {
-        assertSameCollection (List (num4)) (multiBoolNum.withDomain (true).range)
+        assertSameCollection (Vector (num4)) (multiBoolNum.withDomain (true).range)
     }
 
     test ("withDomain of multiple element ref-ref relation of element has correct domain") {
-        assertSameCollection (List (num4)) (multiNumNum.withDomain (num4).domain)
+        assertSameCollection (Vector (num4)) (multiNumNum.withDomain (num4).domain)
     }
 
     test ("withDomain of multiple element ref-ref relation of element has correct range") {
-        assertSameCollection (List (num5)) (multiNumNum.withDomain (num4).range)
+        assertSameCollection (Vector (num5)) (multiNumNum.withDomain (num4).range)
     }
 
     test ("withDomain of multiple element ref-ref relation of non-element is empty") {
-        assertSameCollection (Nil) (multiNumNum.withDomain (num5).domain)
+        assertSameCollection (Vector ()) (multiNumNum.withDomain (num5).domain)
     }
 
     // withRange
@@ -1105,115 +1105,115 @@ class RelationTests extends Tests with RelationTestSupport {
     }
 
     test ("withRange of singleton value-value relation of element has correct domain") {
-        assertResult (List (1)) (singleIntBool.withRange (true).domain)
+        assertResult (Vector (1)) (singleIntBool.withRange (true).domain)
     }
 
     test ("withRange of singleton value-value relation of element has correct range") {
-        assertResult (List (true)) (singleIntBool.withRange (true).range)
+        assertResult (Vector (true)) (singleIntBool.withRange (true).range)
     }
 
     test ("withRange of singleton value-value relation of non-element is empty") {
-        assertResult (Nil) (singleIntBool.withRange (false).domain)
+        assertResult (Vector ()) (singleIntBool.withRange (false).domain)
     }
 
     test ("withRange of singleton ref-value relation of element has correct domain") {
-        assertSameCollection (List (num2)) (singleNumInt.withRange (2).domain)
+        assertSameCollection (Vector (num2)) (singleNumInt.withRange (2).domain)
     }
 
     test ("withRange of singleton ref-value relation of element has correct range") {
-        assertResult (List (2)) (singleNumInt.withRange (2).range)
+        assertResult (Vector (2)) (singleNumInt.withRange (2).range)
     }
 
     test ("withRange of singleton ref-value relation of non-element is empty") {
-        assertResult (Nil) (singleNumInt.withRange (3).domain)
+        assertResult (Vector ()) (singleNumInt.withRange (3).domain)
     }
 
     test ("withRange of singleton value-ref relation of element has correct domain") {
-        assertResult (List (false)) (singleBoolNum.withRange (num3).domain)
+        assertResult (Vector (false)) (singleBoolNum.withRange (num3).domain)
     }
 
     test ("withRange of singleton value-ref relation of element has correct range") {
-        assertSameCollection (List (num3)) (singleBoolNum.withRange (num3).range)
+        assertSameCollection (Vector (num3)) (singleBoolNum.withRange (num3).range)
     }
 
     test ("withRange of singleton value-ref relation of non-element is empty") {
-        assertResult (Nil) (singleBoolNum.withRange (num2).domain)
+        assertResult (Vector ()) (singleBoolNum.withRange (num2).domain)
     }
 
     test ("withRange of singleton ref-ref relation of element has correct domain") {
-        assertSameCollection (List (num4)) (singleNumNum.withRange (num5).domain)
+        assertSameCollection (Vector (num4)) (singleNumNum.withRange (num5).domain)
     }
 
     test ("withRange of singleton ref-ref relation of element has correct range") {
-        assertSameCollection (List (num5)) (singleNumNum.withRange (num5).range)
+        assertSameCollection (Vector (num5)) (singleNumNum.withRange (num5).range)
     }
 
     test ("withRange of singleton ref-ref relation of non-element is empty") {
-        assertResult (Nil) (singleNumNum.withRange (num4).domain)
+        assertResult (Vector ()) (singleNumNum.withRange (num4).domain)
     }
 
     test ("withRange of multiple element value-value relation of first element has correct domain") {
-        assertResult (List (2)) (multiIntBool.withRange (false).domain)
+        assertResult (Vector (2)) (multiIntBool.withRange (false).domain)
     }
 
     test ("withRange of multiple element value-value relation of second element has correct domain") {
-        assertResult (List (1)) (multiIntBool.withRange (true).domain)
+        assertResult (Vector (1)) (multiIntBool.withRange (true).domain)
     }
 
     test ("withRange of multiple element value-value relation of first element has correct range") {
-        assertResult (List (false)) (multiIntBool.withRange (false).range)
+        assertResult (Vector (false)) (multiIntBool.withRange (false).range)
     }
 
     test ("withRange of multiple element value-value relation of second element has correct range") {
-        assertResult (List (true)) (multiIntBool.withRange (true).range)
+        assertResult (Vector (true)) (multiIntBool.withRange (true).range)
     }
 
     test ("withRange of multiple element ref-value relation of first element has correct domain") {
-        assertSameCollection (List (num2)) (multiNumInt.withRange (2).domain)
+        assertSameCollection (Vector (num2)) (multiNumInt.withRange (2).domain)
     }
 
     test ("withRange of multiple element ref-value relation of second element has correct domain") {
-        assertSameCollection (List (num3)) (multiNumInt.withRange (3).domain)
+        assertSameCollection (Vector (num3)) (multiNumInt.withRange (3).domain)
     }
 
     test ("withRange of multiple element ref-value relation of first element has correct range") {
-        assertResult (List (2)) (multiNumInt.withRange (2).range)
+        assertResult (Vector (2)) (multiNumInt.withRange (2).range)
     }
 
     test ("withRange of multiple element ref-value relation of second element has correct range") {
-        assertResult (List (3)) (multiNumInt.withRange (3).range)
+        assertResult (Vector (3)) (multiNumInt.withRange (3).range)
     }
 
     test ("withRange of multiple element ref-value relation of non-element is empty") {
-        assertResult (Nil) (multiNumInt.withRange (4).domain)
+        assertResult (Vector ()) (multiNumInt.withRange (4).domain)
     }
 
     test ("withRange of multiple element value-ref relation of first element has correct domain") {
-        assertResult (List (false)) (multiBoolNum.withRange (num3).domain)
+        assertResult (Vector (false)) (multiBoolNum.withRange (num3).domain)
     }
 
     test ("withRange of multiple element value-ref relation of second element has correct domain") {
-        assertResult (List (false, true)) (multiBoolNum.withRange (num4).domain)
+        assertResult (Vector (false, true)) (multiBoolNum.withRange (num4).domain)
     }
 
     test ("withRange of multiple element value-ref relation of first element has correct range") {
-        assertSameCollection (List (num3)) (multiBoolNum.withRange (num3).range)
+        assertSameCollection (Vector (num3)) (multiBoolNum.withRange (num3).range)
     }
 
     test ("withRange of multiple element value-ref relation of second element has correct range") {
-        assertSameCollection (List (num4)) (multiBoolNum.withRange (num4).range)
+        assertSameCollection (Vector (num4)) (multiBoolNum.withRange (num4).range)
     }
 
     test ("withRange of multiple element ref-ref relation of element has correct domain") {
-        assertSameCollection (List (num4)) (multiNumNum.withRange (num5).domain)
+        assertSameCollection (Vector (num4)) (multiNumNum.withRange (num5).domain)
     }
 
     test ("withRange of multiple element ref-ref relation of element has correct range") {
-        assertSameCollection (List (num5)) (multiNumNum.withRange (num5).range)
+        assertSameCollection (Vector (num5)) (multiNumNum.withRange (num5).range)
     }
 
     test ("withRange of multiple element ref-ref relation of non-element is empty") {
-        assertSameCollection (Nil) (multiNumNum.withRange (num4).domain)
+        assertSameCollection (Vector ()) (multiNumNum.withRange (num4).domain)
     }
 
 }
@@ -1231,7 +1231,7 @@ trait RelationTestSupport {
      * Assert that a relation has a given image at `t`. By default, the expected
      * image is empty, so we are checking if the relation is not defined at `t`.
      */
-    def assertImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : List[T] = Nil) {
+    def assertImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : Vector[T] = Vector ()) {
         assertSameCollection (expected) (v.image (t))
     }
 
@@ -1240,7 +1240,7 @@ trait RelationTestSupport {
      * expected image is empty, so we are checking if the relation is defined at
      * `t`.
      */
-    def assertNotImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : List[T] = Nil) {
+    def assertNotImage[T,Repr[_,_]] (v : RelationLike[T,T,Repr], t : T, expected : Vector[T] = Vector ()) {
         assertNotSameCollection (expected) (v.image (t))
     }
 

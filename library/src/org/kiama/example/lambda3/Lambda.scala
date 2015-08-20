@@ -21,7 +21,8 @@
 package org.kiama
 package example.lambda3
 
-import org.kiama.util.{ParsingREPL, PositionedParserUtilities}
+import org.kiama.parsing.Parsers
+import org.kiama.util.{ParsingREPL, Positions}
 
 /**
  * A simple lambda calculus using abstracted name binding.
@@ -112,15 +113,12 @@ object LambdaTree {
 /**
  * Parser for simple lambda calculus plus REPL queries.
  */
-trait SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import LambdaTree._
     import org.kiama.rewriting.NominalTree.{Bind, Name, Trans}
 
-    lazy val parser =
-        phrase (query)
-
-    lazy val query : PackratParser[Query[_]] =
+    lazy val query : Parser[Query[_]] =
         exp ~ ("===" ~> exp) ^^ EquivQuery |
         ("fv" ~> exp) ^^ FreeNamesQuery |
         name ~ ("#" ~> exp) ^^ FreshQuery |
@@ -128,7 +126,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         trans ~ exp ^^ SwapQuery |
         exp ^^ EvalQuery
 
-    lazy val trans : PackratParser[Trans] =
+    lazy val trans : Parser[Trans] =
         "(" ~> name ~ ("<->" ~> name) <~ ")"
 
     lazy val exp : PackratParser[Exp] =
@@ -139,7 +137,7 @@ trait SyntaxAnalyser extends PositionedParserUtilities {
         factor |
         failure ("expression expected")
 
-    lazy val factor : PackratParser[Exp] =
+    lazy val factor =
         integer | variable | "(" ~> exp <~ ")"
 
     lazy val integer =
@@ -214,9 +212,9 @@ class Evaluator {
  * nominal rewriting. This implementation is closely based on the example
  * used in Scrap your Nameplate, James Cheney, ICFP 2005.
  */
-object Lambda extends ParsingREPL[LambdaTree.Query[_]] with SyntaxAnalyser {
+object Lambda extends ParsingREPL[LambdaTree.Query[_]] {
 
-    import org.kiama.util.REPLConfig
+    import org.kiama.util.{REPLConfig, Source}
 
     val banner =
         """
@@ -237,7 +235,10 @@ object Lambda extends ParsingREPL[LambdaTree.Query[_]] with SyntaxAnalyser {
 
     val evaluator = new Evaluator
 
-    def process (q : LambdaTree.Query[_], config : REPLConfig) {
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.query
+
+    def process (source : Source, q : LambdaTree.Query[_], config : REPLConfig) {
         config.output.emitln (evaluator.execute (q))
     }
 

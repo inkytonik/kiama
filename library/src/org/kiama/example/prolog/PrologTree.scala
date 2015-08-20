@@ -32,17 +32,17 @@ object PrologTree {
 
     sealed abstract class PrologNode extends Product
 
-    case class Program (cs : List[Clause]) extends PrologNode
+    case class Program (cs : Vector[Clause]) extends PrologNode
 
     sealed abstract class Clause extends PrologNode {
         def hd : Term
-        def bdy : List[Term]
+        def bdy : Vector[Term]
     }
 
     case class Fact (hd : Term) extends Clause {
-        def bdy : List[Term] = Nil
+        def bdy : Vector[Term] = Vector ()
     }
-    case class Rule (hd : Term, bdy : List[Term]) extends Clause
+    case class Rule (hd : Term, bdy : Vector[Term]) extends Clause
 
     sealed abstract class Term extends PrologNode
 
@@ -60,7 +60,7 @@ object PrologTree {
     case class Atom (s : String) extends NamedLiteral {
         override def toString : String = s
     }
-    case class Pred (s : String, ts : List[Term]) extends NamedLiteral {
+    case class Pred (s : String, ts : Vector[Term]) extends NamedLiteral {
         override def toString : String = s + ts.mkString ("(", ", ", ")")
     }
     case class Cut () extends Literal {

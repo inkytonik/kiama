@@ -22,12 +22,64 @@ package org.kiama
 package util
 
 /**
+ * Record of a source position at a particular line and column relative to
+ * a given source.
+ */
+case class Position (line : Int, column : Int, source : Source) {
+
+    /**
+     * Format this position. The result is of the form `/foo/bar.txt:2:10:` if
+     * a source is associated with the position and the source has a name, or
+     * of the form `2:10:` otherwise. In each case the numbers are line followed
+     * by column.
+     */
+    lazy val format : String = {
+        val name = source.optName.map (_ + ":").getOrElse ("")
+        s"$name$line:$column:"
+    }
+
+    /**
+     * Turn this position into a string that summarises the context of the input
+     * referred to by the position. If the position has a source that provides
+     * access to its lines then the context is the line containing the position
+     * followed by a line containing a caret pointer. Otherwise, return `None`.
+     */
+    lazy val optContext : Option[String] =
+        source.optLineContents (line).map (s => s"$s\n${" " * (column - 1)}^")
+
+    /**
+     * Return the offset that this position refers to in its source. `None`
+     * is returned if the position is not valid for its source.
+     */
+    lazy val optOffset : Option[Int] =
+        source.positionToOffset (this)
+
+    /**
+     * Does this position occur at least as late as `p`? The two positions
+     * are assumed to refer to the same source. False is returned if one
+     * of the positions is invalid.
+     */
+    def <= (p : Position) : Boolean =
+        (optOffset, p.optOffset) match {
+            case (Some (l), Some (r)) =>
+                l <= r
+            case (l, r) =>
+                false
+        }
+
+}
+
+/**
+ * Interface for objects that have a position store.
+ */
+trait PositionStore {
+    val positions = new Positions
+}
+
+/**
  * Record of source positions that correspond to program elements.
  */
-object Positions extends Memoiser {
-
-    import java.lang.CharSequence
-    import scala.util.parsing.input.{NoPosition, OffsetPosition, Position}
+class Positions extends Memoiser {
 
     /**
      * Map between a value and a source code position.
@@ -40,49 +92,29 @@ object Positions extends Memoiser {
     private val startMap = new PositionMap
 
     /**
-     * Map between value and whitespace starting position.
-     */
-    private val startWhiteMap = new PositionMap
-
-    /**
      * Map between value and finishing position.
      */
     private val finishMap = new PositionMap
 
     /**
-     * Get the start position of `t`. If it doesn't have one, return
-     * `NoPosition`.
+     * Get the optional start position of `t`. If it doesn't have
+     * one, return `None`.
      */
-    def getStart[T] (t : T) : Position =
-        startMap.getWithDefault (t, NoPosition)
+    def getStart[T] (t : T) : Option[Position] =
+        startMap.get (t)
 
     /**
-     * Get the start whitespace position of `t`. If it doesn't have
-     * one, return `NoPosition`.
+     * Get the optional finish position of `t`. If it doesn't have one,
+     * return `None`.
      */
-    def getStartWhite[T] (t : T) : Position =
-        startWhiteMap.getWithDefault (t, NoPosition)
-
-    /**
-     * Get the finish position of `t`. If it doesn't have one, return
-     * `NoPosition`.
-     */
-    def getFinish[T] (t : T) : Position =
-        finishMap.getWithDefault (t, NoPosition)
+    def getFinish[T] (t : T) : Option[Position] =
+        finishMap.get (t)
 
     /**
      * Set the start position of `t` to `p` if it has not already been set.
      */
     def setStart[T] (t : T, p : Position) {
         startMap.putIfNotPresent (t, p)
-    }
-
-    /**
-     * Set the start whitespace position of `t` to `p` if it has not
-     * already been set.
-     */
-    def setStartWhite[T] (t : T, p : Position) {
-        startWhiteMap.putIfNotPresent (t, p)
     }
 
     /**
@@ -93,134 +125,69 @@ object Positions extends Memoiser {
     }
 
     /**
+     * Set all positions of `t` to `p`.
+     */
+    def setAllPositions[T] (t : T, p : Position) {
+        setStart (t, p)
+        setFinish (t, p)
+    }
+
+    /**
      * Set the start and finish positions of `t` to the positions of `a`
      * if it has them. Return `t`.
      */
     def dupPos[T] (a : Any, t : T) : T = {
-        startMap.dup (a, t, NoPosition)
-        startWhiteMap.dup (a, t, NoPosition)
-        finishMap.dup (a, t, NoPosition)
+        startMap.dup (a, t)
+        finishMap.dup (a, t)
         t
     }
 
     /**
-     * Return a position value with starting position given by line `l`,
-     * column `c` and empty line contents. This method is most useful
-     * for testing low-level messages and is not normally be needed in
-     * application code.
+     * Set the start and finish positions of `t` to the start positions of `a`
+     * and the finish position of `b` if they have them. Return `t`.
      */
-    def positionAt (l : Int, c : Int) : Position =
-        new Position {
-            val line = l
-            val column = c
-            val lineContents = ""
+    def dupRangePos[T] (a : Any, b : Any, t : T) : T = {
+        startMap.dup (a, t)
+        finishMap.dup (b, t)
+        t
+    }
+
+    /**
+     * Reset the position maps to be empty.
+     */
+    def reset () {
+        startMap.reset ()
+        finishMap.reset ()
+    }
+
+    /**
+     * Get the source text associated with the substring of a source
+     * between given starting and finishing positions. The two positions
+     * are assumed to reference the same source. If either of the
+     * positions doesn't refer to a valid offset in the source then
+     * `None` is returned.
+     */
+    def substring (s : Position, f : Position) : Option[String] =
+        (s.optOffset, f.optOffset) match {
+            case (Some (soffset), Some (foffset)) =>
+                Some (s.source.content.substring (soffset, foffset))
+            case _ =>
+                None
         }
 
     /**
-     * Get the source text associated with the subsequence of a source
-     * between given starting and finishing offset positions. The two
-     * positions are assumed to reference the same source.
+     * If `t` has valid start and finish positions, return the source text
+     * associated with `t`. Otherwise, return `None`. It is assumed that
+     * the start and finish positions (if present) both refer to the same
+     * source.
      */
-    def subSource (s : OffsetPosition, f : OffsetPosition) : CharSequence =
-        s.source.subSequence (s.offset, f.offset)
-
-}
-
-/**
- * An extension of `ParserUtilities` that has support for automatically
- * tracking start and finish positions for tree nodes.
- */
-trait PositionedParserUtilities extends ParserUtilities {
-
-    import Positions.{getFinish, getStart, getStartWhite,
-        setFinish, setStart, setStartWhite, subSource}
-    import scala.util.parsing.input.OffsetPosition
-
-    /**
-     * A marker of a position. Used as a placeholder when there are no
-     * other suitable values associated with the position.
-     */
-    class Marker
-
-    /**
-     * Mark a string parser so that its value is discarded but a marker is
-     * returned instead. That return value can then be used to set the
-     * position of another value. We can't use the string value itself
-     * since we are not guaranteed to have reference equality on strings.
-     */
-    def mark[T] (p : Parser[String]) : Parser[Marker] =
-        p ^^ (_ => new Marker)
-
-    /**
-     * Run a parse function on some input and set the position of the
-     * resulting value.
-     */
-    def parseAndPosition[T] (f : Input => ParseResult[T], in : Input) : ParseResult[T] =
-        f (in) match {
-            case res @ Success (t, in1) =>
-                val startoffset = handleWhiteSpace (in)
-                val newin = in.drop (startoffset - in.offset)
-                setStart (t, newin.pos)
-                setStartWhite (t, in.pos)
-                setFinish (t, in1.pos)
-                res
-            case res =>
-                res
-        }
-
-    /**
-     * Make a new parser that processes input according to `f`, setting
-     * the position of the value produced. If the parser is ignoring whitespace
-     * then the start position will be the first non-white character that
-     * was accepted.
-     */
-    override def Parser[T] (f : Input => ParseResult[T]) : Parser[T] =
-        new Parser[T] {
-            def apply (in : Input) : ParseResult[T] =
-                parseAndPosition (f, in)
-        }
-
-    /**
-     * As for `Parser` but for the non-backtracking version `OnceParser`.
-     */
-    override def OnceParser[T](f : Input => ParseResult[T]) : Parser[T] with OnceParser[T] =
-       new Parser[T] with OnceParser[T] {
-            def apply (in : Input) : ParseResult[T] =
-                parseAndPosition (f, in)
-       }
-
-    /**
-     * If `t` has start and finish positions implemented by offset positions
-     * from the Scala parser combinator library, return the source text
-     * associated `t`. Otherwise, return `None`. If `includeWhiteSpace` is
-     * true (the default) then the starting position includes any preceding
-     * white space characters; otherwise it starts at the first non-whitespace
-     * character.
-     */
-    def textOf[T] (t : T, includeWhiteSpace : Boolean = true) : Option[String] = {
-        val start = if (includeWhiteSpace) getStartWhite (t) else getStart (t)
-        (start, getFinish (t)) match {
-            case (s : OffsetPosition, f : OffsetPosition) =>
-                Some (subSource (s, f).toString)
+    def textOf[T] (t : T) : Option[String] = {
+        (getStart (t), getFinish (t)) match {
+            case (Some (start), Some (finish)) =>
+                substring (start, finish)
             case _ =>
                 None
         }
     }
-
-}
-
-/**
- * Combination of positioned parsing utilities and whitespace handling with a
- * parser.
- */
-trait WhitespacePositionedParserUtilities extends WhitespaceParser with PositionedParserUtilities {
-
-    /**
-     * Version of `handleWhiteSpace` that accepts an `Input` value and
-     * skips over whitespace defined by the parser. Used with
-     * `PositionedParserUtilities` so that correct positions are used.
-     */
-    override def handleWhiteSpace (in : Input) : Int =
-        parseWhitespace (in).next.offset
 
 }

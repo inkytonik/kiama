@@ -28,16 +28,19 @@ import org.kiama.util.ParsingREPL
  * A read-eval-print loop for parsing imperative programs and printing thei
  * abstract synax trees.
  */
-object Imperative extends ParsingREPL[Stmt] with SyntaxAnalyser {
+object Imperative extends ParsingREPL[Stmt] {
 
-    import org.kiama.util.REPLConfig
+    import org.kiama.util.{REPLConfig, Source}
     import PrettyPrinter.format
 
     val banner = "Enter imperative language programs for parsing."
 
     override val prompt = "imperative> "
 
-    def process (s : Stmt, config : REPLConfig) {
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.stmt
+
+    def process (source : Source, s : Stmt, config : REPLConfig) {
         config.output.emitln (s)
         config.output.emitln (format (s))
     }

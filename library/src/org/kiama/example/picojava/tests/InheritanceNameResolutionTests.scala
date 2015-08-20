@@ -54,29 +54,29 @@ class InheritanceNameResolutionTests extends Tests {
     val declBf  = VarDecl (Use ("int"), "f")
 
     val declAA = ClassDecl ("AA", None, Block(
-                     List (declAAb,
-                          VarDecl (Use ("int"), "d"),
-                          declAAe,
-                          AssignStmt (aInAA, bInAA))))
+                     Vector(declAAb,
+                            VarDecl (Use ("int"), "d"),
+                            declAAe,
+                            AssignStmt (aInAA, bInAA))))
 
     val declA = ClassDecl ("A", None, Block(
-                    List (declAa,
-                         VarDecl (Use ("int"), "b"),
-                         VarDecl (Use ("int"), "c"),
-                         declAA)))
+                    Vector(declAa,
+                           VarDecl (Use ("int"), "b"),
+                           VarDecl (Use ("int"), "c"),
+                           declAA)))
 
     val ast =
         Program (Block (
-            List (declA,
+            Vector(declA,
                  ClassDecl ("B", Some (AinB), Block (
-                     List (declBc,
-                          VarDecl (Use ("int"), "e"),
-                          declBf,
-                          AssignStmt (aInB, cInB),
-                          ClassDecl ("BB", Some (AAinBB), Block (
-                              List (VarDecl (Use ("int"), "d"),
-                                   AssignStmt (aInBB, Use ("d")),
-                                   AssignStmt (eInBB, fInBB))))))))))
+                     Vector (declBc,
+                             VarDecl (Use ("int"), "e"),
+                             declBf,
+                             AssignStmt (aInB, cInB),
+                             ClassDecl ("BB", Some (AAinBB), Block (
+                                 Vector (VarDecl (Use ("int"), "d"),
+                                         AssignStmt (aInBB, Use ("d")),
+                                         AssignStmt (eInBB, fInBB))))))))))
 
     val tree = new PicoJavaTree (ast)
     val analyser = new ErrorCheck (tree)

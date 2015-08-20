@@ -177,7 +177,7 @@ object ImperativeTree {
     /**
      * Statement sequences.
      */
-    case class Seqn (ss : List[Stmt]) extends Stmt {
+    case class Seqn (ss : Vector[Stmt]) extends Stmt {
         override def vars : Set[Idn] = Set (ss flatMap (_.vars) : _*)
     }
 

@@ -21,19 +21,17 @@
 package org.kiama
 package example.json
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.Parsers
+import org.kiama.util.Positions
 
 /**
  * Module containing parsers for the JSON language.
  */
-trait SyntaxAnalyser extends PositionedParserUtilities {
+class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     import JSONTree._
 
-    lazy val parser =
-        phrase (jvalue)
-
-    lazy val jvalue : PackratParser[JValue] =
+    lazy val jvalue : Parser[JValue] =
         jobject | jarray | jstring | jnumber | jtrue | jfalse | jnull
 
     lazy val jobject =

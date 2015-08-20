@@ -22,15 +22,17 @@ package org.kiama
 package example.oberon0
 package L3
 
+import org.kiama.util.Positions
+
 /**
  * Parsers for L3 language.
  */
-trait SyntaxAnalyser extends L2.SyntaxAnalyser {
+class SyntaxAnalyser (positions : Positions) extends L2.SyntaxAnalyser (positions) {
 
     import base.source.{Declaration, Statement}
     import source.{Call, FPSection, ProcDecl, ValMode, VarMode}
 
-    override def declarationsDef : PackratParser[List[Declaration]] =
+    override def declarationsDef : Parser[Vector[Declaration]] =
         super.declarationsDef ~ rep (procedureDeclaration <~ ";") ^^ {
             case ds ~ pds => ds ++ pds
         }
@@ -38,18 +40,18 @@ trait SyntaxAnalyser extends L2.SyntaxAnalyser {
     lazy val procedureDeclaration =
         ("PROCEDURE" ~> idndef) ~ (optformalParameters <~ ";") ~ block ~ idnuse ^^ ProcDecl
 
-    lazy val optformalParameters : PackratParser[List[FPSection]] =
+    lazy val optformalParameters : Parser[Vector[FPSection]] =
         "(" ~> repsep (fpsection, ";") <~ ")" |
-        result (Nil)
+        success (Vector ())
 
     lazy val fpsection =
         optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection
 
     lazy val optvar =
         "VAR" ^^ (_ => VarMode ()) |
-        result (ValMode ())
+        success (ValMode ())
 
-    override def statementDef : PackratParser[Statement] =
+    override def statementDef : Parser[Statement] =
         procedureCall |
         super.statementDef
 
@@ -58,7 +60,7 @@ trait SyntaxAnalyser extends L2.SyntaxAnalyser {
 
     lazy val optActualParameters =
         "(" ~> repsep (expression, ",") <~ ")" |
-        guard (";" | "ELSE" | "END") ^^^ Nil
+        guard (";" | "ELSE" | "END") ^^^ Vector ()
 
     override def keywordStrings : List[String] =
         "PROCEDURE" +: super.keywordStrings

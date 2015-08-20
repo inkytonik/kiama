@@ -6,7 +6,6 @@ MODULE aname;
 
 END i.
 * errors
-6:5: end module name 'i' should be 'aname'
+src/org/kiama/example/oberon0/L0/tests/nonmoduleasmodulename.ob:6:5: end module name 'i' should be 'aname'
 END i.
-
     ^

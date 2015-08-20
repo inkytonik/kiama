@@ -21,32 +21,36 @@
 package org.kiama
 package example.lambda2
 
-import org.kiama.util.{RegexParserTests, TestREPLWithConfig}
+import org.kiama.util.ParseTests
+import org.kiama.util.TestREPLWithConfig
 
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends RegexParserTests with SyntaxAnalyser {
+class LambdaTests extends ParseTests {
 
-    import LambdaTree._
     import Evaluators.{evaluatorFor, mechanisms}
+    import LambdaTree._
     import PrettyPrinter.formattedLayout
     import org.kiama.rewriting.Rewriter._
     import org.kiama.rewriting.Strategy
     import org.kiama.util.Messaging.Messages
 
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.exp
+
     /**
      * Compute errors of `e` check to make sure the relevant message is reported. Use
      * `errors` to actually perform the check.
      */
-    def assertType (e : Exp, aname : String, messages : Messages, line : Int, col : Int, msg : String) {
+    def assertType (e : Exp, aname : String, messages : Messages, l : Int, c : Int, msg : String) {
         messages.length match {
             case 0 =>
-                fail (s"$aname: no messages produced, expected ($line,$col) $msg")
+                fail (s"$aname: no messages produced, expected ($l,$c) $msg")
             case 1 =>
                 val m = messages.head
-                if ((m.line != line) || (m.column != col) || (m.label != msg))
-                    fail (s"$aname: incorrect message, expected ($line,$col) $msg, got (${m.line},${m.column}) ${m.label}")
+                if ((line (m) != Some (l)) || (column (m) != Some (c)) || (m.label != msg))
+                    fail (s"$aname: incorrect message, expected ($l,$c) $msg, got (${line (m)},${column (m)}) ${m.label}")
             case n =>
                 fail (s"$aname: expected one message, but got $n messages: $messages")
         }
@@ -384,13 +388,13 @@ class LambdaTests extends RegexParserTests with SyntaxAnalyser {
 
     test ("pretty-printed parallel lets") {
         assertPrettyE (
-            Letp (List (Bind ("a", Num (1)),
-                        Bind ("b", Num (1)),
-                        Bind ("c", Letp (List (Bind ("d", Num (1)),
-                                               Bind ("e", Num (1))),
-                                        Num (1)))),
-                  Letp (List (Bind ("f", Num (1)),
-                              Bind ("g", Num (1))),
+            Letp (Vector (Bind ("a", Num (1)),
+                          Bind ("b", Num (1)),
+                          Bind ("c", Letp (Vector (Bind ("d", Num (1)),
+                                                   Bind ("e", Num (1))),
+                                           Num (1)))),
+                  Letp (Vector (Bind ("f", Num (1)),
+                                Bind ("g", Num (1))),
                         Num (1))),
 """(letp
     a = 1

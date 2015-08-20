@@ -108,12 +108,12 @@ object Unifier {
      * unify with substitution s, return Some (s).  Otherwise, return
      * None if the lists of terms cannot be unified.
      */
-    def unify (ls : List[Term], rs : List[Term]) : Option[Subst] =
+    def unify (ls : Vector[Term], rs : Vector[Term]) : Option[Subst] =
         ls match {
-            case Nil =>
-                if (rs == Nil) Some (Subst()) else None
+            case Vector () =>
+                if (rs.isEmpty) Some (Subst()) else None
             case _ =>
-                if (rs == Nil)
+                if (rs.isEmpty)
                     None
                 else
                     unify (ls.head, rs.head) match {

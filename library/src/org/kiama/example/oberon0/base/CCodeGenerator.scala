@@ -38,18 +38,18 @@ trait CCodeGenerator extends Translator {
         val ModuleDecl (_, Block (ds, ss), _) = m
         val main =
             CFunctionDecl (CVarDecl ("main", CIntType ()),
-                           List (CVarDecl ("argc", CIntType ()),
-                                 CVarDecl ("argv", CArrayType (0, CStrType ()))),
-                           CBlock (Nil,
+                           Vector (CVarDecl ("argc", CIntType ()),
+                                   CVarDecl ("argv", CArrayType (0, CStrType ()))),
+                           CBlock (Vector (),
                                    (ss map translate) :+
                                         CReturn (CIntExp (0))))
-        CProgram (Nil, (ds map translate).flatten ++ List (main))
+        CProgram (Vector (), (ds map translate).flatten :+ main)
     }
 
     /**
      * Interface to C translation of declarations.
      */
-    def translate (d : Declaration) : List[CDeclaration]
+    def translate (d : Declaration) : Vector[CDeclaration]
 
     /**
      * Generate C equivalent of a statement.

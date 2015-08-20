@@ -23,9 +23,14 @@ package example.til
 
 import org.kiama.util.TransformerTests
 
-class TIL2_2Tests extends TIL2_2 with TransformerTests {
+class TIL2_2Tests extends TransformerTests {
 
     import TILTree._
+
+    val til2_2 = new TIL2_2
+    val parsers = til2_2.parsers
+    import parsers.program
+    import til2_2.transform
 
     test ("transform a single for loop") {
         val input = "for x := 1 to n do write x; end"
@@ -40,7 +45,7 @@ class TIL2_2Tests extends TIL2_2 with TransformerTests {
                 While (Sub (Var (x), Var (upperx)), List (
                     Write (Var (x)),
                     Assign (x, Add (Var (x), Num (1)))))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
     test ("transform nested for loops") {
@@ -64,7 +69,7 @@ class TIL2_2Tests extends TIL2_2 with TransformerTests {
                         Write (Mul (Var (i), Var (j))),
                         Assign (j, Add (Var (j), Num (1))))),
                     Assign (i, Add (Var (i), Num (1)))))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
 }

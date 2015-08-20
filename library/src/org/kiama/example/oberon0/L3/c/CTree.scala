@@ -38,7 +38,7 @@ case class CAddrType (basetype : CType) extends CType
 /**
  * C call statements.
  */
-case class CCall (s : String, ps : List[CExpression]) extends CStatement
+case class CCall (s : String, ps : Vector[CExpression]) extends CStatement
 
 /**
  * C string expressions.

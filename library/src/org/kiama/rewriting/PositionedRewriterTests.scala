@@ -28,33 +28,43 @@ import org.kiama.util.Tests
  */
 class PositionedRewriterTests extends Tests {
 
+    import PositionedRewriter._
     import SupportPositionedRewriterTests._
-    import org.kiama.rewriting.PositionedRewriter._
-    import org.kiama.util.Positions._
-    import scala.util.parsing.input.NoPosition
+    import org.kiama.util.{Position, StringSource}
 
-    val pl1s = positionAt (1, 2)
-    val pl1f = positionAt (3, 4)
+    val source = StringSource ("dummy")
+    override val positions = PositionedRewriter.positions
+
+    /**
+     * Don't do anything to the positions before the next test so that
+     * settings are preserved.
+     */
+    override def initialisePositions () {
+        // Do nothing
+    }
+
+    val pl1s = Position (1, 2, source)
+    val pl1f = Position (3, 4, source)
     val l1 = Leaf (42)
-    setStart (l1, pl1s)
-    setFinish (l1, pl1f)
-    val pl2s = positionAt (5, 6)
-    val pl2f = positionAt (7, 8)
+    positions.setStart (l1, pl1s)
+    positions.setFinish (l1, pl1f)
+    val pl2s = Position (5, 6, source)
+    val pl2f = Position (7, 8, source)
     val l2 = Leaf (99)
-    setStart (l2, pl2s)
-    setFinish (l2, pl2f)
+    positions.setStart (l2, pl2s)
+    positions.setFinish (l2, pl2f)
 
-    val pts = positionAt (9, 10)
-    val ptf = positionAt (11, 12)
+    val pts = Position (9, 10, source)
+    val ptf = Position (11, 12, source)
     val t = Two (l1, l2)
-    setStart (t, pts)
-    setFinish (t, ptf)
+    positions.setStart (t, pts)
+    positions.setFinish (t, ptf)
 
-    val pos = positionAt (13, 14)
-    val pof = positionAt (15, 16)
+    val pos = Position (13, 14, source)
+    val pof = Position (15, 16, source)
     val o = One (t)
-    setStart (o, pos)
-    setFinish (o, pof)
+    positions.setStart (o, pos)
+    positions.setFinish (o, pof)
 
     val r = everywhere (rule[Leaf] {
                 case Leaf (i) => Leaf (i + 1)
@@ -62,14 +72,14 @@ class PositionedRewriterTests extends Tests {
 
     def check (no : One) {
         assertResult (One (Two (Leaf (43), Leaf (100)))) (no)
-        assertSame (pos) (getStart (no))
-        assertSame (pof) (getFinish (no))
-        assertSame (pts) (getStart (no.a))
-        assertSame (ptf) (getFinish (no.a))
-        assertSame (pl1s) (getStart (no.a.asInstanceOf[Two].l))
-        assertSame (pl1f) (getFinish (no.a.asInstanceOf[Two].l))
-        assertSame (pl2s) (getStart (no.a.asInstanceOf[Two].r))
-        assertSame (pl2f) (getFinish (no.a.asInstanceOf[Two].r))
+        assertOptSame (Some (pos)) (positions.getStart (no))
+        assertOptSame (Some (pof)) (positions.getFinish (no))
+        assertOptSame (Some (pts)) (positions.getStart (no.a))
+        assertOptSame (Some (ptf)) (positions.getFinish (no.a))
+        assertOptSame (Some (pl1s)) (positions.getStart (no.a.asInstanceOf[Two].l))
+        assertOptSame (Some (pl1f)) (positions.getFinish (no.a.asInstanceOf[Two].l))
+        assertOptSame (Some (pl2s)) (positions.getStart (no.a.asInstanceOf[Two].r))
+        assertOptSame (Some (pl2f)) (positions.getFinish (no.a.asInstanceOf[Two].r))
     }
 
     test ("positioned rewriting with positions and strategyf works") {
@@ -105,14 +115,14 @@ class PositionedRewriterTests extends Tests {
     test ("positioned rewriting with no positions works") {
         val oo = One (Two (Leaf (42), Leaf (99)))
         val noo = rewrite (r) (oo)
-        assertSame (NoPosition) (getStart (noo))
-        assertSame (NoPosition) (getStart (noo.a))
-        assertSame (NoPosition) (getStart (noo.a.asInstanceOf[Two].l))
-        assertSame (NoPosition) (getStart (noo.a.asInstanceOf[Two].r))
-        assertSame (NoPosition) (getFinish (noo))
-        assertSame (NoPosition) (getFinish (noo.a))
-        assertSame (NoPosition) (getFinish (noo.a.asInstanceOf[Two].l))
-        assertSame (NoPosition) (getFinish (noo.a.asInstanceOf[Two].r))
+        assertResult (None) (positions.getStart (noo))
+        assertResult (None) (positions.getStart (noo.a))
+        assertResult (None) (positions.getStart (noo.a.asInstanceOf[Two].l))
+        assertResult (None) (positions.getStart (noo.a.asInstanceOf[Two].r))
+        assertResult (None) (positions.getFinish (noo))
+        assertResult (None) (positions.getFinish (noo.a))
+        assertResult (None) (positions.getFinish (noo.a.asInstanceOf[Two].l))
+        assertResult (None) (positions.getFinish (noo.a.asInstanceOf[Two].r))
    }
 
 }

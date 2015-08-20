@@ -42,12 +42,12 @@ trait RelationLike[T,U,Repr[_,_]] {
     /**
      * The graph of this relation.
      */
-    def graph : List[(T,U)]
+    def graph : Vector[(T,U)]
 
     /**
      * Apply this relation (same as `image`).
      */
-    def apply (t : T) : List[U] =
+    def apply (t : T) : Vector[U] =
         image (t)
 
     /**
@@ -81,14 +81,14 @@ trait RelationLike[T,U,Repr[_,_]] {
     /**
      * The domain of this relation.
      */
-    lazy val domain : List[T] =
+    lazy val domain : Vector[T] =
         distinct (graph.map (_._1))
 
     /**
      * The image of a value of the relation's domain is a set of the
      * values in the range that are related to that domain value.
      */
-    def image (t : T) : List[U] =
+    def image (t : T) : Vector[U] =
         graph.collect { case (t1, u) if same (t, t1) => u }
 
     /**
@@ -121,8 +121,8 @@ trait RelationLike[T,U,Repr[_,_]] {
 
         def unapply (t : T) : Option[(T,U)] =
             image (t) match {
-                case List (u) => Some ((t, u))
-                case _        => None
+                case Vector (u) => Some ((t, u))
+                case _          => None
             }
 
     }
@@ -131,7 +131,7 @@ trait RelationLike[T,U,Repr[_,_]] {
      * The preImage of a value of the relation's range is a set of the
      * values in the domain that are related to that range value.
      */
-    def preImage (u : U) : List[T] =
+    def preImage (u : U) : Vector[T] =
         graph.collect { case (t, u1) if same (u, u1) => t }
 
     /**
@@ -145,20 +145,20 @@ trait RelationLike[T,U,Repr[_,_]] {
      * Domain projection, i.e., form a relation that relates each
      * value in the domain to all of the related values in the range.
      */
-    lazy val projDomain : Repr[T,List[U]] =
+    lazy val projDomain : Repr[T,Vector[U]] =
         companion.fromGraph (domain.map (t => (t, image (t))))
 
     /**
      * Range projection, i.e., form a relation that relates each
      * value in the range to all of the related values in the domain.
      */
-    lazy val projRange : Repr[U,List[T]] =
+    lazy val projRange : Repr[U,Vector[T]] =
         companion.fromGraph (range.map (u => (u, preImage (u))))
 
     /**
      * The range of this relation.
      */
-    lazy val range : List[U] =
+    lazy val range : Vector[U] =
         distinct (graph.map (_._2))
 
     /**
@@ -168,16 +168,16 @@ trait RelationLike[T,U,Repr[_,_]] {
      */
     def unapply (t : T) : Option[U] =
         image (t) match {
-            case List (u) => Some (u)
-            case _        => None
+            case Vector (u) => Some (u)
+            case _          => None
         }
 
     /**
      * A relation can be used as an extractor that returns the image for a
      * given domain value `t`. Fails if `t` is not in the domain.
      */
-    def unapplySeq (t : T) : Option[List[U]] = {
-        val ti  = image (t)
+    def unapplySeq (t : T) : Option[Vector[U]] = {
+        val ti = image (t)
         if (ti.isEmpty)
             None
         else

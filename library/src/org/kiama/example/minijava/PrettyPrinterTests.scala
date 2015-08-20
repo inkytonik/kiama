@@ -37,8 +37,8 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
     val println = Println (starexp)
     val mainmethod = MainMethod (println)
     val mainclass = MainClass (mul, mainmethod)
-    val nil = Nil
-    val program = Program (mainclass, nil)
+    val nothing = Vector ()
+    val program = Program (mainclass, nothing)
 
     test ("a simple MiniJava program pretty-prints with the correct positions using any") {
 
@@ -46,11 +46,11 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
         //     MainClass (
         //         IdnDef ("Mul"),
         //         MainMethod (Println (StarExp (IntExp (5), IntExp (5))))),
-        //     Nil)
+        //     Vector ())
 
         assertLinks (
             List (
-                program -> Range (0, 125),
+                program -> Range (0, 131),
                 mainclass -> Range (14, 115),
                 mainmethod -> Range (58, 114),
                 mul -> Range (34, 49),
@@ -58,7 +58,7 @@ class PrettyPrinterTests extends PrettyPrinter with org.kiama.util.PrettyPrinter
                 starexp -> Range (79, 112),
                 five -> Range (88, 99),
                 otherfive -> Range (100, 111),
-                nil -> Range (120, 124),
+                nothing -> Range (120, 130),
                 "Mul" -> Range (42, 48)
             )
         ) (pretty (any (program)))

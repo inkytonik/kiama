@@ -44,8 +44,8 @@ object ObrTree {
      * returning an integer value.  The two identifiers name the program and
      * must be the same.
      */
-    case class ObrInt (idn1: Identifier, decls : List[Declaration],
-                       stmts : List[Statement], idn2 : Identifier) extends ObrNode
+    case class ObrInt (idn1: Identifier, decls : Vector[Declaration],
+                       stmts : Vector[Statement], idn2 : Identifier) extends ObrNode
 
     /**
      * Marker trait for all node types that have an entity.
@@ -87,12 +87,12 @@ object ObrTree {
     /**
      * A declaration of a record variable with the given fields.
      */
-    case class RecordVar (idn: IdnDef, fields : List[Identifier]) extends Declaration
+    case class RecordVar (idn: IdnDef, fields : Vector[Identifier]) extends Declaration
 
     /**
      * A declaration of an enumeration variable with given enumeration constants.
      */
-    case class EnumVar (idn : IdnDef, consts : List[EnumConst]) extends Declaration
+    case class EnumVar (idn : IdnDef, consts : Vector[EnumConst]) extends Declaration
 
     /**
      * A declaration of an enumeration constant
@@ -130,20 +130,20 @@ object ObrTree {
      * a range given by its two expressions.
      */
     case class ForStmt (idn : IdnUse, min : Expression, max : Expression,
-                        body : List[Statement]) extends Statement with EntityTree
+                        body : Vector[Statement]) extends Statement with EntityTree
 
     /**
      * A conditional statement that evaluates a Boolean expression and, if it is
      * true, executes its first sequence of statements, and if its is false, executes
      * its second sequence of statements.
      */
-    case class IfStmt (cond : Expression, thens : List[Statement],
-                       elses : List[Statement]) extends Statement
+    case class IfStmt (cond : Expression, thens : Vector[Statement],
+                       elses : Vector[Statement]) extends Statement
 
     /**
      * A loop that executes forever.
      */
-    case class LoopStmt (body : List[Statement]) extends Statement
+    case class LoopStmt (body : Vector[Statement]) extends Statement
 
     /**
      * A statement that returns a value and terminates the program.
@@ -153,7 +153,7 @@ object ObrTree {
     /**
      * A statement that executes its body while its expression is true.
      */
-    case class WhileStmt (cond : Expression, body : List[Statement]) extends Statement
+    case class WhileStmt (cond : Expression, body : Vector[Statement]) extends Statement
 
     /**
      * A statement that raises a specified exception.
@@ -163,9 +163,9 @@ object ObrTree {
     /**
      * A statement that is used to catch exception
      */
-    case class TryStmt (body : TryBody, catches : List[Catch]) extends Statement
-    case class TryBody (stmts : List[Statement]) extends ObrNode
-    case class Catch (idn : IdnUse, stmts : List[Statement]) extends ObrNode
+    case class TryStmt (body : TryBody, catches : Vector[Catch]) extends Statement
+    case class TryBody (stmts : Vector[Statement]) extends ObrNode
+    case class Catch (idn : IdnUse, stmts : Vector[Statement]) extends ObrNode
 
     /**
     * Superclass of all expression classes.

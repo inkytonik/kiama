@@ -36,7 +36,7 @@ trait ParLazy extends Par {
      */
     lazy val letLift =
         rule[Exp] {
-            case e => Letp (Nil, e)
+            case e => Letp (Vector (), e)
         }
 
     /**

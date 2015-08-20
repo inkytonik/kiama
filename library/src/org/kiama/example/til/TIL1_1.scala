@@ -21,7 +21,8 @@
 package org.kiama
 package example.til
 
-import org.kiama.util.PositionedParserUtilities
+import org.kiama.parsing.ListParsers
+import org.kiama.util.Positions
 
 /**
  * AST the basic Tiny Imperative Language.
@@ -49,15 +50,11 @@ object TILTree {
 
     sealed abstract class Exp extends TilNode
 
-    case class Id (s : String) extends TilNode {
-        override def toString : String = s"""Id ("$s")"""
-    }
+    case class Id (s : String) extends TilNode
 
     case class Var (i : Id) extends Exp
     case class Num (n : Int) extends Exp
-    case class Str (s : String) extends Exp {
-        override def toString : String = s"""Str ("$s")"""
-    }
+    case class Str (s : String) extends Exp
 
     case class Mul (l : Exp, r : Exp) extends Exp
     case class Div (l : Exp, r : Exp) extends Exp
@@ -72,18 +69,14 @@ object TILTree {
 /**
  * Parser for the basic Tiny Imperative Language.
  */
-trait TIL1_1 extends PositionedParserUtilities {
+class TIL1_1Parsers (positions : Positions) extends ListParsers (positions) {
 
     import TILTree._
     import scala.language.postfixOps
 
-    type Root = Program
-
-    lazy val parser = program
-
     lazy val program = (statement*) ^^ Program
 
-    lazy val statement : PackratParser[Stat] =
+    lazy val statement : Parser[Stat] =
         declaration | assignment_statement | if_statement | while_statement |
         for_statement | read_statement | write_statement
 
@@ -121,7 +114,7 @@ trait TIL1_1 extends PositionedParserUtilities {
         factor ~ ("/" ~> primary) ^^ Div |
         primary
 
-    lazy val primary : PackratParser[Exp] =
+    lazy val primary =
         identifier ^^ Var |
         integer |
         string |
@@ -141,10 +134,14 @@ trait TIL1_1 extends PositionedParserUtilities {
     lazy val string =
         """\"[^\"]+\"""".r ^^ Str
 
-    override val whiteSpace =
-        """(\s|(//.*\n))+""".r
+    override val whitespace : Parser[String] =
+        """(\s|(//.*\n))*""".r
 
 }
 
-object TIL1_1Main extends ParsingMain with TIL1_1
+class TIL1_1 extends ParsingMain {
+    val parsers = new TIL1_1Parsers (positions)
+    val parser = parsers.program
+}
 
+object TIL1_1Main extends TIL1_1

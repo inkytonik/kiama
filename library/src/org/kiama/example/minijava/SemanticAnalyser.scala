@@ -33,9 +33,9 @@ class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
     import MiniJavaTree._
     import org.kiama.==>
     import org.kiama.attribution.Decorators
-    import org.kiama.util.Message
-    import org.kiama.util.Messaging.{check, checkuse, collectmessages, Messages, message, noMessages}
-    import org.kiama.util.{Entity, MultipleEntity, UnknownEntity}
+    import org.kiama.util.Messaging.{check, checkUse, collectMessages, Messages,
+        message, noMessages}
+    import org.kiama.util.{Entity, Message, MultipleEntity, UnknownEntity}
     import SymbolTable._
 
     val decorators = new Decorators (tree)
@@ -45,7 +45,7 @@ class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
      * The semantic error messages for the tree.
      */
     lazy val errors : Messages =
-        collectmessages (tree) {
+        collectMessages (tree) {
             case d @ IdnDef (i) if entity (d) == MultipleEntity () =>
                 message (d, s"$i is declared more than once")
 
@@ -53,7 +53,7 @@ class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
                 message (u, s"$i is not declared")
 
             case VarAssign (u, _) =>
-                checkuse (entity (u)) {
+                checkUse (entity (u)) {
                     case _ : ClassEntity | _ : MethodEntity =>
                         message (u, "illegal assignment to non-variable, non-argument")
                 }
@@ -63,13 +63,13 @@ class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
                          !iscompatible (tipe (e), exptipe (e))) ++
                 check (e) {
                     case IdnExp (u) =>
-                        checkuse (entity (u)) {
+                        checkUse (entity (u)) {
                             case _ : MethodEntity =>
                                 message (u, "can't refer to methods directly")
                         }
 
                     case CallExp (_, u, args) =>
-                        checkuse (entity (u)) {
+                        checkUse (entity (u)) {
                             case MethodEntity (decl) =>
                                 val expargnum = decl.body.args.length
                                 message (u, s"wrong number of arguments, got ${args.length} but expected $expargnum",
@@ -79,7 +79,7 @@ class SemanticAnalyser (tree : MiniJavaTree) extends Attribution {
                         }
 
                     case NewExp (u) =>
-                        checkuse (entity (u)) {
+                        checkUse (entity (u)) {
                             case _ : ClassEntity =>
                                 noMessages
                             case _ =>

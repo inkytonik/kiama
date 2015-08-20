@@ -22,7 +22,6 @@ package org.kiama
 package util
 
 import java.io.Reader
-import scala.util.parsing.combinator.RegexParsers
 
 /**
  * Trait to provide basic functionality for a compiler-like program
@@ -31,13 +30,11 @@ import scala.util.parsing.combinator.RegexParsers
  * to the main processing of the compiler. `C` is the type of the
  * configuration.
  */
-trait CompilerBase[T, C <: Config] extends Profiler {
+trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Profiler {
 
     import org.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.kiama.util.{Console, Emitter, StringEmitter}
-    import org.kiama.util.IO.{filereader, FileNotFoundException}
-    import org.kiama.util.Messaging.{formats, Messages}
-    import scala.io.Source
+    import org.kiama.util.Messaging.Messages
 
     /**
      * The entry point for this compiler.
@@ -108,33 +105,33 @@ trait CompilerBase[T, C <: Config] extends Profiler {
      */
     def processfile (filename : String, config : C) {
         try {
-            val reader = filereader (filename, encoding)
-            makeast (reader, filename, config) match {
+            val source = FileSource (filename, encoding)
+            makeast (source, config) match {
                 case Left (ast) =>
-                    process (filename, ast, config)
-                case Right (msgs) =>
-                    config.error.emit (formats (msgs))
+                    process (source, ast, config)
+                case Right (messages) =>
+                    report (messages, config.error)
             }
         } catch {
-            case e : FileNotFoundException =>
+            case e : java.io.FileNotFoundException =>
                 config.error.emitln (e.getMessage)
         }
     }
 
     /**
-     * Make an AST from the file with the given name, returning it wrapped in
-     * `Left`.  Returns `Right` with an error message if an AST cannot be made.
-     * `config` provides access to all aspects of the configuration.
+     * Make the contents of the given source, returning the AST wrapped in `Left`.
+     * Return `Right` with messages if an AST cannot be made. `config` provides
+     * access to all aspects of the configuration.
      */
-    def makeast (reader : Reader, filename : String, config : C) : Either[T,Messages]
+    def makeast (source : Source, config : C) : Either[T,Messages]
 
     /**
-     * Function to process the input that was parsed. `filename` is the name
-     * of the file from which the input came. `ast` is the abstract syntax tree
-     * produced by the parser from that file. `config` provides access to all
+     * Function to process the input that was parsed. `source` is the input
+     * text processed by the compiler. `ast` is the abstract syntax tree
+     * produced by the parser from that text. `config` provides access to all
      * aspects of the configuration.
      */
-    def process (filename : String, ast : T, config : C)
+    def process (source : Source, ast : T, config : C)
 
     /**
      * Format an abstract syntax tree for printing. Default: return an empty document.
@@ -144,44 +141,44 @@ trait CompilerBase[T, C <: Config] extends Profiler {
 }
 
 /**
- * A compiler that uses RegexParsers to produce ASTs. `C` is the type of the
+ * A compiler that uses Parsers to produce positioned ASTs. `C` is the type of the
  * compiler configuration.
  */
-trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] with RegexParsers {
+trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] {
 
+    import org.kiama.parsing.{Failure, ParsersBase, Success}
     import org.kiama.util.Messaging.{message, Messages}
 
     /**
-     * The actual parser used to produce the AST.
+     * The suite of parsers that is used by this compiler.
      */
-    def parser : Parser[T]
+    val parsers : ParsersBase
 
     /**
-     * Make an AST by running the parser, returning messages instead if the parse fails.
+     * The particular parser used to parse this compiler's input.
      */
-    def makeast (reader : Reader, filename : String, config : C) : Either[T,Messages] =
-        parseAll (parser, reader) match {
-            case Success (ast, _) =>
-                Left (ast)
-            case f : NoSuccess =>
-                Right (parseFailureMessages (f))
+    val parser : parsers.Parser[T]
+
+    /**
+     * Make an AST by running the parser on the given source, returning messages
+     * instead if the parse fails.
+     */
+    def makeast (source : Source, config : C) : Either[T,Messages] = {
+        try {
+            parsers.parseAll (parser, source) match {
+                case Success (ast, _) =>
+                    Left (ast)
+                case f @ Failure (label, next) =>
+                    val pos = next.position
+                    positions.setStart (f, pos)
+                    positions.setFinish (f, pos)
+                    val messages = message (f, label)
+                    Right (messages)
+            }
+        } catch {
+            case e : java.io.FileNotFoundException =>
+                Right (message (e, e.getMessage))
         }
-
-    /**
-     * Objects to stand as the value that produced a parse error.
-     */
-    case class ParseError ()
-
-    /**
-     * Make messages for the given parse failure. By default a single message
-     * is produced referring to a dummy object whose position is set to the
-     * location of the failure.
-     */
-    def parseFailureMessages (f : NoSuccess) : Messages = {
-        val error = ParseError ()
-        Positions.setStart (error, f.next.pos)
-        Positions.setFinish (error, f.next.pos)
-        message (error, f.msg)
     }
 
 }

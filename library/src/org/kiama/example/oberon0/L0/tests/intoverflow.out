@@ -1,5 +1,4 @@
 * errors
-8:13: integer will not fit into 32 bits
+src/org/kiama/example/oberon0/L0/tests/intoverflow.ob:8:13: expression expected
     avar := 2147483648
-
             ^

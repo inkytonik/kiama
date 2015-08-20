@@ -21,12 +21,14 @@
 package org.kiama
 package rewriting
 
+import org.kiama.util.PositionStore
+
 /**
  * Strategy-based term rewriting that copies positions to rewritten terms.
- * The positions are stored in the Kiama `Positions` object.
+ * The positions are stored in a Kiama `Positions` object.
  *
  * Specifically, this kind of rewriter will record positions of nodes
- * when they are (a) rewrittten as part of a generic traversal (e.g.,
+ * when they are (a) rewritten as part of a generic traversal (e.g.,
  * `all`), or (b) rewritten as part of a `rule` or similar (e.g., `rulefs`).
  *
  * In each case both the start and finish positions of the old node are
@@ -35,9 +37,7 @@ package rewriting
  * of the term that results from a successful application of the rule.
  * Override the `rewriting` method to add more specific behaviour.
  */
-trait PositionedRewriter extends CallbackRewriter {
-
-    import org.kiama.util.Positions.dupPos
+trait PositionedRewriter extends PositionStore with CallbackRewriter {
 
     /**
      * Use the `Positioned` support to set the start and finish positions
@@ -45,7 +45,7 @@ trait PositionedRewriter extends CallbackRewriter {
      * term.
      */
     def rewriting[T] (oldTerm : T, newTerm : T) : T = {
-        dupPos (oldTerm, newTerm)
+        positions.dupPos (oldTerm, newTerm)
         newTerm
     }
 

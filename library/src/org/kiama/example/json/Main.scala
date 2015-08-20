@@ -24,21 +24,19 @@ package example.json
 import JSONTree.JValue
 import org.kiama.util.Compiler
 
-object Main extends Driver
+class Driver extends Compiler[JValue] {
 
-class Driver extends SyntaxAnalyser with Compiler[JValue] {
-
-    import PrettyPrinter.{any => ppany, pretty}
+    import PrettyPrinter.{any, pretty}
     import org.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.kiama.util.Config
+    import org.kiama.util.{Config, Source}
 
-    /**
-     * Process the tree (currently just print it).
-     */
-    def process (filename : String, ast : JValue, config : Config) = {
+    val parsers = new SyntaxAnalyser (positions)
+    val parser = parsers.jvalue
+
+    def process (source : Source, ast : JValue, config : Config) = {
 
         // Pretty-print tree as a product value
-        config.output.emitln (pretty (ppany (ast)))
+        config.output.emitln (pretty (any (ast)))
 
         // Pretty-print tree as a JSON value
         config.output.emitln (format (ast))
@@ -49,3 +47,5 @@ class Driver extends SyntaxAnalyser with Compiler[JValue] {
         emptyDocument
 
 }
+
+object Main extends Driver

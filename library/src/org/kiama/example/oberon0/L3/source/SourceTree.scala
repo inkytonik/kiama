@@ -29,7 +29,7 @@ import L0.source.TypeDef
 /**
  * Procedure declarations.
  */
-case class ProcDecl (idndef : IdnDef, params : List[FPSection], body : Block,
+case class ProcDecl (idndef : IdnDef, params : Vector[FPSection], body : Block,
                      idnuse : IdnUse) extends Declaration
 
 /**
@@ -50,9 +50,9 @@ case class ValMode () extends Mode
 /**
  * Formal parameter sections.
  */
-case class FPSection (mode : Mode, idndefs : List[IdnDef], tipe : TypeDef) extends SourceNode
+case class FPSection (mode : Mode, idndefs : Vector[IdnDef], tipe : TypeDef) extends SourceNode
 
 /**
  * Call statements.
  */
-case class Call (idnuse : IdnUse, params : List[Expression]) extends Statement
+case class Call (idnuse : IdnUse, params : Vector[Expression]) extends Statement

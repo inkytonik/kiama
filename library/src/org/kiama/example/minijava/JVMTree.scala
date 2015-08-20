@@ -36,8 +36,8 @@ object JVMTree {
      * of this class. `fields` and `methods` define the components of the class.
      */
     case class ClassFile (source : MiniJavaNode, filename : String, name : String,
-                          superclassname : String, fields : List[JVMField],
-                          methods : List[JVMMethod])
+                          superclassname : String, fields : Vector[JVMField],
+                          methods : Vector[JVMMethod])
 
     /**
      * Base class for JVM types.
@@ -100,7 +100,7 @@ object JVMTree {
     /**
      * A method specification.
      */
-    case class JVMMethodSpec (name : String, argTypes : List[JVMType], retType : JVMType) {
+    case class JVMMethodSpec (name : String, argTypes : Vector[JVMType], retType : JVMType) {
         override def toString = name + argTypes.mkString ("(", "", ")") + retType
     }
 

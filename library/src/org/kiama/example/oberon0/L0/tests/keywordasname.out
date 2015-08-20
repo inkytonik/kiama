@@ -1,5 +1,4 @@
 * errors
-1:8: ident expected
+src/org/kiama/example/oberon0/L0/tests/keywordasname.ob:1:8: ident expected
 MODULE VAR;
-
        ^

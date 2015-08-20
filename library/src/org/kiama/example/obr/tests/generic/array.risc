@@ -33,7 +33,7 @@ label3:
     stw $1, $27, 20
     ! LabelDef(Label(1))
 label1:
-    ! StW(Indexed(Local(24),MulW(SequenceDatum(List(StW(Local(0),SubW(LdW(Local(20)),IntDatum(1))), Bne(CmpltW(LdW(Local(0)),IntDatum(0)),Label(4)), Beq(CmpltW(IntDatum(9),LdW(Local(0))),Label(5)), LabelDef(Label(4)), StW(Local(4),IntDatum(1)), Jmp(Label(6)), LabelDef(Label(5))),LdW(Local(0))),IntDatum(4))),MulW(IntDatum(2),LdW(Local(20))))
+    ! StW(Indexed(Local(24),MulW(SequenceDatum(Vector(StW(Local(0),SubW(LdW(Local(20)),IntDatum(1))), Bne(CmpltW(LdW(Local(0)),IntDatum(0)),Label(4)), Beq(CmpltW(IntDatum(9),LdW(Local(0))),Label(5)), LabelDef(Label(4)), StW(Local(4),IntDatum(1)), Jmp(Label(6)), LabelDef(Label(5))),LdW(Local(0))),IntDatum(4))),MulW(IntDatum(2),LdW(Local(20))))
     ! StW(Local(0),SubW(LdW(Local(20)),IntDatum(1)))
     ldw $1, $27, 20
     movi $2, $0, 1
@@ -115,7 +115,7 @@ label9:
     stw $1, $27, 20
     ! LabelDef(Label(7))
 label7:
-    ! StW(Local(12),AddW(LdW(Local(12)),LdW(Indexed(Local(24),MulW(SequenceDatum(List(StW(Local(0),SubW(LdW(Local(20)),IntDatum(1))), Bne(CmpltW(LdW(Local(0)),IntDatum(0)),Label(10)), Beq(CmpltW(IntDatum(9),LdW(Local(0))),Label(11)), LabelDef(Label(10)), StW(Local(4),IntDatum(1)), Jmp(Label(6)), LabelDef(Label(11))),LdW(Local(0))),IntDatum(4))))))
+    ! StW(Local(12),AddW(LdW(Local(12)),LdW(Indexed(Local(24),MulW(SequenceDatum(Vector(StW(Local(0),SubW(LdW(Local(20)),IntDatum(1))), Bne(CmpltW(LdW(Local(0)),IntDatum(0)),Label(10)), Beq(CmpltW(IntDatum(9),LdW(Local(0))),Label(11)), LabelDef(Label(10)), StW(Local(4),IntDatum(1)), Jmp(Label(6)), LabelDef(Label(11))),LdW(Local(0))),IntDatum(4))))))
     ldw $1, $27, 12
     ! StW(Local(0),SubW(LdW(Local(20)),IntDatum(1)))
     ldw $2, $27, 20

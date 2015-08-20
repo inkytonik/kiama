@@ -24,10 +24,13 @@ package example.til
 /**
  * Transform for loops into equivalent while loops.
  */
-trait TIL2_2 extends TIL1_1 with TransformingMain {
+class TIL2_2 extends TransformingMain {
 
     import TILTree._
     import org.kiama.rewriting.Rewriter._
+
+    val parsers = new TIL1_1Parsers (positions)
+    val parser = parsers.program
 
     def transform (ast : Program) : Program =
         rewrite (fortowhile) (ast)

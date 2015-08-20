@@ -21,14 +21,17 @@
 package org.kiama
 package example.lambda3
 
-import org.kiama.util.RegexParserTests
+import org.kiama.util.ParseTests
 
 /**
  * Simple lambda calculus query tests.
  */
-class LambdaTests extends RegexParserTests with SyntaxAnalyser {
+class LambdaTests extends ParseTests {
 
     import LambdaTree._
+
+    val parsers = new SyntaxAnalyser (positions)
+    import parsers.{exp, query}
 
     /**
      * Try to parse and evaluate str as a query then evaluate the query

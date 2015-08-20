@@ -23,9 +23,14 @@ package example.til
 
 import org.kiama.util.TransformerTests
 
-class TIL2_1Tests extends TIL2_1 with TransformerTests {
+class TIL2_1Tests extends TransformerTests {
 
     import TILTree._
+
+    val til2_1 = new TIL2_1
+    val parsers = til2_1.parsers
+    import parsers.program
+    import til2_1.transform
 
     val x = Id ("x")
     val y = Id ("y")
@@ -38,7 +43,7 @@ class TIL2_1Tests extends TIL2_1 with TransformerTests {
                 Decl (x),
                 For (x, Num (1), Var (n), List (
                     Write (Var (x))))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
     test ("transform a for loop that occurs first in a sequence") {
@@ -49,7 +54,7 @@ class TIL2_1Tests extends TIL2_1 with TransformerTests {
                 For (x, Num (1), Var (n), List (
                     Write (Var (x)))),
                 Write (Var (x))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
     test ("transform a for loop that occurs last in a sequence") {
@@ -60,7 +65,7 @@ class TIL2_1Tests extends TIL2_1 with TransformerTests {
                 Decl (x),
                 For (x, Num (1), Var (n), List (
                     Write (Var (x))))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
     test ("transform a for loop that occurs in the middle of a sequence") {
@@ -72,7 +77,7 @@ class TIL2_1Tests extends TIL2_1 with TransformerTests {
                 For (x, Num (1), Var (n), List (
                     Write (Var (x)))),
                 Write (Var (x))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
     test ("transform nested for loops") {
@@ -84,7 +89,7 @@ class TIL2_1Tests extends TIL2_1 with TransformerTests {
                      Decl (y),
                      For (y, Num (0), Var (x), List (
                          Write (Var (y))))))))
-        assertTransformOk (input, parser, transform, tree)
+        assertTransformOk (input, program, transform, tree)
     }
 
 }

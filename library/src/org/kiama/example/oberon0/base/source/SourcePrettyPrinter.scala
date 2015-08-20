@@ -40,7 +40,7 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
 
     def toDoc (n : SourceNode) : Doc =
         n match {
-            case ModuleDecl (IdnDef (i1), Block (Nil, Nil), IdnUse (i2)) =>
+            case ModuleDecl (IdnDef (i1), Block (Vector (), Vector ()), IdnUse (i2)) =>
                 "MODULE" <+> i1 <> semi <@> "END" <+> i2 <> dot
 
             case ModuleDecl (IdnDef (i1), b, IdnUse (i2)) =>
@@ -60,7 +60,8 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
      */
     def blockToDoc (b : Block, beginend : Boolean = false) : Doc =
         b.stmts match {
-            case Nil => "END"
+            case Vector () =>
+                "END"
             case ss  =>
                 if (beginend)
                     "BEGIN" <> semisep (ss) <@> "END"
@@ -72,7 +73,7 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
      * Pretty-print a nested list of nodes separated by sep (default: semi
      * colon) and line breaks.
      */
-    def semisep (l : List[SourceNode], sep : Doc = semi) : Doc =
+    def semisep (l : Vector[SourceNode], sep : Doc = semi) : Doc =
         nest (lsep (l map toDoc, sep))
 
 }

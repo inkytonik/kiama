@@ -50,7 +50,7 @@ trait SourcePrettyPrinter extends L1.source.SourcePrettyPrinter {
         s.optelse.map (b => "ELSE" <> semisep (b.stmts) <> line).getOrElse (empty) <>
         "END"
 
-    def casesToDoc (l : List[Case]) : Doc = {
+    def casesToDoc (l : Vector[Case]) : Doc = {
 
         def condToDoc (cond : Condition) : Doc =
             cond match {
@@ -60,7 +60,7 @@ trait SourcePrettyPrinter extends L1.source.SourcePrettyPrinter {
                     toDoc (min) <+> ".." <+> toDoc (max)
             }
 
-        def condsToDoc (conds : List[Condition]) : Doc =
+        def condsToDoc (conds : Vector[Condition]) : Doc =
             hsep (conds map condToDoc, comma)
 
         def singleCaseToDoc (kase : Case) : Doc =

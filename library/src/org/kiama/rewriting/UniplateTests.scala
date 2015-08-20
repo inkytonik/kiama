@@ -59,6 +59,7 @@ class UniplateTests extends Tests with Generator {
 
     {
         val variabless = collect[Set,String] { case Var (s) => s }
+        val variablesv = collect[Vector,String] { case Var (s) => s }
         val variablesl = collect[List,String] { case Var (s) => s }
 
         test ("singleton collection of variable references: indirect style") {
@@ -67,14 +68,17 @@ class UniplateTests extends Tests with Generator {
 
         test ("singleton collection of variable references: indirect style on sets and lists") {
             assertResult (Set ()) (variabless (numexp))
+            assertResult (Vector ()) (variablesv (numexp))
             assertResult (Nil) (variablesl (numexp))
             assertResult (Set ("var1", "var2")) (variabless (varexp))
+            assertResult (Vector ("var1", "var2", "var1")) (variablesv (varexp))
             assertResult (List ("var1", "var2", "var1")) (variablesl (varexp))
         }
     }
 
     {
         val variabless = collectall { case Var (s) => Set (s) }
+        val variablesv = collectall { case Var (s) => Vector (s) }
         val variablesl = collectall { case Var (s) => List (s) }
 
         test ("all collection of variable references: indirect style") {
@@ -84,8 +88,10 @@ class UniplateTests extends Tests with Generator {
 
         test ("all collection of variable references: indirect style on sets and lists") {
             assertResult (Set ()) (variabless (numexp))
+            assertResult (Vector ()) (variablesv (numexp))
             assertResult (Nil) (variablesl (numexp))
             assertResult (Set ("var1", "var2")) (variabless (varexp))
+            assertResult (Vector ("var1", "var2", "var1")) (variablesv (varexp))
             assertResult (List ("var1", "var2", "var1")) (variablesl (varexp))
         }
     }

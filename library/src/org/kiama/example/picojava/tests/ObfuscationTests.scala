@@ -37,19 +37,19 @@ class ObfuscationTests extends PrettyPrinterTests {
     val ast =
         Program (
             Block (
-                List (
+                Vector (
                     ClassDecl (
                         "ALongClassName",
                         None,
                         Block (
-                            List (
+                            Vector (
                                 VarDecl (Use ("int"), "avar"),
                                 VarDecl (Use ("int"), "bvar"),
                                 ClassDecl (
                                     "NestedClass",
                                     None,
                                     Block (
-                                        List (
+                                        Vector (
                                             VarDecl (Use ("int"), "item"),
                                             AssignStmt (
                                                 Use ("avar"),
@@ -62,7 +62,7 @@ class ObfuscationTests extends PrettyPrinterTests {
                         "AnotherClassName",
                         None,
                         Block (
-                            List (
+                            Vector (
                                 VarDecl (Use ("int"), "avar"),
                                 VarDecl (Use ("ALongClassName"), "object"),
                                 AssignStmt (
@@ -74,19 +74,19 @@ class ObfuscationTests extends PrettyPrinterTests {
     val expobast =
         Program (
             Block (
-                List (
+                Vector (
                     ClassDecl (
                         "n0",
                         None,
                         Block (
-                            List (
+                            Vector (
                                 VarDecl (Use ("int"), "n1"),
                                 VarDecl (Use ("int"), "n2"),
                                 ClassDecl (
                                     "n3",
                                     None,
                                     Block (
-                                        List (
+                                        Vector (
                                             VarDecl (Use ("int"), "n4"),
                                             AssignStmt (Use ("n7"), Use ("n4"))))),
                                 VarDecl (Use ("n3"), "n5"),
@@ -97,7 +97,7 @@ class ObfuscationTests extends PrettyPrinterTests {
                         "n6",
                         None,
                         Block (
-                            List (
+                            Vector (
                                 VarDecl (Use ("int"), "n7"),
                                 VarDecl (Use ("n0"), "n8"),
                                 AssignStmt (

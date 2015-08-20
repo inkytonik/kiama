@@ -29,8 +29,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
     import L3.source.{FPSection, ValMode}
     import org.kiama.util.Entity
     import org.kiama.util.Messaging.{check, message, Messages}
-    import source.{ArrayTypeDef, FieldExp, FieldIdn, FieldList, IndexExp,
-        RecordTypeDef}
+    import source.{ArrayTypeDef, FieldExp, FieldIdn, Fields, IndexExp, RecordTypeDef}
 
     /**
      * The error checking for this level.
@@ -96,7 +95,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
 
     override def entityFromDecl (n : IdnDef, i : String) : Entity =
         n match {
-            case tree.parent (FieldList (_, p)) =>
+            case tree.parent (Fields (_, p)) =>
                 Field (i, deftype (p))
             case _ =>
                 super.entityFromDecl (n, i)
@@ -112,7 +111,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
                 super.deftypeDef (n)
         }
 
-    def fieldListsToFields (fls : List[FieldList]) : List[Field] =
+    def fieldListsToFields (fls : Vector[Fields]) : Vector[Field] =
         (for (fl <- fls)
             yield {
                 val t = deftype (fl.tipe)
@@ -131,8 +130,8 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
                 basetype (r) match {
                     case RecordType (fs) =>
                         fs.filter (_.ident == i) match {
-                            case List (f) => f.tipe
-                            case _       => unknownType
+                            case Vector (f) => f.tipe
+                            case _          => unknownType
                         }
                     case _ =>
                         unknownType

@@ -130,7 +130,7 @@ class PrettyPrinter extends org.kiama.output.ParenPrettyPrinter {
                 toParenDoc (e)
         }
 
-    def bodyToDoc (vs : List[Var], ss : List[Statement], r : Result) : Doc =
+    def bodyToDoc (vs : Vector[Var], ss : Vector[Statement], r : Result) : Doc =
         (if (vs.isEmpty)
              empty
          else

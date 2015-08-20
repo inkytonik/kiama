@@ -119,8 +119,8 @@ class Interpreter {
          * satisfied. We start with the query and the display goal.
          */
         val glstack =
-            scala.collection.mutable.Stack[List[Goal]] (
-                List (TermGoal (query), DisplayGoal (goalvars))
+            scala.collection.mutable.Stack[Vector[Goal]] (
+                Vector (TermGoal (query), DisplayGoal (goalvars))
             )
 
         /*
