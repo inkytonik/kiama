@@ -22,8 +22,7 @@ them manually when building from source.
 
   * Version 1.8.0 for Scala 2.10 and 2.11 (November 10, 2014)
     * [Release notes](doc/1.8.0/notes.html)
-    * [1.8.0 API documentation](doc/1.8.0/api/index.html)
-    * [1.8.0 Example and test API documentation](doc/1.8.0/test-api/index.html)
+    * [1.8.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.8.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
       * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
@@ -39,8 +38,7 @@ them manually when building from source.
 
   * Version 1.7.0 for Scala 2.10 and 2.11 (August 11, 2014)
     * [Release notes](doc/1.7.0/notes.html)
-    * [1.7.0 API documentation](doc/1.7.0/api/index.html)
-    * [1.7.0 Example and test API documentation](doc/1.7.0/test-api/index.html)
+    * [1.7.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.7.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
       * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
@@ -56,8 +54,7 @@ them manually when building from source.
 
   * Version 1.6.0 for Scala 2.10 and 2.11 (May 16, 2014)
     * [Release notes](doc/1.6.0/notes.html)
-    * [1.6.0 API documentation](doc/1.6.0/api/index.html)
-    * [1.6.0 Example and test API documentation](doc/1.6.0/test-api/index.html)
+    * [1.6.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.6.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
       * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
@@ -73,8 +70,7 @@ them manually when building from source.
 
   * Version 1.5.3 for Scala 2.11 (April 21, 2014)
     * [Release notes](doc/1.5.3/notes.html)
-    * [1.5.3 API documentation](doc/1.5.3/api/index.html)
-    * [1.5.3 Example and test API documentation](doc/1.5.3/test-api/index.html)
+    * [1.5.3 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.5.3)
     * Compatible tools and libraries:
       * [Scala 2.11.x](http://www.scala-lang.org)
       * [dsinfo 0.4.0](https://bitbucket.org/inkytonik/dsinfo)
@@ -89,8 +85,7 @@ them manually when building from source.
 
   * [Version 1.5.2](http://kiama.googlecode.com/files/kiama_2.10-1.5.2.jar) (December 22, 2013)
     * [Release notes](doc/1.5.2/notes.html)
-    * [1.5.2 API documentation](doc/1.5.2/api/index.html)
-    * [1.5.2 Example and test API documentation](doc/1.5.2/test-api/index.html)
+    * [1.5.2 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.10/1.5.2)
     * Compatible tools and libraries:
       * [Scala 2.10.x](http://www.scala-lang.org)
       * [dsinfo 0.2.0](https://bitbucket.org/inkytonik/dsinfo)
@@ -105,8 +100,7 @@ them manually when building from source.
 
   * [Version 1.5.1](http://kiama.googlecode.com/files/kiama_2.10-1.5.1.jar) (July 5, 2013)
     * [Release notes](doc/1.5.1/notes.html)
-    * [1.5.1 API documentation](doc/1.5.1/api/index.html)
-    * [1.5.1 Example and test API documentation](doc/1.5.1/test-api/index.html)
+    * [1.5.1 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.10/1.5.1)
     * Compatible tools and libraries:
       * [Scala 2.10.x](http://www.scala-lang.org)
       * [dsinfo 0.2.0](https://bitbucket.org/inkytonik/dsinfo)
@@ -119,8 +113,7 @@ them manually when building from source.
 
   * [Version 1.5.0](http://kiama.googlecode.com/files/kiama_2.10-1.5.0.jar) (May 14, 2013)
     * [Release notes](doc/1.5.0/notes.html)
-    * [1.5.0 API documentation](doc/1.5.0/api/index.html)
-    * [1.5.0 Example and test API documentation](doc/1.5.0/test-api/index.html)
+    * [1.5.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.10/1.5.0)
     * Compatible tools and libraries:
       * [Scala 2.10.x](http://www.scala-lang.org)
       * [dsinfo 0.2.0](https://bitbucket.org/inkytonik/dsinfo)
@@ -133,8 +126,7 @@ them manually when building from source.
 
   * [Version 1.4.0 for Scala 2.9.2](http://kiama.googlecode.com/files/kiama_2.9.2-1.4.0.jar) [Version 1.4.0 for Scala 2.10](http://kiama.googlecode.com/files/kiama_2.10-1.4.0.jar) (January 2, 2013)
     * [Release notes](doc/1.4.0/notes.html)
-    * [1.4.0 API documentation](doc/1.4.0/api/index.html)
-    * [1.4.0 Example and test API documentation](doc/1.4.0/test-api/index.html)
+    * [1.4.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.10/1.4.0)
     * Compatible tools and libraries:
       * [Scala 2.9.2, 2.10.0](http://www.scala-lang.org)
       * To use the read-eval-print loops:
@@ -145,8 +137,7 @@ them manually when building from source.
 
   * [Version 1.3.0](http://kiama.googlecode.com/files/kiama_2.9.2-1.3.0.jar) (July 12, 2012)
     * [Release notes](doc/1.3.0/notes.html)
-    * [1.3.0 API documentation](doc/1.3.0/api/index.html)
-    * [1.3.0 Example and test API documentation](doc/1.3.0/test-api/index.html)
+    * [1.3.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.9.2/1.3.0)
     * Compatible tools and libraries:
       * [Scala 2.9.2](http://www.scala-lang.org)
       * To use the read-eval-print loops:
@@ -159,8 +150,6 @@ them manually when building from source.
 
   * [Version 1.2.0](http://kiama.googlecode.com/files/kiama_2.9.1-1.2.0.jar) (March 8, 2012)
     * [Release notes](doc/1.2.0/notes.html)
-    * [1.2.0 API documentation](doc/1.2.0/api/index.html)
-    * [1.2.0 Example and test API documentation](doc/1.2.0/test-api/index.html)
     * Compatible tools and libraries:
       * [Scala 2.9.1](http://www.scala-lang.org)
       * To use the read-eval-print loops:
@@ -173,7 +162,6 @@ them manually when building from source.
 
   * [Version 1.1.0](http://kiama.googlecode.com/files/kiama_2.9.0-1.1.0.jar) (May 18, 2011)
     * [Release notes](doc/1.1.0/notes.html)
-    * [1.1.0 API documentation](doc/1.1.0/api/index.html)
     * Compatible tools and libraries:
       * [Scala 2.9.0](http://www.scala-lang.org)
       * To run Kiama tests:
@@ -183,8 +171,6 @@ them manually when building from source.
 
   * [Version 1.0.2](http://kiama.googlecode.com/files/kiama_2.8.0-1.0.2.jar) (January 4, 2011)
     * [Release notes](doc/1.0.2/notes.html)
-    * [1.0.2 API documentation](doc/1.0.2/api/index.html)
-    * Compatible tools and libraries:
       * [Scala 2.8.1](http://www.scala-lang.org)
       * To use the read-eval-print loops:
         * [JLine 0.9.4](http://jline.sourceforge.net/)
@@ -195,7 +181,6 @@ them manually when building from source.
 
   * [Version 1.0.1](http://kiama.googlecode.com/files/kiama_2.8.0-1.0.1.jar) (September 20, 2010)
     * [Release notes](doc/1.0.1/notes.html)
-    * [1.0.1 API documentation](doc/1.0.1/api/index.html)
     * Compatible tools and libraries:
       * [Scala 2.8.0](http://www.scala-lang.org)
       * To use the read-eval-print loops:
@@ -207,7 +192,6 @@ them manually when building from source.
 
   * [Version 1.0.0](http://kiama.googlecode.com/files/kiama_2.8.0-1.0.0.jar) (July 17, 2010)
     * [Release notes](doc/1.0.0/notes.html)
-    * [1.0.0 API documentation](doc/1.0.0/api/index.html)
     * Compatible tools and libraries:
       * [Scala 2.8.0](http://www.scala-lang.org)
       * To use the read-eval-print loops:
@@ -218,7 +202,6 @@ them manually when building from source.
         * [ScalaTest 1.2](http://www.artima.com/scalatest/)
 
   * [Version 0.9](http://kiama.googlecode.com/files/kiama-0.9.0.jar) (November 12, 2009)
-    * [0.9 API documentation](doc/0.9/api/index.html)
     * Changes since previous release:
       * use sbt instead of ant for building
       * attribution is less dependent on Attributable
@@ -233,7 +216,6 @@ them manually when building from source.
         * [ScalaTest 1.0](http://www.artima.com/scalatest/)
 
   * [Version 0.8](http://kiama.googlecode.com/files/kiama-0.8.jar) (August 4, 2009)
-    * [0.8 API documentation](doc/0.8/api/index.html)
     * Compatible tools and libraries:
       * [Scala 2.7.5](http://www.scala-lang.org)
       * To use the read-eval-print loops:
