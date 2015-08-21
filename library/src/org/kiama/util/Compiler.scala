@@ -53,7 +53,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
                       error : Emitter = new ErrorEmitter) : C
 
     /**
-     * Create and initialise the configuration for a particular run of the REPL.
+     * Create and initialise the configuration for a particular run of the compiler.
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
