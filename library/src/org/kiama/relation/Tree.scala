@@ -280,45 +280,46 @@ object Tree {
 
         @tailrec
         def loop (pending : Queue[Any], children : Vector[T]) : Vector[T] =
-            pending.dequeueOption match {
-                case Some ((candidate, rest)) =>
-                    candidate match {
-                        case _ : Bridge[_] =>
-                            // ignore
-                            loop (rest, children)
+            if (pending.isEmpty)
+                children
+            else {
+                val candidate = pending.front
+                val rest = pending.tail
+                candidate match {
+                    case _ : Bridge[_] =>
+                        // ignore
+                        loop (rest, children)
 
-                        case Some (n) =>
-                            loop (n +: rest, children)
-                        case None =>
-                            // ignore
-                            loop (rest, children)
+                    case Some (n) =>
+                        loop (n +: rest, children)
+                    case None =>
+                        // ignore
+                        loop (rest, children)
 
-                        case Left (l) =>
-                            loop (l +: rest, children)
-                        case Right (r) =>
-                            loop (r +: rest, children)
+                    case Left (l) =>
+                        loop (l +: rest, children)
+                    case Right (r) =>
+                        loop (r +: rest, children)
 
-                        case Tuple1 (a) =>
-                            loop (a +: rest, children)
-                        case (a, b) =>
-                            loop (List (a, b) ++: rest, children)
-                        case (a, b, c) =>
-                            loop (List (a, b, c) ++: rest, children)
-                        case (a, b, c, d) =>
-                            loop (List (a, b, c, d) ++: rest, children)
+                    case Tuple1 (a) =>
+                        loop (a +: rest, children)
+                    case (a, b) =>
+                        loop (List (a, b) ++: rest, children)
+                    case (a, b, c) =>
+                        loop (List (a, b, c) ++: rest, children)
+                    case (a, b, c, d) =>
+                        loop (List (a, b, c, d) ++: rest, children)
 
-                        case s : TraversableOnce[_] =>
-                            loop (s ++: rest, children)
+                    case s : TraversableOnce[_] =>
+                        loop (s ++: rest, children)
 
-                        case p : Product =>
-                            loop (rest, children :+ (p.asInstanceOf[T]))
+                    case p : Product =>
+                        loop (rest, children :+ (p.asInstanceOf[T]))
 
-                        case _ =>
-                            // ignore
-                            loop (rest, children)
-                    }
-                case None =>
-                    children
+                    case _ =>
+                        // ignore
+                        loop (rest, children)
+                }
             }
 
         loop (Queue (t.productIterator), Vector ())

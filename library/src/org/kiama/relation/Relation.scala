@@ -52,13 +52,13 @@ object Relation extends RelationFactory[Relation] {
 
         @tailrec
         def loop (pending : Queue[T], graph : Vector[(T,T)]) : Vector[(T,T)] =
-            pending.dequeueOption match {
-                case Some ((l, rest)) =>
-                    val next = onestep (l)
-                    val pairs = next.map { case r => (l, r) }
-                    loop (rest ++ next, graph ++ pairs)
-                case None =>
-                    graph
+            if (pending.isEmpty)
+                graph
+            else {
+                val l = pending.front
+                val next = onestep (l)
+                val pairs = next.map { case r => (l, r) }
+                loop (pending.tail ++ next, graph ++ pairs)
             }
 
         loop (Queue (t), Vector ())
