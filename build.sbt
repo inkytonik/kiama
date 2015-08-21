@@ -59,7 +59,7 @@ libraryDependencies in ThisBuild ++= {
         // Reflection
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         // REPLs:
-        "jline" % "jline" % "2.12",
+        "jline" % "jline" % "2.13",
         // Testing:
         "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
         "org.scalatest" %% "scalatest" % "2.2.5" % "test"
