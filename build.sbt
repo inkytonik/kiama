@@ -95,7 +95,7 @@ scalacOptions in (ScalaUnidoc, unidoc) ++= {
     Seq (
         macroExpandOption,
         "-doc-source-url",
-            "https://code.google.com/p/kiama/source/browse€{FILE_PATH}.scala"
+            "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
     )
 }
 
