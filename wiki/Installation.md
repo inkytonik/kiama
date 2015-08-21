@@ -6,7 +6,9 @@ Kiama is published in the Central Maven repository.
 Tools such as the [Scala simple-build-tool (sbt)](http://www.scala-sbt.org)
 and Maven will be able to install Kiama automatically from this repository.
 The build systems will automatically download the libraries on which Kiama depends.
-The eaisest way to use Kiama is via one of these build systems.
+The easiest way to use Kiama is via one of these build systems.
+
+If you are new to sbt, we strongly advise you to read the [sbt Getting Started Guide](http://www.scala-sbt.org/release/docs/Getting-Started/Welcome.html).
 
 If you are using Kiama in an sbt project, you should add a dependence on
 
@@ -20,6 +22,17 @@ be used for your Scala build version. See the
 [search facility on Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ckiama)
 for the available versions.
 
+For example, you can add a library dependence on version 1.8.0 of Kiama
+by including the following in your `build.sbt`:
+
+```
+libraryDependencies ++=
+    Seq (
+        "com.googlecode.kiama" %% "kiama" % "1.8.0",
+        ... other libraries here ...
+    )
+```
+
 The Kiama test library contains a collection of examples, tests that use
 those examples, and useful test support code. If you want to use the Kiama test
 library in your project tests, add a dependency of the following form to your
@@ -32,8 +45,6 @@ sbt build configuration.
 Versions of Kiama before 1.2.0 were published with a group ID of
 `com.googlecode` instead of `com.googlecode.kiama`, so you will need to use
 that shorter ID if you want to use an older version of the library.
-
-If you are new to sbt, we strongly advise you to read the [sbt Getting Started Guide](http://www.scala-sbt.org/release/docs/Getting-Started/Welcome.html).
 
 A [giter8](http://github.com/n8han/giter8#readme) template for a sample
 Kiama-based sbt project is [available](https://github.com/inkytonik/kiama.g8).
