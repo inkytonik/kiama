@@ -32,7 +32,6 @@ package rewriting
 trait Rewriter extends RewriterCore {
 
     import org.kiama.relation.Tree
-    import org.kiama.relation.Tree.isLeaf
     import scala.collection.generic.CanBuildFrom
     import scala.language.higherKinds
 
@@ -676,24 +675,6 @@ trait Rewriter extends RewriterCore {
     def everything[T] (name : String, v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T = {
         val collector = collectWithName[List,T] (name, g)
         collector (t).foldLeft (v) (f)
-    }
-
-    // Other higher-level operations
-
-    /**
-     * Deep clone the term `t`. Only applicable if the base type of the tree is
-     * a `Product`.
-     */
-    def deepclone[T <: Product] (t : T) : T = {
-
-        val deepcloner =
-            everywherebu (rule[T] {
-                case n if isLeaf (n) =>
-                    copy (n)
-            })
-
-        rewrite (deepcloner) (t)
-
     }
 
 }

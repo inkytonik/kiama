@@ -33,8 +33,7 @@ trait Desugarer extends L0.Desugarer {
     import L0.source.{AddExp, AndExp, Assignment, EqExp, GeExp, IdnExp,
         IntExp, LeExp, NamedType, OrExp, VarDecl}
     import L1.source.{IfStatement, WhileStatement}
-    import org.kiama.rewriting.Rewriter.{deepclone, everywhere,
-        rewriteTree, rule}
+    import org.kiama.rewriting.Rewriter.{everywhere, rewriteTree, rule}
     import source.{Case, CaseStatement, Condition, ForStatement,
         MinMaxCond, ValCond}
 
@@ -86,14 +85,13 @@ trait Desugarer extends L0.Desugarer {
                                              NamedType (IdnUse ("INTEGER")))
                         ),
                         Vector (
-                            Assignment (deepclone (idnexp), lower),
-                            Assignment (deepclone (limexp), upper),
+                            Assignment (idnexp, lower),
+                            Assignment (limexp, upper),
                             WhileStatement (cond,
                                 Block (
                                     Vector (),
                                     stmts :+
-                                    Assignment (deepclone (idnexp),
-                                                AddExp (deepclone (idnexp), rincval))))
+                                    Assignment (idnexp, AddExp (idnexp, rincval))))
                         )
                     )
             }
@@ -159,9 +157,10 @@ trait Desugarer extends L0.Desugarer {
              */
             def condToExp (n : Condition) : Expression =
                 n match {
-                    case ValCond (e)         => EqExp (deepclone (ce), e)
-                    case MinMaxCond (e1, e2) => AndExp (GeExp (deepclone (ce), e1),
-                                                        LeExp (deepclone (ce), e2))
+                    case ValCond (e) =>
+                        EqExp (ce, e)
+                    case MinMaxCond (e1, e2) =>
+                        AndExp (GeExp (ce, e1), LeExp (ce, e2))
                 }
 
             /*

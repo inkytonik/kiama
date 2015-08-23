@@ -44,11 +44,15 @@ case class Bridge[T] (cross : T)
  * The type `T` is the common base type of the tree nodes. The type `R` is a
  * sub-type of `T` that is the type of the root node.
  *
- * The `root` value should be the root of a tree that obeys the following
- * conditions: a) all `Product` instances in the tree are of type `T` unless
- * they are skipped (see below), and b) the structure is properly hierarchical
- * in the sense that each node other than the root appears as the child of
- * exactly one other node.
+ * The `originalRoot` value should be the root of a finite, acyclic structure
+ * that contains only `Product` instances of type `T` (unless they are skipped,
+ * see below). If the structure reachable from `originalRoot` is actually a tree
+ * (i.e., contains no shared nodes) then the field `root` will be the same as
+ * `originalRoot`.
+ *
+ * On the other hand, if the structure contains shared nodes, then `root` will
+ * be the root of a new structure which duplicates the original structure but
+ * removes the sharing. In other words, shared nodes will be copied.
  *
  * The `child` relation of a tree is defined to skip certain nodes.
  * Specifically, if a node of type `T` is wrapped in a `Some` of an option,
@@ -56,14 +60,26 @@ case class Bridge[T] (cross : T)
  * `TraversableOnce`, then those wrappers are ignored. E.g., if `t1`
  * is `Some (t2)` where both `t1` and `t2` are of type `T`, then `t1`
  * will be `t2`'s parent, not the `Some` value.
+ *
+ * Thanks to Len Hamey for the idea to use lazy cloning to restore the tree
+ * structure instead of requiring that the input trees contain no sharing.
  */
-class Tree[T <: Product,+R <: T] (val root : R) {
+class Tree[T <: Product,+R <: T] (val originalRoot : R) {
 
     tree =>
 
+    import org.kiama.rewriting.Cloner.lazyclone
     import org.kiama.util.Comparison.{contains, same}
     import Relation.fromOneStepGraph
     import Tree.treeChildren
+
+    /**
+     * The root node of the tree. The root node will be different from the
+     * original root if any nodes in the original tree are shared, since
+     * they will be cloned as necessary to yield a proper tree structure.
+     * If there is no sharing then `root` will be same as `originalRoot`.
+     */
+    lazy val root = lazyclone (originalRoot)
 
     /**
      * The graph of the child relation for this tree.

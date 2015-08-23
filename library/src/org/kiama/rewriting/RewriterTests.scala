@@ -2106,68 +2106,6 @@ class RewriterTests extends Tests with Generator {
         }
     }
 
-    // Cloning tests
-
-    {
-        import org.kiama.example.imperative.ImperativeTree._
-        import org.kiama.relation.Tree
-
-        def assertCloned[T <: Product,R <: T] (t : R, ct : R) {
-
-            // Must get the right answer (==)
-            assertResult (t) (ct)
-
-            // Make sure that the new term is actually a tree. If it's not, trying
-            // to make a Tree from it will throw a RuntimeException.
-            try {
-                new Tree[T,R] (ct)
-            } catch {
-                case e : RuntimeException =>
-                    fail (s"deepclone didn't produce a tree: $ct")
-            }
-
-        }
-
-        test ("deep cloning a term gives an equal but not eq term") {
-            val t = Add (Mul (Add (Num (1), Num (2)),
-                              Sub (Add (Num (1), Num (2)),
-                                   Add (Num (1), Num (2)))),
-                         Add (Add (Add (Num (3), Num (4)),
-                                   Num (5)),
-                              Add (Num (3), Num (4))))
-
-            val ttree = new Tree[Exp,Exp] (t)
-            val ct : Add = deepclone (t)
-
-            assertCloned[Exp,Exp] (t, ct)
-
-            assertNotSame (t) (ct)
-            assertNotSame (t.l) (ct.l)
-            assertNotSame (t.r) (ct.r)
-
-        }
-
-        test ("deep cloning a term containing a sequence works") {
-
-            val t = Seqn (Vector (Asgn (Var ("a"), Num (1)),
-                                Asgn (Var ("b"), Num (2)),
-                                Asgn (Var ("c"), Num (3))))
-
-            val ttree = new Tree[ImperativeNode,Seqn] (t)
-            val ct : Seqn = deepclone (t)
-
-            assertCloned[ImperativeNode,Seqn] (t, ct)
-
-            assertNotSame (t) (ct)
-            assertNotSame (t.ss) (ct.ss)
-            assertNotSame (t.ss (0)) (ct.ss (0))
-            assertNotSame (t.ss (1)) (ct.ss (1))
-            assertNotSame (t.ss (2)) (ct.ss (2))
-
-        }
-
-    }
-
     // Strategy naming tests
 
     val myrule1 = rule[Num] {
