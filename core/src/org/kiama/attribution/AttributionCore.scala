@@ -153,7 +153,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
-         * it depends on itself.  IF the value has been memoised, return it.
+         * it depends on itself.  If the value has been memoised, return it.
          * Otherwise, the functions list is tried in order. The first partial
          * function on that list that is defined will be used. If no partial
          * function on this list is defined, then `f` will be used.
