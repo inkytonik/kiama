@@ -43,20 +43,6 @@ trait RewriterCore {
             val body = f
         }
 
-    /**
-     * Is the function `anyf` defined at the domain value `t`? Allows for case
-     * that `anyf` may actually have a more specific domain and `t` may not be
-     * of the domain type. Relies on implementation that does a cast at the
-     * beginning of the `apply` for a partial function literal.
-     */
-    def isDefinedAtArg[T] (anyf : Any ==> T, t : Any) : Boolean =
-        try {
-            anyf isDefinedAt t
-        } catch {
-            case _ : ClassCastException =>
-                false
-        }
-
     // Builder combinators.
 
     /**
@@ -244,16 +230,19 @@ trait RewriterCore {
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def queryWithName[T] (name : String, f : T ==> Unit) : Strategy =
+    def queryWithName[T] (name : String, f : T ==> Unit) : Strategy = {
+        val anyf = f.asInstanceOf[Any ==> Any]
         mkStrategy (name,
             (t : Any) => {
-                val anyf = f.asInstanceOf[Any ==> Any]
-                if (isDefinedAtArg (anyf, t)) {
-                    anyf (t)
-                    Some (t)
-                } else
-                    None
+                val of = anyf andThen (_ => Some (t))
+                try {
+                    of.applyOrElse (t, (a : Any) => None)
+                } catch {
+                    case _ : ClassCastException =>
+                        None
+                }
             })
+    }
 
     /**
      * Define a term query by a function `f`. The query always succeeds with
@@ -292,15 +281,18 @@ trait RewriterCore {
     /**
      * As for `rule` but specifies the name for the constructed strategy.
      */
-    def ruleWithName[T] (name : String, f : T ==> T) : Strategy =
+    def ruleWithName[T] (name : String, f : T ==> T) : Strategy = {
+        val anyf = f.asInstanceOf[Any ==> Any]
+        val of = anyf andThen (Some (_))
         mkStrategy (name,
-            (t : Any) => {
-                val anyf = f.asInstanceOf[Any ==> Any]
-                if (isDefinedAtArg (anyf, t))
-                    Some (anyf (t))
-                else
-                    None
-            })
+            (t : Any) =>
+                try {
+                    of.applyOrElse (t, (a : Any) => None)
+                } catch {
+                    case _ : ClassCastException =>
+                        None
+                })
+    }
 
     /**
      * Define a rewrite rule using a function `f` that returns a term.
@@ -331,15 +323,19 @@ trait RewriterCore {
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def rulefsWithName[T] (name : String, f : T ==> Strategy) : Strategy =
+    def rulefsWithName[T] (name : String, f : T ==> Strategy) : Strategy = {
+        val anyf = f.asInstanceOf[Any ==> Strategy]
         mkStrategy (name,
             (t : Any) => {
-                val anyf = f.asInstanceOf[Any ==> Strategy]
-                if (isDefinedAtArg (anyf, t))
-                    (anyf (t)) (t)
-                else
-                    None
+                val of = anyf andThen (_.apply (t))
+                try {
+                    of.applyOrElse (t, (a : Any) => None)
+                } catch {
+                    case _ : ClassCastException =>
+                        None
+                }
             })
+    }
 
     /**
      * Make a strategy from a partial function `f` defined on the type `T`.
@@ -360,15 +356,17 @@ trait RewriterCore {
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def strategyWithName[T] (name : String, f : T ==> Option[T]) : Strategy =
+    def strategyWithName[T] (name : String, f : T ==> Option[T]) : Strategy = {
+        val of = f.asInstanceOf[Any ==> Option[T]]
         mkStrategy (name,
-            (t : Any) => {
-                val anyf = f.asInstanceOf[Any ==> Option[Any]]
-                if (isDefinedAtArg (anyf, t))
-                    anyf (t)
-                else
-                    None
-            })
+            (t : Any) =>
+                try {
+                    of.applyOrElse (t, (a : Any) => None)
+                } catch {
+                    case _ : ClassCastException =>
+                        None
+                })
+    }
 
     /**
      * Make a strategy from a function `f`. The function return value

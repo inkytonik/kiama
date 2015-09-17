@@ -144,18 +144,12 @@ class NominalRewriter extends Rewriter {
      */
     def subst[T] (n : Name, t1 : Any) : T => T =
         rewrite (alltd (
-            // We use strategyf here instead of rule since rule uses the
-            // isDefinedAt method of its argument and we want to avoid
-            // the pattern matching function being called more than once
-            // due to the side-effect in Binding.
-            strategyf {
+            rule[Any] {
                 case HasVar (m) if n == m =>
-                    Some (t1)
+                    t1
                 case Binding (a, x) =>
                     val y = subst (n, t1) (x)
-                    Some (Bind (a, y))
-                case _ =>
-                    None
+                    Bind (a, y)
             }
         ))
 

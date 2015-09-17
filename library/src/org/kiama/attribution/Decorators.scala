@@ -56,14 +56,14 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
      */
     def down[U] (default : T => U) (a : T ==> U) : CachedAttribute[T,U] = {
         lazy val dattr : CachedAttribute[T,U] =
-            attr {
-                case t if a.isDefinedAt (t) =>
-                    a (t)
-                case tree.parent (p) =>
-                    dattr (p)
-                case t =>
-                    default (t)
-            }
+            attr ((t : T) =>
+                a.applyOrElse (t, (t : T) =>
+                    t match {
+                        case tree.parent (p) =>
+                            dattr (p)
+                        case t =>
+                            default (t)
+                    }))
         dattr
     }
 
@@ -142,13 +142,7 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
 
         lazy val infunc = inupdate (indflt)
 
-        lazy val in : CachedAttribute[T,U] =
-            attr {
-                case t if infunc.isDefinedAt (t) =>
-                    infunc (t)
-                case t =>
-                    indflt (t)
-            }
+        lazy val in = attr ((t : T) => infunc.applyOrElse (t, indflt))
 
         def outdflt (t : T) : U =
             t match {
@@ -160,13 +154,7 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
 
         lazy val outfunc = outupdate (outdflt)
 
-        lazy val out : CachedAttribute[T,U] =
-            attr {
-                case t if outfunc.isDefinedAt (t) =>
-                    outfunc (t)
-                case t =>
-                    outdflt (t)
-            }
+        lazy val out = attr ((t : T) => outfunc.applyOrElse (t, outdflt))
 
         Chain (in, out)
     }
