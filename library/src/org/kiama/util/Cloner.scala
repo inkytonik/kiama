@@ -52,9 +52,14 @@ trait Cloner {
     /**
      * Lazily deep clone the term `t`; i.e., only clone sub-trees if they occur
      * elsewhere in the tree. Only applicable if the base type of the tree is a
-     * `Product`.
+     * `Product`. The `bu` argument specifies the strategy to use when traversing
+     * the term. It should be a bottom-up traversal, but can be tailored to skip
+     * some sub-trees if desired. `bu` defaults to `everywherebu`.
      */
-    def lazyclone[T <: Product] (t : T) : T = {
+    def lazyclone[T <: Product] (
+            t : T,
+            bu : Strategy => Strategy = everywherebu ("everywherebu", _)
+        ) : T = {
 
         object LeafCache extends Memoiser {
             val seen = new IdMemoised[T,Boolean] {}
@@ -63,7 +68,7 @@ trait Cloner {
         import LeafCache.seen
 
         val lazycloner =
-            everywherebu (rule[T] {
+            bu (rule[T] {
                 case n if isLeaf (n) =>
                     if (seen.getWithDefault (n, false))
                         copy (n)

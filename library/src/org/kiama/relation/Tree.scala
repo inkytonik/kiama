@@ -68,18 +68,34 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
 
     tree =>
 
+    import org.kiama.rewriting.Strategy
     import org.kiama.rewriting.Cloner.lazyclone
+    import org.kiama.rewriting.Rewriter.{all, attempt, rule}
     import org.kiama.util.Comparison.{contains, same}
     import Relation.fromOneStepGraph
     import Tree.treeChildren
+
+    /**
+     * A version of `bottomup` that doesn't traverse bridges.
+     */
+    def bottomupNoBridges (s : Strategy) : Strategy =
+        rule[Bridge[_]] {case b => b} <+
+            (all (bottomupNoBridges (s)) <* s)
+
+    /**
+     * A version of `everywherebu` that doesn't traverse bridges.
+     */
+    def everywherebuNoBridges (s : Strategy) : Strategy =
+        bottomupNoBridges (attempt (s))
 
     /**
      * The root node of the tree. The root node will be different from the
      * original root if any nodes in the original tree are shared, since
      * they will be cloned as necessary to yield a proper tree structure.
      * If there is no sharing then `root` will be same as `originalRoot`.
+     * Bridges to other structures will not be traversed.
      */
-    lazy val root = lazyclone (originalRoot)
+    lazy val root = lazyclone (originalRoot, everywherebuNoBridges)
 
     /**
      * The graph of the child relation for this tree.
