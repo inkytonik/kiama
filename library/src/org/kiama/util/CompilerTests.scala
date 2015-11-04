@@ -122,15 +122,16 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
     /**
      * Make tests that process the files in path.  `name` is an identifying
      * name for this set of tests.  All files whose names end in `srcext` are
-     * processed.  Processing is done by the function `compile` which must
-     * return either `Some (s)` where `s` is the output or `None` if processing
-     * failed.  If `srcext` is `.x` and `resext` is `.y`, then the expected result
-     * for `foo.x` is found in file `foo.y`.  If `optinext` is `Some (z)`, then
-     * `foo.z` is used for standard input, if it exists, otherwise the string
-     * `indefault` is used.  A test fails if either the processing fails or
-     * it succeeds with the wrong result.  `argslist` is used to specify the
-     * sets of command-line arguments that you want to use.  Each test is
-     * run with each set of arguments.  The default is an empty argument list.
+     * processed.  Processing is done by the function `testdriver` which
+     * is given a configuration which has an emitter. All output of the run
+     * is captured by the emitter. If `srcext` is `.x` and `resext` is `.y`,
+     * then the expected result for `foo.x` is found in file `foo.y`.  If
+     * `optinext` is `Some (z)`, then `foo.z` is used for standard input, if
+     * it exists, otherwise the string `indefault` is used.  A test fails if
+     * either the processing fails or it succeeds with the wrong result.
+     * `argslist` is used to specify the sets of command-line arguments that
+     * you want to use.  Each test is run with each set of arguments.  The
+     * default is an empty argument list.
      */
     def filetests (name : String, path : String, srcext : String, resext : String,
                    optinext : Option[String] = None, indefault : String = "",
