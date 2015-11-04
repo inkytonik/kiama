@@ -234,9 +234,7 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      * A relation that relates a node to all of its siblings.
      */
     lazy val siblings : TreeRelation[T,T] =
-        new TreeRelation[T,T] (
-            Vector ((root, root))) union (child.compose (parent)
-        )
+        new TreeRelation[T,T] (Vector ((root, root))) union (child.compose (parent))
 
     // Predicates derived from the relations
 
