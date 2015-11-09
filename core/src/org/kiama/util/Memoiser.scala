@@ -59,9 +59,9 @@ trait Memoiser {
 
         /**
          * Return the value stored at key `t` if there is one, otherwise
-         * return `u`.
+         * return `u`. `u` is only evaluated if necessary.
          */
-        def getWithDefault (t : T, u : U) : U =
+        def getWithDefault (t : T, u : => U) : U =
             get (t).getOrElse (u)
 
         /**
@@ -80,9 +80,9 @@ trait Memoiser {
 
         /**
          * Store the value `u` under the key `t` if `t` does not already have an
-         * associated value.
+         * associated value. `u` is only evaluated if necessary.
          */
-        def putIfNotPresent (t : T, u : U) {
+        def putIfNotPresent (t : T, u : => U) {
             if (!hasBeenComputedAt (t))
                 put (t, u)
         }
