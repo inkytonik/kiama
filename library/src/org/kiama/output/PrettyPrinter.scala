@@ -185,13 +185,13 @@ trait PrettyPrinterBase {
     def pretty (d : Doc, w : Width = defaultWidth) : Document
 
     /**
-     * Pretty-printe a document as per `pretty` but just return the layout.
+     * Pretty-print a document as per `pretty` but just return the layout.
      */
     def layout (d : Doc, w : Width = defaultWidth) : Layout =
         pretty (d, w).layout
 
     /**
-     * Pretty-printed a document as per `pretty` but just return the links.
+     * Pretty-print a document as per `pretty` but just return the links.
      */
     def links (d : Doc, w : Width = defaultWidth) : Links =
         pretty (d, w).links
