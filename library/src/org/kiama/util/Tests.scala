@@ -139,7 +139,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * messages in the same order.
      */
     def assertMessages (received : Messages, expected : Message*) {
-        assert (received.size === expected.size, "wrong number of messages produced")
+        assert (received.size == expected.size, "wrong number of messages produced")
         received.zip (expected).zipWithIndex.map {
             case ((rec, exp), i) =>
                 assertMessage (rec, i, exp)
