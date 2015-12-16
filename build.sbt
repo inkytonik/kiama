@@ -48,8 +48,8 @@ libraryDependencies in ThisBuild ++= {
             "0.4.0"
     Seq (
         // Caching:
-        "com.google.code.findbugs" % "jsr305" % "3.0.0",
-        "com.google.guava" % "guava" % "18.0",
+        "com.google.code.findbugs" % "jsr305" % "3.0.1",
+        "com.google.guava" % "guava" % "19.0",
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
@@ -61,7 +61,7 @@ libraryDependencies in ThisBuild ++= {
         // REPLs:
         "jline" % "jline" % "2.13",
         // Testing:
-        "org.scalacheck" %% "scalacheck" % "1.12.4" % "test",
+        "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
         "org.scalatest" %% "scalatest" % "2.2.5" % "test"
     )
 }
