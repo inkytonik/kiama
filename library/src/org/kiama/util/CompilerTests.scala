@@ -164,7 +164,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
                 val cc = emitter.result
                 try {
                     val rc = Source.fromFile (rp).mkString
-                    assert (sanitise (cc) == sanitise (rc), s"$title generated bad output")
+                    assert (sanitise (cc) == sanitise (rc))
                 } catch {
                     case e : java.io.FileNotFoundException =>
                         fail (s"$rp not found")
