@@ -113,9 +113,10 @@ trait Environments {
 
     /**
      * As for `define`, except if `i` is already defined in the innermost
-     * scope of `env`, define it to be `MultipleEntity` instead.
+     * scope of `env`, define it to be `MultipleEntity` instead. The entity
+     * `e` is only evaluated if needed.
      */
-    def defineIfNew (env : Environment, i : String, e : Entity) : Environment =
+    def defineIfNew (env : Environment, i : String, e : => Entity) : Environment =
         define (env, i, if (isDefinedInScope (env, i)) MultipleEntity () else e)
 
     /**
