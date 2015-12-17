@@ -8,7 +8,7 @@ representation (usually an abstract syntax tree), processes it and
 then prints some result. In the programming languages field, this kind
 of interaction is called a _read-eval-print loop_ (or _REPL_).
 
-Kiama provides simple support in the `org.kiama.util` package for creating
+Kiama provides simple support in the `org.bitbucket.inkytonik.kiama.util` package for creating
 REPLs of various kinds. The following examples make particular use of
 the REPL support:
 
@@ -18,7 +18,7 @@ the REPL support:
 
 ## The `REPL` trait
 
-File: [org.kiama.util.REPL.scala](http://code.google.com/p/kiama/source/browse/library/src/org/kiama/util/REPL.scala)
+File: [org.bitbucket.inkytonik.kiama.util.REPL.scala](http://code.google.com/p/kiama/source/browse/library/src/org/bitbucket/inkytonik/kiama/util/REPL.scala)
 
 The common interface for REPLs built using Kiama is provided by the
 `REPL` trait. It provides a `main` function that:
@@ -50,7 +50,7 @@ editing and history.
 
 ## `ParsingREPL`
 
-File: [org.kiama.util.REPL.scala](http://code.google.com/p/kiama/source/browse/library/src/org/kiama/util/REPL.scala)
+File: [org.bitbucket.inkytonik.kiama.util.REPL.scala](http://code.google.com/p/kiama/source/browse/library/src/org/bitbucket/inkytonik/kiama/util/REPL.scala)
 
 `REPL` provides a very general interface. Kiama also provides a number
 of more specialised instantiations of `REPL` for common situations.
@@ -72,7 +72,7 @@ providing a `processline` implementation you should provide:
 
 ## `GeneratingREPL`
 
-File: [org.kiama.util.REPLTests.scala](http://code.google.com/p/kiama/source/browse/library/src/org/kiama/util/REPLTests.scala)
+File: [org.bitbucket.inkytonik.kiama.util.REPLTests.scala](http://code.google.com/p/kiama/source/browse/library/src/org/bitbucket/inkytonik/kiama/util/REPLTests.scala)
 
 A less useful variant of `REPL` is `GeneratingREPL[T]` which provides
 a standard interface for REPLs that randomly generate program

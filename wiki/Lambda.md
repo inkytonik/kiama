@@ -8,7 +8,7 @@ a simple un-typed version of the
 
 ## Abstract syntax
 
-File: [org.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/lambda/Lambda.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/lambda/Lambda.scala)
 
 Programs for this example consist of expressions.
 
@@ -52,7 +52,7 @@ case class Sub (m : Exp, x : Idn, n : Exp) extends Exp
 
 ## Parser
 
-File: [org.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/lambda/Lambda.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/lambda/Lambda.scala)
 
 The [parser](Parsing.md) is a simple application of Scala's [parser combinators](ParserCombs.md).
 (See the [Imperative](Imperative.md) example for more explanation of a similar parser.)
@@ -82,7 +82,7 @@ lazy val idn =
 
 ## Evaluation
 
-File: [org.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/lambda/Lambda.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/lambda/Lambda.scala)
 
 We use an evaluation scheme from lecture notes by Kristoffer H. Rose,
 [Explicit Substitution - Tutorial and Survey](http://www.brics.dk/LS/96/3/BRICS-LS-96-3/BRICS-LS-96-3.html).
@@ -167,7 +167,7 @@ case Sub (m, x, n) if ! (fv (m) contains (x)) => m
 
 ## Free variables
 
-File: [org.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/lambda/Lambda.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/lambda/Lambda.scala)
 
 The auxiliary function `fv` provides the set of variables that are
 free (i.e., not bound) in a given expression.
@@ -186,13 +186,13 @@ def fv (t : Exp) : Set[Idn] = {
 
 ## Running
 
-File: [org.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/lambda/Lambda.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/lambda/Lambda.scala)
 
 To run the read-eval-print loop to parse programs, evaluate them to a normal form
 and print the result:
 
 ```
-sbt 'main org.kiama.example.lambda.Lambda'
+sbt 'main org.bitbucket.inkytonik.kiama.example.lambda.Lambda'
 Enter lambda calculus expressions for evaluation.
 lambda> (\x.99) 42
 99
@@ -204,7 +204,7 @@ lambda>
 To run a read-eval-print loop that generates random expressions:
 
 ```
-sbt 'main org.kiama.example.lambda.LambdaGen'
+sbt 'main org.bitbucket.inkytonik.kiama.example.lambda.LambdaGen'
 Each time you hit ENTER a new instance is generated and printed.
 Hit ENTER to generate an instance:
 (\dw9je.(((cna60 48) uxdbp) ((\qyf1U.10) (\dplpg.(45 26)))))
@@ -213,12 +213,12 @@ Hit ENTER to generate an instance:
 
 ## Tests
 
-File: [org.kiama.example.lambda.LambdaTests.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/lambda/LambdaTests.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.LambdaTests.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/lambda/LambdaTests.scala)
 
 Some simple tests of lambda calculus evaluation.
 
 ```
-sbt 'test-only org.kiama.example.lambda.LambdaTests'
+sbt 'test-only org.bitbucket.inkytonik.kiama.example.lambda.LambdaTests'
 ```
 
 Up: [Examples](Examples.md), Prev: [Imperative](Imperative.md), Next: [Lambda2](Lambda2.md)

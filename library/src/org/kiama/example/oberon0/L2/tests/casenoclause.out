@@ -1,4 +1,0 @@
-* errors
-src/org/kiama/example/oberon0/L2/tests/casenoclause.ob:8:5: clause expected
-    END
-    ^

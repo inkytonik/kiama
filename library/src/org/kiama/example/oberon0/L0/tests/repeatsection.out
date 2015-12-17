@@ -1,4 +1,0 @@
-* errors
-src/org/kiama/example/oberon0/L0/tests/repeatsection.ob:6:1: `END' expected but `C' found
-CONST
-^

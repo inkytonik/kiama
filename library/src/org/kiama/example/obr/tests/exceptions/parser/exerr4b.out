@@ -1,3 +1,0 @@
-src/org/kiama/example/obr/tests/exceptions/parser/exerr4b.obr:16:17: `:=' expected but `D' found
-   DivideByZero DO
-                ^

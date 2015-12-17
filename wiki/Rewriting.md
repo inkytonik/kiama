@@ -31,7 +31,7 @@ Stratego can written in a similar fashion in Kiama and hence much
 of the Stratego documentation and literature also applies to Kiama.
 Exceptions will be noted in the following.
 
-The Kiama rewriting library is in the object `org.kiama.rewriting.Rewriter`.
+The Kiama rewriting library is in the object `org.bitbucket.inkytonik.kiama.rewriting.Rewriter`.
 Import the types and methods you need from that object.  (There is
 also an `Rewriter` trait so you can mix it in with your own
 functionality.)
@@ -39,7 +39,7 @@ functionality.)
 For example,
 
 ```
-import org.kiama.rewriting.Rewriter._
+import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
 ```
 
 imports all names from that object.
@@ -208,7 +208,7 @@ returns a strategy, not a term.  The returned strategy is applied to the
 subject term.  Therefore, rulefs` is most useful in situations where you
 want to match some pattern to bind some variables, then use those
 variables in another strategy.  See the
-File: [ParLazy.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/lambda2/ParLazy.scala)
+File: [ParLazy.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/lambda2/ParLazy.scala)
 of the lambda2 example for uses of `rulefs`.
 
 Stratego allows the use of concrete syntax in strategies. For example

@@ -50,7 +50,7 @@ approach enables attributes to be defined on a pre-existing class
 hierarchy.
 
 The Kiama attribute grammar library is made available by the object
-`org.kiama.attribution.Attribution`.
+`org.bitbucket.inkytonik.kiama.attribution.Attribution`.
 Import the types and methods you need from that object. (There is
 also an `Attribution` trait so you can mix it in with your own
 functionality.)
@@ -58,7 +58,7 @@ functionality.)
 For example,
 
 ```
-import org.kiama.attribution.Attribution._
+import org.bitbucket.inkytonik.kiama.attribution.Attribution._
 ```
 
 imports all names from the `Attribution` object.
@@ -209,7 +209,7 @@ val globmin : Tree => Int =
 
 This definition makes use of some meta-level properties of the tree
 that Kiama provides automatically if the tree nodes inherit from
-`org.kiama.attribution.Attributable`.  For Repmin, the following suffices.
+`org.bitbucket.inkytonik.kiama.attribution.Attributable`.  For Repmin, the following suffices.
 
 ```
 abstract class Tree extends Attributable
@@ -555,7 +555,7 @@ kick in to convert `n` to an `Exp`.
 
 ## Decorators
 
-The module `org.kiama.attribution.Decorators` provides _decorators_
+The module `org.bitbucket.inkytonik.kiama.attribution.Decorators` provides _decorators_
 that implement short-hand notation for common patterns of attribution.
 
 The simplest decorator provided by this module is `down`. The idea
@@ -583,10 +583,10 @@ the decorator will ask the parent for the value. For this reason,
 
 `T ==> U` is an alias for the Scala library type `PartialFunction[T,U]`.
 You can obtain the `==>` type constructor for use in your own code
-by importing it from the `org.kiama` package:
+by importing it from the `org.bitbucket.inkytonik.kiama` package:
 
 ```
-import org.kiama.==>
+import org.bitbucket.inkytonik.kiama.==>
 ```
 
 The other decorator provided by the library at the moment is `chain`.

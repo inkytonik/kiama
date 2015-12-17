@@ -61,7 +61,7 @@ outputStrategy in run := Some (StdoutOutput)
 // Some useful imports for demos and testing in console
 
 initialCommands in console := """
-    import org.kiama._
+    import org.bitbucket.inkytonik.kiama._
     import attribution.Attribution._
     import rewriting.Rewriter._
 """.stripMargin

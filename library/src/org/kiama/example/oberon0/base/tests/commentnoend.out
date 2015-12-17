@@ -1,4 +1,0 @@
-* errors
-src/org/kiama/example/oberon0/base/tests/commentnoend.ob:5:1: `*)' expected but end of source found
-
-^

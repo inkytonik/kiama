@@ -61,12 +61,12 @@ pretty printing. The document embodies the constant text that must be
 present, optional parts, and the constraints if any on the final
 output.
 
-Kiama's pretty printing library is in the `org.kiama.output.PrettyPrinter`
+Kiama's pretty printing library is in the `org.bitbucket.inkytonik.kiama.output.PrettyPrinter`
 trait. You must mix this trait into whichever class or object needs to perform
 pretty printing. For example, if you have
 
 ```
-object P extends org.kiama.output.PrettyPrinter
+object P extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter
 ```
 
 then within `P` or via `P`'s public methods, you can access the pretty
@@ -267,7 +267,7 @@ combinators as short-hand notations for common situations.
 
 This page summarises the kinds of other combinators and lists some
 instances of each kind.  See the
-[PrettyPrinter trait](http://code.google.com/p/kiama/source/browse/src/org/kiama/output/PrettyPrinter.scala)
+[PrettyPrinter trait](http://code.google.com/p/kiama/source/browse/src/org/bitbucket/inkytonik/kiama/output/PrettyPrinter.scala)
 for a complete list.
 
 First up is `string` which is like `text` except that the string is
@@ -508,7 +508,7 @@ depending on line width.
 ## Functional pretty printing: the Imperative language
 
 As a more complex example, consider
-[pretty printing](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/kiama/example/imperative/PrettyPrinter.scala)
+[pretty printing](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
 for the [Imperative](Imperative.md) language. We implement a function `show` that
 converts any imperative language abstract syntax tree node into a
 document. `show` uses `showbin` that abstracts documents for
@@ -518,7 +518,7 @@ printing logic is kept outside of the data that is to be printed.
 (See the next example for a more object-oriented style.)
 
 ```
-object PrettyPrinter extends org.kiama.output.PrettyPrinter {
+object PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
 
     import AST._
 
@@ -601,7 +601,7 @@ First, we define a pretty printer and import its members into the
 current scope.
 
 ```
-object MyPrettyPrinter extends org.kiama.output.PrettyPrinter
+object MyPrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter
 
 import MyPrettyPrinter._
 ```
@@ -650,7 +650,7 @@ For example, if we are printing `1 + 2 + 3` then parentheses are not
 needed at all, but in `(1 + 2) * 3` we need the parentheses around
 `1 + 2` but not another set around the whole expression.
 
-Kiama includes the `org.kiama.output.ParenPrettyPrinter` trait that
+Kiama includes the `org.bitbucket.inkytonik.kiama.output.ParenPrettyPrinter` trait that
 makes it easy to define pretty-printers that perform minimal
 parenthesisation. The module uses algorithms published by Norman Ramsey
 in his paper
@@ -660,7 +660,7 @@ See the [Oberon0](Oberon0.md) example for an illustration.
 
 ## Output filters
 
-The module `org.kiama.output.Filters` provides functions that may be
+The module `org.bitbucket.inkytonik.kiama.output.Filters` provides functions that may be
 usefully applied after pretty-printing.
 
 Sometimes the pretty-printed output is designed to go in fixed space.

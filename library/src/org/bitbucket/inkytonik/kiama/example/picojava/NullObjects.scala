@@ -1,0 +1,59 @@
+/*
+ * This file is part of Kiama.
+ *
+ * Copyright (C) 2008-2015 Anthony M Sloane, Macquarie University.
+ *
+ * Kiama is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ *
+ * Kiama is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Kiama.  (See files COPYING and COPYING.LESSER.)  If not, see
+ * <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * This file is derived from a JastAdd implementation of PicoJava, created
+ * in the Department of Computer Science at Lund University.  See the
+ * following web site for details:
+ *
+ * http://jastadd.cs.lth.se/examples/PicoJava/index.shtml
+ */
+
+package org.bitbucket.inkytonik.kiama
+package example.picojava
+
+import org.bitbucket.inkytonik.kiama.attribution.Attribution
+import PicoJavaTree.PicoJavaTree
+
+trait NullObjects {
+
+    self : Attribution with NameResolution =>
+
+    import PicoJavaTree._
+
+    /**
+     * A declaration object representing an unknown entity.
+     *
+     * syn lazy UnknownDecl Program.unknownDecl() = (UnknownDecl) localLookup("\$unknown");
+     * inh Decl TypeDecl.unknownDecl();
+     * inh Decl Block.unknownDecl();
+     * eq Program.getBlock().unknownDecl() = unknownDecl();
+     * eq Program.getPredefinedType().unknownDecl() = unknownDecl();
+     */
+    val unknownDecl : PicoJavaNode => UnknownDecl =
+        attr {
+            case p : Program =>
+                localLookup ("$unknown") (p).asInstanceOf[UnknownDecl]
+            // FIXME: need NTA case?
+            case tree.parent (p) =>
+                unknownDecl (p)
+        }
+
+}

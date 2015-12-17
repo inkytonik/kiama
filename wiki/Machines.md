@@ -52,10 +52,10 @@ based on the machine described in Wirth's book
 
 ## Abstract state machines in Kiama
 
-The base class of a Kiama abstract machine is `org.kiama.machine.Machine`.
+The base class of a Kiama abstract machine is `org.bitbucket.inkytonik.kiama.machine.Machine`.
 
 ```
-package org.kiama.machine
+package org.bitbucket.inkytonik.kiama.machine
 
 abstract class Machine (val name : String, emitter : Emitter = new Emitter)
 ```
@@ -71,9 +71,9 @@ which input should be read and an emitter to which output should be
 sent.
 
 ```
-import org.kiama.machine.Machine
-import org.kiama.util.Console
-import org.kiama.util.Emitter
+import org.bitbucket.inkytonik.kiama.machine.Machine
+import org.bitbucket.inkytonik.kiama.util.Console
+import org.bitbucket.inkytonik.kiama.util.Emitter
 
 class RISC (code : Code, console : Console, emitter : Emitter)
        extends Machine ("RISC", emitter)

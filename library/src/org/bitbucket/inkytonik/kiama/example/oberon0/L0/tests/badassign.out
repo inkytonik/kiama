@@ -1,0 +1,4 @@
+* errors
+src/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badassign.ob:4:5: `END' expected but `1' found
+    1 := 2
+    ^

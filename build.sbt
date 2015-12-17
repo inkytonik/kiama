@@ -7,7 +7,7 @@ import sbtunidoc.Plugin.UnidocKeys.unidoc
 
 version in ThisBuild := "2.0.0-SNAPSHOT"
 
-organization in ThisBuild := "com.googlecode.kiama"
+organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
 // Scala compiler settings
 
@@ -169,7 +169,7 @@ pomExtra := (
 //              seems to inline the constant into the foo() accessor, but also leaves
 //              the private foo field, which is now not used -->
 //         <Match>
-//             <Class name="org.kiama.example.obr.RISCEncoder$" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.obr.RISCEncoder$" />
 //             <Bug pattern="UUF_UNUSED_FIELD" />
 //             <Or>
 //                 <Field name="firsttemp" />
@@ -178,7 +178,7 @@ pomExtra := (
 //             </Or>
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.obr.SPARCEncoder" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.obr.SPARCEncoder" />
 //             <Bug pattern="UUF_UNUSED_FIELD" />
 //             <Or>
 //                 <Field name="arg1reg" />
@@ -195,24 +195,24 @@ pomExtra := (
 //             <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.iswim.secd.HeapOps$RefValue$$anon$1" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.iswim.secd.HeapOps$RefValue$$anon$1" />
 //             <Method name="toDoc" />
 //             <Bug pattern="UMAC_UNCALLABLE_METHOD_OF_ANONYMOUS_CLASS" />
 //         </Match>
 //         <!-- Places where a pattern match ensures that a value is null or not null,
 //              but then subsequent code checks it again. -->
 //         <Match>
-//             <Class name="org.kiama.example.iswim.driver.Main$" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.iswim.driver.Main$" />
 //             <Method name="processArgs$1" />
 //             <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.iswim.compiler.Parser$class" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.iswim.compiler.Parser$class" />
 //             <Method name="stripComments$1" />
 //             <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.picojava.TypeAnalysis$$anonfun$5$$anonfun$apply$3" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.picojava.TypeAnalysis$$anonfun$5$$anonfun$apply$3" />
 //             <Method name="apply" />
 //             <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
 //         </Match>
@@ -233,29 +233,29 @@ pomExtra := (
 //             <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.obr.RISCTransformation$" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.obr.RISCTransformation$" />
 //             <Method name="org$kiama$example$obr$RISCTransformation$$cblock" />
 //             <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.obr.tests.ObrExecTests" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.obr.tests.ObrExecTests" />
 //             <Method name="org$kiama$example$obr$tests$ObrExecTests$$exectest" />
 //             <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.til.TIL2_3$class" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.til.TIL2_3$class" />
 //             <Method name="transform" />
 //             <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.util.PrettyPrinterBase$class" />
+//             <Class name="org.bitbucket.inkytonik.kiama.util.PrettyPrinterBase$class" />
 //             <Method name="string" />
 //             <Bug pattern="NP_LOAD_OF_KNOWN_NULL_VALUE" />
 //         </Match>
 //         <!-- A possible null value can reach a dereference, but for now we are ok with
 //              it since null checks are not present in much of the code anyway. -->
 //         <Match>
-//             <Class name="org.kiama.example.obr.SymbolTable$Variable" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.obr.SymbolTable$Variable" />
 //             <Method name="&lt;init&gt;" />
 //             <Bug pattern="NP_NULL_ON_SOME_PATH_MIGHT_BE_INFEASIBLE" />
 //         </Match>
@@ -265,8 +265,8 @@ pomExtra := (
 //         <Match>
 //             <Or>
 //                 <Class name="~.*\$class" />
-//                 <Class name="org.kiama.example.lambda2.Evaluator$freshvar$" />
-//                 <Class name="org.kiama.example.picojava.benchmark.PicoJavaBenchmark$delayedInit$body" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.example.lambda2.Evaluator$freshvar$" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.example.picojava.benchmark.PicoJavaBenchmark$delayedInit$body" />
 //             </Or>
 //             <Bug pattern="NM_CLASS_NAMING_CONVENTION" />
 //         </Match>
@@ -274,17 +274,17 @@ pomExtra := (
 //              OK due to their role to implement the package object. -->
 //         <Match>
 //             <Or>
-//                 <Class name="org.kiama.package" />
-//                 <Class name="org.kiama.package$" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.package" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.package$" />
 //             </Or>
 //             <Bug pattern="NM_CLASS_NAMING_CONVENTION" />
 //         </Match>
 //         <!-- These classes have "Exception" in their name for a good reason... -->
 //         <Match>
 //             <Or>
-//                 <Class name="org.kiama.example.iswim.secd.SECDBase$MkUserException" />
-//                 <Class name="org.kiama.example.iswim.secd.SECDBase$PushMachineException" />
-//                 <Class name="org.kiama.example.iswim.secd.SECDBase$RaiseException" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.example.iswim.secd.SECDBase$MkUserException" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.example.iswim.secd.SECDBase$PushMachineException" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.example.iswim.secd.SECDBase$RaiseException" />
 //             </Or>
 //             <Bug pattern="NM_CLASS_NOT_EXCEPTION" />
 //         </Match>
@@ -316,8 +316,8 @@ pomExtra := (
 //         </Match>
 //         <Match>
 //             <Or>
-//                 <Class name="org.kiama.attribution.AttributionTests" />
-//                 <Class name="org.kiama.attribution.DynamicAttributionTests" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.attribution.AttributionTests" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.attribution.DynamicAttributionTests" />
 //             </Or>
 //             <Or>
 //                 <Method name="Leaf" />
@@ -332,7 +332,7 @@ pomExtra := (
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.attribution.DynamicAttributionTests$$anonfun$8" />
+//             <Class name="org.bitbucket.inkytonik.kiama.attribution.DynamicAttributionTests$$anonfun$8" />
 //             <Or>
 //                 <Method name="ExtensionOne$1" />
 //                 <Method name="ExtensionTwo$1" />
@@ -340,12 +340,12 @@ pomExtra := (
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.attribution.DynamicAttributionTests$$anonfun$9" />
+//             <Class name="org.bitbucket.inkytonik.kiama.attribution.DynamicAttributionTests$$anonfun$9" />
 //             <Method name="Extension$1" />
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.example.RISC.RISC" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.RISC.RISC" />
 //             <Method name="Mem" />
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
@@ -369,7 +369,7 @@ pomExtra := (
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
 //         <Match>
-//             <Package name="org.kiama.example.picojava" />
+//             <Package name="org.bitbucket.inkytonik.kiama.example.picojava" />
 //             <Or>
 //                 <Method name="Value" />
 //                 <Method name="Variable" />
@@ -387,7 +387,7 @@ pomExtra := (
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
 //         <Match>
-//             <Package name="org.kiama.rewriting" />
+//             <Package name="org.bitbucket.inkytonik.kiama.rewriting" />
 //             <Or>
 //                 <Method name="Term" />
 //                 <Method name="Equal" />
@@ -397,7 +397,7 @@ pomExtra := (
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.util.PrettyPrinterTests" />
+//             <Class name="org.bitbucket.inkytonik.kiama.util.PrettyPrinterTests" />
 //             <Method name="Val" />
 //             <Bug pattern="NM_METHOD_NAMING_CONVENTION" />
 //         </Match>
@@ -414,7 +414,7 @@ pomExtra := (
 //              or returned. Due to use of App, for comprehension, anon functions inside
 //              defs  -->
 //         <Match>
-//             <Class name="org.kiama.example.picojava.benchmark.PicoJavaBenchmark$" />
+//             <Class name="org.bitbucket.inkytonik.kiama.example.picojava.benchmark.PicoJavaBenchmark$" />
 //             <Field name="scala$App$$_args" />
 //             <Or>
 //                 <Bug pattern="EI_EXPOSE_REP" />
@@ -422,27 +422,27 @@ pomExtra := (
 //             </Or>
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.util.CompilerBase$$anonfun$driver$1" />
+//             <Class name="org.bitbucket.inkytonik.kiama.util.CompilerBase$$anonfun$driver$1" />
 //             <Field name="newargs$1" />
 //             <Bug pattern="EI_EXPOSE_REP2" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.util.TestCompiler$$anonfun$filetest$1$1" />
+//             <Class name="org.bitbucket.inkytonik.kiama.util.TestCompiler$$anonfun$filetest$1$1" />
 //             <Field name="cmd$1" />
 //             <Bug pattern="EI_EXPOSE_REP2" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.util.TestCompiler$$anonfun$filetests$1" />
+//             <Class name="org.bitbucket.inkytonik.kiama.util.TestCompiler$$anonfun$filetests$1" />
 //             <Field name="children$1" />
 //             <Bug pattern="EI_EXPOSE_REP2" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.util.TestCompiler$$anonfun$filetests$1$$anonfun$apply$1" />
+//             <Class name="org.bitbucket.inkytonik.kiama.util.TestCompiler$$anonfun$filetests$1$$anonfun$apply$1" />
 //             <Field name="args$2" />
 //             <Bug pattern="EI_EXPOSE_REP2" />
 //         </Match>
 //         <Match>
-//             <Class name="org.kiama.util.TestCompiler$$anonfun$infiletests$1$1" />
+//             <Class name="org.bitbucket.inkytonik.kiama.util.TestCompiler$$anonfun$infiletests$1$1" />
 //             <Field name="args$1" />
 //             <Bug pattern="EI_EXPOSE_REP2" />
 //         </Match>
@@ -450,8 +450,8 @@ pomExtra := (
 //              is doing, not sure what. Ignoring for now... -->
 //         <Match>
 //             <Or>
-//                 <Class name="org.kiama.example.iswim.secd.SECDBase" />
-//                 <Class name="org.kiama.example.obr.SyntaxAnalysis" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.example.iswim.secd.SECDBase" />
+//                 <Class name="org.bitbucket.inkytonik.kiama.example.obr.SyntaxAnalysis" />
 //             </Or>
 //             <Bug pattern="IS2_INCONSISTENT_SYNC" />
 //         </Match>
