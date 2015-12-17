@@ -13,7 +13,7 @@ organization in ThisBuild := "com.googlecode.kiama"
 
 scalaVersion in ThisBuild := "2.11.7"
 
-crossScalaVersions := Seq ("2.11.7", "2.10.5")
+crossScalaVersions := Seq ("2.11.7", "2.10.6")
 
 scalacOptions in ThisBuild :=
     Seq (
