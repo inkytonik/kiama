@@ -1,6 +1,6 @@
 Kiama major release cross-published for both Scala 2.10 and 2.11. It's been a while and there are lots of changes, so these notes are crazy long.
 
-Since June 2015, Kiama has been based at [BitBucket](https://bitbucket.org/inkytonik/kiama) instead of Google code. Please raise issues on the BitBucket site.
+Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkytonik/kiama) instead of Google code. Please raise issues on the [Bitbucket site](https://bitbucket.org/inkytonik/kiama/issues?status=new&status=open).
 
 ### Breaking changes
 
