@@ -2,6 +2,11 @@
 
 Up: [Examples](Examples.md), Prev: [Imperative](Imperative.md), Next: [Lambda2](Lambda2.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 This example shows how Kiama's rewriting library can be used to implement
 a simple un-typed version of the
 [lambda calculus](http://en.wikipedia.org/wiki/Lambda_calculus).

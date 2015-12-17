@@ -2,6 +2,11 @@
 
 Up: [Examples](Examples.md), Next: [Imperative](Imperative.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 This example shows how Kiama's reference attributes can be used to
 define a control flow graph for an imperative language. Circular
 attributes are then used to implement a fixed-point dataflow

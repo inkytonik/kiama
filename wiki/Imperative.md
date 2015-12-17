@@ -2,6 +2,11 @@
 
 Up: [Examples](Examples.md), Prev: [Dataflow](Dataflow.md), Next: [Lambda](Lambda.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 This example contains an abstract syntax tree structure for a simple
 imperative programming language, a parser that creates instances of
 the abstract syntax from textual representations of imperative

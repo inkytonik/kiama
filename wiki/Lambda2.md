@@ -2,6 +2,11 @@
 
 Up: [Examples](Examples.md), Prev: [Lambda](Lambda.md), Next: [Oberon0](Oberon0.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 An implementation of simply-typed
 [lambda calculus](http://en.wikipedia.org/wiki/Lambda_calculus) with a
 selection of evaluation mechanisms. Name and type analysis are

@@ -1,4 +1,4 @@
-  * [User manual](UserManual.md)
+  * [User Manual](UserManual.md)
     * [Kiama's context](Context.md)
       * [Using case classes to define representations](CaseClasses.md)
       * [Operating on collections](Collections.md)

@@ -2,6 +2,11 @@
 
 Up: [User Manual](UserManual.md), Prev: [Attribution](Attribution.md), Next: [Pretty-printing](PrettyPrinting.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 This page provides an overview of Kiama's support for abstract state
 machines. Abstract state machines are used in the following examples.
 

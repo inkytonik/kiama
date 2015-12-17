@@ -2,6 +2,11 @@
 
 Up: [User Manual](UserManual.md), Prev: [Context](Context.md), Next: [Rewriting](Rewriting.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 It is necessary to have a tree representation of the data that is
 to be manipulated in order to use Kiama's facilities. This
 representation is usually an _abstract syntax tree_ (AST) that

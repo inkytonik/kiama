@@ -2,6 +2,11 @@
 
 Up: [Context](Context.md), Prev: [Case Classes](CaseClasses.md), Next: [Rewritable](Rewritable.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 It is often the case that data to be processed by Kiama is formed using Scala
 [collection classes](http://www.scala-lang.org/docu/files/collections-api/collections.html),
 such as sets, vectors and maps.

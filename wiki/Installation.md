@@ -2,6 +2,11 @@
 
 ## Installing from a Maven repository
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 Kiama is published in the Central Maven repository.
 Tools such as the [Scala simple-build-tool (sbt)](http://www.scala-sbt.org)
 and Maven will be able to install Kiama automatically from this repository.

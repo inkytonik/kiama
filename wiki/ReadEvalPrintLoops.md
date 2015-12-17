@@ -2,6 +2,11 @@
 
 Up: [User Manual](UserManual.md), Prev: [Messaging](Messaging.md), Next: [Profiling](Profiling.md)
 
+IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
+to Kiama 2.x, but not all. Please consult the 2.x release notes for the
+main differences. We are currently writing comprehensive documentation
+for 2.x that will eventually replace these pages.
+
 Some language processors operate most naturally as interactive
 software that reads user input, turns that input into a structured
 representation (usually an abstract syntax tree), processes it and
