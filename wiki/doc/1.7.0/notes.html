@@ -1,0 +1,65 @@
+<p>The Kiama team is pleased to bring you the next release of the library. This release has significant enhancements in the pretty-printing library, but is otherwise a minor release. The release is cross-published for both Scala 2.10 and 2.11.</p>
+
+<h3 id="enhancements">Enhancements</h3>
+
+<ul>
+  <li>
+    <p><a href="http://wiki.kiama.googlecode.com/hg/doc/1.7.0/api/index.html#org.kiama.output.package">Output</a></p>
+
+    <ul>
+      <li>The pretty-printing library now has combinators for <em>side-by-side</em> pretty-printing based on similar features of Haskell libraries. Specifically, <code>column</code> and <code>nesting</code> allow pretty-printing documents to depend on the current printing column and nesting level, respectively. Built on these basic combinators are: <code>align</code> which sets the indentation for a nested document to the current column, <code>hang</code> and <code>indent</code> which allow fine-tuning of indentation, <code>width</code> which allows the pretty-printing of a document to depend on the width of another document, and <code>padto</code>/<code>padtobreak</code> which can be used to pad a document to a specific width. <code>&lt;%&gt;</code> and <code>&lt;%%&gt;</code> allow alignment to be used as an operator.</li>
+    </ul>
+  </li>
+  <li>
+    <p><a href="http://wiki.kiama.googlecode.com/hg/doc/1.7.0/api/index.html#org.kiama.rewriting.package">Rewriting</a></p>
+
+    <ul>
+      <li>The <code>dup</code> operation that is used to duplicate nodes during rewriting is more helpful when it fails by mentioning the common problem that rewritten classes cannot be nested inside another class.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="deletions">Deletions</h3>
+
+<ul>
+  <li>
+    <p><a href="http://wiki.kiama.googlecode.com/hg/doc/1.7.0/api/index.html#org.kiama.util.package">Utilities</a></p>
+
+    <ul>
+      <li><code>ParserUtilities</code>: the <code>regexnows</code> method has been removed to avoid duplication of code from the parser combinators library. We are exploring ways to better support whitespace processing in that library instead.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fixes">Fixes</h3>
+
+<ul>
+  <li>
+    <p><a href="http://wiki.kiama.googlecode.com/hg/doc/1.7.0/api/index.html#org.kiama.util.package">Utilities</a></p>
+
+    <ul>
+      <li>
+        <p><code>ParenPrettyPrinter</code>: fixed doc of <code>noparens</code> method</p>
+      </li>
+      <li>
+        <p><code>REPL</code>: fixed bug where an empty line of input caused REPL to exit</p>
+      </li>
+      <li>
+        <p>Kiama-specific command-line options are now all under <code>--K</code> so that user programs can use other letters for their purposes. E.g., the option to specify that console input should come from a string is <code>--KConsole</code> instead of <code>-c</code> and <code>--console</code>. Run a Kiama main program with <code>--help</code> to see the options.</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Examples</p>
+
+    <ul>
+      <li>Minor fixes and documentation improvements in Lambda2, MiniJava, Obr and Prolog examples</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="other">Other</h3>
+
+<ul>
+  <li>Move to sbt 0.13.5, Scala 2.10.4/2.11.2, Scala parser combinators 1.0.2, ScalaTest 2.2.0, JLine 2.12</li>
+</ul>

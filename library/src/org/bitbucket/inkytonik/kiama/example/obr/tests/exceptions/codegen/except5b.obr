@@ -1,0 +1,22 @@
+(* A more complex DivideByZero example             *)
+(* This one catches the exception, returning -2 in *)
+(* such a case.                                    *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+CONST
+  Limit = 100;
+
+VAR
+   result : INTEGER;
+
+BEGIN
+   result := 0;
+   TRY
+      result := (Limit / ((i*i - 39 * i) + 368)) * 12 + 28;
+   CATCH DivideByZero DO
+      result := -2;
+   END
+   RETURN result;
+END Except.
+

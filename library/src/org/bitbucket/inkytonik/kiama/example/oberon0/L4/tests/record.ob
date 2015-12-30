@@ -1,0 +1,26 @@
+MODULE record;
+
+TYPE
+    atype1 = RECORD END;
+    atype2 = RECORD ; ; ; END;
+    atype3 = INTEGER;
+    atype4 = RECORD x : INTEGER; y : INTEGER END;
+
+VAR
+    avar0 : RECORD x : INTEGER END;
+    avar1 : atype4;
+    avar2 : RECORD one : INTEGER; two : RECORD a : BOOLEAN END END;
+    avar3 : RECORD tag : BOOLEAN; ; rec : atype3; END;
+
+BEGIN
+    avar1.x := 0;
+    avar1.y := 10 * avar1.x;
+    avar2.one := 1;
+    avar2.two.a := TRUE;
+    avar3.tag := FALSE;
+    avar3.rec := 42;
+    CASE avar0.x OF
+        1 : avar0.x := 2
+      | 2, 3 : avar0.x := 3
+    END
+END record.

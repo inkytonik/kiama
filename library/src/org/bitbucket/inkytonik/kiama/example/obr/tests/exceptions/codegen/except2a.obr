@@ -1,0 +1,21 @@
+(* Test re-raising of the DivideByZero exception  *)
+(* Simple test which tests RAISE-ing and          *)
+(* CATCH-ing exceptions without triggering        *)
+(* faults in division code or declaration         *)
+(* mapping.                                       *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+VAR
+  result : INTEGER;
+
+BEGIN
+  TRY
+    RAISE DivideByZero;
+  CATCH DivideByZero DO
+    IF i = 0 THEN
+      RAISE DivideByZero;
+    END
+  END
+  RETURN -2;
+END Except.

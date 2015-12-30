@@ -1,0 +1,1 @@
+ObrInt(EnumOk2,Vector(IntParam(IdnDef(i)), EnumVar(IdnDef(Binary),Vector(EnumConst(IdnDef(One)), EnumConst(IdnDef(TheOther))))),Vector(),EnumOk2)

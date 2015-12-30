@@ -1,0 +1,11 @@
+MODULE selfref;
+
+CONST
+    aconst1 = aconst1;
+    aconst2 = aconst1 + aconst2;
+    
+TYPE
+    atype1 = atype1;
+    atype2 = atype1;
+
+END selfref.

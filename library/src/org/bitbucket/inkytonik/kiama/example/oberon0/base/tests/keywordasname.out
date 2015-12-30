@@ -1,0 +1,4 @@
+* errors
+src/org/bitbucket/inkytonik/kiama/example/oberon0/base/tests/keywordasname.ob:1:8: ident expected
+MODULE END;
+       ^

@@ -1,0 +1,24 @@
+(* This program is compiled and the resulting RISCTrees *)
+(* are analysed to check that exceptions are numbered   *)
+(* as specified in the assignment spec.                 *)
+
+PROGRAM Except ( i : INTEGER ) : INTEGER;
+
+CONST
+  TestException1 : EXCEPTION;
+  Value1 = 100;
+  TestException2 : EXCEPTION;
+  Value2 = 200;
+  TestException3 : EXCEPTION;
+  Value3 = 300;
+
+BEGIN
+
+  RAISE TestException2;
+  RAISE IndexOutOfBounds;
+  RAISE TestException3;
+  RAISE DivideByZero;
+  RAISE TestException1;
+  
+END Except.
+

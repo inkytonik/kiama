@@ -1,0 +1,30 @@
+[
+  {
+    "age" : 25,
+    "name" : "Sven",
+    "titles" : [
+                 {
+                   "name" : "Olympic 5000m",
+                   "year" : 2010
+                 },
+                 {
+                   "name" : "World Allround",
+                   "year" : 2007
+                 }
+               ]
+  },
+  {
+    "age" : 25,
+    "name" : "Ireen",
+    "titles" : [
+                 {
+                   "name" : "Olympic 1500m",
+                   "year" : 2010
+                 },
+                 {
+                   "name" : "World Cup Allround",
+                   "year" : 2012
+                 }
+               ]
+  }
+]

@@ -1,0 +1,9 @@
+MODULE casenoclause;
+
+VAR
+    avar : INTEGER;
+
+BEGIN
+    CASE avar OF
+    END
+END casenoclause.

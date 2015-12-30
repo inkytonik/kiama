@@ -1,0 +1,36 @@
+(* Another "re-raise" test                 *)
+(* Just a double check to make sure that   *)
+(* exceptions in a catch block are not     *)
+(* "self-caught". This test has been       *)
+(* designed to avoid looping behaviours    *)
+(* in the event that it fails.             *)
+
+PROGRAM Except ( i : INTEGER ) : INTEGER;
+
+CONST
+  Limit = 100;
+  TestException : EXCEPTION;
+
+VAR
+  result : INTEGER;
+
+BEGIN
+  result := 0;
+  TRY
+    TRY
+      result := Limit * i;
+      IF i = 0 THEN
+        RAISE DivideByZero;
+      END
+    CATCH DivideByZero DO
+      RAISE TestException;
+    CATCH TestException DO
+      result := -2;
+    END
+  CATCH TestException DO
+    result := 1;
+  END
+
+  RETURN result;
+END Except.
+

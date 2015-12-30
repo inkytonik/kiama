@@ -1,0 +1,7 @@
+* _pp.ob
+MODULE aname;
+END anothername.
+* errors
+src/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/wrongmodulename.ob:3:5: end module name 'anothername' should be 'aname'
+END anothername.
+    ^

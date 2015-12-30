@@ -1,0 +1,34 @@
+MODULE for;
+
+VAR
+    avar1, avar2, avar3, avar4, avar5 : INTEGER;
+
+BEGIN
+    FOR avar1 := 1 TO 2 DO
+    END;
+
+    FOR avar1 := 5 TO 6 DO
+        avar2 := 7
+    END;
+
+    FOR avar1 := avar2 * 3 TO 5 - 9 DO
+        avar2 := avar1 MOD 8;
+        avar3 := avar2 DIV 9
+    END;
+    
+    FOR avar1 := avar2 TO avar2 + 3 BY 2 DO
+        avar2 := avar2 + 1
+    END;
+    
+    FOR avar1 := avar2 TO avar2 DIV 2 BY -5 DO
+        avar2 := avar2 * 10
+    END;
+    
+    avar5 := 0;
+    FOR avar1 := avar2 TO avar3 BY 5 DO
+        FOR avar4 := avar2 TO avar3 BY 10 DO
+            avar5 := avar5 + 1
+        END
+    END
+
+END for.
