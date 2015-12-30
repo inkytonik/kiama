@@ -4,15 +4,13 @@ Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkyt
 
 ### Breaking changes
 
-* To reflect the move from GoogleCode to BitBucket, the group ID under which Kiama is published on Maven Central is now `org.bitbucket.inkytonik.kiama` instead of `com.googlecode.kiama` and the top-level package is now also `org.bitbucket.inkytonik.kiama` instead of `org.kiama`.
+* To reflect the move from Google Code to Bitbucket, the group ID under which Kiama is published on Maven Central is now `org.bitbucket.inkytonik.kiama` instead of `com.googlecode.kiama` and the top-level package is now also `org.bitbucket.inkytonik.kiama` instead of `org.kiama`.
 
 * `Attribution`: The `Attributable` trait that provided generic tree access has been removed and replaced with a new approach based on tree relations. See the "What happened to Attributable?" section below for details.
 
-### Possibly breaking changes
-
 * `Attribution` and `Rewriting`: Deep cloning was previously implemented in  `Attribution` using `Attributable`. It is now provided by `Rewriting` and does not rely on any attribution.
 
-* `Attribution`: Replaced `Attribution` object with a class so that it is now necessary to instantiate it (or sub-class) rather than using a single default global `Attribution` instance. Concurrent use, particularly of circular attributes, is thereby less buggy.
+* `Attribution`: Replaced `Attribution` object with a class so that it is now necessary to instantiate it (or sub-class) rather than using a single default global `Attribution` instance.
 
 * `Output`: Removed `pretty_any` method, use `pretty` and `any` individually instead.
 
@@ -22,11 +20,13 @@ Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkyt
 
 * `Utiltity`: Removed the global `resetMemo` operation for all memoised data since it doesn't play well with concurrent execution.
 
-* `Utiltity`: Removed the `resetEnvironments` operation from the `Environments` module.
+* `Utiltity`: Removed the `resetEnvironments` operation from the `Environments` trait. It is better to create different environments than reuse one.
 
-* `Utility`: As a result of the move to our own parsing library (see below), the old Kiama `ParserUtilities` and `PositionedParserUtilties` traits have been removed. Their functionality is now provided by the parsing library.
+* `Utility`: As a result of the move to our own parsing library (see below), the old Kiama `ParserUtilities` and `PositionedParserUtilties` traits have been removed. Their functionality is now provided directly by the parsing library.
 
-* `Utility`: The new parsing library uses vectors to hold repetitive constructs instead of lists as in the old parsing library. Other parts of Kiama have standardised on using vectors instead of lists for this purpose.
+* `Utility`: The new parsing library uses vectors to hold repetitive constructs instead of lists as in the old parsing library. Other parts of Kiama have also standardised on using vectors instead of lists for this purpose.
+
+* `Utility`: The definition of whitespace for the new parsers must also now match "no whitespace" instead of assuming that there was at least some whitespace present as in previous versions. This new definition allows two constructs to be separated by "no whitespace" provided the parser for the first construct doesn't consume any of the second. Previously it was necessary to have actual whitespace between them.
 
 * We now rely less on general `Seq` and `Stack` types where there is really no benefit.
 
@@ -38,11 +38,11 @@ Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkyt
 
 * `Output`: Added a form of origin tracking which makes available a map between source objects and pretty-printed text ranges as a result of pretty-printing. Rendering operations now return a `Document` which combines the pretty-printed layout with the mapping information.
 
-* `Output`: Added `arguments` method which embodies how a parenthesised sequence of arguments should be pretty-printed. Previously this was built-in to `seq` but now can be reused separately.
+* `Output`: Added `arguments` method which embodies how a parenthesised sequence of arguments should be pretty-printed. Previously this was built-in to the `seq` combinator but now can be reused separately.
 
 * `Utiltity`: Added `defineIfNew` operation and pretty-printing to environments.
 
-* `Utiltity`: The messaging module has some helper methods `dropPrefix` and `dropCurrentPath` for reducing the lengths of names in messages. Some other details of messaging have changed with a view to simplifying messages and generalizing the implementation. `formats` is now called `formatMessages`. `sortmessages` has been removed in favour of just using `.sorted` with a provided `Ordering`.
+* `Utiltity`: Some details of messaging have changed with a view to generalizing the implementation. `formats` is now called `formatMessages`. `sortmessages` has been removed in favour of just using `.sorted` on a message list with a provided `Ordering`. There are now some helper methods `dropPrefix` and `dropCurrentPath` for reducing the lengths of names in messages.
 
 * `Utility`: A new `Source` abstraction is used to encapsulate the source of text used by a processor and to provide facilities used by messaging. It comes in file and string varieties.
 
@@ -52,40 +52,38 @@ Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkyt
 
 ### Fixes
 
-* `Rewriting`: In the core don't duplicate singleton objects such as `Nil` but return the same instance. The previous approach didn't cause problems in rewriting since the generic traversals avoided this kind of duplication, but it was a problem when writing a deep cloning strategy.
-
-* `Utility`: The definition of whitespace for the new parsers must also now match "no whitespace" instead of assuming that there was at least some whitespace present. This new definition allows two constructs to be separated by "no whitespace" provided the parser for the first didn't consume the second. Previously it was necessary to have actual whitespace between them.
+* `Rewriting`: In the core don't duplicate singleton objects such as `Nil` but return the same instance. The previous approach didn't cause problems in rewriting since the generic traversals avoided this kind of duplication, but it was a problem when writing a deep cloning strategy. using duplication directly.
 
 * `Utility`: When printing positions, a blank line is now no longer included before the pointer line.
 
-* `Utiltity`: The `keywords` helper method in the parser utilities now correctly deals with keywords that occur at the end of input.
+* `Utiltity`: The `keywords` helper method in the parser utilities now correctly deals with keywords that occur at the end of the input.
 
 ### Other
 
-* Many other minor adjustments, behind-the-scenes fixes and improvements to examples.
+* Many other minor adjustments, behind-the-scenes fixes and improvements to existing examples.
 
 * Moved to sbt 0.13.9, Scala 2.11.7 and 2.10.6, ScalaCheck 1.12.5, ScalaTest 2.2.5, jline 2.13, Guava 19, Findbugs jsr305 3.0.1
 
 ### What happened to Attributable?
 
-In Kiama 1.x you could use abstract syntax trees generically by accessing fields such as `parent`, `next` or `isRoot`. These fields were provided by the `Attributable` trait that you had to mix in to your AST classes. You also had to call `initTree` on the root of your AST to setup these fields before you tried to use them.
+In Kiama 1.x you could use abstract syntax trees reflexively by accessing fields such as `parent`, `next` or `isRoot`. These fields were provided by the `Attributable` trait that you had to mix in to your AST classes. You also had to call `initTree` on the root of your AST to setup these fields before you tried to use them.
 
-Kiama 2.x changes this aspect of the library quite a bit, so we devote some space here to describing the migration path. The Kiama 2.x examples have all been updated, of course, so you can consult them for more detail.
+Kiama 2.x changes this aspect of the library quite a bit, so we devote some space here to describing the migration path. The Kiama examples have all been updated so you can consult them for more detail.
 
-In a nutshell, `Attributable` and `initTree` no longer exist. Instead, you can use a mechanism called _tree relations_ to achieve a similar goal. The idea is that the relations exist outside your AST so that no modification of the AST classes is necessary. Thus, you can now do full attribution of structures that come from elsewhere for which mixing in `Attributable` would have been impossible.
+In a nutshell, `Attributable` and `initTree` no longer exist. Instead, you can use a mechanism called _tree relations_ to achieve a similar goal. A key property of the new approach is that the relations exist outside your AST so that no modification of the AST classes is necessary. Thus, you can now do full attribution of structures that come from elsewhere for which mixing in `Attributable` would have been impossible.
 
 Since `Attributable` no longer exists, the accompanying `n->a` notation for evaluating an attribute `a` on a node `n` has also gone. Instead, just use the normal function call notation `a(n)`.
 
-Attribution that doesn't want to need to access the tree reflexively (i.e.., doesn't use`parent`, `isRoot`, etc.) can be written as before.
+Attribution that doesn't need to access the tree reflexively (i.e., doesn't use`parent`, `isRoot`, etc.) can be written as before.
 
 If you want the equivalent of the `parent`, `isRoot`, etc fields of 1.x in 2.x you need to create a `Tree` object for your AST.  Suppose that you have a tree rooted at a node `root` that you wish to attribute. You create the `Tree` for this structure as follows:
 
-    import org.bitbucket.inkytonik.kiama.Tree
+    import org.bitbucket.inkytonik.kiama.relation.Tree
     val tree = new Tree(root)
 
 The `Tree` object traverses the structure to set up relations that give reflective access to the structure. E.g., `tree.parent` is a relation that relates each node to its parent (if there is one).
 
-The easiest way to use the relations such as `tree.parent` is via pattern matching. Suppose that you want to write an attribute whose value is zero if the node is the root of the tree (i.e., has no parent) and one more than its parent's value otherwise. Assuming you have access to a relevant `Tree` you can define that attribute as follows:
+The easiest way to use the relations such as `tree.parent` is via pattern matching. Suppose that you want to write a `depth` attribute whose value is zero if the node is the root of the tree (i.e., has no parent) and one more than its parent's value otherwise. Assuming you have access to a relevant `Tree` via the variable `tree` you can define the attribute as follows:
 
     val depth =
       attr {
@@ -95,7 +93,7 @@ The easiest way to use the relations such as `tree.parent` is via pattern matchi
           0
       }
 
-The first case will only succeed if the matched node has a parent and it will bind `p` to that parent node. If the first case fails, then there is no parent and we use the default case for the root of the tree.
+The first case will only succeed if the matched node has a parent and it will bind `p` to that parent node for use in the recursive call. If the first case fails, then there is no parent and we use the default case for the root of the tree.
 
 Each relation also comes with `pair` method which enables you to match on both parts of a relational tuple at the same time. For example, the following case uses the `tree.next` relation to match if the current node is an assignment statement node and the next one at the same level is a while loop node:
 
@@ -103,8 +101,10 @@ Each relation also comes with `pair` method which enables you to match on both p
 
 Of course, patterns can be nested so very powerful matching can be expressed using these relations.
 
-The tree relation approach brings a disciplined approach to programs that combine attribution and rewriting. In Kiama 1.x you had to be very careful if you rewrote an AST and then wanted to perform attribution on it. Because the old and new ASTs could share nodes, it was not always clear what the appropriate value of an attribute should be. (E.g., imagine that the depth of a node changes). In Kiama 2.x you are forced to use a `Tree` value to access the AST structure (other than children). Hence you can have a `Tree` for the old AST and one for the new `AST` and can perform well-defined attribution on either whenever you want.
+The tree relation approach brings a disciplined approach to programs that combine attribution and rewriting. In Kiama 1.x you had to be very careful if you rewrote an AST and then wanted to perform attribution on it. Because the old and new ASTs could share nodes, it was not always clear what the appropriate value of an attribute should be. E.g., imagine that the depth of a node changes. The safest way out was to clear the attribute values before computing any in the new AST, which was a brute force solution.
+
+In Kiama 2.x you are forced to use a `Tree` value to access the AST structure (other than children). Hence you can have a `Tree` for the old AST and one for the new `AST` and can perform well-defined attribution on either whenever you want.
 
 To make rewriting a little easier than before, it is no longer necessary to clone nodes when rewriting to avoid creating sharing in the rewritten tree. Just create the sharing and move on. If later you decide to perform some sharing-senstitive attribution on the AST that contains shared nodes, the `Tree` that you create will clone nodes as necessary to avoid sharing in the relations.
 
-For more information on how to use tree relations, please consult the Kiama 2.x examples. In particular, the semantic analysis modules of most of the compiler examples (e.g., Oberon-0 and MiniJava) show how reusable collections of attribute definitions can be defined.
+For more information on how to use tree relations, please consult the Kiama 2.x examples. In particular, the semantic analysis modules of the compiler examples (e.g., MiniJava and Oberon-0) show how reusable collections of attribute definitions can be defined.
