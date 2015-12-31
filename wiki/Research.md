@@ -6,6 +6,8 @@ The following research papers have been published and presentations have been gi
 
 ## General
 
+Sloane, A. M. and Roberts, M. [Oberon-0 in Kiama](http://www.sciencedirect.com/science/article/pii/S0167642315003032). Science of Computer Programming 114 (2015) 20-32.
+
 Sloane, A. M and Roberts, M. Kiama: Domain-Specific Languages for Language Implementation in Scala. Talk and workshop at [YOW! LambdaJam, Brisbane, May 2013](http://www.yowconference.com.au/lambdajam/index.html). [Slides](https://speakerdeck.com/inkytonik/kiama-domain-specific-languages-for-language-implementation-in-scala) [Repository](https://bitbucket.org/inkytonik/lambdajam13) [Video](http://www.youtube.com/watch?v=eDlYT3DOM0s).
 
 Sloane, A. M. Overview of the Kiama Language Processing Library. Presentation at [ScalaSyd September 14, 2011](http://www.meetup.com/scalasyd/events/28797911/). [Slides](https://speakerdeck.com/inkytonik/overview-of-the-kiama-language-processing-library).
@@ -20,7 +22,7 @@ Sloane, A. M. [Experiences with domain-specific language embedding in Scala](pap
 
 Sloane, A. M., Roberts, M. and Hamey L. G. C. [Respect Your Parents: How Attribution and Rewriting Can Get Along](http://link.springer.com/chapter/10.1007/978-3-319-11245-9_11). In Proceedings of the [International Conference on Software Language Engineering](http://link.springer.com/book/10.1007/978-3-319-11245-9), no. 8706 in Lecture Notes in Computer Science, Springer-Verlag, pp. 191-210. [Slides](https://speakerdeck.com/inkytonik/respect-your-parents-how-attribution-and-rewriting-can-get-along).
 
-Sloane, A. M. and Roberts, M. [Domain-specific program profiling and its application to attribute grammars and term rewriting](http://www.sciencedirect.com/science/article/pii/S0167642314000628). ([Free access](http://authors.elsevier.com/a/1Pvc-c7X4aqZq) until Dec 11, 2014.) Science of Computer Programming 96 (2014) 488-510.
+Sloane, A. M. and Roberts, M. [Domain-specific program profiling and its application to attribute grammars and term rewriting](http://www.sciencedirect.com/science/article/pii/S0167642314000628).  Science of Computer Programming 96 (2014) 488-510.
 
 Sloane, A. M. [Profile-based Abstraction and Analysis of Attribute Grammar Evaluation](papers/SLE12.pdf). In [Proceedings](http://link.springer.com/chapter/10.1007%2F978-3-642-36089-3_3#) of the [5th Conference on Software Language Engineering (SLE 2012)](http://planet-sl.org/sle2012), K. Czarnecki and G. Hedin, Eds. [Slides](https://speakerdeck.com/inkytonik/profile-based-abstraction-and-analysis-of-attribute-grammar-evaluation).
 
@@ -34,7 +36,7 @@ Kats, L., Sloane, A. M., and Visser, E. [Decorated attribute grammars: Attribute
 
 Sloane, A. M., Roberts, M. and Hamey L. G. C. [Respect Your Parents: How Attribution and Rewriting Can Get Along](http://link.springer.com/chapter/10.1007/978-3-319-11245-9_11). In Proceedings of the [International Conference on Software Language Engineering](http://link.springer.com/book/10.1007/978-3-319-11245-9), no. 8706 in Lecture Notes in Computer Science, Springer-Verlag, pp. 191-210. [Slides](https://speakerdeck.com/inkytonik/respect-your-parents-how-attribution-and-rewriting-can-get-along).
 
-Sloane, A. M. and Roberts, M. [Domain-specific program profiling and its application to attribute grammars and term rewriting](http://www.sciencedirect.com/science/article/pii/S0167642314000628). ([Free access](http://authors.elsevier.com/a/1Pvc-c7X4aqZq) until Dec 11, 2014.) Science of Computer Programming 96 (2014) 488-510.
+Sloane, A. M. and Roberts, M. [Domain-specific program profiling and its application to attribute grammars and term rewriting](http://www.sciencedirect.com/science/article/pii/S0167642314000628).  Science of Computer Programming 96 (2014) 488-510.
 
 Sloane, A. M. Embedding a Rewriting DSL in Scala. Talk at [fp-syd](http://groups.google.com/group/fp-syd), November 19, 2009. [Slides](https://speakerdeck.com/inkytonik/embedding-a-rewriting-dsl-in-scala).
 
