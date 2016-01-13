@@ -40,7 +40,7 @@ trait CallbackRewriter extends Rewriter {
      * is called with both the old and the new terms. The return value should
      * be a term that should go forward as the new term.
      */
-    def rewriting[T] (oldTerm : T, newTerm : T) : T
+    def rewriting[T](oldTerm : T, newTerm : T) : T
 
     /**
      * Produce a strategy named `n` that first runs the strategy s on the
@@ -48,35 +48,35 @@ trait CallbackRewriter extends Rewriter {
      * and new terms to the rewriting method and succeed with the term that
      * it returns.
      */
-    def dispatch (name : String, s : Strategy) : Strategy =
-        new Strategy (name) {
+    def dispatch(name : String, s : Strategy) : Strategy =
+        new Strategy(name) {
             val body =
                 (t : Any) =>
-                    s (t) match {
-                        case None     => None
-                        case Some (u) => Some (rewriting (t, u))
+                    s(t) match {
+                        case None    => None
+                        case Some(u) => Some(rewriting(t, u))
                     }
         }
 
-    override def ruleWithName[T] (n : String, f : T ==> T) : Strategy =
-        dispatch (n, super.ruleWithName[T] (n, f))
+    override def ruleWithName[T](n : String, f : T ==> T) : Strategy =
+        dispatch(n, super.ruleWithName[T](n, f))
 
-    override def rulef (n : String, f : Any => Any) : Strategy =
-        dispatch (n, super.rulef (n, f))
+    override def rulef(n : String, f : Any => Any) : Strategy =
+        dispatch(n, super.rulef(n, f))
 
-    override def rulefsWithName[T] (n : String, f : T ==> Strategy) : Strategy =
-        dispatch (n, super.rulefsWithName[T] (n, f))
+    override def rulefsWithName[T](n : String, f : T ==> Strategy) : Strategy =
+        dispatch(n, super.rulefsWithName[T](n, f))
 
-    override def strategyWithName[T] (n : String, f : T ==> Option[T]) : Strategy =
-        dispatch (n, super.strategyWithName (n, f))
+    override def strategyWithName[T](n : String, f : T ==> Option[T]) : Strategy =
+        dispatch(n, super.strategyWithName(n, f))
 
-    override def strategyf (n : String, f : Any => Option[Any]) : Strategy =
-        dispatch (n, super.strategyf (n, f))
+    override def strategyf(n : String, f : Any => Option[Any]) : Strategy =
+        dispatch(n, super.strategyf(n, f))
 
     /**
      * Product duplication with callback notification.
      */
-    override def dup[T <: Product] (t : T, children : Array[AnyRef]) : T =
-        rewriting (t, super.dup (t, children))
+    override def dup[T <: Product](t : T, children : Array[AnyRef]) : T =
+        rewriting(t, super.dup(t, children))
 
 }

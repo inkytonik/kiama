@@ -51,7 +51,7 @@ trait Rewritable {
      * appropriate (e.g., there is the wrong number of them or they are
      * of the wrong type).
      */
-    def reconstruct (components : Seq[Any]) : Any
+    def reconstruct(components : Seq[Any]) : Any
 
     /**
      * Helper function that can be called by implementations of reconstruct
@@ -61,7 +61,7 @@ trait Rewritable {
      * provided.  An IllegalArgumentException containing a description
      * of the problem is thrown.
      */
-    protected def illegalArgs (desc : String, argtypes : String, args : Seq[Any]) =
-        throw (new IllegalArgumentException (s"making $desc: expecting $argtypes, got ${args.mkString (", ")}"))
+    protected def illegalArgs(desc : String, argtypes : String, args : Seq[Any]) =
+        throw (new IllegalArgumentException(s"making $desc: expecting $argtypes, got ${args.mkString(", ")}"))
 
 }

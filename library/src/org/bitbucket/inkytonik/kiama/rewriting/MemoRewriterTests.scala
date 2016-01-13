@@ -29,11 +29,11 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 object MemoRewriterTestsSupport {
 
     abstract class N
-    case class A () extends N
-    case class B () extends N
-    case class S (n : N) extends N
-    case class T (n : N, uses : Int) extends N
-    case class P (l : N, r : N) extends N
+    case class A() extends N
+    case class B() extends N
+    case class S(n : N) extends N
+    case class T(n : N, uses : Int) extends N
+    case class P(l : N, r : N) extends N
 
 }
 
@@ -51,40 +51,40 @@ class MemoRewriterTests extends {
 
     val atob =
         rule[N] {
-            case A () => B ()
+            case A() => B()
         }
 
-    test ("a memoising strategy actually memoises") {
-        val s = everywhere (atob).asInstanceOf[MemoStrategy]
-        val t : N = A ()
-        assert (!s.hasBeenComputedAt (t))
-        val result = rewrite (s) (t)
-        assertResult (B ()) (result)
-        assert (s.hasBeenComputedAt (t))
-        assertSame (result) (rewrite (s) (t))
-        s.reset ()
-        assert (!s.hasBeenComputedAt (t))
-        assertResult (B ()) (rewrite (s) (t))
-        assert (s.hasBeenComputedAt (t))
+    test("a memoising strategy actually memoises") {
+        val s = everywhere(atob).asInstanceOf[MemoStrategy]
+        val t : N = A()
+        assert(!s.hasBeenComputedAt(t))
+        val result = rewrite(s)(t)
+        assertResult(B())(result)
+        assert(s.hasBeenComputedAt(t))
+        assertSame(result)(rewrite(s)(t))
+        s.reset()
+        assert(!s.hasBeenComputedAt(t))
+        assertResult(B())(rewrite(s)(t))
+        assert(s.hasBeenComputedAt(t))
     }
 
-    test ("resetting all memoising strategies actually does reset them") {
+    test("resetting all memoising strategies actually does reset them") {
         val r = atob.asInstanceOf[MemoStrategy]
-        val s = everywheretd (atob).asInstanceOf[MemoStrategy]
-        val t = P (A (), A ())
-        assert (!s.hasBeenComputedAt (t))
-        assert (!r.hasBeenComputedAt (t.l))
-        assert (!r.hasBeenComputedAt (t.r))
-        assertResult (P (B (), B())) (rewrite (s) (t))
-        assert (s.hasBeenComputedAt (t))
-        assert (r.hasBeenComputedAt (t.l))
-        assert (r.hasBeenComputedAt (t.r))
-        s.reset ()
-        r.reset ()
-        assert (!s.hasBeenComputedAt (t))
-        assert (!r.hasBeenComputedAt (t.l))
-        assert (!r.hasBeenComputedAt (t.r))
-        assertResult (P (B (), B())) (rewrite (s) (t))
+        val s = everywheretd(atob).asInstanceOf[MemoStrategy]
+        val t = P(A(), A())
+        assert(!s.hasBeenComputedAt(t))
+        assert(!r.hasBeenComputedAt(t.l))
+        assert(!r.hasBeenComputedAt(t.r))
+        assertResult(P(B(), B()))(rewrite(s)(t))
+        assert(s.hasBeenComputedAt(t))
+        assert(r.hasBeenComputedAt(t.l))
+        assert(r.hasBeenComputedAt(t.r))
+        s.reset()
+        r.reset()
+        assert(!s.hasBeenComputedAt(t))
+        assert(!r.hasBeenComputedAt(t.l))
+        assert(!r.hasBeenComputedAt(t.r))
+        assertResult(P(B(), B()))(rewrite(s)(t))
     }
 
     /**
@@ -92,68 +92,68 @@ class MemoRewriterTests extends {
      * in a traversal by `strat` the results at each stage will be shared in
      * the overall result.
      */
-    def testSharingRewrite (direction : String, strat : Strategy) {
+    def testSharingRewrite(direction : String, strat : Strategy) {
 
-        val s = P (A (), A ())
-        val t = P (s, s)
-        val u = P (t, t)
-        val result = rewrite (strat) (u)
+        val s = P(A(), A())
+        val t = P(s, s)
+        val u = P(t, t)
+        val result = rewrite(strat)(u)
 
-        test (s"memo rewriting produces correct term ($direction)") {
-            val expected = P(P(P(B(),B()),P(B(),B())),P(P(B(),B()),P(B(),B())))
-            assertResult (expected) (result)
+        test(s"memo rewriting produces correct term ($direction)") {
+            val expected = P(P(P(B(), B()), P(B(), B())), P(P(B(), B()), P(B(), B())))
+            assertResult(expected)(result)
         }
 
-        test (s"memo rewriting preserves top-level sharing ($direction)") {
-            assertSame (result.l) (result.r)
+        test(s"memo rewriting preserves top-level sharing ($direction)") {
+            assertSame(result.l)(result.r)
         }
 
-        test (s"memo rewriting preserves second-level sharing ($direction)") {
+        test(s"memo rewriting preserves second-level sharing ($direction)") {
             val lp = result.l.asInstanceOf[P]
             val rp = result.r.asInstanceOf[P]
-            assertSame (lp.l) (lp.r)
-            assertSame (lp.r) (rp.l)
-            assertSame (rp.l) (rp.r)
+            assertSame(lp.l)(lp.r)
+            assertSame(lp.r)(rp.l)
+            assertSame(rp.l)(rp.r)
         }
 
-        test (s"memo rewriting preserves third-level sharing ($direction)") {
+        test(s"memo rewriting preserves third-level sharing ($direction)") {
             val lls = result.l.asInstanceOf[P].l.asInstanceOf[P]
             val lrs = result.l.asInstanceOf[P].r.asInstanceOf[P]
             val rls = result.r.asInstanceOf[P].l.asInstanceOf[P]
             val rrs = result.r.asInstanceOf[P].r.asInstanceOf[P]
-            assertSame (lls.l) (lrs.l)
-            assertSame (lrs.l) (rls.l)
-            assertSame (rls.l) (rrs.l)
-            assertSame (lls.r) (lrs.r)
-            assertSame (lrs.r) (rls.r)
-            assertSame (rls.r) (rrs.r)
+            assertSame(lls.l)(lrs.l)
+            assertSame(lrs.l)(rls.l)
+            assertSame(rls.l)(rrs.l)
+            assertSame(lls.r)(lrs.r)
+            assertSame(lrs.r)(rls.r)
+            assertSame(rls.r)(rrs.r)
         }
 
     }
 
-    testSharingRewrite ("bottom-up", everywherebu (atob))
-    testSharingRewrite ("top-down", everywheretd (atob))
+    testSharingRewrite("bottom-up", everywherebu(atob))
+    testSharingRewrite("top-down", everywheretd(atob))
 
     {
         // Test based on Eric Torreborre's node fusion example from Scoobi
 
-        val tta = T (T (A (), 1), 2)
-        val root = P (T (tta, 1), T (T (tta, 1), 1))
+        val tta = T(T(A(), 1), 2)
+        val root = P(T(tta, 1), T(T(tta, 1), 1))
 
         val fuseT =
             rule[N] {
-                case T (n, 1) => S (n)
+                case T(n, 1) => S(n)
             }
 
-        val fuse = everywheretd (fuseT)
+        val fuse = everywheretd(fuseT)
 
-        test ("conditional node fusion preserves sharing") {
-            val expected = P(S(T(S(A()),2)),S(S(T(S(A()),2))))
-            val result = rewrite (fuse) (root)
-            assertResult (expected) (result)
+        test("conditional node fusion preserves sharing") {
+            val expected = P(S(T(S(A()), 2)), S(S(T(S(A()), 2))))
+            val result = rewrite(fuse)(root)
+            assertResult(expected)(result)
             val resultls = result.l.asInstanceOf[S]
             val resultrss = result.r.asInstanceOf[S].n.asInstanceOf[S]
-            assertSame (resultls.n) (resultrss.n)
+            assertSame(resultls.n)(resultrss.n)
         }
     }
 

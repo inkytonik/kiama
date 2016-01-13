@@ -28,28 +28,28 @@ object PrologTree {
 
     import org.bitbucket.inkytonik.kiama.relation.Tree
 
-    type PrologTree = Tree[PrologNode,Program]
+    type PrologTree = Tree[PrologNode, Program]
 
     sealed abstract class PrologNode extends Product
 
-    case class Program (cs : Vector[Clause]) extends PrologNode
+    case class Program(cs : Vector[Clause]) extends PrologNode
 
     sealed abstract class Clause extends PrologNode {
         def hd : Term
         def bdy : Vector[Term]
     }
 
-    case class Fact (hd : Term) extends Clause {
-        def bdy : Vector[Term] = Vector ()
+    case class Fact(hd : Term) extends Clause {
+        def bdy : Vector[Term] = Vector()
     }
-    case class Rule (hd : Term, bdy : Vector[Term]) extends Clause
+    case class Rule(hd : Term, bdy : Vector[Term]) extends Clause
 
     sealed abstract class Term extends PrologNode
 
-    case class Var (s : String) extends Term {
+    case class Var(s : String) extends Term {
         override def toString : String = s
     }
-    case class Integer (v : Int) extends Term {
+    case class Integer(v : Int) extends Term {
         override def toString : String = v.toString
     }
 
@@ -57,13 +57,13 @@ object PrologTree {
 
     sealed abstract class NamedLiteral extends Literal
 
-    case class Atom (s : String) extends NamedLiteral {
+    case class Atom(s : String) extends NamedLiteral {
         override def toString : String = s
     }
-    case class Pred (s : String, ts : Vector[Term]) extends NamedLiteral {
-        override def toString : String = s + ts.mkString ("(", ", ", ")")
+    case class Pred(s : String, ts : Vector[Term]) extends NamedLiteral {
+        override def toString : String = s + ts.mkString("(", ", ", ")")
     }
-    case class Cut () extends Literal {
+    case class Cut() extends Literal {
         override def toString : String = "!"
     }
 

@@ -33,32 +33,32 @@ class Driver extends Compiler[Program] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 
-    def process (source : Source, program : Program, config : Config) {
+    def process(source : Source, program : Program, config : Config) {
 
         // Print original program and obtain "no priority" expression
-        config.output.emitln (program)
+        config.output.emitln(program)
         val expr = program.expr
 
         // Check for semantic errors on the original expression.  This
         // will cause a translation to a priority-correct representation
         // and error computation on that rep.
-        val tree = new TransformTree (program)
-        val analyser = new SemanticAnalyser (tree)
+        val tree = new TransformTree(program)
+        val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
 
         // For testing, print the priority-correct representation
-        config.output.emitln (analyser.ast (expr))
+        config.output.emitln(analyser.ast(expr))
 
         // Report any semantic errors
         if (messages.length > 0)
-            report (messages, config.error)
+            report(messages, config.error)
 
     }
 
-    def format (ast : Program) : Document =
+    def format(ast : Program) : Document =
         emptyDocument
 
 }

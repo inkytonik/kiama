@@ -30,17 +30,17 @@ class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiam
 
     import MiniJavaTree._
 
-    val mul = IdnDef ("Mul")
-    val five = IntExp (5)
-    val otherfive = IntExp (5)
-    val starexp = StarExp (five, otherfive)
-    val println = Println (starexp)
-    val mainmethod = MainMethod (println)
-    val mainclass = MainClass (mul, mainmethod)
-    val nothing = Vector ()
-    val program = Program (mainclass, nothing)
+    val mul = IdnDef("Mul")
+    val five = IntExp(5)
+    val otherfive = IntExp(5)
+    val starexp = StarExp(five, otherfive)
+    val println = Println(starexp)
+    val mainmethod = MainMethod(println)
+    val mainclass = MainClass(mul, mainmethod)
+    val nothing = Vector()
+    val program = Program(mainclass, nothing)
 
-    test ("a simple MiniJava program pretty-prints with the correct positions using any") {
+    test("a simple MiniJava program pretty-prints with the correct positions using any") {
 
         // Program (
         //     MainClass (
@@ -48,24 +48,24 @@ class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiam
         //         MainMethod (Println (StarExp (IntExp (5), IntExp (5))))),
         //     Vector ())
 
-        assertLinks (
-            List (
-                program -> Range (0, 131),
-                mainclass -> Range (14, 115),
-                mainmethod -> Range (58, 114),
-                mul -> Range (34, 49),
-                println -> Range (70, 113),
-                starexp -> Range (79, 112),
-                five -> Range (88, 99),
-                otherfive -> Range (100, 111),
-                nothing -> Range (120, 130),
-                "Mul" -> Range (42, 48)
+        assertLinks(
+            List(
+                program -> Range(0, 131),
+                mainclass -> Range(14, 115),
+                mainmethod -> Range(58, 114),
+                mul -> Range(34, 49),
+                println -> Range(70, 113),
+                starexp -> Range(79, 112),
+                five -> Range(88, 99),
+                otherfive -> Range(100, 111),
+                nothing -> Range(120, 130),
+                "Mul" -> Range(42, 48)
             )
-        ) (pretty (any (program)))
+        )(pretty(any(program)))
 
     }
 
-    test ("a simple MiniJava program pretty-prints with the correct positions using MiniJava pretty-printer") {
+    test("a simple MiniJava program pretty-prints with the correct positions using MiniJava pretty-printer") {
 
         // class Mul {
         //     public static void main () {
@@ -73,18 +73,18 @@ class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiam
         //     }
         // }
 
-        assertLinks (
-            List (
-                program -> Range (0, 91),
-                mainclass -> Range (0, 91),
-                mainmethod -> Range (16, 87),
-                mul -> Range (6, 10),
-                println -> Range (53, 81),
-                starexp -> Range (73, 79),
-                five -> Range (73, 75),
-                otherfive -> Range (77, 79)
+        assertLinks(
+            List(
+                program -> Range(0, 91),
+                mainclass -> Range(0, 91),
+                mainmethod -> Range(16, 87),
+                mul -> Range(6, 10),
+                println -> Range(53, 81),
+                starexp -> Range(73, 79),
+                five -> Range(73, 75),
+                otherfive -> Range(77, 79)
             )
-        ) (pretty (toDoc (program)))
+        )(pretty(toDoc(program)))
 
     }
 

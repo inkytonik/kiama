@@ -31,7 +31,7 @@ object AttributionCommonMacros {
 
     // Macros for the builder methods
 
-    def constantMacro[T,U] (c : blackbox.Context) (u : c.Expr[U]): c.Expr[Attribute[T,U]] =
-        makeCallWithName (c)
+    def constantMacro[T, U](c : blackbox.Context)(u : c.Expr[U]) : c.Expr[Attribute[T, U]] =
+        makeCallWithName(c)
 
 }

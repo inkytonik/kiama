@@ -27,32 +27,32 @@ trait SourcePrettyPrinter extends L3.source.SourcePrettyPrinter {
     import base.source.{Expression, SourceNode}
     import org.bitbucket.inkytonik.kiama.output.PrettyExpression
 
-    override def toDoc (n : SourceNode) : Doc =
+    override def toDoc(n : SourceNode) : Doc =
         n match {
-            case ArrayTypeDef (s, t) =>
-                "ARRAY" <+> toDoc (s) <+> "OF" <+> toDoc (t)
+            case ArrayTypeDef(s, t) =>
+                "ARRAY" <+> toDoc(s) <+> "OF" <+> toDoc(t)
 
-            case RecordTypeDef (Vector ()) =>
+            case RecordTypeDef(Vector()) =>
                 "RECORD" <+> "END"
 
-            case RecordTypeDef (fs) =>
-                "RECORD" <+> hsep (fs map toDoc, semi) <+> "END"
+            case RecordTypeDef(fs) =>
+                "RECORD" <+> hsep(fs map toDoc, semi) <+> "END"
 
-            case Fields (ids, t) =>
-                (hsep (ids map text, comma)) <+> colon <+> toDoc (t)
+            case Fields(ids, t) =>
+                (hsep(ids map text, comma)) <+> colon <+> toDoc(t)
 
             case _ =>
-                super.toDoc (n)
+                super.toDoc(n)
         }
 
-    override def toParenDoc (e : PrettyExpression) : Doc =
+    override def toParenDoc(e : PrettyExpression) : Doc =
         e match {
-            case IndexExp (b, e) =>
-                toDoc (b) <> brackets (toDoc (e))
-            case FieldExp (b, FieldIdn (f)) =>
-                toDoc (b) <> "." <> f
+            case IndexExp(b, e) =>
+                toDoc(b) <> brackets(toDoc(e))
+            case FieldExp(b, FieldIdn(f)) =>
+                toDoc(b) <> "." <> f
             case _ =>
-                super.toParenDoc (e)
+                super.toParenDoc(e)
         }
 
 }

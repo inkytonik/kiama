@@ -34,16 +34,16 @@ trait Translator {
     /**
      * Generate C equivalent of a module.
      */
-    def translate (m : ModuleDecl) : CProgram
+    def translate(m : ModuleDecl) : CProgram
 
     /**
      * Generate C equivalent of a declaration.
      */
-    def translate (d : Declaration) : Vector[CDeclaration]
+    def translate(d : Declaration) : Vector[CDeclaration]
 
     /**
      * Generate C equivalent of a statement.
      */
-    def translate (s : Statement) : CStatement
+    def translate(s : Statement) : CStatement
 
 }

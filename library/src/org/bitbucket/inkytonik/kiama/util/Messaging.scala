@@ -25,7 +25,7 @@ package util
  * A message record consisting of a value with which the message is associated
  * and a label string.
  */
-case class Message (value : AnyRef, label : String)
+case class Message(value : AnyRef, label : String)
 
 /**
  * Shared definitions for all messaging.
@@ -43,46 +43,46 @@ object Messaging {
     /**
      * Return a value representing no messages.
      */
-    def noMessages = Vector[Message] ()
+    def noMessages = Vector[Message]()
 
     /**
      * If `f` is defined at `t` apply it and return the resulting sequence
      * of messages. Otherwise, return an empty sequence.
      */
-    def check[T] (t : T) (f : T ==> Messages) : Messages =
-        f.applyOrElse (t, (_ : T) => noMessages)
+    def check[T](t : T)(f : T ==> Messages) : Messages =
+        f.applyOrElse(t, (_ : T) => noMessages)
 
     /**
      * Check that the entity `e` is used legally and return appropriate
      * messages if not. If the entity is an error entity (unknown or multiply
      * defined, keep silent on the grounds that the error has already been
-     *reported elsewhere (e.g., at the declaration site of the entity).
+     * reported elsewhere (e.g., at the declaration site of the entity).
      * Otherwise, if `f` is defined at `e` return the messages that `f (e)`
      * evaluates to. If `f` is not defined at `e`, keep silent.
      */
-    def checkUse (e : Entity) (f : Entity ==> Messages) : Messages =
+    def checkUse(e : Entity)(f : Entity ==> Messages) : Messages =
         e match {
             case _ : ErrorEntity =>
                 noMessages
             case _ =>
-                check (e) (f)
+                check(e)(f)
         }
 
     /**
      * Recursively collect all messages in the given tree using the partial
      * function `messages` at all nodes where it is defined.
      */
-    def collectMessages[T <: Product,U <: T] (tree : Tree[T,U]) (messages : T ==> Messages) : Messages =
-        tree.nodes.flatMap (messages.orElse { case _ => noMessages }).toVector
+    def collectMessages[T <: Product, U <: T](tree : Tree[T, U])(messages : T ==> Messages) : Messages =
+        tree.nodes.flatMap(messages.orElse { case _ => noMessages }).toVector
 
     /**
      * If `cond` is true make a singleton message list that associates the
      * label with the start position recorded for `value` (if any). `cond`
      * can be omitted and defaults to true.
      */
-    def message (value : AnyRef, label : String, cond : Boolean = true) : Messages =
+    def message(value : AnyRef, label : String, cond : Boolean = true) : Messages =
         if (cond)
-            Vector (Message (value, label))
+            Vector(Message(value, label))
         else
             noMessages
 
@@ -102,16 +102,18 @@ trait Messaging {
      * An ordering on messages that prioritises line over column.
      */
     implicit object messageOrdering extends Ordering[Message] {
-        def compare (m1 : Message, m2 : Message) =
-            Ordering[(Option[Int],Option[Int])].compare ((line (m1), column (m1)),
-                                                         (line (m2), column (m2)))
+        def compare(m1 : Message, m2 : Message) =
+            Ordering[(Option[Int], Option[Int])].compare(
+                (line(m1), column(m1)),
+                (line(m2), column(m2))
+            )
     }
 
     /**
      * Return the optional column number of a message.
      */
-    def column (message : Message) : Option[Int] =
-        positionOf (message).map (_.column)
+    def column(message : Message) : Option[Int] =
+        positionOf(message).map(_.column)
 
     /**
      * Format the message for reporting as a line containing the position
@@ -119,10 +121,10 @@ trait Messaging {
      * of the position. If no position is associated with this message
      * just format as a line containing the label.
      */
-    def formatMessage (message : Message) : String =
-        positionOf (message) match {
-            case Some (pos) =>
-                val context = pos.optContext.getOrElse ("")
+    def formatMessage(message : Message) : String =
+        positionOf(message) match {
+            case Some(pos) =>
+                val context = pos.optContext.getOrElse("")
                 s"${pos.format} ${message.label}\n$context\n"
             case None =>
                 s"${message.label}\n"
@@ -131,28 +133,28 @@ trait Messaging {
     /**
      * Return a string containing all the given messages sorted and formatted.
      */
-    def formatMessages (messages : Messages) : String =
-        messages.sorted.map (formatMessage).mkString ("")
+    def formatMessages(messages : Messages) : String =
+        messages.sorted.map(formatMessage).mkString("")
 
     /**
      * Return the optional line number of a message.
      */
-    def line (message : Message) : Option[Int] =
-        positionOf (message).map (_.line)
+    def line(message : Message) : Option[Int] =
+        positionOf(message).map(_.line)
 
     /**
      * A message's starting position as determined from the starting position
      * of the message's value. Will be `None` if the value has no position.
      */
-    def positionOf (message : Message) : Option[Position] =
-        positions.getStart (message.value)
+    def positionOf(message : Message) : Option[Position] =
+        positions.getStart(message.value)
 
     /**
      * Output the messages in order of position using the given emitter, which
      * defaults to standard error.
      */
-    def report (messages : Messages, emitter : Emitter = new ErrorEmitter) {
-        emitter.emit (formatMessages (messages))
+    def report(messages : Messages, emitter : Emitter = new ErrorEmitter) {
+        emitter.emit(formatMessages(messages))
     }
 
 }

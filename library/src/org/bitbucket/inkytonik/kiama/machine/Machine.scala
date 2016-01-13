@@ -33,7 +33,7 @@ import org.bitbucket.inkytonik.kiama.output.PrettyPrinter
  * state and updates. Machines are designed to be used in a single-threaded
  * fashion.
  */
-abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
+abstract class Machine(val name : String, emitter : Emitter = new ErrorEmitter)
         extends PrettyPrinter {
 
     import scala.annotation.tailrec
@@ -50,14 +50,14 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
      * Alias for prettyprinter's `value` method since the internals of this
      * class use `value` for something else.
      */
-    def ppvalue (v : Any) : Doc =
-        super.value (v)
+    def ppvalue(v : Any) : Doc =
+        super.value(v)
 
     /**
      * A scalar item of abstract state machine state holding a value of
      * type `T` and called `sname`.
      */
-    class State[T] (val sname : String) {
+    class State[T](val sname : String) {
 
         /**
          * The value of this item of state.  `None` means undefined.
@@ -72,7 +72,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
         /**
          * Make this state item undefined.
          */
-        def undefine () {
+        def undefine() {
             _value = None
         }
 
@@ -82,9 +82,9 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          */
         def value : T =
             _value match {
-                case None     =>
-                    sys.error (s"State.value: $name.$sname is undefined")
-                case Some (t) =>
+                case None =>
+                    sys.error(s"State.value: $name.$sname is undefined")
+                case Some(t) =>
                     t
             }
 
@@ -94,27 +94,27 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          * step happen simultaneously (along with consistency checking).  The
          * state value only becomes defined when this latter process happens.
          */
-        def := (t : T) {
-            updates = new ScalarUpdate (this, t) :: updates
+        def :=(t : T) {
+            updates = new ScalarUpdate(this, t) :: updates
         }
 
         /**
          * Change this item of state to the value `t`.  The change occurs
          * immediately.
          */
-        def change (t : T) {
-            _value = Some (t)
+        def change(t : T) {
+            _value = Some(t)
         }
 
         /**
          * Equality on the underlying value.  If this state item is undefined
          * then it's not equal to anything.
          */
-        def =:= (t : T) : Boolean =
+        def =:=(t : T) : Boolean =
             if (isUndefined)
                 false
             else
-                _value == Some (t)
+                _value == Some(t)
 
         /**
          * Make a printable representation for the contents of this state
@@ -122,8 +122,8 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          */
         override def toString : String =
             _value match {
-                case None     => "** undefined **"
-                case Some (t) => t.toString
+                case None    => "** undefined **"
+                case Some(t) => t.toString
             }
 
     }
@@ -132,12 +132,12 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
      * Implicitly allow a scalar state value of type `T` to be used as a value
      * of type `U` where `U` is a supertype of `T`.
      */
-    implicit def stateTToT[T,U >: T] (t : State[T]) : U = t.value
+    implicit def stateTToT[T, U >: T](t : State[T]) : U = t.value
 
     /**
      * Utility class for updaters for values of parameterised state.
      */
-    class ParamUpdater[T,U] (val state : ParamState[T,U], val t : T) {
+    class ParamUpdater[T, U](val state : ParamState[T, U], val t : T) {
 
         /**
          * Update this item of state to the value `u` at parameter `t`.  The update
@@ -145,19 +145,19 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          * step happen simultaneously (along with consistency checking).  The
          * state value only becomes defined when this latter process happens.
          */
-        def := (u : U) {
-            updates = new ParamUpdate (state, t, u) :: updates
+        def :=(u : U) {
+            updates = new ParamUpdate(state, t, u) :: updates
         }
 
         /**
          * Equality on the underlying value.  If this state item is undefined
          * then it is not equal to anything.
          */
-        def =:= (u : U) : Boolean =
-            if (state.isUndefined (t))
+        def =:=(u : U) : Boolean =
+            if (state.isUndefined(t))
                 false
             else
-                state.value (t) == u
+                state.value(t) == u
 
         /**
          * Make a printable representation of the value of the parameterised
@@ -165,7 +165,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          * value of a parameterised state item.
          */
         override def toString : String =
-            state.value (t).toString
+            state.value(t).toString
 
     }
 
@@ -173,24 +173,24 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
      * A parameterised item of abstract state machine state holding values
      * of type `U`, associated with parameters of type `T`.
      */
-    class ParamState[T,U] (val psname : String) extends State[MutableMap[T,U]] (psname) {
+    class ParamState[T, U](val psname : String) extends State[MutableMap[T, U]](psname) {
 
         /**
          * Is this state item undefined at `t` or not ?
          */
-        def isUndefined (t : T) : Boolean =
+        def isUndefined(t : T) : Boolean =
             _value match {
-                case None     => true
-                case Some (m) => ! (m contains t)
+                case None    => true
+                case Some(m) => !(m contains t)
             }
 
         /**
          * Make this state item undefined at `t`.
          */
-        def undefine (t : T) {
+        def undefine(t : T) {
             _value match {
-                case None     => // Nothing to undefine
-                case Some (m) => _value = Some (m - t)
+                case None    => // Nothing to undefine
+                case Some(m) => _value = Some(m - t)
             }
         }
 
@@ -203,31 +203,31 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
          * checking).  The state value only becomes defined when this latter
          * process happens.
          */
-        def apply (t : T) : ParamUpdater[T,U] =
-            new ParamUpdater (this, t)
+        def apply(t : T) : ParamUpdater[T, U] =
+            new ParamUpdater(this, t)
 
         /**
          * Return the value of this state item if it's defined at parameter `t`.
          * Otherwise abort execution.
          */
-        def value (t : T) : U =
+        def value(t : T) : U =
             _value match {
                 case None =>
-                    sys.error (s"ParamState.value: $name.$sname is undefined")
-                case Some (m) if m contains t =>
-                    m (t)
+                    sys.error(s"ParamState.value: $name.$sname is undefined")
+                case Some(m) if m contains t =>
+                    m(t)
                 case _ =>
-                    sys.error (s"ParamState.value: $name.$sname($t) is undefined")
+                    sys.error(s"ParamState.value: $name.$sname($t) is undefined")
             }
 
         /**
          * Change this item of state to the value u at parameter `t`.  The
          * change occurs immediately.
          */
-        def change (t : T, u : U) {
+        def change(t : T, u : U) {
             _value match {
-                case None     => _value = Some (MutableMap ((t, u)))
-                case Some (m) => m += ((t, u))
+                case None    => _value = Some(MutableMap((t, u)))
+                case Some(m) => m += ((t, u))
             }
         }
 
@@ -236,8 +236,8 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
     /**
      * Allow an updater to be used to access a parameterised state value.
      */
-    implicit def paramUpdaterToU[T,U,V >: U] (up : ParamUpdater[T,U]) : V =
-        up.state.value (up.t)
+    implicit def paramUpdaterToU[T, U, V >: U](up : ParamUpdater[T, U]) : V =
+        up.state.value(up.t)
 
     /**
      * An update of an item of state `s` to have the value `t`.
@@ -247,7 +247,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
         /**
          * Perform this update
          */
-        def perform () : Unit
+        def perform() : Unit
 
         /**
          * Return a key for use when checking consistency of this update
@@ -266,16 +266,16 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
     /**
      * An update of a scalar item of state `s` to have the value `t`.
      */
-    class ScalarUpdate[T] (s : State[T], t : T) extends Update {
+    class ScalarUpdate[T](s : State[T], t : T) extends Update {
 
         /**
          * Perform this update.
          */
-        def perform () {
-            s.change (t)
+        def perform() {
+            s.change(t)
             if (debug) {
-                val d = name <> '.' <> s.sname <+> ":=" </> nest (ppvalue (s))
-                emitter.emitln (layout (d))
+                val d = name <> '.' <> s.sname <+> ":=" </> nest(ppvalue(s))
+                emitter.emitln(layout(d))
             }
         }
 
@@ -304,17 +304,17 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
      * An update of a parameterised item of state `s` to have the value `u`
      * at parameter `t`.
      */
-    class ParamUpdate[T,U] (s : ParamState[T,U], t : T, u : U) extends Update {
+    class ParamUpdate[T, U](s : ParamState[T, U], t : T, u : U) extends Update {
 
         /**
          * Perform this update.
          */
-        def perform () {
-            s.change (t, u)
+        def perform() {
+            s.change(t, u)
             if (debug) {
-                val d = name <> '.' <> s.sname <> '(' <> ppvalue (t) <> ')' <+>
-                            ":=" </> nest (ppvalue (u))
-                emitter.emitln (layout (d))
+                val d = name <> '.' <> s.sname <> '(' <> ppvalue(t) <> ')' <+>
+                    ":=" </> nest(ppvalue(u))
+                emitter.emitln(layout(d))
             }
         }
 
@@ -350,18 +350,18 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
      * state updates will be performed after this routine returns.
      * Default: do nothing.
      */
-    def init () { }
+    def init() {}
 
     /**
      * The rule to execute to run one step of this machine.
      */
-    def main () : Unit
+    def main() : Unit
 
     /**
      * Clean up after this machine.  This routine is called after the
      * machine terminates.  Default: do nothing.
      */
-    def finit () { }
+    def finit() {}
 
     /**
      * Perform any pending updates, returning true if updates were
@@ -370,18 +370,18 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
      * than once, it must be updated to the same value by all updates.
      * If updates are not consistent, the machine is aborted.
      */
-    def performUpdates () : Boolean = {
+    def performUpdates() : Boolean = {
         if (updates.isEmpty)
             false
         else {
             // Check updates for consistency
-            updates.groupBy (_.key).map {
+            updates.groupBy(_.key).map {
                 case (key, keyUpdates) =>
-                    if (keyUpdates.map (_.value).distinct.length != 1)
-                        throw new InconsistentUpdateException (this, keyUpdates)
+                    if (keyUpdates.map(_.value).distinct.length != 1)
+                        throw new InconsistentUpdateException(this, keyUpdates)
             }
             // Actually perform the updates
-            updates.map (_.perform)
+            updates.map(_.perform)
             true
         }
     }
@@ -389,7 +389,7 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
     /**
      * Reset the machine to begin a step.
      */
-    def reset () {
+    def reset() {
         updates = Nil
     }
 
@@ -408,21 +408,21 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
      * updates.  `init` should be called before this method.
      */
     @tailrec
-    final def steps (nstep : Int) {
+    final def steps(nstep : Int) {
         if (debug)
-            emitter.emitln (s"$name step $nstep")
+            emitter.emitln(s"$name step $nstep")
         if (step)
-            steps (nstep + 1)
+            steps(nstep + 1)
     }
 
     /**
      * Run this machine by initialising its state and then executing
      * its steps.
      */
-    def run () {
+    def run() {
         init
         performUpdates
-        steps (0)
+        steps(0)
         finit
     }
 
@@ -434,5 +434,5 @@ abstract class Machine (val name : String, emitter : Emitter = new ErrorEmitter)
  * that performed the update, `updates` is all of the updates for the key
  * that was updated inconsistently.
  */
-class InconsistentUpdateException (m : Machine, updates : List[Machine#Update])
-    extends Exception (s"Machine = ${m.name}, updates = $updates")
+class InconsistentUpdateException(m : Machine, updates : List[Machine#Update])
+    extends Exception(s"Machine = ${m.name}, updates = $updates")

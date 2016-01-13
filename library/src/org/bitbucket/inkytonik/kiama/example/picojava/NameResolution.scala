@@ -49,8 +49,8 @@ trait NameResolution {
      */
     val decl : Access => Decl =
         attr {
-            case Dot (_, n) => decl (n)
-            case u : IdnUse => lookup (u.Name) (u)
+            case Dot(_, n)  => decl(n)
+            case u : IdnUse => lookup(u.Name)(u)
         }
 
     /**
@@ -87,27 +87,28 @@ trait NameResolution {
      */
     val lookup : String => PicoJavaNode => Decl =
         paramAttr {
-            name => {
-                case tree.parent.pair (_ : Block, p : Program) =>
-                    localLookup (name) (p)
+            name =>
+                {
+                    case tree.parent.pair(_ : Block, p : Program) =>
+                        localLookup(name)(p)
 
-                case tree.parent.pair (_ : Block, c : ClassDecl) =>
-                    if ((superClass (c) != null) && (!isUnknown (remoteLookup (name) (superClass (c)))))
-                        remoteLookup (name) (superClass (c))
-                    else
-                        lookup (name) (c)
+                    case tree.parent.pair(_ : Block, c : ClassDecl) =>
+                        if ((superClass(c) != null) && (!isUnknown(remoteLookup(name)(superClass(c)))))
+                            remoteLookup(name)(superClass(c))
+                        else
+                            lookup(name)(c)
 
-                case tree.parent.pair (_ : BlockStmt, b : Block) =>
-                    val d = localLookup (name) (b)
-                    if (isUnknown (d)) lookup (name) (b) else d
+                    case tree.parent.pair(_ : BlockStmt, b : Block) =>
+                        val d = localLookup(name)(b)
+                        if (isUnknown(d)) lookup(name)(b) else d
 
-                case tree.parent.pair (i : IdnUse, Dot (a, i2)) if i eq i2 =>
-                    remoteLookup (name) (tipe (decl (a)))
+                    case tree.parent.pair(i : IdnUse, Dot(a, i2)) if i eq i2 =>
+                        remoteLookup(name)(tipe(decl(a)))
 
-                case tree.parent (p) =>
-                    lookup (name) (p)
-           }
-       }
+                    case tree.parent(p) =>
+                        lookup(name)(p)
+                }
+        }
 
     /**
      * Look through the local declarations in a block.
@@ -130,26 +131,27 @@ trait NameResolution {
      */
     val localLookup : String => PicoJavaNode => Decl =
         paramAttr {
-            name => {
-                case p : Program =>
-                    finddecl (p, name, getPredefinedTypeList (p))
-                case b : Block =>
-                    finddecl (b, name, b.BlockStmts)
-                case tree.parent (p) =>
-                    localLookup (name) (p)
-            }
+            name =>
+                {
+                    case p : Program =>
+                        finddecl(p, name, getPredefinedTypeList(p))
+                    case b : Block =>
+                        finddecl(b, name, b.BlockStmts)
+                    case tree.parent(p) =>
+                        localLookup(name)(p)
+                }
         }
 
     /**
      * Search a sequence of block statements for a declaration matching a given name.
      * Return the matching declaration or the unknown declaration if not found.
      */
-    def finddecl (t : PicoJavaNode, name : String, blockstmts : Vector[BlockStmt]) : Decl =
+    def finddecl(t : PicoJavaNode, name : String, blockstmts : Vector[BlockStmt]) : Decl =
         blockstmts.collectFirst {
-            case blockstmt if declarationOf (name) (blockstmt) != null =>
-                declarationOf (name) (blockstmt)
-        }.getOrElse (
-            unknownDecl (t)
+            case blockstmt if declarationOf(name)(blockstmt) != null =>
+                declarationOf(name)(blockstmt)
+        }.getOrElse(
+            unknownDecl(t)
         )
 
     /**
@@ -173,17 +175,18 @@ trait NameResolution {
      */
     val remoteLookup : String => TypeDecl => Decl =
         paramAttr {
-            name => {
-                case c : ClassDecl =>
-                    if (!isUnknown (localLookup (name) (c.Body)))
-                        localLookup (name) (c.Body)
-                    else if ((superClass (c) != null) && (!isUnknown (remoteLookup (name) (superClass (c)))))
-                        remoteLookup (name) (superClass (c))
-                    else
-                        unknownDecl (c)
-                case t =>
-                    unknownDecl (t)
-            }
+            name =>
+                {
+                    case c : ClassDecl =>
+                        if (!isUnknown(localLookup(name)(c.Body)))
+                            localLookup(name)(c.Body)
+                        else if ((superClass(c) != null) && (!isUnknown(remoteLookup(name)(superClass(c)))))
+                            remoteLookup(name)(superClass(c))
+                        else
+                            unknownDecl(c)
+                    case t =>
+                        unknownDecl(t)
+                }
         }
 
     /**
@@ -195,11 +198,12 @@ trait NameResolution {
      * }
      */
     val declarationOf : String => BlockStmt => Decl =
-         paramAttr {
-             name => {
-                 case d : Decl => if (name == d.Name) d else null
-                 case _        => null
-             }
-         }
+        paramAttr {
+            name =>
+                {
+                    case d : Decl => if (name == d.Name) d else null
+                    case _        => null
+                }
+        }
 
 }

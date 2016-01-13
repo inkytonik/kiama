@@ -35,7 +35,7 @@ trait ReduceSubst extends Reduce {
      * operators anywhere.
      */
     override lazy val s =
-        reduce (lambda)
+        reduce(lambda)
 
     /**
      * Reusable strategy for reduction with explicit term-level substitution.
@@ -48,7 +48,7 @@ trait ReduceSubst extends Reduce {
      */
     override lazy val beta =
         rule[Exp] {
-            case App (Lam (x, t, e1), e2) => Let (x, t, e2, e1)
+            case App(Lam(x, t, e1), e2) => Let(x, t, e2, e1)
         }
 
     /**
@@ -56,7 +56,7 @@ trait ReduceSubst extends Reduce {
      */
     lazy val subsNum =
         rule[Exp] {
-            case Let (_, _, _, e : Num) => e
+            case Let(_, _, _, e : Num) => e
         }
 
     /**
@@ -64,8 +64,8 @@ trait ReduceSubst extends Reduce {
      */
     lazy val subsVar =
         rule[Exp] {
-            case Let (x, _, e, Var (y)) if x == y => e
-            case Let (_, _, _, v : Var)           => v
+            case Let(x, _, e, Var(y)) if x == y => e
+            case Let(_, _, _, v : Var)          => v
         }
 
     /**
@@ -73,8 +73,8 @@ trait ReduceSubst extends Reduce {
      */
     lazy val subsApp =
         rule[Exp] {
-            case Let (x, t, e, App (e1, e2)) =>
-                App (Let (x, t, e, e1), Let (x, t, e, e2))
+            case Let(x, t, e, App(e1, e2)) =>
+                App(Let(x, t, e, e1), Let(x, t, e, e2))
         }
 
     /**
@@ -82,11 +82,11 @@ trait ReduceSubst extends Reduce {
      */
     lazy val subsLam =
         rule[Exp] {
-            case Let (x, t1, e1, Lam (y, t2, e2)) if x == y =>
-                Lam (y, t2, e2)
-            case Let (x, t1, e1, Lam (y, t2, e2)) =>
-                val z = freshVar ()
-                Lam (z, t2, Let (x, t1, e1, Let (y, t2, Var (z), e2)))
+            case Let(x, t1, e1, Lam(y, t2, e2)) if x == y =>
+                Lam(y, t2, e2)
+            case Let(x, t1, e1, Lam(y, t2, e2)) =>
+                val z = freshVar()
+                Lam(z, t2, Let(x, t1, e1, Let(y, t2, Var(z), e2)))
         }
 
     /**
@@ -94,8 +94,8 @@ trait ReduceSubst extends Reduce {
      */
     lazy val subsOpn =
         rule[Exp] {
-            case Let (x, t, e1, Opn (e2, op, e3)) =>
-                Opn (Let (x, t, e1, e2), op, Let (x, t, e1, e3))
+            case Let(x, t, e1, Opn(e2, op, e3)) =>
+                Opn(Let(x, t, e1, e2), op, Let(x, t, e1, e3))
         }
 
 }
@@ -103,5 +103,4 @@ trait ReduceSubst extends Reduce {
 class ReduceSubstEvaluator extends ReduceSubst {
     override val reducesinlambdas = true
 }
-
 

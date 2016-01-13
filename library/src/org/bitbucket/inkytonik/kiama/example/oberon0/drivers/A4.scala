@@ -34,26 +34,26 @@ trait A4Phases extends L4.source.SourcePrettyPrinter
     def langlevel : Int = 4
     def tasklevel : Int = 6
 
-    val parsers = new L4.SyntaxAnalyser (positions)
+    val parsers = new L4.SyntaxAnalyser(positions)
     val parser = parsers.moduledecl
 
-    def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
+    def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
         new L4.NameAnalyser with L4.TypeAnalyser {
             val tree = atree
         }
 
-    def buildTransformer (atree : SourceTree) : base.Transformer =
+    def buildTransformer(atree : SourceTree) : base.Transformer =
         new L2.Lifter with L2.Desugarer {
             val tree = atree
-            def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
-                phases.buildAnalyser (atree)
+            def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
+                phases.buildAnalyser(atree)
         }
 
-    def buildTranslator (atree : SourceTree) : base.Translator =
+    def buildTranslator(atree : SourceTree) : base.Translator =
         new L4.CCodeGenerator {
             val tree = atree
-            def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
-                phases.buildAnalyser (atree)
+            def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
+                phases.buildAnalyser(atree)
         }
 
 }

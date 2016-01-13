@@ -30,65 +30,65 @@ trait SymbolTable extends L0.SymbolTable {
     /**
      * A procedure entity represented by a procedure declaration.
      */
-    case class Procedure (ident : String, decl : ProcDecl) extends NamedEntity
+    case class Procedure(ident : String, decl : ProcDecl) extends NamedEntity
 
     /**
      * A parameter is a variable augmented with a passing mode.
      */
-    case class Parameter (mode : Mode, varr : Variable) extends NamedEntity {
+    case class Parameter(mode : Mode, varr : Variable) extends NamedEntity {
         def ident : String = varr.ident
     }
 
     /**
      * Parameters are variables too.
      */
-    override def isVariable (e : Entity) : Boolean =
-        super.isVariable (e) || e.isInstanceOf[Parameter]
+    override def isVariable(e : Entity) : Boolean =
+        super.isVariable(e) || e.isInstanceOf[Parameter]
 
     /**
      * Information about a particular parameter.  Similar to Parameter but the type
      * has been replaced with its definition.
      */
-    case class ParamInfo (mode : Mode, ident : String, tipe : Type)
+    case class ParamInfo(mode : Mode, ident : String, tipe : Type)
 
     /**
      * A built-in procedure with its parameter information.
      */
-    case class BuiltinProc (ident : String, params : Vector[ParamInfo]) extends Entity
+    case class BuiltinProc(ident : String, params : Vector[ParamInfo]) extends Entity
 
     /**
      * The built-in Read procedure.
      */
     lazy val readProc =
-        BuiltinProc ("Read", Vector (ParamInfo (VarMode (), "ReadParam", integerType)))
+        BuiltinProc("Read", Vector(ParamInfo(VarMode(), "ReadParam", integerType)))
 
     /**
      * The built-in Write procedure.
      */
     lazy val writeProc =
-        BuiltinProc ("Write", Vector (ParamInfo (ValMode (), "WriteParam", integerType)))
+        BuiltinProc("Write", Vector(ParamInfo(ValMode(), "WriteParam", integerType)))
 
     /**
      * The built-in WriteLn procedure.
      */
     lazy val writelnProc =
-        BuiltinProc ("WriteLn", Vector ())
+        BuiltinProc("WriteLn", Vector())
 
     /**
      * Return true if the entity is a builtin, false otherwise.
      */
-    override def isBuiltin (e : Entity) : Boolean =
-        super.isBuiltin (e) || e.isInstanceOf[BuiltinProc]
+    override def isBuiltin(e : Entity) : Boolean =
+        super.isBuiltin(e) || e.isInstanceOf[BuiltinProc]
 
     /**
      * The default environment with pre-defined procedures added.
      */
-    override def defenvPairs : List[(String,Entity)] =
-        List (
-            "Read"    -> readProc,
-            "Write"   -> writeProc,
+    override def defenvPairs : List[(String, Entity)] =
+        List(
+            "Read" -> readProc,
+            "Write" -> writeProc,
             "WriteLn" -> writelnProc
         ) ++
-        super.defenvPairs
+            super.defenvPairs
 
 }

@@ -33,7 +33,7 @@ class InterpreterTests extends ParseTests {
     import org.bitbucket.inkytonik.kiama.util.StringEmitter
     import scala.io.Source
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
 
     /**
      * Create an interpreter test. The file name `fn` is the one that should be
@@ -42,88 +42,88 @@ class InterpreterTests extends ParseTests {
      * definitions to obtain some textual output, which is compared against the
      * expected output.
      */
-    def querytest (fn : String, q : String, exp : String) {
+    def querytest(fn : String, q : String, exp : String) {
         val filename = s"src/org/bitbucket/inkytonik/kiama/example/prolog/tests/$fn"
-        test (s"$q on $filename") {
-            assertParseCheck (Source.fromFile (filename).mkString, parsers.program) {
+        test(s"$q on $filename") {
+            assertParseCheck(Source.fromFile(filename).mkString, parsers.program) {
                 programtree =>
-                    assertParseCheck (q, parsers.query) {
+                    assertParseCheck(q, parsers.query) {
                         querytree =>
                             val interpreter = new Interpreter
                             val emitter = new StringEmitter
-                            interpreter.interpret (querytree, programtree, emitter)
-                            assertResult (exp) (emitter.result)
+                            interpreter.interpret(querytree, programtree, emitter)
+                            assertResult(exp)(emitter.result)
                     }
             }
         }
     }
 
-    querytest ("likes.pl", "likes.", "")
+    querytest("likes.pl", "likes.", "")
 
-    querytest ("likes.pl", "unknown(mary,X).", "")
+    querytest("likes.pl", "unknown(mary,X).", "")
 
-    querytest ("likes.pl", "likes(mary,wine).", "yes\n")
+    querytest("likes.pl", "likes(mary,wine).", "yes\n")
 
-    querytest ("likes.pl", "likes(mary,john).", "")
+    querytest("likes.pl", "likes(mary,john).", "")
 
-    querytest ("likes.pl", "likes(john,Y).",
-               """Y = wine
+    querytest("likes.pl", "likes(john,Y).",
+        """Y = wine
                  |Y = mary
                  |Y = mary
                  |""".stripMargin)
 
-    querytest ("likes.pl", "likes(X,boris).", "")
+    querytest("likes.pl", "likes(X,boris).", "")
 
-    querytest ("likes.pl", "likes(X,mary).",
-               """X = john
+    querytest("likes.pl", "likes(X,mary).",
+        """X = john
                  |X = john
                  |""".stripMargin)
 
-    querytest ("likes.pl", "likes(X,wine).",
-               """X = mary
+    querytest("likes.pl", "likes(X,wine).",
+        """X = mary
                  |X = john
                  |""".stripMargin)
 
-    querytest ("likes.pl", "likes(X,Y).",
-               """X = mary Y = food
+    querytest("likes.pl", "likes(X,Y).",
+        """X = mary Y = food
                  |X = mary Y = wine
                  |X = john Y = wine
                  |X = john Y = mary
                  |X = john Y = mary
                  |""".stripMargin)
 
-    querytest ("family.pl", "male(bob).", "yes\n")
+    querytest("family.pl", "male(bob).", "yes\n")
 
-    querytest ("family.pl", "male(victoria).", "")
+    querytest("family.pl", "male(victoria).", "")
 
-    querytest ("family.pl", "female(victoria).", "yes\n")
+    querytest("family.pl", "female(victoria).", "yes\n")
 
-    querytest ("family.pl", "male(X).",
-               """X = albert
+    querytest("family.pl", "male(X).",
+        """X = albert
                  |X = edward
                  |X = bob
                  |""".stripMargin)
 
-    querytest ("family.pl", "parent(alice,albert).", "yes\n")
+    querytest("family.pl", "parent(alice,albert).", "yes\n")
 
-    querytest ("family.pl", "parent(alice,Y).",
-               """Y = albert
+    querytest("family.pl", "parent(alice,Y).",
+        """Y = albert
                  |Y = victoria
                  |Y = bob
                  |""".stripMargin)
 
-    querytest ("family.pl", "father(edward,Y).",
-               """Y = victoria
+    querytest("family.pl", "father(edward,Y).",
+        """Y = victoria
                  |Y = albert
                  |""".stripMargin)
 
-    querytest ("family.pl", "father(X,Y).",
-               """X = edward Y = victoria
+    querytest("family.pl", "father(X,Y).",
+        """X = edward Y = victoria
                  |X = edward Y = albert
                  |""".stripMargin)
 
-    querytest ("family.pl", "daughter(victoria,Y).",
-               """Y = edward
+    querytest("family.pl", "daughter(victoria,Y).",
+        """Y = edward
                  |Y = alice
                  |""".stripMargin)
 

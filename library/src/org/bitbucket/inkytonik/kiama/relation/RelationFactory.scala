@@ -27,11 +27,11 @@ import scala.language.higherKinds
  * Interface for factories that can create relations. `Repr` is the
  * representation type of the relations that the factory produces.
  */
-trait RelationFactory[Repr[_,_]] {
+trait RelationFactory[Repr[_, _]] {
 
     /**
      * Make a relation from its graph.
      */
-    def fromGraph[T,U] (graph : Vector[(T,U)]) : Repr[T,U]
+    def fromGraph[T, U](graph : Vector[(T, U)]) : Repr[T, U]
 
 }

@@ -38,44 +38,53 @@ class DotNameResolutionTests extends Tests {
 
     // For the actual program text, see DotNameResolutionTests.pj
 
-    val axInA   = Use ("x")
-    val declAAx = VarDecl (Use ("int"), "x")
-    val bxInBB  = Use ("x")
-    val byInBB  = Use ("y")
-    val BBinBB  = Use ("BB")
-    val declAA  = ClassDecl ("AA", None, Block (Vector (declAAx)))
-    val declBB  = ClassDecl ("BB", Some (Use ("AA")), Block (
-                      Vector (VarDecl (BBinBB, "b"),
-                              AssignStmt (Dot (Use ("b"), byInBB),
-                                          Dot (Use ("b"), bxInBB)))))
+    val axInA = Use("x")
+    val declAAx = VarDecl(Use("int"), "x")
+    val bxInBB = Use("x")
+    val byInBB = Use("y")
+    val BBinBB = Use("BB")
+    val declAA = ClassDecl("AA", None, Block(Vector(declAAx)))
+    val declBB = ClassDecl("BB", Some(Use("AA")), Block(
+        Vector(
+            VarDecl(BBinBB, "b"),
+            AssignStmt(
+                Dot(Use("b"), byInBB),
+                Dot(Use("b"), bxInBB)
+            )
+        )
+    ))
 
     val ast =
-        Program (Block (
-            Vector (ClassDecl ("A", None, Block (
-                Vector (VarDecl (Use ("int"), "y"),
-                        VarDecl (Use ("AA"), "a"),
-                        AssignStmt (Use ("x"), Dot (Use ("a"), axInA)),
-                        declAA,
-                        declBB))))))
+        Program(Block(
+            Vector(ClassDecl("A", None, Block(
+                Vector(
+                    VarDecl(Use("int"), "y"),
+                    VarDecl(Use("AA"), "a"),
+                    AssignStmt(Use("x"), Dot(Use("a"), axInA)),
+                    declAA,
+                    declBB
+                )
+            )))
+        ))
 
-    val tree = new PicoJavaTree (ast)
-    val analyser = new ErrorCheck (tree)
+    val tree = new PicoJavaTree(ast)
+    val analyser = new ErrorCheck(tree)
     import analyser._
 
-    test ("class members are resolved") {
-        assertResult (declAAx) (decl (axInA))
+    test("class members are resolved") {
+        assertResult(declAAx)(decl(axInA))
     }
 
-    test ("nested classes are resolved") {
-        assertResult (declBB) (decl (BBinBB))
+    test("nested classes are resolved") {
+        assertResult(declBB)(decl(BBinBB))
     }
 
-    test ("nested names hide outer ones") {
-        assertResult (declAAx) (decl (bxInBB))
+    test("nested names hide outer ones") {
+        assertResult(declAAx)(decl(bxInBB))
     }
 
-    test ("non-members in scope are not resolved as members") {
-        assert (isUnknown (decl (byInBB)))
+    test("non-members in scope are not resolved as members") {
+        assert(isUnknown(decl(byInBB)))
     }
 
 }

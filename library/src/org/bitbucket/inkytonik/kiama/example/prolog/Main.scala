@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.util.{Emitter, REPLConfig, ParsingREPLWithC
 /**
  * Configuration for the Prolog REPL.
  */
-abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
+abstract class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
@@ -42,12 +42,12 @@ abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
 
             val argType = ArgType.SINGLE
 
-            def parse (s : List[(String, List[String])]) : Either[String,Option[Program]] =
+            def parse(s : List[(String, List[String])]) : Either[String, Option[Program]] =
                 s match {
-                    case List ((_, List (filename))) =>
-                        Main.makeDatabase (filename)
+                    case List((_, List(filename))) =>
+                        Main.makeDatabase(filename)
                     case _ =>
-                        Right (None)
+                        Right(None)
                 }
 
             val tag = implicitly[TypeTag[Program]]
@@ -58,8 +58,8 @@ abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
      * The program that represents the facts and clauses that will be made available
      * to the queries that are entered in the REPL.
      */
-    lazy val database = opt[Program] ("database", descr = "Database of facts and clauses to use in queries",
-                                      required = true) (databaseConverter)
+    lazy val database = opt[Program]("database", descr = "Database of facts and clauses to use in queries",
+        required = true)(databaseConverter)
 
 }
 
@@ -69,56 +69,64 @@ abstract class PrologConfig (args : Seq[String]) extends REPLConfig (args) {
  * interactive read-eval-print loop (REPL) to read queries.  For each
  * query, call the interpreter to evaluate it.
  */
-object Main extends ParsingREPLWithConfig[Literal,PrologConfig] with PrettyPrinter {
+object Main extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrinter {
 
     import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
-    import org.bitbucket.inkytonik.kiama.util.{Emitter, ErrorEmitter, FileSource, OutputEmitter, Source,
-        StringEmitter}
+    import org.bitbucket.inkytonik.kiama.util.{
+        Emitter,
+        ErrorEmitter,
+        FileSource,
+        OutputEmitter,
+        Source,
+        StringEmitter
+    }
     import PrologTree.{Program, PrologTree}
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
-    def createConfig (args : Seq[String],
-                      out : Emitter = new OutputEmitter,
-                      err : Emitter = new ErrorEmitter) : PrologConfig =
-        new PrologConfig (args) {
+    def createConfig(
+        args : Seq[String],
+        out : Emitter = new OutputEmitter,
+        err : Emitter = new ErrorEmitter
+    ) : PrologConfig =
+        new PrologConfig(args) {
             lazy val output = out
             lazy val error = err
         }
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.query
 
     /**
      * Helper function to create the database from the given filename or return
      * a command-line error.
      */
-    def makeDatabase (filename : String) : Either[String,Option[Program]] =
+    def makeDatabase(filename : String) : Either[String, Option[Program]] =
         try {
             // Parse the file
-            val source = FileSource (filename)
-            parsers.parseAll (parsers.program, source) match {
+            val source = FileSource(filename)
+            parsers.parseAll(parsers.program, source) match {
                 // If parse worked, we get a source tree, check it
-                case Success (dbtree, _) =>
+                case Success(dbtree, _) =>
                     // Pretty print the source tree
                     // config.error.emitln (pretty (any (dbtree)))
-                    val tree = new PrologTree (dbtree)
-                    val analyser = new SemanticAnalyser (tree)
+                    val tree = new PrologTree(dbtree)
+                    val analyser = new SemanticAnalyser(tree)
                     val messages = analyser.errors
                     if (messages.length > 0) {
                         val emitter = new StringEmitter
-                        report (messages, emitter)
-                        Left (s"database file errors: ${emitter.result}")
+                        report(messages, emitter)
+                        Left(s"database file errors: ${emitter.result}")
                     } else {
-                        Right (Some (dbtree))
+                        Right(Some(dbtree))
                     }
                 // If parse failed, we get an error message
                 case f =>
-                    Left (s"error parsing $filename: $f")
+                    Left(s"error parsing $filename: $f")
             }
         } catch {
             case e : java.io.FileNotFoundException =>
-                Left (e.getMessage)
+                Left(e.getMessage)
         }
 
     /**
@@ -134,8 +142,8 @@ object Main extends ParsingREPLWithConfig[Literal,PrologConfig] with PrettyPrint
     /**
      * Process a query by passing it and the program to the interpreter.
      */
-    def process (source : Source, querytree : Literal, config : PrologConfig) {
-        interpreter.interpret (querytree, config.database (), config.output)
+    def process(source : Source, querytree : Literal, config : PrologConfig) {
+        interpreter.interpret(querytree, config.database(), config.output)
     }
 
 }

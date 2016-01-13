@@ -26,7 +26,7 @@ import org.bitbucket.inkytonik.kiama.util.Source
 /**
  * The input consumed by a parser.
  */
-case class Input (source : Source, offset : Int) {
+case class Input(source : Source, offset : Int) {
 
     import org.bitbucket.inkytonik.kiama.util.Position
 
@@ -43,7 +43,7 @@ case class Input (source : Source, offset : Int) {
         if (atEnd)
             None
         else
-            Some (source.content.charAt (offset))
+            Some(source.content.charAt(offset))
 
     /**
      * Return a description of the current character found in the input,
@@ -54,13 +54,13 @@ case class Input (source : Source, offset : Int) {
         if (offset == source.content.length)
             "end of source"
         else
-            s"`${source.content.charAt (offset)}'"
+            s"`${source.content.charAt(offset)}'"
 
     /**
      * Return the current position of the input.
      */
     val position : Position =
-        source.offsetToPosition (offset)
+        source.offsetToPosition(offset)
 
     /**
      * The rest of the input, unchanged if already at end.
@@ -69,6 +69,6 @@ case class Input (source : Source, offset : Int) {
         if (atEnd)
             this
         else
-            Input (source, offset + 1)
+            Input(source, offset + 1)
 
 }

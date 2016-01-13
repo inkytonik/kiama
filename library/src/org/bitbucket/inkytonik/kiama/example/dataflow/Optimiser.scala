@@ -29,26 +29,26 @@ import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
  * variables that are not live out of the assignment and b) remove empty
  * statements from sequences.
  */
-class Optimiser (override val tree : DataflowTree) extends Dataflow (tree) {
+class Optimiser(override val tree : DataflowTree) extends Dataflow(tree) {
 
     import DataflowTree._
 
-    def run (t : Stm) : Stm =
-        rewrite (rules) (t)
+    def run(t : Stm) : Stm =
+        rewrite(rules)(t)
 
     lazy val rules = elimDeadAssign <* elimEmpties
 
     lazy val elimDeadAssign =
-        alltd (rule[Stm] {
-            case s @ Assign (v, _) if ! (out (s) contains v) =>
-                Empty ()
+        alltd(rule[Stm] {
+            case s @ Assign(v, _) if !(out(s) contains v) =>
+                Empty()
         })
 
     lazy val elimEmpties =
-        bottomup (attempt (rule[List[Stm]] {
-            case Empty () :: ss => ss
+        bottomup(attempt(rule[List[Stm]] {
+            case Empty() :: ss => ss
         } <+ rule[Stm] {
-            case Block (Nil)    => Empty ()
+            case Block(Nil) => Empty()
         }))
 
 }

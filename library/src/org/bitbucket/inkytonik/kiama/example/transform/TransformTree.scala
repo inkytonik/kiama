@@ -31,7 +31,7 @@ object TransformTree {
     /**
      * Tree type for transform trees.
      */
-    type TransformTree = Tree[TransformNode,Program]
+    type TransformTree = Tree[TransformNode, Program]
 
     /**
      * Abstract syntax for transform tree nodes.
@@ -48,13 +48,13 @@ object TransformTree {
      * expression using those operators, and an equivalent expression with
      * correct operator structure which is filled in after parsing.
      */
-    case class Program (ops : Vector[(String,Int)], vars : Vector[VarDecl],
-                        expr : ExpR) extends TransformNode
+    case class Program(ops : Vector[(String, Int)], vars : Vector[VarDecl],
+        expr : ExpR) extends TransformNode
 
     /**
      * A variable declaration.
      */
-    case class VarDecl (name : String) extends TransformNode
+    case class VarDecl(name : String) extends TransformNode
 
     /**
      * Right recursive expression syntax class.
@@ -64,12 +64,12 @@ object TransformTree {
     /**
      * Right recursive binary operator expression.
      */
-    case class BinExpR (left : Exp, op: String, right : ExpR) extends ExpR
+    case class BinExpR(left : Exp, op : String, right : ExpR) extends ExpR
 
     /**
      * Primitive expression
      */
-    case class Factor (exp : PrimExp) extends ExpR
+    case class Factor(exp : PrimExp) extends ExpR
 
     /**
      * Unrestricted expression syntax class.
@@ -79,21 +79,21 @@ object TransformTree {
     /**
      * Binary operator expression with arbitrary expression children.
      */
-    case class BinExp (left : Exp, op: String, right : Exp) extends Exp
+    case class BinExp(left : Exp, op : String, right : Exp) extends Exp
 
     /**
      * Primitive expression abstract class.
      */
-   sealed abstract class PrimExp extends Exp
+    sealed abstract class PrimExp extends Exp
 
     /**
      * Integer literal expression.
      */
-    case class Num (value : Int) extends PrimExp
+    case class Num(value : Int) extends PrimExp
 
     /**
      * Variable expression.
      */
-    case class Var (name : String) extends PrimExp with EntityNode
+    case class Var(name : String) extends PrimExp with EntityNode
 
 }

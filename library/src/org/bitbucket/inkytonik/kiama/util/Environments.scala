@@ -21,7 +21,6 @@
 package org.bitbucket.inkytonik.kiama
 package util
 
-
 /**
  * General implementation of environments as stacked scopes.  The objects
  * associated with names in environments are of type Entity.
@@ -33,7 +32,7 @@ trait Environments {
     /**
      * A counter to count generated names.
      */
-    val nameCounter = new Counter (0)
+    val nameCounter = new Counter(0)
 
     /**
      * Support for unique ids for named things.
@@ -48,7 +47,7 @@ trait Environments {
         /**
          * A unique number to represent this thing.
          */
-        val num = nameCounter.next ()
+        val num = nameCounter.next()
 
         /**
          * A unique identifier for this thing, incorporating the underlying
@@ -71,7 +70,7 @@ trait Environments {
     /**
      * A scope maps identifiers to entities.
      */
-    type Scope = Map[String,Entity]
+    type Scope = Map[String, Entity]
 
     /**
      * An environment is a stack of scopes with the innermost scope on the top.
@@ -82,33 +81,33 @@ trait Environments {
      * Create a root environment, i.e., one that has a single scope containing
      * the given bindings.
      */
-    def rootenv (bindings : (String,Entity)*) : Environment =
-        List (HashMap (bindings : _*))
+    def rootenv(bindings : (String, Entity)*) : Environment =
+        List(HashMap(bindings : _*))
 
     /**
      * Enter a new empty scope nested within the given environment.
      */
-    def enter (env : Environment) : Environment =
-        (new HashMap[String,Entity]) :: env
+    def enter(env : Environment) : Environment =
+        (new HashMap[String, Entity]) :: env
 
     /**
      * Leave the outermost scope of the given environment, raising an error if
      * the environment is empty.
      */
-    def leave (env : Environment) : Environment =
+    def leave(env : Environment) : Environment =
         env match {
             case _ :: t => t
-            case _      => sys.error ("leave called on empty environment")
+            case _      => sys.error("leave called on empty environment")
         }
 
     /**
      * Define `i` to be `e` in the current scope of `env`, raising an error if
      * the environment is empty.
      */
-    def define (env : Environment, i : String, e : Entity) : Environment =
+    def define(env : Environment, i : String, e : Entity) : Environment =
         env match {
             case s :: t => (s + ((i, e))) :: t
-            case _      => sys.error ("define called on empty environment")
+            case _      => sys.error("define called on empty environment")
         }
 
     /**
@@ -116,13 +115,13 @@ trait Environments {
      * scope of `env`, define it to be `MultipleEntity` instead. The entity
      * `e` is only evaluated if needed.
      */
-    def defineIfNew (env : Environment, i : String, e : => Entity) : Environment =
-        define (env, i, if (isDefinedInScope (env, i)) MultipleEntity () else e)
+    def defineIfNew(env : Environment, i : String, e : => Entity) : Environment =
+        define(env, i, if (isDefinedInScope(env, i)) MultipleEntity() else e)
 
     /**
      * Say whether `i` is defined in the current scope of `env`.
      */
-    def isDefinedInScope (env : Environment, i : String) : Boolean =
+    def isDefinedInScope(env : Environment, i : String) : Boolean =
         env match {
             case s :: _ => s contains i
             case _      => false
@@ -131,22 +130,22 @@ trait Environments {
     /**
      * Say whether `i` is defined in the given scope.
      */
-    def isDefinedInScope (scope : Scope, i : String) : Boolean =
+    def isDefinedInScope(scope : Scope, i : String) : Boolean =
         scope contains i
 
     /**
      * Say whether `i` is defined in any scope of `env`.
      */
-    def isDefinedInEnv (env : Environment, i : String) : Boolean =
-        env.exists (s => isDefinedInScope (s, i))
+    def isDefinedInEnv(env : Environment, i : String) : Boolean =
+        env.exists(s => isDefinedInScope(s, i))
 
     /**
      * Say whether `i` is defined in an innermost scope of `env` (i.e., in the
      * current scope).
      */
-    def isDefinedInInner (env : Environment, i : String) : Boolean =
+    def isDefinedInInner(env : Environment, i : String) : Boolean =
         env match {
-            case s :: _ => isDefinedInScope (s, i)
+            case s :: _ => isDefinedInScope(s, i)
             case _      => false
         }
 
@@ -154,9 +153,9 @@ trait Environments {
      * Say whether `i` is defined in an outer scope of `env` (i.e., not in the
      * current scope).
      */
-    def isDefinedInOuter (env : Environment, i : String) : Boolean =
+    def isDefinedInOuter(env : Environment, i : String) : Boolean =
         env match {
-            case _ :: t => isDefinedInEnv (t, i)
+            case _ :: t => isDefinedInEnv(t, i)
             case _      => false
         }
 
@@ -166,15 +165,15 @@ trait Environments {
      * scope, otherwise search outwards in all scopes, returning the first
      * entity found, if any.
      */
-    def lookup (env : Environment, i : String, e : => Entity, local : Boolean = false) : Entity =
+    def lookup(env : Environment, i : String, e : => Entity, local : Boolean = false) : Entity =
         env match {
             case s :: t =>
                 if (local)
-                    s.getOrElse (i, e)
-                else if (isDefinedInScope (env, i))
-                    s (i)
+                    s.getOrElse(i, e)
+                else if (isDefinedInScope(env, i))
+                    s(i)
                 else
-                    lookup (t, i, e)
+                    lookup(t, i, e)
             case _ =>
                 e
         }
@@ -182,21 +181,21 @@ trait Environments {
     /**
      * Pretty-print the environment `env`.
      */
-    def format (env : Environment) : String = {
+    def format(env : Environment) : String = {
 
         import org.bitbucket.inkytonik.kiama.output.PrettyPrinter._
 
-        def entryToDoc (entry : (String,Entity)) : Doc =
-            dquotes (entry._1) <+> "->" <+> value (entry._2)
+        def entryToDoc(entry : (String, Entity)) : Doc =
+            dquotes(entry._1) <+> "->" <+> value(entry._2)
 
-        def scopeToDoc (s : Scope) : Doc =
-            "scope" <> nest (line <> vsep ((s map entryToDoc).toVector))
+        def scopeToDoc(s : Scope) : Doc =
+            "scope" <> nest(line <> vsep((s map entryToDoc).toVector))
 
         env match {
             case Nil =>
                 "no scopes"
-            case ss  =>
-                layout (vsep (ss map scopeToDoc))
+            case ss =>
+                layout(vsep(ss map scopeToDoc))
         }
 
     }

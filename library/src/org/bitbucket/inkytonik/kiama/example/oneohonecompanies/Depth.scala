@@ -23,20 +23,20 @@ package example.oneohonecompanies
 
 object Depth {
 
-    import CompanyTree.{Company,Dept}
+    import CompanyTree.{Company, Dept}
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.para
 
     /**
      * Return the nesting depth of departments.
      */
-    def depth (c : Company) : Int =
+    def depth(c : Company) : Int =
         para[Int] {
             case (t, cs) =>
                 (t match {
                     case d : Dept => 1
                     case _        => 0
-                 }) +
-                (cs :+ 0).max
-        } (c)
+                }) +
+                    (cs :+ 0).max
+        }(c)
 
 }

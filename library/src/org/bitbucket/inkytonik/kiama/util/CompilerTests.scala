@@ -31,36 +31,36 @@ class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
     import org.bitbucket.inkytonik.kiama.parsing.Parsers
     import org.bitbucket.inkytonik.kiama.util.Source
 
-    object parsers extends Parsers (positions) {
+    object parsers extends Parsers(positions) {
         val dummy : Parser[String] = "dummy".r
     }
 
     val parser = parsers.dummy
 
-    def process (source : Source, ast : Any, config : Config) {
+    def process(source : Source, ast : Any, config : Config) {
         // Do nothing
     }
 
-    def format (m : Any) : Document =
+    def format(m : Any) : Document =
         emptyDocument
 
-    test ("compiler driver produces an appropriate message if a file is not found") {
+    test("compiler driver produces an appropriate message if a file is not found") {
         val emitter = new StringEmitter
-        val config = createAndInitConfig (Seq ("IDoNotExist.txt"), emitter, emitter)
+        val config = createAndInitConfig(Seq("IDoNotExist.txt"), emitter, emitter)
         val expectedMsg =
-            if (System.getProperty("os.name").startsWith ("Windows"))
+            if (System.getProperty("os.name").startsWith("Windows"))
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
-        testdriver (config)
-        assertResult (s"IDoNotExist.txt ($expectedMsg)\n") (emitter.result)
+        testdriver(config)
+        assertResult(s"IDoNotExist.txt ($expectedMsg)\n")(emitter.result)
     }
 
-    test ("filetests using a directory that doesn't exist fails") {
+    test("filetests using a directory that doesn't exist fails") {
         val i = intercept[IllegalArgumentException] {
-                    filetests ("Compiler", "src/org/bitbucket/inkytonik/kiama/util/IDoNotExist", ".src", ".out")
-                }
-        assertResult ("bad test file path src/org/bitbucket/inkytonik/kiama/util/IDoNotExist") (i.getMessage)
+            filetests("Compiler", "src/org/bitbucket/inkytonik/kiama/util/IDoNotExist", ".src", ".out")
+        }
+        assertResult("bad test file path src/org/bitbucket/inkytonik/kiama/util/IDoNotExist")(i.getMessage)
     }
 
 }
@@ -79,23 +79,27 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : C
+    def createConfig(
+        args : Seq[String],
+        output : Emitter = new OutputEmitter,
+        error : Emitter = new ErrorEmitter
+    ) : C
 
     /**
      * Create and initialise the configuration for a particular run of the REPL.
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Seq[String],
-                             output : Emitter = new OutputEmitter,
-                             error : Emitter = new ErrorEmitter) : C
+    def createAndInitConfig(
+        args : Seq[String],
+        output : Emitter = new OutputEmitter,
+        error : Emitter = new ErrorEmitter
+    ) : C
 
     /**
      * Run the driver in test mode using the given configuration.
      */
-    def testdriver (config : C)
+    def testdriver(config : C)
 
     /**
      * Flag to decide whether to sanitise the output before comparison
@@ -113,9 +117,9 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      * pass.  This will clearly break any tests where the actual line endings
      * matter.
      */
-    def sanitise (s : String) : String =
+    def sanitise(s : String) : String =
         if (dosanitisation)
-            s.replaceAll ("\r", "\n")
+            s.replaceAll("\r", "\n")
         else
             s
 
@@ -133,9 +137,9 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      * you want to use.  Each test is run with each set of arguments.  The
      * default is an empty argument list.
      */
-    def filetests (name : String, path : String, srcext : String, resext : String,
-                   optinext : Option[String] = None, indefault : String = "",
-                   argslist : List[Seq[String]] = List (Seq ())) {
+    def filetests(name : String, path : String, srcext : String, resext : String,
+        optinext : Option[String] = None, indefault : String = "",
+        argslist : List[Seq[String]] = List(Seq())) {
 
         import java.io.FilenameFilter
 
@@ -146,28 +150,28 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          * messages. If the compilation fails, `rp` is assumed to contain the
          * expected messages. `rt` is a version of `rp` to use in the test title.
          */
-        def filetest (name : String, rp : String, args : Seq[String], rt : String,
-                      extra : String = "") {
-            val ct = args.mkString (" ").replaceAllLiterally ("kiama/src/org/bitbucket/inkytonik/kiama/", "")
+        def filetest(name : String, rp : String, args : Seq[String], rt : String,
+            extra : String = "") {
+            val ct = args.mkString(" ").replaceAllLiterally("kiama/src/org/bitbucket/inkytonik/kiama/", "")
             val title = s"$name: $ct, expecting $rt$extra"
-            test (title) {
+            test(title) {
                 val emitter = new StringEmitter
-                val config = createAndInitConfig (args, emitter, emitter)
-                positions.reset ()
+                val config = createAndInitConfig(args, emitter, emitter)
+                positions.reset()
                 try {
-                    testdriver (config)
+                    testdriver(config)
                 } catch {
                     case e : Exception =>
-                        info ("failed with an exception ")
+                        info("failed with an exception ")
                         throw (e)
                 }
                 val cc = emitter.result
                 try {
-                    val rc = Source.fromFile (rp).mkString
-                    assert (sanitise (cc) == sanitise (rc))
+                    val rc = Source.fromFile(rp).mkString
+                    assert(sanitise(cc) == sanitise(rc))
                 } catch {
                     case e : java.io.FileNotFoundException =>
-                        fail (s"$rp not found")
+                        fail(s"$rp not found")
                 }
             }
         }
@@ -180,45 +184,45 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          * identifying string used in messages.  `args` is the array of extra
          * command line args to use.
          */
-        def infiletests (c : String, dir : File, inext : String,
-                         args : Seq[String]) {
+        def infiletests(c : String, dir : File, inext : String,
+            args : Seq[String]) {
             val resfilter =
                 new FilenameFilter {
-                    def accept (dir : File, name : String) : Boolean = {
-                        name.startsWith (c) && name.endsWith (resext)
+                    def accept(dir : File, name : String) : Boolean = {
+                        name.startsWith(c) && name.endsWith(resext)
                     }
                 }
             val cp = s"$path/$c"
-            for (r <- dir.list (resfilter)) {
+            for (r <- dir.list(resfilter)) {
                 val rp = s"$path/$r"
-                val it = r.replace (resext, inext)
+                val it = r.replace(resext, inext)
                 val ip = s"$path/$it"
-                val inf = new File (ip)
+                val inf = new File(ip)
                 val (consoleArgs, msg) =
                     if (inf.exists)
-                        (Array ("--Kconsole", "file", ip), s" from input $it")
+                        (Array("--Kconsole", "file", ip), s" from input $it")
                     else
-                        (Array ("--Kconsole", "string", indefault), s" from string '$indefault'")
-                filetest (name, rp, consoleArgs ++ args :+ cp, r, msg)
+                        (Array("--Kconsole", "string", indefault), s" from string '$indefault'")
+                filetest(name, rp, consoleArgs ++ args :+ cp, r, msg)
             }
         }
 
-        val dir = new File (path)
+        val dir = new File(path)
         val children = dir.list
         if (children == null) {
-            throw (new IllegalArgumentException (s"bad test file path $path"))
+            throw (new IllegalArgumentException(s"bad test file path $path"))
         } else {
             for (args <- argslist) {
                 for (c <- children) {
-                    if (c.endsWith (srcext)) {
+                    if (c.endsWith(srcext)) {
                         optinext match {
-                            case Some (inext) =>
-                                infiletests (c, dir, inext, args)
+                            case Some(inext) =>
+                                infiletests(c, dir, inext, args)
                             case None =>
                                 val cp = s"$path/$c"
-                                val rt = c.replace (srcext, resext)
+                                val rt = c.replace(srcext, resext)
                                 val rp = s"$path/$rt"
-                                filetest (name, rp, args :+ cp, rt)
+                                filetest(name, rp, args :+ cp, rt)
                         }
                     }
                 }
@@ -234,13 +238,13 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
  */
 trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
 
-    self : CompilerBase[T,C] =>
+    self : CompilerBase[T, C] =>
 
     /**
      * Run the compiler in test mode using the given configuration.
      */
-    def testdriver (config : C) {
-        processfiles (config)
+    def testdriver(config : C) {
+        processfiles(config)
     }
 
 }
@@ -249,8 +253,8 @@ trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
  * Specialisation of `TestCompilerWithConfig` that uses the default
  * configuration type.
  */
-trait TestCompiler[T] extends TestCompilerWithConfig[T,Config] {
+trait TestCompiler[T] extends TestCompilerWithConfig[T, Config] {
 
-    self : CompilerBase[T,Config] =>
+    self : CompilerBase[T, Config] =>
 
 }

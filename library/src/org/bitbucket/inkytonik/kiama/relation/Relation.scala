@@ -26,7 +26,7 @@ package relation
  * Constructed from a vector of pairs that constitute the relation's
  * graph.
  */
-class Relation[T,U] (val graph : Vector[(T,U)]) extends RelationLike[T,U,Relation] {
+class Relation[T, U](val graph : Vector[(T, U)]) extends RelationLike[T, U, Relation] {
     val companion = Relation
 }
 
@@ -41,27 +41,27 @@ object Relation extends RelationFactory[Relation] {
     /**
      * Make a binary relation from its graph.
      */
-    def fromGraph[T,U] (graph : Vector[(T,U)]) : Relation[T,U] =
-        new Relation[T,U] (graph)
+    def fromGraph[T, U](graph : Vector[(T, U)]) : Relation[T, U] =
+        new Relation[T, U](graph)
 
     /**
      * Make a graph from the repeated application of `onestep` to `t` and
      * the results that it produces.
      */
-    def fromOneStepGraph[T] (t : T, onestep : T => Vector[T]) : Vector[(T,T)] = {
+    def fromOneStepGraph[T](t : T, onestep : T => Vector[T]) : Vector[(T, T)] = {
 
         @tailrec
-        def loop (pending : Queue[T], graph : Vector[(T,T)]) : Vector[(T,T)] =
+        def loop(pending : Queue[T], graph : Vector[(T, T)]) : Vector[(T, T)] =
             if (pending.isEmpty)
                 graph
             else {
                 val l = pending.front
-                val next = onestep (l)
+                val next = onestep(l)
                 val pairs = next.map { case r => (l, r) }
-                loop (pending.tail ++ next, graph ++ pairs)
+                loop(pending.tail ++ next, graph ++ pairs)
             }
 
-        loop (Queue (t), Vector ())
+        loop(Queue(t), Vector())
 
     }
 
@@ -69,7 +69,7 @@ object Relation extends RelationFactory[Relation] {
      * Make a binary relation using the graph produced by `fromOneStepGraph`
      * applied to `t` and `onestep`.
      */
-    def fromOneStep[T] (t : T, onestep : T => Vector[T]) : Relation[T,T] =
-        new Relation[T,T] (fromOneStepGraph (t, onestep))
+    def fromOneStep[T](t : T, onestep : T => Vector[T]) : Relation[T, T] =
+        new Relation[T, T](fromOneStepGraph(t, onestep))
 
 }

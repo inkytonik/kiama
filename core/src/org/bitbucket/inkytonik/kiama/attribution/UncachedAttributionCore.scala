@@ -38,8 +38,7 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
      * require the value of this attribute. If it does, a circularity error is reported
      * by throwing an `IllegalStateException`.
      */
-    class UncachedAttribute[T,U] (name : String, f : T => U) extends
-            Attribute[T,U] (name) with IdMemoised[T,Unit] {
+    class UncachedAttribute[T, U](name : String, f : T => U) extends Attribute[T, U](name) with IdMemoised[T, Unit] {
 
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
@@ -47,18 +46,18 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
          * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        def apply (t : T) : U = {
-            val i = start (List ("event" -> "AttrEval", "subject" -> t,
-                                 "attribute" -> this, "parameter" -> None,
-                                 "circular" -> false))
-            get (t) match {
-                case Some (()) =>
-                    reportCycle (t)
+        def apply(t : T) : U = {
+            val i = start(List("event" -> "AttrEval", "subject" -> t,
+                "attribute" -> this, "parameter" -> None,
+                "circular" -> false))
+            get(t) match {
+                case Some(()) =>
+                    reportCycle(t)
                 case None =>
-                    put (t, ())
-                    val u = f (t)
-                    resetAt (t)
-                    finish (i, List ("value" -> u, "cached" -> false))
+                    put(t, ())
+                    val u = f(t)
+                    resetAt(t)
+                    finish(i, List("value" -> u, "cached" -> false))
                     u
             }
 
@@ -69,8 +68,7 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
     /**
      * A variation of the `UncachedAttribute` class for parameterised attributes.
      */
-    class UncachedParamAttribute[A,T,U] (name : String, f : A => T => U) extends
-            (A => Attribute[T,U]) with Memoised[ParamAttributeKey,Unit] {
+    class UncachedParamAttribute[A, T, U](name : String, f : A => T => U) extends (A => Attribute[T, U]) with Memoised[ParamAttributeKey, Unit] {
 
         attr =>
 
@@ -80,28 +78,28 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
          * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        def apply (arg : A) : Attribute[T,U] =
-            new Attribute[T,U] (name) {
+        def apply(arg : A) : Attribute[T, U] =
+            new Attribute[T, U](name) {
 
-                def apply (t : T) : U = {
-                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
-                                         "attribute" -> this, "parameter" -> Some (arg),
-                                         "circular" -> false))
-                    val key = new ParamAttributeKey (arg, t)
-                    get (key) match {
-                        case Some (()) =>
-                            reportCycle (t)
+                def apply(t : T) : U = {
+                    val i = start(List("event" -> "AttrEval", "subject" -> t,
+                        "attribute" -> this, "parameter" -> Some(arg),
+                        "circular" -> false))
+                    val key = new ParamAttributeKey(arg, t)
+                    get(key) match {
+                        case Some(()) =>
+                            reportCycle(t)
                         case None =>
-                            put (key, ())
-                            val u = f (arg) (t)
-                            resetAt (key)
-                            finish (i, List ("value" -> u, "cached" -> false))
+                            put(key, ())
+                            val u = f(arg)(t)
+                            resetAt(key)
+                            finish(i, List("value" -> u, "cached" -> false))
                             u
                     }
                 }
 
-                override def reportCycle (t : T) : U =
-                    throw new IllegalStateException (s"Cycle detected in attribute evaluation '$name' ($arg) at $t")
+                override def reportCycle(t : T) : U =
+                    throw new IllegalStateException(s"Cycle detected in attribute evaluation '$name' ($arg) at $t")
 
             }
 
@@ -112,15 +110,14 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
      * which should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T,U] (f : T => U) : UncachedAttribute[T,U] =
-        macro UncachedAttributionCoreMacros.attrMacro[T,U,UncachedAttribute[T,U]]
+    def attr[T, U](f : T => U) : UncachedAttribute[T, U] = macro UncachedAttributionCoreMacros.attrMacro[T, U, UncachedAttribute[T, U]]
 
     /**
      * As for the other `attr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def attrWithName[T,U] (name : String, f : T => U) : UncachedAttribute[T,U] =
-        new UncachedAttribute (name, f)
+    def attrWithName[T, U](name : String, f : T => U) : UncachedAttribute[T, U] =
+        new UncachedAttribute(name, f)
 
     /**
      * Define a parameterised uncached attribute of `T` nodes of type `U` by the
@@ -128,14 +125,13 @@ trait UncachedAttributionCore extends AttributionCommon with Memoiser {
      * value for a given `T` and `A` pair is cached so it will be computed at most
      * once.
      */
-    def paramAttr[V,T,U] (f : V => T => U) : UncachedParamAttribute[V,T,U] =
-        macro UncachedAttributionCoreMacros.paramAttrMacro[V,T,U,UncachedParamAttribute[V,T,U]]
+    def paramAttr[V, T, U](f : V => T => U) : UncachedParamAttribute[V, T, U] = macro UncachedAttributionCoreMacros.paramAttrMacro[V, T, U, UncachedParamAttribute[V, T, U]]
 
     /**
      * As for the other `paramAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def paramAttrWithName[V,T,U] (name : String, f : V => T => U) : UncachedParamAttribute[V,T,U] =
-        new UncachedParamAttribute (name, f)
+    def paramAttrWithName[V, T, U](name : String, f : V => T => U) : UncachedParamAttribute[V, T, U] =
+        new UncachedParamAttribute(name, f)
 
 }

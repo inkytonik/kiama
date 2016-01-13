@@ -27,42 +27,42 @@ trait CPrettyPrinter extends base.c.CPrettyPrinter {
     import base.c.{CExpression, CNode, CType}
     import org.bitbucket.inkytonik.kiama.output.PrettyExpression
 
-    override def toDoc (n : CNode) : Doc =
+    override def toDoc(n : CNode) : Doc =
         n match {
-            case CNamedType (s) =>
+            case CNamedType(s) =>
                 s
 
-            case CTypeDef (d) =>
-                "typedef" <+> toDoc (d)
+            case CTypeDef(d) =>
+                "typedef" <+> toDoc(d)
 
-            case CInitDecl (d, e) =>
-                toDoc (d) <+> "=" <+> toDoc (e)
+            case CInitDecl(d, e) =>
+                toDoc(d) <+> "=" <+> toDoc(e)
 
-            case CAssignment (d, e) =>
-                toDoc (d) <+> "=" <+> toDoc (e) <> semi
+            case CAssignment(d, e) =>
+                toDoc(d) <+> "=" <+> toDoc(e) <> semi
 
             case e : CExpression =>
-                toParenDoc (e)
+                toParenDoc(e)
 
             case _ =>
-                super.toDoc (n)
+                super.toDoc(n)
         }
 
-    override def basetypeToDoc (t : CType) : Doc =
+    override def basetypeToDoc(t : CType) : Doc =
         t match {
-            case CNamedType (i) => i <> space
-            case _              => super.basetypeToDoc (t)
+            case CNamedType(i) => i <> space
+            case _             => super.basetypeToDoc(t)
         }
 
     /**
      * CNegExp (CNegExp) special case is to avoid output of --e which is interpreted
      * as a pre-decrement operator.
      */
-    override def toParenDoc (e : PrettyExpression) : Doc =
+    override def toParenDoc(e : PrettyExpression) : Doc =
         e match {
-            case CIdnExp (i)           => i
-            case CNegExp (e : CNegExp) => "-" <> parens (toParenDoc (e))
-            case _                     => super.toParenDoc (e)
+            case CIdnExp(i)           => i
+            case CNegExp(e : CNegExp) => "-" <> parens(toParenDoc(e))
+            case _                    => super.toParenDoc(e)
         }
 
 }

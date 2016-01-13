@@ -31,10 +31,10 @@ object UncachedAttributionCoreMacros {
 
     // Macros for the builder methods
 
-    def attrMacro[T,U,A] (c : blackbox.Context) (f : c.Expr[T => U]) : c.Expr[A] =
-        makeCallWithName (c, "this.attrWithName")
+    def attrMacro[T, U, A](c : blackbox.Context)(f : c.Expr[T => U]) : c.Expr[A] =
+        makeCallWithName(c, "this.attrWithName")
 
-    def paramAttrMacro[V,T,U,P] (c : blackbox.Context) (f : c.Expr[V => T => U]) : c.Expr[P] =
-        makeCallWithName (c, "this.paramAttrWithName")
+    def paramAttrMacro[V, T, U, P](c : blackbox.Context)(f : c.Expr[V => T => U]) : c.Expr[P] =
+        makeCallWithName(c, "this.paramAttrWithName")
 
 }

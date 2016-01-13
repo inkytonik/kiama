@@ -32,202 +32,202 @@ class OneOhOneTests extends Tests {
     import Depth.depth
 
     {
-        val empty = Company (Vector ())
+        val empty = Company(Vector())
 
-        val tree = new CompanyTree (empty)
-        val othermod = new Other (tree)
+        val tree = new CompanyTree(empty)
+        val othermod = new Other(tree)
         import othermod._
-        val precedencemod = new Precedence (tree)
+        val precedencemod = new Precedence(tree)
         import precedencemod._
 
-        test ("total of all salaries by rewriting - empty") {
-            assertResult (0.0) (total (empty))
+        test("total of all salaries by rewriting - empty") {
+            assertResult(0.0)(total(empty))
         }
 
-        test ("total of all cut salaries by rewriting - empty") {
-            assertResult (0.0) (total (cut (empty)))
+        test("total of all cut salaries by rewriting - empty") {
+            assertResult(0.0)(total(cut(empty)))
         }
 
-        test ("total of all salaries by attribution - empty") {
-            assertResult (0.0) (salary (empty))
+        test("total of all salaries by attribution - empty") {
+            assertResult(0.0)(salary(empty))
         }
 
-        test ("total of all cut salaries by attribution - empty") {
-            assertResult (0.0) (salary (cut (empty)))
+        test("total of all cut salaries by attribution - empty") {
+            assertResult(0.0)(salary(cut(empty)))
         }
 
-        test ("department depth - empty") {
-            assertResult (0) (depth (empty))
+        test("department depth - empty") {
+            assertResult(0)(depth(empty))
         }
 
-        test ("salaries ordered - empty") {
-            assert (precedence (empty))
+        test("salaries ordered - empty") {
+            assert(precedence(empty))
         }
     }
 
     {
-        val onlymanager = Company (Vector (Dept ("D0", Employee ("A", "Manager", 100), Vector ())))
+        val onlymanager = Company(Vector(Dept("D0", Employee("A", "Manager", 100), Vector())))
 
-        val tree = new CompanyTree (onlymanager)
-        val othermod = new Other (tree)
+        val tree = new CompanyTree(onlymanager)
+        val othermod = new Other(tree)
         import othermod._
-        val precedencemod = new Precedence (tree)
+        val precedencemod = new Precedence(tree)
         import precedencemod._
 
-        test ("total of all salaries by rewriting - onlymanager") {
-            assertResult (100.0) (total (onlymanager))
+        test("total of all salaries by rewriting - onlymanager") {
+            assertResult(100.0)(total(onlymanager))
         }
 
-        test ("total of all cut salaries by rewriting - onlymanager") {
-            assertResult (50.0) (total (cut (onlymanager)))
+        test("total of all cut salaries by rewriting - onlymanager") {
+            assertResult(50.0)(total(cut(onlymanager)))
         }
 
-        test ("total of all salaries by attribution - onlymanager") {
-            assertResult (100.0) (salary (onlymanager))
+        test("total of all salaries by attribution - onlymanager") {
+            assertResult(100.0)(salary(onlymanager))
         }
 
-        test ("total of all cut salaries by attribution - onlymanager") {
-            assertResult (50.0) (salary (cut (onlymanager)))
+        test("total of all cut salaries by attribution - onlymanager") {
+            assertResult(50.0)(salary(cut(onlymanager)))
         }
 
-        test ("department depth - onlymanager") {
-            assertResult (1) (depth (onlymanager))
+        test("department depth - onlymanager") {
+            assertResult(1)(depth(onlymanager))
         }
 
-        test ("salaries ordered - onlymanager") {
-            assert (precedence (onlymanager))
+        test("salaries ordered - onlymanager") {
+            assert(precedence(onlymanager))
         }
     }
 
     {
-        val tree = new CompanyTree (company)
-        val othermod = new Other (tree)
+        val tree = new CompanyTree(company)
+        val othermod = new Other(tree)
         import othermod._
-        val precedencemod = new Precedence (tree)
+        val precedencemod = new Precedence(tree)
         import precedencemod._
 
-        test ("total of all salaries by rewriting - company") {
-            assertResult (399747.0) (total (company))
+        test("total of all salaries by rewriting - company") {
+            assertResult(399747.0)(total(company))
         }
 
-        test ("total of all cut salaries by rewriting - company") {
-            assertResult (199873.5) (total (cut (company)))
+        test("total of all cut salaries by rewriting - company") {
+            assertResult(199873.5)(total(cut(company)))
         }
 
-        test ("total of all salaries by attribution - company") {
-            assertResult (399747.0) (salary (company))
+        test("total of all salaries by attribution - company") {
+            assertResult(399747.0)(salary(company))
         }
 
-        test ("total of research salaries by attribution - company") {
-            assertResult (137035.0) (salary (research))
+        test("total of research salaries by attribution - company") {
+            assertResult(137035.0)(salary(research))
         }
 
-        test ("total of dev salaries by attribution - company") {
-            assertResult (262712.0) (salary (dev))
+        test("total of dev salaries by attribution - company") {
+            assertResult(262712.0)(salary(dev))
         }
 
-        test ("total of dev1 salaries by attribution - company") {
-            assertResult (28145.0) (salary (dev1))
+        test("total of dev1 salaries by attribution - company") {
+            assertResult(28145.0)(salary(dev1))
         }
 
-        test ("total of dev11 salaries by attribution - company") {
-            assertResult (4689.0) (salary (dev11))
+        test("total of dev11 salaries by attribution - company") {
+            assertResult(4689.0)(salary(dev11))
         }
 
-        test ("total of all cut salaries by attribution - company") {
-            assertResult (199873.5) (salary (cut (company)))
+        test("total of all cut salaries by attribution - company") {
+            assertResult(199873.5)(salary(cut(company)))
         }
 
-        test ("average salary for company") {
-            assertResult (57106) (averagesalary (company).toInt)
+        test("average salary for company") {
+            assertResult(57106)(averagesalary(company).toInt)
         }
 
-        test ("average salary for research department") {
-            assertResult (45678) (averagesalary (research).toInt)
+        test("average salary for research department") {
+            assertResult(45678)(averagesalary(research).toInt)
         }
 
-        test ("average salary for dev department") {
-            assertResult (65678) (averagesalary (dev).toInt)
+        test("average salary for dev department") {
+            assertResult(65678)(averagesalary(dev).toInt)
         }
 
-        test ("average salary for dev1 department") {
-            assertResult (9381) (averagesalary (dev1).toInt)
+        test("average salary for dev1 department") {
+            assertResult(9381)(averagesalary(dev1).toInt)
         }
 
-        test ("average salary for dev11 department") {
-            assertResult (2344) (averagesalary (dev11).toInt)
+        test("average salary for dev11 department") {
+            assertResult(2344)(averagesalary(dev11).toInt)
         }
 
-        test ("craig is above average") {
-            assert (aboveaverage (craig))
+        test("craig is above average") {
+            assert(aboveaverage(craig))
         }
 
-        test ("klaus is above average") {
-            assert (aboveaverage (klaus))
+        test("klaus is above average") {
+            assert(aboveaverage(klaus))
         }
 
-        test ("joe is below average") {
-            assert (!aboveaverage (joe))
+        test("joe is below average") {
+            assert(!aboveaverage(joe))
         }
 
-        test ("department depth - company") {
-            assertResult (3) (depth (company))
+        test("department depth - company") {
+            assertResult(3)(depth(company))
         }
 
-        test ("salaries ordered - company") {
-            assert (precedence (company))
+        test("salaries ordered - company") {
+            assert(precedence(company))
         }
 
-        test ("company employee count is correct") {
-            assertResult (7) (numemp (company))
+        test("company employee count is correct") {
+            assertResult(7)(numemp(company))
         }
 
-        test ("single employee count is correct") {
-            assertResult (1) (numemp (craig))
+        test("single employee count is correct") {
+            assertResult(1)(numemp(craig))
         }
 
-        test ("research department employee count is correct") {
-            assertResult (3) (numemp (research))
+        test("research department employee count is correct") {
+            assertResult(3)(numemp(research))
         }
 
-        test ("dev department employee count is correct") {
-            assertResult (4) (numemp (dev))
+        test("dev department employee count is correct") {
+            assertResult(4)(numemp(dev))
         }
 
-        test ("dev1 department employee count is correct") {
-            assertResult (3) (numemp (dev1))
+        test("dev1 department employee count is correct") {
+            assertResult(3)(numemp(dev1))
         }
 
-        test ("dev11 department employee count is correct") {
-            assertResult (2) (numemp (dev11))
+        test("dev11 department employee count is correct") {
+            assertResult(2)(numemp(dev11))
         }
     }
 
     {
-        val d = Company (Vector (Dept ("D1", Employee ("An", "Emp", 100),
-                                     Vector (PU (Employee ("Another", "Emp", 500))))))
+        val d = Company(Vector(Dept("D1", Employee("An", "Emp", 100),
+            Vector(PU(Employee("Another", "Emp", 500))))))
 
-        val tree = new CompanyTree (d)
-        val precedencemod = new Precedence (tree)
+        val tree = new CompanyTree(d)
+        val precedencemod = new Precedence(tree)
         import precedencemod.precedence
 
-        test ("salaries not ordered - employee") {
-            assertResult (false) (precedence (d))
+        test("salaries not ordered - employee") {
+            assertResult(false)(precedence(d))
         }
     }
 
     {
-        val d1 = Dept ("D2", Employee ("The", "Emp", 100),
-                       Vector (PU (Employee ("That", "Emp", 50))))
-        val d2 = Company (Vector (Dept ("D3", Employee ("TheOther", "Emp", 25),
-                                Vector (DU (d1)))))
+        val d1 = Dept("D2", Employee("The", "Emp", 100),
+            Vector(PU(Employee("That", "Emp", 50))))
+        val d2 = Company(Vector(Dept("D3", Employee("TheOther", "Emp", 25),
+            Vector(DU(d1)))))
 
-        val tree = new CompanyTree (d2)
-        val precedencemod = new Precedence (tree)
+        val tree = new CompanyTree(d2)
+        val precedencemod = new Precedence(tree)
         import precedencemod.precedence
 
-        test ("salaries not ordered - manager") {
-            assertResult (false) (precedence (d2))
+        test("salaries not ordered - manager") {
+            assertResult(false)(precedence(d2))
         }
     }
 

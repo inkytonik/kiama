@@ -32,11 +32,11 @@ trait TypeAnalyser extends L0.TypeAnalyser {
      */
     override def exptypeDef : Expression => Type =
         {
-            case tree.parent (_ : IfStatement | _ : WhileStatement) =>
+            case tree.parent(_ : IfStatement | _ : WhileStatement) =>
                 booleanType
 
             case n =>
-                super.exptypeDef (n)
+                super.exptypeDef(n)
         }
 
 }

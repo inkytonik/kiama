@@ -27,35 +27,35 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parse the input.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import TransformTree._
 
     lazy val program =
-        rep (opdecl) ~ rep (vardecl) ~ exp ^^ Program
+        rep(opdecl) ~ rep(vardecl) ~ exp ^^ Program
 
-    lazy val opdecl : Parser[(String,Int)] =
+    lazy val opdecl : Parser[(String, Int)] =
         ("op" ~> op) ~ integer
 
     lazy val op =
-        regex ("[-!@#$%^&*+_=:;<>,.?]+".r)
+        regex("[-!@#$%^&*+_=:;<>,.?]+".r)
 
     lazy val vardecl =
         "var" ~> ident ^^ VarDecl
 
     lazy val exp : Parser[ExpR] =
         factor ~ op ~ exp ^^ BinExpR |
-        factor ^^ Factor
+            factor ^^ Factor
 
     lazy val factor =
         integer ^^ Num |
-        ident ^^ Var
+            ident ^^ Var
 
     lazy val integer =
         "[0-9]+".r ^^ (s => s.toInt)
 
     lazy val ident =
-        regex ("[a-zA-Z]+".r)
+        regex("[a-zA-Z]+".r)
 
     override val whitespace : Parser[String] =
         """(\s|(/\*(?:.|[\n\r])*?\*/))*""".r

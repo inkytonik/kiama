@@ -36,13 +36,13 @@ object SymbolTable extends Environments {
     /**
      * A variable entity of the given type.
      */
-    case class Variable (tipe : Type) extends Entity
+    case class Variable(tipe : Type) extends Entity
 
     /**
      * A constant integer entity with the given type and value.
      * Can represent an integer or an enumeration constant.
      */
-    case class Constant (tipe : Type, value : Int) extends Entity
+    case class Constant(tipe : Type, value : Int) extends Entity
 
     /**
      * The size in bytes of a word used to store both integer and Boolean
@@ -59,8 +59,8 @@ object SymbolTable extends Environments {
      * is compatible with everything.
      */
     abstract class TypeBase {
-        def iscompatible (other : TypeBase) : Boolean =
-            (other == UnknownType ()) || (other == this)
+        def iscompatible(other : TypeBase) : Boolean =
+            (other == UnknownType()) || (other == this)
     }
 
     /**
@@ -74,7 +74,7 @@ object SymbolTable extends Environments {
     /**
      * The integer type.
      */
-    case class IntType () extends Type {
+    case class IntType() extends Type {
         override val storage = WORDSIZE
         override def toString : String = "integer"
     }
@@ -82,7 +82,7 @@ object SymbolTable extends Environments {
     /**
      * The Boolean type.
      */
-    case class BoolType () extends Type {
+    case class BoolType() extends Type {
         override val storage = WORDSIZE
         override def toString : String = "boolean"
     }
@@ -90,7 +90,7 @@ object SymbolTable extends Environments {
     /**
      * An integer array type.
      */
-    case class ArrayType (size : Int) extends Type {
+    case class ArrayType(size : Int) extends Type {
         override val storage = WORDSIZE * size
         override def toString : String = "array"
     }
@@ -98,7 +98,7 @@ object SymbolTable extends Environments {
     /**
      * A record type with the given fields.
      */
-    case class RecordType (fields : Vector[Identifier]) extends Type {
+    case class RecordType(fields : Vector[Identifier]) extends Type {
         override val storage = WORDSIZE * fields.length
         override def toString : String = "record"
     }
@@ -108,16 +108,16 @@ object SymbolTable extends Environments {
      * every record type - and so is useful when type checking constructs
      * which must take a value of an arbitrary record type.
      */
-    case class RecordTypes () extends TypeBase {
+    case class RecordTypes() extends TypeBase {
         override def toString : String = "any record"
-        override def iscompatible (other : TypeBase) : Boolean =
-            (other.isInstanceOf[RecordType]) || (super.iscompatible (other))
+        override def iscompatible(other : TypeBase) : Boolean =
+            (other.isInstanceOf[RecordType]) || (super.iscompatible(other))
     }
 
     /**
      * A named enumeration type.
      */
-    case class EnumType (ident : Identifier) extends Type {
+    case class EnumType(ident : Identifier) extends Type {
         override val storage = WORDSIZE
         override def toString : String = s"enumeration $ident"
     }
@@ -127,26 +127,25 @@ object SymbolTable extends Environments {
      * every enumeration type - and so is useful when type checking constructs
      * which must take a value of an arbitrary enumeration type.
      */
-    case class EnumTypes () extends TypeBase {
+    case class EnumTypes() extends TypeBase {
         override def toString : String = "any enumeration"
-        override def iscompatible (other : TypeBase) : Boolean =
-            (other.isInstanceOf[EnumType]) || (super.iscompatible (other))
+        override def iscompatible(other : TypeBase) : Boolean =
+            (other.isInstanceOf[EnumType]) || (super.iscompatible(other))
     }
 
     /**
      * The exception type.
      */
-    case class ExnType () extends Type {
+    case class ExnType() extends Type {
         override val storage = WORDSIZE
         override def toString : String = "exception"
     }
 
-
     /**
      * A type that we don't know anything about.
      */
-    case class UnknownType () extends Type {
-        override def iscompatible (other : TypeBase) : Boolean = true
+    case class UnknownType() extends Type {
+        override def iscompatible(other : TypeBase) : Boolean = true
     }
 
 }

@@ -28,8 +28,8 @@ import org.bitbucket.inkytonik.kiama.relation.Tree
  * AST for Repmin examples.
  */
 sealed abstract class RepminTree extends Product
-case class Fork (left : RepminTree, right : RepminTree) extends RepminTree
-case class Leaf (value : Int) extends RepminTree
+case class Fork(left : RepminTree, right : RepminTree) extends RepminTree
+case class Leaf(value : Int) extends RepminTree
 
 /**
  * Repmin implementations must provide a repmin attribute.
@@ -45,14 +45,14 @@ trait RepminBase extends RepminImpl {
 
     val locmin : RepminTree => Int =
         attr {
-            case Fork (l, r) => locmin (l).min (locmin (r))
-            case Leaf (v)    => v
+            case Fork(l, r) => locmin(l).min(locmin(r))
+            case Leaf(v)    => v
         }
 
     val repmin : RepminTree => RepminTree =
         attr {
-            case Fork (l, r) => Fork (repmin (l), repmin (r))
-            case t : Leaf    => Leaf (globmin (t))
+            case Fork(l, r) => Fork(repmin(l), repmin(r))
+            case t : Leaf   => Leaf(globmin(t))
         }
 
     val globmin : RepminTree => Int
@@ -65,14 +65,14 @@ trait RepminBase extends RepminImpl {
  * but with all of the leaves replaced by leaves containing the
  * minimum leaf value from the input Repmintree.
  */
-class Repmin (tree : Tree[RepminTree,RepminTree]) extends RepminBase {
+class Repmin(tree : Tree[RepminTree, RepminTree]) extends RepminBase {
 
     val globmin : RepminTree => Int =
         attr {
-            case tree.parent (p) =>
-                globmin (p)
+            case tree.parent(p) =>
+                globmin(p)
             case t =>
-                locmin (t)
+                locmin(t)
         }
 
 }
@@ -80,13 +80,13 @@ class Repmin (tree : Tree[RepminTree,RepminTree]) extends RepminBase {
 /**
  * Repmin problem defined using decorators.
  */
-class RepminDec (tree : Tree[RepminTree,RepminTree]) extends RepminBase {
+class RepminDec(tree : Tree[RepminTree, RepminTree]) extends RepminBase {
 
     import org.bitbucket.inkytonik.kiama.attribution.Decorators
 
-    val decorators = new Decorators (tree)
+    val decorators = new Decorators(tree)
 
     val globmin : RepminTree => Int =
-        decorators.atRoot (locmin)
+        decorators.atRoot(locmin)
 
 }

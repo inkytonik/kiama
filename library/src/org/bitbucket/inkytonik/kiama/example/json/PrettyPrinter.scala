@@ -34,30 +34,30 @@ trait PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
     /**
      * Format a JSON node.
      */
-    def format (t : JValue) : Document =
-        pretty (toDoc (t))
+    def format(t : JValue) : Document =
+        pretty(toDoc(t))
 
     /**
      * Convert a JSON value node to a pretty-printing document.
      */
-    def toDoc (t : JValue) : Doc =
+    def toDoc(t : JValue) : Doc =
         t match {
-            case JNull ()     => "null"
-            case JTrue ()     => "true"
-            case JFalse ()    => "false"
-            case JNumber (d)  => value (if (d.isWhole) d.toInt else d)
-            case JString (s)  => dquotes (value (s))
-            case JArray (vs)  =>
-                brackets (group (nest (line <> ssep (vs map toDoc, comma <> line)) <> line))
-            case JObject (ps) =>
-                braces (group (nest (line <> ssep (ps map pairToDoc, comma <> line)) <> line))
+            case JNull()    => "null"
+            case JTrue()    => "true"
+            case JFalse()   => "false"
+            case JNumber(d) => value(if (d.isWhole) d.toInt else d)
+            case JString(s) => dquotes(value(s))
+            case JArray(vs) =>
+                brackets(group(nest(line <> ssep(vs map toDoc, comma <> line)) <> line))
+            case JObject(ps) =>
+                braces(group(nest(line <> ssep(ps map pairToDoc, comma <> line)) <> line))
         }
 
     /**
      * Return a pretty-printer document for an object pair.
      */
-    def pairToDoc (p : (JName,JValue)) : Doc =
-        dquotes (p._1.s) <+> colon <+> toDoc (p._2)
+    def pairToDoc(p : (JName, JValue)) : Doc =
+        dquotes(p._1.s) <+> colon <+> toDoc(p._2)
 
 }
 

@@ -27,13 +27,13 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parsers for L3 language.
  */
-class SyntaxAnalyser (positions : Positions) extends L2.SyntaxAnalyser (positions) {
+class SyntaxAnalyser(positions : Positions) extends L2.SyntaxAnalyser(positions) {
 
     import base.source.{Declaration, Statement}
     import source.{Call, FPSection, ProcDecl, ValMode, VarMode}
 
     override def declarationsDef : Parser[Vector[Declaration]] =
-        super.declarationsDef ~ rep (procedureDeclaration <~ ";") ^^ {
+        super.declarationsDef ~ rep(procedureDeclaration <~ ";") ^^ {
             case ds ~ pds => ds ++ pds
         }
 
@@ -41,26 +41,26 @@ class SyntaxAnalyser (positions : Positions) extends L2.SyntaxAnalyser (position
         ("PROCEDURE" ~> idndef) ~ (optformalParameters <~ ";") ~ block ~ idnuse ^^ ProcDecl
 
     lazy val optformalParameters : Parser[Vector[FPSection]] =
-        "(" ~> repsep (fpsection, ";") <~ ")" |
-        success (Vector ())
+        "(" ~> repsep(fpsection, ";") <~ ")" |
+            success(Vector())
 
     lazy val fpsection =
         optvar ~ (idndeflist <~ ":") ~ typedef ^^ FPSection
 
     lazy val optvar =
-        "VAR" ^^ (_ => VarMode ()) |
-        success (ValMode ())
+        "VAR" ^^ (_ => VarMode()) |
+            success(ValMode())
 
     override def statementDef : Parser[Statement] =
         procedureCall |
-        super.statementDef
+            super.statementDef
 
     lazy val procedureCall =
         idnuse ~ optActualParameters ^^ Call
 
     lazy val optActualParameters =
-        "(" ~> repsep (expression, ",") <~ ")" |
-        guard (";" | "ELSE" | "END") ^^^ Vector ()
+        "(" ~> repsep(expression, ",") <~ ")" |
+            guard(";" | "ELSE" | "END") ^^^ Vector()
 
     override def keywordStrings : List[String] =
         "PROCEDURE" +: super.keywordStrings

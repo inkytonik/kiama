@@ -26,19 +26,19 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 
 class RepminTests extends Tests {
 
-    val t = Fork (Leaf (3), Fork (Leaf (1), Leaf (10)))
-    val u = Fork (Leaf (1), Fork (Leaf (1), Leaf (1)))
+    val t = Fork(Leaf(3), Fork(Leaf(1), Leaf(10)))
+    val u = Fork(Leaf(1), Fork(Leaf(1), Leaf(1)))
 
-    test ("repmin actually reps and mins (traditional)") {
-        val tree = new Tree[RepminTree,RepminTree] (t)
-        val repmin = new Repmin (tree)
-        assertResult (u) (repmin.repmin (t))
+    test("repmin actually reps and mins (traditional)") {
+        val tree = new Tree[RepminTree, RepminTree](t)
+        val repmin = new Repmin(tree)
+        assertResult(u)(repmin.repmin(t))
     }
 
-    test ("repmin actually reps and mins (decorator)") {
-        val tree = new Tree[RepminTree,RepminTree] (t)
-        val repmin = new RepminDec (tree)
-        assertResult (u) (repmin.repmin (t))
+    test("repmin actually reps and mins (decorator)") {
+        val tree = new Tree[RepminTree, RepminTree](t)
+        val repmin = new RepminDec(tree)
+        assertResult(u)(repmin.repmin(t))
     }
 
 }

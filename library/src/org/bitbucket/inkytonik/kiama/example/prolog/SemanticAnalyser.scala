@@ -26,7 +26,7 @@ import org.bitbucket.inkytonik.kiama.util.Messaging
 
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
 
-class SemanticAnalyser (tree : PrologTree) extends Attribution {
+class SemanticAnalyser(tree : PrologTree) extends Attribution {
 
     import PrologTree._
     import SymbolTable._
@@ -37,45 +37,47 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      * The semantic error messages for a given tree.
      */
     lazy val errors : Messages =
-        collectMessages (tree) {
-            case n @ Pred (s, ts) =>
-                check (entity (n)) {
-                    case Predicate (argtypes) if argtypes.length != ts.length =>
-                        message (n, s"$s should have ${argtypes.length} arguments but has ${ts.length}")
-                    case UnknownEntity () =>
-                        message (n, s"$s is not declared")
+        collectMessages(tree) {
+            case n @ Pred(s, ts) =>
+                check(entity(n)) {
+                    case Predicate(argtypes) if argtypes.length != ts.length =>
+                        message(n, s"$s should have ${argtypes.length} arguments but has ${ts.length}")
+                    case UnknownEntity() =>
+                        message(n, s"$s is not declared")
                 } ++
-                checktype (n)
+                    checktype(n)
 
-            case n @ Atom (s) =>
-                check (entity (n)) {
-                    case Predicate (argtypes) if argtypes.length != 0 =>
-                        message (n, s"$s should have ${argtypes.length} arguments but has 0")
-                    case UnknownEntity () =>
-                        message (n, s"$s is not declared")
+            case n @ Atom(s) =>
+                check(entity(n)) {
+                    case Predicate(argtypes) if argtypes.length != 0 =>
+                        message(n, s"$s should have ${argtypes.length} arguments but has 0")
+                    case UnknownEntity() =>
+                        message(n, s"$s is not declared")
                 } ++
-                checktype (n)
+                    checktype(n)
 
             case n : Term =>
-                checktype (n)
+                checktype(n)
         }
 
     /**
      * Check types: issue a message if n's type is not compatible with its
      * expected type.  The unknown type is compatible with any other type.
      */
-    def checktype (n : Term) : Messages =
-        message (n, s"argument ${tipe (n)} found, ${exptipe (n)} expected",
-                 (tipe (n) != UnknownType ()) && (exptipe (n) != UnknownType ()) &&
-                    (tipe (n) != exptipe (n)))
+    def checktype(n : Term) : Messages =
+        message(n, s"argument ${tipe(n)} found, ${exptipe(n)} expected",
+            (tipe(n) != UnknownType()) && (exptipe(n) != UnknownType()) &&
+                (tipe(n) != exptipe(n)))
 
     /**
      * Default environment.  Contains entities for the pre-defined
      * predicates for lists: cons and nil.
      */
     val defenv : Environment =
-        rootenv ("nil" -> Predicate (Vector ()),
-                 "cons" -> Predicate (Vector (UnknownType (), ListType ())))
+        rootenv(
+            "nil" -> Predicate(Vector()),
+            "cons" -> Predicate(Vector(UnknownType(), ListType()))
+        )
 
     /**
      * The environment containing all bindings visible at a particular
@@ -87,10 +89,10 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val envin : PrologNode => Environment =
         attr {
-            case tree.prev (p) =>
-                env (p)
-            case tree.parent (p) =>
-                envin (p)
+            case tree.prev(p) =>
+                env(p)
+            case tree.parent(p) =>
+                envin(p)
             case _ =>
                 defenv
         }
@@ -111,28 +113,28 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val env : PrologNode => Environment =
         attr {
-            case n @ Pred (s, ts) =>
+            case n @ Pred(s, ts) =>
                 val argtypes = ts map tipe
-                lookup (envin (n), s, UnknownEntity (), true) match {
-                    case Predicate (oldargtypes) =>
-                        val extargtypes = argtypes.padTo (oldargtypes.length, UnknownType ())
+                lookup(envin(n), s, UnknownEntity(), true) match {
+                    case Predicate(oldargtypes) =>
+                        val extargtypes = argtypes.padTo(oldargtypes.length, UnknownType())
                         val newargtypes =
                             (oldargtypes, extargtypes).zipped.map {
-                                case (UnknownType (), argtipe) =>
+                                case (UnknownType(), argtipe) =>
                                     argtipe
                                 case (oldtipe, _) =>
                                     oldtipe
                             }
-                        define (envin (n), s, Predicate (newargtypes))
+                        define(envin(n), s, Predicate(newargtypes))
                     case _ =>
-                        define (envin (n), s, Predicate (argtypes))
+                        define(envin(n), s, Predicate(argtypes))
                 }
-            case n @ Atom (s) if ! isDefinedInEnv (envin (n), s) =>
-                define (envin (n), s, Predicate (Vector ()))
-            case tree.lastChild (c) =>
-                env (c)
+            case n @ Atom(s) if !isDefinedInEnv(envin(n), s) =>
+                define(envin(n), s, Predicate(Vector()))
+            case tree.lastChild(c) =>
+                env(c)
             case n =>
-                envin (n)
+                envin(n)
         }
 
     /**
@@ -143,10 +145,10 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val entity : NamedLiteral => Entity =
         attr {
-            case n @ Pred (s, ts) =>
-                lookup (env (n), s, UnknownEntity (), true)
-            case n @ Atom (s) =>
-                lookup (env (n), s, UnknownEntity (), true)
+            case n @ Pred(s, ts) =>
+                lookup(env(n), s, UnknownEntity(), true)
+            case n @ Atom(s) =>
+                lookup(env(n), s, UnknownEntity(), true)
         }
 
     /**
@@ -157,10 +159,10 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val entityin : NamedLiteral => Entity =
         attr {
-            case n @ Pred (s, ts) =>
-                lookup (envin (n), s, UnknownEntity (), true)
-            case n @ Atom (s) =>
-                lookup (envin (n), s, UnknownEntity (), true)
+            case n @ Pred(s, ts) =>
+                lookup(envin(n), s, UnknownEntity(), true)
+            case n @ Atom(s) =>
+                lookup(envin(n), s, UnknownEntity(), true)
         }
 
     /**
@@ -171,11 +173,11 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
     val varsin : PrologNode => Environment =
         attr {
             case c : Clause =>
-                rootenv ()
-            case tree.prev (p) =>
-                vars (p)
-            case tree.parent (p) =>
-                varsin (p)
+                rootenv()
+            case tree.prev(p) =>
+                vars(p)
+            case tree.parent(p) =>
+                varsin(p)
         }
 
     /**
@@ -189,19 +191,19 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val vars : PrologNode => Environment =
         attr {
-            case n @ Var (s) =>
-                lookup (varsin (n), s, UnknownEntity (), true) match {
-                    case Variable (UnknownType ()) =>
-                        define (varsin (n), s, Variable (exptipe (n)))
-                    case Variable (_) =>
-                        varsin (n)
-                    case UnknownEntity () =>
-                        define (varsin (n), s, Variable (exptipe (n)))
+            case n @ Var(s) =>
+                lookup(varsin(n), s, UnknownEntity(), true) match {
+                    case Variable(UnknownType()) =>
+                        define(varsin(n), s, Variable(exptipe(n)))
+                    case Variable(_) =>
+                        varsin(n)
+                    case UnknownEntity() =>
+                        define(varsin(n), s, Variable(exptipe(n)))
                 }
-            case tree.lastChild (c) =>
-                vars (c)
+            case tree.lastChild(c) =>
+                vars(c)
             case n =>
-                varsin (n)
+                varsin(n)
         }
 
     /**
@@ -210,8 +212,8 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val varentity : Var => Entity =
         attr {
-            case n @ Var (s) =>
-                lookup (varsin (n), s, UnknownEntity (), true)
+            case n @ Var(s) =>
+                lookup(varsin(n), s, UnknownEntity(), true)
         }
 
     /**
@@ -219,16 +221,16 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val tipe : Term => Type =
         attr {
-            case Atom (_)         => AtomType ()
-            case Integer (_)      => IntegerType ()
-            case Pred ("cons", _) => ListType ()
-            case Pred ("nil", _)  => ListType ()
-            case n @ Var (s) =>
-                varentity (n) match {
-                    case Variable (t) => t
-                    case _            => UnknownType ()
+            case Atom(_)         => AtomType()
+            case Integer(_)      => IntegerType()
+            case Pred("cons", _) => ListType()
+            case Pred("nil", _)  => ListType()
+            case n @ Var(s) =>
+                varentity(n) match {
+                    case Variable(t) => t
+                    case _           => UnknownType()
                 }
-            case _                => UnknownType ()
+            case _ => UnknownType()
         }
 
     /**
@@ -241,19 +243,19 @@ class SemanticAnalyser (tree : PrologTree) extends Attribution {
      */
     val exptipe : Term => Type =
         attr {
-            case tree.parent.pair (n, p : Pred) =>
-                entityin (p) match {
-                    case Predicate (argtypes) =>
-                        val i = tree.index (n)
+            case tree.parent.pair(n, p : Pred) =>
+                entityin(p) match {
+                    case Predicate(argtypes) =>
+                        val i = tree.index(n)
                         if (i < argtypes.length)
-                            argtypes (i)
+                            argtypes(i)
                         else
-                            UnknownType ()
+                            UnknownType()
                     case _ =>
-                        UnknownType ()
+                        UnknownType()
                 }
             case _ =>
-                UnknownType ()
+                UnknownType()
         }
 
 }

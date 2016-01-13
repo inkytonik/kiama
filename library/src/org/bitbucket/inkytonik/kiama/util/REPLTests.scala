@@ -36,10 +36,12 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Generating REPLs insist on processing whitespace.
      */
-    override def createConfig (args : Seq[String],
-                               output : Emitter = new OutputEmitter,
-                               error : Emitter = new ErrorEmitter) : REPLConfig =
-        super.createConfig ("--KprocessWhitespaceLines" +: args, output, error)
+    override def createConfig(
+        args : Seq[String],
+        output : Emitter = new OutputEmitter,
+        error : Emitter = new ErrorEmitter
+    ) : REPLConfig =
+        super.createConfig("--KprocessWhitespaceLines" +: args, output, error)
 
     /**
      * The generator to use to make values of type T.
@@ -50,21 +52,21 @@ trait GeneratingREPLBase[T] extends REPL {
      * Generate a new instance and print it, ignoring the input line. Return
      * the configuration unchanged.
      */
-    def processline (source : Source, console : Console, config : REPLConfig) : Option[REPLConfig] = {
-        generator.arbitrary (Gen.Parameters.default) match {
-            case Some (t) =>
-                process (source, t, config)
+    def processline(source : Source, console : Console, config : REPLConfig) : Option[REPLConfig] = {
+        generator.arbitrary(Gen.Parameters.default) match {
+            case Some(t) =>
+                process(source, t, config)
             case None =>
-                config.output.emitln ("can't generate an instance")
+                config.output.emitln("can't generate an instance")
         }
-        Some (config)
+        Some(config)
     }
 
     /**
      * Process a generated value.  Default: print it.
      */
-    def process (source : Source, t : T, config : REPLConfig) {
-        config.output.emitln (t)
+    def process(source : Source, t : T, config : REPLConfig) {
+        config.output.emitln(t)
     }
 
 }
@@ -85,8 +87,8 @@ trait TestREPLWithConfig[C <: REPLConfig] extends TestDriverWithConfig[C] {
     /**
      * Run the REPL in test mode using the given configuration.
      */
-    def testdriver (config : C) {
-        processfiles (config)
+    def testdriver(config : C) {
+        processfiles(config)
     }
 
 }

@@ -32,39 +32,39 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
     /**
      * Format a PicoJava node.
      */
-    def format (t : PicoJavaNode) : Document =
-        pretty (toDoc (t))
+    def format(t : PicoJavaNode) : Document =
+        pretty(toDoc(t))
 
     /**
      * Convert a PicoJava AST node to a pretty-printing document.
      */
-    def toDoc (t : PicoJavaNode) : Doc =
+    def toDoc(t : PicoJavaNode) : Doc =
         t match {
-            case Program (b) =>
-                toDoc (b)
-            case Block (bs) =>
-                braces (nest (line <> ssep (bs map toDoc, line)) <> line)
-            case ClassDecl (n, sc, b) =>
+            case Program(b) =>
+                toDoc(b)
+            case Block(bs) =>
+                braces(nest(line <> ssep(bs map toDoc, line)) <> line)
+            case ClassDecl(n, sc, b) =>
                 val scshow = sc.map {
-                                 case idn =>
-                                     " extends" <+> toDoc (idn)
-                             }.getOrElse (empty)
-                "class" <+> n <> scshow <+> toDoc (b)
-            case VarDecl (t, n) =>
-                toDoc (t) <+> n <> semi
-            case AssignStmt (v, e) =>
-                toDoc (v) <+> equal <+> toDoc (e) <> semi
-            case WhileStmt (c, b) =>
-                "while" <+> parens (toDoc (c)) <> toDoc (b)
-            case Use (n) =>
+                    case idn =>
+                        " extends" <+> toDoc(idn)
+                }.getOrElse(empty)
+                "class" <+> n <> scshow <+> toDoc(b)
+            case VarDecl(t, n) =>
+                toDoc(t) <+> n <> semi
+            case AssignStmt(v, e) =>
+                toDoc(v) <+> equal <+> toDoc(e) <> semi
+            case WhileStmt(c, b) =>
+                "while" <+> parens(toDoc(c)) <> toDoc(b)
+            case Use(n) =>
                 n
-            case Dot (or, i) =>
-                toDoc (or) <> "." <> toDoc (i)
-            case BooleanLiteral (v) =>
+            case Dot(or, i) =>
+                toDoc(or) <> "." <> toDoc(i)
+            case BooleanLiteral(v) =>
                 v
-            case PrimitiveDecl (n) =>
+            case PrimitiveDecl(n) =>
                 n
-            case UnknownDecl (n) =>
+            case UnknownDecl(n) =>
                 n
         }
 

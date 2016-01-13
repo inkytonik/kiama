@@ -33,14 +33,14 @@ trait InnermostSubst extends ReduceSubst {
     /**
      * Version of innermost library strategy that memoises.
      */
-    def innermost (s : => Strategy) : Strategy =
-        memo (all (innermost (s) <* attempt (s <* innermost (s))))
+    def innermost(s : => Strategy) : Strategy =
+        memo(all(innermost(s) <* attempt(s <* innermost(s))))
 
     /**
      * Evaluate expressions starting with the innermost sub-expressions.
      */
     override lazy val s : Strategy =
-        innermost (lambda)
+        innermost(lambda)
 
 }
 

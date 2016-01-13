@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.relation.Tree
  * tree attribution based on simple attributes or functions. A `Tree` must
  * be supplied to give the decorators access to the tree structure.
  */
-class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
+class Decorators[T <: Product, R <: T](tree : Tree[T, R]) {
 
     import org.bitbucket.inkytonik.kiama.attribution.Attribution
     import scala.PartialFunction
@@ -42,8 +42,8 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
      * the root. The value defined at the root will also be made available
      * at all other nodes.
      */
-    def atRoot[U] (a : T => U) : CachedAttribute[T,U] =
-        down[U] (a) (PartialFunction.empty)
+    def atRoot[U](a : T => U) : CachedAttribute[T, U] =
+        down[U](a)(PartialFunction.empty)
 
     /**
      * A decorator that propagates an attribute value down the tree. The
@@ -54,15 +54,15 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
      * If no node on the path to the root defines a value for the attribute,
      * then default applied to the root is returned.
      */
-    def down[U] (default : T => U) (a : T ==> U) : CachedAttribute[T,U] = {
-        lazy val dattr : CachedAttribute[T,U] =
-            attr ((t : T) =>
-                a.applyOrElse (t, (t : T) =>
+    def down[U](default : T => U)(a : T ==> U) : CachedAttribute[T, U] = {
+        lazy val dattr : CachedAttribute[T, U] =
+            attr((t : T) =>
+                a.applyOrElse(t, (t : T) =>
                     t match {
-                        case tree.parent (p) =>
-                            dattr (p)
+                        case tree.parent(p) =>
+                            dattr(p)
                         case t =>
-                            default (t)
+                            default(t)
                     }))
         dattr
     }
@@ -70,23 +70,23 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
     /**
      * Variant of `down` that takes a default value instead of a default function.
      */
-    def down[U] (default : U) (a : T ==> U) : CachedAttribute[T,U] =
-        down[U] ((_ : T) => default) (a)
+    def down[U](default : U)(a : T ==> U) : CachedAttribute[T, U] =
+        down[U]((_ : T) => default)(a)
 
     /**
      * Variant of `down` that throws an error if `a` is not defined on the
      * path to the root of the tree.
      */
-    def downErr[U] (a : T ==> U) : CachedAttribute[T,U] =
-        down[U] ((_ : T) => sys.error ("downErr: function is not defined on path to root")) (a)
+    def downErr[U](a : T ==> U) : CachedAttribute[T, U] =
+        down[U]((_ : T) => sys.error("downErr: function is not defined on path to root"))(a)
 
     /**
      * Variant of `down` that returns `None` if `a` is not defined on the
      * path to the root of the tree, otherwise it wraps the value that `a`
      * returns in `Some`.
      */
-    def downOpt[U] (a : T ==> U) : CachedAttribute[T,Option[U]] =
-        down[Option[U]] (None) (a andThen (Some (_)))
+    def downOpt[U](a : T ==> U) : CachedAttribute[T, Option[U]] =
+        down[Option[U]](None)(a andThen (Some(_)))
 
     /**
      * A pair of attributes that thread through a tree in a depth-first
@@ -94,8 +94,8 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
      * of the chain as it enters a node from above (leaves a node to the
      * above).
      */
-    case class Chain[U] (in : (T => U), out : (T => U)) extends (T => U) {
-        def apply (t : T) : U = out (t)
+    case class Chain[U](in : (T => U), out : (T => U)) extends (T => U) {
+        def apply(t : T) : U = out(t)
     }
 
     /**
@@ -103,7 +103,7 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
      * of the chain through without making any changes.
      */
     private def idf[U] : (T => U) => (T ==> U) =
-        f => { case t => f (t) }
+        f => { case t => f(t) }
 
     /**
      * Create a new attribute chain.  The `update` functions provide ways to
@@ -119,44 +119,44 @@ class Decorators[T <: Product,R <: T] (tree : Tree[T,R]) {
      * of the chain are reset to avoid errors for cyclic if the exception is
      * caught and they are subsequently evaluated again.
      */
-    def chain[U] (
-                 inupdate : (T => U) => (T ==> U) = idf[U],
-                 outupdate : (T => U) => (T ==> U) = idf[U]
-             ) : Chain[U] = {
+    def chain[U](
+        inupdate : (T => U) => (T ==> U) = idf[U],
+        outupdate : (T => U) => (T ==> U) = idf[U]
+    ) : Chain[U] = {
 
-        def error (t : T) : Nothing = {
+        def error(t : T) : Nothing = {
             in.reset
             out.reset
-            sys.error (s"chain root of tree reached at $t")
+            sys.error(s"chain root of tree reached at $t")
         }
 
-        def indflt (t : T) : U =
+        def indflt(t : T) : U =
             t match {
-                case tree.prev (p) =>
-                    out (p)
-                case tree.parent (p) =>
-                    in (p)
+                case tree.prev(p) =>
+                    out(p)
+                case tree.parent(p) =>
+                    in(p)
                 case _ =>
-                    error (t)
+                    error(t)
             }
 
-        lazy val infunc = inupdate (indflt)
+        lazy val infunc = inupdate(indflt)
 
-        lazy val in = attr ((t : T) => infunc.applyOrElse (t, indflt))
+        lazy val in = attr((t : T) => infunc.applyOrElse(t, indflt))
 
-        def outdflt (t : T) : U =
+        def outdflt(t : T) : U =
             t match {
-                case tree.lastChild (c) =>
-                    out (c)
+                case tree.lastChild(c) =>
+                    out(c)
                 case _ =>
-                    in (t)
+                    in(t)
             }
 
-        lazy val outfunc = outupdate (outdflt)
+        lazy val outfunc = outupdate(outdflt)
 
-        lazy val out = attr ((t : T) => outfunc.applyOrElse (t, outdflt))
+        lazy val out = attr((t : T) => outfunc.applyOrElse(t, outdflt))
 
-        Chain (in, out)
+        Chain(in, out)
     }
 
 }

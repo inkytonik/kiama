@@ -27,14 +27,14 @@ import base.c.{CDeclaration, CExpression, CType, CVarDecl}
 /**
  * C record types.
  */
-case class CRecordType (fields : Vector[CVarDecl]) extends CType
+case class CRecordType(fields : Vector[CVarDecl]) extends CType
 
 /**
  * C array index expressions.
  */
-case class CIndexExp (array : CExpression, index : CExpression) extends CExpression
+case class CIndexExp(array : CExpression, index : CExpression) extends CExpression
 
 /**
  * C record field access expressions.
  */
-case class CFieldExp (record : CExpression, field : String) extends CExpression
+case class CFieldExp(record : CExpression, field : String) extends CExpression

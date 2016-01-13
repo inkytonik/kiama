@@ -42,6 +42,6 @@ package object kiama {
     /**
      * Convenient type constructor for partial functions.
      */
-    type ==>[T,U] = PartialFunction[T,U]
+    type ==>[T, U] = PartialFunction[T, U]
 
 }

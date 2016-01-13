@@ -47,56 +47,56 @@ object LambdaTree {
     /**
      * Numeric expressions.
      */
-    case class Num (i : Int) extends Exp {
+    case class Num(i : Int) extends Exp {
         override def toString : String = i.toString
     }
 
     /**
      * Variable expressions.
      */
-    case class Var (x : Idn) extends Exp {
+    case class Var(x : Idn) extends Exp {
         override def toString : String = x
     }
 
     /**
      * Lambda expressions binding x within e.
      */
-    case class Lam (x : Idn, e : Exp) extends Exp {
+    case class Lam(x : Idn, e : Exp) extends Exp {
         override def toString : String = s"(\\$x.$e)"
     }
 
     /**
      * Application of l to r.
      */
-    case class App (l : Exp, r : Exp) extends Exp {
+    case class App(l : Exp, r : Exp) extends Exp {
         override def toString : String = s"($l $r)"
     }
 
     /**
      * Substitution of n for x within m.
      */
-    case class Sub (m : Exp, x : Idn, n : Exp) extends Exp
+    case class Sub(m : Exp, x : Idn, n : Exp) extends Exp
 
 }
 
 /**
  * Parser to abstract syntax tree for simple lambda calculus.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import LambdaTree._
 
     lazy val exp : PackratParser[Exp] =
         exp ~ factor ^^ App |
-        ("\\" ~> idn) ~ ("." ~> exp) ^^ Lam |
-        factor |
-        failure ("expression expected")
+            ("\\" ~> idn) ~ ("." ~> exp) ^^ Lam |
+            factor |
+            failure("expression expected")
 
     lazy val factor =
         integer | variable | "(" ~> exp <~ ")"
 
     lazy val integer =
-        "[0-9]+".r ^^ (s => Num (s.toInt))
+        "[0-9]+".r ^^ (s => Num(s.toInt))
 
     lazy val variable =
         idn ^^ Var
@@ -121,18 +121,18 @@ trait Evaluator {
     /**
      * Free variables
      */
-    def fv (t : Exp) : Set[Idn] = {
+    def fv(t : Exp) : Set[Idn] = {
         t match {
-            case Num (_) =>
-                Set ()
-            case Var (x) =>
-                Set (x)
-            case Lam (x, e) =>
-                fv (e) - x
-            case App (m, n) =>
-                fv (m) ++ fv (n)
-            case Sub (m, x, n) =>
-                (fv (m) - x) ++ fv (n)
+            case Num(_) =>
+                Set()
+            case Var(x) =>
+                Set(x)
+            case Lam(x, e) =>
+                fv(e) - x
+            case App(m, n) =>
+                fv(m) ++ fv(n)
+            case Sub(m, x, n) =>
+                (fv(m) - x) ++ fv(n)
         }
     }
 
@@ -144,8 +144,8 @@ trait Evaluator {
      */
     object FreshVar extends Counter {
 
-        def apply () : Idn =
-            s"_v${next ()}"
+        def apply() : Idn =
+            s"_v${next()}"
 
     }
 
@@ -155,29 +155,29 @@ trait Evaluator {
     val xgc_reduction =
         rule[Exp] {
             // Substitution generation
-            case App (Lam (x, e1), e2) =>
-                Sub (e1, x, e2)
+            case App(Lam(x, e1), e2) =>
+                Sub(e1, x, e2)
 
             // Explicit substitution
-            case Sub (Var (x), y, n) if x == y =>
+            case Sub(Var(x), y, n) if x == y =>
                 n
-            case Sub (Var (x), _, _) =>
-                Var (x)
-            case Sub (Lam (x, m), y, n) =>
-                val xprime = FreshVar ()
-                Lam (xprime, Sub (Sub (m, x, Var (xprime)), y, n))
-            case Sub (App (m1, m2), y, n) =>
-                App (Sub (m1, y, n), Sub (m2, y, n))
+            case Sub(Var(x), _, _) =>
+                Var(x)
+            case Sub(Lam(x, m), y, n) =>
+                val xprime = FreshVar()
+                Lam(xprime, Sub(Sub(m, x, Var(xprime)), y, n))
+            case Sub(App(m1, m2), y, n) =>
+                App(Sub(m1, y, n), Sub(m2, y, n))
 
             // Garbage collection
-            case Sub (m, x, n) if ! (fv (m) contains (x)) =>
+            case Sub(m, x, n) if !(fv(m) contains (x)) =>
                 m
         }
 
     /**
      * Normal-order reduction
      */
-    val normal = outermost (xgc_reduction)
+    val normal = outermost(xgc_reduction)
 
 }
 
@@ -192,17 +192,17 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
 
     override val prompt = "lambda> "
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.exp
 
-    def process (source : Source, e : LambdaTree.Exp, config : REPLConfig) {
+    def process(source : Source, e : LambdaTree.Exp, config : REPLConfig) {
         val result =
             if (config.profile.get != None) {
-                val dimensions = parseProfileOption (config.profile ())
-                profile (normal (e), dimensions, config.logging ())
+                val dimensions = parseProfileOption(config.profile())
+                profile(normal(e), dimensions, config.logging())
             } else
-                normal (e)
-        config.output.emitln (result.getOrElse ("reduction failed"))
+                normal(e)
+        config.output.emitln(result.getOrElse("reduction failed"))
     }
 
 }

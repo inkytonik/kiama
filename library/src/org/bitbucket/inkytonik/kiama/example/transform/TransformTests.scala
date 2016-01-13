@@ -29,6 +29,6 @@ import org.bitbucket.inkytonik.kiama.util.TestCompiler
  */
 class TransformTests extends Driver with TestCompiler[Program] {
 
-    filetests ("Transform", "src/org/bitbucket/inkytonik/kiama/example/transform/tests", ".exp", ".out")
+    filetests("Transform", "src/org/bitbucket/inkytonik/kiama/example/transform/tests", ".exp", ".out")
 
 }

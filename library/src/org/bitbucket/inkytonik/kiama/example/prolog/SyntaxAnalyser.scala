@@ -27,7 +27,7 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Module containing parsers for Prolog.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import PrologTree._
     import scala.language.postfixOps
@@ -40,46 +40,46 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     lazy val clause =
         literal ~ (":-" ~> literals) <~ "." ^^ Rule |
-        literal <~ "." ^^ Fact
+            literal <~ "." ^^ Fact
 
     lazy val literal : Parser[Literal] =
         atom ~ ("(" ~> terms <~ ")") ^^ Pred |
-        atom ^^ Atom
+            atom ^^ Atom
 
     lazy val literals =
-        rep1sep (literal | cut, ",")
+        rep1sep(literal | cut, ",")
 
     lazy val cut =
-        "!" ^^ { case _ => Cut () }
+        "!" ^^ { case _ => Cut() }
 
     lazy val terms =
-        rep1sep (term, ",")
+        rep1sep(term, ",")
 
     lazy val term =
         literal |
-        varr ^^ Var |
-        integer |
-        list
+            varr ^^ Var |
+            integer |
+            list
 
     lazy val list =
-        "[" ~> "]" ^^ { case _ => Pred ("nil", Vector ()) } |
-        "[" ~> listterms <~ "]"
+        "[" ~> "]" ^^ { case _ => Pred("nil", Vector()) } |
+            "[" ~> listterms <~ "]"
 
     lazy val listterms : Parser[Literal] =
         term ~ ("," ~> listterms) ^^ {
-            case h ~ t => Pred ("cons", Vector (h, t))
+            case h ~ t => Pred("cons", Vector(h, t))
         } |
-        term ^^ {
-            case h => Pred ("cons", Vector (h, Pred ("nil", Vector ())))
-        }
+            term ^^ {
+                case h => Pred("cons", Vector(h, Pred("nil", Vector())))
+            }
 
     lazy val atom =
-        regex ("[a-z][a-zA-Z]*".r)
+        regex("[a-z][a-zA-Z]*".r)
 
     lazy val varr =
-        regex ("[A-Z][a-zA-Z]*".r)
+        regex("[A-Z][a-zA-Z]*".r)
 
     lazy val integer =
-        regex ("[0-9]+".r) ^^ { case s => Integer (s.toInt) }
+        regex("[0-9]+".r) ^^ { case s => Integer(s.toInt) }
 
 }

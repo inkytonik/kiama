@@ -34,7 +34,7 @@ trait Evaluator {
      * Evaluate the given expression, returning the result of the
      * evaluation if it succeeded, or exp if it failed.
      */
-    def eval (exp : Exp) : Exp
+    def eval(exp : Exp) : Exp
 
     /**
      * Whether this mechanism evaluates inside lambdas.  Used for
@@ -53,25 +53,25 @@ trait Evaluator {
      * to avoid the potential for clashes with user-level variables (which
      * must start with a letter).
      */
-    def freshVar () : Idn = {
-        val count = freshVarCounter.next ()
+    def freshVar() : Idn = {
+        val count = freshVarCounter.next()
         s"_v$count"
     }
 
     /**
      * Capture-free substitution of free occurrences of x in e1 with e2.
      */
-    def substitute (x : Idn, e2 : Exp, e1 : Exp) : Exp =
+    def substitute(x : Idn, e2 : Exp, e1 : Exp) : Exp =
         e1 match {
-            case Var (y) if x == y =>
+            case Var(y) if x == y =>
                 e2
-            case Lam (y, t, e3) =>
-                val z = freshVar ()
-                Lam (z, t, substitute (x, e2, substitute (y, Var (z), e3)))
-            case App (l, r) =>
-                App (substitute (x, e2, l), substitute (x, e2, r))
-            case Opn (l, op, r) =>
-                Opn (substitute (x, e2, l), op, substitute (x, e2, r))
+            case Lam(y, t, e3) =>
+                val z = freshVar()
+                Lam(z, t, substitute(x, e2, substitute(y, Var(z), e3)))
+            case App(l, r) =>
+                App(substitute(x, e2, l), substitute(x, e2, r))
+            case Opn(l, op, r) =>
+                Opn(substitute(x, e2, l), op, substitute(x, e2, r))
             case e =>
                 e
         }
@@ -90,8 +90,8 @@ trait RewritingEvaluator extends Evaluator {
      * Evaluate the given expression by rewriting it with the s
      * strategy.
      */
-    def eval (exp : Exp) : Exp =
-        rewrite (s) (exp)
+    def eval(exp : Exp) : Exp =
+        rewrite(s)(exp)
 
     /**
      * The strategy to use to perform the evaluation.

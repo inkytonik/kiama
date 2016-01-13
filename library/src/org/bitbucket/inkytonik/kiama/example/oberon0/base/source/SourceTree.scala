@@ -34,7 +34,7 @@ object SourceTree {
     /**
      * Type for Oberon0 program trees.
      */
-    type SourceTree = Tree[SourceNode,ModuleDecl]
+    type SourceTree = Tree[SourceNode, ModuleDecl]
 
 }
 
@@ -51,7 +51,7 @@ abstract class Declaration extends SourceNode
 /**
  * Module declarations.
  */
-case class ModuleDecl (idndef : IdnDef, block : Block, idnuse : IdnUse) extends SourceNode
+case class ModuleDecl(idndef : IdnDef, block : Block, idnuse : IdnUse) extends SourceNode
 
 /**
  * Non-terminal type for statements.
@@ -61,12 +61,12 @@ abstract class Statement extends SourceNode
 /**
  * Block of declarations and statements.
  */
-case class Block (decls : Vector[Declaration], stmts: Vector[Statement]) extends Statement
+case class Block(decls : Vector[Declaration], stmts : Vector[Statement]) extends Statement
 
 /**
  * Empty statements.
  */
-case class EmptyStmt () extends Statement
+case class EmptyStmt() extends Statement
 
 /**
  * Non-terminal type for expressions.
@@ -83,9 +83,9 @@ abstract class Identifier extends SourceNode {
 /**
  * Defining occurrences of identifiers
  */
-case class IdnDef (ident : String) extends Identifier
+case class IdnDef(ident : String) extends Identifier
 
 /**
  * Applied occurrences (uses) of identifiers.
  */
-case class IdnUse (ident : String) extends Identifier
+case class IdnUse(ident : String) extends Identifier

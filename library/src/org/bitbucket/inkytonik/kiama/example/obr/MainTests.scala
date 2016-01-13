@@ -29,7 +29,7 @@ import org.bitbucket.inkytonik.kiama.util.TestCompilerWithConfig
  * A driver which compiles a file and allows a test to be run on the resulting
  * target tree.
  */
-trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig] {
+trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig] {
 
     import ObrTree.ObrTree
     import RISCTree._
@@ -41,30 +41,30 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * Method to compile an Obr program and to apply a specified test to
      * the resulting target tree.
      */
-    def targettreetest (name : String, dirname : String, obrfile : String,
-                        tester : (String, Emitter, RISCNode) => Unit) {
+    def targettreetest(name : String, dirname : String, obrfile : String,
+        tester : (String, Emitter, RISCNode) => Unit) {
         val title = s"$name processing $obrfile"
 
         test(title) {
             val filename = dirname + obrfile
-            val config = createAndInitConfig (Array (filename))
-            val source = FileSource (filename)
-            makeast (source, config) match {
-                case Left (ast) =>
-                    val tree = new ObrTree (ast)
-                    val analyser = new SemanticAnalyser (tree)
+            val config = createAndInitConfig(Array(filename))
+            val source = FileSource(filename)
+            makeast(source, config) match {
+                case Left(ast) =>
+                    val tree = new ObrTree(ast)
+                    val analyser = new SemanticAnalyser(tree)
                     val messages = analyser.errors
                     if (messages.length > 0) {
-                        report (messages, config.error)
-                        fail (s"$title emitted a semantic error.")
+                        report(messages, config.error)
+                        fail(s"$title emitted a semantic error.")
                     } else {
                         val labels = new RISCLabels
-                        val transformer = new RISCTransformer (analyser, labels)
-                        tester (title, config.error, transformer.code (ast))
+                        val transformer = new RISCTransformer(analyser, labels)
+                        tester(title, config.error, transformer.code(ast))
                     }
-                case Right (msgs) =>
-                    config.error.emit (formatMessages (msgs))
-                    fail (s"$title emitted a parse error.")
+                case Right(msgs) =>
+                    config.error.emit(formatMessages(msgs))
+                    fail(s"$title emitted a parse error.")
             }
         }
     }
@@ -73,16 +73,16 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt,ObrConfig
      * Test a target tree by collecting together its IntDatum leaves and checking the resulting
      * sequence of integers to see if it contains an expected sequence of integers as a slice.
      */
-    def checkintdatums (expected : List[Int]) (title : String, emitter : Emitter, code : RISCNode) {
+    def checkintdatums(expected : List[Int])(title : String, emitter : Emitter, code : RISCNode) {
         val realised = List.newBuilder[Int]
-        bottomup (query[RISCNode] {
+        bottomup(query[RISCNode] {
             case IntDatum(num) =>
                 realised += num
-            case n : RISCProg  =>
+            case n : RISCProg =>
                 val found = realised.result
                 if (!(found containsSlice expected))
-                    fail (s"$title unexpected IntDatum leaves, found $found expected slice $expected")
-        }) (code)
+                    fail(s"$title unexpected IntDatum leaves, found $found expected slice $expected")
+        })(code)
     }
 
 }

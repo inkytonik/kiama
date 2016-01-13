@@ -35,30 +35,30 @@ trait CCodeGenerator extends L0.CCodeGenerator {
     /**
      * Add translation of IF and WHILE statements.
      */
-    override def translate (s : Statement) : CStatement =
+    override def translate(s : Statement) : CStatement =
         s match {
-            case IfStatement (c, ss, eis, oe) =>
-                translate ((c,ss) +: eis, oe)
+            case IfStatement(c, ss, eis, oe) =>
+                translate((c, ss) +: eis, oe)
 
-            case WhileStatement (c, b) =>
-                CWhileStatement (translate (c), translate (b))
+            case WhileStatement(c, b) =>
+                CWhileStatement(translate(c), translate(b))
 
             case _ =>
-                super.translate (s)
+                super.translate(s)
         }
 
     /**
      * Translation of expression, block pairs from an IF statement into
      * cascading C IFs.
      */
-    def translate (eis : Vector[(Expression,Block)], oe : Option[Block]) : CStatement = {
+    def translate(eis : Vector[(Expression, Block)], oe : Option[Block]) : CStatement = {
         val (e, ss) = eis.last
-        val te = translate (e)
-        val tss = translate (ss)
-        val tail = oe.map (b => CIfElseStatement (te, tss, translate (b))).getOrElse (CIfStatement (te, tss))
-        eis.init.foldRight (tail) {
+        val te = translate(e)
+        val tss = translate(ss)
+        val tail = oe.map(b => CIfElseStatement(te, tss, translate(b))).getOrElse(CIfStatement(te, tss))
+        eis.init.foldRight(tail) {
             case ((e, ss), s) =>
-                CIfElseStatement (translate (e), translate (ss), s)
+                CIfElseStatement(translate(e), translate(ss), s)
         }
     }
 

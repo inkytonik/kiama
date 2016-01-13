@@ -29,19 +29,19 @@ object Rewriter {
     /**
      * Calculate total salary bill.
      */
-    def total (c : JValue) : Double =
-        everything (0.0) (_ + _) {
-            case (JName ("salary"), JNumber (d)) =>
+    def total(c : JValue) : Double =
+        everything(0.0)(_ + _) {
+            case (JName("salary"), JNumber(d)) =>
                 d
-        } (c)
+        }(c)
 
     /**
      * Cut all salaries by half.
      */
-    def cut (c : JValue) : JValue =
-        rewrite (everywhere (rule[(JName, JNumber)] {
-            case (n @ JName ("salary"), JNumber (d)) =>
-                (n, JNumber (d / 2))
-        })) (c)
+    def cut(c : JValue) : JValue =
+        rewrite(everywhere(rule[(JName, JNumber)] {
+            case (n @ JName("salary"), JNumber(d)) =>
+                (n, JNumber(d / 2))
+        }))(c)
 
 }

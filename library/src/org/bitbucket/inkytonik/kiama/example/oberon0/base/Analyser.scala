@@ -39,22 +39,22 @@ trait Analyser extends Attribution with SymbolTable {
     /**
      * Decorators on the analysed tree.
      */
-    lazy val decorators = new Decorators (tree)
+    lazy val decorators = new Decorators(tree)
 
     /**
      * The semantic errors for the tree.
      */
     lazy val errors : Messages =
-        collectMessages (tree) {
+        collectMessages(tree) {
             case n =>
-                errorsDef (n)
+                errorsDef(n)
         }
 
     /**
      * The error checking for this level, overridden to extend at later
      * levels. No errors are collected at this level.
      */
-    def errorsDef (n : SourceNode) : Messages =
+    def errorsDef(n : SourceNode) : Messages =
         noMessages
 
 }

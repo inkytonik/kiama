@@ -33,14 +33,14 @@ object NominalTree {
      * A name comprising a base string with an optional integer index. The
      * index defaults to being omitted.
      */
-    case class Name (base : String, opti : Option[Int] = None) {
-        override def toString : String = base + opti.getOrElse ("")
+    case class Name(base : String, opti : Option[Int] = None) {
+        override def toString : String = base + opti.getOrElse("")
     }
 
     /**
      * A generic abstract binding of a name in a term.
      */
-    case class Bind (name : Name, term : Any)
+    case class Bind(name : Name, term : Any)
 
     /**
      * A transposition of two names is just a tuple.
@@ -63,41 +63,41 @@ class NominalRewriter extends Rewriter {
     /**
      * Swap two names (given by `tr`) throughout a term `t`.
      */
-    def swap[T] (tr : Trans) (t : T) : T = {
-        val s = everywhere (rule[Name] {
-                    case n => if (n == tr._1) tr._2
-                              else if (n == tr._2) tr._1
-                              else n
-                })
-        rewrite (s) (t)
+    def swap[T](tr : Trans)(t : T) : T = {
+        val s = everywhere(rule[Name] {
+            case n => if (n == tr._1) tr._2
+            else if (n == tr._2) tr._1
+            else n
+        })
+        rewrite(s)(t)
     }
 
     /**
      * Is the name `a` fresh (not free) in a term?
      */
-    def fresh (a : Name) (t : Any) : Boolean =
+    def fresh(a : Name)(t : Any) : Boolean =
         t match {
             case n : Name    => a != n
-            case Bind (b, t) => (a == b) || fresh (a) (t)
-            case p : Product => p.productIterator.forall (c => fresh (a) (c))
+            case Bind(b, t)  => (a == b) || fresh(a)(t)
+            case p : Product => p.productIterator.forall(c => fresh(a)(c))
             case _           => true
         }
 
     /**
      * Alpha equivalence of two terms.
      */
-    def alphaequiv (a1 : Any, a2 : Any) : Boolean =
+    def alphaequiv(a1 : Any, a2 : Any) : Boolean =
         (a1, a2) match {
             case (n1 : Name, n2 : Name) =>
                 n1 == n2
-            case (Bind (a, x), Bind (b, y)) =>
-                ((a == b) && alphaequiv (x, y)) ||
-                    (fresh (a) (y) && alphaequiv (x, swap (a, b) (y)))
+            case (Bind(a, x), Bind(b, y)) =>
+                ((a == b) && alphaequiv(x, y)) ||
+                    (fresh(a)(y) && alphaequiv(x, swap(a, b)(y)))
             case (p1 : Product, p2 : Product) =>
                 (p1.productPrefix == p2.productPrefix) &&
-                p1.productIterator.zip (p2.productIterator).forall {
-                    case (x,y) => alphaequiv (x,y)
-                }
+                    p1.productIterator.zip(p2.productIterator).forall {
+                        case (x, y) => alphaequiv(x, y)
+                    }
             case _ =>
                 a1 == a2
         }
@@ -106,10 +106,10 @@ class NominalRewriter extends Rewriter {
      * An extractor pattern for terms that contain a single name child.
      */
     object HasVar {
-        def unapply (t : Product) : Option[Name] =
+        def unapply(t : Product) : Option[Name] =
             if (t.productArity == 1)
-                t.productElement (0) match {
-                    case n : Name => Some (n)
+                t.productElement(0) match {
+                    case n : Name => Some(n)
                     case _        => None
                 }
             else
@@ -124,8 +124,8 @@ class NominalRewriter extends Rewriter {
     /**
      * Make a unique name using an old name as the base.
      */
-    def genName (oldname : Name) : Name = {
-        Name (oldname.base, Some (uniqueNameCounter.next ()))
+    def genName(oldname : Name) : Name = {
+        Name(oldname.base, Some(uniqueNameCounter.next()))
     }
 
     /**
@@ -133,37 +133,37 @@ class NominalRewriter extends Rewriter {
      * returning the components after freshening the bound name.
      */
     object Binding {
-        def unapply (b : Bind) : Option[(Name,Any)] = {
-            val n = genName (b.name)
-            Some ((n, swap (n, b.name) (b.term)))
+        def unapply(b : Bind) : Option[(Name, Any)] = {
+            val n = genName(b.name)
+            Some((n, swap(n, b.name)(b.term)))
         }
     }
 
     /**
      * Substitution of `t1` for free occurrences of `n` in a term.
      */
-    def subst[T] (n : Name, t1 : Any) : T => T =
-        rewrite (alltd (
+    def subst[T](n : Name, t1 : Any) : T => T =
+        rewrite(alltd(
             rule[Any] {
-                case HasVar (m) if n == m =>
+                case HasVar(m) if n == m =>
                     t1
-                case Binding (a, x) =>
-                    val y = subst (n, t1) (x)
-                    Bind (a, y)
+                case Binding(a, x) =>
+                    val y = subst(n, t1)(x)
+                    Bind(a, y)
             }
         ))
 
     /**
      * Free variables in an term.
      */
-    def fv (t : Any) : Set[Name] =
+    def fv(t : Any) : Set[Name] =
         t match {
-            case n : Name    => Set (n)
-            case Bind (b, t) => fv (t) - b
-            case p : Product => p.productIterator.foldLeft (Set[Name] ()) {
-                                    case (s, c) => s | fv (c)
-                                }
-            case _           => Set ()
+            case n : Name   => Set(n)
+            case Bind(b, t) => fv(t) - b
+            case p : Product => p.productIterator.foldLeft(Set[Name]()) {
+                case (s, c) => s | fv(c)
+            }
+            case _ => Set()
         }
 
 }

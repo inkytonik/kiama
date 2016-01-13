@@ -27,13 +27,13 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parser to abstract syntax tree for the imperative language.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import ImperativeTree._
     import scala.language.postfixOps
 
     lazy val stmt : Parser[Stmt] =
-        ";" ^^ (_ => Null ()) | sequence | asgnStmt | whileStmt
+        ";" ^^ (_ => Null()) | sequence | asgnStmt | whileStmt
 
     lazy val asgnStmt =
         variable ~ ("=" ~> exp) <~ ";" ^^ Asgn
@@ -46,30 +46,30 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     lazy val exp : Parser[Exp] =
         exp ~ ("+" ~> term) ^^ Add |
-        exp ~ ("-" ~> term) ^^ Sub |
-        term
+            exp ~ ("-" ~> term) ^^ Sub |
+            term
 
     lazy val term : Parser[Exp] =
         term ~ ("*" ~> factor) ^^ Mul |
-        term ~ ("/" ~> factor) ^^ Div |
-        factor
+            term ~ ("/" ~> factor) ^^ Div |
+            factor
 
     lazy val factor : Parser[Exp] =
         double | integer | variable | "-" ~> exp ^^ Neg | "(" ~> exp <~ ")"
 
     lazy val double =
-        """[0-9]+\.[0-9]+""" ^^ (s => Num (s.toDouble))
+        """[0-9]+\.[0-9]+""" ^^ (s => Num(s.toDouble))
 
     lazy val integer =
-        "[0-9]+".r ^^ (s => Num (s.toInt))
+        "[0-9]+".r ^^ (s => Num(s.toInt))
 
     lazy val variable =
         idn ^^ Var
 
     lazy val idn =
-        not (keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r
+        not(keyword) ~> "[a-zA-Z][a-zA-Z0-9]*".r
 
     lazy val keyword =
-        keywords ("[^a-zA-Z0-9]".r, List ("while"))
+        keywords("[^a-zA-Z0-9]".r, List("while"))
 
 }

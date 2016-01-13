@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parsers for base language.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import source.{Block, Declaration, EmptyStmt, IdnDef, IdnUse, ModuleDecl, Statement}
 
@@ -43,31 +43,31 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
 
     lazy val block =
         declarations ~ statements ^^ {
-            case ds1 ~ Block (ds2, ss) =>
-                Block (ds1 ++ ds2, ss)
+            case ds1 ~ Block(ds2, ss) =>
+                Block(ds1 ++ ds2, ss)
         }
 
     lazy val declarations =
         declarationsDef
 
     def declarationsDef : Parser[Vector[Declaration]] =
-        "" ^^^ Vector ()
+        "" ^^^ Vector()
 
     lazy val statements =
         "BEGIN" ~> statementSequence <~ "END" |
-        "END" ^^ (_ => Block (Vector (), Vector ()))
+            "END" ^^ (_ => Block(Vector(), Vector()))
 
     lazy val statementSequence =
-        rep1sep (statement, ";") ^^ {
+        rep1sep(statement, ";") ^^ {
             case ss =>
-                Block (Vector (), ss)
+                Block(Vector(), ss)
         }
 
     lazy val statement =
         statementDef
 
     def statementDef : Parser[Statement] =
-        success (EmptyStmt ())
+        success(EmptyStmt())
 
     lazy val idndef =
         ident ^^ IdnDef
@@ -76,19 +76,19 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
         ident ^^ IdnUse
 
     def keywordStrings : List[String] =
-        List ("BEGIN", "END", "MODULE")
+        List("BEGIN", "END", "MODULE")
 
     lazy val keyword =
-        keywords ("[^a-zA-Z0-9]".r, keywordStrings)
+        keywords("[^a-zA-Z0-9]".r, keywordStrings)
 
     lazy val ident =
-        not (keyword) ~> "[a-zA-Z_][a-zA-Z0-9]*".r |
-        failure ("ident expected")
+        not(keyword) ~> "[a-zA-Z_][a-zA-Z0-9]*".r |
+            failure("ident expected")
 
     override val whitespace =
-        rep ("""\s+""".r | comment)
+        rep("""\s+""".r | comment)
 
     lazy val comment : Parser[Any] =
-        "(*" ~ rep (not ("*)") ~ (comment | any)) ~ "*)"
+        "(*" ~ rep(not("*)") ~ (comment | any)) ~ "*)"
 
 }

@@ -28,11 +28,11 @@ import base.source.{Block, Expression, Statement}
  * Conditional statements containing a main expression and then block, zero
  * or more else if blocks, and an optional else block.
  */
-case class IfStatement (cond : Expression, block : Block,
-                        elsifs : Vector[(Expression,Block)],
-                        optelse : Option[Block]) extends Statement
+case class IfStatement(cond : Expression, block : Block,
+    elsifs : Vector[(Expression, Block)],
+    optelse : Option[Block]) extends Statement
 
 /**
  * While statements.
  */
-case class WhileStatement (cond : Expression, block : Block) extends Statement
+case class WhileStatement(cond : Expression, block : Block) extends Statement

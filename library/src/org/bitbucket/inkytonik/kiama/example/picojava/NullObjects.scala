@@ -50,10 +50,10 @@ trait NullObjects {
     val unknownDecl : PicoJavaNode => UnknownDecl =
         attr {
             case p : Program =>
-                localLookup ("$unknown") (p).asInstanceOf[UnknownDecl]
+                localLookup("$unknown")(p).asInstanceOf[UnknownDecl]
             // FIXME: need NTA case?
-            case tree.parent (p) =>
-                unknownDecl (p)
+            case tree.parent(p) =>
+                unknownDecl(p)
         }
 
 }

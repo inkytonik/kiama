@@ -29,29 +29,29 @@ package output
  * size, or lines indented greater than a certain amount might be omitted
  * to show an overview.
  */
- trait Filters {
+trait Filters {
 
     /**
      * A filter that limits the string `s` to at most `n` characters.
      */
-    def keepMaxChars (n : Int) (s : String) : String =
-        s.take (n)
+    def keepMaxChars(n : Int)(s : String) : String =
+        s.take(n)
 
     /**
      * A filter that limits the string `s` to at most `n` completed
      * lines. The final end of line is included.
      */
-    def keepMaxLines (n : Int) (s : String) : String =
-        s.linesWithSeparators.take (n).mkString
+    def keepMaxLines(n : Int)(s : String) : String =
+        s.linesWithSeparators.take(n).mkString
 
     /**
      * A filter that limits the string `s` to at most `n` words. A word
      * is one or more consecutive non-whitespace characters. The
      * whitespace after the last word (if any) is not included.
      */
-    def keepMaxWords (n : Int) (s : String) : String = {
-        val wordRE = """^(?:\s*[^\s]+){0,%d}""".format (n).r
-        wordRE.findFirstIn (s).getOrElse ("")
+    def keepMaxWords(n : Int)(s : String) : String = {
+        val wordRE = """^(?:\s*[^\s]+){0,%d}""".format(n).r
+        wordRE.findFirstIn(s).getOrElse("")
     }
 
     /**
@@ -59,15 +59,15 @@ package output
      * string `"..."` preceded by `n` spaces. The string argument `s` is
      * ignored.
      */
-    def indentedEllipsis (n : Int, s : String) : String =
+    def indentedEllipsis(n : Int, s : String) : String =
         s"${" " * n}...\n"
 
     /**
      * Return the indentation of a line, i.e., the number of spaces that
      * appear before the first non-space character.
      */
-    def indentOf (s : String) : Int =
-        s.takeWhile (_.isSpaceChar).length
+    def indentOf(s : String) : Int =
+        s.takeWhile(_.isSpaceChar).length
 
     /**
      * A filter that replaces runs of lines that have an indentation
@@ -76,13 +76,13 @@ package output
      * the first line of the run. By default, `mkrepl` is
      * `indentedEllipsis`.
      */
-    def keepMaxIndent (n : Int, s : String,
-                       mkrepl : (Int, String) => String = indentedEllipsis) : String = {
-        s.linesWithSeparators.foldLeft ((Vector[String] (), true)) {
+    def keepMaxIndent(n : Int, s : String,
+        mkrepl : (Int, String) => String = indentedEllipsis) : String = {
+        s.linesWithSeparators.foldLeft((Vector[String](), true)) {
             case ((result, first), l) =>
-                if (indentOf (l) >= n)
+                if (indentOf(l) >= n)
                     if (first)
-                        (result :+ mkrepl (n, l), false)
+                        (result :+ mkrepl(n, l), false)
                     else
                         (result, false)
                 else

@@ -45,37 +45,37 @@ object SymbolTable extends Environments {
      * The `decl` field gives us access back to the declaration from the
      * entity.
      */
-    case class MainClassEntity (decl : MainClass) extends MiniJavaEntity
+    case class MainClassEntity(decl : MainClass) extends MiniJavaEntity
 
     /**
      * A normal class entity (i.e., all the non-main classes). The `decl`
      * field gives us access back to the declaration from the entity.
      */
-    case class ClassEntity (decl : Class) extends MiniJavaEntity
+    case class ClassEntity(decl : Class) extends MiniJavaEntity
 
     /**
      * A method entity. The `decl` field gives us access back to the
      * declaration from the entity.
      */
-    case class MethodEntity (decl : Method) extends MiniJavaEntity
+    case class MethodEntity(decl : Method) extends MiniJavaEntity
 
     /**
      * An entity representing an argument to a method. The `decl` field
      * gives us access back to the declaration from the entity.
      */
-    case class ArgumentEntity (decl : Argument) extends MiniJavaEntity
+    case class ArgumentEntity(decl : Argument) extends MiniJavaEntity
 
     /**
      * A instance variable (field) entity. The `decl` field gives us access
      * back to the declaration from the entity.
      */
-    case class FieldEntity (decl : Field) extends MiniJavaEntity
+    case class FieldEntity(decl : Field) extends MiniJavaEntity
 
     /**
      * A local variable entity. The `decl` field gives us access back
      * to the declaration from the entity.
      */
-    case class VariableEntity (decl : Var) extends MiniJavaEntity
+    case class VariableEntity(decl : Var) extends MiniJavaEntity
 
     // Internal types, not created from user programs by the parser but
     // used to represent some types internally to the semantic analysis.
@@ -83,12 +83,12 @@ object SymbolTable extends Environments {
     /**
      * A reference type given by the declared class body.
      */
-    case class ReferenceType (decl : Class) extends Type
+    case class ReferenceType(decl : Class) extends Type
 
     /**
      * An unknown type, for example, one belonging to a name that is not declared
      * but is used in an expression.
      */
-    case class UnknownType () extends Type
+    case class UnknownType() extends Type
 
 }

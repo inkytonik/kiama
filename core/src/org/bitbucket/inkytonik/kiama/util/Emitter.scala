@@ -29,22 +29,22 @@ abstract class Emitter {
     /**
      * Emit `any`.
      */
-    def emit (any : Any)
+    def emit(any : Any)
 
     /**
      * Emit `any` and start a new line.
      */
-    def emitln (any : Any)
+    def emitln(any : Any)
 
     /**
      * Emit a new line.
      */
-    def emitln ()
+    def emitln()
 
     /**
      * Close this emitter. Default: do nothing.
      */
-    def close () {
+    def close() {
     }
 
 }
@@ -59,21 +59,21 @@ class OutputEmitter extends Emitter {
     /**
      * Emit `any`.
      */
-    def emit (any : Any) {
-        print (any.toString)
+    def emit(any : Any) {
+        print(any.toString)
     }
 
     /**
      * Emit `any` and start a new line.
      */
-    def emitln (any : Any) {
-        println (any.toString)
+    def emitln(any : Any) {
+        println(any.toString)
     }
 
     /**
      * Emit a new line.
      */
-    def emitln () {
+    def emitln() {
         println
     }
 
@@ -89,21 +89,21 @@ class ErrorEmitter extends Emitter {
     /**
      * Emit `any`.
      */
-    def emit (any : Any) {
-        print (any.toString)
+    def emit(any : Any) {
+        print(any.toString)
     }
 
     /**
      * Emit `any` and start a new line.
      */
-    def emitln (any : Any) {
-        println (any.toString)
+    def emitln(any : Any) {
+        println(any.toString)
     }
 
     /**
      * Emit a new line.
      */
-    def emitln () {
+    def emitln() {
         println
     }
 
@@ -115,23 +115,23 @@ class ErrorEmitter extends Emitter {
  */
 class StringEmitter extends Emitter {
     val b = new StringBuilder
-    override def emit (any : Any) { b.append (any.toString) }
-    override def emitln (any : Any) { b.append (any.toString).append ('\n') }
-    override def emitln () { b.append ('\n') }
-    def clear () { b.clear }
-    def result () : String = b.result
+    override def emit(any : Any) { b.append(any.toString) }
+    override def emitln(any : Any) { b.append(any.toString).append('\n') }
+    override def emitln() { b.append('\n') }
+    def clear() { b.clear }
+    def result() : String = b.result
 }
 
 /**
  * A string emitter that also provides a `close` method to send the
  * result to the named UTF-8 encoded file.
  */
-class FileEmitter (filename : String) extends StringEmitter {
+class FileEmitter(filename : String) extends StringEmitter {
     import org.bitbucket.inkytonik.kiama.util.IO.filewriter
 
-    override def close () {
-        val out = filewriter (filename)
-        out.write (result ())
-        out.close ()
+    override def close() {
+        val out = filewriter(filename)
+        out.write(result())
+        out.close()
     }
 }

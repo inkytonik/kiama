@@ -36,7 +36,7 @@ trait Driver extends Compiler[Program] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 
     /**
@@ -52,35 +52,35 @@ trait Driver extends Compiler[Program] {
      * errors. If any messages are produced, print them. If all is ok,
      * translate the program and generate code for the translation.
      */
-    def process (source : Source, ast : Program, config : Config) {
+    def process(source : Source, ast : Program, config : Config) {
 
         // Pretty print the abstract syntax tree
         // config.output.emitln (layout (any (ast)))
 
         // Perform the semantic checks
-        val tree = new MiniJavaTree (ast)
-        val analyser = new SemanticAnalyser (tree)
+        val tree = new MiniJavaTree(ast)
+        val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
 
         // Report any messages that were produced
         if (messages.length > 0) {
 
-            report (messages, config.error)
+            report(messages, config.error)
 
         } else {
 
             // Make a translator for this tree
-            val translator = new Translator (tree)
+            val translator = new Translator(tree)
 
             // Translate the source tree to JVM
-            val filename = source.optName.getOrElse ("")
-            val targettree = translator.translate (ast, filename, analyser)
+            val filename = source.optName.getOrElse("")
+            val targettree = translator.translate(ast, filename, analyser)
 
             // Pretty print the target tree
             // config.output.emitln (layout (any (targettree)))
 
             // Output code for the target tree
-            targettree.map (generate (isTest, _, config.output))
+            targettree.map(generate(isTest, _, config.output))
 
         }
 
@@ -89,8 +89,8 @@ trait Driver extends Compiler[Program] {
     /**
      * Pretty printer to use to print minijava ASTs.
      */
-    override def format (ast : Program) : Document =
-        PrettyPrinter.format (ast)
+    override def format(ast : Program) : Document =
+        PrettyPrinter.format(ast)
 
 }
 

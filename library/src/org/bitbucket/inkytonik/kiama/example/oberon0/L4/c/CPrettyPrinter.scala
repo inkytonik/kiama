@@ -28,25 +28,25 @@ trait CPrettyPrinter extends L3.c.CPrettyPrinter {
     import L3.c.CDerefExp
     import org.bitbucket.inkytonik.kiama.output.PrettyExpression
 
-    override def basetypeToDoc (t : CType) : Doc =
+    override def basetypeToDoc(t : CType) : Doc =
         t match {
-            case CRecordType (fls) =>
-                "struct" <+> "{" <> (nest (lterm (fls map toDoc, semi))) <>
+            case CRecordType(fls) =>
+                "struct" <+> "{" <> (nest(lterm(fls map toDoc, semi))) <>
                     line <> "}" <> space
             case _ =>
-                super.basetypeToDoc (t)
+                super.basetypeToDoc(t)
         }
 
-    override def toParenDoc (e : PrettyExpression) : Doc =
+    override def toParenDoc(e : PrettyExpression) : Doc =
         e match {
-            case CIndexExp (a, e) =>
-                toDoc (a) <> brackets (toDoc (e))
-            case CFieldExp (r : CDerefExp, f) =>
-                parens (toDoc (r)) <> dot <> f
-            case CFieldExp (r, f) =>
-                toDoc (r) <> dot <> f
+            case CIndexExp(a, e) =>
+                toDoc(a) <> brackets(toDoc(e))
+            case CFieldExp(r : CDerefExp, f) =>
+                parens(toDoc(r)) <> dot <> f
+            case CFieldExp(r, f) =>
+                toDoc(r) <> dot <> f
             case _ =>
-                super.toParenDoc (e)
+                super.toParenDoc(e)
         }
 
 }

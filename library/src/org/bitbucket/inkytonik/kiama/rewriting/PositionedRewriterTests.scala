@@ -32,98 +32,98 @@ class PositionedRewriterTests extends Tests {
     import SupportPositionedRewriterTests._
     import org.bitbucket.inkytonik.kiama.util.{Position, StringSource}
 
-    val source = StringSource ("dummy")
+    val source = StringSource("dummy")
     override val positions = PositionedRewriter.positions
 
     /**
      * Don't do anything to the positions before the next test so that
      * settings are preserved.
      */
-    override def initialisePositions () {
+    override def initialisePositions() {
         // Do nothing
     }
 
-    val pl1s = Position (1, 2, source)
-    val pl1f = Position (3, 4, source)
-    val l1 = Leaf (42)
-    positions.setStart (l1, pl1s)
-    positions.setFinish (l1, pl1f)
-    val pl2s = Position (5, 6, source)
-    val pl2f = Position (7, 8, source)
-    val l2 = Leaf (99)
-    positions.setStart (l2, pl2s)
-    positions.setFinish (l2, pl2f)
+    val pl1s = Position(1, 2, source)
+    val pl1f = Position(3, 4, source)
+    val l1 = Leaf(42)
+    positions.setStart(l1, pl1s)
+    positions.setFinish(l1, pl1f)
+    val pl2s = Position(5, 6, source)
+    val pl2f = Position(7, 8, source)
+    val l2 = Leaf(99)
+    positions.setStart(l2, pl2s)
+    positions.setFinish(l2, pl2f)
 
-    val pts = Position (9, 10, source)
-    val ptf = Position (11, 12, source)
-    val t = Two (l1, l2)
-    positions.setStart (t, pts)
-    positions.setFinish (t, ptf)
+    val pts = Position(9, 10, source)
+    val ptf = Position(11, 12, source)
+    val t = Two(l1, l2)
+    positions.setStart(t, pts)
+    positions.setFinish(t, ptf)
 
-    val pos = Position (13, 14, source)
-    val pof = Position (15, 16, source)
-    val o = One (t)
-    positions.setStart (o, pos)
-    positions.setFinish (o, pof)
+    val pos = Position(13, 14, source)
+    val pof = Position(15, 16, source)
+    val o = One(t)
+    positions.setStart(o, pos)
+    positions.setFinish(o, pof)
 
-    val r = everywhere (rule[Leaf] {
-                case Leaf (i) => Leaf (i + 1)
-            })
+    val r = everywhere(rule[Leaf] {
+        case Leaf(i) => Leaf(i + 1)
+    })
 
-    def check (no : One) {
-        assertResult (One (Two (Leaf (43), Leaf (100)))) (no)
-        assertOptSame (Some (pos)) (positions.getStart (no))
-        assertOptSame (Some (pof)) (positions.getFinish (no))
-        assertOptSame (Some (pts)) (positions.getStart (no.a))
-        assertOptSame (Some (ptf)) (positions.getFinish (no.a))
-        assertOptSame (Some (pl1s)) (positions.getStart (no.a.asInstanceOf[Two].l))
-        assertOptSame (Some (pl1f)) (positions.getFinish (no.a.asInstanceOf[Two].l))
-        assertOptSame (Some (pl2s)) (positions.getStart (no.a.asInstanceOf[Two].r))
-        assertOptSame (Some (pl2f)) (positions.getFinish (no.a.asInstanceOf[Two].r))
+    def check(no : One) {
+        assertResult(One(Two(Leaf(43), Leaf(100))))(no)
+        assertOptSame(Some(pos))(positions.getStart(no))
+        assertOptSame(Some(pof))(positions.getFinish(no))
+        assertOptSame(Some(pts))(positions.getStart(no.a))
+        assertOptSame(Some(ptf))(positions.getFinish(no.a))
+        assertOptSame(Some(pl1s))(positions.getStart(no.a.asInstanceOf[Two].l))
+        assertOptSame(Some(pl1f))(positions.getFinish(no.a.asInstanceOf[Two].l))
+        assertOptSame(Some(pl2s))(positions.getStart(no.a.asInstanceOf[Two].r))
+        assertOptSame(Some(pl2f))(positions.getFinish(no.a.asInstanceOf[Two].r))
     }
 
-    test ("positioned rewriting with positions and strategyf works") {
-        val r = everywhere (strategyf {
-                    case Leaf (i) => Some (Leaf (i + 1))
-                    case n        => Some (n)
-                })
-        val no = rewrite (r) (o)
-        check (no)
+    test("positioned rewriting with positions and strategyf works") {
+        val r = everywhere(strategyf {
+            case Leaf(i) => Some(Leaf(i + 1))
+            case n       => Some(n)
+        })
+        val no = rewrite(r)(o)
+        check(no)
     }
 
-    test ("positioned rewriting with positions and strategy works") {
-        val r = everywhere (strategy[Leaf] {
-                    case Leaf (i) => Some (Leaf (i + 1))
-                })
-        val no = rewrite (r) (o)
-        check (no)
+    test("positioned rewriting with positions and strategy works") {
+        val r = everywhere(strategy[Leaf] {
+            case Leaf(i) => Some(Leaf(i + 1))
+        })
+        val no = rewrite(r)(o)
+        check(no)
     }
 
-    test ("positioned rewriting with positions and rule works") {
-        val no = rewrite (r) (o)
-        check (no)
+    test("positioned rewriting with positions and rule works") {
+        val no = rewrite(r)(o)
+        check(no)
     }
 
-    test ("positioned rewriting with positions and rulefs works") {
-        val r = everywhere (rulefs[Leaf] {
-                    case Leaf (i) => build (Leaf (i + 1))
-                })
-        val no = rewrite (r) (o)
-        check (no)
+    test("positioned rewriting with positions and rulefs works") {
+        val r = everywhere(rulefs[Leaf] {
+            case Leaf(i) => build(Leaf(i + 1))
+        })
+        val no = rewrite(r)(o)
+        check(no)
     }
 
-    test ("positioned rewriting with no positions works") {
-        val oo = One (Two (Leaf (42), Leaf (99)))
-        val noo = rewrite (r) (oo)
-        assertResult (None) (positions.getStart (noo))
-        assertResult (None) (positions.getStart (noo.a))
-        assertResult (None) (positions.getStart (noo.a.asInstanceOf[Two].l))
-        assertResult (None) (positions.getStart (noo.a.asInstanceOf[Two].r))
-        assertResult (None) (positions.getFinish (noo))
-        assertResult (None) (positions.getFinish (noo.a))
-        assertResult (None) (positions.getFinish (noo.a.asInstanceOf[Two].l))
-        assertResult (None) (positions.getFinish (noo.a.asInstanceOf[Two].r))
-   }
+    test("positioned rewriting with no positions works") {
+        val oo = One(Two(Leaf(42), Leaf(99)))
+        val noo = rewrite(r)(oo)
+        assertResult(None)(positions.getStart(noo))
+        assertResult(None)(positions.getStart(noo.a))
+        assertResult(None)(positions.getStart(noo.a.asInstanceOf[Two].l))
+        assertResult(None)(positions.getStart(noo.a.asInstanceOf[Two].r))
+        assertResult(None)(positions.getFinish(noo))
+        assertResult(None)(positions.getFinish(noo.a))
+        assertResult(None)(positions.getFinish(noo.a.asInstanceOf[Two].l))
+        assertResult(None)(positions.getFinish(noo.a.asInstanceOf[Two].r))
+    }
 
 }
 
@@ -135,8 +135,8 @@ class PositionedRewriterTests extends Tests {
 object SupportPositionedRewriterTests {
 
     trait Node
-    case class One (a : Node) extends Node
-    case class Two (l : Node, r : Node) extends Node
-    case class Leaf (i : Int) extends Node
+    case class One(a : Node) extends Node
+    case class Two(l : Node, r : Node) extends Node
+    case class Leaf(i : Int) extends Node
 
 }

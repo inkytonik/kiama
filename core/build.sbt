@@ -49,3 +49,15 @@ publishSigned := {}
 
 publishLocalSigned := {}
 
+// ScalariForm
+
+import scalariform.formatter.preferences._
+import SbtScalariform.ScalariformKeys
+
+scalariformSettings
+
+ScalariformKeys.preferences := ScalariformKeys.preferences.value
+    .setPreference (AlignSingleLineCaseStatements, true)
+    .setPreference (IndentSpaces, 4)
+    .setPreference (SpaceBeforeColon, true)
+    .setPreference (SpacesAroundMultiImports, false)

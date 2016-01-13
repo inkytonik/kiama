@@ -29,19 +29,19 @@ class TIL2_3 extends TransformingMain {
     import TILTree._
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
 
-    val parsers = new TIL1_1Parsers (positions)
+    val parsers = new TIL1_1Parsers(positions)
     val parser = parsers.program
 
-    def transform (ast : Program) : Program = {
+    def transform(ast : Program) : Program = {
         val decls = Vector.newBuilder[Decl]
         val getandremovedecls =
-            everywhere (rule[List[Stat]] {
+            everywhere(rule[List[Stat]] {
                 case (d : Decl) :: ss =>
                     decls += d
                     ss
             })
-        val Program (stmts) = rewrite (getandremovedecls) (ast)
-        Program (decls.result.toList ++ stmts)
+        val Program(stmts) = rewrite(getandremovedecls)(ast)
+        Program(decls.result.toList ++ stmts)
     }
 
 }

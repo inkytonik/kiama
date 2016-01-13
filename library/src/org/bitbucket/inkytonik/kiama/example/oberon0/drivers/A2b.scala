@@ -31,10 +31,10 @@ trait A2bPhases extends L2.source.SourcePrettyPrinter
     def langlevel : Int = 2
     def tasklevel : Int = 3
 
-    val parsers = new L2.SyntaxAnalyser (positions)
+    val parsers = new L2.SyntaxAnalyser(positions)
     val parser = parsers.moduledecl
 
-    def buildAnalyser (atree : SourceTree) : base.Analyser =
+    def buildAnalyser(atree : SourceTree) : base.Analyser =
         new L2.NameAnalyser with L2.TypeAnalyser {
             val tree = atree
         }

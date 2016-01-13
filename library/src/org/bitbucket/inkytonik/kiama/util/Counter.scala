@@ -30,7 +30,7 @@ package util
  *
  * `init` is the initial value of the counter (default: -1).
  */
-class Counter (init : Int = -1) {
+class Counter(init : Int = -1) {
 
     /**
      * The most recent value that was generated, or -1 if no values have
@@ -50,7 +50,7 @@ class Counter (init : Int = -1) {
      * Increment the stored value of the counter and return its new value.
      * `inc` is the amount to increment by (default: 1).
      */
-    def next (inc : Int = 1) : Int = {
+    def next(inc : Int = 1) : Int = {
         synchronized {
             _value = _value + inc
             _value
@@ -60,7 +60,7 @@ class Counter (init : Int = -1) {
     /**
      * Reset the value, by default to the initial value of the counter.
      */
-    def reset (to : Int = init) {
+    def reset(to : Int = init) {
         synchronized {
             _value = to
         }

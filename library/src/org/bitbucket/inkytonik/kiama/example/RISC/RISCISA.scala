@@ -50,7 +50,7 @@ object RISCISA {
      */
     type RegNo = Int
 
-    def sayReg (reg : RegNo) : String = s"$$$reg"
+    def sayReg(reg : RegNo) : String = s"$$$reg"
 
     /**
      * Machine instructions.
@@ -61,123 +61,123 @@ object RISCISA {
     /**
      * Shift the value in register c by b and store the result in register a.
      */
-    case class MOV (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class MOV(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"mov ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"mov ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Shift the value im by b and store the result in register a.
      */
-    case class MOVI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class MOVI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"movi ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"movi ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Shift the value in register c by b and store the negation of the result
      * in register a.
      */
-    case class MVN (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class MVN(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"mvn ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"mvn ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Shift the value im by b and store the negation of the result in
      * register a.
      */
-    case class MVNI (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class MVNI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"mvni ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"mvni ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Add the values in registers b and c, store the result in register a.
      */
-    case class ADD (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class ADD(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"add ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"add ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Add the value in register b and the value im, store the result
      * in register a.
      */
-    case class ADDI (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class ADDI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"addi ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"addi ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Subtract the values in registers b and c, store the result in
      * register a.
      */
-    case class SUB (a : RegNo, b : RegNo, c : RegNo) extends Instr  {
+    case class SUB(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"sub ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"sub ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Subtract the value in register b and the value im, store the result
      * in register a.
      */
-    case class SUBI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class SUBI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"subi ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"subi ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Muliply the values in registers b and c, store the result in register a.
      */
-    case class MUL (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class MUL(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"mul ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"mul ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Multiply the value in register b and the value im, store the result
      * in register a.
      */
-    case class MULI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class MULI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"muli ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"muli ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Divide the values in registers b and c, store the (integer) result in
      * register a.
      */
-    case class DIV (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class DIV(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"div ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"div ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Divide the value in register b and the value im, store the (integer)
      * result in register a.
      */
-    case class DIVI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class DIVI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"divi ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"divi ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Divide the values in registers b and c, store the (integer) remainder
      * in register a.
      */
-    case class MOD (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class MOD(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"mod ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"mod ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Divide the value in registers b and the value im, store the (integer)
      * remainder in register a.
      */
-    case class MODI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class MODI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"modi ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"modi ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
@@ -185,10 +185,10 @@ object RISCISA {
      * are equal.  Set the N condition code if the content of register
      * b is less than the content of register c.
      */
-    case class CMP (b : RegNo, c : RegNo) extends Instr {
+    case class CMP(b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"cmp ${sayReg (b)}, ${sayReg (c)}"
-     }
+            s"cmp ${sayReg(b)}, ${sayReg(c)}"
+    }
 
     /**
      * Set the Z condition code if the content of register b and the
@@ -196,72 +196,72 @@ object RISCISA {
      * if the content of register b is less than the value im, otherwise
      * clear N.
      */
-    case class CMPI (b : RegNo, im : Imm) extends Instr {
+    case class CMPI(b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"cmpi ${sayReg (b)}, $im"
+            s"cmpi ${sayReg(b)}, $im"
     }
 
     /**
      * If register a contains a value that is negative or greater than
      * or equal to the value im, set register a to zero.
      */
-    case class CHKI (b : RegNo, im : Imm) extends Instr {
+    case class CHKI(b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"chki ${sayReg (b)}, $im"
+            s"chki ${sayReg(b)}, $im"
     }
 
     /**
      * Bitwise AND the values in registers b and c, store the (integer) remainder
      * in register a.
      */
-    case class AND (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class AND(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"and ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"and ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Bitwise AND the value in registers b and the value im, store the (integer)
      * remainder in register a.
      */
-    case class ANDI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class ANDI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"andi ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"andi ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Bitwise OR the values in registers b and c, store the (integer) remainder
      * in register a.
      */
-    case class OR (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class OR(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"or ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"or ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Bitwise OR the value in registers b and the value im, store the (integer)
      * remainder in register a.
      */
-    case class ORI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class ORI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"ori ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"ori ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Bitwise XOR the values in registers b and c, store the (integer) remainder
      * in register a.
      */
-    case class XOR (a : RegNo, b : RegNo, c : RegNo) extends Instr {
+    case class XOR(a : RegNo, b : RegNo, c : RegNo) extends Instr {
         override def toString : String =
-            s"xor ${sayReg (a)}, ${sayReg (b)}, ${sayReg (c)}"
+            s"xor ${sayReg(a)}, ${sayReg(b)}, ${sayReg(c)}"
     }
 
     /**
      * Bitwise XOR the value in registers b and the value im, store the (integer)
      * remainder in register a.
      */
-    case class XORI (a : RegNo, b : RegNo, im : Imm) extends Instr  {
+    case class XORI(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"xori ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"xori ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
@@ -269,18 +269,18 @@ object RISCISA {
      * address given by the contents of register b plus the value im.
      * The lowest two bits of the address are ignored.
      */
-    case class LDW (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class LDW(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"ldw ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"ldw ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Load register a with the byte value stored in memory at the
      * address given by the contents of register b plus the value im.
      */
-    case class LDB (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class LDB(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"ldb ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"ldb ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
@@ -288,9 +288,9 @@ object RISCISA {
      * lowest two bits of the address are ignored. Subtract (???) im from
      * the contents of register b and store the result in register b.
      */
-    case class POP (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class POP(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"pop ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"pop ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
@@ -298,9 +298,9 @@ object RISCISA {
      * by the contents of register b plus the value im.  The lowest two
      * bits of the address are ignored.
      */
-    case class STW (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class STW(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"stw ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"stw ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
@@ -308,9 +308,9 @@ object RISCISA {
      * memory at the address given by the contents of register b plus the
      * value im.
      */
-    case class STB (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class STB(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"stb ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"stb ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
@@ -319,39 +319,39 @@ object RISCISA {
      * memory at the address given by the contents of register b.
      * The lowest two bits of the address are ignored.
      */
-    case class PSH (a : RegNo, b : RegNo, im : Imm) extends Instr {
+    case class PSH(a : RegNo, b : RegNo, im : Imm) extends Instr {
         override def toString : String =
-            s"psh ${sayReg (a)}, ${sayReg (b)}, $im"
+            s"psh ${sayReg(a)}, ${sayReg(b)}, $im"
     }
 
     /**
      * Read an integer variable from standard input and store the value
      * in register a.
      */
-    case class RD (a : RegNo) extends Instr {
-        override def toString : String = s"rd ${sayReg (a)}"
+    case class RD(a : RegNo) extends Instr {
+        override def toString : String = s"rd ${sayReg(a)}"
     }
 
     /**
      * Write a decimal representation of the value in register c to
      * standard output.
      */
-    case class WRD (c : RegNo) extends Instr {
-        override def toString : String = s"wrd ${sayReg (c)}"
+    case class WRD(c : RegNo) extends Instr {
+        override def toString : String = s"wrd ${sayReg(c)}"
     }
 
     /**
      * Write a hexadecimal representation of the value in register c to
      * standard output.
      */
-    case class WRH (c : RegNo) extends Instr {
-        override def toString : String = s"wrh ${sayReg (c)}"
+    case class WRH(c : RegNo) extends Instr {
+        override def toString : String = s"wrh ${sayReg(c)}"
     }
 
     /**
      * Write a newline to standard output.
      */
-    case class WRL () extends Instr {
+    case class WRL() extends Instr {
         override def toString : String = "wrl"
     }
 
@@ -360,7 +360,7 @@ object RISCISA {
      * has not been resolved. Otherwise, `disp` gives the offset from
      * the start of the code block.
      */
-    case class Label (num : Int, disp : Int = -1) extends Instr {
+    case class Label(num : Int, disp : Int = -1) extends Instr {
         override def toString : String =
             if (disp == -1)
                 s"label$num"
@@ -379,7 +379,7 @@ object RISCISA {
      * If the Z condition code is set, set the program counter to its
      * value plus four times disp.
      */
-    case class BEQ (val label : Label) extends Branch {
+    case class BEQ(val label : Label) extends Branch {
         override def toString : String = s"beq $label"
     }
 
@@ -387,7 +387,7 @@ object RISCISA {
      * If the Z condition code is clear, set the program counter to its
      * value plus four times disp.
      */
-    case class BNE (val label : Label) extends Branch {
+    case class BNE(val label : Label) extends Branch {
         override def toString : String = s"bne $label"
     }
 
@@ -395,7 +395,7 @@ object RISCISA {
      * If the N condition code is set, set the program counter to its
      * value plus four times disp.
      */
-    case class BLT (val label : Label) extends Branch {
+    case class BLT(val label : Label) extends Branch {
         override def toString : String = s"blt $label"
     }
 
@@ -403,7 +403,7 @@ object RISCISA {
      * If the N condition code is clear, set the program counter to its
      * value plus four times disp.
      */
-    case class BGE (val label : Label) extends Branch {
+    case class BGE(val label : Label) extends Branch {
         override def toString : String = s"bge $label"
     }
 
@@ -411,7 +411,7 @@ object RISCISA {
      * If either of the Z or N condition codes is set, set the program
      * counter to its value plus four times disp.
      */
-    case class BLE (val label : Label) extends Branch {
+    case class BLE(val label : Label) extends Branch {
         override def toString : String = s"ble $label"
     }
 
@@ -419,14 +419,14 @@ object RISCISA {
      * If both of the Z and N condition codes are clear, set the program
      * counter to its value plus four times disp.
      */
-    case class BGT (val label : Label) extends Branch {
+    case class BGT(val label : Label) extends Branch {
         override def toString : String = s"bgt $label"
     }
 
     /**
      * Set the program counter to its value plus disp.
      */
-    case class BR (val label : Label) extends Branch {
+    case class BR(val label : Label) extends Branch {
         override def toString : String = s"br $label"
     }
 
@@ -434,7 +434,7 @@ object RISCISA {
      * Set R31 to the value of the program counter plus one. Set the
      * program counter to its value plus disp.
      */
-    case class BSR (val label : Label) extends Branch {
+    case class BSR(val label : Label) extends Branch {
         override def toString : String = s"bsr $label"
     }
 
@@ -442,8 +442,8 @@ object RISCISA {
      * Set the program counter to the value in register c.  If that
      * value is zero, halt the machine.
      */
-    case class RET (c : RegNo) extends Instr {
-        override def toString : String = s"ret ${sayReg (c)}"
+    case class RET(c : RegNo) extends Instr {
+        override def toString : String = s"ret ${sayReg(c)}"
     }
 
     /**
@@ -455,26 +455,26 @@ object RISCISA {
     /**
      * Branch target label.
      */
-    case class Target (label : Label) extends Pseudo {
+    case class Target(label : Label) extends Pseudo {
         override def toString : String = s"$label:"
     }
 
     /**
      * Comment.
      */
-    case class Comment (text : String) extends Pseudo {
+    case class Comment(text : String) extends Pseudo {
         override def toString : String = s"! $text"
     }
 
     /**
      * Pretty-print a list of assembly code instructions to an emitter.
      */
-     def prettyprint (emitter : Emitter, code : AssemCode) {
-         for (line <- code) {
-             line match {
-                 case _ : Target => emitter.emitln (line)
-                 case _          => emitter.emitln (s"    $line")
-             }
-         }
-     }
+    def prettyprint(emitter : Emitter, code : AssemCode) {
+        for (line <- code) {
+            line match {
+                case _ : Target => emitter.emitln(line)
+                case _          => emitter.emitln(s"    $line")
+            }
+        }
+    }
 }

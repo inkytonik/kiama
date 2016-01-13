@@ -38,15 +38,15 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
     /**
      * Initialise positions before next test. By default, the positions are reset.
      */
-    def initialisePositions () {
-        positions.reset ()
+    def initialisePositions() {
+        positions.reset()
     }
 
     /**
      * Set up before each test.
      */
-    override def beforeEach () {
-        initialisePositions ()
+    override def beforeEach() {
+        initialisePositions()
     }
 
     /**
@@ -62,7 +62,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * the folder given by the package name.
      */
     override def suiteName = {
-        val filename = getClass.getName.replaceAllLiterally (".", "/")
+        val filename = getClass.getName.replaceAllLiterally(".", "/")
         s"${super.suiteName} in src/$filename"
     }
 
@@ -70,17 +70,17 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * Fail a test with a message about finding something and expecting
      * something else.
      */
-    def failExpectedTest[T] (expected : T, found : T, description : String = "") {
-        fail ("expected %s'%s', not '%s'".format (description, expected, found))
+    def failExpectedTest[T](expected : T, found : T, description : String = "") {
+        fail("expected %s'%s', not '%s'".format(description, expected, found))
     }
 
     /**
      * Analogous to ScalaTest's `assertResult` but it uses `same` to compare
      * the two values instead of equality.
      */
-    def assertSame (expected : Any) (actual : Any) {
-        if (!same (expected, actual)) {
-            failExpectedTest (expected, actual, "same object as ")
+    def assertSame(expected : Any)(actual : Any) {
+        if (!same(expected, actual)) {
+            failExpectedTest(expected, actual, "same object as ")
         }
     }
 
@@ -88,9 +88,9 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * Analogous to ScalaTest's `assertResult` but it uses `same` to compare
      * the two values instead of equality.
      */
-    def assertNotSame (expected : Any) (actual : Any) {
-        if (same (expected, actual)) {
-            failExpectedTest (expected, actual, "not same object as ")
+    def assertNotSame(expected : Any)(actual : Any) {
+        if (same(expected, actual)) {
+            failExpectedTest(expected, actual, "not same object as ")
         }
     }
 
@@ -98,9 +98,9 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * Analogous to ScalaTest's `assertResult` but it uses `optsame` to compare
      * the two values instead of equality.
      */
-    def assertOptSame (expected : Any) (actual : Any) {
-        if (!optsame (expected, actual)) {
-            failExpectedTest (expected, actual, "same object as ")
+    def assertOptSame(expected : Any)(actual : Any) {
+        if (!optsame(expected, actual)) {
+            failExpectedTest(expected, actual, "same object as ")
         }
     }
 
@@ -108,9 +108,9 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * Analogous to ScalaTest's `assertResult` but it uses `optsame` to compare
      * the two values instead of equality.
      */
-    def assertNotOptSame (expected : Any) (actual : Any) {
-        if (optsame (expected, actual)) {
-            failExpectedTest (expected, actual, "not same object as ")
+    def assertNotOptSame(expected : Any)(actual : Any) {
+        if (optsame(expected, actual)) {
+            failExpectedTest(expected, actual, "not same object as ")
         }
     }
 
@@ -118,9 +118,9 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * Analogous to ScalaTest's `assertResult` but it uses `samecollection` to compare
      * two collections instead of equality.
      */
-    def assertSameCollection (expected : Any) (actual : Any) {
-        if (!samecollection (expected, actual)) {
-            failExpectedTest (expected, actual, "same collection as ")
+    def assertSameCollection(expected : Any)(actual : Any) {
+        if (!samecollection(expected, actual)) {
+            failExpectedTest(expected, actual, "same collection as ")
         }
     }
 
@@ -128,9 +128,9 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * Analogous to ScalaTest's `assertResult` but it uses `samecollection` to compare
      * two collections instead of equality.
      */
-    def assertNotSameCollection (expected : Any) (actual : Any) {
-        if (samecollection (expected, actual)) {
-            failExpectedTest (expected, actual, "not same collection as ")
+    def assertNotSameCollection(expected : Any)(actual : Any) {
+        if (samecollection(expected, actual)) {
+            failExpectedTest(expected, actual, "not same collection as ")
         }
     }
 
@@ -138,11 +138,11 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * Assert that the `received` list of messsages has recorded the `expected`
      * messages in the same order.
      */
-    def assertMessages (received : Messages, expected : Message*) {
-        assert (received.size == expected.size, "wrong number of messages produced")
-        received.zip (expected).zipWithIndex.map {
+    def assertMessages(received : Messages, expected : Message*) {
+        assert(received.size == expected.size, "wrong number of messages produced")
+        received.zip(expected).zipWithIndex.map {
             case ((rec, exp), i) =>
-                assertMessage (rec, i, exp)
+                assertMessage(rec, i, exp)
         }
     }
 
@@ -151,10 +151,10 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * to an expected one in that it reports the same message label at the same
      * position.
      */
-    def assertMessage (received : Message, index : Int, expected : Message) {
-        assertResult (expected.label, s"wrong text in message $index") (received.label)
-        assertResult (line (expected), s"wrong line number in message $index") (line (received))
-        assertResult (column (expected), s"wrong column number in message $index") (column (received))
+    def assertMessage(received : Message, index : Int, expected : Message) {
+        assertResult(expected.label, s"wrong text in message $index")(received.label)
+        assertResult(line(expected), s"wrong line number in message $index")(line(received))
+        assertResult(column(expected), s"wrong column number in message $index")(column(received))
     }
 
     /**
@@ -164,7 +164,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * use an sbt command such as "test-only *RewriterTests -- -n FocusTest"
      * to run just the tests in that suite with this tag.
      */
-    object FocusTest extends Tag ("FocusTest")
+    object FocusTest extends Tag("FocusTest")
 
 }
 
@@ -184,15 +184,15 @@ trait ParseTests extends Tests {
     /**
      * Fail a test with a message about reaching the end of the input.
      */
-    def failInputEnd (in : Input) {
-        fail (s"input remaining at ${in.position}")
+    def failInputEnd(in : Input) {
+        fail(s"input remaining at ${in.position}")
     }
 
     /**
      * Fail a test with a message detailing a parse failure.
      */
-    def failParseFailure (failure : Failure) {
-        fail (s"parse faiure: ${failure.message}")
+    def failParseFailure(failure : Failure) {
+        fail(s"parse faiure: ${failure.message}")
     }
 
     /**
@@ -203,14 +203,14 @@ trait ParseTests extends Tests {
      * from `assertParseCheck`. Fail if the parse succeeds but doesn't consume
      * all of `str` or if the parse fails.
      */
-    def assertParseCheck[T,U] (str : String, parser : parsers.Parser[T]) (func : T => U) : U = {
-        parsers.parseAll (parser, StringSource (str)) match {
-            case Success (value, in) if in.atEnd =>
-                func (value)
-            case Success (_, in) =>
-                fail (s"extraneous input at ${in.position}: $str")
-            case Failure (message, _) =>
-                fail (s"parse failure: $message")
+    def assertParseCheck[T, U](str : String, parser : parsers.Parser[T])(func : T => U) : U = {
+        parsers.parseAll(parser, StringSource(str)) match {
+            case Success(value, in) if in.atEnd =>
+                func(value)
+            case Success(_, in) =>
+                fail(s"extraneous input at ${in.position}: $str")
+            case Failure(message, _) =>
+                fail(s"parse failure: $message")
         }
     }
 
@@ -221,11 +221,11 @@ trait ParseTests extends Tests {
      * produce the expected value or if `parser` doesn't consume all of the
      * input.
      */
-    def assertParseOk[T] (str : String, parser : parsers.Parser[T], expected : T) {
-        assertParseCheck (str, parser) {
+    def assertParseOk[T](str : String, parser : parsers.Parser[T], expected : T) {
+        assertParseCheck(str, parser) {
             result =>
                 if (expected != result)
-                    failExpectedTest (expected, result)
+                    failExpectedTest(expected, result)
         }
     }
 
@@ -238,16 +238,16 @@ trait ParseTests extends Tests {
      * fails, but the error or failure is not indicated at the given `line`
      * and `column` location or doesn't contain the given message `msg`.
      */
-    def assertParseError[T] (str : String, parser : parsers.Parser[T], line : Int,
-                             column : Int, msg : String, iserr : Boolean = false) {
-        parsers.parseAll (parser, StringSource (str)) match {
-            case Success (r, _) =>
-                fail ("expected to find parse error in %s but it succeeded with %s".format (str, r))
-            case Failure (message, next) =>
+    def assertParseError[T](str : String, parser : parsers.Parser[T], line : Int,
+        column : Int, msg : String, iserr : Boolean = false) {
+        parsers.parseAll(parser, StringSource(str)) match {
+            case Success(r, _) =>
+                fail("expected to find parse error in %s but it succeeded with %s".format(str, r))
+            case Failure(message, next) =>
                 val pos = next.position
-                assertResult (msg, "wrong message in error") (message)
-                assertResult (line, "wrong line number in error") (pos.line)
-                assertResult (column, "wrong column number in error") (pos.column)
+                assertResult(msg, "wrong message in error")(message)
+                assertResult(line, "wrong line number in error")(pos.line)
+                assertResult(column, "wrong column number in error")(pos.column)
         }
     }
 
@@ -256,8 +256,8 @@ trait ParseTests extends Tests {
      * `str` is the string to be parsed and `parser` is the parser to parse it
      * with.
      */
-    def assertParseReturn[T] (str : String, parser : parsers.Parser[T]) : T =
-        assertParseCheck (str, parser) (identity)
+    def assertParseReturn[T](str : String, parser : parsers.Parser[T]) : T =
+        assertParseCheck(str, parser)(identity)
 
 }
 
@@ -273,11 +273,11 @@ trait TransformerTests extends ParseTests {
      * `trans` transformation function. Fail the test if the value produced by
      * the transformation is not `expected`.
      */
-    def assertTransformOk[T] (str : String, parser : parsers.Parser[T], trans : T => T, expected : T) {
-        assertParseCheck (str, parser) {
+    def assertTransformOk[T](str : String, parser : parsers.Parser[T], trans : T => T, expected : T) {
+        assertParseCheck(str, parser) {
             result =>
-                val transformed = trans (result)
-                if (transformed != expected) failExpectedTest (expected, transformed)
+                val transformed = trans(result)
+                if (transformed != expected) failExpectedTest(expected, transformed)
         }
     }
 
@@ -294,32 +294,32 @@ trait PrettyPrinterTests extends Tests {
     /**
      * Assert that a doc when pretty-printed has the given layout.
      */
-    def assertLayout (expected : Layout) (document : Document) {
-        assertResult (expected) (document.layout)
+    def assertLayout(expected : Layout)(document : Document) {
+        assertResult(expected)(document.layout)
     }
 
     /**
      * Assert that a doc when pretty-printed has the given links.
      */
-    def assertLinks (expected : List[(AnyRef,Range)]) (document : Document) {
+    def assertLinks(expected : List[(AnyRef, Range)])(document : Document) {
         for ((v, r) <- expected) {
-            assertLink (r) (document.links, v)
+            assertLink(r)(document.links, v)
         }
     }
 
     /**
      * Assert that a value has a given link in a links map.
      */
-    def assertLink (expected : Range) (links : Links, value : AnyRef) {
+    def assertLink(expected : Range)(links : Links, value : AnyRef) {
         val optRange = links.collectFirst {
-                                 case Link (k, v) if k eq value =>
-                                     v
-                             }
+            case Link(k, v) if k eq value =>
+                v
+        }
         optRange match {
-            case Some (r) =>
-                assertResult (expected, s"for value $value") (r)
+            case Some(r) =>
+                assertResult(expected, s"for value $value")(r)
             case None =>
-                fail (s"link for $value not found")
+                fail(s"link for $value not found")
         }
     }
 

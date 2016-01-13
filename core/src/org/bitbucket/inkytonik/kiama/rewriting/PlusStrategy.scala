@@ -28,7 +28,7 @@ package rewriting
  * specifies a name for the constructed strategy. `p` and `q` are
  * evaluated at most once.
  */
-class PlusStrategy (name : String, p : => Strategy, q : => Strategy) extends Strategy (name) {
+class PlusStrategy(name : String, p : => Strategy, q : => Strategy) extends Strategy(name) {
 
     /**
      * The left alternative of the choice.
@@ -50,6 +50,6 @@ class PlusStrategy (name : String, p : => Strategy, q : => Strategy) extends Str
      */
     val body =
         (t : Any) =>
-            s (t)
+            s(t)
 
 }

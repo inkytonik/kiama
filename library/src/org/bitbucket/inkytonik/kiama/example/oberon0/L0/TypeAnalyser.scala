@@ -26,35 +26,48 @@ trait TypeAnalyser extends NameAnalyser {
 
     import base.source.{Expression, IdnUse, SourceNode}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, message, Messages}
-    import source.{AndExp, Assignment, ConstDecl, IdnExp, IntExp, NamedType,
-        NegExp, NotExp, OrExp, ProdExpression, RelationalExpression,
-        SumExpression, TypeDecl, TypeDef}
+    import source.{
+        AndExp,
+        Assignment,
+        ConstDecl,
+        IdnExp,
+        IntExp,
+        NamedType,
+        NegExp,
+        NotExp,
+        OrExp,
+        ProdExpression,
+        RelationalExpression,
+        SumExpression,
+        TypeDecl,
+        TypeDef
+    }
 
     /**
      * The error checking for this level.
      */
-    override def errorsDef (n : SourceNode) : Messages =
-        super.errorsDef (n) ++
-        check (n) {
-            case e : Expression if !isCompatible (tipe (e), exptype (e)) =>
-                message (e, s"type error: got ${tipe (e)}, but expected ${exptype (e)}")
-        }
+    override def errorsDef(n : SourceNode) : Messages =
+        super.errorsDef(n) ++
+            check(n) {
+                case e : Expression if !isCompatible(tipe(e), exptype(e)) =>
+                    message(e, s"type error: got ${tipe(e)}, but expected ${exptype(e)}")
+            }
 
     /**
      * Compatibility of types.  Return true if the type is compatible with the
      * expected type.  Unknown types are compatible with any other type.
      * Otherwise, use look up the base types of what we have and compare them.
      */
-    def isCompatible (tipe : Type, exptype : Type) : Boolean =
+    def isCompatible(tipe : Type, exptype : Type) : Boolean =
         (tipe == unknownType) || (exptype == unknownType) ||
-            (typebasetype (tipe) == typebasetype (exptype))
+            (typebasetype(tipe) == typebasetype(exptype))
 
     /**
      * The actual type of an expression following type aliases.
      */
     lazy val basetype : Expression => Type =
-        attr (
-            e => typebasetype (tipe (e))
+        attr(
+            e => typebasetype(tipe(e))
         )
 
     /**
@@ -62,15 +75,15 @@ trait TypeAnalyser extends NameAnalyser {
      */
     lazy val typebasetype : Type => Type =
         attr {
-            case UserType (_, t2) => typebasetype (deftype (t2.tipe))
-            case t                => t
+            case UserType(_, t2) => typebasetype(deftype(t2.tipe))
+            case t               => t
         }
 
     /**
      * The type of an expression.
      */
     lazy val tipe : Expression => Type =
-        attr (tipeDef)
+        attr(tipeDef)
 
     def tipeDef : Expression => Type =
         {
@@ -80,8 +93,8 @@ trait TypeAnalyser extends NameAnalyser {
             case _ : SumExpression | _ : ProdExpression | _ : IntExp | _ : NegExp =>
                 integerType
 
-            case IdnExp (u : IdnUse) =>
-                idntype (u)
+            case IdnExp(u : IdnUse) =>
+                idntype(u)
 
             case _ =>
                 unknownType
@@ -91,29 +104,29 @@ trait TypeAnalyser extends NameAnalyser {
      * The type of the entity denoted by an identifier use.
      */
     lazy val idntype : IdnUse => Type =
-        attr (idntypeDef)
+        attr(idntypeDef)
 
     def idntypeDef : IdnUse => Type =
         (u =>
-            entity (u) match {
-                case Constant (_, ConstDecl (_, e)) => tipe (e)
-                case IntegerValue (_, t, _)         => t
-                case Variable (_, t)                => deftype (t)
-                case _                              => unknownType
+            entity(u) match {
+                case Constant(_, ConstDecl(_, e)) => tipe(e)
+                case IntegerValue(_, t, _)        => t
+                case Variable(_, t)               => deftype(t)
+                case _                            => unknownType
             })
 
     /**
      * The type given by a type definition.
      */
     lazy val deftype : TypeDef => Type =
-        attr (deftypeDef)
+        attr(deftypeDef)
 
     def deftypeDef : TypeDef => Type =
         {
-            case NamedType (u : IdnUse) =>
-                entity (u) match {
-                    case t : Type  => t
-                    case _         => unknownType
+            case NamedType(u : IdnUse) =>
+                entity(u) match {
+                    case t : Type => t
+                    case _        => unknownType
                 }
         }
 
@@ -122,22 +135,22 @@ trait TypeAnalyser extends NameAnalyser {
      */
     lazy val decltype : TypeDecl => Type =
         attr {
-            case TypeDecl (_, t) => deftype (t)
+            case TypeDecl(_, t) => deftype(t)
         }
 
     /**
      * The type expected of an expression as defined by its context.
      */
     lazy val exptype : Expression => Type =
-        attr (exptypeDef)
+        attr(exptypeDef)
 
     def exptypeDef : Expression => Type =
         {
-            case tree.parent (_ : OrExp | _ : AndExp | _ : NotExp) =>
+            case tree.parent(_ : OrExp | _ : AndExp | _ : NotExp) =>
                 booleanType
 
-            case tree.parent (Assignment (d, _)) =>
-                tipe (d)
+            case tree.parent(Assignment(d, _)) =>
+                tipe(d)
 
             case _ =>
                 integerType

@@ -36,6 +36,6 @@ object SymbolTable extends Environments {
      * A non-terminal entity containing a reference to the production that
      * defines the non-terminal.
      */
-    case class NonTerminal (rule : Rule) extends Entity
+    case class NonTerminal(rule : Rule) extends Entity
 
 }

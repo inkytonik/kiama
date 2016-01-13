@@ -52,7 +52,7 @@ import scala.language.higherKinds
  * ACM SIGPLAN Symposium on Partial Evaluation and Semantics-based Program
  * Manipulation, 2008.
  */
-class ParsersBase (positions : Positions) {
+class ParsersBase(positions : Positions) {
 
     import java.util.regex.Pattern
     import org.bitbucket.inkytonik.kiama.util.{Messaging, Source}
@@ -68,7 +68,7 @@ class ParsersBase (positions : Positions) {
      * looking for the end of input but there was a later failure for some other
      * reason.
      */
-    lazy val failureStack = new DynamicVariable[Option[Failure]] (None)
+    lazy val failureStack = new DynamicVariable[Option[Failure]](None)
 
     /**
      * Convenience method for making a parser out of its body function,
@@ -76,22 +76,22 @@ class ParsersBase (positions : Positions) {
      * recording. All parsers should be created using this method so that they
      * share the book-keeping.
      */
-    def Parser[T] (f : Input => ParseResult[T]) : Parser[T] =
+    def Parser[T](f : Input => ParseResult[T]) : Parser[T] =
         new Parser[T] {
-            def apply (in : Input) : ParseResult[T] =
-                parseWhitespace (in) match {
-                    case Success (_, start) =>
-                        f (start) match {
-                            case res @ Success (t, finish) =>
-                                positions.setStart (t, start.position)
-                                positions.setFinish (t, finish.position)
+            def apply(in : Input) : ParseResult[T] =
+                parseWhitespace(in) match {
+                    case Success(_, start) =>
+                        f(start) match {
+                            case res @ Success(t, finish) =>
+                                positions.setStart(t, start.position)
+                                positions.setFinish(t, finish.position)
                                 res
-                            case failure @ Failure (message, next)=>
+                            case failure @ Failure(message, next) =>
                                 // Record this failure if it occurs later than the most
                                 // recent one, but ignore artificial left recursion failures
                                 if ((message != "") &&
-                                    (failureStack.value.forall (_.next.offset <= next.offset)))
-                                        failureStack.value = Some (failure)
+                                    (failureStack.value.forall(_.next.offset <= next.offset)))
+                                    failureStack.value = Some(failure)
                                 failure
                         }
                     case failure : Failure =>
@@ -104,12 +104,12 @@ class ParsersBase (positions : Positions) {
     /**
      * Information about an active instance of left recursion.
      */
-    case class Head (rule : Rule, var involvedSet : Set[Rule], var evalSet : Set[Rule])
+    case class Head(rule : Rule, var involvedSet : Set[Rule], var evalSet : Set[Rule])
 
     /**
      * Map between left input positions and active left recursion instances.
      */
-    var heads = new HashMap[Input,Head]
+    var heads = new HashMap[Input, Head]
 
     /**
      * Parsing answers.
@@ -119,12 +119,12 @@ class ParsersBase (positions : Positions) {
     /**
      * An answer that is a resolved parser result.
      */
-    case class Resolution[T] (result : ParseResult[T]) extends Answer[T]
+    case class Resolution[T](result : ParseResult[T]) extends Answer[T]
 
     /**
      * An answer that is a left recursion record.
      */
-    case class LR[T] (var seed : ParseResult[T], rule : Rule, var head : Head, next : LR[_]) extends Answer[T]
+    case class LR[T](var seed : ParseResult[T], rule : Rule, var head : Head, next : LR[_]) extends Answer[T]
 
     /**
      * Left recursion stack.
@@ -147,44 +147,44 @@ class ParsersBase (positions : Positions) {
      * `Parser`. We need the latter to be covariant but this class can't be
      * because `T` occurs in an invariant position in `MemoEntry`.
      */
-    class PackratParser[T] (body : => Parser[T]) extends Parser[T] with Rule {
+    class PackratParser[T](body : => Parser[T]) extends Parser[T] with Rule {
 
         p =>
 
         /**
          * Memo table entries.
          */
-        case class MemoEntry (var ans : Answer[T], var in : Input)
+        case class MemoEntry(var ans : Answer[T], var in : Input)
 
         /**
          * The section of the memo table relating to this rule.
          */
-        val memo = new HashMap[Input,MemoEntry]
+        val memo = new HashMap[Input, MemoEntry]
 
         /**
          * Apply this rule, memoising the result.
          */
-        def apply (in : Input) : ParseResult[T] = {
-            recall (in) match {
+        def apply(in : Input) : ParseResult[T] = {
+            recall(in) match {
                 case None =>
-                    val lr = LR[T] (Failure ("", in), this, null, LRStack)
+                    val lr = LR[T](Failure("", in), this, null, LRStack)
                     LRStack = lr
-                    val m = MemoEntry (lr, in)
+                    val m = MemoEntry(lr, in)
                     memo += (in -> m)
-                    val ans = body (in)
+                    val ans = body(in)
                     LRStack = LRStack.next
                     m.in = ans.next
                     if (lr.head == null) {
-                        m.ans = Resolution (ans)
+                        m.ans = Resolution(ans)
                         ans
                     } else {
                         lr.seed = ans
-                        lranswer (in, m)
+                        lranswer(in, m)
                     }
-                case Some (MemoEntry (Resolution (r), _)) =>
+                case Some(MemoEntry(Resolution(r), _)) =>
                     r
-                case Some (MemoEntry (lr @ LR (_, _, _, _), _)) =>
-                    setuplr (lr)
+                case Some(MemoEntry(lr @ LR(_, _, _, _), _)) =>
+                    setuplr(lr)
                     lr.seed
             }
 
@@ -193,9 +193,9 @@ class ParsersBase (positions : Positions) {
         /**
          * Initialise the left recursion data for a new application of this rule.
          */
-        def setuplr (l : LR[T]) {
+        def setuplr(l : LR[T]) {
             if (l.head == null)
-                l.head = Head (p, Set (), Set ())
+                l.head = Head(p, Set(), Set())
             var s = LRStack
             while (s.head != l.head) {
                 s.head = l.head
@@ -207,22 +207,22 @@ class ParsersBase (positions : Positions) {
         /**
          * Process a given left recursion instance.
          */
-        def lranswer (in : Input, m : MemoEntry) : ParseResult[T] = {
+        def lranswer(in : Input, m : MemoEntry) : ParseResult[T] = {
             m.ans match {
-                case lr @ LR (_, _, _, _) =>
+                case lr @ LR(_, _, _, _) =>
                     val h = lr.head
                     if (h.rule == p) {
-                        m.ans = Resolution (lr.seed)
+                        m.ans = Resolution(lr.seed)
                         m.ans match {
-                            case Resolution (f @ Failure (_, _)) =>
+                            case Resolution(f @ Failure(_, _)) =>
                                 f
                             case _ =>
-                                 growlr (in, m, h)
+                                growlr(in, m, h)
                         }
                     } else
                         lr.seed
                 case _ =>
-                    sys.error ("lranswer: unexpected non-LR answer")
+                    sys.error("lranswer: unexpected non-LR answer")
             }
         }
 
@@ -230,18 +230,18 @@ class ParsersBase (positions : Positions) {
          * Look up the memoised result for this rule, taking into account that
          * it might be participating in an active left recursion.
          */
-        def recall (in : Input) : Option[MemoEntry] = {
-            val om = memo.get (in)
-            heads.get (in) match {
-                case None     => om
-                case Some (h) =>
+        def recall(in : Input) : Option[MemoEntry] = {
+            val om = memo.get(in)
+            heads.get(in) match {
+                case None => om
+                case Some(h) =>
                     if ((om == None) && !((h.involvedSet + h.rule) contains p))
-                        Some (MemoEntry (Resolution (Failure ("", in)), in))
+                        Some(MemoEntry(Resolution(Failure("", in)), in))
                     else if (h.evalSet contains this) {
                         h.evalSet = h.evalSet - p
-                        val ans = body (in)
-                        memo += (in -> MemoEntry (Resolution (ans), ans.next))
-                        memo.get (in)
+                        val ans = body(in)
+                        memo += (in -> MemoEntry(Resolution(ans), ans.next))
+                        memo.get(in)
                     } else
                         om
             }
@@ -250,24 +250,24 @@ class ParsersBase (positions : Positions) {
         /**
          * Grow the current parse result according to a left recursion.
          */
-        def growlr (in : Input, m : MemoEntry, h : Head) : ParseResult[T] = {
+        def growlr(in : Input, m : MemoEntry, h : Head) : ParseResult[T] = {
             heads += (in -> h)
             while (true) {
                 h.evalSet = h.involvedSet.toSet
-                val ans = body (in)
+                val ans = body(in)
                 if (ans.isInstanceOf[Failure] || ans.next.offset <= m.in.offset) {
                     heads -= in
                     m.ans match {
-                        case Resolution (r) =>
+                        case Resolution(r) =>
                             return r
                         case _ =>
-                            sys.error ("growlr: unexpected non-result answer")
+                            sys.error("growlr: unexpected non-result answer")
                     }
                 }
-                m.ans = Resolution (ans)
+                m.ans = Resolution(ans)
                 m.in = ans.next
             }
-            sys.error ("growlr: went where I shouldn't go")
+            sys.error("growlr: went where I shouldn't go")
         }
 
     }
@@ -275,15 +275,15 @@ class ParsersBase (positions : Positions) {
     /**
      * (Implicit) conversion of non-memoising parser into a memoising one.
      */
-    implicit def memo[T] (parser : => Parser[T]) : PackratParser[T] =
-        new PackratParser[T] (parser)
+    implicit def memo[T](parser : => Parser[T]) : PackratParser[T] =
+        new PackratParser[T](parser)
 
     // Non-memoising parsers, don't support left recursion.
 
     /**
      * Special tuple class to match sequence combinator.
      */
-    case class ~[+T,+U](_1 : T, _2 : U) {
+    case class ~[+T, +U](_1 : T, _2 : U) {
         override def toString = s"(${_1}~${_2})"
     }
 
@@ -299,21 +299,21 @@ class ParsersBase (positions : Positions) {
 
         // Functional operators
 
-        def append[U >: T] (q : => Parser[U]) : Parser[U] =
-            Parser { in => p (in).append (q (in)) }
+        def append[U >: T](q : => Parser[U]) : Parser[U] =
+            Parser { in => p(in).append(q(in)) }
 
-        def flatMap[U] (f : T => Parser[U]) : Parser[U] =
-            Parser { in => p (in).flatMapWithNext (f) }
+        def flatMap[U](f : T => Parser[U]) : Parser[U] =
+            Parser { in => p(in).flatMapWithNext(f) }
 
-        def map[U] (f : T => U) : Parser[U] =
-            Parser { in => p (in).map (f) }
+        def map[U](f : T => U) : Parser[U] =
+            Parser { in => p(in).map(f) }
 
         // Combinators
 
         /**
          * Sequential composition.
          */
-        def ~[U] (q : => Parser[U]) : Parser[~[T,U]] = {
+        def ~[U](q : => Parser[U]) : Parser[~[T, U]] = {
             lazy val qq = q
             for (t <- p; u <- qq)
                 yield new ~(t, u)
@@ -322,7 +322,7 @@ class ParsersBase (positions : Positions) {
         /**
          * Sequential composition ignoring left side.
          */
-        def ~>[U] (q : => Parser[U]) : Parser[U] = {
+        def ~>[U](q : => Parser[U]) : Parser[U] = {
             lazy val qq = q
             for (t <- p; u <- qq)
                 yield u
@@ -331,7 +331,7 @@ class ParsersBase (positions : Positions) {
         /**
          * Sequential composition ignoring right side.
          */
-        def <~[U] (q : => Parser[U]) : Parser[T] = {
+        def <~[U](q : => Parser[U]) : Parser[T] = {
             lazy val qq = q
             for (t <- p; u <- qq)
                 yield t
@@ -340,23 +340,23 @@ class ParsersBase (positions : Positions) {
         /**
          * Alternation.
          */
-        def |[U >: T] (q : => Parser[U]) : Parser[U] =
-            append (q)
+        def |[U >: T](q : => Parser[U]) : Parser[U] =
+            append(q)
 
         /**
          * Apply function to successful result.
          */
-        def ^^[U] (f : T => U) : Parser[U] =
-            map (f)
+        def ^^[U](f : T => U) : Parser[U] =
+            map(f)
 
         /**
          * Turn a successful result into a specific value which is evaluated each
          * each time this parser is used.
          */
-        def ^^^[U] (u : => U) : Parser[U] =
+        def ^^^[U](u : => U) : Parser[U] =
             Parser {
                 in =>
-                    this (in).map (_ => u)
+                    this(in).map(_ => u)
             }
 
         // Aliases
@@ -377,13 +377,13 @@ class ParsersBase (positions : Positions) {
          * Optional parsing.
          */
         def ? : Parser[Option[T]] =
-            opt (p)
+            opt(p)
 
         /**
          * Parameterise next parse step by result from previous one.
          */
-        def into[U] (fq : T => Parser[U]) : Parser[U] =
-            flatMap (fq)
+        def into[U](fq : T => Parser[U]) : Parser[U] =
+            flatMap(fq)
 
     }
 
@@ -392,14 +392,14 @@ class ParsersBase (positions : Positions) {
     /**
      * Run a parser on a string to obtain its result.
      */
-    def parse[T] (p : Parser[T], source : Source) : ParseResult[T] =
-        p (Input (source, 0))
+    def parse[T](p : Parser[T], source : Source) : ParseResult[T] =
+        p(Input(source, 0))
 
     /**
      * Run a parser on all of a string to obtain its result.
      */
-    def parseAll[T] (p : Parser[T], source : Source) : ParseResult[T] =
-        parse (phrase (p), source)
+    def parseAll[T](p : Parser[T], source : Source) : ParseResult[T] =
+        parse(phrase(p), source)
 
     // Constructors
 
@@ -411,41 +411,41 @@ class ParsersBase (positions : Positions) {
         Parser {
             in =>
                 if (in.atEnd)
-                    Failure ("any character expected but end of source found", in)
+                    Failure("any character expected but end of source found", in)
                 else
-                    elem ("any character", _ => true) (in)
+                    elem("any character", _ => true)(in)
         }
 
     /**
      * A parser that accepts just the given character.
      */
-    def elem (ch : Char) : Parser[Char] =
-        elem (ch.toString, _ == ch)
+    def elem(ch : Char) : Parser[Char] =
+        elem(ch.toString, _ == ch)
 
     /**
      * A parser that accepts just those characters that pass the given predicate.
      * The message is used to describe what was expected if an error occurs.
      */
-    def elem (message : String, p : Char => Boolean) : Parser[Char] =
+    def elem(message : String, p : Char => Boolean) : Parser[Char] =
         Parser {
             in =>
                 in.first match {
                     case None =>
-                        Failure ("end of input", in)
-                    case Some (c) if p (c) =>
-                        Success (c, in.rest)
+                        Failure("end of input", in)
+                    case Some(c) if p(c) =>
+                        Success(c, in.rest)
                     case _ =>
-                        Failure (message, in)
+                        Failure(message, in)
                 }
         }
 
     /**
      * A parser that always fails with the given message.
      */
-    def failure (message : String) : Parser[Nothing] =
+    def failure(message : String) : Parser[Nothing] =
         Parser {
             in =>
-                Failure (message, in)
+                Failure(message, in)
         }
 
     /**
@@ -453,45 +453,45 @@ class ParsersBase (positions : Positions) {
      */
     trait CCOps[CC[_] <: Seq[_]] {
         def empty[T] : CC[T]
-        def newBuilder[T] : Builder[T,CC[T]]
-        def prepend[T] (t : T, cc : CC[T]) : CC[T]
+        def newBuilder[T] : Builder[T, CC[T]]
+        def prepend[T](t : T, cc : CC[T]) : CC[T]
     }
 
     /**
      * Generic repetition zero or more times.
      */
-    def grep[T,CC[_] <: Seq[_]] (p : => Parser[T]) (ops : CCOps[CC]) : Parser[CC[T]] =
-        grep1 (p) (ops) | success (ops.empty)
+    def grep[T, CC[_] <: Seq[_]](p : => Parser[T])(ops : CCOps[CC]) : Parser[CC[T]] =
+        grep1(p)(ops) | success(ops.empty)
 
     /**
      * Generic repetition one or more times.
      */
-    def grep1[T,CC[_] <: Seq[_]] (p : => Parser[T]) (ops : CCOps[CC]) : Parser[CC[T]] = {
+    def grep1[T, CC[_] <: Seq[_]](p : => Parser[T])(ops : CCOps[CC]) : Parser[CC[T]] = {
         lazy val pp = p
         Parser {
             in =>
                 val buf = ops.newBuilder[T]
 
-                def rest (last : T, in : Input) : ParseResult[CC[T]] = {
+                def rest(last : T, in : Input) : ParseResult[CC[T]] = {
                     val ppp = pp
 
                     @tailrec
-                    def loop (last : T, in : Input) : ParseResult[CC[T]] =
-                        ppp (in) match {
-                            case Success (t, next) =>
+                    def loop(last : T, in : Input) : ParseResult[CC[T]] =
+                        ppp(in) match {
+                            case Success(t, next) =>
                                 buf += t
-                                loop (t, next)
+                                loop(t, next)
                             case _ =>
-                                Success (buf.result, in)
+                                Success(buf.result, in)
                         }
 
-                    loop (last, in)
+                    loop(last, in)
                 }
 
-                pp (in) match {
-                    case Success (t, next) =>
+                pp(in) match {
+                    case Success(t, next) =>
                         buf += t
-                        rest (t, next)
+                        rest(t, next)
                     case failure : Failure =>
                         failure
                 }
@@ -502,17 +502,17 @@ class ParsersBase (positions : Positions) {
     /**
      * Generic repetition zero or more times with separators.
      */
-    def grepsep[T,CC[_] <: Seq[_]] (p : => Parser[T], q : => Parser[Any]) (ops : CCOps[CC]) : Parser[CC[T]] =
-        grep1sep (p, q) (ops) | success (ops.empty)
+    def grepsep[T, CC[_] <: Seq[_]](p : => Parser[T], q : => Parser[Any])(ops : CCOps[CC]) : Parser[CC[T]] =
+        grep1sep(p, q)(ops) | success(ops.empty)
 
     /**
      * Generic repetition one or more times with separators.
      */
-    def grep1sep[T,CC[_] <: Seq[_]] (p : => Parser[T], q : => Parser[Any]) (ops : CCOps[CC]) : Parser[CC[T]] = {
+    def grep1sep[T, CC[_] <: Seq[_]](p : => Parser[T], q : => Parser[Any])(ops : CCOps[CC]) : Parser[CC[T]] = {
         lazy val pp = p
-        pp ~ grep (q ~> pp) (ops) ^^ {
+        pp ~ grep(q ~> pp)(ops) ^^ {
             case t ~ ts =>
-                ops.prepend (t, ts)
+                ops.prepend(t, ts)
         }
     }
 
@@ -520,12 +520,12 @@ class ParsersBase (positions : Positions) {
      * A parser that succeeds iff its argument parser succeeds, but consumes
      * no input in any circumstances.
      */
-    def guard[T] (p : => Parser[T]) : Parser[T] =
+    def guard[T](p : => Parser[T]) : Parser[T] =
         Parser {
             in =>
-                p (in) match {
-                    case Success (t, _) =>
-                        Success (t, in)
+                p(in) match {
+                    case Success(t, _) =>
+                        Success(t, in)
                     case failure =>
                         failure
                 }
@@ -543,28 +543,28 @@ class ParsersBase (positions : Positions) {
      * position of another value. We can't use the string value itself
      * since we are not guaranteed to have reference equality on strings.
      */
-    def mark[T] (p : => Parser[String]) : Parser[Marker] =
+    def mark[T](p : => Parser[String]) : Parser[Marker] =
         p ^^ (_ => new Marker)
 
     /**
      * Invert the result of a parser without consuming any input.
      */
-    def not[T] (p : => Parser[T]) : Parser[Unit] =
+    def not[T](p : => Parser[T]) : Parser[Unit] =
         Parser {
             in =>
-                p (in) match {
+                p(in) match {
                     case _ : Success[_] =>
-                        Failure ("failure of not", in)
+                        Failure("failure of not", in)
                     case _ =>
-                        Success ((), in)
+                        Success((), in)
                 }
         }
 
     /**
      * Optional parsing.
      */
-    def opt[T] (p : => Parser[T]) : Parser[Option[T]] =
-        p ^^ (t => Some (t)) | success (None)
+    def opt[T](p : => Parser[T]) : Parser[Option[T]] =
+        p ^^ (t => Some(t)) | success(None)
 
     /**
      * Phrases, i.e., parse and succeed with no input remaining, except possibly
@@ -572,20 +572,20 @@ class ParsersBase (positions : Positions) {
      * over the failure due to end of input being expected since the later one is
      * usually more informative.
      */
-    def phrase[T] (p : => Parser[T]) : Parser[T] =
+    def phrase[T](p : => Parser[T]) : Parser[T] =
         Parser {
             in =>
-                failureStack.withValue (None) {
-                    (p <~ "") (in) match {
-                        case s @ Success (t, next) =>
+                failureStack.withValue(None) {
+                    (p <~ "")(in) match {
+                        case s @ Success(t, next) =>
                             if (next.atEnd)
                                 s
                             else
                                 failureStack.value.filterNot {
                                     _.next.offset < next.offset
-                                }.getOrElse (Failure ("end of input expected", next))
+                                }.getOrElse(Failure("end of input expected", next))
                         case f : Failure =>
-                            failureStack.value.getOrElse (f)
+                            failureStack.value.getOrElse(f)
                     }
                 }
         }
@@ -594,10 +594,10 @@ class ParsersBase (positions : Positions) {
      * Succeed with a given value consuming no non-whitespace input. The value is
      * evaluated each time this parser is used.
      */
-    def success[T] (v : => T) : Parser[T] =
+    def success[T](v : => T) : Parser[T] =
         Parser {
             in =>
-                Success (v, in)
+                Success(v, in)
         }
 
     // Whitespace handling and lexical level parsing
@@ -608,7 +608,7 @@ class ParsersBase (positions : Positions) {
      * as the new definition succeeds at the end of the input.
      */
     def whitespace : Parser[Any] =
-        regex ("""\s*""".r)
+        regex("""\s*""".r)
 
     /**
      * Are we currently parsing whitespace?
@@ -622,18 +622,18 @@ class ParsersBase (positions : Positions) {
      * unless they occur at the end of the input. In other words, an
      * error not at the end is treated as the absence of whitespace.
      */
-    def parseWhitespace (in : Input) : ParseResult[Any] =
+    def parseWhitespace(in : Input) : ParseResult[Any] =
         if (parsingWhitespace) {
-            Success ("", in)
+            Success("", in)
         } else {
             parsingWhitespace = true
             val result =
-                whitespace (in) match {
-                    case failure @ Failure (_, next) =>
+                whitespace(in) match {
+                    case failure @ Failure(_, next) =>
                         if (next.atEnd)
                             failure
                         else
-                            Success ("", in)
+                            Success("", in)
                     case success =>
                         success
                 }
@@ -645,13 +645,13 @@ class ParsersBase (positions : Positions) {
      * A parser that matches a literal string after skipping any whitespace.
      * The form of the latter is defined by the `whitespace` parser.
      */
-    implicit def literal (s : String) : Parser[String] =
+    implicit def literal(s : String) : Parser[String] =
         Parser {
             in =>
-                if (in.source.content.regionMatches (in.offset, s, 0, s.length)) {
-                    Success (s, Input (in.source, in.offset + s.length))
+                if (in.source.content.regionMatches(in.offset, s, 0, s.length)) {
+                    Success(s, Input(in.source, in.offset + s.length))
                 } else {
-                    Failure (s"`$s' expected but ${in.found} found", in)
+                    Failure(s"`$s' expected but ${in.found} found", in)
                 }
         }
 
@@ -659,15 +659,15 @@ class ParsersBase (positions : Positions) {
      * A parser that matches a regex string after skipping any whitespace.
      * The form of the latter is defined by the `whitespace` parser.
      */
-    implicit def regex (r : Regex) : Parser[String] =
+    implicit def regex(r : Regex) : Parser[String] =
         Parser {
             in =>
-                val s = in.source.content.substring (in.offset)
-                r.findPrefixMatchOf (s) match {
-                    case Some (m) =>
-                        Success (s.substring (0, m.end), Input (in.source, in.offset + m.end))
+                val s = in.source.content.substring(in.offset)
+                r.findPrefixMatchOf(s) match {
+                    case Some(m) =>
+                        Success(s.substring(0, m.end), Input(in.source, in.offset + m.end))
                     case None =>
-                        Failure (s"string matching regex `$r' expected but ${in.found} found", in)
+                        Failure(s"string matching regex `$r' expected but ${in.found} found", in)
                 }
         }
 
@@ -675,85 +675,80 @@ class ParsersBase (positions : Positions) {
      * Convenience conversion to lift parsers that return 2-tilde-tuples to parsers
      * that return regular 2-tuples.
      */
-    implicit def parseResultToTuple2[A,B] (p : Parser[A ~ B]) : Parser[(A,B)] =
-        p ^^ { case a ~ b => (a,b) }
+    implicit def parseResultToTuple2[A, B](p : Parser[A ~ B]) : Parser[(A, B)] =
+        p ^^ { case a ~ b => (a, b) }
 
     /**
      * Convenience conversion to lift parsers that return 3-tilde-tuples to parsers
      * that return regular 3-tuples.
      */
-    implicit def parseResultToTuple3[A,B,C] (p : Parser[A ~ B ~ C]) : Parser[(A,B,C)] =
-        p ^^ { case a ~ b ~ c => (a,b,c) }
+    implicit def parseResultToTuple3[A, B, C](p : Parser[A ~ B ~ C]) : Parser[(A, B, C)] =
+        p ^^ { case a ~ b ~ c => (a, b, c) }
 
     /**
      * Convenience conversion to lift parsers that return 4-tilde-tuples to parsers
      * that return regular 4-tuples.
      */
-    implicit def parseResultToTuple4[A,B,C,D] (p : Parser[A ~ B ~ C ~ D]) : Parser[(A,B,C,D)] =
-        p ^^ { case a ~ b ~ c ~ d => (a,b,c,d) }
+    implicit def parseResultToTuple4[A, B, C, D](p : Parser[A ~ B ~ C ~ D]) : Parser[(A, B, C, D)] =
+        p ^^ { case a ~ b ~ c ~ d => (a, b, c, d) }
 
     /**
      * Convenience conversion to lift parsers that return 5-tilde-tuples to parsers
      * that return regular 5-tuples.
      */
-    implicit def parseResultToTuple5[A,B,C,D,E] (p : Parser[A ~ B ~ C ~ D ~ E]) : Parser[(A,B,C,D,E)] =
-        p ^^ { case a ~ b ~ c ~ d ~ e => (a,b,c,d,e) }
+    implicit def parseResultToTuple5[A, B, C, D, E](p : Parser[A ~ B ~ C ~ D ~ E]) : Parser[(A, B, C, D, E)] =
+        p ^^ { case a ~ b ~ c ~ d ~ e => (a, b, c, d, e) }
 
     /**
      * Convenience conversion to lift parsers that return 6-tilde-tuples to parsers
      * that return regular 6-tuples.
      */
-    implicit def parseResultToTuple6[A,B,C,D,E,F] (p : Parser[A ~ B ~ C ~ D ~ E ~ F]) : Parser[(A,B,C,D,E,F)] =
-        p ^^ { case a ~ b ~ c ~ d ~ e ~ f => (a,b,c,d,e,f) }
+    implicit def parseResultToTuple6[A, B, C, D, E, F](p : Parser[A ~ B ~ C ~ D ~ E ~ F]) : Parser[(A, B, C, D, E, F)] =
+        p ^^ { case a ~ b ~ c ~ d ~ e ~ f => (a, b, c, d, e, f) }
 
     /**
      * Convenience conversion to allow arity two functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction2[A,B,X] (x : (A,B) => X) :
-                     (A ~ B) => X = {
+    implicit def constToTupleFunction2[A, B, X](x : (A, B) => X) : (A ~ B) => X = {
         case a ~ b =>
-            x (a, b)
+            x(a, b)
     }
 
     /**
      * Convenience conversion to allow arity three functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction3[A,B,C,X] (x : (A,B,C) => X) :
-                     (A ~ B ~ C) => X = {
+    implicit def constToTupleFunction3[A, B, C, X](x : (A, B, C) => X) : (A ~ B ~ C) => X = {
         case a ~ b ~ c =>
-            x (a, b, c)
+            x(a, b, c)
     }
 
     /**
      * Convenience conversion to allow arity four functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction4[A,B,C,D,X] (x : (A,B,C,D) => X) :
-                     (A ~ B ~ C ~ D) => X = {
+    implicit def constToTupleFunction4[A, B, C, D, X](x : (A, B, C, D) => X) : (A ~ B ~ C ~ D) => X = {
         case a ~ b ~ c ~ d =>
-            x (a, b, c, d)
+            x(a, b, c, d)
     }
 
     /**
      * Convenience conversion to allow arity five functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction5[A,B,C,D,E,X] (x : (A,B,C,D,E) => X) :
-                     (A ~ B ~ C ~ D ~ E) => X = {
+    implicit def constToTupleFunction5[A, B, C, D, E, X](x : (A, B, C, D, E) => X) : (A ~ B ~ C ~ D ~ E) => X = {
         case a ~ b ~ c ~ d ~ e =>
-            x (a, b, c, d, e)
+            x(a, b, c, d, e)
     }
 
     /**
      * Convenience conversion to allow arity six functions to be used directly in
      * tree construction actions.
      */
-    implicit def constToTupleFunction6[A,B,C,D,E,F,X] (x : (A,B,C,D,E,F) => X) :
-                     (A ~ B ~ C ~ D ~ E ~ F) => X = {
+    implicit def constToTupleFunction6[A, B, C, D, E, F, X](x : (A, B, C, D, E, F) => X) : (A ~ B ~ C ~ D ~ E ~ F) => X = {
         case a ~ b ~ c ~ d ~ e ~ f =>
-            x (a, b, c, d, e, f)
+            x(a, b, c, d, e, f)
     }
 
     // Utilities
@@ -763,7 +758,7 @@ class ParsersBase (positions : Positions) {
      * If the digit string is too big, a parse error results.
      */
     lazy val constrainedInt : Parser[Int] =
-        wrap (regex ("[0-9]+".r), stringToInt)
+        wrap(regex("[0-9]+".r), stringToInt)
 
     /**
      * Parser for keywords. The list of string arguments gives the text
@@ -776,16 +771,16 @@ class ParsersBase (positions : Positions) {
      * This parser succeeds if any of the keywords is present, provided
      * that it's not immediately followed by something that extends it.
      */
-    def keywords (ext : Regex, kws : List[String]) : Parser[String] =
-        regex ("(%s)(%s|\\z)".format (kws.mkString ("|"), ext).r)
+    def keywords(ext : Regex, kws : List[String]) : Parser[String] =
+        regex("(%s)(%s|\\z)".format(kws.mkString("|"), ext).r)
 
     /**
      * Convert the digit string `s` to an `Int` if it's in range, but return an
      * error message if it's too big.
      */
-    def stringToInt (s : String) : Either[Int,String] = {
+    def stringToInt(s : String) : Either[Int, String] = {
         val value =
-            s.foldLeft (0) {
+            s.foldLeft(0) {
                 case (i, d) =>
                     val dv = d.toInt - '0'.toInt
                     if ((i >= 0) && (i <= (Int.MaxValue - dv) / 10))
@@ -794,9 +789,9 @@ class ParsersBase (positions : Positions) {
                         -1
             }
         if (value == -1)
-            Right ("integer will not fit into 32 bits")
+            Right("integer will not fit into 32 bits")
         else
-            Left (value)
+            Left(value)
     }
 
     /**
@@ -810,16 +805,16 @@ class ParsersBase (positions : Positions) {
      * at that position.  Failures or errors of `p` will be lifted to
      * the returned type.
      */
-    def wrap[T,U] (p : => Parser[T], f : T => Either[U,String]) : Parser[U] =
+    def wrap[T, U](p : => Parser[T], f : T => Either[U, String]) : Parser[U] =
         Parser {
             in =>
-                p (in) match {
-                    case Success (t, out) =>
-                        f (t) match {
-                            case Left (u)    =>
-                                Success (u, out)
-                            case Right (msg) =>
-                                Failure (msg, in)
+                p(in) match {
+                    case Success(t, out) =>
+                        f(t) match {
+                            case Left(u) =>
+                                Success(u, out)
+                            case Right(msg) =>
+                                Failure(msg, in)
                         }
                     case failure : Failure =>
                         failure
@@ -839,41 +834,41 @@ trait VectorRepetitionParsers {
     import scala.collection.mutable.Builder
 
     object VectorOps extends CCOps[Vector] {
-        def empty[T] : Vector[T] = Vector ()
-        def newBuilder[T] : Builder[T,Vector[T]] = Vector.newBuilder
-        def prepend[T] (t : T, cc : Vector[T]) : Vector[T] = t +: cc
+        def empty[T] : Vector[T] = Vector()
+        def newBuilder[T] : Builder[T, Vector[T]] = Vector.newBuilder
+        def prepend[T](t : T, cc : Vector[T]) : Vector[T] = t +: cc
     }
 
     /**
      * Repetition zero or more times (vector version).
      */
-    def rep[T] (p : => Parser[T]) : Parser[Vector[T]] =
-        grep (p) (VectorOps)
+    def rep[T](p : => Parser[T]) : Parser[Vector[T]] =
+        grep(p)(VectorOps)
 
     /**
      * Repetition one or more times (vector version).
      */
-    def rep1[T] (p : => Parser[T]) : Parser[Vector[T]] =
-        grep1 (p) (VectorOps)
+    def rep1[T](p : => Parser[T]) : Parser[Vector[T]] =
+        grep1(p)(VectorOps)
 
     /**
      * Repetition zero or more times with separators (vector version)
      */
-    def repsep[T] (p : => Parser[T], q : => Parser[Any]) : Parser[Vector[T]] =
-        grepsep (p, q) (VectorOps)
+    def repsep[T](p : => Parser[T], q : => Parser[Any]) : Parser[Vector[T]] =
+        grepsep(p, q)(VectorOps)
 
     /**
      * Repetition one or more times with separators (vector version)
      */
-    def rep1sep[T] (p : => Parser[T], q : => Parser[Any]) : Parser[Vector[T]] =
-        grep1sep (p, q) (VectorOps)
+    def rep1sep[T](p : => Parser[T], q : => Parser[Any]) : Parser[Vector[T]] =
+        grep1sep(p, q)(VectorOps)
 
     /**
      * Adds postfix `*` and `+` to `Parser` class (vector version).
      */
-    implicit class PostfixParserCombinators[T] (p : Parser[T]) {
-        def * = rep (p)
-        def + = rep1 (p)
+    implicit class PostfixParserCombinators[T](p : Parser[T]) {
+        def * = rep(p)
+        def + = rep1(p)
     }
 
 }
@@ -889,41 +884,41 @@ trait ListRepetitionParsers {
     import scala.collection.mutable.Builder
 
     object ListOps extends CCOps[List] {
-        def empty[T] : List[T] = List ()
-        def newBuilder[T] : Builder[T,List[T]] = List.newBuilder
-        def prepend[T] (t : T, cc : List[T]) : List[T] = t :: cc
+        def empty[T] : List[T] = List()
+        def newBuilder[T] : Builder[T, List[T]] = List.newBuilder
+        def prepend[T](t : T, cc : List[T]) : List[T] = t :: cc
     }
 
     /**
      * Repetition zero or more times (list version).
      */
-    def rep[T] (p : => Parser[T]) : Parser[List[T]] =
-        grep (p) (ListOps)
+    def rep[T](p : => Parser[T]) : Parser[List[T]] =
+        grep(p)(ListOps)
 
     /**
      * Repetition one or more times (list version).
      */
-    def rep1[T] (p : => Parser[T]) : Parser[List[T]] =
-        grep1 (p) (ListOps)
+    def rep1[T](p : => Parser[T]) : Parser[List[T]] =
+        grep1(p)(ListOps)
 
     /**
      * Repetition zero or more times with separators (list version)
      */
-    def repsep[T] (p : => Parser[T], q : => Parser[Any]) : Parser[List[T]] =
-        grepsep (p, q) (ListOps)
+    def repsep[T](p : => Parser[T], q : => Parser[Any]) : Parser[List[T]] =
+        grepsep(p, q)(ListOps)
 
     /**
      * Repetition one or more times with separators (list version)
      */
-    def rep1sep[T] (p : => Parser[T], q : => Parser[Any]) : Parser[List[T]] =
-        grep1sep (p, q) (ListOps)
+    def rep1sep[T](p : => Parser[T], q : => Parser[Any]) : Parser[List[T]] =
+        grep1sep(p, q)(ListOps)
 
     /**
      * Adds postfix `*` and `+` to `Parser` class (list version).
      */
-    implicit class PostfixParserCombinators[T] (p : Parser[T]) {
-        def * = rep (p)
-        def + = rep1 (p)
+    implicit class PostfixParserCombinators[T](p : Parser[T]) {
+        def * = rep(p)
+        def + = rep1(p)
     }
 
 }
@@ -931,11 +926,11 @@ trait ListRepetitionParsers {
 /**
  * Parser combinators that use vectors to represent repetitive constructs.
  */
-class Parsers (positions : Positions) extends ParsersBase (positions)
-        with VectorRepetitionParsers
+class Parsers(positions : Positions) extends ParsersBase(positions)
+    with VectorRepetitionParsers
 
 /**
  * Parser combinators that use lists to represent repetitive constructs.
  */
-class ListParsers (positions : Positions) extends ParsersBase (positions)
-        with ListRepetitionParsers
+class ListParsers(positions : Positions) extends ParsersBase(positions)
+    with ListRepetitionParsers

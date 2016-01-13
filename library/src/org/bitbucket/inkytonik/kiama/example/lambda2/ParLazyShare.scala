@@ -37,8 +37,8 @@ trait ParLazyShare extends ParLazy {
      */
     override lazy val s : Strategy = {
         lazy val e : Strategy =
-            attempt (letAppL (e) + letOpn (e)) <*
-            attempt ((subsVar + Letp (id, beta + arithop) + letLetRen) <* e)
+            attempt(letAppL(e) + letOpn(e)) <*
+                attempt((subsVar + Letp(id, beta + arithop) + letLetRen) <* e)
         letLift <* e <* letDrop
     }
 

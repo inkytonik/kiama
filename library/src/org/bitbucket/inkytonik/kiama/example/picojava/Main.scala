@@ -22,50 +22,57 @@ package org.bitbucket.inkytonik.kiama
 package example.picojava
 
 import PicoJavaTree.Program
-import org.bitbucket.inkytonik.kiama.util.{CompilerWithConfig, Config, Emitter, ErrorEmitter,
-    OutputEmitter}
+import org.bitbucket.inkytonik.kiama.util.{
+    CompilerWithConfig,
+    Config,
+    Emitter,
+    ErrorEmitter,
+    OutputEmitter
+}
 
 /**
  * Configuration for the PicoJava compiler.
  */
-abstract class PicojavaConfig (args : Seq[String]) extends Config (args) {
-    lazy val obfuscate = opt[Boolean] ("obfuscate", descr = "Obfuscate the code")
+abstract class PicojavaConfig(args : Seq[String]) extends Config(args) {
+    lazy val obfuscate = opt[Boolean]("obfuscate", descr = "Obfuscate the code")
 }
 
-object Main extends CompilerWithConfig[Program,PicojavaConfig] {
+object Main extends CompilerWithConfig[Program, PicojavaConfig] {
 
     import PicoJavaTree.PicoJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    def createConfig (args : Seq[String],
-                      out : Emitter = new OutputEmitter,
-                      err : Emitter = new ErrorEmitter) : PicojavaConfig =
-        new PicojavaConfig (args) {
+    def createConfig(
+        args : Seq[String],
+        out : Emitter = new OutputEmitter,
+        err : Emitter = new ErrorEmitter
+    ) : PicojavaConfig =
+        new PicojavaConfig(args) {
             lazy val output = out
             lazy val error = err
         }
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 
     /**
      * Process a PicoJava program by checking for errors, optionally obfuscating and
      * then printing any errors that were found.
      */
-    def process (source : Source, program : Program, config : PicojavaConfig) {
+    def process(source : Source, program : Program, config : PicojavaConfig) {
 
-        val tree = new PicoJavaTree (program)
-        val analysis = new ErrorCheck (tree)
+        val tree = new PicoJavaTree(program)
+        val analysis = new ErrorCheck(tree)
         val messages = analysis.errors
 
         if (messages.size > 0) {
             // Note, prints array list, no coords
-            config.output.emitln (messages)
-        } else if (config.obfuscate ()) {
-            val obfuscator = new Obfuscator (analysis)
-            config.output.emitln (format (program))
-            config.output.emitln (format (obfuscator.obfuscate (program)))
+            config.output.emitln(messages)
+        } else if (config.obfuscate()) {
+            val obfuscator = new Obfuscator(analysis)
+            config.output.emitln(format(program))
+            config.output.emitln(format(obfuscator.obfuscate(program)))
         }
 
     }
@@ -73,7 +80,7 @@ object Main extends CompilerWithConfig[Program,PicojavaConfig] {
     /**
      * Pretty printer to use to print minijava ASTs.
      */
-    override def format (ast : Program) : Document =
-        PrettyPrinter.format (ast)
+    override def format(ast : Program) : Document =
+        PrettyPrinter.format(ast)
 
 }

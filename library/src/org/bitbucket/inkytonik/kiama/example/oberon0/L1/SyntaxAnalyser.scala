@@ -27,33 +27,33 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parsers for L1 language.
  */
-class SyntaxAnalyser (positions : Positions) extends L0.SyntaxAnalyser (positions) {
+class SyntaxAnalyser(positions : Positions) extends L0.SyntaxAnalyser(positions) {
 
     import base.source.{Block, Expression, Statement}
     import source.{IfStatement, WhileStatement}
 
-    override def statementDef : Parser[Statement]=
+    override def statementDef : Parser[Statement] =
         ifStatement |
-        whileStatement |
-        super.statementDef
+            whileStatement |
+            super.statementDef
 
     lazy val ifStatement =
         "IF" ~> expression ~ ("THEN" ~> statementSequence) ~
             elsifs ~ (optelse <~ "END") ^^ IfStatement
 
     lazy val elsifs =
-        rep (elsif)
+        rep(elsif)
 
     lazy val elsif : Parser[(Expression, Block)] =
         ("ELSIF" ~> expression) ~ ("THEN" ~> statementSequence)
 
     lazy val optelse =
-        "ELSE" ~> statementSequence ^^ (ss => Some (ss)) |
-        success (None)
+        "ELSE" ~> statementSequence ^^ (ss => Some(ss)) |
+            success(None)
 
     lazy val whileStatement =
         "WHILE" ~> expression ~ ("DO" ~> statementSequence <~ "END") ^^
-        WhileStatement
+            WhileStatement
 
     override def keywordStrings : List[String] =
         "DO" +: "ELSE" +: "ELSIF" +: "IF" +: "THEN" +: "WHILE" +: super.keywordStrings

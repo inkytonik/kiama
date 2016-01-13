@@ -22,25 +22,37 @@ package org.bitbucket.inkytonik.kiama
 package example.oberon0
 package L0.source
 
-import base.source.{Declaration, Expression, IdnDef, IdnUse, SourceNode,
-    Statement}
-import org.bitbucket.inkytonik.kiama.output.{Infix, LeftAssoc, NonAssoc, Prefix,
-    PrettyBinaryExpression, PrettyUnaryExpression}
+import base.source.{
+    Declaration,
+    Expression,
+    IdnDef,
+    IdnUse,
+    SourceNode,
+    Statement
+}
+import org.bitbucket.inkytonik.kiama.output.{
+    Infix,
+    LeftAssoc,
+    NonAssoc,
+    Prefix,
+    PrettyBinaryExpression,
+    PrettyUnaryExpression
+}
 
 /**
  * Constant declarations.
  */
-case class ConstDecl (idndef : IdnDef, exp: Expression) extends Declaration
+case class ConstDecl(idndef : IdnDef, exp : Expression) extends Declaration
 
 /**
  * Variable declarations.
  */
-case class VarDecl (idndefs : Vector[IdnDef], tipe: TypeDef) extends Declaration
+case class VarDecl(idndefs : Vector[IdnDef], tipe : TypeDef) extends Declaration
 
 /**
  * Type declarations.
  */
-case class TypeDecl (idndef : IdnDef, tipe: TypeDef) extends Declaration
+case class TypeDecl(idndef : IdnDef, tipe : TypeDef) extends Declaration
 
 /**
  * Non-terminal type for type definitions.
@@ -50,12 +62,12 @@ abstract class TypeDef extends SourceNode
 /**
  * Types defined by naming another type.
  */
-case class NamedType (idnuse : IdnUse) extends TypeDef
+case class NamedType(idnuse : IdnUse) extends TypeDef
 
 /**
  * Assignment statements.
  */
-case class Assignment (desig : Expression, exp : Expression) extends Statement
+case class Assignment(desig : Expression, exp : Expression) extends Statement
 
 /**
  * Common interface for binary expressions.
@@ -68,91 +80,91 @@ abstract class BinaryExpression extends Expression with PrettyBinaryExpression {
 /**
  * Common interface for relational expressions.
  */
-abstract class RelationalExpression (val op : String) extends BinaryExpression {
+abstract class RelationalExpression(val op : String) extends BinaryExpression {
     override val priority = 4
-    val fixity = Infix (NonAssoc)
+    val fixity = Infix(NonAssoc)
 }
 
 /**
  * Equality expressions.
  */
-case class EqExp (left : Expression, right : Expression) extends RelationalExpression ("=")
+case class EqExp(left : Expression, right : Expression) extends RelationalExpression("=")
 
 /**
  * Ineuality expressions.
  */
-case class NeExp (left : Expression, right : Expression) extends RelationalExpression ("#")
+case class NeExp(left : Expression, right : Expression) extends RelationalExpression("#")
 
 /**
  * Less-than expressions.
  */
-case class LtExp (left : Expression, right : Expression) extends RelationalExpression ("<")
+case class LtExp(left : Expression, right : Expression) extends RelationalExpression("<")
 
 /**
  * Less-than or equal expressions.
  */
-case class LeExp (left : Expression, right : Expression) extends RelationalExpression ("<=")
+case class LeExp(left : Expression, right : Expression) extends RelationalExpression("<=")
 
 /**
  * Greater-than expressions.
  */
-case class GtExp (left : Expression, right : Expression) extends RelationalExpression (">")
+case class GtExp(left : Expression, right : Expression) extends RelationalExpression(">")
 
 /**
  * Greater-than or equal expressions.
  */
-case class GeExp (left : Expression, right : Expression) extends RelationalExpression (">=")
+case class GeExp(left : Expression, right : Expression) extends RelationalExpression(">=")
 
 /**
  * Common interface for sum expressions.
  */
-abstract class SumExpression (val op : String) extends BinaryExpression {
+abstract class SumExpression(val op : String) extends BinaryExpression {
     override val priority = 3
-    val fixity = Infix (LeftAssoc)
+    val fixity = Infix(LeftAssoc)
 }
 
 /**
  * Addition expressions.
  */
-case class AddExp (left : Expression, right : Expression) extends SumExpression ("+")
+case class AddExp(left : Expression, right : Expression) extends SumExpression("+")
 
 /**
  * Subtraction expressions.
  */
-case class SubExp (left : Expression, right : Expression) extends SumExpression ("-")
+case class SubExp(left : Expression, right : Expression) extends SumExpression("-")
 
 /**
  * Or expressions.
  */
-case class OrExp (left : Expression, right : Expression) extends SumExpression ("OR")
+case class OrExp(left : Expression, right : Expression) extends SumExpression("OR")
 
 /**
  * Common interface for product expressions.
  */
-abstract class ProdExpression (val op : String) extends BinaryExpression {
+abstract class ProdExpression(val op : String) extends BinaryExpression {
     override val priority = 2
-    val fixity = Infix (LeftAssoc)
+    val fixity = Infix(LeftAssoc)
 }
 
 /**
  * Multiplication expressions.
  */
-case class MulExp (left : Expression, right : Expression) extends ProdExpression ("*")
+case class MulExp(left : Expression, right : Expression) extends ProdExpression("*")
 
 /**
  * Division expressions.
  */
-case class DivExp (left : Expression, right : Expression) extends ProdExpression ("DIV")
+case class DivExp(left : Expression, right : Expression) extends ProdExpression("DIV")
 
 /**
  * Modulus expressions.
  */
-case class ModExp (left : Expression, right : Expression) extends ProdExpression ("MOD")
+case class ModExp(left : Expression, right : Expression) extends ProdExpression("MOD")
 
 /**
  * And expressions.
  */
-case class AndExp (left : Expression, right : Expression) extends ProdExpression ("&")
+case class AndExp(left : Expression, right : Expression) extends ProdExpression("&")
 
 /**
  * Common interface for unary expressions.
@@ -165,7 +177,7 @@ abstract class UnaryExpression extends Expression with PrettyUnaryExpression {
 /**
  * Negation expressions.
  */
-case class NegExp (exp : Expression) extends UnaryExpression {
+case class NegExp(exp : Expression) extends UnaryExpression {
     override val priority = 3
     val op = "-"
 }
@@ -173,7 +185,7 @@ case class NegExp (exp : Expression) extends UnaryExpression {
 /**
  * Complement expressions.
  */
-case class NotExp (exp : Expression) extends UnaryExpression {
+case class NotExp(exp : Expression) extends UnaryExpression {
     override val priority = 1
     val op = "~"
 }
@@ -181,9 +193,9 @@ case class NotExp (exp : Expression) extends UnaryExpression {
 /**
  * Integer expressions.
  */
-case class IntExp (v : Int) extends Expression
+case class IntExp(v : Int) extends Expression
 
 /**
  * Identifier expressions.
  */
-case class IdnExp (idnuse : IdnUse) extends Expression
+case class IdnExp(idnuse : IdnUse) extends Expression

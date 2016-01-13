@@ -32,38 +32,38 @@ trait PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
     /**
      * Format a grammar node.
      */
-    def format (t : GrammarNode) : Document =
-        pretty (toDoc (t))
+    def format(t : GrammarNode) : Document =
+        pretty(toDoc(t))
 
     /**
      * Convert a grammar node to a pretty-printing document.
      */
-    def toDoc (t : GrammarNode) : Doc =
+    def toDoc(t : GrammarNode) : Doc =
         t match {
-            case Grammar (r, rs) =>
-                "Start rule:" <@> toDoc (r) <@>
-                "Other rules:" <@> cat (rs map toDoc)
-            case Rule (lhs, rhs) =>
-                toDoc (lhs) <+> "->" <+> toDoc (rhs)
-            case EmptyProdList () =>
+            case Grammar(r, rs) =>
+                "Start rule:" <@> toDoc(r) <@>
+                    "Other rules:" <@> cat(rs map toDoc)
+            case Rule(lhs, rhs) =>
+                toDoc(lhs) <+> "->" <+> toDoc(rhs)
+            case EmptyProdList() =>
                 empty
-            case NonEmptyProdList (h, EmptyProdList ()) =>
-                toDoc (h)
-            case NonEmptyProdList (h, t) =>
-                toDoc (h) <+> "|" <+> toDoc (t)
-            case Prod (ss) =>
-                toDoc (ss)
-            case EmptySymbolList () =>
+            case NonEmptyProdList(h, EmptyProdList()) =>
+                toDoc(h)
+            case NonEmptyProdList(h, t) =>
+                toDoc(h) <+> "|" <+> toDoc(t)
+            case Prod(ss) =>
+                toDoc(ss)
+            case EmptySymbolList() =>
                 "epsilon"
-            case NonEmptySymbolList (h, EmptySymbolList ()) =>
-                toDoc (h)
-            case NonEmptySymbolList (h, t) =>
-                toDoc (h) <+> toDoc (t)
+            case NonEmptySymbolList(h, EmptySymbolList()) =>
+                toDoc(h)
+            case NonEmptySymbolList(h, t) =>
+                toDoc(h) <+> toDoc(t)
             case nt : NonTerm =>
                 nt.name
-            case TermSym (s) =>
+            case TermSym(s) =>
                 s
-            case NonTermSym (s) =>
+            case NonTermSym(s) =>
                 s.name
         }
 

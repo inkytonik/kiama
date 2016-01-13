@@ -25,19 +25,19 @@ object CompanyTree {
 
     import org.bitbucket.inkytonik.kiama.relation.Tree
 
-    type CompanyTree = Tree[CompanyNode,Company]
+    type CompanyTree = Tree[CompanyNode, Company]
 
     abstract class CompanyNode extends Product
 
-    case class Company (depts : Vector[Dept]) extends CompanyNode
-    case class Dept (n : Name, m : Manager, su : Vector[SubUnit]) extends CompanyNode
+    case class Company(depts : Vector[Dept]) extends CompanyNode
+    case class Dept(n : Name, m : Manager, su : Vector[SubUnit]) extends CompanyNode
 
     type Manager = Employee
-    case class Employee (n : Name, a : Address, s : Salary) extends CompanyNode
+    case class Employee(n : Name, a : Address, s : Salary) extends CompanyNode
 
     abstract class SubUnit extends CompanyNode
-    case class PU (e : Employee) extends SubUnit
-    case class DU (d : Dept) extends SubUnit
+    case class PU(e : Employee) extends SubUnit
+    case class DU(d : Dept) extends SubUnit
 
     type Name = String
     type Address = String

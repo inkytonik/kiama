@@ -26,19 +26,19 @@ trait CPrettyPrinter extends L0.c.CPrettyPrinter {
 
     import base.c.CNode
 
-    override def toDoc (n : CNode) : Doc =
+    override def toDoc(n : CNode) : Doc =
         n match {
-            case CIfStatement (c, ts) =>
-                "if" <+> parens (toParenDoc (c)) <+> toDoc (ts)
+            case CIfStatement(c, ts) =>
+                "if" <+> parens(toParenDoc(c)) <+> toDoc(ts)
 
-            case CIfElseStatement (c, ts, es) =>
-                "if" <+> parens (toParenDoc (c)) <+> toDoc (ts) <+> "else" <+> toDoc (es)
+            case CIfElseStatement(c, ts, es) =>
+                "if" <+> parens(toParenDoc(c)) <+> toDoc(ts) <+> "else" <+> toDoc(es)
 
-            case CWhileStatement (c, ss) =>
-                "while" <+> parens (toParenDoc (c)) <+> toDoc (ss)
+            case CWhileStatement(c, ss) =>
+                "while" <+> parens(toParenDoc(c)) <+> toDoc(ss)
 
             case _ =>
-                super.toDoc (n)
+                super.toDoc(n)
         }
 
 }

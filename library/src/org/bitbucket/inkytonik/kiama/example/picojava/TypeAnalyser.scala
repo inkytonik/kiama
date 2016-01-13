@@ -45,8 +45,8 @@ trait TypeAnalyser {
      */
     val isUnknown : Decl => Boolean =
         attr {
-            case UnknownDecl (_) => true
-            case _               => false
+            case UnknownDecl(_) => true
+            case _              => false
         }
 
     /**
@@ -63,11 +63,11 @@ trait TypeAnalyser {
     val tipe : PicoJavaNode => TypeDecl =
         attr {
             case t : TypeDecl       => t
-            case v : VarDecl        => tipe (decl (v.Type))
-            case i : IdnUse         => tipe (decl (i))
-            case d : Dot            => tipe (d.IdnUse)
-            case b : BooleanLiteral => booleanType (b)
-            case t                  => unknownDecl (t)
+            case v : VarDecl        => tipe(decl(v.Type))
+            case i : IdnUse         => tipe(decl(i))
+            case d : Dot            => tipe(d.IdnUse)
+            case b : BooleanLiteral => booleanType(b)
+            case t                  => unknownDecl(t)
         }
 
     /**
@@ -81,11 +81,12 @@ trait TypeAnalyser {
      */
     val isSubtypeOf : TypeDecl => TypeDecl => Boolean =
         paramAttr {
-             typedecl => {
-                 case UnknownDecl (_) => true
-                 case c : ClassDecl   => isSuperTypeOfClassDecl (c) (typedecl)
-                 case t : TypeDecl    => isSuperTypeOf (t) (typedecl)
-             }
+            typedecl =>
+                {
+                    case UnknownDecl(_) => true
+                    case c : ClassDecl  => isSuperTypeOfClassDecl(c)(typedecl)
+                    case t : TypeDecl   => isSuperTypeOf(t)(typedecl)
+                }
         }
 
     /**
@@ -97,10 +98,11 @@ trait TypeAnalyser {
      */
     val isSuperTypeOf : TypeDecl => TypeDecl => Boolean =
         paramAttr {
-            typedecl => {
-                case UnknownDecl (_) => true
-                case t               => t eq typedecl
-            }
+            typedecl =>
+                {
+                    case UnknownDecl(_) => true
+                    case t              => t eq typedecl
+                }
         }
 
     /**
@@ -114,11 +116,12 @@ trait TypeAnalyser {
      */
     val isSuperTypeOfClassDecl : ClassDecl => TypeDecl => Boolean =
         paramAttr {
-            typedecl => {
-                case UnknownDecl (_) => true
-                case t : TypeDecl    =>
-                    (t eq typedecl) || (superClass (typedecl) != null) && (isSubtypeOf (superClass (typedecl)) (t))
-            }
+            typedecl =>
+                {
+                    case UnknownDecl(_) => true
+                    case t : TypeDecl =>
+                        (t eq typedecl) || (superClass(typedecl) != null) && (isSubtypeOf(superClass(typedecl))(t))
+                }
         }
 
     /**
@@ -133,15 +136,15 @@ trait TypeAnalyser {
      * }
      */
     val superClass : ClassDecl => ClassDecl =
-        attr (
+        attr(
             c =>
                 c.Superclass match {
-                    case Some (i) =>
-                        decl (i) match {
-                            case sc : ClassDecl if !hasCycleOnSuperclassChain (c) => sc
-                            case _                                                => null
+                    case Some(i) =>
+                        decl(i) match {
+                            case sc : ClassDecl if !hasCycleOnSuperclassChain(c) => sc
+                            case _ => null
                         }
-                    case None     => null
+                    case None => null
                 }
         )
 
@@ -156,15 +159,15 @@ trait TypeAnalyser {
      *        return false;
      */
     val hasCycleOnSuperclassChain : ClassDecl => Boolean =
-        circular (true) (
+        circular(true)(
             c =>
                 c.Superclass match {
-                    case Some (i) =>
-                        decl (i) match {
-                            case sc : ClassDecl => hasCycleOnSuperclassChain (sc)
+                    case Some(i) =>
+                        decl(i) match {
+                            case sc : ClassDecl => hasCycleOnSuperclassChain(sc)
                             case _              => false
                         }
-                    case None     => false
+                    case None => false
                 }
         )
 
@@ -182,11 +185,11 @@ trait TypeAnalyser {
      */
     val isValue : Exp => Boolean =
         attr {
-            case i : IdnUse => ! decl (i).isInstanceOf[TypeDecl] // replace this one
+            case i : IdnUse => !decl(i).isInstanceOf[TypeDecl] // replace this one
             // with this one, when the rewrites are in:
             // case t : TypeUse => false
-            case d : Dot   => isValue (d.IdnUse)
-            case _         => true
+            case d : Dot    => isValue(d.IdnUse)
+            case _          => true
         }
 
     /*

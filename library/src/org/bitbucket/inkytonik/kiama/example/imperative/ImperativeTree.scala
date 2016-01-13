@@ -33,7 +33,7 @@ object ImperativeTree {
     /**
      * Tree type for imperative programs.
      */
-    type ImperativeTree = Tree[ImperativeNode,ImperativeNode]
+    type ImperativeTree = Tree[ImperativeNode, ImperativeNode]
 
     /**
      * Identifiers are represented as strings.
@@ -58,7 +58,7 @@ object ImperativeTree {
         /**
          * The set of all variable references in the expression.
          */
-        def vars : Set[Idn] = Set ()
+        def vars : Set[Idn] = Set()
 
         /**
          * The number of divisions by the constant zero in the expression.
@@ -80,7 +80,7 @@ object ImperativeTree {
     /**
      * Numeric expressions.
      */
-    case class Num (d : Double) extends Exp {
+    case class Num(d : Double) extends Exp {
         override def value : Double = d
         override def depth : Int = 2
     }
@@ -88,10 +88,10 @@ object ImperativeTree {
     /**
      * Variable expressions.
      */
-    case class Var (s : Idn) extends Exp {
+    case class Var(s : Idn) extends Exp {
         // Hack to make tests more interesting
         override def value : Double = 3
-        override def vars : Set[Idn] = Set (s)
+        override def vars : Set[Idn] = Set(s)
         override def depth : Int = 2
         override def toString : String = s"""Var("$s")"""
     }
@@ -99,8 +99,8 @@ object ImperativeTree {
     /**
      * Unary negation expressions.
      */
-    case class Neg (e : Exp) extends Exp {
-        override def value : Double = - e.value
+    case class Neg(e : Exp) extends Exp {
+        override def value : Double = -e.value
         override def vars : Set[Idn] = e.vars
         override def divsbyzero : Int = e.divsbyzero
         override def depth : Int = 1 + e.depth
@@ -110,51 +110,51 @@ object ImperativeTree {
     /**
      * Binary expressions.
      */
-    abstract class Binary (l : Exp, r : Exp) extends Exp {
+    abstract class Binary(l : Exp, r : Exp) extends Exp {
         override def vars : Set[Idn] = l.vars ++ r.vars
         override def divsbyzero : Int = l.divsbyzero + r.divsbyzero
-        override def depth : Int = 1 + (l.depth).max (r.depth)
+        override def depth : Int = 1 + (l.depth).max(r.depth)
         override def intadds : Int = l.intadds + r.intadds
     }
 
     /**
      * Addition expressions.
      */
-    case class Add (l : Exp, r : Exp) extends Binary (l, r) {
+    case class Add(l : Exp, r : Exp) extends Binary(l, r) {
         override def value : Double = l.value + r.value
         override def intadds : Int =
             (l, r) match {
-                case (Num (_), Num (_)) => 1
-                case _                  => super.intadds
+                case (Num(_), Num(_)) => 1
+                case _                => super.intadds
             }
     }
 
     /**
      * Subtraction expressions.
      */
-    case class Sub (l : Exp, r : Exp) extends Binary (l, r) {
+    case class Sub(l : Exp, r : Exp) extends Binary(l, r) {
         override def value : Double = l.value - r.value
     }
 
     /**
      * Multiplication expressions.
      */
-    case class Mul (l : Exp, r : Exp) extends Binary (l, r) {
+    case class Mul(l : Exp, r : Exp) extends Binary(l, r) {
         override def value : Double = l.value * r.value
     }
 
     /**
      * Division expressions.
      */
-    case class Div (l : Exp, r : Exp) extends Binary (l, r) {
+    case class Div(l : Exp, r : Exp) extends Binary(l, r) {
         // Hack: no errors, so return zero for divide by zero
         override def value : Double =
             if (r.value == 0) 0 else l.value / r.value
         override def divsbyzero : Int =
             l.divsbyzero + (r match {
-                                case Num (0) => 1
-                                case _       => r.divsbyzero
-                            })
+                case Num(0) => 1
+                case _      => r.divsbyzero
+            })
     }
 
     /**
@@ -165,96 +165,96 @@ object ImperativeTree {
         /**
          * The set of all variable references in the statement.
          */
-        def vars : Set[Idn] = Set ()
+        def vars : Set[Idn] = Set()
 
     }
 
     /**
      * Empty statements.
      */
-    case class Null () extends Stmt
+    case class Null() extends Stmt
 
     /**
      * Statement sequences.
      */
-    case class Seqn (ss : Vector[Stmt]) extends Stmt {
-        override def vars : Set[Idn] = Set (ss flatMap (_.vars) : _*)
+    case class Seqn(ss : Vector[Stmt]) extends Stmt {
+        override def vars : Set[Idn] = Set(ss flatMap (_.vars) : _*)
     }
 
     /**
      * Assignment statements.
      */
-    case class Asgn (v : Var, e : Exp) extends Stmt {
-        override def vars : Set[Idn] = Set (v.s)
+    case class Asgn(v : Var, e : Exp) extends Stmt {
+        override def vars : Set[Idn] = Set(v.s)
     }
 
     /**
      * While loops.
      */
-    case class While (e : Exp, b : Stmt) extends Stmt {
+    case class While(e : Exp, b : Stmt) extends Stmt {
         override def vars : Set[Idn] = e.vars ++ b.vars
     }
 
     // Congruences
 
-    def Num (s1 : => Strategy) : Strategy =
+    def Num(s1 : => Strategy) : Strategy =
         rulefs[Num] {
             case _ =>
-                congruence (s1)
+                congruence(s1)
         }
 
-    def Var (s1 : => Strategy) : Strategy =
+    def Var(s1 : => Strategy) : Strategy =
         rulefs[Var] {
             case _ =>
-                congruence (s1)
+                congruence(s1)
         }
 
-    def Neg (s1 : => Strategy) : Strategy =
+    def Neg(s1 : => Strategy) : Strategy =
         rulefs[Var] {
             case _ =>
-                congruence (s1)
+                congruence(s1)
         }
 
-    def Add (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def Add(s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs[Add] {
             case _ =>
-                congruence (s1, s2)
+                congruence(s1, s2)
         }
 
-    def Sub (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def Sub(s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs[Sub] {
             case _ =>
-                congruence (s1, s2)
+                congruence(s1, s2)
         }
 
-    def Mul (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def Mul(s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs[Mul] {
             case _ =>
-                congruence (s1, s2)
+                congruence(s1, s2)
         }
 
-    def Div (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def Div(s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs[Div] {
             case _ =>
-                congruence (s1, s2)
+                congruence(s1, s2)
         }
 
-    def Seqn (s1 : => Strategy) : Strategy =
+    def Seqn(s1 : => Strategy) : Strategy =
         rulefs[Seqn] {
             case _ =>
-                congruence (s1)
+                congruence(s1)
         }
 
-    def Asgn (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def Asgn(s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs[Asgn] {
             case _ =>
-                congruence (s1, s2)
+                congruence(s1, s2)
         }
 
-    def While (s1 : => Strategy, s2 : => Strategy) : Strategy =
+    def While(s1 : => Strategy, s2 : => Strategy) : Strategy =
         rulefs[While] {
             case _ =>
-                congruence (s1, s2)
+                congruence(s1, s2)
         }
 
 }

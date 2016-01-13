@@ -38,8 +38,8 @@ trait RewriterCore {
      * Make a strategy with the given name and body `f`. By default, make a
      * basic strategy.
      */
-    def mkStrategy (name : String, f : Any => Option[Any]) : Strategy =
-        new Strategy (name) {
+    def mkStrategy(name : String, f : Any => Option[Any]) : Strategy =
+        new Strategy(name) {
             val body = f
         }
 
@@ -49,15 +49,14 @@ trait RewriterCore {
      * Construct a strategy that always succeeds, changing the subject term to
      * the given term `t`. The term `t` is evaluated at most once.
      */
-    def build (t : Any) : Strategy =
-        macro RewriterCoreMacros.buildMacro
+    def build(t : Any) : Strategy = macro RewriterCoreMacros.buildMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def build (name : String, t : => Any) : Strategy =
-        rulef (name, _ => t)
+    def build(name : String, t : => Any) : Strategy =
+        rulef(name, _ => t)
 
     /**
      * A strategy that always succeeds with the subject term unchanged (i.e.,
@@ -65,27 +64,26 @@ trait RewriterCore {
      * term is printed to the given emitter, prefixed by the string `s`.  The
      * emitter defaults to one that writes to standard output.
      */
-    def debug (msg : String, emitter : Emitter = new OutputEmitter) : Strategy =
-        macro RewriterCoreMacros.debugMacro
+    def debug(msg : String, emitter : Emitter = new OutputEmitter) : Strategy = macro RewriterCoreMacros.debugMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def debug (name : String, msg : String, emitter : Emitter) : Strategy =
-        strategyf (name, t => { emitter.emitln (msg + t); Some (t) })
+    def debug(name : String, msg : String, emitter : Emitter) : Strategy =
+        strategyf(name, t => { emitter.emitln(msg + t); Some(t) })
 
     /**
      * A strategy that always fails.
      */
     val fail : Strategy =
-        mkStrategy ("fail", _ => None)
+        mkStrategy("fail", _ => None)
 
     /**
      * A strategy that always succeeds.
      */
     val id : Strategy =
-        mkStrategy ("id", Some (_))
+        mkStrategy("id", Some(_))
 
     /**
      * Create a logging strategy based on a strategy `s`. The returned strategy
@@ -94,24 +92,24 @@ trait RewriterCore {
      * term, to the provided emitter (default: standard error). `s` is evaluated
      * at most once.
      */
-    def log (s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy =
-        macro RewriterCoreMacros.logMacro
+    def log(s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy = macro RewriterCoreMacros.logMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def log (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
+    def log(name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
         lazy val strat = s
-        mkStrategy (name,
+        mkStrategy(
+            name,
             t1 => {
-                emitter.emit (msg + t1)
-                val r = strat (t1)
+                emitter.emit(msg + t1)
+                val r = strat(t1)
                 r match {
-                    case Some (t2) =>
-                        emitter.emitln (s" succeeded with $t2")
+                    case Some(t2) =>
+                        emitter.emitln(s" succeeded with $t2")
                     case None =>
-                        emitter.emitln (" failed")
+                        emitter.emitln(" failed")
                 }
                 r
             }
@@ -124,23 +122,23 @@ trait RewriterCore {
      * provided message and the subject term to the provided emitter (default:
      * standard error). `s` is evaluated at most once.
      */
-    def logfail[T] (s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy =
-        macro RewriterCoreMacros.logfailMacro
+    def logfail[T](s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy = macro RewriterCoreMacros.logfailMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def logfail[T] (name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
+    def logfail[T](name : String, s : => Strategy, msg : String, emitter : Emitter) : Strategy = {
         lazy val strat = s
-        mkStrategy (name,
+        mkStrategy(
+            name,
             t1 => {
-                val r = strat (t1)
+                val r = strat(t1)
                 r match {
-                    case Some (t2) =>
-                        // Do nothing
+                    case Some(t2) =>
+                    // Do nothing
                     case None =>
-                        emitter.emitln (s"$msg$t1 failed")
+                        emitter.emitln(s"$msg$t1 failed")
                 }
                 r
             }
@@ -154,14 +152,13 @@ trait RewriterCore {
      * invoke `s`.  For best results, it is important that `s` should have no side
      * effects. `s` is evaluated at most once.
      */
-    def memo (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.memoMacro
+    def memo(s : Strategy) : Strategy = macro RewriterCoreMacros.memoMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def memo (name : String, s : => Strategy) : Strategy = {
+    def memo(name : String, s : => Strategy) : Strategy = {
 
         import com.google.common.base.Function
         import com.google.common.cache.{CacheBuilder, CacheLoader}
@@ -169,16 +166,16 @@ trait RewriterCore {
         lazy val strat = s
 
         val cache =
-            CacheBuilder.newBuilder.build (
-                CacheLoader.from (
-                    new Function[AnyRef,Option[Any]] {
-                        def apply (t : AnyRef) : Option[Any] =
-                            strat (t)
+            CacheBuilder.newBuilder.build(
+                CacheLoader.from(
+                    new Function[AnyRef, Option[Any]] {
+                        def apply(t : AnyRef) : Option[Any] =
+                            strat(t)
                     }
                 )
             )
 
-        mkStrategy (name, t => cache.get (t.asInstanceOf[AnyRef]))
+        mkStrategy(name, t => cache.get(t.asInstanceOf[AnyRef]))
 
     }
 
@@ -188,15 +185,14 @@ trait RewriterCore {
      * If `o` is a `Some`, then the subject term is changed to the term that
      * is wrapped by the `Some`. `o` is evaluated at most once.
      */
-    def option (o : Option[Any]) : Strategy =
-        macro RewriterCoreMacros.optionMacro
+    def option(o : Option[Any]) : Strategy = macro RewriterCoreMacros.optionMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def option (name : String, o : => Option[Any]) : Strategy =
-        strategyf (name, _ => o)
+    def option(name : String, o : => Option[Any]) : Strategy =
+        strategyf(name, _ => o)
 
     /**
      * Perform a paramorphism over a value. This is a fold in which the
@@ -208,8 +204,8 @@ trait RewriterCore {
      * supported by the `Term` generic term deconstruction.  This operation
      * is similar to that used in the Uniplate library.
      */
-    def para[T] (f : (Any, Seq[T]) => T) : Any => T = {
-        case Term (t, ts) => f (t, ts.map (para (f)))
+    def para[T](f : (Any, Seq[T]) => T) : Any => T = {
+        case Term(t, ts) => f(t, ts.map(para(f)))
     }
 
     /**
@@ -223,25 +219,26 @@ trait RewriterCore {
      * will be imprecise for some types. E.g., it is not possible to tell
      * the difference between `List[Int]` and `List[String]`.
      */
-    def query[T] (f : T ==> Unit) : Strategy =
-        macro RewriterCoreMacros.queryMacro[T]
+    def query[T](f : T ==> Unit) : Strategy = macro RewriterCoreMacros.queryMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def queryWithName[T] (name : String, f : T ==> Unit) : Strategy = {
+    def queryWithName[T](name : String, f : T ==> Unit) : Strategy = {
         val anyf = f.asInstanceOf[Any ==> Any]
-        mkStrategy (name,
+        mkStrategy(
+            name,
             (t : Any) => {
-                val of = anyf andThen (_ => Some (t))
+                val of = anyf andThen (_ => Some(t))
                 try {
-                    of.applyOrElse (t, (a : Any) => None)
+                    of.applyOrElse(t, (a : Any) => None)
                 } catch {
                     case _ : ClassCastException =>
                         None
                 }
-            })
+            }
+        )
     }
 
     /**
@@ -250,18 +247,18 @@ trait RewriterCore {
      * function `f` to the subject term.  In other words, the strategy runs
      * `f` for its side-effects.
      */
-    def queryf (f : Any => Unit) : Strategy =
-        macro RewriterCoreMacros.queryfMacro
+    def queryf(f : Any => Unit) : Strategy = macro RewriterCoreMacros.queryfMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def queryf (name : String, f : Any => Unit) : Strategy =
-        mkStrategy (name,
+    def queryf(name : String, f : Any => Unit) : Strategy =
+        mkStrategy(
+            name,
             t => {
-                f (t)
-                Some (t)
+                f(t)
+                Some(t)
             }
         )
 
@@ -275,38 +272,38 @@ trait RewriterCore {
      * will be imprecise for some types. E.g., it is not possible to tell
      * the difference between `List[Int]` and `List[String]`.
      */
-    def rule[T] (f : T ==> T) : Strategy =
-        macro RewriterCoreMacros.ruleMacro[T]
+    def rule[T](f : T ==> T) : Strategy = macro RewriterCoreMacros.ruleMacro[T]
 
     /**
      * As for `rule` but specifies the name for the constructed strategy.
      */
-    def ruleWithName[T] (name : String, f : T ==> T) : Strategy = {
+    def ruleWithName[T](name : String, f : T ==> T) : Strategy = {
         val anyf = f.asInstanceOf[Any ==> Any]
-        val of = anyf andThen (Some (_))
-        mkStrategy (name,
+        val of = anyf andThen (Some(_))
+        mkStrategy(
+            name,
             (t : Any) =>
                 try {
-                    of.applyOrElse (t, (a : Any) => None)
+                    of.applyOrElse(t, (a : Any) => None)
                 } catch {
                     case _ : ClassCastException =>
                         None
-                })
+                }
+        )
     }
 
     /**
      * Define a rewrite rule using a function `f` that returns a term.
      * The rule always succeeds with the return value of the function.
      */
-    def rulef (f : Any => Any) : Strategy =
-        macro RewriterCoreMacros.rulefMacro
+    def rulef(f : Any => Any) : Strategy = macro RewriterCoreMacros.rulefMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def rulef (name : String, f : Any => Any) : Strategy =
-        strategyf (name, t => Some (f (t)))
+    def rulef(name : String, f : Any => Any) : Strategy =
+        strategyf(name, t => Some(f(t)))
 
     /**
      * Define a rewrite rule using a function `f` defined on type `T` that returns
@@ -316,25 +313,26 @@ trait RewriterCore {
      * the function is only used for effects such as pattern matching.  The whole
      * thing also fails if `f` is not defined at the term in the first place.
      */
-    def rulefs[T] (f : T ==> Strategy) : Strategy =
-        macro RewriterCoreMacros.rulefsMacro[T]
+    def rulefs[T](f : T ==> Strategy) : Strategy = macro RewriterCoreMacros.rulefsMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def rulefsWithName[T] (name : String, f : T ==> Strategy) : Strategy = {
+    def rulefsWithName[T](name : String, f : T ==> Strategy) : Strategy = {
         val anyf = f.asInstanceOf[Any ==> Strategy]
-        mkStrategy (name,
+        mkStrategy(
+            name,
             (t : Any) => {
-                val of = anyf andThen (_.apply (t))
+                val of = anyf andThen (_.apply(t))
                 try {
-                    of.applyOrElse (t, (a : Any) => None)
+                    of.applyOrElse(t, (a : Any) => None)
                 } catch {
                     case _ : ClassCastException =>
                         None
                 }
-            })
+            }
+        )
     }
 
     /**
@@ -349,52 +347,51 @@ trait RewriterCore {
      * will be imprecise for some types. E.g., it is not possible to tell
      * the difference between `List[Int]` and `List[String]`.
      */
-    def strategy[T] (f : T ==> Option[T]) : Strategy =
-        macro RewriterCoreMacros.strategyMacro[T]
+    def strategy[T](f : T ==> Option[T]) : Strategy = macro RewriterCoreMacros.strategyMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def strategyWithName[T] (name : String, f : T ==> Option[T]) : Strategy = {
+    def strategyWithName[T](name : String, f : T ==> Option[T]) : Strategy = {
         val of = f.asInstanceOf[Any ==> Option[T]]
-        mkStrategy (name,
+        mkStrategy(
+            name,
             (t : Any) =>
                 try {
-                    of.applyOrElse (t, (a : Any) => None)
+                    of.applyOrElse(t, (a : Any) => None)
                 } catch {
                     case _ : ClassCastException =>
                         None
-                })
+                }
+        )
     }
 
     /**
      * Make a strategy from a function `f`. The function return value
      * determines whether the strategy succeeds or fails.
      */
-    def strategyf (f : Any => Option[Any]) : Strategy =
-        macro RewriterCoreMacros.strategyfMacro
+    def strategyf(f : Any => Option[Any]) : Strategy = macro RewriterCoreMacros.strategyfMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def strategyf (name : String, f : Any => Option[Any]) : Strategy =
-        mkStrategy (name, f)
+    def strategyf(name : String, f : Any => Option[Any]) : Strategy =
+        mkStrategy(name, f)
 
     /**
      * Construct a strategy that succeeds only if the subject term matches
      * the given term `t`.
      */
-    def term[T] (t : T) : Strategy =
-        macro RewriterCoreMacros.termMacro[T]
+    def term[T](t : T) : Strategy = macro RewriterCoreMacros.termMacro[T]
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def termWithName[T] (name : String, t : T) : Strategy =
-        ruleWithName[T] (name, {
+    def termWithName[T](name : String, t : T) : Strategy =
+        ruleWithName[T](name, {
             case `t` => t
         })
 
@@ -417,16 +414,16 @@ trait RewriterCore {
 
         type Duper = (Any, Array[AnyRef]) => Any
 
-        object MakeDuper extends Function[Class[_],Duper] {
+        object MakeDuper extends Function[Class[_], Duper] {
 
-            def apply (clazz : Class[_]) : Duper =
+            def apply(clazz : Class[_]) : Duper =
                 try {
                     // See if this class has a MODULE$ field. This field is used by Scala
                     // to hold a singleton instance and is only present in singleton classes
                     // (e.g., ones arising from object declarations or case objects). If we
                     // are trying to duplicate one of these then we want to return the same
                     // singleton so we use an identity duper.
-                    clazz.getField ("MODULE$")
+                    clazz.getField("MODULE$")
                     (t : Any, children : Array[AnyRef]) =>
                         t
                 } catch {
@@ -435,30 +432,30 @@ trait RewriterCore {
                     case _ : NoSuchFieldException =>
                         val ctors = clazz.getConstructors
                         if (ctors.length == 0)
-                            sys.error (s"dup no constructors for ${clazz.getName}")
+                            sys.error(s"dup no constructors for ${clazz.getName}")
                         else
                             (t : Any, children : Array[AnyRef]) =>
-                                makeInstance (ctors (0), children)
+                                makeInstance(ctors(0), children)
                 }
 
-            def makeInstance (ctor : Constructor[_], children : Array[AnyRef]) : Any =
+            def makeInstance(ctor : Constructor[_], children : Array[AnyRef]) : Any =
                 try {
-                    ctor.newInstance (children : _*)
+                    ctor.newInstance(children : _*)
                 } catch {
                     case e : IllegalArgumentException =>
-                        sys.error (s"""dup illegal arguments: $ctor (${children.mkString (",")}), expects ${ctor.getParameterTypes.length}
+                        sys.error(s"""dup illegal arguments: $ctor (${children.mkString(",")}), expects ${ctor.getParameterTypes.length}
                                     |Common cause: term classes are nested in another class, move them to the top level""".stripMargin)
                 }
 
         }
 
-        val cache = CacheBuilder.newBuilder.weakKeys.build (
-                        CacheLoader.from (MakeDuper)
-                    )
+        val cache = CacheBuilder.newBuilder.weakKeys.build(
+            CacheLoader.from(MakeDuper)
+        )
 
-        def apply[T <: Product] (t : T, children : Array[AnyRef]) : T = {
-            val duper = cache.get (t.getClass)
-            duper (t, children).asInstanceOf[T]
+        def apply[T <: Product](t : T, children : Array[AnyRef]) : T = {
+            val duper = cache.get(t.getClass)
+            duper(t, children).asInstanceOf[T]
         }
 
     }
@@ -467,22 +464,22 @@ trait RewriterCore {
      * The duplicator used by the generic traversals. Needs to be defined
      * as a method so we can override it in other rewriting modules.
      */
-    def dup[T <: Product] (t : T, children : Array[AnyRef]) : T =
-        Duplicator (t, children)
+    def dup[T <: Product](t : T, children : Array[AnyRef]) : T =
+        Duplicator(t, children)
 
     /**
      * Copy a product node by creating a new node of the same class type
      * using the same children.
      */
-    def copy[T <: Product] (t : T) : T =
-        Duplicator (t, t.productIterator.map (makechild).toArray)
+    def copy[T <: Product](t : T) : T =
+        Duplicator(t, t.productIterator.map(makechild).toArray)
 
     /**
      * Make an arbitrary value `c` into a term child, checking that it worked
      * properly. Object references will be returned unchanged; other values
      * will be boxed.
      */
-    protected def makechild (c : Any) : AnyRef =
+    protected def makechild(c : Any) : AnyRef =
         c.asInstanceOf[AnyRef]
 
     // Generic traversals
@@ -499,22 +496,21 @@ trait RewriterCore {
      * This operation works for instances of `Product` or finite `Seq` values.
      * `s` is evaluated at most once.
      */
-    def child (i : Int, s : Strategy) : Strategy =
-        macro RewriterCoreMacros.childMacro
+    def child(i : Int, s : Strategy) : Strategy = macro RewriterCoreMacros.childMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def child (name : String, i : Int, s : => Strategy) : Strategy =
-        mkStrategy (name, {
+    def child(name : String, i : Int, s : => Strategy) : Strategy =
+        mkStrategy(name, {
             lazy val strat = s
             t =>
                 t match {
                     case p : Product =>
-                        childProduct (strat, i, p)
+                        childProduct(strat, i, p)
                     case t : Seq[_] =>
-                        childSeq (strat, i, t.asInstanceOf[Seq[Any]])
+                        childSeq(strat, i, t.asInstanceOf[Seq[Any]])
                     case _ =>
                         None
                 }
@@ -523,19 +519,19 @@ trait RewriterCore {
     /**
      * Implementation of `child` for `Product` values.
      */
-    def childProduct (s : Strategy, i : Int, p : Product) : Option[Any] = {
+    def childProduct(s : Strategy, i : Int, p : Product) : Option[Any] = {
         val numchildren = p.productArity
         if ((i < 1) || (i > numchildren)) {
             None
         } else {
-            val ct = p.productElement (i-1)
-            s (ct) match {
-                case Some (ti) if same (ct, ti) =>
-                    Some (p)
-                case Some (ti) =>
-                    val newchildren = p.productIterator.map (makechild).toArray
-                    newchildren (i - 1) = makechild (ti)
-                    Some (dup (p, newchildren))
+            val ct = p.productElement(i - 1)
+            s(ct) match {
+                case Some(ti) if same(ct, ti) =>
+                    Some(p)
+                case Some(ti) =>
+                    val newchildren = p.productIterator.map(makechild).toArray
+                    newchildren(i - 1) = makechild(ti)
+                    Some(dup(p, newchildren))
                 case None =>
                     None
             }
@@ -545,26 +541,24 @@ trait RewriterCore {
     /**
      * Implementation of `child` for `Seq` values.
      */
-    def childSeq[CC[U] <: Seq[U]] (s : Strategy, i : Int, t : CC[Any])
-            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                        : Option[CC[Any]] = {
+    def childSeq[CC[U] <: Seq[U]](s : Strategy, i : Int, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] = {
         val numchildren = t.size
         if ((i < 1) || (i > numchildren)) {
             None
         } else {
-            val ct = t (i - 1)
-            s (ct) match {
-                case Some (ti) if same (ct, ti) =>
-                    Some (t)
-                case Some (ti) =>
-                    val b = cbf (t)
-                    b.sizeHint (t.size)
-                    t.foldLeft (0) {
+            val ct = t(i - 1)
+            s(ct) match {
+                case Some(ti) if same(ct, ti) =>
+                    Some(t)
+                case Some(ti) =>
+                    val b = cbf(t)
+                    b.sizeHint(t.size)
+                    t.foldLeft(0) {
                         case (j, ct) =>
                             b += (if (j == i - 1) ti else ct)
                             j + 1
                     }
-                    Some (b.result)
+                    Some(b.result)
                 case None =>
                     None
             }
@@ -586,139 +580,134 @@ trait RewriterCore {
      * `foreach`) method.
      * `s` is evaluated at most once.
      */
-    def all (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.allMacro
+    def all(s : Strategy) : Strategy = macro RewriterCoreMacros.allMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def all (name : String, s : => Strategy) : Strategy =
-        mkStrategy (name, {
+    def all(name : String, s : => Strategy) : Strategy =
+        mkStrategy(name, {
             lazy val strat = s
             t =>
                 t match {
                     case r : Rewritable =>
-                        allRewritable (strat, r)
+                        allRewritable(strat, r)
                     case p : Product =>
-                        allProduct (strat, p)
-                    case m : Map[_,_] =>
-                        allMap (strat, m.asInstanceOf[Map[Any,Any]])
+                        allProduct(strat, p)
+                    case m : Map[_, _] =>
+                        allMap(strat, m.asInstanceOf[Map[Any, Any]])
                     case t : Traversable[_] =>
-                        allTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                        allTraversable(strat, t.asInstanceOf[Traversable[Any]])
                     case _ =>
-                        Some (t)
+                        Some(t)
                 }
         })
 
     /**
      * Implementation of `all` for `Rewritable` values.
      */
-    def allRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
+    def allRewritable(s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
         if (numchildren == 0)
-            Some (r)
+            Some(r)
         else {
             val newchildren = Seq.newBuilder[Any]
             val changed =
-                r.deconstruct.foldLeft (false) {
+                r.deconstruct.foldLeft(false) {
                     case (changed, ct) =>
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren += makechild (ti)
-                                changed || !same (ct, ti)
+                        s(ct) match {
+                            case Some(ti) =>
+                                newchildren += makechild(ti)
+                                changed || !same(ct, ti)
                             case None =>
                                 return None
                         }
                 }
             if (changed)
-                Some (r.reconstruct (newchildren.result))
+                Some(r.reconstruct(newchildren.result))
             else
-                Some (r)
+                Some(r)
         }
     }
 
     /**
      * Implementation of `all` for `Product` values.
      */
-    def allProduct (s : Strategy, p : Product) : Option[Any] = {
+    def allProduct(s : Strategy, p : Product) : Option[Any] = {
         val numchildren = p.productArity
         if (numchildren == 0)
-            Some (p)
+            Some(p)
         else {
             val newchildren = Array.newBuilder[AnyRef]
             val changed =
-                p.productIterator.foldLeft (false) {
+                p.productIterator.foldLeft(false) {
                     case (changed, ct) =>
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren += makechild (ti)
-                                changed || !same (ct, ti)
+                        s(ct) match {
+                            case Some(ti) =>
+                                newchildren += makechild(ti)
+                                changed || !same(ct, ti)
                             case None =>
                                 return None
                         }
                 }
             if (changed)
-                Some (dup (p, newchildren.result))
+                Some(dup(p, newchildren.result))
             else
-                Some (p)
+                Some(p)
         }
     }
 
     /**
      * Implementation of `all` for `Traversable` values.
      */
-    def allTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
-            (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                        : Option[CC[Any]] =
+    def allTraversable[CC[U] <: Traversable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] =
         if (t.size == 0)
-            Some (t)
+            Some(t)
         else {
-            val b = cbf (t)
-            b.sizeHint (t.size)
+            val b = cbf(t)
+            b.sizeHint(t.size)
             val (changed, _) =
-                t.foldLeft (false, 0) {
+                t.foldLeft(false, 0) {
                     case ((changed, i), ct) =>
-                        s (ct) match {
-                            case Some (ti) =>
+                        s(ct) match {
+                            case Some(ti) =>
                                 b += ti
-                                (changed || !same (ct, ti), i + 1)
+                                (changed || !same(ct, ti), i + 1)
                             case None =>
                                 return None
                         }
                 }
             if (changed)
-                Some (b.result)
+                Some(b.result)
             else
-                Some (t)
+                Some(t)
         }
 
     /**
      * Implementation of `all` for `Map` values.
      */
-    def allMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
-            (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
-                        : Option[CC[Any,Any]] =
+    def allMap[CC[V, W] <: Map[V, W]](s : Strategy, t : CC[Any, Any])(implicit cbf : CanBuildFrom[CC[Any, Any], (Any, Any), CC[Any, Any]]) : Option[CC[Any, Any]] =
         if (t.size == 0)
-            Some (t)
+            Some(t)
         else {
-            val b = cbf (t)
-            b.sizeHint (t.size)
+            val b = cbf(t)
+            b.sizeHint(t.size)
             val (changed, _) =
-                t.foldLeft (false, 0) {
+                t.foldLeft(false, 0) {
                     case ((changed, i), ct) =>
-                        s (ct) match {
-                            case Some (ti @ (tix,tiy)) =>
+                        s(ct) match {
+                            case Some(ti @ (tix, tiy)) =>
                                 b += ti
-                                (changed || !same (ct, ti), i + 1)
+                                (changed || !same(ct, ti), i + 1)
                             case _ =>
                                 return None
                         }
                 }
             if (changed)
-                Some (b.result)
+                Some(b.result)
             else
-                Some (t)
+                Some(t)
         }
 
     /**
@@ -738,27 +727,26 @@ trait RewriterCore {
      * `foreach`) method.
      * `s` is evaluated at most once.
      */
-    def one (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.oneMacro
+    def one(s : Strategy) : Strategy = macro RewriterCoreMacros.oneMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def one (name : String, s : => Strategy) : Strategy =
-        mkStrategy (name, {
+    def one(name : String, s : => Strategy) : Strategy =
+        mkStrategy(name, {
             lazy val strat = s
             t =>
                 t match {
                     case r : Rewritable =>
-                        oneRewritable (strat, r)
+                        oneRewritable(strat, r)
                     case p : Product =>
-                        oneProduct (strat, p)
-                    case m : Map[_,_] =>
-                        oneMap (strat, m.asInstanceOf[Map[Any,Any]])
+                        oneProduct(strat, p)
+                    case m : Map[_, _] =>
+                        oneMap(strat, m.asInstanceOf[Map[Any, Any]])
                     case t : Traversable[_] =>
-                        oneTraversable (strat, t.asInstanceOf[Traversable[Any]])
-                    case _  =>
+                        oneTraversable(strat, t.asInstanceOf[Traversable[Any]])
+                    case _ =>
                         None
                 }
         })
@@ -766,16 +754,16 @@ trait RewriterCore {
     /**
      * Implementation of `one` for `Rewritable` values.
      */
-    def oneRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
+    def oneRewritable(s : Strategy, r : Rewritable) : Option[Any] = {
         val children = r.deconstruct
-        children.foldLeft (0) {
+        children.foldLeft(0) {
             case (i, ct) =>
-                s (ct) match {
-                    case Some (ti) if same (ct, ti) =>
-                        return Some (r)
-                    case Some (ti) =>
-                        val newchildren = children.updated (i, ti)
-                        return Some (r.reconstruct (newchildren))
+                s(ct) match {
+                    case Some(ti) if same(ct, ti) =>
+                        return Some(r)
+                    case Some(ti) =>
+                        val newchildren = children.updated(i, ti)
+                        return Some(r.reconstruct(newchildren))
                     case None =>
                         i + 1
                 }
@@ -786,17 +774,17 @@ trait RewriterCore {
     /**
      * Implementation of `one` for `Product` values.
      */
-    def oneProduct (s : Strategy, p : Product) : Option[Any] = {
+    def oneProduct(s : Strategy, p : Product) : Option[Any] = {
         val numchildren = p.productArity
-        p.productIterator.foldLeft (0) {
+        p.productIterator.foldLeft(0) {
             case (i, ct) =>
-                s (ct) match {
-                    case Some (ti) if same (ct, ti) =>
-                        return Some (p)
-                    case Some (ti) =>
-                        val newchildren = p.productIterator.toArray.map (makechild)
-                        newchildren (i) = makechild (ti)
-                        return Some (dup (p, newchildren))
+                s(ct) match {
+                    case Some(ti) if same(ct, ti) =>
+                        return Some(p)
+                    case Some(ti) =>
+                        val newchildren = p.productIterator.toArray.map(makechild)
+                        newchildren(i) = makechild(ti)
+                        return Some(dup(p, newchildren))
                     case None =>
                         i + 1
                 }
@@ -807,19 +795,17 @@ trait RewriterCore {
     /**
      * Implementation of `one` for `Traversable` values.
      */
-    def oneTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
-                (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                        : Option[CC[Any]] = {
-        val b = cbf (t)
-        b.sizeHint (t.size)
+    def oneTraversable[CC[U] <: Traversable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] = {
+        val b = cbf(t)
+        b.sizeHint(t.size)
         val add =
-            t.foldLeft (true) {
+            t.foldLeft(true) {
                 case (add, ct) =>
                     if (add)
-                        s (ct) match {
-                            case Some (ti) if same (ct, ti) =>
-                                return Some (t)
-                            case Some (ti) =>
+                        s(ct) match {
+                            case Some(ti) if same(ct, ti) =>
+                                return Some(t)
+                            case Some(ti) =>
                                 b += ti
                                 false
                             case None =>
@@ -834,25 +820,23 @@ trait RewriterCore {
         if (add)
             None
         else
-            Some (b.result)
+            Some(b.result)
     }
 
     /**
      * Implementation of `one` for `Map` values.
      */
-    def oneMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
-                (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
-                        : Option[CC[Any,Any]] = {
-        val b = cbf (t)
-        b.sizeHint (t.size)
+    def oneMap[CC[V, W] <: Map[V, W]](s : Strategy, t : CC[Any, Any])(implicit cbf : CanBuildFrom[CC[Any, Any], (Any, Any), CC[Any, Any]]) : Option[CC[Any, Any]] = {
+        val b = cbf(t)
+        b.sizeHint(t.size)
         val add =
-            t.foldLeft (true) {
+            t.foldLeft(true) {
                 case (add, ct) =>
                     if (add)
-                        s (ct) match {
-                            case Some (ti @ (tix,tiy)) if same (ct, ti) =>
-                                return Some (t)
-                            case Some (ti @ (tix, tiy)) =>
+                        s(ct) match {
+                            case Some(ti @ (tix, tiy)) if same(ct, ti) =>
+                                return Some(t)
+                            case Some(ti @ (tix, tiy)) =>
                                 b += ti
                                 false
                             case None =>
@@ -867,7 +851,7 @@ trait RewriterCore {
         if (add)
             None
         else
-            Some (b.result)
+            Some(b.result)
     }
 
     /**
@@ -887,26 +871,25 @@ trait RewriterCore {
      * `foreach`) method.
      * `s` is evaluated at most once.
      */
-    def some (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.someMacro
+    def some(s : Strategy) : Strategy = macro RewriterCoreMacros.someMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def some (name : String, s : => Strategy) : Strategy =
-        mkStrategy (name, {
+    def some(name : String, s : => Strategy) : Strategy =
+        mkStrategy(name, {
             lazy val strat = s
             t =>
                 t match {
                     case r : Rewritable =>
-                        someRewritable (strat, r)
+                        someRewritable(strat, r)
                     case p : Product =>
-                        someProduct (strat, p)
-                    case m : Map[_,_] =>
-                        someMap (strat, m.asInstanceOf[Map[Any,Any]])
+                        someProduct(strat, p)
+                    case m : Map[_, _] =>
+                        someMap(strat, m.asInstanceOf[Map[Any, Any]])
                     case t : Traversable[_] =>
-                        someTraversable (strat, t.asInstanceOf[Traversable[Any]])
+                        someTraversable(strat, t.asInstanceOf[Traversable[Any]])
                     case _ =>
                         None
                 }
@@ -915,29 +898,29 @@ trait RewriterCore {
     /**
      * Implementation of `some` for `Rewritable` values.
      */
-    def someRewritable (s : Strategy, r : Rewritable) : Option[Any] = {
+    def someRewritable(s : Strategy, r : Rewritable) : Option[Any] = {
         val numchildren = r.arity
         if (numchildren == 0)
             None
         else {
             val newchildren = Seq.newBuilder[Any]
             val (success, changed) =
-                r.deconstruct.foldLeft (false, false) {
+                r.deconstruct.foldLeft(false, false) {
                     case ((success, changed), ct) =>
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren += makechild (ti)
-                                (true, changed || !same (ct, ti))
+                        s(ct) match {
+                            case Some(ti) =>
+                                newchildren += makechild(ti)
+                                (true, changed || !same(ct, ti))
                             case None =>
-                                newchildren += makechild (ct)
+                                newchildren += makechild(ct)
                                 (success, changed)
                         }
                 }
             if (success)
                 if (changed)
-                    Some (r.reconstruct (newchildren.result))
+                    Some(r.reconstruct(newchildren.result))
                 else
-                    Some (r)
+                    Some(r)
             else
                 None
         }
@@ -946,29 +929,29 @@ trait RewriterCore {
     /**
      * Implementation of `some` for `Product` values.
      */
-    def someProduct (s : Strategy, p : Product) : Option[Any] = {
+    def someProduct(s : Strategy, p : Product) : Option[Any] = {
         val numchildren = p.productArity
         if (numchildren == 0)
             None
         else {
             val newchildren = Array.newBuilder[AnyRef]
             val (success, changed) =
-                p.productIterator.foldLeft (false, false) {
+                p.productIterator.foldLeft(false, false) {
                     case ((success, changed), ct) =>
-                        s (ct) match {
-                            case Some (ti) =>
-                                newchildren += makechild (ti)
-                                (true, changed || !same (ct, ti))
+                        s(ct) match {
+                            case Some(ti) =>
+                                newchildren += makechild(ti)
+                                (true, changed || !same(ct, ti))
                             case None =>
-                                newchildren += makechild (ct)
+                                newchildren += makechild(ct)
                                 (success, changed)
                         }
                 }
             if (success)
                 if (changed)
-                    Some (dup (p, newchildren.result))
+                    Some(dup(p, newchildren.result))
                 else
-                    Some (p)
+                    Some(p)
             else
                 None
         }
@@ -977,21 +960,19 @@ trait RewriterCore {
     /**
      * Implementation of `some` for `Traversable` values.
      */
-    def someTraversable[CC[U] <: Traversable[U]] (s : Strategy, t : CC[Any])
-                (implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]])
-                        : Option[CC[Any]] =
+    def someTraversable[CC[U] <: Traversable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] =
         if (t.size == 0)
             None
         else {
-            val b = cbf (t)
-            b.sizeHint (t.size)
+            val b = cbf(t)
+            b.sizeHint(t.size)
             val (success, changed) =
-                t.foldLeft (false, false) {
+                t.foldLeft(false, false) {
                     case ((success, changed), ct) =>
-                        s (ct) match {
-                            case Some (ti) =>
+                        s(ct) match {
+                            case Some(ti) =>
                                 b += ti
-                                (true, changed || !same (ct, ti))
+                                (true, changed || !same(ct, ti))
                             case None =>
                                 b += ct
                                 (success, changed)
@@ -999,9 +980,9 @@ trait RewriterCore {
                 }
             if (success)
                 if (changed)
-                    Some (b.result)
+                    Some(b.result)
                 else
-                    Some (t)
+                    Some(t)
             else
                 None
         }
@@ -1009,21 +990,19 @@ trait RewriterCore {
     /**
      * Implementation of `some` for `Map` values.
      */
-    def someMap[CC[V,W] <: Map[V,W]] (s : Strategy, t : CC[Any,Any])
-                (implicit cbf : CanBuildFrom[CC[Any,Any], (Any, Any), CC[Any,Any]])
-                        : Option[CC[Any,Any]] =
+    def someMap[CC[V, W] <: Map[V, W]](s : Strategy, t : CC[Any, Any])(implicit cbf : CanBuildFrom[CC[Any, Any], (Any, Any), CC[Any, Any]]) : Option[CC[Any, Any]] =
         if (t.size == 0)
             None
         else {
-            val b = cbf (t)
-            b.sizeHint (t.size)
+            val b = cbf(t)
+            b.sizeHint(t.size)
             val (success, changed) =
-                t.foldLeft (false, false) {
+                t.foldLeft(false, false) {
                     case ((success, changed), ct) =>
-                        s (ct) match {
-                            case Some (ti @ (tix, tiy)) =>
+                        s(ct) match {
+                            case Some(ti @ (tix, tiy)) =>
                                 b += ti
-                                (true, changed || !same (ct, ti))
+                                (true, changed || !same(ct, ti))
                             case _ =>
                                 b += ct
                                 (success, changed)
@@ -1031,9 +1010,9 @@ trait RewriterCore {
                 }
             if (success)
                 if (changed)
-                    Some (b.result)
+                    Some(b.result)
                 else
-                    Some (t)
+                    Some(t)
             else
                 None
         }
@@ -1050,48 +1029,48 @@ trait RewriterCore {
      * overall strategy returns the subject term.
      * This operation works on instances of `Product` values.
      */
-    def congruence (ss : Strategy*) : Strategy =
-        macro RewriterCoreMacros.congruenceMacro
+    def congruence(ss : Strategy*) : Strategy = macro RewriterCoreMacros.congruenceMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
      * the constructed strategy.
      */
-    def congruence (name : String, ss : Strategy*) : Strategy =
-        mkStrategy (name,
+    def congruence(name : String, ss : Strategy*) : Strategy =
+        mkStrategy(
+            name,
             t =>
                 t match {
                     case p : Product =>
-                        congruenceProduct (p, ss : _*)
+                        congruenceProduct(p, ss : _*)
                     case _ =>
-                        Some (t)
+                        Some(t)
                 }
         )
 
     /**
      * Implementation of `congruence` for `Product` values.
      */
-    def congruenceProduct (p : Product, ss : Strategy*) : Option[Any] = {
-       val numchildren = p.productArity
-       if (numchildren == ss.length) {
-           val newchildren = Array.newBuilder[AnyRef]
-           val (changed, _) =
-               p.productIterator.foldLeft (false, 0) {
-                   case ((changed, i), ct) =>
-                       (ss (i)) (ct) match {
-                           case Some (ti) =>
-                               newchildren += makechild (ti)
-                               (changed || !same (ct, ti), i + 1)
-                           case None =>
-                               return None
-                       }
-               }
-           if (changed)
-               Some (dup (p, newchildren.result))
-           else
-               Some (p)
-       } else
-           None
+    def congruenceProduct(p : Product, ss : Strategy*) : Option[Any] = {
+        val numchildren = p.productArity
+        if (numchildren == ss.length) {
+            val newchildren = Array.newBuilder[AnyRef]
+            val (changed, _) =
+                p.productIterator.foldLeft(false, 0) {
+                    case ((changed, i), ct) =>
+                        (ss(i))(ct) match {
+                            case Some(ti) =>
+                                newchildren += makechild(ti)
+                                (changed || !same(ct, ti), i + 1)
+                            case None =>
+                                return None
+                        }
+                }
+            if (changed)
+                Some(dup(p, newchildren.result))
+            else
+                Some(p)
+        } else
+            None
     }
 
     // Extractors
@@ -1107,16 +1086,16 @@ trait RewriterCore {
          * its children.  Terms that are not of these types are not decomposable
          * (i.e., the children will be empty).
          */
-        def unapply (t : Any) : Option[(Any,Vector[Any])] = {
+        def unapply(t : Any) : Option[(Any, Vector[Any])] = {
             t match {
                 case r : Rewritable =>
-                    Some ((r, r.deconstruct.toVector))
+                    Some((r, r.deconstruct.toVector))
                 case p : Product =>
-                    Some ((p, p.productIterator.toVector))
+                    Some((p, p.productIterator.toVector))
                 case s : Seq[_] =>
-                    Some ((s, s.toVector))
+                    Some((s, s.toVector))
                 case _ =>
-                    Some ((t, Vector ()))
+                    Some((t, Vector()))
             }
         }
 
@@ -1128,31 +1107,27 @@ trait RewriterCore {
      * Construct a strategy that applies `s` in a bottom-up fashion to all
      * subterms at each level, stopping at a frontier where s succeeds.
      */
-    def allbu (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.allbuMacro
+    def allbu(s : Strategy) : Strategy = macro RewriterCoreMacros.allbuMacro
 
     /**
      * Construct a strategy that applies `s` in a top-down fashion, stopping
      * at a frontier where s succeeds.
      */
-    def alltd (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.alltdMacro
+    def alltd(s : Strategy) : Strategy = macro RewriterCoreMacros.alltdMacro
 
     /**
      * Construct a strategy that applies `s1` in a top-down, prefix fashion
      * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
      * postfix fashion to the result.
      */
-    def alldownup2 (s1 : Strategy, s2 : Strategy) : Strategy =
-        macro RewriterCoreMacros.alldownup2Macro
+    def alldownup2(s1 : Strategy, s2 : Strategy) : Strategy = macro RewriterCoreMacros.alldownup2Macro
 
     /**
      * Construct a strategy that applies `s1` in a top-down, prefix fashion
      * stopping at a frontier where `s1` succeeds.  `s2` is applied in a bottom-up,
      * postfix fashion to the results of the recursive calls.
      */
-    def alltdfold (s1 : Strategy, s2 : Strategy) : Strategy =
-        macro RewriterCoreMacros.alltdfoldMacro
+    def alltdfold(s1 : Strategy, s2 : Strategy) : Strategy = macro RewriterCoreMacros.alltdfoldMacro
 
     /**
      * `and(s1, s2)` applies `s1` and `s2` to the subject
@@ -1160,31 +1135,27 @@ trait RewriterCore {
      * be applied, i.e., and is ''not'' a short-circuit
      * operator
      */
-    def and (s1 : Strategy, s2 : Strategy) : Strategy =
-        macro RewriterCoreMacros.andMacro
+    def and(s1 : Strategy, s2 : Strategy) : Strategy = macro RewriterCoreMacros.andMacro
 
     /**
      * Construct a strategy that applies `s`, yielding the result of `s` if it
      * succeeds, otherwise leave the original subject term unchanged.  In
      * Stratego library this strategy is called `try`.
      */
-    def attempt (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.attemptMacro
+    def attempt(s : Strategy) : Strategy = macro RewriterCoreMacros.attemptMacro
 
     /**
      * Construct a strategy that applies `s` in a bottom-up, postfix fashion
      * to the subject term.
      */
-    def bottomup (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.bottomupMacro
+    def bottomup(s : Strategy) : Strategy = macro RewriterCoreMacros.bottomupMacro
 
     /**
      * Construct a strategy that applies `s` in a bottom-up, postfix fashion
      * to the subject term but stops when the strategy produced by `stop`
      * succeeds. `stop` is given the whole strategy itself as its argument.
      */
-    def bottomupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        macro RewriterCoreMacros.bottomupSMacro
+    def bottomupS(s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = macro RewriterCoreMacros.bottomupSMacro
 
     /**
      * Construct a strategy that applies `s` in breadth first order. This
@@ -1195,31 +1166,27 @@ trait RewriterCore {
      * descendants of the first child of a term are visited before any of
      * the descendants of the second child of a term.
      */
-    def breadthfirst (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.breadthfirstMacro
+    def breadthfirst(s : Strategy) : Strategy = macro RewriterCoreMacros.breadthfirstMacro
 
     /**
      * Construct a strategy that applies `s` at least once and then repeats `s`
      * while `r` succeeds.  This operator is called `do-while` in the Stratego
      * library.
      */
-    def doloop (s : Strategy, r : Strategy) : Strategy =
-        macro RewriterCoreMacros.doloopMacro
+    def doloop(s : Strategy, r : Strategy) : Strategy = macro RewriterCoreMacros.doloopMacro
 
     /**
      * Construct a strategy that applies `s` in a combined top-down and
      * bottom-up fashion (i.e., both prefix and postfix) to the subject
      * term.
      */
-    def downup (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.downupMacro1
+    def downup(s : Strategy) : Strategy = macro RewriterCoreMacros.downupMacro1
 
     /**
      * Construct a strategy that applies `s1` in a top-down, prefix fashion
      * and `s2` in a bottom-up, postfix fashion to the subject term.
      */
-    def downup (s1 : Strategy, s2 : Strategy) : Strategy =
-        macro RewriterCoreMacros.downupMacro2
+    def downup(s1 : Strategy, s2 : Strategy) : Strategy = macro RewriterCoreMacros.downupMacro2
 
     /**
      * Construct a strategy that applies `s` in a combined top-down and
@@ -1227,8 +1194,7 @@ trait RewriterCore {
      * but stops when the strategy produced by `stop` succeeds. `stop` is
      * given the whole strategy itself as its argument.
      */
-    def downupS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        macro RewriterCoreMacros.downupSMacro1
+    def downupS(s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = macro RewriterCoreMacros.downupSMacro1
 
     /**
      * Construct a strategy that applies `s1` in a top-down, prefix fashion
@@ -1236,44 +1202,38 @@ trait RewriterCore {
      * when the strategy produced by `stop` succeeds. `stop` is given the whole
      * strategy itself as its argument.
      */
-    def downupS (s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        macro RewriterCoreMacros.downupSMacro2
+    def downupS(s1 : Strategy, s2 : Strategy, stop : (=> Strategy) => Strategy) : Strategy = macro RewriterCoreMacros.downupSMacro2
 
     /**
      * Same as `everywheretd`.
      */
-    def everywhere (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.everywhereMacro
+    def everywhere(s : Strategy) : Strategy = macro RewriterCoreMacros.everywhereMacro
 
     /**
      * Construct a strategy that applies `s` at all terms in a bottom-up fashion
      * regardless of failure.  Terms for which the strategy fails are left
      * unchanged.
      */
-    def everywherebu (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.everywherebuMacro
+    def everywherebu(s : Strategy) : Strategy = macro RewriterCoreMacros.everywherebuMacro
 
     /**
      * Construct a strategy that applies `s` at all terms in a top-down fashion
      * regardless of failure.  Terms for which the strategy fails are left
      * unchanged.
      */
-    def everywheretd (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.everywheretdMacro
+    def everywheretd(s : Strategy) : Strategy = macro RewriterCoreMacros.everywheretdMacro
 
     /**
      * Construct a strategy that applies `s` repeatedly to the innermost
      * (i.e., lowest and left-most) (sub-)term to which it applies.
      * Stop with the subject term if `s` doesn't apply anywhere.
      */
-    def innermost (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.innermostMacro
+    def innermost(s : Strategy) : Strategy = macro RewriterCoreMacros.innermostMacro
 
     /**
      * An alternative version of `innermost`.
      */
-    def innermost2 (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.innermost2Macro
+    def innermost2(s : Strategy) : Strategy = macro RewriterCoreMacros.innermost2Macro
 
     /**
      * `ior(s1, s2)` implements inclusive OR, that is, the
@@ -1281,140 +1241,121 @@ trait RewriterCore {
      * that fails it applies `s2` (just like `s1 <+ s2`). However,
      * when `s1` succeeds it also tries to apply `s2`.
      */
-    def ior (s1 : Strategy, s2 : Strategy) : Strategy =
-        macro RewriterCoreMacros.iorMacro
+    def ior(s1 : Strategy, s2 : Strategy) : Strategy = macro RewriterCoreMacros.iorMacro
 
     /**
      * Applies `s` followed by `f` whether `s` failed or not.
      * This operator is called `finally` in the Stratego library.
      */
-    def lastly (s : Strategy, f : Strategy) : Strategy =
-        macro RewriterCoreMacros.lastlyMacro
+    def lastly(s : Strategy, f : Strategy) : Strategy = macro RewriterCoreMacros.lastlyMacro
 
     /**
      * Construct a strategy that applies to all of the leaves of the
      * subject term, using `isleaf` as the leaf predicate.
      */
-    def leaves (s : Strategy, isleaf : Strategy) : Strategy =
-        macro RewriterCoreMacros.leavesMacro1
+    def leaves(s : Strategy, isleaf : Strategy) : Strategy = macro RewriterCoreMacros.leavesMacro1
 
     /**
      * Construct a strategy that applies to all of the leaves of the
      * subject term, using `isleaf` as the leaf predicate, skipping
      * subterms for which `skip` when applied to the result succeeds.
      */
-    def leaves (s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy =
-        macro RewriterCoreMacros.leavesMacro2
+    def leaves(s : Strategy, isleaf : Strategy, skip : Strategy => Strategy) : Strategy = macro RewriterCoreMacros.leavesMacro2
 
     /**
      * Construct a strategy that while `r` succeeds applies `s`.  This operator
      * is called `while` in the Stratego library.
      */
-    def loop (r : Strategy, s : Strategy) : Strategy =
-        macro RewriterCoreMacros.loopMacro
+    def loop(r : Strategy, s : Strategy) : Strategy = macro RewriterCoreMacros.loopMacro
 
     /**
      * Construct a strategy that repeats application of `s` while `r` fails, after
      * initialization with `i`.  This operator is called `for` in the Stratego
      * library.
      */
-    def loopiter (i : Strategy, r : Strategy, s : Strategy) : Strategy =
-        macro RewriterCoreMacros.loopiterMacro1
+    def loopiter(i : Strategy, r : Strategy, s : Strategy) : Strategy = macro RewriterCoreMacros.loopiterMacro1
 
     /**
      * Construct a strategy that applies `s(i)` for each integer `i` from `low` to
      * `high` (inclusive).  This operator is called `for` in the Stratego library.
      */
-    def loopiter (s : Int => Strategy, low : Int, high : Int) : Strategy =
-        macro RewriterCoreMacros.loopiterMacro2
+    def loopiter(s : Int => Strategy, low : Int, high : Int) : Strategy = macro RewriterCoreMacros.loopiterMacro2
 
     /**
      * Construct a strategy that while `r` does not succeed applies `s`.  This
      * operator is called `while-not` in the Stratego library.
      */
-    def loopnot (r : Strategy, s : Strategy) : Strategy =
-        macro RewriterCoreMacros.loopnotMacro
+    def loopnot(r : Strategy, s : Strategy) : Strategy = macro RewriterCoreMacros.loopnotMacro
     /**
      * Construct a strategy that applies `s` to each element of a finite
      * sequence (type `Seq`) returning a new sequence of the results if
      * all of the applications succeed, otherwise fail.  If all of the
      * applications succeed without change, return the input sequence.
      */
-    def map (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.mapMacro
+    def map(s : Strategy) : Strategy = macro RewriterCoreMacros.mapMacro
 
     /**
      * Construct a strategy that applies `s` as many times as possible, but
      * at least once, in bottom up order.
      */
-    def manybu (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.manybuMacro
+    def manybu(s : Strategy) : Strategy = macro RewriterCoreMacros.manybuMacro
 
     /**
      * Construct a strategy that applies `s` as many times as possible, but
      * at least once, in top down order.
      */
-    def manytd (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.manytdMacro
+    def manytd(s : Strategy) : Strategy = macro RewriterCoreMacros.manytdMacro
 
     /**
      * Construct a strategy that applies `s`, then fails if `s` succeeded or, if `s`
      * failed, succeeds with the subject term unchanged,  I.e., it tests if
      * `s` applies, but has no effect on the subject term.
      */
-    def not (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.notMacro
+    def not(s : Strategy) : Strategy = macro RewriterCoreMacros.notMacro
 
     /**
      * Construct a strategy that applies `s` in a bottom-up fashion to one
      * subterm at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def oncebu (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.oncebuMacro
+    def oncebu(s : Strategy) : Strategy = macro RewriterCoreMacros.oncebuMacro
 
     /**
      * Construct a strategy that applies `s` in a top-down fashion to one
      * subterm at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def oncetd (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.oncetdMacro
+    def oncetd(s : Strategy) : Strategy = macro RewriterCoreMacros.oncetdMacro
 
     /**
      * `or(s1, s2)` is similar to `ior(s1, s2)`, but the application
      * of the strategies is only tested.
      */
-    def or (s1 : Strategy, s2 : Strategy) : Strategy =
-        macro RewriterCoreMacros.orMacro
+    def or(s1 : Strategy, s2 : Strategy) : Strategy = macro RewriterCoreMacros.orMacro
 
     /**
      * Construct a strategy that applies `s` repeatedly in a top-down fashion
      * stopping each time as soon as it succeeds once (at any level). The
      * outermost fails when `s` fails to apply to any (sub-)term.
      */
-    def outermost (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.outermostMacro
+    def outermost(s : Strategy) : Strategy = macro RewriterCoreMacros.outermostMacro
 
     /**
      * Construct a strategy that applies `s` repeatedly to subterms
      * until it fails on all of them.
      */
-    def reduce (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.reduceMacro
+    def reduce(s : Strategy) : Strategy = macro RewriterCoreMacros.reduceMacro
 
     /**
      * Construct a strategy that applies `s` repeatedly until it fails.
      */
-    def repeat (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.repeatMacro1
+    def repeat(s : Strategy) : Strategy = macro RewriterCoreMacros.repeatMacro1
 
     /**
      * Construct a strategy that repeatedly applies `s` until it fails and
      * then terminates with application of `r`.
      */
-    def repeat (s : Strategy, r : Strategy) : Strategy =
-        macro RewriterCoreMacros.repeatMacro2
+    def repeat(s : Strategy, r : Strategy) : Strategy = macro RewriterCoreMacros.repeatMacro2
 
     /**
      * Construct a strategy that applies `s` repeatedly exactly `n` times. If
@@ -1422,27 +1363,23 @@ trait RewriterCore {
      * fails. The result of the strategy is that of the ''nth'' application of
      * `s`.
      */
-    def repeat (s : Strategy, n : Int) : Strategy =
-        macro RewriterCoreMacros.repeatMacro3
+    def repeat(s : Strategy, n : Int) : Strategy = macro RewriterCoreMacros.repeatMacro3
 
     /**
      * Construct a strategy that repeatedly applies `s` (at least once).
      */
-    def repeat1 (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.repeat1Macro1
+    def repeat1(s : Strategy) : Strategy = macro RewriterCoreMacros.repeat1Macro1
 
     /**
      * Construct a strategy that repeatedly applies `s` (at least once) and
      * terminates with application of `c`.
      */
-    def repeat1 (s : Strategy, r : Strategy) : Strategy =
-        macro RewriterCoreMacros.repeat1Macro2
+    def repeat1(s : Strategy, r : Strategy) : Strategy = macro RewriterCoreMacros.repeat1Macro2
 
     /**
      * Construct a strategy that repeatedly applies `s` until `c` succeeds.
      */
-    def repeatuntil (s : Strategy, r : Strategy) : Strategy =
-        macro RewriterCoreMacros.repeatuntilMacro
+    def repeatuntil(s : Strategy, r : Strategy) : Strategy = macro RewriterCoreMacros.repeatuntilMacro
 
     /**
      * Construct a strategy that applies `s`, then applies the restoring action
@@ -1450,8 +1387,7 @@ trait RewriterCore {
      * Typically useful if `s` performs side effects that should be restored or
      * undone when `s` fails.
      */
-    def restore (s : Strategy, rest : Strategy) : Strategy =
-        macro RewriterCoreMacros.restoreMacro
+    def restore(s : Strategy, rest : Strategy) : Strategy = macro RewriterCoreMacros.restoreMacro
 
     /**
      * Construct a strategy that applies `s`, then applies the restoring action
@@ -1460,54 +1396,47 @@ trait RewriterCore {
      * side effects that should be restored always, e.g., when maintaining scope
      * information.
      */
-    def restorealways (s : Strategy, rest : Strategy) : Strategy =
-        macro RewriterCoreMacros.restoreAlwaysMacro
+    def restorealways(s : Strategy, rest : Strategy) : Strategy = macro RewriterCoreMacros.restoreAlwaysMacro
 
     /**
      * Construct a strategy that applies `s` in a bottom-up fashion to some
      * subterms at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def somebu (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.somebuMacro
+    def somebu(s : Strategy) : Strategy = macro RewriterCoreMacros.somebuMacro
 
     /**
      * Construct a strategy that applies `s` in a top-down, prefix fashion
      * stopping at a frontier where `s` succeeds on some children.  `s` is then
      * applied in a bottom-up, postfix fashion to the result.
      */
-    def somedownup (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.somedownupMacro
+    def somedownup(s : Strategy) : Strategy = macro RewriterCoreMacros.somedownupMacro
 
     /**
      * Construct a strategy that applies `s` in a top-down fashion to some
      * subterms at each level, stopping as soon as it succeeds once (at
      * any level).
      */
-    def sometd (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.sometdMacro
+    def sometd(s : Strategy) : Strategy = macro RewriterCoreMacros.sometdMacro
 
     /**
      * Construct a strategy that tests whether strategy `s` succeeds,
      * restoring the original term on success.  A synonym for `where`.
      */
-    def test (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.testMacro
+    def test(s : Strategy) : Strategy = macro RewriterCoreMacros.testMacro
 
     /**
      * Construct a strategy that applies `s` in a top-down, prefix fashion
      * to the subject term.
      */
-    def topdown (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.topdownMacro
+    def topdown(s : Strategy) : Strategy = macro RewriterCoreMacros.topdownMacro
 
     /**
      * Construct a strategy that applies `s` in a top-down, prefix fashion
      * to the subject term but stops when the strategy produced by `stop`
      * succeeds. `stop` is given the whole strategy itself as its argument.
      */
-    def topdownS (s : Strategy, stop : (=> Strategy) => Strategy) : Strategy =
-        macro RewriterCoreMacros.topdownSMacro
+    def topdownS(s : Strategy, stop : (=> Strategy) => Strategy) : Strategy = macro RewriterCoreMacros.topdownSMacro
 
     /**
      * Construct a strategy that tests whether strategy `s` succeeds,
@@ -1515,8 +1444,7 @@ trait RewriterCore {
      * to Stratego's `where`, except that in this version any effects on
      * bindings are not visible outside `s`.
      */
-    def where (s : Strategy) : Strategy =
-        macro RewriterCoreMacros.whereMacro
+    def where(s : Strategy) : Strategy = macro RewriterCoreMacros.whereMacro
 
     // Queries below here
 
@@ -1526,9 +1454,7 @@ trait RewriterCore {
      * application of `f` returns a single value. All of these values are
      * accumulated in the collection.
      */
-    def collect[CC[X] <: Traversable[X],U] (f : Any ==> U)
-            (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
-        macro RewriterCoreMacros.collectMacro[CC,U]
+    def collect[CC[X] <: Traversable[X], U](f : Any ==> U)(implicit cbf : CanBuildFrom[CC[Any], U, CC[U]]) : Any => CC[U] = macro RewriterCoreMacros.collectMacro[CC, U]
 
     /**
      * Collect query results in a traversable collection.  Run the function
@@ -1536,24 +1462,20 @@ trait RewriterCore {
      * application of `f` returns a collection of values. All of these values
      * are accumulated in the collection.
      */
-    def collectall[CC[X] <: Traversable[X],U] (f : Any ==> CC[U])
-            (implicit cbf : CanBuildFrom[CC[Any],U,CC[U]]) : Any => CC[U] =
-        macro RewriterCoreMacros.collectallMacro[CC,U]
+    def collectall[CC[X] <: Traversable[X], U](f : Any ==> CC[U])(implicit cbf : CanBuildFrom[CC[Any], U, CC[U]]) : Any => CC[U] = macro RewriterCoreMacros.collectallMacro[CC, U]
 
     /**
      * Count function results.  Run the function `f` as a top-down query on
      * the subject term.  Sum the integer values returned by `f` from all
      * applications.
      */
-    def count (f : Any ==> Int) : Any => Int =
-        macro RewriterCoreMacros.countMacro
+    def count(f : Any ==> Int) : Any => Int = macro RewriterCoreMacros.countMacro
 
     /**
      * Apply the function at every term in `t` in a top-down, left-to-right order.
      * Collect the resulting `T` values by accumulating them using `f` with initial
      * left value `v`.  Return the final value of the accumulation.
      */
-    def everything[T] (v : T) (f : (T, T) => T) (g : Any ==> T) (t : Any) : T =
-        macro RewriterCoreMacros.everythingMacro[T]
+    def everything[T](v : T)(f : (T, T) => T)(g : Any ==> T)(t : Any) : T = macro RewriterCoreMacros.everythingMacro[T]
 
 }

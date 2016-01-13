@@ -27,7 +27,7 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Syntax analyser for simple imperative dataflow language.
  */
-class SyntaxAnalyser (positions : Positions) extends ListParsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends ListParsers(positions) {
 
     import DataflowTree._
     import scala.language.postfixOps
@@ -54,9 +54,9 @@ class SyntaxAnalyser (positions : Positions) extends ListParsers (positions) {
         idn
 
     lazy val idn =
-        not (keyword) ~> "[a-zA-Z]+".r
+        not(keyword) ~> "[a-zA-Z]+".r
 
     lazy val keyword =
-        keywords ("[^a-zA-Z]".r, List ("if", "return", "while"))
+        keywords("[^a-zA-Z]".r, List("if", "return", "while"))
 
 }

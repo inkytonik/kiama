@@ -38,84 +38,99 @@ class InheritanceNameResolutionTests extends Tests {
 
     // For the actual program text, see InheritanceNameResolutionTests.pj
 
-    val declAa  = VarDecl (Use ("int"), "a")
-    val aInAA   = Use ("a")
-    val declAAb = VarDecl (Use ("int"), "b")
-    val bInAA   = Use ("b")
-    val AinB    = Use ("A")
-    val aInB    = Use ("a")
-    val declBc  = VarDecl (Use ("int"), "c")
-    val cInB    = Use ("c")
-    val AAinBB  = Use ("AA")
-    val aInBB   = Use ("a")
-    val declAAe = VarDecl (Use ("int"), "e")
-    val eInBB   = Use ("e")
-    val fInBB   = Use ("f")
-    val declBf  = VarDecl (Use ("int"), "f")
+    val declAa = VarDecl(Use("int"), "a")
+    val aInAA = Use("a")
+    val declAAb = VarDecl(Use("int"), "b")
+    val bInAA = Use("b")
+    val AinB = Use("A")
+    val aInB = Use("a")
+    val declBc = VarDecl(Use("int"), "c")
+    val cInB = Use("c")
+    val AAinBB = Use("AA")
+    val aInBB = Use("a")
+    val declAAe = VarDecl(Use("int"), "e")
+    val eInBB = Use("e")
+    val fInBB = Use("f")
+    val declBf = VarDecl(Use("int"), "f")
 
-    val declAA = ClassDecl ("AA", None, Block(
-                     Vector(declAAb,
-                            VarDecl (Use ("int"), "d"),
-                            declAAe,
-                            AssignStmt (aInAA, bInAA))))
+    val declAA = ClassDecl("AA", None, Block(
+        Vector(
+            declAAb,
+            VarDecl(Use("int"), "d"),
+            declAAe,
+            AssignStmt(aInAA, bInAA)
+        )
+    ))
 
-    val declA = ClassDecl ("A", None, Block(
-                    Vector(declAa,
-                           VarDecl (Use ("int"), "b"),
-                           VarDecl (Use ("int"), "c"),
-                           declAA)))
+    val declA = ClassDecl("A", None, Block(
+        Vector(
+            declAa,
+            VarDecl(Use("int"), "b"),
+            VarDecl(Use("int"), "c"),
+            declAA
+        )
+    ))
 
     val ast =
-        Program (Block (
-            Vector(declA,
-                 ClassDecl ("B", Some (AinB), Block (
-                     Vector (declBc,
-                             VarDecl (Use ("int"), "e"),
-                             declBf,
-                             AssignStmt (aInB, cInB),
-                             ClassDecl ("BB", Some (AAinBB), Block (
-                                 Vector (VarDecl (Use ("int"), "d"),
-                                         AssignStmt (aInBB, Use ("d")),
-                                         AssignStmt (eInBB, fInBB))))))))))
+        Program(Block(
+            Vector(
+                declA,
+                ClassDecl("B", Some(AinB), Block(
+                    Vector(
+                        declBc,
+                        VarDecl(Use("int"), "e"),
+                        declBf,
+                        AssignStmt(aInB, cInB),
+                        ClassDecl("BB", Some(AAinBB), Block(
+                            Vector(
+                                VarDecl(Use("int"), "d"),
+                                AssignStmt(aInBB, Use("d")),
+                                AssignStmt(eInBB, fInBB)
+                            )
+                        ))
+                    )
+                ))
+            )
+        ))
 
-    val tree = new PicoJavaTree (ast)
-    val analyser = new ErrorCheck (tree)
+    val tree = new PicoJavaTree(ast)
+    val analyser = new ErrorCheck(tree)
     import analyser._
 
-    test ("members are resolved in nested classes") {
-        assertResult (declAa) (decl (aInAA))
+    test("members are resolved in nested classes") {
+        assertResult(declAa)(decl(aInAA))
     }
 
-    test ("nested members shadow outer members") {
-        assertResult (declAAb) (decl (bInAA))
+    test("nested members shadow outer members") {
+        assertResult(declAAb)(decl(bInAA))
     }
 
-    test ("class names are resolved in extends clauses") {
-        assertResult (declA) (decl (AinB))
+    test("class names are resolved in extends clauses") {
+        assertResult(declA)(decl(AinB))
     }
 
-    test ("inherited members are resolved") {
-        assertResult (declAa) (decl (aInB))
+    test("inherited members are resolved") {
+        assertResult(declAa)(decl(aInB))
     }
 
-    test ("local members hide inherited ones") {
-        assertResult (declBc) (decl (cInB))
+    test("local members hide inherited ones") {
+        assertResult(declBc)(decl(cInB))
     }
 
-    test ("inherited inner classes are resolved") {
-        assertResult (declAA) (decl (AAinBB))
+    test("inherited inner classes are resolved") {
+        assertResult(declAA)(decl(AAinBB))
     }
 
-    test ("inner references to members of outer class are resolved") {
-        assertResult (declBf) (decl (fInBB))
+    test("inner references to members of outer class are resolved") {
+        assertResult(declBf)(decl(fInBB))
     }
 
-    test ("inner references to inherited members of outer class are resolved") {
-        assertResult (declAa) (decl (aInBB))
+    test("inner references to inherited members of outer class are resolved") {
+        assertResult(declAa)(decl(aInBB))
     }
 
-    test ("inherited members shadow outer occurrences of the same name") {
-        assertResult (declAAe) (decl (eInBB))
+    test("inherited members shadow outer occurrences of the same name") {
+        assertResult(declAAe)(decl(eInBB))
     }
 
 }

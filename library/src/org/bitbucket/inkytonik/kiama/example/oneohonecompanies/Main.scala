@@ -27,13 +27,13 @@ object Main {
     import CompanyTree.CompanyTree
     import SampleCompany.company
 
-    def main (args : Array[String]) {
+    def main(args : Array[String]) {
         val output = new OutputEmitter
-        val tree = new CompanyTree (company)
-        output.emitln (Total.total (company))
-        output.emitln (Total.total (Cut.cut (company)))
-        output.emitln (Depth.depth (company))
-        output.emitln (new Precedence (tree).precedence (company))
+        val tree = new CompanyTree(company)
+        output.emitln(Total.total(company))
+        output.emitln(Total.total(Cut.cut(company)))
+        output.emitln(Depth.depth(company))
+        output.emitln(new Precedence(tree).precedence(company))
     }
 
 }

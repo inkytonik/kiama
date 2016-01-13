@@ -45,28 +45,28 @@ object LambdaTree {
     /**
      * Numeric expression.
      */
-    case class Num (i : Int) extends Exp {
+    case class Num(i : Int) extends Exp {
         override def toString : String = i.toString
     }
 
     /**
      * Variable expression.
      */
-    case class Var (x : Name) extends Exp {
+    case class Var(x : Name) extends Exp {
         override def toString : String = x.toString
     }
 
     /**
      * Application of l to r.
      */
-    case class App (e1 : Exp, e2 : Exp) extends Exp {
+    case class App(e1 : Exp, e2 : Exp) extends Exp {
         override def toString : String = s"($e1 $e2)"
     }
 
     /**
      * Lambda expression containing an abstracted binding.
      */
-    case class Lam (b : Bind) extends Exp {
+    case class Lam(b : Bind) extends Exp {
         override def toString : String = s"(\\${b.name} . ${b.term})"
     }
 
@@ -80,68 +80,68 @@ object LambdaTree {
     /**
      * A query that determines the alpha equivalence of two expressions.
      */
-    case class EquivQuery (e1 : Exp, e2 : Exp) extends Query[Boolean]
+    case class EquivQuery(e1 : Exp, e2 : Exp) extends Query[Boolean]
 
     /**
      * A query that computes the value of an expression.
      */
-    case class EvalQuery (e : Exp) extends Query[Exp]
+    case class EvalQuery(e : Exp) extends Query[Exp]
 
     /**
      * A query that determines the free names in an expression.
      */
-    case class FreeNamesQuery (e : Exp) extends Query[Set[Name]]
+    case class FreeNamesQuery(e : Exp) extends Query[Set[Name]]
 
     /**
      * A query that determines whether a name is not free in an expression.
      */
-    case class FreshQuery (n : Name, e : Exp) extends Query[Boolean]
+    case class FreshQuery(n : Name, e : Exp) extends Query[Boolean]
 
     /**
      * A query that substitutes an expression `e1` for name `n` in another
      * expression `e2`.
      */
-    case class SubstQuery (n : Name, e1 : Exp, e2 : Exp) extends Query[Exp]
+    case class SubstQuery(n : Name, e1 : Exp, e2 : Exp) extends Query[Exp]
 
     /**
      * A query that swaps two names in an expression.
      */
-    case class SwapQuery (tr : Trans, e : Exp) extends Query[Exp]
+    case class SwapQuery(tr : Trans, e : Exp) extends Query[Exp]
 
 }
 
 /**
  * Parser for simple lambda calculus plus REPL queries.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import LambdaTree._
     import org.bitbucket.inkytonik.kiama.rewriting.NominalTree.{Bind, Name, Trans}
 
     lazy val query : Parser[Query[_]] =
         exp ~ ("===" ~> exp) ^^ EquivQuery |
-        ("fv" ~> exp) ^^ FreeNamesQuery |
-        name ~ ("#" ~> exp) ^^ FreshQuery |
-        ("[" ~> name) ~ ("-> " ~> exp <~ "]") ~ exp ^^ SubstQuery |
-        trans ~ exp ^^ SwapQuery |
-        exp ^^ EvalQuery
+            ("fv" ~> exp) ^^ FreeNamesQuery |
+            name ~ ("#" ~> exp) ^^ FreshQuery |
+            ("[" ~> name) ~ ("-> " ~> exp <~ "]") ~ exp ^^ SubstQuery |
+            trans ~ exp ^^ SwapQuery |
+            exp ^^ EvalQuery
 
     lazy val trans : Parser[Trans] =
         "(" ~> name ~ ("<->" ~> name) <~ ")"
 
     lazy val exp : PackratParser[Exp] =
         exp ~ factor ^^ App |
-        ("\\" ~> name) ~ ("." ~> exp) ^^ {
-            case n ~ e => Lam (Bind (n, e))
-        } |
-        factor |
-        failure ("expression expected")
+            ("\\" ~> name) ~ ("." ~> exp) ^^ {
+                case n ~ e => Lam(Bind(n, e))
+            } |
+            factor |
+            failure("expression expected")
 
     lazy val factor =
         integer | variable | "(" ~> exp <~ ")"
 
     lazy val integer =
-        "[0-9]+".r ^^ (s => Num (s.toInt))
+        "[0-9]+".r ^^ (s => Num(s.toInt))
 
     lazy val variable =
         name ^^ Var
@@ -149,14 +149,14 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
     lazy val name =
         "[a-zA-Z]+[0-9]+".r ^^ (
             fullname => {
-                val (base, index) = fullname.span (_.isLetter)
-                Name (base, Some (index.toInt))
+                val (base, index) = fullname.span(_.isLetter)
+                Name(base, Some(index.toInt))
             }
         ) |
-        "[a-zA-Z]+".r ^^ (
-            base =>
-                Name (base, None)
-        )
+            "[a-zA-Z]+".r ^^ (
+                base =>
+                    Name(base, None)
+            )
 
 }
 
@@ -177,16 +177,16 @@ class Evaluator {
     /**
      * Call-by-name evaluation.
      */
-    def cbn_eval (e : Exp) : Exp =
+    def cbn_eval(e : Exp) : Exp =
         e match {
-            case App (t1, t2) =>
-                val w = cbn_eval (t1)
+            case App(t1, t2) =>
+                val w = cbn_eval(t1)
                 w match {
-                    case Lam (Bind (a, u : Exp)) =>
-                        val v = rewriter.subst (a, t2) (u)
-                        cbn_eval (v)
+                    case Lam(Bind(a, u : Exp)) =>
+                        val v = rewriter.subst(a, t2)(u)
+                        cbn_eval(v)
                     case _ =>
-                        App (w, t2)
+                        App(w, t2)
                 }
             case _ =>
                 e
@@ -195,14 +195,14 @@ class Evaluator {
     /**
      * Query execution
      */
-    def execute[T] (q : Query[T]) : T =
+    def execute[T](q : Query[T]) : T =
         q match {
-            case EquivQuery (e1, e2)    => rewriter.alphaequiv (e1, e2)
-            case EvalQuery (e)          => cbn_eval (e)
-            case FreeNamesQuery (e)     => rewriter.fv (e)
-            case FreshQuery (n, e)      => rewriter.fresh (n) (e)
-            case SubstQuery (n, e1, e2) => rewriter.subst (n, e1) (e2)
-            case SwapQuery (tr, e)      => rewriter.swap (tr) (e)
+            case EquivQuery(e1, e2)    => rewriter.alphaequiv(e1, e2)
+            case EvalQuery(e)          => cbn_eval(e)
+            case FreeNamesQuery(e)     => rewriter.fv(e)
+            case FreshQuery(n, e)      => rewriter.fresh(n)(e)
+            case SubstQuery(n, e1, e2) => rewriter.subst(n, e1)(e2)
+            case SwapQuery(tr, e)      => rewriter.swap(tr)(e)
         }
 
 }
@@ -235,11 +235,11 @@ object Lambda extends ParsingREPL[LambdaTree.Query[_]] {
 
     val evaluator = new Evaluator
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.query
 
-    def process (source : Source, q : LambdaTree.Query[_], config : REPLConfig) {
-        config.output.emitln (evaluator.execute (q))
+    def process(source : Source, q : LambdaTree.Query[_], config : REPLConfig) {
+        config.output.emitln(evaluator.execute(q))
     }
 
 }

@@ -35,12 +35,12 @@ object SymbolTable extends Environments {
     /**
      * A predicate entity and its argument type constraints.
      */
-    case class Predicate (argtypes : Vector[Type]) extends Entity
+    case class Predicate(argtypes : Vector[Type]) extends Entity
 
     /**
      * A variable entity including the type constraint that we know so far.
      */
-    case class Variable (tipe : Type) extends Entity
+    case class Variable(tipe : Type) extends Entity
 
     /**
      * The type of a predicate argument.
@@ -50,27 +50,27 @@ object SymbolTable extends Environments {
     /**
      * The atom type.
      */
-    case class AtomType () extends Type {
+    case class AtomType() extends Type {
         override def toString : String = "atom"
     }
 
     /**
      * The integer type.
      */
-    case class IntegerType () extends Type {
+    case class IntegerType() extends Type {
         override def toString : String = "integer"
     }
 
     /**
      * The list type.
      */
-    case class ListType () extends Type {
+    case class ListType() extends Type {
         override def toString : String = "list"
     }
 
     /**
      * A type that is unknown.
      */
-    case class UnknownType () extends Type
+    case class UnknownType() extends Type
 
 }

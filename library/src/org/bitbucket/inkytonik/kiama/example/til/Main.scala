@@ -33,11 +33,11 @@ trait ParsingMain extends Compiler[Program] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.util.Emitter
 
-    def process (source : Source, ast : Program, config : Config) {
-        config.output.emitln (ast)
+    def process(source : Source, ast : Program, config : Config) {
+        config.output.emitln(ast)
     }
 
-    def format (ast : Program) : Document =
+    def format(ast : Program) : Document =
         emptyDocument
 
 }
@@ -47,11 +47,11 @@ trait ParsingMain extends Compiler[Program] {
  */
 trait TransformingMain extends ParsingMain {
 
-    def transform (ast : Program) : Program
+    def transform(ast : Program) : Program
 
-    override def process (source : Source, ast : Program, config : Config) {
-        val newast = transform (ast)
-        super.process (source, newast, config)
+    override def process(source : Source, ast : Program, config : Config) {
+        val newast = transform(ast)
+        super.process(source, newast, config)
     }
 
 }

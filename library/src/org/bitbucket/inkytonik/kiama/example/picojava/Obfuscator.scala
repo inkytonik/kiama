@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.rewriting.Rewriter
 /**
  * Transform a program into an equivalent obsfuscated program.
  */
-class Obfuscator (analysis : NameResolution) extends Rewriter {
+class Obfuscator(analysis : NameResolution) extends Rewriter {
 
     import PicoJavaTree._
 
@@ -37,12 +37,12 @@ class Obfuscator (analysis : NameResolution) extends Rewriter {
      * The variables and classes are numbered and the input names replaced
      * by `v` or `c` followed by a number.
      */
-    def obfuscate (p : Program) : Program = {
+    def obfuscate(p : Program) : Program = {
 
         import org.bitbucket.inkytonik.kiama.util.Counter
 
         // Map from declaration nodes to new variable names
-        val declNames = scala.collection.mutable.Map[Decl, String] ()
+        val declNames = scala.collection.mutable.Map[Decl, String]()
 
         // Counter to generate unique names
         val uniqueNameCounter = new Counter
@@ -51,8 +51,8 @@ class Obfuscator (analysis : NameResolution) extends Rewriter {
          * Make and return a new name for declaration `d` and remember it in
          * the map.
          */
-        def makeName (d : Decl) : String = {
-            val count = uniqueNameCounter.next ()
+        def makeName(d : Decl) : String = {
+            val count = uniqueNameCounter.next()
             val varname = s"n$count"
             declNames += ((d, varname))
             varname
@@ -65,28 +65,28 @@ class Obfuscator (analysis : NameResolution) extends Rewriter {
         val obfuscateDecl =
             rule[Decl] {
                 case d : VarDecl =>
-                    d.copy (Name = makeName (d))
+                    d.copy(Name = makeName(d))
                 case d : ClassDecl =>
-                    d.copy (Name = makeName (d))
+                    d.copy(Name = makeName(d))
             }
 
         /*
          * Obfuscate all of the variable and class declarations in a program.
          */
         val obfuscateDecls =
-            topdown (attempt (obfuscateDecl))
+            topdown(attempt(obfuscateDecl))
 
         /*
          * Sequence of names that we do not want to replace.
          */
-        val predefinedNames = List ("boolean", "int")
+        val predefinedNames = List("boolean", "int")
 
         /*
          * Rule that detects pre-defined identifiers and leaves them unchanged
          */
         val preservePredefinedUse =
             rule[Use] {
-                case u @ Use (name) if predefinedNames contains name =>
+                case u @ Use(name) if predefinedNames contains name =>
                     u
             }
 
@@ -98,7 +98,7 @@ class Obfuscator (analysis : NameResolution) extends Rewriter {
          */
         val preservePredefinedUse2 =
             rule[Use] {
-                case u @ Use (name) if ! (predefinedNames contains name) =>
+                case u @ Use(name) if !(predefinedNames contains name) =>
                     u
             }
 
@@ -109,21 +109,21 @@ class Obfuscator (analysis : NameResolution) extends Rewriter {
         val obfuscateNormalUse =
             rule[Use] {
                 case u =>
-                    u.copy (Name = declNames.getOrElse (analysis.decl (u), "$UNDEF$"))
+                    u.copy(Name = declNames.getOrElse(analysis.decl(u), "$UNDEF$"))
             }
 
         /*
          * Obfuscate all identifier uses in the program.
          */
         val obfuscateUses =
-            topdown (attempt (preservePredefinedUse <+ obfuscateNormalUse))
+            topdown(attempt(preservePredefinedUse <+ obfuscateNormalUse))
 
         /*
          * Version of `obfuscateUses` that uses `preservePredefinedUse2` and
          * only moves to `obfuscateNormalUse` if the former suceeds.
          */
         val obfuscateUses2 =
-            topdown (attempt (preservePredefinedUse2 <* obfuscateNormalUse))
+            topdown(attempt(preservePredefinedUse2 <* obfuscateNormalUse))
 
         /*
          * Combined strategy to obfuscate a program.
@@ -139,7 +139,7 @@ class Obfuscator (analysis : NameResolution) extends Rewriter {
 
         // Actually make the transformation
 
-        rewrite (obfuscateProgram) (p)
+        rewrite(obfuscateProgram)(p)
         // rewrite (obfuscateProgram2) (p)
 
     }

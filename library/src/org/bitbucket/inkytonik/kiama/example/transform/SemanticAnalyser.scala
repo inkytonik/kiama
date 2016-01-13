@@ -30,34 +30,34 @@ import TransformTree.TransformTree
  * correctly represents the precedence of the operators.  Operators are
  * assumed to be left associative.
  */
-class SemanticAnalyser (tree : TransformTree) extends Attribution {
+class SemanticAnalyser(tree : TransformTree) extends Attribution {
 
     import TransformTree._
     import org.bitbucket.inkytonik.kiama.util.Messaging.{collectMessages, message, Messages}
     import scala.collection.immutable.HashMap
 
-    lazy val prioenv : Program => Map[String,Int] =
-        attr (
-            p => HashMap (p.ops : _*)
+    lazy val prioenv : Program => Map[String, Int] =
+        attr(
+            p => HashMap(p.ops : _*)
         )
 
     lazy val prio : String => TransformNode => Int =
-        paramAttr (
+        paramAttr(
             op => {
-                case tree.parent (p) =>
-                    prio (op) (p)
+                case tree.parent(p) =>
+                    prio(op)(p)
                 case p : Program =>
-                    prioenv (p) getOrElse (op, 0)
+                    prioenv(p) getOrElse (op, 0)
             }
         )
 
     lazy val op_tree : ExpR => Exp =
         attr {
-            case BinExpR (_, _, e1) =>
-                op_tree (e1)
-            case e1 @ Factor (e)    =>
-                val (optor, opnd) = ops (e1)
-                val (_, es) = eval_top (optor, "", e +: opnd) (e1)
+            case BinExpR(_, _, e1) =>
+                op_tree(e1)
+            case e1 @ Factor(e) =>
+                val (optor, opnd) = ops(e1)
+                val (_, es) = eval_top(optor, "", e +: opnd)(e1)
                 es.head
         }
 
@@ -65,9 +65,9 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
 
     lazy val ops : ExpR => Stacks =
         {
-            case tree.parent (e0 @ BinExpR (e, op, _)) =>
-                val (optor, opnd) = ops (e0)
-                eval_top (optor, op, e +: opnd) (e0)
+            case tree.parent(e0 @ BinExpR(e, op, _)) =>
+                val (optor, opnd) = ops(e0)
+                eval_top(optor, op, e +: opnd)(e0)
             case _ =>
                 (Nil, Nil)
         }
@@ -76,15 +76,15 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
         paramAttr {
             case (Nil, op, opnd) => (
                 _ =>
-                    (List (op), opnd)
+                    (List(op), opnd)
             )
             case (top_op :: rest_ops, op, opnd) => (
                 e =>
-                    if (prio (top_op) (e) < prio (op) (e))
+                    if (prio(top_op)(e) < prio(op)(e))
                         (op :: top_op :: rest_ops, opnd)
                     else {
                         val o1 :: o2 :: rest = opnd
-                        eval_top (rest_ops, op, BinExp (o2, top_op, o1) :: rest) (e)
+                        eval_top(rest_ops, op, BinExp(o2, top_op, o1) :: rest)(e)
                     }
             )
         }
@@ -96,12 +96,13 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
      */
     lazy val lookup : String => TransformNode => Option[VarDecl] =
         paramAttr {
-            s => {
-                case tree.parent (p) =>
-                    lookup (s) (p)
-                case p : Program =>
-                    p.vars.find (_.name == s)
-            }
+            s =>
+                {
+                    case tree.parent(p) =>
+                        lookup(s)(p)
+                    case p : Program =>
+                        p.vars.find(_.name == s)
+                }
         }
 
     /**
@@ -118,9 +119,9 @@ class SemanticAnalyser (tree : TransformTree) extends Attribution {
      * variable are ok.
      */
     lazy val errors : Messages =
-        collectMessages (tree) {
-            case e @ Var (s) if lookup (s) (e) == None =>
-                message (e, s"$s is not declared")
+        collectMessages(tree) {
+            case e @ Var(s) if lookup(s)(e) == None =>
+                message(e, s"$s is not declared")
         }
 
 }

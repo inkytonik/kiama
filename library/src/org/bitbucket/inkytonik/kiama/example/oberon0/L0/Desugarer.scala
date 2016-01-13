@@ -35,26 +35,26 @@ trait Desugarer extends base.Transformer {
      * Desugar the provided module to replace identifier uses with uses
      * of unique names. Then call the next level of transformation.
      */
-    override def transform (tree : SourceTree) : SourceTree =
-        super.transform (uniquifyNames (tree))
+    override def transform(tree : SourceTree) : SourceTree =
+        super.transform(uniquifyNames(tree))
 
     /**
      * A way to build other instances of the relevant analysis stack. Used by
      * the transformer to apply name analysis to trees that may not be the
      * original tree.
      */
-    def buildAnalyser (atree : SourceTree) : TypeAnalyser
+    def buildAnalyser(atree : SourceTree) : TypeAnalyser
 
     /**
      * Rename user-defined names to avoid clashes with outer declarations
      * of the same name.  This transformation is not idempotent.
      */
-    def uniquifyNames (t : SourceTree) : SourceTree = {
+    def uniquifyNames(t : SourceTree) : SourceTree = {
 
         /*
          * An analyser for the input tree.
          */
-        val analyser = buildAnalyser (t)
+        val analyser = buildAnalyser(t)
         import analyser.{entity, isBuiltin, Named}
 
         /*
@@ -62,12 +62,12 @@ trait Desugarer extends base.Transformer {
          * denotes a named entity, use that entity's id, otherwise leave the
          * occurrence unchanged.
          */
-        def nameOf (i : Identifier, isdef : Boolean) : Identifier =
-            entity (i) match {
+        def nameOf(i : Identifier, isdef : Boolean) : Identifier =
+            entity(i) match {
                 case e : Named if isdef =>
-                    IdnDef (e.id)
+                    IdnDef(e.id)
                 case e : Named =>
-                    IdnUse (e.id)
+                    IdnUse(e.id)
                 case _ =>
                     i
             }
@@ -76,19 +76,19 @@ trait Desugarer extends base.Transformer {
          * Rename any user-defined name to its id if it has one.
          */
         val renameNames =
-            everywherebu (
+            everywherebu(
                 rule[Identifier] {
                     case i : IdnDef =>
-                        nameOf (i, true)
-                    case i @ IdnUse (s) =>
-                        if (isBuiltin (entity (i)))
+                        nameOf(i, true)
+                    case i @ IdnUse(s) =>
+                        if (isBuiltin(entity(i)))
                             i
                         else
-                            nameOf (i, false)
+                            nameOf(i, false)
                 }
             )
 
-        rewriteTree (renameNames) (t)
+        rewriteTree(renameNames)(t)
 
     }
 

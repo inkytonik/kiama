@@ -34,7 +34,7 @@ trait Transformer {
      * Transform a module tree in some way, returning a new module tree.
      * By default, just return the given module.
      */
-    def transform (tree : SourceTree) : SourceTree =
+    def transform(tree : SourceTree) : SourceTree =
         tree
 
 }

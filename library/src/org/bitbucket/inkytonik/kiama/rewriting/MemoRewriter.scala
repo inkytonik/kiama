@@ -35,14 +35,13 @@ trait MemoRewriter extends Rewriter with Memoiser {
      * Any-rewriting strategies that memoise their results by identity on
      * the subject term.
      */
-    abstract class MemoStrategy (name : String) extends
-            Strategy (name) with IdMemoised[Any,Option[Any]] {
+    abstract class MemoStrategy(name : String) extends Strategy(name) with IdMemoised[Any, Option[Any]] {
 
         /**
          * Make one of these strategies with the given name and body `f`.
          */
-        override def mkStrategy (name : String, f : Any => Option[Any]) : Strategy =
-            new MemoStrategy (name) {
+        override def mkStrategy(name : String, f : Any => Option[Any]) : Strategy =
+            new MemoStrategy(name) {
                 val body = f
             }
 
@@ -50,17 +49,17 @@ trait MemoRewriter extends Rewriter with Memoiser {
          * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        override def apply (r : Any) : Option[Any] = {
-            val i = start (List ("event" -> "StratEval", "strategy" -> this,
-                                 "subject" -> r, "subjectHash" -> r.##))
-            get (r) match {
+        override def apply(r : Any) : Option[Any] = {
+            val i = start(List("event" -> "StratEval", "strategy" -> this,
+                "subject" -> r, "subjectHash" -> r.##))
+            get(r) match {
                 case None =>
-                    val u = body (r)
-                    put (r, u)
-                    finish (i, List ("cached" -> false, "result" -> u))
+                    val u = body(r)
+                    put(r, u)
+                    finish(i, List("cached" -> false, "result" -> u))
                     u
-                case Some (u) =>
-                    finish (i, List ("cached" -> true, "result" -> u))
+                case Some(u) =>
+                    finish(i, List("cached" -> true, "result" -> u))
                     u
             }
         }
@@ -70,8 +69,8 @@ trait MemoRewriter extends Rewriter with Memoiser {
     /**
      * Make a memoising strategy with the given name and body `f`.
      */
-    override def mkStrategy (name : String, f : Any => Option[Any]) : Strategy =
-        new MemoStrategy (name) {
+    override def mkStrategy(name : String, f : Any => Option[Any]) : Strategy =
+        new MemoStrategy(name) {
             val body = f
         }
 
@@ -79,7 +78,7 @@ trait MemoRewriter extends Rewriter with Memoiser {
      * Build a memoising strategy. Since all strategies here are memoised, this
      * method is the identity.
      */
-    override def memo (name : String, s : => Strategy) : Strategy =
+    override def memo(name : String, s : => Strategy) : Strategy =
         s
 
 }

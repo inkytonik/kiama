@@ -37,20 +37,20 @@ trait ParLazyUpdate extends ParLazy {
      */
     override lazy val s = {
         lazy val e : Strategy =
-            attempt (letAppL (e) + letOpn (e)) <*
-            attempt (update (subsVar <* e) + Letp (id, beta + arithop) +
-                     letLetRen <* e)
+            attempt(letAppL(e) + letOpn(e)) <*
+                attempt(update(subsVar <* e) + Letp(id, beta + arithop) +
+                    letLetRen <* e)
         letLift <* e <* letDrop
     }
 
     /**
      * Update variable bindings using a given evaluation strategy.
      */
-    def update (eval : Strategy) : Strategy =
+    def update(eval : Strategy) : Strategy =
         rulefs[Letp] {
-            case Letp (ds1, v @ Var (x)) =>
-                option (eval (Letp (ds1, v))) <* rule[Letp] {
-                    case Letp (ds2, e) => Letp (Bind (x, e) +: ds2, e)
+            case Letp(ds1, v @ Var(x)) =>
+                option(eval(Letp(ds1, v))) <* rule[Letp] {
+                    case Letp(ds2, e) => Letp(Bind(x, e) +: ds2, e)
                 }
         }
 

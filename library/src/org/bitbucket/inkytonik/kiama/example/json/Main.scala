@@ -30,20 +30,20 @@ class Driver extends Compiler[JValue] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.jvalue
 
-    def process (source : Source, ast : JValue, config : Config) = {
+    def process(source : Source, ast : JValue, config : Config) = {
 
         // Pretty-print tree as a product value
-        config.output.emitln (pretty (any (ast)))
+        config.output.emitln(pretty(any(ast)))
 
         // Pretty-print tree as a JSON value
-        config.output.emitln (format (ast))
+        config.output.emitln(format(ast))
 
     }
 
-    def format (ast : JValue) : Document =
+    def format(ast : JValue) : Document =
         emptyDocument
 
 }

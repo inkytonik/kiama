@@ -39,41 +39,41 @@ object JSONTree {
     /**
      * A JSON object.
      */
-    case class JObject (fields : Vector[(JName,JValue)]) extends JValue
+    case class JObject(fields : Vector[(JName, JValue)]) extends JValue
 
     /**
      * The name of a JSON field.
      */
-    case class JName (s : String) extends JSONNode
+    case class JName(s : String) extends JSONNode
 
     /**
      * A JSON array.
      */
-    case class JArray (values : Vector[JValue]) extends JValue
+    case class JArray(values : Vector[JValue]) extends JValue
 
     /**
      * A JSON string value.
      */
-    case class JString (value : String) extends JValue
+    case class JString(value : String) extends JValue
 
     /**
      * A JSON number value.
      */
-    case class JNumber (value : Double) extends JValue
+    case class JNumber(value : Double) extends JValue
 
     /**
      * A JSON true value.
      */
-    case class JTrue () extends JValue
+    case class JTrue() extends JValue
 
     /**
      * A JSON false value.
      */
-    case class JFalse () extends JValue
+    case class JFalse() extends JValue
 
     /**
      * A JSON null value.
      */
-    case class JNull () extends JValue
+    case class JNull() extends JValue
 
 }

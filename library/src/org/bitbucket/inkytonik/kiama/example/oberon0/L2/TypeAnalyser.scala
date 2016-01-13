@@ -32,20 +32,20 @@ trait TypeAnalyser extends L1.TypeAnalyser {
     /**
      * The error checking for this level.
      */
-    override def errorsDef (n : SourceNode) : Messages =
-        super.errorsDef (n) ++
-        check (n) {
-            case ForStatement (IdnExp (u @ IdnUse (i)), _, _, _, _) if !isVariable (entity (u)) =>
-                message (u, s"illegal FOR loop control variable $i")
-        }
+    override def errorsDef(n : SourceNode) : Messages =
+        super.errorsDef(n) ++
+            check(n) {
+                case ForStatement(IdnExp(u @ IdnUse(i)), _, _, _, _) if !isVariable(entity(u)) =>
+                    message(u, s"illegal FOR loop control variable $i")
+            }
 
     override def exptypeDef : Expression => Type =
         {
-            case tree.parent (_ : ForStatement | _ : CaseStatement) =>
+            case tree.parent(_ : ForStatement | _ : CaseStatement) =>
                 integerType
 
             case n =>
-                super.exptypeDef (n)
+                super.exptypeDef(n)
         }
 
 }

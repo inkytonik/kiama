@@ -25,7 +25,7 @@ package util
  * Record of a source position at a particular line and column relative to
  * a given source.
  */
-case class Position (line : Int, column : Int, source : Source) {
+case class Position(line : Int, column : Int, source : Source) {
 
     /**
      * Format this position. The result is of the form `/foo/bar.txt:2:10:` if
@@ -34,7 +34,7 @@ case class Position (line : Int, column : Int, source : Source) {
      * by column.
      */
     lazy val format : String = {
-        val name = source.optName.map (_ + ":").getOrElse ("")
+        val name = source.optName.map(_ + ":").getOrElse("")
         s"$name$line:$column:"
     }
 
@@ -45,23 +45,23 @@ case class Position (line : Int, column : Int, source : Source) {
      * followed by a line containing a caret pointer. Otherwise, return `None`.
      */
     lazy val optContext : Option[String] =
-        source.optLineContents (line).map (s => s"$s\n${" " * (column - 1)}^")
+        source.optLineContents(line).map(s => s"$s\n${" " * (column - 1)}^")
 
     /**
      * Return the offset that this position refers to in its source. `None`
      * is returned if the position is not valid for its source.
      */
     lazy val optOffset : Option[Int] =
-        source.positionToOffset (this)
+        source.positionToOffset(this)
 
     /**
      * Does this position occur at least as late as `p`? The two positions
      * are assumed to refer to the same source. False is returned if one
      * of the positions is invalid.
      */
-    def <= (p : Position) : Boolean =
+    def <=(p : Position) : Boolean =
         (optOffset, p.optOffset) match {
-            case (Some (l), Some (r)) =>
+            case (Some(l), Some(r)) =>
                 l <= r
             case (l, r) =>
                 false
@@ -84,7 +84,7 @@ class Positions extends Memoiser {
     /**
      * Map between a value and a source code position.
      */
-    class PositionMap extends IdMemoised[Any,Position]
+    class PositionMap extends IdMemoised[Any, Position]
 
     /**
      * Map between value and starting position.
@@ -100,45 +100,45 @@ class Positions extends Memoiser {
      * Get the optional start position of `t`. If it doesn't have
      * one, return `None`.
      */
-    def getStart[T] (t : T) : Option[Position] =
-        startMap.get (t)
+    def getStart[T](t : T) : Option[Position] =
+        startMap.get(t)
 
     /**
      * Get the optional finish position of `t`. If it doesn't have one,
      * return `None`.
      */
-    def getFinish[T] (t : T) : Option[Position] =
-        finishMap.get (t)
+    def getFinish[T](t : T) : Option[Position] =
+        finishMap.get(t)
 
     /**
      * Set the start position of `t` to `p` if it has not already been set.
      */
-    def setStart[T] (t : T, p : Position) {
-        startMap.putIfNotPresent (t, p)
+    def setStart[T](t : T, p : Position) {
+        startMap.putIfNotPresent(t, p)
     }
 
     /**
      * Set the `finish` position of `t` to `p` if it has not already been set.
      */
-    def setFinish[T] (t : T, p : Position) {
-        finishMap.putIfNotPresent (t, p)
+    def setFinish[T](t : T, p : Position) {
+        finishMap.putIfNotPresent(t, p)
     }
 
     /**
      * Set all positions of `t` to `p`.
      */
-    def setAllPositions[T] (t : T, p : Position) {
-        setStart (t, p)
-        setFinish (t, p)
+    def setAllPositions[T](t : T, p : Position) {
+        setStart(t, p)
+        setFinish(t, p)
     }
 
     /**
      * Set the start and finish positions of `t` to the positions of `a`
      * if it has them. Return `t`.
      */
-    def dupPos[T] (a : Any, t : T) : T = {
-        startMap.dup (a, t)
-        finishMap.dup (a, t)
+    def dupPos[T](a : Any, t : T) : T = {
+        startMap.dup(a, t)
+        finishMap.dup(a, t)
         t
     }
 
@@ -146,18 +146,18 @@ class Positions extends Memoiser {
      * Set the start and finish positions of `t` to the start positions of `a`
      * and the finish position of `b` if they have them. Return `t`.
      */
-    def dupRangePos[T] (a : Any, b : Any, t : T) : T = {
-        startMap.dup (a, t)
-        finishMap.dup (b, t)
+    def dupRangePos[T](a : Any, b : Any, t : T) : T = {
+        startMap.dup(a, t)
+        finishMap.dup(b, t)
         t
     }
 
     /**
      * Reset the position maps to be empty.
      */
-    def reset () {
-        startMap.reset ()
-        finishMap.reset ()
+    def reset() {
+        startMap.reset()
+        finishMap.reset()
     }
 
     /**
@@ -167,10 +167,10 @@ class Positions extends Memoiser {
      * positions doesn't refer to a valid offset in the source then
      * `None` is returned.
      */
-    def substring (s : Position, f : Position) : Option[String] =
+    def substring(s : Position, f : Position) : Option[String] =
         (s.optOffset, f.optOffset) match {
-            case (Some (soffset), Some (foffset)) =>
-                Some (s.source.content.substring (soffset, foffset))
+            case (Some(soffset), Some(foffset)) =>
+                Some(s.source.content.substring(soffset, foffset))
             case _ =>
                 None
         }
@@ -181,10 +181,10 @@ class Positions extends Memoiser {
      * the start and finish positions (if present) both refer to the same
      * source.
      */
-    def textOf[T] (t : T) : Option[String] = {
-        (getStart (t), getFinish (t)) match {
-            case (Some (start), Some (finish)) =>
-                substring (start, finish)
+    def textOf[T](t : T) : Option[String] = {
+        (getStart(t), getFinish(t)) match {
+            case (Some(start), Some(finish)) =>
+                substring(start, finish)
             case _ =>
                 None
         }

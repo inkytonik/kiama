@@ -27,26 +27,26 @@ trait CPrettyPrinter extends L1.c.CPrettyPrinter {
     import base.c.{CExpression, CNode, CType}
     import org.bitbucket.inkytonik.kiama.output.PrettyExpression
 
-    override def toDoc (n : CNode) : Doc =
+    override def toDoc(n : CNode) : Doc =
         n match {
-            case CCall (s, ps) =>
-                s <+> parens (hsep (ps map toParenDoc, comma)) <> semi
+            case CCall(s, ps) =>
+                s <+> parens(hsep(ps map toParenDoc, comma)) <> semi
 
             case _ =>
-                super.toDoc (n)
+                super.toDoc(n)
         }
 
-    override def basetypeToDoc (t : CType) : Doc =
+    override def basetypeToDoc(t : CType) : Doc =
         t match {
-            case CVoidType ()   => "void" <> space
-            case CAddrType (bt) => super.basetypeToDoc (bt) <> "*"
-            case _              => super.basetypeToDoc (t)
+            case CVoidType()   => "void" <> space
+            case CAddrType(bt) => super.basetypeToDoc(bt) <> "*"
+            case _             => super.basetypeToDoc(t)
         }
 
-    override def toParenDoc (e : PrettyExpression) : Doc =
+    override def toParenDoc(e : PrettyExpression) : Doc =
         e match {
-            case CStrExp (s)  => dquotes (s)
-            case _            => super.toParenDoc (e)
+            case CStrExp(s) => dquotes(s)
+            case _          => super.toParenDoc(e)
         }
 
 }

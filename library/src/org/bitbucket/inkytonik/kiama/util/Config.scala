@@ -28,7 +28,7 @@ import org.rogach.scallop.ScallopConf
  * arguments that are used to determine many of the configuration
  * settings.
  */
-abstract class Config (args : Seq[String]) extends ScallopConf (args) {
+abstract class Config(args : Seq[String]) extends ScallopConf(args) {
 
     import org.bitbucket.inkytonik.kiama.util.{FileConsole, JLineConsole, StringConsole}
     import org.rogach.scallop.{ArgType, ValueConverter}
@@ -52,16 +52,16 @@ abstract class Config (args : Seq[String]) extends ScallopConf (args) {
 
             val argType = ArgType.LIST
 
-            def parse (s : List[(String, List[String])]) : Either[String,Option[Console]] =
+            def parse(s : List[(String, List[String])]) : Either[String, Option[Console]] =
                 s match {
-                    case List ((_, List ("file", filename))) =>
-                        Right (Some (new FileConsole (filename)))
-                    case List ((_, List ("string", contents))) =>
-                        Right (Some (new StringConsole (contents)))
-                    case List ((_, _)) =>
-                        Left ("expected 'file name' or 'string value'")
+                    case List((_, List("file", filename))) =>
+                        Right(Some(new FileConsole(filename)))
+                    case List((_, List("string", contents))) =>
+                        Right(Some(new StringConsole(contents)))
+                    case List((_, _)) =>
+                        Left("expected 'file name' or 'string value'")
                     case _ =>
-                        Right (None)
+                        Right(None)
                 }
 
             val tag = implicitly[TypeTag[Console]]
@@ -74,45 +74,51 @@ abstract class Config (args : Seq[String]) extends ScallopConf (args) {
      * contents, and a file console where the option value specifies the
      * file name.
      */
-    lazy val console = opt[Console] ("Kconsole", descr = "Console for program input",
-                                     default = Some (JLineConsole),
-                                     noshort = true,
-                                     hidden = true) (consoleConverter)
+    lazy val console = opt[Console]("Kconsole", descr = "Console for program input",
+        default = Some(JLineConsole),
+        noshort = true,
+        hidden = true)(consoleConverter)
 
     /**
      * Profiling dimensions.
      */
-    lazy val profile = opt[String] ("Kprofile",
-                                    descr = "Profiling dimensions (comma-separated)",
-                                    noshort = true,
-                                    hidden = true)
+    lazy val profile = opt[String](
+        "Kprofile",
+        descr = "Profiling dimensions (comma-separated)",
+        noshort = true,
+        hidden = true
+    )
 
     /**
      * Logging option. If profiling and this is set, print out events as they are generated.
      */
-    lazy val logging = toggle ("Klogging",
-                               descrYes = "Print profile events dynamically",
-                               descrNo = "Don't print profile events",
-                               default = Some (false),
-                               noshort = true,
-                               hidden = true)
+    lazy val logging = toggle(
+        "Klogging",
+        descrYes = "Print profile events dynamically",
+        descrNo = "Don't print profile events",
+        default = Some(false),
+        noshort = true,
+        hidden = true
+    )
 
     /**
      * Time option. If set, print out execution time report.
      */
-    lazy val time = toggle ("Ktime",
-                            descrYes = "Report execution time",
-                            descrNo = "Don't report execution time",
-                            default = Some (false),
-                            noshort = true,
-                            hidden = true)
+    lazy val time = toggle(
+        "Ktime",
+        descrYes = "Report execution time",
+        descrNo = "Don't report execution time",
+        default = Some(false),
+        noshort = true,
+        hidden = true
+    )
 
     /**
      * The zero or more filenames that were specified positionally after all of the options.
      */
-    lazy val filenames = trailArg[List[String]] ("files", descr = "Input files",
-                                                 required = false,
-                                                 default = Some (Nil))
+    lazy val filenames = trailArg[List[String]]("files", descr = "Input files",
+        required = false,
+        default = Some(Nil))
 
     /**
      * Handle errors by printing them, then printing the help message, then
@@ -120,9 +126,9 @@ abstract class Config (args : Seq[String]) extends ScallopConf (args) {
      */
     errorMessageHandler =
         (message : String) => {
-            error.emitln (s"Command-line error: $message")
-            error.emitln (builder.help)
-            sys.exit (1)
+            error.emitln(s"Command-line error: $message")
+            error.emitln(builder.help)
+            sys.exit(1)
         }
 
 }
@@ -131,16 +137,18 @@ abstract class Config (args : Seq[String]) extends ScallopConf (args) {
  * Configurations for Kiama REPLS. Adds some options to the default
  * set that all Kiama programs support.
  */
-abstract class REPLConfig (args : Seq[String]) extends Config (args) {
+abstract class REPLConfig(args : Seq[String]) extends Config(args) {
 
     /**
      * Whitespace option. If set, pass input lines that are completely white space
      * to the REPL processing. By default, these lines are ignored.
      */
-    lazy val processWhitespaceLines = toggle ("KprocessWhitespaceLines",
-                                              descrYes = "Process whitespace lines",
-                                              descrNo = "Don't process whitespace lines",
-                                              default = Some (false),
-                                              hidden = true)
+    lazy val processWhitespaceLines = toggle(
+        "KprocessWhitespaceLines",
+        descrYes = "Process whitespace lines",
+        descrNo = "Don't process whitespace lines",
+        default = Some(false),
+        hidden = true
+    )
 
 }

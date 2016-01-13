@@ -40,28 +40,27 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * `f` should not itself require the value of this attribute. If it does, a
      * circularity error is reported by throwing an `IllegalStateException`.
      */
-    class CachedAttribute[T,U] (name : String, f : T => U) extends
-            Attribute[T,U] (name) with IdMemoised[T,Option[U]] {
+    class CachedAttribute[T, U](name : String, f : T => U) extends Attribute[T, U](name) with IdMemoised[T, Option[U]] {
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        def apply (t : T) : U = {
-            val i = start (List ("event" -> "AttrEval", "subject" -> t,
-                                 "attribute" -> this, "parameter" -> None,
-                                 "circular" -> false))
-            get (t) match {
-                case Some (Some (u)) =>
-                    finish (i, List ("value" -> u, "cached" -> true))
+        def apply(t : T) : U = {
+            val i = start(List("event" -> "AttrEval", "subject" -> t,
+                "attribute" -> this, "parameter" -> None,
+                "circular" -> false))
+            get(t) match {
+                case Some(Some(u)) =>
+                    finish(i, List("value" -> u, "cached" -> true))
                     u
-                case Some (None) =>
-                    reportCycle (t)
+                case Some(None) =>
+                    reportCycle(t)
                 case None =>
-                    put (t, None)
-                    val u = f (t)
-                    put (t, Some (u))
-                    finish (i, List ("value" -> u, "cached" -> false))
+                    put(t, None)
+                    val u = f(t)
+                    put(t, Some(u))
+                    finish(i, List("value" -> u, "cached" -> false))
                     u
             }
         }
@@ -72,10 +71,10 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * was `u`. If the memo table contains `None` we are in the middle of
          * computing it. Otherwise the memo table contains no entry for `t`.
          */
-        override def hasBeenComputedAt (t : T) : Boolean =
-            get (t) match {
-                case Some (Some (_)) => true
-                case _               => false
+        override def hasBeenComputedAt(t : T) : Boolean =
+            get(t) match {
+                case Some(Some(_)) => true
+                case _             => false
             }
 
     }
@@ -83,8 +82,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
     /**
      * A variation of the `CachedAttribute` class for parameterised attributes.
      */
-    class CachedParamAttribute[A,T,U] (name : String, f : A => T => U) extends
-            (A => Attribute[T,U]) with Memoised[ParamAttributeKey,Option[U]] {
+    class CachedParamAttribute[A, T, U](name : String, f : A => T => U) extends (A => Attribute[T, U]) with Memoised[ParamAttributeKey, Option[U]] {
 
         attr =>
 
@@ -92,31 +90,31 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Return the value of this attribute for node `t`, raising an error if
          * it depends on itself.
          */
-        def apply (arg : A) : Attribute[T,U] =
-            new Attribute[T,U] (name) {
+        def apply(arg : A) : Attribute[T, U] =
+            new Attribute[T, U](name) {
 
-                def apply (t : T) : U = {
-                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
-                                         "attribute" -> this, "parameter" -> Some (arg),
-                                         "circular" -> false))
-                    val key = new ParamAttributeKey (arg, t)
-                    get (key) match {
-                        case Some (Some (u)) =>
-                            finish (i, List ("value" -> u, "cached" -> true))
+                def apply(t : T) : U = {
+                    val i = start(List("event" -> "AttrEval", "subject" -> t,
+                        "attribute" -> this, "parameter" -> Some(arg),
+                        "circular" -> false))
+                    val key = new ParamAttributeKey(arg, t)
+                    get(key) match {
+                        case Some(Some(u)) =>
+                            finish(i, List("value" -> u, "cached" -> true))
                             u
-                        case Some (None) =>
-                            reportCycle (t)
+                        case Some(None) =>
+                            reportCycle(t)
                         case None =>
-                            put (key, None)
-                            val u = f (arg) (t)
-                            put (key, Some (u))
-                            finish (i, List ("value" -> u, "cached" -> false))
+                            put(key, None)
+                            val u = f(arg)(t)
+                            put(key, Some(u))
+                            finish(i, List("value" -> u, "cached" -> false))
                             u
                     }
                 }
 
-                override def reportCycle (t : T) : U =
-                    throw new IllegalStateException (s"Cycle detected in attribute evaluation '$name' ($arg) at $t")
+                override def reportCycle(t : T) : U =
+                    throw new IllegalStateException(s"Cycle detected in attribute evaluation '$name' ($arg) at $t")
 
             }
 
@@ -124,11 +122,11 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Has the value of this attribute at `t` already been computed for `arg`
          * or not?
          */
-        def hasBeenComputedAt (arg : A, t : T) : Boolean = {
-            val key = new ParamAttributeKey (arg, t)
-            get (key) match {
-                case Some (Some (_)) => true
-                case _               => false
+        def hasBeenComputedAt(arg : A, t : T) : Boolean = {
+            val key = new ParamAttributeKey(arg, t)
+            get(key) match {
+                case Some(Some(_)) => true
+                case _             => false
             }
         }
 
@@ -144,12 +142,12 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * This kind of attribute encapsulates state to keep track of the current definition,
      * so an instance should only be used from one thread at a time.
      */
-    class CachedDynamicAttribute[T,U] (name : String, f : T => U) extends CachedAttribute[T,U] (name, f) {
+    class CachedDynamicAttribute[T, U](name : String, f : T => U) extends CachedAttribute[T, U](name, f) {
 
         /**
          * List of functions that currently dynamically define this attribute.
          */
-        val functions = scala.collection.mutable.ListBuffer[T ==> U] ()
+        val functions = scala.collection.mutable.ListBuffer[T ==> U]()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -158,18 +156,18 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * function on that list that is defined will be used. If no partial
          * function on this list is defined, then `f` will be used.
          */
-        override def apply (t : T) : U = {
-            get (t) match {
-                case Some (Some (u)) =>
+        override def apply(t : T) : U = {
+            get(t) match {
+                case Some(Some(u)) =>
                     u
-                case Some (None) =>
-                    reportCycle (t)
+                case Some(None) =>
+                    reportCycle(t)
                 case None =>
-                    put (t, None)
-                    val pf = functions.find (_.isDefinedAt (t))
-                    val func = pf.getOrElse (f)
-                    val u = func (t)
-                    put (t, Some (u))
+                    put(t, None)
+                    val pf = functions.find(_.isDefinedAt(t))
+                    val func = pf.getOrElse(f)
+                    val u = func(t)
+                    put(t, Some(u))
                     u
             }
         }
@@ -178,9 +176,9 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Add a new partial function to the definition of this attribute.
          * Resets the memo table for this attribute.
          */
-        def += (g : T ==> U) {
+        def +=(g : T ==> U) {
             g +=: functions
-            reset ()
+            reset()
         }
 
         /**
@@ -189,9 +187,9 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * definition, just remove the first one. Resets the memo table for this
          * attribute.
          */
-        def -= (g : T ==> U) {
+        def -=(g : T ==> U) {
             functions -= g
-            reset ()
+            reset()
         }
 
         /**
@@ -200,11 +198,11 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * definition of the attribute for use within the block. Any definitions
          * that are added will be automatically removed at the end of the block.
          */
-        def block (b : => Any) {
+        def block(b : => Any) {
             val savedFunctions = functions.toList
             b
-            functions.clear ()
-            functions.appendAll (savedFunctions)
+            functions.clear()
+            functions.appendAll(savedFunctions)
         }
 
     }
@@ -233,7 +231,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
         /**
          * Reset the circular attribute evaluation state.
          */
-        def resetState () {
+        def resetState() {
             IN_CIRCLE = false
             CHANGE = false
             READY = false
@@ -254,8 +252,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T,U] (name : String, init : U, f : T => U) extends
-            Attribute[T,U] (name) with IdMemoised[T,U] {
+    class CircularAttribute[T, U](name : String, init : U, f : T => U) extends Attribute[T, U](name) with IdMemoised[T, U] {
 
         import CircularAttribute._
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
@@ -276,20 +273,20 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Return the value of the attribute for tree `t`, or the initial value if
          * no value for `t` has been computed.
          */
-        private def value (t : T) : U =
-            getWithDefault (t, init)
+        private def value(t : T) : U =
+            getWithDefault(t, init)
 
         /**
          * Run the semantic function `f` in a safe manner. We need to guard against
          * `f` throwing an exception which aborts the computation, since we could
          * then leave the global circular attribute state in a funny state.
          */
-        def safef (t : T) : U =
+        def safef(t : T) : U =
             try {
-                f (t)
+                f(t)
             } catch {
                 case e : RuntimeException =>
-                    resetState ()
+                    resetState()
                     throw e
             }
 
@@ -297,15 +294,15 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Return the value of this attribute for node `t`.  Essentially Figure 6
          * from the CRAG paper, plus the READY optimisation (section 3.3).
          */
-        def apply (t : T) : U =
-            if (hasBeenComputedAt (t)) {
+        def apply(t : T) : U =
+            if (hasBeenComputedAt(t)) {
 
                 // We have previously computed this attribute occurrence so fetch it from the cache.
 
-                val i = start (List ("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
-                                     "parameter" -> None, "circular" -> true, "phase" -> "computed"))
-                val u = value (t)
-                finish (i, List ("value" -> u, "cached" -> true, "phase" -> "computed"))
+                val i = start(List("event" -> "AttrEval", "subject" -> t, "attribute" -> this,
+                    "parameter" -> None, "circular" -> true, "phase" -> "computed"))
+                val u = value(t)
+                finish(i, List("value" -> u, "cached" -> true, "phase" -> "computed"))
                 u
 
             } else if (!IN_CIRCLE) {
@@ -315,7 +312,7 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 // occurrences until they stabilise.
 
                 IN_CIRCLE = true
-                visited.add (t)
+                visited.add(t)
                 do {
 
                     // Evaluate the attribute occurrence once. Compare the value that is
@@ -323,42 +320,42 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     // we are done, since it and all dependent occurrences have stabilised.
                     // If the values are different, cache the new one and repeat.
 
-                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
-                                         "attribute" -> this, "parameter" -> None,
-                                         "circular" -> true, "phase" -> "iterate"))
+                    val i = start(List("event" -> "AttrEval", "subject" -> t,
+                        "attribute" -> this, "parameter" -> None,
+                        "circular" -> true, "phase" -> "iterate"))
                     CHANGE = false
-                    val u = value (t)
-                    val newu = safef (t)
+                    val u = value(t)
+                    val newu = safef(t)
                     if (u == newu) {
-                        finish (i, List ("value" -> u, "cached" -> false, "phase" -> "iteratenochange"))
+                        finish(i, List("value" -> u, "cached" -> false, "phase" -> "iteratenochange"))
                     } else {
-                        finish (i, List ("value" -> newu, "cached" -> false, "phase" -> "iteratechange"))
+                        finish(i, List("value" -> newu, "cached" -> false, "phase" -> "iteratechange"))
                         CHANGE = true
-                        put (t, newu)
+                        put(t, newu)
                     }
 
                 } while (CHANGE)
 
                 // The value of this attribute at t has been computed and cached.
-                computed.add (t)
+                computed.add(t)
 
                 // All of the values of dependent attribute occurences are also final, but have
                 // not yet been cached. Enter READY mode to go around the circle one more time
                 // to cache them.
 
                 READY = true
-                val u = safef (t)
+                val u = safef(t)
                 READY = false
 
                 // Now we have computed and cached all of the attribute occurrences on the circle
                 // so we are done with this one. Return the final value of the initial attribute
                 // occurrence.
 
-                visited.remove (t)
+                visited.remove(t)
                 IN_CIRCLE = false
                 u
 
-            } else if (! (visited contains t)) {
+            } else if (!(visited contains t)) {
 
                 if (READY) {
 
@@ -370,10 +367,10 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     // them as computed as well. This code handles an occurrence that hasn't yet
                     // been visited on this last iteration.
 
-                    computed.add (t)
-                    visited.add (t)
-                    val u = safef (t)
-                    visited.remove (t)
+                    computed.add(t)
+                    visited.add(t)
+                    val u = safef(t)
+                    visited.remove(t)
                     u
 
                 } else {
@@ -386,20 +383,20 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                     // above, if the value changes, note that something has changed on the cycle,
                     // and cache the new value.
 
-                    val i = start (List ("event" -> "AttrEval", "subject" -> t,
-                                         "attribute" -> this, "parameter" -> None,
-                                         "circular" -> true, "phase" -> "notvisited"))
-                    visited.add (t)
-                    val u = value (t)
-                    val newu = safef (t)
-                    visited.remove (t)
+                    val i = start(List("event" -> "AttrEval", "subject" -> t,
+                        "attribute" -> this, "parameter" -> None,
+                        "circular" -> true, "phase" -> "notvisited"))
+                    visited.add(t)
+                    val u = value(t)
+                    val newu = safef(t)
+                    visited.remove(t)
                     if (u == newu) {
-                        finish (i, List ("value" -> u, "cached" -> false, "phase" -> "notvisitednochange"))
+                        finish(i, List("value" -> u, "cached" -> false, "phase" -> "notvisitednochange"))
                         u
                     } else {
-                        finish (i, List ("value" -> newu, "cached" -> false, "phase" -> "notvisitedchange"))
+                        finish(i, List("value" -> newu, "cached" -> false, "phase" -> "notvisitedchange"))
                         CHANGE = true
-                        put (t, newu)
+                        put(t, newu)
                         newu
                     }
 
@@ -412,11 +409,11 @@ trait AttributionCore extends AttributionCommon with Memoiser {
                 // return the cached value since that is our view of the value of this attribute
                 // so far.
 
-                val i = start (List ("event" -> "AttrEval", "subject" -> t,
-                                     "attribute" -> this, "parameter" -> None,
-                                     "circular" -> true, "phase" -> "default"))
-                val u = value (t)
-                finish (i, List ("value" -> u, "cached" -> false, "phase" -> "default"))
+                val i = start(List("event" -> "AttrEval", "subject" -> t,
+                    "attribute" -> this, "parameter" -> None,
+                    "circular" -> true, "phase" -> "default"))
+                val u = value(t)
+                finish(i, List("value" -> u, "cached" -> false, "phase" -> "default"))
                 u
 
             }
@@ -424,16 +421,16 @@ trait AttributionCore extends AttributionCommon with Memoiser {
         /**
          * Immediately reset this attribute's memoisation cache.
          */
-        override def reset () {
-            super.reset ()
-            computed.clear ()
-            visited.clear ()
+        override def reset() {
+            super.reset()
+            computed.clear()
+            visited.clear()
         }
 
         /**
          * Has the value of this attribute at `t` already been computed or not?
          */
-        override def hasBeenComputedAt (t : T) : Boolean =
+        override def hasBeenComputedAt(t : T) : Boolean =
             computed contains t
 
     }
@@ -443,30 +440,28 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * which should not depend on the value of this attribute.  The computed
      * attribute value is cached so it will be computed at most once.
      */
-    def attr[T,U] (f : T => U) : CachedAttribute[T,U] =
-        macro AttributionCoreMacros.attrMacro[T,U,CachedAttribute[T,U]]
+    def attr[T, U](f : T => U) : CachedAttribute[T, U] = macro AttributionCoreMacros.attrMacro[T, U, CachedAttribute[T, U]]
 
     /**
      * As for the other `attr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def attrWithName[T,U] (name : String, f : T => U) : CachedAttribute[T,U] =
-        new CachedAttribute (name, f)
+    def attrWithName[T, U](name : String, f : T => U) : CachedAttribute[T, U] =
+        new CachedAttribute(name, f)
 
     /**
      * Define a cached dynamic attribute of `T` nodes of type `U` by the partial
      * function `f`, which should not depend on the value of this attribute.
      * The computed attribute value is cached so it will be computed at most once.
      */
-    def dynAttr[T,U] (f : T => U) : CachedDynamicAttribute[T,U] =
-        macro AttributionCoreMacros.dynAttrMacro[T,U,CachedDynamicAttribute[T,U]]
+    def dynAttr[T, U](f : T => U) : CachedDynamicAttribute[T, U] = macro AttributionCoreMacros.dynAttrMacro[T, U, CachedDynamicAttribute[T, U]]
 
     /**
      * As for the other `dynAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def dynAttrWithName[T,U] (name : String, f : T => U) : CachedDynamicAttribute[T,U] =
-        new CachedDynamicAttribute (name, f)
+    def dynAttrWithName[T, U](name : String, f : T => U) : CachedDynamicAttribute[T, U] =
+        new CachedDynamicAttribute(name, f)
 
     /**
      * Define a parameterised attribute of `T` nodes of type `U` by the function
@@ -474,26 +469,25 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * for a given `V` and `T` pair is cached so it will be computed at most
      * once.
      */
-    def paramAttr[V,T,U] (f : V => T => U) : CachedParamAttribute[V,T,U] =
-        macro AttributionCoreMacros.paramAttrMacro[V,T,U,CachedParamAttribute[V,T,U]]
+    def paramAttr[V, T, U](f : V => T => U) : CachedParamAttribute[V, T, U] = macro AttributionCoreMacros.paramAttrMacro[V, T, U, CachedParamAttribute[V, T, U]]
 
     /**
      * As for the other `paramAttr` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def paramAttrWithName[V,T,U] (name : String, f : V => T => U) : CachedParamAttribute[V,T,U] =
-        new CachedParamAttribute (name, f)
+    def paramAttrWithName[V, T, U](name : String, f : V => T => U) : CachedParamAttribute[V, T, U] =
+        new CachedParamAttribute(name, f)
 
     /**
      * Implicitly converts functions to dynamic attributes. This conversion allows us
      * to use simpler types for dynamic attributes, but still extend them later.
      */
-    implicit def internalToDynamicAttribute[T,U] (f : T => U) : CachedDynamicAttribute[T,U] =
+    implicit def internalToDynamicAttribute[T, U](f : T => U) : CachedDynamicAttribute[T, U] =
         f match {
-            case f : CachedDynamicAttribute[_,_] =>
-                f.asInstanceOf[CachedDynamicAttribute[T,U]]
+            case f : CachedDynamicAttribute[_, _] =>
+                f.asInstanceOf[CachedDynamicAttribute[T, U]]
             case f =>
-                throw new UnsupportedOperationException ("Can only extend the definition of dynamic attributes")
+                throw new UnsupportedOperationException("Can only extend the definition of dynamic attributes")
         }
 
     /**
@@ -503,14 +497,13 @@ trait AttributionCore extends AttributionCommon with Memoiser {
      * iteratively until a fixed point is reached (in conjunction with other
      * circular attributes on which it depends).  The final value is cached.
      */
-    def circular[T,U] (init : U) (f : T => U) : CircularAttribute[T,U] =
-        macro AttributionCoreMacros.circularMacro[T,U,CircularAttribute[T,U]]
+    def circular[T, U](init : U)(f : T => U) : CircularAttribute[T, U] = macro AttributionCoreMacros.circularMacro[T, U, CircularAttribute[T, U]]
 
     /**
      * As for the other `circular` with the first argument specifying a name for
      * the constructed attribute.
      */
-    def circularWithName[T,U] (name : String, init : U) (f : T => U) : CircularAttribute[T,U] =
-        new CircularAttribute (name, init, f)
+    def circularWithName[T, U](name : String, init : U)(f : T => U) : CircularAttribute[T, U] =
+        new CircularAttribute(name, init, f)
 
 }

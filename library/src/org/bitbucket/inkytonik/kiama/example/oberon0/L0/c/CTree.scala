@@ -23,34 +23,39 @@ package example.oberon0
 package L0.c
 
 import base.c.{CDeclaration, CExpression, CStatement, CType, CVarDecl}
-import org.bitbucket.inkytonik.kiama.output.{Infix, LeftAssoc, Prefix,
-    PrettyBinaryExpression, PrettyUnaryExpression}
+import org.bitbucket.inkytonik.kiama.output.{
+    Infix,
+    LeftAssoc,
+    Prefix,
+    PrettyBinaryExpression,
+    PrettyUnaryExpression
+}
 
 /**
  * C types referenced by name.
  */
-case class CNamedType (ident : String) extends CType
+case class CNamedType(ident : String) extends CType
 
 /**
  * C initialised variable declarations.
  */
-case class CInitDecl (decl : CVarDecl, e : CExpression) extends CDeclaration
+case class CInitDecl(decl : CVarDecl, e : CExpression) extends CDeclaration
 
 /**
  * C type definitions.
  */
-case class CTypeDef (decl : CVarDecl) extends CDeclaration
+case class CTypeDef(decl : CVarDecl) extends CDeclaration
 
 /**
  * C assignment statements.
  */
-case class CAssignment (desig : CExpression, exp : CExpression) extends CStatement
+case class CAssignment(desig : CExpression, exp : CExpression) extends CStatement
 
 /**
  * Common interface for C binary expressions.
  */
-abstract class CBinaryExpression (val op : String) extends CExpression with PrettyBinaryExpression {
-    val fixity = Infix (LeftAssoc)
+abstract class CBinaryExpression(val op : String) extends CExpression with PrettyBinaryExpression {
+    val fixity = Infix(LeftAssoc)
 }
 
 // Priorities here are based on Table 7-1 in Harbison & Steele, C : A Reference
@@ -62,91 +67,91 @@ abstract class CBinaryExpression (val op : String) extends CExpression with Pret
 /**
  * C equality expressions.
  */
-case class CEqExp  (left : CExpression, right : CExpression) extends CBinaryExpression ("==") {
+case class CEqExp(left : CExpression, right : CExpression) extends CBinaryExpression("==") {
     override val priority = 8
 }
 
 /**
  * C inequality expressions.
  */
-case class CNeExp  (left : CExpression, right : CExpression) extends CBinaryExpression ("!=") {
+case class CNeExp(left : CExpression, right : CExpression) extends CBinaryExpression("!=") {
     override val priority = 8
 }
 
 /**
  * C less-than expressions.
  */
-case class CLtExp  (left : CExpression, right : CExpression) extends CBinaryExpression ("<") {
+case class CLtExp(left : CExpression, right : CExpression) extends CBinaryExpression("<") {
     override val priority = 7
 }
 
 /**
  * C less-than or equal expressions.
  */
-case class CLeExp  (left : CExpression, right : CExpression) extends CBinaryExpression ("<=") {
+case class CLeExp(left : CExpression, right : CExpression) extends CBinaryExpression("<=") {
     override val priority = 7
 }
 
 /**
  * C greater-than expressions.
  */
-case class CGtExp  (left : CExpression, right : CExpression) extends CBinaryExpression (">") {
+case class CGtExp(left : CExpression, right : CExpression) extends CBinaryExpression(">") {
     override val priority = 7
 }
 
 /**
  * C greater-than or equal expressions.
  */
-case class CGeExp  (left : CExpression, right : CExpression) extends CBinaryExpression (">=") {
+case class CGeExp(left : CExpression, right : CExpression) extends CBinaryExpression(">=") {
     override val priority = 7
 }
 
 /**
  * C addition expressions.
  */
-case class CAddExp (left : CExpression, right : CExpression) extends CBinaryExpression ("+") {
+case class CAddExp(left : CExpression, right : CExpression) extends CBinaryExpression("+") {
     override val priority = 5
 }
 
 /**
  * C subtraction expressions.
  */
-case class CSubExp (left : CExpression, right : CExpression) extends CBinaryExpression ("-") {
+case class CSubExp(left : CExpression, right : CExpression) extends CBinaryExpression("-") {
     override val priority = 5
 }
 
 /**
  * C or expressions.
  */
-case class COrExp  (left : CExpression, right : CExpression) extends CBinaryExpression ("||") {
+case class COrExp(left : CExpression, right : CExpression) extends CBinaryExpression("||") {
     override val priority = 13
 }
 
 /**
  * C multiplication expressions.
  */
-case class CMulExp (left : CExpression, right : CExpression) extends CBinaryExpression ("*") {
+case class CMulExp(left : CExpression, right : CExpression) extends CBinaryExpression("*") {
     override val priority = 4
 }
 
 /**
  * C division expressions.
  */
-case class CDivExp (left : CExpression, right : CExpression) extends CBinaryExpression ("/") {
+case class CDivExp(left : CExpression, right : CExpression) extends CBinaryExpression("/") {
     override val priority = 4
 }
 
 /**
  * C modulus expressions.
  */
-case class CModExp (left : CExpression, right : CExpression) extends CBinaryExpression ("%") {
+case class CModExp(left : CExpression, right : CExpression) extends CBinaryExpression("%") {
     override val priority = 4
 }
 
 /**
  * C and expressions.
  */
-case class CAndExp (left : CExpression, right : CExpression) extends CBinaryExpression ("&&") {
+case class CAndExp(left : CExpression, right : CExpression) extends CBinaryExpression("&&") {
     override val priority = 12
 }
 
@@ -160,7 +165,7 @@ abstract class CUnaryExpression extends CExpression with PrettyUnaryExpression {
 /**
  * C negation expressions.
  */
-case class CNegExp (exp : CExpression) extends CUnaryExpression {
+case class CNegExp(exp : CExpression) extends CUnaryExpression {
     override val priority = 2
     def op : String = "-"
 }
@@ -168,7 +173,7 @@ case class CNegExp (exp : CExpression) extends CUnaryExpression {
 /**
  * C complement expressions.
  */
-case class CNotExp (exp : CExpression) extends CUnaryExpression {
+case class CNotExp(exp : CExpression) extends CUnaryExpression {
     override val priority = 2
     def op : String = "!"
 }
@@ -176,4 +181,4 @@ case class CNotExp (exp : CExpression) extends CUnaryExpression {
 /**
  * C identifier expressions.
  */
-case class CIdnExp (i : String) extends CExpression
+case class CIdnExp(i : String) extends CExpression

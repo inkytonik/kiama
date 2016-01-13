@@ -25,7 +25,7 @@ package example.obr
 import ObrTree.ObrTree
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
 
-class SemanticAnalyser (val tree : ObrTree) extends Attribution {
+class SemanticAnalyser(val tree : ObrTree) extends Attribution {
 
     import ObrTree._
     import SymbolTable._
@@ -34,82 +34,82 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
     import org.bitbucket.inkytonik.kiama.util.Message
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, collectMessages, Messages, message, noMessages}
 
-    val decorators = new Decorators (tree)
+    val decorators = new Decorators(tree)
     import decorators.{chain, Chain}
 
     /**
      * The semantic error messages for the tree.
      */
     lazy val errors : Messages =
-        collectMessages (tree) {
-            case p @ ObrInt (i1, ds, ss, i2) if i1 != i2 =>
-                message (p, s"identifier $i2 at end should be $i1")
+        collectMessages(tree) {
+            case p @ ObrInt(i1, ds, ss, i2) if i1 != i2 =>
+                message(p, s"identifier $i2 at end should be $i1")
 
-            case d @ IdnDef (i) if entity (d) == MultipleEntity () =>
-                message (d, s"$i is declared more than once")
+            case d @ IdnDef(i) if entity(d) == MultipleEntity() =>
+                message(d, s"$i is declared more than once")
 
-            case u @ IdnUse (i) if entity (u) == UnknownEntity () =>
-                message (u, s"$i is not declared")
+            case u @ IdnUse(i) if entity(u) == UnknownEntity() =>
+                message(u, s"$i is not declared")
 
-            case n @ AssignStmt (l, r) if !assignable (l) =>
-                message (l, "illegal assignment")
+            case n @ AssignStmt(l, r) if !assignable(l) =>
+                message(l, "illegal assignment")
 
-            case n @ ExitStmt () if !isinloop (n) =>
-                message (n, "an EXIT statement must be inside a LOOP statement")
+            case n @ ExitStmt() if !isinloop(n) =>
+                message(n, "an EXIT statement must be inside a LOOP statement")
 
-            case ForStmt (n @ IdnUse (i), e1, e2, ss) =>
-                checkUse (entity (n)) {
+            case ForStmt(n @ IdnUse(i), e1, e2, ss) =>
+                checkUse(entity(n)) {
                     case ent =>
-                        val t = enttipe (ent)
-                        message (n, s"for loop variable $i must be integer",
-                                 (t != IntType ()) && (t != UnknownType ()))
+                        val t = enttipe(ent)
+                        message(n, s"for loop variable $i must be integer",
+                            (t != IntType()) && (t != UnknownType()))
                 }
 
             // Check a RAISE statement to make sure its parameter is an exception constant.
-            case n @ RaiseStmt (v @ IdnUse (i)) =>
-                checkUse (entity (v)) {
+            case n @ RaiseStmt(v @ IdnUse(i)) =>
+                checkUse(entity(v)) {
                     case ent =>
-                        val t = enttipe (ent)
-                        message (n, s"raise parameter $i must be an exception constant",
-                                 (t != ExnType ()) && (t != UnknownType ()))
+                        val t = enttipe(ent)
+                        message(n, s"raise parameter $i must be an exception constant",
+                            (t != ExnType()) && (t != UnknownType()))
                 }
 
             // Check a CATCH clause to make sure its parameter is an exception constant.
-            case n @ Catch (v @ IdnUse (i), ss) =>
-                checkUse (entity (v)) {
+            case n @ Catch(v @ IdnUse(i), ss) =>
+                checkUse(entity(v)) {
                     case ent =>
-                        val t = enttipe (ent)
-                        message (n, s"catch clause parameter $i must be an exception constant",
-                                 (t != ExnType ()) && (t != UnknownType ()))
+                        val t = enttipe(ent)
+                        message(n, s"catch clause parameter $i must be an exception constant",
+                            (t != ExnType()) && (t != UnknownType()))
                 }
 
-            case RecordVar (n @ IdnDef (i), _) =>
-                checkUse (entity (n)) {
-                     case Variable (RecordType (fs)) =>
-                         message (n, s"$i contains duplicate field(s)",
-                                  fs.distinct.length != fs.length)
+            case RecordVar(n @ IdnDef(i), _) =>
+                checkUse(entity(n)) {
+                    case Variable(RecordType(fs)) =>
+                        message(n, s"$i contains duplicate field(s)",
+                            fs.distinct.length != fs.length)
                 }
 
             case e : Expression =>
-                check (e) {
-                    case IndexExp (v @ IdnUse (a), r) =>
-                        check (enttipe (entity (v))) {
-                            case ArrayType (_) | UnknownType () =>
+                check(e) {
+                    case IndexExp(v @ IdnUse(a), r) =>
+                        check(enttipe(entity(v))) {
+                            case ArrayType(_) | UnknownType() =>
                                 noMessages
                             case _ =>
-                                message (v, s"attempt to index the non-array $a")
+                                message(v, s"attempt to index the non-array $a")
                         }
 
-                    case FieldExp (v @ IdnUse (r), f) =>
-                        check (enttipe (entity (v))) {
-                            case RecordType (fs) =>
-                                message (v, s"$f is not a field of $r", ! (fs contains f))
+                    case FieldExp(v @ IdnUse(r), f) =>
+                        check(enttipe(entity(v))) {
+                            case RecordType(fs) =>
+                                message(v, s"$f is not a field of $r", !(fs contains f))
                             case _ =>
-                                message (v, s"attempt to access field of non-record $r")
+                                message(v, s"attempt to access field of non-record $r")
                         }
                 } ++
-                message (e, s"""type error: expected ${exptipe (e).mkString(" or ")} got ${tipe (e)}""",
-                         ! (exptipe (e) exists ((_ : TypeBase) iscompatible tipe (e))))
+                    message(e, s"""type error: expected ${exptipe(e).mkString(" or ")} got ${tipe(e)}""",
+                        !(exptipe(e) exists ((_ : TypeBase) iscompatible tipe(e))))
         }
 
     /**
@@ -117,8 +117,8 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     val enumconstnum : ObrNode => Int =
         attr {
-            case tree.prev (p) =>
-                enumconstnum (p) + 1
+            case tree.prev(p) =>
+                enumconstnum(p) + 1
             case _ =>
                 0
         }
@@ -135,10 +135,10 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     val exnconstnum : ObrNode => Int =
         attr {
-            case tree.prev (p) =>
+            case tree.prev(p) =>
                 p match {
-                    case d : ExnConst   => exnconstnum (d) + 1
-                    case d              => exnconstnum (d)
+                    case d : ExnConst => exnconstnum(d) + 1
+                    case d            => exnconstnum(d)
                 }
             case _ =>
                 userExn
@@ -148,9 +148,9 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      * Initial environment, primed with bindings for pre-defined identifiers.
      */
     val initenv =
-        rootenv (
-            "DivideByZero" -> Constant (ExnType (), divideByZeroExn),
-            "IndexOutOfBounds" -> Constant (ExnType (), indexOutOfBoundsExn)
+        rootenv(
+            "DivideByZero" -> Constant(ExnType(), divideByZeroExn),
+            "IndexOutOfBounds" -> Constant(ExnType(), indexOutOfBoundsExn)
         )
 
     /**
@@ -159,26 +159,26 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     lazy val defentity : IdnDef => Entity =
         attr {
-            case tree.parent (p) =>
+            case tree.parent(p) =>
                 p match {
                     case _ : IntParam | _ : IntVar =>
-                        Variable (IntType ())
+                        Variable(IntType())
                     case _ : BoolVar =>
-                         Variable (BoolType ())
-                    case ArrayVar (_, v) =>
-                        Variable (ArrayType (v))
-                    case RecordVar (IdnDef (i), fs) =>
-                        Variable (RecordType (fs))
-                    case EnumVar (IdnDef (i), _) =>
-                        Variable (EnumType (i))
-                    case tree.parent.pair (p @ EnumConst (IdnDef (i)), EnumVar (IdnDef (pi), _)) =>
-                        Constant (EnumType (pi), enumconstnum (p))
+                        Variable(BoolType())
+                    case ArrayVar(_, v) =>
+                        Variable(ArrayType(v))
+                    case RecordVar(IdnDef(i), fs) =>
+                        Variable(RecordType(fs))
+                    case EnumVar(IdnDef(i), _) =>
+                        Variable(EnumType(i))
+                    case tree.parent.pair(p @ EnumConst(IdnDef(i)), EnumVar(IdnDef(pi), _)) =>
+                        Constant(EnumType(pi), enumconstnum(p))
                     case p : ExnConst =>
-                        Constant (ExnType (), exnconstnum (p))
-                    case IntConst (_, v) =>
-                        Constant (IntType (), v)
+                        Constant(ExnType(), exnconstnum(p))
+                    case IntConst(_, v) =>
+                        Constant(IntType(), v)
                     case _ =>
-                        UnknownEntity ()
+                        UnknownEntity()
                 }
         }
 
@@ -186,9 +186,9 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      * The environment containing bindings for things that are being defined.
      */
     lazy val defenv : Chain[Environment] =
-        chain (defenvin, defenvout)
+        chain(defenvin, defenvout)
 
-    def defenvin (in : ObrNode => Environment) : ObrNode ==> Environment = {
+    def defenvin(in : ObrNode => Environment) : ObrNode ==> Environment = {
 
         // At the root, get the initial environment
         case n : ObrInt =>
@@ -196,13 +196,13 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
 
     }
 
-    def defenvout (out : ObrNode => Environment) : ObrNode ==> Environment = {
+    def defenvout(out : ObrNode => Environment) : ObrNode ==> Environment = {
 
         // At a defining occurrence of an identifier, check to see if it's already
         // been defined in this scope. If so, change its entity to MultipleEntity,
         // otherwise use the entity appropriate for this definition.
-        case n @ IdnDef (i) =>
-            defineIfNew (out (n), i, defentity (n))
+        case n @ IdnDef(i) =>
+            defineIfNew(out(n), i, defentity(n))
 
     }
 
@@ -215,14 +215,14 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
             // At a scope-introducing node, get the final value of the
             // defining environment, so that all of the definitions of
             // that scope are present.
-            case tree.lastChild.pair (n : ObrInt, c) =>
-                defenv (c)
+            case tree.lastChild.pair(n : ObrInt, c) =>
+                defenv(c)
 
             // Otherwise, ask our parent so we work out way up to the
             // nearest scope node ancestor (which represents the smallest
             // enclosing scope).
-            case tree.parent (p) =>
-                env (p)
+            case tree.parent(p) =>
+                env(p)
 
         }
 
@@ -235,7 +235,7 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
             // Just look the identifier up in the environment at the node.
             // Return `UnknownEntity` if the identifier is not defined.
             case n =>
-                lookup (env (n), n.idn, UnknownEntity ())
+                lookup(env(n), n.idn, UnknownEntity())
 
         }
 
@@ -244,24 +244,24 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     val tipe : Expression => Type =
         attr {
-            case AndExp (l, r)      => BoolType ()
-            case BoolExp (b)        => BoolType ()
-            case EqualExp (l, r)    => BoolType ()
-            case FieldExp (r, f)    => IntType ()
-            case GreaterExp (l, r)  => BoolType ()
-            case IdnExp (n)         => enttipe (entity (n))
-            case IndexExp (l, r)    => IntType ()
-            case IntExp (i)         => IntType ()
-            case LessExp (l, r)     => BoolType ()
-            case MinusExp (l, r)    => IntType ()
-            case ModExp (l, r)      => IntType ()
-            case NegExp (e)         => IntType ()
-            case NotEqualExp (l, r) => BoolType ()
-            case NotExp (e)         => BoolType ()
-            case OrExp (l, r)       => BoolType ()
-            case PlusExp (l, r)     => IntType ()
-            case SlashExp (l, r)    => IntType ()
-            case StarExp (l, r)     => IntType ()
+            case AndExp(l, r)      => BoolType()
+            case BoolExp(b)        => BoolType()
+            case EqualExp(l, r)    => BoolType()
+            case FieldExp(r, f)    => IntType()
+            case GreaterExp(l, r)  => BoolType()
+            case IdnExp(n)         => enttipe(entity(n))
+            case IndexExp(l, r)    => IntType()
+            case IntExp(i)         => IntType()
+            case LessExp(l, r)     => BoolType()
+            case MinusExp(l, r)    => IntType()
+            case ModExp(l, r)      => IntType()
+            case NegExp(e)         => IntType()
+            case NotEqualExp(l, r) => BoolType()
+            case NotExp(e)         => BoolType()
+            case OrExp(l, r)       => BoolType()
+            case PlusExp(l, r)     => IntType()
+            case SlashExp(l, r)    => IntType()
+            case StarExp(l, r)     => IntType()
         }
 
     /**
@@ -270,51 +270,51 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     val exptipe : Expression => Set[TypeBase] =
         attr {
-            case tree.parent.pair (e, p) =>
+            case tree.parent.pair(e, p) =>
                 p match {
-                    case AssignStmt (IndexExp (_, _), e1) if e eq e1    => Set (IntType ())
-                    case AssignStmt (FieldExp (_, _), e1) if e eq e1    => Set (IntType ())
-                    case AssignStmt (IdnExp (v), e1) if e eq e1         => Set (enttipe (entity (v)))
+                    case AssignStmt(IndexExp(_, _), e1) if e eq e1 => Set(IntType())
+                    case AssignStmt(FieldExp(_, _), e1) if e eq e1 => Set(IntType())
+                    case AssignStmt(IdnExp(v), e1) if e eq e1      => Set(enttipe(entity(v)))
 
-                    case ForStmt (_, _, _, _)                           => Set (IntType ())
-                    case IfStmt (_, _, _)                               => Set (BoolType ())
-                    case ReturnStmt (_)                                 => Set (IntType ())
-                    case WhileStmt (_, _)                               => Set (BoolType ())
+                    case ForStmt(_, _, _, _)                       => Set(IntType())
+                    case IfStmt(_, _, _)                           => Set(BoolType())
+                    case ReturnStmt(_)                             => Set(IntType())
+                    case WhileStmt(_, _)                           => Set(BoolType())
 
-                    case AndExp (_, _)                                  => Set (BoolType ())
-                    case EqualExp (l, e1) if e eq e1                    => Set (tipe (l))
+                    case AndExp(_, _)                              => Set(BoolType())
+                    case EqualExp(l, e1) if e eq e1                => Set(tipe(l))
 
                     // The left operand of a GreaterExp must be an integer or an enumeration value
-                    case GreaterExp (e1, _) if e eq e1                  => Set (IntType (), EnumTypes ())
+                    case GreaterExp(e1, _) if e eq e1              => Set(IntType(), EnumTypes())
                     // The left and right operands of a GreaterExp must have the same type
-                    case GreaterExp (l, e1) if e eq e1                  =>
-                        if ((tipe (l) == IntType ()) || (tipe (l).isInstanceOf[EnumType]))
-                            Set (tipe (l))
+                    case GreaterExp(l, e1) if e eq e1 =>
+                        if ((tipe(l) == IntType()) || (tipe(l).isInstanceOf[EnumType]))
+                            Set(tipe(l))
                         else
-                            Set (UnknownType ())
+                            Set(UnknownType())
 
-                    case IndexExp (_, e1) if e eq e1                    => Set (IntType ())
+                    case IndexExp(_, e1) if e eq e1 => Set(IntType())
 
                     // The left operand of a LessExp must be an integer or an enumeration value
-                    case LessExp (e1, _) if e eq e1                     => Set (IntType (), EnumTypes ())
+                    case LessExp(e1, _) if e eq e1  => Set(IntType(), EnumTypes())
                     // The left and right operands of a LessExp must have the same type
-                    case LessExp (l, e1) if e eq e1                     =>
-                        if ((tipe (l) == IntType ()) || (tipe (l).isInstanceOf[EnumType]))
-                            Set (tipe (l))
+                    case LessExp(l, e1) if e eq e1 =>
+                        if ((tipe(l) == IntType()) || (tipe(l).isInstanceOf[EnumType]))
+                            Set(tipe(l))
                         else
-                            Set (UnknownType ())
+                            Set(UnknownType())
 
-                    case MinusExp (_, _)                                => Set (IntType ())
-                    case ModExp (_, _)                                  => Set (IntType ())
-                    case NegExp (_)                                     => Set (IntType ())
-                    case NotEqualExp (l, e1) if e eq e1                 => Set (tipe (l))
-                    case NotExp (_)                                     => Set (BoolType ())
-                    case OrExp (_, _)                                   => Set (BoolType ())
-                    case PlusExp (_, _)                                 => Set (IntType ())
-                    case SlashExp (_, _)                                => Set (IntType ())
-                    case StarExp (_, _)                                 => Set (IntType ())
+                    case MinusExp(_, _)                => Set(IntType())
+                    case ModExp(_, _)                  => Set(IntType())
+                    case NegExp(_)                     => Set(IntType())
+                    case NotEqualExp(l, e1) if e eq e1 => Set(tipe(l))
+                    case NotExp(_)                     => Set(BoolType())
+                    case OrExp(_, _)                   => Set(BoolType())
+                    case PlusExp(_, _)                 => Set(IntType())
+                    case SlashExp(_, _)                => Set(IntType())
+                    case StarExp(_, _)                 => Set(IntType())
 
-                    case _                                              => Set (UnknownType ())
+                    case _                             => Set(UnknownType())
                 }
         }
 
@@ -323,10 +323,10 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     val assignable : Expression => Boolean =
         attr {
-            case IdnExp (n)      => isassignable (entity (n))
-            case IndexExp (_, _) => true
-            case FieldExp (_, _) => true
-            case _               => false
+            case IdnExp(n)      => isassignable(entity(n))
+            case IndexExp(_, _) => true
+            case FieldExp(_, _) => true
+            case _              => false
         }
 
     /**
@@ -344,10 +344,10 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     val isinloop : ObrNode => Boolean =
         attr {
-            case tree.parent (_ : LoopStmt) =>
+            case tree.parent(_ : LoopStmt) =>
                 true
-            case tree.parent (p) =>
-                isinloop (p)
+            case tree.parent(p) =>
+                isinloop(p)
             case _ =>
                 false
         }
@@ -357,9 +357,9 @@ class SemanticAnalyser (val tree : ObrTree) extends Attribution {
      */
     val enttipe : Entity => Type =
         attr {
-            case Variable (tipe)    => tipe
-            case Constant (tipe, _) => tipe
-            case _                  => UnknownType ()
+            case Variable(tipe)    => tipe
+            case Constant(tipe, _) => tipe
+            case _                 => UnknownType()
         }
 
     /**

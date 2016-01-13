@@ -31,10 +31,10 @@ class SyntaxAnalyserTests extends ParseTests {
 
     import MiniJavaTree._
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     import parsers._
 
-/*    // Tests of parsing terminals
+    /*    // Tests of parsing terminals
 
     test ("parsing an identifier of one letter works") {
         assertParseOk ("x", identifier, "x")
@@ -620,23 +620,23 @@ class SyntaxAnalyserTests extends ParseTests {
 
     // Input text recovery tests
 
-    test ("a standalone node has no input text") {
-        val t = Argument (IntType (), IdnDef ("a"))
-        assertResult (None) (positions.textOf (t))
+    test("a standalone node has no input text") {
+        val t = Argument(IntType(), IdnDef("a"))
+        assertResult(None)(positions.textOf(t))
     }
 
-    test ("input text from an identifier parse is the identifier") {
-        val t = assertParseReturn ("    x", expression)
-        assertResult (Some ("x")) (positions.textOf (t))
+    test("input text from an identifier parse is the identifier") {
+        val t = assertParseReturn("    x", expression)
+        assertResult(Some("x"))(positions.textOf(t))
     }
 
-    test ("input text from an operator expression parse is correct") {
-        val t = assertParseReturn ("  x   +  1 ", expression)
-        assertResult (Some ("x   +  1")) (positions.textOf (t))
+    test("input text from an operator expression parse is correct") {
+        val t = assertParseReturn("  x   +  1 ", expression)
+        assertResult(Some("x   +  1"))(positions.textOf(t))
     }
 
-    test ("input text from a statement with comments is correct") {
-        val t = assertParseReturn ("""
+    test("input text from a statement with comments is correct") {
+        val t = assertParseReturn("""
                     |// In
                     |while (a < 1) { // In
                     |    b = 1;
@@ -644,10 +644,10 @@ class SyntaxAnalyserTests extends ParseTests {
                     |}
                     |// Out
                     |""".stripMargin, statement)
-        assertResult (Some ("""while (a < 1) { // In
+        assertResult(Some("""while (a < 1) { // In
                     |    b = 1;
                     |    // In
-                    |}""".stripMargin)) (positions.textOf (t))
+                    |}""".stripMargin))(positions.textOf(t))
     }
 
 }

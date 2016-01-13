@@ -60,7 +60,7 @@ case object Postfix extends Fixity
 /**
  * The binary operator occurs in infix position (i.e., between its two operands).
  */
-case class Infix (side : Side) extends Fixity
+case class Infix(side : Side) extends Fixity
 
 /**
  * Super type of all expressions that are to be pretty-printed.
@@ -117,31 +117,31 @@ trait ParenPrettyPrinter extends PrettyPrinter {
     /**
      * Pretty-print a recursive child reference, parenthesizing if necessary.
      */
-    def recursiveToDoc (outer : PrettyOperatorExpression, inner : PrettyExpression, side : Side) : Doc =
+    def recursiveToDoc(outer : PrettyOperatorExpression, inner : PrettyExpression, side : Side) : Doc =
         inner match {
             case l : PrettyOperatorExpression =>
-                bracket (outer, l, side)
+                bracket(outer, l, side)
             case l =>
-                toParenDoc (l)
+                toParenDoc(l)
         }
 
     /**
      * Pretty-print a unary, binary or nary expression.
      */
-    def toParenDoc (e : PrettyExpression) : Doc =
+    def toParenDoc(e : PrettyExpression) : Doc =
         e match {
 
             case b : PrettyBinaryExpression =>
-                val ld = recursiveToDoc (b, b.left, LeftAssoc)
-                val rd = recursiveToDoc (b, b.right, RightAssoc)
-                ld <+> text (b.op) <+> rd
+                val ld = recursiveToDoc(b, b.left, LeftAssoc)
+                val rd = recursiveToDoc(b, b.right, RightAssoc)
+                ld <+> text(b.op) <+> rd
 
             case u : PrettyUnaryExpression =>
-                val ed = recursiveToDoc (u, u.exp, NonAssoc)
+                val ed = recursiveToDoc(u, u.exp, NonAssoc)
                 if (u.fixity == Prefix)
-                    text (u.op) <> ed
+                    text(u.op) <> ed
                 else
-                    ed <> text (u.op)
+                    ed <> text(u.op)
 
         }
 
@@ -149,18 +149,18 @@ trait ParenPrettyPrinter extends PrettyPrinter {
      * Optionally parenthesise an operator expression based on the precedence relation
      * with an outer expression's operator.
      */
-    def bracket (outer : PrettyOperatorExpression, inner : PrettyOperatorExpression,
-                 side : Side) : Doc = {
-        val d = toParenDoc (inner)
-        if (noparens (outer, inner, side)) d else parens (d)
+    def bracket(outer : PrettyOperatorExpression, inner : PrettyOperatorExpression,
+        side : Side) : Doc = {
+        val d = toParenDoc(inner)
+        if (noparens(outer, inner, side)) d else parens(d)
     }
 
     /**
      * Return true if the inner expression should not be parenthesised when appearing
      * on the given side with the outer expression.
      */
-    def noparens (outer : PrettyOperatorExpression, inner : PrettyOperatorExpression,
-                  side : Side) : Boolean = {
+    def noparens(outer : PrettyOperatorExpression, inner : PrettyOperatorExpression,
+        side : Side) : Boolean = {
         val pi = inner.priority
         val po = outer.priority
         lazy val fi = inner.fixity
@@ -171,10 +171,10 @@ trait ParenPrettyPrinter extends PrettyPrinter {
                     true
                 case (Prefix, RightAssoc) =>
                     true
-                case (Infix (LeftAssoc), LeftAssoc) =>
-                    (pi == po) && (fo == Infix (LeftAssoc))
-                case (Infix (RightAssoc), RightAssoc) =>
-                    (pi == po) && (fo == Infix (RightAssoc))
+                case (Infix(LeftAssoc), LeftAssoc) =>
+                    (pi == po) && (fo == Infix(LeftAssoc))
+                case (Infix(RightAssoc), RightAssoc) =>
+                    (pi == po) && (fo == Infix(RightAssoc))
                 case (_, NonAssoc) =>
                     fi == fo
                 case _ =>

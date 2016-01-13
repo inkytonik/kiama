@@ -31,20 +31,20 @@ trait NameAnalyser extends L3.NameAnalyser {
     /**
      * The error checking for this level.
      */
-    override def errorsDef (n : SourceNode) : Messages =
-        super.errorsDef (n) ++
-        check (n) {
-            case n @ RecordTypeDef (fls) =>
-                val flnames = fls.flatMap (_.idndefs)
-                message (n, "record contains duplicate field names", flnames.distinct != flnames)
-        }
+    override def errorsDef(n : SourceNode) : Messages =
+        super.errorsDef(n) ++
+            check(n) {
+                case n @ RecordTypeDef(fls) =>
+                    val flnames = fls.flatMap(_.idndefs)
+                    message(n, "record contains duplicate field names", flnames.distinct != flnames)
+            }
 
-    override def isLvalue (l : Expression) : Boolean =
+    override def isLvalue(l : Expression) : Boolean =
         l match {
             case _ : IndexExp | _ : FieldExp =>
                 true
             case _ =>
-                super.isLvalue (l)
+                super.isLvalue(l)
         }
 
 }

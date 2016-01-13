@@ -22,16 +22,22 @@ package org.bitbucket.inkytonik.kiama
 package example.oberon0
 package base
 
-import org.bitbucket.inkytonik.kiama.util.{CompilerBase, Emitter, ErrorEmitter, OutputEmitter,
-    TestCompilerWithConfig, Tests}
+import org.bitbucket.inkytonik.kiama.util.{
+    CompilerBase,
+    Emitter,
+    ErrorEmitter,
+    OutputEmitter,
+    TestCompilerWithConfig,
+    Tests
+}
 import source.ModuleDecl
 
 /**
  * A driver for testing.
  */
-trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Config] {
+trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl, Oberon0Config] {
 
-    this : CompilerBase[ModuleDecl,Oberon0Config] =>
+    this : CompilerBase[ModuleDecl, Oberon0Config] =>
 
     /**
      * The language level of this program.  The levels are:
@@ -65,21 +71,21 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
      * Make the tests for a given language subset. proglang denotes the
      * language subset whose tests are used.
      */
-    def mktests (proglang : String) {
+    def mktests(proglang : String) {
         val name = s"Oberon0 testing $artefact on $proglang tests"
         val path = s"src/org/bitbucket/inkytonik/kiama/example/oberon0/$proglang/tests"
-        filetests (name, path, ".ob", ".out")
+        filetests(name, path, ".ob", ".out")
     }
 
     // Actually create the tests, always including base and LO, then the other
     // levels if the driver supports at least that language level.
-    mktests ("base")
-    mktests ("L0")
-    if (langlevel > 0) mktests ("L1")
-    if (langlevel > 1) mktests ("L2")
-    if (langlevel > 2) mktests ("L3")
-    if (langlevel > 3) mktests ("L4")
-    if (langlevel > 4) mktests ("L5")
+    mktests("base")
+    mktests("L0")
+    if (langlevel > 0) mktests("L1")
+    if (langlevel > 1) mktests("L2")
+    if (langlevel > 2) mktests("L3")
+    if (langlevel > 3) mktests("L4")
+    if (langlevel > 4) mktests("L5")
 
     /**
      * Sanitise the output from a test.  Remove any output that doesn't
@@ -92,7 +98,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
      * If p is given, but q and r are omitted, the output also applies to
      * all language levels.
      */
-    override def sanitise (s : String) : String = {
+    override def sanitise(s : String) : String = {
         // Pattern for a line marked with just p
         val MarkedLine1 = """\[([0-9]+)\](.*)""".r
 
@@ -102,8 +108,8 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
         /*
          * Include line in the output if it meets the criteria.
          */
-        def processline (lines : List[String], line : String,
-                         p : Int, q : Int = 0, r : Int = maxlanglevel) : List[String] =
+        def processline(lines : List[String], line : String,
+            p : Int, q : Int = 0, r : Int = maxlanglevel) : List[String] =
             if ((p <= tasklevel) && (langlevel >= q) && (langlevel <= r))
                 lines :+ line
             else
@@ -112,26 +118,28 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl,Oberon0Co
         // Fold over all possible output lines, checking them if they are
         // marked. Unmarked lines are always included.
         val lines =
-            s.lines.foldLeft (List[String] ()) {
-                case (lines, MarkedLine1 (ps, line)) =>
-                    processline (lines, line, ps.toInt)
-                case (lines, MarkedLine2 (ps, qs, rs, line)) =>
-                    processline (lines, line, ps.toInt, qs.toInt, rs.toInt)
+            s.lines.foldLeft(List[String]()) {
+                case (lines, MarkedLine1(ps, line)) =>
+                    processline(lines, line, ps.toInt)
+                case (lines, MarkedLine2(ps, qs, rs, line)) =>
+                    processline(lines, line, ps.toInt, qs.toInt, rs.toInt)
                 case (lines, t) =>
                     lines :+ t
             }
 
         // Return the selected lines
-        lines.mkString ("\n")
+        lines.mkString("\n")
     }
 
     /**
      * In the test configuration we pretty print the source and C ASTs by default.
      */
-    override def createConfig (args : Seq[String],
-                               out : Emitter = new OutputEmitter,
-                               err : Emitter = new ErrorEmitter) : Oberon0Config =
-        new Oberon0Config (args, true) {
+    override def createConfig(
+        args : Seq[String],
+        out : Emitter = new OutputEmitter,
+        err : Emitter = new ErrorEmitter
+    ) : Oberon0Config =
+        new Oberon0Config(args, true) {
             lazy val output = out
             lazy val error = err
         }

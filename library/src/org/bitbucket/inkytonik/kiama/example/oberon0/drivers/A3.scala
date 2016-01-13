@@ -33,19 +33,19 @@ trait A3Phases extends L3.source.SourcePrettyPrinter
     def langlevel : Int = 3
     def tasklevel : Int = 3
 
-    val parsers = new L3.SyntaxAnalyser (positions)
+    val parsers = new L3.SyntaxAnalyser(positions)
     val parser = parsers.moduledecl
 
-    def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
+    def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
         new L3.NameAnalyser with L3.TypeAnalyser {
             val tree = atree
         }
 
-    def buildTransformer (atree : SourceTree) : base.Transformer =
+    def buildTransformer(atree : SourceTree) : base.Transformer =
         new L2.Lifter with L2.Desugarer {
             val tree = atree
-            def buildAnalyser (atree : SourceTree) : L0.TypeAnalyser =
-                phases.buildAnalyser (atree)
+            def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
+                phases.buildAnalyser(atree)
         }
 
 }

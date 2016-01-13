@@ -24,52 +24,74 @@ package L0
 
 trait NameAnalyser extends base.Analyser with SymbolTable {
 
-    import base.source.{Block, Expression, Identifier, IdnDef, IdnUse,
-        ModuleDecl, SourceNode}
+    import base.source.{
+        Block,
+        Expression,
+        Identifier,
+        IdnDef,
+        IdnUse,
+        ModuleDecl,
+        SourceNode
+    }
     import decorators.{chain, Chain}
     import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, message, Messages}
-    import source.{AddExp, Assignment, BinaryExpression, ConstDecl,
-        DivExp, IdnExp, IntExp, ModExp, MulExp, NamedType, NegExp,
-        SubExp, TypeDecl, TypeDef, UnaryExpression, VarDecl}
+    import source.{
+        AddExp,
+        Assignment,
+        BinaryExpression,
+        ConstDecl,
+        DivExp,
+        IdnExp,
+        IntExp,
+        ModExp,
+        MulExp,
+        NamedType,
+        NegExp,
+        SubExp,
+        TypeDecl,
+        TypeDef,
+        UnaryExpression,
+        VarDecl
+    }
 
     /**
      * The error checking for this level.
      */
-    override def errorsDef (n : SourceNode) : Messages =
-        super.errorsDef (n) ++
-        check (n) {
-            case ModuleDecl (_, _, u @ IdnUse (i)) if !isModule (entity (u)) =>
-                message (u, s"$i is not a module")
+    override def errorsDef(n : SourceNode) : Messages =
+        super.errorsDef(n) ++
+            check(n) {
+                case ModuleDecl(_, _, u @ IdnUse(i)) if !isModule(entity(u)) =>
+                    message(u, s"$i is not a module")
 
-            case d @ IdnDef (i) if entity (d) == MultipleEntity () =>
-                message (d, s"$i is already declared")
+                case d @ IdnDef(i) if entity(d) == MultipleEntity() =>
+                    message(d, s"$i is already declared")
 
-            case tree.parent.pair (u @ IdnUse (i2), ModuleDecl (IdnDef (i1), _, _)) if i1 != i2 =>
-                message (u, s"end module name '$i2' should be '$i1'")
+                case tree.parent.pair(u @ IdnUse(i2), ModuleDecl(IdnDef(i1), _, _)) if i1 != i2 =>
+                    message(u, s"end module name '$i2' should be '$i1'")
 
-            case u @ IdnUse (i) if entity (u) == UnknownEntity () =>
-                message (u, s"$i is not declared")
+                case u @ IdnUse(i) if entity(u) == UnknownEntity() =>
+                    message(u, s"$i is not declared")
 
-            case NamedType (u @ IdnUse (i)) if !isType (entity (u)) =>
-                message (u, s"$i is not a type name")
+                case NamedType(u @ IdnUse(i)) if !isType(entity(u)) =>
+                    message(u, s"$i is not a type name")
 
-            case Assignment (l, _) if !isLvalue (l) =>
-                message (l, "illegal assignment")
+                case Assignment(l, _) if !isLvalue(l) =>
+                    message(l, "illegal assignment")
 
-            case e : Expression =>
-                message (e, "expression is not constant", rootconstexp (e) && !isconst (e)) ++
-                check (e) {
-                    case u @ IdnExp (IdnUse (i)) if !(isRvalue (u)) =>
-                        message (u, s"$i cannot be used in an expression")
+                case e : Expression =>
+                    message(e, "expression is not constant", rootconstexp(e) && !isconst(e)) ++
+                        check(e) {
+                            case u @ IdnExp(IdnUse(i)) if !(isRvalue(u)) =>
+                                message(u, s"$i cannot be used in an expression")
 
-                    case DivExp (_, r) if expconst (r) && isconst (r) && (value (r) == 0) =>
-                        message (r, "division by zero in constant expression")
+                            case DivExp(_, r) if expconst(r) && isconst(r) && (value(r) == 0) =>
+                                message(r, "division by zero in constant expression")
 
-                    case ModExp (_, r) if expconst (r) && isconst (r) && (value (r) == 0) =>
-                        message (r, "modulus by zero in constant expression")
-                }
-        }
+                            case ModExp(_, r) if expconst(r) && isconst(r) && (value(r) == 0) =>
+                                message(r, "modulus by zero in constant expression")
+                        }
+            }
 
     /**
      * Return true if the expression can legally appear on the left-hand side of an
@@ -77,10 +99,10 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      * things we don't know anything about.  The true default is used so that this
      * computation can be used in redefinitions.
      */
-    def isLvalue (l : Expression) : Boolean =
+    def isLvalue(l : Expression) : Boolean =
         l match {
-            case IdnExp (u @ IdnUse (i)) =>
-                isVariable (entity (u))
+            case IdnExp(u @ IdnUse(i)) =>
+                isVariable(entity(u))
             case _ =>
                 false
         }
@@ -89,23 +111,23 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      * Return true if the identifier is an r-value and hence its value can be
      * used (ie. it's erroneous or is a constant, value or variable).
      */
-    def isRvalue (r : IdnExp) : Boolean = {
-        val e = entity (r.idnuse)
-        isLvalue (r) || e.isInstanceOf[Constant] || e.isInstanceOf[IntegerValue]
+    def isRvalue(r : IdnExp) : Boolean = {
+        val e = entity(r.idnuse)
+        isLvalue(r) || e.isInstanceOf[Constant] || e.isInstanceOf[IntegerValue]
     }
 
     /**
      * The entity for an identifier definition as given by its declaration
      * context.
      */
-    def entityFromDecl (n : IdnDef, i : String) : Entity =
+    def entityFromDecl(n : IdnDef, i : String) : Entity =
         n match {
-            case tree.parent (p) =>
+            case tree.parent(p) =>
                 p match {
-                    case p : ModuleDecl => Module (i, p)
-                    case p : ConstDecl  => Constant (i, p)
-                    case p : TypeDecl   => UserType (i, p)
-                    case p : VarDecl    => Variable (i, p.tipe)
+                    case p : ModuleDecl => Module(i, p)
+                    case p : ConstDecl  => Constant(i, p)
+                    case p : TypeDecl   => UserType(i, p)
+                    case p : VarDecl    => Variable(i, p.tipe)
                 }
         }
 
@@ -119,13 +141,13 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      */
     lazy val entity : Identifier => Entity =
         attr {
-            case n @ IdnDef (i) =>
-                if (isDefinedInScope (env.in (n), i))
-                    MultipleEntity ()
+            case n @ IdnDef(i) =>
+                if (isDefinedInScope(env.in(n), i))
+                    MultipleEntity()
                 else
-                    entityFromDecl (n, i)
-            case n @ IdnUse (i) =>
-                lookup (env.in (n), i, UnknownEntity ())
+                    entityFromDecl(n, i)
+            case n @ IdnUse(i) =>
+                lookup(env.in(n), i, UnknownEntity())
         }
 
     /**
@@ -139,22 +161,22 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      * those constructs, since declarations can't occur there.
      */
     lazy val env : Chain[Environment] =
-        chain (envin, envout)
+        chain(envin, envout)
 
-    def envin (in : SourceNode => Environment) : SourceNode ==> Environment = {
-        case _ : ModuleDecl                              => enter (defenv)
-        case b : Block                                   => enter (in (b))
-        case tree.parent.pair (_ : Expression, p : ConstDecl) => env.in (p)
-        case tree.parent.pair (_ : TypeDef, p : TypeDecl)     => env.in (p)
+    def envin(in : SourceNode => Environment) : SourceNode ==> Environment = {
+        case _ : ModuleDecl                                  => enter(defenv)
+        case b : Block                                       => enter(in(b))
+        case tree.parent.pair(_ : Expression, p : ConstDecl) => env.in(p)
+        case tree.parent.pair(_ : TypeDef, p : TypeDecl)     => env.in(p)
     }
 
-    def envout (out : SourceNode => Environment) : SourceNode ==> Environment = {
-        case b : Block        => leave (out (b))
-        case ConstDecl (d, _) => env (d)
-        case TypeDecl (d, _)  => env (d)
-        case n @ IdnDef (i)   => define (out (n), i, entity (n))
-        case a : Assignment   => env.in (a)
-        case e : Expression   => env.in (e)
+    def envout(out : SourceNode => Environment) : SourceNode ==> Environment = {
+        case b : Block       => leave(out(b))
+        case ConstDecl(d, _) => env(d)
+        case TypeDecl(d, _)  => env(d)
+        case n @ IdnDef(i)   => define(out(n), i, entity(n))
+        case a : Assignment  => env.in(a)
+        case e : Expression  => env.in(e)
     }
 
     /**
@@ -163,13 +185,13 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      * declaration have this property.
      */
     lazy val rootconstexp : Expression => Boolean =
-        attr (rootconstexpDef)
+        attr(rootconstexpDef)
 
     def rootconstexpDef : Expression => Boolean =
         (e =>
             e match {
-                case tree.parent (_ : ConstDecl) => true
-                case _                           => false
+                case tree.parent(_ : ConstDecl) => true
+                case _                          => false
             })
 
     /**
@@ -179,10 +201,10 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      */
     lazy val expconst : Expression => Boolean =
         attr {
-            case e if rootconstexp (e) =>
+            case e if rootconstexp(e) =>
                 true
-            case tree.parent (p : Expression) =>
-                expconst (p)
+            case tree.parent(p : Expression) =>
+                expconst(p)
             case _ =>
                 false
         }
@@ -196,14 +218,14 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      */
     lazy val isconst : Expression => Boolean =
         attr {
-            case IdnExp (n) if isConstant (entity (n)) =>
+            case IdnExp(n) if isConstant(entity(n)) =>
                 true
-            case IntExp (n) =>
+            case IntExp(n) =>
                 true
             case e : UnaryExpression =>
-                isconst (e.exp)
+                isconst(e.exp)
             case e : BinaryExpression =>
-                isconst (e.left) && isconst (e.right)
+                isconst(e.left) && isconst(e.right)
             case _ =>
                 false
         }
@@ -216,25 +238,25 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      */
     lazy val value : Expression => Int =
         attr {
-            case IdnExp (n) =>
-                entity (n) match {
-                    case Constant (_, p) => value (p.exp)
-                    case _               => 0 // Dummy
+            case IdnExp(n) =>
+                entity(n) match {
+                    case Constant(_, p) => value(p.exp)
+                    case _              => 0 // Dummy
                 }
-            case IntExp (n)    => n
-            case NegExp (e)    => -1 * value (e)
-            case SubExp (l, r) => value (l) - value (r)
-            case AddExp (l, r) => value (l) + value (r)
-            case MulExp (l, r) => value (l) * value (r)
-            case DivExp (l, r) => if (value (r) == 0)
-                                      0 // Dummy
-                                  else
-                                      value (l) / value (r)
-            case ModExp (l, r) => if (value (r) == 0)
-                                      0 // Dummy
-                                  else
-                                      value (l) % value (r)
-            case _             => 0 // Dummy
+            case IntExp(n)    => n
+            case NegExp(e)    => -1 * value(e)
+            case SubExp(l, r) => value(l) - value(r)
+            case AddExp(l, r) => value(l) + value(r)
+            case MulExp(l, r) => value(l) * value(r)
+            case DivExp(l, r) => if (value(r) == 0)
+                0 // Dummy
+            else
+                value(l) / value(r)
+            case ModExp(l, r) => if (value(r) == 0)
+                0 // Dummy
+            else
+                value(l) % value(r)
+            case _ => 0 // Dummy
         }
 
 }

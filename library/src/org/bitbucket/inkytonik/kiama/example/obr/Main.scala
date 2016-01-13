@@ -23,23 +23,32 @@ package org.bitbucket.inkytonik.kiama
 package example.obr
 
 import ObrTree.ObrInt
-import org.bitbucket.inkytonik.kiama.util.{Console, CompilerWithConfig, Config, Emitter,
-    ErrorEmitter, JLineConsole, OutputEmitter, Messaging, Source}
+import org.bitbucket.inkytonik.kiama.util.{
+    Console,
+    CompilerWithConfig,
+    Config,
+    Emitter,
+    ErrorEmitter,
+    JLineConsole,
+    OutputEmitter,
+    Messaging,
+    Source
+}
 
 /**
  * Configuration for the Obr compiler.
  */
-abstract class ObrConfig (args : Seq[String]) extends Config (args) {
-    lazy val targetPrint = opt[Boolean] ("target", descr = "Print the target tree")
-    lazy val riscPrint = opt[Boolean] ("risc", 'a', descr = "Print the RISC tree")
-    lazy val envPrint = opt[Boolean] ("env", 's', descr = "Print the global environment")
-    lazy val execute = opt[Boolean] ("execute", descr = "Execute the compiled code")
+abstract class ObrConfig(args : Seq[String]) extends Config(args) {
+    lazy val targetPrint = opt[Boolean]("target", descr = "Print the target tree")
+    lazy val riscPrint = opt[Boolean]("risc", 'a', descr = "Print the RISC tree")
+    lazy val envPrint = opt[Boolean]("env", 's', descr = "Print the global environment")
+    lazy val execute = opt[Boolean]("execute", descr = "Execute the compiled code")
 }
 
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends CompilerWithConfig[ObrInt,ObrConfig] {
+class Driver extends CompilerWithConfig[ObrInt, ObrConfig] {
 
     import ObrTree.ObrTree
     import org.bitbucket.inkytonik.kiama.example.obr.{RISCEncoder, RISCTransformer}
@@ -47,61 +56,63 @@ class Driver extends CompilerWithConfig[ObrInt,ObrConfig] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
 
-    override def createConfig (args : Seq[String],
-                               out : Emitter = new OutputEmitter,
-                               err : Emitter = new ErrorEmitter) : ObrConfig =
-        new ObrConfig (args) {
+    override def createConfig(
+        args : Seq[String],
+        out : Emitter = new OutputEmitter,
+        err : Emitter = new ErrorEmitter
+    ) : ObrConfig =
+        new ObrConfig(args) {
             lazy val output = out
             lazy val error = err
         }
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 
-    def process (source : Source, ast : ObrInt, config : ObrConfig) {
+    def process(source : Source, ast : ObrInt, config : ObrConfig) {
 
         // Conduct semantic analysis and report any errors
-        val tree = new ObrTree (ast)
-        val analyser = new SemanticAnalyser (tree)
+        val tree = new ObrTree(ast)
+        val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
         if (messages.length > 0) {
-            report (messages, config.error)
+            report(messages, config.error)
         } else {
             // Print out final environment
-            if (config.envPrint ()) {
-                config.output.emitln (analyser.env (ast))
+            if (config.envPrint()) {
+                config.output.emitln(analyser.env(ast))
             }
 
             // Label generator for this run
             val labels = new RISCLabels
 
             // Compile the source tree to a target tree
-            val transformer = new RISCTransformer (analyser, labels)
-            val targettree = transformer.code (ast)
+            val transformer = new RISCTransformer(analyser, labels)
+            val targettree = transformer.code(ast)
 
             // Print out the target tree for debugging
-            if (config.targetPrint ()) {
-                config.output.emitln (pretty (any (targettree)))
+            if (config.targetPrint()) {
+                config.output.emitln(pretty(any(targettree)))
             }
 
             // Encode the target tree and emit the assembler or run if requested
-            val encoder = new RISCEncoder (labels)
-            encoder.encode (targettree)
+            val encoder = new RISCEncoder(labels)
+            encoder.encode(targettree)
 
-            if (config.riscPrint ()) {
-                RISCISA.prettyprint (config.output, encoder.getassem)
+            if (config.riscPrint()) {
+                RISCISA.prettyprint(config.output, encoder.getassem)
             }
 
-            if (config.execute ()) {
+            if (config.execute()) {
                 val code = encoder.getcode
-                val machine = new RISC (code, config.console (), config.output)
+                val machine = new RISC(code, config.console(), config.output)
                 machine.run
             }
         }
 
     }
 
-    def format (ast : ObrInt) : Document =
+    def format(ast : ObrInt) : Document =
         emptyDocument
 
 }
@@ -116,8 +127,8 @@ object Main extends Driver
  */
 class ParserDriver extends Driver {
 
-    override def process (source : Source, ast : ObrInt, config : ObrConfig) {
-        config.output.emitln (ast.toString)
+    override def process(source : Source, ast : ObrInt, config : ObrConfig) {
+        config.output.emitln(ast.toString)
     }
 
 }
@@ -129,14 +140,14 @@ class SemanticDriver extends Driver with Messaging {
 
     import ObrTree.ObrTree
 
-    override def process (source : Source, ast : ObrInt, config : ObrConfig) {
+    override def process(source : Source, ast : ObrInt, config : ObrConfig) {
 
         // Conduct semantic analysis and report any errors
-        val tree = new ObrTree (ast)
-        val analyser = new SemanticAnalyser (tree)
+        val tree = new ObrTree(ast)
+        val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
         if (messages.length > 0)
-            report (messages, config.error)
+            report(messages, config.error)
 
     }
 

@@ -23,40 +23,40 @@ package example.dataflow
 
 import DataflowTree._
 
-case class Foreach (cond : Var, body : Stm) extends Stm
+case class Foreach(cond : Var, body : Stm) extends Stm
 
 case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
 
-class DataflowFor (override val tree : DataflowTree) extends Dataflow (tree) {
+class DataflowFor(override val tree : DataflowTree) extends Dataflow(tree) {
 
-    def addForAndForeachCases () {
+    def addForAndForeachCases() {
 
         succ +=
             {
-                case t @ Foreach (_, body) =>
-                    following (t) + body
+                case t @ Foreach(_, body) =>
+                    following(t) + body
             }
 
         following +=
             {
-                case tree.parent (parent : Foreach) =>
-                    following (parent) + parent.body
+                case tree.parent(parent : Foreach) =>
+                    following(parent) + parent.body
             }
 
         succ +=
             {
-                case For (init, c, inc, body) =>
-                    Set (init)
+                case For(init, c, inc, body) =>
+                    Set(init)
             }
 
         following +=
             {
-                case tree.parent.pair (s, parent : For) =>
+                case tree.parent.pair(s, parent : For) =>
                     parent match {
-                        case t @ For (s1, c, _, _) if s eq s1 => Set (c)
-                        case t @ For (_, s1, _, b) if s eq s1 => following (t) + b
-                        case t @ For (_, c, s1, _) if s eq s1 => Set (c)
-                        case t @ For (_, _, i, s1) if s eq s1 => Set (i)
+                        case t @ For(s1, c, _, _) if s eq s1 => Set(c)
+                        case t @ For(_, s1, _, b) if s eq s1 => following(t) + b
+                        case t @ For(_, c, s1, _) if s eq s1 => Set(c)
+                        case t @ For(_, _, i, s1) if s eq s1 => Set(i)
                     }
             }
 

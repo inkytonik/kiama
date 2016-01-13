@@ -24,19 +24,19 @@ package attribution
 /**
  * Support for parameterised attributes: argument, node pair comparison.
  */
-class ParamAttributeKey (val arg : Any, val node : Any) {
+class ParamAttributeKey(val arg : Any, val node : Any) {
 
     import org.bitbucket.inkytonik.kiama.util.Comparison.same
 
     override def equals(o : Any) : Boolean =
         o match {
             case o : ParamAttributeKey =>
-                arg == o.arg && same (node, o.node)
+                arg == o.arg && same(node, o.node)
             case _ =>
                 false
         }
 
     override def hashCode : Int =
-        System.identityHashCode (node) ^ arg.hashCode
+        System.identityHashCode(node) ^ arg.hashCode
 
 }

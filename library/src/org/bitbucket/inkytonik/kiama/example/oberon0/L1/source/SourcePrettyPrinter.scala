@@ -26,28 +26,28 @@ trait SourcePrettyPrinter extends L0.source.SourcePrettyPrinter {
 
     import base.source.{Block, Expression, SourceNode}
 
-    override def toDoc (n : SourceNode) : Doc =
+    override def toDoc(n : SourceNode) : Doc =
         n match {
             case s : IfStatement =>
-                ifToDoc (s)
+                ifToDoc(s)
 
             case s : WhileStatement =>
-                "WHILE" <+> toDoc (s.cond) <+> "DO" <> semisep (s.block.stmts) <@> "END"
+                "WHILE" <+> toDoc(s.cond) <+> "DO" <> semisep(s.block.stmts) <@> "END"
 
             case _ =>
-                super.toDoc (n)
+                super.toDoc(n)
         }
 
-    def ifToDoc (s : IfStatement) : Doc = {
+    def ifToDoc(s : IfStatement) : Doc = {
 
-        def elsifToDoc (ei : (Expression, Block)) : Doc =
-            line <> "ELSIF" <+> toDoc (ei._1) <+> "THEN" <> semisep (ei._2.stmts)
+        def elsifToDoc(ei : (Expression, Block)) : Doc =
+            line <> "ELSIF" <+> toDoc(ei._1) <+> "THEN" <> semisep(ei._2.stmts)
 
-        "IF" <+> toDoc (s.cond) <+> "THEN" <>
-        semisep (s.block.stmts) <>
-        hcat (s.elsifs map elsifToDoc) <>
-        s.optelse.map (b => line <> "ELSE" <> semisep (b.stmts)).getOrElse (empty) <@>
-        "END"
+        "IF" <+> toDoc(s.cond) <+> "THEN" <>
+            semisep(s.block.stmts) <>
+            hcat(s.elsifs map elsifToDoc) <>
+            s.optelse.map(b => line <> "ELSE" <> semisep(b.stmts)).getOrElse(empty) <@>
+            "END"
     }
 
 }

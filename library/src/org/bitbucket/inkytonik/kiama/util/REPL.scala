@@ -39,28 +39,32 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
     /**
      * The entry point for this REPL.
      */
-    def main (args : Array[String]) {
-        driver (args)
+    def main(args : Array[String]) {
+        driver(args)
     }
 
     /**
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : C
+    def createConfig(
+        args : Seq[String],
+        output : Emitter = new OutputEmitter,
+        error : Emitter = new ErrorEmitter
+    ) : C
 
     /**
      * Create and initialise the configuration for a particular run of the REPL.
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Seq[String],
-                             output : Emitter = new OutputEmitter,
-                             error : Emitter = new ErrorEmitter) : C = {
-        val config = createConfig (args, output, error)
-        config.afterInit ()
+    def createAndInitConfig(
+        args : Seq[String],
+        output : Emitter = new OutputEmitter,
+        error : Emitter = new ErrorEmitter
+    ) : C = {
+        val config = createConfig(args, output, error)
+        config.afterInit()
         config
     }
 
@@ -72,23 +76,23 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      * contain just whitespace, otherwise do. Continue until `processline`
      * returns false. Call `prompt` each time input is about to be read.
      */
-    def driver (args : Seq[String]) {
+    def driver(args : Seq[String]) {
 
         // Set up the configuration
-        val config = createAndInitConfig (args)
+        val config = createAndInitConfig(args)
 
         // Process any filename arguments
-        processfiles (config)
+        processfiles(config)
 
         // Enter interactive phase
-        config.output.emitln (banner)
+        config.output.emitln(banner)
         if (config.profile.get != None) {
-            val dimensions = parseProfileOption (config.profile ())
-            profile (processlines (config), dimensions, config.logging ())
-        } else if (config.time ())
-            time (processlines (config))
+            val dimensions = parseProfileOption(config.profile())
+            profile(processlines(config), dimensions, config.logging())
+        } else if (config.time())
+            time(processlines(config))
         else
-            processlines (config)
+            processlines(config)
 
         config.output.emitln
 
@@ -104,26 +108,26 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      * Process interactively entered lines, one by one, until end of file.
      * Prompt with the given prompt.
      */
-    def processlines (config : C) {
-        processconsole (config.console (), prompt, config)
+    def processlines(config : C) {
+        processconsole(config.console(), prompt, config)
     }
 
     /**
      * Process the files one by one, allowing config to be updated each time
      * and updated config to be used by the next file.
      */
-    final def processfiles (config : C) : C = {
+    final def processfiles(config : C) : C = {
 
         @tailrec
-        def loop (filenames : List[String], config : C) : C =
+        def loop(filenames : List[String], config : C) : C =
             filenames match {
                 case filename +: rest =>
-                    loop (rest, processfile (filename, config))
+                    loop(rest, processfile(filename, config))
                 case _ =>
                     config
             }
 
-        loop (config.filenames (), config)
+        loop(config.filenames(), config)
 
     }
 
@@ -131,22 +135,22 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      * Process a file argument by passing its contents line-by-line to
      * `processline`.
      */
-    def processfile (filename : String, config : C) : C =
-        processconsole (new FileConsole (filename), "", config)
+    def processfile(filename : String, config : C) : C =
+        processconsole(new FileConsole(filename), "", config)
 
     /**
      * Process interactively entered lines, one by one, until end of file.
      */
     @tailrec
-    final def processconsole (console : Console, prompt : String, config : C) : C = {
-        val line = console.readLine (prompt)
+    final def processconsole(console : Console, prompt : String, config : C) : C = {
+        val line = console.readLine(prompt)
         if (line == null)
             config
         else {
-            val source = new StringSource (line)
-            processline (source, console, config) match {
-                case Some (newConfig) =>
-                    processconsole (console, prompt, newConfig)
+            val source = new StringSource(line)
+            processline(source, console, config) match {
+                case Some(newConfig) =>
+                    processconsole(console, prompt, newConfig)
                 case _ =>
                     config
             }
@@ -159,7 +163,7 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      * in subsequent processing. A return value of `None` indicates that no
      * more lines from the current console should be processed.
      */
-    def processline (source : Source, console : Console, config : C) : Option[C]
+    def processline(source : Source, console : Console, config : C) : Option[C]
 
 }
 
@@ -168,10 +172,12 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
  */
 trait REPL extends REPLBase[REPLConfig] {
 
-    def createConfig (args : Seq[String],
-                      out : Emitter = new OutputEmitter,
-                      err : Emitter = new ErrorEmitter) : REPLConfig =
-        new REPLConfig (args) {
+    def createConfig(
+        args : Seq[String],
+        out : Emitter = new OutputEmitter,
+        err : Emitter = new ErrorEmitter
+    ) : REPLConfig =
+        new REPLConfig(args) {
             lazy val output = out
             lazy val error = err
         }
@@ -203,26 +209,26 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
      * then passing it to the `process` method. Returns the configuration
      * unchanged.
      */
-    def processline (source : Source, console : Console, config : C) : Option[C] = {
-        if (config.processWhitespaceLines () || (source.content.trim.length != 0)) {
-            parsers.parseAll (parser, source) match {
-                case Success (e, _) =>
-                    process (source, e, config)
-                case f @ Failure (label, next) =>
+    def processline(source : Source, console : Console, config : C) : Option[C] = {
+        if (config.processWhitespaceLines() || (source.content.trim.length != 0)) {
+            parsers.parseAll(parser, source) match {
+                case Success(e, _) =>
+                    process(source, e, config)
+                case f @ Failure(label, next) =>
                     val pos = next.position
-                    positions.setStart (f, pos)
-                    positions.setFinish (f, pos)
-                    val messages = message (f, label)
-                    report (messages, config.error)
+                    positions.setStart(f, pos)
+                    positions.setFinish(f, pos)
+                    val messages = message(f, label)
+                    report(messages, config.error)
             }
         }
-        Some (config)
+        Some(config)
     }
 
     /**
      * Process a user input value in the given configuration.
      */
-    def process (source : Source, t : T, config : C)
+    def process(source : Source, t : T, config : C)
 
 }
 
@@ -230,18 +236,20 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. `C` is the type of the configuration.
  */
-trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T,C]
+trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T, C]
 
 /**
  * A REPL that parses its input lines into a value (such as an abstract syntax
  * tree), then processes them. Output is emitted to standard output.
  */
-trait ParsingREPL[T] extends ParsingREPLWithConfig[T,REPLConfig] {
+trait ParsingREPL[T] extends ParsingREPLWithConfig[T, REPLConfig] {
 
-    def createConfig (args : Seq[String],
-                      out : Emitter = new OutputEmitter,
-                      err : Emitter = new ErrorEmitter) : REPLConfig =
-        new REPLConfig (args) {
+    def createConfig(
+        args : Seq[String],
+        out : Emitter = new OutputEmitter,
+        err : Emitter = new ErrorEmitter
+    ) : REPLConfig =
+        new REPLConfig(args) {
             lazy val output = out
             lazy val error = err
         }

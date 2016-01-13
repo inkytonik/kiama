@@ -27,7 +27,7 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parsers for L2 language.
  */
-class SyntaxAnalyser (positions : Positions) extends L1.SyntaxAnalyser (positions) {
+class SyntaxAnalyser(positions : Positions) extends L1.SyntaxAnalyser(positions) {
 
     import base.source.Statement
     import L0.source.IdnExp
@@ -35,36 +35,36 @@ class SyntaxAnalyser (positions : Positions) extends L1.SyntaxAnalyser (position
 
     override def statementDef : Parser[Statement] =
         forStatement |
-        caseStatement |
-        super.statementDef
+            caseStatement |
+            super.statementDef
 
     lazy val forStatement =
         "FOR" ~> forVar ~ (":=" ~> expression) ~ ("TO" ~> expression) ~ step ~
-             ("DO" ~> statementSequence <~ "END") ^^ ForStatement
+            ("DO" ~> statementSequence <~ "END") ^^ ForStatement
 
     lazy val forVar =
         idnuse ^^ IdnExp
 
     lazy val step =
-        "BY" ~> expression ^^ (e => Some (e)) |
-        success (None)
+        "BY" ~> expression ^^ (e => Some(e)) |
+            success(None)
 
     lazy val caseStatement =
         ("CASE" ~> expression <~ "OF") ~ cases ~ optelse <~ "END" ^^ CaseStatement
 
     lazy val cases =
-        rep1sep (kase, "|") |
-        failure ("clause expected")
+        rep1sep(kase, "|") |
+            failure("clause expected")
 
     lazy val kase =
         conditions ~ (":" ~> statementSequence) ^^ Case
 
     lazy val conditions =
-        rep1sep (condition, ",")
+        rep1sep(condition, ",")
 
     lazy val condition =
         expression ~ (".." ~> expression) ^^ MinMaxCond |
-        expression ^^ ValCond
+            expression ^^ ValCond
 
     override def keywordStrings : List[String] =
         "BY" +: "CASE" +: "FOR" +: "OF" +: "STEP" +: "TO" +: super.keywordStrings

@@ -29,8 +29,8 @@ import org.bitbucket.inkytonik.kiama.util.{Console, Emitter}
  * Abstract state machine simulation of a simple RISC architecture.  Run the
  * given code, reading input from console and emitting output using emitter.
  */
-class RISC (code : Code, console : Console, emitter : Emitter)
-        extends Machine ("RISC", emitter) {
+class RISC(code : Code, console : Console, emitter : Emitter)
+        extends Machine("RISC", emitter) {
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain
@@ -47,42 +47,42 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     /**
      * Integer register file addressed by 0-31.
      */
-    val R = new ParamState[RegNo,Int] ("R")
+    val R = new ParamState[RegNo, Int]("R")
 
     /**
      * Names for special registers.
      */
-    val PC = R (28)
-    val FP = R (29)
-    val SP = R (30)
-    val LNK = R (31)
+    val PC = R(28)
+    val FP = R(29)
+    val SP = R(30)
+    val LNK = R(31)
 
     /**
      * Byte addressed store of words.
      */
-    val Mem = new ParamState[Int,Int] ("Mem")
+    val Mem = new ParamState[Int, Int]("Mem")
 
     /**
      * Condition code: zero.
      */
-    val Z = new State[Boolean] ("Z")
+    val Z = new State[Boolean]("Z")
 
     /**
      * Condition code: less than.
      */
-    val N = new State[Boolean] ("N")
+    val N = new State[Boolean]("N")
 
     /**
      * Halt flag.  True if the machine should stop executing, false otherwise.
      */
-    val halt = new State[Boolean] ("halt")
+    val halt = new State[Boolean]("halt")
 
     /**
      * Initialise the machine.
      */
     override def init {
         PC := 0
-        R (0) := 0
+        R(0) := 0
         Z := false
         N := false
         halt := false
@@ -93,34 +93,33 @@ class RISC (code : Code, console : Console, emitter : Emitter)
      */
     def main {
         if (!halt)
-            execute (code (PC))
+            execute(code(PC))
     }
 
     /**
      * Execute a single instruction.
      */
-    def execute (instr : Instr) {
+    def execute(instr : Instr) {
         if (debug)
-            emitter.emitln (s"$name exec: $instr")
+            emitter.emitln(s"$name exec: $instr")
         try {
-            arithmetic (instr)
-            memory (instr)
-            control (instr)
-            inputoutput (instr)
-        }
-        catch {
+            arithmetic(instr)
+            memory(instr)
+            control(instr)
+            inputoutput(instr)
+        } catch {
             case e : Exception =>
-                emitter.emitln (s"Exception $e at $instr")
-                emitter.emitln ("RISC.R =")
-                emitter.emit ("    Map(")
+                emitter.emitln(s"Exception $e at $instr")
+                emitter.emitln("RISC.R =")
+                emitter.emit("    Map(")
                 for (r <- R.keys.toList.sorted)
-                    emitter.emit (s"$r -> ${R (r)}, ")
-                emitter.emitln (")")
-                emitter.emitln ("RISC.Mem =")
-                emitter.emit ("    Map(")
+                    emitter.emit(s"$r -> ${R(r)}, ")
+                emitter.emitln(")")
+                emitter.emitln("RISC.Mem =")
+                emitter.emit("    Map(")
                 for (m <- Mem.keys.toList.sorted)
-                    emitter.emit (s"$m -> ${Mem (m)}, ")
-                emitter.emitln (")")
+                    emitter.emit(s"$m -> ${Mem(m)}, ")
+                emitter.emitln(")")
                 halt := true
         }
     }
@@ -128,53 +127,57 @@ class RISC (code : Code, console : Console, emitter : Emitter)
     /**
      * Execute arithmetic instructions.
      */
-    def arithmetic (instr : Instr) {
+    def arithmetic(instr : Instr) {
         instr match {
-            case MOV (a, b, c)   => R (a) := R (c) << b
-            case MOVI (a, b, im) => R (a) := im << b
-            case MVN (a, b, c)   => R (a) := - (R (c) << b)
-            case MVNI (a, b, im) => R (a) := - (im << b)
-            case ADD (a, b, c)   => R (a) := R (b) + R (c)
-            case ADDI (a, b, im) => R (a) := R (b) + im
-            case SUB (a, b, c)   => R (a) := R (b) - R (c)
-            case SUBI (a, b, im) => R (a) := R (b) - im
-            case MUL (a, b, c)   => R (a) := R (b) * R (c)
-            case MULI (a, b, im) => R (a) := R (b) * im
-            case DIV (a, b, c)   => R (a) := R (b) / R (c)
-            case DIVI (a, b, im) => R (a) := R (b) / im
-            case MOD (a, b, c)   => R (a) := R (b) % R (c)
-            case MODI (a, b, im) => R (a) := R (b) % im
-            case CMP (b, c)      => Z := R (b) =:= R (c)
-                                    N := R (b) < R (c)
-            case CMPI (b, im)    => Z := R (b) =:= im
-                                    N := R (b) < im
-            case CHKI (a, im)    => if ((R (a) < 0) || (R (a) >= im))
-                                        R (a) := 0
-            case _               =>
+            case MOV(a, b, c)   => R(a) := R(c) << b
+            case MOVI(a, b, im) => R(a) := im << b
+            case MVN(a, b, c)   => R(a) := -(R(c) << b)
+            case MVNI(a, b, im) => R(a) := -(im << b)
+            case ADD(a, b, c)   => R(a) := R(b) + R(c)
+            case ADDI(a, b, im) => R(a) := R(b) + im
+            case SUB(a, b, c)   => R(a) := R(b) - R(c)
+            case SUBI(a, b, im) => R(a) := R(b) - im
+            case MUL(a, b, c)   => R(a) := R(b) * R(c)
+            case MULI(a, b, im) => R(a) := R(b) * im
+            case DIV(a, b, c)   => R(a) := R(b) / R(c)
+            case DIVI(a, b, im) => R(a) := R(b) / im
+            case MOD(a, b, c)   => R(a) := R(b) % R(c)
+            case MODI(a, b, im) => R(a) := R(b) % im
+            case CMP(b, c) =>
+                Z := R(b) =:= R(c)
+                N := R(b) < R(c)
+            case CMPI(b, im) =>
+                Z := R(b) =:= im
+                N := R(b) < im
+            case CHKI(a, im) => if ((R(a) < 0) || (R(a) >= im))
+                R(a) := 0
+            case _ =>
         }
     }
 
     /**
      * Execute memory instructions.
      */
-    def memory (instr : Instr) {
+    def memory(instr : Instr) {
         instr match {
-            case LDW (a, b, im) => R (a) := Mem ((R (b) + im) / 4)
-            case LDB (a, b, im) => halt := true // not implemented
-            case POP (a, b, im) => R (a) := Mem ((R (b) - im) / 4)
-                                   R (b) := R (b) - im
-            case STW (a, b, im) => Mem ((R (b) + im) / 4) := R (a)
-            case STB (a, b, im) => halt := true // not implemented
-            case PSH (a, b, im) => Mem (R (b) / 4) := R (a)
-                                   R (b) := R (b) + im
-            case _              =>
+            case LDW(a, b, im) => R(a) := Mem((R(b) + im) / 4)
+            case LDB(a, b, im) => halt := true // not implemented
+            case POP(a, b, im) =>
+                R(a) := Mem((R(b) - im) / 4)
+                R(b) := R(b) - im
+            case STW(a, b, im) => Mem((R(b) + im) / 4) := R(a)
+            case STB(a, b, im) => halt := true // not implemented
+            case PSH(a, b, im) =>
+                Mem(R(b) / 4) := R(a)
+                R(b) := R(b) + im
+            case _ =>
         }
     }
 
     /**
      * Execute control instructions, including default control step.
      */
-    def control (instr : Instr) {
+    def control(instr : Instr) {
         instr match {
             case b : BEQ if Z        => PC := PC + b.label.disp
             case b : BNE if !Z       => PC := PC + b.label.disp
@@ -183,24 +186,26 @@ class RISC (code : Code, console : Console, emitter : Emitter)
             case b : BLE if Z || N   => PC := PC + b.label.disp
             case b : BGT if !Z && !N => PC := PC + b.label.disp
             case b : BR              => PC := PC + b.label.disp
-            case b : BSR             => LNK := PC + 1
-                                        PC := PC + b.label.disp
-            case RET (c) => PC := R (c)
-                            if (R (c) =:= 0) halt := true
-            case _       => PC := PC + 1
+            case b : BSR =>
+                LNK := PC + 1
+                PC := PC + b.label.disp
+            case RET(c) =>
+                PC := R(c)
+                if (R(c) =:= 0) halt := true
+            case _ => PC := PC + 1
         }
     }
 
     /**
      * Execute input/output instructions.
      */
-    def inputoutput (instr : Instr) {
+    def inputoutput(instr : Instr) {
         instr match {
-            case RD (a)  => R (a) := console.readInt ("Enter integer: ")
-            case WRD (c) => emitter.emit (R (c))
-            case WRH (c) => emitter.emit ((R (c) : Int).toHexString)
-            case WRL ()  => emitter.emitln
-            case _       =>
+            case RD(a)  => R(a) := console.readInt("Enter integer: ")
+            case WRD(c) => emitter.emit(R(c))
+            case WRH(c) => emitter.emit((R(c) : Int).toHexString)
+            case WRL()  => emitter.emitln
+            case _      =>
         }
     }
 

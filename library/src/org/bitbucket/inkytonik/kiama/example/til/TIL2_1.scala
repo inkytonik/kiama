@@ -30,16 +30,16 @@ class TIL2_1 extends TransformingMain {
     import TILTree._
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
 
-    val parsers = new TIL1_1Parsers (positions)
+    val parsers = new TIL1_1Parsers(positions)
     val parser = parsers.program
 
-    def transform (ast : Program) : Program =
-        rewrite (declareforvars) (ast)
+    def transform(ast : Program) : Program =
+        rewrite(declareforvars)(ast)
 
     val declareforvars =
-        everywherebu (rule[List[Stat]] {
-            case (s @ For (Id (i), f, t, b)) :: ss =>
-                Decl (Id (i)) :: s :: ss
+        everywherebu(rule[List[Stat]] {
+            case (s @ For(Id(i), f, t, b)) :: ss =>
+                Decl(Id(i)) :: s :: ss
         })
 
 }

@@ -38,167 +38,171 @@ class UniplateTests extends Tests with Generator {
     /**
      * A simple numeric test expression.
      */
-    val numexp = Num (42)
+    val numexp = Num(42)
 
     /**
      * A simple test expression involving variables.
      */
-    val varexp = Div (Mul (Var ("var1"), Var ("var2")), Var ("var1"))
+    val varexp = Div(Mul(Var("var1"), Var("var2")), Var("var1"))
 
-    test ("collection of variable references: direct style") {
+    test("collection of variable references: direct style") {
         /*
          *  Direct style: local management of the collection.
          */
-        def variables (e : Exp) : Set[String] = {
+        def variables(e : Exp) : Set[String] = {
             var vars = Set[String]()
-            everywhere (query[Var] { case Var (s) => vars += s }) (e)
+            everywhere(query[Var] { case Var(s) => vars += s })(e)
             vars
         }
-        check ((e : Exp) => variables (e) == e.vars)
+        check((e : Exp) => variables(e) == e.vars)
     }
 
     {
-        val variabless = collect[Set,String] { case Var (s) => s }
-        val variablesv = collect[Vector,String] { case Var (s) => s }
-        val variablesl = collect[List,String] { case Var (s) => s }
+        val variabless = collect[Set, String] { case Var(s) => s }
+        val variablesv = collect[Vector, String] { case Var(s) => s }
+        val variablesl = collect[List, String] { case Var(s) => s }
 
-        test ("singleton collection of variable references: indirect style") {
-            check ((e : Exp) => variabless (e) == e.vars)
+        test("singleton collection of variable references: indirect style") {
+            check((e : Exp) => variabless(e) == e.vars)
         }
 
-        test ("singleton collection of variable references: indirect style on sets and lists") {
-            assertResult (Set ()) (variabless (numexp))
-            assertResult (Vector ()) (variablesv (numexp))
-            assertResult (Nil) (variablesl (numexp))
-            assertResult (Set ("var1", "var2")) (variabless (varexp))
-            assertResult (Vector ("var1", "var2", "var1")) (variablesv (varexp))
-            assertResult (List ("var1", "var2", "var1")) (variablesl (varexp))
+        test("singleton collection of variable references: indirect style on sets and lists") {
+            assertResult(Set())(variabless(numexp))
+            assertResult(Vector())(variablesv(numexp))
+            assertResult(Nil)(variablesl(numexp))
+            assertResult(Set("var1", "var2"))(variabless(varexp))
+            assertResult(Vector("var1", "var2", "var1"))(variablesv(varexp))
+            assertResult(List("var1", "var2", "var1"))(variablesl(varexp))
         }
     }
 
     {
-        val variabless = collectall { case Var (s) => Set (s) }
-        val variablesv = collectall { case Var (s) => Vector (s) }
-        val variablesl = collectall { case Var (s) => List (s) }
+        val variabless = collectall { case Var(s) => Set(s) }
+        val variablesv = collectall { case Var(s) => Vector(s) }
+        val variablesl = collectall { case Var(s) => List(s) }
 
-        test ("all collection of variable references: indirect style") {
+        test("all collection of variable references: indirect style") {
             // Indirect: using the collects combinator to manage the set
-            check ((e : Exp) => variabless (e) == e.vars)
+            check((e : Exp) => variabless(e) == e.vars)
         }
 
-        test ("all collection of variable references: indirect style on sets and lists") {
-            assertResult (Set ()) (variabless (numexp))
-            assertResult (Vector ()) (variablesv (numexp))
-            assertResult (Nil) (variablesl (numexp))
-            assertResult (Set ("var1", "var2")) (variabless (varexp))
-            assertResult (Vector ("var1", "var2", "var1")) (variablesv (varexp))
-            assertResult (List ("var1", "var2", "var1")) (variablesl (varexp))
+        test("all collection of variable references: indirect style on sets and lists") {
+            assertResult(Set())(variabless(numexp))
+            assertResult(Vector())(variablesv(numexp))
+            assertResult(Nil)(variablesl(numexp))
+            assertResult(Set("var1", "var2"))(variabless(varexp))
+            assertResult(Vector("var1", "var2", "var1"))(variablesv(varexp))
+            assertResult(List("var1", "var2", "var1"))(variablesl(varexp))
         }
     }
 
-    test ("search for division by zero") {
+    test("search for division by zero") {
         object TestDivsByZero extends Generator {
-            override def genDiv (sz : Int) : Gen[Div] =
-                Gen.frequency ((3, genDivByZero (sz)), (1, super.genDiv (sz)))
-            def genDivByZero (sz : Int) : Gen[Div] =
-                for { l <- genExp (sz/2) } yield Div (l, Num (0))
-            val divsbyzero = count { case Div (_, Num (0)) => 1 }
-            assertResult (0) (divsbyzero (numexp))
-            assertResult (0) (divsbyzero (varexp))
-            check ((e : Exp) => divsbyzero (e) == e.divsbyzero)
+            override def genDiv(sz : Int) : Gen[Div] =
+                Gen.frequency((3, genDivByZero(sz)), (1, super.genDiv(sz)))
+            def genDivByZero(sz : Int) : Gen[Div] =
+                for { l <- genExp(sz / 2) } yield Div(l, Num(0))
+            val divsbyzero = count { case Div(_, Num(0)) => 1 }
+            assertResult(0)(divsbyzero(numexp))
+            assertResult(0)(divsbyzero(varexp))
+            check((e : Exp) => divsbyzero(e) == e.divsbyzero)
         }
         TestDivsByZero
     }
 
-    test ("arithmetic simplification") {
+    test("arithmetic simplification") {
         def simplify : Exp => Exp =
-            rewrite (everywhere (rule[Exp] {
-                case Sub (x, y)           => simplify (Add (x, Neg (y)))
-                case Add (x, y) if x == y => Mul (Num (2), x)
+            rewrite(everywhere(rule[Exp] {
+                case Sub(x, y)           => simplify(Add(x, Neg(y)))
+                case Add(x, y) if x == y => Mul(Num(2), x)
             }))
-        assertResult (numexp) (simplify (numexp))
-        assertResult (varexp) (simplify (varexp))
+        assertResult(numexp)(simplify(numexp))
+        assertResult(varexp)(simplify(varexp))
 
-        val e = Sub (Add (Var ("a"), Var ("a")),
-                     Add (Sub (Var ("b"), Num (1)), Sub (Var ("b"), Num (1))))
-        val simpe = Add (Mul (Num (2), Var ("a")),
-                         Neg (Mul (Num (2), Add (Var ("b"), Neg (Num (1))))))
-        assertResult (simpe) (simplify (e))
+        val e = Sub(
+            Add(Var("a"), Var("a")),
+            Add(Sub(Var("b"), Num(1)), Sub(Var("b"), Num(1)))
+        )
+        val simpe = Add(
+            Mul(Num(2), Var("a")),
+            Neg(Mul(Num(2), Add(Var("b"), Neg(Num(1)))))
+        )
+        assertResult(simpe)(simplify(e))
 
-        val f = Sub (Neg (Num (1)), Num (1))
-        val simpf = Mul (Num (2), Neg (Num (1)))
-        assertResult (simpf) (simplify (f))
+        val f = Sub(Neg(Num(1)), Num(1))
+        val simpf = Mul(Num(2), Neg(Num(1)))
+        assertResult(simpf)(simplify(f))
 
-        check ((e : Exp) => simplify (e).value == e.value)
+        check((e : Exp) => simplify(e).value == e.value)
     }
 
-    test ("remove double negations") {
+    test("remove double negations") {
         object TestDoubleNegSimplification extends Generator {
-            override def genNeg (sz : Int) : Gen[Neg] =
-                Gen.frequency ((1, genDoubleNeg (sz)), (1, super.genNeg (sz)))
-            def genDoubleNeg (sz : Int) : Gen[Neg] =
-                for { e <- super.genNeg (sz) } yield Neg (e)
+            override def genNeg(sz : Int) : Gen[Neg] =
+                Gen.frequency((1, genDoubleNeg(sz)), (1, super.genNeg(sz)))
+            def genDoubleNeg(sz : Int) : Gen[Neg] =
+                for { e <- super.genNeg(sz) } yield Neg(e)
             def doubleneg : Exp => Exp =
-                rewrite (everywherebu ( rule[Exp] { case Neg (Neg (x)) => x }))
-            assertResult (numexp) (doubleneg (numexp))
-            assertResult (varexp) (doubleneg (varexp))
-            check ((e : Exp) => doubleneg (e).value == e.value)
+                rewrite(everywherebu(rule[Exp] { case Neg(Neg(x)) => x }))
+            assertResult(numexp)(doubleneg(numexp))
+            assertResult(varexp)(doubleneg(varexp))
+            check((e : Exp) => doubleneg(e).value == e.value)
         }
         TestDoubleNegSimplification
     }
 
-    test ("reciprocal division to multiplication conversion") {
+    test("reciprocal division to multiplication conversion") {
         def reciprocal : Exp => Exp =
-            rewrite (everywherebu (rule[Exp] {
-                case Div (n, m) => Mul (n, Div (Num (1), m))
+            rewrite(everywherebu(rule[Exp] {
+                case Div(n, m) => Mul(n, Div(Num(1), m))
             }))
 
-        val e1 = Div (Num (1), Num (2))
-        assertResult (0.5) (reciprocal (e1).value)
+        val e1 = Div(Num(1), Num(2))
+        assertResult(0.5)(reciprocal(e1).value)
 
-        val e2 = Mul (Num (2), Div (Num (3), Num (4)))
-        assertResult (1.5) (reciprocal (e2).value)
+        val e2 = Mul(Num(2), Div(Num(3), Num(4)))
+        assertResult(1.5)(reciprocal(e2).value)
     }
 
-    test ("unique variable renaming") {
+    test("unique variable renaming") {
         def uniquevars : Exp => Exp = {
             var count = 0
-            rewrite ({
-                everywhere (rule[Var] { case _ => count = count + 1; Var (s"x$count") })
+            rewrite({
+                everywhere(rule[Var] { case _ => count = count + 1; Var(s"x$count") })
             })
         }
-        assertResult (numexp) (uniquevars (numexp))
+        assertResult(numexp)(uniquevars(numexp))
         // Run this twice to make sure that count is not shared
-        assertResult (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3"))) (uniquevars (varexp))
-        assertResult (Div (Mul (Var ("x1"), Var ("x2")), Var ("x3"))) (uniquevars (varexp))
-        check ((e : Exp) => uniquevars (e).value == e.value)
+        assertResult(Div(Mul(Var("x1"), Var("x2")), Var("x3")))(uniquevars(varexp))
+        assertResult(Div(Mul(Var("x1"), Var("x2")), Var("x3")))(uniquevars(varexp))
+        check((e : Exp) => uniquevars(e).value == e.value)
     }
 
-    test ("calculate expression depth") {
+    test("calculate expression depth") {
         val depth = para[Int] { case (t, cs) => 1 + (cs :+ 0).max }
-        assertResult (2) (depth (numexp))
-        assertResult (4) (depth (varexp))
-        check ((e : Exp) => depth (e) == e.depth)
+        assertResult(2)(depth(numexp))
+        assertResult(4)(depth(varexp))
+        check((e : Exp) => depth(e) == e.depth)
     }
 
-    test ("variable renaming") {
+    test("variable renaming") {
         def rename : Exp => Exp =
-            rewrite (everywhere (rule[Var] { case Var (s) => Var (s"_$s") }))
-        check ((e : Exp) => rename (e).vars == e.vars.map ("_" + _))
+            rewrite(everywhere(rule[Var] { case Var(s) => Var(s"_$s") }))
+        check((e : Exp) => rename(e).vars == e.vars.map("_" + _))
     }
 
-    test ("optimisation of integer addition") {
+    test("optimisation of integer addition") {
         object OptimiseAdd extends Generator {
-            override def genAdd (sz : Int) : Gen[Add] =
-                Gen.frequency ((1, genIntAdd (sz)), (1, super.genAdd (sz)))
-            def genIntAdd (sz : Int) : Gen[Add] =
-                for { l <- genNum; r <- genNum } yield Add (l, r)
+            override def genAdd(sz : Int) : Gen[Add] =
+                Gen.frequency((1, genIntAdd(sz)), (1, super.genAdd(sz)))
+            def genIntAdd(sz : Int) : Gen[Add] =
+                for { l <- genNum; r <- genNum } yield Add(l, r)
             def optimiseadd : Exp => Exp =
-                rewrite (everywherebu (rule[Exp] {
-                    case Add (Num (n), Num (m)) => Num (n + m)
+                rewrite(everywherebu(rule[Exp] {
+                    case Add(Num(n), Num(m)) => Num(n + m)
                 }))
-            check ((e : Exp) => {
-                val eopt = optimiseadd (e)
+            check((e : Exp) => {
+                val eopt = optimiseadd(e)
                 (eopt.intadds == 0) && (eopt.value == e.value)
             })
         }

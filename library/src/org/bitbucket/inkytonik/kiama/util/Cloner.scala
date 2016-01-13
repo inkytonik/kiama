@@ -37,15 +37,15 @@ trait Cloner {
      * Deep clone the term `t`. Only applicable if the base type of the tree is
      * a `Product`.
      */
-    def deepclone[T <: Product] (t : T) : T = {
+    def deepclone[T <: Product](t : T) : T = {
 
         val deepcloner =
-            everywherebu (rule[T] {
-                case n if isLeaf (n) =>
-                    copy (n)
+            everywherebu(rule[T] {
+                case n if isLeaf(n) =>
+                    copy(n)
             })
 
-        rewrite (deepcloner) (t)
+        rewrite(deepcloner)(t)
 
     }
 
@@ -56,29 +56,29 @@ trait Cloner {
      * the term. It should be a bottom-up traversal, but can be tailored to skip
      * some sub-trees if desired. `bu` defaults to `everywherebu`.
      */
-    def lazyclone[T <: Product] (
-            t : T,
-            bu : Strategy => Strategy = everywherebu ("everywherebu", _)
-        ) : T = {
+    def lazyclone[T <: Product](
+        t : T,
+        bu : Strategy => Strategy = everywherebu("everywherebu", _)
+    ) : T = {
 
         object LeafCache extends Memoiser {
-            val seen = new IdMemoised[T,Boolean] {}
+            val seen = new IdMemoised[T, Boolean] {}
         }
 
         import LeafCache.seen
 
         val lazycloner =
-            bu (rule[T] {
-                case n if isLeaf (n) =>
-                    if (seen.getWithDefault (n, false))
-                        copy (n)
+            bu(rule[T] {
+                case n if isLeaf(n) =>
+                    if (seen.getWithDefault(n, false))
+                        copy(n)
                     else {
-                        seen.put (n, true)
+                        seen.put(n, true)
                         n
                     }
             })
 
-        rewrite (lazycloner) (t)
+        rewrite(lazycloner)(t)
 
     }
 

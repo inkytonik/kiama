@@ -27,14 +27,14 @@ import base.c.{CExpression, CStatement}
 /**
  * C one-sided conditional expressions.
  */
-case class CIfStatement (cond : CExpression, tstmt : CStatement) extends CStatement
+case class CIfStatement(cond : CExpression, tstmt : CStatement) extends CStatement
 
 /**
  * C two-sided conditional expressions.
  */
-case class CIfElseStatement (cond : CExpression, tstmt : CStatement, estmt : CStatement) extends CStatement
+case class CIfElseStatement(cond : CExpression, tstmt : CStatement, estmt : CStatement) extends CStatement
 
 /**
  * C while statements.
  */
-case class CWhileStatement (cond : CExpression, stmt : CStatement) extends CStatement
+case class CWhileStatement(cond : CExpression, stmt : CStatement) extends CStatement

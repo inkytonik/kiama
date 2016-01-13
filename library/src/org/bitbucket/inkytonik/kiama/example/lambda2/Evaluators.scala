@@ -28,20 +28,22 @@ package example.lambda2
  */
 object Evaluators {
 
-   /**
+    /**
      * Map of evaluator names to the evaluators themselves.
      * Comments refer to names in Dolstra and Visser paper.
      */
     val evalmap =
-        Map ("reduce"         -> new ReduceEvaluator,          // eval1
-             "reducesubst"    -> new ReduceSubstEvaluator,     // eval2
-             "innermostsubst" -> new InnermostSubstEvaluator,  // eval3
-             "eagersubst"     -> new EagerSubstEvaluator,      // eval4, eval5
-             "lazysubst"      -> new LazySubstEvaluator,       // eval6
-             "pareagersubst"  -> new ParEagerSubstEvaluator,   // eval7
-             "parlazysubst"   -> new ParLazySubstEvaluator,    // eval8
-             "parlazyshare"   -> new ParLazyShareEvaluator,    // eval9
-             "parlazyupdate"  -> new ParLazyUpdateEvaluator)   // eval10
+        Map(
+            "reduce" -> new ReduceEvaluator, // eval1
+            "reducesubst" -> new ReduceSubstEvaluator, // eval2
+            "innermostsubst" -> new InnermostSubstEvaluator, // eval3
+            "eagersubst" -> new EagerSubstEvaluator, // eval4, eval5
+            "lazysubst" -> new LazySubstEvaluator, // eval6
+            "pareagersubst" -> new ParEagerSubstEvaluator, // eval7
+            "parlazysubst" -> new ParLazySubstEvaluator, // eval8
+            "parlazyshare" -> new ParLazyShareEvaluator, // eval9
+            "parlazyupdate" -> new ParLazyUpdateEvaluator
+        ) // eval10
 
     /**
      * Return the names of the available evaluation mechanisms.
@@ -51,7 +53,7 @@ object Evaluators {
     /**
      * The evaluator for the given mechanism.
      */
-    def evaluatorFor (mechanism : String) : Evaluator =
-        evalmap (mechanism)
+    def evaluatorFor(mechanism : String) : Evaluator =
+        evalmap(mechanism)
 
 }

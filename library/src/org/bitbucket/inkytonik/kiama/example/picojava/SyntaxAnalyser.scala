@@ -35,7 +35,7 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * PicoJava parser
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import PicoJavaTree._
     import scala.language.postfixOps
@@ -66,8 +66,8 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
         boolean_literal | name
 
     lazy val name : PackratParser[Access] =
-        name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot (n, Use (i)) } |
-        IDENTIFIER ^^ Use
+        name ~ ("." ~> IDENTIFIER) ^^ { case n ~ i => Dot(n, Use(i)) } |
+            IDENTIFIER ^^ Use
 
     lazy val boolean_literal =
         ("true" | "false") ^^ BooleanLiteral

@@ -27,45 +27,45 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parser to abstract syntax for optionally typed lambda calculus.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import LambdaTree._
 
     lazy val exp : Parser[Exp] =
         "\\" ~> idn ~ itype ~ ("." ~> exp) ^^ Lam |
-        exp2
+            exp2
 
     lazy val itype =
         ":" ~> ttype |
-        "" ^^ (_ => NoType ())
+            "" ^^ (_ => NoType())
 
     lazy val exp2 : PackratParser[Exp] =
         exp2 ~ op ~ exp1 ^^ Opn |
-        exp1
+            exp1
 
     lazy val exp1 : PackratParser[Exp] =
         exp1 ~ exp0 ^^ App |
-        exp0
+            exp0
 
     lazy val exp0 =
         number | idn ^^ Var | "(" ~> exp <~ ")"
 
     lazy val ttype : Parser[Type] =
         ttype0 ~ ("->" ~> ttype) ^^ FunType |
-        ttype0
+            ttype0
 
     lazy val ttype0 : Parser[Type] =
-        "Int" ^^ (_ => IntType ()) |
-        "(" ~> ttype <~ ")"
+        "Int" ^^ (_ => IntType()) |
+            "(" ~> ttype <~ ")"
 
     lazy val op =
-        "+" ^^ (_ => AddOp ()) |
-        "-" ^^ (_ => SubOp ())
+        "+" ^^ (_ => AddOp()) |
+            "-" ^^ (_ => SubOp())
 
     lazy val idn =
         "[a-zA-Z][a-zA-Z0-9]*".r
 
     lazy val number =
-        "[0-9]+".r ^^ (s => Num (s.toInt))
+        "[0-9]+".r ^^ (s => Num(s.toInt))
 
 }

@@ -28,28 +28,28 @@ sealed abstract class ParseResult[+T] {
 
     def next : Input
 
-    def append[U >: T] (r : => ParseResult[U]) : ParseResult[U]
+    def append[U >: T](r : => ParseResult[U]) : ParseResult[U]
 
-    def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U]
+    def flatMapWithNext[U](f : T => Input => ParseResult[U]) : ParseResult[U]
 
-    def map[U] (f : T => U) : ParseResult[U]
+    def map[U](f : T => U) : ParseResult[U]
 
 }
 
 /**
  * A successful parse result.
  */
-case class Success[+T] (result : T, next : Input) extends ParseResult[T] {
+case class Success[+T](result : T, next : Input) extends ParseResult[T] {
 
-    def append[U >: T] (r : => ParseResult[U]) : ParseResult[U] =
+    def append[U >: T](r : => ParseResult[U]) : ParseResult[U] =
         this
 
-    def flatMapWithNext[U] (f : T => Input => ParseResult[U]) : ParseResult[U] =
-        f (result) (next)
+    def flatMapWithNext[U](f : T => Input => ParseResult[U]) : ParseResult[U] =
+        f(result)(next)
 
-    def map[U] (f : T => U) : ParseResult[U] = {
-        val u = f (result)
-        Success (u, next)
+    def map[U](f : T => U) : ParseResult[U] = {
+        val u = f(result)
+        Success(u, next)
     }
 
 }
@@ -57,9 +57,9 @@ case class Success[+T] (result : T, next : Input) extends ParseResult[T] {
 /**
  * A failure parse result.
  */
-case class Failure (message : String, next : Input) extends ParseResult[Nothing] {
+case class Failure(message : String, next : Input) extends ParseResult[Nothing] {
 
-    def append[U >: Nothing] (r : => ParseResult[U]) : ParseResult[U] = {
+    def append[U >: Nothing](r : => ParseResult[U]) : ParseResult[U] = {
         val rr = r
         rr match {
             case _ : Failure =>
@@ -72,10 +72,10 @@ case class Failure (message : String, next : Input) extends ParseResult[Nothing]
         }
     }
 
-    def flatMapWithNext[U] (f : Nothing => Input => ParseResult[U]) : ParseResult[U] =
+    def flatMapWithNext[U](f : Nothing => Input => ParseResult[U]) : ParseResult[U] =
         this
 
-    def map[U] (f : Nothing => U) : ParseResult[U] =
+    def map[U](f : Nothing => U) : ParseResult[U] =
         this
 
 }

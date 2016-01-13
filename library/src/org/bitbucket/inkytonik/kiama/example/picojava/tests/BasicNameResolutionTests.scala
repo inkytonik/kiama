@@ -38,53 +38,59 @@ class BasicNameResolutionTests extends Tests {
 
     // For the actual program text, see BasicNameResolutionTests.pj
 
-    val declRx = VarDecl (Use ("int"), "x")
-    val xInR   = Use ("x")
-    val declRz = VarDecl (Use ("int"), "z")
-    val zInR   = Use ("z")
-    val yInR   = Use ("y")
-    val yInA   = Use("y")
-    val xInA   = Use ("x")
-    val declAz = VarDecl (Use ("int"), "z")
-    val zInA   = Use ("z")
+    val declRx = VarDecl(Use("int"), "x")
+    val xInR = Use("x")
+    val declRz = VarDecl(Use("int"), "z")
+    val zInR = Use("z")
+    val yInR = Use("y")
+    val yInA = Use("y")
+    val xInA = Use("x")
+    val declAz = VarDecl(Use("int"), "z")
+    val zInA = Use("z")
 
     val ast =
-        Program (Block (
-            Vector (declRx,
-                  AssignStmt (xInR, zInR),
-                  declRz,
-                  AssignStmt (yInR, Use ("x")),
-                  ClassDecl ("A", None, Block (
-                      Vector (declAz,
-                            AssignStmt (xInA, zInA),
-                            AssignStmt (yInA, Use ("z"))))))))
+        Program(Block(
+            Vector(
+                declRx,
+                AssignStmt(xInR, zInR),
+                declRz,
+                AssignStmt(yInR, Use("x")),
+                ClassDecl("A", None, Block(
+                    Vector(
+                        declAz,
+                        AssignStmt(xInA, zInA),
+                        AssignStmt(yInA, Use("z"))
+                    )
+                ))
+            )
+        ))
 
-    val tree = new PicoJavaTree (ast)
-    val analyser = new ErrorCheck (tree)
+    val tree = new PicoJavaTree(ast)
+    val analyser = new ErrorCheck(tree)
     import analyser._
 
-    test ("bindings at the same nesting level are resolved") {
-        assertResult (declRx) (decl (xInR))
+    test("bindings at the same nesting level are resolved") {
+        assertResult(declRx)(decl(xInR))
     }
 
-    test ("bindings at an outer nesting level are resolved") {
-        assertResult (declRx) (decl (xInA))
+    test("bindings at an outer nesting level are resolved") {
+        assertResult(declRx)(decl(xInA))
     }
 
-    test ("names can be declared after use") {
-        assertResult (declRz) (decl (zInR))
+    test("names can be declared after use") {
+        assertResult(declRz)(decl(zInR))
     }
 
-    test ("a missing declaration for a top-level use is detected") {
-        assert (isUnknown (decl (yInR)))
+    test("a missing declaration for a top-level use is detected") {
+        assert(isUnknown(decl(yInR)))
     }
 
-    test ("a missing declaration for a nested use is detected") {
-        assert (isUnknown (decl (yInA)))
+    test("a missing declaration for a nested use is detected") {
+        assert(isUnknown(decl(yInA)))
     }
 
-    test ("a local shadowing binding is resolved") {
-        assertResult (declAz) (decl (zInA))
+    test("a local shadowing binding is resolved") {
+        assertResult(declAz)(decl(zInA))
     }
 
 }

@@ -27,41 +27,62 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parsers for L0 language.
  */
-class SyntaxAnalyser (positions : Positions) extends base.SyntaxAnalyser (positions) {
+class SyntaxAnalyser(positions : Positions) extends base.SyntaxAnalyser(positions) {
 
     import base.source.{Declaration, Expression, Statement}
     import scala.language.postfixOps
-    import source.{AddExp, AndExp, Assignment, ConstDecl, DivExp, EqExp,
-        GeExp, GtExp, IdnExp, IntExp, LeExp, LtExp, ModExp, MulExp,
-        NamedType, NeExp, NegExp, NotExp, OrExp, SubExp, TypeDecl,
-        TypeDef, VarDecl}
+    import source.{
+        AddExp,
+        AndExp,
+        Assignment,
+        ConstDecl,
+        DivExp,
+        EqExp,
+        GeExp,
+        GtExp,
+        IdnExp,
+        IntExp,
+        LeExp,
+        LtExp,
+        ModExp,
+        MulExp,
+        NamedType,
+        NeExp,
+        NegExp,
+        NotExp,
+        OrExp,
+        SubExp,
+        TypeDecl,
+        TypeDef,
+        VarDecl
+    }
 
     override def declarationsDef : Parser[Vector[Declaration]] =
         (constdeclsection?) ~ (typedeclsection?) ~ (vardeclsection?) ^^ {
             case oc ~ ot ~ ov =>
-                Vector (oc, ot, ov).flatten.flatten
+                Vector(oc, ot, ov).flatten.flatten
         }
 
     lazy val constdeclsection =
-        "CONST" ~> rep (constdecl)
+        "CONST" ~> rep(constdecl)
 
     lazy val constdecl =
         (idndef <~ "=") ~ (expression <~ ";") ^^ ConstDecl
 
     lazy val typedeclsection =
-        "TYPE" ~> rep (typedecl)
+        "TYPE" ~> rep(typedecl)
 
     lazy val typedecl =
         (idndef <~ "=") ~ (typedef <~ ";") ^^ TypeDecl
 
     lazy val vardeclsection =
-        "VAR" ~> rep (vardecl)
+        "VAR" ~> rep(vardecl)
 
     lazy val vardecl =
         (idndeflist <~ ":") ~ (typedef <~ ";") ^^ VarDecl
 
     lazy val idndeflist =
-        rep1sep (idndef, ",")
+        rep1sep(idndef, ",")
 
     lazy val typedef =
         typedefDef
@@ -74,7 +95,7 @@ class SyntaxAnalyser (positions : Positions) extends base.SyntaxAnalyser (positi
 
     override def statementDef : Parser[Statement] =
         assignment |
-        super.statementDef
+            super.statementDef
 
     lazy val assignment =
         lhs ~ (":=" ~> expression) ^^ Assignment
@@ -87,34 +108,34 @@ class SyntaxAnalyser (positions : Positions) extends base.SyntaxAnalyser (positi
 
     lazy val expression : PackratParser[Expression] =
         simpexp ~ ("=" ~> simpexp) ^^ EqExp |
-        simpexp ~ ("#" ~> simpexp) ^^ NeExp |
-        simpexp ~ ("<" ~> simpexp) ^^ LtExp |
-        simpexp ~ ("<=" ~> simpexp) ^^ LeExp |
-        simpexp ~ (">" ~> simpexp) ^^ GtExp |
-        simpexp ~ (">=" ~> simpexp) ^^ GeExp |
-        simpexp
+            simpexp ~ ("#" ~> simpexp) ^^ NeExp |
+            simpexp ~ ("<" ~> simpexp) ^^ LtExp |
+            simpexp ~ ("<=" ~> simpexp) ^^ LeExp |
+            simpexp ~ (">" ~> simpexp) ^^ GtExp |
+            simpexp ~ (">=" ~> simpexp) ^^ GeExp |
+            simpexp
 
     lazy val simpexp : PackratParser[Expression] =
         simpexp ~ ("+" ~> term) ^^ AddExp |
-        simpexp ~ ("-" ~> term) ^^ SubExp |
-        simpexp ~ ("OR" ~> term) ^^ OrExp |
-        term
+            simpexp ~ ("-" ~> term) ^^ SubExp |
+            simpexp ~ ("OR" ~> term) ^^ OrExp |
+            term
 
     lazy val term : PackratParser[Expression] =
         term ~ ("*" ~> factor) ^^ MulExp |
-        term ~ ("DIV" ~> factor) ^^ DivExp |
-        term ~ ("MOD" ~> factor) ^^ ModExp |
-        term ~ ("&" ~> factor) ^^ AndExp |
-        factor
+            term ~ ("DIV" ~> factor) ^^ DivExp |
+            term ~ ("MOD" ~> factor) ^^ ModExp |
+            term ~ ("&" ~> factor) ^^ AndExp |
+            factor
 
     lazy val factor : PackratParser[Expression] =
         intexp |
-        lhs |
-        "+" ~> factor |
-        "-" ~> factor ^^ NegExp |
-        "~" ~> factor ^^ NotExp |
-        "(" ~> expression <~ ")" |
-        failure ("expression expected")
+            lhs |
+            "+" ~> factor |
+            "-" ~> factor ^^ NegExp |
+            "~" ~> factor ^^ NotExp |
+            "(" ~> expression <~ ")" |
+            failure("expression expected")
 
     lazy val intexp =
         constrainedInt ^^ IntExp

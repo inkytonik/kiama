@@ -39,8 +39,8 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     /**
      * The entry point for this compiler.
      */
-    def main (args : Array[String]) {
-        driver (args)
+    def main(args : Array[String]) {
+        driver(args)
     }
 
     /**
@@ -48,20 +48,24 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * If supplied, use `output` instead of a standard output emitter,
      * and/or `error` instead of a standard error emitter.
      */
-    def createConfig (args : Seq[String],
-                      output : Emitter = new OutputEmitter,
-                      error : Emitter = new ErrorEmitter) : C
+    def createConfig(
+        args : Seq[String],
+        output : Emitter = new OutputEmitter,
+        error : Emitter = new ErrorEmitter
+    ) : C
 
     /**
      * Create and initialise the configuration for a particular run of the compiler.
      * If supplied, use `emitter` instead of a standard output emitter. Default:
      * call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig (args : Seq[String],
-                             output : Emitter = new OutputEmitter,
-                             error : Emitter = new ErrorEmitter) : C = {
-        val config = createConfig (args, output, error)
-        config.afterInit ()
+    def createAndInitConfig(
+        args : Seq[String],
+        output : Emitter = new OutputEmitter,
+        error : Emitter = new ErrorEmitter
+    ) : C = {
+        val config = createConfig(args, output, error)
+        config.afterInit()
         config
     }
 
@@ -70,23 +74,23 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * configuration for this execution. Then, use the configuration to
      * run the file processing in the appropriate way.
      */
-    def driver (args : Seq[String]) {
-        val config = createAndInitConfig (args)
+    def driver(args : Seq[String]) {
+        val config = createAndInitConfig(args)
         if (config.profile.get != None) {
-            val dimensions = parseProfileOption (config.profile ())
-            profile (processfiles (config), dimensions, config.logging ())
-        } else if (config.time ())
-            time (processfiles (config))
+            val dimensions = parseProfileOption(config.profile())
+            profile(processfiles(config), dimensions, config.logging())
+        } else if (config.time())
+            time(processfiles(config))
         else
-            processfiles (config)
+            processfiles(config)
     }
 
     /**
      * Process the files one by one.
      */
-    def processfiles (config : C) {
-        for (filename <- config.filenames ()) {
-            processfile (filename, config)
+    def processfiles(config : C) {
+        for (filename <- config.filenames()) {
+            processfile(filename, config)
         }
     }
 
@@ -103,18 +107,18 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * processing on the ASTs. The character encoding of the files is given by
      * the `encoding` method.
      */
-    def processfile (filename : String, config : C) {
+    def processfile(filename : String, config : C) {
         try {
-            val source = FileSource (filename, encoding)
-            makeast (source, config) match {
-                case Left (ast) =>
-                    process (source, ast, config)
-                case Right (messages) =>
-                    report (messages, config.error)
+            val source = FileSource(filename, encoding)
+            makeast(source, config) match {
+                case Left(ast) =>
+                    process(source, ast, config)
+                case Right(messages) =>
+                    report(messages, config.error)
             }
         } catch {
             case e : java.io.FileNotFoundException =>
-                config.error.emitln (e.getMessage)
+                config.error.emitln(e.getMessage)
         }
     }
 
@@ -123,7 +127,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * Return `Right` with messages if an AST cannot be made. `config` provides
      * access to all aspects of the configuration.
      */
-    def makeast (source : Source, config : C) : Either[T,Messages]
+    def makeast(source : Source, config : C) : Either[T, Messages]
 
     /**
      * Function to process the input that was parsed. `source` is the input
@@ -131,12 +135,12 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * produced by the parser from that text. `config` provides access to all
      * aspects of the configuration.
      */
-    def process (source : Source, ast : T, config : C)
+    def process(source : Source, ast : T, config : C)
 
     /**
      * Format an abstract syntax tree for printing. Default: return an empty document.
      */
-    def format (ast : T) : Document
+    def format(ast : T) : Document
 
 }
 
@@ -144,7 +148,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
  * A compiler that uses Parsers to produce positioned ASTs. `C` is the type of the
  * compiler configuration.
  */
-trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] {
+trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
 
     import org.bitbucket.inkytonik.kiama.parsing.{Failure, ParsersBase, Success}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{message, Messages}
@@ -163,21 +167,21 @@ trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] {
      * Make an AST by running the parser on the given source, returning messages
      * instead if the parse fails.
      */
-    def makeast (source : Source, config : C) : Either[T,Messages] = {
+    def makeast(source : Source, config : C) : Either[T, Messages] = {
         try {
-            parsers.parseAll (parser, source) match {
-                case Success (ast, _) =>
-                    Left (ast)
-                case f @ Failure (label, next) =>
+            parsers.parseAll(parser, source) match {
+                case Success(ast, _) =>
+                    Left(ast)
+                case f @ Failure(label, next) =>
                     val pos = next.position
-                    positions.setStart (f, pos)
-                    positions.setFinish (f, pos)
-                    val messages = message (f, label)
-                    Right (messages)
+                    positions.setStart(f, pos)
+                    positions.setFinish(f, pos)
+                    val messages = message(f, label)
+                    Right(messages)
             }
         } catch {
             case e : java.io.FileNotFoundException =>
-                Right (message (e, e.getMessage))
+                Right(message(e, e.getMessage))
         }
     }
 
@@ -187,12 +191,14 @@ trait CompilerWithConfig[T,C <: Config] extends CompilerBase[T,C] {
  * Specialisation of `CompilerWithConfig` that uses the default configuration
  * type.
  */
-trait Compiler[T] extends CompilerWithConfig[T,Config] {
+trait Compiler[T] extends CompilerWithConfig[T, Config] {
 
-    def createConfig (args : Seq[String],
-                      out : Emitter = new OutputEmitter,
-                      err : Emitter = new ErrorEmitter) : Config =
-        new Config (args) {
+    def createConfig(
+        args : Seq[String],
+        out : Emitter = new OutputEmitter,
+        err : Emitter = new ErrorEmitter
+    ) : Config =
+        new Config(args) {
             lazy val output = out
             lazy val error = err
         }

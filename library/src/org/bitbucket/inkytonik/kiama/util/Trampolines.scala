@@ -44,58 +44,58 @@ object Trampolines {
         @tailrec
         final def runT : A =
             resume match {
-                case Left (k)  => k ().runT
-                case Right (a) => a
+                case Left(k)  => k().runT
+                case Right(a) => a
             }
 
         @tailrec
         final def resume : Either[() => Trampoline[A], A] =
             this match {
-                case Done(v)       => Right (v)
-                case More(k)       => Left (k)
-                case FlatMap (a,f) =>
+                case Done(v) => Right(v)
+                case More(k) => Left(k)
+                case FlatMap(a, f) =>
                     a match {
-                        case Done (v)     => f (v).resume
-                        case More (k)     => Left (() => k () flatMap f)
-                        case FlatMap(b,g) => b.flatMap ((x : Any) => g (x) flatMap f).resume
+                        case Done(v)       => f(v).resume
+                        case More(k)       => Left(() => k() flatMap f)
+                        case FlatMap(b, g) => b.flatMap((x : Any) => g(x) flatMap f).resume
                     }
             }
 
-        def flatMap[B] (f : A => Trampoline[B]) : Trampoline[B] =
+        def flatMap[B](f : A => Trampoline[B]) : Trampoline[B] =
             this match {
-                case FlatMap (a, g) =>
-                    FlatMap (a, (x : Any) => g (x) flatMap f)
+                case FlatMap(a, g) =>
+                    FlatMap(a, (x : Any) => g(x) flatMap f)
                 case x =>
-                    FlatMap (x, f)
+                    FlatMap(x, f)
             }
 
-        def map[B] (f : A => B) : Trampoline[B] =
-            flatMap (a => Done (f (a)))
+        def map[B](f : A => B) : Trampoline[B] =
+            flatMap(a => Done(f(a)))
 
     }
 
     /**
      * A computation whose value is `a`.
      */
-    case class Done[+A] (a : A) extends Trampoline[A]
+    case class Done[+A](a : A) extends Trampoline[A]
 
     /**
      * A computation whose value is obtained from the computation that is
      * returned by the continuation `k`.
      */
-    case class More[+A] (k : () => Trampoline[A]) extends Trampoline[A]
+    case class More[+A](k : () => Trampoline[A]) extends Trampoline[A]
 
     /**
      * A computation whose value is obtained by first runnning `ta` then
      * passing its value to the continutation `k` to get the computation
      * that provides the final value.
      */
-    case class FlatMap[A,+B] (ta : Trampoline[A], k : A => Trampoline[B]) extends Trampoline[B]
+    case class FlatMap[A, +B](ta : Trampoline[A], k : A => Trampoline[B]) extends Trampoline[B]
 
     /**
      * A computation that returns `a` when it is eventually run.
      */
-    def step[A] (a : => A) : Trampoline[A] =
-        More (() => Done (a))
+    def step[A](a : => A) : Trampoline[A] =
+        More(() => Done(a))
 
 }

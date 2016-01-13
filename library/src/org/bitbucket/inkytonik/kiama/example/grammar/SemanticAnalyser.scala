@@ -31,7 +31,7 @@ import org.bitbucket.inkytonik.kiama.attribution.Attribution
  * Reference Attributed Grammars - their Evaluation and Applications", by
  * Magnusson and Hedin from LDTA 2003.
  */
-class SemanticAnalyser (tree : GrammarTree) extends Attribution {
+class SemanticAnalyser(tree : GrammarTree) extends Attribution {
 
     import GrammarTree._
     import SymbolTable._
@@ -41,18 +41,18 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
     import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import scala.collection.immutable.Set
 
-    val decorators = new Decorators (tree)
+    val decorators = new Decorators(tree)
     import decorators._
 
     /**
      * The semantic error messages for a given tree.
      */
     lazy val errors : Messages =
-        collectMessages (tree) {
-            case n @ NonTermDef (name) if entity (n) == MultipleEntity () =>
-                message (n, s"$name is defined more than once")
-            case n @ NonTermUse (name) if entity (n) == UnknownEntity () =>
-                message (n, s"$name is not declared")
+        collectMessages(tree) {
+            case n @ NonTermDef(name) if entity(n) == MultipleEntity() =>
+                message(n, s"$name is defined more than once")
+            case n @ NonTermUse(name) if entity(n) == UnknownEntity() =>
+                message(n, s"$name is not declared")
         }
 
     /**
@@ -62,12 +62,12 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      */
     val envin : GrammarNode => Environment =
         attr {
-            case tree.prev (p) =>
-                defenv (p)
-            case tree.parent (p) =>
-                envin (p)
+            case tree.prev(p) =>
+                defenv(p)
+            case tree.parent(p) =>
+                envin(p)
             case _ =>
-                rootenv ()
+                rootenv()
         }
 
     /**
@@ -76,15 +76,15 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      */
     val defenv : GrammarNode => Environment =
         attr {
-            case r @ Rule (NonTermDef (s), _) =>
+            case r @ Rule(NonTermDef(s), _) =>
                 val entity =
-                    if (isDefinedInEnv (envin (r), s))
-                        MultipleEntity ()
+                    if (isDefinedInEnv(envin(r), s))
+                        MultipleEntity()
                     else
-                        NonTerminal (r)
-                define (envin (r), s, entity)
+                        NonTerminal(r)
+                define(envin(r), s, entity)
             case n =>
-                envin (n)
+                envin(n)
         }
 
     /**
@@ -94,8 +94,8 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      */
     val env =
         downErr[Environment] {
-            case tree.lastChild.pair (g : Grammar, c) =>
-                defenv (c)
+            case tree.lastChild.pair(g : Grammar, c) =>
+                defenv(c)
         }
 
     /**
@@ -105,7 +105,7 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
     val entity : NonTerm => Entity =
         attr {
             case nt =>
-                lookup (env (nt), nt.name, UnknownEntity ())
+                lookup(env(nt), nt.name, UnknownEntity())
         }
 
     // Auxiliary properties
@@ -135,9 +135,9 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
     val decl : NonTermUse => Option[Rule] =
         attr {
             case n =>
-                entity (n) match {
-                    case NonTerminal (r) => Some (r)
-                    case _               => None
+                entity(n) match {
+                    case NonTerminal(r) => Some(r)
+                    case _              => None
                 }
         }
 
@@ -147,15 +147,15 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      */
     val uses : NonTermDef => List[NonTermUse] =
         attr {
-            case n @ NonTermDef (name) =>
-                ntuses (grammar (n)).filter (_.name == name)
+            case n @ NonTermDef(name) =>
+                ntuses(grammar(n)).filter(_.name == name)
         }
 
     /**
      * Non-terminal applied occurrences in a tree.
      */
     val ntuses =
-        attr (collect[List,NonTermUse] {
+        attr(collect[List, NonTermUse] {
             case n : NonTermUse =>
                 n
         })
@@ -166,43 +166,43 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      * Nullability (i.e., can derive the empty sequence).
      */
     val nullable : GrammarNode => Boolean =
-        circular (false) {
+        circular(false) {
 
             // nullable of the start rule
-            case Grammar (r, _) =>
-                nullable (r)
+            case Grammar(r, _) =>
+                nullable(r)
 
             // nullable of the right-hand side of the rule
-            case Rule (_, rhs) =>
-                nullable (rhs)
+            case Rule(_, rhs) =>
+                nullable(rhs)
 
             // nullable of the component productions
-            case EmptyProdList () =>
+            case EmptyProdList() =>
                 false
-            case NonEmptyProdList (h, t) =>
-                nullable (h) || nullable (t)
+            case NonEmptyProdList(h, t) =>
+                nullable(h) || nullable(t)
 
             // nullable of the component symbol lists
-            case Prod (ss) =>
-                nullable (ss)
-            case EmptySymbolList () =>
+            case Prod(ss) =>
+                nullable(ss)
+            case EmptySymbolList() =>
                 true
-            case NonEmptySymbolList (h, t) =>
-                nullable (h) && nullable (t)
+            case NonEmptySymbolList(h, t) =>
+                nullable(h) && nullable(t)
 
             // terminals are not nullable
-            case TermSym (_) =>
+            case TermSym(_) =>
                 false
 
             // Non-terminal definitions are nullable if the rule in which they
             // are defined is nullable. Uses are nullable if their associated
             // declaration is nullable.
-            case NonTermSym (n) =>
-                nullable (n)
-            case tree.parent.pair (n : NonTermDef, p) =>
-                nullable (p)
+            case NonTermSym(n) =>
+                nullable(n)
+            case tree.parent.pair(n : NonTermDef, p) =>
+                nullable(p)
             case n : NonTermUse =>
-                decl (n).map (nullable).getOrElse (false)
+                decl(n).map(nullable).getOrElse(false)
 
         }
 
@@ -211,46 +211,46 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      * derived from a non-terminal.
      */
     val first : GrammarNode => Set[TermSym] =
-        circular (Set[TermSym] ()) {
+        circular(Set[TermSym]()) {
 
             // FIRST of the start rule
-            case Grammar (r, _) =>
-                first (r)
+            case Grammar(r, _) =>
+                first(r)
 
             // FIRST of the right-hand side of the rule
-            case Rule (_, rhs) =>
-                first (rhs)
+            case Rule(_, rhs) =>
+                first(rhs)
 
             // FIRST of the component productions
-            case EmptyProdList () =>
-                Set ()
-            case NonEmptyProdList (h, t) =>
-                first (h) union (first (t))
-            case Prod (ss) =>
-                first (ss)
+            case EmptyProdList() =>
+                Set()
+            case NonEmptyProdList(h, t) =>
+                first(h) union (first(t))
+            case Prod(ss) =>
+                first(ss)
 
             // empty symbol lists have no first symbols
-            case EmptySymbolList () =>
-                Set ()
+            case EmptySymbolList() =>
+                Set()
 
             // non-empty symbol lists get the first of their head, and if the
             // head is nullable the first of their tail as well
-            case NonEmptySymbolList (h, t) =>
-                if (nullable (h)) (first (h)) union (first (t)) else first (h)
+            case NonEmptySymbolList(h, t) =>
+                if (nullable(h)) (first(h)) union (first(t)) else first(h)
 
             // FIRST of a terminal is that terminal
             case n : TermSym =>
-                Set (n)
+                Set(n)
 
             // FIRST of a non-terminal definition is the first of the rule in
             // which it appears. first of a use is the first of their associated
             // declaration
-            case NonTermSym (n) =>
-                first (n)
-            case tree.parent.pair (n : NonTermDef, p) =>
-                first (p)
+            case NonTermSym(n) =>
+                first(n)
+            case tree.parent.pair(n : NonTermDef, p) =>
+                first(p)
             case n : NonTermUse =>
-                decl (n).map (first).getOrElse (Set ())
+                decl(n).map(first).getOrElse(Set())
 
         }
 
@@ -259,20 +259,20 @@ class SemanticAnalyser (tree : GrammarTree) extends Attribution {
      * a sentential form).
      */
     val follow : NonTerm => Set[TermSym] =
-        circular (Set[TermSym] ()) {
+        circular(Set[TermSym]()) {
 
             // FOLLOW of all uses of this defined non-terminal
             case n : NonTermDef =>
-                uses (n).flatMap (follow).toSet
+                uses(n).flatMap(follow).toSet
 
             // FIRST of the following symbol list, plus if the following symbol list
             // is NULLABLE, then also the FOLLOW of the LHS of the rule in which
             // this use appears
-            case tree.parent.pair (n : NonTermUse, tree.next (suffix)) =>
-                if (nullable (suffix))
-                    first (suffix).union (follow (rule (n).lhs))
+            case tree.parent.pair(n : NonTermUse, tree.next(suffix)) =>
+                if (nullable(suffix))
+                    first(suffix).union(follow(rule(n).lhs))
                 else
-                    first (suffix)
+                    first(suffix)
 
         }
 

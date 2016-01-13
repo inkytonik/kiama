@@ -37,12 +37,12 @@ object Imperative extends ParsingREPL[Stmt] {
 
     override val prompt = "imperative> "
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.stmt
 
-    def process (source : Source, s : Stmt, config : REPLConfig) {
-        config.output.emitln (s)
-        config.output.emitln (format (s))
+    def process(source : Source, s : Stmt, config : REPLConfig) {
+        config.output.emitln(s)
+        config.output.emitln(format(s))
     }
 
 }

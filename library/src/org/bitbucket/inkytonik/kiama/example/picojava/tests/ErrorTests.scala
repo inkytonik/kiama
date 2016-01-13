@@ -38,13 +38,13 @@ class ErrorTests extends ParseTests {
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree.PicoJavaTree
     import org.bitbucket.inkytonik.kiama.util.Message
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
 
     /**
      * Parse the illegal program and make sure that the errors and their
      * positions are as expected.
      */
-    test ("semantic errors are correctly reported") {
+    test("semantic errors are correctly reported") {
         val text = """
 {
   class A extends B{
@@ -64,17 +64,17 @@ class ErrorTests extends ParseTests {
   refC = refD;
 }
 """;
-        assertParseCheck (text, parsers.program) {
+        assertParseCheck(text, parsers.program) {
             ast =>
-                val tree = new PicoJavaTree (ast)
-                val analyser = new ErrorCheck (tree)
+                val tree = new PicoJavaTree(ast)
+                val analyser = new ErrorCheck(tree)
                 val messages = analyser.errors
-                assertResult (5, "errors") (messages.size)
-                assertResult ("Unknown identifier b") (messages.get (0))
-                assertResult ("Can not assign a variable of type boolean to a value of type A") (messages.get (1))
-                assertResult ("Cyclic inheritance chain for class A") (messages.get (2))
-                assertResult ("Cyclic inheritance chain for class B") (messages.get (3))
-                assertResult ("Can not assign a variable of type C to a value of type D") (messages.get (4))
+                assertResult(5, "errors")(messages.size)
+                assertResult("Unknown identifier b")(messages.get(0))
+                assertResult("Can not assign a variable of type boolean to a value of type A")(messages.get(1))
+                assertResult("Cyclic inheritance chain for class A")(messages.get(2))
+                assertResult("Cyclic inheritance chain for class B")(messages.get(3))
+                assertResult("Can not assign a variable of type C to a value of type D")(messages.get(4))
         }
     }
 

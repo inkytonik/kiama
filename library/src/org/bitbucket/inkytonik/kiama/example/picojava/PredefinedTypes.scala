@@ -48,9 +48,11 @@ trait PredefinedTypes {
      */
     val getPredefinedTypeList : Program => Vector[TypeDecl] =
         constant {
-            Vector (UnknownDecl ("$unknown"),
-                    PrimitiveDecl ("boolean"),
-                    PrimitiveDecl ("int"))
+            Vector(
+                UnknownDecl("$unknown"),
+                PrimitiveDecl("boolean"),
+                PrimitiveDecl("int")
+            )
         }
 
     /**
@@ -66,10 +68,10 @@ trait PredefinedTypes {
     val booleanType : PicoJavaNode => PrimitiveDecl =
         attr {
             case p : Program =>
-                localLookup ("boolean") (p).asInstanceOf[PrimitiveDecl]
+                localLookup("boolean")(p).asInstanceOf[PrimitiveDecl]
             // FIXME don't have NTA case, needed?
-            case tree.parent (p) =>
-                booleanType (p)
+            case tree.parent(p) =>
+                booleanType(p)
         }
 
 }

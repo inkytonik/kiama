@@ -27,7 +27,7 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Parsers for L4 language.
  */
-class SyntaxAnalyser (positions: Positions) extends L3.SyntaxAnalyser (positions) {
+class SyntaxAnalyser(positions : Positions) extends L3.SyntaxAnalyser(positions) {
 
     import base.source.Expression
     import L0.source.TypeDef
@@ -35,25 +35,25 @@ class SyntaxAnalyser (positions: Positions) extends L3.SyntaxAnalyser (positions
 
     override def typedefDef : Parser[TypeDef] =
         ("ARRAY" ~> expression) ~ ("OF" ~> typedef) ^^ ArrayTypeDef |
-        "RECORD" ~> fieldlists <~ "END" ^^ RecordTypeDef |
-        super.typedefDef
+            "RECORD" ~> fieldlists <~ "END" ^^ RecordTypeDef |
+            super.typedefDef
 
     lazy val fieldlists =
-        rep1sep (fieldlist, ";") ^^ (_.flatten)
+        rep1sep(fieldlist, ";") ^^ (_.flatten)
 
     lazy val fieldlist =
         (idnlist <~ ":") ~ typedef ^^ {
-            case is ~ t => Some (Fields (is, t))
+            case is ~ t => Some(Fields(is, t))
         } |
-        success (None)
+            success(None)
 
     lazy val idnlist =
-        rep1sep (ident, ",")
+        rep1sep(ident, ",")
 
     override def lhsDef : PackratParser[Expression] =
         lhs ~ ("." ~> fldidn) ^^ FieldExp |
-        lhs ~ ("[" ~> expression <~ "]") ^^ IndexExp |
-        super.lhsDef
+            lhs ~ ("[" ~> expression <~ "]") ^^ IndexExp |
+            super.lhsDef
 
     lazy val fldidn =
         ident ^^ FieldIdn

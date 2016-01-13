@@ -31,10 +31,10 @@ class TIL1_1Tests extends ParseTests {
     val parsers = til1_1.parsers
     import parsers.program
 
-    val n = Id ("n")
-    val f = Id ("f")
+    val n = Id("n")
+    val f = Id("f")
 
-    test ("parse factorial program") {
+    test("parse factorial program") {
         val input = """
 var n;
 read n;
@@ -49,28 +49,31 @@ write n;
 write " is ";
 write fact;
 write "\n";"""
-        val x = Id ("x")
-        val fact = Id ("fact")
+        val x = Id("x")
+        val fact = Id("fact")
         val tree =
-            Program (
-                List (
-                    Decl (n),
-                    Read (n),
-                    Decl (x),
-                    Decl (fact),
-                    Assign (fact, Num (1)),
-                    For (x, Num (1), Var (n),
-                        List (
-                            Assign (fact, Mul (Var (x), Var (fact))))),
-                    Write (Str ("\"factorial of \"")),
-                    Write (Var (n)),
-                    Write (Str ("\" is \"")),
-                    Write (Var (fact)),
-                    Write (Str ("\"\\n\""))))
-        assertParseOk (input, program, tree)
+            Program(
+                List(
+                    Decl(n),
+                    Read(n),
+                    Decl(x),
+                    Decl(fact),
+                    Assign(fact, Num(1)),
+                    For(x, Num(1), Var(n),
+                        List(
+                            Assign(fact, Mul(Var(x), Var(fact)))
+                        )),
+                    Write(Str("\"factorial of \"")),
+                    Write(Var(n)),
+                    Write(Str("\" is \"")),
+                    Write(Var(fact)),
+                    Write(Str("\"\\n\""))
+                )
+            )
+        assertParseOk(input, program, tree)
     }
 
-    test ("parse factors program") {
+    test("parse factors program") {
         val input = """
 var n;
 write "Input n please";
@@ -86,25 +89,33 @@ while n != 1 do
     f := f + 1;
 end"""
         val tree =
-            Program (
-                List (
-                    Decl (n),
-                    Write (Str ("\"Input n please\"")),
-                    Read (n),
-                    Write (Str ("\"The factors of n are\"")),
-                    Decl (f),
-                    Assign (f, Num (2)),
-                    While (Ne (Var (n), Num (1)),
-                        List (
-                            While (Eq (Mul (Div (Var (n), Var (f)), Var (f)), Var (n)),
-                                List (
-                                    Write (Var (f)),
-                                    Assign (n, Div (Var (n), Var (f))))),
-                            Assign (f, Add (Var (f), Num (1)))))))
-        assertParseOk (input, program, tree)
+            Program(
+                List(
+                    Decl(n),
+                    Write(Str("\"Input n please\"")),
+                    Read(n),
+                    Write(Str("\"The factors of n are\"")),
+                    Decl(f),
+                    Assign(f, Num(2)),
+                    While(
+                        Ne(Var(n), Num(1)),
+                        List(
+                            While(
+                                Eq(Mul(Div(Var(n), Var(f)), Var(f)), Var(n)),
+                                List(
+                                    Write(Var(f)),
+                                    Assign(n, Div(Var(n), Var(f)))
+                                )
+                            ),
+                            Assign(f, Add(Var(f), Num(1)))
+                        )
+                    )
+                )
+            )
+        assertParseOk(input, program, tree)
     }
 
-    test ("parse multiples program") {
+    test("parse multiples program") {
         val input = """
 for i := 1 to 9 do
     for j := 1 to 10 do
@@ -112,16 +123,19 @@ for i := 1 to 9 do
     end
 end
 """
-        val i = Id ("i")
-        val j = Id ("j")
+        val i = Id("i")
+        val j = Id("j")
         val tree =
-            Program (
-                List (
-                    For (i, Num (1), Num (9),
-                        List (
-                            For (j, Num (1), Num (10),
-                                List (Write (Mul (Var (i), Var (j)))))))))
-        assertParseOk (input, program, tree)
+            Program(
+                List(
+                    For(i, Num(1), Num(9),
+                        List(
+                            For(j, Num(1), Num(10),
+                                List(Write(Mul(Var(i), Var(j)))))
+                        ))
+                )
+            )
+        assertParseOk(input, program, tree)
     }
 
 }

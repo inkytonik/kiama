@@ -33,78 +33,78 @@ trait Memoiser {
      * Common interface for encapsulation of memoisation for a single memoised
      * entity backed by a configurable cache.
      */
-    trait MemoisedBase[T,U] {
+    trait MemoisedBase[T, U] {
 
         /**
          * The memo table.
          */
-        def memo : Cache[AnyRef,AnyRef]
+        def memo : Cache[AnyRef, AnyRef]
 
         /**
          * Duplicate an entry if possible. If `t1` has a memoised value associated
          * with it, set the value associated with `t2` to the same value. If there
          * is no value associated with `t1`, do nothing.
          */
-        def dup (t1 : T, t2 : T) {
-            val u = memo.getIfPresent (t1).asInstanceOf[U]
+        def dup(t1 : T, t2 : T) {
+            val u = memo.getIfPresent(t1).asInstanceOf[U]
             if (u != null)
-                put (t2, u)
+                put(t2, u)
         }
 
         /**
          * Return the value stored at key `t` as an option.
          */
-        def get (t : T) : Option[U] =
-            Option (memo.getIfPresent (t).asInstanceOf[U])
+        def get(t : T) : Option[U] =
+            Option(memo.getIfPresent(t).asInstanceOf[U])
 
         /**
          * Return the value stored at key `t` if there is one, otherwise
          * return `u`. `u` is only evaluated if necessary.
          */
-        def getWithDefault (t : T, u : => U) : U =
-            get (t).getOrElse (u)
+        def getWithDefault(t : T, u : => U) : U =
+            get(t).getOrElse(u)
 
         /**
          * Has the value at `t` already been computed or not? By default, does
          * the memo table contain a value for `t`?
          */
-        def hasBeenComputedAt (t : T) : Boolean =
-            get (t) != None
+        def hasBeenComputedAt(t : T) : Boolean =
+            get(t) != None
 
         /**
          * Store the value `u` under the key `t`.
          */
-        def put (t : T, u : U) {
-            memo.put (t.asInstanceOf[AnyRef], u.asInstanceOf[AnyRef])
+        def put(t : T, u : U) {
+            memo.put(t.asInstanceOf[AnyRef], u.asInstanceOf[AnyRef])
         }
 
         /**
          * Store the value `u` under the key `t` if `t` does not already have an
          * associated value. `u` is only evaluated if necessary.
          */
-        def putIfNotPresent (t : T, u : => U) {
-            if (!hasBeenComputedAt (t))
-                put (t, u)
+        def putIfNotPresent(t : T, u : => U) {
+            if (!hasBeenComputedAt(t))
+                put(t, u)
         }
 
         /**
          * Immediately reset the memo table.
          */
-        def reset () {
-            memo.invalidateAll ()
+        def reset() {
+            memo.invalidateAll()
         }
 
         /**
          * Immediately reset the memo table at `t`.
          */
-        def resetAt (t : T) {
-            memo.invalidate (t)
+        def resetAt(t : T) {
+            memo.invalidate(t)
         }
 
         /**
          * The number of entries in the memo table.
          */
-        def size () : Long =
+        def size() : Long =
             memo.size
 
     }
@@ -112,10 +112,10 @@ trait Memoiser {
     /**
      * A memoised entity that uses equality to compare keys.
      */
-    trait Memoised[T,U] extends MemoisedBase[T,U] {
+    trait Memoised[T, U] extends MemoisedBase[T, U] {
 
-        val memo : Cache[AnyRef,AnyRef] =
-            CacheBuilder.newBuilder.build ()
+        val memo : Cache[AnyRef, AnyRef] =
+            CacheBuilder.newBuilder.build()
 
     }
 
@@ -123,10 +123,10 @@ trait Memoiser {
      * A memoised entity that weakly holds onto its keys and uses identity
      * to compare them.
      */
-    trait IdMemoised[T,U] extends MemoisedBase[T,U] {
+    trait IdMemoised[T, U] extends MemoisedBase[T, U] {
 
-        val memo : Cache[AnyRef,AnyRef] =
-            CacheBuilder.newBuilder.weakKeys.build ()
+        val memo : Cache[AnyRef, AnyRef] =
+            CacheBuilder.newBuilder.weakKeys.build()
 
     }
 

@@ -32,22 +32,22 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
     import org.bitbucket.inkytonik.kiama.output.PrettyExpression
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
 
-    def format (m : ModuleDecl) : Document =
-        pretty (toDoc (m))
+    def format(m : ModuleDecl) : Document =
+        pretty(toDoc(m))
 
-    def declsection (d : Declaration) : String =
+    def declsection(d : Declaration) : String =
         ""
 
-    def toDoc (n : SourceNode) : Doc =
+    def toDoc(n : SourceNode) : Doc =
         n match {
-            case ModuleDecl (IdnDef (i1), Block (Vector (), Vector ()), IdnUse (i2)) =>
+            case ModuleDecl(IdnDef(i1), Block(Vector(), Vector()), IdnUse(i2)) =>
                 "MODULE" <+> i1 <> semi <@> "END" <+> i2 <> dot
 
-            case ModuleDecl (IdnDef (i1), b, IdnUse (i2)) =>
-                "MODULE" <+> i1 <> semi <@> blockToDoc (b, true) <+> i2 <> dot
+            case ModuleDecl(IdnDef(i1), b, IdnUse(i2)) =>
+                "MODULE" <+> i1 <> semi <@> blockToDoc(b, true) <+> i2 <> dot
 
             case b : Block =>
-                blockToDoc (b)
+                blockToDoc(b)
 
             case _ =>
                 empty
@@ -58,22 +58,22 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
      * No declarations can be present at this level.  Second parameter says
      * whether the BEGIN-END should be included if there are no declarations.
      */
-    def blockToDoc (b : Block, beginend : Boolean = false) : Doc =
+    def blockToDoc(b : Block, beginend : Boolean = false) : Doc =
         b.stmts match {
-            case Vector () =>
+            case Vector() =>
                 "END"
-            case ss  =>
+            case ss =>
                 if (beginend)
-                    "BEGIN" <> semisep (ss) <@> "END"
+                    "BEGIN" <> semisep(ss) <@> "END"
                 else
-                    vsep (ss map toDoc, semi)
+                    vsep(ss map toDoc, semi)
         }
 
     /**
      * Pretty-print a nested list of nodes separated by sep (default: semi
      * colon) and line breaks.
      */
-    def semisep (l : Vector[SourceNode], sep : Doc = semi) : Doc =
-        nest (lsep (l map toDoc, sep))
+    def semisep(l : Vector[SourceNode], sep : Doc = semi) : Doc =
+        nest(lsep(l map toDoc, sep))
 
 }

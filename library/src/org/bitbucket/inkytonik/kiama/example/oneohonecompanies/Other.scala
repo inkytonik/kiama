@@ -24,7 +24,7 @@ package example.oneohonecompanies
 import CompanyTree.CompanyTree
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
 
-class Other (tree : CompanyTree) extends Attribution {
+class Other(tree : CompanyTree) extends Attribution {
 
     import CompanyTree._
 
@@ -33,10 +33,10 @@ class Other (tree : CompanyTree) extends Attribution {
      */
     lazy val numemp : CompanyNode => Int =
         attr {
-            case Company (ds)     => (ds map numemp).sum
-            case Dept (_, _, sus) => 1 + (sus map numemp).sum
-            case DU (d)           => numemp (d)
-            case _                => 1
+            case Company(ds)     => (ds map numemp).sum
+            case Dept(_, _, sus) => 1 + (sus map numemp).sum
+            case DU(d)           => numemp(d)
+            case _               => 1
         }
 
     /**
@@ -44,11 +44,11 @@ class Other (tree : CompanyTree) extends Attribution {
      */
     lazy val salary : CompanyNode => Double =
         attr {
-            case Company (ds)       => (ds map salary).sum
-            case Dept (_, m, sus)   => m.s + (sus map salary).sum
-            case PU (e)             => salary (e)
-            case DU (d)             => salary (d)
-            case Employee (_, _, s) => s
+            case Company(ds)       => (ds map salary).sum
+            case Dept(_, m, sus)   => m.s + (sus map salary).sum
+            case PU(e)             => salary(e)
+            case DU(d)             => salary(d)
+            case Employee(_, _, s) => s
         }
 
     /**
@@ -57,15 +57,15 @@ class Other (tree : CompanyTree) extends Attribution {
     lazy val averagesalary : CompanyNode => Double =
         attr {
             case n @ (_ : Company | _ : Dept) =>
-                salary (n) / numemp (n)
-            case tree.parent (p) =>
-                averagesalary (p)
+                salary(n) / numemp(n)
+            case tree.parent(p) =>
+                averagesalary(p)
         }
 
     lazy val aboveaverage : Employee => Boolean =
         attr {
-            case e @ Employee (_, _, s) =>
-                s > averagesalary (e)
+            case e @ Employee(_, _, s) =>
+                s > averagesalary(e)
         }
 
 }

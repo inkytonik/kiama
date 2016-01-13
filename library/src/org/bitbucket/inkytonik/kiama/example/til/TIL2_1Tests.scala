@@ -32,64 +32,75 @@ class TIL2_1Tests extends TransformerTests {
     import parsers.program
     import til2_1.transform
 
-    val x = Id ("x")
-    val y = Id ("y")
-    val n = Id ("n")
+    val x = Id("x")
+    val y = Id("y")
+    val n = Id("n")
 
-    test ("transform a single for loop") {
+    test("transform a single for loop") {
         val input = "for x := 1 to n do write x; end"
         val tree =
-            Program (List (
-                Decl (x),
-                For (x, Num (1), Var (n), List (
-                    Write (Var (x))))))
-        assertTransformOk (input, program, transform, tree)
+            Program(List(
+                Decl(x),
+                For(x, Num(1), Var(n), List(
+                    Write(Var(x))
+                ))
+            ))
+        assertTransformOk(input, program, transform, tree)
     }
 
-    test ("transform a for loop that occurs first in a sequence") {
+    test("transform a for loop that occurs first in a sequence") {
         val input = "for x := 1 to n do write x; end write x;"
         val tree =
-            Program (List (
-                Decl (x),
-                For (x, Num (1), Var (n), List (
-                    Write (Var (x)))),
-                Write (Var (x))))
-        assertTransformOk (input, program, transform, tree)
+            Program(List(
+                Decl(x),
+                For(x, Num(1), Var(n), List(
+                    Write(Var(x))
+                )),
+                Write(Var(x))
+            ))
+        assertTransformOk(input, program, transform, tree)
     }
 
-    test ("transform a for loop that occurs last in a sequence") {
+    test("transform a for loop that occurs last in a sequence") {
         val input = "write x; for x := 1 to n do write x; end"
         val tree =
-            Program (List (
-                Write (Var (x)),
-                Decl (x),
-                For (x, Num (1), Var (n), List (
-                    Write (Var (x))))))
-        assertTransformOk (input, program, transform, tree)
+            Program(List(
+                Write(Var(x)),
+                Decl(x),
+                For(x, Num(1), Var(n), List(
+                    Write(Var(x))
+                ))
+            ))
+        assertTransformOk(input, program, transform, tree)
     }
 
-    test ("transform a for loop that occurs in the middle of a sequence") {
+    test("transform a for loop that occurs in the middle of a sequence") {
         val input = "write x; for x := 1 to n do write x; end write x;"
         val tree =
-            Program (List (
-                Write (Var (x)),
-                Decl (x),
-                For (x, Num (1), Var (n), List (
-                    Write (Var (x)))),
-                Write (Var (x))))
-        assertTransformOk (input, program, transform, tree)
+            Program(List(
+                Write(Var(x)),
+                Decl(x),
+                For(x, Num(1), Var(n), List(
+                    Write(Var(x))
+                )),
+                Write(Var(x))
+            ))
+        assertTransformOk(input, program, transform, tree)
     }
 
-    test ("transform nested for loops") {
+    test("transform nested for loops") {
         val input = "for x := 1 to n do for y := 0 to x do write y; end end"
         val tree =
-            Program (List (
-                Decl (x),
-                For (x, Num (1), Var (n), List (
-                     Decl (y),
-                     For (y, Num (0), Var (x), List (
-                         Write (Var (y))))))))
-        assertTransformOk (input, program, transform, tree)
+            Program(List(
+                Decl(x),
+                For(x, Num(1), Var(n), List(
+                    Decl(y),
+                    For(y, Num(0), Var(x), List(
+                        Write(Var(y))
+                    ))
+                ))
+            ))
+        assertTransformOk(input, program, transform, tree)
     }
 
 }

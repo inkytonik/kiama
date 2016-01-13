@@ -44,8 +44,8 @@ trait PositionedRewriter extends PositionStore with CallbackRewriter {
      * of the new term to be those of the old term. Always return the new
      * term.
      */
-    def rewriting[T] (oldTerm : T, newTerm : T) : T = {
-        positions.dupPos (oldTerm, newTerm)
+    def rewriting[T](oldTerm : T, newTerm : T) : T = {
+        positions.dupPos(oldTerm, newTerm)
         newTerm
     }
 

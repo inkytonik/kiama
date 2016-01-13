@@ -22,15 +22,22 @@ package org.bitbucket.inkytonik.kiama
 package example.oberon0
 package L3.source
 
-import base.source.{Block, Declaration, Expression, IdnDef, IdnUse, SourceNode,
-    Statement}
+import base.source.{
+    Block,
+    Declaration,
+    Expression,
+    IdnDef,
+    IdnUse,
+    SourceNode,
+    Statement
+}
 import L0.source.TypeDef
 
 /**
  * Procedure declarations.
  */
-case class ProcDecl (idndef : IdnDef, params : Vector[FPSection], body : Block,
-                     idnuse : IdnUse) extends Declaration
+case class ProcDecl(idndef : IdnDef, params : Vector[FPSection], body : Block,
+    idnuse : IdnUse) extends Declaration
 
 /**
  * Non-terminal type for parameter passing modes.
@@ -40,19 +47,19 @@ sealed abstract class Mode extends SourceNode
 /**
  * Pass by variable (reference) mode.
  */
-case class VarMode () extends Mode
+case class VarMode() extends Mode
 
 /**
  * Pass by value mode.
  */
-case class ValMode () extends Mode
+case class ValMode() extends Mode
 
 /**
  * Formal parameter sections.
  */
-case class FPSection (mode : Mode, idndefs : Vector[IdnDef], tipe : TypeDef) extends SourceNode
+case class FPSection(mode : Mode, idndefs : Vector[IdnDef], tipe : TypeDef) extends SourceNode
 
 /**
  * Call statements.
  */
-case class Call (idnuse : IdnUse, params : Vector[Expression]) extends Statement
+case class Call(idnuse : IdnUse, params : Vector[Expression]) extends Statement

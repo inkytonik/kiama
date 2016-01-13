@@ -30,7 +30,7 @@ class LambdaTests extends ParseTests {
 
     import LambdaTree._
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     import parsers.{exp, query}
 
     /**
@@ -38,12 +38,13 @@ class LambdaTests extends ParseTests {
      * and compare the outcome to `expected`. `T` is the result type of
      * the query.
      */
-    def assertQuery[T] (str : String, expected : T) {
-        assertParseCheck (str, query) {
-            exp => {
-                val evaluator = new Evaluator
-                assertResult (expected) (evaluator.execute (exp))
-            }
+    def assertQuery[T](str : String, expected : T) {
+        assertParseCheck(str, query) {
+            exp =>
+                {
+                    val evaluator = new Evaluator
+                    assertResult(expected)(evaluator.execute(exp))
+                }
         }
     }
 
@@ -51,12 +52,13 @@ class LambdaTests extends ParseTests {
      * As for assertQuery except that the expected result is the `toString`
      * of the query result.
      */
-    def assertQueryPrint[T] (str : String, expected : String) {
-        assertParseCheck (str, query) {
-            exp => {
-                val evaluator = new Evaluator
-                assertResult (expected) (evaluator.execute (exp).toString)
-            }
+    def assertQueryPrint[T](str : String, expected : String) {
+        assertParseCheck(str, query) {
+            exp =>
+                {
+                    val evaluator = new Evaluator
+                    assertResult(expected)(evaluator.execute(exp).toString)
+                }
         }
     }
 
@@ -65,115 +67,115 @@ class LambdaTests extends ParseTests {
      * which is first parsed as an expression to obtain the expected result
      * value.
      */
-    def assertQueryParse (str : String, expectedStr : String) {
-        assertParseCheck (expectedStr, exp) {
+    def assertQueryParse(str : String, expectedStr : String) {
+        assertParseCheck(expectedStr, exp) {
             expected =>
-                assertQuery (str, expected)
+                assertQuery(str, expected)
         }
     }
 
     // Test construction short-hands
 
-    def mkvaluetest[T] (s : String, r : T) {
-        test (s"$s is $r") {
-            assertQuery (s, r)
+    def mkvaluetest[T](s : String, r : T) {
+        test(s"$s is $r") {
+            assertQuery(s, r)
         }
     }
 
-    def mkprinttest (s : String, r : String) {
-        test (s"$s is $r") {
-            assertQueryPrint (s, r)
+    def mkprinttest(s : String, r : String) {
+        test(s"$s is $r") {
+            assertQueryPrint(s, r)
         }
     }
 
-    def mkparsetest (s : String, r : String) {
-        test (s"$s is $r") {
-            assertQueryParse (s, r)
+    def mkparsetest(s : String, r : String) {
+        test(s"$s is $r") {
+            assertQueryParse(s, r)
         }
     }
 
     // Freshness
 
-    mkvaluetest ("e # 1", true)
-    mkvaluetest ("e # e", false)
-    mkvaluetest ("e # f", true)
-    mkvaluetest ("e # (\\e . e)", true)
-    mkvaluetest ("e # (\\f . f)", true)
-    mkvaluetest ("e # (\\f . e)", false)
-    mkvaluetest ("e # (\\f . f) (\\g . g)", true)
-    mkvaluetest ("e # (\\f . f) (\\e . e)", true)
-    mkvaluetest ("e # (\\f . f) (\\g . e)", false)
+    mkvaluetest("e # 1", true)
+    mkvaluetest("e # e", false)
+    mkvaluetest("e # f", true)
+    mkvaluetest("e # (\\e . e)", true)
+    mkvaluetest("e # (\\f . f)", true)
+    mkvaluetest("e # (\\f . e)", false)
+    mkvaluetest("e # (\\f . f) (\\g . g)", true)
+    mkvaluetest("e # (\\f . f) (\\e . e)", true)
+    mkvaluetest("e # (\\f . f) (\\g . e)", false)
 
     // Swapping
 
-    mkparsetest ("(a <-> a) a", "a")
-    mkparsetest ("(a <-> a) b", "b")
-    mkparsetest ("(a <-> b) a", "b")
-    mkparsetest ("(a <-> b) b", "a")
-    mkparsetest ("(a <-> b) c", "c")
-    mkparsetest ("(a <-> b) a b", "b a")
-    mkparsetest ("(a <-> b) a c", "b c")
-    mkparsetest ("(a <-> b) c b", "c a")
-    mkparsetest ("(a <-> b) \\x . x", "\\x . x")
-    mkparsetest ("(a <-> b) \\a . a", "\\b . b")
-    mkparsetest ("(a <-> b) \\b . b", "\\a . a")
-    mkparsetest ("(a <-> b) (\\b . b a) (\\x . x)", "(\\a . a b) (\\x . x)")
-    mkparsetest ("(a <-> b) (\\a . b) (\\b . a)", "(\\b . a) (\\a . b)")
+    mkparsetest("(a <-> a) a", "a")
+    mkparsetest("(a <-> a) b", "b")
+    mkparsetest("(a <-> b) a", "b")
+    mkparsetest("(a <-> b) b", "a")
+    mkparsetest("(a <-> b) c", "c")
+    mkparsetest("(a <-> b) a b", "b a")
+    mkparsetest("(a <-> b) a c", "b c")
+    mkparsetest("(a <-> b) c b", "c a")
+    mkparsetest("(a <-> b) \\x . x", "\\x . x")
+    mkparsetest("(a <-> b) \\a . a", "\\b . b")
+    mkparsetest("(a <-> b) \\b . b", "\\a . a")
+    mkparsetest("(a <-> b) (\\b . b a) (\\x . x)", "(\\a . a b) (\\x . x)")
+    mkparsetest("(a <-> b) (\\a . b) (\\b . a)", "(\\b . a) (\\a . b)")
 
     // Alpha equivalence
 
-    mkvaluetest ("a === a", true)
-    mkvaluetest ("a === b", false)
-    mkvaluetest ("a === \\x . x", false)
-    mkvaluetest ("a === b c", false)
-    mkvaluetest ("\\a . a === \\b . b", true)
-    mkvaluetest ("\\a . a === \\b . a", false)
-    mkvaluetest ("\\a . a === a b", false)
-    mkvaluetest ("\\a . \\a . a === \\b . \\a . b", false)
-    mkvaluetest ("\\a . \\a . a === \\a . \\a . b", false)
-    mkvaluetest ("\\a . \\a . a === \\b . \\a . a", true)
-    mkvaluetest ("(\\x . x) (\\y. y) === (\\a . a) (\\b . b)", true)
-    mkvaluetest ("(\\x . x) (\\y. y) === (\\x . x) (\\b . b)", true)
-    mkvaluetest ("(\\x . x) (\\y. y) === (\\x . y) (\\y . x)", false)
+    mkvaluetest("a === a", true)
+    mkvaluetest("a === b", false)
+    mkvaluetest("a === \\x . x", false)
+    mkvaluetest("a === b c", false)
+    mkvaluetest("\\a . a === \\b . b", true)
+    mkvaluetest("\\a . a === \\b . a", false)
+    mkvaluetest("\\a . a === a b", false)
+    mkvaluetest("\\a . \\a . a === \\b . \\a . b", false)
+    mkvaluetest("\\a . \\a . a === \\a . \\a . b", false)
+    mkvaluetest("\\a . \\a . a === \\b . \\a . a", true)
+    mkvaluetest("(\\x . x) (\\y. y) === (\\a . a) (\\b . b)", true)
+    mkvaluetest("(\\x . x) (\\y. y) === (\\x . x) (\\b . b)", true)
+    mkvaluetest("(\\x . x) (\\y. y) === (\\x . y) (\\y . x)", false)
 
     // Substitution
 
-    mkparsetest ("[a -> 1] a", "1")
-    mkparsetest ("[a -> 1] b", "b")
-    mkparsetest ("[a -> 1] \\x . x", "\\x0 . x0")
-    mkparsetest ("[a -> 1] \\x . a", "\\x0 . 1")
-    mkparsetest ("[a -> b] \\a . a", "\\a0 . a0")
-    mkparsetest ("[a -> b] \\b . a", "\\b0 . b")
-    mkparsetest ("[a -> b] \\b . b a", "\\b0 . b0 b")
-    mkparsetest ("[a -> b] \\b . \\a . a", "\\b0 . \\a1 . a1")
+    mkparsetest("[a -> 1] a", "1")
+    mkparsetest("[a -> 1] b", "b")
+    mkparsetest("[a -> 1] \\x . x", "\\x0 . x0")
+    mkparsetest("[a -> 1] \\x . a", "\\x0 . 1")
+    mkparsetest("[a -> b] \\a . a", "\\a0 . a0")
+    mkparsetest("[a -> b] \\b . a", "\\b0 . b")
+    mkparsetest("[a -> b] \\b . b a", "\\b0 . b0 b")
+    mkparsetest("[a -> b] \\b . \\a . a", "\\b0 . \\a1 . a1")
 
     // Free variables
 
-    mkprinttest ("fv 1", "Set()")
-    mkprinttest ("fv a", "Set(a)")
-    mkprinttest ("fv a b", "Set(a, b)")
-    mkprinttest ("fv \\a . a", "Set()")
-    mkprinttest ("fv \\a . b", "Set(b)")
-    mkprinttest ("fv \\a . a b", "Set(b)")
-    mkprinttest ("fv \\a . b a", "Set(b)")
-    mkprinttest ("fv \\a . b c", "Set(b, c)")
-    mkprinttest ("fv \\a . \\b . a", "Set()")
-    mkprinttest ("fv \\a . \\b . b", "Set()")
-    mkprinttest ("fv \\a . \\b . c", "Set(c)")
+    mkprinttest("fv 1", "Set()")
+    mkprinttest("fv a", "Set(a)")
+    mkprinttest("fv a b", "Set(a, b)")
+    mkprinttest("fv \\a . a", "Set()")
+    mkprinttest("fv \\a . b", "Set(b)")
+    mkprinttest("fv \\a . a b", "Set(b)")
+    mkprinttest("fv \\a . b a", "Set(b)")
+    mkprinttest("fv \\a . b c", "Set(b, c)")
+    mkprinttest("fv \\a . \\b . a", "Set()")
+    mkprinttest("fv \\a . \\b . b", "Set()")
+    mkprinttest("fv \\a . \\b . c", "Set(c)")
 
     // Evaluation
 
-    mkparsetest ("1", "1")
-    mkparsetest ("a", "a")
-    mkparsetest ("a b", "a b")
-    mkparsetest ("a (\\b . b)", "a (\\b . b)")
-    mkparsetest ("a (\\b . b) 1", "(a (\\b . b)) 1")
-    mkparsetest ("a ((\\b . b) 1)", "a ((\\b . b) 1)")
-    mkparsetest ("(\\a . a) 1", "1")
-    mkparsetest ("(\\a . a) a", "a")
-    mkparsetest ("(\\a . a) b", "b")
-    mkparsetest ("(\\a . a) (\\b . b) a", "a")
-    mkparsetest ("(\\a . a c) (\\b . b)", "c")
-    mkparsetest ("(\\a . \\b . a b) b", "\\b0 . b b0")
+    mkparsetest("1", "1")
+    mkparsetest("a", "a")
+    mkparsetest("a b", "a b")
+    mkparsetest("a (\\b . b)", "a (\\b . b)")
+    mkparsetest("a (\\b . b) 1", "(a (\\b . b)) 1")
+    mkparsetest("a ((\\b . b) 1)", "a ((\\b . b) 1)")
+    mkparsetest("(\\a . a) 1", "1")
+    mkparsetest("(\\a . a) a", "a")
+    mkparsetest("(\\a . a) b", "b")
+    mkparsetest("(\\a . a) (\\b . b) a", "a")
+    mkparsetest("(\\a . a c) (\\b . b)", "c")
+    mkparsetest("(\\a . \\b . a b) b", "\\b0 . b b0")
 
 }

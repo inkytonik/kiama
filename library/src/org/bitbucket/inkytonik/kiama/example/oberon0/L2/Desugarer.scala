@@ -27,26 +27,50 @@ package L2
  */
 trait Desugarer extends L0.Desugarer {
 
-    import base.source.{Block, Expression, IdnDef, IdnUse, ModuleDecl,
-        SourceNode, Statement}
+    import base.source.{
+        Block,
+        Expression,
+        IdnDef,
+        IdnUse,
+        ModuleDecl,
+        SourceNode,
+        Statement
+    }
     import base.source.SourceTree.SourceTree
-    import L0.source.{AddExp, AndExp, Assignment, EqExp, GeExp, IdnExp,
-        IntExp, LeExp, NamedType, OrExp, VarDecl}
+    import L0.source.{
+        AddExp,
+        AndExp,
+        Assignment,
+        EqExp,
+        GeExp,
+        IdnExp,
+        IntExp,
+        LeExp,
+        NamedType,
+        OrExp,
+        VarDecl
+    }
     import L1.source.{IfStatement, WhileStatement}
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{everywhere, rewriteTree, rule}
-    import source.{Case, CaseStatement, Condition, ForStatement,
-        MinMaxCond, ValCond}
+    import source.{
+        Case,
+        CaseStatement,
+        Condition,
+        ForStatement,
+        MinMaxCond,
+        ValCond
+    }
 
     /**
      * Desugar FOR and CASE statements into simpler constructs.
      * Then call the next level of transformation.
      */
-    override def transform (tree : SourceTree) : SourceTree = {
+    override def transform(tree : SourceTree) : SourceTree = {
 
         /*
          * An analyser for the input tree.
          */
-        val analyser = buildAnalyser (tree)
+        val analyser = buildAnalyser(tree)
         import analyser.value
 
         /*
@@ -70,28 +94,33 @@ trait Desugarer extends L0.Desugarer {
          */
         lazy val desugarFor =
             rule[Statement] {
-                case ForStatement (idnexp, lower, upper, optby, Block (Vector (), stmts)) =>
+                case ForStatement(idnexp, lower, upper, optby, Block(Vector(), stmts)) =>
                     val limvarname = "_limit"
-                    val limexp = IdnExp (IdnUse (limvarname))
-                    val incval = optby.map (value).getOrElse (1)
-                    val rincval = IntExp (incval)
+                    val limexp = IdnExp(IdnUse(limvarname))
+                    val incval = optby.map(value).getOrElse(1)
+                    val rincval = IntExp(incval)
                     val cond = if (incval >= 0)
-                                   LeExp (idnexp, limexp)
-                               else
-                                   GeExp (idnexp, limexp)
-                    Block (
-                        Vector (
-                            VarDecl (Vector (IdnDef (limvarname)),
-                                             NamedType (IdnUse ("INTEGER")))
+                        LeExp(idnexp, limexp)
+                    else
+                        GeExp(idnexp, limexp)
+                    Block(
+                        Vector(
+                            VarDecl(
+                                Vector(IdnDef(limvarname)),
+                                NamedType(IdnUse("INTEGER"))
+                            )
                         ),
-                        Vector (
-                            Assignment (idnexp, lower),
-                            Assignment (limexp, upper),
-                            WhileStatement (cond,
-                                Block (
-                                    Vector (),
+                        Vector(
+                            Assignment(idnexp, lower),
+                            Assignment(limexp, upper),
+                            WhileStatement(
+                                cond,
+                                Block(
+                                    Vector(),
                                     stmts :+
-                                    Assignment (idnexp, AddExp (idnexp, rincval))))
+                                        Assignment(idnexp, AddExp(idnexp, rincval))
+                                )
+                            )
                         )
                     )
             }
@@ -116,17 +145,19 @@ trait Desugarer extends L0.Desugarer {
          */
         lazy val desugarCase =
             rule[Statement] {
-                case CaseStatement (exp, cases, optelse) =>
+                case CaseStatement(exp, cases, optelse) =>
                     val casevarname = "_caseval"
-                    val caseexp = IdnExp (IdnUse (casevarname))
-                    Block (
-                        Vector (
-                            VarDecl (Vector (IdnDef (casevarname)),
-                                             NamedType (IdnUse ("INTEGER")))
+                    val caseexp = IdnExp(IdnUse(casevarname))
+                    Block(
+                        Vector(
+                            VarDecl(
+                                Vector(IdnDef(casevarname)),
+                                NamedType(IdnUse("INTEGER"))
+                            )
                         ),
-                        Vector (
-                            Assignment (caseexp, exp),
-                            casesToIf (caseexp, cases, optelse)
+                        Vector(
+                            Assignment(caseexp, exp),
+                            casesToIf(caseexp, cases, optelse)
                         )
                     )
             }
@@ -149,27 +180,27 @@ trait Desugarer extends L0.Desugarer {
          * If a case has more than one condition then they are combined with Or
          * operators.
          */
-        def casesToIf (ce : IdnExp, cases : Vector[Case], optelse : Option[Block]) : IfStatement = {
+        def casesToIf(ce : IdnExp, cases : Vector[Case], optelse : Option[Block]) : IfStatement = {
 
             /*
              * Return an expression for a case condition. A value condition becomes
              * a simple equality and a min-max condition becomes a range test.
              */
-            def condToExp (n : Condition) : Expression =
+            def condToExp(n : Condition) : Expression =
                 n match {
-                    case ValCond (e) =>
-                        EqExp (ce, e)
-                    case MinMaxCond (e1, e2) =>
-                        AndExp (GeExp (ce, e1), LeExp (ce, e2))
+                    case ValCond(e) =>
+                        EqExp(ce, e)
+                    case MinMaxCond(e1, e2) =>
+                        AndExp(GeExp(ce, e1), LeExp(ce, e2))
                 }
 
             /*
              * Return a single expression for a sequence of conditions by
              * forming a disjunction of translating each one.
              */
-            def condsToExp (ns : Vector[Condition]) : Expression = {
-                val es = ns.map (condToExp)
-                es.tail.foldLeft (es.head) (OrExp)
+            def condsToExp(ns : Vector[Condition]) : Expression = {
+                val es = ns.map(condToExp)
+                es.tail.foldLeft(es.head)(OrExp)
             }
 
             // Extract the first (f) and rest (tl) cases.
@@ -177,19 +208,19 @@ trait Desugarer extends L0.Desugarer {
 
             // Produce an IF which implements the first case in the THEN branch,
             // the other cases as the ELSE-IFs, and the optional ELSE.
-            IfStatement (
-                condsToExp (f.conds),
+            IfStatement(
+                condsToExp(f.conds),
                 f.block,
                 tl.map {
-                    case Case (es, b) => (condsToExp (es), b)
+                    case Case(es, b) => (condsToExp(es), b)
                 },
                 optelse
             )
 
         }
 
-        val desugarer = everywhere (desugarFor + desugarCase)
-        super.transform (rewriteTree (desugarer) (tree))
+        val desugarer = everywhere(desugarFor + desugarCase)
+        super.transform(rewriteTree(desugarer)(tree))
 
     }
 

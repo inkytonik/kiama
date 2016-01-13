@@ -28,20 +28,20 @@ import L0.source.IdnExp
 /**
  * FOR statements.
  */
-case class ForStatement (idn : IdnExp, lower : Expression,
-                         upper : Expression, by : Option[Expression],
-                         block : Block) extends Statement
+case class ForStatement(idn : IdnExp, lower : Expression,
+    upper : Expression, by : Option[Expression],
+    block : Block) extends Statement
 
 /**
  * Case statements.
  */
-case class CaseStatement (exp : Expression, cases : Vector[Case],
-                          optelse : Option[Block]) extends Statement
+case class CaseStatement(exp : Expression, cases : Vector[Case],
+    optelse : Option[Block]) extends Statement
 
 /**
  * A single case of a case statement.
  */
-case class Case (conds : Vector[Condition], block : Block) extends Statement
+case class Case(conds : Vector[Condition], block : Block) extends Statement
 
 /**
  * Non-terminal type for case conditions.
@@ -51,10 +51,10 @@ abstract class Condition extends SourceNode
 /**
  * A condition that matches a single value.
  */
-case class ValCond (value : Expression) extends Condition
+case class ValCond(value : Expression) extends Condition
 
 /**
  * A condition that matches a range of values, inclusive of the minimum
  * and maximum.
  */
-case class MinMaxCond (minvalue : Expression, maxvalue : Expression) extends Condition
+case class MinMaxCond(minvalue : Expression, maxvalue : Expression) extends Condition

@@ -32,34 +32,34 @@ class WeakIdentityHashSet[T] {
     /**
      * Cache of the current set contents.
      */
-    val cache : Cache[AnyRef,AnyRef] =
-        CacheBuilder.newBuilder.weakKeys.build ()
+    val cache : Cache[AnyRef, AnyRef] =
+        CacheBuilder.newBuilder.weakKeys.build()
 
     /**
      * Add the value `t` to the set.
      */
-    def add (t : T) {
-        cache.put (t.asInstanceOf[AnyRef], ().asInstanceOf[AnyRef])
+    def add(t : T) {
+        cache.put(t.asInstanceOf[AnyRef], ().asInstanceOf[AnyRef])
     }
 
     /**
      * Remove all entries from the set.
      */
-    def clear () {
-        cache.invalidateAll ()
+    def clear() {
+        cache.invalidateAll()
     }
 
     /**
      * Is the value `t` in the set?
      */
-    def contains (t : T) : Boolean =
-        cache.getIfPresent (t) != null
+    def contains(t : T) : Boolean =
+        cache.getIfPresent(t) != null
 
     /**
      * Remove the value `t` from the set if it is a member.
      */
-    def remove (t : T) {
-        cache.invalidate (t)
+    def remove(t : T) {
+        cache.invalidate(t)
     }
 
 }

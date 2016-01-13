@@ -35,7 +35,7 @@ trait Lifter extends base.Transformer {
      * Lift inner declarations within the module to the top level.  Assumes
      * that identifiers are unique. Then call the next level of transformation.
      */
-    override def transform (tree : SourceTree) : SourceTree = {
+    override def transform(tree : SourceTree) : SourceTree = {
 
         /*
          * The collected declarations.
@@ -48,26 +48,26 @@ trait Lifter extends base.Transformer {
          * removing them from their blocks.
          */
         lazy val liftBlocks =
-            everywherebu (
+            everywherebu(
                 rule[Block] {
 
                     // Add this block's decls to the buffer, clear them
-                    case Block (ds, ss) =>
+                    case Block(ds, ss) =>
                         decls ++= ds
-                        Block (Vector (), ss)
+                        Block(Vector(), ss)
 
                 } <+ rule[ModuleDecl] {
 
                     // The module declarations will have been added to the
                     // buffer already. Create a new module with all of the
                     // accumulated declarations.
-                    case ModuleDecl (i1, Block (Vector (), ss), i2) =>
-                        ModuleDecl (i1, Block (decls.result, ss), i2)
+                    case ModuleDecl(i1, Block(Vector(), ss), i2) =>
+                        ModuleDecl(i1, Block(decls.result, ss), i2)
 
                 }
             )
 
-        super.transform (rewriteTree (liftBlocks) (tree))
+        super.transform(rewriteTree(liftBlocks)(tree))
 
     }
 

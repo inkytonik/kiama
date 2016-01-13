@@ -31,7 +31,7 @@ object GrammarTree {
     /**
      * Tree type for grammars.
      */
-    type GrammarTree = Tree[GrammarNode,Grammar]
+    type GrammarTree = Tree[GrammarNode, Grammar]
 
     /**
      * Abstract syntax tree nodes.
@@ -41,12 +41,12 @@ object GrammarTree {
     /**
      * Grammars.
      */
-    case class Grammar (startRule : Rule, rules : Vector[Rule]) extends GrammarNode
+    case class Grammar(startRule : Rule, rules : Vector[Rule]) extends GrammarNode
 
     /**
      * Production rules.
      */
-    case class Rule (lhs : NonTermDef, rhs : ProdList) extends GrammarNode
+    case class Rule(lhs : NonTermDef, rhs : ProdList) extends GrammarNode
 
     /**
      * Production lists.
@@ -56,17 +56,17 @@ object GrammarTree {
     /**
      * Empty symbol list.
      */
-    case class EmptyProdList () extends ProdList
+    case class EmptyProdList() extends ProdList
 
     /**
      * Non-empty symbol list.
      */
-    case class NonEmptyProdList (head : Prod, tail : ProdList) extends ProdList
+    case class NonEmptyProdList(head : Prod, tail : ProdList) extends ProdList
 
     /**
      * Production.
      */
-    case class Prod (symbols : SymbolList) extends GrammarNode
+    case class Prod(symbols : SymbolList) extends GrammarNode
 
     /**
      * Symbol lists.
@@ -76,12 +76,12 @@ object GrammarTree {
     /**
      * Empty symbol list.
      */
-    case class EmptySymbolList () extends SymbolList
+    case class EmptySymbolList() extends SymbolList
 
     /**
      * Non-empty symbol list.
      */
-    case class NonEmptySymbolList (head : Symbol, tail : SymbolList) extends SymbolList
+    case class NonEmptySymbolList(head : Symbol, tail : SymbolList) extends SymbolList
 
     /**
      * Grammar symbols.
@@ -91,12 +91,12 @@ object GrammarTree {
     /**
      * Terminal symbol.
      */
-    case class TermSym (name : String) extends Symbol
+    case class TermSym(name : String) extends Symbol
 
     /**
      * Non-terminal symbol.
      */
-    case class NonTermSym (nt : NonTermUse) extends Symbol
+    case class NonTermSym(nt : NonTermUse) extends Symbol
 
     /**
      * A non-terminal reference.
@@ -108,48 +108,48 @@ object GrammarTree {
     /**
      * Non-terminal defining occurrence.
      */
-    case class NonTermDef (name : String) extends NonTerm
+    case class NonTermDef(name : String) extends NonTerm
 
     /**
      * Non-terminal applied occurrence.
      */
-    case class NonTermUse (name : String) extends NonTerm
+    case class NonTermUse(name : String) extends NonTerm
 
     /**
      * End of input terminal assumed to appear at the end of any sentential form.
      */
-    val EOI = TermSym ("$")
+    val EOI = TermSym("$")
 
     // Smart constructors
 
     /**
      * Smart constructor for rules.
      */
-    def mkRule (lhs : NonTermDef, prods : Prod*) : Rule =
-        Rule (lhs, mkProdList (prods.toVector))
+    def mkRule(lhs : NonTermDef, prods : Prod*) : Rule =
+        Rule(lhs, mkProdList(prods.toVector))
 
     /**
      * Smart constructor for production lists.
      */
-    def mkProdList (prods : Vector[Prod]) : ProdList =
+    def mkProdList(prods : Vector[Prod]) : ProdList =
         if (prods.isEmpty)
-            EmptyProdList ()
+            EmptyProdList()
         else
-            NonEmptyProdList (prods.head, mkProdList (prods.tail))
+            NonEmptyProdList(prods.head, mkProdList(prods.tail))
 
     /**
      * Smart constructor for productions.
      */
-    def mkProd (rhs : Symbol*) : Prod =
-        Prod (mkSymbolList (rhs.toVector))
+    def mkProd(rhs : Symbol*) : Prod =
+        Prod(mkSymbolList(rhs.toVector))
 
     /**
      * Smart constructor for symbol lists.
      */
-    def mkSymbolList (symbols : Vector[Symbol]) : SymbolList =
+    def mkSymbolList(symbols : Vector[Symbol]) : SymbolList =
         if (symbols.isEmpty)
-            EmptySymbolList ()
+            EmptySymbolList()
         else
-            NonEmptySymbolList (symbols.head, mkSymbolList (symbols.tail))
+            NonEmptySymbolList(symbols.head, mkSymbolList(symbols.tail))
 
 }

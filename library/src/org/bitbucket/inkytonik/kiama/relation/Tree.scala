@@ -29,13 +29,13 @@ package relation
  * because it's not clear how to identify the tree briefly in a short message.
  * The stack trace that accompanies the exception should be sufficient.
  */
-case class NodeNotInTreeException[T] (t : T)  extends Exception (s"node not in tree: $t")
+case class NodeNotInTreeException[T](t : T) extends Exception(s"node not in tree: $t")
 
 /**
  * A bridge node in a tree structure which connects to another structure.
  * Bridges are not traversed when determining the tree structure.
  */
-case class Bridge[T] (cross : T)
+case class Bridge[T](cross : T)
 
 /**
  * Relational representations of trees built out of hierarchical `Product`
@@ -64,7 +64,7 @@ case class Bridge[T] (cross : T)
  * Thanks to Len Hamey for the idea to use lazy cloning to restore the tree
  * structure instead of requiring that the input trees contain no sharing.
  */
-class Tree[T <: Product,+R <: T] (val originalRoot : R) {
+class Tree[T <: Product, +R <: T](val originalRoot : R) {
 
     tree =>
 
@@ -78,15 +78,15 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
     /**
      * A version of `bottomup` that doesn't traverse bridges.
      */
-    def bottomupNoBridges (s : Strategy) : Strategy =
-        rule[Bridge[_]] {case b => b} <+
-            (all (bottomupNoBridges (s)) <* s)
+    def bottomupNoBridges(s : Strategy) : Strategy =
+        rule[Bridge[_]] { case b => b } <+
+            (all(bottomupNoBridges(s)) <* s)
 
     /**
      * A version of `everywherebu` that doesn't traverse bridges.
      */
-    def everywherebuNoBridges (s : Strategy) : Strategy =
-        bottomupNoBridges (attempt (s))
+    def everywherebuNoBridges(s : Strategy) : Strategy =
+        bottomupNoBridges(attempt(s))
 
     /**
      * The root node of the tree. The root node will be different from the
@@ -95,19 +95,19 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      * If there is no sharing then `root` will be same as `originalRoot`.
      * Bridges to other structures will not be traversed.
      */
-    lazy val root = lazyclone (originalRoot, everywherebuNoBridges)
+    lazy val root = lazyclone(originalRoot, everywherebuNoBridges)
 
     /**
      * The graph of the child relation for this tree.
      */
-    lazy val childGraph = fromOneStepGraph[T] (root, treeChildren)
+    lazy val childGraph = fromOneStepGraph[T](root, treeChildren)
 
     /**
      * A tree relation is a binary relation on tree nodes with an extra property
      * that the `image` operation throws a `NodeNotInTreeException` exception if
      * it is applied to a node that is not in this tree.
      */
-    class TreeRelation[V,W] (val graph : Vector[(V,W)]) extends RelationLike[V,W,TreeRelation] {
+    class TreeRelation[V, W](val graph : Vector[(V, W)]) extends RelationLike[V, W, TreeRelation] {
 
         val companion = TreeRelationFactory
 
@@ -116,8 +116,8 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
          * except that it throws `NodeNotInTreeException` if the node is not
          * actually in the tree on which this relation is defined.
          */
-        override def image (v : V) : Vector[W] =
-            tree.whenContains (v, super.image (v))
+        override def image(v : V) : Vector[W] =
+            tree.whenContains(v, super.image(v))
 
     }
 
@@ -126,8 +126,8 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      */
     object TreeRelationFactory extends RelationFactory[TreeRelation] {
 
-        def fromGraph[V,W] (graph : Vector[(V,W)]) : TreeRelation[V,W] =
-            new TreeRelation[V,W] (graph)
+        def fromGraph[V, W](graph : Vector[(V, W)]) : TreeRelation[V, W] =
+            new TreeRelation[V, W](graph)
 
     }
 
@@ -135,17 +135,17 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      * The nodes that occur in this tree.
      */
     val nodes : Vector[T] =
-        root +: (childGraph.map (_._2))
+        root +: (childGraph.map(_._2))
 
     /**
      * If the tree contains node `u` return `v`, otherwise throw a
      * `NodeNotInTreeException`.
      */
-    def whenContains[U,V] (u : U, v : V) : V =
-        if (same (u, root) || (contains (nodes, u)))
+    def whenContains[U, V](u : U, v : V) : V =
+        if (same(u, root) || (contains(nodes, u)))
             v
         else
-            throw new NodeNotInTreeException (u)
+            throw new NodeNotInTreeException(u)
 
     /**
      * The basic relation between a node and its children. All of the
@@ -154,10 +154,10 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      * children of a particular node in the order they appear in the
      * tree.
      */
-    lazy val child : TreeRelation[T,T] = {
+    lazy val child : TreeRelation[T, T] = {
 
         // Compute the child relation
-        val rel = new TreeRelation (childGraph)
+        val rel = new TreeRelation(childGraph)
 
         // As a safety check, we make sure that values are not children
         // of more than one parent.
@@ -171,7 +171,7 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
             }
         }
         if (!msgBuilder.isEmpty)
-            sys.error ("Tree creation: illegal tree structure:\n" + msgBuilder.result)
+            sys.error("Tree creation: illegal tree structure:\n" + msgBuilder.result)
 
         // All ok
         rel
@@ -183,16 +183,16 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
     /**
      * A relation that relates a node to its first child.
      */
-    lazy val firstChild : TreeRelation[T,T] =
-        new TreeRelation (
+    lazy val firstChild : TreeRelation[T, T] =
+        new TreeRelation(
             child.projDomain.graph.map { case (t, ts) => (t, ts.head) }
         )
 
     /**
      * A relation that relates a node to its last child.
      */
-    lazy val lastChild : TreeRelation[T,T] =
-        new TreeRelation (
+    lazy val lastChild : TreeRelation[T, T] =
+        new TreeRelation(
             child.projDomain.graph.map { case (t, ts) => (t, ts.last) }
         )
 
@@ -200,18 +200,18 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      * A relation that relates a node to its next sibling. Inverse of
      * the `prev` relation.
      */
-    lazy val next : TreeRelation[T,T] = {
+    lazy val next : TreeRelation[T, T] = {
 
-        def nextPairs (ts : Vector[T]) : Vector[(T,T)] =
+        def nextPairs(ts : Vector[T]) : Vector[(T, T)] =
             ts match {
                 case t1 +: (rest @ (t2 +: _)) =>
-                    (t1, t2) +: nextPairs (rest)
+                    (t1, t2) +: nextPairs(rest)
                 case _ =>
-                    Vector ()
+                    Vector()
             }
 
-        new TreeRelation (
-            child.projDomain.graph.flatMap (p => nextPairs (p._2))
+        new TreeRelation(
+            child.projDomain.graph.flatMap(p => nextPairs(p._2))
         )
 
     }
@@ -220,21 +220,21 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      * A relation that relates a node to its parent. Inverse of the
      * `child` relation.
      */
-    lazy val parent : TreeRelation[T,T] =
+    lazy val parent : TreeRelation[T, T] =
         child.inverse
 
     /**
      * A relation that relates a node to its previous sibling. Inverse
      * of the `next` relation.
      */
-    lazy val prev : TreeRelation[T,T] =
+    lazy val prev : TreeRelation[T, T] =
         next.inverse
 
     /**
      * A relation that relates a node to all of its siblings.
      */
-    lazy val siblings : TreeRelation[T,T] =
-        new TreeRelation[T,T] (Vector ((root, root))) union (child.compose (parent))
+    lazy val siblings : TreeRelation[T, T] =
+        new TreeRelation[T, T](Vector((root, root))) union (child.compose(parent))
 
     // Predicates derived from the relations
 
@@ -242,35 +242,37 @@ class Tree[T <: Product,+R <: T] (val originalRoot : R) {
      * Return the index of `t` in the children of `t's` parent node.
      * Counts from zero.
      */
-    def index (t : T) : Int =
-        siblings.withDomain (t).index (t) match {
-            case Vector (i) =>
+    def index(t : T) : Int =
+        siblings.withDomain(t).index(t) match {
+            case Vector(i) =>
                 i
             case is =>
-                sys.error (s"index: non-singleton index $is for $t")
+                sys.error(s"index: non-singleton index $is for $t")
         }
 
     /**
      * Return whether or not `t` is a first child.
      */
-    def isFirst (t : T) : Boolean =
-        whenContains (t, !prev.containsInDomain (t))
+    def isFirst(t : T) : Boolean =
+        whenContains(t, !prev.containsInDomain(t))
 
     /**
      * Return whether or not `t` is a last child.
      */
-    def isLast (t : T) : Boolean =
-        whenContains (t, !next.containsInDomain (t))
+    def isLast(t : T) : Boolean =
+        whenContains(t, !next.containsInDomain(t))
 
     /**
      * Return whether or not `t` is the root of this tree.
      */
-    def isRoot (t : T) : Boolean =
-        whenContains (t,
+    def isRoot(t : T) : Boolean =
+        whenContains(
+            t,
             (t, root) match {
                 case (tr : AnyRef, rootr : AnyRef) =>
                     tr eq rootr
-            })
+            }
+        )
 
 }
 
@@ -285,16 +287,16 @@ object Tree {
     /**
      * Return whether this node is a leaf node or not.
      */
-    def isLeaf[T <: Product] (t : T) : Boolean = {
+    def isLeaf[T <: Product](t : T) : Boolean = {
         for (desc <- t.productIterator) {
             desc match {
-                case _ : Option[_] | _ : Either[_,_] | _ : Tuple1[_] |
-                     _ : Tuple2[_,_] | _ : Tuple3[_,_,_] | _ : Tuple4[_,_,_,_] =>
-                    // Do nothing
+                case _ : Option[_] | _ : Either[_, _] | _ : Tuple1[_] |
+                    _ : Tuple2[_, _] | _ : Tuple3[_, _, _] | _ : Tuple4[_, _, _, _] =>
+                // Do nothing
                 case _ : Product =>
                     return false
                 case _ =>
-                    // Do nothing
+                // Do nothing
             }
         }
         true
@@ -306,10 +308,10 @@ object Tree {
      * `Tree` class for a detailed explanation of values that are skipped by
      * this method.
      */
-    def treeChildren[T <: Product] (t : T) : Vector[T] = {
+    def treeChildren[T <: Product](t : T) : Vector[T] = {
 
         @tailrec
-        def loop (pending : Queue[Any], children : Vector[T]) : Vector[T] =
+        def loop(pending : Queue[Any], children : Vector[T]) : Vector[T] =
             if (pending.isEmpty)
                 children
             else {
@@ -318,41 +320,41 @@ object Tree {
                 candidate match {
                     case _ : Bridge[_] =>
                         // ignore
-                        loop (rest, children)
+                        loop(rest, children)
 
-                    case Some (n) =>
-                        loop (n +: rest, children)
+                    case Some(n) =>
+                        loop(n +: rest, children)
                     case None =>
                         // ignore
-                        loop (rest, children)
+                        loop(rest, children)
 
-                    case Left (l) =>
-                        loop (l +: rest, children)
-                    case Right (r) =>
-                        loop (r +: rest, children)
+                    case Left(l) =>
+                        loop(l +: rest, children)
+                    case Right(r) =>
+                        loop(r +: rest, children)
 
-                    case Tuple1 (a) =>
-                        loop (a +: rest, children)
+                    case Tuple1(a) =>
+                        loop(a +: rest, children)
                     case (a, b) =>
-                        loop (List (a, b) ++: rest, children)
+                        loop(List(a, b) ++: rest, children)
                     case (a, b, c) =>
-                        loop (List (a, b, c) ++: rest, children)
+                        loop(List(a, b, c) ++: rest, children)
                     case (a, b, c, d) =>
-                        loop (List (a, b, c, d) ++: rest, children)
+                        loop(List(a, b, c, d) ++: rest, children)
 
                     case s : TraversableOnce[_] =>
-                        loop (s ++: rest, children)
+                        loop(s ++: rest, children)
 
                     case p : Product =>
-                        loop (rest, children :+ (p.asInstanceOf[T]))
+                        loop(rest, children :+ (p.asInstanceOf[T]))
 
                     case _ =>
                         // ignore
-                        loop (rest, children)
+                        loop(rest, children)
                 }
             }
 
-        loop (Queue (t.productIterator), Vector ())
+        loop(Queue(t.productIterator), Vector())
 
     }
 

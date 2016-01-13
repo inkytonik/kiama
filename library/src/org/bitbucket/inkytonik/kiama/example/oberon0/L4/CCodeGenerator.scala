@@ -38,58 +38,58 @@ trait CCodeGenerator extends TypeAnalyser with L3.CCodeGenerator with SymbolTabl
     /**
      * Add translation for array and record types.
      */
-    override def translate (t : Type) : CType =
+    override def translate(t : Type) : CType =
         t match {
-            case ArrayType (s, et) =>
-                CArrayType (s, translate (et))
-            case RecordType (fls) =>
+            case ArrayType(s, et) =>
+                CArrayType(s, translate(et))
+            case RecordType(fls) =>
                 val vs = fls map {
-                             case Field (i, t) =>
-                                 CVarDecl (i, translate (t))
-                         }
-                CRecordType (vs)
+                    case Field(i, t) =>
+                        CVarDecl(i, translate(t))
+                }
+                CRecordType(vs)
             case _ =>
-                super.translate (t)
+                super.translate(t)
         }
 
     /**
      * Uses of array parameter names don't need to be dereferenced.
      */
-    override def translate (e : Expression) : CExpression =
+    override def translate(e : Expression) : CExpression =
         e match {
-            case IdnExp (u @ IdnUse (s)) =>
-                if (isNotArray (basetype (e)))
-                    super.translate (e)
+            case IdnExp(u @ IdnUse(s)) =>
+                if (isNotArray(basetype(e)))
+                    super.translate(e)
                 else
-                    CIdnExp (mangle (s))
-            case IndexExp (a, i) =>
-                CIndexExp (translate (a), translate (i))
-            case FieldExp (r, FieldIdn (f)) =>
-                CFieldExp (translate (r), f)
+                    CIdnExp(mangle(s))
+            case IndexExp(a, i) =>
+                CIndexExp(translate(a), translate(i))
+            case FieldExp(r, FieldIdn(f)) =>
+                CFieldExp(translate(r), f)
             case _ =>
-                super.translate (e)
+                super.translate(e)
         }
 
     /**
      * Array formal parameters are not made into address types.
      */
-    override def translateFormalParam (m : Mode, i : String, t  : Type) : CDeclaration =
-        if (isNotArray (typebasetype (t)))
-            super.translateFormalParam (m, i, t)
+    override def translateFormalParam(m : Mode, i : String, t : Type) : CDeclaration =
+        if (isNotArray(typebasetype(t)))
+            super.translateFormalParam(m, i, t)
         else {
-            val tt = translate (t)
-            CVarDecl (mangle (i), tt)
+            val tt = translate(t)
+            CVarDecl(mangle(i), tt)
         }
 
     /**
      * Array parameters get passed by reference, so we don't need to insert
      * addressing operations for VAR.
      */
-    override def translateActualParam (p : Expression, mode : Mode) : CExpression =
-        if (isNotArray (basetype (p)))
-            super.translateActualParam (p, mode)
+    override def translateActualParam(p : Expression, mode : Mode) : CExpression =
+        if (isNotArray(basetype(p)))
+            super.translateActualParam(p, mode)
         else
-            translate (p)
+            translate(p)
 
 }
 

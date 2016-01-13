@@ -32,33 +32,33 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
     /**
      * Format an imperative node.
      */
-    def format (t : ImperativeNode) : Document =
-        pretty (toDoc (t))
+    def format(t : ImperativeNode) : Document =
+        pretty(toDoc(t))
 
     /**
      * Convert an imperative node to a pretty-printing document in
      * fully-parenthesised C style.
      */
-    def toDoc (t : ImperativeNode) : Doc =
+    def toDoc(t : ImperativeNode) : Doc =
         t match {
-            case Num (d)      => value (d)
-            case Var (s)      => s
-            case Neg (e)      => parens ("-" <> toDoc (e))
-            case Add (l, r)   => binToDoc (l, "+", r)
-            case Sub (l, r)   => binToDoc (l, "-", r)
-            case Mul (l, r)   => binToDoc (l, "*", r)
-            case Div (l, r)   => binToDoc (l, "/", r)
-            case Null ()      => semi
-            case Seqn (ss)    => group (braces (nest (line <> ssep (ss map toDoc, line)) <> line))
-            case Asgn (v, e)  => toDoc (v) <+> "=" <+> toDoc (e) <> semi
-            case While (e, b) => "while" <+> parens (toDoc (e)) <> group (nest (line <> toDoc (b)))
+            case Num(d)      => value(d)
+            case Var(s)      => s
+            case Neg(e)      => parens("-" <> toDoc(e))
+            case Add(l, r)   => binToDoc(l, "+", r)
+            case Sub(l, r)   => binToDoc(l, "-", r)
+            case Mul(l, r)   => binToDoc(l, "*", r)
+            case Div(l, r)   => binToDoc(l, "/", r)
+            case Null()      => semi
+            case Seqn(ss)    => group(braces(nest(line <> ssep(ss map toDoc, line)) <> line))
+            case Asgn(v, e)  => toDoc(v) <+> "=" <+> toDoc(e) <> semi
+            case While(e, b) => "while" <+> parens(toDoc(e)) <> group(nest(line <> toDoc(b)))
         }
 
     /**
      * Return a pretty-printing document for an instance of a binary expression.
      */
-    def binToDoc (l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
-        parens (toDoc (l) <+> op <+> toDoc (r))
+    def binToDoc(l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
+        parens(toDoc(l) <+> op <+> toDoc(r))
 
 }
 

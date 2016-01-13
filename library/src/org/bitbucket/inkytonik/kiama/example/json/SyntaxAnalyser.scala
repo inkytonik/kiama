@@ -27,7 +27,7 @@ import org.bitbucket.inkytonik.kiama.util.Positions
 /**
  * Module containing parsers for the JSON language.
  */
-class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
+class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
 
     import JSONTree._
 
@@ -35,7 +35,7 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
         jobject | jarray | jstring | jnumber | jtrue | jfalse | jnull
 
     lazy val jobject =
-        "{" ~> repsep (jpair, ",") <~ "}" ^^ JObject
+        "{" ~> repsep(jpair, ",") <~ "}" ^^ JObject
 
     lazy val jpair =
         jname ~ (":" ~> jvalue) ^^ {
@@ -46,30 +46,30 @@ class SyntaxAnalyser (positions : Positions) extends Parsers (positions) {
         string ^^ JName
 
     lazy val jarray =
-        "[" ~> repsep (jvalue, ",") <~ "]" ^^ {
-            case l => JArray (l)
+        "[" ~> repsep(jvalue, ",") <~ "]" ^^ {
+            case l => JArray(l)
         }
 
     lazy val jstring =
         string ^^ JString
 
     lazy val string =
-        regex ("\"[^\"]*\"".r) ^^ {
-            case s => s.substring (1, s.length - 1)
+        regex("\"[^\"]*\"".r) ^^ {
+            case s => s.substring(1, s.length - 1)
         }
 
     lazy val jnumber =
-        regex ("""-?(0|[1-9]\d*)(\.\d+)?([eE][-+]?\d+)?""".r) ^^ {
-            case s => JNumber (s.toDouble)
+        regex("""-?(0|[1-9]\d*)(\.\d+)?([eE][-+]?\d+)?""".r) ^^ {
+            case s => JNumber(s.toDouble)
         }
 
     lazy val jtrue =
-        "true" ^^ (_ => JTrue ())
+        "true" ^^ (_ => JTrue())
 
     lazy val jfalse =
-        "false" ^^ (_ => JFalse ())
+        "false" ^^ (_ => JFalse())
 
     lazy val jnull =
-        "null" ^^ (_ => JNull ())
+        "null" ^^ (_ => JNull())
 
 }

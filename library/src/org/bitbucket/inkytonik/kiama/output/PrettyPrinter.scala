@@ -49,7 +49,7 @@ object PrettyPrinterTypes {
      * of mappings between pretty-printed values and their printed
      * representations.
      */
-    case class Link (value : AnyRef, range : Range)
+    case class Link(value : AnyRef, range : Range)
 
     /**
      * A collection of link.s.
@@ -59,7 +59,7 @@ object PrettyPrinterTypes {
     /**
      * An empty links mapping.
      */
-    val emptyLinks = List[Link] ()
+    val emptyLinks = List[Link]()
 
     /**
      * A pretty-printed document, consisting of layout for the
@@ -77,12 +77,12 @@ object PrettyPrinterTypes {
      * specify the association between a value and the document
      * that represents it.
      */
-    case class Document (layout : Layout, links : Links)
+    case class Document(layout : Layout, links : Links)
 
     /**
      * An empty pretty-printed document.
      */
-    val emptyDocument = Document ("", emptyLinks)
+    val emptyDocument = Document("", emptyLinks)
 
 }
 
@@ -117,7 +117,7 @@ trait PrettyPrinterBase {
         /**
          * Return the concatenation of this document with the argument.
          */
-        def <> (e : Doc) : Doc
+        def <>(e : Doc) : Doc
 
         // Extended operations, defined in terms of the basic operations.
 
@@ -125,48 +125,48 @@ trait PrettyPrinterBase {
          * Return the concatenation of this document with the argument
          * using a `space` separator.
          */
-        def <+> (e : Doc) : Doc =
+        def <+>(e : Doc) : Doc =
             this <> space <> e
 
         /**
          * Return the concatenation of this document with the argument
          * using a `softline` separator.
          */
-        def </> (e : Doc) : Doc =
+        def </>(e : Doc) : Doc =
             this <> softline <> e
 
         /**
          * Return the concatenation of this document with the argument
          * using a `softbreak` separator.
          */
-        def <\> (e : Doc) : Doc =
+        def <\>(e : Doc) : Doc =
             this <> softbreak <> e
 
         /**
          * Return the concatenation of this document with the argument
          * using a `line` separator.
          */
-        def <@> (e : Doc) : Doc =
+        def <@>(e : Doc) : Doc =
             this <> line <> e
 
         /**
          * Return the concatenation of this document with the argument
          * using a `linebreak` separator.
          */
-        def <@@> (e : Doc) : Doc =
+        def <@@>(e : Doc) : Doc =
             this <> linebreak <> e
 
         /**
          * Align the argument below this document using a `line` separator.
          */
-        def <%> (e : Doc) : Doc =
-            align (this <@> e)
+        def <%>(e : Doc) : Doc =
+            align(this <@> e)
 
         /**
          * Align the argument below this document using a `linebreak` separator.
          */
-        def <%%> (e : Doc) : Doc =
-            align (this <@@> e)
+        def <%%>(e : Doc) : Doc =
+            align(this <@@> e)
 
     }
 
@@ -182,19 +182,19 @@ trait PrettyPrinterBase {
      * the width is the first parameter, but here we put it second so we can provide
      * a default value.
      */
-    def pretty (d : Doc, w : Width = defaultWidth) : Document
+    def pretty(d : Doc, w : Width = defaultWidth) : Document
 
     /**
      * Pretty-print a document as per `pretty` but just return the layout.
      */
-    def layout (d : Doc, w : Width = defaultWidth) : Layout =
-        pretty (d, w).layout
+    def layout(d : Doc, w : Width = defaultWidth) : Layout =
+        pretty(d, w).layout
 
     /**
      * Pretty-print a document as per `pretty` but just return the links.
      */
-    def links (d : Doc, w : Width = defaultWidth) : Links =
-        pretty (d, w).links
+    def links(d : Doc, w : Width = defaultWidth) : Links =
+        pretty(d, w).links
 
     // Basic combinators.  Thse need to be implemented for a specific
     // instantiation of `Doc`.
@@ -203,7 +203,7 @@ trait PrettyPrinterBase {
      * Convert a string to a document.  The string should not contain any
      * newline characters.  Use `line` instead.
      */
-    implicit def text (t : String) : Doc
+    implicit def text(t : String) : Doc
 
     /**
      * A document representing a potential line break.  Behaves like a space
@@ -221,12 +221,12 @@ trait PrettyPrinterBase {
      * A document representing a potential line break.  Behaves like the
      * string `repl` if the break is omitted by a group.
      */
-    def line (repl : Layout) : Doc
+    def line(repl : Layout) : Doc
 
     /**
      * A document representing a choice among different ways to print a structure.
      */
-    def group (d : Doc) : Doc
+    def group(d : Doc) : Doc
 
     /**
      * An empty document.  This is a left and right unit for the concatenation
@@ -239,19 +239,19 @@ trait PrettyPrinterBase {
      * In the paper version, the indentation parameter comes first, but we put it
      * second here so that it can be given a default value.
      */
-    def nest (d : Doc, j : Indent = defaultIndent) : Doc
+    def nest(d : Doc, j : Indent = defaultIndent) : Doc
 
     /**
      * Return the document produced by `f` when it is passed the column at which
      * rendering is currently placed.
      */
-    def column (f : Int => Doc) : Doc
+    def column(f : Int => Doc) : Doc
 
     /**
      * Return the document produced by `f` when it is passed the nesting level
      * (indentation) of the current line.
      */
-    def nesting (f : Int => Doc) : Doc
+    def nesting(f : Int => Doc) : Doc
 
     // Positioned documents
 
@@ -261,7 +261,7 @@ trait PrettyPrinterBase {
      * pretty-printed representation can be retrieved via the position
      * information in the `Document` returned when this `Doc` is pretty-printed.
      */
-    def link (n : AnyRef, d : Doc) : Doc
+    def link(n : AnyRef, d : Doc) : Doc
 
     // Extended combinators that are implemented in terms of the basic
     // combinators and the representation-independent document operations.
@@ -271,48 +271,48 @@ trait PrettyPrinterBase {
      * newline characters.  If no newlines are included, it is best to
      * use `text` directly instead.
      */
-    def string (s : String) : Doc =
+    def string(s : String) : Doc =
         if (s == "") {
             empty
-        } else if (s (0) == '\n') {
-            line <> string (s.tail)
+        } else if (s(0) == '\n') {
+            line <> string(s.tail)
         } else {
-            val (xs, ys) = s.span (_ != '\n')
-            text (xs) <> string (ys)
+            val (xs, ys) = s.span(_ != '\n')
+            text(xs) <> string(ys)
         }
 
     /**
      * Convert a character to a document.  The character can be a newline.
      */
-    implicit def char (c : Char) : Doc =
+    implicit def char(c : Char) : Doc =
         if (c == '\n')
             line
         else
-            text (c.toString)
+            text(c.toString)
 
     /**
      * Return a document that behaves like `space` if the resulting output
      * fits the page, otherwise it behaves like `line`.
      */
     def softline : Doc =
-        group (line)
+        group(line)
 
     /**
      * Return a document that behaves like `empty` if the resulting output
      * fits the page, otherwise it behaves like `line`.
      */
     def softbreak : Doc =
-        group (linebreak)
+        group(linebreak)
 
     /**
      * Return a document representing `n` spaces if `n` s greater than zero,
      * otherwise return an empty document.
      */
-    def spaces (n : Int) : Doc =
+    def spaces(n : Int) : Doc =
         if (n <= 0)
             empty
         else
-            text (" " * n)
+            text(" " * n)
 
     /**
      * Return a document that pretty-prints a list in Scala notation,
@@ -320,11 +320,11 @@ trait PrettyPrinterBase {
      * as calling `seq` with a prefix of `"List"` and passing all
      * other arguments through.
      */
-    def list[T] (l : List[T], prefix : String = "List",
-                 elemToDoc : T => Doc = (x : T) => value (x),
-                 sep : Doc = comma,
-                 sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        seq (l, prefix, elemToDoc, sep, sepfn)
+    def list[T](l : List[T], prefix : String = "List",
+        elemToDoc : T => Doc = (x : T) => value(x),
+        sep : Doc = comma,
+        sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+        seq(l, prefix, elemToDoc, sep, sepfn)
 
     /**
      * Return a document that pretty-prints a sequence in Scala notation,
@@ -333,11 +333,11 @@ trait PrettyPrinterBase {
      * `arguments` to pretty-print the content of the sequence, passing
      * all other arguments through.
      */
-    def seq[T] (l : Seq[T], prefix : String = "Seq",
-                elemToDoc : T => Doc = (x : T) => value (x),
-                sep : Doc = comma,
-                sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        text (prefix) <+> arguments (l, elemToDoc, sep, sepfn)
+    def seq[T](l : Seq[T], prefix : String = "Seq",
+        elemToDoc : T => Doc = (x : T) => value(x),
+        sep : Doc = comma,
+        sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
+        text(prefix) <+> arguments(l, elemToDoc, sep, sepfn)
 
     /**
      * Return a document that pretty-prints a sequence as a Scala argument
@@ -346,11 +346,13 @@ trait PrettyPrinterBase {
      * using `elemToDoc` (default: `value`). The separator defaults to a
      * comma.
      */
-    def arguments[T] (l : Seq[T],
-                      elemToDoc : T => Doc = (x : T) => value (x),
-                      sep : Doc = comma,
-                      sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        parens (group (nest (sepfn (l map elemToDoc, sep))))
+    def arguments[T](
+        l : Seq[T],
+        elemToDoc : T => Doc = (x : T) => value(x),
+        sep : Doc = comma,
+        sepfn : (Seq[Doc], Doc) => Doc = lsep
+    ) : Doc =
+        parens(group(nest(sepfn(l map elemToDoc, sep))))
 
     /**
      * Generic pretty-printer document for any type of value. If `a` is a
@@ -360,23 +362,27 @@ trait PrettyPrinterBase {
      * quotes. If none of these cases apply, use `value` on `a`. `null` prints
      * as `null`.
      */
-    def any (a : Any) : Doc =
-        link (a.asInstanceOf[AnyRef],
+    def any(a : Any) : Doc =
+        link(
+            a.asInstanceOf[AnyRef],
             if (a == null)
                 "null"
             else
                 a match {
-                    case v : Vector[_] => list (v.toList, "Vector", any)
-                    case m : Map[_,_]  => list (m.toList, "Map", any)
+                    case v : Vector[_] => list(v.toList, "Vector", any)
+                    case m : Map[_, _] => list(m.toList, "Map", any)
                     case Nil           => "Nil"
-                    case l : List[_]   => list (l, "List", any)
-                    case (l, r)        => any (l) <+> "->" <+> any (r)
+                    case l : List[_]   => list(l, "List", any)
+                    case (l, r)        => any(l) <+> "->" <+> any(r)
                     case None          => "None"
-                    case p : Product   => list (p.productIterator.toList,
-                                                p.productPrefix, any)
-                    case s : String    => dquotes (text (s))
-                    case _             => value (a)
-                })
+                    case p : Product => list(
+                        p.productIterator.toList,
+                        p.productPrefix, any
+                    )
+                    case s : String => dquotes(text(s))
+                    case _          => value(a)
+                }
+        )
 
     // Extended combinator set
 
@@ -385,56 +391,56 @@ trait PrettyPrinterBase {
      * either horizontally with `<+>` if they fit in the output medium width,
      * or if not, vertically with `<@>`.
      */
-    def sep (ds : Seq[Doc]) : Doc =
-        group (vsep (ds))
+    def sep(ds : Seq[Doc]) : Doc =
+        group(vsep(ds))
 
     /**
      * Return a document that is the result of folding `f` over the sequence
      * `ds`. Returns the empty document is `ds` is empty.
      */
-    def folddoc (ds : Seq[Doc], f : (Doc, Doc) => Doc) =
+    def folddoc(ds : Seq[Doc], f : (Doc, Doc) => Doc) =
         if (ds.isEmpty)
             empty
         else
-            ds.tail.foldLeft (ds.head) (f)
+            ds.tail.foldLeft(ds.head)(f)
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * horizontally with `<+>`.
      */
-    def hsep (ds : Seq[Doc]) : Doc =
-        folddoc (ds, (_ <+> _))
+    def hsep(ds : Seq[Doc]) : Doc =
+        folddoc(ds, (_ <+> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * horizontally with `<+>`.  Separates documents with the given separator
      * before the `<+>`.
      */
-    def hsep (ds : Seq[Doc], sep : Doc) : Doc =
-        folddoc (ds, (_ <> sep <+> _))
+    def hsep(ds : Seq[Doc], sep : Doc) : Doc =
+        folddoc(ds, (_ <> sep <+> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * vertically with `<@>`.
      */
-    def vsep (ds : Seq[Doc]) : Doc =
-        folddoc (ds, (_ <@> _))
+    def vsep(ds : Seq[Doc]) : Doc =
+        folddoc(ds, (_ <@> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * vertically with `<@>`.  Separates documents with the given separator
      * before the `<@>`.
      */
-    def vsep (ds : Seq[Doc], sep : Doc) : Doc =
-        folddoc (ds, (_ <> sep <@> _))
+    def vsep(ds : Seq[Doc], sep : Doc) : Doc =
+        folddoc(ds, (_ <> sep <@> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * horizontally with `<+>` as long as they fit the output width, then
      * inserts a `line` and continues with the rest of the sequence.
      */
-    def fillsep (ds : Seq[Doc]) : Doc =
-        folddoc (ds, (_ </> _))
+    def fillsep(ds : Seq[Doc]) : Doc =
+        folddoc(ds, (_ </> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
@@ -442,16 +448,16 @@ trait PrettyPrinterBase {
      * inserts a `line` and continues with the rest of the sequence.  Separates
      * documents with the given separator before the `<+>`.
      */
-    def fillsep (ds : Seq[Doc], sep : Doc) : Doc =
-        folddoc (ds, (_ <> sep </> _))
+    def fillsep(ds : Seq[Doc], sep : Doc) : Doc =
+        folddoc(ds, (_ <> sep </> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * and separates adjacent documents with `sep` with no space around the
      * separator.
      */
-    def ssep (ds : Seq[Doc], sep : Doc) : Doc =
-        folddoc (ds, (_ <> sep <> _))
+    def ssep(ds : Seq[Doc], sep : Doc) : Doc =
+        folddoc(ds, (_ <> sep <> _))
 
     /**
      * Return a pretty-printer document for a separated sequence.
@@ -460,11 +466,11 @@ trait PrettyPrinterBase {
      * before line break turns into nothing if omitted.  The internal line
      * breaks turn into `space` if omitted.
      */
-    def lsep (ds : Seq[Doc], sep : Doc) : Doc =
+    def lsep(ds : Seq[Doc], sep : Doc) : Doc =
         if (ds.isEmpty)
             empty
         else
-            linebreak <> folddoc (ds, _ <> sep <@> _)
+            linebreak <> folddoc(ds, _ <> sep <@> _)
 
     /**
      * Return a pretty-printer document for a separated sequence.
@@ -473,11 +479,11 @@ trait PrettyPrinterBase {
      * inserted after each separator.  The internal line breaks turn into
      * `space` if omitted.  The end line break turns into nothing if omitted.
      */
-    def lsep2 (ds : Seq[Doc], sep : Doc) : Doc =
+    def lsep2(ds : Seq[Doc], sep : Doc) : Doc =
         if (ds.isEmpty)
             empty
         else
-            folddoc (ds, _ <@@> sep <+> _) <> linebreak
+            folddoc(ds, _ <@@> sep <+> _) <> linebreak
 
     /**
      * Return a pretty-printer document for a sequence where each element
@@ -486,48 +492,48 @@ trait PrettyPrinterBase {
      * before line break turns into nothing if omitted.  The internal line
      * breaks turn into `space` if omitted.
      */
-    def lterm (ds : Seq[Doc], term : Doc) : Doc =
+    def lterm(ds : Seq[Doc], term : Doc) : Doc =
         if (ds.isEmpty)
             empty
         else
-            linebreak <> folddoc (ds, _ <> term <@> _) <> term
+            linebreak <> folddoc(ds, _ <> term <@> _) <> term
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * either horizontally with `<>` if they fit in the output medium width,
      * or if not, vertically with `<@@>`.
      */
-    def cat (ds : Seq[Doc]) : Doc =
-        group (vcat (ds))
+    def cat(ds : Seq[Doc]) : Doc =
+        group(vcat(ds))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * horizontally with `<>`.
      */
-    def hcat (ds : Seq[Doc]) : Doc =
-        folddoc (ds, (_ <> _))
+    def hcat(ds : Seq[Doc]) : Doc =
+        folddoc(ds, (_ <> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * vertically with `<@@>`.
      */
-    def vcat (ds : Seq[Doc]) : Doc =
-        folddoc (ds, (_ <@@> _))
+    def vcat(ds : Seq[Doc]) : Doc =
+        folddoc(ds, (_ <@@> _))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * horizontally with `<>` until they don't fit the output width, then
      * inserts a line break and continues to the end of the sequence.
      */
-    def fillcat (ds : Seq[Doc]) : Doc =
-        folddoc (ds, (l : Doc, r : Doc) => (l <> group (linebreak <> r)))
+    def fillcat(ds : Seq[Doc]) : Doc =
+        folddoc(ds, (l : Doc, r : Doc) => (l <> group(linebreak <> r)))
 
     /**
      * Return a document that concatenates the documents in the given sequence
      * and terminates each document with `term`.
      */
-    def sterm (ds : Seq[Doc], term : Doc) : Doc =
-        cat (ds map (_ <> term))
+    def sterm(ds : Seq[Doc], term : Doc) : Doc =
+        cat(ds map (_ <> term))
 
     /**
      * Return a document that is like `d` but whose second and subsequent lines
@@ -535,36 +541,36 @@ trait PrettyPrinterBase {
      * In other words, the first line is indented at the current nesting level
      * and the remaining lines are indented `i` spaces more.
      */
-    def hang (d : Doc, i : Indent = defaultIndent) : Doc =
-        align (nest (d, i))
+    def hang(d : Doc, i : Indent = defaultIndent) : Doc =
+        align(nest(d, i))
 
     /**
      * Return a document that is `d` but with the first line indented by `i` more spaces.
      */
-    def indent (d : Doc, i : Indent = defaultIndent) : Doc =
-        hang (spaces (i) <> d, i)
+    def indent(d : Doc, i : Indent = defaultIndent) : Doc =
+        hang(spaces(i) <> d, i)
 
     /**
      * Return a document that renders `d` with the nesting level set to the
      * current indentation column.
      */
-    def align (d : Doc) : Doc =
-        column (k => nesting (i => nest (d, k - i)))
+    def align(d : Doc) : Doc =
+        column(k => nesting(i => nest(d, k - i)))
 
     /**
      * Return a document that renders `d` beside the document obtained by running
      * `f` on the width of `d`.
      */
-    def width (d : Doc, f : Int => Doc) : Doc =
-        column (k1 => d <> column (k2 => f (k2 - k1)))
+    def width(d : Doc, f : Int => Doc) : Doc =
+        column(k1 => d <> column(k2 => f(k2 - k1)))
 
     /**
      * Return a document that pads `d` out to a width of `p`. If `d` already has
      * a width greater than or equal to `d`, don't add any padding. This combinator
      * is called `fill` in the PPrint library.
      */
-    def padto (p : Int, d : Doc) : Doc =
-        width (d, w => spaces (p - w))
+    def padto(p : Int, d : Doc) : Doc =
+        width(d, w => spaces(p - w))
 
     /**
      * As for `padto` but if the document width is already greater than or equal
@@ -572,75 +578,75 @@ trait PrettyPrinterBase {
      * adding any padding. This combinator is called `fillBreak` in the PPrint
      * library.
      */
-    def padtobreak (p : Int, d : Doc) : Doc =
-        width (d, w => if (w > p) nest (linebreak, p) else spaces (p - w))
+    def padtobreak(p : Int, d : Doc) : Doc =
+        width(d, w => if (w > p) nest(linebreak, p) else spaces(p - w))
 
     /**
      * Return a document representing a value formatted using `toString` and
      * the `string` combinator. As a special case, if the value is a null
      * reference it is formatted as `null`.
      */
-    def value (v : Any) : Doc =
+    def value(v : Any) : Doc =
         if (v == null)
             "null"
         else
-            string (v.toString)
+            string(v.toString)
 
     /**
      * Return a document that encloses a given document `d` between two
      * occurrences of another document `b`.
      */
-    def surround (d : Doc, b : Doc) : Doc =
+    def surround(d : Doc, b : Doc) : Doc =
         b <> d <> b
 
     /**
      * Return a document that encloses a given document between single
      * quotes.
      */
-    def squotes (d : Doc) : Doc =
-        surround (d, squote)
+    def squotes(d : Doc) : Doc =
+        surround(d, squote)
 
     /**
      * Return a document that encloses a given document between double
      * quotes.
      */
-    def dquotes (d : Doc) : Doc =
-        surround (d, dquote)
+    def dquotes(d : Doc) : Doc =
+        surround(d, dquote)
 
     /**
      * Return a document that encloses a given document between left
      * and right documents.
      */
-    def enclose (l : Doc, d : Doc, r : Doc) : Doc =
+    def enclose(l : Doc, d : Doc, r : Doc) : Doc =
         l <> d <> r
 
     /**
      * Return a document that encloses a given document between left
      * and right braces.
      */
-    def braces (d : Doc) : Doc =
-        enclose (lbrace, d, rbrace)
+    def braces(d : Doc) : Doc =
+        enclose(lbrace, d, rbrace)
 
     /**
      * Return a document that encloses a given document between left
      * and right parentheses.
      */
-    def parens (d : Doc) : Doc =
-        enclose (lparen, d, rparen)
+    def parens(d : Doc) : Doc =
+        enclose(lparen, d, rparen)
 
     /**
      * Return a document that encloses a given document between left
      * and right angle brackets.
      */
-    def angles (d : Doc) : Doc =
-        enclose (langle, d, rangle)
+    def angles(d : Doc) : Doc =
+        enclose(langle, d, rangle)
 
     /**
      * Return a document that encloses a given document between left
      * and right square brackets.
      */
-    def brackets (d : Doc) : Doc =
-        enclose (lbracket, d, rbracket)
+    def brackets(d : Doc) : Doc =
+        enclose(lbracket, d, rbracket)
 
     // Character shorthands
 
@@ -650,79 +656,79 @@ trait PrettyPrinterBase {
      * A tilde document.
      */
     def tilde : Doc =
-        char ('~')
+        char('~')
 
     /**
      * An exclamation mark document.
      */
     def exclamation : Doc =
-        char ('!')
+        char('!')
 
     /**
      * An at-sign document.
      */
     def atsign : Doc =
-        char ('@')
+        char('@')
 
     /**
      * A hash mark document.
      */
     def hash : Doc =
-        char ('#')
+        char('#')
 
     /**
      * A dollar sign document.
      */
     def dollar : Doc =
-        char ('$')
+        char('$')
 
     /**
      * A percent sign document.
      */
     def percent : Doc =
-        char ('%')
+        char('%')
 
     /**
      * A caret document.
      */
     def caret : Doc =
-        char ('^')
+        char('^')
 
     /**
      * An ampersand document.
      */
     def ampersand : Doc =
-        char ('&')
+        char('&')
 
     /**
      * An asterisk document.
      */
     def asterisk : Doc =
-        char ('*')
+        char('*')
 
     /**
      * A left parenthesis document.
      */
     def lparen : Doc =
-        char ('(')
+        char('(')
 
     /**
      * A right parenthesis document.
      */
     def rparen : Doc =
-        char (')')
+        char(')')
 
     /**
      * An underscore document.
      */
     def underscore : Doc =
-        char ('_')
+        char('_')
 
     /**
      * An plus sign document.
      */
     def plus : Doc =
-        char ('+')
+        char('+')
 
     // Second top row
 
@@ -730,19 +736,19 @@ trait PrettyPrinterBase {
      * A backquote document.
      */
     def backquote : Doc =
-        char ('`')
+        char('`')
 
     /**
      * An minus sign document.
      */
     def minus : Doc =
-        char ('-')
+        char('-')
 
     /**
      * An equal sign document.
      */
     def equal : Doc =
-        char ('=')
+        char('=')
 
     // Third top row
 
@@ -750,19 +756,19 @@ trait PrettyPrinterBase {
      * A left brace document.
      */
     def lbrace : Doc =
-        char ('{')
+        char('{')
 
     /**
      * A right brace document.
      */
     def rbrace : Doc =
-        char ('}')
+        char('}')
 
     /**
      * A vertical bar document.
      */
     def verticalbar : Doc =
-        char ('|')
+        char('|')
 
     // Fourth top row
 
@@ -770,19 +776,19 @@ trait PrettyPrinterBase {
      * A left square bracket document.
      */
     def lbracket : Doc =
-        char ('[')
+        char('[')
 
     /**
      * A right square bracket document.
      */
     def rbracket : Doc =
-        char (']')
+        char(']')
 
     /**
      * A backslash document.
      */
     def backslash : Doc =
-        char ('\\')
+        char('\\')
 
     // Fifth top row
 
@@ -790,13 +796,13 @@ trait PrettyPrinterBase {
      * A colon document.
      */
     def colon : Doc =
-        char (':')
+        char(':')
 
     /**
      * A double quote document.
      */
     def dquote : Doc =
-        char ('"')
+        char('"')
 
     // Sixth top row
 
@@ -804,13 +810,13 @@ trait PrettyPrinterBase {
      * A semicolon document.
      */
     def semi : Doc =
-        char (';')
+        char(';')
 
     /**
      * A single quote document.
      */
     def squote : Doc =
-        char ('\'')
+        char('\'')
 
     // Seventh top row
 
@@ -818,19 +824,19 @@ trait PrettyPrinterBase {
      * A left angle bracket document.
      */
     def langle : Doc =
-        char ('<')
+        char('<')
 
     /**
      * A right angle bracket document.
      */
     def rangle : Doc =
-        char ('>')
+        char('>')
 
     /**
      * A question mark document.
      */
     def question : Doc =
-        char ('?')
+        char('?')
 
     // Eighth top row
 
@@ -838,19 +844,19 @@ trait PrettyPrinterBase {
      * A comma document.
      */
     def comma : Doc =
-        char (',')
+        char(',')
 
     /**
      * A dot (period) document.
      */
     def dot : Doc =
-        char ('.')
+        char('.')
 
     /**
      * A forward slash document.
      */
     def forwslash : Doc =
-        char ('/')
+        char('/')
 
     // Bottom row
 
@@ -858,7 +864,7 @@ trait PrettyPrinterBase {
      * A space document.
      */
     def space : Doc =
-        char (' ')
+        char(' ')
 
 }
 
@@ -890,286 +896,274 @@ trait PrettyPrinter extends PrettyPrinterBase {
     /**
      * An output entry for a piece of the pretty-printed text.
      */
-    case class Text (s : String) extends Entry
+    case class Text(s : String) extends Entry
 
     /**
      * An output entry that indicates the finish of a document linked with `n`.
      */
-    case class Start (n : AnyRef) extends Entry
+    case class Start(n : AnyRef) extends Entry
 
     /**
      * An output entry that indicates the finish of a document linked with `n`.
      */
-    case class Finish (n : AnyRef) extends Entry
+    case class Finish(n : AnyRef) extends Entry
 
     // As per Swierstra and Chitil with addition of trampolines
 
-    type Remaining  = Int
+    type Remaining = Int
     type Horizontal = Boolean
-    type Buffer     = Seq[Entry]
-    type Effect     = Buffer => Buffer
-    type Out        = Remaining => Trampoline[Buffer]
-    type OutGroup   = Horizontal => Out => Trampoline[Out]
-    type PPosition  = Int
-    type Dq         = Queue[(PPosition,OutGroup)]
-    type TreeCont   = (PPosition,Dq) => Trampoline[Out]
-    type IW         = (Indent,Width)
-    type DocCont    = IW => TreeCont => Trampoline[TreeCont]
+    type Buffer = Seq[Entry]
+    type Effect = Buffer => Buffer
+    type Out = Remaining => Trampoline[Buffer]
+    type OutGroup = Horizontal => Out => Trampoline[Out]
+    type PPosition = Int
+    type Dq = Queue[(PPosition, OutGroup)]
+    type TreeCont = (PPosition, Dq) => Trampoline[Out]
+    type IW = (Indent, Width)
+    type DocCont = IW => TreeCont => Trampoline[TreeCont]
 
     // Helper functions
 
-    def scan (l : Width, out : OutGroup) (c : TreeCont) : Trampoline[TreeCont] =
-        step (
+    def scan(l : Width, out : OutGroup)(c : TreeCont) : Trampoline[TreeCont] =
+        step(
             (p : PPosition, dq : Dq) =>
                 if (dq.isEmpty) {
-                    More (() =>
+                    More(() =>
                         for {
-                            o1 <- c (p + l, emptyDq)
-                            o2 <- out (false) (o1)
-                        } yield o2
-                    )
+                            o1 <- c(p + l, emptyDq)
+                            o2 <- out(false)(o1)
+                        } yield o2)
                 } else {
                     val (s, grp) = dq.last
                     val n = (s, (h : Horizontal) =>
-                                    (o1 : Out) =>
-                                        More (() =>
-                                            for {
-                                                o2 <- out (h) (o1)
-                                                o3 <- grp (h) (o2)
-                                            } yield o3
-                                        ))
-                    prune (c) (p + l, dq.init :+ n)
+                        (o1 : Out) =>
+                            More(() =>
+                                for {
+                                    o2 <- out(h)(o1)
+                                    o3 <- grp(h)(o2)
+                                } yield o3))
+                    prune(c)(p + l, dq.init :+ n)
                 }
         )
 
-    def prune (c1 : TreeCont) : TreeCont =
+    def prune(c1 : TreeCont) : TreeCont =
         (p : PPosition, dq : Dq) =>
-            Done (
+            Done(
                 (r : Remaining) =>
                     if (dq.isEmpty)
-                        More (() =>
-                            for {
-                                o <- c1 (p, emptyDq)
-                                layout <- o (r)
-                            } yield layout
-                        )
+                        More(() =>
+                        for {
+                            o <- c1(p, emptyDq)
+                            layout <- o(r)
+                        } yield layout)
                     else {
                         val (s, grp) = dq.head
                         if (p > s + r) {
-                            More (() =>
+                            More(() =>
                                 for {
-                                    c2 <- prune (c1) (p, dq.tail)
-                                    o <- grp (false) (c2)
-                                    layout <- o (r)
-                                } yield layout
-                            )
+                                    c2 <- prune(c1)(p, dq.tail)
+                                    o <- grp(false)(c2)
+                                    layout <- o(r)
+                                } yield layout)
                         } else {
-                            More (() =>
+                            More(() =>
                                 for {
-                                    o <- c1 (p, dq)
-                                    layout <- o (r)
-                                } yield layout
-                            )
+                                    o <- c1(p, dq)
+                                    layout <- o(r)
+                                } yield layout)
                         }
                     }
             )
 
-    def leave (c : TreeCont) : TreeCont =
+    def leave(c : TreeCont) : TreeCont =
         (p : PPosition, dq : Dq) =>
             if (dq.isEmpty) {
-                c (p, emptyDq)
+                c(p, emptyDq)
             } else if (dq.length == 1) {
                 val (s1, grp1) = dq.last
-                More (() =>
+                More(() =>
                     for {
-                        o1 <- c (p, emptyDq)
-                        o2 <- grp1 (true) (o1)
-                    } yield o2
-                )
+                        o1 <- c(p, emptyDq)
+                        o2 <- grp1(true)(o1)
+                    } yield o2)
             } else {
                 val (s1, grp1) = dq.last
                 val (s2, grp2) = dq.init.last
                 val n = (s2, (h : Horizontal) =>
-                                 (o1 : Out) => {
-                                     val o3 =
-                                         (r : Remaining) =>
-                                             More (() =>
-                                                 for {
-                                                     o2 <- grp1 (p <= s1 + r) (o1)
-                                                     layout <- o2 (r)
-                                                 } yield layout
-                                             )
-                                     More (() =>
-                                         for {
-                                             o4 <- grp2 (h) (o3)
-                                         } yield o4
-                                     )
-                                 })
-                c (p, dq.init.init :+ n)
+                    (o1 : Out) => {
+                        val o3 =
+                            (r : Remaining) =>
+                                More(() =>
+                                    for {
+                                        o2 <- grp1(p <= s1 + r)(o1)
+                                        layout <- o2(r)
+                                    } yield layout)
+                        More(() =>
+                            for {
+                                o4 <- grp2(h)(o3)
+                            } yield o4)
+                    })
+                c(p, dq.init.init :+ n)
             }
 
-    def output (o : Out, r : Int, entry : Entry) : More[Buffer] =
-        More (() =>
+    def output(o : Out, r : Int, entry : Entry) : More[Buffer] =
+        More(() =>
             for {
-                buffer <- o (r)
-            } yield entry +: buffer
-        )
+                buffer <- o(r)
+            } yield entry +: buffer)
 
-    def insert (len : Int, entry : Entry) : Doc =
-        new Doc (
+    def insert(len : Int, entry : Entry) : Doc =
+        new Doc(
             (iw : IW) => {
                 val out =
                     (_ : Horizontal) => (o : Out) =>
-                        Done (
+                        Done(
                             (r : Remaining) =>
-                                output (o, r - len, entry)
+                                output(o, r - len, entry)
                         )
-                scan (len, out)
+                scan(len, out)
             }
         )
 
     /**
      * Continuation representation of documents.
      */
-    class Doc (val f : DocCont) extends DocCont with DocOps {
+    class Doc(val f : DocCont) extends DocCont with DocOps {
 
         // Forward function operations to the function
 
-        def apply (iw : IW) : TreeCont => Trampoline[TreeCont] =
-            f (iw)
+        def apply(iw : IW) : TreeCont => Trampoline[TreeCont] =
+            f(iw)
 
         // Basic operations
 
-        def <> (e : Doc) : Doc =
-            new Doc (
+        def <>(e : Doc) : Doc =
+            new Doc(
                 (iw : IW) =>
                     (c1 : TreeCont) =>
-                        More (() =>
+                        More(() =>
                             for {
-                                c2 <- e (iw) (c1)
-                                c3 <- f (iw) (c2)
-                            } yield c3
-                        )
+                                c2 <- e(iw)(c1)
+                                c3 <- f(iw)(c2)
+                            } yield c3)
             )
 
     }
 
     // Basic combinators
 
-    implicit def text (t : String) : Doc =
+    implicit def text(t : String) : Doc =
         if (t == "")
             empty
         else
-            insert (t.length, Text (t))
+            insert(t.length, Text(t))
 
-    def line (repl : Layout) : Doc =
-        new Doc ({
+    def line(repl : Layout) : Doc =
+        new Doc({
             case (i, w) =>
                 val width = repl.length
                 val outLine =
                     (h : Horizontal) => (o : Out) =>
-                        Done (
+                        Done(
                             (r : Remaining) =>
                                 if (h)
-                                    output (o, r - width, Text (repl))
+                                    output(o, r - width, Text(repl))
                                 else
-                                    output (o, w - i, Text ("\n" + " " * i))
+                                    output(o, w - i, Text("\n" + " " * i))
                         )
-                scan (width, outLine)
+                scan(width, outLine)
         })
 
     def line : Doc =
-        line (" ")
+        line(" ")
 
     def linebreak : Doc =
-        line ("")
+        line("")
 
-    def group (d : Doc) : Doc =
-        new Doc (
+    def group(d : Doc) : Doc =
+        new Doc(
             (iw : IW) =>
                 (c1 : TreeCont) =>
-                    More (() =>
+                    More(() =>
                         for {
-                            c2 <- d (iw) (leave (c1))
-                        } yield
-                            (p : PPosition, dq : Dq) => {
-                                val n = (h : Horizontal) => (o : Out) => Done (o)
-                                c2 (p, dq :+ ((p, n)))
-                            }
-                    )
+                            c2 <- d(iw)(leave(c1))
+                        } yield (p : PPosition, dq : Dq) => {
+                            val n = (h : Horizontal) => (o : Out) => Done(o)
+                            c2(p, dq :+ ((p, n)))
+                        })
         )
 
     def empty : Doc =
-        new Doc (
+        new Doc(
             (iw : IW) =>
                 (c : TreeCont) =>
-                    Done (c)
+                    Done(c)
         )
 
-    def nest (d : Doc, j : Indent = defaultIndent) : Doc =
-        new Doc ({
+    def nest(d : Doc, j : Indent = defaultIndent) : Doc =
+        new Doc({
             case (i, w) =>
-                d ((i + j, w))
+                d((i + j, w))
         })
 
-    def column (f : Int => Doc) : Doc =
-        new Doc ({
+    def column(f : Int => Doc) : Doc =
+        new Doc({
             case (i, w) =>
                 (c : TreeCont) =>
-                    Done (
+                    Done(
                         (p : PPosition, dq : Dq) =>
-                            Done (
+                            Done(
                                 (r : Remaining) =>
                                     for {
-                                        c1 <- f (w - r) (i, w) (c)
-                                        out <- c1 (p, dq)
-                                        bp <- out (r)
+                                        c1 <- f(w - r)(i, w)(c)
+                                        out <- c1(p, dq)
+                                        bp <- out(r)
                                     } yield bp
                             )
                     )
         })
 
-    def nesting (f : Int => Doc) : Doc =
-        new Doc ({
+    def nesting(f : Int => Doc) : Doc =
+        new Doc({
             case iw @ (i, _) =>
-                f (i) (iw)
+                f(i)(iw)
         })
 
     // Linking combinator
 
-    def link (n : AnyRef, d : Doc) : Doc =
-        insert (0, Start (n)) <> d <> insert (0, Finish (n))
+    def link(n : AnyRef, d : Doc) : Doc =
+        insert(0, Start(n)) <> d <> insert(0, Finish(n))
 
     // Obtaining output
 
-    def pretty (d : Doc, w : Width = defaultWidth) : Document = {
+    def pretty(d : Doc, w : Width = defaultWidth) : Document = {
 
-        val initBuffer = Seq[Entry] ()
+        val initBuffer = Seq[Entry]()
         val cend =
             (p : PPosition, dq : Dq) =>
-                Done ((r : Remaining) => Done (initBuffer))
+                Done((r : Remaining) => Done(initBuffer))
         val finalBufferComputation =
             for {
-                c <- d (0, w) (cend)
-                o <- c (0, emptyDq)
-                buffer <- o (w)
+                c <- d(0, w)(cend)
+                o <- c(0, emptyDq)
+                buffer <- o(w)
             } yield buffer
         val finalBuffer = finalBufferComputation.runT
 
         val (links, _, _, stringBuilder) =
-            finalBuffer.foldLeft ((emptyLinks, List[Int] (), 0, new StringBuilder)) {
+            finalBuffer.foldLeft((emptyLinks, List[Int](), 0, new StringBuilder)) {
                 case ((m, s, p, o), e) =>
                     e match {
-                        case Start (a) =>
+                        case Start(a) =>
                             (m, p :: s, p, o)
-                        case Finish (a) =>
-                            (Link (a, Range (s.head, p + 1)) :: m, s.tail, p, o)
-                        case Text (t) =>
-                            (m, s, p + t.length, o.append (t))
+                        case Finish(a) =>
+                            (Link(a, Range(s.head, p + 1)) :: m, s.tail, p, o)
+                        case Text(t) =>
+                            (m, s, p + t.length, o.append(t))
                     }
             }
 
-        Document (stringBuilder.result, links)
+        Document(stringBuilder.result, links)
 
     }
 

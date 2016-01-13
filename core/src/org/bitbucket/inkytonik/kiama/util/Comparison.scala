@@ -30,7 +30,7 @@ object Comparison {
      * Compare two arbitrary values. If they are both references, use
      * reference equality, otherwise use value equality.
      */
-    def same (v1 : Any, v2 : Any) : Boolean =
+    def same(v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
             v2 == null
         else if (v2 == null)
@@ -45,31 +45,31 @@ object Comparison {
                     i1 == i2
                 case (l1 : Long, l2 : Long) =>
                     l1 == l2
-                case (r1 : AnyRef, r2: AnyRef) =>
+                case (r1 : AnyRef, r2 : AnyRef) =>
                     r1 eq r2
                 case _ =>
-                    sys.error (s"same: comparison of $v1 and $v2, should not be reached")
+                    sys.error(s"same: comparison of $v1 and $v2, should not be reached")
             }
 
     /**
      * Compare two `Iterable` collections or options and tuples containing that kind of
      * collection. Use `same` to compare the individual elements.
      */
-    def samecollection (v1 : Any, v2 : Any) : Boolean =
+    def samecollection(v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
             v2 == null
         else if (v2 == null)
             false
         else
             (v1, v2) match {
-                case (Some (s1), Some (s2)) =>
-                    samecollection (s1, s2)
-                case ((t1,t2), (t3,t4)) =>
-                    samecollection (t1, t3) && samecollection (t2, t4)
+                case (Some(s1), Some(s2)) =>
+                    samecollection(s1, s2)
+                case ((t1, t2), (t3, t4)) =>
+                    samecollection(t1, t3) && samecollection(t2, t4)
                 case (t1 : Iterable[_], t2 : Iterable[_]) =>
-                    (t1.size == t2.size) && (t1.zip (t2).forall (Function.tupled (samecollection)))
+                    (t1.size == t2.size) && (t1.zip(t2).forall(Function.tupled(samecollection)))
                 case _ =>
-                    same (v1, v2)
+                    same(v1, v2)
             }
 
     /**
@@ -77,31 +77,31 @@ object Comparison {
      * containing references, they are unwrapped first and the contents are
      * compared by reference.
      */
-    def optsame (v1 : Any, v2 : Any) : Boolean =
+    def optsame(v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
             v2 == null
         else if (v2 == null)
             false
         else
             (v1, v2) match {
-                case (Some (r1 : AnyRef), Some (r2 : AnyRef)) =>
+                case (Some(r1 : AnyRef), Some(r2 : AnyRef)) =>
                     r1 eq r2
                 case _ =>
-                    same (v1, v2)
+                    same(v1, v2)
             }
 
     /**
      * Does the sequence `s` contain `t`? Equality is tested using `same`.
      */
-    def contains[T] (s : Seq[T], t : T) : Boolean =
-        s.exists (same (_, t))
+    def contains[T](s : Seq[T], t : T) : Boolean =
+        s.exists(same(_, t))
 
     /**
      * Return a vector with only the distinct elements from the sequence `s`.
      * "distinct" in this case means compare unequal using `same`. The
      * first occurrence of each distinct element is kept.
      */
-    def distinct[T] (s : Seq[T]) : Vector[T] = {
+    def distinct[T](s : Seq[T]) : Vector[T] = {
 
         import scala.collection.mutable.TreeSet
 
@@ -110,16 +110,16 @@ object Comparison {
          * are, otherwise uses the index (i.e., the position in `s`) so that
          * earlier elements are less than later ones.
          */
-        object TOrdering extends Ordering[(T,Int)] {
+        object TOrdering extends Ordering[(T, Int)] {
 
-              def compare (a : (T, Int), b : (T, Int)) : Int =
-                  if (same (a._1, b._1)) 0 else a._2 - b._2
+            def compare(a : (T, Int), b : (T, Int)) : Int =
+                if (same(a._1, b._1)) 0 else a._2 - b._2
 
         }
 
-        val set = new TreeSet[(T,Int)] () (TOrdering)
+        val set = new TreeSet[(T, Int)]()(TOrdering)
         set ++= (s.zipWithIndex)
-        set.toVector.map (_._1)
+        set.toVector.map(_._1)
 
     }
 

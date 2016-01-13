@@ -28,7 +28,7 @@ package util
  * not use this class directly, but import from its companion object so
  * that the deprecation warnings will be suppressed.
  */
-@deprecated ("You should never see this message", "2.11")
+@deprecated("You should never see this message", "2.11")
 class Compat210 {
 
     /**
@@ -45,8 +45,8 @@ class Compat210 {
      */
     object io {
         object StdIn {
-            def readLine (text : String, args : Any*) : String =
-                Console.readLine (text, args)
+            def readLine(text : String, args : Any*) : String =
+                Console.readLine(text, args)
         }
     }
 

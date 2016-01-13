@@ -32,7 +32,7 @@ object Total extends Attribution {
     /**
      * Return the total salary cost of a company (by rewriting).
      */
-    def total (c : Company) : Double =
-        everything (0.0) (_ + _) { case s : Salary => s } (c)
+    def total(c : Company) : Double =
+        everything(0.0)(_ + _) { case s : Salary => s }(c)
 
 }

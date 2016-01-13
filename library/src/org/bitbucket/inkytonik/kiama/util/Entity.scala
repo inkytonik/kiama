@@ -36,10 +36,10 @@ abstract class ErrorEntity extends Entity
  * A entity represented by names for whom we have seen more than one
  * declaration so we are unsure what is being represented.
  */
-case class MultipleEntity () extends ErrorEntity
+case class MultipleEntity() extends ErrorEntity
 
 /**
  * An unknown entity, for example one that is represened by names whose
  * declarations are missing.
  */
-case class UnknownEntity () extends ErrorEntity
+case class UnknownEntity() extends ErrorEntity

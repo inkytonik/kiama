@@ -29,23 +29,25 @@ class TIL2_2 extends TransformingMain {
     import TILTree._
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
 
-    val parsers = new TIL1_1Parsers (positions)
+    val parsers = new TIL1_1Parsers(positions)
     val parser = parsers.program
 
-    def transform (ast : Program) : Program =
-        rewrite (fortowhile) (ast)
+    def transform(ast : Program) : Program =
+        rewrite(fortowhile)(ast)
 
     val fortowhile =
-        everywhere (rule[List[Stat]] {
-            case (s @ For (id @ Id (i), f, t, b)) :: ss =>
-                val upperid = Id (s"Upper$i")
-                Decl (id) ::
-                Assign (id, f) ::
-                Decl (upperid) ::
-                Assign (upperid, Add (t, Num (1))) ::
-                While (Sub (Var (id), Var (upperid)),
-                    b ++ List (Assign (id, Add (Var (id), Num (1))))) ::
-                ss
+        everywhere(rule[List[Stat]] {
+            case (s @ For(id @ Id(i), f, t, b)) :: ss =>
+                val upperid = Id(s"Upper$i")
+                Decl(id) ::
+                    Assign(id, f) ::
+                    Decl(upperid) ::
+                    Assign(upperid, Add(t, Num(1))) ::
+                    While(
+                        Sub(Var(id), Var(upperid)),
+                        b ++ List(Assign(id, Add(Var(id), Num(1))))
+                    ) ::
+                        ss
         })
 
 }

@@ -42,51 +42,67 @@ class CombinedTests extends Tests {
     // For the actual program text, see CombinedTests.pj
 
     val ast =
-        Program (
-            Block (
-                Vector (
-                    ClassDecl (
+        Program(
+            Block(
+                Vector(
+                    ClassDecl(
                         "A",
                         None,
-                        Block (
-                            Vector (
-                                VarDecl (Use ("boolean"), "a"),
-                                AssignStmt (Use ("a"), BooleanLiteral ("true")),
-                                ClassDecl (
+                        Block(
+                            Vector(
+                                VarDecl(Use("boolean"), "a"),
+                                AssignStmt(Use("a"), BooleanLiteral("true")),
+                                ClassDecl(
                                     "AA",
                                     None,
-                                    Block (
-                                        Vector (VarDecl (Use ("boolean"), "aa"))))))),
-                    ClassDecl (
+                                    Block(
+                                        Vector(VarDecl(Use("boolean"), "aa"))
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    ClassDecl(
                         "B",
-                        Some (Use ("A")),
-                        Block (
-                            Vector (
-                                VarDecl (Use ("boolean"), "b"),
-                                AssignStmt (Use ("b"), Use ("a")),
-                                VarDecl (Use ("A"), "refA"),
-                                VarDecl (Use ("B"), "refB"),
-                                AssignStmt (Use ("refA"), Use ("refB")),
-                                AssignStmt (
-                                    Dot (Use ("refB"), Use ("b")),
-                                    Dot (Use ("refA"), Use ("a"))),
-                                ClassDecl (
+                        Some(Use("A")),
+                        Block(
+                            Vector(
+                                VarDecl(Use("boolean"), "b"),
+                                AssignStmt(Use("b"), Use("a")),
+                                VarDecl(Use("A"), "refA"),
+                                VarDecl(Use("B"), "refB"),
+                                AssignStmt(Use("refA"), Use("refB")),
+                                AssignStmt(
+                                    Dot(Use("refB"), Use("b")),
+                                    Dot(Use("refA"), Use("a"))
+                                ),
+                                ClassDecl(
                                     "BB",
-                                    Some (Use ("AA")),
-                                    Block (
-                                        Vector (
-                                            VarDecl (Use ("boolean"), "bb"),
-                                            AssignStmt (Use ("bb"), Use ("aa")),
-                                            WhileStmt (
-                                                Use ("b"),
-                                                AssignStmt (Use ("b"), Use ("a"))))))))))))
+                                    Some(Use("AA")),
+                                    Block(
+                                        Vector(
+                                            VarDecl(Use("boolean"), "bb"),
+                                            AssignStmt(Use("bb"), Use("aa")),
+                                            WhileStmt(
+                                                Use("b"),
+                                                AssignStmt(Use("b"), Use("a"))
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
 
-    val tree = new PicoJavaTree (ast)
-    val analyser = new ErrorCheck (tree)
+    val tree = new PicoJavaTree(ast)
+    val analyser = new ErrorCheck(tree)
     import analyser._
 
-    test ("combined test program has no errors") {
-        assertResult (0) (errors.size)
+    test("combined test program has no errors") {
+        assertResult(0)(errors.size)
     }
 
 }

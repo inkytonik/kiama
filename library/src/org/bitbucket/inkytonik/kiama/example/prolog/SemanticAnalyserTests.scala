@@ -34,23 +34,23 @@ class SemanticAnalyserTests extends Compiler[Program] with TestCompiler[Program]
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    filetests ("Prolog", "src/org/bitbucket/inkytonik/kiama/example/prolog/tests", ".pl", ".sem")
+    filetests("Prolog", "src/org/bitbucket/inkytonik/kiama/example/prolog/tests", ".pl", ".sem")
 
-    val parsers = new SyntaxAnalyser (positions)
+    val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.
      */
-    def process (source : Source, ast : Program, config : Config) {
-        val tree = new PrologTree (ast)
-        val analyser = new SemanticAnalyser (tree)
+    def process(source : Source, ast : Program, config : Config) {
+        val tree = new PrologTree(ast)
+        val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
         if (messages.length > 0)
-            report (messages, config.error)
+            report(messages, config.error)
     }
 
-    def format (m : Program) : Document =
+    def format(m : Program) : Document =
         emptyDocument
 
 }

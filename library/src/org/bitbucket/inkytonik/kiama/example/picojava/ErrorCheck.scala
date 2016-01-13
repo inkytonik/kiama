@@ -32,8 +32,7 @@ package example.picojava
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
 import PicoJavaTree.PicoJavaTree
 
-class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
-        NameResolution with TypeAnalyser with NullObjects with PredefinedTypes {
+class ErrorCheck(val tree : PicoJavaTree) extends Attribution with NameResolution with TypeAnalyser with NullObjects with PredefinedTypes {
 
     import PicoJavaTree._
     import java.util.ArrayList
@@ -85,46 +84,46 @@ class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
     // lazy val errors : ArrayList[String] = {
     def errors : ArrayList[String] = {
         val c = new ArrayList[String]
-        collectErrors (tree.root, c)
+        collectErrors(tree.root, c)
         c
     }
 
-    def error (c : ArrayList[String], s : String) {
-        c.add (s)
+    def error(c : ArrayList[String], s : String) {
+        c.add(s)
     }
 
-    def collectErrors (p : PicoJavaNode, c : ArrayList[String]) {
+    def collectErrors(p : PicoJavaNode, c : ArrayList[String]) {
 
         // Collect error from p's children
         val children = p.productIterator
         while (children.hasNext) {
-            children.next () match {
+            children.next() match {
                 case cp : PicoJavaNode =>
-                    collectErrors (cp, c)
+                    collectErrors(cp, c)
                 case v : Vector[_] =>
                     v.collect {
                         case cp : PicoJavaNode =>
-                            collectErrors (cp, c)
+                            collectErrors(cp, c)
                     }
                 case _ =>
-                    // Do nothing
+                // Do nothing
             }
         }
 
         // Collect errors from p
         p match {
-            case a : AssignStmt if (!isSubtypeOf (tipe (a.Variable)) (tipe (a.Value))) =>
-                error (c, s"Can not assign a variable of type ${tipe (a.Variable).Name} to a value of type ${tipe (a.Value).Name}")
-            case d : ClassDecl if (hasCycleOnSuperclassChain (d)) =>
-                error (c, s"Cyclic inheritance chain for class ${d.Name}")
-            case s : WhileStmt if (!isSubtypeOf (tipe (s.Condition)) (booleanType (s))) =>
-                error (c, "Condition must be a boolean expression")
-            case s :  WhileStmt if (!isValue (s.Condition)) =>
-                error (c, "Condition must be a value")
-            case i : IdnUse if (isUnknown (decl (i)) && (!isQualified (i) || !isUnknown (tipe (qualifier (i))))) =>
-                error (c, s"Unknown identifier ${i.Name}")
+            case a : AssignStmt if (!isSubtypeOf(tipe(a.Variable))(tipe(a.Value))) =>
+                error(c, s"Can not assign a variable of type ${tipe(a.Variable).Name} to a value of type ${tipe(a.Value).Name}")
+            case d : ClassDecl if (hasCycleOnSuperclassChain(d)) =>
+                error(c, s"Cyclic inheritance chain for class ${d.Name}")
+            case s : WhileStmt if (!isSubtypeOf(tipe(s.Condition))(booleanType(s))) =>
+                error(c, "Condition must be a boolean expression")
+            case s : WhileStmt if (!isValue(s.Condition)) =>
+                error(c, "Condition must be a value")
+            case i : IdnUse if (isUnknown(decl(i)) && (!isQualified(i) || !isUnknown(tipe(qualifier(i))))) =>
+                error(c, s"Unknown identifier ${i.Name}")
             case _ =>
-                // Do nothing
+            // Do nothing
         }
 
     }
@@ -140,8 +139,8 @@ class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
      */
     val isQualified : IdnUse => Boolean =
         attr {
-            case tree.parent (_ : Dot) => true
-            case _                        => false
+            case tree.parent(_ : Dot) => true
+            case _                    => false
         }
 
     /**
@@ -159,10 +158,10 @@ class ErrorCheck (val tree : PicoJavaTree) extends Attribution with
      */
     val qualifier : IdnUse => Access =
         attr {
-            case tree.parent (Dot (o, _)) =>
+            case tree.parent(Dot(o, _)) =>
                 o
             case _ =>
-                sys.error ("Can not compute qualifier for non qualified names")
+                sys.error("Can not compute qualifier for non qualified names")
         }
 
 }

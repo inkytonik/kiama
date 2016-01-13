@@ -40,10 +40,12 @@ trait Par extends ReduceSubst {
      */
     override lazy val beta =
         rule[Exp] {
-            case App (Lam (x, t, e1), e2) =>
-                val y = freshVar ()
-                Letp (Vector (Bind (y, e2)),
-                      Letp (Vector (Bind (x, Var (y))), e1))
+            case App(Lam(x, t, e1), e2) =>
+                val y = freshVar()
+                Letp(
+                    Vector(Bind(y, e2)),
+                    Letp(Vector(Bind(x, Var(y))), e1)
+                )
         }
 
     /**
@@ -51,15 +53,15 @@ trait Par extends ReduceSubst {
      */
     override lazy val subsNum =
         rule[Exp] {
-            case Letp (_, e : Num) => e
+            case Letp(_, e : Num) => e
         }
 
     /**
      * Lookup a binding for a name in a vector of bindings.
      */
-    def lookupb (x : Idn, ds : Vector[Bind]) : Option[Exp] =
+    def lookupb(x : Idn, ds : Vector[Bind]) : Option[Exp] =
         ds.collectFirst {
-            case Bind (y, e) if x == y =>
+            case Bind(y, e) if x == y =>
                 e
         }
 
@@ -68,8 +70,8 @@ trait Par extends ReduceSubst {
      */
     override lazy val subsVar =
         rulefs[Exp] {
-            case Letp (ds, e @ Var (x)) =>
-                option (lookupb (x, ds)) <+ build (e)
+            case Letp(ds, e @ Var(x)) =>
+                option(lookupb(x, ds)) <+ build(e)
         }
 
     /**
@@ -77,8 +79,8 @@ trait Par extends ReduceSubst {
      */
     override lazy val subsApp =
         rule[Exp] {
-            case Letp (ds, App (e1, e2)) =>
-                App (Letp (ds, e1), Letp (ds, e2))
+            case Letp(ds, App(e1, e2)) =>
+                App(Letp(ds, e1), Letp(ds, e2))
         }
 
     /**
@@ -86,9 +88,9 @@ trait Par extends ReduceSubst {
      */
     override lazy val subsLam =
         rule[Exp] {
-            case Letp (ds, Lam (x, t, e)) =>
-                val y = freshVar ()
-                Lam (y, t, Letp (ds, Letp (Vector (Bind (x, Var (y))), e)))
+            case Letp(ds, Lam(x, t, e)) =>
+                val y = freshVar()
+                Lam(y, t, Letp(ds, Letp(Vector(Bind(x, Var(y))), e)))
         }
 
     /**
@@ -96,8 +98,8 @@ trait Par extends ReduceSubst {
      */
     override lazy val subsOpn =
         rule[Exp] {
-            case Letp (ds, Opn (e1, op, e2)) =>
-                Opn (Letp (ds, e1), op, Letp (ds, e2))
+            case Letp(ds, Opn(e1, op, e2)) =>
+                Opn(Letp(ds, e1), op, Letp(ds, e2))
         }
 
     /**
@@ -105,12 +107,12 @@ trait Par extends ReduceSubst {
      */
     lazy val letLet =
         rule[Letp] {
-            case Letp (ds1, Letp (ds2, e1)) =>
+            case Letp(ds1, Letp(ds2, e1)) =>
                 val ds3 = ds2 map {
-                    case Bind (x, e) => Bind (x, Letp (ds1, e))
+                    case Bind(x, e) => Bind(x, Letp(ds1, e))
                 }
                 val ds4 = ds3 ++ ds1
-                Letp (ds4, e1)
+                Letp(ds4, e1)
         }
 
 }
