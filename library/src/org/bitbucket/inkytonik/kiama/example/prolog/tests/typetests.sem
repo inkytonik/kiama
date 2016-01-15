@@ -1,0 +1,24 @@
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:5:5: argument list found, integer expected
+pb([1]) :- pb(a).
+    ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:5:15: argument atom found, integer expected
+pb([1]) :- pb(a).
+              ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:11:4: argument integer found, atom expected
+pd(1) :- pd([1]).
+   ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:11:14: argument list found, atom expected
+pd(1) :- pd([1]).
+             ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:17:4: argument atom found, list expected
+pf(a) :- pf(1).
+   ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:17:13: argument integer found, list expected
+pf(a) :- pf(1).
+            ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:25:15: argument atom found, integer expected
+pi (Y) :- pi (a).
+              ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typetests.pl:28:30: argument integer found, list expected
+pk (1,[1]) :- pj (X), pk (X, X).
+                             ^

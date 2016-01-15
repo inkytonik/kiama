@@ -1,0 +1,15 @@
+* _pp.ob
+MODULE badcond;
+
+    VAR
+        avar : INTEGER;
+
+BEGIN
+    IF avar THEN
+        avar := 42
+    END
+END badcond.
+[3]* errors
+[3]src/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/badcond.ob:7:8: type error: got INTEGER, but expected BOOLEAN
+[3]    IF avar THEN
+[3]       ^

@@ -1,0 +1,6 @@
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typeerror.pl:3:21: argument atom found, integer expected
+less(X,Y) :- next(X,tony).
+                    ^
+src/org/bitbucket/inkytonik/kiama/example/prolog/tests/typeerror.pl:4:7: argument list found, integer expected
+less([1,2],Y) :- next(X,W), less(W,Y).
+      ^

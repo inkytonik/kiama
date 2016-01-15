@@ -1,0 +1,14 @@
+(* DO instead of END for TRY *)
+
+PROGRAM ExErr4a (i : INTEGER) : INTEGER;
+
+BEGIN
+
+   TRY
+      Average := Quantity / Count;
+      Result := Average * Frequency;
+   CATCH DivideByZero DO
+      Result := 0;
+   DO
+
+END ExErr4a.

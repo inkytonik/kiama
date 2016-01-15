@@ -1,0 +1,15 @@
+* _pp.ob
+MODULE aname;
+
+    PROCEDURE aproc;
+    
+    END anotherproc;
+
+END aname.
+* errors
+[2]src/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/wrongprocedurename.ob:5:5: anotherproc is not declared
+[2]END anotherproc;
+[2]    ^
+[2]src/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/wrongprocedurename.ob:5:5: end procedure name anotherproc should be aproc
+[2]END anotherproc;
+[2]    ^

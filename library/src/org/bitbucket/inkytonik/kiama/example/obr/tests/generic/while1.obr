@@ -1,0 +1,13 @@
+PROGRAM X (x : INTEGER) : INTEGER;
+VAR
+    i : INTEGER;
+    sum : INTEGER;
+BEGIN
+    i := 1;
+    sum := 0;
+    WHILE i < 10 DO
+        sum := sum + i;
+        i := i + 1;
+    END
+    RETURN sum;
+END X.

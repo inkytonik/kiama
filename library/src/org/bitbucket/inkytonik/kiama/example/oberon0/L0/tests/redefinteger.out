@@ -1,0 +1,20 @@
+* _pp.ob
+MODULE redefinteger;
+
+    TYPE
+        INTEGER = BOOLEAN;
+
+    VAR
+        a : INTEGER;
+
+BEGIN
+    a := TRUE
+END redefinteger.
+[6]* c
+[6]#include <stdio.h>
+[6]typedef int ob_INTEGER2;
+[6]ob_INTEGER2 ob_a3;
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_a3 = 1;
+[6]    return 0;
+[6]}

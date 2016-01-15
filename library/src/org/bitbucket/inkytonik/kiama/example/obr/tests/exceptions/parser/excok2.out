@@ -1,0 +1,1 @@
+ObrInt(ExcOk2,Vector(IntParam(IdnDef(i))),Vector(RaiseStmt(IdnUse(CountException))),ExcOk2)

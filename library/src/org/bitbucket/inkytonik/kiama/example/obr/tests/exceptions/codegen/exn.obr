@@ -1,0 +1,25 @@
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+CONST
+  DomsException : EXCEPTION;
+  DomsOtherException : EXCEPTION;
+
+VAR
+  result : INTEGER;
+  
+BEGIN
+  result := 0;
+  TRY
+    IF i = 0 THEN
+      RAISE DomsException;
+    ELSE
+      RAISE DomsOtherException;
+    END
+  CATCH DomsException DO
+    result := 1;
+  CATCH DomsOtherException DO
+    result := 2;
+    RAISE DomsException;
+  END
+  RETURN result;
+END Except.

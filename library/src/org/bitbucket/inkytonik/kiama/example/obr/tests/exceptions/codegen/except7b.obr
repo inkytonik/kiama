@@ -1,0 +1,57 @@
+(* CATCH selection.                         *)
+(* Tests that the correct exception handler *)
+(* is selected. Also tests to make sure     *)
+(* that handlers do not "fall through" and  *)
+(* that they are only run if an exception   *)
+(* actually occurs.                         *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+CONST
+  Limit = 100;
+  TestException1 : EXCEPTION;
+  TestException2 : EXCEPTION;
+  TestException3 : EXCEPTION;
+  TestException4 : EXCEPTION;
+
+VAR
+   result1 : INTEGER;
+   result2 : INTEGER;
+
+BEGIN
+   result1 := 0;
+   result2 := 0;
+   TRY
+     IF i = 0 THEN
+       result1 := Limit * i + 1;
+       IF i < 1 THEN
+         RAISE DivideByZero;
+       END
+     END
+     IF i = 1 THEN
+       RAISE TestException1;
+     END
+     IF i = 2 THEN
+       RAISE TestException2;
+     END
+     IF i = 3 THEN
+       RAISE TestException3;
+     END
+     IF i = 4 THEN
+       RAISE TestException4;
+     END
+   CATCH DivideByZero DO
+     result2 := result2 + 10;
+   CATCH TestException1 DO
+     result1 := 2;
+     result2 := result2 + 10;
+   CATCH TestException2 DO
+     result1 := 3;
+     result2 := result2 + 10;
+   CATCH TestException3 DO
+     result1 := 4;
+     result2 := result2 + 10;
+   END
+   RETURN (result1 + result2);
+END Except.
+

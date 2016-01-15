@@ -1,0 +1,26 @@
+MODULE casename;
+
+BEGIN
+    CASE avar OF
+        1 : avar := 2
+    END;
+    
+    CASE avar OF
+        1 : avar := 2
+      | 3 : avar := 4
+    ELSE
+        avar := 5
+    END;
+
+    CASE 6 * avar OF
+        7 : avar := 8
+      | 9 : avar := 10; avar := 11
+      | 12 :
+      | 13 .. 14 : avar := 15
+    END;
+    
+    CASE avar OF
+        16 : avar := 17
+    ELSE
+    END
+END casename.

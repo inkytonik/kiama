@@ -1,0 +1,14 @@
+(* Missing identifier in CATCH *)
+
+PROGRAM ExErr2 (i : INTEGER) : INTEGER;
+
+BEGIN
+
+   TRY
+      Average := Quantity / Count;         
+      Result := Average * Frequency;
+   CATCH DO
+      Result := 0;
+   END
+   
+END ExErr2.

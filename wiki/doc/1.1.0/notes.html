@@ -1,0 +1,55 @@
+<h3 id="enhancements">Enhancements</h3>
+<ul>
+  <li>attribution:
+    <ul>
+      <li>parent-child connections in Attributable now work for any GenTraversable, not just Seqs</li>
+      <li>parent-child connection setting is now protected rather than private so it can be customised</li>
+    </ul>
+  </li>
+  <li>machine:
+    <ul>
+      <li>new reset method</li>
+    </ul>
+  </li>
+  <li>pretty printing:
+    <ul>
+      <li>new pretty printing combinator library based on Swierstra and Chitil, <em>Linear, bounded, functional pretty-printing</em>, Journal of Functional Programming, 19 (1), 2008. See http://implicit.ly/kiama-110 for documentation.</li>
+      <li>use pretty printer in many examples</li>
+    </ul>
+  </li>
+  <li>rewriting:
+    <ul>
+      <li>generic traversals now work on Rewritable, Product, Traversable and Map values</li>
+      <li>generic traversals now return the subject term if no changes are made to its children</li>
+      <li>new Rewritable trait for custom rewriting of any structure</li>
+    </ul>
+  </li>
+  <li>general:
+    <ul>
+      <li>move to Scala 2.9.0, ScalaTest 1.4.1, ScalaCheck 1.9 and sbt 0.7.7</li>
+      <li>use org.scala-lang version of JLine</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fixes">Fixes</h3>
+<ul>
+  <li>examples:
+    <ul>
+      <li>imperative: fix bug in unary minus tree construction</li>
+    </ul>
+  </li>
+  <li>rewriting:
+    <ul>
+      <li>make more strategy parameters call-by-name</li>
+      <li>fix bugs in manybu and leaves combinators</li>
+      <li>remove unnecessary <em>where</em> strategies based on one and some</li>
+    </ul>
+  </li>
+  <li>testing:
+    <ul>
+      <li>many new tests to significantly improve code coverage</li>
+      <li>uniplate: constrain division by zero test to avoid heap exhaustion</li>
+    </ul>
+  </li>
+</ul>

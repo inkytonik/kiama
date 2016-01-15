@@ -1,0 +1,23 @@
+{
+    class A {
+      boolean a;
+      a = true;
+      class AA {
+        boolean aa;
+      }
+    }
+    class B extends A {
+      boolean b;
+      b = a;
+      A refA;
+      B refB;
+      refA = refB;
+      refB.b = refA.a;
+      class BB extends AA {
+        boolean bb;
+        bb = aa;
+        while (b)
+          b = a;
+      }
+    }
+}
