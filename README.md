@@ -1,5 +1,7 @@
 # Kiama
 
+[![Build Status](https://inkytonik.ci.cloudbees.com/buildStatus/icon?job=Kiama)](https://inkytonik.ci.cloudbees.com/job/Kiama)
+
 Kiama is a Scala library for language processing.  In the Kiama project we are investigating embedding of language processing formalisms such as grammars, parsers, rewriters and analysers into general-purpose programming languages.
 
 IMPORTANT NOTE: Kiama is a research project, so many details will change. Consult with us before you rely on it for serious work. We make no guarantees about the features or performance of the Kiama library if you do choose to use it.
