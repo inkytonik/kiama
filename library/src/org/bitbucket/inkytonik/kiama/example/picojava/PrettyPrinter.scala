@@ -48,7 +48,7 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
                 val scshow = sc.map {
                     case idn =>
                         " extends" <+> toDoc(idn)
-                }.getOrElse(empty)
+                }.getOrElse(emptyDoc)
                 "class" <+> n <> scshow <+> toDoc(b)
             case VarDecl(t, n) =>
                 toDoc(t) <+> n <> semi

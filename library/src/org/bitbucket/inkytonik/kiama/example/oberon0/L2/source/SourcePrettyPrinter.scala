@@ -41,13 +41,13 @@ trait SourcePrettyPrinter extends L1.source.SourcePrettyPrinter {
     def forToDoc(s : ForStatement) : Doc =
         "FOR" <+> toDoc(s.idn) <+> ":=" <+> toDoc(s.lower) <+>
             "TO" <+> toDoc(s.upper) <+>
-            s.by.map(e => "BY" <+> toDoc(e) <> space).getOrElse(empty) <>
+            s.by.map(e => "BY" <+> toDoc(e) <> space).getOrElse(emptyDoc) <>
             "DO" <> semisep(s.block.stmts) <@> "END"
 
     def caseToDoc(s : CaseStatement) : Doc =
         "CASE" <+> toDoc(s.exp) <+> "OF" <>
             casesToDoc(s.cases) <@>
-            s.optelse.map(b => "ELSE" <> semisep(b.stmts) <> line).getOrElse(empty) <>
+            s.optelse.map(b => "ELSE" <> semisep(b.stmts) <> line).getOrElse(emptyDoc) <>
             "END"
 
     def casesToDoc(l : Vector[Case]) : Doc = {

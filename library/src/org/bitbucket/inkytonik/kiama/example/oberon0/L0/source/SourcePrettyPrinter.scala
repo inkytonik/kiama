@@ -48,7 +48,7 @@ trait SourcePrettyPrinter extends base.source.SourcePrettyPrinter {
 
     def declsToDoc(ds : Vector[Declaration]) : Doc =
         if (ds.isEmpty)
-            empty
+            emptyDoc
         else {
             val m = ds.groupBy(declsection)
             optSectionToDoc("CONST", m.get("CONST")) <>
@@ -68,11 +68,11 @@ trait SourcePrettyPrinter extends base.source.SourcePrettyPrinter {
     def optSectionToDoc(section : String, optds : Option[Vector[Declaration]]) : Doc =
         (section, optds) match {
             case (_, None) =>
-                empty
+                emptyDoc
             case ("", Some(ds)) =>
                 nest(line <> vsep(ds map toDoc, line)) <> line
             case (s, Some(ds)) =>
-                nest(line <> s <> semisep(ds, empty)) <> line
+                nest(line <> s <> semisep(ds, emptyDoc)) <> line
         }
 
     override def toDoc(n : SourceNode) : Doc =

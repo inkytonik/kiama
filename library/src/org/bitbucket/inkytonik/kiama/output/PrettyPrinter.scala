@@ -232,7 +232,7 @@ trait PrettyPrinterBase {
      * An empty document.  This is a left and right unit for the concatenation
      * method.  Called `nil` in the paper.
      */
-    def empty : Doc
+    def emptyDoc : Doc
 
     /**
      * Nest a document by an indentation increment on top of the current nesting.
@@ -273,7 +273,7 @@ trait PrettyPrinterBase {
      */
     def string(s : String) : Doc =
         if (s == "") {
-            empty
+            emptyDoc
         } else if (s(0) == '\n') {
             line <> string(s.tail)
         } else {
@@ -310,7 +310,7 @@ trait PrettyPrinterBase {
      */
     def spaces(n : Int) : Doc =
         if (n <= 0)
-            empty
+            emptyDoc
         else
             text(" " * n)
 
@@ -400,7 +400,7 @@ trait PrettyPrinterBase {
      */
     def folddoc(ds : Seq[Doc], f : (Doc, Doc) => Doc) =
         if (ds.isEmpty)
-            empty
+            emptyDoc
         else
             ds.tail.foldLeft(ds.head)(f)
 
@@ -468,7 +468,7 @@ trait PrettyPrinterBase {
      */
     def lsep(ds : Seq[Doc], sep : Doc) : Doc =
         if (ds.isEmpty)
-            empty
+            emptyDoc
         else
             linebreak <> folddoc(ds, _ <> sep <@> _)
 
@@ -481,7 +481,7 @@ trait PrettyPrinterBase {
      */
     def lsep2(ds : Seq[Doc], sep : Doc) : Doc =
         if (ds.isEmpty)
-            empty
+            emptyDoc
         else
             folddoc(ds, _ <@@> sep <+> _) <> linebreak
 
@@ -494,7 +494,7 @@ trait PrettyPrinterBase {
      */
     def lterm(ds : Seq[Doc], term : Doc) : Doc =
         if (ds.isEmpty)
-            empty
+            emptyDoc
         else
             linebreak <> folddoc(ds, _ <> term <@> _) <> term
 
@@ -1054,7 +1054,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
 
     implicit def text(t : String) : Doc =
         if (t == "")
-            empty
+            emptyDoc
         else
             insert(t.length, Text(t))
 
@@ -1093,7 +1093,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                         })
         )
 
-    def empty : Doc =
+    def emptyDoc : Doc =
         new Doc(
             (iw : IW) =>
                 (c : TreeCont) =>

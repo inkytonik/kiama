@@ -46,7 +46,7 @@ trait PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
             case Rule(lhs, rhs) =>
                 toDoc(lhs) <+> "->" <+> toDoc(rhs)
             case EmptyProdList() =>
-                empty
+                emptyDoc
             case NonEmptyProdList(h, EmptyProdList()) =>
                 toDoc(h)
             case NonEmptyProdList(h, t) =>
@@ -73,4 +73,3 @@ trait PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
  * Abstract syntax tree pretty-printing for grammars.
  */
 object PrettyPrinter extends PrettyPrinter
-

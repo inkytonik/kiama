@@ -30,7 +30,7 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinterTests with PrettyPrinter {
 
     test("pretty-print empty document") {
-        assertResult("")(layout(empty))
+        assertResult("")(layout(emptyDoc))
     }
 
     test("pretty-print empty string") {

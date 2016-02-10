@@ -46,7 +46,7 @@ trait SourcePrettyPrinter extends L0.source.SourcePrettyPrinter {
         "IF" <+> toDoc(s.cond) <+> "THEN" <>
             semisep(s.block.stmts) <>
             hcat(s.elsifs map elsifToDoc) <>
-            s.optelse.map(b => line <> "ELSE" <> semisep(b.stmts)).getOrElse(empty) <@>
+            s.optelse.map(b => line <> "ELSE" <> semisep(b.stmts)).getOrElse(emptyDoc) <@>
             "END"
     }
 

@@ -85,7 +85,7 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter {
      */
     def typedeclToDoc(t : Type) : Doc =
         if (t == NoType())
-            empty
+            emptyDoc
         else
             space <> ':' <+> typeToDoc(t)
 

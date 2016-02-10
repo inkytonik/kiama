@@ -33,7 +33,7 @@ trait SourcePrettyPrinter extends L2.source.SourcePrettyPrinter {
                     blockToDoc(b, true) <+> i2 <> semi
 
             case FPSection(m, ids, t) =>
-                val mode : Doc = if (m == VarMode()) "VAR " else empty
+                val mode : Doc = if (m == VarMode()) "VAR " else emptyDoc
                 mode <> idlistToDoc(ids) <+> colon <+> toDoc(t)
 
             case Call(IdnUse(i), ps) =>
@@ -45,7 +45,7 @@ trait SourcePrettyPrinter extends L2.source.SourcePrettyPrinter {
 
     def paramsToDoc(ds : Vector[Doc], sep : Doc) : Doc =
         ds match {
-            case Vector() => empty
+            case Vector() => emptyDoc
             case _        => space <> parens(hsep(ds, sep))
         }
 

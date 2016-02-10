@@ -47,7 +47,7 @@ trait CPrettyPrinter extends ParenPrettyPrinter {
 
             case CBlock(ds, ss) =>
                 braces(nest(lterm(ds map toDoc, semi) <>
-                    lsep(ss map toDoc, empty)) <>
+                    lsep(ss map toDoc, emptyDoc)) <>
                     line)
 
             case CVarDecl(i, t : CArrayType) =>
@@ -66,7 +66,7 @@ trait CPrettyPrinter extends ParenPrettyPrinter {
                 toParenDoc(e)
 
             case _ =>
-                empty
+                emptyDoc
         }
 
     override def toParenDoc(e : PrettyExpression) : Doc =
@@ -86,7 +86,7 @@ trait CPrettyPrinter extends ParenPrettyPrinter {
         s"[${t1.size}]" <>
             (t1.elemtype match {
                 case t2 : CArrayType => arraydimensToDoc(t2)
-                case _               => empty
+                case _               => emptyDoc
             })
     }
 

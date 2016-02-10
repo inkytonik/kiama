@@ -50,7 +50,7 @@ trait SourcePrettyPrinter extends ParenPrettyPrinter {
                 blockToDoc(b)
 
             case _ =>
-                empty
+                emptyDoc
         }
 
     /**

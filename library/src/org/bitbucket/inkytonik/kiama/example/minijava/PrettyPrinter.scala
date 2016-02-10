@@ -65,7 +65,7 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.ParenPrettyPrin
                         line
                 )
             case Class(i, optsc, b) =>
-                val ext = optsc.map(n => space <> "extends" <+> toDoc(n)).getOrElse(empty)
+                val ext = optsc.map(n => space <> "extends" <+> toDoc(n)).getOrElse(emptyDoc)
                 "class" <+> toDoc(i) <> ext <+> braces(
                     nest(
                         line <>
@@ -132,7 +132,7 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.ParenPrettyPrin
 
     def bodyToDoc(vs : Vector[Var], ss : Vector[Statement], r : Result) : Doc =
         (if (vs.isEmpty)
-            empty
+            emptyDoc
         else
             line <>
                 vsep(vs map toDoc) <>

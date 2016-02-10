@@ -125,7 +125,7 @@ object CodeGenerator extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
             link(
                 method.source,
                 ".method public" <+>
-                    (if (method.isStatic) "static " else empty) <>
+                    (if (method.isStatic) "static " else emptyDoc) <>
                     value(method.spec) <@>
                     ".limit stack" <+> value(maxstack) <@>
                     ".limit locals" <+> value(maxloc + 1) <>
