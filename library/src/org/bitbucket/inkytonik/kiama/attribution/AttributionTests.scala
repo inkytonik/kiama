@@ -302,6 +302,31 @@ class AttributionTests extends Tests {
         assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
     }
 
+    test("cached parameterised attributes can be reset at specific keys") {
+        val definitions = new Definitions
+        import definitions._
+
+        lazy val pattr =
+            paramAttr(pattrDef)
+
+        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
+        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
+        assertResult(0, "cached paramAttr Pair hello")(pattr("hello")(u))
+        assertResult(3, "cached paramAttr Pair goodbye")(pattr("goodbye")(u))
+        assertResult(1, "evaluation count")(count)
+        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
+        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
+        pattr.resetAt("hello", u)
+        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
+        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
+        assertResult(0, "cached paramAttr Pair hello")(pattr("hello")(u))
+        assertResult(3, "cached paramAttr Pair goodbye")(pattr("goodbye")(u))
+        assertResult(2, "evaluation count")(count)
+        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
+        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
+
+    }
+
     test("uncached parameterised attributes work") {
         val definitions = new Definitions
         import definitions.pattrDef

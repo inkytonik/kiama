@@ -122,12 +122,14 @@ trait AttributionCore extends AttributionCommon with Memoiser {
          * Has the value of this attribute at `t` already been computed for `arg`
          * or not?
          */
-        def hasBeenComputedAt(arg : A, t : T) : Boolean = {
-            val key = new ParamAttributeKey(arg, t)
-            get(key) match {
-                case Some(Some(_)) => true
-                case _             => false
-            }
+        def hasBeenComputedAt(arg : A, t : T) : Boolean =
+            super.hasBeenComputedAt(new ParamAttributeKey(arg, t))
+
+        /**
+         * Reset this attribute's cache at `t` for just parameter value `arg`.
+         */
+        def resetAt(arg : A, t : T) {
+            super.resetAt(new ParamAttributeKey(arg, t))
         }
 
     }
