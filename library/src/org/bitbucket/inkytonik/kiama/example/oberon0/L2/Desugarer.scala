@@ -33,7 +33,6 @@ trait Desugarer extends L0.Desugarer {
         IdnDef,
         IdnUse,
         ModuleDecl,
-        SourceNode,
         Statement
     }
     import base.source.SourceTree.SourceTree

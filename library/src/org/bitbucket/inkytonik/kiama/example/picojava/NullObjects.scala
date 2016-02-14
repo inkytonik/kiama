@@ -30,7 +30,6 @@ package org.bitbucket.inkytonik.kiama
 package example.picojava
 
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
-import PicoJavaTree.PicoJavaTree
 
 trait NullObjects {
 

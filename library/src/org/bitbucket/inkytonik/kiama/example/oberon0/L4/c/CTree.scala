@@ -22,7 +22,7 @@ package org.bitbucket.inkytonik.kiama
 package example.oberon0
 package L4.c
 
-import base.c.{CDeclaration, CExpression, CType, CVarDecl}
+import base.c.{CExpression, CType, CVarDecl}
 
 /**
  * C record types.

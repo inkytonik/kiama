@@ -29,7 +29,6 @@ trait Translator {
 
     import c.{CDeclaration, CProgram, CStatement}
     import source.{Declaration, ModuleDecl, Statement}
-    import source.SourceTree.SourceTree
 
     /**
      * Generate C equivalent of a module.

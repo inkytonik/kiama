@@ -28,8 +28,6 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
  */
 class LambdaTests extends ParseTests {
 
-    import LambdaTree._
-
     val parsers = new SyntaxAnalyser(positions)
     import parsers.{exp, query}
 

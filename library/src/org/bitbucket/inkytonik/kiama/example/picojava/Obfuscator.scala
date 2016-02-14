@@ -22,7 +22,6 @@
 package org.bitbucket.inkytonik.kiama
 package example.picojava
 
-import PicoJavaTree.PicoJavaTree
 import org.bitbucket.inkytonik.kiama.rewriting.Rewriter
 
 /**

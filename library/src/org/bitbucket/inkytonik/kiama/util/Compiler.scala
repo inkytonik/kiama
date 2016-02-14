@@ -33,7 +33,7 @@ import java.io.Reader
 trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Profiler {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
-    import org.bitbucket.inkytonik.kiama.util.{Console, Emitter, StringEmitter}
+    import org.bitbucket.inkytonik.kiama.util.{Emitter, StringEmitter}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
 
     /**

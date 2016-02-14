@@ -24,7 +24,7 @@ package L4.source
 
 trait SourcePrettyPrinter extends L3.source.SourcePrettyPrinter {
 
-    import base.source.{Expression, SourceNode}
+    import base.source.SourceNode
     import org.bitbucket.inkytonik.kiama.output.PrettyExpression
 
     override def toDoc(n : SourceNode) : Doc =

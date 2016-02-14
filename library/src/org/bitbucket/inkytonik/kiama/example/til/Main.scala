@@ -31,7 +31,6 @@ import org.bitbucket.inkytonik.kiama.util.{Compiler, Config, Source}
 trait ParsingMain extends Compiler[Program] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.bitbucket.inkytonik.kiama.util.Emitter
 
     def process(source : Source, ast : Program, config : Config) {
         config.output.emitln(ast)

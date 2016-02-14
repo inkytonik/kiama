@@ -30,7 +30,6 @@ import org.bitbucket.inkytonik.kiama.util.Environments
 object SymbolTable extends Environments {
 
     import org.bitbucket.inkytonik.kiama.util.Entity
-    import PrologTree._
 
     /**
      * A predicate entity and its argument type constraints.

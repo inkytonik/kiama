@@ -29,7 +29,6 @@ object MiniJavaTree {
     import org.bitbucket.inkytonik.kiama.output.{
         Infix,
         LeftAssoc,
-        NonAssoc,
         Prefix,
         PrettyBinaryExpression,
         PrettyExpression,

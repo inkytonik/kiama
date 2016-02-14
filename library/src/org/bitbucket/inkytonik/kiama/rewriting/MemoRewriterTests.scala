@@ -21,8 +21,6 @@
 package org.bitbucket.inkytonik.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.kiama.util.Tests
-
 /**
  * Supporting definitions for the memo rewriter tests.
  */

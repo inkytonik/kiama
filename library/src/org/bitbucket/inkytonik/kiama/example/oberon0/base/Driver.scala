@@ -24,7 +24,6 @@ package base
 
 import source.ModuleDecl
 import source.SourceTree.SourceTree
-import org.bitbucket.inkytonik.kiama.parsing.Parsers
 import org.bitbucket.inkytonik.kiama.output.PrettyPrinter
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,

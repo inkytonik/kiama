@@ -881,7 +881,7 @@ trait PrettyPrinterBase {
 trait PrettyPrinter extends PrettyPrinterBase {
 
     import org.bitbucket.inkytonik.kiama.util.Trampolines.{Done, More, step, Trampoline}
-    import PrettyPrinterTypes.{Document, emptyLinks, Indent, Layout, Link, Links, Width}
+    import PrettyPrinterTypes.{Document, emptyLinks, Indent, Layout, Link, Width}
     import scala.collection.immutable.{Queue, Seq}
     import scala.collection.immutable.Queue.{empty => emptyDq}
     import scala.collection.mutable.StringBuilder

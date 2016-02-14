@@ -28,7 +28,7 @@ class ObfuscationTests extends PrettyPrinterTests {
 
     import org.bitbucket.inkytonik.kiama.example.picojava.{ErrorCheck, Obfuscator}
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree._
-    import org.bitbucket.inkytonik.kiama.example.picojava.PrettyPrinter.{format, layout}
+    import org.bitbucket.inkytonik.kiama.example.picojava.PrettyPrinter.format
 
     // For the actual program text, see ObfuscationTest.pj
 
@@ -149,4 +149,3 @@ class ObfuscationTests extends PrettyPrinterTests {
     }
 
 }
-

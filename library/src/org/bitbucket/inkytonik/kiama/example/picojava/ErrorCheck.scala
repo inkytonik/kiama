@@ -37,7 +37,6 @@ class ErrorCheck(val tree : PicoJavaTree) extends Attribution with NameResolutio
     import PicoJavaTree._
     import java.util.ArrayList
     import org.bitbucket.inkytonik.kiama.util.Messaging.message
-    import org.bitbucket.inkytonik.kiama.util.Positions
 
     /**
      * All of the error messages for a program.

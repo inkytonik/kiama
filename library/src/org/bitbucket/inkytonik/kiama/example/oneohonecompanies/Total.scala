@@ -26,7 +26,6 @@ import org.bitbucket.inkytonik.kiama.attribution.Attribution
 object Total extends Attribution {
 
     import CompanyTree._
-    import org.bitbucket.inkytonik.kiama.==>
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.everything
 
     /**

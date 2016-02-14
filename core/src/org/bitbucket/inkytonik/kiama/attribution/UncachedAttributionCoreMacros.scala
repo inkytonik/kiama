@@ -26,8 +26,10 @@ import org.bitbucket.inkytonik.kiama.util.Compat210._
 object UncachedAttributionCoreMacros {
 
     import org.bitbucket.inkytonik.dsinfo.DSInfo.makeCallWithName
-
     import scala.reflect.macros._
+
+    // Avoid unused import warning for Compat210
+    val used = dummy
 
     // Macros for the builder methods
 

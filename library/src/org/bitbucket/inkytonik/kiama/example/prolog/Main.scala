@@ -71,7 +71,7 @@ abstract class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
  */
 object Main extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrinter {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.Success
     import org.bitbucket.inkytonik.kiama.util.{
         Emitter,
         ErrorEmitter,

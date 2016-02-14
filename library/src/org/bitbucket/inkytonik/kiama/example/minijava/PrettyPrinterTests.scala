@@ -21,8 +21,6 @@
 package org.bitbucket.inkytonik.kiama
 package example.minijava
 
-import org.bitbucket.inkytonik.kiama.util.Tests
-
 /**
  * Tests that check that the code generator produces the expected byte code.
  */
@@ -89,4 +87,3 @@ class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiam
     }
 
 }
-

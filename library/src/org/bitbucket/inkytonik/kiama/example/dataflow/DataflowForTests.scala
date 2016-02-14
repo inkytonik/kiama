@@ -29,10 +29,6 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 class DataflowForTests extends Tests {
 
     import DataflowTree._
-    import org.bitbucket.inkytonik.kiama.attribution.Attribution
-
-    val attribution = new Attribution
-    import attribution._
 
     /*
      * begin                 (prog)

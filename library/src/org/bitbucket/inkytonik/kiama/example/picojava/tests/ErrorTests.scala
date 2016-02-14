@@ -36,7 +36,6 @@ class ErrorTests extends ParseTests {
 
     import org.bitbucket.inkytonik.kiama.example.picojava.ErrorCheck
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree.PicoJavaTree
-    import org.bitbucket.inkytonik.kiama.util.Message
 
     val parsers = new SyntaxAnalyser(positions)
 

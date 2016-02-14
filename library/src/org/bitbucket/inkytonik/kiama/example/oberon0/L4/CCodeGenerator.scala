@@ -27,7 +27,7 @@ package L4
  */
 trait CCodeGenerator extends TypeAnalyser with L3.CCodeGenerator with SymbolTable {
 
-    import base.source.{Declaration, Expression, IdnDef, IdnUse}
+    import base.source.{Expression, IdnDef, IdnUse}
     import base.c.{CArrayType, CDeclaration, CExpression, CType, CVarDecl}
     import c.{CFieldExp, CIndexExp, CRecordType}
     import L0.source.IdnExp
@@ -92,4 +92,3 @@ trait CCodeGenerator extends TypeAnalyser with L3.CCodeGenerator with SymbolTabl
             translate(p)
 
 }
-

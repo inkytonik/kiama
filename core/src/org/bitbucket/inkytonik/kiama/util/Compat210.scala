@@ -32,6 +32,12 @@ package util
 class Compat210 {
 
     /**
+     * Dummy value that can be referred to in importing context. Useful
+     * for avoiding warnings about unused import on 2.11.
+     */
+    val dummy = 0
+
+    /**
      * Make 2.10 macro contexts available under a "blackbox" prefix.
      * See https://issues.scala-lang.org/browse/SI-8209.
      */

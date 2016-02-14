@@ -28,7 +28,6 @@ import org.bitbucket.inkytonik.kiama.util.Tests
  */
 class RelationTests extends Tests with RelationTestSupport {
 
-    import org.scalacheck.Prop._
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree.Num
 
     // Empty relations

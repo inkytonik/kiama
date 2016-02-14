@@ -24,7 +24,6 @@ package example.obr
 
 import ObrTree.ObrInt
 import org.bitbucket.inkytonik.kiama.util.{
-    Console,
     CompilerWithConfig,
     Config,
     Emitter,

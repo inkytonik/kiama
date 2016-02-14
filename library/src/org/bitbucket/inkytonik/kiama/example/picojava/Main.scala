@@ -41,7 +41,7 @@ object Main extends CompilerWithConfig[Program, PicojavaConfig] {
 
     import PicoJavaTree.PicoJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
-    import org.bitbucket.inkytonik.kiama.util.{Config, Source}
+    import org.bitbucket.inkytonik.kiama.util.Source
 
     def createConfig(
         args : Seq[String],

@@ -29,7 +29,6 @@ import org.bitbucket.inkytonik.kiama.output.ParenPrettyPrinter
  */
 trait SourcePrettyPrinter extends ParenPrettyPrinter {
 
-    import org.bitbucket.inkytonik.kiama.output.PrettyExpression
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
 
     def format(m : ModuleDecl) : Document =

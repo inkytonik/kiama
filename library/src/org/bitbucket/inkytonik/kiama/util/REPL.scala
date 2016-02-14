@@ -21,8 +21,6 @@
 package org.bitbucket.inkytonik.kiama
 package util
 
-import org.bitbucket.inkytonik.kiama.parsing.Parsers
-
 /**
  * General support for applications that implement read-eval-print loops (REPLs).
  */

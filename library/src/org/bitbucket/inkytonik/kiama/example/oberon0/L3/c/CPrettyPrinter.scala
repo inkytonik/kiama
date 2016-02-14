@@ -24,7 +24,7 @@ package L3.c
 
 trait CPrettyPrinter extends L1.c.CPrettyPrinter {
 
-    import base.c.{CExpression, CNode, CType}
+    import base.c.{CNode, CType}
     import org.bitbucket.inkytonik.kiama.output.PrettyExpression
 
     override def toDoc(n : CNode) : Doc =
