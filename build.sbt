@@ -23,8 +23,7 @@ scalacOptions in ThisBuild :=
         "-unchecked",
         "-Xfatal-warnings",
         "-Xlint",
-        "-Xcheckinit",
-        "-Ywarn-unused-import"
+        "-Xcheckinit"
     )
 
 // Dependency resolution
