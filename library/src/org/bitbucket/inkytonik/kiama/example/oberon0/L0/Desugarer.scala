@@ -27,7 +27,7 @@ package L0
  */
 trait Desugarer extends base.Transformer {
 
-    import base.source.{Identifier, IdnDef, IdnUse, ModuleDecl}
+    import base.source.{Identifier, IdnDef, IdnUse}
     import base.source.SourceTree.SourceTree
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{everywherebu, rewriteTree, rule}
 

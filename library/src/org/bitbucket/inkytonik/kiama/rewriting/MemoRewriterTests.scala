@@ -45,7 +45,7 @@ class MemoRewriterTests extends {
 } with RewriterTests {
 
     import MemoRewriterTestsSupport._
-    import rewriter.{test => rwtest, _}
+    import rewriter._
 
     val atob =
         rule[N] {
