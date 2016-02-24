@@ -146,7 +146,7 @@ class RewriterTests extends Tests {
         )
 
     test("total salary is correct") {
-        assertResult(399747.0)(total(company))
+        total(company) shouldBe 399747.0
     }
 
     test("halvng salaries in company works") {
@@ -251,7 +251,7 @@ class RewriterTests extends Tests {
                     )
                 )
             )
-        assertResult(newcompany)(cut(company))
+        cut(company) shouldBe newcompany
     }
 
 }

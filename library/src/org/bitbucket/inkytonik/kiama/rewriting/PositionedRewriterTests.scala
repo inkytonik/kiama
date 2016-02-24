@@ -71,15 +71,15 @@ class PositionedRewriterTests extends Tests {
     })
 
     def check(no : One) {
-        assertResult(One(Two(Leaf(43), Leaf(100))))(no)
-        assertOptSame(Some(pos))(positions.getStart(no))
-        assertOptSame(Some(pof))(positions.getFinish(no))
-        assertOptSame(Some(pts))(positions.getStart(no.a))
-        assertOptSame(Some(ptf))(positions.getFinish(no.a))
-        assertOptSame(Some(pl1s))(positions.getStart(no.a.asInstanceOf[Two].l))
-        assertOptSame(Some(pl1f))(positions.getFinish(no.a.asInstanceOf[Two].l))
-        assertOptSame(Some(pl2s))(positions.getStart(no.a.asInstanceOf[Two].r))
-        assertOptSame(Some(pl2f))(positions.getFinish(no.a.asInstanceOf[Two].r))
+        no shouldBe One(Two(Leaf(43), Leaf(100)))
+        positions.getStart(no) should beSomeOf(pos)
+        positions.getFinish(no) should beSomeOf(pof)
+        positions.getStart(no.a) should beSomeOf(pts)
+        positions.getFinish(no.a) should beSomeOf(ptf)
+        positions.getStart(no.a.asInstanceOf[Two].l) should beSomeOf(pl1s)
+        positions.getFinish(no.a.asInstanceOf[Two].l) should beSomeOf(pl1f)
+        positions.getStart(no.a.asInstanceOf[Two].r) should beSomeOf(pl2s)
+        positions.getFinish(no.a.asInstanceOf[Two].r) should beSomeOf(pl2f)
     }
 
     test("positioned rewriting with positions and strategyf works") {
@@ -115,14 +115,14 @@ class PositionedRewriterTests extends Tests {
     test("positioned rewriting with no positions works") {
         val oo = One(Two(Leaf(42), Leaf(99)))
         val noo = rewrite(r)(oo)
-        assertResult(None)(positions.getStart(noo))
-        assertResult(None)(positions.getStart(noo.a))
-        assertResult(None)(positions.getStart(noo.a.asInstanceOf[Two].l))
-        assertResult(None)(positions.getStart(noo.a.asInstanceOf[Two].r))
-        assertResult(None)(positions.getFinish(noo))
-        assertResult(None)(positions.getFinish(noo.a))
-        assertResult(None)(positions.getFinish(noo.a.asInstanceOf[Two].l))
-        assertResult(None)(positions.getFinish(noo.a.asInstanceOf[Two].r))
+        positions.getStart(noo) shouldBe empty
+        positions.getStart(noo.a) shouldBe empty
+        positions.getStart(noo.a.asInstanceOf[Two].l) shouldBe empty
+        positions.getStart(noo.a.asInstanceOf[Two].r) shouldBe empty
+        positions.getFinish(noo) shouldBe empty
+        positions.getFinish(noo.a) shouldBe empty
+        positions.getFinish(noo.a.asInstanceOf[Two].l) shouldBe empty
+        positions.getFinish(noo.a.asInstanceOf[Two].r) shouldBe empty
     }
 
 }

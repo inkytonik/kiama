@@ -55,7 +55,7 @@ object Comparison {
      * Compare two `Iterable` collections or options and tuples containing that kind of
      * collection. Use `same` to compare the individual elements.
      */
-    def samecollection(v1 : Any, v2 : Any) : Boolean =
+    def samelements(v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
             v2 == null
         else if (v2 == null)
@@ -63,11 +63,11 @@ object Comparison {
         else
             (v1, v2) match {
                 case (Some(s1), Some(s2)) =>
-                    samecollection(s1, s2)
+                    samelements(s1, s2)
                 case ((t1, t2), (t3, t4)) =>
-                    samecollection(t1, t3) && samecollection(t2, t4)
+                    samelements(t1, t3) && samelements(t2, t4)
                 case (t1 : Iterable[_], t2 : Iterable[_]) =>
-                    (t1.size == t2.size) && (t1.zip(t2).forall(Function.tupled(samecollection)))
+                    (t1.size == t2.size) && (t1.zip(t2).forall(Function.tupled(samelements)))
                 case _ =>
                     same(v1, v2)
             }

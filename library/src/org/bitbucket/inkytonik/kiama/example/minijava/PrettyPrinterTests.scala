@@ -27,6 +27,7 @@ package example.minijava
 class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiama.util.PrettyPrinterTests {
 
     import MiniJavaTree._
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Link
 
     val mul = IdnDef("Mul")
     val five = IntExp(5)
@@ -46,20 +47,23 @@ class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiam
         //         MainMethod (Println (StarExp (IntExp (5), IntExp (5))))),
         //     Vector ())
 
-        assertLinks(
+        val links =
             List(
-                program -> Range(0, 131),
-                mainclass -> Range(14, 115),
-                mainmethod -> Range(58, 114),
-                mul -> Range(34, 49),
-                println -> Range(70, 113),
-                starexp -> Range(79, 112),
-                five -> Range(88, 99),
-                otherfive -> Range(100, 111),
-                nothing -> Range(120, 130),
-                "Mul" -> Range(42, 48)
+                Link(program, Range(0, 131)),
+                Link(nothing, Range(120, 130)),
+                Link(mainclass, Range(14, 115)),
+                Link(mainmethod, Range(58, 114)),
+                Link(println, Range(70, 113)),
+                Link(starexp, Range(79, 112)),
+                Link(otherfive, Range(100, 111)),
+                Link(5, Range(108, 110)),
+                Link(five, Range(88, 99)),
+                Link(5, Range(96, 98)),
+                Link(mul, Range(34, 49)),
+                Link("Mul", Range(42, 48))
             )
-        )(pretty(any(program)))
+
+        pretty(any(program)) should produceLinks(links)
 
     }
 
@@ -71,18 +75,20 @@ class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiam
         //     }
         // }
 
-        assertLinks(
+        val links =
             List(
-                program -> Range(0, 91),
-                mainclass -> Range(0, 91),
-                mainmethod -> Range(16, 87),
-                mul -> Range(6, 10),
-                println -> Range(53, 81),
-                starexp -> Range(73, 79),
-                five -> Range(73, 75),
-                otherfive -> Range(77, 79)
+                Link(program, Range(0, 91)),
+                Link(mainclass, Range(0, 91)),
+                Link(mainmethod, Range(16, 87)),
+                Link(println, Range(53, 81)),
+                Link(starexp, Range(73, 79)),
+                Link(starexp, Range(73, 79)),
+                Link(otherfive, Range(77, 79)),
+                Link(five, Range(73, 75)),
+                Link(mul, Range(6, 10))
             )
-        )(pretty(toDoc(program)))
+
+        pretty(toDoc(program)) should produceLinks(links)
 
     }
 

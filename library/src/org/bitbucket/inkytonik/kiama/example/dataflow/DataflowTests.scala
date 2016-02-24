@@ -60,100 +60,100 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
     val outAttr = out.asInstanceOf[CircularAttribute[Stm, Set[Var]]]
 
     test("succ - s1") {
-        assertSameCollection(Set(s2))(succ(s1))
+        succ(s1) should beSameCollectionAs(Set(s2))
     }
 
     test("succ - s2") {
-        assertSameCollection(Set(s3))(succ(s2))
+        succ(s2) should beSameCollectionAs(Set(s3))
     }
 
     test("succ - s3") {
-        assertSameCollection(Set(s4))(succ(s3))
+        succ(s3) should beSameCollectionAs(Set(s4))
     }
 
     test("succ - s4") {
-        assertSameCollection(Set(s5, s41))(succ(s4))
+        succ(s4) should beSameCollectionAs(Set(s5, s41))
     }
 
     test("succ - s41") {
-        assertSameCollection(Set(s411))(succ(s41))
+        succ(s41) should beSameCollectionAs(Set(s411))
     }
 
     test("succ - s411") {
-        assertSameCollection(Set(s412))(succ(s411))
+        succ(s411) should beSameCollectionAs(Set(s412))
     }
 
     test("succ - s412") {
-        assertSameCollection(Set(s4))(succ(s412))
+        succ(s412) should beSameCollectionAs(Set(s4))
     }
 
     test("succ - s5") {
-        assertSameCollection(Set())(succ(s5))
+        succ(s5) shouldBe Set()
     }
 
     test("in - s1") {
-        assertResult(Set("w", "v"))(in(s1))
+        in(s1) shouldBe Set("w", "v")
     }
 
     test("in - s2") {
-        assertResult(Set("y", "w", "v"))(in(s2))
+        in(s2) shouldBe Set("y", "w", "v")
     }
 
     test("in - s3") {
-        assertResult(Set("w", "v"))(in(s3))
+        in(s3) shouldBe Set("w", "v")
     }
 
     test("in - s4") {
-        assertResult(Set("x", "w", "v"))(in(s4))
+        in(s4) shouldBe Set("x", "w", "v")
     }
 
     test("in - s411") {
-        assertResult(Set("w", "v"))(in(s411))
+        in(s411) shouldBe Set("w", "v")
     }
 
     test("in - s412") {
-        assertResult(Set("w", "v"))(in(s412))
+        in(s412) shouldBe Set("w", "v")
     }
 
     test("in - s5") {
-        assertResult(Set("x"))(in(s5))
+        in(s5) shouldBe Set("x")
     }
 
     test("out - s1") {
-        assertResult(Set("y", "w", "v"))(out(s1))
+        out(s1) shouldBe Set("y", "w", "v")
     }
 
     test("out - s2") {
-        assertResult(Set("w", "v"))(out(s2))
+        out(s2) shouldBe Set("w", "v")
     }
 
     test("out - s3") {
-        assertResult(Set("x", "w", "v"))(out(s3))
+        out(s3) shouldBe Set("x", "w", "v")
     }
 
     test("out - s4") {
-        assertResult(Set("x", "w", "v"))(out(s4))
+        out(s4) shouldBe Set("x", "w", "v")
     }
 
     test("out - s411") {
-        assertResult(Set("w", "v"))(out(s411))
+        out(s411) shouldBe Set("w", "v")
     }
 
     test("out - s412") {
-        assertResult(Set("x", "w", "v"))(out(s412))
+        out(s412) shouldBe Set("x", "w", "v")
     }
 
     test("out - s412 (reset)") {
         outAttr.reset()
-        assert(!outAttr.hasBeenComputedAt(s412))
-        assertResult(Set("x", "w", "v"))(outAttr(s412))
-        assert(outAttr.hasBeenComputedAt(s412))
+        outAttr.hasBeenComputedAt(s412) shouldBe false
+        outAttr(s412) shouldBe Set("x", "w", "v")
+        outAttr.hasBeenComputedAt(s412) shouldBe true
         outAttr.reset()
-        assert(!outAttr.hasBeenComputedAt(s412))
+        outAttr.hasBeenComputedAt(s412) shouldBe false
     }
 
     test("out - s5") {
-        assertResult(Set())(out(s5))
+        out(s5) shouldBe Set()
     }
 
     filetests("Dataflow", "src/org/bitbucket/inkytonik/kiama/example/dataflow/tests", ".data", ".out")

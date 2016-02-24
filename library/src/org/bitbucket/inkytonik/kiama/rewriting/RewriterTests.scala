@@ -128,51 +128,51 @@ class RewriterTests extends Tests with Generator {
         val t = Add(Num(1), Num(2))
 
         test("issubterm: selected subterms - fail") {
-            assertResult(None)(issubterm((Num(42), t)))
+            issubterm((Num(42), t)) should beFailure
         }
 
         test("issubterm: selected subterms - succeed sub") {
-            assertOptSame(Some(t))(issubterm((Num(1), t)))
+            issubterm((Num(1), t)) should beSomeOf(t)
         }
 
         test("issubterm: selected subterms - succeed self") {
-            assertOptSame(Some(t))(issubterm((t, t)))
+            issubterm((t, t)) should beSomeOf(t)
         }
 
         test("issubterm: selected proper subterms - fail") {
-            assertResult(None)(ispropersubterm((Num(42), t)))
+            ispropersubterm((Num(42), t)) should beFailure
         }
 
         test("issubterm: selected proper subterms - succeed sub") {
-            assertOptSame(Some(t))(ispropersubterm((Num(1), t)))
+            ispropersubterm((Num(1), t)) should beSomeOf(t)
         }
 
         test("issubterm: selected proper subterms - fail self") {
-            assertResult(None)(ispropersubterm((t, t)))
+            ispropersubterm((t, t)) should beFailure
         }
 
         test("issuperterm: selected superterms - fail") {
-            assertResult(None)(issuperterm((t, Num(42))))
+            issuperterm((t, Num(42))) should beFailure
         }
 
         test("issuperterm: selected superterms - succeed sub") {
-            assertOptSame(Some(t))(issuperterm((t, Num(1))))
+            issuperterm((t, Num(1))) should beSomeOf(t)
         }
 
         test("issuperterm: selected superterms - succeed self") {
-            assertOptSame(Some(t))(issuperterm((t, t)))
+            issuperterm((t, t)) should beSomeOf(t)
         }
 
         test("issuperterm: selected proper superterms - fail") {
-            assertResult(None)(ispropersuperterm((t, Num(42))))
+            ispropersuperterm((t, Num(42))) should beFailure
         }
 
         test("issuperterm: selected proper superterms - succeed sub") {
-            assertOptSame(Some(t))(ispropersuperterm((t, Num(1))))
+            ispropersuperterm((t, Num(1))) should beSomeOf(t)
         }
 
         test("issuperterm: selected proper superterms - fail self") {
-            assertResult(None)(ispropersuperterm((t, t)))
+            ispropersuperterm((t, t)) should beFailure
         }
     }
 
@@ -208,7 +208,7 @@ class RewriterTests extends Tests with Generator {
         val r = rule[Num] { case Num(i) => Num(i + 1) }
         val s = where(r)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("test: failure") {
@@ -223,7 +223,7 @@ class RewriterTests extends Tests with Generator {
         val r = rule[Num] { case Num(i) => Num(i + 1) }
         val s = rwtest(r)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("leaf detection") {
@@ -253,37 +253,43 @@ class RewriterTests extends Tests with Generator {
         check((t : Exp) => (term(t))(t) == Some(t))
 
         val t = Add(Num(1), Num(2))
-        assertResult(None)(term(Num(1))(t))
-        assertResult(None)(term(Num(42))(t))
+        term(Num(1))(t) should beFailure
+        term(Num(42))(t) should beFailure
     }
 
     {
-        val e1 = Mul(Num(2), Num(3))
-        val e2 = Add(Num(2), Num(3))
+        val num1 = Num(1)
+        val num2 = Num(2)
+        val num3 = Num(3)
+
+        val e1 = Mul(num2, num3)
+        val e2 = Add(num2, num3)
 
         test("conditional choice operator: identity") {
-            assertResult(Some(Num(1)))((id < build(Num(1)) + build(Num(2)))(e1))
+            (id < build(num1) + build(Num(2)))(e1) should beSomeOf(num1)
         }
 
         test("conditional choice operator: failure") {
-            assertResult(Some(Num(2)))((rwfail < build(Num(1)) + build(Num(2)))(e1))
+            (rwfail < build(Num(1)) + build(num2))(e1) should beSomeOf(num2)
         }
 
         test("conditional choice operator: condition for just success or failure") {
             val ismulbytwo = rule[Mul] { case t @ Mul(Num(2), _) => t }
             val multoadd = rule[Exp] { case Mul(Num(2), x) => Add(x, x) }
-            val error : Strategy = build(Num(99))
+            val num99 = Num(99)
+            val error : Strategy = build(num99)
             val trans1 = ismulbytwo < multoadd + error
-            assertResult(Some(Add(Num(3), Num(3))))((trans1)(e1))
-            assertResult(Some(Num(99)))((trans1)(e2))
+            (trans1)(e1) shouldBe Some(Add(num3, num3))
+            (trans1)(e2) should beSomeOf(num99)
         }
 
         test("conditional choice operator: condition that transforms object") {
             val mulbytwotoadd = rule[Exp] { case t @ Mul(Num(2), x) => Add(x, x) }
-            val add = rule[Exp] { case Add(_, _) => Num(42) }
+            val num42 = Num(42)
+            val add = rule[Exp] { case Add(_, _) => num42 }
             val trans2 = mulbytwotoadd < add + id
-            assertResult(Some(Num(42)))((trans2)(e1))
-            assertResult(Some(Add(Num(2), Num(3))))((trans2)(e2))
+            (trans2)(e1) should beSomeOf(num42)
+            (trans2)(e2) should beSomeOf(e2)
         }
     }
 
@@ -296,8 +302,8 @@ class RewriterTests extends Tests with Generator {
         val twotothree = rule[Num] { case Num(2) => Num(3) }
         val pass = rulefs[Num] { case Num(2) => twotothree }
         val passtd = everywhere(pass)
-        assertResult(Some(Mul(Num(3), (Num(5)))))((passtd)(e1))
-        assertResult(Some(Add(Num(4), (Num(5)))))((passtd)(e2))
+        (passtd)(e1) shouldBe Some(Mul(Num(3), (Num(5))))
+        (passtd)(e2) should beSomeOf(e2)
     }
 
     {
@@ -305,23 +311,23 @@ class RewriterTests extends Tests with Generator {
         val ee = Mul(Num(1), Add(Sub(Var("hello"), Num(2)), Var("harold")))
 
         test("a bottomup traversal applying identity returns the same term") {
-            assertOptSame(Some(e))((bottomup(id))(e))
+            (bottomup(id))(e) should beSomeOf(e)
         }
 
-        test("a bottomup traversal applying identity doesn't returns term with same value") {
-            assertNotOptSame(Some(ee))((bottomup(id))(e))
+        test("a bottomup traversal applying identity doesn't return term with same value") {
+            (bottomup(id))(e) should not(beSomeOf(ee))
         }
 
         test("counting all terms using count") {
             val countall = count { case _ => 1 }
-            assertResult(11)(countall(e))
+            countall(e) shouldBe 11
         }
 
         test("counting all terms using queryf") {
             var count = 0
             val countall = everywhere(queryf(_ => count = count + 1))
-            assertOptSame(Some(e))(countall(e))
-            assertResult(11)(count)
+            countall(e) should beSomeOf(e)
+            count shouldBe 11
         }
 
         test("counting all terms using a para") {
@@ -329,17 +335,17 @@ class RewriterTests extends Tests with Generator {
                 para[Int] {
                     case (t, cs) => 1 + cs.sum
                 }
-            assertResult(11)(countfold(e))
+            countfold(e) shouldBe 11
         }
 
         test("counting all Num terms twice") {
             val countnum = count { case Num(_) => 2 }
-            assertResult(4)(countnum(e))
+            countnum(e) shouldBe 4
         }
 
         test("counting all Div terms") {
             val countdiv = count { case Div(_, _) => 1 }
-            assertResult(0)(countdiv(e))
+            countdiv(e) shouldBe 0
         }
 
         test("counting all binary operator terms, with Muls twice") {
@@ -349,7 +355,7 @@ class RewriterTests extends Tests with Generator {
                 case Mul(_, _) => 2
                 case Div(_, _) => 1
             }
-            assertResult(4)(countbin(e))
+            countbin(e) shouldBe 4
         }
 
         {
@@ -364,54 +370,54 @@ class RewriterTests extends Tests with Generator {
             val vl3 = Vector(Num(1))
 
             test("map fail over a nil list gives nil") {
-                assertResult(Some(Nil))(map(rwfail)(Nil))
+                map(rwfail)(Nil) should beSomeOf(Nil)
             }
 
             test("map fail over a non-nil list fails") {
-                assertResult(None)(map(rwfail)(ll1))
+                map(rwfail)(ll1) should beFailure
             }
 
             test("map id over a nil list gives nil") {
-                assertResult(Some(Nil))(map(id)(Nil))
+                map(id)(Nil) should beSomeOf(Nil)
             }
 
             test("map id over a non-nil list gives that list") {
-                assertOptSame(Some(ll1))(map(id)(ll1))
+                map(id)(ll1) should beSomeOf(ll1)
             }
 
             test("map fail over an empty vector gives an empty vector") {
-                assertResult(Some(Vector()))(map(rwfail)(Vector()))
+                map(rwfail)(Vector()) should beSomeOf(Vector())
             }
 
             test("map fail over a non-empty vector fails") {
-                assertResult(None)(map(rwfail)(vl1))
+                map(rwfail)(vl1) should beFailure
             }
 
             test("map id over an empty vector gives an empty vector") {
-                assertResult(Some(Vector()))(map(id)(Vector()))
+                map(id)(Vector()) should beSomeOf(Vector())
             }
 
             test("map id over a non-empty vector gives that vector") {
-                assertOptSame(Some(vl1))(map(id)(vl1))
+                map(id)(vl1) should beSomeOf(vl1)
             }
 
             {
                 val inc = rule[Double] { case d => d + 1 }
 
                 test("map double inc over a nil list gives nil") {
-                    assertResult(Some(Nil))(map(inc)(Nil))
+                    map(inc)(Nil) should beSomeOf(Nil)
                 }
 
                 test("map double inc over a non-nil list fails") {
-                    assertResult(None)(map(inc)(ll1))
+                    map(inc)(ll1) should beFailure
                 }
 
                 test("map double inc over an empty vector gives an empty vector") {
-                    assertResult(Some(Vector()))(map(inc)(Vector()))
+                    map(inc)(Vector()) should beSomeOf(Vector())
                 }
 
                 test("map double inc over a non-empty vector fails") {
-                    assertResult(None)(map(inc)(vl1))
+                    map(inc)(vl1) should beFailure
                 }
             }
 
@@ -419,66 +425,64 @@ class RewriterTests extends Tests with Generator {
                 val isnum = rule[Num] { case n => n }
 
                 test("map isnum over a nil list gives nil") {
-                    assertResult(Some(Nil))(map(isnum)(Nil))
+                    map(isnum)(Nil) should beSomeOf(Nil)
                 }
 
                 test("map isnum over a list with one num succeeds with same list") {
-                    assertOptSame(Some(ll3))(map(isnum)(ll3))
+                    map(isnum)(ll3) should beSomeOf(ll3)
                 }
 
                 test("map isnum over a list with more than one num succeeds with same list") {
-                    assertOptSame(Some(ll1))(map(isnum)(ll1))
+                    map(isnum)(ll1) should beSomeOf(ll1)
                 }
 
                 test("map isnum over a list with non-num fails") {
-                    assertResult(None)(map(isnum)(ll2))
+                    map(isnum)(ll2) should beFailure
                 }
 
                 test("map isnum over an empty vector gives an empty vector") {
-                    assertResult(Some(Vector()))(map(isnum)(Vector()))
+                    map(isnum)(Vector()) should beSomeOf(Vector())
                 }
 
                 test("map isnum over a vector with one num succeeds with same vector") {
-                    assertOptSame(Some(vl3))(map(isnum)(vl3))
+                    map(isnum)(vl3) should beSomeOf(vl3)
                 }
 
                 test("map isnum over a vector with more than one num succeeds with same vector") {
-                    assertOptSame(Some(vl1))(map(isnum)(vl1))
+                    map(isnum)(vl1) should beSomeOf(vl1)
                 }
 
                 test("map isnum over a vector with non-num fails") {
-                    assertResult(None)(map(isnum)(vl2))
+                    map(isnum)(vl2) should beFailure
                 }
-
             }
 
             {
                 val isnuminc = rule[Num] { case Num(i) => Num(i + 1) }
 
                 test("map isnuminc over a nil list gives nil") {
-                    assertResult(Some(Nil))(map(isnuminc)(Nil))
+                    map(isnuminc)(Nil) should beSomeOf(Nil)
                 }
 
                 test("map isnuminc over a list with only nums succeeds with incremented list") {
-                    assertResult(Some(lr1))(map(isnuminc)(ll1))
+                    map(isnuminc)(ll1) shouldBe Some(lr1)
                 }
 
                 test("map isnuminc over a list with non-num fails") {
-                    assertResult(None)(map(isnuminc)(ll2))
+                    map(isnuminc)(ll2) should beFailure
                 }
 
                 test("map isnuminc over an empty vector gives an empty vector") {
-                    assertResult(Some(Vector()))(map(isnuminc)(Vector()))
+                    map(isnuminc)(Vector()) should beSomeOf(Vector())
                 }
 
                 test("map isnuminc over a vector with only nums succeeds with incremented vector") {
-                    assertResult(Some(vr1))(map(isnuminc)(vl1))
+                    map(isnuminc)(vl1) shouldBe Some(vr1)
                 }
 
                 test("map isnuminc over a vector with non-num fails") {
-                    assertResult(None)(map(isnuminc)(vl2))
+                    map(isnuminc)(vl2) should beFailure
                 }
-
             }
         }
 
@@ -489,31 +493,31 @@ class RewriterTests extends Tests with Generator {
             val double = rule[Double] { case d => d + 1 }
 
             test("rewriting leaf types: increment doubles - all, topdown") {
-                assertResult(Some(r))((alltd(double))(e))
+                (alltd(double))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: increment doubles - all, bottomup, same") {
-                assertOptSame(Some(e))((allbu(double))(e))
+                (allbu(double))(e) should beSomeOf(e)
             }
 
             test("rewriting leaf types: increment doubles - all, bottomup, not same") {
-                assertNotOptSame(Some(ee))((allbu(double))(e))
+                (allbu(double))(e) should not(beSomeOf(ee))
             }
 
             test("rewriting leaf types: increment doubles - some, topdown") {
-                assertResult(Some(r))((sometd(double))(e))
+                (sometd(double))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: increment doubles - some, bottomup") {
-                assertResult(Some(r))((somebu(double))(e))
+                (somebu(double))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: increment doubles - one, topdown") {
-                assertResult(Some(s))((oncetd(double))(e))
+                (oncetd(double))(e) shouldBe Some(s)
             }
 
             test("rewriting leaf types: increment doubles - one, bottomup") {
-                assertResult(Some(s))((oncebu(double))(e))
+                (oncebu(double))(e) shouldBe Some(s)
             }
         }
 
@@ -524,31 +528,31 @@ class RewriterTests extends Tests with Generator {
             val rev = rule[String] { case s => s.reverse }
 
             test("rewriting leaf types: reverse identifiers - all, topdown") {
-                assertResult(Some(r))((alltd(rev))(e))
+                (alltd(rev))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: reverse identifiers - all, bottomup, same") {
-                assertOptSame(Some(e))((allbu(rev))(e))
+                (allbu(rev))(e) should beSomeOf(e)
             }
 
             test("rewriting leaf types: reverse identifiers - all, bottomup, not same") {
-                assertNotOptSame(Some(ee))((allbu(rev))(e))
+                (allbu(rev))(e) should not(beSomeOf(ee))
             }
 
             test("rewriting leaf types: reverse identifiers - some, topdown") {
-                assertResult(Some(r))((sometd(rev))(e))
+                (sometd(rev))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: reverse identifiers - some, bottomup") {
-                assertResult(Some(r))((somebu(rev))(e))
+                (somebu(rev))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: reverse identifiers - one, topdown") {
-                assertResult(Some(s))((oncetd(rev))(e))
+                (oncetd(rev))(e) shouldBe Some(s)
             }
 
             test("rewriting leaf types: reverse identifiers - one, bottomup") {
-                assertResult(Some(s))((oncebu(rev))(e))
+                (oncebu(rev))(e) shouldBe Some(s)
             }
         }
 
@@ -563,48 +567,48 @@ class RewriterTests extends Tests with Generator {
                 }
 
             test("rewriting leaf types: increment even doubles and reverse idn - all, topdown") {
-                assertResult(Some(r))((alltd(evendoubleincrev))(e))
+                (alltd(evendoubleincrev))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, same") {
-                assertOptSame(Some(e))((allbu(evendoubleincrev))(e))
+                (allbu(evendoubleincrev))(e) should beSomeOf(e)
             }
 
             test("rewriting leaf types: increment even doubles and reverse idn - all, bottomup, not same") {
-                assertNotOptSame(Some(ee))((allbu(evendoubleincrev))(e))
+                (allbu(evendoubleincrev))(e) should not(beSomeOf(ee))
             }
 
             test("rewriting leaf types: increment even doubles and reverse idn - some, topdown") {
-                assertResult(Some(r))((sometd(evendoubleincrev))(e))
+                (sometd(evendoubleincrev))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: increment even doubles and reverse idn - some, bottomup") {
-                assertResult(Some(r))((somebu(evendoubleincrev))(e))
+                (somebu(evendoubleincrev))(e) shouldBe Some(r)
             }
 
             test("rewriting leaf types: increment even doubles and reverse idn - one, topdown") {
-                assertResult(Some(s))((oncetd(evendoubleincrev))(e))
+                (oncetd(evendoubleincrev))(e) shouldBe Some(s)
             }
 
             test("rewriting leaf types: increment even doubles and reverse idn - one, bottomup") {
-                assertResult(Some(s))((oncebu(evendoubleincrev))(e))
+                (oncebu(evendoubleincrev))(e) shouldBe Some(s)
             }
         }
     }
 
     test("rewrite to increment an integer") {
         val inc = rule[Int] { case i => i + 1 }
-        assertResult(Some(4))((inc)(3))
+        (inc)(3) shouldBe Some(4)
     }
 
     test("rewrite to a constant value") {
         val const = rulef(_ => 88)
-        assertResult(Some(88))((const)(3))
+        (const)(3) shouldBe Some(88)
     }
 
     test("rewrite failing to increment an integer with a double increment") {
         val inc = rule[Double] { case d => d + 1 }
-        assertResult(None)((inc)(3))
+        (inc)(3) should beFailure
     }
 
     {
@@ -613,109 +617,109 @@ class RewriterTests extends Tests with Generator {
         val incodd = sometd(rule[Int] { case i if i % 2 != 0 => i + 1 })
 
         test("rewrite list: increment all numbers - non-empty") {
-            assertResult(Some(List(2, 3, 4)))((incall)(List(1, 2, 3)))
+            (incall)(List(1, 2, 3)) shouldBe Some(List(2, 3, 4))
         }
 
         test("rewrite list: increment all numbers - empty") {
-            assertResult(Some(Nil))((incall)(Nil))
+            (incall)(Nil) shouldBe Some(Nil)
         }
 
         test("rewrite list: increment first number - non-empty") {
-            assertResult(Some(List(2, 2, 3)))((incfirst)(List(1, 2, 3)))
+            (incfirst)(List(1, 2, 3)) shouldBe Some(List(2, 2, 3))
         }
 
         test("rewrite list: increment first number - empty") {
-            assertResult(None)((incfirst)(Nil))
+            (incfirst)(Nil) should beFailure
         }
 
         test("rewrite list: increment odd numbers - succeed") {
-            assertResult(Some(List(2, 2, 4)))((incodd)(List(1, 2, 3)))
+            (incodd)(List(1, 2, 3)) shouldBe Some(List(2, 2, 4))
         }
 
         test("rewrite list: increment odd numbers - fail") {
-            assertResult(None)((incodd)(List(2, 4, 6)))
+            (incodd)(List(2, 4, 6)) should beFailure
         }
 
         val ll = List(List(1, 2), List(3), List(4, 5, 6))
 
         test("rewrite list: nested increment all numbers") {
-            assertResult(Some(List(List(2, 3), List(4), List(5, 6, 7))))((incall)(ll))
+            (incall)(ll) shouldBe Some(List(List(2, 3), List(4), List(5, 6, 7)))
         }
 
         test("rewrite list: nested increment first number") {
-            assertResult(Some(List(List(2, 2), List(3), List(4, 5, 6))))((incfirst)(ll))
+            (incfirst)(ll) shouldBe Some(List(List(2, 2), List(3), List(4, 5, 6)))
         }
 
         test("rewrite list: nested increment odd numbers - succeed") {
-            assertResult(Some(List(List(2, 2), List(4), List(4, 6, 6))))((incodd)(ll))
+            (incodd)(ll) shouldBe Some(List(List(2, 2), List(4), List(4, 6, 6)))
         }
 
         test("rewrite list: nested increment odd numbers - fail") {
-            assertResult(None)((incodd)(List(List(2, 2), List(4), List(4, 6, 6))))
+            (incodd)(List(List(2, 2), List(4), List(4, 6, 6))) should beFailure
         }
 
         test("rewrite vector: increment all numbers - non-empty") {
-            assertResult(Some(Vector(2, 3, 4)))((incall)(Vector(1, 2, 3)))
+            (incall)(Vector(1, 2, 3)) shouldBe Some(Vector(2, 3, 4))
         }
 
         test("rewrite vector: increment all numbers - empty") {
-            assertResult(Some(Vector()))((incall)(Vector()))
+            (incall)(Vector()) shouldBe Some(Vector())
         }
 
         test("rewrite vector: increment first number - non-empty") {
-            assertResult(Some(Vector(2, 2, 3)))((incfirst)(Vector(1, 2, 3)))
+            (incfirst)(Vector(1, 2, 3)) shouldBe Some(Vector(2, 2, 3))
         }
 
         test("rewrite vector: increment first number - empty") {
-            assertResult(None)((incfirst)(Vector()))
+            (incfirst)(Vector()) should beFailure
         }
 
         test("rewrite vector: increment odd numbers - succeed") {
-            assertResult(Some(Vector(2, 2, 4)))((incodd)(Vector(1, 2, 3)))
+            (incodd)(Vector(1, 2, 3)) shouldBe Some(Vector(2, 2, 4))
         }
 
         test("rewrite vector: increment odd numbers - fail") {
-            assertResult(None)((incodd)(Vector(2, 4, 6)))
+            (incodd)(Vector(2, 4, 6)) should beFailure
         }
 
         val vl = Vector(Vector(1, 2), Vector(3), Vector(4, 5, 6))
 
         test("rewrite vector: nested increment all numbers") {
-            assertResult(Some(Vector(Vector(2, 3), Vector(4), Vector(5, 6, 7))))((incall)(vl))
+            (incall)(vl) shouldBe Some(Vector(Vector(2, 3), Vector(4), Vector(5, 6, 7)))
         }
 
         test("rewrite vector: nested increment first number") {
-            assertResult(Some(Vector(Vector(2, 2), Vector(3), Vector(4, 5, 6))))((incfirst)(vl))
+            (incfirst)(vl) shouldBe Some(Vector(Vector(2, 2), Vector(3), Vector(4, 5, 6)))
         }
 
         test("rewrite vector: nested increment odd numbers - succeed") {
-            assertResult(Some(Vector(Vector(2, 2), Vector(4), Vector(4, 6, 6))))((incodd)(vl))
+            (incodd)(vl) shouldBe Some(Vector(Vector(2, 2), Vector(4), Vector(4, 6, 6)))
         }
 
         test("rewrite vector: nested increment odd numbers - fail") {
-            assertResult(None)((incodd)(Vector(Vector(2, 2), Vector(4), Vector(4, 6, 6))))
+            (incodd)(Vector(Vector(2, 2), Vector(4), Vector(4, 6, 6))) should beFailure
         }
     }
 
     test("same comparison of equal references yields true xxxx") {
         class Num(i : Int)
         val r = new Num(42)
-        assert(optsame(r, r))
+        optsame(r, r) shouldBe true
     }
 
     test("same comparison of unequalt references yields false") {
         class Num(i : Int)
         val r1 = new Num(42)
         val r2 = new Num(42)
-        assert(!optsame(r1, r2))
+        optsame(r1, r2) shouldBe false
     }
 
     test("same comparison of equal non-references yields true") {
-        assert(optsame(42, 42))
+        optsame(42, 42) shouldBe true
     }
 
     test("same comparison of unequalt non-references yields false") {
-        assert(!optsame(42, 43))
+        optsame(42, 43) shouldBe false
     }
 
     /**
@@ -734,9 +738,9 @@ class RewriterTests extends Tests with Generator {
         val msg = s"$basemsg - $testmsg, $expecting"
         test(msg) {
             expecting match {
-                case Equal   => assertResult(expected)(eval)
-                case Same    => assertOptSame(expected)(eval)
-                case NotSame => assertNotOptSame(expected)(eval)
+                case Equal   => eval shouldBe expected
+                case Same    => eval should beSameOptionAs(expected)
+                case NotSame => eval should not(beSameOptionAs(expected))
             }
         }
     }
@@ -984,37 +988,35 @@ class RewriterTests extends Tests with Generator {
         val incallsecondchild = alltd(incsecondchild)
 
         test("rewrite by child index: inc zeroth child - fail") {
-            assertResult(None)(inczerothchild(Add(Num(2), Num(3))))
+            inczerothchild(Add(Num(2), Num(3))) should beFailure
         }
 
         test("rewrite by child index: inc first child - fail") {
-            assertResult(None)(incfirstchild(Num(2)))
+            incfirstchild(Num(2)) should beFailure
         }
 
         test("rewrite by child index: inc first child - succeed, one child, one level") {
-            assertResult(Some(Neg(Num(3))))(incfirstchild(Neg(Num(2))))
+            incfirstchild(Neg(Num(2))) shouldBe Some(Neg(Num(3)))
         }
 
         test("rewrite by child index: inc first child - succeed, two children, one level") {
-            assertResult(Some(Add(Num(3), Num(3))))(incfirstchild(Add(Num(2), Num(3))))
+            incfirstchild(Add(Num(2), Num(3))) shouldBe Some(Add(Num(3), Num(3)))
         }
 
         test("rewrite by child index: inc second child - fail") {
-            assertResult(None)(incsecondchild(Num(2)))
+            incsecondchild(Num(2)) should beFailure
         }
 
         test("rewrite by child index: inc second child - succeed, one level") {
-            assertResult(Some(Add(Num(2), Num(4))))(incsecondchild(Add(Num(2), Num(3))))
+            incsecondchild(Add(Num(2), Num(3))) shouldBe Some(Add(Num(2), Num(4)))
         }
 
         test("rewrite by child index: inc third child - fail, one level") {
-            assertResult(None)(incthirdchild(Add(Num(2), Num(3))))
+            incthirdchild(Add(Num(2), Num(3))) should beFailure
         }
 
         test("rewrite by child index: inc second child - succeed, multi-level") {
-            assertResult(Some(Sub(Add(Num(2), Num(4)), Mul(Num(4), Num(6)))))(
-                incallsecondchild(Sub(Add(Num(2), Num(3)), Mul(Num(4), Num(5))))
-            )
+            incallsecondchild(Sub(Add(Num(2), Num(3)), Mul(Num(4), Num(5)))) shouldBe Some(Sub(Add(Num(2), Num(4)), Mul(Num(4), Num(6))))
         }
     }
 
@@ -1033,37 +1035,35 @@ class RewriterTests extends Tests with Generator {
         val l3 = Vector(1, 2, 3, 4)
 
         test("rewrite linkedlist by child index: inc zeroth child - fail, empty") {
-            assertResult(None)(inczerothchild(l1))
+            inczerothchild(l1) should beFailure
         }
 
         test("rewrite linkedlist by child index: inc first child - fail, empty") {
-            assertResult(None)(incfirstchild(l1))
+            incfirstchild(l1) should beFailure
         }
 
         test("rewrite linkedlist by child index: inc first child - succeed, singleton") {
-            assertResult(Some(Vector(2)))(incfirstchild(l2))
+            incfirstchild(l2) shouldBe Some(Vector(2))
         }
 
         test("rewrite linkedlist by child index: inc second child - fail, singleton") {
-            assertResult(None)(incsecondchild(l2))
+            incsecondchild(l2) should beFailure
         }
 
         test("rewrite linkedlist by child index: inc zeroth child - fail, multiple") {
-            assertResult(None)(inczerothchild(l3))
+            inczerothchild(l3) should beFailure
         }
 
         test("rewrite linkedlist by child index: inc first child - succeed, multiple") {
-            assertResult(Some(Vector(2, 2, 3, 4)))(incfirstchild(l3))
+            incfirstchild(l3) shouldBe Some(Vector(2, 2, 3, 4))
         }
 
         test("rewrite linkedlist by child index: inc second child - succeed, one level") {
-            assertResult(Some(Vector(1, 3, 3, 4)))(incsecondchild(l3))
+            incsecondchild(l3) shouldBe Some(Vector(1, 3, 3, 4))
         }
 
         test("rewrite linkedlist by child index: inc second child - succeed, multi-level") {
-            assertResult(Some(Vector(Vector(1), Vector(3, 5, 5), Vector(6, 8))))(
-                incallsecondchild(Vector(Vector(1), Vector(3, 4, 5), Vector(6, 7)))
-            )
+            incallsecondchild(Vector(Vector(1), Vector(3, 4, 5), Vector(6, 7))) shouldBe Some(Vector(Vector(1), Vector(3, 5, 5), Vector(6, 8)))
         }
     }
 
@@ -1103,15 +1103,15 @@ class RewriterTests extends Tests with Generator {
                 Add(rule[Var] { case _ => Var("bob") }, id))
 
         test("rewrite by congruence: top-level wrong congruence") {
-            assertResult(None)(Num(incint)(p))
+            Num(incint)(p) should beFailure
         }
 
         test("rewrite by congruence: top-level correct congruence") {
-            assertResult(Some(Seqn(Vector())))(Seqn(clearvector)(p))
+            Seqn(clearvector)(p) shouldBe Some(Seqn(Vector()))
         }
 
         test("rewrite by congruence: multi-level") {
-            assertResult(Some(q))(zeronumsbreakadds(p))
+            zeronumsbreakadds(p) shouldBe Some(q)
         }
     }
 
@@ -1120,8 +1120,8 @@ class RewriterTests extends Tests with Generator {
         val e = new StringEmitter
         val s = debug("hello there: ", e)
         val t = Asgn(Var("i"), Add(Num(1), Var("i")))
-        assertOptSame(Some(t))(s(t))
-        assertResult(s"hello there: $t\n")(e.result)
+        s(t) should beSomeOf(t)
+        e.result shouldBe s"hello there: $t\n"
     }
 
     test("log strategy produces the expected message and result on success") {
@@ -1131,8 +1131,8 @@ class RewriterTests extends Tests with Generator {
         val s = log(r, "test log ", e)
         val t = Asgn(Var("i"), Add(Num(1), Var("i")))
         val u = Asgn(Var("i"), Num(42))
-        assertResult(Some(u))(s(t))
-        assertResult(s"test log $t succeeded with $u\n")(e.result)
+        s(t) shouldBe Some(u)
+        e.result shouldBe s"test log $t succeeded with $u\n"
     }
 
     test("log strategy produces the expected message and result on failure") {
@@ -1141,8 +1141,8 @@ class RewriterTests extends Tests with Generator {
         val r = rule[Asgn] { case Asgn(l, r) => Asgn(l, Num(42)) }
         val s = log(r, "test log ", e)
         val t = Add(Num(1), Var("i"))
-        assertResult(None)(s(t))
-        assertResult(s"test log $t failed\n")(e.result)
+        s(t) should beFailure
+        e.result shouldBe s"test log $t failed\n"
     }
 
     test("logfail strategy produces no message but the right result on success") {
@@ -1152,8 +1152,8 @@ class RewriterTests extends Tests with Generator {
         val s = logfail(r, "test log ", e)
         val t = Asgn(Var("i"), Add(Num(1), Var("i")))
         val u = Asgn(Var("i"), Num(42))
-        assertResult(Some(u))(s(t))
-        assertResult("")(e.result)
+        s(t) shouldBe Some(u)
+        e.result shouldBe ""
     }
 
     test("logfail strategy produces the expected message and result on failure") {
@@ -1162,19 +1162,19 @@ class RewriterTests extends Tests with Generator {
         val r = rule[Asgn] { case Asgn(l, r) => Asgn(l, Num(42)) }
         val s = logfail(r, "test log ", e)
         val t = Add(Num(1), Var("i"))
-        assertResult(None)(s(t))
-        assertResult(s"test log $t failed\n")(e.result)
+        s(t) should beFailure
+        e.result shouldBe s"test log $t failed\n"
     }
 
     test("rewrite returns the original term when the strategy fails") {
         val t = Asgn(Var("i"), Add(Num(1), Var("i")))
-        assertOptSame(Some(t))(Some(rewrite(rwfail)(t)))
+        rewrite(rwfail)(t) should be theSameInstanceAs t
     }
 
     test("rewrite returns the strategy result when the strategy succeeds") {
         val t = Asgn(Var("i"), Add(Num(1), Var("i")))
         val s = everywhere(rule[Var] { case _ => Var("hello") })
-        assertResult(s(t))(Some(rewrite(s)(t)))
+        Some(rewrite(s)(t)) shouldBe s(t)
     }
 
     test("a memo strategy returns the previous result without re-evaluating") {
@@ -1186,11 +1186,11 @@ class RewriterTests extends Tests with Generator {
                 Var(s"i$count")
         }))
         val r = Some(Asgn(Var("i1"), Add(Num(1), Var("i2"))))
-        assertResult(0)(count)
-        assertResult(r)(s(t))
-        assertResult(2)(count)
-        assertResult(r)(s(t))
-        assertResult(2)(count)
+        count shouldBe 0
+        s(t) shouldBe r
+        count shouldBe 2
+        s(t) shouldBe r
+        count shouldBe 2
     }
 
     {
@@ -1198,14 +1198,14 @@ class RewriterTests extends Tests with Generator {
 
         test("a copy of a singleton case object doesn't copy") {
             val u = copy(t)
-            assertResult(t)(u)
-            assertSame(t)(u)
+            u shouldBe t
+            u should be theSameInstanceAs t
         }
 
         test("a dup of a singleton case object doesn't dup") {
             val u = dup(t, Array())
-            assertResult(t)(u)
-            assertSame(t)(u)
+            u shouldBe t
+            u should be theSameInstanceAs t
         }
     }
 
@@ -1214,14 +1214,14 @@ class RewriterTests extends Tests with Generator {
 
         test("a copy of a singleton object doesn't copy") {
             val u = copy(t)
-            assertResult(t)(u)
-            assertSame(t)(u)
+            u shouldBe t
+            u should be theSameInstanceAs t
         }
 
         test("a dup of a singleton object doesn't dup") {
             val u = dup(t, Array())
-            assertResult(t)(u)
-            assertSame(t)(u)
+            u shouldBe t
+            u should be theSameInstanceAs t
         }
     }
 
@@ -1230,14 +1230,14 @@ class RewriterTests extends Tests with Generator {
 
         test("a copy of Nil doesn't copy") {
             val u = copy(t)
-            assertResult(t)(u)
-            assertSame(t)(u)
+            u shouldBe t
+            u should be theSameInstanceAs t
         }
 
         test("a dup of Nil doesn't dup") {
             val u = dup(t, Array())
-            assertResult(t)(u)
-            assertSame(t)(u)
+            u shouldBe t
+            u should be theSameInstanceAs t
         }
     }
 
@@ -1246,14 +1246,14 @@ class RewriterTests extends Tests with Generator {
 
         test("a copy of a no-children instance copies") {
             val u = copy(t)
-            assertResult(t)(u)
-            assertNotSame(t)(u)
+            u shouldBe t
+            u should not(be theSameInstanceAs t)
         }
 
         test("a dup of a no-children instance dups") {
             val u = dup(t, Array())
-            assertResult(t)(u)
-            assertNotSame(t)(u)
+            u shouldBe t
+            u should not(be theSameInstanceAs t)
         }
     }
 
@@ -1262,14 +1262,14 @@ class RewriterTests extends Tests with Generator {
 
         test("a copy of a node with a child copies") {
             val u = copy(t)
-            assertResult(t)(u)
-            assertNotSame(t)(u)
+            u shouldBe t
+            u should not(be theSameInstanceAs t)
         }
 
         test("a dup of a node with a child dups") {
             val u = dup(t, Array("j"))
-            assertResult(Var("j"))(u)
-            assertNotSame(t)(u)
+            u shouldBe Var("j")
+            u should not(be theSameInstanceAs t)
         }
     }
 
@@ -1278,14 +1278,14 @@ class RewriterTests extends Tests with Generator {
 
         test("a copy of a node with multiple children copies") {
             val u = copy(t)
-            assertResult(t)(u)
-            assertNotSame(t)(u)
+            u shouldBe t
+            u should not(be theSameInstanceAs t)
         }
 
         test("a dup of a node with multiple children dups") {
             val u = dup(t, Array(Num(3), Num(4)))
-            assertResult(Add(Num(3), Num(4)))(u)
-            assertNotSame(t)(u)
+            u shouldBe Add(Num(3), Num(4))
+            u should not(be theSameInstanceAs t)
         }
     }
 
@@ -1294,14 +1294,14 @@ class RewriterTests extends Tests with Generator {
 
         test("a copy of a non-empty sequence copies") {
             val u = copy(t)
-            assertResult(t)(u)
-            assertNotSame(t)(u)
+            u shouldBe t
+            u should not(be theSameInstanceAs t)
         }
 
         test("a dup of a non-empty sequence dups") {
             val u = dup(t, Array(Var("j"), List(Num(2))))
-            assertResult(List(Var("j"), Num(2)))(u)
-            assertNotSame(t)(u)
+            u shouldBe List(Var("j"), Num(2))
+            u should not(be theSameInstanceAs t)
         }
     }
 
@@ -1317,13 +1317,13 @@ class RewriterTests extends Tests with Generator {
         val error = "(Num(42.0),Num(99.0)), expects 2"
         val hint = "Common cause: term classes are nested in another class, move them to the top level"
         val msg = "%s: %s(%s,%s) %s\n%s".format(base, method, arg1type, arg2type, error, hint)
-        assertResult(msg)(i.getMessage)
+        i.getMessage shouldBe msg
     }
 
     test("repeat on failure succeeds") {
         val s = repeat(rwfail)
         val t = Num(10)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("repeat of non-failure works") {
@@ -1331,7 +1331,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i < 10 => Num(i + 1)
         }
         val s = repeat(r)
-        assertResult(Some(Num(10)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(10))
     }
 
     test("repeat with a final strategy on failure applies the final strategy") {
@@ -1339,7 +1339,7 @@ class RewriterTests extends Tests with Generator {
             case Num(10) => Num(20)
         }
         val s = repeat(rwfail, f)
-        assertResult(Some(Num(20)))(s(Num(10)))
+        s(Num(10)) shouldBe Some(Num(20))
     }
 
     test("repeat with a final strategy works") {
@@ -1350,7 +1350,7 @@ class RewriterTests extends Tests with Generator {
             case Num(10) => Num(20)
         }
         val s = repeat(r, f)
-        assertResult(Some(Num(20)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(20))
     }
 
     test("repeat with a final failure fails") {
@@ -1358,12 +1358,12 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i < 10 => Num(i + 1)
         }
         val s = repeat(r, rwfail)
-        assertResult(None)(s(Num(1)))
+        s(Num(1)) should beFailure
     }
 
     test("repeat1 on failure fails") {
         val s = repeat1(rwfail)
-        assertResult(None)(s(Num(10)))
+        s(Num(10)) should beFailure
     }
 
     test("repeat1 of non-failure works") {
@@ -1371,7 +1371,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i < 10 => Num(i + 1)
         }
         val s = repeat1(r)
-        assertResult(Some(Num(10)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(10))
     }
 
     test("repeat1 with a final strategy on failure doesn't apply the final strategy") {
@@ -1379,7 +1379,7 @@ class RewriterTests extends Tests with Generator {
             case Num(10) => Num(20)
         }
         val s = repeat1(rwfail, f)
-        assertResult(None)(s(Num(10)))
+        s(Num(10)) should beFailure
     }
 
     test("repeat1 with a final strategy works") {
@@ -1390,7 +1390,7 @@ class RewriterTests extends Tests with Generator {
             case Num(10) => Num(20)
         }
         val s = repeat1(r, f)
-        assertResult(Some(Num(20)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(20))
     }
 
     test("repeat1 with a final failure fails") {
@@ -1398,18 +1398,18 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i < 10 => Num(i + 1)
         }
         val s = repeat1(r, rwfail)
-        assertResult(None)(s(Num(1)))
+        s(Num(1)) should beFailure
     }
 
     test("zero repeat of failure is identity") {
         val s = repeat(rwfail, 0)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("non-zero repeat of failure fails") {
         val s = repeat(rwfail, 4)
-        assertResult(None)(s(Num(1)))
+        s(Num(1)) should beFailure
     }
 
     test("zero repeat of non-failure is identity") {
@@ -1418,7 +1418,7 @@ class RewriterTests extends Tests with Generator {
         }
         val s = repeat(r, 0)
         val t = Num(1)
-        assertResult(Some(t))(s(t))
+        s(t) shouldBe Some(t)
     }
 
     test("non-zero repeat of non-failure is repeated correct number of times") {
@@ -1426,7 +1426,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i < 10 => Num(i + 1)
         }
         val s = repeat(r, 4)
-        assertResult(Some(Num(5)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(5))
     }
 
     test("repeatuntil on failure fails") {
@@ -1434,7 +1434,7 @@ class RewriterTests extends Tests with Generator {
             case Num(10) => Num(20)
         }
         val s = repeatuntil(rwfail, f)
-        assertResult(None)(s(Num(1)))
+        s(Num(1)) should beFailure
     }
 
     test("repeatuntil on non-failure works") {
@@ -1445,7 +1445,7 @@ class RewriterTests extends Tests with Generator {
             case Num(10) => Num(20)
         }
         val s = repeatuntil(r, f)
-        assertResult(Some(Num(20)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(20))
     }
 
     test("loop on failure is identity") {
@@ -1454,7 +1454,7 @@ class RewriterTests extends Tests with Generator {
         }
         val s = loop(rwfail, f)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("loop on non-failure with initially false condition is identity") {
@@ -1466,7 +1466,7 @@ class RewriterTests extends Tests with Generator {
         }
         val s = loop(r, f)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("loop on failure with initially true condition is identity") {
@@ -1475,7 +1475,7 @@ class RewriterTests extends Tests with Generator {
         }
         val s = loop(r, rwfail)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("loop on non-failure with initially true condition works") {
@@ -1486,7 +1486,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) => Num(i + 1)
         }
         val s = loop(r, f)
-        assertResult(Some(Num(10)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(10))
     }
 
     test("loopnot on succeess is identity") {
@@ -1495,7 +1495,7 @@ class RewriterTests extends Tests with Generator {
         }
         val s = loopnot(id, f)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("loopnot on non-failure with initially true condition is identity") {
@@ -1507,7 +1507,7 @@ class RewriterTests extends Tests with Generator {
         }
         val s = loopnot(r, f)
         val t = Num(1)
-        assertResult(Some(t))(s(t))
+        s(t) shouldBe Some(t)
     }
 
     test("loopnot on failure with initially false condition fails") {
@@ -1515,7 +1515,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i >= 10 => Num(i + 1)
         }
         val s = loopnot(r, rwfail)
-        assertResult(None)(s(Num(1)))
+        s(Num(1)) should beFailure
     }
 
     test("loopnot on non-failure with initially false condition works") {
@@ -1526,7 +1526,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) => Num(i + 1)
         }
         val s = loopnot(r, f)
-        assertResult(Some(Num(10)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(10))
     }
 
     test("doloop on failure applies once") {
@@ -1534,7 +1534,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) => Num(i + 1)
         }
         val s = doloop(f, rwfail)
-        assertResult(Some(Num(2)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(2))
     }
 
     test("doloop on non-failure with initially false condition applies once") {
@@ -1545,7 +1545,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i >= 10 => Num(i)
         }
         val s = doloop(r, f)
-        assertResult(Some(Num(2)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(2))
     }
 
     test("doloop on failure with initially true condition is failure") {
@@ -1553,7 +1553,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i < 10 => Num(i)
         }
         val s = doloop(rwfail, f)
-        assertResult(None)(s(Num(1)))
+        s(Num(1)) should beFailure
     }
 
     test("doloop on non-failure with initially true condition works") {
@@ -1564,7 +1564,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i < 10 => Num(i)
         }
         val s = doloop(r, f)
-        assertResult(Some(Num(10)))(s(Num(1)))
+        s(Num(1)) shouldBe Some(Num(10))
     }
 
     test("loopiter with failure init fails") {
@@ -1575,7 +1575,7 @@ class RewriterTests extends Tests with Generator {
             case Num(1) => Num(2)
         }
         val s = loopiter(rwfail, r, f)
-        assertResult(None)(s(Num(1)))
+        s(Num(1)) should beFailure
     }
 
     test("loopiter with succeeding init and initially true condition works") {
@@ -1589,7 +1589,7 @@ class RewriterTests extends Tests with Generator {
             case Num(1) => Num(2)
         }
         val s = loopiter(i, r, f)
-        assertResult(Some(Num(1)))(s(Num(100)))
+        s(Num(100)) shouldBe Some(Num(1))
     }
 
     test("loopiter with succeeding init and initially false condition works") {
@@ -1603,7 +1603,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) => Num(i + 1)
         }
         val s = loopiter(i, r, f)
-        assertResult(Some(Num(10)))(s(Num(100)))
+        s(Num(100)) shouldBe Some(Num(10))
     }
 
     test("counting loopiter is identity if there is nothing to count") {
@@ -1613,7 +1613,7 @@ class RewriterTests extends Tests with Generator {
             }
         val s = loopiter(r, 10, 1)
         val t = Num(1)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("counting loopiter counts correctly") {
@@ -1625,8 +1625,8 @@ class RewriterTests extends Tests with Generator {
                     Num(j + 1)
             }
         val s = loopiter(r, 1, 10)
-        assertResult(Some(Num(11)))(s(Num(1)))
-        assertResult(55)(count)
+        s(Num(1)) shouldBe Some(Num(11))
+        count shouldBe 55
     }
 
     test("breadthfirst traverses in correct order") {
@@ -1639,8 +1639,8 @@ class RewriterTests extends Tests with Generator {
             case n => n
         }
         val s = breadthfirst(r)
-        assertOptSame(Some(t))(s(t))
-        assertResult(Vector(3, 1, 2, 4, 5))(l)
+        s(t) should beSomeOf(t)
+        l shouldBe Vector(3, 1, 2, 4, 5)
     }
 
     test("leaves with a failing leaf detector succeeds but doesn't collect anything") {
@@ -1653,8 +1653,8 @@ class RewriterTests extends Tests with Generator {
             case n => n
         }
         val s = leaves(r, rwfail)
-        assertResult(Some(t))(s(t))
-        assertResult(0)(sum)
+        s(t) shouldBe Some(t)
+        sum shouldBe 0
     }
 
     test("leaves with a non-failing leaf detector succeeds and collects correctly") {
@@ -1669,8 +1669,8 @@ class RewriterTests extends Tests with Generator {
             case Num(i) if i % 2 != 1 => Num(i)
         }
         val s = leaves(r, l)
-        assertResult(Some(t))(s(t))
-        assertResult(6)(sum)
+        s(t) shouldBe Some(t)
+        sum shouldBe 6
     }
 
     test("skipping leaves with a non-failing leaf detector succeeds and collects correctly") {
@@ -1686,8 +1686,8 @@ class RewriterTests extends Tests with Generator {
         }
         val x = (y : Strategy) => rule[Sub] { case n => n }
         val s = leaves(r, l, x)
-        assertResult(Some(t))(s(t))
-        assertResult(4)(sum)
+        s(t) shouldBe Some(t)
+        sum shouldBe 4
     }
 
     {
@@ -1702,8 +1702,8 @@ class RewriterTests extends Tests with Generator {
                     Var(i.toString)
             }
             val s = innermost(r)
-            assertResult(Some(u))(s(t))
-            assertResult(Vector(1, 2, 3, 4, 5))(l)
+            s(t) shouldBe Some(u)
+            l shouldBe Vector(1, 2, 3, 4, 5)
         }
 
         test("innermost2 visits the correct node") {
@@ -1714,8 +1714,8 @@ class RewriterTests extends Tests with Generator {
                     Var(i.toString)
             }
             val s = innermost2(r)
-            assertResult(Some(u))(s(t))
-            assertResult(Vector(1, 2, 3, 4, 5))(l)
+            s(t) shouldBe Some(u)
+            l shouldBe Vector(1, 2, 3, 4, 5)
         }
 
     }
@@ -1729,7 +1729,7 @@ class RewriterTests extends Tests with Generator {
             case n                  => n
         }
         val s = downup(d)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("downup (two arg version) visits the correct frontier") {
@@ -1745,7 +1745,7 @@ class RewriterTests extends Tests with Generator {
             case n         => n
         }
         val s = downup(d, e)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("somedownup visits the correct frontier") {
@@ -1757,7 +1757,7 @@ class RewriterTests extends Tests with Generator {
             case n : Mul             => n
         }
         val s = somedownup(d)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("downupS (two arg version) visits the correct frontier") {
@@ -1773,7 +1773,7 @@ class RewriterTests extends Tests with Generator {
                 case n @ Add(_, Num(3)) => n
             }
         val s = downupS(d, f)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("downupS (three arg version) visits the correct frontier") {
@@ -1793,7 +1793,7 @@ class RewriterTests extends Tests with Generator {
                 case n @ Add(_, Num(3)) => n
             }
         val s = downupS(d, e, f _)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("alldownup2 visits the correct frontier") {
@@ -1808,7 +1808,7 @@ class RewriterTests extends Tests with Generator {
             case n         => n
         }
         val s = alldownup2(d, e)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("topdownS stops at the right spots") {
@@ -1824,7 +1824,7 @@ class RewriterTests extends Tests with Generator {
                 case n @ Add(Num(3), _) => n
             }
         val s = topdownS(d, f)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("topdownS with no stopping doesn't stop") {
@@ -1836,7 +1836,7 @@ class RewriterTests extends Tests with Generator {
             case n         => n
         }
         val s = topdownS(d, dontstop)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("bottomupS stops at the right spots") {
@@ -1852,7 +1852,7 @@ class RewriterTests extends Tests with Generator {
                 case n @ Add(_, Num(3)) => n
             }
         val s = bottomupS(d, f)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("bottomupS with no stopping doesn't stop") {
@@ -1864,7 +1864,7 @@ class RewriterTests extends Tests with Generator {
             case n         => n
         }
         val s = bottomupS(d, dontstop)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("manybu applies the strategy in the right order and right number of times") {
@@ -1877,7 +1877,7 @@ class RewriterTests extends Tests with Generator {
                 Num(count)
         }
         val s = manybu(d)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("manytd applies the strategy in the right order and right number of times") {
@@ -1893,7 +1893,7 @@ class RewriterTests extends Tests with Generator {
                 Add(r, l)
         }
         val s = manytd(d)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("alltdfold can be used to evaluate an expression") {
@@ -1906,7 +1906,7 @@ class RewriterTests extends Tests with Generator {
             case Mul(Num(i), Num(j)) => Num(i * j)
         }
         val s = alltdfold(d, e)
-        assertResult(Some(Num(-6)))(s(t))
+        s(t) shouldBe Some(Num(-6))
     }
 
     test("restore restores when the strategy fails") {
@@ -1921,8 +1921,8 @@ class RewriterTests extends Tests with Generator {
             case n => count = count - 1; n
         }
         val s = restore(d, e)
-        assertResult(None)(s(t))
-        assertResult(0)(count)
+        s(t) should beFailure
+        count shouldBe 0
     }
 
     test("restore doesn't restore when the strategy succeeds") {
@@ -1935,8 +1935,8 @@ class RewriterTests extends Tests with Generator {
             case n => count = count - 1; n
         }
         val s = restore(d, e)
-        assertOptSame(Some(t))(s(t))
-        assertResult(1)(count)
+        s(t) should beSomeOf(t)
+        count shouldBe 1
     }
 
     test("restorealways restores when the strategy fails") {
@@ -1951,8 +1951,8 @@ class RewriterTests extends Tests with Generator {
             case n => count = count - 1; n
         }
         val s = restorealways(d, e)
-        assertResult(None)(s(t))
-        assertResult(0)(count)
+        s(t) should beFailure
+        count shouldBe 0
     }
 
     test("restorealways restores when the strategy succeeds") {
@@ -1965,8 +1965,8 @@ class RewriterTests extends Tests with Generator {
             case n => count = count - 1; n
         }
         val s = restorealways(d, e)
-        assertOptSame(Some(t))(s(t))
-        assertResult(0)(count)
+        s(t) should beSomeOf(t)
+        count shouldBe 0
     }
 
     test("lastly applies the second strategy when the first strategy fails") {
@@ -1981,8 +1981,8 @@ class RewriterTests extends Tests with Generator {
             case n => count = count - 1; n
         }
         val s = lastly(d, e)
-        assertResult(None)(s(t))
-        assertResult(0)(count)
+        s(t) should beFailure
+        count shouldBe 0
     }
 
     test("lastly applies the second strategy when the first strategy succeeds") {
@@ -1995,8 +1995,8 @@ class RewriterTests extends Tests with Generator {
             case n => count = count - 1; n
         }
         val s = lastly(d, e)
-        assertOptSame(Some(t))(s(t))
-        assertResult(0)(count)
+        s(t) should beSomeOf(t)
+        count shouldBe 0
     }
 
     test("ior applies second strategy if first strategy fails") {
@@ -2009,7 +2009,7 @@ class RewriterTests extends Tests with Generator {
             case Add(l, r) => Add(r, l)
         }
         val s = ior(d, e)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("ior applies second strategy if first strategy succeeds") {
@@ -2022,7 +2022,7 @@ class RewriterTests extends Tests with Generator {
             case Add(l, r) => Add(r, l)
         }
         val s = ior(d, e)
-        assertResult(Some(u))(s(t))
+        s(t) shouldBe Some(u)
     }
 
     test("or applies second strategy and restores term if first strategy fails") {
@@ -2034,7 +2034,7 @@ class RewriterTests extends Tests with Generator {
             case Add(l, r) => Add(r, l)
         }
         val s = or(d, e)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("or applies second strategy and restores term if first strategy succeeds") {
@@ -2046,7 +2046,7 @@ class RewriterTests extends Tests with Generator {
             case Add(l, r) => Add(r, l)
         }
         val s = or(d, e)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     test("and fails if the first strategy fails") {
@@ -2058,7 +2058,7 @@ class RewriterTests extends Tests with Generator {
             case Add(l, r) => Add(r, l)
         }
         val s = and(d, e)
-        assertResult(None)(s(t))
+        s(t) should beFailure
     }
 
     test("and fails if the first strategy succeeds but the second strategy fails") {
@@ -2070,7 +2070,7 @@ class RewriterTests extends Tests with Generator {
             case Num(i) => Num(i + 1)
         }
         val s = and(d, e)
-        assertResult(None)(s(t))
+        s(t) should beFailure
     }
 
     test("and succeeds and restores term if both strategies succeed") {
@@ -2082,7 +2082,7 @@ class RewriterTests extends Tests with Generator {
             case Add(l, r) => Add(r, l)
         }
         val s = and(d, e)
-        assertOptSame(Some(t))(s(t))
+        s(t) should beSomeOf(t)
     }
 
     {
@@ -2101,8 +2101,8 @@ class RewriterTests extends Tests with Generator {
                     n
             }
             val s = everywhere(r)
-            assertResult(Some(u))(s(t))
-            assertResult(Vector(1, 2, 3, 4, 5))(l)
+            s(t) shouldBe Some(u)
+            l shouldBe Vector(1, 2, 3, 4, 5)
         }
 
         test("everywheretd traverses in expected order") {
@@ -2117,8 +2117,8 @@ class RewriterTests extends Tests with Generator {
                     n
             }
             val s = everywheretd(r)
-            assertResult(Some(u))(s(t))
-            assertResult(Vector(1, 2, 3, 4, 5))(l)
+            s(t) shouldBe Some(u)
+            l shouldBe Vector(1, 2, 3, 4, 5)
         }
 
         test("everywherebu traverses in expected order") {
@@ -2133,8 +2133,8 @@ class RewriterTests extends Tests with Generator {
                     n
             }
             val s = everywheretd(r)
-            assertResult(Some(u))(s(t))
-            assertResult(Vector(1, 2, 3, 4, 5))(l)
+            s(t) shouldBe Some(u)
+            l shouldBe Vector(1, 2, 3, 4, 5)
         }
     }
 
@@ -2145,59 +2145,59 @@ class RewriterTests extends Tests with Generator {
     }
 
     test("class-level rule has the correct name") {
-        assertResult("myrule1")(myrule1.name)
+        myrule1.name shouldBe "myrule1"
     }
 
     test("rule in closure has the correct name") {
         val myrule2 = rule[Num] {
             case Num(i) => Num(i + 1)
         }
-        assertResult("myrule2")(myrule2.name)
+        myrule2.name shouldBe "myrule2"
     }
 
     val mystrategy1 = outermost(id)
 
     test("class-level strategy has the correct name") {
-        assertResult("mystrategy1")(mystrategy1.name)
+        mystrategy1.name shouldBe "mystrategy1"
     }
 
     test("strategy in closure has the correct name") {
         val mystrategy2 = outermost(id)
-        assertResult("mystrategy2")(mystrategy2.name)
+        mystrategy2.name shouldBe "mystrategy2"
     }
 
     // Compilation tests
 
     test("rule that takes a basic type and returns the wrong basic type doesn't compile") {
-        assertTypeError("rule[Int] { case i : Int => 3.5 }")
+        "rule[Int] { case i : Int => 3.5 }" shouldNot typeCheck
     }
 
     test("rule that takes a reference type and returns the wrong reference type doesn't compile") {
-        assertTypeError("rule[Num] { case Num (i) => Var (\"i\") }")
+        "rule[Num] { case Num (i) => Var (\"i\") }" shouldNot typeCheck
     }
 
     test("rule that takes a reference type and returns a basic type doesn't compile") {
-        assertTypeError("rule[Num] { case Num (i) => i }")
+        "rule[Num] { case Num (i) => i }" shouldNot typeCheck
     }
 
     test("rule that takes a basic type and returns a reference type doesn't compile") {
-        assertTypeError("rule[Int] { case i => Num (i) }")
+        "rule[Int] { case i => Num (i) }" shouldNot typeCheck
     }
 
     test("strategy that takes a basic type and returns the wrong basic type doesn't compile") {
-        assertTypeError("strategy[Int] { case i : Int => Some (3.5) }")
+        "strategy[Int] { case i : Int => Some (3.5) }" shouldNot typeCheck
     }
 
     test("strategy that takes a reference type and returns the wrong reference type doesn't compile") {
-        assertTypeError("strategy[Num] { case Num (i) => Some (Var (\"i\")) }")
+        "strategy[Num] { case Num (i) => Some (Var (\"i\")) }" shouldNot typeCheck
     }
 
     test("strategy that takes a reference type and returns a basic type doesn't compile") {
-        assertTypeError("strategy[Num] { case Num (i) => Some (i) }")
+        "strategy[Num] { case Num (i) => Some (i) }" shouldNot typeCheck
     }
 
     test("strategy that takes a basic type and returns a reference type doesn't compile") {
-        assertTypeError("strategy[Int] { case i => Some (Num (i)) }")
+        "strategy[Int] { case i => Some (Num (i)) }" shouldNot typeCheck
     }
 
 }

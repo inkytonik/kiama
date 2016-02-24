@@ -21,121 +21,126 @@
 package org.bitbucket.inkytonik.kiama
 package example.lambda2
 
-import org.bitbucket.inkytonik.kiama.util.ParseTests
-import org.bitbucket.inkytonik.kiama.util.TestREPLWithConfig
+import org.bitbucket.inkytonik.kiama.util.{Messaging, ParseTests}
 
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends ParseTests {
+class LambdaTests extends ParseTests with Messaging {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree._
     import PrettyPrinter.formattedLayout
-    import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
+    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{all => rwall, _}
     import org.bitbucket.inkytonik.kiama.rewriting.Strategy
-    import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
+    import org.bitbucket.inkytonik.kiama.util.Message
+    import org.bitbucket.inkytonik.kiama.util.StringSource
+    import org.scalatest.matchers.{Matcher, MatchResult}
 
     val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.exp
 
     /**
-     * Compute errors of `e` check to make sure the relevant message is reported. Use
-     * `errors` to actually perform the check.
+     * Parse and analyse the term string and return a collection of the
+     * messages that result. It actually runs both `errors` and `errors2`,
+     * returning a single set of messages if they are the same, otherwise
+     * a composite set is returned.
      */
-    def assertType(e : Exp, aname : String, messages : Messages, l : Int, c : Int, msg : String) {
-        messages.length match {
-            case 0 =>
-                fail(s"$aname: no messages produced, expected ($l,$c) $msg")
-            case 1 =>
-                val m = messages.head
-                if ((line(m) != Some(l)) || (column(m) != Some(c)) || (m.label != msg))
-                    fail(s"$aname: incorrect message, expected ($l,$c) $msg, got (${line(m)},${column(m)}) ${m.label}")
-            case n =>
-                fail(s"$aname: expected one message, but got $n messages: $messages")
-        }
-    }
-
-    /**
-     * Compute the tipe of the expression and check to see if the specified
-     * message is produced.  We test both of the analysis methods.
-     */
-    def assertMessage(term : String, line : Int, col : Int, msg : String) {
-        assertParseCheck(term, parser) {
-            exp =>
+    def analyse(term : String) : String = {
+        parsers.parseAll(parsers.exp, StringSource(term)) match {
+            case Success(exp, _) =>
                 val tree = new LambdaTree(exp)
                 val analyser = new Analyser(tree)
-                assertType(exp, "errors", analyser.errors, line, col, msg)
-                assertType(exp, "errors2", analyser.errors2, line, col, msg)
-        }
-    }
-
-    /**
-     * Parse and type check the expression and expect no messages.
-     */
-    def assertNoMessage(term : String) {
-        assertParseCheck(term, parser) {
-            exp =>
-                val tree = new LambdaTree(exp)
-                val analyser = new Analyser(tree)
-                val messages = analyser.errors
-                if (messages.length != 0)
-                    fail(s"errors: no messages expected, got ${messages}")
-                val messages2 = analyser.errors2
-                if (messages.length != 0)
-                    fail(s"errors2: no messages expected, got ${messages2}")
+                val errors = analyser.errors.map(formatMessage).mkString
+                val errors2 = analyser.errors2.map(formatMessage).mkString
+                if (errors == errors2)
+                    errors
+                else
+                    "There were differences between 'errors' and 'errors2'\n" +
+                        "errors:\n" + errors + "errors2:\n" + errors2
+            case Failure(msg, _) =>
+                msg
         }
     }
 
     test("an unknown variable by itself is reported") {
-        assertMessage("y", 1, 1, "'y' unknown")
+        analyse("y") shouldBe
+            """1:1: 'y' unknown
+              |y
+              |^
+              |""".stripMargin
     }
 
     test("an unknown variable in an abstraction is reported (typed)") {
-        assertMessage("""\x : Int . x + y""", 1, 16, "'y' unknown")
+        analyse("""\x : Int . x + y""") shouldBe
+            """1:16: 'y' unknown
+              |\x : Int . x + y
+              |               ^
+              |""".stripMargin
     }
 
     test("an unknown variable in an abstraction is reported (untyped)") {
-        assertMessage("""\x . x + y""", 1, 10, "'y' unknown")
+        analyse("""\x . x + y""") shouldBe
+            """1:10: 'y' unknown
+              |\x . x + y
+              |         ^
+              |""".stripMargin
     }
 
     test("an Int -> Int cannot be used as an Int (typed)") {
-        assertMessage("""(\x : Int -> Int . x + 1) (\y : Int . y)""", 1, 20,
-            "expected Int, found Int -> Int")
+        analyse("""(\x : Int -> Int . x + 1) (\y : Int . y)""") shouldBe
+            """1:20: expected Int, found Int -> Int
+              |(\x : Int -> Int . x + 1) (\y : Int . y)
+              |                   ^
+              |""".stripMargin
     }
 
     test("an Int -> Int can be used as an Int (untyped)") {
-        assertNoMessage("""(\x . x + 1) (\y . y)""")
+        analyse("""(\x . x + 1) (\y . y)""") shouldBe empty
     }
 
     test("an Int cannot be passed to an Int -> Int (typed)") {
-        assertMessage("""(\x : Int -> Int . x 4) 3""", 1, 25,
-            "expected Int -> Int, found Int")
+        analyse("""(\x : Int -> Int . x 4) 3""") shouldBe
+            """1:25: expected Int -> Int, found Int
+              |(\x : Int -> Int . x 4) 3
+              |                        ^
+              |""".stripMargin
     }
 
     test("an Int cannot be passed to an Int -> Int (untyped)") {
-        assertNoMessage("""(\x . x 4) 3""")
+        analyse("""(\x . x 4) 3""") shouldBe empty
     }
 
     test("an Int -> Int cannot be passed to an Int (typed)") {
-        assertMessage("""(\x : Int . x + x) (\y : Int . y + 1)""", 1, 21,
-            "expected Int, found Int -> Int")
+        analyse("""(\x : Int . x + x) (\y : Int . y + 1)""") shouldBe
+            """1:21: expected Int, found Int -> Int
+              |(\x : Int . x + x) (\y : Int . y + 1)
+              |                    ^
+              |""".stripMargin
     }
 
     test("an Int -> Int cannot be passed to an Int (untyped)") {
-        assertNoMessage("""(\x . x + x) (\y . y + 1)""")
+        analyse("""(\x . x + x) (\y . y + 1)""") shouldBe empty
     }
 
     test("an Int cannot be directly applied as a function") {
-        assertMessage("""1 3""", 1, 1, "application of non-function")
+        analyse("""1 3""") shouldBe
+            """1:1: application of non-function
+              |1 3
+              |^
+              |""".stripMargin
     }
 
     test("an Int cannot be applied as a function via a parameter (typed)") {
-        assertMessage("""(\x : Int . x 5) 7""", 1, 13, "application of non-function")
+        analyse("""(\x : Int . x 5) 7""") shouldBe
+            """1:13: application of non-function
+              |(\x : Int . x 5) 7
+              |            ^
+              |""".stripMargin
     }
 
     test("an Int cannot be applied as a function via a parameter (untyped)") {
-        assertNoMessage("""(\x . x 5) 7""")
+        analyse("""(\x . x 5) 7""") shouldBe empty
     }
 
     /**
@@ -155,218 +160,233 @@ class LambdaTests extends ParseTests {
                     val m = s"v${d.toString}"
                     Let(m, t, canonise(e2, d + 1, e), canonise(e1, d + 1, e + (n -> m)))
             } +
-                all(canons(d, e))
+                rwall(canons(d, e))
         def canonise(x : Exp, d : Int, e : Map[Idn, Idn]) : Exp =
             rewrite(canons(d, e))(x)
         canonise(x, 1, Map() withDefault (n => n))
     }
 
     /**
-     * Assert true if the two expressions are the same modulo variable
-     * renaming, otherwise assert a failure.
+     * Parse and evalaute the term string using the given evaluator. If it works,
+     * return the result of evaluation. If* the term fails to parse return the error
+     * message.
      */
-    def assertSame(mech : String, e1 : Exp, e2 : Exp) {
-        if (canon(e1) != canon(e2))
-            fail(s"$mech: $e1 and $e2 are not equal")
-    }
-
-    /**
-     * Parse and evaluate term using the specified mechanism
-     * (which is assumed to already have been set) then compare to
-     * result. Fail if the parsing fails or the comparison with
-     * the result fails.
-     */
-    def assertEval(mech : String, term : String, expected : Exp) {
-        assertParseCheck(term, parser) {
-            exp =>
-                val result = evaluatorFor(mech).eval(exp)
-                assertSame(mech, expected, result)
+    def eval(term : String, evaluator : Evaluator) : Either[String, Exp] = {
+        parsers.parseAll(parsers.exp, StringSource(term)) match {
+            case Success(exp, _) =>
+                Right(evaluator.eval(exp))
+            case Failure(msg, _) =>
+                Left(msg)
         }
     }
 
+    // FIXME deal with other evaluation mechanisms
+
     /**
-     * Test the assertion on all available evaluation mechanisms.
+     * Matcher for evaluation where `mech` specifies the evaluation mechanism to use.
+     * The result of evaluation and the expected results are canonicalised before
+     * comparison. `expected1` is used if the evaluator evaluates inside lambdas, otherwise `expected2` is used.
      */
-    def assertEvalAll(term : String, expected : Exp) {
+    def evalTo(mech : String, expected1 : Exp, expected2 : Exp) =
+        new Matcher[String] {
+            def apply(term : String) = {
+                val evaluator = evaluatorFor(mech)
+                eval(term, evaluator) match {
+                    case Left(msg) =>
+                        MatchResult(
+                            false,
+                            s""""$mech: $term" failed to parse: "$msg"""",
+                            "NOT USED"
+                        )
+                    case Right(result) =>
+                        val expected = if (evaluator.reducesinlambdas) expected1 else expected2
+                        MatchResult(
+                            canon(result) == canon(expected),
+                            s""""$mech: $term" evaluated to $result not expected $expected""",
+                            s""""$mech: $term" evaluated to $expected"""
+                        )
+                }
+            }
+        }
+
+    /**
+     * Matcher for evaluation that tries all of the evaluation mechanisms
+     * using the same expected value for all mechanisms.
+     */
+    def evalAllTo(term : String, expected : Exp) =
         for (mech <- mechanisms) {
-            assertEval(mech, term, expected)
+            term should evalTo(mech, expected, expected)
         }
-    }
 
     /**
-     * Test the assertion on all available evaluation mechanisms.
-     * Same as single result version, except that result1 is
-     * expected for mechanisms that evaluate inside lambdas and
-     * result2 is expected for those that don't.
+     * Matcher for evaluation that tries all of the evaluation mechanisms
+     * using `expected1` for mechanisms that evaluate inside lambdas and
+     * `expected2` otherwise.
      */
-    def assertEvalAll(term : String, expected1 : Exp, expected2 : Exp) {
+    def evalAllToBoth(term : String, expected1 : Exp, expected2 : Exp) =
         for (mech <- mechanisms) {
-            val evaluator = evaluatorFor(mech)
-            assertEval(mech, term,
-                if (evaluator.reducesinlambdas)
-                    expected1
-                else
-                    expected2)
+            term should evalTo(mech, expected1, expected2)
         }
-    }
 
     test("a single digit number evaluates to itself") {
-        assertEvalAll("4", Num(4))
+        evalAllTo("4", Num(4))
     }
 
     test("a two digit number evaluates to itself") {
-        assertEvalAll("25", Num(25))
+        evalAllTo("25", Num(25))
     }
 
     test("a four digit number evaluates to itself") {
-        assertEvalAll("9876", Num(9876))
+        evalAllTo("9876", Num(9876))
     }
 
     test("a single character variable evaluates to itself") {
-        assertEvalAll("v", Var("v"))
+        evalAllTo("v", Var("v"))
     }
 
     test("a two character variable evaluates to itself") {
-        assertEvalAll("var", Var("var"))
+        evalAllTo("var", Var("var"))
     }
 
     test("a variable whose name contains digits evaluates to itself") {
-        assertEvalAll("v45", Var("v45"))
+        evalAllTo("v45", Var("v45"))
     }
 
     test("primitives evaluate correctly: addition") {
-        assertEvalAll("4 + 1", Num(5))
+        evalAllTo("4 + 1", Num(5))
     }
 
     test("primitives evaluate correctly: subtraction") {
-        assertEvalAll("20 - 12", Num(8))
+        evalAllTo("20 - 12", Num(8))
     }
 
     test("primitives evaluate correctly: addition and subtraction") {
-        assertEvalAll("12 + 7 - 19", Num(0))
+        evalAllTo("12 + 7 - 19", Num(0))
     }
 
     test("primitives evaluate correctly: addition and subtraction with parens") {
-        assertEvalAll("12 + (7 - 19)", Num(0))
+        evalAllTo("12 + (7 - 19)", Num(0))
     }
 
     test("primitives evaluate correctly: addition twice") {
-        assertEvalAll("2 + 3 + 4", Num(9))
+        evalAllTo("2 + 3 + 4", Num(9))
     }
 
     test("primitives evaluate correctly: subtraction twice") {
-        assertEvalAll("2 - 3 - 4", Num(-5))
+        evalAllTo("2 - 3 - 4", Num(-5))
     }
 
     test("primitives evaluate correctly: subtraction twice with parens") {
-        assertEvalAll("2 - (3 - 4)", Num(3))
+        evalAllTo("2 - (3 - 4)", Num(3))
     }
 
     test("lambda expressions evaluate to themselves: constant body") {
-        assertEvalAll(
+        evalAllTo(
             """\x:Int.4""",
             Lam("x", IntType(), Num(4))
         )
     }
 
     test("lambda expressions evaluate to themselves: non-constant body") {
-        assertEvalAll(
+        evalAllTo(
             """\x : Int . x - 1""",
             Lam("x", IntType(), Opn(Var("x"), SubOp(), Num(1)))
         )
     }
 
     test("parameters are correctly substituted: integer param") {
-        assertEvalAll("""(\x : Int . x) 42""", Num(42))
+        evalAllTo("""(\x : Int . x) 42""", Num(42))
     }
 
     test("parameters are correctly substituted: function param") {
-        assertEvalAll(
+        evalAllTo(
             """(\x : Int -> Int . x) (\y : Int . y)""",
             Lam("y", IntType(), Var("y"))
         )
     }
 
     test("a beta reduction and an operator evaluation works") {
-        assertEvalAll("""(\x . x + 1) 4""", Num(5))
+        evalAllTo("""(\x . x + 1) 4""", Num(5))
     }
 
     test("an unused parameter is ignored: integer param") {
-        assertEvalAll("""(\x:Int.99)42""", Num(99))
+        evalAllTo("""(\x:Int.99)42""", Num(99))
     }
 
     test("an unused parameter is ignored: integer param with whitespace") {
-        assertEvalAll("""(\x : Int . 4 + 3) 8""", Num(7))
+        evalAllTo("""(\x : Int . 4 + 3) 8""", Num(7))
     }
 
     test("an unused parameter is ignored: function param") {
-        assertEvalAll("""(\x.99) (\y:Int.y)""", Num(99))
+        evalAllTo("""(\x.99) (\y:Int.y)""", Num(99))
     }
 
     test("a function of one parameter passed as a parameter can be called") {
-        assertEvalAll(
+        evalAllTo(
             """(\f : Int -> Int . f 4) (\x : Int . x + 1)""",
             Num(5)
         )
     }
 
     test("a function of multiple parameters passed as a parameter can be called") {
-        assertEvalAll(
+        evalAllTo(
             """(\f : Int -> Int -> Int . f 1 2) (\x : Int . (\y : Int . x + y))""",
             Num(3)
         )
     }
 
     test("multiple parameters are passed correctly") {
-        assertEvalAll("""(\x . \f . f x) 4 (\y . y - 1)""", Num(3))
+        evalAllTo("""(\x . \f . f x) 4 (\y . y - 1)""", Num(3))
     }
 
     test("applications in arguments are evaluated correctly") {
-        assertEvalAll(
+        evalAllTo(
             """(\x . x + x) ((\y . y + 1) 5)""",
             Num(12)
         )
     }
 
     test("redexes inside lambdas are evaluated or ignored as appropriate") {
-        assertEvalAll("""\x:Int.4+3""", Lam("x", IntType(), Num(7)),
+        evalAllToBoth("""\x:Int.4+3""", Lam("x", IntType(), Num(7)),
             Lam("x", IntType(), Opn(Num(4), AddOp(), Num(3))))
     }
 
     /**
-     * Parse and pretty-print resulting term then compare to result.
+     * Matcher for round-tripping a string through the parser and then
+     * the result throgh the pretty-printer.
      */
-    def assertPrettyS(term : String, expected : String) {
-        assertParseCheck(term, parser) {
-            exp =>
-                val result = formattedLayout(exp)
-                if (result != expected)
-                    fail(s"pretty-print of $term expected $expected, got $result")
+    def roundTripTo(expected : String) =
+        new Matcher[String] {
+            def apply(term : String) =
+                parsers.exp(term) match {
+                    case Success(exp, _) =>
+                        val layout = formattedLayout(exp)
+                        MatchResult(
+                            layout == expected,
+                            s""""$term" round-tripped to "$layout not expected "$expected"""",
+                            s""""$term" round-tripped to "$expected""""
+                        )
+                    case Failure(msg, _) =>
+                        MatchResult(
+                            false,
+                            s""""$term" failed to parse: $msg"""",
+                            "NOT USED"
+                        )
+                }
         }
-    }
-
-    /**
-     * Pretty-print term then compare to result.
-     */
-    def assertPrettyE(term : Exp, expected : String) {
-        val result = formattedLayout(term)
-        if (result != expected)
-            fail(s"pretty-print of $term expected $expected, got $result")
-    }
 
     test("pretty-print lambda expression, simple operation") {
-        assertPrettyS("""\x:Int.x+1""", """(\x : Int . (x + 1))""")
+        """\x:Int.x+1""" should roundTripTo("""(\x : Int . (x + 1))""")
     }
 
     test("pretty-print applications, nested operation") {
-        assertPrettyS(
-            """(\f:Int->Int.f 4)(\x:Int.x+x-5)""",
+        """(\f:Int->Int.f 4)(\x:Int.x+x-5)""" should roundTripTo(
             """((\f : Int -> Int . (f 4)) (\x : Int . ((x + x) - 5)))"""
         )
     }
 
     test("pretty-printed nested lets") {
-        assertPrettyE(
+        formattedLayout(
             Let("a", IntType(),
                 Let("b", IntType(), Num(1),
                     Let("c", IntType(), Num(1),
@@ -377,7 +397,8 @@ class LambdaTests extends ParseTests {
                 Let("g", IntType(), Num(1),
                     Let("h", IntType(), Num(1),
                         Let("i", IntType(), Num(1),
-                            Num(1))))),
+                            Num(1)))))
+        ) shouldBe
             """(let a : Int =
     (let b : Int =
         1 in
@@ -397,12 +418,11 @@ class LambdaTests extends ParseTests {
             (let i : Int =
                 1 in
                 1))))"""
-        )
 
     }
 
     test("pretty-printed parallel lets") {
-        assertPrettyE(
+        formattedLayout(
             Letp(
                 Vector(
                     Bind("a", Num(1)),
@@ -422,7 +442,8 @@ class LambdaTests extends ParseTests {
                     ),
                     Num(1)
                 )
-            ),
+            )
+        ) shouldBe
             """(letp
     a = 1
     b = 1
@@ -434,18 +455,7 @@ class LambdaTests extends ParseTests {
         f = 1
         g = 1 in
         1))"""
-        )
+
     }
 
 }
-
-/**
- * Tests that check that the REPL produces appropriate output.
- */
-class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
-
-    val path = "src/org/bitbucket/inkytonik/kiama/example/lambda2/tests"
-    filetests("Lambda REPL", path, ".repl", ".replout")
-
-}
-

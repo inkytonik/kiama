@@ -54,35 +54,28 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt, ObrConfi
                     val tree = new ObrTree(ast)
                     val analyser = new SemanticAnalyser(tree)
                     val messages = analyser.errors
-                    if (messages.length > 0) {
-                        report(messages, config.error)
-                        fail(s"$title emitted a semantic error.")
-                    } else {
-                        val labels = new RISCLabels
-                        val transformer = new RISCTransformer(analyser, labels)
-                        tester(title, config.error, transformer.code(ast))
-                    }
+                    messages shouldBe empty
+                    val labels = new RISCLabels
+                    val transformer = new RISCTransformer(analyser, labels)
+                    tester(title, config.error, transformer.code(ast))
                 case Right(msgs) =>
-                    config.error.emit(formatMessages(msgs))
-                    fail(s"$title emitted a parse error.")
+                    msgs shouldBe empty
             }
         }
     }
 
     /**
      * Test a target tree by collecting together its IntDatum leaves and checking the resulting
-     * sequence of integers to see if it contains an expected sequence of integers as a slice.
+     * sequence of integers to see if it contains an expected sequence of integers.
      */
     def checkintdatums(expected : List[Int])(title : String, emitter : Emitter, code : RISCNode) {
         val realised = List.newBuilder[Int]
-        bottomup(query[RISCNode] {
+        bottomup(attempt(query[RISCNode] {
             case IntDatum(num) =>
                 realised += num
             case n : RISCProg =>
-                val found = realised.result
-                if (!(found containsSlice expected))
-                    fail(s"$title unexpected IntDatum leaves, found $found expected slice $expected")
-        })(code)
+                realised.result shouldBe expected
+        }))(code)
     }
 
 }

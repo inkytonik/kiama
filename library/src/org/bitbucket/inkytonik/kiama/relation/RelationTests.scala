@@ -26,7 +26,7 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 /**
  * Tests of binary relations.
  */
-class RelationTests extends Tests with RelationTestSupport {
+class RelationTests extends Tests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree.Num
 
@@ -59,1188 +59,1160 @@ class RelationTests extends Tests with RelationTestSupport {
     // collect
 
     test("collect on an empty relation produces an empty relation") {
-        assert(emptyBoolNum.collect { case (b, n) => (!b, n) }.isEmpty)
+        emptyBoolNum.collect { case (b, n) => (!b, n) } shouldBe empty
     }
 
     test("collect same type on an singleton relation produces correct singleton relation") {
-        assertResult(Vector((true, num3)))(singleBoolNum.collect { case (b, n) => (!b, n) }.graph)
+        singleBoolNum.collect { case (b, n) => (!b, n) }.graph shouldBe Vector((true, num3))
     }
 
     test("collect new type on an singleton relation produces correct singleton relation") {
-        assertResult(Vector((num3, true)))(singleBoolNum.collect { case (b, n) => (n, !b) }.graph)
+        singleBoolNum.collect { case (b, n) => (n, !b) }.graph shouldBe Vector((num3, true))
     }
 
     test("collect same type on a multiple relation produces correct multiple relation (same Nums)") {
-        assertResult(Vector((num2, 3), (num3, 4)))(multiNumInt.collect { case (n, i) => (n, i + 1) }.graph)
+        multiNumInt.collect { case (n, i) => (n, i + 1) }.graph shouldBe Vector((num2, 3), (num3, 4))
     }
 
     test("collect same type on a multiple relation produces correct multiple relation (new Nums)") {
-        assertResult(Vector((Num(3), 3), (Num(3), 4)))(multiNumInt.collect { case (Num(i), j) => (Num(i + 1), j + 1) }.graph)
+        multiNumInt.collect { case (Num(i), j) => (Num(i + 1), j + 1) }.graph shouldBe Vector((Num(3), 3), (Num(3), 4))
     }
 
     test("collect new type on a multiple relation produces correct multiple relation") {
-        assertResult(Vector((false, "bob"), (true, "bob"), (false, "bob")))(multiIntBool.collect { case (i, b) => (!b, "bob") }.graph)
+        multiIntBool.collect { case (i, b) => (!b, "bob") }.graph shouldBe Vector((false, "bob"), (true, "bob"), (false, "bob"))
     }
 
     // compose
 
     test("compose two empty relations produces an empty relation ") {
-        assert(emptyBoolNum.compose(emptyIntBool).isEmpty)
+        emptyBoolNum.compose(emptyIntBool) shouldBe empty
     }
 
     test("compose an empty relation on left of singleton relation produces an empty relation ") {
-        assert(emptyIntBool.compose(singleNumInt).isEmpty)
+        emptyIntBool.compose(singleNumInt) shouldBe empty
     }
 
     test("compose an empty relation on right of singleton relation produces an empty relation ") {
-        assert(singleBoolNum.compose(emptyIntBool).isEmpty)
+        singleBoolNum.compose(emptyIntBool) shouldBe empty
     }
 
     test("compose a singleton relation with a mu;tiple relation produces the correct pairs") {
-        assertResult(Vector((num2, false)))(multiIntBool.compose(singleNumInt).graph)
+        multiIntBool.compose(singleNumInt).graph shouldBe Vector((num2, false))
     }
 
     test("compose of two multiple relations produces the correct pairs") {
-        assertResult(Vector((1, num4), (2, num3), (2, num4), (1, num4)))(multiBoolNum.compose(multiIntBool).graph)
+        multiBoolNum.compose(multiIntBool).graph shouldBe Vector((1, num4), (2, num3), (2, num4), (1, num4))
     }
 
     // containsInDomain
 
     test("domain of singleton value-value relation contains its element") {
-        assertResult(true)(singleIntBool.containsInDomain(1))
+        singleIntBool.containsInDomain(1) shouldBe true
     }
 
     test("domain of singleton value-value relation doesn't contain a non-element") {
-        assertResult(false)(singleIntBool.containsInDomain(2))
+        singleIntBool.containsInDomain(2) shouldBe false
     }
 
     test("domain of singleton ref-value relation contains its element") {
-        assertSameCollection(true)(singleNumInt.containsInDomain(num2))
+        singleNumInt.containsInDomain(num2) shouldBe true
     }
 
     test("domain of singleton ref-value relation doesn't contain a non-element") {
-        assertSameCollection(false)(singleNumInt.containsInDomain(num3))
+        singleNumInt.containsInDomain(num3) shouldBe false
     }
 
     test("domain of singleton value-ref relation contains its element") {
-        assertResult(true)(singleBoolNum.containsInDomain(false))
+        singleBoolNum.containsInDomain(false) shouldBe true
     }
 
     test("domain of singleton value-ref relation doesn't contain a non-element") {
-        assertResult(false)(singleBoolNum.containsInDomain(true))
+        singleBoolNum.containsInDomain(true) shouldBe false
     }
 
     test("domain of singleton ref-ref relation contains its element") {
-        assertSameCollection(true)(singleNumNum.containsInDomain(num4))
+        singleNumNum.containsInDomain(num4) shouldBe true
     }
 
     test("domain of singleton ref-ref relation doesn't contain a non-element") {
-        assertSameCollection(false)(singleNumNum.containsInDomain(num5))
+        singleNumNum.containsInDomain(num5) shouldBe false
     }
 
     test("domain of multiple element value-value relation contains its first element") {
-        assertResult(true)(multiIntBool.containsInDomain(1))
+        multiIntBool.containsInDomain(1) shouldBe true
     }
 
     test("domain of multiple element value-value relation contains its second element") {
-        assertResult(true)(multiIntBool.containsInDomain(2))
+        multiIntBool.containsInDomain(2) shouldBe true
     }
 
     test("domain of multiple element value-value relation doesn't contain a non-element") {
-        assertResult(false)(multiIntBool.containsInDomain(3))
+        multiIntBool.containsInDomain(3) shouldBe false
     }
 
     test("domain of multiple element ref-value relation contains its first element") {
-        assertSameCollection(true)(multiNumInt.containsInDomain(num2))
+        multiNumInt.containsInDomain(num2) shouldBe true
     }
 
     test("domain of multiple element ref-value relation contains its second element") {
-        assertSameCollection(true)(multiNumInt.containsInDomain(num3))
+        multiNumInt.containsInDomain(num3) shouldBe true
     }
 
     test("domain of multiple element ref-value relation doesn't contain a non-element") {
-        assertSameCollection(false)(multiNumInt.containsInDomain(num4))
+        multiNumInt.containsInDomain(num4) shouldBe false
     }
 
     test("domain of multiple element value-ref relation contains its first element") {
-        assertResult(true)(multiBoolNum.containsInDomain(false))
+        multiBoolNum.containsInDomain(false) shouldBe true
     }
 
     test("domain of multiple element value-ref relation contains its second element") {
-        assertResult(true)(multiBoolNum.containsInDomain(true))
+        multiBoolNum.containsInDomain(true) shouldBe true
     }
 
     test("domain of multiple element ref-ref relation contains its element") {
-        assertSameCollection(true)(multiNumNum.containsInDomain(num4))
+        multiNumNum.containsInDomain(num4) shouldBe true
     }
 
     test("domain of multiple element ref-ref relation doesn't contain a non-element") {
-        assertSameCollection(false)(multiNumNum.containsInDomain(num5))
+        multiNumNum.containsInDomain(num5) shouldBe false
     }
 
     // containsInRange
 
     test("range of singleton value-value relation contains its element") {
-        assertResult(true)(singleIntBool.containsInRange(true))
+        singleIntBool.containsInRange(true) shouldBe true
     }
 
     test("range of singleton value-value relation doesn't contain a non-element") {
-        assertResult(false)(singleIntBool.containsInRange(false))
+        singleIntBool.containsInRange(false) shouldBe false
     }
 
     test("range of singleton ref-value relation contains its element") {
-        assertResult(true)(singleNumInt.containsInRange(2))
+        singleNumInt.containsInRange(2) shouldBe true
     }
 
     test("range of singleton ref-value relation doesn't contain a non-element") {
-        assertResult(false)(singleNumInt.containsInRange(3))
+        singleNumInt.containsInRange(3) shouldBe false
     }
 
     test("range of singleton value-ref relation contains its element") {
-        assertSameCollection(true)(singleBoolNum.containsInRange(num3))
+        singleBoolNum.containsInRange(num3) shouldBe true
     }
 
     test("range of singleton value-ref relation doesn't contain a non-element") {
-        assertSameCollection(false)(singleBoolNum.containsInRange(num2))
+        singleBoolNum.containsInRange(num2) shouldBe false
     }
 
     test("range of singleton ref-ref relation contains its element") {
-        assertSameCollection(true)(singleNumNum.containsInRange(num5))
+        singleNumNum.containsInRange(num5) shouldBe true
     }
 
     test("range of singleton ref-ref relation doesn't contain a non-element") {
-        assertSameCollection(false)(singleNumNum.containsInRange(num4))
+        singleNumNum.containsInRange(num4) shouldBe false
     }
 
     test("range of multiple element value-value relation contains its first element") {
-        assertResult(true)(multiIntBool.containsInRange(true))
+        multiIntBool.containsInRange(true) shouldBe true
     }
 
     test("range of multiple element value-value relation contains its second element") {
-        assertResult(true)(multiIntBool.containsInRange(false))
+        multiIntBool.containsInRange(false) shouldBe true
     }
 
     test("range of multiple element ref-value relation contains its first element") {
-        assertResult(true)(multiNumInt.containsInRange(2))
+        multiNumInt.containsInRange(2) shouldBe true
     }
 
     test("range of multiple element ref-value relation contains its second element") {
-        assertResult(true)(multiNumInt.containsInRange(3))
+        multiNumInt.containsInRange(3) shouldBe true
     }
 
     test("range of multiple element ref-value relation doesn't contain a non-element") {
-        assertResult(false)(multiNumInt.containsInRange(4))
+        multiNumInt.containsInRange(4) shouldBe false
     }
 
     test("range of multiple element value-ref relation contains its first element") {
-        assertSameCollection(true)(multiBoolNum.containsInRange(num3))
+        multiBoolNum.containsInRange(num3) shouldBe true
     }
 
     test("range of multiple element value-ref relation contains its second element") {
-        assertSameCollection(true)(multiBoolNum.containsInRange(num4))
+        multiBoolNum.containsInRange(num4) shouldBe true
     }
 
     test("range of multiple element value-ref relation doesn't contain a non-element") {
-        assertSameCollection(false)(multiBoolNum.containsInRange(num2))
+        multiBoolNum.containsInRange(num2) shouldBe false
     }
 
     test("range of multiple element ref-ref relation contains its element") {
-        assertSameCollection(true)(multiNumNum.containsInRange(num5))
+        multiNumNum.containsInRange(num5) shouldBe true
     }
 
     test("range of multiple element ref-ref relation doesn't contain a non-element") {
-        assertSameCollection(false)(multiNumNum.containsInRange(num4))
+        multiNumNum.containsInRange(num4) shouldBe false
     }
 
     // domain
 
     test("domain of empty value-value relation is empty") {
-        assert(emptyIntBool.domain.isEmpty)
+        emptyIntBool.domain shouldBe empty
     }
 
     test("domain of empty ref-value relation is empty") {
-        assert(emptyNumInt.domain.isEmpty)
+        emptyNumInt.domain shouldBe empty
     }
 
     test("domain of empty value-ref relation is empty") {
-        assert(emptyBoolNum.domain.isEmpty)
+        emptyBoolNum.domain shouldBe empty
     }
 
     test("domain of empty ref-ref relation is empty") {
-        assert(emptyNumNum.domain.isEmpty)
+        emptyNumNum.domain shouldBe empty
     }
 
     test("domain of singleton value-value relation is correct") {
-        assertResult(Vector(1))(singleIntBool.domain)
+        singleIntBool.domain shouldBe Vector(1)
     }
 
     test("domain of singleton ref-value relation is correct") {
-        assertSameCollection(Vector(num2))(singleNumInt.domain)
+        singleNumInt.domain should beSameCollectionAs(Vector(num2))
     }
 
     test("domain of singleton value-ref relation is correct") {
-        assertResult(Vector(false))(singleBoolNum.domain)
+        singleBoolNum.domain shouldBe Vector(false)
     }
 
     test("domain of singleton ref-ref relation is correct") {
-        assertSameCollection(Vector(num4))(singleNumNum.domain)
+        singleNumNum.domain should beSameCollectionAs(Vector(num4))
     }
 
     test("domain of multiple element value-value relation is correct") {
-        assertResult(Vector(1, 2))(multiIntBool.domain)
+        multiIntBool.domain shouldBe Vector(1, 2)
     }
 
     test("domain of multiple element ref-value relation is correct") {
-        assertSameCollection(Vector(num2, num3))(multiNumInt.domain)
+        multiNumInt.domain should beSameCollectionAs(Vector(num2, num3))
     }
 
     test("domain of multiple element value-ref relation is correct") {
-        assertResult(Vector(false, true))(multiBoolNum.domain)
+        multiBoolNum.domain shouldBe Vector(false, true)
     }
 
     test("domain of multiple element ref-ref relation is correct") {
-        assertSameCollection(Vector(num4))(multiNumNum.domain)
+        multiNumNum.domain should beSameCollectionAs(Vector(num4))
     }
 
     // image
 
     test("image of empty value-value relation is empty") {
-        assert(emptyIntBool.image(1).isEmpty)
+        emptyIntBool.image(1) shouldBe empty
     }
 
     test("image of empty ref-value relation is empty") {
-        assert(emptyNumInt.image(num2).isEmpty)
+        emptyNumInt.image(num2) shouldBe empty
     }
 
     test("image of empty value-ref relation is empty") {
-        assert(emptyBoolNum.image(false).isEmpty)
+        emptyBoolNum.image(false) shouldBe empty
     }
 
     test("image of empty ref-ref relation is empty") {
-        assert(emptyNumNum.image(num3).isEmpty)
+        emptyNumNum.image(num3) shouldBe empty
     }
 
     test("image of singleton value-value relation is correct (present)") {
-        assertResult(Vector(true))(singleIntBool.image(1))
+        singleIntBool.image(1) shouldBe Vector(true)
     }
 
     test("image of singleton value-value relation is empty (not present)") {
-        assert(singleIntBool.image(2).isEmpty)
+        singleIntBool.image(2) shouldBe empty
     }
 
     test("image of singleton ref-value relation is correct (present)") {
-        assertResult(Vector(2))(singleNumInt.image(num2))
+        singleNumInt.image(num2) shouldBe Vector(2)
     }
 
     test("image of singleton ref-value relation is empty (not present)") {
-        assert(singleNumInt.image(num3).isEmpty)
+        singleNumInt.image(num3) shouldBe empty
     }
 
     test("image of singleton value-ref relation is correct (present)") {
-        assertSameCollection(Vector(num3))(singleBoolNum.image(false))
+        singleBoolNum.image(false) should beSameCollectionAs(Vector(num3))
     }
 
     test("image of singleton value-ref relation is empty (not present)") {
-        assert(singleBoolNum.image(true).isEmpty)
+        singleBoolNum.image(true) shouldBe empty
     }
 
     test("image of singleton ref-ref relation is correct (present)") {
-        assertSameCollection(Vector(num5))(singleNumNum.image(num4))
+        singleNumNum.image(num4) should beSameCollectionAs(Vector(num5))
     }
 
     test("image of singleton ref-ref relation is empty (not present)") {
-        assert(singleNumNum.image(num5).isEmpty)
+        singleNumNum.image(num5) shouldBe empty
     }
 
     test("image of multiple element value-value relation is correct (present 1)") {
-        assertResult(Vector(true, true))(multiIntBool.image(1))
+        multiIntBool.image(1) shouldBe Vector(true, true)
     }
 
     test("image of multiple element value-value relation is correct (present 2)") {
-        assertResult(Vector(false))(multiIntBool.image(2))
+        multiIntBool.image(2) shouldBe Vector(false)
     }
 
     test("image of multiple element value-value relation is empty (not present)") {
-        assert(multiIntBool.image(3).isEmpty)
+        multiIntBool.image(3) shouldBe empty
     }
 
     test("image of multiple element ref-value relation is correct (present)") {
-        assertResult(Vector(2))(multiNumInt.image(num2))
+        multiNumInt.image(num2) shouldBe Vector(2)
     }
 
     test("image of multiple element ref-value relation is empty (not present)") {
-        assert(multiNumInt.image(num4).isEmpty)
+        multiNumInt.image(num4) shouldBe empty
     }
 
     test("image of multiple element value-ref relation is correct (present 1)") {
-        assertSameCollection(Vector(num3, num4))(multiBoolNum.image(false))
+        multiBoolNum.image(false) should beSameCollectionAs(Vector(num3, num4))
     }
 
     test("image of multiple element value-ref relation is correct (present 2)") {
-        assertSameCollection(Vector(num4))(multiBoolNum.image(true))
+        multiBoolNum.image(true) should beSameCollectionAs(Vector(num4))
     }
 
     test("image of multiple element ref-ref relation is correct (present)") {
-        assertSameCollection(Vector(num5, num5))(multiNumNum.image(num4))
+        multiNumNum.image(num4) should beSameCollectionAs(Vector(num5, num5))
     }
 
     test("image of multiple element ref-ref relation is empty (not present)") {
-        assert(multiNumNum.image(num2).isEmpty)
+        multiNumNum.image(num2) shouldBe empty
     }
 
     // index
 
     test("index of empty value-value relation is empty") {
-        assert(emptyIntBool.index.isEmpty)
+        emptyIntBool.index shouldBe empty
     }
 
     test("index of empty ref-value relation is empty") {
-        assert(emptyNumInt.index.isEmpty)
+        emptyNumInt.index shouldBe empty
     }
 
     test("index of empty value-ref relation is empty") {
-        assert(emptyBoolNum.index.isEmpty)
+        emptyBoolNum.index shouldBe empty
     }
 
     test("index of empty ref-ref relation is empty") {
-        assert(emptyNumNum.index.isEmpty)
+        emptyNumNum.index shouldBe empty
     }
 
     test("index of singleton value-value relation is correct") {
-        assertResult(Vector((true, 0)))(singleIntBool.index.graph)
+        singleIntBool.index.graph shouldBe Vector((true, 0))
     }
 
     test("index of singleton ref-value relation is correct") {
-        assertResult(Vector((2, 0)))(singleNumInt.index.graph)
+        singleNumInt.index.graph shouldBe Vector((2, 0))
     }
 
     test("index of singleton value-ref relation is correct") {
-        assertSameCollection(Vector((num3, 0)))(singleBoolNum.index.graph)
+        singleBoolNum.index.graph should beSameCollectionAs(Vector((num3, 0)))
     }
 
     test("index of singleton ref-ref relation is correct (present)") {
-        assertSameCollection(Vector((num5, 0)))(singleNumNum.index.graph)
+        singleNumNum.index.graph should beSameCollectionAs(Vector((num5, 0)))
     }
 
     test("index of multiple element value-value relation is correct") {
-        assertResult(Vector((true, 0), (false, 1), (true, 2)))(multiIntBool.index.graph)
+        multiIntBool.index.graph shouldBe Vector((true, 0), (false, 1), (true, 2))
     }
 
     test("index of multiple element ref-value relation is correct") {
-        assertResult(Vector((2, 0), (3, 1)))(multiNumInt.index.graph)
+        multiNumInt.index.graph shouldBe Vector((2, 0), (3, 1))
     }
 
     test("index of multiple element value-ref relation is correct") {
-        assertSameCollection(Vector((num3, 0), (num4, 1), (num4, 2)))(multiBoolNum.index.graph)
+        multiBoolNum.index.graph should beSameCollectionAs(Vector((num3, 0), (num4, 1), (num4, 2)))
     }
 
     test("index of multiple element ref-ref relation is correct") {
-        assertSameCollection(Vector((num5, 0), (num5, 1)))(multiNumNum.index.graph)
+        multiNumNum.index.graph should beSameCollectionAs(Vector((num5, 0), (num5, 1)))
     }
 
     // inverse
 
     test("inverting an empty relation yields an empty relation") {
-        assert(emptyIntBool.inverse.isEmpty)
+        emptyIntBool.inverse shouldBe empty
     }
 
     test("inverting a singleton relation yields the correct singleton relation") {
-        assertResult(Vector((true, 1)))(singleIntBool.inverse.graph)
+        singleIntBool.inverse.graph shouldBe Vector((true, 1))
     }
 
     test("inverting a multiple relation yields the correct multiple relation") {
-        assertResult(Vector((num3, false), (num4, false), (num4, true)))(multiBoolNum.inverse.graph)
+        multiBoolNum.inverse.graph shouldBe Vector((num3, false), (num4, false), (num4, true))
     }
 
     // preImage
 
     test("preImage of empty value-value relation is empty") {
-        assert(emptyIntBool.preImage(false).isEmpty)
+        emptyIntBool.preImage(false) shouldBe empty
     }
 
     test("preImage of empty ref-value relation is empty") {
-        assert(emptyNumInt.preImage(2).isEmpty)
+        emptyNumInt.preImage(2) shouldBe empty
     }
 
     test("preImage of empty value-ref relation is empty") {
-        assert(emptyBoolNum.preImage(num2).isEmpty)
+        emptyBoolNum.preImage(num2) shouldBe empty
     }
 
     test("preImage of empty ref-ref relation is empty") {
-        assert(emptyNumNum.preImage(num3).isEmpty)
+        emptyNumNum.preImage(num3) shouldBe empty
     }
 
     test("preImage of singleton value-value relation is correct (present)") {
-        assertResult(Vector(1))(singleIntBool.preImage(true))
+        singleIntBool.preImage(true) shouldBe Vector(1)
     }
 
     test("preImage of singleton value-value relation is empty (not present)") {
-        assert(singleIntBool.preImage(false).isEmpty)
+        singleIntBool.preImage(false) shouldBe empty
     }
 
     test("preImage of singleton ref-value relation is correct (present)") {
-        assertSameCollection(Vector(num2))(singleNumInt.preImage(2))
+        singleNumInt.preImage(2) should beSameCollectionAs(Vector(num2))
     }
 
     test("preImage of singleton ref-value relation is empty (not present)") {
-        assert(singleNumInt.preImage(3).isEmpty)
+        singleNumInt.preImage(3) shouldBe empty
     }
 
     test("preImage of singleton value-ref relation is correct (present)") {
-        assertResult(Vector(false))(singleBoolNum.preImage(num3))
+        singleBoolNum.preImage(num3) shouldBe Vector(false)
     }
 
     test("preImage of singleton value-ref relation is empty (not present)") {
-        assert(singleBoolNum.preImage(num2).isEmpty)
+        singleBoolNum.preImage(num2) shouldBe empty
     }
 
     test("preImage of singleton ref-ref relation is correct (present)") {
-        assertSameCollection(Vector(num4))(singleNumNum.preImage(num5))
+        singleNumNum.preImage(num5) should beSameCollectionAs(Vector(num4))
     }
 
     test("preImage of singleton ref-ref relation is empty (not present)") {
-        assert(singleNumNum.preImage(num4).isEmpty)
+        singleNumNum.preImage(num4) shouldBe empty
     }
 
     test("preImage of multiple element value-value relation is correct (present 1)") {
-        assertResult(Vector(1, 1))(multiIntBool.preImage(true))
+        multiIntBool.preImage(true) shouldBe Vector(1, 1)
     }
 
     test("preImage of multiple element value-value relation is correct (present 2)") {
-        assertResult(Vector(2))(multiIntBool.preImage(false))
+        multiIntBool.preImage(false) shouldBe Vector(2)
     }
 
     test("preImage of multiple element ref-value relation is correct (present)") {
-        assertSameCollection(Vector(num2))(multiNumInt.preImage(2))
+        multiNumInt.preImage(2) should beSameCollectionAs(Vector(num2))
     }
 
     test("preImage of multiple element ref-value relation is empty (not present)") {
-        assert(multiNumInt.preImage(4).isEmpty)
+        multiNumInt.preImage(4) shouldBe empty
     }
 
     test("preImage of multiple element value-ref relation is correct (present 1)") {
-        assertResult(Vector(false))(multiBoolNum.preImage(num3))
+        multiBoolNum.preImage(num3) shouldBe Vector(false)
     }
 
     test("preImage of multiple element value-ref relation is correct (present 2)") {
-        assertResult(Vector(false, true))(multiBoolNum.preImage(num4))
+        multiBoolNum.preImage(num4) shouldBe Vector(false, true)
     }
 
     test("preImage of multiple element value-ref relation is empty (not present)") {
-        assert(multiBoolNum.preImage(num2).isEmpty)
+        multiBoolNum.preImage(num2) shouldBe empty
     }
 
     test("preImage of multiple element ref-ref relation is correct (present)") {
-        assertSameCollection(Vector(num4, num4))(multiNumNum.preImage(num5))
+        multiNumNum.preImage(num5) should beSameCollectionAs(Vector(num4, num4))
     }
 
     test("preImage of multiple element ref-ref relation is empty (not present)") {
-        assert(multiNumNum.preImage(num2).isEmpty)
+        multiNumNum.preImage(num2) shouldBe empty
     }
 
     // preIndex
 
     test("preIndex of empty value-value relation is empty") {
-        assert(emptyIntBool.preIndex.isEmpty)
+        emptyIntBool.preIndex shouldBe empty
     }
 
     test("preIndex of empty ref-value relation is empty") {
-        assert(emptyNumInt.preIndex.isEmpty)
+        emptyNumInt.preIndex shouldBe empty
     }
 
     test("preIndex of empty value-ref relation is empty") {
-        assert(emptyBoolNum.preIndex.isEmpty)
+        emptyBoolNum.preIndex shouldBe empty
     }
 
     test("preIndex of empty ref-ref relation is empty") {
-        assert(emptyNumNum.preIndex.isEmpty)
+        emptyNumNum.preIndex shouldBe empty
     }
 
     test("preIndex of singleton value-value relation is correct") {
-        assertResult(Vector((1, 0)))(singleIntBool.preIndex.graph)
+        singleIntBool.preIndex.graph shouldBe Vector((1, 0))
     }
 
     test("preIndex of singleton ref-value relation is correct") {
-        assertSameCollection(Vector((num2, 0)))(singleNumInt.preIndex.graph)
+        singleNumInt.preIndex.graph should beSameCollectionAs(Vector((num2, 0)))
     }
 
     test("preIndex of singleton value-ref relation is correct") {
-        assertResult(Vector((false, 0)))(singleBoolNum.preIndex.graph)
+        singleBoolNum.preIndex.graph shouldBe Vector((false, 0))
     }
 
     test("preIndex of singleton ref-ref relation is correct (present)") {
-        assertSameCollection(Vector((num4, 0)))(singleNumNum.preIndex.graph)
+        singleNumNum.preIndex.graph should beSameCollectionAs(Vector((num4, 0)))
     }
 
     test("preIndex of multiple element value-value relation is correct") {
-        assertResult(Vector((1, 0), (2, 1), (1, 2)))(multiIntBool.preIndex.graph)
+        multiIntBool.preIndex.graph shouldBe Vector((1, 0), (2, 1), (1, 2))
     }
 
     test("preIndex of multiple element ref-value relation is correct") {
-        assertSameCollection(Vector((num2, 0), (num3, 1)))(multiNumInt.preIndex.graph)
+        multiNumInt.preIndex.graph should beSameCollectionAs(Vector((num2, 0), (num3, 1)))
     }
 
     test("preIndex of multiple element value-ref relation is correct") {
-        assertResult(Vector((false, 0), (false, 1), (true, 2)))(multiBoolNum.preIndex.graph)
+        multiBoolNum.preIndex.graph shouldBe Vector((false, 0), (false, 1), (true, 2))
     }
 
     test("preIndex of multiple element ref-ref relation is correct") {
-        assertSameCollection(Vector((num4, 0), (num4, 1)))(multiNumNum.preIndex.graph)
+        multiNumNum.preIndex.graph should beSameCollectionAs(Vector((num4, 0), (num4, 1)))
     }
 
     // projDomain
 
     test("projDomain of empty value-value relation is empty") {
-        assert(emptyIntBool.projDomain.isEmpty)
+        emptyIntBool.projDomain shouldBe empty
     }
 
     test("projDomain of empty ref-value relation is empty") {
-        assert(emptyNumInt.projDomain.isEmpty)
+        emptyNumInt.projDomain shouldBe empty
     }
 
     test("projDomain of empty value-ref relation is empty") {
-        assert(emptyBoolNum.projDomain.isEmpty)
+        emptyBoolNum.projDomain shouldBe empty
     }
 
     test("projDomain of empty ref-ref relation is empty") {
-        assert(emptyNumNum.projDomain.isEmpty)
+        emptyNumNum.projDomain shouldBe empty
     }
 
     test("projDomain of singleton value-value relation is correct") {
-        assertResult(Vector((1, Vector(true))))(singleIntBool.projDomain.graph)
+        singleIntBool.projDomain.graph shouldBe Vector((1, Vector(true)))
     }
 
     test("projDomain of singleton ref-value relation is correct") {
-        assertSameCollection(Vector((num2, Vector(2))))(singleNumInt.projDomain.graph)
+        singleNumInt.projDomain.graph should beSameCollectionAs(Vector((num2, Vector(2))))
     }
 
     test("projDomain of singleton value-ref relation is correct") {
-        assertSameCollection(Vector((false, Vector(num3))))(singleBoolNum.projDomain.graph)
+        singleBoolNum.projDomain.graph should beSameCollectionAs(Vector((false, Vector(num3))))
     }
 
     test("projDomain of singleton ref-ref relation is correct") {
-        assertSameCollection(Vector((num4, Vector(num5))))(singleNumNum.projDomain.graph)
+        singleNumNum.projDomain.graph should beSameCollectionAs(Vector((num4, Vector(num5))))
     }
 
     test("projDomain of multiple element value-value relation is correct") {
-        assertResult(Vector((1, Vector(true, true)), (2, Vector(false))))(multiIntBool.projDomain.graph)
+        multiIntBool.projDomain.graph shouldBe Vector((1, Vector(true, true)), (2, Vector(false)))
     }
 
     test("projDomain of multiple element ref-value relation is correct") {
-        assertSameCollection(Vector((num2, Vector(2)), (num3, Vector(3))))(multiNumInt.projDomain.graph)
+        multiNumInt.projDomain.graph should beSameCollectionAs(Vector((num2, Vector(2)), (num3, Vector(3))))
     }
 
     test("projDomain of multiple element value-ref relation is correct") {
-        assertSameCollection(Vector((false, Vector(num3, num4)), (true, Vector(num4))))(multiBoolNum.projDomain.graph)
+        multiBoolNum.projDomain.graph should beSameCollectionAs(Vector((false, Vector(num3, num4)), (true, Vector(num4))))
     }
 
     test("projDomain of multiple element ref-ref relation is correct") {
-        assertSameCollection(Vector((num4, Vector(num5, num5))))(multiNumNum.projDomain.graph)
+        multiNumNum.projDomain.graph should beSameCollectionAs(Vector((num4, Vector(num5, num5))))
     }
 
     // projRange
 
     test("projRange of empty value-value relation is empty") {
-        assert(emptyIntBool.projRange.isEmpty)
+        emptyIntBool.projRange shouldBe empty
     }
 
     test("projRange of empty ref-value relation is empty") {
-        assert(emptyNumInt.projRange.isEmpty)
+        emptyNumInt.projRange shouldBe empty
     }
 
     test("projRange of empty value-ref relation is empty") {
-        assert(emptyBoolNum.projRange.isEmpty)
+        emptyBoolNum.projRange shouldBe empty
     }
 
     test("projRange of empty ref-ref relation is empty") {
-        assert(emptyNumNum.projRange.isEmpty)
+        emptyNumNum.projRange shouldBe empty
     }
 
     test("projRange of singleton value-value relation is correct") {
-        assertResult(Vector((true, Vector(1))))(singleIntBool.projRange.graph)
+        singleIntBool.projRange.graph shouldBe Vector((true, Vector(1)))
     }
 
     test("projRange of singleton ref-value relation is correct") {
-        assertSameCollection(Vector((2, Vector(num2))))(singleNumInt.projRange.graph)
+        singleNumInt.projRange.graph should beSameCollectionAs(Vector((2, Vector(num2))))
     }
 
     test("projRange of singleton value-ref relation is correct") {
-        assertSameCollection(Vector((num3, Vector(false))))(singleBoolNum.projRange.graph)
+        singleBoolNum.projRange.graph should beSameCollectionAs(Vector((num3, Vector(false))))
     }
 
     test("projRange of singleton ref-ref relation is correct") {
-        assertSameCollection(Vector((num5, Vector(num4))))(singleNumNum.projRange.graph)
+        singleNumNum.projRange.graph should beSameCollectionAs(Vector((num5, Vector(num4))))
     }
 
     test("projRange of multiple element value-value relation is correct") {
-        assertResult(Vector((true, Vector(1, 1)), (false, Vector(2))))(multiIntBool.projRange.graph)
+        multiIntBool.projRange.graph shouldBe Vector((true, Vector(1, 1)), (false, Vector(2)))
     }
 
     test("projRange of multiple element ref-value relation is correct") {
-        assertSameCollection(Vector((2, Vector(num2)), (3, Vector(num3))))(multiNumInt.projRange.graph)
+        multiNumInt.projRange.graph should beSameCollectionAs(Vector((2, Vector(num2)), (3, Vector(num3))))
     }
 
     test("projRange of multiple element value-ref relation is correct") {
-        assertSameCollection(Vector((num3, Vector(false)), (num4, Vector(false, true))))(multiBoolNum.projRange.graph)
+        multiBoolNum.projRange.graph should beSameCollectionAs(Vector((num3, Vector(false)), (num4, Vector(false, true))))
     }
 
     test("projRange of multiple element ref-ref relation is correct") {
-        assertSameCollection(Vector((num5, Vector(num4, num4))))(multiNumNum.projRange.graph)
+        multiNumNum.projRange.graph should beSameCollectionAs(Vector((num5, Vector(num4, num4))))
     }
 
     // range
 
     test("range of empty value-value relation is empty") {
-        assert(emptyIntBool.range.isEmpty)
+        emptyIntBool.range shouldBe empty
     }
 
     test("range of empty ref-value relation is empty") {
-        assert(emptyNumInt.range.isEmpty)
+        emptyNumInt.range shouldBe empty
     }
 
     test("range of empty value-ref relation is empty") {
-        assert(emptyBoolNum.range.isEmpty)
+        emptyBoolNum.range shouldBe empty
     }
 
     test("range of empty ref-ref relation is empty") {
-        assert(emptyNumNum.range.isEmpty)
+        emptyNumNum.range shouldBe empty
     }
 
     test("range of singleton value-value relation is correct") {
-        assertResult(Vector(true))(singleIntBool.range)
+        singleIntBool.range shouldBe Vector(true)
     }
 
     test("range of singleton ref-value relation is correct") {
-        assertResult(Vector(2))(singleNumInt.range)
+        singleNumInt.range shouldBe Vector(2)
     }
 
     test("range of singleton value-ref relation is correct") {
-        assertSameCollection(Vector(num3))(singleBoolNum.range)
+        singleBoolNum.range should beSameCollectionAs(Vector(num3))
     }
 
     test("range of singleton ref-ref relation is correct") {
-        assertSameCollection(Vector(num5))(singleNumNum.range)
+        singleNumNum.range should beSameCollectionAs(Vector(num5))
     }
 
     test("range of multiple element value-value relation is correct") {
-        assertResult(Vector(true, false))(multiIntBool.range)
+        multiIntBool.range shouldBe Vector(true, false)
     }
 
     test("range of multiple element ref-value relation is correct") {
-        assertResult(Vector(2, 3))(multiNumInt.range)
+        multiNumInt.range shouldBe Vector(2, 3)
     }
 
     test("range of multiple element value-ref relation is correct") {
-        assertSameCollection(Vector(num3, num4))(multiBoolNum.range)
+        multiBoolNum.range should beSameCollectionAs(Vector(num3, num4))
     }
 
     test("range of multiple element ref-ref relation is correct") {
-        assertSameCollection(Vector(num5))(multiNumNum.range)
+        multiNumNum.range should beSameCollectionAs(Vector(num5))
     }
 
     // unapply
 
     test("unapply of empty value-value relation fails") {
-        assertResult(None)(emptyIntBool.unapply(1))
+        emptyIntBool.unapply(1) shouldBe empty
     }
 
     test("unapply of empty ref-value relation fails") {
-        assertResult(None)(emptyNumInt.unapply(num2))
+        emptyNumInt.unapply(num2) shouldBe empty
     }
 
     test("unapply of empty value-ref relation fails") {
-        assertResult(None)(emptyBoolNum.unapply(false))
+        emptyBoolNum.unapply(false) shouldBe empty
     }
 
     test("unapply of empty ref-ref relation fails") {
-        assertResult(None)(emptyNumNum.unapply(num3))
+        emptyNumNum.unapply(num3) shouldBe empty
     }
 
     test("unapply of singleton value-value relation is correct (present)") {
-        assertResult(Some(true))(singleIntBool.unapply(1))
+        singleIntBool.unapply(1) shouldBe Some(true)
     }
 
     test("unapply pair of singleton value-value relation is correct (present)") {
-        assertResult(Some((1, true)))(singleIntBool.pair.unapply(1))
+        singleIntBool.pair.unapply(1) shouldBe Some((1, true))
     }
 
     test("unapply of singleton value-value relation fails (not present)") {
-        assertResult(None)(singleIntBool.unapply(2))
+        singleIntBool.unapply(2) shouldBe empty
     }
 
     test("unapply of singleton ref-value relation is correct (present)") {
-        assertResult(Option(2))(singleNumInt.unapply(num2))
+        singleNumInt.unapply(num2) shouldBe Option(2)
     }
 
     // This test makes sure that we are comparing nodes by identity since
     // num2 and num3 are equal by value.
 
     test("unapply pair of singleton ref-value relation doesn't produce equal but not eq value (present)") {
-        assertNotSameCollection(Option((num3, 2)))(singleNumInt.pair.unapply(num2))
+        singleNumInt.pair.unapply(num2) should not(beSameCollectionAs(Option((num3, 2))))
     }
 
     test("unapply of singleton ref-value relation fails (not present)") {
-        assertResult(None)(singleNumInt.unapply(num3))
+        singleNumInt.unapply(num3) shouldBe empty
     }
 
     test("unapply of singleton value-ref relation is correct (present)") {
-        assertSameCollection(Option(num3))(singleBoolNum.unapply(false))
+        singleBoolNum.unapply(false) should beSameCollectionAs(Option(num3))
     }
 
     test("unapply pair of singleton value-ref relation is correct (present)") {
-        assertSameCollection(Option((false, num3)))(singleBoolNum.pair.unapply(false))
+        singleBoolNum.pair.unapply(false) should beSameCollectionAs(Option((false, num3)))
     }
 
     test("unapply of singleton value-ref relation fails (not present)") {
-        assertResult(None)(singleBoolNum.unapply(true))
+        singleBoolNum.unapply(true) shouldBe empty
     }
 
     test("unapply of singleton ref-ref relation is correct (present)") {
-        assertSameCollection(Option(num5))(singleNumNum.unapply(num4))
+        singleNumNum.unapply(num4) should beSameCollectionAs(Option(num5))
     }
 
     test("unapply pair of singleton ref-ref relation is correct (present)") {
-        assertSameCollection(Option((num4, num5)))(singleNumNum.pair.unapply(num4))
+        singleNumNum.pair.unapply(num4) should beSameCollectionAs(Option((num4, num5)))
     }
 
     test("unapply of singleton ref-ref relation fails (not present)") {
-        assertResult(None)(singleNumNum.unapply(num5))
+        singleNumNum.unapply(num5) shouldBe empty
     }
 
     test("unapply of multiple element value-value relation fails (multiple)") {
-        assertResult(None)(multiIntBool.unapply(1))
+        multiIntBool.unapply(1) shouldBe empty
     }
 
     test("unapply of multiple element value-value relation is correct (present)") {
-        assertResult(Option(false))(multiIntBool.unapply(2))
+        multiIntBool.unapply(2) shouldBe Option(false)
     }
 
     test("unapply pair of multiple element value-value relation is correct (present)") {
-        assertResult(Option((2, false)))(multiIntBool.pair.unapply(2))
+        multiIntBool.pair.unapply(2) shouldBe Option((2, false))
     }
 
     test("unapply of multiple element value-value relation fails (not present)") {
-        assertResult(None)(multiIntBool.unapply(3))
+        multiIntBool.unapply(3) shouldBe empty
     }
 
     test("unapply of multiple element ref-value relation is correct (present)") {
-        assertResult(Option(2))(multiNumInt.unapply(num2))
+        multiNumInt.unapply(num2) shouldBe Option(2)
     }
 
     test("unapply pair of multiple element ref-value relation is correct (present)") {
-        assertSameCollection(Option((num2, 2)))(multiNumInt.pair.unapply(num2))
+        multiNumInt.pair.unapply(num2) should beSameCollectionAs(Option((num2, 2)))
     }
 
     test("unapply of multiple element ref-value relation is correct (not present)") {
-        assertResult(None)(multiNumInt.unapply(num4))
+        multiNumInt.unapply(num4) shouldBe empty
     }
 
     test("unapply of multiple element value-ref relation fails (multiple)") {
-        assertResult(None)(multiBoolNum.unapply(false))
+        multiBoolNum.unapply(false) shouldBe empty
     }
 
     test("unapply of multiple element value-ref relation is correct (present)") {
-        assertSameCollection(Option(num4))(multiBoolNum.unapply(true))
+        multiBoolNum.unapply(true) should beSameCollectionAs(Option(num4))
     }
 
     test("unapply pair of multiple element value-ref relation is correct (present)") {
-        assertSameCollection(Option((true, num4)))(multiBoolNum.pair.unapply(true))
+        multiBoolNum.pair.unapply(true) should beSameCollectionAs(Option((true, num4)))
     }
 
     test("unapply of multiple element ref-ref relation is correct (multiple)") {
-        assertResult(None)(multiNumNum.unapply(num4))
+        multiNumNum.unapply(num4) shouldBe empty
     }
 
     test("unapply of multiple element ref-ref relation is correct (not present)") {
-        assertResult(None)(multiNumNum.unapply(num2))
+        multiNumNum.unapply(num2) shouldBe empty
     }
 
     // unapplySeq
 
     test("unapplySeq of an empty relation fails") {
-        assertResult(None)(emptyIntBool.unapplySeq(1))
+        emptyIntBool.unapplySeq(1) shouldBe empty
     }
 
     test("unapplySeq of a singleton relation is correct (present)") {
-        assertSameCollection(Option(Vector(2)))(singleNumInt.unapplySeq(num2))
+        singleNumInt.unapplySeq(num2) should beSameCollectionAs(Option(Vector(2)))
     }
 
     test("unapplySeq of a singleton relation fails (not present)") {
-        assertResult(None)(singleNumInt.unapplySeq(num3))
+        singleNumInt.unapplySeq(num3) shouldBe empty
     }
 
     test("unapplySeq of a multiple relation is correct (present)") {
-        assertSameCollection(Option(Vector(true, true)))(multiIntBool.unapplySeq(1))
+        multiIntBool.unapplySeq(1) should beSameCollectionAs(Option(Vector(true, true)))
     }
 
     test("unapplySeq of a multiple relation fails (not present)") {
-        assertResult(None)(multiIntBool.unapplySeq(3))
+        multiIntBool.unapplySeq(3) shouldBe empty
     }
 
     // union
 
     test("an empty relation union an empty relation is empty (value-value)") {
         val r = new Relation[Int, Boolean](Vector())
-        assertResult(true)(emptyIntBool.union(r).isEmpty)
+        emptyIntBool.union(r) shouldBe empty
     }
 
     test("an empty relation union an empty relation is empty (ref-value)") {
         val r = new Relation[Num, Int](Vector())
-        assertResult(true)(emptyNumInt.union(r).isEmpty)
+        emptyNumInt.union(r) shouldBe empty
     }
 
     test("an empty relation union an empty relation is empty (value-ref)") {
         val r = new Relation[Boolean, Num](Vector())
-        assertResult(true)(emptyBoolNum.union(r).isEmpty)
+        emptyBoolNum.union(r) shouldBe empty
     }
 
     test("an empty relation union an empty relation is empty (ref-ref)") {
         val r = new Relation[Num, Num](Vector())
-        assertResult(true)(emptyNumNum.union(r).isEmpty)
+        emptyNumNum.union(r) shouldBe empty
     }
 
     test("an empty relation union a non-empty relation has correct graph (value-value)") {
-        assertResult(Vector((1, true)))(emptyIntBool.union(singleIntBool).graph)
+        emptyIntBool.union(singleIntBool).graph shouldBe Vector((1, true))
     }
 
     test("a non-empty relation union an empty relation has correct graph (value-value)") {
-        assertResult(Vector((1, true)))(singleIntBool.union(emptyIntBool).graph)
+        singleIntBool.union(emptyIntBool).graph shouldBe Vector((1, true))
     }
 
     test("an empty relation union a non-empty relation has correct graph (ref-value)") {
-        assertSameCollection(Vector((num2, 2)))(emptyNumInt.union(singleNumInt).graph)
+        emptyNumInt.union(singleNumInt).graph should beSameCollectionAs(Vector((num2, 2)))
     }
 
     test("a non-empty relation union an empty relation has correct graph (ref-value)") {
-        assertSameCollection(Vector((num2, 2)))(singleNumInt.union(emptyNumInt).graph)
+        singleNumInt.union(emptyNumInt).graph should beSameCollectionAs(Vector((num2, 2)))
     }
 
     test("an empty relation union a non-empty relation has correct graph (value-ref)") {
-        assertSameCollection(Vector((false, num3)))(emptyBoolNum.union(singleBoolNum).graph)
+        emptyBoolNum.union(singleBoolNum).graph should beSameCollectionAs(Vector((false, num3)))
     }
 
     test("a non-empty relation union an empty relation has correct graph (value-ref)") {
-        assertSameCollection(Vector((false, num3)))(singleBoolNum.union(emptyBoolNum).graph)
+        singleBoolNum.union(emptyBoolNum).graph should beSameCollectionAs(Vector((false, num3)))
     }
 
     test("an empty relation union a non-empty relation has correct graph (ref-ref)") {
-        assertSameCollection(Vector((num4, num5)))(emptyNumNum.union(singleNumNum).graph)
+        emptyNumNum.union(singleNumNum).graph should beSameCollectionAs(Vector((num4, num5)))
     }
 
     test("a non-empty relation union an empty relation has correct graph (ref-ref)") {
-        assertSameCollection(Vector((num4, num5)))(singleNumNum.union(emptyNumNum).graph)
+        singleNumNum.union(emptyNumNum).graph should beSameCollectionAs(Vector((num4, num5)))
     }
 
     test("union of non-empty relations has correct graph (value-value)") {
         val r = new Relation[Int, Boolean](Vector((42, false), (99, true)))
-        assertResult(Vector((1, true), (2, false), (1, true), (42, false), (99, true)))(multiIntBool.union(r).graph)
+        multiIntBool.union(r).graph shouldBe Vector((1, true), (2, false), (1, true), (42, false), (99, true))
     }
 
     test("union of non-empty relations has correct graph (ref-value)") {
         val r = new Relation[Num, Int](Vector((num4, 42)))
-        assertSameCollection(Vector((num2, 2), (num3, 3), (num4, 42)))(multiNumInt.union(r).graph)
+        multiNumInt.union(r).graph should beSameCollectionAs(Vector((num2, 2), (num3, 3), (num4, 42)))
     }
 
     test("union of non-empty relations has correct graph (value-ref)") {
         val r = new Relation[Boolean, Num](Vector((false, num3), (true, num2)))
-        assertSameCollection(Vector((false, num3), (false, num4), (true, num4), (false, num3), (true, num2)))(multiBoolNum.union(r).graph)
+        multiBoolNum.union(r).graph should beSameCollectionAs(Vector((false, num3), (false, num4), (true, num4), (false, num3), (true, num2)))
     }
 
     test("union of non-empty relations has correct graph (ref-ref)") {
         val r = new Relation[Num, Num](Vector((num2, num3), (num2, num3)))
-        assertSameCollection(Vector((num4, num5), (num4, num5), (num2, num3), (num2, num3)))(multiNumNum.union(r).graph)
+        multiNumNum.union(r).graph should beSameCollectionAs(Vector((num4, num5), (num4, num5), (num2, num3), (num2, num3)))
     }
 
     // withDomain
 
     test("withDomain of empty value-value relation is an empty relation") {
-        assertResult(true)(emptyIntBool.withDomain(1).isEmpty)
+        emptyIntBool.withDomain(1) shouldBe empty
     }
 
     test("withDomain of empty ref-value relation is an empty relation") {
-        assertResult(true)(emptyNumInt.withDomain(num2).isEmpty)
+        emptyNumInt.withDomain(num2) shouldBe empty
     }
 
     test("withDomain of empty value-ref relation is an empty relation") {
-        assertResult(true)(emptyBoolNum.withDomain(true).isEmpty)
+        emptyBoolNum.withDomain(true) shouldBe empty
     }
 
     test("withDomain of empty ref-ref relation is an empty relation") {
-        assertResult(true)(emptyNumNum.withDomain(num4).isEmpty)
+        emptyNumNum.withDomain(num4) shouldBe empty
     }
 
     test("withDomain of singleton value-value relation of element has correct domain") {
-        assertResult(Vector(1))(singleIntBool.withDomain(1).domain)
+        singleIntBool.withDomain(1).domain shouldBe Vector(1)
     }
 
     test("withDomain of singleton value-value relation of element has correct range") {
-        assertResult(Vector(true))(singleIntBool.withDomain(1).range)
+        singleIntBool.withDomain(1).range shouldBe Vector(true)
     }
 
     test("withDomain of singleton value-value relation of non-element is empty") {
-        assertResult(Vector())(singleIntBool.withDomain(2).domain)
+        singleIntBool.withDomain(2).domain shouldBe Vector()
     }
 
     test("withDomain of singleton ref-value relation of element has correct domain") {
-        assertSameCollection(Vector(num2))(singleNumInt.withDomain(num2).domain)
+        singleNumInt.withDomain(num2).domain should beSameCollectionAs(Vector(num2))
     }
 
     test("withDomain of singleton ref-value relation of element has correct range") {
-        assertResult(Vector(2))(singleNumInt.withDomain(num2).range)
+        singleNumInt.withDomain(num2).range shouldBe Vector(2)
     }
 
     test("withDomain of singleton ref-value relation of non-element is empty") {
-        assertResult(Vector())(singleNumInt.withDomain(num3).domain)
+        singleNumInt.withDomain(num3).domain shouldBe Vector()
     }
 
     test("withDomain of singleton value-ref relation of element has correct domain") {
-        assertResult(Vector(false))(singleBoolNum.withDomain(false).domain)
+        singleBoolNum.withDomain(false).domain shouldBe Vector(false)
     }
 
     test("withDomain of singleton value-ref relation of element has correct range") {
-        assertSameCollection(Vector(num3))(singleBoolNum.withDomain(false).range)
+        singleBoolNum.withDomain(false).range should beSameCollectionAs(Vector(num3))
     }
 
     test("withDomain of singleton value-ref relation of non-element is empty") {
-        assertResult(Vector())(singleBoolNum.withDomain(true).domain)
+        singleBoolNum.withDomain(true).domain shouldBe Vector()
     }
 
     test("withDomain of singleton ref-ref relation of element has correct domain") {
-        assertSameCollection(Vector(num4))(singleNumNum.withDomain(num4).domain)
+        singleNumNum.withDomain(num4).domain should beSameCollectionAs(Vector(num4))
     }
 
     test("withDomain of singleton ref-ref relation of element has correct range") {
-        assertSameCollection(Vector(num5))(singleNumNum.withDomain(num4).range)
+        singleNumNum.withDomain(num4).range should beSameCollectionAs(Vector(num5))
     }
 
     test("withDomain of singleton ref-ref relation of non-element is empty") {
-        assertResult(Vector())(singleNumNum.withDomain(num5).domain)
+        singleNumNum.withDomain(num5).domain shouldBe Vector()
     }
 
     test("withDomain of multiple element value-value relation of first element has correct domain") {
-        assertResult(Vector(1))(multiIntBool.withDomain(1).domain)
+        multiIntBool.withDomain(1).domain shouldBe Vector(1)
     }
 
     test("withDomain of multiple element value-value relation of second element has correct domain") {
-        assertResult(Vector(2))(multiIntBool.withDomain(2).domain)
+        multiIntBool.withDomain(2).domain shouldBe Vector(2)
     }
 
     test("withDomain of multiple element value-value relation of first element has correct range") {
-        assertResult(Vector(true))(multiIntBool.withDomain(1).range)
+        multiIntBool.withDomain(1).range shouldBe Vector(true)
     }
 
     test("withDomain of multiple element value-value relation of second element has correct range") {
-        assertResult(Vector(false))(multiIntBool.withDomain(2).range)
+        multiIntBool.withDomain(2).range shouldBe Vector(false)
     }
 
     test("withDomain of multiple element value-value relation of non-element is empty") {
-        assertResult(Vector())(multiIntBool.withDomain(3).domain)
+        multiIntBool.withDomain(3).domain shouldBe Vector()
     }
 
     test("withDomain of multiple element ref-value relation of first element has correct domain") {
-        assertSameCollection(Vector(num2))(multiNumInt.withDomain(num2).domain)
+        multiNumInt.withDomain(num2).domain should beSameCollectionAs(Vector(num2))
     }
 
     test("withDomain of multiple element ref-value relation of second element has correct domain") {
-        assertSameCollection(Vector(num3))(multiNumInt.withDomain(num3).domain)
+        multiNumInt.withDomain(num3).domain should beSameCollectionAs(Vector(num3))
     }
 
     test("withDomain of multiple element ref-value relation of first element has correct range") {
-        assertResult(Vector(2))(multiNumInt.withDomain(num2).range)
+        multiNumInt.withDomain(num2).range shouldBe Vector(2)
     }
 
     test("withDomain of multiple element ref-value relation of second element has correct range") {
-        assertResult(Vector(3))(multiNumInt.withDomain(num3).range)
+        multiNumInt.withDomain(num3).range shouldBe Vector(3)
     }
 
     test("withDomain of multiple element ref-value relation of non-element is empty") {
-        assertResult(Vector())(multiNumInt.withDomain(num4).domain)
+        multiNumInt.withDomain(num4).domain shouldBe Vector()
     }
 
     test("withDomain of multiple element value-ref relation of first element has correct domain") {
-        assertResult(Vector(false))(multiBoolNum.withDomain(false).domain)
+        multiBoolNum.withDomain(false).domain shouldBe Vector(false)
     }
 
     test("withDomain of multiple element value-ref relation of second element has correct domain") {
-        assertResult(Vector(true))(multiBoolNum.withDomain(true).domain)
+        multiBoolNum.withDomain(true).domain shouldBe Vector(true)
     }
 
     test("withDomain of multiple element value-ref relation of first element has correct range") {
-        assertSameCollection(Vector(num3, num4))(multiBoolNum.withDomain(false).range)
+        multiBoolNum.withDomain(false).range should beSameCollectionAs(Vector(num3, num4))
     }
 
     test("withDomain of multiple element value-ref relation of second element has correct range") {
-        assertSameCollection(Vector(num4))(multiBoolNum.withDomain(true).range)
+        multiBoolNum.withDomain(true).range should beSameCollectionAs(Vector(num4))
     }
 
     test("withDomain of multiple element ref-ref relation of element has correct domain") {
-        assertSameCollection(Vector(num4))(multiNumNum.withDomain(num4).domain)
+        multiNumNum.withDomain(num4).domain should beSameCollectionAs(Vector(num4))
     }
 
     test("withDomain of multiple element ref-ref relation of element has correct range") {
-        assertSameCollection(Vector(num5))(multiNumNum.withDomain(num4).range)
+        multiNumNum.withDomain(num4).range should beSameCollectionAs(Vector(num5))
     }
 
     test("withDomain of multiple element ref-ref relation of non-element is empty") {
-        assertSameCollection(Vector())(multiNumNum.withDomain(num5).domain)
+        multiNumNum.withDomain(num5).domain should beSameCollectionAs(Vector())
     }
 
     // withRange
 
     test("withRange of empty value-value relation is an empty relation") {
-        assertResult(true)(emptyIntBool.withRange(true).isEmpty)
+        emptyIntBool.withRange(true) shouldBe empty
     }
 
     test("withRange of empty ref-value relation is an empty relation") {
-        assertResult(true)(emptyNumInt.withRange(2).isEmpty)
+        emptyNumInt.withRange(2) shouldBe empty
     }
 
     test("withRange of empty value-ref relation is an empty relation") {
-        assertResult(true)(emptyBoolNum.withRange(num2).isEmpty)
+        emptyBoolNum.withRange(num2) shouldBe empty
     }
 
     test("withRange of empty ref-ref relation is an empty relation") {
-        assertResult(true)(emptyNumNum.withRange(num4).isEmpty)
+        emptyNumNum.withRange(num4) shouldBe empty
     }
 
     test("withRange of singleton value-value relation of element has correct domain") {
-        assertResult(Vector(1))(singleIntBool.withRange(true).domain)
+        singleIntBool.withRange(true).domain shouldBe Vector(1)
     }
 
     test("withRange of singleton value-value relation of element has correct range") {
-        assertResult(Vector(true))(singleIntBool.withRange(true).range)
+        singleIntBool.withRange(true).range shouldBe Vector(true)
     }
 
     test("withRange of singleton value-value relation of non-element is empty") {
-        assertResult(Vector())(singleIntBool.withRange(false).domain)
+        singleIntBool.withRange(false).domain shouldBe Vector()
     }
 
     test("withRange of singleton ref-value relation of element has correct domain") {
-        assertSameCollection(Vector(num2))(singleNumInt.withRange(2).domain)
+        singleNumInt.withRange(2).domain should beSameCollectionAs(Vector(num2))
     }
 
     test("withRange of singleton ref-value relation of element has correct range") {
-        assertResult(Vector(2))(singleNumInt.withRange(2).range)
+        singleNumInt.withRange(2).range shouldBe Vector(2)
     }
 
     test("withRange of singleton ref-value relation of non-element is empty") {
-        assertResult(Vector())(singleNumInt.withRange(3).domain)
+        singleNumInt.withRange(3).domain shouldBe Vector()
     }
 
     test("withRange of singleton value-ref relation of element has correct domain") {
-        assertResult(Vector(false))(singleBoolNum.withRange(num3).domain)
+        singleBoolNum.withRange(num3).domain shouldBe Vector(false)
     }
 
     test("withRange of singleton value-ref relation of element has correct range") {
-        assertSameCollection(Vector(num3))(singleBoolNum.withRange(num3).range)
+        singleBoolNum.withRange(num3).range should beSameCollectionAs(Vector(num3))
     }
 
     test("withRange of singleton value-ref relation of non-element is empty") {
-        assertResult(Vector())(singleBoolNum.withRange(num2).domain)
+        singleBoolNum.withRange(num2).domain shouldBe Vector()
     }
 
     test("withRange of singleton ref-ref relation of element has correct domain") {
-        assertSameCollection(Vector(num4))(singleNumNum.withRange(num5).domain)
+        singleNumNum.withRange(num5).domain should beSameCollectionAs(Vector(num4))
     }
 
     test("withRange of singleton ref-ref relation of element has correct range") {
-        assertSameCollection(Vector(num5))(singleNumNum.withRange(num5).range)
+        singleNumNum.withRange(num5).range should beSameCollectionAs(Vector(num5))
     }
 
     test("withRange of singleton ref-ref relation of non-element is empty") {
-        assertResult(Vector())(singleNumNum.withRange(num4).domain)
+        singleNumNum.withRange(num4).domain shouldBe Vector()
     }
 
     test("withRange of multiple element value-value relation of first element has correct domain") {
-        assertResult(Vector(2))(multiIntBool.withRange(false).domain)
+        multiIntBool.withRange(false).domain shouldBe Vector(2)
     }
 
     test("withRange of multiple element value-value relation of second element has correct domain") {
-        assertResult(Vector(1))(multiIntBool.withRange(true).domain)
+        multiIntBool.withRange(true).domain shouldBe Vector(1)
     }
 
     test("withRange of multiple element value-value relation of first element has correct range") {
-        assertResult(Vector(false))(multiIntBool.withRange(false).range)
+        multiIntBool.withRange(false).range shouldBe Vector(false)
     }
 
     test("withRange of multiple element value-value relation of second element has correct range") {
-        assertResult(Vector(true))(multiIntBool.withRange(true).range)
+        multiIntBool.withRange(true).range shouldBe Vector(true)
     }
 
     test("withRange of multiple element ref-value relation of first element has correct domain") {
-        assertSameCollection(Vector(num2))(multiNumInt.withRange(2).domain)
+        multiNumInt.withRange(2).domain should beSameCollectionAs(Vector(num2))
     }
 
     test("withRange of multiple element ref-value relation of second element has correct domain") {
-        assertSameCollection(Vector(num3))(multiNumInt.withRange(3).domain)
+        multiNumInt.withRange(3).domain should beSameCollectionAs(Vector(num3))
     }
 
     test("withRange of multiple element ref-value relation of first element has correct range") {
-        assertResult(Vector(2))(multiNumInt.withRange(2).range)
+        multiNumInt.withRange(2).range shouldBe Vector(2)
     }
 
     test("withRange of multiple element ref-value relation of second element has correct range") {
-        assertResult(Vector(3))(multiNumInt.withRange(3).range)
+        multiNumInt.withRange(3).range shouldBe Vector(3)
     }
 
     test("withRange of multiple element ref-value relation of non-element is empty") {
-        assertResult(Vector())(multiNumInt.withRange(4).domain)
+        multiNumInt.withRange(4).domain shouldBe Vector()
     }
 
     test("withRange of multiple element value-ref relation of first element has correct domain") {
-        assertResult(Vector(false))(multiBoolNum.withRange(num3).domain)
+        multiBoolNum.withRange(num3).domain shouldBe Vector(false)
     }
 
     test("withRange of multiple element value-ref relation of second element has correct domain") {
-        assertResult(Vector(false, true))(multiBoolNum.withRange(num4).domain)
+        multiBoolNum.withRange(num4).domain shouldBe Vector(false, true)
     }
 
     test("withRange of multiple element value-ref relation of first element has correct range") {
-        assertSameCollection(Vector(num3))(multiBoolNum.withRange(num3).range)
+        multiBoolNum.withRange(num3).range should beSameCollectionAs(Vector(num3))
     }
 
     test("withRange of multiple element value-ref relation of second element has correct range") {
-        assertSameCollection(Vector(num4))(multiBoolNum.withRange(num4).range)
+        multiBoolNum.withRange(num4).range should beSameCollectionAs(Vector(num4))
     }
 
     test("withRange of multiple element ref-ref relation of element has correct domain") {
-        assertSameCollection(Vector(num4))(multiNumNum.withRange(num5).domain)
+        multiNumNum.withRange(num5).domain should beSameCollectionAs(Vector(num4))
     }
 
     test("withRange of multiple element ref-ref relation of element has correct range") {
-        assertSameCollection(Vector(num5))(multiNumNum.withRange(num5).range)
+        multiNumNum.withRange(num5).range should beSameCollectionAs(Vector(num5))
     }
 
     test("withRange of multiple element ref-ref relation of non-element is empty") {
-        assertSameCollection(Vector())(multiNumNum.withRange(num4).domain)
-    }
-
-}
-
-/**
- * Helper routines for tests involving relations.
- */
-trait RelationTestSupport {
-
-    self : Tests =>
-
-    import scala.language.higherKinds
-
-    /**
-     * Assert that a relation has a given image at `t`. By default, the expected
-     * image is empty, so we are checking if the relation is not defined at `t`.
-     */
-    def assertImage[T, Repr[_, _]](v : RelationLike[T, T, Repr], t : T, expected : Vector[T] = Vector()) {
-        assertSameCollection(expected)(v.image(t))
-    }
-
-    /**
-     * Assert that a relation doesn't have a given image at `t`. By default, the
-     * expected image is empty, so we are checking if the relation is defined at
-     * `t`.
-     */
-    def assertNotImage[T, Repr[_, _]](v : RelationLike[T, T, Repr], t : T, expected : Vector[T] = Vector()) {
-        assertNotSameCollection(expected)(v.image(t))
+        multiNumNum.withRange(num4).domain shouldBe Vector()
     }
 
 }

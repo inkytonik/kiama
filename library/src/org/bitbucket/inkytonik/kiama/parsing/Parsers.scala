@@ -55,7 +55,7 @@ import scala.language.higherKinds
 class ParsersBase(positions : Positions) {
 
     import java.util.regex.Pattern
-    import org.bitbucket.inkytonik.kiama.util.{Messaging, Source}
+    import org.bitbucket.inkytonik.kiama.util.{Messaging, Source, StringSource}
     import scala.annotation.tailrec
     import scala.collection.immutable.Set
     import scala.collection.mutable.{Builder, HashMap, ListBuffer}
@@ -162,7 +162,7 @@ class ParsersBase(positions : Positions) {
         val memo = new HashMap[Input, MemoEntry]
 
         /**
-         * Apply this rule, memoising the result.
+         * Apply this rule to the given input, memoising the result.
          */
         def apply(in : Input) : ParseResult[T] = {
             recall(in) match {
@@ -296,6 +296,12 @@ class ParsersBase(positions : Positions) {
     abstract class Parser[+T] extends (Input => ParseResult[T]) {
 
         p =>
+
+        /**
+         * Alternative entry point to directly parse a string.
+         */
+        def apply(str : String) : ParseResult[T] =
+            apply(Input(StringSource(str), 0))
 
         // Functional operators
 
@@ -651,7 +657,7 @@ class ParsersBase(positions : Positions) {
                 if (in.source.content.regionMatches(in.offset, s, 0, s.length)) {
                     Success(s, Input(in.source, in.offset + s.length))
                 } else {
-                    Failure(s"`$s' expected but ${in.found} found", in)
+                    Failure(s"'$s' expected but ${in.found} found", in)
                 }
         }
 
@@ -667,7 +673,7 @@ class ParsersBase(positions : Positions) {
                     case Some(m) =>
                         Success(s.substring(0, m.end), Input(in.source, in.offset + m.end))
                     case None =>
-                        Failure(s"string matching regex `$r' expected but ${in.found} found", in)
+                        Failure(s"string matching regex '$r' expected but ${in.found} found", in)
                 }
         }
 

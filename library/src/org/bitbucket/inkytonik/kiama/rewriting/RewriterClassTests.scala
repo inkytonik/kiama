@@ -51,33 +51,27 @@ class RewriterClassTests extends Tests {
         }
 
         test("rewrite normal classes: top-level fail") {
-            assertResult(None)(r(p))
+            r(p) should beFailure
         }
 
         test("rewrite normal classes: all") {
             // (1 - abc) * (zyx - 4)
-            assertResult("Some(Mul(Sub(Num(1.0),Var(abc)),Sub(Var(zyx),Num(4.0))))")(
-                ((alltd(r))(p)).toString
-            )
+            (alltd(r))(p).toString shouldBe "Some(Mul(Sub(Num(1.0),Var(abc)),Sub(Var(zyx),Num(4.0))))"
         }
 
         test("rewrite normal classes: some") {
             // (varname + 1) * (varname - 3)
-            assertResult("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(varname),Num(3.0))))")(
-                ((sometd(s))(p)).toString
-            )
+            (sometd(s))(p).toString shouldBe "Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(varname),Num(3.0))))"
         }
 
         test("rewrite normal classes: one") {
             // (varname + 1) * (xyz - 3)
-            assertResult("Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(xyz),Num(3.0))))")(
-                ((oncetd(s))(p)).toString
-            )
+            (oncetd(s))(p).toString shouldBe "Some(Mul(Add(Var(varname),Num(1.0)),Sub(Var(xyz),Num(3.0))))"
         }
 
         test("rewrite normal classes: counting all terms using count") {
             val countall = count { case _ => 1 }
-            assertResult(11)(countall(p))
+            countall(p) shouldBe 11
         }
 
         test("rewrite normal classes: counting all terms using a para") {
@@ -85,7 +79,7 @@ class RewriterClassTests extends Tests {
                 para[Int] {
                     case (t, cs) => 1 + cs.sum
                 }
-            assertResult(11)(countfold(p))
+            countfold(p) shouldBe 11
         }
 
         test("constructing a Rewritable with wrong args throws exception") {
@@ -93,12 +87,9 @@ class RewriterClassTests extends Tests {
             val i = intercept[IllegalArgumentException] {
                 t.reconstruct(List(new Num(3), new Num(4), new Num(5)))
             }
-            assertResult("making Add: expecting Exp, Exp, got Num(3.0), Num(4.0), Num(5.0)")(
-                i.getMessage
-            )
+            i.getMessage shouldBe "making Add: expecting Exp, Exp, got Num(3.0), Num(4.0), Num(5.0)"
         }
 
     }
 
 }
-

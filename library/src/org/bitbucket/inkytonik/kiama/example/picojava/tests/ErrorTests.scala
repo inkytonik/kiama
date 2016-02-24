@@ -34,17 +34,38 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
 
 class ErrorTests extends ParseTests {
 
+    import java.util.ArrayList
     import org.bitbucket.inkytonik.kiama.example.picojava.ErrorCheck
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree.PicoJavaTree
+    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.util.StringSource
 
     val parsers = new SyntaxAnalyser(positions)
 
     /**
-     * Parse the illegal program and make sure that the errors and their
+     * Parse and evaluate a program string and return a collection of the
+     * messages that result.
+     */
+    def eval(term : String) : ArrayList[String] = {
+        parsers.parseAll(parsers.program, StringSource(term)) match {
+            case Success(ast, _) =>
+                val tree = new PicoJavaTree(ast)
+                val analyser = new ErrorCheck(tree)
+                analyser.errors
+            case Failure(msg, _) =>
+                val result = new ArrayList[String]
+                result.add(msg)
+                result
+        }
+    }
+
+    /**
+     * Parse an illegal program and make sure that the errors and their
      * positions are as expected.
      */
     test("semantic errors are correctly reported") {
-        val text = """
+
+        val term = """
 {
   class A extends B{
     boolean a;
@@ -63,18 +84,15 @@ class ErrorTests extends ParseTests {
   refC = refD;
 }
 """;
-        assertParseCheck(text, parsers.program) {
-            ast =>
-                val tree = new PicoJavaTree(ast)
-                val analyser = new ErrorCheck(tree)
-                val messages = analyser.errors
-                assertResult(5, "errors")(messages.size)
-                assertResult("Unknown identifier b")(messages.get(0))
-                assertResult("Can not assign a variable of type boolean to a value of type A")(messages.get(1))
-                assertResult("Cyclic inheritance chain for class A")(messages.get(2))
-                assertResult("Cyclic inheritance chain for class B")(messages.get(3))
-                assertResult("Can not assign a variable of type C to a value of type D")(messages.get(4))
-        }
+
+        val messages = eval(term)
+        messages.size shouldBe 5
+        messages.get(0) shouldBe "Unknown identifier b"
+        messages.get(1) shouldBe "Can not assign a variable of type boolean to a value of type A"
+        messages.get(2) shouldBe "Cyclic inheritance chain for class A"
+        messages.get(3) shouldBe "Cyclic inheritance chain for class B"
+        messages.get(4) shouldBe "Can not assign a variable of type C to a value of type D"
+
     }
 
 }

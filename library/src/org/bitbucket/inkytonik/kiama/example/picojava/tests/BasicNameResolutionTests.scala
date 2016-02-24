@@ -70,28 +70,27 @@ class BasicNameResolutionTests extends Tests {
     import analyser._
 
     test("bindings at the same nesting level are resolved") {
-        assertResult(declRx)(decl(xInR))
+        decl(xInR) shouldBe declRx
     }
 
     test("bindings at an outer nesting level are resolved") {
-        assertResult(declRx)(decl(xInA))
+        decl(xInA) shouldBe declRx
     }
 
     test("names can be declared after use") {
-        assertResult(declRz)(decl(zInR))
+        decl(zInR) shouldBe declRz
     }
 
     test("a missing declaration for a top-level use is detected") {
-        assert(isUnknown(decl(yInR)))
+        isUnknown(decl(yInR)) shouldBe true
     }
 
     test("a missing declaration for a nested use is detected") {
-        assert(isUnknown(decl(yInA)))
+        isUnknown(decl(yInA)) shouldBe true
     }
 
     test("a local shadowing binding is resolved") {
-        assertResult(declAz)(decl(zInA))
+        decl(zInA) shouldBe declAz
     }
 
 }
-

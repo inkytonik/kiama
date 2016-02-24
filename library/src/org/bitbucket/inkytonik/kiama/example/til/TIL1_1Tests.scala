@@ -70,7 +70,7 @@ write "\n";"""
                     Write(Str("\"\\n\""))
                 )
             )
-        assertParseOk(input, program, tree)
+        program(input) should parseTo(tree)
     }
 
     test("parse factors program") {
@@ -112,7 +112,7 @@ end"""
                     )
                 )
             )
-        assertParseOk(input, program, tree)
+        program(input) should parseTo(tree)
     }
 
     test("parse multiples program") {
@@ -135,7 +135,7 @@ end
                         ))
                 )
             )
-        assertParseOk(input, program, tree)
+        program(input) should parseTo(tree)
     }
 
 }

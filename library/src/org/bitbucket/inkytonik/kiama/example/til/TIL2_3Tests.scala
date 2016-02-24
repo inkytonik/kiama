@@ -33,7 +33,7 @@ class TIL2_3Tests extends TransformerTests {
     import til2_3.transform
 
     test("transform a program with many nested declarations") {
-        val input = """
+        val term = """
 var d;
 d := 17;
 var r;
@@ -82,43 +82,45 @@ end
         val x = Id("x")
         val y = Id("y")
         val z = Id("z")
-        val tree = Program(List(
-            Decl(d),
-            Decl(r),
-            Decl(y),
-            Decl(z),
-            Decl(x),
-            Decl(a),
-            Decl(j),
-            Decl(b),
-            Decl(k),
-            Decl(e),
-            Decl(c),
-            Decl(m),
-            Decl(n),
-            Assign(d, Num(17)),
-            Assign(r, Num(5)),
-            Read(y),
-            Read(z),
-            While(Ne(Var(y), Num(0)), List(
-                Assign(x, Add(Var(y), Var(z))),
-                Assign(a, Num(3)),
-                Assign(j, Num(1)),
-                While(Ne(Var(j), Num(100)), List(
-                    Assign(k, Add(Var(a), Var(z))),
-                    Assign(b, Mul(Var(j), Var(z))),
-                    Assign(d, Mul(Add(Var(y), Var(z)), Var(d))),
-                    Assign(e, Mul(Add(Var(x), Var(z)), Var(r))),
-                    Assign(j, Add(Var(j), Num(1)))
-                )),
-                Assign(c, Add(Var(a), Var(y))),
-                Assign(m, Mul(Var(y), Var(b))),
-                Assign(n, Mul(Var(r), Var(y))),
-                Write(Var(n)),
-                Assign(y, Sub(Var(y), Num(1)))
+        term should transformTo(
+            program, transform,
+            Program(List(
+                Decl(d),
+                Decl(r),
+                Decl(y),
+                Decl(z),
+                Decl(x),
+                Decl(a),
+                Decl(j),
+                Decl(b),
+                Decl(k),
+                Decl(e),
+                Decl(c),
+                Decl(m),
+                Decl(n),
+                Assign(d, Num(17)),
+                Assign(r, Num(5)),
+                Read(y),
+                Read(z),
+                While(Ne(Var(y), Num(0)), List(
+                    Assign(x, Add(Var(y), Var(z))),
+                    Assign(a, Num(3)),
+                    Assign(j, Num(1)),
+                    While(Ne(Var(j), Num(100)), List(
+                        Assign(k, Add(Var(a), Var(z))),
+                        Assign(b, Mul(Var(j), Var(z))),
+                        Assign(d, Mul(Add(Var(y), Var(z)), Var(d))),
+                        Assign(e, Mul(Add(Var(x), Var(z)), Var(r))),
+                        Assign(j, Add(Var(j), Num(1)))
+                    )),
+                    Assign(c, Add(Var(a), Var(y))),
+                    Assign(m, Mul(Var(y), Var(b))),
+                    Assign(n, Mul(Var(r), Var(y))),
+                    Write(Var(n)),
+                    Assign(y, Sub(Var(y), Num(1)))
+                ))
             ))
-        ))
-        assertTransformOk(input, program, transform, tree)
+        )
     }
 
 }

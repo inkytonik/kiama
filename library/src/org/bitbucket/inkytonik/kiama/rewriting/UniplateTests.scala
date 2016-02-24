@@ -67,12 +67,12 @@ class UniplateTests extends Tests with Generator {
         }
 
         test("singleton collection of variable references: indirect style on sets and lists") {
-            assertResult(Set())(variabless(numexp))
-            assertResult(Vector())(variablesv(numexp))
-            assertResult(Nil)(variablesl(numexp))
-            assertResult(Set("var1", "var2"))(variabless(varexp))
-            assertResult(Vector("var1", "var2", "var1"))(variablesv(varexp))
-            assertResult(List("var1", "var2", "var1"))(variablesl(varexp))
+            variabless(numexp) shouldBe Set()
+            variablesv(numexp) shouldBe Vector()
+            variablesl(numexp) shouldBe Nil
+            variabless(varexp) shouldBe Set("var1", "var2")
+            variablesv(varexp) shouldBe Vector("var1", "var2", "var1")
+            variablesl(varexp) shouldBe List("var1", "var2", "var1")
         }
     }
 
@@ -87,12 +87,12 @@ class UniplateTests extends Tests with Generator {
         }
 
         test("all collection of variable references: indirect style on sets and lists") {
-            assertResult(Set())(variabless(numexp))
-            assertResult(Vector())(variablesv(numexp))
-            assertResult(Nil)(variablesl(numexp))
-            assertResult(Set("var1", "var2"))(variabless(varexp))
-            assertResult(Vector("var1", "var2", "var1"))(variablesv(varexp))
-            assertResult(List("var1", "var2", "var1"))(variablesl(varexp))
+            variabless(numexp) shouldBe Set()
+            variablesv(numexp) shouldBe Vector()
+            variablesl(numexp) shouldBe Nil
+            variabless(varexp) shouldBe Set("var1", "var2")
+            variablesv(varexp) shouldBe Vector("var1", "var2", "var1")
+            variablesl(varexp) shouldBe List("var1", "var2", "var1")
         }
     }
 
@@ -103,8 +103,8 @@ class UniplateTests extends Tests with Generator {
             def genDivByZero(sz : Int) : Gen[Div] =
                 for { l <- genExp(sz / 2) } yield Div(l, Num(0))
             val divsbyzero = count { case Div(_, Num(0)) => 1 }
-            assertResult(0)(divsbyzero(numexp))
-            assertResult(0)(divsbyzero(varexp))
+            divsbyzero(numexp) shouldBe 0
+            divsbyzero(varexp) shouldBe 0
             check((e : Exp) => divsbyzero(e) == e.divsbyzero)
         }
         TestDivsByZero
@@ -116,8 +116,8 @@ class UniplateTests extends Tests with Generator {
                 case Sub(x, y)           => simplify(Add(x, Neg(y)))
                 case Add(x, y) if x == y => Mul(Num(2), x)
             }))
-        assertResult(numexp)(simplify(numexp))
-        assertResult(varexp)(simplify(varexp))
+        simplify(numexp) shouldBe numexp
+        simplify(varexp) shouldBe varexp
 
         val e = Sub(
             Add(Var("a"), Var("a")),
@@ -127,11 +127,11 @@ class UniplateTests extends Tests with Generator {
             Mul(Num(2), Var("a")),
             Neg(Mul(Num(2), Add(Var("b"), Neg(Num(1)))))
         )
-        assertResult(simpe)(simplify(e))
+        simplify(e) shouldBe simpe
 
         val f = Sub(Neg(Num(1)), Num(1))
         val simpf = Mul(Num(2), Neg(Num(1)))
-        assertResult(simpf)(simplify(f))
+        simplify(f) shouldBe simpf
 
         check((e : Exp) => simplify(e).value == e.value)
     }
@@ -144,8 +144,8 @@ class UniplateTests extends Tests with Generator {
                 for { e <- super.genNeg(sz) } yield Neg(e)
             def doubleneg : Exp => Exp =
                 rewrite(everywherebu(rule[Exp] { case Neg(Neg(x)) => x }))
-            assertResult(numexp)(doubleneg(numexp))
-            assertResult(varexp)(doubleneg(varexp))
+            doubleneg(numexp) shouldBe numexp
+            doubleneg(varexp) shouldBe varexp
             check((e : Exp) => doubleneg(e).value == e.value)
         }
         TestDoubleNegSimplification
@@ -158,10 +158,10 @@ class UniplateTests extends Tests with Generator {
             }))
 
         val e1 = Div(Num(1), Num(2))
-        assertResult(0.5)(reciprocal(e1).value)
+        reciprocal(e1).value shouldBe 0.5
 
         val e2 = Mul(Num(2), Div(Num(3), Num(4)))
-        assertResult(1.5)(reciprocal(e2).value)
+        reciprocal(e2).value shouldBe 1.5
     }
 
     test("unique variable renaming") {
@@ -171,17 +171,17 @@ class UniplateTests extends Tests with Generator {
                 everywhere(rule[Var] { case _ => count = count + 1; Var(s"x$count") })
             })
         }
-        assertResult(numexp)(uniquevars(numexp))
+        uniquevars(numexp) shouldBe numexp
         // Run this twice to make sure that count is not shared
-        assertResult(Div(Mul(Var("x1"), Var("x2")), Var("x3")))(uniquevars(varexp))
-        assertResult(Div(Mul(Var("x1"), Var("x2")), Var("x3")))(uniquevars(varexp))
+        uniquevars(varexp) shouldBe Div(Mul(Var("x1"), Var("x2")), Var("x3"))
+        uniquevars(varexp) shouldBe Div(Mul(Var("x1"), Var("x2")), Var("x3"))
         check((e : Exp) => uniquevars(e).value == e.value)
     }
 
     test("calculate expression depth") {
         val depth = para[Int] { case (t, cs) => 1 + (cs :+ 0).max }
-        assertResult(2)(depth(numexp))
-        assertResult(4)(depth(varexp))
+        depth(numexp) shouldBe 2
+        depth(varexp) shouldBe 4
         check((e : Exp) => depth(e) == e.depth)
     }
 

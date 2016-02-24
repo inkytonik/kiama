@@ -31,89 +31,89 @@ class ComparisonTests extends Tests {
     case class Foo(i : Int)
 
     test("same: two equal Booleans compare equal") {
-        assert(same(false, false))
+        same(false, false) shouldBe true
     }
 
     test("same: two unequal Booleans compare unequal") {
-        assert(!same(false, true))
+        same(false, true) shouldBe false
     }
 
     test("same: two equal integers compare equal") {
-        assert(same(1, 1))
+        same(1, 1) shouldBe true
     }
 
     test("same: two unequal integers compare unequal") {
-        assert(!same(1, 2))
+        same(1, 2) shouldBe false
     }
 
     test("same: two equal longs compare equal") {
-        assert(same(1L, 1L))
+        same(1L, 1L) shouldBe true
     }
 
     test("same: two unequal longs compare unequal") {
-        assert(!same(1L, 2L))
+        same(1L, 2L) shouldBe false
     }
 
     test("same: two equal floats compare equal") {
-        assert(same(4.5f, 4.5f))
+        same(4.5f, 4.5f) shouldBe true
     }
 
     test("same: two unequal floats compare unequal") {
-        assert(!same(7.8f, 3.4f))
+        same(7.8f, 3.4f) shouldBe false
     }
 
     test("same: two equal doubles compare equal") {
-        assert(same(4.5, 4.5))
+        same(4.5, 4.5) shouldBe true
     }
 
     test("same: two unequal doubles compare unequal") {
-        assert(!same(7.8, 3.4))
+        same(7.8, 3.4) shouldBe false
     }
 
     test("same: two equal strings compare equal") {
-        assert(same("hello", "hello"))
+        same("hello", "hello") shouldBe true
     }
 
     test("same: two unequal strings compare unequal") {
-        assert(!same("hello", "there"))
+        same("hello", "there") shouldBe false
     }
 
     test("same: null is not equal to a reference on left") {
-        assert(!same(null, Foo(1)))
+        same(null, Foo(1)) shouldBe false
     }
 
     test("same: null is not equal to a reference on right") {
-        assert(!same(Foo(1), null))
+        same(Foo(1), null) shouldBe false
     }
 
     test("same: two unequal references compare unequal") {
-        assert(!same(Foo(1), Foo(1)))
+        same(Foo(1), Foo(1)) shouldBe false
     }
 
     test("same: two equal references compare equal") {
         val r = Foo(1)
-        assert(same(r, r))
+        same(r, r) shouldBe true
     }
 
     test("optsame: two None values compare equal") {
-        assert(optsame(None, None))
+        optsame(None, None) shouldBe true
     }
 
     test("optsame: None is not equal to a Some on left") {
-        assert(!optsame(None, Some(1)))
+        optsame(None, Some(1)) shouldBe false
     }
 
     test("optsame: None is not equal to a Some on right") {
-        assert(!optsame(Some(2), None))
+        optsame(Some(2), None) shouldBe false
     }
 
     test("optsame: Some of two unequal references compare unequal") {
-        assert(!optsame(Some(Foo(1)), Some(Foo(1))))
+        optsame(Some(Foo(1)), Some(Foo(1))) shouldBe false
     }
 
     test("optsame: Some of two equal references compare equal") {
         val r = Foo(1)
-        assert(optsame(Some(r), Some(r)))
+        optsame(Some(r), Some(r)) shouldBe true
     }
 
 }

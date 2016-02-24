@@ -41,83 +41,84 @@ class ParsersTests extends ParseTests {
     val parsers = new Parsers(positions)
     import parsers._
 
-    lazy val node = "[0-9]+".r ^^ (s => Node(s.toInt))
+    lazy val node =
+        parsers.regex("[0-9]+".r) ^^ (s => Node(s.toInt))
 
     test("arity 2 case class contructors can be used as parser actions") {
         val p = node ~ node ^^ Tup2
-        assertParseOk("1 2", p, Tup2(Node(1), Node(2)))
+        p("1 2") should parseTo(Tup2(Node(1), Node(2)))
     }
 
     test("arity 3 case class contructors can be used as parser actions") {
         val p = node ~ node ~ node ^^ Tup3
-        assertParseOk("1 2 3", p, Tup3(Node(1), Node(2), Node(3)))
+        p("1 2 3") should parseTo(Tup3(Node(1), Node(2), Node(3)))
     }
 
     test("arity 4 case class contructors can be used as parser actions") {
         val p = node ~ node ~ node ~ node ^^ Tup4
-        assertParseOk("1 2 3 4", p, Tup4(Node(1), Node(2), Node(3), Node(4)))
+        p("1 2 3 4") should parseTo(Tup4(Node(1), Node(2), Node(3), Node(4)))
     }
 
     test("arity 5 case class contructors can be used as parser actions") {
         val p = node ~ node ~ node ~ node ~ node ^^ Tup5
-        assertParseOk("1 2 3 4 5", p, Tup5(Node(1), Node(2), Node(3), Node(4), Node(5)))
+        p("1 2 3 4 5") should parseTo(Tup5(Node(1), Node(2), Node(3), Node(4), Node(5)))
     }
 
     test("arity 6 case class contructors can be used as parser actions") {
         val p = node ~ node ~ node ~ node ~ node ~ node ^^ Tup6
-        assertParseOk("1 2 3 4 5 6", p, Tup6(Node(1), Node(2), Node(3), Node(4), Node(5), Node(6)))
+        p("1 2 3 4 5 6") should parseTo(Tup6(Node(1), Node(2), Node(3), Node(4), Node(5), Node(6)))
     }
 
     test("arity 2 tuples can be created by parsers without explicit actions") {
         val p : Parser[(Node, Node)] =
             node ~ node
-        assertParseOk("1 2", p, (Node(1), Node(2)))
+        p("1 2") should parseTo((Node(1), Node(2)))
     }
 
     test("arity 3 tuples can be created by parsers without explicit actions") {
         val p : Parser[(Node, Node, Node)] =
             node ~ node ~ node
-        assertParseOk("1 2 3", p, (Node(1), Node(2), Node(3)))
+        p("1 2 3") should parseTo((Node(1), Node(2), Node(3)))
     }
 
     test("arity 4 tuples can be created by parsers without explicit actions") {
         val p : Parser[(Node, Node, Node, Node)] =
             node ~ node ~ node ~ node
-        assertParseOk("1 2 3 4", p, (Node(1), Node(2), Node(3), Node(4)))
+        p("1 2 3 4") should parseTo((Node(1), Node(2), Node(3), Node(4)))
     }
 
     test("arity 5 tuples can be created by parsers without explicit actions") {
         val p : Parser[(Node, Node, Node, Node, Node)] =
             node ~ node ~ node ~ node ~ node
-        assertParseOk("1 2 3 4 5", p, (Node(1), Node(2), Node(3), Node(4), Node(5)))
+        p("1 2 3 4 5") should parseTo((Node(1), Node(2), Node(3), Node(4), Node(5)))
     }
 
     test("arity 6 tuples can be created by parsers without explicit actions") {
         val p : Parser[(Node, Node, Node, Node, Node, Node)] =
             node ~ node ~ node ~ node ~ node ~ node
-        assertParseOk("1 2 3 4 5 6", p, (Node(1), Node(2), Node(3), Node(4), Node(5), Node(6)))
+        p("1 2 3 4 5 6") should parseTo((Node(1), Node(2), Node(3), Node(4), Node(5), Node(6)))
     }
 
     test("failure parser combinator skips whitespace and gives correct failure") {
         val p = failure("MESSAGE")
-        assertParseError("foo", p, 1, 1, "MESSAGE")
-        assertParseError("   foo", p, 1, 4, "MESSAGE")
-        assertParseError("  \n  foo", p, 2, 3, "MESSAGE")
+        p("foo") should failParseAt(1, 1, "MESSAGE")
+        p("   foo") should failParseAt(1, 4, "MESSAGE")
+        p("  \n  foo") should failParseAt(2, 3, "MESSAGE")
     }
 
     {
         val p = keywords("[^a-z]".r, List("one", "two"))
 
         test("keywords parser works if whitespace is after the keyword") {
-            assertParseOk("one ", p, "one ")
+            p("one ") should parseTo("one ")
         }
 
         test("keywords parser works if EOI is after the keyword") {
-            assertParseOk("two", p, "two")
+            p("two") should parseTo("two")
         }
 
         test("keywords parser fails if keyword is just a prefix of input") {
-            assertParseError("ones", p, 1, 1, """string matching regex `(one|two)([^a-z]|\z)' expected but `o' found""")
+            p("ones") should failParseAt(1, 1, """string matching regex '(one|two)([^a-z]|\z)' expected but 'o' found""")
         }
     }
 

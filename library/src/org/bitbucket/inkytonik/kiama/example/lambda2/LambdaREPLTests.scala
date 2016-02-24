@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2008-2016 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2009-2016 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -19,26 +19,16 @@
  */
 
 package org.bitbucket.inkytonik.kiama
-package example.repmin
+package example.lambda2
 
-import org.bitbucket.inkytonik.kiama.relation.Tree
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.TestREPLWithConfig
 
-class RepminTests extends Tests {
+/**
+ * Tests that check that the REPL produces appropriate output.
+ */
+class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
 
-    val t = Fork(Leaf(3), Fork(Leaf(1), Leaf(10)))
-    val u = Fork(Leaf(1), Fork(Leaf(1), Leaf(1)))
-
-    test("repmin actually reps and mins (traditional)") {
-        val tree = new Tree[RepminTree, RepminTree](t)
-        val repmin = new Repmin(tree)
-        repmin.repmin(t) shouldBe u
-    }
-
-    test("repmin actually reps and mins (decorator)") {
-        val tree = new Tree[RepminTree, RepminTree](t)
-        val repmin = new RepminDec(tree)
-        repmin.repmin(t) shouldBe u
-    }
+    val path = "src/org/bitbucket/inkytonik/kiama/example/lambda2/tests"
+    filetests("Lambda REPL", path, ".repl", ".replout")
 
 }

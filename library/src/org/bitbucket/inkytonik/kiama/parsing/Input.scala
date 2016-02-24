@@ -54,7 +54,7 @@ case class Input(source : Source, offset : Int) {
         if (offset == source.content.length)
             "end of source"
         else
-            s"`${source.content.charAt(offset)}'"
+            s"'${source.content.charAt(offset)}'"
 
     /**
      * Return the current position of the input.

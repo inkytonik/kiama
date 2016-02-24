@@ -49,7 +49,7 @@ object PrettyPrinterTypes {
      * of mappings between pretty-printed values and their printed
      * representations.
      */
-    case class Link(value : AnyRef, range : Range)
+    case class Link(value : Any, range : Range)
 
     /**
      * A collection of link.s.

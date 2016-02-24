@@ -179,6 +179,12 @@ trait Evaluator {
      */
     val normal = outermost(xgc_reduction)
 
+    /**
+     * Entry poiint for running reduction-based evaluator.
+     */
+    def evaluate(e : Exp) : Exp =
+        rewrite(normal)(e)
+
 }
 
 /**

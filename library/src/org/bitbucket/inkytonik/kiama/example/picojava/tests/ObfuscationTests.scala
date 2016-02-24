@@ -141,11 +141,11 @@ class ObfuscationTests extends PrettyPrinterTests {
     val obast = obfuscator.obfuscate(ast)
 
     test("obfuscation produces correct program (pretty printed)") {
-        assertLayout(format(expobast).layout)(format(obast))
+        format(obast).layout shouldBe format(expobast).layout
     }
 
     test("obfuscation produces correct program") {
-        assertResult(expobast)(obast)
+        obast shouldBe expobast
     }
 
 }

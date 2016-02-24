@@ -53,14 +53,14 @@ class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
             else
                 "No such file or directory"
         testdriver(config)
-        assertResult(s"IDoNotExist.txt ($expectedMsg)\n")(emitter.result)
+        emitter.result shouldBe s"IDoNotExist.txt ($expectedMsg)\n"
     }
 
     test("filetests using a directory that doesn't exist fails") {
         val i = intercept[IllegalArgumentException] {
             filetests("Compiler", "src/org/bitbucket/inkytonik/kiama/util/IDoNotExist", ".src", ".out")
         }
-        assertResult("bad test file path src/org/bitbucket/inkytonik/kiama/util/IDoNotExist")(i.getMessage)
+        i.getMessage shouldBe "bad test file path src/org/bitbucket/inkytonik/kiama/util/IDoNotExist"
     }
 
 }
@@ -166,13 +166,8 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
                         throw (e)
                 }
                 val cc = emitter.result
-                try {
-                    val rc = Source.fromFile(rp).mkString
-                    assert(sanitise(cc) == sanitise(rc))
-                } catch {
-                    case e : java.io.FileNotFoundException =>
-                        fail(s"$rp not found")
-                }
+                val rc = Source.fromFile(rp).mkString
+                sanitise(cc) shouldBe sanitise(rc)
             }
         }
 

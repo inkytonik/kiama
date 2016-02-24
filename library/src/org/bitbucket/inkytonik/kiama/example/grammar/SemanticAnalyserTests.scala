@@ -94,9 +94,13 @@ class SemanticAnalyserTests extends Tests {
      *   E -> *
      */
 
-    val g3r1 = mkRule(NonTermDef("S"), mkProd(E, F, EOI))
-    val g3r2 = mkRule(NonTermDef("E"), mkProd(plus))
-    val g3r3 = mkRule(NonTermDef("E"), mkProd(star))
+    val g3F = NonTermUse("F")
+    val g3E1 = NonTermDef("E")
+    val g3E2 = NonTermDef("E")
+
+    val g3r1 = mkRule(NonTermDef("S"), mkProd(E, NonTermSym(g3F), EOI))
+    val g3r2 = mkRule(g3E1, mkProd(plus))
+    val g3r3 = mkRule(g3E2, mkProd(star))
 
     val g3 = Grammar(g3r1, Vector(g3r2, g3r3))
 
@@ -104,140 +108,142 @@ class SemanticAnalyserTests extends Tests {
     val g3analyser = new SemanticAnalyser(tree3)
 
     test("g1: has no semantic errors") {
-        assertResult(0)(g1analyser.errors.length)
+        g1analyser.errors.length shouldBe 0
     }
 
     test("g1: S is not nullable") {
-        assert(!g1analyser.nullable(g1r1))
+        g1analyser.nullable(g1r1) shouldBe false
     }
 
     test("g1: E is not nullable") {
-        assert(!g1analyser.nullable(g1r2))
+        g1analyser.nullable(g1r2) shouldBe false
     }
 
     test("g1: T is not nullable") {
-        assert(!g1analyser.nullable(g1r3))
+        g1analyser.nullable(g1r3) shouldBe false
     }
 
     test("g1: F is not nullable") {
-        assert(!g1analyser.nullable(g1r4))
+        g1analyser.nullable(g1r4) shouldBe false
     }
 
     test("g1: FIRST (S) is correct") {
-        assertResult(Set(lparen, id))(g1analyser.first(g1r1))
+        g1analyser.first(g1r1) shouldBe Set(lparen, id)
     }
 
     test("g1: FIRST (E) is correct") {
-        assertResult(Set(lparen, id))(g1analyser.first(g1r2))
+        g1analyser.first(g1r2) shouldBe Set(lparen, id)
     }
 
     test("g1: FIRST (T) is correct") {
-        assertResult(Set(lparen, id))(g1analyser.first(g1r3))
+        g1analyser.first(g1r3) shouldBe Set(lparen, id)
     }
 
     test("g1: FIRST (F) is correct") {
-        assertResult(Set(lparen, id))(g1analyser.first(g1r4))
+        g1analyser.first(g1r4) shouldBe Set(lparen, id)
     }
 
     test("g1: FOLLOW (S) is correct") {
-        assertResult(Set())(g1analyser.follow(g1r1.lhs))
+        g1analyser.follow(g1r1.lhs) shouldBe Set()
     }
 
     test("g1: FOLLOW (E) is correct") {
-        assertResult(Set(EOI, rparen, plus))(g1analyser.follow(g1r2.lhs))
+        g1analyser.follow(g1r2.lhs) shouldBe Set(EOI, rparen, plus)
     }
 
     test("g1: FOLLOW (T) is correct") {
-        assertResult(Set(EOI, rparen, plus, star))(g1analyser.follow(g1r3.lhs))
+        g1analyser.follow(g1r3.lhs) shouldBe Set(EOI, rparen, plus, star)
     }
 
     test("g1: FOLLOW (F) is correct") {
-        assertResult(Set(EOI, rparen, plus, star))(g1analyser.follow(g1r4.lhs))
+        g1analyser.follow(g1r4.lhs) shouldBe Set(EOI, rparen, plus, star)
     }
 
     test("g2: has no semantic errors") {
-        assertResult(0)(g2analyser.errors.length)
+        g2analyser.errors.length shouldBe 0
     }
 
     test("g2: S is not nullable") {
-        assert(!g2analyser.nullable(g2r1))
+        g2analyser.nullable(g2r1) shouldBe false
     }
 
     test("g2: E is not nullable") {
-        assert(!g2analyser.nullable(g2r2))
+        g2analyser.nullable(g2r2) shouldBe false
     }
 
     test("g2: Ep is nullable") {
-        assert(g2analyser.nullable(g2r3))
+        g2analyser.nullable(g2r3) shouldBe true
     }
 
     test("g2: T is not nullable") {
-        assert(!g2analyser.nullable(g2r4))
+        g2analyser.nullable(g2r4) shouldBe false
     }
 
     test("g2: Tp is nullable") {
-        assert(g2analyser.nullable(g2r5))
+        g2analyser.nullable(g2r5) shouldBe true
     }
 
     test("g2: F is not nullable") {
-        assert(!g2analyser.nullable(g2r6))
+        g2analyser.nullable(g2r6) shouldBe false
     }
 
     test("g2: FIRST (S) is correct") {
-        assertResult(Set(lparen, id))(g2analyser.first(g2r1))
+        g2analyser.first(g2r1) shouldBe Set(lparen, id)
     }
 
     test("g2: FIRST (E) is correct") {
-        assertResult(Set(lparen, id))(g2analyser.first(g2r2))
+        g2analyser.first(g2r2) shouldBe Set(lparen, id)
     }
 
     test("g2: FIRST (Ep) is correct") {
-        assertResult(Set(plus))(g2analyser.first(g2r3))
+        g2analyser.first(g2r3) shouldBe Set(plus)
     }
 
     test("g2: FIRST (T) is correct") {
-        assertResult(Set(lparen, id))(g2analyser.first(g2r4))
+        g2analyser.first(g2r4) shouldBe Set(lparen, id)
     }
 
     test("g2: FIRST (Tp) is correct") {
-        assertResult(Set(star))(g2analyser.first(g2r5))
+        g2analyser.first(g2r5) shouldBe Set(star)
     }
 
     test("g2: FIRST (F) is correct") {
-        assertResult(Set(lparen, id))(g2analyser.first(g2r6))
+        g2analyser.first(g2r6) shouldBe Set(lparen, id)
     }
 
     test("g2: FOLLOW (S) is correct") {
-        assertResult(Set())(g2analyser.follow(g2r1.lhs))
+        g2analyser.follow(g2r1.lhs) shouldBe Set()
     }
 
     test("g2: FOLLOW (E) is correct") {
-        assertResult(Set(EOI, rparen))(g2analyser.follow(g2r2.lhs))
+        g2analyser.follow(g2r2.lhs) shouldBe Set(EOI, rparen)
     }
 
     test("g2: FOLLOW (Ep) is correct") {
-        assertResult(Set(EOI, rparen))(g2analyser.follow(g2r3.lhs))
+        g2analyser.follow(g2r3.lhs) shouldBe Set(EOI, rparen)
     }
 
     test("g2: FOLLOW (T) is correct") {
-        assertResult(Set(EOI, rparen, plus))(g2analyser.follow(g2r4.lhs))
+        g2analyser.follow(g2r4.lhs) shouldBe Set(EOI, rparen, plus)
     }
 
     test("g2: FOLLOW (Tp) is correct") {
-        assertResult(Set(EOI, rparen, plus))(g2analyser.follow(g2r5.lhs))
+        g2analyser.follow(g2r5.lhs) shouldBe Set(EOI, rparen, plus)
     }
 
     test("g2: FOLLOW (F) is correct") {
-        assertResult(Set(EOI, rparen, plus, star))(g2analyser.follow(g2r6.lhs))
+        g2analyser.follow(g2r6.lhs) shouldBe Set(EOI, rparen, plus, star)
     }
 
     test("g3: has the expected semantic errors") {
-        assertMessages(
-            g3analyser.errors,
-            Message(g3, "E is defined more than once"),
-            Message(g3, "E is defined more than once"),
-            Message(g3, "F is not declared")
-        )
+        val errors = g3analyser.errors
+        errors.length shouldBe 3
+        errors(0).value should be theSameInstanceAs g3E1
+        errors(0).label shouldBe "E is defined more than once"
+        errors(1).value should be theSameInstanceAs g3E2
+        errors(1).label shouldBe "E is defined more than once"
+        errors(2).value should be theSameInstanceAs g3F
+        errors(2).label shouldBe "F is not declared"
     }
 
 }

@@ -33,10 +33,10 @@ class TIL2_2Tests extends TransformerTests {
     import til2_2.transform
 
     test("transform a single for loop") {
-        val input = "for x := 1 to n do write x; end"
         val x = Id("x")
         val upperx = Id("Upperx")
-        val tree =
+        "for x := 1 to n do write x; end" should transformTo(
+            program, transform,
             Program(List(
                 Decl(x),
                 Assign(x, Num(1)),
@@ -47,16 +47,16 @@ class TIL2_2Tests extends TransformerTests {
                     Assign(x, Add(Var(x), Num(1)))
                 ))
             ))
-        assertTransformOk(input, program, transform, tree)
+        )
     }
 
     test("transform nested for loops") {
-        val input = "for i := 1 to 9 do for j := 1 to 10 do write i*j; end end"
         val i = Id("i")
         val upperi = Id("Upperi")
         val j = Id("j")
         val upperj = Id("Upperj")
-        val tree =
+        "for i := 1 to 9 do for j := 1 to 10 do write i*j; end end" should transformTo(
+            program, transform,
             Program(List(
                 Decl(i),
                 Assign(i, Num(1)),
@@ -74,7 +74,7 @@ class TIL2_2Tests extends TransformerTests {
                     Assign(i, Add(Var(i), Num(1)))
                 ))
             ))
-        assertTransformOk(input, program, transform, tree)
+        )
     }
 
 }

@@ -34,21 +34,26 @@ class SyntaxAnalyserTests extends ParseTests {
     val parsers = new SyntaxAnalyser(positions)
     import parsers._
 
+    def parseToClause(l : Clause) = parseTo(l)
+    def parseToLit(l : Literal) = parseTo(l)
+    def parseToLits(l : Vector[Literal]) = parseTo(l)
+
     test("parsing an atom as an atom works") {
-        assertParseOk("albert", atom, "albert")
+        atom("albert") should parseTo("albert")
     }
 
     test("parsing a non-atom as an atom gives an error") {
-        assertParseError("X", atom, 1, 1, "string matching regex `[a-z][a-zA-Z]*' expected but `X' found")
+        atom("X") should failParseAt(1, 1, "string matching regex '[a-z][a-zA-Z]*' expected but 'X' found")
     }
 
     test("parsing an atomic literal produces the correct tree") {
-        assertParseOk("albert", literal, Atom("albert"))
+        lit("albert") should parseToLit(Atom("albert"))
     }
 
     test("parsing a predicate literal produces the correct tree") {
-        assertParseOk("likes(X,nigel)", literal,
-            Pred("likes", Vector(Var("X"), Atom("nigel"))))
+        lit("likes(X,nigel)") should parseToLit(
+            Pred("likes", Vector(Var("X"), Atom("nigel")))
+        )
     }
 
     // Additional tests:
@@ -56,176 +61,187 @@ class SyntaxAnalyserTests extends ParseTests {
     // More atom tests
 
     test("parsing a single letter atom as an atom works") {
-        assertParseOk("x", atom, "x")
+        atom("x") should parseTo("x")
     }
 
     // Variable tests
 
     test("parsing an atom as an var gives an error") {
-        assertParseError("albert", varr, 1, 1, "string matching regex `[A-Z][a-zA-Z]*' expected but `a' found")
+        varr("albert") should failParseAt(1, 1, "string matching regex '[A-Z][a-zA-Z]*' expected but 'a' found")
     }
 
     test("parsing a single letter var as a var works") {
-        assertParseOk("X", varr, "X")
+        varr("X") should parseTo("X")
     }
 
     test("parsing a length > 1 var as a var works") {
-        assertParseOk("XYZ", varr, "XYZ")
+        varr("XYZ") should parseTo("XYZ")
     }
 
     test("parsing a mixed-case var as a var works") {
-        assertParseOk("XxyyABc", varr, "XxyyABc")
+        varr("XxyyABc") should parseTo("XxyyABc")
     }
 
     // Program tests
 
     test("parsing an empty program gives an error") {
-        assertParseError("", program, 1, 1, "string matching regex `[a-z][a-zA-Z]*' expected but end of source found")
+        program("") should failParseAt(1, 1, "string matching regex '[a-z][a-zA-Z]*' expected but end of source found")
     }
 
     test("parsing a single clause works") {
-        assertParseOk("female(mary).", program,
-            Program(Vector(Fact(Pred("female", Vector(Atom("mary")))))))
+        program("female(mary).") should parseTo(
+            Program(Vector(Fact(Pred("female", Vector(Atom("mary"))))))
+        )
     }
 
     test("parsing multiple clauses works") {
-        assertParseOk("female(mary).\nmale (john).\nmale (luke).", program,
+        program("female(mary).\nmale (john).\nmale (luke).") should parseTo(
             Program(Vector(
                 Fact(Pred("female", Vector(Atom("mary")))),
                 Fact(Pred("male", Vector(Atom("john")))),
                 Fact(Pred("male", Vector(Atom("luke"))))
-            )))
+            ))
+        )
     }
 
     // Clause tests
 
     test("parsing a rule works") {
-        assertParseOk("likes(john,X) :- likes(X,wine), likes(X,food).", clause,
+        clause("likes(john,X) :- likes(X,wine), likes(X,food).") should parseToClause(
             Rule(
                 Pred("likes", Vector(Atom("john"), Var("X"))),
                 Vector(
                     Pred("likes", Vector(Var("X"), Atom("wine"))),
                     Pred("likes", Vector(Var("X"), Atom("food")))
                 )
-            ))
+            )
+        )
     }
 
     test("parsing a fact works") {
-        assertParseOk("bodgie (boo).", clause,
-            Fact(Pred("bodgie", Vector(Atom("boo")))))
+        clause("bodgie (boo).") should parseToClause(
+            Fact(Pred("bodgie", Vector(Atom("boo"))))
+        )
     }
 
     // Literal tests
 
     test("parsing an atomic literal works") {
-        assertParseOk("roger", literal, Atom("roger"))
+        lit("roger") should parseToLit(Atom("roger"))
     }
 
     test("parsing a variable as a literal fails") {
-        assertParseError("Vavoom", literal, 1, 1, "string matching regex `[a-z][a-zA-Z]*' expected but `V' found")
+        lit("Vavoom") should failParseAt(1, 1, "string matching regex '[a-z][a-zA-Z]*' expected but 'V' found")
     }
 
-    test("parsing a predicate literal with zero arguments fails") {
-        assertParseError("likes ()", literal, 1, 8, "`[' expected but `)' found")
+    test("can't parse a predicate literal with zero arguments") {
+        lit("likes ()") should parseToLit(Atom("likes"))
     }
 
     test("parsing a predicate literal with one argument works") {
-        assertParseOk("likes (X)", literal,
-            Pred("likes", Vector(Var("X"))))
+        lit("likes (X)") should parseToLit(
+            Pred("likes", Vector(Var("X")))
+        )
     }
 
     test("parsing a predicate literal with many argument works") {
-        assertParseOk("likes (X, at, VAR)", literal,
-            Pred("likes", Vector(Var("X"), Atom("at"), Var("VAR"))))
+        lit("likes (X, at, VAR)") should parseToLit(
+            Pred("likes", Vector(Var("X"), Atom("at"), Var("VAR")))
+        )
     }
 
     test("parsing a predicate literal with a predicate argument works") {
-        assertParseOk("likes (X, likes (Y, Z), W)", literal,
+        lit("likes (X, likes (Y, Z), W)") should parseToLit(
             Pred("likes", Vector(
                 Var("X"),
                 Pred("likes", Vector(Var("Y"), Var("Z"))),
                 Var("W")
-            )))
+            ))
+        )
     }
 
     test("parsing a cut works") {
-        assertParseOk("!", cut, Cut())
+        cut("!") should parseTo(Cut())
     }
 
     test("parsing a literal list containg a cut works") {
-        assertParseOk("likes (X), !, male (Y)", literals,
+        lits("likes (X), !, male (Y)") should parseToLits(
             Vector(
                 Pred("likes", Vector(Var("X"))),
                 Cut(),
                 Pred("male", Vector(Var("Y")))
-            ))
+            )
+        )
     }
 
-    test("parsing a nested cut fails") {
-        assertParseError("likes (!)", literal, 1, 8, "`[' expected but `!' found")
+    test("can't parse a nested cut") {
+        lit("likes (!)") should parseToLit(Atom("likes"))
     }
 
     // Literal list tests, assuming that literal tests take care of most cases
     // for the components
 
     test("parsing an empty literal list gives an error") {
-        assertParseError("", literals, 1, 1, "`!' expected but end of source found")
+        lits("") should failParseAt(1, 1, "'!' expected but end of source found")
     }
 
     test("parsing a singleton literal list works") {
-        assertParseOk("nonny (harold)", literals,
-            Vector(Pred("nonny", Vector(Atom("harold")))))
+        lits("nonny (harold)") should parseToLits(
+            Vector(Pred("nonny", Vector(Atom("harold"))))
+        )
     }
 
     test("parsing multiple literal list works") {
-        assertParseOk("nonny (harold), ninny (tony), nanny (jane)", literals,
+        lits("nonny (harold), ninny (tony), nanny (jane)") should parseToLits(
             Vector(
                 Pred("nonny", Vector(Atom("harold"))),
                 Pred("ninny", Vector(Atom("tony"))),
                 Pred("nanny", Vector(Atom("jane")))
-            ))
+            )
+        )
     }
 
     // Integer tests
 
     test("parsing a single digit integer works") {
-        assertParseOk("0", integer, Integer(0))
-        assertParseOk("4", integer, Integer(4))
-        assertParseOk("7", integer, Integer(7))
-        assertParseOk("9", integer, Integer(9))
+        integer("0") should parseTo(Integer(0))
+        integer("4") should parseTo(Integer(4))
+        integer("7") should parseTo(Integer(7))
+        integer("9") should parseTo(Integer(9))
     }
 
     test("parsing a non-trivial integer works") {
-        assertParseOk("78", integer, Integer(78))
-        assertParseOk("123", integer, Integer(123))
-        assertParseOk("793223", integer, Integer(793223))
+        integer("78") should parseTo(Integer(78))
+        integer("123") should parseTo(Integer(123))
+        integer("793223") should parseTo(Integer(793223))
     }
 
     test("parsing non-integers as integers fails") {
-        assertParseError("x", integer, 1, 1,
-            "string matching regex `[0-9]+' expected but `x' found")
-        assertParseError("Eugene", integer, 1, 1,
-            "string matching regex `[0-9]+' expected but `E' found")
-        assertParseError("(", integer, 1, 1,
-            "string matching regex `[0-9]+' expected but `(' found")
+        integer("x") should failParseAt(1, 1,
+            "string matching regex '[0-9]+' expected but 'x' found")
+        integer("Eugene") should failParseAt(1, 1,
+            "string matching regex '[0-9]+' expected but 'E' found")
+        integer("(") should failParseAt(1, 1,
+            "string matching regex '[0-9]+' expected but '(' found")
     }
 
     // List terms
 
     test("parsing an empty list works") {
-        assertParseOk("[]", list, Pred("nil", Vector()))
+        list("[]") should parseToLit(Pred("nil", Vector()))
     }
 
     test("parsing a singleton list works") {
-        assertParseOk("[a]", list,
+        list("[a]") should parseToLit(
             Pred("cons", Vector(
                 Atom("a"),
                 Pred("nil", Vector())
-            )))
+            ))
+        )
     }
 
     test("parsing a multiple-element list works") {
-        assertParseOk("[a,b,c]", list,
+        list("[a,b,c]") should parseToLit(
             Pred("cons", Vector(
                 Atom("a"),
                 Pred("cons", Vector(
@@ -235,7 +251,8 @@ class SyntaxAnalyserTests extends ParseTests {
                         Pred("nil", Vector())
                     ))
                 ))
-            )))
+            ))
+        )
     }
 
 }

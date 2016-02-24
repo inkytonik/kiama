@@ -102,7 +102,7 @@ class CombinedTests extends Tests {
     import analyser._
 
     test("combined test program has no errors") {
-        assertResult(0)(errors.size)
+        errors.size shouldBe 0
     }
 
 }

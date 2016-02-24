@@ -118,74 +118,73 @@ class AttributionTests extends Tests {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(false, "hasBeenComputedAt")(inc.hasBeenComputedAt(1))
-        assertResult(false, "hasBeenComputedAt")(inc.hasBeenComputedAt(2))
-        assertResult(0, "evaluation count")(count)
-        assertResult(2, "first inc of 1")(inc(1))
-        assertResult(1, "evaluation count")(count)
-        assertResult(true, "hasBeenComputedAt")(inc.hasBeenComputedAt(1))
-        assertResult(false, "hasBeenComputedAt")(inc.hasBeenComputedAt(2))
-        assertResult(3, "first inc of 2")(inc(2))
-        assertResult(2, "evaluation count")(count)
-        assertResult(true, "hasBeenComputedAt")(inc.hasBeenComputedAt(1))
-        assertResult(true, "hasBeenComputedAt")(inc.hasBeenComputedAt(2))
-        assertResult(2, "second inc of 1")(inc(1))
-        assertResult(3, "second inc of 2")(inc(2))
-        assertResult(2, "evaluation count")(count)
+        inc.hasBeenComputedAt(1) shouldBe false
+        inc.hasBeenComputedAt(2) shouldBe false
+        count shouldBe 0
+        inc(1) shouldBe 2
+        count shouldBe 1
+        inc.hasBeenComputedAt(1) shouldBe true
+        inc.hasBeenComputedAt(2) shouldBe false
+        inc(2) shouldBe 3
+        count shouldBe 2
+        inc.hasBeenComputedAt(1) shouldBe true
+        inc.hasBeenComputedAt(2) shouldBe true
+        inc(1) shouldBe 2
+        inc(2) shouldBe 3
+        count shouldBe 2
     }
 
     test("parameterised attributes of a value type are correctly evaluated") {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(1, 0))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(2, 0))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(3, 0))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(4, 0))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(1, 1))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(2, 1))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(3, 1))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(4, 1))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(1, 2))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(2, 2))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(3, 2))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(4, 2))
-        assertResult(0, "evaluation count")(count)
+        concat.hasBeenComputedAt(1, 0) shouldBe false
+        concat.hasBeenComputedAt(2, 0) shouldBe false
+        concat.hasBeenComputedAt(3, 0) shouldBe false
+        concat.hasBeenComputedAt(4, 0) shouldBe false
+        concat.hasBeenComputedAt(1, 1) shouldBe false
+        concat.hasBeenComputedAt(2, 1) shouldBe false
+        concat.hasBeenComputedAt(3, 1) shouldBe false
+        concat.hasBeenComputedAt(4, 1) shouldBe false
+        concat.hasBeenComputedAt(1, 2) shouldBe false
+        concat.hasBeenComputedAt(2, 2) shouldBe false
+        concat.hasBeenComputedAt(3, 2) shouldBe false
+        concat.hasBeenComputedAt(4, 2) shouldBe false
+        count shouldBe 0
 
-        assertResult(1)(concat(1)(0))
-        assertResult(999)(concat(2)(0))
-        assertResult(0)(concat(3)(0))
-        assertResult(2)(concat(1)(1))
-        assertResult(3)(concat(2)(1))
-        assertResult(1)(concat(3)(1))
-        assertResult(3)(concat(1)(2))
-        assertResult(4)(concat(2)(2))
-        assertResult(4)(concat(3)(2))
+        concat(1)(0) shouldBe 1
+        concat(2)(0) shouldBe 999
+        concat(3)(0) shouldBe 0
+        concat(1)(1) shouldBe 2
+        concat(2)(1) shouldBe 3
+        concat(3)(1) shouldBe 1
+        concat(1)(2) shouldBe 3
+        concat(2)(2) shouldBe 4
+        concat(3)(2) shouldBe 4
 
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(1, 0))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(2, 0))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(3, 0))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(4, 0))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(1, 1))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(2, 1))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(3, 1))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(4, 1))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(1, 2))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(2, 2))
-        assertResult(true, "hasBeenComputedAt")(concat.hasBeenComputedAt(3, 2))
-        assertResult(false, "hasBeenComputedAt")(concat.hasBeenComputedAt(4, 2))
-        assertResult(9, "evaluation count")(count)
+        concat.hasBeenComputedAt(1, 0) shouldBe true
+        concat.hasBeenComputedAt(2, 0) shouldBe true
+        concat.hasBeenComputedAt(3, 0) shouldBe true
+        concat.hasBeenComputedAt(4, 0) shouldBe false
+        concat.hasBeenComputedAt(1, 1) shouldBe true
+        concat.hasBeenComputedAt(2, 1) shouldBe true
+        concat.hasBeenComputedAt(3, 1) shouldBe true
+        concat.hasBeenComputedAt(4, 1) shouldBe false
+        concat.hasBeenComputedAt(1, 2) shouldBe true
+        concat.hasBeenComputedAt(2, 2) shouldBe true
+        concat.hasBeenComputedAt(3, 2) shouldBe true
+        concat.hasBeenComputedAt(4, 2) shouldBe false
+        count shouldBe 9
 
-        assertResult(1)(concat(1)(0))
-        assertResult(999)(concat(2)(0))
-        assertResult(0)(concat(3)(0))
-        assertResult(2)(concat(1)(1))
-        assertResult(3)(concat(2)(1))
-        assertResult(1)(concat(3)(1))
-        assertResult(3)(concat(1)(2))
-        assertResult(4)(concat(2)(2))
-        assertResult(4)(concat(3)(2))
-        assertResult(9, "evaluation count")(count)
+        concat(1)(0) shouldBe 1
+        concat(2)(0) shouldBe 999
+        concat(3)(0) shouldBe 0
+        concat(1)(1) shouldBe 2
+        concat(2)(1) shouldBe 3
+        concat(3)(1) shouldBe 1
+        concat(1)(2) shouldBe 3
+        concat(2)(2) shouldBe 4
+        concat(3)(2) shouldBe 4
 
     }
 
@@ -193,61 +192,61 @@ class AttributionTests extends Tests {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(false, "hasBeenComputedAt")(maximum.hasBeenComputedAt(t))
-        assertResult(10, "first value")(maximum(t))
-        assertResult(true, "hasBeenComputedAt")(maximum.hasBeenComputedAt(t))
-        assertResult(10, "second value")(maximum(t))
-        assertResult(true, "hasBeenComputedAt")(maximum.hasBeenComputedAt(t))
-        assertResult(2, "evaluation count")(count)
+        maximum.hasBeenComputedAt(t) shouldBe false
+        maximum(t) shouldBe 10
+        maximum.hasBeenComputedAt(t) shouldBe true
+        maximum(t) shouldBe 10
+        maximum.hasBeenComputedAt(t) shouldBe true
+        count shouldBe 2
     }
 
     test("reset resets the hasBeenComputedAt state") {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(false, "hasBeenComputedAt")(maximum.hasBeenComputedAt(t))
+        maximum.hasBeenComputedAt(t) shouldBe false
         maximum(t)
-        assertResult(true, "hasBeenComputedAt")(maximum.hasBeenComputedAt(t))
+        maximum.hasBeenComputedAt(t) shouldBe true
         maximum.reset()
-        assertResult(false, "hasBeenComputedAt")(maximum.hasBeenComputedAt(t))
+        maximum.hasBeenComputedAt(t) shouldBe false
     }
 
     test("hasBeenComputedAt returns false while an attribute is being evaluated") {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(false, "hasBeenComputedAt during")(leafComputed(l))
-        assertResult(true, "hasBeenComputedAt after")(leafComputed.hasBeenComputedAt(l))
+        leafComputed(l) shouldBe false
+        leafComputed.hasBeenComputedAt(l) shouldBe true
     }
 
     test("constant attributes are only evaluated once") {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(42, "first value")(answer(t))
-        assertResult(42, "second value")(answer(t))
-        assertResult(1, "evaluation count")(count)
+        answer(t) shouldBe 42
+        answer(t) shouldBe 42
+        count shouldBe 1
     }
 
     test("cached attributes are re-evaluated after a reset") {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(10, "first value")(maximum(t))
-        assertResult(10, "first value")(maximum(t))
-        assertResult(2, "evaluation count")(count)
+        maximum(t) shouldBe 10
+        maximum(t) shouldBe 10
+        count shouldBe 2
         maximum.reset()
-        assertResult(10, "second value")(maximum(t))
-        assertResult(4, "evaluation count")(count)
+        maximum(t) shouldBe 10
+        count shouldBe 4
     }
 
     test("cached attributes are distinct for nodes that are equal") {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(10, "first value")(maximum(t))
-        assertResult(10, "second value")(maximum(s))
-        assertResult(4, "evaluation count")(count)
+        maximum(t) shouldBe 10
+        maximum(s) shouldBe 10
+        count shouldBe 4
     }
 
     test("uncached attributes are evaluated each time") {
@@ -260,9 +259,9 @@ class AttributionTests extends Tests {
                 case Leaf(v) => v
             }
 
-        assertResult(10, "first value")(maximum(t))
-        assertResult(10, "second value")(maximum(t))
-        assertResult(4, "evaluation count")(count)
+        maximum(t) shouldBe 10
+        maximum(t) shouldBe 10
+        count shouldBe 4
     }
 
     test("cached parameterised attributes work") {
@@ -272,14 +271,8 @@ class AttributionTests extends Tests {
         lazy val pattr =
             paramAttr(pattrDef)
 
-        assertResult(0, "cached paramAttr Pair hello")(
-            pattr("hello")(Pair(Leaf(1), Leaf(2)))
-        )
-        assertResult(3, "cached paramAttr Pair goodbye")(
-            pattr("goodbye")(Pair(Leaf(1), Leaf(2)))
-        )
-        assertResult(1, "cached paramAttr Leaf hello")(pattr("hello")(Leaf(1)))
-        assertResult(3, "cached paramAttr Leaf goodbye")(pattr("goodbye")(Leaf(1)))
+        pattr("hello")(Leaf(1)) shouldBe 1
+        pattr("goodbye")(Leaf(1)) shouldBe 3
     }
 
     test("cached parameterised attributes are re-evaluated after reset") {
@@ -289,17 +282,17 @@ class AttributionTests extends Tests {
         lazy val pattr =
             paramAttr(pattrDef)
 
-        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
-        assertResult(0, "cached paramAttr Pair hello")(pattr("hello")(u))
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
-        assertResult(0, "cached paramAttr Pair hello")(pattr("hello")(u))
-        assertResult(1, "evaluation count")(count)
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
+        pattr.hasBeenComputedAt("hello", u) shouldBe false
+        pattr("hello")(u) shouldBe 0
+        pattr.hasBeenComputedAt("hello", u) shouldBe true
+        pattr("hello")(u) shouldBe 0
+        count shouldBe 1
+        pattr.hasBeenComputedAt("hello", u) shouldBe true
         pattr.reset()
-        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
-        assertResult(0, "cached paramAttr Pair hello")(pattr("hello")(u))
-        assertResult(2, "evaluation count")(count)
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
+        pattr.hasBeenComputedAt("hello", u) shouldBe false
+        pattr("hello")(u) shouldBe 0
+        count shouldBe 2
+        pattr.hasBeenComputedAt("hello", u) shouldBe true
     }
 
     test("cached parameterised attributes can be reset at specific keys") {
@@ -309,22 +302,21 @@ class AttributionTests extends Tests {
         lazy val pattr =
             paramAttr(pattrDef)
 
-        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
-        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
-        assertResult(0, "cached paramAttr Pair hello")(pattr("hello")(u))
-        assertResult(3, "cached paramAttr Pair goodbye")(pattr("goodbye")(u))
-        assertResult(1, "evaluation count")(count)
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
+        pattr.hasBeenComputedAt("hello", u) shouldBe false
+        pattr.hasBeenComputedAt("goodbye", u) shouldBe false
+        pattr("hello")(u) shouldBe 0
+        pattr("goodbye")(u) shouldBe 3
+        count shouldBe 1
+        pattr.hasBeenComputedAt("hello", u) shouldBe true
+        pattr.hasBeenComputedAt("goodbye", u) shouldBe true
         pattr.resetAt("hello", u)
-        assertResult(false, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
-        assertResult(0, "cached paramAttr Pair hello")(pattr("hello")(u))
-        assertResult(3, "cached paramAttr Pair goodbye")(pattr("goodbye")(u))
-        assertResult(2, "evaluation count")(count)
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("hello", u))
-        assertResult(true, "hasBeenComputedAt")(pattr.hasBeenComputedAt("goodbye", u))
-
+        pattr.hasBeenComputedAt("hello", u) shouldBe false
+        pattr.hasBeenComputedAt("goodbye", u) shouldBe true
+        pattr("hello")(u) shouldBe 0
+        pattr("goodbye")(u) shouldBe 3
+        count shouldBe 2
+        pattr.hasBeenComputedAt("hello", u) shouldBe true
+        pattr.hasBeenComputedAt("goodbye", u) shouldBe true
     }
 
     test("uncached parameterised attributes work") {
@@ -334,14 +326,10 @@ class AttributionTests extends Tests {
         lazy val pattr =
             UncachedAttribution.paramAttr(pattrDef)
 
-        assertResult(0, "uncached paramAttr Pair hello")(
-            pattr("hello")(Pair(Leaf(1), Leaf(2)))
-        )
-        assertResult(3, "uncached paramAttr Pair goodbye")(
-            pattr("goodbye")(Pair(Leaf(1), Leaf(2)))
-        )
-        assertResult(1, "uncached paramAttr Leaf hello")(pattr("hello")(Leaf(1)))
-        assertResult(3, "uncached paramAttr Leaf goodbye")(pattr("goodbye")(Leaf(1)))
+        pattr("hello")(Pair(Leaf(1), Leaf(2))) shouldBe 0
+        pattr("goodbye")(Pair(Leaf(1), Leaf(2))) shouldBe 3
+        pattr("hello")(Leaf(1)) shouldBe 1
+        pattr("goodbye")(Leaf(1)) shouldBe 3
     }
 
     test("circularities are detected for cached attributes") {
@@ -360,17 +348,17 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
             direct(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i1.getMessage)
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i2.getMessage)
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i3.getMessage)
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("circularities are detected for uncached attributes") {
@@ -386,17 +374,17 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
             direct(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i1.getMessage)
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i2.getMessage)
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i3.getMessage)
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("circularities are detected for parameterised attributes") {
@@ -415,17 +403,17 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
             direct(1)(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i1.getMessage)
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(8)(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i2.getMessage)
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(9)(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i3.getMessage)
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("circularities are detected for uncached parameterised attributes") {
@@ -441,17 +429,17 @@ class AttributionTests extends Tests {
         val i1 = intercept[IllegalStateException] {
             direct(1)(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i1.getMessage)
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' (1) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(8)(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i2.getMessage)
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' (8) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(9)(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i3.getMessage)
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' (9) at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
     test("parameterised attribute keys compare correctly") {
@@ -464,26 +452,18 @@ class AttributionTests extends Tests {
         val k6 = new ParamAttributeKey("hello", null)
         val k7 = new ParamAttributeKey("hello", null)
         val k8 = new ParamAttributeKey("goodbye", null)
-        assert(!(n equals k1))
-        assert(!(k1 equals n))
-        assert(k1 equals k2)
-        assert(k2 equals k1)
-        assert(!(k1 equals k3))
-        assert(!(k3 equals k1))
-        assert(!(k1 equals k4))
-        assert(!(k4 equals k1))
-        assert(!(k1 equals k5))
-        assert(!(k5 equals k1))
-        assert(!(k1 equals k6))
-        assert(!(k6 equals k1))
-        assert(!(k1 equals k7))
-        assert(!(k7 equals k1))
-        assert(!(k1 equals k8))
-        assert(!(k8 equals k1))
-        assert(k6 equals k7)
-        assert(k7 equals k6)
-        assert(!(k6 equals k8))
-        assert(!(k8 equals k6))
+
+        n should not equal k1
+        k1 should not equal k3
+        k1 should not equal k4
+        k1 should not equal k5
+        k1 should not equal k6
+        k1 should not equal k7
+        k1 should not equal k8
+        k6 should not equal k8
+
+        k1 shouldEqual k2
+        k6 shouldEqual k7
     }
 
     {
@@ -495,8 +475,8 @@ class AttributionTests extends Tests {
 
         test("a constant atRoot attribute returns the constant value") {
             val rattr = atRoot[Int](_ => 99)
-            assertResult(99)(rattr(t))
-            assertResult(99)(rattr(l))
+            rattr(t) shouldBe 99
+            rattr(l) shouldBe 99
         }
 
         test("a variable atRoot attribute returns the value from the root") {
@@ -506,8 +486,8 @@ class AttributionTests extends Tests {
                 case _ =>
                     42
             }
-            assertResult(42)(rattr(t))
-            assertResult(42)(rattr(l))
+            rattr(t) shouldBe 42
+            rattr(l) shouldBe 42
         }
 
         test("a down attribute with default function returns the computed value") {
@@ -518,23 +498,23 @@ class AttributionTests extends Tests {
                     case tree.parent(_) =>
                         99
                 }
-            assertResult(42)(dattr(t))
-            assertResult(99)(dattr(l))
+            dattr(t) shouldBe 42
+            dattr(l) shouldBe 99
         }
 
         test("a down attribute that is defined returns the computed value") {
             val dattr = down[Int](99) { case _ : Pair => 42 }
-            assertResult(42)(dattr(l))
+            dattr(l) shouldBe 42
         }
 
         test("a down attribute that is not defined returns the default value") {
             val dattr = down[Int](99) { case _ : Unused => 42 }
-            assertResult(99)(dattr(l))
+            dattr(l) shouldBe 99
         }
 
         test("a downErr attribute that is defined returns the computed value") {
             val dattr = downErr[Int] { case _ : Pair => 42 }
-            assertResult(42)(dattr(l))
+            dattr(l) shouldBe 42
         }
 
         test("a downErr attribute that is not defined throws an error") {
@@ -542,17 +522,17 @@ class AttributionTests extends Tests {
             val i = intercept[RuntimeException] {
                 dattr(l)
             }
-            assertResult("downErr: function is not defined on path to root")(i.getMessage)
+            i.getMessage shouldBe "downErr: function is not defined on path to root"
         }
 
         test("a downOpt attribute that is defined returns Some of the computed value") {
             val dattr = downOpt[Int] { case _ : Pair => 42 }
-            assertResult(Some(42))(dattr(l))
+            dattr(l) shouldBe Some(42)
         }
 
         test("a downOpt attribute that is not defined returns None") {
             val dattr = downOpt[Int] { case _ : Unused => 42 }
-            assertResult(None)(dattr(l))
+            dattr(l) shouldBe None
         }
 
     }
@@ -568,8 +548,8 @@ class AttributionTests extends Tests {
             case n if tree.isRoot(n) => 42
         }
         val rootchain = chain(rootupd)
-        assertResult(42)(rootchain.in(t))
-        assertResult(42)(rootchain.out(t))
+        rootchain.in(t) shouldBe 42
+        rootchain.out(t) shouldBe 42
     }
 
     test("a chain with no updates throws appropriate exceptions") {
@@ -584,11 +564,11 @@ class AttributionTests extends Tests {
         val i1 = intercept[RuntimeException] {
             idchain.in(t)
         }
-        assertResult("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i1.getMessage)
+        i1.getMessage shouldBe "chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
         val i2 = intercept[RuntimeException] {
             idchain.out(t)
         }
-        assertResult("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i2.getMessage)
+        i2.getMessage shouldBe "chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         // A chain with refusing-all-in update function. This exercises a
         // different path in the 'in' attribute to the previous checks.
@@ -601,11 +581,11 @@ class AttributionTests extends Tests {
         val i3 = intercept[RuntimeException] {
             refchain.in(t)
         }
-        assertResult("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i3.getMessage)
+        i3.getMessage shouldBe "chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
         val i4 = intercept[RuntimeException] {
             refchain.out(t)
         }
-        assertResult("chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i4.getMessage)
+        i4.getMessage shouldBe "chain root of tree reached at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
     }
 
@@ -619,9 +599,9 @@ class AttributionTests extends Tests {
             circular(0.0)(_ => 0)
 
         val n = Num(1)
-        assert(!zero.hasBeenComputedAt(n))
-        assertResult(0)(zero(n))
-        assert(zero.hasBeenComputedAt(n))
+        zero.hasBeenComputedAt(n) shouldBe false
+        zero(n) shouldBe 0
+        zero.hasBeenComputedAt(n) shouldBe true
     }
 
     test("two circular attributes that never change from initial value do converge") {
@@ -643,14 +623,13 @@ class AttributionTests extends Tests {
             )
 
         val n = Num(1)
-        assert(!counter.hasBeenComputedAt(n))
-        assert(!pass.hasBeenComputedAt(n))
-        assertResult(0.0)(counter(n))
-        assert(counter.hasBeenComputedAt(n))
-        assert(pass.hasBeenComputedAt(n))
-        assertResult(0.0)(pass(n))
-        assert(counter.hasBeenComputedAt(n))
-        assert(pass.hasBeenComputedAt(n))
+        counter.hasBeenComputedAt(n) shouldBe false
+        pass.hasBeenComputedAt(n) shouldBe false
+        counter(n) shouldBe 0.0
+        counter.hasBeenComputedAt(n) shouldBe true
+        pass(n) shouldBe 0.0
+        counter.hasBeenComputedAt(n) shouldBe true
+        pass.hasBeenComputedAt(n) shouldBe true
     }
 
     test("a directly circular attribute can count") {
@@ -668,9 +647,9 @@ class AttributionTests extends Tests {
             )
 
         val n = Num(1)
-        assert(!counter.hasBeenComputedAt(n))
-        assertResult(10.0)(counter(n))
-        assert(counter.hasBeenComputedAt(n))
+        counter.hasBeenComputedAt(n) shouldBe false
+        counter(n) shouldBe 10.0
+        counter.hasBeenComputedAt(n) shouldBe true
     }
 
     test("a cycle of two circular attributes can count") {
@@ -694,8 +673,8 @@ class AttributionTests extends Tests {
             )
 
         val n = Num(1)
-        assertResult(10.0)(counter(n))
-        assertResult(10.0)(pass(n))
+        counter(n) shouldBe 10.0
+        pass(n) shouldBe 10.0
     }
 
     test("a cycle of three circular attributes can count") {
@@ -727,9 +706,9 @@ class AttributionTests extends Tests {
             )
 
         val n = Num(1)
-        assertResult(14.0)(counter(n))
-        assertResult(14.0)(double(n))
-        assertResult(14.0)(pass(n))
+        counter(n) shouldBe 14.0
+        double(n) shouldBe 14.0
+        pass(n) shouldBe 14.0
     }
 
     test("a single circular attribute plus a cycle of two circular attributes can count") {
@@ -761,9 +740,9 @@ class AttributionTests extends Tests {
             )
 
         val n = Num(1)
-        assertResult(14.0)(entry(n))
-        assertResult(14.0)(counter(n))
-        assertResult(14.0)(double(n))
+        entry(n) shouldBe 14.0
+        counter(n) shouldBe 14.0
+        double(n) shouldBe 14.0
     }
 
     test("a single circular attribute plus a cycle of two trivial circular attributes converges") {
@@ -791,9 +770,9 @@ class AttributionTests extends Tests {
             )
 
         val n = Num(1)
-        assertResult(0.0)(entry(n))
-        assertResult(0.0)(pass1(n))
-        assertResult(0.0)(pass2(n))
+        entry(n) shouldBe 0.0
+        pass1(n) shouldBe 0.0
+        pass2(n) shouldBe 0.0
     }
 
 }

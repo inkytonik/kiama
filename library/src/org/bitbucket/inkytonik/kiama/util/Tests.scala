@@ -21,18 +21,18 @@
 package org.bitbucket.inkytonik.kiama
 package util
 
-import org.bitbucket.inkytonik.kiama.output.PrettyPrinter
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, BeforeAndAfterEach, FunSuiteLike, Matchers}
+import org.scalatest.matchers.{Matcher, MatchResult}
 import org.scalatest.prop.Checkers
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, BeforeAndAfterEach, FunSuiteLike}
 
 /**
  * General test support designed to be mixed in to compilers or drivers.
  */
 trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
-        with BeforeAndAfterEach with Checkers with PositionStore with Messaging {
+        with BeforeAndAfterEach with Checkers with Matchers with PositionStore
+        with Messaging {
 
-    import Comparison.{optsame, same, samecollection}
-    import Messaging.Messages
+    import Comparison.{same, samelements}
     import org.scalatest.Tag
 
     /**
@@ -62,100 +62,66 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * the folder given by the package name.
      */
     override def suiteName = {
-        val filename = getClass.getName.replaceAllLiterally(".", "/")
-        s"${super.suiteName} in src/$filename"
+        val pkgName = Option(getClass.getPackage).map(_.getName).getOrElse("")
+        val path = s"library/src/${pkgName.replaceAllLiterally(".", "/")}"
+        s"${super.suiteName} in $path"
     }
 
     /**
-     * Fail a test with a message about finding something and expecting
-     * something else.
+     * Matcher for being the same collection, i.e., equal and containing
+     * the same elements.
      */
-    def failExpectedTest[T](expected : T, found : T, description : String = "") {
-        fail("expected %s'%s', not '%s'".format(description, expected, found))
-    }
-
-    /**
-     * Analogous to ScalaTest's `assertResult` but it uses `same` to compare
-     * the two values instead of equality.
-     */
-    def assertSame(expected : Any)(actual : Any) {
-        if (!same(expected, actual)) {
-            failExpectedTest(expected, actual, "same object as ")
+    def beSameCollectionAs(expected : Any) =
+        new Matcher[Any] {
+            def apply(value : Any) =
+                MatchResult(
+                    (value == expected) && samelements(value, expected),
+                    s""""$value" is not same collection as "$expected"""",
+                    s""""$value" is same collection as "$expected""""
+                )
         }
-    }
 
     /**
-     * Analogous to ScalaTest's `assertResult` but it uses `same` to compare
-     * the two values instead of equality.
+     * Matcher for same options.
      */
-    def assertNotSame(expected : Any)(actual : Any) {
-        if (same(expected, actual)) {
-            failExpectedTest(expected, actual, "not same object as ")
+    def beSameOptionAs(expected : Option[Any]) =
+        new Matcher[Option[Any]] {
+            def apply(value : Option[Any]) =
+                MatchResult(
+                    (expected == None && value == None) || same(value.get, expected.get),
+                    s""""$value" is not same Option as "$expected"""",
+                    s""""$value" is same Option as "$expected""""
+                )
         }
-    }
 
     /**
-     * Analogous to ScalaTest's `assertResult` but it uses `optsame` to compare
-     * the two values instead of equality.
+     * Matcher for being a `Some` containing an expected object. The difference
+     * to just comparing with with `Some(x)` is that this matcher makes sure
+     * the wrapped object is identical to the expected value, not just equal
+     * to it.
      */
-    def assertOptSame(expected : Any)(actual : Any) {
-        if (!optsame(expected, actual)) {
-            failExpectedTest(expected, actual, "same object as ")
+    def beSomeOf(expected : Any) =
+        new Matcher[Option[Any]] {
+            def apply(value : Option[Any]) =
+                MatchResult(
+                    !value.isEmpty && same(value.get, expected),
+                    s""""$value" is not same Some as "$expected"""",
+                    s""""$value" is same Some as "$expected""""
+                )
         }
-    }
 
     /**
-     * Analogous to ScalaTest's `assertResult` but it uses `optsame` to compare
-     * the two values instead of equality.
+     * Matcher for use of options where `None` represents failure.
      */
-    def assertNotOptSame(expected : Any)(actual : Any) {
-        if (optsame(expected, actual)) {
-            failExpectedTest(expected, actual, "not same object as ")
+    val beFailure =
+        new Matcher[Option[Any]] {
+            def apply(value : Option[Any]) =
+                MatchResult(
+                    value.isEmpty,
+                    s""""$value" is not failure""",
+                    s"""failure was seen"""
+                )
         }
-    }
-
-    /**
-     * Analogous to ScalaTest's `assertResult` but it uses `samecollection` to compare
-     * two collections instead of equality.
-     */
-    def assertSameCollection(expected : Any)(actual : Any) {
-        if (!samecollection(expected, actual)) {
-            failExpectedTest(expected, actual, "same collection as ")
-        }
-    }
-
-    /**
-     * Analogous to ScalaTest's `assertResult` but it uses `samecollection` to compare
-     * two collections instead of equality.
-     */
-    def assertNotSameCollection(expected : Any)(actual : Any) {
-        if (samecollection(expected, actual)) {
-            failExpectedTest(expected, actual, "not same collection as ")
-        }
-    }
-
-    /**
-     * Assert that the `received` list of messsages has recorded the `expected`
-     * messages in the same order.
-     */
-    def assertMessages(received : Messages, expected : Message*) {
-        assert(received.size == expected.size, "wrong number of messages produced")
-        received.zip(expected).zipWithIndex.map {
-            case ((rec, exp), i) =>
-                assertMessage(rec, i, exp)
-        }
-    }
-
-    /**
-     * Assert that a `received` message at the given zero-based `index` conforms
-     * to an expected one in that it reports the same message label at the same
-     * position.
-     */
-    def assertMessage(received : Message, index : Int, expected : Message) {
-        assertResult(expected.label, s"wrong text in message $index")(received.label)
-        assertResult(line(expected), s"wrong line number in message $index")(line(received))
-        assertResult(column(expected), s"wrong column number in message $index")(column(received))
-    }
 
     /**
      * A ScalaTest tag that enables us to focus attention on particular tests
@@ -173,7 +139,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
  */
 trait ParseTests extends Tests {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Input, ParsersBase, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Input, ParseResult, ParsersBase, Success}
     import org.bitbucket.inkytonik.kiama.util.StringSource
 
     /**
@@ -182,82 +148,91 @@ trait ParseTests extends Tests {
     val parsers : ParsersBase
 
     /**
-     * Fail a test with a message about reaching the end of the input.
+     * Matcher for parse success yielding an expected value.
      */
-    def failInputEnd(in : Input) {
-        fail(s"input remaining at ${in.position}")
-    }
-
-    /**
-     * Fail a test with a message detailing a parse failure.
-     */
-    def failParseFailure(failure : Failure) {
-        fail(s"parse faiure: ${failure.message}")
-    }
-
-    /**
-     * Parse a string and if the parse succeeds, pass the result of the parse
-     * to a function for further processing or checking. `str` is the string to
-     * be parsed and `parser` is the parser to parse it with. `func` accepts the
-     * result value of the parse and returns whatever it likes which is returned
-     * from `assertParseCheck`. Fail if the parse succeeds but doesn't consume
-     * all of `str` or if the parse fails.
-     */
-    def assertParseCheck[T, U](str : String, parser : parsers.Parser[T])(func : T => U) : U = {
-        parsers.parseAll(parser, StringSource(str)) match {
-            case Success(value, in) if in.atEnd =>
-                func(value)
-            case Success(_, in) =>
-                fail(s"extraneous input at ${in.position}: $str")
-            case Failure(message, _) =>
-                fail(s"parse failure: $message")
+    def parseTo[T](expected : T) =
+        new Matcher[ParseResult[T]] {
+            def apply(result : ParseResult[T]) =
+                result match {
+                    case Success(value, in) =>
+                        MatchResult(
+                            (value == expected),
+                            s"""Parse succeeded with "$value" instead of expected "$expected"""",
+                            s"""Parse succeeded with disallowed value "$value""""
+                        )
+                    case Failure(message, _) =>
+                        MatchResult(
+                            false,
+                            s"""Parse failed with message "$message"""",
+                            "NOT USED"
+                        )
+                }
         }
-    }
 
     /**
-     * Assert that a parsing operation should be performed correctly.
-     * Try to parse `str` as a `T` using `parser`, which is expected
-     * to succeed and to produce the `expected` value.  Fail if `p` doesn't
-     * produce the expected value or if `parser` doesn't consume all of the
-     * input.
+     * Matcher for parse success where the parsed value corresponds to
+     * particluar input text.
      */
-    def assertParseOk[T](str : String, parser : parsers.Parser[T], expected : T) {
-        assertParseCheck(str, parser) {
-            result =>
-                if (expected != result)
-                    failExpectedTest(expected, result)
+    def parseText[T](expected : String) =
+        new Matcher[ParseResult[T]] {
+            def apply(result : ParseResult[T]) =
+                result match {
+                    case Success(value, in) =>
+                        val matched = positions.textOf(value)
+                        MatchResult(
+                            matched == Some(expected),
+                            s"""Parse succeeded matching "$matched" instead of expected "Some($expected)"""",
+                            s"""Parse succeeded with disallowed value "$value""""
+                        )
+                    case Failure(message, _) =>
+                        MatchResult(
+                            false,
+                            s"""Parse failed with message "$message"""",
+                            "NOT USED"
+                        )
+                }
         }
-    }
 
     /**
-     * Assert that a parsing operation should not result in success.
-     * Try to parse `str` as a `T` using `parser`, which is expected
-     * to not succeed, giving either a fatal error or failure (as specified
-     * by the `iserr` parameter, which defaults to failure). Fail the test
-     * if the parsing operation succeeds. Furthermore, fail the test if it
-     * fails, but the error or failure is not indicated at the given `line`
-     * and `column` location or doesn't contain the given message `msg`.
+     * Matcher for parse failure at given location and with given message.
      */
-    def assertParseError[T](str : String, parser : parsers.Parser[T], line : Int,
-        column : Int, msg : String, iserr : Boolean = false) {
-        parsers.parseAll(parser, StringSource(str)) match {
-            case Success(r, _) =>
-                fail("expected to find parse error in %s but it succeeded with %s".format(str, r))
-            case Failure(message, next) =>
-                val pos = next.position
-                assertResult(msg, "wrong message in error")(message)
-                assertResult(line, "wrong line number in error")(pos.line)
-                assertResult(column, "wrong column number in error")(pos.column)
+    def failParseAt[T](line : Int, column : Int, expectedMsg : String) =
+        new Matcher[ParseResult[T]] {
+            def apply(result : ParseResult[T]) = {
+                result match {
+                    case Success(value, in) =>
+                        MatchResult(
+                            false,
+                            s"""Parse succeeded with "$value" at ${in.found} (${in.position.line},${in.position.column})""",
+                            "NOT USED"
+                        )
+                    case Failure(message, in) =>
+                        MatchResult(
+                            (in.position.line == line) && (in.position.column == column) && (message == expectedMsg),
+                            {
+                                val buf = new scala.collection.mutable.ListBuffer[String]()
+                                if (in.position.line != line)
+                                    buf += s"line is ${in.position.line} not $line"
+                                if (in.position.column != column)
+                                    buf += s"column is ${in.position.column} not $column"
+                                if (message != expectedMsg)
+                                    buf += s"""message is "$message" not "$expectedMsg""""
+                                buf.mkString("Parse failed wrongly: ", ", ", "")
+                            },
+                            {
+                                val buf = new scala.collection.mutable.ListBuffer[String]()
+                                if (in.position.line == line)
+                                    buf += s"line is $line"
+                                if (in.position.column == column)
+                                    buf += s"column is $column"
+                                if (message == expectedMsg)
+                                    buf += s"""message is "$expectedMsg""""
+                                buf.mkString("Parse failed as expected: ", ", ", "")
+                            }
+                        )
+                }
+            }
         }
-    }
-
-    /**
-     * Parse a string and if the parse succeeds, return the result of the parse.
-     * `str` is the string to be parsed and `parser` is the parser to parse it
-     * with.
-     */
-    def assertParseReturn[T](str : String, parser : parsers.Parser[T]) : T =
-        assertParseCheck(str, parser)(identity)
 
 }
 
@@ -266,20 +241,34 @@ trait ParseTests extends Tests {
  */
 trait TransformerTests extends ParseTests {
 
+    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+
     /**
-     * Assert that a transformation should be performed correctly. Try to parse
-     * `str` as a `T` using the parser `parser`, which is expected to succeed
-     * while consuming all of the input. Then pass the resulting `T` to the
-     * `trans` transformation function. Fail the test if the value produced by
-     * the transformation is not `expected`.
+     * Matcher for parsing and then transformation with expected value. Try to
+     * parse `term` as a `T` using the parser `parser`, which is expected to
+     * succeed while consuming all of the input. Then pass the resulting `T` to the
+     * `transform` transformation function. The result of the transformation is
+     * then compared to `expected`.
      */
-    def assertTransformOk[T](str : String, parser : parsers.Parser[T], trans : T => T, expected : T) {
-        assertParseCheck(str, parser) {
-            result =>
-                val transformed = trans(result)
-                if (transformed != expected) failExpectedTest(expected, transformed)
+    def transformTo[T](parser : parsers.Parser[T], transform : T => T, expected : T) =
+        new Matcher[String] {
+            def apply(term : String) =
+                parser(term) match {
+                    case Success(ast, _) =>
+                        val transformed = transform(ast)
+                        MatchResult(
+                            transformed == expected,
+                            s""""$term" transformed to "$transformed" not expected "$expected"""",
+                            s""""$term" evaluated to "$expected""""
+                        )
+                    case Failure(msg, _) =>
+                        MatchResult(
+                            false,
+                            s""""$term" failed to parse: $msg"""",
+                            "NOT USED"
+                        )
+                }
         }
-    }
 
 }
 
@@ -289,38 +278,19 @@ trait TransformerTests extends ParseTests {
 
 trait PrettyPrinterTests extends Tests {
 
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, Layout, Link, Links}
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, Links}
 
     /**
-     * Assert that a doc when pretty-printed has the given layout.
+     * Matcher for pretty-printer links.
      */
-    def assertLayout(expected : Layout)(document : Document) {
-        assertResult(expected)(document.layout)
-    }
-
-    /**
-     * Assert that a doc when pretty-printed has the given links.
-     */
-    def assertLinks(expected : List[(AnyRef, Range)])(document : Document) {
-        for ((v, r) <- expected) {
-            assertLink(r)(document.links, v)
+    def produceLinks[T](links : Links) =
+        new Matcher[Document] {
+            def apply(doc : Document) =
+                MatchResult(
+                    doc.links == links,
+                    s"Document has links ${doc.links} instead of expected $links",
+                    s"Document has expected $links"
+                )
         }
-    }
-
-    /**
-     * Assert that a value has a given link in a links map.
-     */
-    def assertLink(expected : Range)(links : Links, value : AnyRef) {
-        val optRange = links.collectFirst {
-            case Link(k, v) if k eq value =>
-                v
-        }
-        optRange match {
-            case Some(r) =>
-                assertResult(expected, s"for value $value")(r)
-            case None =>
-                fail(s"link for $value not found")
-        }
-    }
 
 }

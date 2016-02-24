@@ -72,19 +72,19 @@ class DotNameResolutionTests extends Tests {
     import analyser._
 
     test("class members are resolved") {
-        assertResult(declAAx)(decl(axInA))
+        decl(axInA) shouldBe declAAx
     }
 
     test("nested classes are resolved") {
-        assertResult(declBB)(decl(BBinBB))
+        decl(BBinBB) shouldBe declBB
     }
 
     test("nested names hide outer ones") {
-        assertResult(declAAx)(decl(bxInBB))
+        decl(bxInBB) shouldBe declAAx
     }
 
     test("non-members in scope are not resolved as members") {
-        assert(isUnknown(decl(byInBB)))
+        isUnknown(decl(byInBB)) shouldBe true
     }
 
 }

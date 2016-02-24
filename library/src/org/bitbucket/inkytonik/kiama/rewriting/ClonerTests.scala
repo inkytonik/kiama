@@ -31,22 +31,20 @@ class ClonerTests extends Tests {
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.relation.Tree
     import org.bitbucket.inkytonik.kiama.rewriting.Cloner.{deepclone, lazyclone}
+    import org.scalatest.matchers.{Matcher, MatchResult}
 
-    def assertCloned[T <: Product, R <: T](t : R, ct : R) {
-
-        // Must get the right answer (==)
-        assertResult(t)(ct)
-
-        // Make sure that the new term is actually a tree. If it's not, trying
-        // to make a Tree from it will throw a RuntimeException.
+    /**
+     * Predicate for trees that works by making a `Tree` and trapping the
+     * exception that results if it's not actually a tree structure.
+     */
+    def isATree[T <: Product](value : T) : Boolean =
         try {
-            new Tree[T, R](ct)
+            new Tree[T, T](value)
+            true
         } catch {
             case e : RuntimeException =>
-                fail(s"cloning didn't produce a tree: $ct")
+                false
         }
-
-    }
 
     test("deep cloning a term gives an equal but not eq term") {
         val t = Add(
@@ -69,10 +67,11 @@ class ClonerTests extends Tests {
         val ttree = new Tree[Exp, Exp](t)
         val ct : Add = deepclone(t)
 
-        assertCloned[Exp, Exp](t, ct)
-        assertNotSame(t)(ct)
-        assertNotSame(t.l)(ct.l)
-        assertNotSame(t.r)(ct.r)
+        isATree(ct) shouldBe true
+        ct shouldBe t
+        ct should not(be theSameInstanceAs t)
+        ct.l should not(be theSameInstanceAs t.l)
+        ct.r should not(be theSameInstanceAs t.r)
     }
 
     test("deep cloning a term containing a sequence works") {
@@ -85,12 +84,13 @@ class ClonerTests extends Tests {
         val ttree = new Tree[ImperativeNode, Seqn](t)
         val ct : Seqn = deepclone(t)
 
-        assertCloned[ImperativeNode, Seqn](t, ct)
-        assertNotSame(t)(ct)
-        assertNotSame(t.ss)(ct.ss)
-        assertNotSame(t.ss(0))(ct.ss(0))
-        assertNotSame(t.ss(1))(ct.ss(1))
-        assertNotSame(t.ss(2))(ct.ss(2))
+        isATree(ct) shouldBe true
+        ct shouldBe t
+        ct should not(be theSameInstanceAs t)
+        ct.ss should not(be theSameInstanceAs t.ss)
+        ct.ss(0) should not(be theSameInstanceAs t.ss(0))
+        ct.ss(1) should not(be theSameInstanceAs t.ss(1))
+        ct.ss(2) should not(be theSameInstanceAs t.ss(2))
     }
 
     test("lazy cloning a term with no sharing gives that term") {
@@ -98,8 +98,9 @@ class ClonerTests extends Tests {
         val ttree = new Tree[Exp, Exp](t)
         val ct : Add = lazyclone(t)
 
-        assertCloned[Exp, Exp](t, ct)
-        assertSame(t)(ct)
+        isATree(ct) shouldBe true
+        ct shouldBe t
+        ct should be theSameInstanceAs t
     }
 
     test("lazy cloning a term with sharing clones the shared sub-term") {
@@ -108,10 +109,11 @@ class ClonerTests extends Tests {
         val ttree = new Tree[Exp, Exp](t)
         val ct : Add = lazyclone(t)
 
-        assertCloned[Exp, Exp](t, ct)
-        assertNotSame(t)(ct)
-        assertSame(t.l)(ct.l)
-        assertNotSame(t.r)(ct.r)
+        isATree(ct) shouldBe true
+        ct shouldBe t
+        ct should not(be theSameInstanceAs t)
+        ct.l should be theSameInstanceAs t.l
+        ct.r should not(be theSameInstanceAs t.r)
     }
 
 }

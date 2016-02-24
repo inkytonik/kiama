@@ -61,59 +61,59 @@ class DataflowForTests extends Tests {
     }
 
     test("in s1") {
-        assertResult(Set("w", "v"))(in(s1))
+        in(s1) shouldBe Set("w", "v")
     }
 
     test("in s2") {
-        assertResult(Set("y", "w", "v"))(in(s2))
+        in(s2) shouldBe Set("y", "w", "v")
     }
 
     test("in s3") {
-        assertResult(Set("w", "v"))(in(s3))
+        in(s3) shouldBe Set("w", "v")
     }
 
     test("in s4") {
-        assertResult(Set("x", "w", "v"))(in(s4))
+        in(s4) shouldBe Set("x", "w", "v")
     }
 
     test("in s411") {
-        assertResult(Set("w", "v"))(in(s411))
+        in(s411) shouldBe Set("w", "v")
     }
 
     test("in s412") {
-        assertResult(Set("w", "v"))(in(s412))
+        in(s412) shouldBe Set("w", "v")
     }
 
     test("in s5") {
-        assertResult(Set("x"))(in(s5))
+        in(s5) shouldBe Set("x")
     }
 
     test("out s1") {
-        assertResult(Set("y", "w", "v"))(out(s1))
+        out(s1) shouldBe Set("y", "w", "v")
     }
 
     test("out s2") {
-        assertResult(Set("w", "v"))(out(s2))
+        out(s2) shouldBe Set("w", "v")
     }
 
     test("out s3") {
-        assertResult(Set("x", "w", "v"))(out(s3))
+        out(s3) shouldBe Set("x", "w", "v")
     }
 
     test("out s4") {
-        assertResult(Set("x", "w", "v"))(out(s4))
+        out(s4) shouldBe Set("x", "w", "v")
     }
 
     test("out s411") {
-        assertResult(Set("w", "v"))(out(s411))
+        out(s411) shouldBe Set("w", "v")
     }
 
     test("out s412") {
-        assertResult(Set("x", "w", "v"))(out(s412))
+        out(s412) shouldBe Set("x", "w", "v")
     }
 
     test("out s5") {
-        assertResult(Set())(out(s5))
+        out(s5) shouldBe Set()
     }
 
 }

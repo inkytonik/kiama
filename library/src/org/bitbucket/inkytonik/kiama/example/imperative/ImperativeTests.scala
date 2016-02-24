@@ -32,23 +32,19 @@ import org.bitbucket.inkytonik.kiama.util.{GeneratingREPL, PrettyPrinterTests}
 class ImperativeTests extends PrettyPrinter with PrettyPrinterTests {
 
     test("pretty-print imperative variable") {
-        assertLayout("xyz123")(format(Var("xyz123")))
+        format(Var("xyz123")).layout shouldBe "xyz123"
     }
 
     test("pretty-print imperative variable - product") {
-        assertLayout("""Var ("xyz123")""")(pretty(any(Var("xyz123"))))
+        pretty(any(Var("xyz123"))).layout shouldBe """Var ("xyz123")"""
     }
 
     test("pretty-print imperative assignment") {
-        assertLayout("i = (0.0 * j);")(
-            format(Asgn(Var("i"), Mul(Num(0), Var("j"))))
-        )
+        format(Asgn(Var("i"), Mul(Num(0), Var("j")))).layout shouldBe "i = (0.0 * j);"
     }
 
     test("pretty-print imperative assignment - product") {
-        assertLayout("""Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))""")(
-            pretty(any(Asgn(Var("i"), Mul(Num(0), Var("j")))))
-        )
+        pretty(any(Asgn(Var("i"), Mul(Num(0), Var("j"))))).layout shouldBe """Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))"""
     }
 
     // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
@@ -96,15 +92,15 @@ class ImperativeTests extends PrettyPrinter with PrettyPrinterTests {
           |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
 
     test("pretty-print non-trivial imperative program (default width)") {
-        assertLayout(pp1)(format(p))
+        format(p).layout shouldBe pp1
     }
 
     test("pretty-print non-trivial imperative program (narrow)") {
-        assertLayout(pp2)(pretty(group(toDoc(p)), 40))
+        pretty(group(toDoc(p)), 40).layout shouldBe pp2
     }
 
     test("pretty-print non-trivial imperative program (product)") {
-        assertLayout(ppp)(pretty(any(p)))
+        pretty(any(p)).layout shouldBe ppp
     }
 
 }

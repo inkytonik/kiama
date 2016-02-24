@@ -26,7 +26,7 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 /**
  * Tests of tree relations.
  */
-class TreeTests extends Tests with RelationTestSupport {
+class TreeTests extends Tests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.relation.Tree.isLeaf
@@ -86,210 +86,210 @@ class TreeTests extends Tests with RelationTestSupport {
     // child
 
     test("child of leaf is empty (n1)") {
-        assertImage(child, n1)
+        child.image(n1) shouldBe empty
     }
 
     test("child of leaf is empty (n2)") {
-        assertImage(child, n2)
+        child.image(n2) shouldBe empty
     }
 
     test("child of leaf is empty (n3)") {
-        assertImage(child, n3)
+        child.image(n3) shouldBe empty
     }
 
     test("child of leaf is empty (v1)") {
-        assertImage(child, v1)
+        child.image(v1) shouldBe empty
     }
 
     test("child of leaf is empty (v2)") {
-        assertImage(child, v2)
+        child.image(v2) shouldBe empty
     }
 
     test("child of leaf is empty (v3)") {
-        assertImage(child, v3)
+        child.image(v3) shouldBe empty
     }
 
     test("child of leaf is empty (e4)") {
-        assertImage(child, v1)
+        child.image(e4) shouldBe empty
     }
 
     test("child of leaf is empty (s2)") {
-        assertImage(child, s2)
+        child.image(s2) shouldBe empty
     }
 
     test("child of interior node is its children (e1)") {
-        assertImage(child, e1, Vector(n1, n2))
+        child.image(e1) should beSameCollectionAs(Vector(n1, n2))
     }
 
     test("child of interior node is its children (e2)") {
-        assertImage(child, e2, Vector(e1, v1))
+        child.image(e2) should beSameCollectionAs(Vector(e1, v1))
     }
 
     test("child of interior node is its children (e3)") {
-        assertImage(child, e3, Vector(n3))
+        child.image(e3) should beSameCollectionAs(Vector(n3))
     }
 
     test("child of interior node is its children (s1)") {
-        assertImage(child, s1, Vector(v2, e2))
+        child.image(s1) should beSameCollectionAs(Vector(v2, e2))
     }
 
     test("child of interior node is its children (v3)") {
-        assertImage(child, s3, Vector(v3, e3))
+        child.image(s3) should beSameCollectionAs(Vector(v3, e3))
     }
 
     test("child of interior node is its children (s4)") {
-        assertImage(child, s4, Vector(e4, s3))
+        child.image(s4) should beSameCollectionAs(Vector(e4, s3))
     }
 
     test("child of Program ignores its non ImperativeTree fields") {
-        assertImage(child, p, pchildren)
+        child.image(p) should beSameCollectionAs(pchildren)
     }
 
     test("child of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.child(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // firstChild
 
     test("firstChild of a leaf is not defined (n1)") {
-        assertResult(None)(firstChild.unapply(n1))
+        firstChild.unapply(n1) shouldBe empty
     }
 
     test("firstChild of a leaf is not defined (n2)") {
-        assertResult(None)(firstChild.unapply(n2))
+        firstChild.unapply(n2) shouldBe empty
     }
 
     test("firstChild of a leaf is not defined (n3)") {
-        assertResult(None)(firstChild.unapply(n3))
+        firstChild.unapply(n3) shouldBe empty
     }
 
     test("firstChild of a leaf is not defined (v1)") {
-        assertResult(None)(firstChild.unapply(v1))
+        firstChild.unapply(v1) shouldBe empty
     }
 
     test("firstChild of a leaf is not defined (v2)") {
-        assertResult(None)(firstChild.unapply(v2))
+        firstChild.unapply(v2) shouldBe empty
     }
 
     test("firstChild of a leaf is not defined (v3)") {
-        assertResult(None)(firstChild.unapply(v3))
+        firstChild.unapply(v3) shouldBe empty
     }
 
     test("firstChild of a leaf is not defined (e4)") {
-        assertResult(None)(firstChild.unapply(e4))
+        firstChild.unapply(e4) shouldBe empty
     }
 
     test("firstChild of a leaf is not defined (s2)") {
-        assertResult(None)(firstChild.unapply(s2))
+        firstChild.unapply(s2) shouldBe empty
     }
 
     test("firstChild of a node with children is correct (e1)") {
-        assertResult(Some(n1))(firstChild.unapply(e1))
+        firstChild.unapply(e1) should beSameCollectionAs(Some(n1))
     }
 
     test("firstChild of a node with children is correct (e2)") {
-        assertResult(Some(e1))(firstChild.unapply(e2))
+        firstChild.unapply(e2) should beSameCollectionAs(Some(e1))
     }
 
     test("firstChild of a node with children is correct (e3)") {
-        assertResult(Some(n3))(firstChild.unapply(e3))
+        firstChild.unapply(e3) should beSameCollectionAs(Some(n3))
     }
 
     test("firstChild of a node with children is correct (s1)") {
-        assertResult(Some(v2))(firstChild.unapply(s1))
+        firstChild.unapply(s1) should beSameCollectionAs(Some(v2))
     }
 
     test("firstChild of a node with children is correct (s3)") {
-        assertResult(Some(v3))(firstChild.unapply(s3))
+        firstChild.unapply(s3) should beSameCollectionAs(Some(v3))
     }
 
     test("firstChild of a node with children is correct (s4)") {
-        assertResult(Some(e4))(firstChild.unapply(s4))
+        firstChild.unapply(s4) should beSameCollectionAs(Some(e4))
     }
 
     test("firstChild of a node with a list component is correct") {
-        assertResult(Some(s1))(firstChild.unapply(p))
+        firstChild.unapply(p) should beSameCollectionAs(Some(s1))
     }
 
     test("firstChild of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             firstChild.unapply(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // index
 
     test("index of root is zero (p)") {
-        assertResult(0)(index(p))
+        index(p) shouldBe 0
     }
 
     test("index of first child is zero (n1)") {
-        assertResult(0)(index(n1))
+        index(n1) shouldBe 0
     }
 
     test("index of first child is zero (e1)") {
-        assertResult(0)(index(e1))
+        index(e1) shouldBe 0
     }
 
     test("index of first child is zero (n3)") {
-        assertResult(0)(index(n3))
+        index(n3) shouldBe 0
     }
 
     test("index of first child is zero (v2)") {
-        assertResult(0)(index(v2))
+        index(v2) shouldBe 0
     }
 
     test("index of first child is zero (v3)") {
-        assertResult(0)(index(v3))
+        index(v3) shouldBe 0
     }
 
     test("index of first child is zero (e4)") {
-        assertResult(0)(index(e4))
+        index(e4) shouldBe 0
     }
 
     test("index of first child is zero (s1)") {
-        assertResult(0)(index(s1))
+        index(s1) shouldBe 0
     }
 
     test("index of second child is one (n2)") {
-        assertResult(1)(index(n2))
+        index(n2) shouldBe 1
     }
 
     test("index of second child is one (v1)") {
-        assertResult(1)(index(v1))
+        index(v1) shouldBe 1
     }
 
     test("index of second child is one (e2)") {
-        assertResult(1)(index(e2))
+        index(e2) shouldBe 1
     }
 
     test("index of second child is one (e3)") {
-        assertResult(1)(index(e3))
+        index(e3) shouldBe 1
     }
 
     test("index of second child is one (s3)") {
-        assertResult(1)(index(s3))
+        index(s3) shouldBe 1
     }
 
     test("index of second child is one (s2)") {
-        assertResult(1)(index(s2))
+        index(s2) shouldBe 1
     }
 
     test("index of third child is two (s4)") {
-        assertResult(2)(index(s4))
+        index(s4) shouldBe 2
     }
 
     test("index of fourth child is three (s5)") {
-        assertResult(3)(index(s5))
+        index(s5) shouldBe 3
     }
 
     for (i <- 0 to nulls.size - 1) {
-        test("index of nulls (" + i + ") is " + (i + 4)) {
-            assertResult(i + 4)(index(nulls(i)))
+        test("index of nulls(" + i + ") is " + (i + 4)) {
+            index(nulls(i)) shouldBe i + 4
         }
     }
 
@@ -297,216 +297,216 @@ class TreeTests extends Tests with RelationTestSupport {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.index(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // isLeaf
 
     test("isLeaf returns true for a leaf") {
-        assert(isLeaf(n1))
+        isLeaf(n1) shouldBe true
     }
 
     test("isLeaf returns false for a non-leaf") {
-        assert(!isLeaf(e1))
+        !isLeaf(e1) shouldBe true
     }
 
     // isFirst
 
     test("isFirst returns true for root") {
-        assert(ptree.isFirst(p))
+        ptree.isFirst(p) shouldBe true
     }
 
     test("isFirst returns true for a first child") {
-        assert(ptree.isFirst(n1))
+        ptree.isFirst(n1) shouldBe true
     }
 
     test("isFirst returns false for a non-first child") {
-        assert(!ptree.isFirst(e3))
+        !ptree.isFirst(e3) shouldBe true
     }
 
     test("isFirst throws an exception for an unrelated node") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.isFirst(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // isLast
 
     test("isLast returns true for root") {
-        assert(ptree.isLast(p))
+        ptree.isLast(p) shouldBe true
     }
 
     test("isLast returns true for a last child") {
-        assert(ptree.isLast(v1))
+        ptree.isLast(v1) shouldBe true
     }
 
     test("isLast returns false for a non-last child") {
-        assert(!ptree.isLast(e4))
+        !ptree.isLast(e4) shouldBe true
     }
 
     test("isLast throws an exception for an unrelated node") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.isLast(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // isRoot
 
     test("isRoot returns true for the root") {
-        assert(ptree.isRoot(p))
+        ptree.isRoot(p) shouldBe true
     }
 
     test("isRoot returns false for a non-root node") {
-        assert(!ptree.isRoot(s3))
+        !ptree.isRoot(s3) shouldBe true
     }
 
     test("isRoot throws an exception for an unrelated node") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.isRoot(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // lastChild
 
     test("lastChild of a leaf is not defined (n1)") {
-        assertResult(None)(lastChild.unapply(n1))
+        lastChild.unapply(n1) shouldBe empty
     }
 
     test("lastChild of a leaf is not defined (n2)") {
-        assertResult(None)(lastChild.unapply(n2))
+        lastChild.unapply(n2) shouldBe empty
     }
 
     test("lastChild of a leaf is not defined (n3)") {
-        assertResult(None)(lastChild.unapply(n3))
+        lastChild.unapply(n3) shouldBe empty
     }
 
     test("lastChild of a leaf is not defined (v1)") {
-        assertResult(None)(lastChild.unapply(v1))
+        lastChild.unapply(v1) shouldBe empty
     }
 
     test("lastChild of a leaf is not defined (v2)") {
-        assertResult(None)(lastChild.unapply(v2))
+        lastChild.unapply(v2) shouldBe empty
     }
 
     test("lastChild of a leaf is not defined (v3)") {
-        assertResult(None)(lastChild.unapply(v3))
+        lastChild.unapply(v3) shouldBe empty
     }
 
     test("lastChild of a leaf is not defined (e4)") {
-        assertResult(None)(lastChild.unapply(e4))
+        lastChild.unapply(e4) shouldBe empty
     }
 
     test("lastChild of a leaf is not defined (s2)") {
-        assertResult(None)(lastChild.unapply(s2))
+        lastChild.unapply(s2) shouldBe empty
     }
 
     test("lastChild of a node with children is correct (e1)") {
-        assertResult(Some(n2))(lastChild.unapply(e1))
+        lastChild.unapply(e1) should beSameCollectionAs(Some(n2))
     }
 
     test("lastChild of a node with children is correct (e2)") {
-        assertResult(Some(v1))(lastChild.unapply(e2))
+        lastChild.unapply(e2) should beSameCollectionAs(Some(v1))
     }
 
     test("lastChild of a node with children is correct (e3)") {
-        assertResult(Some(n3))(lastChild.unapply(e3))
+        lastChild.unapply(e3) should beSameCollectionAs(Some(n3))
     }
 
     test("lastChild of a node with children is correct (s1)") {
-        assertResult(Some(e2))(lastChild.unapply(s1))
+        lastChild.unapply(s1) should beSameCollectionAs(Some(e2))
     }
 
     test("lastChild of a node with children is correct (s3)") {
-        assertResult(Some(e3))(lastChild.unapply(s3))
+        lastChild.unapply(s3) should beSameCollectionAs(Some(e3))
     }
 
     test("lastChild of a node with children is correct (s4)") {
-        assertResult(Some(s3))(lastChild.unapply(s4))
+        lastChild.unapply(s4) should beSameCollectionAs(Some(s3))
     }
 
     test("lastChild of a node with a list component is correct") {
-        assertResult(Some(nulls(17)))(lastChild.unapply(p))
+        lastChild.unapply(p) should beSameCollectionAs(Some(nulls(23)))
     }
 
     test("lastChild of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             lastChild.unapply(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // next
 
     test("next of root is not defined") {
-        assertImage(next, p)
+        next.image(p) shouldBe empty
     }
 
     test("next of a last child is not defined (n2)") {
-        assertImage(next, n2)
+        next.image(n2) shouldBe empty
     }
 
     test("next of a last child is not defined (v1)") {
-        assertImage(next, v1)
+        next.image(v1) shouldBe empty
     }
 
     test("next of a last child is not defined (n3)") {
-        assertImage(next, n3)
+        next.image(n3) shouldBe empty
     }
 
     test("next of a last child is not defined (e2)") {
-        assertImage(next, e2)
+        next.image(e2) shouldBe empty
     }
 
     test("next of a last child is not defined (e3)") {
-        assertImage(next, e3)
+        next.image(e3) shouldBe empty
     }
 
     test("next of a last child is not defined (s3)") {
-        assertImage(next, s3)
+        next.image(s3) shouldBe empty
     }
 
-    test("next of a last child is not defined (nulls (23))") {
-        assertImage(next, nulls(23))
+    test("next of a last child is not defined (nulls(23))") {
+        next.image(nulls(23)) shouldBe empty
     }
 
     test("next of a non-last child is correct (n1)") {
-        assertImage(next, n1, Vector(n2))
+        next.image(n1) should beSameCollectionAs(Vector(n2))
     }
 
     test("next of a non-last child is correct (e1)") {
-        assertImage(next, e1, Vector(v1))
+        next.image(e1) should beSameCollectionAs(Vector(v1))
     }
 
     test("next of a non-last child is correct (v2)") {
-        assertImage(next, v2, Vector(e2))
+        next.image(v2) should beSameCollectionAs(Vector(e2))
     }
 
     test("next of a non-last child is correct (v3)") {
-        assertImage(next, v3, Vector(e3))
+        next.image(v3) should beSameCollectionAs(Vector(e3))
     }
 
     test("next of a non-last child is correct (e4)") {
-        assertImage(next, e4, Vector(s3))
+        next.image(e4) should beSameCollectionAs(Vector(s3))
     }
 
     test("next of a non-last child is correct (s1)") {
-        assertImage(next, s1, Vector(s2))
+        next.image(s1) should beSameCollectionAs(Vector(s2))
     }
 
     test("next of a non-last child is correct (s2)") {
-        assertImage(next, s2, Vector(s4))
+        next.image(s2) should beSameCollectionAs(Vector(s4))
     }
 
     test("next of a non-last child is correct (s4)") {
-        assertImage(next, s4, Vector(s5))
+        next.image(s4) should beSameCollectionAs(Vector(s5))
     }
 
     for (i <- 0 to nulls.size - 2) {
-        test("next of nulls (" + i + ") is nulls (" + (i + 1) + ")") {
-            assertImage(next, nulls(i), Vector(nulls(i + 1)))
+        test("next of nulls(" + i + ") is nulls(" + (i + 1) + ")") {
+            next.image(nulls(i)) should beSameCollectionAs(Vector(nulls(i + 1)))
         }
     }
 
@@ -514,255 +514,255 @@ class TreeTests extends Tests with RelationTestSupport {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.next(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // parent
 
     test("parent of root is not defined") {
-        assertImage(parent, p)
+        parent.image(p) shouldBe empty
     }
 
     test("parent of leaf is its parent (n1)") {
-        assertImage(parent, n1, Vector(e1))
+        parent.image(n1) should beSameCollectionAs(Vector(e1))
     }
 
     test("parent of leaf is its parent (n2)") {
-        assertImage(parent, n2, Vector(e1))
+        parent.image(n2) should beSameCollectionAs(Vector(e1))
     }
 
     test("parent of leaf is its parent (n3)") {
-        assertImage(parent, n3, Vector(e3))
+        parent.image(n3) should beSameCollectionAs(Vector(e3))
     }
 
     test("parent of leaf is its parent (v1)") {
-        assertImage(parent, v1, Vector(e2))
+        parent.image(v1) should beSameCollectionAs(Vector(e2))
     }
 
     test("parent of leaf is its parent (v2)") {
-        assertImage(parent, v2, Vector(s1))
+        parent.image(v2) should beSameCollectionAs(Vector(s1))
     }
 
     test("parent of leaf is its parent (v3)") {
-        assertImage(parent, v3, Vector(s3))
+        parent.image(v3) should beSameCollectionAs(Vector(s3))
     }
 
     test("parent of leaf is its parent (e4)") {
-        assertImage(parent, e4, Vector(s4))
+        parent.image(e4) should beSameCollectionAs(Vector(s4))
     }
 
     test("parent of interior node is its parent (e1)") {
-        assertImage(parent, e1, Vector(e2))
+        parent.image(e1) should beSameCollectionAs(Vector(e2))
     }
 
     test("parent of interior node is its parent (e2)") {
-        assertImage(parent, e2, Vector(s1))
+        parent.image(e2) should beSameCollectionAs(Vector(s1))
     }
 
     test("parent of interior node is its parent (e3)") {
-        assertImage(parent, e3, Vector(s3))
+        parent.image(e3) should beSameCollectionAs(Vector(s3))
     }
 
     test("parent of interior node is its parent (e4)") {
-        assertImage(parent, e4, Vector(s4))
+        parent.image(e4) should beSameCollectionAs(Vector(s4))
     }
 
     test("parent of interior node is its parent (s3)") {
-        assertImage(parent, s3, Vector(s4))
+        parent.image(s3) should beSameCollectionAs(Vector(s4))
     }
 
     test("parent of node in Program is the program (s1)") {
-        assertImage(parent, s1, Vector(p))
+        parent.image(s1) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Program is the program (s2)") {
-        assertImage(parent, s2, Vector(p))
+        parent.image(s2) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Program is the program (s4)") {
-        assertImage(parent, s4, Vector(p))
+        parent.image(s4) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Program is the program (s5)") {
-        assertImage(parent, s5, Vector(p))
+        parent.image(s5) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Option field of Program is the program") {
-        assertImage(parent, nulls(0), Vector(p))
+        parent.image(nulls(0)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node after Option field of Program is the program") {
-        assertImage(parent, nulls(1), Vector(p))
+        parent.image(nulls(1)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Left field of Program is the program") {
-        assertImage(parent, nulls(2), Vector(p))
+        parent.image(nulls(2)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Right field of Program is the program") {
-        assertImage(parent, nulls(3), Vector(p))
+        parent.image(nulls(3)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node after Either fields of Program is the program") {
-        assertImage(parent, nulls(4), Vector(p))
+        parent.image(nulls(4)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 1 of Program is the program") {
-        assertImage(parent, nulls(5), Vector(p))
+        parent.image(nulls(5)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 2 of Program is the program (first)") {
-        assertImage(parent, nulls(6), Vector(p))
+        parent.image(nulls(6)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 2 of Program is the program (second)") {
-        assertImage(parent, nulls(7), Vector(p))
+        parent.image(nulls(7)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 3 of Program is the program (first)") {
-        assertImage(parent, nulls(8), Vector(p))
+        parent.image(nulls(8)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 3 of Program is the program (second)") {
-        assertImage(parent, nulls(9), Vector(p))
+        parent.image(nulls(9)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 3 of Program is the program (third)") {
-        assertImage(parent, nulls(10), Vector(p))
+        parent.image(nulls(10)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (first)") {
-        assertImage(parent, nulls(11), Vector(p))
+        parent.image(nulls(11)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (second)") {
-        assertImage(parent, nulls(12), Vector(p))
+        parent.image(nulls(12)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (third)") {
-        assertImage(parent, nulls(13), Vector(p))
+        parent.image(nulls(13)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (fourth)") {
-        assertImage(parent, nulls(14), Vector(p))
+        parent.image(nulls(14)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node after tuple 4 field of Program is the program") {
-        assertImage(parent, nulls(15), Vector(p))
+        parent.image(nulls(15)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in list of Somes of Program is the program (first)") {
-        assertImage(parent, nulls(16), Vector(p))
+        parent.image(nulls(16)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in list of Somes of Program is the program (second)") {
-        assertImage(parent, nulls(17), Vector(p))
+        parent.image(nulls(17)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of middle field of Program is the program") {
-        assertImage(parent, nulls(18), Vector(p))
+        parent.image(nulls(18)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Vector field of Program is the program (first)") {
-        assertImage(parent, nulls(19), Vector(p))
+        parent.image(nulls(19)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Vector field of Program is the program (second)") {
-        assertImage(parent, nulls(20), Vector(p))
+        parent.image(nulls(20)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Vector field of Program is the program (third)") {
-        assertImage(parent, nulls(21), Vector(p))
+        parent.image(nulls(21)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Map field of Program is the program (first)") {
-        assertImage(parent, nulls(22), Vector(p))
+        parent.image(nulls(22)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Map field of Program is the program (second)") {
-        assertImage(parent, nulls(23), Vector(p))
+        parent.image(nulls(23)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.parent(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // prev
 
     test("prev of root is not defined") {
-        assertImage(prev, p)
+        prev.image(p) shouldBe empty
     }
 
     test("prev of a first child is not defined (n1)") {
-        assertImage(prev, n1)
+        prev.image(n1) shouldBe empty
     }
 
     test("prev of a first child is not defined (e1)") {
-        assertImage(prev, e1)
+        prev.image(e1) shouldBe empty
     }
 
     test("prev of a first child is not defined (n3)") {
-        assertImage(prev, n3)
+        prev.image(n3) shouldBe empty
     }
 
     test("prev of a first child is not defined (v2)") {
-        assertImage(prev, v2)
+        prev.image(v2) shouldBe empty
     }
 
     test("prev of a first child is not defined (v3)") {
-        assertImage(prev, v3)
+        prev.image(v3) shouldBe empty
     }
 
     test("prev of a first child is not defined (e4)") {
-        assertImage(prev, e4)
+        prev.image(e4) shouldBe empty
     }
 
     test("prev of a first child is not defined (s1)") {
-        assertImage(prev, s1)
+        prev.image(s1) shouldBe empty
     }
 
     test("prev of a non-first child is correct (n2)") {
-        assertImage(prev, n2, Vector(n1))
+        prev.image(n2) should beSameCollectionAs(Vector(n1))
     }
 
     test("prev of a non-first child is correct (v1)") {
-        assertImage(prev, v1, Vector(e1))
+        prev.image(v1) should beSameCollectionAs(Vector(e1))
     }
 
     test("prev of a non-first child is correct (e2)") {
-        assertImage(prev, e2, Vector(v2))
+        prev.image(e2) should beSameCollectionAs(Vector(v2))
     }
 
     test("prev of a non-first child is correct (e3)") {
-        assertImage(prev, e3, Vector(v3))
+        prev.image(e3) should beSameCollectionAs(Vector(v3))
     }
 
     test("prev of a non-first child is correct (s3)") {
-        assertImage(prev, s3, Vector(e4))
+        prev.image(s3) should beSameCollectionAs(Vector(e4))
     }
 
     test("prev of a non-first child is correct (s2)") {
-        assertImage(prev, s2, Vector(s1))
+        prev.image(s2) should beSameCollectionAs(Vector(s1))
     }
 
     test("prev of a non-first child is correct (s4)") {
-        assertImage(prev, s4, Vector(s2))
+        prev.image(s4) should beSameCollectionAs(Vector(s2))
     }
 
     test("prev of a non-first child is correct (s5)") {
-        assertImage(prev, s5, Vector(s4))
+        prev.image(s5) should beSameCollectionAs(Vector(s4))
     }
 
-    test("prev of a nulls (0) is correct") {
-        assertImage(prev, nulls(0), Vector(s5))
+    test("prev of a nulls(0) is correct") {
+        prev.image(nulls(0)) should beSameCollectionAs(Vector(s5))
     }
 
     for (i <- 1 to nulls.size - 1) {
-        test("prev of nulls (" + i + ") is nulls (" + (i - 1) + ")") {
-            assertImage(prev, nulls(i), Vector(nulls(i - 1)))
+        test("prev of nulls(" + i + ") is nulls(" + (i - 1) + ")") {
+            prev.image(nulls(i)) should beSameCollectionAs(Vector(nulls(i - 1)))
         }
     }
 
@@ -770,76 +770,76 @@ class TreeTests extends Tests with RelationTestSupport {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.next(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // siblings
 
     test("root has itself as a sibling") {
-        assertImage(siblings, p, Vector(p))
+        siblings.image(p) should beSameCollectionAs(Vector(p))
     }
 
     test("an only child has itself as a sibling (n3)") {
-        assertImage(siblings, n3, Vector(n3))
+        siblings.image(n3) should beSameCollectionAs(Vector(n3))
     }
 
     test("a child of a normal node has the expected siblings (n1)") {
-        assertImage(siblings, n1, Vector(n1, n2))
+        siblings.image(n1) should beSameCollectionAs(Vector(n1, n2))
     }
 
     test("a child of a normal node has the expected siblings (n2)") {
-        assertImage(siblings, n2, Vector(n1, n2))
+        siblings.image(n2) should beSameCollectionAs(Vector(n1, n2))
     }
 
     test("a child of a normal node has the expected siblings (e1)") {
-        assertImage(siblings, e1, Vector(e1, v1))
+        siblings.image(e1) should beSameCollectionAs(Vector(e1, v1))
     }
 
     test("a child of a normal node has the expected siblings (e2)") {
-        assertImage(siblings, e2, Vector(v2, e2))
+        siblings.image(e2) should beSameCollectionAs(Vector(v2, e2))
     }
 
     test("a child of a normal node has the expected siblings (v2)") {
-        assertImage(siblings, v2, Vector(v2, e2))
+        siblings.image(v2) should beSameCollectionAs(Vector(v2, e2))
     }
 
     test("a child of a normal node has the expected siblings (e3)") {
-        assertImage(siblings, e3, Vector(v3, e3))
+        siblings.image(e3) should beSameCollectionAs(Vector(v3, e3))
     }
 
     test("a child of a normal node has the expected siblings (v3)") {
-        assertImage(siblings, v3, Vector(v3, e3))
+        siblings.image(v3) should beSameCollectionAs(Vector(v3, e3))
     }
 
     test("a child of a normal node has the expected siblings (e4)") {
-        assertImage(siblings, e4, Vector(e4, s3))
+        siblings.image(e4) should beSameCollectionAs(Vector(e4, s3))
     }
 
     test("a child of a normal node has the expected siblings (s3)") {
-        assertImage(siblings, s3, Vector(e4, s3))
+        siblings.image(s3) should beSameCollectionAs(Vector(e4, s3))
     }
 
     test("a child of a node with a list component has the expected siblings (s1") {
-        assertImage(siblings, s1, pchildren)
+        siblings.image(s1) should beSameCollectionAs(pchildren)
     }
 
     test("a child of a node with a list component has the expected siblings (s2)") {
-        assertImage(siblings, s2, pchildren)
+        siblings.image(s2) should beSameCollectionAs(pchildren)
     }
 
     test("a child of a node with a list component has the expected siblings (s4)") {
-        assertImage(siblings, s4, pchildren)
+        siblings.image(s4) should beSameCollectionAs(pchildren)
     }
 
     test("a child of a node with a list component has the expected siblings (s5)") {
-        assertImage(siblings, s5, pchildren)
+        siblings.image(s5) should beSameCollectionAs(pchildren)
     }
 
     test("siblings of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
             ptree.next(nonNode)
         }
-        assertResult("node not in tree: Num(1.0)")(i.getMessage)
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
 }

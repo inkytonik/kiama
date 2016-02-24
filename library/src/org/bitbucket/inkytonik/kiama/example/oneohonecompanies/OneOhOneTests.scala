@@ -41,27 +41,27 @@ class OneOhOneTests extends Tests {
         import precedencemod._
 
         test("total of all salaries by rewriting - empty") {
-            assertResult(0.0)(total(empty))
+            total(empty) shouldBe 0.0
         }
 
         test("total of all cut salaries by rewriting - empty") {
-            assertResult(0.0)(total(cut(empty)))
+            total(cut(empty)) shouldBe 0.0
         }
 
         test("total of all salaries by attribution - empty") {
-            assertResult(0.0)(salary(empty))
+            salary(empty) shouldBe 0.0
         }
 
         test("total of all cut salaries by attribution - empty") {
-            assertResult(0.0)(salary(cut(empty)))
+            salary(cut(empty)) shouldBe 0.0
         }
 
         test("department depth - empty") {
-            assertResult(0)(depth(empty))
+            depth(empty) shouldBe 0
         }
 
         test("salaries ordered - empty") {
-            assert(precedence(empty))
+            precedence(empty) shouldBe true
         }
     }
 
@@ -75,27 +75,27 @@ class OneOhOneTests extends Tests {
         import precedencemod._
 
         test("total of all salaries by rewriting - onlymanager") {
-            assertResult(100.0)(total(onlymanager))
+            total(onlymanager) shouldBe 100.0
         }
 
         test("total of all cut salaries by rewriting - onlymanager") {
-            assertResult(50.0)(total(cut(onlymanager)))
+            total(cut(onlymanager)) shouldBe 50.0
         }
 
         test("total of all salaries by attribution - onlymanager") {
-            assertResult(100.0)(salary(onlymanager))
+            salary(onlymanager) shouldBe 100.0
         }
 
         test("total of all cut salaries by attribution - onlymanager") {
-            assertResult(50.0)(salary(cut(onlymanager)))
+            salary(cut(onlymanager)) shouldBe 50.0
         }
 
         test("department depth - onlymanager") {
-            assertResult(1)(depth(onlymanager))
+            depth(onlymanager) shouldBe 1
         }
 
         test("salaries ordered - onlymanager") {
-            assert(precedence(onlymanager))
+            precedence(onlymanager) shouldBe true
         }
     }
 
@@ -107,99 +107,99 @@ class OneOhOneTests extends Tests {
         import precedencemod._
 
         test("total of all salaries by rewriting - company") {
-            assertResult(399747.0)(total(company))
+            total(company) shouldBe 399747.0
         }
 
         test("total of all cut salaries by rewriting - company") {
-            assertResult(199873.5)(total(cut(company)))
+            total(cut(company)) shouldBe 199873.5
         }
 
         test("total of all salaries by attribution - company") {
-            assertResult(399747.0)(salary(company))
+            salary(company) shouldBe 399747.0
         }
 
         test("total of research salaries by attribution - company") {
-            assertResult(137035.0)(salary(research))
+            salary(research) shouldBe 137035.0
         }
 
         test("total of dev salaries by attribution - company") {
-            assertResult(262712.0)(salary(dev))
+            salary(dev) shouldBe 262712.0
         }
 
         test("total of dev1 salaries by attribution - company") {
-            assertResult(28145.0)(salary(dev1))
+            salary(dev1) shouldBe 28145.0
         }
 
         test("total of dev11 salaries by attribution - company") {
-            assertResult(4689.0)(salary(dev11))
+            salary(dev11) shouldBe 4689.0
         }
 
         test("total of all cut salaries by attribution - company") {
-            assertResult(199873.5)(salary(cut(company)))
+            salary(cut(company)) shouldBe 199873.5
         }
 
         test("average salary for company") {
-            assertResult(57106)(averagesalary(company).toInt)
+            averagesalary(company).toInt shouldBe 57106
         }
 
         test("average salary for research department") {
-            assertResult(45678)(averagesalary(research).toInt)
+            averagesalary(research).toInt shouldBe 45678
         }
 
         test("average salary for dev department") {
-            assertResult(65678)(averagesalary(dev).toInt)
+            averagesalary(dev).toInt shouldBe 65678
         }
 
         test("average salary for dev1 department") {
-            assertResult(9381)(averagesalary(dev1).toInt)
+            averagesalary(dev1).toInt shouldBe 9381
         }
 
         test("average salary for dev11 department") {
-            assertResult(2344)(averagesalary(dev11).toInt)
+            averagesalary(dev11).toInt shouldBe 2344
         }
 
         test("craig is above average") {
-            assert(aboveaverage(craig))
+            aboveaverage(craig) shouldBe true
         }
 
         test("klaus is above average") {
-            assert(aboveaverage(klaus))
+            aboveaverage(klaus) shouldBe true
         }
 
         test("joe is below average") {
-            assert(!aboveaverage(joe))
+            !aboveaverage(joe) shouldBe true
         }
 
         test("department depth - company") {
-            assertResult(3)(depth(company))
+            depth(company) shouldBe 3
         }
 
         test("salaries ordered - company") {
-            assert(precedence(company))
+            precedence(company) shouldBe true
         }
 
         test("company employee count is correct") {
-            assertResult(7)(numemp(company))
+            numemp(company) shouldBe 7
         }
 
         test("single employee count is correct") {
-            assertResult(1)(numemp(craig))
+            numemp(craig) shouldBe 1
         }
 
         test("research department employee count is correct") {
-            assertResult(3)(numemp(research))
+            numemp(research) shouldBe 3
         }
 
         test("dev department employee count is correct") {
-            assertResult(4)(numemp(dev))
+            numemp(dev) shouldBe 4
         }
 
         test("dev1 department employee count is correct") {
-            assertResult(3)(numemp(dev1))
+            numemp(dev1) shouldBe 3
         }
 
         test("dev11 department employee count is correct") {
-            assertResult(2)(numemp(dev11))
+            numemp(dev11) shouldBe 2
         }
     }
 
@@ -212,7 +212,7 @@ class OneOhOneTests extends Tests {
         import precedencemod.precedence
 
         test("salaries not ordered - employee") {
-            assertResult(false)(precedence(d))
+            precedence(d) shouldBe false
         }
     }
 
@@ -227,7 +227,7 @@ class OneOhOneTests extends Tests {
         import precedencemod.precedence
 
         test("salaries not ordered - manager") {
-            assertResult(false)(precedence(d2))
+            precedence(d2) shouldBe false
         }
     }
 

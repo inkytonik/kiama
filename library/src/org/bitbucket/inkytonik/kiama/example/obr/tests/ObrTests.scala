@@ -91,9 +91,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
                     info("failed with an exception ")
                     throw (e)
             }
-            val output = emitter.result
-            if (output != s"$expect\n")
-                fail(s"$title generated bad output: $output")
+            emitter.result shouldBe s"$expect\n"
         }
     }
 
@@ -138,8 +136,8 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
 class ObrNumberingTests extends TreeTestDriver {
 
     targettreetest("ObrNumbering", "src/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/codegen/",
-        "except8.obr", checkintdatums(List(3, 1, 4, 0, 2)))
+        "except8.obr", checkintdatums(List(3, 1, 4, 0, 2, 0, -1)))
     targettreetest("ObrNumbering", "src/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/codegen/",
-        "enumtest2.obr", checkintdatums(List(1, 3, 1, 0, 2, 2, 1, 0, 1)))
+        "enumtest2.obr", checkintdatums(List(2, 4, 2, 1, 3, 3, 2, 1, 2, 0, -1)))
 
 }

@@ -54,13 +54,13 @@ class DynamicAttributionTests extends Attribution with Tests {
     test("dynamic attribution base works on Leafs") {
         val definitions = new Definitions
         import definitions._
-        assertResult(2)(sumleaf(Leaf(2)))
+        sumleaf(Leaf(2)) shouldBe 2
     }
 
     test("dynamic attribution base defaults on Pairs") {
         val definitions = new Definitions
         import definitions._
-        assertResult(-1)(sumleaf(Pair(Leaf(1), Leaf(2))))
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe -1
     }
 
     test("dynamic attribute are re-evaluated when reset") {
@@ -69,17 +69,17 @@ class DynamicAttributionTests extends Attribution with Tests {
 
         val t = Leaf(2)
 
-        assertResult(false, "hasBeenComputedAt")(sumleaf.hasBeenComputedAt(t))
-        assertResult(2)(sumleaf(t))
-        assertResult(true, "hasBeenComputedAt")(sumleaf.hasBeenComputedAt(t))
-        assertResult(2)(sumleaf(t))
-        assertResult(1, "evaluation count")(count)
-        assertResult(true, "hasBeenComputedAt")(sumleaf.hasBeenComputedAt(t))
+        sumleaf.hasBeenComputedAt(t) shouldBe false
+        sumleaf(t) shouldBe 2
+        sumleaf.hasBeenComputedAt(t) shouldBe true
+        sumleaf(t) shouldBe 2
+        count shouldBe 1
+        sumleaf.hasBeenComputedAt(t) shouldBe true
         sumleaf.reset()
-        assertResult(false, "hasBeenComputedAt")(sumleaf.hasBeenComputedAt(t))
-        assertResult(2)(sumleaf(t))
-        assertResult(true, "hasBeenComputedAt")(sumleaf.hasBeenComputedAt(t))
-        assertResult(2, "evaluation count")(count)
+        sumleaf.hasBeenComputedAt(t) shouldBe false
+        sumleaf(t) shouldBe 2
+        sumleaf.hasBeenComputedAt(t) shouldBe true
+        count shouldBe 2
     }
 
     test("dynamic attribute can be extended and reduced manually") {
@@ -97,48 +97,48 @@ class DynamicAttributionTests extends Attribution with Tests {
             }
 
         // No modification
-        assertResult(2)(sumleaf(Leaf(2)))
-        assertResult(-1)(sumleaf(Pair(Leaf(1), Leaf(2))))
+        sumleaf(Leaf(2)) shouldBe 2
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe -1
 
         // Add a partial function and take away again
         sumleaf += newcase
-        assertResult(4)(sumleaf(Leaf(4)))
-        assertResult(8)(sumleaf(Pair(Leaf(3), Leaf(5))))
-        assertResult(154)(sumleaf(Pair(Leaf(88), Leaf(88))))
+        sumleaf(Leaf(4)) shouldBe 4
+        sumleaf(Pair(Leaf(3), Leaf(5))) shouldBe 8
+        sumleaf(Pair(Leaf(88), Leaf(88))) shouldBe 154
         sumleaf -= newcase
-        assertResult(6)(sumleaf(Leaf(6)))
-        assertResult(-1)(sumleaf(Pair(Leaf(1), Leaf(2))))
+        sumleaf(Leaf(6)) shouldBe 6
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe -1
 
         // Add another partial function and take away again
         sumleaf += func
-        assertResult(6)(sumleaf(Leaf(6)))
-        assertResult(99)(sumleaf(Pair(Leaf(1), Leaf(2))))
+        sumleaf(Leaf(6)) shouldBe 6
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe 99
         sumleaf -= func
-        assertResult(6)(sumleaf(Leaf(6)))
-        assertResult(-1)(sumleaf(Pair(Leaf(1), Leaf(2))))
+        sumleaf(Leaf(6)) shouldBe 6
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe -1
 
         // Multiple additions and out of order removal
         sumleaf += newcase
         sumleaf += func
-        assertResult(6)(sumleaf(Leaf(6)))
-        assertResult(99)(sumleaf(Pair(Leaf(1), Leaf(2))))
-        assertResult(77)(sumleaf(Leaf(88)))
+        sumleaf(Leaf(6)) shouldBe 6
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe 99
+        sumleaf(Leaf(88)) shouldBe 77
         sumleaf -= newcase
-        assertResult(6)(sumleaf(Leaf(6)))
-        assertResult(99)(sumleaf(Pair(Leaf(1), Leaf(2))))
-        assertResult(88)(sumleaf(Leaf(88)))
+        sumleaf(Leaf(6)) shouldBe 6
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe 99
+        sumleaf(Leaf(88)) shouldBe 88
         sumleaf -= func
-        assertResult(6)(sumleaf(Leaf(6)))
-        assertResult(-1)(sumleaf(Pair(Leaf(1), Leaf(2))))
-        assertResult(88)(sumleaf(Leaf(88)))
+        sumleaf(Leaf(6)) shouldBe 6
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe -1
+        sumleaf(Leaf(88)) shouldBe 88
     }
 
     test("dynamic attribute can be extended and reduced with a using operation") {
         val definitions = new Definitions
         import definitions._
 
-        assertResult(2)(sumleaf(Leaf(2)))
-        assertResult(-1)(sumleaf(Pair(Leaf(1), Leaf(2))))
+        sumleaf(Leaf(2)) shouldBe 2
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe -1
 
         sumleaf.block {
 
@@ -147,8 +147,8 @@ class DynamicAttributionTests extends Attribution with Tests {
                     case Pair(l, r) => sumleaf(l) + sumleaf(r)
                 }
 
-            assertResult(4)(sumleaf(Leaf(4)))
-            assertResult(8)(sumleaf(Pair(Leaf(3), Leaf(5))))
+            sumleaf(Leaf(4)) shouldBe 4
+            sumleaf(Pair(Leaf(3), Leaf(5))) shouldBe 8
 
             sumleaf.block {
 
@@ -157,18 +157,18 @@ class DynamicAttributionTests extends Attribution with Tests {
                         case Pair(l, r) => 42
                     }
 
-                assertResult(4)(sumleaf(Leaf(4)))
-                assertResult(42)(sumleaf(Pair(Leaf(3), Leaf(5))))
+                sumleaf(Leaf(4)) shouldBe 4
+                sumleaf(Pair(Leaf(3), Leaf(5))) shouldBe 42
 
             }
 
-            assertResult(4)(sumleaf(Leaf(4)))
-            assertResult(9)(sumleaf(Pair(Leaf(3), Leaf(6))))
+            sumleaf(Leaf(4)) shouldBe 4
+            sumleaf(Pair(Leaf(3), Leaf(6))) shouldBe 9
 
         }
 
-        assertResult(6)(sumleaf(Leaf(6)))
-        assertResult(-1)(sumleaf(Pair(Leaf(1), Leaf(2))))
+        sumleaf(Leaf(6)) shouldBe 6
+        sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe -1
     }
 
     test("using a dynamic attribute outside its domain raises an exception") {
@@ -182,9 +182,7 @@ class DynamicAttributionTests extends Attribution with Tests {
         val i = intercept[MatchError] {
             sumleaf(Pair(Leaf(1), Leaf(2)))
         }
-        assertResult(s"Pair(Leaf(1),Leaf(2)) (of class org.bitbucket.inkytonik.kiama.attribution.DynamicAttributionTests$$Pair)")(
-            i.getMessage
-        )
+        i.getMessage shouldBe s"Pair(Leaf(1),Leaf(2)) (of class org.bitbucket.inkytonik.kiama.attribution.DynamicAttributionTests$$Pair)"
 
         sumleaf.block {
             sumleaf +=
@@ -192,13 +190,11 @@ class DynamicAttributionTests extends Attribution with Tests {
                     case Pair(Leaf(1), Leaf(2)) => 100
                 }
 
-            assertResult(100)(sumleaf(Pair(Leaf(1), Leaf(2))))
+            sumleaf(Pair(Leaf(1), Leaf(2))) shouldBe 100
             val i = intercept[MatchError] {
                 sumleaf(Pair(Leaf(3), Leaf(1)))
             }
-            assertResult(s"Pair(Leaf(3),Leaf(1)) (of class org.bitbucket.inkytonik.kiama.attribution.DynamicAttributionTests$$Pair)")(
-                i.getMessage
-            )
+            i.getMessage shouldBe s"Pair(Leaf(3),Leaf(1)) (of class org.bitbucket.inkytonik.kiama.attribution.DynamicAttributionTests$$Pair)"
         }
 
     }
@@ -216,17 +212,17 @@ class DynamicAttributionTests extends Attribution with Tests {
         val i1 = intercept[IllegalStateException] {
             direct(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i1.getMessage)
+        i1.getMessage shouldBe "Cycle detected in attribute evaluation 'direct' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i2 = intercept[IllegalStateException] {
             indirect(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i2.getMessage)
+        i2.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
 
         val i3 = intercept[IllegalStateException] {
             indirect2(t)
         }
-        assertResult("Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))")(i3.getMessage)
+        i3.getMessage shouldBe "Cycle detected in attribute evaluation 'indirect2' at Pair(Leaf(3),Pair(Leaf(1),Leaf(10)))"
     }
 
 }

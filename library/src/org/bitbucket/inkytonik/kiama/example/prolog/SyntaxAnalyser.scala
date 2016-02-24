@@ -36,18 +36,18 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         (clause+) ^^ Program
 
     lazy val query =
-        literal <~ "."
+        lit <~ "."
 
     lazy val clause =
-        literal ~ (":-" ~> literals) <~ "." ^^ Rule |
-            literal <~ "." ^^ Fact
+        lit ~ (":-" ~> lits) <~ "." ^^ Rule |
+            lit <~ "." ^^ Fact
 
-    lazy val literal : Parser[Literal] =
+    lazy val lit : Parser[Literal] =
         atom ~ ("(" ~> terms <~ ")") ^^ Pred |
             atom ^^ Atom
 
-    lazy val literals =
-        rep1sep(literal | cut, ",")
+    lazy val lits =
+        rep1sep(lit | cut, ",")
 
     lazy val cut =
         "!" ^^ { case _ => Cut() }
@@ -56,7 +56,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         rep1sep(term, ",")
 
     lazy val term =
-        literal |
+        lit |
             varr ^^ Var |
             integer |
             list

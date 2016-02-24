@@ -57,55 +57,51 @@ class FiltersTests extends Tests with PrettyPrinter {
             |""".stripMargin
 
         test("keepMaxChars can handle zero count") {
-            assertResult("")(keepMaxChars(0)(output))
+            keepMaxChars(0)(output) shouldBe ""
         }
 
         test("keepMaxChars can handle count in first line") {
-            assertResult("The firs")(keepMaxChars(8)(output))
+            keepMaxChars(8)(output) shouldBe "The firs"
         }
 
         test("keepMaxChars can handle count in an inner line") {
-            assertResult("The first line\n  the s")(keepMaxChars(22)(output))
+            keepMaxChars(22)(output) shouldBe "The first line\n  the s"
         }
 
         test("keepMaxChars can handle count after end") {
-            assertResult(output)(keepMaxChars(200)(output))
+            keepMaxChars(200)(output) shouldBe output
         }
 
         test("keepMaxLines can handle zero count") {
-            assertResult("")(keepMaxLines(0)(output))
+            keepMaxLines(0)(output) shouldBe ""
         }
 
         test("keepMaxLines can handle one count") {
-            assertResult("The first line\n")(keepMaxLines(1)(output))
+            keepMaxLines(1)(output) shouldBe "The first line\n"
         }
 
         test("keepMaxLines can handle an inner count") {
-            assertResult("The first line\n  the second, line\n    the third line!\n")(
-                keepMaxLines(3)(output)
-            )
+            keepMaxLines(3)(output) shouldBe "The first line\n  the second, line\n    the third line!\n"
         }
 
         test("keepMaxLines can handle count after end") {
-            assertResult(output)(keepMaxLines(10)(output))
+            keepMaxLines(10)(output) shouldBe output
         }
 
         test("keepMaxWords can handle zero count") {
-            assertResult("")(keepMaxWords(0)(output))
+            keepMaxWords(0)(output) shouldBe ""
         }
 
         test("keepMaxWords can handle count in first line") {
-            assertResult("The first")(keepMaxWords(2)(output))
+            keepMaxWords(2)(output) shouldBe "The first"
         }
 
         test("keepMaxWords can handle count in an inner line") {
-            assertResult("The first line\n  the second, line\n    the third")(
-                keepMaxWords(8)(output)
-            )
+            keepMaxWords(8)(output) shouldBe "The first line\n  the second, line\n    the third"
         }
 
         test("keepMaxWords can handle count after end") {
-            assertResult(output.init)(keepMaxWords(20)(output))
+            keepMaxWords(20)(output) shouldBe output.init
         }
 
     }
@@ -125,29 +121,27 @@ class FiltersTests extends Tests with PrettyPrinter {
             |""".stripMargin
 
         test("keepMaxIndent with indent of zero replaces all") {
-            assertResult("...\n")(keepMaxIndent(0, output))
+            keepMaxIndent(0, output) shouldBe "...\n"
         }
 
         test("keepMaxIndent with indent of one keeps just top-level lines") {
-            val result =
+            keepMaxIndent(1, output) shouldBe
                 """ ...
                 |the second line
                 | ...
                 |the ninth line
                 | ...
                 |""".stripMargin
-            assertResult(result)(keepMaxIndent(1, output))
         }
 
         test("keepMaxIndent with indent of two keeps just top-level lines") {
-            val result =
+            keepMaxIndent(2, output) shouldBe
                 """  ...
                 |the second line
                 |  ...
                 |the ninth line
                 |  ...
                 |""".stripMargin
-            assertResult(result)(keepMaxIndent(2, output))
         }
 
         test("keepMaxIndent with indent of two and FIXME insertion works") {
@@ -155,19 +149,18 @@ class FiltersTests extends Tests with PrettyPrinter {
             def fixmeInsertion(n : Int, s : String) : String =
                 s"""${"FIXME" * n}\n"""
 
-            val result =
+            keepMaxIndent(2, output, fixmeInsertion) shouldBe
                 """FIXMEFIXME
                 |the second line
                 |FIXMEFIXME
                 |the ninth line
                 |FIXMEFIXME
                 |""".stripMargin
-            assertResult(result)(keepMaxIndent(2, output, fixmeInsertion))
 
         }
 
         test("keepMaxIndent with indent of three keeps top two levels") {
-            val result =
+            keepMaxIndent(3, output) shouldBe
                 """  The first line
                 |the second line
                 |  the third line
@@ -178,11 +171,10 @@ class FiltersTests extends Tests with PrettyPrinter {
                 |the ninth line
                 |   ...
                 |""".stripMargin
-            assertResult(result)(keepMaxIndent(3, output))
         }
 
         test("keepMaxIndent with indent of four keeps top two levels") {
-            val result =
+            keepMaxIndent(4, output) shouldBe
                 """  The first line
                 |the second line
                 |  the third line
@@ -193,11 +185,10 @@ class FiltersTests extends Tests with PrettyPrinter {
                 |the ninth line
                 |    ...
                 |""".stripMargin
-            assertResult(result)(keepMaxIndent(4, output))
         }
 
         test("keepMaxIndent with indent of five keeps everything") {
-            assertResult(output)(keepMaxIndent(5, output))
+            keepMaxIndent(5, output) shouldBe output
         }
 
     }

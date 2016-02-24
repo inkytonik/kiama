@@ -98,39 +98,39 @@ class InheritanceNameResolutionTests extends Tests {
     import analyser._
 
     test("members are resolved in nested classes") {
-        assertResult(declAa)(decl(aInAA))
+        decl(aInAA) shouldBe declAa
     }
 
     test("nested members shadow outer members") {
-        assertResult(declAAb)(decl(bInAA))
+        decl(bInAA) shouldBe declAAb
     }
 
     test("class names are resolved in extends clauses") {
-        assertResult(declA)(decl(AinB))
+        decl(AinB) shouldBe declA
     }
 
     test("inherited members are resolved") {
-        assertResult(declAa)(decl(aInB))
+        decl(aInB) shouldBe declAa
     }
 
     test("local members hide inherited ones") {
-        assertResult(declBc)(decl(cInB))
+        decl(cInB) shouldBe declBc
     }
 
     test("inherited inner classes are resolved") {
-        assertResult(declAA)(decl(AAinBB))
+        decl(AAinBB) shouldBe declAA
     }
 
     test("inner references to members of outer class are resolved") {
-        assertResult(declBf)(decl(fInBB))
+        decl(fInBB) shouldBe declBf
     }
 
     test("inner references to inherited members of outer class are resolved") {
-        assertResult(declAa)(decl(aInBB))
+        decl(aInBB) shouldBe declAa
     }
 
     test("inherited members shadow outer occurrences of the same name") {
-        assertResult(declAAe)(decl(eInBB))
+        decl(eInBB) shouldBe declAAe
     }
 
 }

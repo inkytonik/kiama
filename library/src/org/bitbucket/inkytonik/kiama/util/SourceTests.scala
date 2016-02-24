@@ -29,35 +29,35 @@ class SourceTests extends Tests {
     import Source.dropPrefix
 
     test("dropPrefix copes with empty filename") {
-        assertResult("")(dropPrefix("", "/foo/bar"))
+        dropPrefix("", "/foo/bar") shouldBe ""
     }
 
     test("dropPrefix correctly drops nothing if prefix is empty") {
-        assertResult("/foo/bar/ble.txt")(dropPrefix("/foo/bar/ble.txt", ""))
+        dropPrefix("/foo/bar/ble.txt", "") shouldBe "/foo/bar/ble.txt"
     }
 
     test("dropPrefix correctly drops prefix that is there") {
-        assertResult("ble.txt")(dropPrefix("/foo/bar/ble.txt", "/foo/bar"))
+        dropPrefix("/foo/bar/ble.txt", "/foo/bar") shouldBe "ble.txt"
     }
 
     test("dropPrefix correctly drops prefix that is whole filename") {
-        assertResult("")(dropPrefix("/foo/bar/ble.txt", "/foo/bar/ble.txt"))
+        dropPrefix("/foo/bar/ble.txt", "/foo/bar/ble.txt") shouldBe ""
     }
 
     test("dropPrefix correctly ignores prefix that isn't there") {
-        assertResult("/foo/bar/ble.txt")(dropPrefix("/foo/bar/ble.txt", "bob/harry"))
+        dropPrefix("/foo/bar/ble.txt", "bob/harry") shouldBe "/foo/bar/ble.txt"
     }
 
     test("dropPrefix correctly deals with filename that is prefix of prefix") {
-        assertResult("")(dropPrefix("/foo/bar", "/foo/bar/ble.txt"))
+        dropPrefix("/foo/bar", "/foo/bar/ble.txt") shouldBe ""
     }
 
     test("dropPrefix correctly deals with empty filename") {
-        assertResult("")(dropPrefix("", "/bob/harry"))
+        dropPrefix("", "/bob/harry") shouldBe ""
     }
 
     test("dropPrefix correctly deals with empty prefix") {
-        assertResult("/foo/bar/ble.txt")(dropPrefix("/foo/bar/ble.txt", ""))
+        dropPrefix("/foo/bar/ble.txt", "") shouldBe "/foo/bar/ble.txt"
     }
 
 }

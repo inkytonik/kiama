@@ -55,34 +55,34 @@ class MemoRewriterTests extends {
     test("a memoising strategy actually memoises") {
         val s = everywhere(atob).asInstanceOf[MemoStrategy]
         val t : N = A()
-        assert(!s.hasBeenComputedAt(t))
+        s.hasBeenComputedAt(t) shouldBe false
         val result = rewrite(s)(t)
-        assertResult(B())(result)
-        assert(s.hasBeenComputedAt(t))
-        assertSame(result)(rewrite(s)(t))
+        result shouldBe B()
+        s.hasBeenComputedAt(t) shouldBe true
+        rewrite(s)(t) should be theSameInstanceAs result
         s.reset()
-        assert(!s.hasBeenComputedAt(t))
-        assertResult(B())(rewrite(s)(t))
-        assert(s.hasBeenComputedAt(t))
+        s.hasBeenComputedAt(t) shouldBe false
+        rewrite(s)(t) shouldBe B()
+        s.hasBeenComputedAt(t) shouldBe true
     }
 
     test("resetting all memoising strategies actually does reset them") {
         val r = atob.asInstanceOf[MemoStrategy]
         val s = everywheretd(atob).asInstanceOf[MemoStrategy]
         val t = P(A(), A())
-        assert(!s.hasBeenComputedAt(t))
-        assert(!r.hasBeenComputedAt(t.l))
-        assert(!r.hasBeenComputedAt(t.r))
-        assertResult(P(B(), B()))(rewrite(s)(t))
-        assert(s.hasBeenComputedAt(t))
-        assert(r.hasBeenComputedAt(t.l))
-        assert(r.hasBeenComputedAt(t.r))
+        s.hasBeenComputedAt(t) shouldBe false
+        r.hasBeenComputedAt(t.l) shouldBe false
+        r.hasBeenComputedAt(t.r) shouldBe false
+        rewrite(s)(t) shouldBe P(B(), B())
+        s.hasBeenComputedAt(t) shouldBe true
+        r.hasBeenComputedAt(t.l) shouldBe true
+        r.hasBeenComputedAt(t.r) shouldBe true
         s.reset()
         r.reset()
-        assert(!s.hasBeenComputedAt(t))
-        assert(!r.hasBeenComputedAt(t.l))
-        assert(!r.hasBeenComputedAt(t.r))
-        assertResult(P(B(), B()))(rewrite(s)(t))
+        s.hasBeenComputedAt(t) shouldBe false
+        r.hasBeenComputedAt(t.l) shouldBe false
+        r.hasBeenComputedAt(t.r) shouldBe false
+        rewrite(s)(t) shouldBe P(B(), B())
     }
 
     /**
@@ -99,19 +99,18 @@ class MemoRewriterTests extends {
 
         test(s"memo rewriting produces correct term ($direction)") {
             val expected = P(P(P(B(), B()), P(B(), B())), P(P(B(), B()), P(B(), B())))
-            assertResult(expected)(result)
+            result shouldBe expected
         }
 
         test(s"memo rewriting preserves top-level sharing ($direction)") {
-            assertSame(result.l)(result.r)
+            result.r should be theSameInstanceAs result.l
         }
 
         test(s"memo rewriting preserves second-level sharing ($direction)") {
             val lp = result.l.asInstanceOf[P]
             val rp = result.r.asInstanceOf[P]
-            assertSame(lp.l)(lp.r)
-            assertSame(lp.r)(rp.l)
-            assertSame(rp.l)(rp.r)
+            lp.r should be theSameInstanceAs lp.l
+            rp.r should be theSameInstanceAs rp.l
         }
 
         test(s"memo rewriting preserves third-level sharing ($direction)") {
@@ -119,12 +118,12 @@ class MemoRewriterTests extends {
             val lrs = result.l.asInstanceOf[P].r.asInstanceOf[P]
             val rls = result.r.asInstanceOf[P].l.asInstanceOf[P]
             val rrs = result.r.asInstanceOf[P].r.asInstanceOf[P]
-            assertSame(lls.l)(lrs.l)
-            assertSame(lrs.l)(rls.l)
-            assertSame(rls.l)(rrs.l)
-            assertSame(lls.r)(lrs.r)
-            assertSame(lrs.r)(rls.r)
-            assertSame(rls.r)(rrs.r)
+            lrs.l should be theSameInstanceAs lls.l
+            rls.l should be theSameInstanceAs lrs.l
+            rrs.l should be theSameInstanceAs rls.l
+            lrs.r should be theSameInstanceAs lls.r
+            rls.r should be theSameInstanceAs lrs.r
+            rrs.r should be theSameInstanceAs rls.r
         }
 
     }
@@ -148,10 +147,10 @@ class MemoRewriterTests extends {
         test("conditional node fusion preserves sharing") {
             val expected = P(S(T(S(A()), 2)), S(S(T(S(A()), 2))))
             val result = rewrite(fuse)(root)
-            assertResult(expected)(result)
+            result shouldBe expected
             val resultls = result.l.asInstanceOf[S]
             val resultrss = result.r.asInstanceOf[S].n.asInstanceOf[S]
-            assertSame(resultls.n)(resultrss.n)
+            resultrss.n should be theSameInstanceAs resultls.n
         }
     }
 

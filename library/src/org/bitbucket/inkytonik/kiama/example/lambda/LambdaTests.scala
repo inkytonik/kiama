@@ -30,79 +30,68 @@ import org.bitbucket.inkytonik.kiama.util.GeneratingREPL
 class LambdaTests extends ParseTests with Evaluator with Generator {
 
     import LambdaTree._
+    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.util.StringSource
     import org.scalacheck.Prop._
 
     val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.exp
 
     /**
-     * Parse and evaluate `term` then compare to `expected`.
+     * Parse and evaluate the term string and if it works return the result
+     * of the evaluation as an expression. It the term fails to parse,
+     * return the error message.
      */
-    def assertEval(term : String, expected : Exp) {
-        assertParseCheck(term, parser) {
-            exp =>
-                normal(exp) match {
-                    case Some(r) => assertResult(expected)(r)
-                    case None    => fail(s"reduction failed: $term")
-                }
+    def eval(term : String) : Either[String, Exp] = {
+        parsers.parseAll(parsers.exp, StringSource(term)) match {
+            case Success(exp, _) =>
+                Right(evaluate(exp))
+            case Failure(msg, _) =>
+                Left(msg)
         }
     }
 
-    /**
-     * Parse and evaluate term then compare to expected result, returning
-     * the result of the comparison.
-     */
-    def evalTo(term : String, expected : Exp) : Boolean =
-        assertParseCheck(term, parser) {
-            exp =>
-                normal(exp) match {
-                    case Some(r) => r == expected
-                    case None    => false
-                }
-        }
-
     test("an integer leaf evaluates to itself") {
-        check((i : Int) => (i >= 0) ==> evalTo(i.toString, Num(i)))
+        check((i : Int) => (i >= 0) ==> (eval(i.toString) == Right(Num(i))))
     }
 
     test("a variable leaf evaluates to itself") {
-        check((v : Var) => evalTo(v.toString, v))
+        check((v : Var) => (eval(v.toString) == Right(v)))
     }
 
     test("a numeric parameter is passed and ignored") {
-        assertEval("""(\x.99) 42""", Num(99))
+        eval("""(\x.99) 42""") shouldBe Right(Num(99))
     }
 
     test("a numeric parameter is passed and substituted") {
-        assertEval("""(\x.x) 42""", Num(42))
+        eval("""(\x.x) 42""") shouldBe Right(Num(42))
     }
 
     test("recursive application works") {
-        assertEval("""(\y.y) (\x.x) 42""", Num(42))
+        eval("""(\y.y) (\x.x) 42""") shouldBe Right(Num(42))
     }
 
     test("name capturing is avoided (1)") {
-        assertEval("""(\x.x) x""", Var("x"))
+        eval("""(\x.x) x""") shouldBe Right(Var("x"))
     }
 
     test("name capturing is avoided (2)") {
-        assertEval("""(\x.\y.x) y""", Lam("_v0", Var("y")))
+        eval("""(\x.\y.x) y""") shouldBe Right(Lam("_v0", Var("y")))
     }
 
     test("name capturing is avoided (3)") {
-        assertEval("""(\x. x y) (\x. y x)""", App(Var("y"), Var("y")))
+        eval("""(\x. x y) (\x. y x)""") shouldBe Right(App(Var("y"), Var("y")))
     }
 
     test("a function parameter is passed and ignored") {
-        assertEval("""(\x.99) (\y.y)""", Num(99))
+        eval("""(\x.99) (\y.y)""") shouldBe Right(Num(99))
     }
 
     test("a function parameter is passed and substituted") {
-        assertEval("""(\x.x) (\y.y)""", Lam("y", Var("y")))
+        eval("""(\x.x) (\y.y)""") shouldBe Right(Lam("y", Var("y")))
     }
 
     test("a variable is substituted at multiple levels") {
-        assertEval("""(\y.(\z.z) y) x""", Var("x"))
+        eval("""(\y.(\z.z) y) x""") shouldBe Right(Var("x"))
     }
 
     /**
@@ -112,7 +101,11 @@ class LambdaTests extends ParseTests with Evaluator with Generator {
      *  (((if-then-else)false)42)99 -> 99
      */
     test("Church encodings of Booleans work") {
-        assertEval("""(((\a.\b.\c.((a)b)c) (\x.\y.y)) 42) 99""", Num(99))
+        eval("""(((\a.\b.\c.((a)b)c) (\x.\y.y)) 42) 99""") shouldBe Right(Num(99))
+    }
+
+    test("a syntactically invalid term produces a parse error") {
+        eval("""(\x ,99 42""") shouldBe Left("'.' expected but ',' found")
     }
 
 }

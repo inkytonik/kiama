@@ -28,152 +28,158 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
  */
 class LambdaTests extends ParseTests {
 
+    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.rewriting.NominalTree.Name
+    import org.scalatest.matchers.{Matcher, MatchResult}
+
+    /**
+     * Abstract syntax constructs that are common to all nominal rewriters.
+     * These definitions need to be separate from the NominalRewriter class
+     * so that the classes here don't get an outer field referring to an
+     * instance of that class.
+     */
+    object NominalTree
+
     val parsers = new SyntaxAnalyser(positions)
     import parsers.{exp, query}
 
     /**
-     * Try to parse and evaluate str as a query then evaluate the query
-     * and compare the outcome to `expected`. `T` is the result type of
-     * the query.
+     * Matcher for query parsing and evaluation with expected value.
      */
-    def assertQuery[T](str : String, expected : T) {
-        assertParseCheck(str, query) {
-            exp =>
-                {
-                    val evaluator = new Evaluator
-                    assertResult(expected)(evaluator.execute(exp))
+    def queryTo[T](expected : T) =
+        new Matcher[String] {
+            def apply(term : String) =
+                parsers.query(term) match {
+                    case Success(query, _) =>
+                        val evaluator = new Evaluator
+                        val value = evaluator.execute(query)
+                        MatchResult(
+                            value == expected,
+                            s""""$term" evaluated to "$value" not expected "$expected"""",
+                            s""""$term" evaluated to "$expected""""
+                        )
+                    case Failure(msg, _) =>
+                        MatchResult(
+                            false,
+                            s""""$term" failed to parse: $msg"""",
+                            "NOT USED"
+                        )
                 }
         }
-    }
 
     /**
-     * As for assertQuery except that the expected result is the `toString`
-     * of the query result.
+     * Same as `queryTo` but the expected value comes in string form and is
+     * parsed as an expresion to obtain the actual expected value.
      */
-    def assertQueryPrint[T](str : String, expected : String) {
-        assertParseCheck(str, query) {
-            exp =>
-                {
-                    val evaluator = new Evaluator
-                    assertResult(expected)(evaluator.execute(exp).toString)
+    def evalTo[T](expectedStr : String) =
+        new Matcher[String] {
+            def apply(term : String) =
+                parsers.exp(expectedStr) match {
+                    case Success(exp, _) =>
+                        queryTo(exp)(term)
+                    case Failure(msg, _) =>
+                        MatchResult(
+                            false,
+                            s""""$expectedStr" failed to parse: $msg"""",
+                            "NOT USED"
+                        )
                 }
         }
-    }
-
-    /**
-     * As for assertQuery except that the expected result is a string
-     * which is first parsed as an expression to obtain the expected result
-     * value.
-     */
-    def assertQueryParse(str : String, expectedStr : String) {
-        assertParseCheck(expectedStr, exp) {
-            expected =>
-                assertQuery(str, expected)
-        }
-    }
-
-    // Test construction short-hands
-
-    def mkvaluetest[T](s : String, r : T) {
-        test(s"$s is $r") {
-            assertQuery(s, r)
-        }
-    }
-
-    def mkprinttest(s : String, r : String) {
-        test(s"$s is $r") {
-            assertQueryPrint(s, r)
-        }
-    }
-
-    def mkparsetest(s : String, r : String) {
-        test(s"$s is $r") {
-            assertQueryParse(s, r)
-        }
-    }
 
     // Freshness
 
-    mkvaluetest("e # 1", true)
-    mkvaluetest("e # e", false)
-    mkvaluetest("e # f", true)
-    mkvaluetest("e # (\\e . e)", true)
-    mkvaluetest("e # (\\f . f)", true)
-    mkvaluetest("e # (\\f . e)", false)
-    mkvaluetest("e # (\\f . f) (\\g . g)", true)
-    mkvaluetest("e # (\\f . f) (\\e . e)", true)
-    mkvaluetest("e # (\\f . f) (\\g . e)", false)
+    test("freshness evaluates correctly") {
+        "e # 1" should queryTo(true)
+        "e # e" should queryTo(false)
+        "e # f" should queryTo(true)
+        "e # (\\e . e)" should queryTo(true)
+        "e # (\\f . f)" should queryTo(true)
+        "e # (\\f . e)" should queryTo(false)
+        "e # (\\f . f) (\\g . g)" should queryTo(true)
+        "e # (\\f . f) (\\e . e)" should queryTo(true)
+        "e # (\\f . f) (\\g . e)" should queryTo(false)
+    }
 
     // Swapping
 
-    mkparsetest("(a <-> a) a", "a")
-    mkparsetest("(a <-> a) b", "b")
-    mkparsetest("(a <-> b) a", "b")
-    mkparsetest("(a <-> b) b", "a")
-    mkparsetest("(a <-> b) c", "c")
-    mkparsetest("(a <-> b) a b", "b a")
-    mkparsetest("(a <-> b) a c", "b c")
-    mkparsetest("(a <-> b) c b", "c a")
-    mkparsetest("(a <-> b) \\x . x", "\\x . x")
-    mkparsetest("(a <-> b) \\a . a", "\\b . b")
-    mkparsetest("(a <-> b) \\b . b", "\\a . a")
-    mkparsetest("(a <-> b) (\\b . b a) (\\x . x)", "(\\a . a b) (\\x . x)")
-    mkparsetest("(a <-> b) (\\a . b) (\\b . a)", "(\\b . a) (\\a . b)")
+    test("swapping evaluates correctly") {
+        "(a <-> a) a" should evalTo("a")
+        "(a <-> a) b" should evalTo("b")
+        "(a <-> b) a" should evalTo("b")
+        "(a <-> b) b" should evalTo("a")
+        "(a <-> b) c" should evalTo("c")
+        "(a <-> b) a b" should evalTo("b a")
+        "(a <-> b) a c" should evalTo("b c")
+        "(a <-> b) c b" should evalTo("c a")
+        "(a <-> b) \\x . x" should evalTo("\\x . x")
+        "(a <-> b) \\a . a" should evalTo("\\b . b")
+        "(a <-> b) \\b . b" should evalTo("\\a . a")
+        "(a <-> b) (\\b . b a) (\\x . x)" should evalTo("(\\a . a b) (\\x . x)")
+        "(a <-> b) (\\a . b) (\\b . a)" should evalTo("(\\b . a) (\\a . b)")
+    }
 
     // Alpha equivalence
 
-    mkvaluetest("a === a", true)
-    mkvaluetest("a === b", false)
-    mkvaluetest("a === \\x . x", false)
-    mkvaluetest("a === b c", false)
-    mkvaluetest("\\a . a === \\b . b", true)
-    mkvaluetest("\\a . a === \\b . a", false)
-    mkvaluetest("\\a . a === a b", false)
-    mkvaluetest("\\a . \\a . a === \\b . \\a . b", false)
-    mkvaluetest("\\a . \\a . a === \\a . \\a . b", false)
-    mkvaluetest("\\a . \\a . a === \\b . \\a . a", true)
-    mkvaluetest("(\\x . x) (\\y. y) === (\\a . a) (\\b . b)", true)
-    mkvaluetest("(\\x . x) (\\y. y) === (\\x . x) (\\b . b)", true)
-    mkvaluetest("(\\x . x) (\\y. y) === (\\x . y) (\\y . x)", false)
+    test("alpha equivalence evaluates correctly") {
+        "a === a" should queryTo(true)
+        "a === b" should queryTo(false)
+        "a === \\x . x" should queryTo(false)
+        "a === b c" should queryTo(false)
+        "\\a . a === \\b . b" should queryTo(true)
+        "\\a . a === \\b . a" should queryTo(false)
+        "\\a . a === a b" should queryTo(false)
+        "\\a . \\a . a === \\b . \\a . b" should queryTo(false)
+        "\\a . \\a . a === \\a . \\a . b" should queryTo(false)
+        "\\a . \\a . a === \\b . \\a . a" should queryTo(true)
+        "(\\x . x) (\\y. y) === (\\a . a) (\\b . b)" should queryTo(true)
+        "(\\x . x) (\\y. y) === (\\x . x) (\\b . b)" should queryTo(true)
+        "(\\x . x) (\\y. y) === (\\x . y) (\\y . x)" should queryTo(false)
+    }
 
     // Substitution
 
-    mkparsetest("[a -> 1] a", "1")
-    mkparsetest("[a -> 1] b", "b")
-    mkparsetest("[a -> 1] \\x . x", "\\x0 . x0")
-    mkparsetest("[a -> 1] \\x . a", "\\x0 . 1")
-    mkparsetest("[a -> b] \\a . a", "\\a0 . a0")
-    mkparsetest("[a -> b] \\b . a", "\\b0 . b")
-    mkparsetest("[a -> b] \\b . b a", "\\b0 . b0 b")
-    mkparsetest("[a -> b] \\b . \\a . a", "\\b0 . \\a1 . a1")
+    test("substitution evaluates correctly") {
+        "[a -> 1] a" should evalTo("1")
+        "[a -> 1] b" should evalTo("b")
+        "[a -> 1] \\x . x" should evalTo("\\x0 . x0")
+        "[a -> 1] \\x . a" should evalTo("\\x0 . 1")
+        "[a -> b] \\a . a" should evalTo("\\a0 . a0")
+        "[a -> b] \\b . a" should evalTo("\\b0 . b")
+        "[a -> b] \\b . b a" should evalTo("\\b0 . b0 b")
+        "[a -> b] \\b . \\a . a" should evalTo("\\b0 . \\a1 . a1")
+    }
 
     // Free variables
 
-    mkprinttest("fv 1", "Set()")
-    mkprinttest("fv a", "Set(a)")
-    mkprinttest("fv a b", "Set(a, b)")
-    mkprinttest("fv \\a . a", "Set()")
-    mkprinttest("fv \\a . b", "Set(b)")
-    mkprinttest("fv \\a . a b", "Set(b)")
-    mkprinttest("fv \\a . b a", "Set(b)")
-    mkprinttest("fv \\a . b c", "Set(b, c)")
-    mkprinttest("fv \\a . \\b . a", "Set()")
-    mkprinttest("fv \\a . \\b . b", "Set()")
-    mkprinttest("fv \\a . \\b . c", "Set(c)")
+    test("free variables are calculated correctly") {
+        "fv 1" should queryTo(Set())
+        "fv a" should queryTo(Set(Name("a")))
+        "fv a b" should queryTo(Set(Name("a"), Name("b")))
+        "fv \\a . a" should queryTo(Set())
+        "fv \\a . b" should queryTo(Set(Name("b")))
+        "fv \\a . a b" should queryTo(Set(Name("b")))
+        "fv \\a . b a" should queryTo(Set(Name("b")))
+        "fv \\a . b c" should queryTo(Set(Name("b"), Name("c")))
+        "fv \\a . \\b . a" should queryTo(Set())
+        "fv \\a . \\b . b" should queryTo(Set())
+        "fv \\a . \\b . c" should queryTo(Set(Name("c")))
+    }
 
     // Evaluation
 
-    mkparsetest("1", "1")
-    mkparsetest("a", "a")
-    mkparsetest("a b", "a b")
-    mkparsetest("a (\\b . b)", "a (\\b . b)")
-    mkparsetest("a (\\b . b) 1", "(a (\\b . b)) 1")
-    mkparsetest("a ((\\b . b) 1)", "a ((\\b . b) 1)")
-    mkparsetest("(\\a . a) 1", "1")
-    mkparsetest("(\\a . a) a", "a")
-    mkparsetest("(\\a . a) b", "b")
-    mkparsetest("(\\a . a) (\\b . b) a", "a")
-    mkparsetest("(\\a . a c) (\\b . b)", "c")
-    mkparsetest("(\\a . \\b . a b) b", "\\b0 . b b0")
+    test("basic evaluation works correctly") {
+        "1" should evalTo("1")
+        "a" should evalTo("a")
+        "a b" should evalTo("a b")
+        "a (\\b . b)" should evalTo("a (\\b . b)")
+        "a (\\b . b) 1" should evalTo("(a (\\b . b)) 1")
+        "a ((\\b . b) 1)" should evalTo("a ((\\b . b) 1)")
+        "(\\a . a) 1" should evalTo("1")
+        "(\\a . a) a" should evalTo("a")
+        "(\\a . a) b" should evalTo("b")
+        "(\\a . a) (\\b . b) a" should evalTo("a")
+        "(\\a . a c) (\\b . b)" should evalTo("c")
+        "(\\a . \\b . a b) b" should evalTo("\\b0 . b b0")
+    }
 
 }
