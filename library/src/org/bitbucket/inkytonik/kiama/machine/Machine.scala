@@ -22,18 +22,18 @@ package org.bitbucket.inkytonik.kiama
 package machine
 
 import java.lang.Exception
-import org.bitbucket.inkytonik.kiama.util.{Emitter, ErrorEmitter}
+import org.bitbucket.inkytonik.kiama.util.{Emitter, OutputEmitter}
 import org.bitbucket.inkytonik.kiama.output.PrettyPrinter
 
 /**
  * A deterministic abstract state machine defined by its main rule and
  * called `name`.  Tracing messages are output to the given emitter, which
- * defaults to standard error. You should avoid accessing a single
+ * defaults to terminal output. You should avoid accessing a single
  * machine frmom multiple threads since the machine encapsulates
  * state and updates. Machines are designed to be used in a single-threaded
  * fashion.
  */
-abstract class Machine(val name : String, emitter : Emitter = new ErrorEmitter)
+abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
         extends PrettyPrinter {
 
     import scala.annotation.tailrec

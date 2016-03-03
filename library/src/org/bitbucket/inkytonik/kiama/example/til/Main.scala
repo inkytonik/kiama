@@ -33,7 +33,7 @@ trait ParsingMain extends Compiler[Program] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
 
     def process(source : Source, ast : Program, config : Config) {
-        config.output.emitln(ast)
+        config.output().emitln(ast)
     }
 
     def format(ast : Program) : Document =

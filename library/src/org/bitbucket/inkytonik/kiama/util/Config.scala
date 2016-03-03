@@ -28,21 +28,53 @@ import org.rogach.scallop.ScallopConf
  * arguments that are used to determine many of the configuration
  * settings.
  */
-abstract class Config(args : Seq[String]) extends ScallopConf(args) {
+class Config(args : Seq[String]) extends ScallopConf(args) with Memoiser {
 
     import org.bitbucket.inkytonik.kiama.util.{FileConsole, JLineConsole, StringConsole}
     import org.rogach.scallop.{ArgType, ValueConverter}
     import scala.reflect.runtime.universe.TypeTag
 
     /**
-     * The emitter to use for normal output.
+     * The string emitter to use if a '--Koutput string' option is seen.
      */
-    def output : Emitter
+    lazy val stringEmitter = new StringEmitter
 
     /**
-     * The emitter to use for error output.
+     * Make a convertor for the output option.
      */
-    def error : Emitter
+    val outputConverter =
+        new ValueConverter[Emitter] with Memoised[String, FileEmitter] {
+
+            val argType = ArgType.LIST
+
+            def parse(s : List[(String, List[String])]) : Either[String, Option[Emitter]] =
+                s match {
+                    case List((_, List("file", filename))) =>
+                        Right(Some(getWithDefault(filename, new FileEmitter(filename))))
+                    case List((_, List("string"))) =>
+                        Right(Some(stringEmitter))
+                    case List((_, _)) =>
+                        Left("expected 'file name' or 'string'")
+                    case _ =>
+                        Right(None)
+                }
+
+            val tag = implicitly[TypeTag[Emitter]]
+
+        }
+
+    /**
+     * The emitter to use for normal output. Defaults to standard output.
+     * Options are output to a string emitter and a file console where the
+     * option value specifies the file name.
+     */
+    lazy val output = opt[Emitter](
+        "Koutput",
+        descr = "Emitter for program output (default: standard output)",
+        default = Some(new OutputEmitter),
+        noshort = true,
+        hidden = true
+    )(outputConverter)
 
     /**
      * Convertor for console options.
@@ -74,10 +106,13 @@ abstract class Config(args : Seq[String]) extends ScallopConf(args) {
      * contents, and a file console where the option value specifies the
      * file name.
      */
-    lazy val console = opt[Console]("Kconsole", descr = "Console for program input",
+    lazy val console = opt[Console](
+        "Kconsole",
+        descr = "Console for program input (default: JLine console)",
         default = Some(JLineConsole),
         noshort = true,
-        hidden = true)(consoleConverter)
+        hidden = true
+    )(consoleConverter)
 
     /**
      * Profiling dimensions.
@@ -126,8 +161,8 @@ abstract class Config(args : Seq[String]) extends ScallopConf(args) {
      */
     errorMessageHandler =
         (message : String) => {
-            error.emitln(s"Command-line error: $message")
-            error.emitln(builder.help)
+            output().emitln(s"Command-line error: $message")
+            output().emitln(builder.help)
             sys.exit(1)
         }
 
@@ -137,7 +172,7 @@ abstract class Config(args : Seq[String]) extends ScallopConf(args) {
  * Configurations for Kiama REPLS. Adds some options to the default
  * set that all Kiama programs support.
  */
-abstract class REPLConfig(args : Seq[String]) extends Config(args) {
+class REPLConfig(args : Seq[String]) extends Config(args) {
 
     /**
      * Whitespace option. If set, pass input lines that are completely white space

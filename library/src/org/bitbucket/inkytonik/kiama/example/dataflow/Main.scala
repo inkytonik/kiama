@@ -40,7 +40,7 @@ class Driver extends Compiler[Stm] {
         val tree = new DataflowTree(ast)
         val optimiser = new Optimiser(tree)
         val optast = optimiser.run(ast)
-        config.output.emitln(optast)
+        config.output().emitln(optast)
     }
 
     def format(ast : Stm) : Document =

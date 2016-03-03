@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.util.{Emitter, REPLConfig, ParsingREPLWithC
 /**
  * Configuration for the Prolog REPL.
  */
-abstract class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
+class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
 
     import org.rogach.scallop.{ArgType, ValueConverter}
     import PrologTree.Program
@@ -74,7 +74,6 @@ object Main extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrin
     import org.bitbucket.inkytonik.kiama.parsing.Success
     import org.bitbucket.inkytonik.kiama.util.{
         Emitter,
-        ErrorEmitter,
         FileSource,
         OutputEmitter,
         Source,
@@ -84,15 +83,8 @@ object Main extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrin
 
     val banner = "Prolog interpreter (exit with end of file: ^Z on Windows, ^D on Mac, Linux, Unix"
 
-    def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : PrologConfig =
-        new PrologConfig(args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    def createConfig(args : Seq[String]) : PrologConfig =
+        new PrologConfig(args)
 
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.query
@@ -143,7 +135,7 @@ object Main extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrin
      * Process a query by passing it and the program to the interpreter.
      */
     def process(source : Source, querytree : Literal, config : PrologConfig) {
-        interpreter.interpret(querytree, config.database(), config.output)
+        interpreter.interpret(querytree, config.database(), config.output())
     }
 
 }

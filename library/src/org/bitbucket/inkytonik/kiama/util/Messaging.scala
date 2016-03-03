@@ -151,9 +151,9 @@ trait Messaging {
 
     /**
      * Output the messages in order of position using the given emitter, which
-     * defaults to standard error.
+     * defaults to terminal output.
      */
-    def report(messages : Messages, emitter : Emitter = new ErrorEmitter) {
+    def report(messages : Messages, emitter : Emitter = new OutputEmitter) {
         emitter.emit(formatMessages(messages))
     }
 

@@ -41,8 +41,8 @@ object Imperative extends ParsingREPL[Stmt] {
     val parser = parsers.stmt
 
     def process(source : Source, s : Stmt, config : REPLConfig) {
-        config.output.emitln(s)
-        config.output.emitln(format(s))
+        config.output().emitln(s)
+        config.output().emitln(format(s))
     }
 
 }

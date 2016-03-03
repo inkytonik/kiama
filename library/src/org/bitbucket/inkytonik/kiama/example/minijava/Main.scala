@@ -65,7 +65,7 @@ trait Driver extends Compiler[Program] {
         // Report any messages that were produced
         if (messages.length > 0) {
 
-            report(messages, config.error)
+            report(messages, config.output())
 
         } else {
 
@@ -80,7 +80,7 @@ trait Driver extends Compiler[Program] {
             // config.output.emitln (layout (any (targettree)))
 
             // Output code for the target tree
-            targettree.map(generate(isTest, _, config.output))
+            targettree.map(generate(isTest, _, config.output()))
 
         }
 

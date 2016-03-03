@@ -80,10 +80,9 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
         val (obrfile, params, expect) = spec
         val title = s"""$name processing $obrfile parameters ${params.mkString("(", ", ", ")")} expecting $expect"""
         test(title) {
-            val emitter = new StringEmitter
-            val args = Seq("--Kconsole", "string", params.mkString("", "\n", "\n"),
+            val args = Seq("--Koutput", "string", "--Kconsole", "string", params.mkString("", "\n", "\n"),
                 "-e", dirname + obrfile)
-            val config = createAndInitConfig(args, emitter)
+            val config = createAndInitConfig(args)
             try {
                 testdriver(config)
             } catch {
@@ -91,7 +90,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
                     info("failed with an exception ")
                     throw (e)
             }
-            emitter.result shouldBe s"$expect\n"
+            config.stringEmitter.result shouldBe s"$expect\n"
         }
     }
 

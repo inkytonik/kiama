@@ -28,7 +28,7 @@ package rewriting
 trait RewriterCore {
 
     import org.bitbucket.inkytonik.kiama.util.Comparison.same
-    import org.bitbucket.inkytonik.kiama.util.{Emitter, ErrorEmitter, OutputEmitter}
+    import org.bitbucket.inkytonik.kiama.util.{Emitter, OutputEmitter}
     import scala.collection.generic.CanBuildFrom
     import scala.collection.immutable.Seq
     import scala.language.higherKinds
@@ -89,10 +89,10 @@ trait RewriterCore {
      * Create a logging strategy based on a strategy `s`. The returned strategy
      * succeeds or fails exactly as `s` does, but also prints the provided message,
      * the subject term, the success or failure status, and on success, the result
-     * term, to the provided emitter (default: standard error). `s` is evaluated
+     * term, to the provided emitter (default: terminal output). `s` is evaluated
      * at most once.
      */
-    def log(s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy = macro RewriterCoreMacros.logMacro
+    def log(s : Strategy, msg : String, emitter : Emitter = new OutputEmitter) : Strategy = macro RewriterCoreMacros.logMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
@@ -120,9 +120,9 @@ trait RewriterCore {
      * Create a logging strategy based on a strategy `s`.  The returned strategy
      * succeeds or fails exactly as `s` does, but if `s` fails, also prints the
      * provided message and the subject term to the provided emitter (default:
-     * standard error). `s` is evaluated at most once.
+     * terminal output). `s` is evaluated at most once.
      */
-    def logfail[T](s : Strategy, msg : String, emitter : Emitter = new ErrorEmitter) : Strategy = macro RewriterCoreMacros.logfailMacro
+    def logfail[T](s : Strategy, msg : String, emitter : Emitter = new OutputEmitter) : Strategy = macro RewriterCoreMacros.logfailMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for

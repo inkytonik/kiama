@@ -47,7 +47,7 @@ class SemanticAnalyserTests extends Compiler[Program] with TestCompiler[Program]
         val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
         if (messages.length > 0)
-            report(messages, config.error)
+            report(messages, config.output())
     }
 
     def format(m : Program) : Document =

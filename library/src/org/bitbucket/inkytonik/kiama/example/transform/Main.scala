@@ -39,7 +39,7 @@ class Driver extends Compiler[Program] {
     def process(source : Source, program : Program, config : Config) {
 
         // Print original program and obtain "no priority" expression
-        config.output.emitln(program)
+        config.output().emitln(program)
         val expr = program.expr
 
         // Check for semantic errors on the original expression.  This
@@ -50,11 +50,11 @@ class Driver extends Compiler[Program] {
         val messages = analyser.errors
 
         // For testing, print the priority-correct representation
-        config.output.emitln(analyser.ast(expr))
+        config.output().emitln(analyser.ast(expr))
 
         // Report any semantic errors
         if (messages.length > 0)
-            report(messages, config.error)
+            report(messages, config.output())
 
     }
 

@@ -44,27 +44,17 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     }
 
     /**
-     * Create the configuration for a particular run of the compiler.
-     * If supplied, use `output` instead of a standard output emitter,
-     * and/or `error` instead of a standard error emitter.
+     * Create the configuration for a particular run of the compiler. Override
+     * this if you have a custom configuration for your compiler.
      */
-    def createConfig(
-        args : Seq[String],
-        output : Emitter = new OutputEmitter,
-        error : Emitter = new ErrorEmitter
-    ) : C
+    def createConfig(args : Seq[String]) : C
 
     /**
      * Create and initialise the configuration for a particular run of the compiler.
-     * If supplied, use `emitter` instead of a standard output emitter. Default:
-     * call `createConfig` and then initialise the resulting configuration.
+     * Default: call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig(
-        args : Seq[String],
-        output : Emitter = new OutputEmitter,
-        error : Emitter = new ErrorEmitter
-    ) : C = {
-        val config = createConfig(args, output, error)
+    def createAndInitConfig(args : Seq[String]) : C = {
+        val config = createConfig(args)
         config.afterInit()
         config
     }
@@ -114,11 +104,11 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
                 case Left(ast) =>
                     process(source, ast, config)
                 case Right(messages) =>
-                    report(messages, config.error)
+                    report(messages, config.output())
             }
         } catch {
             case e : java.io.FileNotFoundException =>
-                config.error.emitln(e.getMessage)
+                config.output().emitln(e.getMessage)
         }
     }
 
@@ -193,14 +183,7 @@ trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
  */
 trait Compiler[T] extends CompilerWithConfig[T, Config] {
 
-    def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : Config =
-        new Config(args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    def createConfig(args : Seq[String]) : Config =
+        new Config(args)
 
 }

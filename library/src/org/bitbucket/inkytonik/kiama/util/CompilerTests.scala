@@ -45,15 +45,14 @@ class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
         emptyDocument
 
     test("compiler driver produces an appropriate message if a file is not found") {
-        val emitter = new StringEmitter
-        val config = createAndInitConfig(Seq("IDoNotExist.txt"), emitter, emitter)
+        val config = createAndInitConfig(Vector("--Koutput", "string", "IDoNotExist.txt"))
         val expectedMsg =
             if (System.getProperty("os.name").startsWith("Windows"))
                 "The system cannot find the file specified"
             else
                 "No such file or directory"
         testdriver(config)
-        emitter.result shouldBe s"IDoNotExist.txt ($expectedMsg)\n"
+        config.stringEmitter.result shouldBe s"IDoNotExist.txt ($expectedMsg)\n"
     }
 
     test("filetests using a directory that doesn't exist fails") {
@@ -76,25 +75,16 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
     import scala.io.Source
 
     /**
-     * Create the configuration for a particular run of the REPL. If supplied, use
-     * `emitter` instead of a standard output emitter.
+     * Create the configuration for a particular run of the program. Override
+     * this if you have a custom configuration for your compiler.
      */
-    def createConfig(
-        args : Seq[String],
-        output : Emitter = new OutputEmitter,
-        error : Emitter = new ErrorEmitter
-    ) : C
+    def createConfig(args : Seq[String]) : C
 
     /**
      * Create and initialise the configuration for a particular run of the REPL.
-     * If supplied, use `emitter` instead of a standard output emitter. Default:
-     * call `createConfig` and then initialise the resulting configuration.
+     * Default: call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig(
-        args : Seq[String],
-        output : Emitter = new OutputEmitter,
-        error : Emitter = new ErrorEmitter
-    ) : C
+    def createAndInitConfig(args : Seq[String]) : C
 
     /**
      * Run the driver in test mode using the given configuration.
@@ -155,8 +145,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
             val ct = args.mkString(" ").replaceAllLiterally("kiama/src/org/bitbucket/inkytonik/kiama/", "")
             val title = s"$name: $ct, expecting $rt$extra"
             test(title) {
-                val emitter = new StringEmitter
-                val config = createAndInitConfig(args, emitter, emitter)
+                val config = createAndInitConfig("--Koutput" +: "string" +: args)
                 positions.reset()
                 try {
                     testdriver(config)
@@ -165,7 +154,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
                         info("failed with an exception ")
                         throw (e)
                 }
-                val cc = emitter.result
+                val cc = config.stringEmitter.result
                 val rc = Source.fromFile(rp).mkString
                 sanitise(cc) shouldBe sanitise(rc)
             }
@@ -195,10 +184,10 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
                 val inf = new File(ip)
                 val (consoleArgs, msg) =
                     if (inf.exists)
-                        (Array("--Kconsole", "file", ip), s" from input $it")
+                        (Vector("--Kconsole", "file", ip), s" from input $it")
                     else
-                        (Array("--Kconsole", "string", indefault), s" from string '$indefault'")
-                filetest(name, rp, consoleArgs ++ args :+ cp, r, msg)
+                        (Vector("--Kconsole", "string", indefault), s" from string '$indefault'")
+                filetest(name, rp, consoleArgs ++ args :+ "--" :+ cp, r, msg)
             }
         }
 
@@ -217,7 +206,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
                                 val cp = s"$path/$c"
                                 val rt = c.replace(srcext, resext)
                                 val rp = s"$path/$rt"
-                                filetest(name, rp, args :+ cp, rt)
+                                filetest(name, rp, args :+ "--" :+ cp, rt)
                         }
                     }
                 }

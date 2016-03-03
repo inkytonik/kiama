@@ -239,7 +239,7 @@ object Lambda extends ParsingREPL[LambdaTree.Query[_]] {
     val parser = parsers.query
 
     def process(source : Source, q : LambdaTree.Query[_], config : REPLConfig) {
-        config.output.emitln(evaluator.execute(q))
+        config.output().emitln(evaluator.execute(q))
     }
 
 }

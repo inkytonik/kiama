@@ -208,7 +208,7 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
                 profile(normal(e), dimensions, config.logging())
             } else
                 normal(e)
-        config.output.emitln(result.getOrElse("reduction failed"))
+        config.output().emitln(result.getOrElse("reduction failed"))
     }
 
 }

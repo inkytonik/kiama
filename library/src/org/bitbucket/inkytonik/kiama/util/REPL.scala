@@ -45,23 +45,14 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      * Create the configuration for a particular run of the REPL. If supplied, use
      * `emitter` instead of a standard output emitter.
      */
-    def createConfig(
-        args : Seq[String],
-        output : Emitter = new OutputEmitter,
-        error : Emitter = new ErrorEmitter
-    ) : C
+    def createConfig(args : Seq[String]) : C
 
     /**
      * Create and initialise the configuration for a particular run of the REPL.
-     * If supplied, use `emitter` instead of a standard output emitter. Default:
-     * call `createConfig` and then initialise the resulting configuration.
+     * Default: call `createConfig` and then initialise the resulting configuration.
      */
-    def createAndInitConfig(
-        args : Seq[String],
-        output : Emitter = new OutputEmitter,
-        error : Emitter = new ErrorEmitter
-    ) : C = {
-        val config = createConfig(args, output, error)
+    def createAndInitConfig(args : Seq[String]) : C = {
+        val config = createConfig(args)
         config.afterInit()
         config
     }
@@ -83,7 +74,7 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
         processfiles(config)
 
         // Enter interactive phase
-        config.output.emitln(banner)
+        config.output().emitln(banner)
         if (config.profile.get != None) {
             val dimensions = parseProfileOption(config.profile())
             profile(processlines(config), dimensions, config.logging())
@@ -92,7 +83,7 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
         else
             processlines(config)
 
-        config.output.emitln
+        config.output().emitln
 
     }
 
@@ -170,15 +161,8 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
  */
 trait REPL extends REPLBase[REPLConfig] {
 
-    def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : REPLConfig =
-        new REPLConfig(args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    def createConfig(args : Seq[String]) : REPLConfig =
+        new REPLConfig(args)
 
 }
 
@@ -217,7 +201,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
                     positions.setStart(f, pos)
                     positions.setFinish(f, pos)
                     val messages = message(f, label)
-                    report(messages, config.error)
+                    report(messages, config.output())
             }
         }
         Some(config)
@@ -242,14 +226,7 @@ trait ParsingREPLWithConfig[T, C <: REPLConfig] extends ParsingREPLBase[T, C]
  */
 trait ParsingREPL[T] extends ParsingREPLWithConfig[T, REPLConfig] {
 
-    def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : REPLConfig =
-        new REPLConfig(args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    def createConfig(args : Seq[String]) : REPLConfig =
+        new REPLConfig(args)
 
 }

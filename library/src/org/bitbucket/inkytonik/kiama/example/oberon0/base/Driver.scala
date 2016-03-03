@@ -29,7 +29,6 @@ import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
     Config,
     Emitter,
-    ErrorEmitter,
     OutputEmitter
 }
 
@@ -57,16 +56,14 @@ trait Driver {
  * of compiler share a configuration type, so some of these settings have no
  * effect for some of the drivers.
  */
-abstract class Oberon0Config(args : Seq[String], testPrettyPrint : Boolean = false) extends Config(args) {
+class Oberon0Config(args : Seq[String]) extends Config(args) {
     lazy val challenge = opt[Boolean]("challenge", 'x', descr = "Run in LDTA challenge mode")
     lazy val astPrint = opt[Boolean]("astPrint", 'a', descr = "Print the abstract syntax tree")
-    lazy val astPrettyPrint = opt[Boolean]("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree",
-        default = Some(testPrettyPrint))
+    lazy val astPrettyPrint = opt[Boolean]("astPrettyPrint", 'A', descr = "Pretty-print the abstract syntax tree")
     lazy val intPrint = opt[Boolean]("intPrint", 'i', descr = "Print the intermediate abstract syntax tree")
     lazy val intPrettyPrint = opt[Boolean]("intPrettyPrint", 'I', descr = "Pretty-print the intermediate abstract syntax tree")
     lazy val cPrint = opt[Boolean]("cPrint", 'c', descr = "Print the C abstract syntax tree")
-    lazy val cPrettyPrint = opt[Boolean]("cPrettyPrint", 'C', descr = "Pretty-print the C abstract syntax tree",
-        default = Some(testPrettyPrint))
+    lazy val cPrettyPrint = opt[Boolean]("cPrettyPrint", 'C', descr = "Pretty-print the C abstract syntax tree")
 }
 
 /**
@@ -80,15 +77,8 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
     import java.io.File
     import org.bitbucket.inkytonik.kiama.util.{Emitter, FileSource, Source}
 
-    override def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : Oberon0Config =
-        new Oberon0Config(args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    override def createConfig(args : Seq[String]) : Oberon0Config =
+        new Oberon0Config(args)
 
     /**
      * Custom driver for section tagging and challenge mode for errors.  If
@@ -96,7 +86,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
      * standard output, otherwise send the message to the errors file.
      */
     override def processfile(filename : String, config : Oberon0Config) {
-        val output = config.output
+        val output = config.output()
         val source = FileSource(filename)
         makeast(source, config) match {
             case Left(ast) =>
@@ -122,7 +112,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
      */
     def process(source : Source, ast : ModuleDecl, config : Oberon0Config) {
 
-        val output = config.output
+        val output = config.output()
 
         // Perform default processing
         if (config.astPrint()) {
@@ -200,7 +190,7 @@ trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDe
      * Process the AST by transforming it.
      */
     override def processast(tree : SourceTree, config : Oberon0Config) : SourceTree = {
-        val output = config.output
+        val output = config.output()
         val transformer = buildTransformer(tree)
         val ntree = transformer.transform(tree)
         if (config.intPrint()) {
@@ -235,7 +225,7 @@ trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[Modul
      * Consume the AST by translating it to C.
      */
     override def consumeast(tree : SourceTree, config : Oberon0Config) {
-        val output = config.output
+        val output = config.output()
         val translator = buildTranslator(tree)
         val cast = translator.translate(tree.root) // FIXME should be tree
         if (config.cPrint()) {

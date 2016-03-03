@@ -80,36 +80,6 @@ class OutputEmitter extends Emitter {
 }
 
 /**
- * Class of objects that can emit arbitrary error-like text such as program
- * errors, warnings or log messages.  The messages are sent to standard error.
- * Use an `OutputEmitter` if you just want to output normal program output.
- */
-class ErrorEmitter extends Emitter {
-
-    /**
-     * Emit `any`.
-     */
-    def emit(any : Any) {
-        print(any.toString)
-    }
-
-    /**
-     * Emit `any` and start a new line.
-     */
-    def emitln(any : Any) {
-        println(any.toString)
-    }
-
-    /**
-     * Emit a new line.
-     */
-    def emitln() {
-        println
-    }
-
-}
-
-/**
  * An emitter that records the output in a string that can be accessed
  * via the result method.
  */

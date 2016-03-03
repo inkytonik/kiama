@@ -25,7 +25,6 @@ package base
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerBase,
     Emitter,
-    ErrorEmitter,
     OutputEmitter,
     TestCompilerWithConfig
 }
@@ -133,14 +132,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl, Oberon0C
     /**
      * In the test configuration we pretty print the source and C ASTs by default.
      */
-    override def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : Oberon0Config =
-        new Oberon0Config(args, true) {
-            lazy val output = out
-            lazy val error = err
-        }
+    override def createConfig(args : Seq[String]) : Oberon0Config =
+        new Oberon0Config(Vector("-A", "-C") ++ args)
 
 }

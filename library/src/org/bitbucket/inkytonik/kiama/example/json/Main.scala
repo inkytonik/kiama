@@ -36,10 +36,10 @@ class Driver extends Compiler[JValue] {
     def process(source : Source, ast : JValue, config : Config) = {
 
         // Pretty-print tree as a product value
-        config.output.emitln(pretty(any(ast)))
+        config.output().emitln(pretty(any(ast)))
 
         // Pretty-print tree as a JSON value
-        config.output.emitln(format(ast))
+        config.output().emitln(format(ast))
 
     }
 

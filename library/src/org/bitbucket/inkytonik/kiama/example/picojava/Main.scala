@@ -26,14 +26,13 @@ import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
     Config,
     Emitter,
-    ErrorEmitter,
     OutputEmitter
 }
 
 /**
  * Configuration for the PicoJava compiler.
  */
-abstract class PicojavaConfig(args : Seq[String]) extends Config(args) {
+class PicojavaConfig(args : Seq[String]) extends Config(args) {
     lazy val obfuscate = opt[Boolean]("obfuscate", descr = "Obfuscate the code")
 }
 
@@ -43,15 +42,8 @@ object Main extends CompilerWithConfig[Program, PicojavaConfig] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.Source
 
-    def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : PicojavaConfig =
-        new PicojavaConfig(args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    def createConfig(args : Seq[String]) : PicojavaConfig =
+        new PicojavaConfig(args)
 
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
@@ -68,11 +60,11 @@ object Main extends CompilerWithConfig[Program, PicojavaConfig] {
 
         if (messages.size > 0) {
             // Note, prints array list, no coords
-            config.output.emitln(messages)
+            config.output().emitln(messages)
         } else if (config.obfuscate()) {
             val obfuscator = new Obfuscator(analysis)
-            config.output.emitln(format(program))
-            config.output.emitln(format(obfuscator.obfuscate(program)))
+            config.output().emitln(format(program))
+            config.output().emitln(format(obfuscator.obfuscate(program)))
         }
 
     }

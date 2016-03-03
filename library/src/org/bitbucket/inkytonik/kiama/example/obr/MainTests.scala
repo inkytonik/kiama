@@ -57,7 +57,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt, ObrConfi
                     messages shouldBe empty
                     val labels = new RISCLabels
                     val transformer = new RISCTransformer(analyser, labels)
-                    tester(title, config.error, transformer.code(ast))
+                    tester(title, config.output(), transformer.code(ast))
                 case Right(msgs) =>
                     msgs shouldBe empty
             }

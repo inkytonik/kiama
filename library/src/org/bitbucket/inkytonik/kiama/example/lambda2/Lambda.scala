@@ -24,7 +24,6 @@ package example.lambda2
 import LambdaTree.Exp
 import org.bitbucket.inkytonik.kiama.util.{
     Emitter,
-    ErrorEmitter,
     OutputEmitter,
     ParsingREPLWithConfig,
     REPLConfig
@@ -33,9 +32,12 @@ import org.bitbucket.inkytonik.kiama.util.{
 /**
  * Configuration for the Lambda REPL.
  */
-abstract class LambdaConfig(args : Seq[String]) extends REPLConfig(args) {
-    lazy val mechanism = opt[String]("mechanism", descr = "Evaluation mechanism",
-        default = Some("reduce"))
+class LambdaConfig(args : Seq[String]) extends REPLConfig(args) {
+
+    /**
+     * Current evaluation mechanism (default: reduce).
+     */
+    var mechanism : String = "reduce"
 }
 
 /**
@@ -53,15 +55,8 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
     import PrettyPrinter.formattedLayout
     import org.bitbucket.inkytonik.kiama.util.{Console, Emitter, Source}
 
-    def createConfig(
-        args : Seq[String],
-        out : Emitter = new OutputEmitter,
-        err : Emitter = new ErrorEmitter
-    ) : LambdaConfig =
-        new LambdaConfig(args) {
-            lazy val output = out
-            lazy val error = err
-        }
+    def createConfig(args : Seq[String]) : LambdaConfig =
+        new LambdaConfig(args)
 
     val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 
@@ -76,7 +71,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
     override def processline(source : Source, console : Console, config : LambdaConfig) : Option[LambdaConfig] = {
 
         // Shorthand access to the output emitter
-        val output = config.output
+        val output = config.output()
 
         /*
          * Print help about the available commands.
@@ -101,7 +96,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
                 output.emitln("Available evaluation mechanisms:")
                 for (mech <- mechanisms) {
                     output.emit(s"  $mech")
-                    if (mech == config.mechanism())
+                    if (mech == config.mechanism)
                         output.emitln(" (current)")
                     else
                         output.emitln
@@ -109,9 +104,10 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
                 Some(config)
 
             case Command(Array(":eval", mech)) =>
-                if (mechanisms contains mech)
-                    Some(createAndInitConfig(Array("-m", mech), output))
-                else {
+                if (mechanisms contains mech) {
+                    config.mechanism = mech
+                    Some(config)
+                } else {
                     output.emitln(s"unknown evaluation mechanism: $mech")
                     Some(config)
                 }
@@ -145,11 +141,11 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
         val messages = analyser.errors
         if (messages.length == 0) {
             // If everything is OK, evaluate the expression
-            val evaluator = evaluatorFor(config.mechanism())
-            config.output.emitln(formattedLayout(evaluator.eval(e)))
+            val evaluator = evaluatorFor(config.mechanism)
+            config.output().emitln(formattedLayout(evaluator.eval(e)))
         } else {
             // Otherwise report the errors
-            report(messages, config.error)
+            report(messages, config.output())
         }
     }
 
