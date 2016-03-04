@@ -13,7 +13,7 @@ organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
 scalaVersion in ThisBuild := "2.11.7"
 
-crossScalaVersions := Seq ("2.12.0-M3", "2.11.7", "2.10.6")
+crossScalaVersions := Seq ("2.11.7", "2.10.6")
 
 scalacOptions in ThisBuild :=
     Seq (
