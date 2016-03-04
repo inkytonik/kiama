@@ -13,7 +13,7 @@ organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
 scalaVersion in ThisBuild := "2.11.7"
 
-crossScalaVersions := Seq ("2.11.7", "2.10.6")
+crossScalaVersions := Seq ("2.12.0-M3", "2.11.7", "2.10.6")
 
 scalacOptions in ThisBuild :=
     Seq (
@@ -46,6 +46,11 @@ libraryDependencies in ThisBuild ++= {
             "0.3.0"
         else
             "0.4.0"
+    val scalaTestVersion =
+        if (scalaVersion.value.startsWith ("2.12"))
+            "2.2.5-M3"
+        else
+            "2.2.5"
     Seq (
         // Caching:
         "com.google.code.findbugs" % "jsr305" % "3.0.1",
@@ -62,7 +67,7 @@ libraryDependencies in ThisBuild ++= {
         "jline" % "jline" % "2.13",
         // Testing:
         "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
-        "org.scalatest" %% "scalatest" % "2.2.5" % "test"
+        "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
     )
 }
 
