@@ -53,7 +53,7 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      */
     def createAndInitConfig(args : Seq[String]) : C = {
         val config = createConfig(args)
-        config.afterInit()
+        config.verify()
         config
     }
 

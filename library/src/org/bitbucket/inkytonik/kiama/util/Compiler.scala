@@ -55,7 +55,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      */
     def createAndInitConfig(args : Seq[String]) : C = {
         val config = createConfig(args)
-        config.afterInit()
+        config.verify()
         config
     }
 
