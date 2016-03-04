@@ -28,7 +28,7 @@ import org.rogach.scallop.ScallopConf
  * arguments that are used to determine many of the configuration
  * settings.
  */
-class Config(args : Seq[String]) extends ScallopConf(args) with Memoiser {
+class Config(args : Seq[String]) extends ScallopConf(args) {
 
     import org.bitbucket.inkytonik.kiama.util.{FileConsole, JLineConsole, StringConsole}
     import org.rogach.scallop.{ArgType, ValueConverter}
@@ -43,14 +43,14 @@ class Config(args : Seq[String]) extends ScallopConf(args) with Memoiser {
      * Make a convertor for the output option.
      */
     val outputConverter =
-        new ValueConverter[Emitter] with Memoised[String, FileEmitter] {
+        new ValueConverter[Emitter] {
 
             val argType = ArgType.LIST
 
             def parse(s : List[(String, List[String])]) : Either[String, Option[Emitter]] =
                 s match {
                     case List((_, List("file", filename))) =>
-                        Right(Some(getWithDefault(filename, new FileEmitter(filename))))
+                        Right(Some(new FileEmitter(filename)))
                     case List((_, List("string"))) =>
                         Right(Some(stringEmitter))
                     case List((_, _)) =>
