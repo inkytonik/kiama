@@ -31,7 +31,6 @@ class ClonerTests extends Tests {
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.relation.Tree
     import org.bitbucket.inkytonik.kiama.rewriting.Cloner.{deepclone, lazyclone}
-    import org.scalatest.matchers.{Matcher, MatchResult}
 
     /**
      * Predicate for trees that works by making a `Tree` and trapping the
