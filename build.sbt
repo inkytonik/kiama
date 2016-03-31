@@ -11,9 +11,9 @@ organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
 // Scala compiler settings
 
-scalaVersion in ThisBuild := "2.11.7"
+scalaVersion in ThisBuild := "2.11.8"
 
-crossScalaVersions := Seq ("2.11.7", "2.10.6")
+crossScalaVersions := Seq ("2.11.8", "2.10.6")
 
 scalacOptions in ThisBuild :=
     Seq (
@@ -64,7 +64,7 @@ libraryDependencies in ThisBuild ++= {
         // Reflection
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         // REPLs:
-        "jline" % "jline" % "2.13",
+        "jline" % "jline" % "2.14.1",
         // Testing:
         "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
         "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
