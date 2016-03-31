@@ -50,7 +50,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             case Success(program, _) =>
                 val tree = new MiniJavaTree(program)
                 val analyser = new SemanticAnalyser(tree)
-                analyser.errors.map(formatMessage).mkString
+                formatMessages(analyser.errors)
             case Failure(msg, _) =>
                 msg
         }
@@ -69,7 +69,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     ) : String = {
         val tree = new MiniJavaTree(embedExpression(exp, retType, vars, stmts))
         val analyser = new SemanticAnalyser(tree)
-        analyser.errors.map(formatMessage).mkString
+        formatMessages(analyser.errors)
     }
 
     /**

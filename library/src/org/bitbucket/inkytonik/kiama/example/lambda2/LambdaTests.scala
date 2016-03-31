@@ -51,8 +51,8 @@ class LambdaTests extends ParseTests with Messaging {
             case Success(exp, _) =>
                 val tree = new LambdaTree(exp)
                 val analyser = new Analyser(tree)
-                val errors = analyser.errors.map(formatMessage).mkString
-                val errors2 = analyser.errors2.map(formatMessage).mkString
+                val errors = formatMessages(analyser.errors)
+                val errors2 = formatMessages(analyser.errors2)
                 if (errors == errors2)
                     errors
                 else
