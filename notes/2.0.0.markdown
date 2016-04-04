@@ -24,13 +24,14 @@ Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkyt
 
 * `Utility`: Removed the `resetEnvironments` operation from the `Environments` trait. It is better to create different environments than reuse one.
 
-* `Utility`: As a result of the move to our own parsing library (see below), the old Kiama `ParserUtilities` and `PositionedParserUtilties` traits have been removed. Their functionality is now provided directly by the parsing library.
+* `Utility`: As a result of the move to our own parsing library (see below), the old Kiama `ParserUtilities` and `PositionedParserUtilities` traits have been removed. Their functionality is now provided directly by the parsing library.
 
 * `Utility`: The new parsing library uses vectors to hold repetitive constructs instead of lists as in the old parsing library. Other parts of Kiama have also standardised on using vectors instead of lists for this purpose.
 
 * `Utility`: The definition of whitespace for the new parsers must also now match "no whitespace" instead of assuming that there was at least some whitespace present as in previous versions. This new definition allows two constructs to be separated by "no whitespace" provided the parser for the first construct doesn't consume any of the second construct. Previously it was necessary to have actual whitespace between them.
 
-* `Utility`: configuration of output emitters for Kiama-based programs is now done using the command-line option `--Koutput` instead of via specialised configuration code.
+* `Utility`: configuration of output emitters for Kiama-based programs is now done using the command-line option `--Koutput` instead of via specialised configuration code. Error emitters
+have been removed since they were not really needed and never actually output to standard error.
 
 * We now rely less on general `Seq` and `Stack` types where there is really no benefit.
 
