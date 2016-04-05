@@ -54,18 +54,27 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * it displays the name of the suite. If a suite class name is
      * used in more than one package we can't tell them apart. Here
      * we override the name that is printed so that we get a project
-     * relative source file name as well.
-     *
-     * This definition assumes that the test suite resides in the
-     * library project, that the name of the suite class is the same
-     * as the basename of the file and that the file is located in
-     * the folder given by the package name.
+     * relative source directory as well.
      */
-    override def suiteName = {
+    override def suiteName : String =
+        s"${super.suiteName} in $suiteSourcePath"
+
+    /**
+     * The path from the main source directory to the directory that holds
+     * this suite. By default it's the directory given by the suite class's
+     * package name. E.g., package `foo.bar.ble` will be in `foo/bar/ble`.
+     */
+    def suitePackagePath : String = {
         val pkgName = Option(getClass.getPackage).map(_.getName).getOrElse("")
-        val path = s"library/src/${pkgName.replaceAllLiterally(".", "/")}"
-        s"${super.suiteName} in $path"
+        pkgName.replaceAllLiterally(".", "/")
     }
+
+    /**
+     * Path to the source folder that contains this suite. By default,
+     * `library/src` with `suitePackagePath` appended.
+     */
+    def suiteSourcePath : String =
+        s"library/src/$suitePackagePath"
 
     /**
      * Matcher for being the same collection, i.e., equal and containing
