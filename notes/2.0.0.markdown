@@ -1,4 +1,6 @@
-Kiama major release cross-published for both Scala 2.10 and 2.11. It's been a while and there are lots of changes, so these notes are crazy long.
+[Kiama](https://bitbucket.org/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+
+This is a major release cross-published for both Scala 2.10 and 2.11. It's been a while and there are lots of changes, so these notes are crazy long.
 
 Since June 2015, Kiama has been based at [Bitbucket](https://bitbucket.org/inkytonik/kiama) instead of Google code. Please raise issues on the [Bitbucket site](https://bitbucket.org/inkytonik/kiama/issues?status=new&status=open).
 
@@ -37,15 +39,13 @@ have been removed since they were not really needed and never actually output to
 
 ### Enhancements
 
-* `Parsing`: Kiama no longer uses the Scala parser combinator library. The new `parsing` package contains a parsing combinator library with a very similar interface to the Scala library one. Ours has a simpler implementation and interfaces more easily with the rest of Kiama on things like positions. Many features that we didn't need have been omitted (e.g., there is no distinction between `RegexParsers` and other ones).
-
-  We use the new parsing library for our examples, teaching and testing but wouldn't recommend it for production use. Instead, you may be interested in our [sbt-rats parser generator](https://bitbucket.org/inkytonik/sbt-rats).
+* `Parsing`: Kiama no longer uses the Scala parser combinator library. The new `parsing` package contains a parsing combinator library with a very similar interface to the Scala library one. Ours has a simpler implementation and interfaces more easily with the rest of Kiama on things like positions. Many features that we didn't need have been omitted (e.g., there is no distinction between `RegexParsers` and other ones). We use the new parsing library for our examples, teaching and testing but wouldn't recommend it for production use. Instead, you may be interested in our [sbt-rats parser generator](https://bitbucket.org/inkytonik/sbt-rats) for Scala.
 
 * `Output`: Added support for parenthesised pretty-printing of n-ary expressions.
 
-* `Output`: Added a form of origin tracking which makes available a map between source objects and pretty-printed text ranges as a result of pretty-printing. Rendering operations now return a `Document` which combines the pretty-printed layout with the mapping information.
-
 * `Output`: Added `arguments` method which embodies how a parenthesised sequence of arguments should be pretty-printed. Previously this was built-in to the `seq` combinator but now can be accessed separately.
+
+* `Output`: Added a form of origin tracking that makes available a map between source objects and pretty-printed text ranges as a result of pretty-printing. Rendering operations now return a `Document` which combines the pretty-printed layout with the mapping information.
 
 * `Utility`: Added `defineIfNew` operation and pretty-printing to environments.
 
@@ -59,7 +59,7 @@ have been removed since they were not really needed and never actually output to
 
 ### Fixes
 
-* `Rewriting`: In the core don't duplicate singleton objects such as `Nil` but return the same instance. The previous approach didn't cause problems in rewriting since the generic traversals avoided this kind of duplication, but it was a problem when writing a deep cloning strategy.
+* `Rewriting`: In the core don't duplicate singleton objects such as `Nil` but return the same instance. The previous approach didn't cause problems in rewriting since the generic traversals avoided this kind of duplication, but it was a problem when writing other general operations including deep cloning.
 
 * `Utility`: When printing positions, a blank line is now no longer included before the pointer line.
 
@@ -67,14 +67,14 @@ have been removed since they were not really needed and never actually output to
 
 ### Other
 
-* [Bitbucket project page](https://bitbucket.org/inkytonik/kiama) now shows build status from
+* The [Bitbucket project page](https://bitbucket.org/inkytonik/kiama) now shows build status from
 [latest nightly SNAPSHOT build on CloudBees](https://inkytonik.ci.cloudbees.com/job/Kiama/).
 
-* Many other minor adjustments, behind-the-scenes fixes and improvements to existing examples.
+* Many other minor adjustments, behind-the-scenes fixes and improvements to examples.
 
 * Moved to sbt 0.13.11, Scala 2.11.8 and 2.10.6, ScalaCheck 1.12.5, ScalaTest 2.2.5, jline 2.14.1, Guava 19, Scallop 1.0.0, Findbugs jsr305 3.0.1
 
-* Code base is also compatible with Scala 2.12.0-M3.
+* The code base is also compatible with Scala 2.12.0-M3.
 
 ### What happened to Attributable?
 
