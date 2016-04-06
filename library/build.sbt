@@ -15,7 +15,7 @@ scalaSource in Test := (scalaSource in Compile).value
 
 unmanagedSources in Test := {
     val s = (scalaSource in Test).value
-    val egs = s / "org" / "kiama" / "example" ** "*.scala"
+    val egs = s / "org" / "bitbucket" / "inkytonik" / "kiama" / "example" ** "*.scala"
     ((s ** "*Tests.scala") +++ egs).get
 }
 
