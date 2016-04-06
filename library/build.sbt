@@ -62,7 +62,6 @@ outputStrategy in run := Some (StdoutOutput)
 
 initialCommands in console := """
     import org.bitbucket.inkytonik.kiama._
-    import attribution.Attribution._
     import rewriting.Rewriter._
 """.stripMargin
 
