@@ -20,6 +20,22 @@ Since Kiama is built with sbt, a source build of Kiama will also automatically
 download the compatible tools and libraries so there is no need to download
 them manually when building from source.
 
+  * Version 2.0.0 for Scala 2.10 and 2.11 (April 6, 2016)
+    * [Release notes](doc/2.0.0/notes.html)
+    * [2.0.0 API documentation](http://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.11/2.0.0)
+    * Compatible tools and libraries:
+      * [Scala 2.10.x/2.11.x](http://www.scala-lang.org)
+      * [dsinfo 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsinfo)
+      * [dsprofile 0.3.0/0.4.0](https://bitbucket.org/inkytonik/dsprofile)
+      * [Guava collections 19](https://guava-libraries.googlecode.com)
+      * To use the read-eval-print loops:
+        * [JLine 2.14.1](https://github.com/jline/jline2)
+      * Command-line support in examples:
+        * [Scallop 1.0.0](https://github.com/scallop/scallop)
+      * To run Kiama tests:
+        * [ScalaCheck 1.12.5](https://github.com/rickynils/scalacheck)
+        * [ScalaTest 2.2.5](http://www.artima.com/scalatest/)
+
   * Version 1.8.0 for Scala 2.10 and 2.11 (November 10, 2014)
     * [Release notes](doc/1.8.0/notes.html)
     * [1.8.0 API documentation](http://www.javadoc.io/doc/com.googlecode.kiama/kiama_2.11/1.8.0)
