@@ -5,7 +5,7 @@ import sbtunidoc.Plugin.UnidocKeys.unidoc
 
 // Main settings
 
-version in ThisBuild := "2.0.0-SNAPSHOT"
+version in ThisBuild := "2.0.0"
 
 organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
