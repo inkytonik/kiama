@@ -271,6 +271,8 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
             (t, root) match {
                 case (tr : AnyRef, rootr : AnyRef) =>
                     tr eq rootr
+                case _ =>
+                    false
             }
         )
 
