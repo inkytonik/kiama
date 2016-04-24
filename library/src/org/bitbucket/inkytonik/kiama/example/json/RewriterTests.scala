@@ -149,7 +149,7 @@ class RewriterTests extends Tests {
         total(company) shouldBe 399747.0
     }
 
-    test("halvng salaries in company works") {
+    test("halving salaries in company works") {
         val newcompany =
             JObject(
                 Vector(
