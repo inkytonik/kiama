@@ -270,7 +270,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
      */
     val exptipe : Expression => Set[TypeBase] =
         attr {
-            case tree.parent.pair(e, p) =>
+            case e @ tree.parent(p) =>
                 p match {
                     case AssignStmt(IndexExp(_, _), e1) if e eq e1 => Set(IntType())
                     case AssignStmt(FieldExp(_, _), e1) if e eq e1 => Set(IntType())

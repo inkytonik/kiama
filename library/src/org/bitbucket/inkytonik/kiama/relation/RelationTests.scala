@@ -738,143 +738,172 @@ class RelationTests extends Tests {
         multiNumNum.range should beSameCollectionAs(Vector(num5))
     }
 
-    // unapply
+    // unapplySeq (direct)
 
-    test("unapply of empty value-value relation fails") {
-        emptyIntBool.unapply(1) shouldBe empty
+    test("unapplySeq of empty value-value relation fails") {
+        emptyIntBool.unapplySeq(1) shouldBe Some(Vector())
     }
 
-    test("unapply of empty ref-value relation fails") {
-        emptyNumInt.unapply(num2) shouldBe empty
+    test("unapplySeq of empty ref-value relation fails") {
+        emptyNumInt.unapplySeq(num2) shouldBe Some(Vector())
     }
 
-    test("unapply of empty value-ref relation fails") {
-        emptyBoolNum.unapply(false) shouldBe empty
+    test("unapplySeq of empty value-ref relation fails") {
+        emptyBoolNum.unapplySeq(false) shouldBe Some(Vector())
     }
 
-    test("unapply of empty ref-ref relation fails") {
-        emptyNumNum.unapply(num3) shouldBe empty
+    test("unapplySeq of empty ref-ref relation fails") {
+        emptyNumNum.unapplySeq(num3) shouldBe Some(Vector())
     }
 
-    test("unapply of singleton value-value relation is correct (present)") {
-        singleIntBool.unapply(1) shouldBe Some(true)
+    test("unapplySeq of singleton value-value relation is correct (present)") {
+        singleIntBool.unapplySeq(1) shouldBe Some(Vector(true))
     }
 
-    test("unapply pair of singleton value-value relation is correct (present)") {
-        singleIntBool.pair.unapply(1) shouldBe Some((1, true))
+    test("unapplySeq pair of singleton value-value relation is correct (present)") {
+        singleIntBool.pair.unapplySeq(1) shouldBe Some((1, Vector(true)))
     }
 
-    test("unapply of singleton value-value relation fails (not present)") {
-        singleIntBool.unapply(2) shouldBe empty
+    test("unapplySeq of singleton value-value relation fails (not present)") {
+        singleIntBool.unapplySeq(2) shouldBe Some(Vector())
     }
 
-    test("unapply of singleton ref-value relation is correct (present)") {
-        singleNumInt.unapply(num2) shouldBe Option(2)
+    test("unapplySeq of singleton ref-value relation is correct (present)") {
+        singleNumInt.unapplySeq(num2) shouldBe Some(Vector(2))
     }
 
     // This test makes sure that we are comparing nodes by identity since
     // num2 and num3 are equal by value.
 
-    test("unapply pair of singleton ref-value relation doesn't produce equal but not eq value (present)") {
-        singleNumInt.pair.unapply(num2) should not(beSameCollectionAs(Option((num3, 2))))
+    test("unapplySeq pair of singleton ref-value relation doesn't produce equal but not eq value (present)") {
+        singleNumInt.pair.unapplySeq(num2) should not(beSameCollectionAs(Some((num3, Vector(2)))))
     }
 
-    test("unapply of singleton ref-value relation fails (not present)") {
-        singleNumInt.unapply(num3) shouldBe empty
+    test("unapplySeq of singleton ref-value relation fails (not present)") {
+        singleNumInt.unapplySeq(num3) shouldBe Some(Vector())
     }
 
-    test("unapply of singleton value-ref relation is correct (present)") {
-        singleBoolNum.unapply(false) should beSameCollectionAs(Option(num3))
+    test("unapplySeq of singleton value-ref relation is correct (present)") {
+        singleBoolNum.unapplySeq(false) should beSameCollectionAs(Some(Vector(num3)))
     }
 
-    test("unapply pair of singleton value-ref relation is correct (present)") {
-        singleBoolNum.pair.unapply(false) should beSameCollectionAs(Option((false, num3)))
+    test("unapplySeq pair of singleton value-ref relation is correct (present)") {
+        singleBoolNum.pair.unapplySeq(false) should beSameCollectionAs(Some((false, Vector(num3))))
     }
 
-    test("unapply of singleton value-ref relation fails (not present)") {
-        singleBoolNum.unapply(true) shouldBe empty
+    test("unapplySeq of singleton value-ref relation fails (not present)") {
+        singleBoolNum.unapplySeq(true) shouldBe Some(Vector())
     }
 
-    test("unapply of singleton ref-ref relation is correct (present)") {
-        singleNumNum.unapply(num4) should beSameCollectionAs(Option(num5))
+    test("unapplySeq of singleton ref-ref relation is correct (present)") {
+        singleNumNum.unapplySeq(num4) should beSameCollectionAs(Some(Vector(num5)))
     }
 
-    test("unapply pair of singleton ref-ref relation is correct (present)") {
-        singleNumNum.pair.unapply(num4) should beSameCollectionAs(Option((num4, num5)))
+    test("unapplySeq pair of singleton ref-ref relation is correct (present)") {
+        singleNumNum.pair.unapplySeq(num4) should beSameCollectionAs(Some((num4, Vector(num5))))
     }
 
-    test("unapply of singleton ref-ref relation fails (not present)") {
-        singleNumNum.unapply(num5) shouldBe empty
+    test("unapplySeq of singleton ref-ref relation fails (not present)") {
+        singleNumNum.unapplySeq(num5) shouldBe Some(Vector())
     }
 
-    test("unapply of multiple element value-value relation fails (multiple)") {
-        multiIntBool.unapply(1) shouldBe empty
+    test("unapplySeq of multiple element value-value relation fails (multiple)") {
+        multiIntBool.unapplySeq(1) shouldBe Some(Vector(true, true))
     }
 
-    test("unapply of multiple element value-value relation is correct (present)") {
-        multiIntBool.unapply(2) shouldBe Option(false)
+    test("unapplySeq of multiple element value-value relation is correct (present)") {
+        multiIntBool.unapplySeq(2) shouldBe Some(Vector(false))
     }
 
-    test("unapply pair of multiple element value-value relation is correct (present)") {
-        multiIntBool.pair.unapply(2) shouldBe Option((2, false))
+    test("unapplySeq pair of multiple element value-value relation is correct (present)") {
+        multiIntBool.pair.unapplySeq(2) shouldBe Some((2, Vector(false)))
     }
 
-    test("unapply of multiple element value-value relation fails (not present)") {
-        multiIntBool.unapply(3) shouldBe empty
+    test("unapplySeq of multiple element value-value relation fails (not present)") {
+        multiIntBool.unapplySeq(3) shouldBe Some(Vector())
     }
 
-    test("unapply of multiple element ref-value relation is correct (present)") {
-        multiNumInt.unapply(num2) shouldBe Option(2)
+    test("unapplySeq of multiple element ref-value relation is correct (present)") {
+        multiNumInt.unapplySeq(num2) shouldBe Some(Vector(2))
     }
 
-    test("unapply pair of multiple element ref-value relation is correct (present)") {
-        multiNumInt.pair.unapply(num2) should beSameCollectionAs(Option((num2, 2)))
+    test("unapplySeq pair of multiple element ref-value relation is correct (present)") {
+        multiNumInt.pair.unapplySeq(num2) should beSameCollectionAs(Some((num2, Vector(2))))
     }
 
-    test("unapply of multiple element ref-value relation is correct (not present)") {
-        multiNumInt.unapply(num4) shouldBe empty
+    test("unapplySeq of multiple element ref-value relation is correct (not present)") {
+        multiNumInt.unapplySeq(num4) shouldBe Some(Vector())
     }
 
-    test("unapply of multiple element value-ref relation fails (multiple)") {
-        multiBoolNum.unapply(false) shouldBe empty
+    test("unapplySeq of multiple element value-ref relation fails (multiple)") {
+        multiBoolNum.unapplySeq(false) should beSameCollectionAs(Some(Vector(num3, num4)))
     }
 
-    test("unapply of multiple element value-ref relation is correct (present)") {
-        multiBoolNum.unapply(true) should beSameCollectionAs(Option(num4))
+    test("unapplySeq of multiple element value-ref relation is correct (present)") {
+        multiBoolNum.unapplySeq(true) should beSameCollectionAs(Some(Vector(num4)))
     }
 
-    test("unapply pair of multiple element value-ref relation is correct (present)") {
-        multiBoolNum.pair.unapply(true) should beSameCollectionAs(Option((true, num4)))
+    test("unapplySeq pair of multiple element value-ref relation is correct (present)") {
+        multiBoolNum.pair.unapplySeq(true) should beSameCollectionAs(Some((true, Vector(num4))))
     }
 
-    test("unapply of multiple element ref-ref relation is correct (multiple)") {
-        multiNumNum.unapply(num4) shouldBe empty
+    test("unapplySeq of multiple element ref-ref relation is correct (multiple)") {
+        multiNumNum.unapplySeq(num4) should beSameCollectionAs(Some(Vector(num5, num5)))
     }
 
-    test("unapply of multiple element ref-ref relation is correct (not present)") {
-        multiNumNum.unapply(num2) shouldBe empty
+    test("unapplySeq of multiple element ref-ref relation is correct (not present)") {
+        multiNumNum.unapplySeq(num2) shouldBe Some(Vector())
     }
 
-    // unapplySeq
+    // unapplySeq (via match)
 
-    test("unapplySeq of an empty relation fails") {
-        emptyIntBool.unapplySeq(1) shouldBe empty
+    test("match of an empty relation gives nothing") {
+        (1 match {
+            case emptyIntBool() => true
+            case _              => false
+        }) shouldBe true
     }
 
-    test("unapplySeq of a singleton relation is correct (present)") {
-        singleNumInt.unapplySeq(num2) should beSameCollectionAs(Option(Vector(2)))
+    test("match of a singleton relation suceeds with exactly one value (present)") {
+        (num2 match {
+            case singleNumInt(v) => v
+            case _               => 0
+        }) shouldBe 2
     }
 
-    test("unapplySeq of a singleton relation fails (not present)") {
-        singleNumInt.unapplySeq(num3) shouldBe empty
+    test("pair match of a singleton relation suceeds with exactly one value (present)") {
+        (num2 match {
+            case singleNumInt.pair(n, v) => (n, v)
+            case _                       => (Num(0), 0)
+        }) should beSameCollectionAs((num2, 2))
     }
 
-    test("unapplySeq of a multiple relation is correct (present)") {
-        multiIntBool.unapplySeq(1) should beSameCollectionAs(Option(Vector(true, true)))
+    test("match of a singleton relation gives nothing (not present)") {
+        (num3 match {
+            case singleNumInt() => true
+            case _              => false
+        }) shouldBe true
     }
 
-    test("unapplySeq of a multiple relation fails (not present)") {
-        multiIntBool.unapplySeq(3) shouldBe empty
+    test("match of a multiple relation gives multiple values (present)") {
+        (1 match {
+            case multiIntBool(v1, v2) => (v1, v2)
+            case _                    => (false, false)
+        }) shouldBe ((true, true))
+    }
+
+    test("pair match of a multiple relation gives multiple values (present)") {
+        (1 match {
+            case multiIntBool.pair(i, v1, v2) => (i, v1, v2)
+            case _                            => (0, false, false)
+        }) shouldBe ((1, true, true))
+    }
+
+    test("match of a multiple relation fails (not present)") {
+        (3 match {
+            case multiIntBool() => true
+            case _              => false
+        }) shouldBe true
     }
 
     // union

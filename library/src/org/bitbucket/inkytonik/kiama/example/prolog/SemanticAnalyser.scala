@@ -243,7 +243,7 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
      */
     val exptipe : Term => Type =
         attr {
-            case tree.parent.pair(n, p : Pred) =>
+            case n @ tree.parent(p : Pred) =>
                 entityin(p) match {
                     case Predicate(argtypes) =>
                         val i = tree.index(n)

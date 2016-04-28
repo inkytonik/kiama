@@ -146,7 +146,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
      */
     override def exptypeDef : Expression => Type =
         {
-            case tree.parent.pair(e, p : IndexExp) =>
+            case e @ tree.parent(p : IndexExp) =>
                 if (e eq p.base)
                     unknownType
                 else

@@ -21,9 +21,14 @@ scalacOptions in ThisBuild :=
         "-feature",
         "-sourcepath", baseDirectory.value.getAbsolutePath,
         "-unchecked",
+        "-Xcheckinit",
         "-Xfatal-warnings",
-        "-Xlint",
-        "-Xcheckinit"
+
+        // Turn on all lint warnings, except:
+        //  - stars-align: incorrectly reports problems if pattern matching of
+        //    unapplySeq extractor doesn't match sequence directly
+
+        "-Xlint:-stars-align,_"
     )
 
 // Dependency resolution

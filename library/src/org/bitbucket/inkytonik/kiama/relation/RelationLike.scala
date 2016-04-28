@@ -112,18 +112,13 @@ trait RelationLike[T, U, Repr[_, _]] {
         graph.isEmpty
 
     /**
-     * An auxiliary extractor for this relation that matches pairs. The
-     * match succeeds if and only if the matched value `t` has a unique
-     * image in the relation. Both `t` and its unique image value are
-     * returned for a successful match.
+     * An auxiliary extractor for this relation that returns the matched
+     * value `t` and its image as a sequence.
      */
     object pair {
 
-        def unapply(t : T) : Option[(T, U)] =
-            image(t) match {
-                case Vector(u) => Some((t, u))
-                case _         => None
-            }
+        def unapplySeq(t : T) : Option[(T, Seq[U])] =
+            Some((t, image(t)))
 
     }
 
@@ -162,27 +157,15 @@ trait RelationLike[T, U, Repr[_, _]] {
         distinct(graph.map(_._2))
 
     /**
-     * A relation can be used as an extractor that matches if and only if
-     * the matched value `t` has a unique image in the relation. The unique
-     * image value is returned for a successful match.
+     * A relation can be used as an extractor that matches the image of the
+     * matched value `t`. E.g., the pattern `relation(a,b)` succeeds if and
+     * only if the image of the matched value contains exactly two elements,
+     * which are then bound to `a` and `b`, respectively. Normal sequence
+     * matching works, such as `case relation(a, _*)` to match if there is
+     * at least one element in the image and bind the first element to `a`.
      */
-    def unapply(t : T) : Option[U] =
-        image(t) match {
-            case Vector(u) => Some(u)
-            case _         => None
-        }
-
-    /**
-     * A relation can be used as an extractor that returns the image for a
-     * given domain value `t`. Fails if `t` is not in the domain.
-     */
-    def unapplySeq(t : T) : Option[Vector[U]] = {
-        val ti = image(t)
-        if (ti.isEmpty)
-            None
-        else
-            Some(ti)
-    }
+    def unapplySeq(t : T) : Option[Vector[U]] =
+        Some(image(t))
 
     /**
      * Union this relation with `r`.

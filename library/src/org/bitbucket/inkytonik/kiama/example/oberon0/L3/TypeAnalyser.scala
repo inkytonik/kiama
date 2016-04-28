@@ -134,7 +134,7 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
      */
     override def exptypeDef : Expression => Type =
         {
-            case tree.parent.pair(e, Call(u, _)) =>
+            case e @ tree.parent(Call(u, _)) =>
                 paramtype(u, tree.index(e))
             case e =>
                 super.exptypeDef(e)

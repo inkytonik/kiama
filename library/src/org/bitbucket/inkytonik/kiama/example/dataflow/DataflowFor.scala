@@ -51,7 +51,7 @@ class DataflowFor(override val tree : DataflowTree) extends Dataflow(tree) {
 
         following +=
             {
-                case tree.parent.pair(s, parent : For) =>
+                case s @ tree.parent(parent : For) =>
                     parent match {
                         case t @ For(s1, c, _, _) if s eq s1 => Set(c)
                         case t @ For(_, s1, _, b) if s eq s1 => following(t) + b
@@ -63,4 +63,3 @@ class DataflowFor(override val tree : DataflowTree) extends Dataflow(tree) {
     }
 
 }
-

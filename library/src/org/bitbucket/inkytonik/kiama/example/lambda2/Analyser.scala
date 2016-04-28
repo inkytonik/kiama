@@ -205,11 +205,11 @@ class Analyser(tree : LambdaTree) extends Attribution {
 
             // An applied expression is allowed to be anything. We check
             // elsewhere that it's a function.
-            case tree.parent.pair(e, App(e1, _)) if e eq e1 =>
+            case e @ tree.parent(App(e1, _)) if e eq e1 =>
                 NoType()
 
             // An argument is expected to be of the function's input type
-            case tree.parent.pair(e, App(e1, e2)) if e eq e2 =>
+            case e @ tree.parent(App(e1, e2)) if e eq e2 =>
                 tipe(e1) match {
                     case FunType(t1, _) =>
                         t1
@@ -218,11 +218,11 @@ class Analyser(tree : LambdaTree) extends Attribution {
                 }
 
             // The type of a let-bound expression must match the declared type
-            case tree.parent.pair(e, Let(_, t, e1, _)) if e eq e1 =>
+            case e @ tree.parent(Let(_, t, e1, _)) if e eq e1 =>
                 t
 
             // The type of let body must match the context of the let
-            case tree.parent.pair(e, p @ Let(_, t, _, e2)) if e eq e2 =>
+            case e @ tree.parent(p @ Let(_, t, _, e2)) if e eq e2 =>
                 exptipe(p)
 
             // The operands of an operation should be integers

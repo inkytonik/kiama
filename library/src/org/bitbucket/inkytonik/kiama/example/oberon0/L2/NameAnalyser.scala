@@ -29,7 +29,7 @@ trait NameAnalyser extends L0.NameAnalyser {
 
     override def rootconstexpDef : Expression => Boolean =
         {
-            case tree.parent.pair(e1, ForStatement(_, _, _, Some(e2), _)) if e1 == e2 =>
+            case e1 @ tree.parent(ForStatement(_, _, _, Some(e2), _)) if e1 == e2 =>
                 true
             case tree.parent(_ : ValCond | _ : MinMaxCond) =>
                 true

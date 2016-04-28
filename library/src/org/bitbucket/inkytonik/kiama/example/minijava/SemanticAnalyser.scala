@@ -409,23 +409,23 @@ class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
                 }
 
             // Rule 10
-            case tree.parent.pair(e, ArrayAssign(base, _, _)) if base eq e =>
+            case e @ tree.parent(ArrayAssign(base, _, _)) if base eq e =>
                 IntArrayType()
 
             // Rule 10
-            case tree.parent.pair(e, ArrayAssign(_, index, _)) if index eq e =>
+            case e @ tree.parent(ArrayAssign(_, index, _)) if index eq e =>
                 IntType()
 
             // Rule 10
-            case tree.parent.pair(e, ArrayAssign(_, _, elem)) if elem eq e =>
+            case e @ tree.parent(ArrayAssign(_, _, elem)) if elem eq e =>
                 IntType()
 
             // Rule 10
-            case tree.parent.pair(e, IndExp(base, _)) if base eq e =>
+            case e @ tree.parent(IndExp(base, _)) if base eq e =>
                 IntArrayType()
 
             // Rule 10
-            case tree.parent.pair(e, IndExp(_, index)) if index eq e =>
+            case e @ tree.parent(IndExp(_, index)) if index eq e =>
                 IntType()
 
             // Rule 11
@@ -449,10 +449,10 @@ class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
                 IntArrayType()
 
             // Rule 16
-            case tree.parent.pair(e, CallExp(base, u, _)) if base eq e =>
+            case e @ tree.parent(CallExp(base, u, _)) if base eq e =>
                 UnknownType()
 
-            case tree.parent.pair(e, CallExp(_, u, _)) =>
+            case e @ tree.parent(CallExp(_, u, _)) =>
                 entity(u) match {
                     case MethodEntity(decl) =>
                         expTypeOfArg(decl, tree.index(e))
@@ -467,7 +467,7 @@ class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
                 IntType()
 
             // Rule 20
-            case tree.parent.pair(_, tree.parent.pair(_ : Result, MethodBody(t, _, _, _, _))) =>
+            case tree.parent(tree.parent.pair(_ : Result, MethodBody(t, _, _, _, _))) =>
                 actualTypeOf(t)
 
             // In all other cases, we don't care

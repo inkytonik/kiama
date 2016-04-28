@@ -155,68 +155,68 @@ class TreeTests extends Tests {
     // firstChild
 
     test("firstChild of a leaf is not defined (n1)") {
-        firstChild.unapply(n1) shouldBe empty
+        firstChild.unapplySeq(n1) shouldBe Some(Vector())
     }
 
     test("firstChild of a leaf is not defined (n2)") {
-        firstChild.unapply(n2) shouldBe empty
+        firstChild.unapplySeq(n2) shouldBe Some(Vector())
     }
 
     test("firstChild of a leaf is not defined (n3)") {
-        firstChild.unapply(n3) shouldBe empty
+        firstChild.unapplySeq(n3) shouldBe Some(Vector())
     }
 
     test("firstChild of a leaf is not defined (v1)") {
-        firstChild.unapply(v1) shouldBe empty
+        firstChild.unapplySeq(v1) shouldBe Some(Vector())
     }
 
     test("firstChild of a leaf is not defined (v2)") {
-        firstChild.unapply(v2) shouldBe empty
+        firstChild.unapplySeq(v2) shouldBe Some(Vector())
     }
 
     test("firstChild of a leaf is not defined (v3)") {
-        firstChild.unapply(v3) shouldBe empty
+        firstChild.unapplySeq(v3) shouldBe Some(Vector())
     }
 
     test("firstChild of a leaf is not defined (e4)") {
-        firstChild.unapply(e4) shouldBe empty
+        firstChild.unapplySeq(e4) shouldBe Some(Vector())
     }
 
     test("firstChild of a leaf is not defined (s2)") {
-        firstChild.unapply(s2) shouldBe empty
+        firstChild.unapplySeq(s2) shouldBe Some(Vector())
     }
 
     test("firstChild of a node with children is correct (e1)") {
-        firstChild.unapply(e1) should beSameCollectionAs(Some(n1))
+        firstChild.unapplySeq(e1) should beSameCollectionAs(Some(Vector(n1)))
     }
 
     test("firstChild of a node with children is correct (e2)") {
-        firstChild.unapply(e2) should beSameCollectionAs(Some(e1))
+        firstChild.unapplySeq(e2) should beSameCollectionAs(Some(Vector(e1)))
     }
 
     test("firstChild of a node with children is correct (e3)") {
-        firstChild.unapply(e3) should beSameCollectionAs(Some(n3))
+        firstChild.unapplySeq(e3) should beSameCollectionAs(Some(Vector(n3)))
     }
 
     test("firstChild of a node with children is correct (s1)") {
-        firstChild.unapply(s1) should beSameCollectionAs(Some(v2))
+        firstChild.unapplySeq(s1) should beSameCollectionAs(Some(Vector(v2)))
     }
 
     test("firstChild of a node with children is correct (s3)") {
-        firstChild.unapply(s3) should beSameCollectionAs(Some(v3))
+        firstChild.unapplySeq(s3) should beSameCollectionAs(Some(Vector(v3)))
     }
 
     test("firstChild of a node with children is correct (s4)") {
-        firstChild.unapply(s4) should beSameCollectionAs(Some(e4))
+        firstChild.unapplySeq(s4) should beSameCollectionAs(Some(Vector(e4)))
     }
 
     test("firstChild of a node with a list component is correct") {
-        firstChild.unapply(p) should beSameCollectionAs(Some(s1))
+        firstChild.unapplySeq(p) should beSameCollectionAs(Some(Vector(s1)))
     }
 
     test("firstChild of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            firstChild.unapply(nonNode)
+            firstChild.unapplySeq(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -372,68 +372,68 @@ class TreeTests extends Tests {
     // lastChild
 
     test("lastChild of a leaf is not defined (n1)") {
-        lastChild.unapply(n1) shouldBe empty
+        lastChild.unapplySeq(n1) shouldBe Some(Vector())
     }
 
     test("lastChild of a leaf is not defined (n2)") {
-        lastChild.unapply(n2) shouldBe empty
+        lastChild.unapplySeq(n2) shouldBe Some(Vector())
     }
 
     test("lastChild of a leaf is not defined (n3)") {
-        lastChild.unapply(n3) shouldBe empty
+        lastChild.unapplySeq(n3) shouldBe Some(Vector())
     }
 
     test("lastChild of a leaf is not defined (v1)") {
-        lastChild.unapply(v1) shouldBe empty
+        lastChild.unapplySeq(v1) shouldBe Some(Vector())
     }
 
     test("lastChild of a leaf is not defined (v2)") {
-        lastChild.unapply(v2) shouldBe empty
+        lastChild.unapplySeq(v2) shouldBe Some(Vector())
     }
 
     test("lastChild of a leaf is not defined (v3)") {
-        lastChild.unapply(v3) shouldBe empty
+        lastChild.unapplySeq(v3) shouldBe Some(Vector())
     }
 
     test("lastChild of a leaf is not defined (e4)") {
-        lastChild.unapply(e4) shouldBe empty
+        lastChild.unapplySeq(e4) shouldBe Some(Vector())
     }
 
     test("lastChild of a leaf is not defined (s2)") {
-        lastChild.unapply(s2) shouldBe empty
+        lastChild.unapplySeq(s2) shouldBe Some(Vector())
     }
 
     test("lastChild of a node with children is correct (e1)") {
-        lastChild.unapply(e1) should beSameCollectionAs(Some(n2))
+        lastChild.unapplySeq(e1) should beSameCollectionAs(Some(Vector(n2)))
     }
 
     test("lastChild of a node with children is correct (e2)") {
-        lastChild.unapply(e2) should beSameCollectionAs(Some(v1))
+        lastChild.unapplySeq(e2) should beSameCollectionAs(Some(Vector(v1)))
     }
 
     test("lastChild of a node with children is correct (e3)") {
-        lastChild.unapply(e3) should beSameCollectionAs(Some(n3))
+        lastChild.unapplySeq(e3) should beSameCollectionAs(Some(Vector(n3)))
     }
 
     test("lastChild of a node with children is correct (s1)") {
-        lastChild.unapply(s1) should beSameCollectionAs(Some(e2))
+        lastChild.unapplySeq(s1) should beSameCollectionAs(Some(Vector(e2)))
     }
 
     test("lastChild of a node with children is correct (s3)") {
-        lastChild.unapply(s3) should beSameCollectionAs(Some(e3))
+        lastChild.unapplySeq(s3) should beSameCollectionAs(Some(Vector(e3)))
     }
 
     test("lastChild of a node with children is correct (s4)") {
-        lastChild.unapply(s4) should beSameCollectionAs(Some(s3))
+        lastChild.unapplySeq(s4) should beSameCollectionAs(Some(Vector(s3)))
     }
 
     test("lastChild of a node with a list component is correct") {
-        lastChild.unapply(p) should beSameCollectionAs(Some(nulls(23)))
+        lastChild.unapplySeq(p) should beSameCollectionAs(Some(Vector(nulls(23))))
     }
 
     test("lastChild of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            lastChild.unapply(nonNode)
+            lastChild.unapplySeq(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }

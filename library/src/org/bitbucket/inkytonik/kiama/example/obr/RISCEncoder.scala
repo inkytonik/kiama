@@ -167,7 +167,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
          */
         lazy val reg : RISCNode => RegNo =
             attr {
-                case tree.parent.pair(n, p) =>
+                case n @ tree.parent(p) =>
                     p match {
                         // Base case
                         case _ : RISCProg =>
