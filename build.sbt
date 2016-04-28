@@ -15,7 +15,18 @@ scalaVersion in ThisBuild := "2.11.8"
 
 crossScalaVersions := Seq ("2.11.8", "2.10.6")
 
-scalacOptions in ThisBuild :=
+scalacOptions in ThisBuild := {
+
+    // Turn on all lint warnings, except:
+    //  - stars-align: incorrectly reports problems if pattern matching of
+    //    unapplySeq extractor doesn't match sequence directly
+
+    val lintOption =
+        if (scalaVersion.value.startsWith ("2.10"))
+            "-Xlint"
+        else
+            "-Xlint:-stars-align,_"
+
     Seq (
         "-deprecation",
         "-feature",
@@ -23,13 +34,9 @@ scalacOptions in ThisBuild :=
         "-unchecked",
         "-Xcheckinit",
         "-Xfatal-warnings",
-
-        // Turn on all lint warnings, except:
-        //  - stars-align: incorrectly reports problems if pattern matching of
-        //    unapplySeq extractor doesn't match sequence directly
-
-        "-Xlint:-stars-align,_"
+        lintOption
     )
+}
 
 // Dependency resolution
 
