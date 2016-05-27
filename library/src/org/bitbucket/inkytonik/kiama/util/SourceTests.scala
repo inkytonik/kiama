@@ -28,36 +28,38 @@ class SourceTests extends Tests {
 
     import Source.dropPrefix
 
+    def makePath(p : String*) = p mkString java.io.File.separator
+
     test("dropPrefix copes with empty filename") {
-        dropPrefix("", "/foo/bar") shouldBe ""
+        dropPrefix("", makePath("foo", "bar")) shouldBe ""
     }
 
     test("dropPrefix correctly drops nothing if prefix is empty") {
-        dropPrefix("/foo/bar/ble.txt", "") shouldBe "/foo/bar/ble.txt"
+        dropPrefix(makePath("foo", "bar", "ble.txt"), "") shouldBe makePath("foo", "bar", "ble.txt")
     }
 
     test("dropPrefix correctly drops prefix that is there") {
-        dropPrefix("/foo/bar/ble.txt", "/foo/bar") shouldBe "ble.txt"
+        dropPrefix(makePath("foo", "bar", "ble.txt"), makePath("foo", "bar")) shouldBe "ble.txt"
     }
 
     test("dropPrefix correctly drops prefix that is whole filename") {
-        dropPrefix("/foo/bar/ble.txt", "/foo/bar/ble.txt") shouldBe ""
+        dropPrefix(makePath("foo", "bar", "ble.txt"), makePath("foo", "bar", "ble.txt")) shouldBe ""
     }
 
     test("dropPrefix correctly ignores prefix that isn't there") {
-        dropPrefix("/foo/bar/ble.txt", "bob/harry") shouldBe "/foo/bar/ble.txt"
+        dropPrefix(makePath("foo", "bar", "ble.txt"), makePath("bob", "harry")) shouldBe makePath("foo", "bar", "ble.txt")
     }
 
     test("dropPrefix correctly deals with filename that is prefix of prefix") {
-        dropPrefix("/foo/bar", "/foo/bar/ble.txt") shouldBe ""
+        dropPrefix(makePath("foo", "bar"), makePath("foo", "bar", "ble.txt")) shouldBe ""
     }
 
     test("dropPrefix correctly deals with empty filename") {
-        dropPrefix("", "/bob/harry") shouldBe ""
+        dropPrefix("", makePath("bob", "harry")) shouldBe ""
     }
 
     test("dropPrefix correctly deals with empty prefix") {
-        dropPrefix("/foo/bar/ble.txt", "") shouldBe "/foo/bar/ble.txt"
+        dropPrefix(makePath("foo", "bar", "ble.txt"), "") shouldBe makePath("foo", "bar", "ble.txt")
     }
 
 }
