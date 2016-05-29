@@ -1,0 +1,9 @@
+(* Missing comma between enumeration constant identifiers *)
+
+PROGRAM Err803a (i : INTEGER) : INTEGER;
+
+VAR
+    x : ( harold bob );
+
+BEGIN
+END Err803a.

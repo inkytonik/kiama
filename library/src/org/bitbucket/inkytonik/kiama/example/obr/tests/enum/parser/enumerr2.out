@@ -1,0 +1,3 @@
+src/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/parser/enumerr2.obr:6:19: string matching regex '[a-zA-Z][a-zA-Z0-9]*' expected but '8' found
+    x : ( harold, 802 );
+                  ^

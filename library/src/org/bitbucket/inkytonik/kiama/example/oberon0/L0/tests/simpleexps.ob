@@ -1,0 +1,68 @@
+MODULE simpleexps;
+
+VAR
+    ivar1, ivar2 : INTEGER;
+    bvar1, bvar2 : BOOLEAN;
+
+BEGIN
+    ivar1 := 0;
+    ivar1 := 12; 
+    ivar1 := 345; 
+    ivar1 := 67890123;
+    
+    ivar1 := -0;
+    ivar1 := -1;
+    ivar2 := -782374;
+    ivar2 := --10;
+
+    ivar1 := ivar2 + 1;
+    ivar1 := 2 + ivar2;
+    ivar1 := ivar2 - ivar1;
+    ivar1 := +3 - ivar2;
+    ivar1 := ivar2 * 4;
+    ivar1 := 5 * ivar2;
+    ivar1 := ivar2 DIV 6;
+    ivar1 := -7 DIV (ivar2 + 1);
+    ivar1 := ivar2 MOD ivar1;
+    ivar1 := 8 MOD (ivar2 + 1);
+    
+    ivar1 := 2 + 3 * 4;
+    ivar1 := (2 + 3) * 4;
+    ivar1 := 2 - 3 DIV 4;
+    ivar1 := (2 - 3) DIV 4;
+    ivar1 := 2 + 3 MOD 4;
+    ivar1 := (2 + 3) MOD 4;
+    ivar1 := 2 + 3 + 4;
+    ivar1 := 2 + (3 + 4);
+    ivar1 := 2 - 3 - 4;
+    ivar1 := 2 - (3 - 4);
+    ivar1 := 2 * 3 * 4;
+    ivar1 := 2 * (3 * 4);
+    ivar1 := 2 MOD 3 MOD 4;
+    ivar1 := 2 MOD (3 MOD 4);
+    ivar1 := 2 DIV 3 DIV 4;
+    ivar1 := 2 DIV (4 DIV 4);
+    
+    bvar1 := FALSE;
+    bvar1 := TRUE;
+    bvar1 := bvar1 OR bvar2;
+    bvar1 := bvar1 & bvar2;
+    bvar1 := FALSE OR FALSE & TRUE;
+    bvar1 := bvar1 & ~bvar2;
+    bvar1 := bvar1 OR bvar2 OR FALSE;
+    bvar1 := bvar1 OR (bvar2 & FALSE);
+    bvar1 := bvar1 & (TRUE & bvar2);
+    bvar1 := ~TRUE;
+    bvar1 := ~bvar1 & bvar2;
+    bvar1 := ~~bvar1;
+    
+    bvar1 := ivar1 = ivar2;
+    bvar1 := ivar1 # ivar2;
+    bvar1 := ivar1 < ivar2;
+    bvar1 := ivar1 <= ivar2;
+    bvar1 := ivar1 > ivar2;
+    bvar1 := ivar1 >= ivar2;
+    
+    bvar1 := (ivar1 = ivar2) OR bvar2;
+    bvar1 := bvar2 & (ivar1 # ivar2)
+END simpleexps.

@@ -1,0 +1,9 @@
+MODULE repeatsection;
+
+CONST
+    aconst = 10;
+
+CONST
+    aconst = 20;
+
+END repeatsection.

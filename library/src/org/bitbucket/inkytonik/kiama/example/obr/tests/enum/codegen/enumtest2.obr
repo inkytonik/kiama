@@ -1,0 +1,19 @@
+PROGRAM EnumTest (c : INTEGER) : INTEGER;
+
+VAR
+  size : (Small, Medium, Large);
+  colour : (Red, Green, Blue, Yellow);
+
+BEGIN
+
+  size := Medium;
+  colour := Yellow;
+  colour := Green;
+  size := Small;
+  colour := Blue;
+  size := Large;
+  size := Medium;
+  colour := Red;
+  colour := Green;
+
+END EnumTest.

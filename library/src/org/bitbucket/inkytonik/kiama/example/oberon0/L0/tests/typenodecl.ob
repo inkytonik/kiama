@@ -1,0 +1,6 @@
+MODULE typenodecl;
+
+VAR
+    avar : NOTYPE;
+
+END typenodecl.

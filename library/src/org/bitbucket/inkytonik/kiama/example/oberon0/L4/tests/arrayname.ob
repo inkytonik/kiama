@@ -1,0 +1,7 @@
+MODULE arrayname;
+
+TYPE
+    atype1 = ARRAY 10 OF atype0;
+    atype2 = ARRAY 3 * aconst OF INTEGER;
+
+END arrayname.

@@ -1,0 +1,23 @@
+The Kiama team is pleased to bring you the next minor release of the library. The release is cross-published for both Scala 2.10 and 2.11.
+
+### Enhancements
+
+* [Utilities](http://wiki.kiama.googlecode.com/hg/doc/1.8.0/api/index.html#org.kiama.util.package)
+
+    * `Positions`: added support for tracking a second start position for values so that we can keep track of both the position that includes leading white-space and the position after white-space has been skipped. The former is useful if you want the exact text that corresponds to the value (see next change) and the latter is useful for error messages that should point at non-white-space characters.
+
+    * `PositionedParserUtilities`: set the white-space-skipped start position of parsed values and add `textOf` that returns the source text corresponding to a value that has start and finish positions, optionally including the white-space.
+
+    * `Messaging`: add a new method `collectmessages` to provide a more efficient way to collect all of the messages arising from nodes in a particular tree. Previously the easiest way to do this was to use the generic traversal combinator `collectall` which still works, but `collectmessages` is faster.
+
+### Fixes
+
+* Examples
+
+    * `PicoJava`: make error processing more closely match the approach in the JastAdd specification on which this example is based so as to serve as a better performance comparison, including fixing an error in the sub-typing check for assignment statements.
+
+### Other
+
+* Other minor adjustments.
+
+* Move to sbt 0.13.6 and Scala 2.11.4

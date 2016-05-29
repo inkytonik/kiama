@@ -1,0 +1,53 @@
+* _pp.ob
+MODULE proc;
+
+    VAR
+        topb : BOOLEAN;
+
+    PROCEDURE empty;
+    
+    END empty;
+    
+    PROCEDURE p (a : INTEGER; VAR b : BOOLEAN);
+    
+        VAR
+            c : INTEGER;
+    
+    BEGIN
+        c := a * 2;
+        b := c # 0
+    END p;
+
+BEGIN
+    empty;
+    topb := FALSE;
+    p (5, topb);
+    IF topb THEN
+        Write (1)
+    ELSE
+        Write (0)
+    END;
+    WriteLn
+END proc.
+[6]* c
+[6]#include <stdio.h>
+[6]int ob_c9;
+[6]int ob_topb2;
+[6]void ob_empty3 () {
+[6]};
+[6]void ob_p4 (int ob_a6, int *ob_b8) {
+[6]    ob_c9 = ob_a6 * 2;
+[6]    *ob_b8 = ob_c9 != 0;
+[6]};
+[6]int main (int argc, char *argv[0]) {
+[6]    ob_empty3 ();
+[6]    ob_topb2 = 0;
+[6]    ob_p4 (5, &ob_topb2);
+[6]    if (ob_topb2) {
+[6]        printf (" %d", 1);
+[6]    } else {
+[6]        printf (" %d", 0);
+[6]    }
+[6]    puts ("");
+[6]    return 0;
+[6]}

@@ -1,0 +1,129 @@
+<p>The Kiama team are pleased to bring you the next release of the library.</p>
+
+<p>This release includes some breaking changes that improve the reliability and safety of Kiama-based applications. All users should take careful note of these changes.</p>
+
+<p>In addition, there are quite a few new features and bug fixes, most notably a new chain decorator for threading attributes through a tree, support for minimal parenthesisation in pretty printing, and callback support for rewriting. A new version of the Oberon-0 example shows how Kiama can be used in an extensible, modular way.</p>
+
+<h3 id="breaking-changes">Breaking changes</h3>
+<ul>
+  <li>General
+    <ul>
+      <li>Kiama&rsquo;s group ID is now <code>com.googlecode.kiama</code> instead of <code>com.googlecode</code> to fit with Maven Central policies. In sbt you can use it with the following dependency.</li>
+    </ul>
+
+    <p><code>"com.googlecode.kiama" %% "kiama" % "1.2.0"</code></p>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.package">Attribution</a>
+    <ul>
+      <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attribution$$CachedAttribute">Basic attributes</a> are now normal functions, not partial functions, so pattern match completion checking works on their definitions. This change may require some fixes to declared types and may reveal incompleteness that was hidden before.</li>
+      <li>Node properties in <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable"><code>Attributable</code></a> such as <code>parent</code> are not automatically set any more. If you want to use them, first call the <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attribution$"><code>Attribution.initTree</code></a> method, passing the root of your tree. This change removes a set of bad behaviours caused by setting these properties at node construction time.</li>
+      <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable"><code>Attributable</code></a> does not extend <code>scala.util.parsing.input.Positional</code> any more, since it didn&rsquo;t use it.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.package">Rewriting</a>
+    <ul>
+      <li>Remove <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$"><code>Rewriter</code></a> implicit conversions from <code>Term</code> and <code>Option[Term]</code> to <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$Strategy"><code>Strategy</code></a> because they were too dangerous. Use the new explicit operations <code>build</code> and <code>option</code> instead.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.package">Output</a>
+    <ul>
+      <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.PrettyPrinter">Pretty printing library</a> moved to new <code>org.kiama.output</code> package from <code>org.kiama.util</code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="new-features">New features</h3>
+<ul>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.package">Attribution</a>
+    <ul>
+      <li>Add <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Decorators$"><code>chain</code></a>   decorator for <a href="http://code.google.com/p/kiama/wiki/Attribution#Decorators">threading attributes through a tree</a>.</li>
+      <li>Non-circular attributes now have a <code>reset</code> method which clears their cache.</li>
+      <li>Add <code>clone</code> and <code>deepclone</code> support to <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable"><code>Attributable</code></a>. Cloning is important if you intend to calculate some attributes on a <a href="http://code.google.com/p/kiama/wiki/Rewriting#Cloning">structure that would otherwise contain duplicate occurrences of nodes</a>.</li>
+      <li>The current node is now reported in the exception thrown when a cycle is detected during calculation of a non-circular attribute.</li>
+      <li>Support for node properties of tuple, <code>Some</code> and <code>GenTraversable</code> children.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.package">Output</a>
+    <ul>
+      <li>Add <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.ParenPrettyPrinter"><code>ParenPrettyPrinter</code></a> trait for <a href="http://code.google.com/p/kiama/wiki/PrettyPrinting#Parenthesisation">pretty-printing with minimal parenthesisation</a>.</li>
+      <li>Updates to <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.output.PrettyPrinter"><code>PrettyPrinter</code></a>
+        <ul>
+          <li>Make conversions from <code>String</code> and <code>Char</code> to pretty-printer <code>Doc</code> type implicit.</li>
+          <li>Split <code>list</code> combinator into <code>list</code> (for lists of values) and <code>plist</code> (for list of pretty printables).</li>
+          <li>Add <code>hsep</code>, <code>vsep</code> and <code>fillsep</code> variants that allow a separator to be given.</li>
+          <li><code>product</code> combinator now does something sensible for vectors, maps and tuples.</li>
+          <li>Add <code>lterm</code> combinator for lists with terminated elements.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.package">Rewriting</a>
+    <ul>
+      <li>Add <code>log</code> and <code>logfail</code> combinators to <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$"><code>Rewriter</code></a> to improve debugging of rewriting phases.</li>
+      <li>Add <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.CallbackRewriter"><code>CallbackRewriter</code></a> extension of <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.Rewriter$"><code>Rewriter</code></a> that <a href="http://code.google.com/p/kiama/wiki/Rewriting#Callbacks">adds callbacks to various rewriting operations</a>. The callback provides both the node that is being rewritten and the node to which it is being rewritten.</li>
+      <li>Add <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.PositionalRewriter$"><code>PositionalRewriter</code></a> extension of <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.CallbackRewriter"><code>CallbackRewriter</code></a> that <a href="http://code.google.com/p/kiama/wiki/Rewriting#Callbacks">automatically copies positions</a> when rewriting <code>scala.util.parsing.input.Positional</code> nodes .</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.package">Utilities</a>
+    <ul>
+      <li>Add <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.ParserUtilities"><code>ParserUtilities</code></a> trait containing <a href="http://code.google.com/p/kiama/wiki/ParserCombs#ParserUtilities">helper support for using Scala combinator parsers</a>, most notably implicit conversions so that <code>case</code> <code>class</code> constructors can take &ldquo;tilde&rdquo; tuples, thereby eliminating a lot of the pattern matching that you normally need to do in parser actions.</li>
+      <li>Add <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.WhitespaceParser"><code>WhitespaceParser</code></a> trait which allows white space to be defined using a parser instead of a regular expression when using <code>RegexParsers</code> and <code>PackratParsers</code>. This capability is useful when white space contains comments that are nestable.</li>
+      <li>Add <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.Patterns$"><code>Patterns</code></a> module to contain useful extractors (just <code>HasParent</code> for <a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.attribution.Attributable"><code>Attributable</code></a> now).</li>
+    </ul>
+  </li>
+  <li>Examples
+    <ul>
+      <li>Add Oberon-0 example including attribution, rewriting and pretty-printing, plus assembly of processors from smaller components in a modular fashion.</li>
+      <li>Add small JSON example.</li>
+      <li>101companies example now includes some attribution.</li>
+    </ul>
+  </li>
+  <li>Testing
+    <ul>
+      <li>Add tests to improve code coverage.</li>
+      <li>Allow tests to capture output during command-line argument processing.</li>
+    </ul>
+  </li>
+  <li>General
+    <ul>
+      <li>Move to Scala 2.9.1, ScalaTest 1.7.1, JLine 1.0 and sbt 0.11.</li>
+      <li>Add console import commands to <code>build.sbt</code> so that interactive testing is easier.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fixes">Fixes</h3>
+<ul>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.rewriting.package">Rewriting</a>
+    <ul>
+      <li>Use while loops instead of for comprehensions to iterate over children in generic traversal combinators to gain significant speed-up.</li>
+      <li>The <code>Product</code> node duplication operation now caches constructors to reduce reflection overhead.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html#org.kiama.util.package">Utilities</a>
+    <ul>
+      <li><code>Messaging.report</code> now defaults its <code>Emitter</code> argument to standard output.    </li>
+    </ul>
+  </li>
+  <li>Examples
+    <ul>
+      <li>Ignore lines that only contain white space in REPLs.</li>
+    </ul>
+  </li>
+  <li>Testing
+    <ul>
+      <li>Change some test names so that bits don&rsquo;t disappear when run by Eclipse JUnit runner.</li>
+      <li>Make a better split between basic code and test code so that normal compile doesn&rsquo;t need the test libraries.</li>
+    </ul>
+  </li>
+  <li>General
+    <ul>
+      <li>Publish in Sonatype OSS repository (and hence Maven Central) instead of on <code>www.scala-tools.org</code>.</li>
+      <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/api/index.html">API documentation</a> on <code>http://kiama.googlecode.com</code> now includes links to source.</li>
+      <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.2.0/test-api/index.html">Example and test API documentation</a> is now published as well.</li>
+      <li>Add tree-oriented navigation links to the wiki documentation.</li>
+      <li>Many other small bug fixes, improvements and documentation clarifications.</li>
+    </ul>
+  </li>
+</ul>
+
