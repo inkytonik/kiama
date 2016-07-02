@@ -15,3 +15,5 @@ tags
 *.docset
 
 .SublimeSBT_history
+.ensime
+.ensime_cache
