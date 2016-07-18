@@ -169,7 +169,7 @@ and companies.
 
 * YourKit
 
-[![YourKit](http://www.yourkit.com/images/yk_logo.png)](http://www.yourkit.com)
+[![YourKit](https://www.yourkit.com/images/yklogo.png)](http://www.yourkit.com)
 
 YourKit is kindly supporting open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of innovative and intelligent tools for profiling Java and .NET applications. Take a look at YourKit's leading software products: [YourKit Java Profiler](http://www.yourkit.com/java/profiler/index.jsp) and [YourKit .NET Profiler](http://www.yourkit.com/dotnet/index.jsp).
 
