@@ -11,3 +11,7 @@ This is a minor release cross-published for both Scala 2.10 and 2.11.
 ### Fixes
 
 * Handling of source file paths should now work properly on Windows (contributed by Matt Pigram).
+
+### Other
+
+* Moved to Scallop 2.0.0.

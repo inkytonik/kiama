@@ -75,7 +75,7 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
 
         // Enter interactive phase
         config.output().emitln(banner)
-        if (config.profile.get != None) {
+        if (config.profile.isDefined) {
             val dimensions = parseProfileOption(config.profile())
             profile(processlines(config), dimensions, config.logging())
         } else if (config.time())

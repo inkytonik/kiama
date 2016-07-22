@@ -66,7 +66,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      */
     def driver(args : Seq[String]) {
         val config = createAndInitConfig(args)
-        if (config.profile.get != None) {
+        if (config.profile.isDefined) {
             val dimensions = parseProfileOption(config.profile())
             profile(processfiles(config), dimensions, config.logging())
         } else if (config.time())

@@ -72,7 +72,7 @@ libraryDependencies in ThisBuild ++= {
         // Profiling:
         "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion,
         // Command-line handling:
-        "org.rogach" %% "scallop" % "1.0.0",
+        "org.rogach" %% "scallop" % "2.0.0",
         // Reflection
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         // REPLs:

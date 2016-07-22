@@ -203,7 +203,7 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
 
     def process(source : Source, e : LambdaTree.Exp, config : REPLConfig) {
         val result =
-            if (config.profile.get != None) {
+            if (config.profile.isDefined) {
                 val dimensions = parseProfileOption(config.profile())
                 profile(normal(e), dimensions, config.logging())
             } else
