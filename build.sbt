@@ -58,11 +58,6 @@ libraryDependencies in ThisBuild ++= {
             "0.3.0"
         else
             "0.4.0"
-    val scalaTestVersion =
-        if (scalaVersion.value.startsWith ("2.12"))
-            "2.2.5-M3"
-        else
-            "2.2.5"
     Seq (
         // Caching:
         "com.google.code.findbugs" % "jsr305" % "3.0.1",
@@ -78,8 +73,8 @@ libraryDependencies in ThisBuild ++= {
         // REPLs:
         "jline" % "jline" % "2.14.1",
         // Testing:
-        "org.scalacheck" %% "scalacheck" % "1.12.5" % "test",
-        "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
+        "org.scalacheck" %% "scalacheck" % "1.13.2" % "test",
+        "org.scalatest" %% "scalatest" % "3.0.0" % "test"
     )
 }
 

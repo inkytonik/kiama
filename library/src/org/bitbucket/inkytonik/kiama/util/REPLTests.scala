@@ -28,6 +28,7 @@ package util
 trait GeneratingREPLBase[T] extends REPL {
 
     import org.scalacheck._
+    import org.scalacheck.rng.Seed
 
     val banner = "Each time you hit ENTER a new instance is generated and printed."
 
@@ -45,11 +46,16 @@ trait GeneratingREPLBase[T] extends REPL {
     def generator : Arbitrary[T]
 
     /**
+     * The seed for the generator.
+     */
+    val seed = Seed(0)
+
+    /**
      * Generate a new instance and print it, ignoring the input line. Return
      * the configuration unchanged.
      */
     def processline(source : Source, console : Console, config : REPLConfig) : Option[REPLConfig] = {
-        generator.arbitrary(Gen.Parameters.default) match {
+        generator.arbitrary(Gen.Parameters.default, seed) match {
             case Some(t) =>
                 process(source, t, config)
             case None =>
