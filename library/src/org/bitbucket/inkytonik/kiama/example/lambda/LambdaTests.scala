@@ -70,6 +70,10 @@ class LambdaTests extends ParseTests with Evaluator with Generator {
         eval("""(\y.y) (\x.x) 42""") shouldBe Right(Num(42))
     }
 
+    test("another recursive application works") {
+        eval("""(\y.y) (\x.99) 42""") shouldBe Right(Num(99))
+    }
+
     test("name capturing is avoided (1)") {
         eval("""(\x.x) x""") shouldBe Right(Var("x"))
     }
