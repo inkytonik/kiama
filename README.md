@@ -157,6 +157,8 @@ See http://releases.strategoxt.org/docs/api/libstratego-lib/stable/docs/.
 Work on this project has been supported by the following Universities, funding agencies
 and companies.
 
+* University of Minnesota
+
 * Delft University of Technology, The Netherlands
 
 * Eindhoven University of Technology, The Netherlands
