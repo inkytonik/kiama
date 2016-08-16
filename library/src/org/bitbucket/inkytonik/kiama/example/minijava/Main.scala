@@ -55,7 +55,7 @@ trait Driver extends Compiler[Program] {
     def process(source : Source, ast : Program, config : Config) {
 
         // Pretty print the abstract syntax tree
-        // config.output.emitln (layout (any (ast)))
+        // config.output().emitln (layout (any (ast)))
 
         // Perform the semantic checks
         val tree = new MiniJavaTree(ast)
@@ -77,7 +77,7 @@ trait Driver extends Compiler[Program] {
             val targettree = translator.translate(ast, filename, analyser)
 
             // Pretty print the target tree
-            // config.output.emitln (layout (any (targettree)))
+            // config.output().emitln (layout (any (targettree)))
 
             // Output code for the target tree
             targettree.map(generate(isTest, _, config.output()))
