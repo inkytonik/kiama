@@ -188,13 +188,13 @@ lazy val kiama = (project in file (".")).
         mappings in (Compile, packageBin) :=
             (mappings in (core, Compile, packageBin)).value ++
             (mappings in (library, Compile, packageBin)).value,
-            mappings in (Compile, packageSrc) :=
-                (mappings in (core, Compile, packageSrc)).value ++
-                (mappings in (library, Compile, packageSrc)).value,
-                mappings in (Test, packageBin) :=
-                    (mappings in (library, Test, packageBin)).value,
-                    mappings in (Test, packageSrc) :=
-                        (mappings in (library, Test, packageSrc)).value,
+        mappings in (Compile, packageSrc) :=
+            (mappings in (core, Compile, packageSrc)).value ++
+            (mappings in (library, Compile, packageSrc)).value,
+        mappings in (Test, packageBin) :=
+            (mappings in (library, Test, packageBin)).value,
+        mappings in (Test, packageSrc) :=
+            (mappings in (library, Test, packageSrc)).value,
 
         // Unidoc
 
