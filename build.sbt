@@ -183,7 +183,7 @@ lazy val kiama = (project in file (".")).
     ).settings (
         unidocSettings : _*
     ).settings (
-        // File emappings
+        // File mappings
 
         mappings in (Compile, packageBin) :=
             (mappings in (core, Compile, packageBin)).value ++
