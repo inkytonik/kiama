@@ -70,7 +70,10 @@ libraryDependencies in ThisBuild ++= {
     )
 }
 
-incOptions in ThisBuild := (incOptions in ThisBuild).value.withNameHashing (true)
+incOptions in ThisBuild :=
+    (incOptions in ThisBuild).value.
+        withNameHashing (true).
+        withLogRecompileOnMacro(false)
 
 logLevel in ThisBuild := Level.Info
 
