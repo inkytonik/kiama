@@ -14,4 +14,6 @@ This is a minor release cross-published for both Scala 2.10 and 2.11.
 
 ### Other
 
-* Moved to Scallop 2.0.0.
+* Source reorganised to match standard Maven/Sbt structure.
+* Tidied and simplified build specs, removed Build.scala, moved to sbt 0.13.12
+* Moved to ScalaTest 3.0.0, ScalaCheck 1.13.2, Scallop 2.0.0.
