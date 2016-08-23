@@ -1,5 +1,0 @@
-Program(Vector((*,2)),Vector(),BinExpR(Num(1),*,BinExpR(Num(2),+,Factor(Var(x)))))
-BinExp(BinExp(Num(1),*,Num(2)),+,Var(x))
-src/org/bitbucket/inkytonik/kiama/example/transform/tests/test3.exp:2:9: x is not declared
-1 * 2 + x
-        ^

@@ -1,0 +1,11 @@
+* _pp.ob
+MODULE typenodecl;
+
+    VAR
+        avar : NOTYPE;
+
+END typenodecl.
+* errors
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/typenodecl.ob:4:12: NOTYPE is not declared
+    avar : NOTYPE;
+           ^

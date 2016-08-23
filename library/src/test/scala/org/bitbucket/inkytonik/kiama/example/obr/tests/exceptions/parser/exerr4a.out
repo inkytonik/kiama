@@ -1,0 +1,3 @@
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/parser/exerr4a.obr:14:1: keyword "DO" found where variable name expected
+END ExErr4a.
+^

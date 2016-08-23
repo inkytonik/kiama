@@ -50,7 +50,7 @@ For example, you can run with the `-p` option to specify the dimensions you
 wish to see.
 
 ```
-test:run-main org.bitbucket.inkytonik.kiama.example.picojava.Main -pevent -o src/org/bitbucket/inkytonik/kiama/example/picojava/tests/ObfuscationTest.pj
+test:run-main org.bitbucket.inkytonik.kiama.example.picojava.Main -pevent -o src/test/scala/org/bitbucket/inkytonik/kiama/example/picojava/tests/ObfuscationTest.pj
 ```
 
 In this run we request the `event` dimension.

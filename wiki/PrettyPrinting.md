@@ -272,7 +272,7 @@ combinators as short-hand notations for common situations.
 
 This page summarises the kinds of other combinators and lists some
 instances of each kind.  See the
-[PrettyPrinter trait](http://code.google.com/p/kiama/source/browse/src/org/bitbucket/inkytonik/kiama/output/PrettyPrinter.scala)
+[PrettyPrinter trait](http://code.google.com/p/kiama/source/browse/src/main/scala/org/bitbucket/inkytonik/kiama/output/PrettyPrinter.scala)
 for a complete list.
 
 First up is `string` which is like `text` except that the string is
@@ -513,7 +513,7 @@ depending on line width.
 ## Functional pretty printing: the Imperative language
 
 As a more complex example, consider
-[pretty printing](https://bitbucket.org/inkytonik/kiama/src/default/library/src/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
+[pretty printing](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/imperative/PrettyPrinter.scala)
 for the [Imperative](Imperative.md) language. We implement a function `show` that
 converts any imperative language abstract syntax tree node into a
 document. `show` uses `showbin` that abstracts documents for

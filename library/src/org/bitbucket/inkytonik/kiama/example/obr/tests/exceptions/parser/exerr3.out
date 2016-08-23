@@ -1,3 +1,0 @@
-src/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/parser/exerr3.obr:11:7: 'DO' expected but 'R' found
-      Result := 0;
-      ^

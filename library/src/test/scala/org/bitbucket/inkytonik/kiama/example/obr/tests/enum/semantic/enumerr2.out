@@ -1,0 +1,39 @@
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:12:18: type error: expected enumeration CarColour got enumeration WeekDays
+    CarColour := Wednesday;
+                 ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:15:5: illegal assignment
+    Red := Blue;
+    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:19:15: type error: expected enumeration CarColour got enumeration WeekDays
+    IF Blue < Tuesday THEN
+              ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:24:8: type error: expected integer or any enumeration got boolean
+    IF FALSE < TRUE THEN
+       ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:29:18: type error: expected enumeration CarColour got integer
+    CarColour := 0;
+                 ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:32:10: type error: expected integer got enumeration CarColour
+    i := Red;
+         ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:35:18: type error: expected integer got enumeration CarColour
+    CarColour := Red + Green;
+                 ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:35:22: type error: expected enumeration CarColour got integer
+    CarColour := Red + Green;
+                     ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:35:24: type error: expected integer got enumeration CarColour
+    CarColour := Red + Green;
+                       ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:38:18: type error: expected integer got enumeration CarColour
+    CarColour := Red + Monday;
+                 ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:38:22: type error: expected enumeration CarColour got integer
+    CarColour := Red + Monday;
+                     ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:38:24: type error: expected integer got enumeration WeekDays
+    CarColour := Red + Monday;
+                       ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr2.obr:41:10: type error: expected integer got enumeration CarColour
+    i := Red + 1;
+         ^

@@ -1,0 +1,3 @@
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/parser/exerr1.obr:10:17: ':=' expected but 'D' found
+   DivideByZero DO
+                ^

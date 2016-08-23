@@ -1,0 +1,65 @@
+* _pp.ob
+MODULE casename;
+
+BEGIN
+    CASE avar OF
+        1 : avar := 2
+    END;
+    CASE avar OF
+        1 : avar := 2
+      | 3 : avar := 4
+    ELSE
+        avar := 5
+    END;
+    CASE 6 * avar OF
+        7 : avar := 8
+      | 9 : avar := 10; avar := 11
+      | 12 : 
+      | 13 .. 14 : avar := 15
+    END;
+    CASE avar OF
+        16 : avar := 17
+    ELSE
+        
+    END
+END casename.
+* errors
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:4:10: avar is not declared
+    CASE avar OF
+         ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:5:13: avar is not declared
+        1 : avar := 2
+            ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:8:10: avar is not declared
+    CASE avar OF
+         ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:9:13: avar is not declared
+        1 : avar := 2
+            ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:10:13: avar is not declared
+      | 3 : avar := 4
+            ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:12:9: avar is not declared
+        avar := 5
+        ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:15:14: avar is not declared
+    CASE 6 * avar OF
+             ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:16:13: avar is not declared
+        7 : avar := 8
+            ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:17:13: avar is not declared
+      | 9 : avar := 10; avar := 11
+            ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:17:25: avar is not declared
+      | 9 : avar := 10; avar := 11
+                        ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:19:20: avar is not declared
+      | 13 .. 14 : avar := 15
+                   ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:22:10: avar is not declared
+    CASE avar OF
+         ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casename.ob:23:14: avar is not declared
+        16 : avar := 17
+             ^
