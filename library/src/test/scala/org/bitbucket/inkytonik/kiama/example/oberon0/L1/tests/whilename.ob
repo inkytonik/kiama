@@ -1,0 +1,19 @@
+MODULE while;
+
+BEGIN
+    WHILE bvar DO
+    END;
+    
+    WHILE bvar DO
+        avar := 1
+    END;
+    
+    WHILE bvar DO
+        avar := 2;
+    END;
+
+    WHILE (avar > 1) & (avar > 0) DO
+        avar := avar + 4;
+        bvar := avar < 5
+    END
+END while.

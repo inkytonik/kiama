@@ -1,0 +1,8 @@
+* _pp.ob
+MODULE emptydeclsections;
+END emptydeclsections.
+[6]* c
+[6]#include <stdio.h>
+[6]int main (int argc, char *argv[0]) {
+[6]    return 0;
+[6]}

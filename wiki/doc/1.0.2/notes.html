@@ -1,0 +1,45 @@
+<h3 id="enhancements">Enhancements</h3>
+
+<ul>
+  <li>rewriting:
+    <ul>
+      <li>new <code>collect</code> strategy combinator that uses 2.8 collection framework to build any <code>Traversable</code></li>
+      <li><code>collectl</code> and <code>collects</code> versions of <code>collect</code> for <code>List</code> and <code>Set</code>, respectively</li>
+      <li>new <code>everything</code> combinator to fold across a whole structure</li>
+      <li><code>everywhere</code> combinator is alias for <code>everywheretd</code> (top-down version)</li>
+    </ul>
+  </li>
+  <li>general:
+    <ul>
+      <li><code>==&gt;</code> as an alias for <code>PartialFunction</code> is now in <code>org.kiama</code> package object</li>
+      <li>Scala 2.8.1 is default version</li>
+    </ul>
+  </li>
+  <li>examples:
+    <ul>
+      <li>new <a href="http://sourceforge.net/apps/mediawiki/developers/index.php?title=101companies">101companies</a> example</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fixes">Fixes</h3>
+
+<ul>
+  <li>command-line framework:
+    <ul>
+      <li>all argument files are now processed, not just one</li>
+      <li>no requirement for a usage message</li>
+    </ul>
+  </li>
+  <li>test framework:
+    <ul>
+      <li>make <code>filetest</code> public again</li>
+    </ul>
+  </li>
+  <li>general:
+    <ul>
+      <li>remove <code>sbt</code> launcher and invocation scripts from distribution</li>
+    </ul>
+  </li>
+  <li>other minor fixes and tidying up</li>
+</ul>

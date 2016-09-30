@@ -1,0 +1,9 @@
+image: williamyeh/sbt
+
+pipelines:
+  default:
+    - step:
+        script:
+          - sbt sbtVersion
+          - sbt +clean +test
+          - sbt +kiama/package +kiama/package-src +kiama/package-doc +kiama/test:package +kiama/test:package-src +kiama/test:package-doc

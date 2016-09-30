@@ -1,0 +1,61 @@
+<p>The Kiama team are pleased to bring you the next release of the library.</p>
+
+<h3 id="new-features">New features</h3>
+<ul>
+  <li>General
+    <ul>
+      <li>The API methods that create rewriting strategies and attributes are now defined by macros. We use our <a href="https://bitbucket.org/inkytonik/dsinfo"><code>dsinfo</code></a> library to provide easy access to the names of these domain objects. Strategies and attributes now have a <code>name</code> member that can be used for debugging messages and profiling (see below).</li>
+      <li>This new dependence on macros means that we do not support Kiama on Scala 2.9 any more.</li>
+      <li>Kiama now uses our <a href="https://bitbucket.org/inkytonik/dsprofile"><code>dsprofile</code></a> library to provide domain-specific profiling reports about strategy and attribute evaluation. See the <a href="https://code.google.com/p/kiama/wiki/Profiling">Profiling wiki page</a> for more information on Kiama&#8217;s profiling support.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.attribution.package">Attribution</a>
+    <ul>
+      <li>Circular attributes now support the same <code>reset</code> and <code>hasBeenComputedAt</code> interface as other cached attributes.</li>
+      <li>Dynamic attributes can now be properly reset.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.rewriting.package">Rewriting</a>
+    <ul>
+      <li>The <code>apply</code> method of strategies is now common, so it is possible to easily customise the behaviour of all strategies.</li>
+      <li><code>MemoRewriter</code> is a new version of the <code>Rewriter</code> where every strategy memoises its results.</li>
+      <li>The <code>Strategy</code> type is now defined externally to the <code>Rewriter</code> so it must be imported separately if you use it.</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.output.package">Output</a>
+    <ul>
+      <li>There is now a <code>PrettyPrinter</code> module that can be used if you just want the default pretty-printer behaviour (e.g., just to print trees with no customisation).</li>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=57">Issue 57</a>: Output filters have been added so that pretty-printed output can be filtered for display (e.g., to only show up to a maximum number of lines or up to particular indentation) (inspired by Lucas Sabatin).</li>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=58">Issue 58</a>: <code>line (repl)</code> is exported from the pretty-printing library so that the replacement for an omitted line break can be customised (inspired by Lucas Sabatin).</li>
+    </ul>
+  </li>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.5.0/api/index.html#org.kiama.util.package">Utilities</a>
+    <ul>
+      <li>A <code>ProfilingCompiler</code> variant of <code>Compiler</code> trait has been added to make it easier to define main programs that provide options for running profiles.</li>
+      <li>Bug fixed in <code>Compiler</code> trait where only the first filename argument was passed on to the driver.</li>
+      <li>The <code>Compiler.process</code> method is now also given the filename.</li>
+    </ul>
+  </li>
+  <li>Examples
+    <ul>
+      <li>Added a pretty-printer and obfuscation rewriting to the PicoJava example.</li>
+      <li>The Lambda2 example now always allows type annotations to be omitted instead of using an interactive REPL command to switch type checking on and off.</li>
+      <li>New MiniJava example that compiles a cut-down but non-trivial version of Java to JVM byte code.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fixes">Fixes</h3>
+<ul>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.4.0/api/index.html#org.kiama.attribution.package">Attribution</a>
+    <ul>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=59">Issue 59</a>: fix bug where <code>hasBeenComputedAt</code> on attributes didn&#8217;t take account of memoisation table resets.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="other">Other</h3>
+<ul>
+  <li>The project uses a new structure with <code>core</code> and <code>kiama</code> sub-projects to support separate compilation needed for macros.</li>
+  <li>Some other minor fixes and code style improvements.</li>
+</ul>

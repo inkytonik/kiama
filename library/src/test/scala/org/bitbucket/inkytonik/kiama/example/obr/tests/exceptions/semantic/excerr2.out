@@ -1,0 +1,39 @@
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:14:5: illegal assignment
+    FallOverALot := 1;
+    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:14:21: type error: expected exception got integer
+    FallOverALot := 1;
+                    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:15:5: illegal assignment
+    DivideByZero := 10;
+    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:15:21: type error: expected exception got integer
+    DivideByZero := 10;
+                    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:18:8: type error: expected integer or any enumeration got exception
+    IF FallOverALot > 10 THEN
+       ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:19:14: type error: expected integer got exception
+        i := DivideByZero + 1;
+             ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:23:5: raise parameter i must be an exception constant
+    RAISE i;
+    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:28:5: catch clause parameter j must be an exception constant
+    CATCH j DO
+    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:30:5: catch clause parameter i must be an exception constant
+    CATCH i DO
+    ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:36:14: true is not declared
+        i := true;
+             ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:38:9: illegal assignment
+        FallOverALot := 1;
+        ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:38:25: type error: expected exception got integer
+        FallOverALot := 1;
+                        ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic/excerr2.obr:40:18: type error: expected integer got exception
+        i := j + DivideByZero;
+                 ^

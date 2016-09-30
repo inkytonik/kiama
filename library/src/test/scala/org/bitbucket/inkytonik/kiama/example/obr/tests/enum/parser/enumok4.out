@@ -1,0 +1,1 @@
+ObrInt(EnumOk4,Vector(IntParam(IdnDef(i)), EnumVar(IdnDef(WeekDays),Vector(EnumConst(IdnDef(Monday)), EnumConst(IdnDef(Tuesday)), EnumConst(IdnDef(Wednesday)), EnumConst(IdnDef(Thursday)), EnumConst(IdnDef(Friday))))),Vector(),EnumOk4)

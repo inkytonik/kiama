@@ -1,0 +1,38 @@
+MODULE badfor;
+
+CONST
+    aconst = 10;
+    
+TYPE
+    atype = INTEGER;    
+
+VAR
+    avar : INTEGER;
+    bvar : BOOLEAN;
+    cvar : INTEGER;
+
+BEGIN
+    FOR aconst := 1 TO 10 DO
+        avar := 1
+    END;
+
+    FOR atype := 1 TO 10 DO
+        avar := 1
+    END;
+
+    FOR bvar := FALSE TO TRUE DO
+        avar := 42
+    END;
+
+    FOR avar := 1 TO 2 BY cvar * 2 DO
+        avar := 42
+    END;
+
+    FOR dvar := 1 TO 2 DO
+        dvar := 99
+    END;
+
+    FOR avar := 8 TO 10 BY 3 DIV 0 DO
+        cvar := 100
+    END
+END badfor.

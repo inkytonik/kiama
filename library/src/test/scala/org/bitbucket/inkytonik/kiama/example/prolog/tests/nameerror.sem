@@ -1,0 +1,12 @@
+src/test/scala/org/bitbucket/inkytonik/kiama/example/prolog/tests/nameerror.pl:2:33: likes should have 2 arguments but has 3
+likes(john,X) :- likes(X,wine), likes(X,food,beer).
+                                ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/prolog/tests/nameerror.pl:3:1: likes should have 2 arguments but has 1
+likes(john) :- female(X,likes), doesntlike(X,wine).
+^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/prolog/tests/nameerror.pl:3:16: female should have 1 arguments but has 2
+likes(john) :- female(X,likes), doesntlike(X,wine).
+               ^
+src/test/scala/org/bitbucket/inkytonik/kiama/example/prolog/tests/nameerror.pl:3:25: likes should have 2 arguments but has 0
+likes(john) :- female(X,likes), doesntlike(X,wine).
+                        ^

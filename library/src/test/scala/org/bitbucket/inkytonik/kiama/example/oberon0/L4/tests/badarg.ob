@@ -1,0 +1,34 @@
+MODULE badarg;
+
+TYPE
+    arr1 = ARRAY 5 OF BOOLEAN;
+    arr2 = ARRAY 5 OF BOOLEAN;
+    rec1 = RECORD x : INTEGER END;
+    rec2 = RECORD x : INTEGER END;
+
+VAR
+    arr : arr2;
+    rec : rec2;
+
+PROCEDURE nonidparam (a : ARRAY 10 OF INTEGER; b : RECORD x : INTEGER END);
+
+END nonidparam;
+
+PROCEDURE nonvararrayparam (a : arr1; b : rec1);
+
+END nonvararrayparam;
+
+PROCEDURE One (VAR a : arr1; VAR b : rec1);
+
+PROCEDURE Two (VAR c : arr2; VAR d : rec2);
+
+BEGIN
+END Two;
+
+BEGIN
+    Two (a, b)
+END One;
+
+BEGIN
+    nonvararrayparam (arr, rec)
+END badarg.

@@ -1,0 +1,31 @@
+MODULE nominalarg;
+
+TYPE
+    arr1 = ARRAY 10 OF INTEGER;
+    rec1 = RECORD x : INTEGER END;
+
+VAR
+    a : arr1;
+    b : rec1;
+
+PROCEDURE proc (VAR c : arr1; VAR d : rec1);
+
+BEGIN
+    c[1] := 99;
+    d.x := 100
+END proc;
+
+BEGIN
+    a[1] := 42;
+    b.x := 43;
+    proc (a, b);
+    Write (a[1]);
+    WriteLn;
+    Write (b.x);
+    WriteLn
+END nominalarg.
+
+(*
+99
+100
+*)

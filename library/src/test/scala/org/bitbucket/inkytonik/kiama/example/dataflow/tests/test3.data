@@ -1,0 +1,9 @@
+{
+    w = y
+    if (y) {
+        w = x
+    } else {
+        y = w
+    }
+    return w
+}

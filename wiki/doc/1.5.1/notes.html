@@ -1,0 +1,19 @@
+<p>The Kiama team are pleased to bring you a bug fix release of the library.</p>
+
+<h3 id="fixes">Fixes</h3>
+
+<ul>
+  <li><a href="http://wiki.kiama.googlecode.com/hg/doc/1.5.1/api/index.html#org.kiama.output.package">Output</a>
+    <ul>
+      <li><a href="https://code.google.com/p/kiama/issues/detail?id=60">Issue 60</a>: Pretty-printers now use much less stack, so pretty-printing long or deeply-nested documents is possible.</li>
+      <li>Performance of pretty-printers was also improved by using buffering instead of string concatenation.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="other">Other</h3>
+<ul>
+  <li>Moved to Scala 2.10.2.</li>
+  <li>Use string interpolation to build strings instead of concatenation.</li>
+</ul>
+

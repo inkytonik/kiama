@@ -1,0 +1,23 @@
+(* Legal TRY statement (semicolons before CATCH, nesting) *)
+
+PROGRAM ExcOk6 (i : INTEGER) : INTEGER;
+
+BEGIN
+
+   TRY
+      A := B / C;
+      TRY
+         B := C / A;
+      CATCH DivideByZero DO
+         RAISE HaroldWasHere;
+      END
+   CATCH DivideByZero DO
+      TRY
+         B := A;
+      CATCH HaroldWasHere DO
+         RAISE NoHeWasnt;
+      END
+      B := C - A;
+   END
+   
+END ExcOk6.

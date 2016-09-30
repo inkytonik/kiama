@@ -1,0 +1,6 @@
+:eval
+4 + 1
+:eval lazysubst
+:eval
+4 + 1
+:eval bob

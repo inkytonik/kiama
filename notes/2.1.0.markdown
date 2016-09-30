@@ -1,0 +1,19 @@
+[Kiama](https://bitbucket.org/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+
+This is a minor release cross-published for both Scala 2.10 and 2.11.
+
+### Enhancements
+
+* `Relation`: `unapply` on relations has been replaced by `unapplySeq` that returns the image of the matched value as a sequence. The old usage of matching a single value and failing otherwise still works, since the pattern `rel(x)` only succeeds if the image contains exactly one value. Since the whole image is now returned it is possible to check other image structures, including the empty image `rel()` and one that contains at least one element `rel(a, rest @ _*)`.
+
+* `Relation`: following the previous change, the `pair` extractor on relations has been modified to use `unapplySeq`. It now returns the matched value and that value's image as a tuple. Thus, a pattern such as `rel.pair(n, x, y)` succeeds if the matched value has a two-element image, binding `n` to the matched value, `x` to the first element of the image and `y` to the second element of the image.
+
+### Fixes
+
+* Handling of source file paths should now work properly on Windows (contributed by Matt Pigram).
+
+### Other
+
+* Source reorganised to match standard Maven/Sbt structure.
+* Tidied and simplified build specs, removed Build.scala, moved to sbt 0.13.12
+* Moved to ScalaTest 3.0.0, ScalaCheck 1.13.2, Scallop 2.0.0.

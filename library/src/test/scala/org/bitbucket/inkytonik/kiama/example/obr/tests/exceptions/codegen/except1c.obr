@@ -1,0 +1,37 @@
+(* Manually raise the DivideByZero exception  *)
+(* and catch it in a nested TRY...CATCH       *)
+(* Simple test which tests RAISE-ing and      *)
+(* CATCH-ing exceptions without triggering    *)
+(* faults in division code or declaration     *)
+(* mapping.                                   *)
+
+PROGRAM Except (i : INTEGER) : INTEGER;
+
+VAR
+  result : INTEGER;
+
+BEGIN
+  result := -4;
+  IF i = 0 THEN
+    RAISE DivideByZero;
+  ELSE
+    TRY
+      IF i = 1 THEN
+        RAISE DivideByZero;
+      ELSE
+        TRY
+          IF i = 2 THEN
+            RAISE DivideByZero;
+          ELSE
+            result := i;
+          END
+        CATCH DivideByZero DO
+          result := -3;
+        END
+      END
+    CATCH DivideByZero DO
+      result := -2;
+    END
+  END
+  RETURN result;
+END Except.

@@ -1,0 +1,17 @@
+{
+    class ALongClassName {
+        int avar;
+        int bvar;
+        class NestedClass {
+            int item;
+            avar = item;
+        }
+        NestedClass object;
+        object.item = bvar;
+    }
+    class AnotherClassName {
+        int avar;
+        ALongClassName object;
+        avar = object.bvar;
+    }
+}

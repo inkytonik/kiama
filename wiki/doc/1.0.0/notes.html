@@ -1,0 +1,65 @@
+<h3 id="enhancements">Enhancements</h3>
+
+<ul>
+  <li>depends on Scala 2.8.0</li>
+  <li>abstract state machine library (issue 43):
+    <ul>
+      <li>documentation page added to wiki</li>
+      <li>parameterised state</li>
+      <li>consistency checking for updates</li>
+    </ul>
+  </li>
+  <li>attribute grammars:
+    <ul>
+      <li>attribute forwarding</li>
+      <li>tree splicing</li>
+      <li>beginning of decorators library</li>
+    </ul>
+  </li>
+  <li>examples:
+    <ul>
+      <li>dataflow example now includes rewrites for simple optimisations</li>
+      <li>new example: Obr compiler from imperative language to SPARC</li>
+      <li>new example: ISWIM to SECD machine compiler</li>
+    </ul>
+  </li>
+  <li>parsing:
+    <ul>
+      <li>removed, use Scala library packrat combinators</li>
+      <li>or try Rats!-generated parsers via our sbt-rats plugin</li>
+    </ul>
+  </li>
+  <li>pretty-printing:
+    <ul>
+      <li>rudimentary support in util</li>
+    </ul>
+  </li>
+  <li>rewriting:
+    <ul>
+      <li>support for congruences (issue 39)</li>
+      <li>failure combinator is now called fail as in Stratego</li>
+      <li>extended strategy library</li>
+    </ul>
+  </li>
+  <li>sbt
+    <ul>
+      <li>build with sbt (currently 0.7.4)</li>
+      <li>&ldquo;main&rdquo; task for running a specific Main with arguments</li>
+    </ul>
+  </li>
+  <li>testing:
+    <ul>
+      <li>use ScalaTest instead of JUnit (issue 35)</li>
+      <li>more powerful support for end-to-end testing (issue 46)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="fixes">Fixes</h3>
+
+<ul>
+  <li>top-level package is now org.kiama (issue 41)</li>
+  <li>examples now packaged with tests, not main library code (issue 44)</li>
+  <li>many smaller bug fixes and many new tests</li>
+</ul>
+

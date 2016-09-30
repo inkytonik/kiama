@@ -1,0 +1,22 @@
+The Kiama team is pleased to bring you the next release of the library. This release mostly contains code tidy-up changes, plus a couple of important bug and performance fixes.
+
+### Fixes
+
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.5.2/api/index.html#org.kiama.attribution.package)
+    * Circular attributes are more efficient as they are better at avoiding re-computation
+    * `circular` now returns the correct attribute type, not a plain function type
+* [Rewriting](http://wiki.kiama.googlecode.com/hg/doc/1.5.2/api/index.html#org.kiama.rewriting.package)
+    * Names for strategies that have recursive implementations are now allocated to the top-level strategy only not to each level of the recursion, thereby making profiles of those strategies show correct invocation counts
+
+### Enhancements
+
+* [Attribution](http://wiki.kiama.googlecode.com/hg/doc/1.5.2/api/index.html#org.kiama.attribution.package)
+    * Circular attributes now have a `hasBeenComputedAt` method
+* [Utility](http://wiki.kiama.googlecode.com/hg/doc/1.5.2/api/index.html#org.kiama.util.package)
+    * New `ProfilingREPL` trait to easily combine profiling with REPLs
+    * Move to Scallop-based command-line handling in examples
+
+### Other
+* Remove some reliance on mutable data and vars
+* Move to sbt 0.13, Scala 2.10.3, ScalaTest 2.0, ScalaCheck 1.10.1, Scallop 0.9.4, dsprofile 0.3
+* Other code tidy up

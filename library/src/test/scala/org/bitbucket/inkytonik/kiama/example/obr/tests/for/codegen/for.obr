@@ -1,0 +1,16 @@
+PROGRAM For (x : INTEGER; y : INTEGER) : INTEGER;
+
+VAR
+    a : INTEGER;
+    b : INTEGER;
+    c : INTEGER;
+
+BEGIN
+    c := 0;
+    FOR a := 1 TO x DO
+        FOR b := 1 TO y DO
+            c := c + 1;
+        END
+    END
+    RETURN c;
+END For.
