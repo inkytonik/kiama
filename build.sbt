@@ -19,11 +19,11 @@ scalacOptions in ThisBuild := {
     //  - stars-align: incorrectly reports problems if pattern matching of
     //    unapplySeq extractor doesn't match sequence directly
     val lintOption =
-        if (scalaVersion.value.startsWith ("2.10"))
+        if (scalaVersion.value.startsWith("2.10"))
             "-Xlint"
         else
             "-Xlint:-stars-align,_"
-    Seq (
+    Seq(
         "-deprecation",
         "-feature",
         "-sourcepath", baseDirectory.value.getAbsolutePath,
@@ -34,23 +34,23 @@ scalacOptions in ThisBuild := {
     )
 }
 
-resolvers in ThisBuild ++= Seq (
-    Resolver.sonatypeRepo ("releases"),
-    Resolver.sonatypeRepo ("snapshots")
+resolvers in ThisBuild ++= Seq(
+    Resolver.sonatypeRepo("releases"),
+    Resolver.sonatypeRepo("snapshots")
 )
 
 libraryDependencies in ThisBuild ++= {
     val dsinfoVersion =
-        if (scalaVersion.value.startsWith ("2.10"))
+        if (scalaVersion.value.startsWith("2.10"))
             "0.3.0"
         else
             "0.4.0"
     val dsprofileVersion =
-        if (scalaVersion.value.startsWith ("2.10"))
+        if (scalaVersion.value.startsWith("2.10"))
             "0.3.0"
         else
             "0.4.0"
-    Seq (
+    Seq(
         // Caching:
         "com.google.code.findbugs" % "jsr305" % "3.0.1",
         "com.google.guava" % "guava" % "19.0",
@@ -72,14 +72,14 @@ libraryDependencies in ThisBuild ++= {
 
 incOptions in ThisBuild :=
     (incOptions in ThisBuild).value.
-        withNameHashing (true).
+        withNameHashing(true).
         withLogRecompileOnMacro(false)
 
 logLevel in ThisBuild := Level.Info
 
 shellPrompt in ThisBuild := {
     state =>
-        Project.extract (state).currentRef.project + " " + version.value +
+        Project.extract(state).currentRef.project + " " + version.value +
             " " + scalaVersion.value + "> "
 }
 
@@ -89,7 +89,7 @@ mainClass in ThisBuild := None
 
 val subProjectSettings =
     scalariformSettings ++
-    Seq (
+    Seq(
         // No publishing, it's done in the root project
 
         publish := {},
@@ -99,11 +99,12 @@ val subProjectSettings =
 
         // Source code formatting
 
-        ScalariformKeys.preferences := ScalariformKeys.preferences.value
-        .setPreference (AlignSingleLineCaseStatements, true)
-        .setPreference (IndentSpaces, 4)
-        .setPreference (SpaceBeforeColon, true)
-        .setPreference (SpacesAroundMultiImports, false)
+        ScalariformKeys.preferences :=
+            ScalariformKeys.preferences.value
+                .setPreference(AlignSingleLineCaseStatements, true)
+                .setPreference(IndentSpaces, 4)
+                .setPreference(SpaceBeforeColon, true)
+                .setPreference(SpacesAroundMultiImports, false)
     )
 
 // Project configuration:
@@ -111,20 +112,28 @@ val subProjectSettings =
 //   - library project containing everything else, including all tests
 //   - kiama (root) project aggregates core and library
 
-lazy val core = (project in file ("core")).
-    settings (
-        name := "core"
-    ).settings (
+def setupProject(project : Project, projectName : String) : Project =
+    project.settings(
+        name := projectName
+    ).settings(
         subProjectSettings : _*
     )
 
-lazy val library = (project in file ("library")).
-    settings (
-        name := "library",
-        javaOptions ++= Seq ("-Xss8M"),
+lazy val core =
+    setupProject(
+        project in file("core"),
+        "core"
+    )
+
+lazy val library =
+    setupProject(
+        project in file("library"),
+        "library"
+    ).settings(
+        javaOptions ++= Seq("-Xss8M"),
         fork := true,
         connectInput in run := true,
-        outputStrategy in run := Some (StdoutOutput),
+        outputStrategy in run := Some(StdoutOutput),
         initialCommands in console := """
             import org.bitbucket.inkytonik.kiama._
             import rewriting.Rewriter._
@@ -134,16 +143,17 @@ lazy val library = (project in file ("library")).
                 import example.json.JSONTree._
                 import example.json.PrettyPrinter._
             """.stripMargin
-    ).settings (
-        subProjectSettings : _*
-    ) dependsOn (core % "compile-internal, test-internal")
+    ).dependsOn(
+        core % "compile-internal, test-internal"
+    )
 
-lazy val kiama = (project in file (".")).
-    settings (
-        name := "kiama"
-    ).settings (
+lazy val kiama =
+    setupProject(
+        project in file("."),
+        "kiama"
+    ).settings(
         unidocSettings : _*
-    ).settings (
+    ).settings(
         // File mappings
 
         mappings in (Compile, packageBin) :=
@@ -165,11 +175,11 @@ lazy val kiama = (project in file (".")).
         target in unidoc in TestScalaUnidoc := crossTarget.value / "test-api",
         scalacOptions in (ScalaUnidoc, unidoc) ++= {
             val macroExpandOption =
-                if (scalaVersion.value.startsWith ("2.10"))
+                if (scalaVersion.value.startsWith("2.10"))
                 "-Ymacro-no-expand"
                 else
                 "-Ymacro-expand:none"
-                Seq (
+                Seq(
                     macroExpandOption,
                     "-doc-source-url",
                     "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
@@ -181,10 +191,10 @@ lazy val kiama = (project in file (".")).
 
         publishTo := {
             val nexus = "https://oss.sonatype.org/"
-            if (version.value.trim.endsWith ("SNAPSHOT"))
-                Some ("snapshots" at nexus + "content/repositories/snapshots")
+            if (version.value.trim.endsWith("SNAPSHOT"))
+                Some("snapshots" at nexus + "content/repositories/snapshots")
             else
-                Some ("releases" at nexus + "service/local/staging/deploy/maven2")
+                Some("releases" at nexus + "service/local/staging/deploy/maven2")
         },
         publishMavenStyle := true,
         publishArtifact in Test := true,
@@ -211,4 +221,4 @@ lazy val kiama = (project in file (".")).
             </developers>
         )
 
-    ).aggregate (core, library)
+    ).aggregate(core, library)
