@@ -26,42 +26,56 @@ package util
  */
 class SourceTests extends Tests {
 
-    import Source.dropPrefix
+    import Source.{dropCurrentPath, dropPrefix}
     import java.io.File.separator
+    import java.lang.System.getProperty
+
+    val currentPathFile = getProperty("user.dir") + separator + "foo.txt"
+    val currentPathBase = "foo.txt"
+    val notCurrentPathFileWithSep = separator + "x" + currentPathFile
+    val notCurrentPathFileWithoutSep = "x" + currentPathFile
+
+    test("dropCurrentPath drops current path correctly") {
+        dropCurrentPath(currentPathFile) shouldBe currentPathBase
+    }
+
+    test("dropCurrentPath doesn't drop non-current path (with sep)") {
+        dropCurrentPath(notCurrentPathFileWithSep) shouldBe notCurrentPathFileWithSep
+    }
+
+    test("dropCurrentPath doesn't drop non-current path (without sep)") {
+        dropCurrentPath(notCurrentPathFileWithoutSep) shouldBe notCurrentPathFileWithoutSep
+    }
 
     def makePath(p : String*) = p mkString separator
     def makePrefixPath(p : String*) = separator + makePath(p : _*)
 
+    val testPath = makePrefixPath("foo", "bar", "ble.txt")
+    val prefixOfTestPath = makePrefixPath("foo", "bar")
+    val otherPath = makePath("bob", "harry")
+
     test("dropPrefix copes with empty filename") {
-        dropPrefix("", makePrefixPath("foo", "bar")) shouldBe ""
+        dropPrefix("", testPath) shouldBe ""
     }
 
     test("dropPrefix correctly drops nothing if prefix is empty") {
-        dropPrefix(makePrefixPath("foo", "bar", "ble.txt"), "") shouldBe makePrefixPath("foo", "bar", "ble.txt")
+        dropPrefix(testPath, "") shouldBe testPath
     }
 
     test("dropPrefix correctly drops prefix that is there") {
-        dropPrefix(makePrefixPath("foo", "bar", "ble.txt"), makePrefixPath("foo", "bar")) shouldBe "ble.txt"
+        dropPrefix(testPath, prefixOfTestPath) shouldBe "ble.txt"
     }
 
     test("dropPrefix correctly drops prefix that is whole filename") {
-        dropPrefix(makePrefixPath("foo", "bar", "ble.txt"), makePrefixPath("foo", "bar", "ble.txt")) shouldBe ""
+        dropPrefix(testPath, testPath) shouldBe ""
     }
 
-    test("dropPrefix correctly ignores prefix that isn't there") {
-        dropPrefix(makePrefixPath("foo", "bar", "ble.txt"), makePath("bob", "harry")) shouldBe makePrefixPath("foo", "bar", "ble.txt")
+    test("dropPrefix correctly ignores path that isn't there") {
+        dropPrefix(testPath, otherPath) shouldBe testPath
     }
 
     test("dropPrefix correctly deals with filename that is prefix of prefix") {
-        dropPrefix(makePrefixPath("foo", "bar"), makePrefixPath("foo", "bar", "ble.txt")) shouldBe ""
-    }
-
-    test("dropPrefix correctly deals with empty filename") {
-        dropPrefix("", makePrefixPath("bob", "harry")) shouldBe ""
-    }
-
-    test("dropPrefix correctly deals with empty prefix") {
-        dropPrefix(makePrefixPath("foo", "bar", "ble.txt"), "") shouldBe makePrefixPath("foo", "bar", "ble.txt")
+        dropPrefix(prefixOfTestPath, testPath) shouldBe ""
     }
 
 }

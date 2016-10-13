@@ -122,12 +122,13 @@ object Source {
     /**
      * Return a simplified filename where a string has been dropped if it
      * occurs as a prefix of the given filename. The system separator
-     * character is also dropped if it occurs immediately after the prefix.
+     * character is also dropped if it occurs immediately after a
+     * non-empty prefix.
      */
     def dropPrefix(filename : String, prefix : String) : String = {
 
         def dropIgnoreSep(i : Int) : String =
-            if (i == 0)
+            if ((i == 0) || ((i == 1) && (filename(0) == separatorChar)))
                 filename
             else if (i < filename.length)
                 filename.drop(if (filename(i) == separatorChar) i + 1 else i)
