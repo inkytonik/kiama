@@ -115,18 +115,24 @@ val subProjectSettings =
 def setupProject(project : Project, projectName : String) : Project =
     project.settings(
         name := projectName
+    )
+
+def setupSubProject(project : Project, projectName : String) : Project =
+    setupProject(
+        project,
+        projectName
     ).settings(
         subProjectSettings : _*
     )
 
 lazy val core =
-    setupProject(
+    setupSubProject(
         project in file("core"),
         "core"
     )
 
 lazy val library =
-    setupProject(
+    setupSubProject(
         project in file("library"),
         "library"
     ).settings(
