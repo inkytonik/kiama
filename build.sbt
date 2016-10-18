@@ -206,7 +206,7 @@ lazy val kiama =
         publishArtifact in Test := true,
         pomIncludeRepository := { x => false },
         pomExtra := (
-            <url>http://kiama.googlecode.com</url>
+            <url>https://bitbucket.org/inkytonik/kiama</url>
             <licenses>
                 <license>
                     <name>LGPL 3.0 license</name>
@@ -215,14 +215,14 @@ lazy val kiama =
                 </license>
             </licenses>
             <scm>
-                <url>https://kiama.googlecode.com/hg</url>
-                <connection>scm:hg:https://kiama.googlecode.com/hg</connection>
+                <url>https://bitbucket.org/inkytonik/kiama</url>
+                <connection>scm:hg:https://bitbucket.org/inkytonik/kiama</connection>
             </scm>
             <developers>
                 <developer>
                    <id>inkytonik</id>
                    <name>Tony Sloane</name>
-                   <url>https://code.google.com/u/inkytonik</url>
+                   <url>https://bitbucket.org/inkytonik</url>
                 </developer>
             </developers>
         )
