@@ -136,10 +136,8 @@ object Source {
                 ""
 
         for (i <- 0 until prefix.length) {
-            if (i == filename.length)
-                return ""
-            else if (filename(i) != prefix(i))
-                return dropIgnoreSep(i)
+            if ((i == filename.length) || (filename(i) != prefix(i)))
+                return filename
         }
         dropIgnoreSep(prefix.length)
 

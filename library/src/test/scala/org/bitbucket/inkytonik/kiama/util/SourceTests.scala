@@ -30,12 +30,17 @@ class SourceTests extends Tests {
     import java.io.File.separator
     import java.lang.System.getProperty
 
-    val currentPathFile = getProperty("user.dir") + separator + "foo.txt"
+    val currentPath = getProperty("user.dir")
+    val currentPathFile = currentPath + separator + "foo.txt"
     val currentPathBase = "foo.txt"
     val notCurrentPathFileWithSep = separator + "x" + currentPathFile
     val notCurrentPathFileWithoutSep = "x" + currentPathFile
 
     test("dropCurrentPath drops current path correctly") {
+        dropCurrentPath(currentPathFile) shouldBe currentPathBase
+    }
+
+    test("dropCurrentPath drops partial current path correctly") {
         dropCurrentPath(currentPathFile) shouldBe currentPathBase
     }
 
@@ -51,7 +56,8 @@ class SourceTests extends Tests {
     def makePrefixPath(p : String*) = separator + makePath(p : _*)
 
     val testPath = makePrefixPath("foo", "bar", "ble.txt")
-    val prefixOfTestPath = makePrefixPath("foo", "bar")
+    val prefixOfTestPath1 = makePrefixPath("foo")
+    val prefixOfTestPath2 = makePrefixPath("foo", "bar")
     val otherPath = makePath("bob", "harry")
 
     test("dropPrefix copes with empty filename") {
@@ -62,8 +68,12 @@ class SourceTests extends Tests {
         dropPrefix(testPath, "") shouldBe testPath
     }
 
-    test("dropPrefix correctly drops prefix that is there") {
-        dropPrefix(testPath, prefixOfTestPath) shouldBe "ble.txt"
+    test("dropPrefix correctly drops prefix that is there (1)") {
+        dropPrefix(testPath, prefixOfTestPath1) shouldBe "bar/ble.txt"
+    }
+
+    test("dropPrefix correctly drops prefix that is there (2)") {
+        dropPrefix(testPath, prefixOfTestPath2) shouldBe "ble.txt"
     }
 
     test("dropPrefix correctly drops prefix that is whole filename") {
@@ -74,8 +84,16 @@ class SourceTests extends Tests {
         dropPrefix(testPath, otherPath) shouldBe testPath
     }
 
-    test("dropPrefix correctly deals with filename that is prefix of prefix") {
-        dropPrefix(prefixOfTestPath, testPath) shouldBe ""
+    test("dropPrefix correctly drops nothing if there is a partial common prefix (1)") {
+        dropPrefix(prefixOfTestPath1, testPath) shouldBe prefixOfTestPath1
+    }
+
+    test("dropPrefix correctly drops nothing if there is a partial common prefix (2)") {
+        dropPrefix(prefixOfTestPath2, testPath) shouldBe prefixOfTestPath2
+    }
+
+    test("dropPrefix correctly drops nothing if there is a partial common prefix (3)") {
+        dropPrefix(prefixOfTestPath1, prefixOfTestPath2) shouldBe prefixOfTestPath1
     }
 
 }
