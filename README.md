@@ -49,12 +49,14 @@ A traditional approach to language processing is to represent the data to be pro
 
 * [Context-sensitive attribute equations](https://bitbucket.org/inkytonik/kiama/src/default/wiki/Attribution.md)
 
-Attribute equations define properties of tree nodes in terms of constants or the properties of other nodes.  In this example, the local and global minima of a binary tree (`locmin` and `globmin`) are defined using simple local equations.  The arrow notation denotes accessing an attribute (property) of a node.  The `attr` function provides caching and circularity checking to the equations. The `parent` field provides access to the parent of a node.
+Attribute equations define properties of tree nodes in terms of constants or the properties of other nodes.  In this example, the local and global minima of a binary tree (`locmin` and `globmin`) are defined using simple local equations.  Accessing an attribute (property) of a node is just a function call (also accessible via the arrow notation in Kiama 1.x).  The `attr` function provides caching and circularity checking to the equations.
+
+Kiama version 1.x:
 
     val locmin : Tree ==> Int =
         attr {
-            case Fork (l, r) => (l->locmin) min (r->locmin)
-            case Leaf (v)    => v
+            case Fork(l, r) => (l->locmin) min (r->locmin)
+            case Leaf(v)    => v
         }
 
     val globmin : Tree ==> Int =
@@ -63,59 +65,100 @@ Attribute equations define properties of tree nodes in terms of constants or the
             case t             => t.parent[Tree]->globmin
         }
 
+Kiama version 2.x:
+
+    val locmin : RepminTree => Int =
+        attr {
+            case Fork(l, r) => locmin(l).min(locmin(r))
+            case Leaf(v)    => v
+        }
+
+    val globmin : RepminTree => Int =
+        attr {
+            case tree.parent(p) => globmin(p)
+            case t              => locmin(t)
+        }
+
 * [Dataflow Circular attribute equations](https://bitbucket.org/inkytonik/kiama/src/default/wiki/Dataflow.md)
 
 Sometimes it is useful to define attributes using a mutual dependency.  With `attr` this approach would lead to an error since it would not be possible to calculate the values of such attributes. The `circular` function goes further by implementing mutually dependent attributes via an iteration to a fixed point. In this example, we are calculating variable liveness information for a imperative language statements using the standard data flow equations.
 
+Kiama 1.x:
+
     val in : Stm ==> Set[Var] =
-        circular (Set[Var]()) {
-            case s => uses (s) ++ (out (s) -- defines (s))
+        circular(Set[Var]()) {
+            case s => uses(s) ++ (out(s) -- defines(s))
         }
 
     val out : Stm ==> Set[Var] =
-        circular (Set[Var]()) {
+        circular(Set[Var]()) {
             case s => (s->succ) flatMap (in)
         }
+
+Kiama 2.x:
+
+    val in : Stm => Set[Var] =
+        circular(Set[Var]())(
+            s => uses(s) ++ (out(s) -- defines(s))
+        )
+
+    val out : Stm => Set[Var] =
+        circular(Set[Var]())(
+            s => succ(s) flatMap (in)
+        )
 
 * [Rewrite rules and higher-order rewriting strategies](https://bitbucket.org/inkytonik/kiama/src/default/wiki/Lambda2.md)
 
 While attributes provide a way to decorate a tree with information, rewriting is concerned with transforming trees, perhaps for translation or for optimisation. Kiama contains a strategy-based rewriting library heavily inspired by the [http://strategoxt.org/ Stratego] program transformation language. In this example, we are implementing an evaluation strategy for lambda calculus, using generic strategies such as innermost rewriting.
 
+Kiama 1.x:
+
     val beta =
         rule {
-            case App (Lam (x, t, e1), e2) =>  Let (x, t, e2, e1)
+            case App(Lam(x, t, e1), e2) =>  Let(x, t, e2, e1)
         }
+
+Kiama 2.x:
+
+    val beta =
+        rule[Exp] {
+            case App(Lam(x, t, e1), e2) => substitute(x, e2, e1)
+        }
+
+Kiama 1.x and 2.x:
 
     val lambda =
         beta + arithop + subsNum + subsVar + subsApp + subsLam + subsOpn
 
     def innermost (s : => Strategy) : Strategy =
-        all (innermost (s) <* attempt (s <* innermost (s)))
+        all(innermost(s) <* attempt(s <* innermost(s)))
 
-    lazy val s : Strategy =
-        innermost (lambda)
+    val s : Strategy =
+        innermost(lambda)
 
 * [Pretty-printing](https://bitbucket.org/inkytonik/kiama/src/default/wiki/PrettyPrinting.md)
 
 Kiama's pretty-printing library provides a flexible way to describe how you want your output to be produced within constraint of line length. For example, the following describes how to pretty-print the constructs of a simple imperative language, where `group`, `nest` and `line` cooperate to produce nicely indented code that breaks lines  at sensible place when needed.
 
-    def show (t : ImperativeNode) : Doc =
+Kiama 1.x and 2.x:
+
+    def toDoc(t : ImperativeNode) : Doc =
         t match {
-            case Num (d)      => value (d)
-            case Var (s)      => s
-            case Neg (e)      => parens ("-" <> show (e))
-            case Add (l, r)   => showbin (l, "+", r)
-            case Sub (l, r)   => showbin (l, "-", r)
-            case Mul (l, r)   => showbin (l, "*", r)
-            case Div (l, r)   => showbin (l, "/", r)
-            case Null ()      => semi
-            case Seqn (ss)    => group (braces (nest (line <> ssep (ss map show, line)) <> line))
-            case Asgn (v, e)  => show (v) <+> "=" <+> show (e) <> semi
-            case While (e, b) => "while" <+> parens (show (e)) <> group (nest (line <> show (b)))
+            case Num(d)      => value(d)
+            case Var(s)      => s
+            case Neg(e)      => parens("-" <> toDoc(e))
+            case Add(l, r)   => binToDoc(l, "+", r)
+            case Sub(l, r)   => binToDoc(l, "-", r)
+            case Mul(l, r)   => binToDoc(l, "*", r)
+            case Div(l, r)   => binToDoc(l, "/", r)
+            case Null()      => semi
+            case Seqn(ss)    => group(braces (nest (line <> ssep (ss map toDoc, line)) <> line))
+            case Asgn(v, e)  => toDoc(v) <+> "=" <+> toDoc(e) <> semi
+            case While(e, b) => "while" <+> parens(toDoc(e)) <> group(nest(line <> toDoc(b)))
         }
 
-    def showbin (l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
-        parens (show (l) <+> op <+> show (r))
+    def binToDoc(l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
+        parens(toDoc(l) <+> op <+> toDoc (r))
 
 ## Mailing lists
 
