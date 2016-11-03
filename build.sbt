@@ -11,8 +11,8 @@ version in ThisBuild := "2.1.0-SNAPSHOT"
 
 organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
-scalaVersion in ThisBuild := "2.11.8"
-crossScalaVersions in ThisBuild := Seq ("2.11.8", "2.10.6")
+scalaVersion in ThisBuild := "2.12.0"
+crossScalaVersions in ThisBuild := Seq ("2.12.0", "2.11.8", "2.10.6")
 
 scalacOptions in ThisBuild := {
     // Turn on all lint warnings, except:
@@ -59,13 +59,13 @@ libraryDependencies in ThisBuild ++= {
         // Profiling:
         "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion,
         // Command-line handling:
-        "org.rogach" %% "scallop" % "2.0.0",
+        "org.rogach" %% "scallop" % "2.0.5",
         // Reflection
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         // REPLs:
         "jline" % "jline" % "2.14.1",
         // Testing:
-        "org.scalacheck" %% "scalacheck" % "1.13.2" % "test",
+        "org.scalacheck" %% "scalacheck" % "1.13.4" % "test",
         "org.scalatest" %% "scalatest" % "3.0.0" % "test"
     )
 }
