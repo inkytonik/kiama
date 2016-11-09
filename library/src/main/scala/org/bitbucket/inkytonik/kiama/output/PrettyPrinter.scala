@@ -21,7 +21,6 @@
 package org.bitbucket.inkytonik.kiama
 package output
 
-import org.bitbucket.inkytonik.kiama.util.Memoiser
 import scala.language.implicitConversions
 
 /**

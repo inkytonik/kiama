@@ -21,15 +21,14 @@
 package org.bitbucket.inkytonik.kiama
 package attribution
 
-import org.bitbucket.inkytonik.kiama.util.Memoiser
-
 /**
  * Reusable implementation of attribution of syntax trees in a functional style
  * with attribute values cached so that each value is computed at most once.
  */
-trait AttributionCore extends AttributionCommon with Memoiser {
+trait AttributionCore extends AttributionCommon {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+    import org.bitbucket.inkytonik.kiama.util.Memoiser.{IdMemoised, Memoised}
     import scala.language.experimental.macros
     import scala.language.implicitConversions
 

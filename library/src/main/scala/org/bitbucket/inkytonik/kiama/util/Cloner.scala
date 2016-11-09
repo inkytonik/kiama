@@ -31,7 +31,6 @@ trait Cloner {
     self : Rewriter =>
 
     import org.bitbucket.inkytonik.kiama.relation.Tree.isLeaf
-    import org.bitbucket.inkytonik.kiama.util.Memoiser
 
     /**
      * Deep clone the term `t`. Only applicable if the base type of the tree is
@@ -61,7 +60,8 @@ trait Cloner {
         bu : Strategy => Strategy = everywherebu("everywherebu", _)
     ) : T = {
 
-        object LeafCache extends Memoiser {
+        object LeafCache {
+            import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
             val seen = new IdMemoised[T, Boolean] {}
         }
 

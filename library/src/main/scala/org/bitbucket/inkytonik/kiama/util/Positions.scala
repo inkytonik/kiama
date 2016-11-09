@@ -79,7 +79,9 @@ trait PositionStore {
 /**
  * Record of source positions that correspond to program elements.
  */
-class Positions extends Memoiser {
+class Positions {
+
+    import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
 
     /**
      * Map between a value and a source code position.

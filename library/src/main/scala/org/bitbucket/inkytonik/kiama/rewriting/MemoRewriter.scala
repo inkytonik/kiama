@@ -21,14 +21,13 @@
 package org.bitbucket.inkytonik.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.kiama.util.Memoiser
-
 /**
  * Strategy-based term rewriting where all strategy results are memoised
  * by identity on the subject term.
  */
-trait MemoRewriter extends Rewriter with Memoiser {
+trait MemoRewriter extends Rewriter {
 
+    import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
     /*

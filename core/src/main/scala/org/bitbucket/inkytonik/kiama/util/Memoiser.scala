@@ -25,7 +25,7 @@ package util
  * Support for memoisation, encapsulating common behaviour of memoised
  * entities and a general reset mechanism for all such entities.
  */
-trait Memoiser {
+object Memoiser {
 
     import com.google.common.cache.{Cache, CacheBuilder}
 
