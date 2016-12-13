@@ -32,7 +32,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
         with BeforeAndAfterEach with Checkers with Matchers with PositionStore
         with Messaging {
 
-    import Comparison.{same, samelements}
+    import Comparison.{same, sameCollection, sameElements}
     import org.scalatest.Tag
 
     /**
@@ -78,15 +78,29 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
 
     /**
      * Matcher for being the same collection, i.e., equal and containing
-     * the same elements.
+     * the same elements in the same order. Also works on pairs of values
+     * and tuples.
      */
     def beSameCollectionAs(expected : Any) =
         new Matcher[Any] {
             def apply(value : Any) =
                 MatchResult(
-                    (value == expected) && samelements(value, expected),
+                    (value == expected) && sameCollection(value, expected),
                     s""""$value" is not same collection as "$expected"""",
                     s""""$value" is same collection as "$expected""""
+                )
+        }
+
+    /**
+     * Matcher for being a collection with the same elements.
+     */
+    def haveSameElementsAs[T](expected : Seq[T]) =
+        new Matcher[Seq[T]] {
+            def apply(value : Seq[T]) =
+                MatchResult(
+                    sameElements(value, expected),
+                    s""""$value" does not have same elements as "$expected"""",
+                    s""""$value" has same elements as "$expected""""
                 )
         }
 

@@ -59,10 +59,10 @@ END badproc.
 [2,0,4]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/badproc.ob:23:5: non-local procedure access to proc1 is not allowed
 [2,0,4]    proc1 (d, TRUE)
 [2,0,4]    ^
-[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/badproc.ob:28:5: proc is not declared
+[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/badproc.ob:28:5: end procedure name proc should be proc1
 [2]END proc;
 [2]    ^
-[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/badproc.ob:28:5: end procedure name proc should be proc1
+[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/badproc.ob:28:5: proc is not declared
 [2]END proc;
 [2]    ^
 [2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L3/tests/badproc.ob:30:37: a is already declared

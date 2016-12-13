@@ -53,9 +53,9 @@ object Comparison {
 
     /**
      * Compare two `Iterable` collections or options and tuples containing that kind of
-     * collection. Use `same` to compare the individual elements.
+     * collection. Use `same` to compare the individual elements in the same order.
      */
-    def samelements(v1 : Any, v2 : Any) : Boolean =
+    def sameCollection(v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
             v2 == null
         else if (v2 == null)
@@ -63,14 +63,21 @@ object Comparison {
         else
             (v1, v2) match {
                 case (Some(s1), Some(s2)) =>
-                    samelements(s1, s2)
+                    sameCollection(s1, s2)
                 case ((t1, t2), (t3, t4)) =>
-                    samelements(t1, t3) && samelements(t2, t4)
+                    sameCollection(t1, t3) && sameCollection(t2, t4)
                 case (t1 : Iterable[_], t2 : Iterable[_]) =>
-                    (t1.size == t2.size) && (t1.zip(t2).forall(Function.tupled(samelements)))
+                    (t1.size == t2.size) && (t1.zip(t2).forall(Function.tupled(sameCollection)))
                 case _ =>
                     same(v1, v2)
             }
+
+    /**
+     * Compare two `Seq` collections or options and tuples containing that kind of
+     * collection. Use `same` to compare the individual elements in any order.
+     */
+    def sameElements[T](t1 : Seq[_], t2 : Seq[_]) : Boolean =
+        (t1.size == t2.size) && (t1.forall(contains(t2, _)))
 
     /**
      * As for `same`, except that if the two values are `Some` options
@@ -122,5 +129,12 @@ object Comparison {
         set.toVector.map(_._1)
 
     }
+
+    /**
+     * Return the zero-based index at which `elem` occurs in `s` using `same`
+     * to perform comparisons, or -1 if `elem` does not occur in `s`.
+     */
+    def indexOf[T](s : Seq[T], elem : T) : Int =
+        s.indexWhere(same(_, elem))
 
 }

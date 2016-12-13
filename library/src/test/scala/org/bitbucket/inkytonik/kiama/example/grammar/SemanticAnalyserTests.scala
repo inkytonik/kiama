@@ -236,14 +236,13 @@ class SemanticAnalyserTests extends Tests {
     }
 
     test("g3: has the expected semantic errors") {
-        val errors = g3analyser.errors
+        val errors = g3analyser.errors.sorted
         errors.length shouldBe 3
-        errors(0).value should be theSameInstanceAs g3E1
         errors(0).label shouldBe "E is defined more than once"
-        errors(1).value should be theSameInstanceAs g3E2
         errors(1).label shouldBe "E is defined more than once"
-        errors(2).value should be theSameInstanceAs g3F
+        Vector(errors(0).value, errors(1).value) should haveSameElementsAs(Vector[AnyRef](g3E1, g3E2))
         errors(2).label shouldBe "F is not declared"
+        errors(2).value should be theSameInstanceAs g3F
     }
 
 }

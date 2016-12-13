@@ -28,6 +28,7 @@ package util
 object Memoiser {
 
     import com.google.common.cache.{Cache, CacheBuilder}
+    import scala.collection.JavaConverters._
 
     /**
      * Common interface for encapsulation of memoisation for a single memoised
@@ -38,7 +39,7 @@ object Memoiser {
         /**
          * The memo table.
          */
-        def memo : Cache[AnyRef, AnyRef]
+        def cache : Cache[AnyRef, AnyRef]
 
         /**
          * Duplicate an entry if possible. If `t1` has a memoised value associated
@@ -46,7 +47,7 @@ object Memoiser {
          * is no value associated with `t1`, do nothing.
          */
         def dup(t1 : T, t2 : T) {
-            val u = memo.getIfPresent(t1).asInstanceOf[U]
+            val u = cache.getIfPresent(t1).asInstanceOf[U]
             if (u != null)
                 put(t2, u)
         }
@@ -55,7 +56,7 @@ object Memoiser {
          * Return the value stored at key `t` as an option.
          */
         def get(t : T) : Option[U] =
-            Option(memo.getIfPresent(t).asInstanceOf[U])
+            Option(cache.getIfPresent(t).asInstanceOf[U])
 
         /**
          * Return the value stored at key `t` if there is one, otherwise
@@ -72,10 +73,16 @@ object Memoiser {
             get(t) != None
 
         /**
+         * A view of the set of keys that are currently in this memo table.
+         */
+        def keys : Vector[T] =
+            cache.asMap.keySet.asScala.toVector.asInstanceOf[Vector[T]]
+
+        /**
          * Store the value `u` under the key `t`.
          */
         def put(t : T, u : U) {
-            memo.put(t.asInstanceOf[AnyRef], u.asInstanceOf[AnyRef])
+            cache.put(t.asInstanceOf[AnyRef], u.asInstanceOf[AnyRef])
         }
 
         /**
@@ -91,21 +98,41 @@ object Memoiser {
          * Immediately reset the memo table.
          */
         def reset() {
-            memo.invalidateAll()
+            cache.invalidateAll()
         }
 
         /**
          * Immediately reset the memo table at `t`.
          */
         def resetAt(t : T) {
-            memo.invalidate(t)
+            cache.invalidate(t)
         }
 
         /**
          * The number of entries in the memo table.
          */
         def size() : Long =
-            memo.size
+            cache.size
+
+        /**
+         * Update the value associated with `t` by applying `f` to it. If there
+         * is no value currently associated with `t`, associate it with `u`. `u`
+         * is only evaluated if necessary.
+         */
+        def updateAt(t : T, f : U => U, u : => U) {
+            get(t) match {
+                case Some(v) =>
+                    put(t, f(v))
+                case None =>
+                    put(t, u)
+            }
+        }
+
+        /**
+         * A view of the set of values that are currently in this memo table.
+         */
+        def values : Vector[U] =
+            cache.asMap.values.asScala.toVector.asInstanceOf[Vector[U]]
 
     }
 
@@ -114,7 +141,7 @@ object Memoiser {
      */
     trait Memoised[T, U] extends MemoisedBase[T, U] {
 
-        val memo : Cache[AnyRef, AnyRef] =
+        val cache : Cache[AnyRef, AnyRef] =
             CacheBuilder.newBuilder.build()
 
     }
@@ -125,7 +152,7 @@ object Memoiser {
      */
     trait IdMemoised[T, U] extends MemoisedBase[T, U] {
 
-        val memo : Cache[AnyRef, AnyRef] =
+        val cache : Cache[AnyRef, AnyRef] =
             CacheBuilder.newBuilder.weakKeys.build()
 
     }

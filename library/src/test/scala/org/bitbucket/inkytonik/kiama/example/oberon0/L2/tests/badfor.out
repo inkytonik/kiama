@@ -36,12 +36,12 @@ END badfor.
 [3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/badfor.ob:15:9: illegal FOR loop control variable aconst
 [3]    FOR aconst := 1 TO 10 DO
 [3]        ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/badfor.ob:19:9: illegal FOR loop control variable atype
-[3]    FOR atype := 1 TO 10 DO
-[3]        ^
 [2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/badfor.ob:19:9: atype cannot be used in an expression
 [2]    FOR atype := 1 TO 10 DO
 [2]        ^
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/badfor.ob:19:9: illegal FOR loop control variable atype
+[3]    FOR atype := 1 TO 10 DO
+[3]        ^
 [3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/badfor.ob:23:9: type error: got BOOLEAN, but expected INTEGER
 [3]    FOR bvar := FALSE TO TRUE DO
 [3]        ^

@@ -53,10 +53,10 @@ END type.
 [2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/type.ob:21:13: aconst2 is not a type name
 [2]    avar2 : aconst2;
 [2]            ^
-[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/type.ob:28:5: illegal assignment
+[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/type.ob:28:5: atype1 cannot be used in an expression
 [2]    atype1 := 2;
 [2]    ^
-[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/type.ob:28:5: atype1 cannot be used in an expression
+[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/type.ob:28:5: illegal assignment
 [2]    atype1 := 2;
 [2]    ^
 [2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/type.ob:29:22: atype1 cannot be used in an expression

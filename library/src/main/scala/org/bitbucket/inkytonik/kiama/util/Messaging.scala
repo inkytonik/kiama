@@ -103,9 +103,9 @@ trait Messaging {
      */
     implicit object messageOrdering extends Ordering[Message] {
         def compare(m1 : Message, m2 : Message) =
-            Ordering[(Option[Int], Option[Int])].compare(
-                (line(m1), column(m1)),
-                (line(m2), column(m2))
+            Ordering[(Option[Int], Option[Int], String)].compare(
+                (line(m1), column(m1), m1.label),
+                (line(m2), column(m2), m2.label)
             )
     }
 

@@ -23,10 +23,9 @@ package relation
 
 /**
  * A binary relation between values of type `T` and values of type `U`.
- * Constructed from a vector of pairs that constitute the relation's
- * graph.
+ * Constructed from a memoised cache that maps `T` values to their image.
  */
-class Relation[T, U](val graph : Vector[(T, U)]) extends RelationLike[T, U, Relation] {
+class Relation[T, U](val graph : RelationGraph[T, U]) extends RelationLike[T, U, Relation] {
     val companion = Relation
 }
 
@@ -39,37 +38,65 @@ object Relation extends RelationFactory[Relation] {
     import scala.collection.immutable.Queue
 
     /**
-     * Make a binary relation from its graph.
+     * Make a graph from a sequence of pairs that describe the mappings.
      */
-    def fromGraph[T, U](graph : Vector[(T, U)]) : Relation[T, U] =
-        new Relation[T, U](graph)
+    def graphFromImages[T, U](pairs : Vector[(T, Vector[U])]) : RelationGraph[T, U] = {
+        val graph = new RelationGraph[T, U]
+        for ((t, us) <- pairs)
+            graph.putAll(t, us)
+        graph
+    }
 
     /**
      * Make a graph from the repeated application of `onestep` to `t` and
      * the results that it produces.
      */
-    def fromOneStepGraph[T](t : T, onestep : T => Vector[T]) : Vector[(T, T)] = {
+    def graphFromOneStep[T](t : T, onestep : T => Vector[T]) : RelationGraph[T, T] = {
+
+        val graph = new RelationGraph[T, T]
 
         @tailrec
-        def loop(pending : Queue[T], graph : Vector[(T, T)]) : Vector[(T, T)] =
+        def loop(pending : Queue[T]) : RelationGraph[T, T] =
             if (pending.isEmpty)
                 graph
             else {
                 val l = pending.front
                 val next = onestep(l)
-                val pairs = next.map { case r => (l, r) }
-                loop(pending.tail ++ next, graph ++ pairs)
+                graph.putAll(l, next)
+                loop(pending.tail ++ next)
             }
 
-        loop(Queue(t), Vector())
+        loop(Queue(t))
 
     }
 
     /**
-     * Make a binary relation using the graph produced by `fromOneStepGraph`
-     * applied to `t` and `onestep`.
+     * Make a graph from a sequence of pairs that describe the mappings.
+     */
+    def graphFromPairs[T, U](pairs : Vector[(T, U)]) : RelationGraph[T, U] = {
+        val graph = new RelationGraph[T, U]
+        for ((t, u) <- pairs)
+            graph.put(t, u)
+        graph
+    }
+
+    /**
+     * Make a relation from the repeated application of `onestep` to `t` and
+     * the results that it produces.
      */
     def fromOneStep[T](t : T, onestep : T => Vector[T]) : Relation[T, T] =
-        new Relation[T, T](fromOneStepGraph(t, onestep))
+        fromGraph(graphFromOneStep(t, onestep))
+
+    /**
+     * Make a relation from a sequence of pairs that describe the mappings.
+     */
+    def fromPairs[T, U](pairs : Vector[(T, U)]) : Relation[T, U] =
+        fromGraph(graphFromPairs(pairs))
+
+    /**
+     * Make a relation from its graph.
+     */
+    def fromGraph[V, W](graph : RelationGraph[V, W]) : Relation[V, W] =
+        new Relation[V, W](graph)
 
 }
