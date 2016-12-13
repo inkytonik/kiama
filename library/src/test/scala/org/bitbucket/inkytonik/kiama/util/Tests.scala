@@ -74,7 +74,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * `library/src` with `suitePackagePath` appended.
      */
     def suiteSourcePath : String =
-        s"library/src/$suitePackagePath"
+        s"library/src/test/scala/$suitePackagePath"
 
     /**
      * Matcher for being the same collection, i.e., equal and containing
