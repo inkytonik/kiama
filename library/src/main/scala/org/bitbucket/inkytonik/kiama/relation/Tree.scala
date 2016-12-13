@@ -284,7 +284,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
      * Return whether or not `t` is a last child. True for root.
      */
     def isLast(t : T) : Boolean =
-        whenContains(t, !next.containsInDomain(t))
+        whenContains(t, index(t) == siblingCount(t) - 1)
 
     /**
      * Return whether or not `t` is the root of this tree.
@@ -297,6 +297,20 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
                     tr eq rootr
                 case _ =>
                     false
+            }
+        )
+
+    /**
+     * Return the number of sibling nodes of `t` (including itself).
+     */
+    def siblingCount(t : T) : Int =
+        whenContains(
+            t,
+            parent(t) match {
+                case Vector(p) =>
+                    child(p).length
+                case _ =>
+                    1
             }
         )
 

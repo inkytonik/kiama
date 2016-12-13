@@ -147,7 +147,7 @@ class TreeTests extends Tests {
 
     test("child of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.child(nonNode)
+            child(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -295,7 +295,7 @@ class TreeTests extends Tests {
 
     test("index of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.index(nonNode)
+            index(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -313,20 +313,20 @@ class TreeTests extends Tests {
     // isFirst
 
     test("isFirst returns true for root") {
-        ptree.isFirst(p) shouldBe true
+        isFirst(p) shouldBe true
     }
 
     test("isFirst returns true for a first child") {
-        ptree.isFirst(n1) shouldBe true
+        isFirst(n1) shouldBe true
     }
 
     test("isFirst returns false for a non-first child") {
-        !ptree.isFirst(e3) shouldBe true
+        !isFirst(e3) shouldBe true
     }
 
     test("isFirst throws an exception for an unrelated node") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.isFirst(nonNode)
+            isFirst(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -334,20 +334,20 @@ class TreeTests extends Tests {
     // isLast
 
     test("isLast returns true for root") {
-        ptree.isLast(p) shouldBe true
+        isLast(p) shouldBe true
     }
 
     test("isLast returns true for a last child") {
-        ptree.isLast(v1) shouldBe true
+        isLast(v1) shouldBe true
     }
 
     test("isLast returns false for a non-last child") {
-        !ptree.isLast(e4) shouldBe true
+        !isLast(e4) shouldBe true
     }
 
     test("isLast throws an exception for an unrelated node") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.isLast(nonNode)
+            isLast(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -355,16 +355,16 @@ class TreeTests extends Tests {
     // isRoot
 
     test("isRoot returns true for the root") {
-        ptree.isRoot(p) shouldBe true
+        isRoot(p) shouldBe true
     }
 
     test("isRoot returns false for a non-root node") {
-        !ptree.isRoot(s3) shouldBe true
+        !isRoot(s3) shouldBe true
     }
 
     test("isRoot throws an exception for an unrelated node") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.isRoot(nonNode)
+            isRoot(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -512,7 +512,7 @@ class TreeTests extends Tests {
 
     test("next of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.next(nonNode)
+            next(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -685,7 +685,7 @@ class TreeTests extends Tests {
 
     test("parent of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.parent(nonNode)
+            parent(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -768,7 +768,7 @@ class TreeTests extends Tests {
 
     test("prev of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.next(nonNode)
+            next(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -837,7 +837,75 @@ class TreeTests extends Tests {
 
     test("siblings of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            ptree.next(nonNode)
+            next(nonNode)
+        }
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
+    }
+
+    // sibling count
+
+    test("root has one sibling") {
+        siblingCount(p) shouldBe 1
+    }
+    test("an only child has one sibling (n3)") {
+        siblingCount(n3) shouldBe 1
+    }
+
+    test("a child of a normal node has the expected number of siblings (n1)") {
+        siblingCount(n1) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (n2)") {
+        siblingCount(n2) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (e1)") {
+        siblingCount(e1) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (e2)") {
+        siblingCount(e2) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (v2)") {
+        siblingCount(v2) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (e3)") {
+        siblingCount(e3) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (v3)") {
+        siblingCount(v3) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (e4)") {
+        siblingCount(e4) shouldBe 2
+    }
+
+    test("a child of a normal node has the expected number of siblings (s3)") {
+        siblingCount(s3) shouldBe 2
+    }
+
+    test("a child of a node with a list component has the expected number of siblings (s1)") {
+        siblingCount(s1) shouldBe (pchildren.length)
+    }
+
+    test("a child of a node with a list component has the expected number of siblings (s2)") {
+        siblingCount(s2) shouldBe (pchildren.length)
+    }
+
+    test("a child of a node with a list component has the expected number of siblings (s4)") {
+        siblingCount(s4) shouldBe (pchildren.length)
+    }
+
+    test("a child of a node with a list component has the expected number of siblings (s5)") {
+        siblingCount(s5) shouldBe (pchildren.length)
+    }
+
+    test("sibling count of non-node throws an exception") {
+        val i = intercept[NodeNotInTreeException[Exp]] {
+            next(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
