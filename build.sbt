@@ -11,8 +11,8 @@ version in ThisBuild := "2.1.0-SNAPSHOT"
 
 organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
-scalaVersion in ThisBuild := "2.12.0"
-crossScalaVersions in ThisBuild := Seq ("2.12.0", "2.11.8", "2.10.6")
+scalaVersion in ThisBuild := "2.12.1"
+crossScalaVersions in ThisBuild := Seq ("2.12.1", "2.11.8", "2.10.6")
 
 scalacOptions in ThisBuild := {
     // Turn on all lint warnings, except:
