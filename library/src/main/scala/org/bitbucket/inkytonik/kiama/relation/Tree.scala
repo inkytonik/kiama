@@ -98,20 +98,6 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
     lazy val root = lazyclone(originalRoot, everywherebuNoBridges)
 
     /**
-     * The graph of the child relation for this tree. Should only be used
-     * directly to define the `child` relation. Other uses should be `child.graph`.
-     */
-    lazy val childGraph = graphFromOneStep[T](root, treeChildren)
-
-    /**
-     * The graph of the parent relation for this tree. Should only be used
-     * directly to define the `child` and `parent` relations. Other uses should be
-     * `parent.graph`.
-     */
-    lazy val parentGraph =
-        childGraph.inverse
-
-    /**
      * A tree relation is a binary relation on tree nodes with an extra property
      * that the `image` operation throws a `NodeNotInTreeException` exception if
      * it is applied to a node that is not in this tree.
@@ -141,13 +127,23 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
     }
 
     /**
-     * The basic relation between a node and its children. All of the
-     * other relations are derived from this one. This relation preserves
-     * order in the sense that the graph of this relation records the
-     * children of a particular node in the order they appear in the
-     * tree.
+     * The basic relations between a node and its children. All of the
+     * other relations are derived from `child` and `parent`.
      */
-    lazy val child : TreeRelation[T, T] = {
+    lazy val (child, parent) : (TreeRelation[T, T], TreeRelation[T, T]) = {
+
+        /**
+         * The graph of the child relation for this tree. Should only be used
+         * directly to define the `child` relation. Other uses should be `child.graph`.
+         */
+        val childGraph = graphFromOneStep[T](root, treeChildren)
+
+        /**
+         * The graph of the parent relation for this tree. Should only be used
+         * directly to define the `child` and `parent` relations. Other uses should be
+         * `parent.graph`.
+         */
+        val parentGraph = childGraph.inverse
 
         // As a safety check, we make sure that values are not children
         // of more than one parent.
@@ -165,7 +161,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
             sys.error("Tree creation: illegal tree structure:\n" + msgBuilder.result)
 
         // All ok
-        new TreeRelation(childGraph)
+        (new TreeRelation(childGraph), new TreeRelation(parentGraph))
 
     }
 
@@ -225,13 +221,6 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
         )
 
     }
-
-    /**
-     * A relation that relates a node to its parent. Inverse of the
-     * `child` relation.
-     */
-    lazy val parent : TreeRelation[T, T] =
-        new TreeRelation(parentGraph)
 
     /**
      * A relation that relates a node to its previous sibling. Inverse of the
