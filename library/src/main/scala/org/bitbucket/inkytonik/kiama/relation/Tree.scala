@@ -188,26 +188,23 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
     // Derived relations
 
     /**
+     * Map the function `f` over the images of this tree's child relation and
+     * use the resulting graph to make a new tree relation.
+     */
+    def mapChild(f : Vector[T] => Vector[T]) : TreeRelation[T, T] =
+        new TreeRelation(child.graph.mapValues(f))
+
+    /**
      * A relation that relates a node to its first child.
      */
     lazy val firstChild : TreeRelation[T, T] =
-        new TreeRelation(child.graph.mapValues {
-            case Vector() =>
-                Vector()
-            case vs =>
-                Vector(vs.head)
-        })
+        mapChild(_.take(1))
 
     /**
      * A relation that relates a node to its last child.
      */
     lazy val lastChild : TreeRelation[T, T] =
-        new TreeRelation(child.graph.mapValues {
-            case Vector() =>
-                Vector()
-            case vs =>
-                Vector(vs.last)
-        })
+        mapChild(_.takeRight(1))
 
     /**
      * A relation that relates a node to its next sibling. Inverse of
