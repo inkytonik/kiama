@@ -133,15 +133,12 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
     lazy val (child, parent) : (TreeRelation[T, T], TreeRelation[T, T]) = {
 
         /**
-         * The graph of the child relation for this tree. Should only be used
-         * directly to define the `child` relation. Other uses should be `child.graph`.
+         * The graph of the child relation for this tree.
          */
         val childGraph = graphFromOneStep[T](root, treeChildren)
 
         /**
-         * The graph of the parent relation for this tree. Should only be used
-         * directly to define the `child` and `parent` relations. Other uses should be
-         * `parent.graph`.
+         * The graph of the parent relation for this tree.
          */
         val parentGraph = childGraph.inverse
 
