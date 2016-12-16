@@ -44,6 +44,12 @@ class RelationGraph[T, U] {
         memo.keys
 
     /**
+     * Does the domain of this graph contain `t`?
+     */
+    def domainContains(t : T) : Boolean =
+        memo.hasBeenComputedAt(t)
+
+    /**
      * The image of this graph at domain value `t`.
      */
     def image(t : T) : Vector[U] =

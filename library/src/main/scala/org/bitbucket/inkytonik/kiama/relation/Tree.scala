@@ -166,13 +166,13 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
 
     /**
      * If the tree contains node `u` return `v`, otherwise throw a
-     * `NodeNotInTreeException`.
+     * `NodeNotInTreeException`. `v` is only evaluated if necessary.
      */
-    def whenContains[U, V](u : U, v : V) : V =
-        if (same(u, root) || (contains(nodes, u)))
+    def whenContains[V](t : T, v : => V) : V =
+        if (same(t, root) || (parent.graph.domainContains(t)))
             v
         else
-            throw new NodeNotInTreeException(u)
+            throw new NodeNotInTreeException(t)
 
     // Derived relations
 
