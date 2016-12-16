@@ -38,6 +38,31 @@ case class NodeNotInTreeException[T](t : T) extends Exception(s"node not in tree
 case class Bridge[T](cross : T)
 
 /**
+ * A tree relation is a binary relation on tree nodes with an extra property
+ * that the `image` operation throws a `NodeNotInTreeException` exception if
+ * it is applied to a node that is not in this tree. `T` is the type of the
+ * tree nodes.
+ */
+class TreeRelation[T <: Product](tree : Tree[T, _], val graph : RelationGraph[T, T]) extends RelationLike[T, T] {
+
+    /**
+     * Return the image of a node in this tree. As for normal relations,
+     * except that it throws `NodeNotInTreeException` if the node is not
+     * actually in the tree on which this relation is defined.
+     */
+    override def image(t : T) : Vector[T] =
+        tree.whenContains(t, super.image(t))
+
+    /**
+     * Invert this relation. In other words, if `(t,u)` is in the relation,
+     * then `(u,t)` is in the inverted relation.
+     */
+    lazy val inverse : TreeRelation[T] =
+        new TreeRelation(tree, graph.inverse)
+
+}
+
+/**
  * Relational representations of trees built out of hierarchical `Product`
  * instances. Typically, the nodes are instances of case classes.
  *
@@ -98,39 +123,10 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
     lazy val root = lazyclone(originalRoot, everywherebuNoBridges)
 
     /**
-     * A tree relation is a binary relation on tree nodes with an extra property
-     * that the `image` operation throws a `NodeNotInTreeException` exception if
-     * it is applied to a node that is not in this tree.
-     */
-    class TreeRelation[V, W](val graph : RelationGraph[V, W]) extends RelationLike[V, W, TreeRelation] {
-
-        val companion = TreeRelationFactory
-
-        /**
-         * Return the image of a node in this tree. As for normal relations,
-         * except that it throws `NodeNotInTreeException` if the node is not
-         * actually in the tree on which this relation is defined.
-         */
-        override def image(v : V) : Vector[W] =
-            tree.whenContains(v, super.image(v))
-
-    }
-
-    /**
-     * Relation factory for tree relations.
-     */
-    object TreeRelationFactory extends RelationFactory[TreeRelation] {
-
-        def fromGraph[V, W](graph : RelationGraph[V, W]) : TreeRelation[V, W] =
-            new TreeRelation[V, W](graph)
-
-    }
-
-    /**
      * The basic relations between a node and its children. All of the
      * other relations are derived from `child` and `parent`.
      */
-    lazy val (child, parent) : (TreeRelation[T, T], TreeRelation[T, T]) = {
+    lazy val (child, parent) : (TreeRelation[T], TreeRelation[T]) = {
 
         /**
          * The graph of the child relation for this tree.
@@ -158,7 +154,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
             sys.error("Tree creation: illegal tree structure:\n" + msgBuilder.result)
 
         // All ok
-        (new TreeRelation(childGraph), new TreeRelation(parentGraph))
+        (new TreeRelation(tree, childGraph), new TreeRelation(tree, parentGraph))
 
     }
 
@@ -184,26 +180,26 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
      * Map the function `f` over the images of this tree's child relation and
      * use the resulting graph to make a new tree relation.
      */
-    def mapChild(f : Vector[T] => Vector[T]) : TreeRelation[T, T] =
-        new TreeRelation(child.graph.mapValues(f))
+    def mapChild(f : Vector[T] => Vector[T]) : TreeRelation[T] =
+        new TreeRelation(tree, child.graph.mapValues(f))
 
     /**
      * A relation that relates a node to its first child.
      */
-    lazy val firstChild : TreeRelation[T, T] =
+    lazy val firstChild : TreeRelation[T] =
         mapChild(_.take(1))
 
     /**
      * A relation that relates a node to its last child.
      */
-    lazy val lastChild : TreeRelation[T, T] =
+    lazy val lastChild : TreeRelation[T] =
         mapChild(_.takeRight(1))
 
     /**
      * A relation that relates a node to its next sibling. Inverse of
      * the `prev` relation.
      */
-    lazy val next : TreeRelation[T, T] = {
+    lazy val next : TreeRelation[T] = {
 
         def nextPairs(ts : Vector[T]) : Vector[(T, T)] =
             ts match {
@@ -214,6 +210,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
             }
 
         new TreeRelation(
+            tree,
             graphFromPairs(child.graph.images.flatMap(nextPairs(_)))
         )
 
@@ -223,13 +220,13 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
      * A relation that relates a node to its previous sibling. Inverse of the
      * `next` relation.
      */
-    lazy val prev : TreeRelation[T, T] =
+    lazy val prev : TreeRelation[T] =
         next.inverse
 
     /**
      * A relation that relates a node to all of its siblings, including itself.
      */
-    lazy val siblings : TreeRelation[T, T] = {
+    lazy val siblings : TreeRelation[T] = {
         val graph = parent.graph.mapValues {
             case Vector(p) =>
                 child(p)
@@ -237,7 +234,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
                 sys.error(s"siblings: non-singleton parent $ps")
         }
         graph.put(root, root)
-        new TreeRelation(graph)
+        new TreeRelation(tree, graph)
     }
 
     // Predicates derived from the relations

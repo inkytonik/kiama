@@ -25,19 +25,11 @@ import scala.language.higherKinds
 
 /**
  * A template trait for Relation-like types. `T` and `U` are the domain
- * and range types of the relation, respectively. `Repr` is the type
- * constructor for the concrete representation of a particular relation
- * type.
+ * and range types of the relation, respectively.
  */
-trait RelationLike[T, U, Repr[_, _]] {
+trait RelationLike[T, U] {
 
     import org.bitbucket.inkytonik.kiama.util.Comparison.contains
-
-    /**
-     * A companion object that provides factory methods for this kind of
-     * relation.
-     */
-    def companion : RelationFactory[Repr]
 
     /**
      * The graph of this relation.
@@ -79,9 +71,7 @@ trait RelationLike[T, U, Repr[_, _]] {
      * Invert this relation. In other words, if `(t,u)` is in the relation,
      * then `(u,t)` is in the inverted relation.
      */
-    lazy val inverse : Repr[U, T] = {
-        companion.fromGraph(graph.inverse)
-    }
+    def inverse : RelationLike[U, T]
 
     /**
      * Is this relation empty (i.e., contains no pairs)?

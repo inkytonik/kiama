@@ -25,14 +25,21 @@ package relation
  * A binary relation between values of type `T` and values of type `U`.
  * Constructed from a memoised cache that maps `T` values to their image.
  */
-class Relation[T, U](val graph : RelationGraph[T, U]) extends RelationLike[T, U, Relation] {
-    val companion = Relation
+class Relation[T, U](val graph : RelationGraph[T, U]) extends RelationLike[T, U] {
+
+    /**
+     * Invert this relation. In other words, if `(t,u)` is in the relation,
+     * then `(u,t)` is in the inverted relation.
+     */
+    lazy val inverse : RelationLike[U, T] =
+        Relation.fromGraph(graph.inverse)
+
 }
 
 /**
  * Factory for binary relations.
  */
-object Relation extends RelationFactory[Relation] {
+object Relation {
 
     import scala.annotation.tailrec
     import scala.collection.immutable.Queue
