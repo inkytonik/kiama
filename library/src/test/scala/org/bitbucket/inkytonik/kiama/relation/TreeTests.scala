@@ -768,76 +768,145 @@ class TreeTests extends Tests {
 
     test("prev of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            next(nonNode)
+            prev(nonNode)
+        }
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
+    }
+
+    // sibling
+
+    test("root has itself as a sibling (sibling relation)") {
+        sibling.image(p) should beSameCollectionAs(Vector(p))
+    }
+
+    test("an only child has itself as a sibling (sibling relation) (n3)") {
+        sibling.image(n3) should beSameCollectionAs(Vector(n3))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (n1)") {
+        sibling.image(n1) should beSameCollectionAs(Vector(n1, n2))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (n2)") {
+        sibling.image(n2) should beSameCollectionAs(Vector(n1, n2))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (e1)") {
+        sibling.image(e1) should beSameCollectionAs(Vector(e1, v1))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (e2)") {
+        sibling.image(e2) should beSameCollectionAs(Vector(v2, e2))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (v2)") {
+        sibling.image(v2) should beSameCollectionAs(Vector(v2, e2))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (e3)") {
+        sibling.image(e3) should beSameCollectionAs(Vector(v3, e3))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (v3)") {
+        sibling.image(v3) should beSameCollectionAs(Vector(v3, e3))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (e4)") {
+        sibling.image(e4) should beSameCollectionAs(Vector(e4, s3))
+    }
+
+    test("a child of a normal node has the expected siblings (sibling relation) (s3)") {
+        sibling.image(s3) should beSameCollectionAs(Vector(e4, s3))
+    }
+
+    test("a child of a node with a list component has the expected siblings (sibling relation) (s1") {
+        sibling.image(s1) should beSameCollectionAs(pchildren)
+    }
+
+    test("a child of a node with a list component has the expected siblings (sibling relation) (s2)") {
+        sibling.image(s2) should beSameCollectionAs(pchildren)
+    }
+
+    test("a child of a node with a list component has the expected siblings (sibling relation) (sibling relation) (s4)") {
+        sibling.image(s4) should beSameCollectionAs(pchildren)
+    }
+
+    test("a child of a node with a list component has the expected siblings (sibling relation) (s5)") {
+        sibling.image(s5) should beSameCollectionAs(pchildren)
+    }
+
+    test("sibling of non-node throws an exception (sibling relation)") {
+        val i = intercept[NodeNotInTreeException[Exp]] {
+            sibling.image(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
     // siblings
 
-    test("root has itself as a sibling") {
-        siblings.image(p) should beSameCollectionAs(Vector(p))
+    test("root has itself as a sibling (siblings method)") {
+        siblings(p) should beSameCollectionAs(Vector(p))
     }
 
-    test("an only child has itself as a sibling (n3)") {
-        siblings.image(n3) should beSameCollectionAs(Vector(n3))
+    test("an only child has itself as a sibling (siblings method) (n3)") {
+        siblings(n3) should beSameCollectionAs(Vector(n3))
     }
 
-    test("a child of a normal node has the expected siblings (n1)") {
-        siblings.image(n1) should beSameCollectionAs(Vector(n1, n2))
+    test("a child of a normal node has the expected siblings (siblings method) (n1)") {
+        siblings(n1) should beSameCollectionAs(Vector(n1, n2))
     }
 
-    test("a child of a normal node has the expected siblings (n2)") {
-        siblings.image(n2) should beSameCollectionAs(Vector(n1, n2))
+    test("a child of a normal node has the expected siblings (siblings method) (n2)") {
+        siblings(n2) should beSameCollectionAs(Vector(n1, n2))
     }
 
-    test("a child of a normal node has the expected siblings (e1)") {
-        siblings.image(e1) should beSameCollectionAs(Vector(e1, v1))
+    test("a child of a normal node has the expected siblings (siblings method) (e1)") {
+        siblings(e1) should beSameCollectionAs(Vector(e1, v1))
     }
 
-    test("a child of a normal node has the expected siblings (e2)") {
-        siblings.image(e2) should beSameCollectionAs(Vector(v2, e2))
+    test("a child of a normal node has the expected siblings (siblings method) (e2)") {
+        siblings(e2) should beSameCollectionAs(Vector(v2, e2))
     }
 
-    test("a child of a normal node has the expected siblings (v2)") {
-        siblings.image(v2) should beSameCollectionAs(Vector(v2, e2))
+    test("a child of a normal node has the expected siblings (siblings method) (v2)") {
+        siblings(v2) should beSameCollectionAs(Vector(v2, e2))
     }
 
-    test("a child of a normal node has the expected siblings (e3)") {
-        siblings.image(e3) should beSameCollectionAs(Vector(v3, e3))
+    test("a child of a normal node has the expected siblings (siblings method) (e3)") {
+        siblings(e3) should beSameCollectionAs(Vector(v3, e3))
     }
 
-    test("a child of a normal node has the expected siblings (v3)") {
-        siblings.image(v3) should beSameCollectionAs(Vector(v3, e3))
+    test("a child of a normal node has the expected siblings (siblings method) (v3)") {
+        siblings(v3) should beSameCollectionAs(Vector(v3, e3))
     }
 
-    test("a child of a normal node has the expected siblings (e4)") {
-        siblings.image(e4) should beSameCollectionAs(Vector(e4, s3))
+    test("a child of a normal node has the expected siblings (siblings method) (e4)") {
+        siblings(e4) should beSameCollectionAs(Vector(e4, s3))
     }
 
-    test("a child of a normal node has the expected siblings (s3)") {
-        siblings.image(s3) should beSameCollectionAs(Vector(e4, s3))
+    test("a child of a normal node has the expected siblings (siblings method) (s3)") {
+        siblings(s3) should beSameCollectionAs(Vector(e4, s3))
     }
 
-    test("a child of a node with a list component has the expected siblings (s1") {
-        siblings.image(s1) should beSameCollectionAs(pchildren)
+    test("a child of a node with a list component has the expected siblings (siblings method) (s1") {
+        siblings(s1) should beSameCollectionAs(pchildren)
     }
 
-    test("a child of a node with a list component has the expected siblings (s2)") {
-        siblings.image(s2) should beSameCollectionAs(pchildren)
+    test("a child of a node with a list component has the expected siblings (siblings method) (s2)") {
+        siblings(s2) should beSameCollectionAs(pchildren)
     }
 
-    test("a child of a node with a list component has the expected siblings (s4)") {
-        siblings.image(s4) should beSameCollectionAs(pchildren)
+    test("a child of a node with a list component has the expected siblings (siblings method) (s4)") {
+        siblings(s4) should beSameCollectionAs(pchildren)
     }
 
-    test("a child of a node with a list component has the expected siblings (s5)") {
-        siblings.image(s5) should beSameCollectionAs(pchildren)
+    test("a child of a node with a list component has the expected siblings (siblings method) (s5)") {
+        siblings(s5) should beSameCollectionAs(pchildren)
     }
 
-    test("siblings of non-node throws an exception") {
+    test("siblings of non-node throws an exception (siblings method)") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            next(nonNode)
+            siblings(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
@@ -905,7 +974,7 @@ class TreeTests extends Tests {
 
     test("sibling count of non-node throws an exception") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            next(nonNode)
+            siblingCount(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }

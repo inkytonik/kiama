@@ -224,14 +224,14 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
         next.inverse
 
     /**
-     * A relation that relates a node to all of its siblings, including itself.
+     * A relation that relates a node to its siblings, including itself.
      */
-    lazy val siblings : TreeRelation[T] = {
+    lazy val sibling : TreeRelation[T] = {
         val graph = parent.graph.mapValues {
             case Vector(p) =>
                 child(p)
             case ps =>
-                sys.error(s"siblings: non-singleton parent $ps")
+                sys.error(s"sibling: non-singleton parent $ps")
         }
         graph.put(root, root)
         new TreeRelation(tree, graph)
@@ -291,6 +291,20 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
                     child(p).length
                 case _ =>
                     1
+            }
+        )
+
+    /**
+     * Return the sibling nodes of `t` (including itself).
+     */
+    def siblings(t : T) : Vector[T] =
+        whenContains(
+            t,
+            parent(t) match {
+                case Vector(p) =>
+                    child(p)
+                case _ =>
+                    Vector(t)
             }
         )
 
