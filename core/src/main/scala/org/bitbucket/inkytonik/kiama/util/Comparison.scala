@@ -26,6 +26,8 @@ package util
  */
 object Comparison {
 
+    import scala.collection.mutable.TreeSet
+
     /**
      * Compare two arbitrary values. If they are both references, use
      * reference equality, otherwise use value equality.
@@ -50,6 +52,15 @@ object Comparison {
                 case _ =>
                     sys.error(s"same: comparison of $v1 and $v2, should not be reached")
             }
+
+    /**
+     * An ordering that says two values are equal if `same` says they
+     * are, otherwise earlier elements are greater than later ones.
+     */
+    class TOrdering[T] extends Ordering[T] {
+        def compare(a : T, b : T) : Int =
+            if (same(a, b)) 0 else 1
+    }
 
     /**
      * Compare two `Iterable` collections or options and tuples containing that kind of
@@ -105,29 +116,22 @@ object Comparison {
 
     /**
      * Return a vector with only the distinct elements from the sequence `s`.
-     * "distinct" in this case means compare unequal using `same`. The
-     * first occurrence of each distinct element is kept.
+     * "distinct" in this case means compare using `same`.
      */
     def distinct[T](s : Seq[T]) : Vector[T] = {
+        val set = new TreeSet[T]()(new TOrdering[T])
+        set ++= s
+        set.toVector
+    }
 
-        import scala.collection.mutable.TreeSet
-
-        /*
-         * An ordering that says two elements are equal if `same` says they
-         * are, otherwise uses the index (i.e., the position in `s`) so that
-         * earlier elements are less than later ones.
-         */
-        object TOrdering extends Ordering[(T, Int)] {
-
-            def compare(a : (T, Int), b : (T, Int)) : Int =
-                if (same(a._1, b._1)) 0 else a._2 - b._2
-
-        }
-
-        val set = new TreeSet[(T, Int)]()(TOrdering)
-        set ++= (s.zipWithIndex)
-        set.toVector.map(_._1)
-
+    /**
+     * As for `distinct` but works over a sequence of sequences.
+     */
+    def flatDistinct[T](ss : Seq[Seq[T]]) : Vector[T] = {
+        val set = new TreeSet[T]()(new TOrdering[T])
+        for (s <- ss)
+            set ++= s
+        set.toVector
     }
 
     /**

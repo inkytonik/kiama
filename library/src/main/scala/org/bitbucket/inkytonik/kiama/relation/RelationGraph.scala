@@ -30,7 +30,7 @@ import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
 class RelationGraph[T, U] {
 
     import org.bitbucket.inkytonik.kiama.relation.Relation.{graphFromImages, graphFromPairs}
-    import org.bitbucket.inkytonik.kiama.util.Comparison.distinct
+    import org.bitbucket.inkytonik.kiama.util.Comparison.flatDistinct
 
     /**
      * Backing memo table.
@@ -102,7 +102,7 @@ class RelationGraph[T, U] {
      * The range of this graph.
      */
     lazy val range : Vector[U] =
-        distinct(memo.values.flatten)
+        flatDistinct(memo.values)
 
     /**
      * The number of relationships in this graph.
