@@ -88,6 +88,16 @@ object Relation {
     }
 
     /**
+     * Make a graph from a sequence of pairs that describe the inverse mappings.
+     */
+    def graphFromInversePairs[T, U](pairs : Vector[(T, U)]) : RelationGraph[U, T] = {
+        val graph = new RelationGraph[U, T]
+        for ((t, u) <- pairs)
+            graph.put(u, t)
+        graph
+    }
+
+    /**
      * Make a relation from the repeated application of `onestep` to `t` and
      * the results that it produces.
      */

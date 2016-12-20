@@ -52,11 +52,15 @@ trait Rewriter extends RewriterCore {
      * Rewrite a tree.  Apply the strategy `s` to the root of a tree returning the
      * a tree formed from the result term if `s` succeeds, otherwise return the
      * original tree.
+     *
+     * The `ensureTree` parameter says whether or not to make sure that the result
+     * tree is actually a tree structure. The default is `true` since it is likely
+     * that rewrites will result in node sharing that should be removed.
      */
-    def rewriteTree[T <: Product, U <: T](s : Strategy)(t : Tree[T, U]) : Tree[T, U] = {
+    def rewriteTree[T <: Product, U <: T](s : Strategy)(t : Tree[T, U], ensureTree : Boolean = true) : Tree[T, U] = {
         s(t.root) match {
             case Some(t1) =>
-                new Tree[T, U](t1.asInstanceOf[U])
+                new Tree[T, U](t1.asInstanceOf[U], ensureTree)
             case None =>
                 t
         }

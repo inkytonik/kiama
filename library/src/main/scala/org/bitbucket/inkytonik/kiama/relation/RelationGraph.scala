@@ -29,7 +29,7 @@ import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
  */
 class RelationGraph[T, U] {
 
-    import org.bitbucket.inkytonik.kiama.relation.Relation.{graphFromImages, graphFromPairs}
+    import org.bitbucket.inkytonik.kiama.relation.Relation.{graphFromImages, graphFromInversePairs}
     import org.bitbucket.inkytonik.kiama.util.Comparison.flatDistinct
 
     /**
@@ -38,16 +38,16 @@ class RelationGraph[T, U] {
     val memo = new IdMemoised[T, Vector[U]] {}
 
     /**
+     * Does the domain of this graph contain `t`?
+     */
+    def containsInDomain(t : T) : Boolean =
+        memo.hasBeenComputedAt(t)
+
+    /**
      * The domain of this graph.
      */
     lazy val domain : Vector[T] =
         memo.keys
-
-    /**
-     * Does the domain of this graph contain `t`?
-     */
-    def domainContains(t : T) : Boolean =
-        memo.hasBeenComputedAt(t)
 
     /**
      * The image of this graph at domain value `t`.
@@ -66,7 +66,7 @@ class RelationGraph[T, U] {
      * in this graph then `t` will be in the image of `u` in the returned graph.
      */
     lazy val inverse : RelationGraph[U, T] =
-        graphFromPairs(pairs.map(_.swap))
+        graphFromInversePairs(pairs)
 
     /**
      * A graph that is the result of applying `f` to the images of domain values

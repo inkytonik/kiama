@@ -71,13 +71,16 @@ class TreeRelation[T <: Product](tree : Tree[T, _], val graph : RelationGraph[T,
  *
  * The `originalRoot` value should be the root of a finite, acyclic structure
  * that contains only `Product` instances of type `T` (unless they are skipped,
- * see below). If the structure reachable from `originalRoot` is actually a tree
- * (i.e., contains no shared nodes) then the field `root` will be the same as
- * `originalRoot`.
+ * see below).
  *
- * On the other hand, if the structure contains shared nodes, then `root` will
- * be the root of a new structure which duplicates the original structure but
- * removes the sharing. In other words, shared nodes will be copied.
+ * If `ensureTree` is false (the default), then the structure will be left alone
+ * and `root` will be the same as `originalRoot`.
+ *
+ * If `ensureTree` is true, then the structure reachable from `originalRoot`
+ * will be processed to ensure that it is a tree structure. I.e., nodes will
+ * be cloned if they are shared. If the structure reachable from `originalRoot`
+ * is actually a tree (i.e., contains no shared nodes) then the field `root`
+ * will be the same as `originalRoot`.
  *
  * The `child` relation of a tree is defined to skip certain nodes.
  * Specifically, if a node of type `T` is wrapped in a `Some` of an option,
@@ -89,14 +92,15 @@ class TreeRelation[T <: Product](tree : Tree[T, _], val graph : RelationGraph[T,
  * Thanks to Len Hamey for the idea to use lazy cloning to restore the tree
  * structure instead of requiring that the input trees contain no sharing.
  */
-class Tree[T <: Product, +R <: T](val originalRoot : R) {
+class Tree[T <: Product, +R <: T](val originalRoot : R, ensureTree : Boolean = false) {
 
     tree =>
 
     import org.bitbucket.inkytonik.kiama.rewriting.Strategy
     import org.bitbucket.inkytonik.kiama.rewriting.Cloner.lazyclone
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{all, attempt, rule}
-    import org.bitbucket.inkytonik.kiama.util.Comparison.{contains, indexOf, same}
+    import org.bitbucket.inkytonik.kiama.util.Comparison
+    import org.bitbucket.inkytonik.kiama.util.Comparison.{contains, same}
     import Relation.{graphFromOneStep, graphFromPairs}
     import Tree.treeChildren
 
@@ -120,20 +124,23 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
      * If there is no sharing then `root` will be same as `originalRoot`.
      * Bridges to other structures will not be traversed.
      */
-    lazy val root = lazyclone(originalRoot, everywherebuNoBridges)
-
+    lazy val root =
+        if (ensureTree)
+            lazyclone(originalRoot, everywherebuNoBridges)
+        else
+            originalRoot
     /**
      * The basic relations between a node and its children. All of the
      * other relations are derived from `child` and `parent`.
      */
     lazy val (child, parent) : (TreeRelation[T], TreeRelation[T]) = {
 
-        /**
+        /*
          * The graph of the child relation for this tree.
          */
         val childGraph = graphFromOneStep[T](root, treeChildren)
 
-        /**
+        /*
          * The graph of the parent relation for this tree.
          */
         val parentGraph = childGraph.inverse
@@ -159,17 +166,18 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
     }
 
     /**
-     * The nodes that occur in this tree.
+     * The nodes that occur in this tree. Mostly useful if you want to
+     * iterate to look at every node.
      */
-    val nodes : Vector[T] =
-        root +: child.graph.range
+    lazy val nodes : Vector[T] =
+        root +: parent.graph.domain
 
     /**
      * If the tree contains node `u` return `v`, otherwise throw a
      * `NodeNotInTreeException`. `v` is only evaluated if necessary.
      */
     def whenContains[V](t : T, v : => V) : V =
-        if (same(t, root) || (parent.graph.domainContains(t)))
+        if (same(t, root) || (parent.containsInDomain(t)))
             v
         else
             throw new NodeNotInTreeException(t)
@@ -240,7 +248,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
     // Predicates derived from the relations
 
     /**
-     * Return the index of `t` in the children of `t's` parent node.
+     * Return the first index of `t` in the children of `t's` parent node.
      * Counts from zero. Is zero for a node that has no parent.
      */
     def index(t : T) : Int =
@@ -248,7 +256,23 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
             t,
             parent(t) match {
                 case Vector(p) =>
-                    indexOf(child(p), t)
+                    Comparison.indexOf(child(p), t)
+                case _ =>
+                    0
+            }
+        )
+
+    /**
+     * Return the last index of `t` in the children of `t's` parent node.
+     * Counts from zero. Is zero for a node that has no parent.
+     */
+    def indexFromEnd(t : T) : Int =
+        whenContains(
+            t,
+            parent(t) match {
+                case Vector(p) =>
+                    val c = child(p)
+                    c.length - Comparison.lastIndexOf(c, t) - 1
                 case _ =>
                     0
             }
@@ -264,21 +288,13 @@ class Tree[T <: Product, +R <: T](val originalRoot : R) {
      * Return whether or not `t` is a last child. True for root.
      */
     def isLast(t : T) : Boolean =
-        whenContains(t, index(t) == siblingCount(t) - 1)
+        whenContains(t, indexFromEnd(t) == 0)
 
     /**
      * Return whether or not `t` is the root of this tree.
      */
     def isRoot(t : T) : Boolean =
-        whenContains(
-            t,
-            (t, root) match {
-                case (tr : AnyRef, rootr : AnyRef) =>
-                    tr eq rootr
-                case _ =>
-                    false
-            }
-        )
+        whenContains(t, same(t, root))
 
     /**
      * Return the number of sibling nodes of `t` (including itself).

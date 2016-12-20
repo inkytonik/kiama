@@ -60,12 +60,8 @@ trait Cloner {
         bu : Strategy => Strategy = everywherebu("everywherebu", _)
     ) : T = {
 
-        object LeafCache {
-            import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
-            val seen = new IdMemoised[T, Boolean] {}
-        }
-
-        import LeafCache.seen
+        import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
+        val seen = new IdMemoised[T, Boolean] {}
 
         val lazycloner =
             bu(rule[T] {

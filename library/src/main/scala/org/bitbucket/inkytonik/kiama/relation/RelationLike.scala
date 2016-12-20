@@ -46,13 +46,7 @@ trait RelationLike[T, U] {
      * Does the domain of this relation contain the value `t`?
      */
     def containsInDomain(t : T) : Boolean =
-        contains(domain, t)
-
-    /**
-     * Does the range of this relation contain the value `u`?
-     */
-    def containsInRange(u : U) : Boolean =
-        contains(range, u)
+        graph.containsInDomain(t)
 
     /**
      * The domain of this relation.

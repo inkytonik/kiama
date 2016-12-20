@@ -300,6 +300,85 @@ class TreeTests extends Tests {
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }
 
+    // indexFromEnd
+
+    test("indexFromEnd of root is zero (p)") {
+        indexFromEnd(p) shouldBe 0
+    }
+
+    test("indexFromEnd of second-last child is one (n1)") {
+        indexFromEnd(n1) shouldBe 1
+    }
+
+    test("indexFromEnd of second-last child is one (e1)") {
+        indexFromEnd(e1) shouldBe 1
+    }
+
+    test("indexFromEnd of last child is zero (n3)") {
+        indexFromEnd(n3) shouldBe 0
+    }
+
+    test("indexFromEnd of second-last child is one (v2)") {
+        indexFromEnd(v2) shouldBe 1
+    }
+
+    test("indexFromEnd of second-last child is one (v3)") {
+        indexFromEnd(v3) shouldBe 1
+    }
+
+    test("indexFromEnd of second-last child is one (e4)") {
+        indexFromEnd(e4) shouldBe 1
+    }
+
+    test("indexFromEnd of first sequence child is twenty-seven (s1)") {
+        indexFromEnd(s1) shouldBe 27
+    }
+
+    test("indexFromEnd of last child is zero (n2)") {
+        indexFromEnd(n2) shouldBe 0
+    }
+
+    test("indexFromEnd of last child is zero (v1)") {
+        indexFromEnd(v1) shouldBe 0
+    }
+
+    test("indexFromEnd of last child is zero (e2)") {
+        indexFromEnd(e2) shouldBe 0
+    }
+
+    test("indexFromEnd of last child is zero (e3)") {
+        indexFromEnd(e3) shouldBe 0
+    }
+
+    test("indexFromEnd of last child is zero (s3)") {
+        indexFromEnd(s3) shouldBe 0
+    }
+
+    test("indexFromEnd of second sequence child is twenty-six (s2)") {
+        indexFromEnd(s2) shouldBe 26
+    }
+
+    test("indexFromEnd of third sequence child is twenty-five (s4)") {
+        indexFromEnd(s4) shouldBe 25
+    }
+
+    test("indexFromEnd of fourth sequence child is twenty-four (s5)") {
+        indexFromEnd(s5) shouldBe 24
+    }
+
+    for (i <- 0 to nulls.size - 1) {
+        test("indexFromEnd of nulls(" + i + ") is " + (23 - i)) {
+            indexFromEnd(nulls(i)) shouldBe 23 - i
+        }
+    }
+
+    test("indexFromEnd of non-node throws an exception") {
+        val i = intercept[NodeNotInTreeException[Exp]] {
+            indexFromEnd(nonNode)
+        }
+        i.getMessage shouldBe "node not in tree: Num(1.0)"
+    }
+
     // isLeaf
 
     test("isLeaf returns true for a leaf") {

@@ -135,10 +135,17 @@ object Comparison {
     }
 
     /**
-     * Return the zero-based index at which `elem` occurs in `s` using `same`
+     * Return the first zero-based index at which `elem` occurs in `s` using `same`
      * to perform comparisons, or -1 if `elem` does not occur in `s`.
      */
     def indexOf[T](s : Seq[T], elem : T) : Int =
         s.indexWhere(same(_, elem))
+
+    /**
+     * Return the last zero-based index at which `elem` occurs in `s` using `same`
+     * to perform comparisons, or -1 if `elem` does not occur in `s`.
+     */
+    def lastIndexOf[T](s : Seq[T], elem : T) : Int =
+        s.lastIndexWhere(same(_, elem))
 
 }
