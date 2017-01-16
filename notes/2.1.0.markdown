@@ -10,7 +10,7 @@ This is a simplification, enhancement and bug fix release cross-published for Sc
 
 * `Relation`: simplify API by removing rarely used relational operations (`collect`, `compose`, `containsInRange`, `index`, `preImage`, `preIndex`, `projDomain`, `projRange`, `union`, `withDomain` and `withRange`).
 
-* `Tree`: the constructor now has an `ensureTree` argument which when true causes lazy cloning to be performed to ensure that the structure is actually a tree. `ensureTree` is false by default which changes behaviour since lazy cloning was always performed in the previous version. Thus, pass `ensureTree = true` if there is a chance that your structure is not already a tree. The `rewriteTree` operation in the `Rewriter` passes `ensureTree = true` by default since sharing is likely after rewriting.
+* `Tree`: the constructor now has a `props` argument that can be used to specify optional properties for the tree. The available properties are: `CheckTree` that causes dynamic checks to be performed to check that the structure is actually a tree, and `LazyClone` that ensures that the structure is a tree by cloning any shared nodes. By default, the `props` argument is empty which changes behaviour since lazy cloning was always performed in the previous version. Thus, pass `LazyClone` if there is a chance that your structure is not already a tree. The `rewriteTree` operation in the `Rewriter` passes `LazyClone` by default since sharing is likely after rewriting.
 
 * `Tree`: old `siblings` relation is now called `sibling` which better matches the naming of relations such as `child`.
 

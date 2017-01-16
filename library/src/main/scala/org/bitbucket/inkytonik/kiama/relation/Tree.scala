@@ -38,6 +38,23 @@ case class NodeNotInTreeException[T](t : T) extends Exception(s"node not in tree
 case class Bridge[T](cross : T)
 
 /**
+ * Tree properties
+ */
+abstract class TreeProp
+
+/**
+ * When creating the child relation for the structure, check that it is
+ * in fact a tree. A system error will result if it's not.
+ */
+case object CheckTree extends TreeProp
+
+/**
+ * When creating the tree, laziy clone the structure so that there are no
+ * duplicate nodes.
+ */
+case object LazyClone extends TreeProp
+
+/**
  * Relational representations of trees built out of hierarchical `Product`
  * instances. Typically, the nodes are instances of case classes.
  *
@@ -48,14 +65,24 @@ case class Bridge[T](cross : T)
  * that contains only `Product` instances of type `T` (unless they are skipped,
  * see below).
  *
- * If `ensureTree` is false (the default), then the structure will be left alone
- * and `root` will be the same as `originalRoot`.
+ * The `props` argument is a sequence of `TreeProp` values, defaulting to an
+ * empty sequence.
  *
- * If `ensureTree` is true, then the structure reachable from `originalRoot`
+ * If `LazyClone` is in `props` then the structure reachable from `originalRoot`
  * will be processed to ensure that it is a tree structure. I.e., nodes will
  * be cloned if they are shared. If the structure reachable from `originalRoot`
  * is actually a tree (i.e., contains no shared nodes) then the field `root`
  * will be the same as `originalRoot`.
+ *
+ * If `LazyClone` is not in `props`, then the structure will be left alone
+ * and `root` will always be the same as `originalRoot`.
+ *
+ * If `EnsureTree` is in `props` then a dynamic check will be performed when
+ * the tree relations are created to ensure that structure is actually a tree.
+ * If a node has more than one parent, then an error will be thrown.
+ *
+ * If `EnsureTree` is not in `props` then there will be no attempt to check the
+ * tree structure.
  *
  * The `child` relation of a tree is defined to skip certain nodes.
  * Specifically, if a node of type `T` is wrapped in a `Some` of an option,
@@ -67,7 +94,7 @@ case class Bridge[T](cross : T)
  * Thanks to Len Hamey for the idea to use lazy cloning to restore the tree
  * structure instead of requiring that the input trees contain no sharing.
  */
-class Tree[T <: Product, +R <: T](val originalRoot : R, ensureTree : Boolean = false) {
+class Tree[T <: Product, +R <: T](val originalRoot : R, props : Seq[TreeProp] = Seq()) {
 
     tree =>
 
@@ -101,7 +128,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, ensureTree : Boolean = f
      * Bridges to other structures will not be traversed.
      */
     lazy val root =
-        if (ensureTree)
+        if (props.contains(LazyClone))
             lazyclone(originalRoot, everywherebuNoBridges)
         else
             originalRoot
@@ -118,7 +145,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, ensureTree : Boolean = f
 
         // As a safety check, we make sure that values are not children
         // of more than one parent.
-        if (ensureTree) {
+        if (props.contains(CheckTree)) {
             val msgBuilder = new StringBuilder
             val parent = child.inverse
             for (c <- parent.domain) {
