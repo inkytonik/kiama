@@ -27,14 +27,19 @@ package rewriting
  */
 trait MemoRewriter extends Rewriter {
 
-    import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
+    import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
 
     /*
      * Any-rewriting strategies that memoise their results by identity on
      * the subject term.
      */
-    abstract class MemoStrategy(name : String) extends Strategy(name) with IdMemoised[Any, Option[Any]] {
+    abstract class MemoStrategy(name : String) extends Strategy(name) {
+
+        /**
+         * Backing memo table.
+         */
+        val memo = makeIdMemoiser[Any, Option[Any]]()
 
         /**
          * Make one of these strategies with the given name and body `f`.
@@ -51,16 +56,29 @@ trait MemoRewriter extends Rewriter {
         override def apply(r : Any) : Option[Any] = {
             val i = start(List("event" -> "StratEval", "strategy" -> this,
                 "subject" -> r, "subjectHash" -> r.##))
-            get(r) match {
+            memo.get(r) match {
                 case None =>
                     val u = body(r)
-                    put(r, u)
+                    memo.put(r, u)
                     finish(i, List("cached" -> false, "result" -> u))
                     u
                 case Some(u) =>
                     finish(i, List("cached" -> true, "result" -> u))
                     u
             }
+        }
+
+        /**
+         * Has this strategy been computed on `r`?
+         */
+        def hasBeenComputedAt(r : Any) : Boolean =
+            memo.hasBeenComputedAt(r)
+
+        /**
+         * Reset the memo table that backs this strategy.
+         */
+        def reset() {
+            memo.reset()
         }
 
     }

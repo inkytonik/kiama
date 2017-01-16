@@ -29,7 +29,7 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 class TreeTests extends Tests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
-    import org.bitbucket.inkytonik.kiama.relation.Tree.isLeaf
+    import org.bitbucket.inkytonik.kiama.relation.TreeRelation.isLeaf
     import scala.collection.immutable.Set
 
     // Test tree
@@ -86,63 +86,63 @@ class TreeTests extends Tests {
     // child
 
     test("child of leaf is empty (n1)") {
-        child.image(n1) shouldBe empty
+        child(n1) shouldBe empty
     }
 
     test("child of leaf is empty (n2)") {
-        child.image(n2) shouldBe empty
+        child(n2) shouldBe empty
     }
 
     test("child of leaf is empty (n3)") {
-        child.image(n3) shouldBe empty
+        child(n3) shouldBe empty
     }
 
     test("child of leaf is empty (v1)") {
-        child.image(v1) shouldBe empty
+        child(v1) shouldBe empty
     }
 
     test("child of leaf is empty (v2)") {
-        child.image(v2) shouldBe empty
+        child(v2) shouldBe empty
     }
 
     test("child of leaf is empty (v3)") {
-        child.image(v3) shouldBe empty
+        child(v3) shouldBe empty
     }
 
     test("child of leaf is empty (e4)") {
-        child.image(e4) shouldBe empty
+        child(e4) shouldBe empty
     }
 
     test("child of leaf is empty (s2)") {
-        child.image(s2) shouldBe empty
+        child(s2) shouldBe empty
     }
 
     test("child of interior node is its children (e1)") {
-        child.image(e1) should beSameCollectionAs(Vector(n1, n2))
+        child(e1) should beSameCollectionAs(Vector(n1, n2))
     }
 
     test("child of interior node is its children (e2)") {
-        child.image(e2) should beSameCollectionAs(Vector(e1, v1))
+        child(e2) should beSameCollectionAs(Vector(e1, v1))
     }
 
     test("child of interior node is its children (e3)") {
-        child.image(e3) should beSameCollectionAs(Vector(n3))
+        child(e3) should beSameCollectionAs(Vector(n3))
     }
 
     test("child of interior node is its children (s1)") {
-        child.image(s1) should beSameCollectionAs(Vector(v2, e2))
+        child(s1) should beSameCollectionAs(Vector(v2, e2))
     }
 
     test("child of interior node is its children (v3)") {
-        child.image(s3) should beSameCollectionAs(Vector(v3, e3))
+        child(s3) should beSameCollectionAs(Vector(v3, e3))
     }
 
     test("child of interior node is its children (s4)") {
-        child.image(s4) should beSameCollectionAs(Vector(e4, s3))
+        child(s4) should beSameCollectionAs(Vector(e4, s3))
     }
 
     test("child of Program ignores its non ImperativeTree fields") {
-        child.image(p) should beSameCollectionAs(pchildren)
+        child(p) should beSameCollectionAs(pchildren)
     }
 
     test("child of non-node throws an exception") {
@@ -520,72 +520,72 @@ class TreeTests extends Tests {
     // next
 
     test("next of root is not defined") {
-        next.image(p) shouldBe empty
+        next(p) shouldBe empty
     }
 
     test("next of a last child is not defined (n2)") {
-        next.image(n2) shouldBe empty
+        next(n2) shouldBe empty
     }
 
     test("next of a last child is not defined (v1)") {
-        next.image(v1) shouldBe empty
+        next(v1) shouldBe empty
     }
 
     test("next of a last child is not defined (n3)") {
-        next.image(n3) shouldBe empty
+        next(n3) shouldBe empty
     }
 
     test("next of a last child is not defined (e2)") {
-        next.image(e2) shouldBe empty
+        next(e2) shouldBe empty
     }
 
     test("next of a last child is not defined (e3)") {
-        next.image(e3) shouldBe empty
+        next(e3) shouldBe empty
     }
 
     test("next of a last child is not defined (s3)") {
-        next.image(s3) shouldBe empty
+        next(s3) shouldBe empty
     }
 
     test("next of a last child is not defined (nulls(23))") {
-        next.image(nulls(23)) shouldBe empty
+        next(nulls(23)) shouldBe empty
     }
 
     test("next of a non-last child is correct (n1)") {
-        next.image(n1) should beSameCollectionAs(Vector(n2))
+        next(n1) should beSameCollectionAs(Vector(n2))
     }
 
     test("next of a non-last child is correct (e1)") {
-        next.image(e1) should beSameCollectionAs(Vector(v1))
+        next(e1) should beSameCollectionAs(Vector(v1))
     }
 
     test("next of a non-last child is correct (v2)") {
-        next.image(v2) should beSameCollectionAs(Vector(e2))
+        next(v2) should beSameCollectionAs(Vector(e2))
     }
 
     test("next of a non-last child is correct (v3)") {
-        next.image(v3) should beSameCollectionAs(Vector(e3))
+        next(v3) should beSameCollectionAs(Vector(e3))
     }
 
     test("next of a non-last child is correct (e4)") {
-        next.image(e4) should beSameCollectionAs(Vector(s3))
+        next(e4) should beSameCollectionAs(Vector(s3))
     }
 
     test("next of a non-last child is correct (s1)") {
-        next.image(s1) should beSameCollectionAs(Vector(s2))
+        next(s1) should beSameCollectionAs(Vector(s2))
     }
 
     test("next of a non-last child is correct (s2)") {
-        next.image(s2) should beSameCollectionAs(Vector(s4))
+        next(s2) should beSameCollectionAs(Vector(s4))
     }
 
     test("next of a non-last child is correct (s4)") {
-        next.image(s4) should beSameCollectionAs(Vector(s5))
+        next(s4) should beSameCollectionAs(Vector(s5))
     }
 
     for (i <- 0 to nulls.size - 2) {
         test("next of nulls(" + i + ") is nulls(" + (i + 1) + ")") {
-            next.image(nulls(i)) should beSameCollectionAs(Vector(nulls(i + 1)))
+            next(nulls(i)) should beSameCollectionAs(Vector(nulls(i + 1)))
         }
     }
 
@@ -599,167 +599,167 @@ class TreeTests extends Tests {
     // parent
 
     test("parent of root is not defined") {
-        parent.image(p) shouldBe empty
+        parent(p) shouldBe empty
     }
 
     test("parent of leaf is its parent (n1)") {
-        parent.image(n1) should beSameCollectionAs(Vector(e1))
+        parent(n1) should beSameCollectionAs(Vector(e1))
     }
 
     test("parent of leaf is its parent (n2)") {
-        parent.image(n2) should beSameCollectionAs(Vector(e1))
+        parent(n2) should beSameCollectionAs(Vector(e1))
     }
 
     test("parent of leaf is its parent (n3)") {
-        parent.image(n3) should beSameCollectionAs(Vector(e3))
+        parent(n3) should beSameCollectionAs(Vector(e3))
     }
 
     test("parent of leaf is its parent (v1)") {
-        parent.image(v1) should beSameCollectionAs(Vector(e2))
+        parent(v1) should beSameCollectionAs(Vector(e2))
     }
 
     test("parent of leaf is its parent (v2)") {
-        parent.image(v2) should beSameCollectionAs(Vector(s1))
+        parent(v2) should beSameCollectionAs(Vector(s1))
     }
 
     test("parent of leaf is its parent (v3)") {
-        parent.image(v3) should beSameCollectionAs(Vector(s3))
+        parent(v3) should beSameCollectionAs(Vector(s3))
     }
 
     test("parent of leaf is its parent (e4)") {
-        parent.image(e4) should beSameCollectionAs(Vector(s4))
+        parent(e4) should beSameCollectionAs(Vector(s4))
     }
 
     test("parent of interior node is its parent (e1)") {
-        parent.image(e1) should beSameCollectionAs(Vector(e2))
+        parent(e1) should beSameCollectionAs(Vector(e2))
     }
 
     test("parent of interior node is its parent (e2)") {
-        parent.image(e2) should beSameCollectionAs(Vector(s1))
+        parent(e2) should beSameCollectionAs(Vector(s1))
     }
 
     test("parent of interior node is its parent (e3)") {
-        parent.image(e3) should beSameCollectionAs(Vector(s3))
+        parent(e3) should beSameCollectionAs(Vector(s3))
     }
 
     test("parent of interior node is its parent (e4)") {
-        parent.image(e4) should beSameCollectionAs(Vector(s4))
+        parent(e4) should beSameCollectionAs(Vector(s4))
     }
 
     test("parent of interior node is its parent (s3)") {
-        parent.image(s3) should beSameCollectionAs(Vector(s4))
+        parent(s3) should beSameCollectionAs(Vector(s4))
     }
 
     test("parent of node in Program is the program (s1)") {
-        parent.image(s1) should beSameCollectionAs(Vector(p))
+        parent(s1) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Program is the program (s2)") {
-        parent.image(s2) should beSameCollectionAs(Vector(p))
+        parent(s2) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Program is the program (s4)") {
-        parent.image(s4) should beSameCollectionAs(Vector(p))
+        parent(s4) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Program is the program (s5)") {
-        parent.image(s5) should beSameCollectionAs(Vector(p))
+        parent(s5) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Option field of Program is the program") {
-        parent.image(nulls(0)) should beSameCollectionAs(Vector(p))
+        parent(nulls(0)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node after Option field of Program is the program") {
-        parent.image(nulls(1)) should beSameCollectionAs(Vector(p))
+        parent(nulls(1)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Left field of Program is the program") {
-        parent.image(nulls(2)) should beSameCollectionAs(Vector(p))
+        parent(nulls(2)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Right field of Program is the program") {
-        parent.image(nulls(3)) should beSameCollectionAs(Vector(p))
+        parent(nulls(3)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node after Either fields of Program is the program") {
-        parent.image(nulls(4)) should beSameCollectionAs(Vector(p))
+        parent(nulls(4)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 1 of Program is the program") {
-        parent.image(nulls(5)) should beSameCollectionAs(Vector(p))
+        parent(nulls(5)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 2 of Program is the program (first)") {
-        parent.image(nulls(6)) should beSameCollectionAs(Vector(p))
+        parent(nulls(6)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 2 of Program is the program (second)") {
-        parent.image(nulls(7)) should beSameCollectionAs(Vector(p))
+        parent(nulls(7)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 3 of Program is the program (first)") {
-        parent.image(nulls(8)) should beSameCollectionAs(Vector(p))
+        parent(nulls(8)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 3 of Program is the program (second)") {
-        parent.image(nulls(9)) should beSameCollectionAs(Vector(p))
+        parent(nulls(9)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 3 of Program is the program (third)") {
-        parent.image(nulls(10)) should beSameCollectionAs(Vector(p))
+        parent(nulls(10)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (first)") {
-        parent.image(nulls(11)) should beSameCollectionAs(Vector(p))
+        parent(nulls(11)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (second)") {
-        parent.image(nulls(12)) should beSameCollectionAs(Vector(p))
+        parent(nulls(12)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (third)") {
-        parent.image(nulls(13)) should beSameCollectionAs(Vector(p))
+        parent(nulls(13)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in tuple 4 of Program is the program (fourth)") {
-        parent.image(nulls(14)) should beSameCollectionAs(Vector(p))
+        parent(nulls(14)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node after tuple 4 field of Program is the program") {
-        parent.image(nulls(15)) should beSameCollectionAs(Vector(p))
+        parent(nulls(15)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in list of Somes of Program is the program (first)") {
-        parent.image(nulls(16)) should beSameCollectionAs(Vector(p))
+        parent(nulls(16)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in list of Somes of Program is the program (second)") {
-        parent.image(nulls(17)) should beSameCollectionAs(Vector(p))
+        parent(nulls(17)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of middle field of Program is the program") {
-        parent.image(nulls(18)) should beSameCollectionAs(Vector(p))
+        parent(nulls(18)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Vector field of Program is the program (first)") {
-        parent.image(nulls(19)) should beSameCollectionAs(Vector(p))
+        parent(nulls(19)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Vector field of Program is the program (second)") {
-        parent.image(nulls(20)) should beSameCollectionAs(Vector(p))
+        parent(nulls(20)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Vector field of Program is the program (third)") {
-        parent.image(nulls(21)) should beSameCollectionAs(Vector(p))
+        parent(nulls(21)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Map field of Program is the program (first)") {
-        parent.image(nulls(22)) should beSameCollectionAs(Vector(p))
+        parent(nulls(22)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of node in Map field of Program is the program (second)") {
-        parent.image(nulls(23)) should beSameCollectionAs(Vector(p))
+        parent(nulls(23)) should beSameCollectionAs(Vector(p))
     }
 
     test("parent of non-node throws an exception") {
@@ -772,76 +772,76 @@ class TreeTests extends Tests {
     // prev
 
     test("prev of root is not defined") {
-        prev.image(p) shouldBe empty
+        prev(p) shouldBe empty
     }
 
     test("prev of a first child is not defined (n1)") {
-        prev.image(n1) shouldBe empty
+        prev(n1) shouldBe empty
     }
 
     test("prev of a first child is not defined (e1)") {
-        prev.image(e1) shouldBe empty
+        prev(e1) shouldBe empty
     }
 
     test("prev of a first child is not defined (n3)") {
-        prev.image(n3) shouldBe empty
+        prev(n3) shouldBe empty
     }
 
     test("prev of a first child is not defined (v2)") {
-        prev.image(v2) shouldBe empty
+        prev(v2) shouldBe empty
     }
 
     test("prev of a first child is not defined (v3)") {
-        prev.image(v3) shouldBe empty
+        prev(v3) shouldBe empty
     }
 
     test("prev of a first child is not defined (e4)") {
-        prev.image(e4) shouldBe empty
+        prev(e4) shouldBe empty
     }
 
     test("prev of a first child is not defined (s1)") {
-        prev.image(s1) shouldBe empty
+        prev(s1) shouldBe empty
     }
 
     test("prev of a non-first child is correct (n2)") {
-        prev.image(n2) should beSameCollectionAs(Vector(n1))
+        prev(n2) should beSameCollectionAs(Vector(n1))
     }
 
     test("prev of a non-first child is correct (v1)") {
-        prev.image(v1) should beSameCollectionAs(Vector(e1))
+        prev(v1) should beSameCollectionAs(Vector(e1))
     }
 
     test("prev of a non-first child is correct (e2)") {
-        prev.image(e2) should beSameCollectionAs(Vector(v2))
+        prev(e2) should beSameCollectionAs(Vector(v2))
     }
 
     test("prev of a non-first child is correct (e3)") {
-        prev.image(e3) should beSameCollectionAs(Vector(v3))
+        prev(e3) should beSameCollectionAs(Vector(v3))
     }
 
     test("prev of a non-first child is correct (s3)") {
-        prev.image(s3) should beSameCollectionAs(Vector(e4))
+        prev(s3) should beSameCollectionAs(Vector(e4))
     }
 
     test("prev of a non-first child is correct (s2)") {
-        prev.image(s2) should beSameCollectionAs(Vector(s1))
+        prev(s2) should beSameCollectionAs(Vector(s1))
     }
 
     test("prev of a non-first child is correct (s4)") {
-        prev.image(s4) should beSameCollectionAs(Vector(s2))
+        prev(s4) should beSameCollectionAs(Vector(s2))
     }
 
     test("prev of a non-first child is correct (s5)") {
-        prev.image(s5) should beSameCollectionAs(Vector(s4))
+        prev(s5) should beSameCollectionAs(Vector(s4))
     }
 
     test("prev of a nulls(0) is correct") {
-        prev.image(nulls(0)) should beSameCollectionAs(Vector(s5))
+        prev(nulls(0)) should beSameCollectionAs(Vector(s5))
     }
 
     for (i <- 1 to nulls.size - 1) {
         test("prev of nulls(" + i + ") is nulls(" + (i - 1) + ")") {
-            prev.image(nulls(i)) should beSameCollectionAs(Vector(nulls(i - 1)))
+            prev(nulls(i)) should beSameCollectionAs(Vector(nulls(i - 1)))
         }
     }
 
@@ -855,205 +855,68 @@ class TreeTests extends Tests {
     // sibling
 
     test("root has itself as a sibling (sibling relation)") {
-        sibling.image(p) should beSameCollectionAs(Vector(p))
+        sibling(p) should beSameCollectionAs(Vector(p))
     }
 
     test("an only child has itself as a sibling (sibling relation) (n3)") {
-        sibling.image(n3) should beSameCollectionAs(Vector(n3))
+        sibling(n3) should beSameCollectionAs(Vector(n3))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (n1)") {
-        sibling.image(n1) should beSameCollectionAs(Vector(n1, n2))
+        sibling(n1) should beSameCollectionAs(Vector(n1, n2))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (n2)") {
-        sibling.image(n2) should beSameCollectionAs(Vector(n1, n2))
+        sibling(n2) should beSameCollectionAs(Vector(n1, n2))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (e1)") {
-        sibling.image(e1) should beSameCollectionAs(Vector(e1, v1))
+        sibling(e1) should beSameCollectionAs(Vector(e1, v1))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (e2)") {
-        sibling.image(e2) should beSameCollectionAs(Vector(v2, e2))
+        sibling(e2) should beSameCollectionAs(Vector(v2, e2))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (v2)") {
-        sibling.image(v2) should beSameCollectionAs(Vector(v2, e2))
+        sibling(v2) should beSameCollectionAs(Vector(v2, e2))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (e3)") {
-        sibling.image(e3) should beSameCollectionAs(Vector(v3, e3))
+        sibling(e3) should beSameCollectionAs(Vector(v3, e3))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (v3)") {
-        sibling.image(v3) should beSameCollectionAs(Vector(v3, e3))
+        sibling(v3) should beSameCollectionAs(Vector(v3, e3))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (e4)") {
-        sibling.image(e4) should beSameCollectionAs(Vector(e4, s3))
+        sibling(e4) should beSameCollectionAs(Vector(e4, s3))
     }
 
     test("a child of a normal node has the expected siblings (sibling relation) (s3)") {
-        sibling.image(s3) should beSameCollectionAs(Vector(e4, s3))
+        sibling(s3) should beSameCollectionAs(Vector(e4, s3))
     }
 
     test("a child of a node with a list component has the expected siblings (sibling relation) (s1") {
-        sibling.image(s1) should beSameCollectionAs(pchildren)
+        sibling(s1) should beSameCollectionAs(pchildren)
     }
 
     test("a child of a node with a list component has the expected siblings (sibling relation) (s2)") {
-        sibling.image(s2) should beSameCollectionAs(pchildren)
+        sibling(s2) should beSameCollectionAs(pchildren)
     }
 
     test("a child of a node with a list component has the expected siblings (sibling relation) (sibling relation) (s4)") {
-        sibling.image(s4) should beSameCollectionAs(pchildren)
+        sibling(s4) should beSameCollectionAs(pchildren)
     }
 
     test("a child of a node with a list component has the expected siblings (sibling relation) (s5)") {
-        sibling.image(s5) should beSameCollectionAs(pchildren)
+        sibling(s5) should beSameCollectionAs(pchildren)
     }
 
     test("sibling of non-node throws an exception (sibling relation)") {
         val i = intercept[NodeNotInTreeException[Exp]] {
-            sibling.image(nonNode)
-        }
-        i.getMessage shouldBe "node not in tree: Num(1.0)"
-    }
-
-    // siblings
-
-    test("root has itself as a sibling (siblings method)") {
-        siblings(p) should beSameCollectionAs(Vector(p))
-    }
-
-    test("an only child has itself as a sibling (siblings method) (n3)") {
-        siblings(n3) should beSameCollectionAs(Vector(n3))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (n1)") {
-        siblings(n1) should beSameCollectionAs(Vector(n1, n2))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (n2)") {
-        siblings(n2) should beSameCollectionAs(Vector(n1, n2))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (e1)") {
-        siblings(e1) should beSameCollectionAs(Vector(e1, v1))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (e2)") {
-        siblings(e2) should beSameCollectionAs(Vector(v2, e2))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (v2)") {
-        siblings(v2) should beSameCollectionAs(Vector(v2, e2))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (e3)") {
-        siblings(e3) should beSameCollectionAs(Vector(v3, e3))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (v3)") {
-        siblings(v3) should beSameCollectionAs(Vector(v3, e3))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (e4)") {
-        siblings(e4) should beSameCollectionAs(Vector(e4, s3))
-    }
-
-    test("a child of a normal node has the expected siblings (siblings method) (s3)") {
-        siblings(s3) should beSameCollectionAs(Vector(e4, s3))
-    }
-
-    test("a child of a node with a list component has the expected siblings (siblings method) (s1") {
-        siblings(s1) should beSameCollectionAs(pchildren)
-    }
-
-    test("a child of a node with a list component has the expected siblings (siblings method) (s2)") {
-        siblings(s2) should beSameCollectionAs(pchildren)
-    }
-
-    test("a child of a node with a list component has the expected siblings (siblings method) (s4)") {
-        siblings(s4) should beSameCollectionAs(pchildren)
-    }
-
-    test("a child of a node with a list component has the expected siblings (siblings method) (s5)") {
-        siblings(s5) should beSameCollectionAs(pchildren)
-    }
-
-    test("siblings of non-node throws an exception (siblings method)") {
-        val i = intercept[NodeNotInTreeException[Exp]] {
-            siblings(nonNode)
-        }
-        i.getMessage shouldBe "node not in tree: Num(1.0)"
-    }
-
-    // sibling count
-
-    test("root has one sibling") {
-        siblingCount(p) shouldBe 1
-    }
-    test("an only child has one sibling (n3)") {
-        siblingCount(n3) shouldBe 1
-    }
-
-    test("a child of a normal node has the expected number of siblings (n1)") {
-        siblingCount(n1) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (n2)") {
-        siblingCount(n2) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (e1)") {
-        siblingCount(e1) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (e2)") {
-        siblingCount(e2) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (v2)") {
-        siblingCount(v2) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (e3)") {
-        siblingCount(e3) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (v3)") {
-        siblingCount(v3) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (e4)") {
-        siblingCount(e4) shouldBe 2
-    }
-
-    test("a child of a normal node has the expected number of siblings (s3)") {
-        siblingCount(s3) shouldBe 2
-    }
-
-    test("a child of a node with a list component has the expected number of siblings (s1)") {
-        siblingCount(s1) shouldBe (pchildren.length)
-    }
-
-    test("a child of a node with a list component has the expected number of siblings (s2)") {
-        siblingCount(s2) shouldBe (pchildren.length)
-    }
-
-    test("a child of a node with a list component has the expected number of siblings (s4)") {
-        siblingCount(s4) shouldBe (pchildren.length)
-    }
-
-    test("a child of a node with a list component has the expected number of siblings (s5)") {
-        siblingCount(s5) shouldBe (pchildren.length)
-    }
-
-    test("sibling count of non-node throws an exception") {
-        val i = intercept[NodeNotInTreeException[Exp]] {
-            siblingCount(nonNode)
+            sibling(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
     }

@@ -30,7 +30,7 @@ trait Cloner {
 
     self : Rewriter =>
 
-    import org.bitbucket.inkytonik.kiama.relation.Tree.isLeaf
+    import org.bitbucket.inkytonik.kiama.relation.TreeRelation.isLeaf
 
     /**
      * Deep clone the term `t`. Only applicable if the base type of the tree is
@@ -60,13 +60,14 @@ trait Cloner {
         bu : Strategy => Strategy = everywherebu("everywherebu", _)
     ) : T = {
 
-        import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
-        val seen = new IdMemoised[T, Boolean] {}
+        import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser
+
+        val seen = makeIdMemoiser[Product, Boolean]()
 
         val lazycloner =
             bu(rule[T] {
                 case n if isLeaf(n) =>
-                    if (seen.getWithDefault(n, false))
+                    if (seen.getOrDefault(n, false))
                         copy(n)
                     else {
                         seen.put(n, true)

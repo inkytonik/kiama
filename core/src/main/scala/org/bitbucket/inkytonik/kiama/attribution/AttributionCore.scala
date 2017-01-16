@@ -21,6 +21,8 @@
 package org.bitbucket.inkytonik.kiama
 package attribution
 
+import org.bitbucket.inkytonik.kiama.util.Memoiser.{makeIdMemoiser, makeMemoiser}
+
 /**
  * Reusable implementation of attribution of syntax trees in a functional style
  * with attribute values cached so that each value is computed at most once.
@@ -28,7 +30,6 @@ package attribution
 trait AttributionCore extends AttributionCommon {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
-    import org.bitbucket.inkytonik.kiama.util.Memoiser.{IdMemoised, Memoised}
     import scala.language.experimental.macros
     import scala.language.implicitConversions
 
@@ -39,7 +40,12 @@ trait AttributionCore extends AttributionCommon {
      * `f` should not itself require the value of this attribute. If it does, a
      * circularity error is reported by throwing an `IllegalStateException`.
      */
-    class CachedAttribute[T, U](name : String, f : T => U) extends Attribute[T, U](name) with IdMemoised[T, Option[U]] {
+    class CachedAttribute[T, U](name : String, f : T => U) extends Attribute[T, U](name) {
+
+        /**
+         * Backing memo table.
+         */
+        val memo = makeIdMemoiser[T, Option[U]]
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -49,16 +55,16 @@ trait AttributionCore extends AttributionCommon {
             val i = start(List("event" -> "AttrEval", "subject" -> t,
                 "attribute" -> this, "parameter" -> None,
                 "circular" -> false))
-            get(t) match {
+            memo.get(t) match {
                 case Some(Some(u)) =>
                     finish(i, List("value" -> u, "cached" -> true))
                     u
                 case Some(None) =>
                     reportCycle(t)
                 case None =>
-                    put(t, None)
+                    memo.put(t, None)
                     val u = f(t)
-                    put(t, Some(u))
+                    memo.put(t, Some(u))
                     finish(i, List("value" -> u, "cached" -> false))
                     u
             }
@@ -70,20 +76,32 @@ trait AttributionCore extends AttributionCommon {
          * was `u`. If the memo table contains `None` we are in the middle of
          * computing it. Otherwise the memo table contains no entry for `t`.
          */
-        override def hasBeenComputedAt(t : T) : Boolean =
-            get(t) match {
+        def hasBeenComputedAt(t : T) : Boolean =
+            memo.get(t) match {
                 case Some(Some(_)) => true
                 case _             => false
             }
+
+        /**
+         * Reset the cache for this attribute.
+         */
+        def reset() {
+            memo.reset()
+        }
 
     }
 
     /**
      * A variation of the `CachedAttribute` class for parameterised attributes.
      */
-    class CachedParamAttribute[A, T, U](name : String, f : A => T => U) extends (A => Attribute[T, U]) with Memoised[ParamAttributeKey, Option[U]] {
+    class CachedParamAttribute[A, T, U](name : String, f : A => T => U) extends (A => Attribute[T, U]) {
 
         attr =>
+
+        /**
+         * Backing memo table.
+         */
+        val memo = makeMemoiser[ParamAttributeKey, Option[U]]()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -97,16 +115,16 @@ trait AttributionCore extends AttributionCommon {
                         "attribute" -> this, "parameter" -> Some(arg),
                         "circular" -> false))
                     val key = new ParamAttributeKey(arg, t)
-                    get(key) match {
+                    memo.get(key) match {
                         case Some(Some(u)) =>
                             finish(i, List("value" -> u, "cached" -> true))
                             u
                         case Some(None) =>
                             reportCycle(t)
                         case None =>
-                            put(key, None)
+                            memo.put(key, None)
                             val u = f(arg)(t)
-                            put(key, Some(u))
+                            memo.put(key, Some(u))
                             finish(i, List("value" -> u, "cached" -> false))
                             u
                     }
@@ -122,13 +140,20 @@ trait AttributionCore extends AttributionCommon {
          * or not?
          */
         def hasBeenComputedAt(arg : A, t : T) : Boolean =
-            super.hasBeenComputedAt(new ParamAttributeKey(arg, t))
+            memo.hasBeenComputedAt(new ParamAttributeKey(arg, t))
+
+        /**
+         * Reset the cache for this attribute.
+         */
+        def reset() {
+            memo.reset()
+        }
 
         /**
          * Reset this attribute's cache at `t` for just parameter value `arg`.
          */
         def resetAt(arg : A, t : T) {
-            super.resetAt(new ParamAttributeKey(arg, t))
+            memo.resetAt(new ParamAttributeKey(arg, t))
         }
 
     }
@@ -158,17 +183,17 @@ trait AttributionCore extends AttributionCommon {
          * function on this list is defined, then `f` will be used.
          */
         override def apply(t : T) : U = {
-            get(t) match {
+            memo.get(t) match {
                 case Some(Some(u)) =>
                     u
                 case Some(None) =>
                     reportCycle(t)
                 case None =>
-                    put(t, None)
+                    memo.put(t, None)
                     val pf = functions.find(_.isDefinedAt(t))
                     val func = pf.getOrElse(f)
                     val u = func(t)
-                    put(t, Some(u))
+                    memo.put(t, Some(u))
                     u
             }
         }
@@ -179,7 +204,7 @@ trait AttributionCore extends AttributionCommon {
          */
         def +=(g : T ==> U) {
             g +=: functions
-            reset()
+            memo.reset()
         }
 
         /**
@@ -190,7 +215,7 @@ trait AttributionCore extends AttributionCommon {
          */
         def -=(g : T ==> U) {
             functions -= g
-            reset()
+            memo.reset()
         }
 
         /**
@@ -253,11 +278,16 @@ trait AttributionCore extends AttributionCommon {
      * Reference Attributed Grammars - their Evaluation and Applications", by Magnusson
      * and Hedin from LDTA 2003.
      */
-    class CircularAttribute[T, U](name : String, init : U, f : T => U) extends Attribute[T, U](name) with IdMemoised[T, U] {
+    class CircularAttribute[T, U](name : String, init : U, f : T => U) extends Attribute[T, U](name) {
 
         import CircularAttribute._
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
         import org.bitbucket.inkytonik.kiama.util.WeakIdentityHashSet
+
+        /**
+         * Backing memo table.
+         */
+        val memo = makeIdMemoiser[T, U]()
 
         /**
          * Has the value of this attribute for a given tree already been computed?
@@ -275,7 +305,7 @@ trait AttributionCore extends AttributionCommon {
          * no value for `t` has been computed.
          */
         private def value(t : T) : U =
-            getWithDefault(t, init)
+            memo.getOrDefault(t, init)
 
         /**
          * Run the semantic function `f` in a safe manner. We need to guard against
@@ -332,7 +362,7 @@ trait AttributionCore extends AttributionCommon {
                     } else {
                         finish(i, List("value" -> newu, "cached" -> false, "phase" -> "iteratechange"))
                         CHANGE = true
-                        put(t, newu)
+                        memo.put(t, newu)
                     }
 
                 } while (CHANGE)
@@ -397,7 +427,7 @@ trait AttributionCore extends AttributionCommon {
                     } else {
                         finish(i, List("value" -> newu, "cached" -> false, "phase" -> "notvisitedchange"))
                         CHANGE = true
-                        put(t, newu)
+                        memo.put(t, newu)
                         newu
                     }
 
@@ -422,8 +452,8 @@ trait AttributionCore extends AttributionCommon {
         /**
          * Immediately reset this attribute's memoisation cache.
          */
-        override def reset() {
-            super.reset()
+        def reset() {
+            memo.reset()
             computed.clear()
             visited.clear()
         }
@@ -431,7 +461,7 @@ trait AttributionCore extends AttributionCommon {
         /**
          * Has the value of this attribute at `t` already been computed or not?
          */
-        override def hasBeenComputedAt(t : T) : Boolean =
+        def hasBeenComputedAt(t : T) : Boolean =
             computed contains t
 
     }

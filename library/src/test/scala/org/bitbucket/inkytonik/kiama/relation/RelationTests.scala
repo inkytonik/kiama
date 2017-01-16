@@ -29,14 +29,14 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 class RelationTests extends Tests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree.Num
-    import org.bitbucket.inkytonik.kiama.relation.Relation.{fromPairs, graphFromPairs}
+    import org.bitbucket.inkytonik.kiama.relation.Relation.fromPairs
 
     // Empty relations
 
-    val emptyIntBool = new Relation[Int, Boolean](graphFromPairs(Vector()))
-    val emptyNumInt = new Relation[Num, Int](graphFromPairs(Vector()))
-    val emptyBoolNum = new Relation[Boolean, Num](graphFromPairs(Vector()))
-    val emptyNumNum = new Relation[Num, Num](graphFromPairs(Vector()))
+    val emptyIntBool = new Relation[Int, Boolean]
+    val emptyNumInt = new Relation[Num, Int]
+    val emptyBoolNum = new Relation[Boolean, Num]
+    val emptyNumNum = new Relation[Num, Num]
 
     // Singleton relations
 
@@ -56,6 +56,92 @@ class RelationTests extends Tests {
     val multiNumInt = fromPairs(Vector((num2, 2), (num3, 3)))
     val multiBoolNum = fromPairs(Vector((false, num3), (false, num4), (true, num4)))
     val multiNumNum = fromPairs(Vector((num4, num5), (num4, num5)))
+
+    // apply
+
+    test("apply of empty value-value relation is empty") {
+        emptyIntBool(1) shouldBe empty
+    }
+
+    test("apply of empty ref-value relation is empty") {
+        emptyNumInt(num2) shouldBe empty
+    }
+
+    test("apply of empty value-ref relation is empty") {
+        emptyBoolNum(false) shouldBe empty
+    }
+
+    test("apply of empty ref-ref relation is empty") {
+        emptyNumNum(num3) shouldBe empty
+    }
+
+    test("apply of singleton value-value relation is correct (present)") {
+        singleIntBool(1) should haveSameElementsAs(Vector(true))
+    }
+
+    test("apply of singleton value-value relation is empty (not present)") {
+        singleIntBool(2) shouldBe empty
+    }
+
+    test("apply of singleton ref-value relation is correct (present)") {
+        singleNumInt(num2) should haveSameElementsAs(Vector(2))
+    }
+
+    test("apply of singleton ref-value relation is empty (not present)") {
+        singleNumInt(num3) shouldBe empty
+    }
+
+    test("apply of singleton value-ref relation is correct (present)") {
+        singleBoolNum(false) should haveSameElementsAs(Vector(num3))
+    }
+
+    test("apply of singleton value-ref relation is empty (not present)") {
+        singleBoolNum(true) shouldBe empty
+    }
+
+    test("apply of singleton ref-ref relation is correct (present)") {
+        singleNumNum(num4) should haveSameElementsAs(Vector(num5))
+    }
+
+    test("apply of singleton ref-ref relation is empty (not present)") {
+        singleNumNum(num5) shouldBe empty
+    }
+
+    test("apply of multiple element value-value relation is correct (present 1)") {
+        multiIntBool(1) should haveSameElementsAs(Vector(true, true))
+    }
+
+    test("apply of multiple element value-value relation is correct (present 2)") {
+        multiIntBool(2) should haveSameElementsAs(Vector(false))
+    }
+
+    test("apply of multiple element value-value relation is empty (not present)") {
+        multiIntBool(3) shouldBe empty
+    }
+
+    test("apply of multiple element ref-value relation is correct (present)") {
+        multiNumInt(num2) should haveSameElementsAs(Vector(2))
+    }
+
+    test("apply of multiple element ref-value relation is empty (not present)") {
+        multiNumInt(num4) shouldBe empty
+    }
+
+    test("apply of multiple element value-ref relation is correct (present 1)") {
+        multiBoolNum(false) should haveSameElementsAs(Vector(num3, num4))
+    }
+
+    test("apply of multiple element value-ref relation is correct (present 2)") {
+        multiBoolNum(true) should haveSameElementsAs(Vector(num4))
+    }
+
+    test("apply of multiple element ref-ref relation is correct (present)") {
+        multiNumNum(num4) should haveSameElementsAs(Vector(num5, num5))
+    }
+
+    test("apply of multiple element ref-ref relation is empty (not present)") {
+        multiNumNum(num2) shouldBe empty
+    }
 
     // containsInDomain
 
@@ -181,92 +267,6 @@ class RelationTests extends Tests {
         multiNumNum.domain should haveSameElementsAs(Vector(num4))
     }
 
-    // image
-
-    test("image of empty value-value relation is empty") {
-        emptyIntBool.image(1) shouldBe empty
-    }
-
-    test("image of empty ref-value relation is empty") {
-        emptyNumInt.image(num2) shouldBe empty
-    }
-
-    test("image of empty value-ref relation is empty") {
-        emptyBoolNum.image(false) shouldBe empty
-    }
-
-    test("image of empty ref-ref relation is empty") {
-        emptyNumNum.image(num3) shouldBe empty
-    }
-
-    test("image of singleton value-value relation is correct (present)") {
-        singleIntBool.image(1) should haveSameElementsAs(Vector(true))
-    }
-
-    test("image of singleton value-value relation is empty (not present)") {
-        singleIntBool.image(2) shouldBe empty
-    }
-
-    test("image of singleton ref-value relation is correct (present)") {
-        singleNumInt.image(num2) should haveSameElementsAs(Vector(2))
-    }
-
-    test("image of singleton ref-value relation is empty (not present)") {
-        singleNumInt.image(num3) shouldBe empty
-    }
-
-    test("image of singleton value-ref relation is correct (present)") {
-        singleBoolNum.image(false) should haveSameElementsAs(Vector(num3))
-    }
-
-    test("image of singleton value-ref relation is empty (not present)") {
-        singleBoolNum.image(true) shouldBe empty
-    }
-
-    test("image of singleton ref-ref relation is correct (present)") {
-        singleNumNum.image(num4) should haveSameElementsAs(Vector(num5))
-    }
-
-    test("image of singleton ref-ref relation is empty (not present)") {
-        singleNumNum.image(num5) shouldBe empty
-    }
-
-    test("image of multiple element value-value relation is correct (present 1)") {
-        multiIntBool.image(1) should haveSameElementsAs(Vector(true, true))
-    }
-
-    test("image of multiple element value-value relation is correct (present 2)") {
-        multiIntBool.image(2) should haveSameElementsAs(Vector(false))
-    }
-
-    test("image of multiple element value-value relation is empty (not present)") {
-        multiIntBool.image(3) shouldBe empty
-    }
-
-    test("image of multiple element ref-value relation is correct (present)") {
-        multiNumInt.image(num2) should haveSameElementsAs(Vector(2))
-    }
-
-    test("image of multiple element ref-value relation is empty (not present)") {
-        multiNumInt.image(num4) shouldBe empty
-    }
-
-    test("image of multiple element value-ref relation is correct (present 1)") {
-        multiBoolNum.image(false) should haveSameElementsAs(Vector(num3, num4))
-    }
-
-    test("image of multiple element value-ref relation is correct (present 2)") {
-        multiBoolNum.image(true) should haveSameElementsAs(Vector(num4))
-    }
-
-    test("image of multiple element ref-ref relation is correct (present)") {
-        multiNumNum.image(num4) should haveSameElementsAs(Vector(num5, num5))
-    }
-
-    test("image of multiple element ref-ref relation is empty (not present)") {
-        multiNumNum.image(num2) shouldBe empty
-    }
-
     // inverse
 
     test("inverting an empty relation yields an empty relation") {
@@ -274,16 +274,18 @@ class RelationTests extends Tests {
     }
 
     test("inverting a singleton relation yields the correct singleton relation") {
-        val graph = singleIntBool.inverse.graph
-        graph.size shouldBe 1
-        graph.image(true) shouldBe Vector(1)
+        val inv = singleIntBool.inverse
+        inv.size shouldBe 1
+        inv(false) shouldBe Vector()
+        inv(true) shouldBe Vector(1)
     }
 
     test("inverting a multiple relation yields the correct multiple relation") {
-        val graph = multiBoolNum.inverse.graph
-        graph.size shouldBe 2
-        graph.image(num3) shouldBe Vector(false)
-        val num4image = graph.image(num4)
+        val inv = multiBoolNum.inverse
+        inv.size shouldBe 2
+        inv(num2) shouldBe Vector()
+        inv(num3) shouldBe Vector(false)
+        val num4image = inv(num4)
         num4image.size shouldBe 2
         num4image should contain(false)
         num4image should contain(true)

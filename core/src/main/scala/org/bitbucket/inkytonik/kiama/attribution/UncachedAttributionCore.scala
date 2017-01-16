@@ -21,13 +21,14 @@
 package org.bitbucket.inkytonik.kiama
 package attribution
 
+import org.bitbucket.inkytonik.kiama.util.Memoiser.{makeIdMemoiser, makeMemoiser}
+
 /**
  * Reusable implementation of attribution of syntax trees in a functional style
  * with attribute values computed each time they are accessed.
  */
 trait UncachedAttributionCore extends AttributionCommon {
 
-    import org.bitbucket.inkytonik.kiama.util.Memoiser.{IdMemoised, Memoised}
     import scala.language.experimental.macros
 
     /**
@@ -37,9 +38,14 @@ trait UncachedAttributionCore extends AttributionCommon {
      * require the value of this attribute. If it does, a circularity error is reported
      * by throwing an `IllegalStateException`.
      */
-    class UncachedAttribute[T, U](name : String, f : T => U) extends Attribute[T, U](name) with IdMemoised[T, Unit] {
+    class UncachedAttribute[T, U](name : String, f : T => U) extends Attribute[T, U](name) {
 
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+
+        /**
+         * Backing memo table.
+         */
+        val memo = makeIdMemoiser[T, Unit]()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -49,13 +55,13 @@ trait UncachedAttributionCore extends AttributionCommon {
             val i = start(List("event" -> "AttrEval", "subject" -> t,
                 "attribute" -> this, "parameter" -> None,
                 "circular" -> false))
-            get(t) match {
+            memo.get(t) match {
                 case Some(()) =>
                     reportCycle(t)
                 case None =>
-                    put(t, ())
+                    memo.put(t, ())
                     val u = f(t)
-                    resetAt(t)
+                    memo.resetAt(t)
                     finish(i, List("value" -> u, "cached" -> false))
                     u
             }
@@ -67,11 +73,16 @@ trait UncachedAttributionCore extends AttributionCommon {
     /**
      * A variation of the `UncachedAttribute` class for parameterised attributes.
      */
-    class UncachedParamAttribute[A, T, U](name : String, f : A => T => U) extends (A => Attribute[T, U]) with Memoised[ParamAttributeKey, Unit] {
+    class UncachedParamAttribute[A, T, U](name : String, f : A => T => U) extends (A => Attribute[T, U]) {
 
         attr =>
 
         import org.bitbucket.inkytonik.dsprofile.Events.{finish, start}
+
+        /**
+         * Backing memo table.
+         */
+        val memo = makeMemoiser[ParamAttributeKey, Unit]()
 
         /**
          * Return the value of this attribute for node `t`, raising an error if
@@ -85,13 +96,13 @@ trait UncachedAttributionCore extends AttributionCommon {
                         "attribute" -> this, "parameter" -> Some(arg),
                         "circular" -> false))
                     val key = new ParamAttributeKey(arg, t)
-                    get(key) match {
+                    memo.get(key) match {
                         case Some(()) =>
                             reportCycle(t)
                         case None =>
-                            put(key, ())
+                            memo.put(key, ())
                             val u = f(arg)(t)
-                            resetAt(key)
+                            memo.resetAt(key)
                             finish(i, List("value" -> u, "cached" -> false))
                             u
                     }

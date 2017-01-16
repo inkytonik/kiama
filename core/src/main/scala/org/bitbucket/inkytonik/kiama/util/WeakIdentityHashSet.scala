@@ -22,44 +22,42 @@ package org.bitbucket.inkytonik.kiama
 package util
 
 /**
- * A simple set that holds onto its elements weakly and compares them by
- * identity.
+ * A simple set that compares elements by identity.
  */
 class WeakIdentityHashSet[T] {
 
-    import com.google.common.cache.{Cache, CacheBuilder}
+    import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser
 
     /**
      * Cache of the current set contents.
      */
-    val cache : Cache[AnyRef, AnyRef] =
-        CacheBuilder.newBuilder.weakKeys.build()
+    val cache = makeIdMemoiser[T, Unit]()
 
     /**
      * Add the value `t` to the set.
      */
     def add(t : T) {
-        cache.put(t.asInstanceOf[AnyRef], ().asInstanceOf[AnyRef])
+        cache.put(t, ())
     }
 
     /**
      * Remove all entries from the set.
      */
     def clear() {
-        cache.invalidateAll()
+        cache.reset()
     }
 
     /**
      * Is the value `t` in the set?
      */
     def contains(t : T) : Boolean =
-        cache.getIfPresent(t) != null
+        cache.hasBeenComputedAt(t)
 
     /**
      * Remove the value `t` from the set if it is a member.
      */
     def remove(t : T) {
-        cache.invalidate(t)
+        cache.resetAt(t)
     }
 
 }

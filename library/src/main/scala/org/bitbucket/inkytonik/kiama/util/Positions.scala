@@ -81,22 +81,22 @@ trait PositionStore {
  */
 class Positions {
 
-    import org.bitbucket.inkytonik.kiama.util.Memoiser.IdMemoised
+    import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser
 
     /**
      * Map between a value and a source code position.
      */
-    class PositionMap extends IdMemoised[Any, Position]
+    type PositionMap = Memoiser[Any, Position]
 
     /**
      * Map between value and starting position.
      */
-    private val startMap = new PositionMap
+    private val startMap = makeIdMemoiser[Any, Position]()
 
     /**
      * Map between value and finishing position.
      */
-    private val finishMap = new PositionMap
+    private val finishMap = makeIdMemoiser[Any, Position]()
 
     /**
      * Get the optional start position of `t`. If it doesn't have
@@ -116,14 +116,14 @@ class Positions {
      * Set the start position of `t` to `p` if it has not already been set.
      */
     def setStart[T](t : T, p : Position) {
-        startMap.putIfNotPresent(t, p)
+        startMap.putIfAbsent(t, p)
     }
 
     /**
      * Set the `finish` position of `t` to `p` if it has not already been set.
      */
     def setFinish[T](t : T, p : Position) {
-        finishMap.putIfNotPresent(t, p)
+        finishMap.putIfAbsent(t, p)
     }
 
     /**
