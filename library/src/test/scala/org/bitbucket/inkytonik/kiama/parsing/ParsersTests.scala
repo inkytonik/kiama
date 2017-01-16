@@ -29,8 +29,6 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
  */
 class ParsersTests extends ParseTests {
 
-    import org.bitbucket.inkytonik.kiama.util.Positions
-
     case class Node(i : Int)
     case class Tup2(n1 : Node, n2 : Node)
     case class Tup3(n1 : Node, n2 : Node, n3 : Node)
