@@ -46,6 +46,12 @@ case class Input(source : Source, offset : Int) {
             Some(source.content.charAt(offset))
 
     /**
+     * Return a formatted description of this input.
+     */
+    def format : String =
+        s"${found} (${position.line},${position.column})"
+
+    /**
      * Return a description of the current character found in the input,
      * either the actual character is there is one, or "end of source" if
      * we are at the end.

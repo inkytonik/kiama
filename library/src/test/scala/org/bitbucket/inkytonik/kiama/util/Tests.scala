@@ -180,13 +180,13 @@ trait ParseTests extends Tests {
                     case Success(value, in) =>
                         MatchResult(
                             (value == expected),
-                            s"""Parse succeeded with "$value" instead of expected "$expected"""",
-                            s"""Parse succeeded with disallowed value "$value""""
+                            s"""Parse succeeded with "$value" instead of expected "$expected" at ${in.format}""",
+                            s"""Parse succeeded with disallowed value "$value" at ${in.format}"""
                         )
-                    case Failure(message, _) =>
+                    case Failure(message, in) =>
                         MatchResult(
                             false,
-                            s"""Parse failed with message "$message"""",
+                            s"""Parse failed with message "$message" at ${in.format}""",
                             "NOT USED"
                         )
                 }
@@ -204,13 +204,13 @@ trait ParseTests extends Tests {
                         val matched = positions.textOf(value)
                         MatchResult(
                             matched == Some(expected),
-                            s"""Parse succeeded matching "$matched" instead of expected "Some($expected)"""",
-                            s"""Parse succeeded with disallowed value "$value""""
+                            s"""Parse succeeded matching "$matched" instead of expected "Some($expected)" at ${in.format}""",
+                            s"""Parse succeeded with disallowed value "$value" at ${in.format}"""
                         )
-                    case Failure(message, _) =>
+                    case Failure(message, in) =>
                         MatchResult(
                             false,
-                            s"""Parse failed with message "$message"""",
+                            s"""Parse failed with message "$message" at ${in.format}""",
                             "NOT USED"
                         )
                 }
@@ -226,7 +226,7 @@ trait ParseTests extends Tests {
                     case Success(value, in) =>
                         MatchResult(
                             false,
-                            s"""Parse succeeded with "$value" at ${in.found} (${in.position.line},${in.position.column})""",
+                            s"""Parse succeeded with "$value" at ${in.format}""",
                             "NOT USED"
                         )
                     case Failure(message, in) =>
