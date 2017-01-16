@@ -42,7 +42,7 @@ object Imperative extends ParsingREPL[Stmt] {
 
     def process(source : Source, s : Stmt, config : REPLConfig) {
         config.output().emitln(s)
-        config.output().emitln(format(s))
+        config.output().emitln(format(s).layout)
     }
 
 }

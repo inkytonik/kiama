@@ -44,12 +44,12 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
     lazy val sequence =
         "{" ~> (stmt*) <~ "}" ^^ Seqn
 
-    lazy val exp : Parser[Exp] =
+    lazy val exp : PackratParser[Exp] =
         exp ~ ("+" ~> term) ^^ Add |
             exp ~ ("-" ~> term) ^^ Sub |
             term
 
-    lazy val term : Parser[Exp] =
+    lazy val term : PackratParser[Exp] =
         term ~ ("*" ~> factor) ^^ Mul |
             term ~ ("/" ~> factor) ^^ Div |
             factor
@@ -58,7 +58,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
         double | integer | variable | "-" ~> exp ^^ Neg | "(" ~> exp <~ ")"
 
     lazy val double =
-        """[0-9]+\.[0-9]+""" ^^ (s => Num(s.toDouble))
+        """[0-9]+\.[0-9]+""".r ^^ (s => Num(s.toDouble))
 
     lazy val integer =
         "[0-9]+".r ^^ (s => Num(s.toInt))
