@@ -41,9 +41,10 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt, ObrConfi
      * Method to compile an Obr program and to apply a specified test to
      * the resulting target tree.
      */
-    def targettreetest(name : String, dirname : String, obrfile : String,
+    def targettreetest(name : String, relDirname : String, obrfile : String,
         tester : (String, Emitter, RISCNode) => Unit) {
         val title = s"$name processing $obrfile"
+        val dirname = "src/test/scala/org/bitbucket/inkytonik/kiama/" + relDirname
 
         test(title) {
             val filename = dirname + obrfile

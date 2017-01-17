@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.util.TestREPLWithConfig
  */
 class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
 
-    val path = "src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/tests"
+    val path = "example/lambda2/tests"
     filetests("Lambda REPL", path, ".repl", ".replout")
 
 }

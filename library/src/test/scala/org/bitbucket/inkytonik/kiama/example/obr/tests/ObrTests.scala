@@ -31,7 +31,7 @@ import org.bitbucket.inkytonik.kiama.util.TestCompilerWithConfig
  */
 class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig] {
 
-    filetests("ObrRegression", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/generic", ".obr", ".risc",
+    filetests("ObrRegression", "example/obr/tests/generic", ".obr", ".risc",
         argslist = List(Seq("-a")))
 
 }
@@ -41,8 +41,8 @@ class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt, ObrC
  */
 class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrInt, ObrConfig] {
 
-    filetests("ObrParserEnum", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/parser", ".obr", ".out")
-    filetests("ObrParserException", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/parser", ".obr", ".out")
+    filetests("ObrParserEnum", "example/obr/tests/enum/parser", ".obr", ".out")
+    filetests("ObrParserException", "example/obr/tests/exceptions/parser", ".obr", ".out")
 
 }
 
@@ -51,8 +51,8 @@ class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrInt, Ob
  */
 class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrInt, ObrConfig] {
 
-    filetests("ObrSemanticEnum", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic", ".obr", ".out")
-    filetests("ObrSemanticException", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/semantic", ".obr", ".out")
+    filetests("ObrSemanticEnum", "example/obr/tests/enum/semantic", ".obr", ".out")
+    filetests("ObrSemanticException", "example/obr/tests/exceptions/semantic", ".obr", ".out")
 
 }
 
@@ -63,7 +63,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
 
     import org.bitbucket.inkytonik.kiama.util.{Config, StringEmitter}
 
-    filetests("ObrExec", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/generic", ".obr", ".out",
+    filetests("ObrExec", "example/obr/tests/generic", ".obr", ".out",
         Some(".in"), "0", List(Array("-e")))
 
     /*
@@ -76,8 +76,9 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
      *                          - a list containing the parameters to pass to the Obr program
      *                          - the corresponding result we expect the program to produce
      */
-    def exectest(name : String, dirname : String, spec : (String, List[Int], Int)) {
+    def exectest(name : String, relDirname : String, spec : (String, List[Int], Int)) {
         val (obrfile, params, expect) = spec
+        val dirname = "src/test/scala/org/bitbucket/inkytonik/kiama/" + relDirname
         val title = s"""$name processing $obrfile parameters ${params.mkString("(", ", ", ")")} expecting $expect"""
         test(title) {
             val args = Seq("--Koutput", "string", "--Kconsole", "string", params.mkString("", "\n", "\n"),
@@ -95,7 +96,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
     }
 
     // Execution tests for FOR loops
-    val forExecDir = "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/for/codegen/"
+    val forExecDir = "example/obr/tests/for/codegen/"
     val forExecTests = List(
         ("for.obr", List(0, 0), 0), ("for.obr", List(5, 0), 0), ("for.obr", List(-1, 3), 0), ("for.obr", List(5, 5), 25), ("for2.obr", List(2), 2), ("for2.obr", List(0), 1), ("for2.obr", List(-1), 1), ("for2.obr", List(1), 1), ("for2.obr", List(5), 120), ("for3.obr", List(2), 2), ("for3.obr", List(0), 1), ("for3.obr", List(-1), 1), ("for3.obr", List(1), 1), ("for3.obr", List(5), 141)
     )
@@ -103,7 +104,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
 
     // Execution tests for code involving enumeration values.
 
-    val enumExecDir = "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/codegen/"
+    val enumExecDir = "example/obr/tests/enum/codegen/"
     val enumExecTests = List(
         ("enumtest.obr", List(-1), 0), ("enumtest.obr", List(0), 1), ("enumtest.obr", List(1), 1), ("enumtest.obr", List(2), 1), ("enumtest.obr", List(3), 1), ("enumtest.obr", List(4), 0), ("enumtest.obr", List(5), 0), ("enumtest.obr", List(6), 0), ("enumtest.obr", List(7), 0)
     )
@@ -111,7 +112,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
 
     // Execution tests for code involving exception handling.
 
-    val exceptionsExecDir = "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/codegen/"
+    val exceptionsExecDir = "example/obr/tests/exceptions/codegen/"
     val exceptionsExecTests = List(
         ("except1a.obr", List(0), -1), ("except1b.obr", List(0), -2), ("except1b.obr", List(20), 20), ("except1c.obr", List(-20), -20), ("except1c.obr", List(0), -1), ("except1c.obr", List(1), -2), ("except1c.obr", List(2), -3), ("except1c.obr", List(3), 3), ("except2a.obr", List(75), -2), ("except2a.obr", List(0), -1), ("except2b.obr", List(3), -2), ("except2b.obr", List(2), 2), ("except2b.obr", List(1), 11), ("except2b.obr", List(0), 110), ("except3.obr", List(-32), 68), ("except4a.obr", List(-3), -33), ("except4a.obr", List(0), -1), ("except4a.obr", List(10), 10), ("except4b.obr", List(23), -1), ("except4b.obr", List(16), -1), ("except4b.obr", List(10),
             (100.asInstanceOf[Int] / ((10 * 10 - 39 * 10) + 368)) * 12 + 28), ("except4b.obr", List(20),
@@ -134,9 +135,9 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig]
  */
 class ObrNumberingTests extends TreeTestDriver {
 
-    targettreetest("ObrNumbering", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/exceptions/codegen/",
+    targettreetest("ObrNumbering", "example/obr/tests/exceptions/codegen/",
         "except8.obr", checkintdatums(List(3, 1, 4, 0, 2, 0, -1)))
-    targettreetest("ObrNumbering", "src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/codegen/",
+    targettreetest("ObrNumbering", "example/obr/tests/enum/codegen/",
         "enumtest2.obr", checkintdatums(List(2, 4, 2, 1, 3, 3, 2, 1, 2, 0, -1)))
 
 }

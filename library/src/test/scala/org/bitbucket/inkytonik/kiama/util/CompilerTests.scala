@@ -57,7 +57,7 @@ class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
 
     test("filetests using a directory that doesn't exist fails") {
         val i = intercept[IllegalArgumentException] {
-            filetests("Compiler", "src/test/scala/org/bitbucket/inkytonik/kiama/util/IDoNotExist", ".src", ".out")
+            filetests("Compiler", "util/IDoNotExist", ".src", ".out")
         }
         i.getMessage shouldBe "bad test file path src/test/scala/org/bitbucket/inkytonik/kiama/util/IDoNotExist"
     }
@@ -114,7 +114,8 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
             s
 
     /**
-     * Make tests that process the files in path.  `name` is an identifying
+     * Make tests that process the files in relPath which is relative to the
+     * Kiama library sub-project test sources.  `name` is an identifying
      * name for this set of tests.  All files whose names end in `srcext` are
      * processed.  Processing is done by the function `testdriver` which
      * is given a configuration which has an emitter. All output of the run
@@ -127,11 +128,14 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
      * you want to use.  Each test is run with each set of arguments.  The
      * default is an empty argument list.
      */
-    def filetests(name : String, path : String, srcext : String, resext : String,
+    def filetests(name : String, relPath : String, srcext : String, resext : String,
         optinext : Option[String] = None, indefault : String = "",
         argslist : List[Seq[String]] = List(Seq())) {
 
         import java.io.FilenameFilter
+
+        val basePath = "src/test/scala/org/bitbucket/inkytonik/kiama/"
+        val path = basePath + relPath
 
         /*
          * Make a single file test processing using the command-line `args`,
@@ -142,7 +146,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          */
         def filetest(name : String, rp : String, args : Seq[String], rt : String,
             extra : String = "") {
-            val ct = args.mkString(" ").replaceAllLiterally("kiama/src/test/scala/org/bitbucket/inkytonik/kiama/", "")
+            val ct = args.mkString(" ").replaceAllLiterally(basePath, "")
             val title = s"$name: $ct, expecting $rt$extra"
             test(title) {
                 val config = createAndInitConfig("--Koutput" +: "string" +: args)

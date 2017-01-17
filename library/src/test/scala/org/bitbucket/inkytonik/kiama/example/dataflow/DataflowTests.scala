@@ -156,7 +156,7 @@ class DataflowTests extends Driver with TestCompiler[Stm] {
         out(s5) shouldBe Set()
     }
 
-    filetests("Dataflow", "src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/tests", ".data", ".out")
-    filetests("Dataflow", "src/test/scala/org/bitbucket/inkytonik/kiama/example/dataflow/tests", ".dataerr", ".err")
+    filetests("Dataflow", "example/dataflow/tests", ".data", ".out")
+    filetests("Dataflow", "example/dataflow/tests", ".dataerr", ".err")
 
 }

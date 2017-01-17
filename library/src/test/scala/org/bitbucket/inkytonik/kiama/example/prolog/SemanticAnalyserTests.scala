@@ -34,7 +34,7 @@ class SemanticAnalyserTests extends Compiler[Program] with TestCompiler[Program]
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
-    filetests("Prolog", "src/test/scala/org/bitbucket/inkytonik/kiama/example/prolog/tests", ".pl", ".sem")
+    filetests("Prolog", "example/prolog/tests", ".pl", ".sem")
 
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program

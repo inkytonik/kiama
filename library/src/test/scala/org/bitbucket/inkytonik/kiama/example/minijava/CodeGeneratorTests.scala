@@ -29,7 +29,7 @@ import org.bitbucket.inkytonik.kiama.util.TestCompiler
  */
 class CodeGeneratorTests extends Driver with TestCompiler[Program] {
 
-    val path = "src/test/scala/org/bitbucket/inkytonik/kiama/example/minijava/tests"
+    val path = "example/minijava/tests"
     filetests("minijava code generation", path, ".mj", ".out")
 
 }

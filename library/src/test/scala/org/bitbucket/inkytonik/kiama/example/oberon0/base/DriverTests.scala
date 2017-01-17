@@ -71,7 +71,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl, Oberon0C
      */
     def mktests(proglang : String) {
         val name = s"Oberon0 testing $artefact on $proglang tests"
-        val path = s"src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/$proglang/tests"
+        val path = s"example/oberon0/$proglang/tests"
         filetests(name, path, ".ob", ".out")
     }
 
