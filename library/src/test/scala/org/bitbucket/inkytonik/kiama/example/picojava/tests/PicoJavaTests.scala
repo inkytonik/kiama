@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2009-2017 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2017 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -19,16 +19,19 @@
  */
 
 package org.bitbucket.inkytonik.kiama
-package example.lambda2
+package example.picojava
+package tests
 
-import org.bitbucket.inkytonik.kiama.util.TestREPLWithConfig
+import org.bitbucket.inkytonik.kiama.util.TestCompilerWithConfig
+import PicoJavaTree.Program
 
 /**
- * Tests that check that the REPL produces appropriate output.
+ * Tests that check that the PicoJava main program produces appropriate output.
  */
-class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
+class PicoJavaTests extends Driver with TestCompilerWithConfig[Program, PicojavaConfig] {
 
-    val path = "example/lambda2/tests"
-    filetests("Lambda2 REPL", path, ".repl", ".replout")
+    val path = "example/picojava/tests"
+    filetests("PicoJava", path, ".pj", ".out")
+    filetests("PicoJava", path, ".pj", ".obsout", argslist = List(List("--obfuscate")))
 
 }

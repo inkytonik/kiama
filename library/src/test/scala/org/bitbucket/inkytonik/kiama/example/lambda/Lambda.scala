@@ -190,7 +190,7 @@ trait Evaluator {
 /**
  * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-object Lambda extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
+class LambdaDriver extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
 
     import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
 
@@ -212,3 +212,8 @@ object Lambda extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
     }
 
 }
+
+/**
+ * Main object for Lambda REPL.
+ */
+object Lambda extends LambdaDriver

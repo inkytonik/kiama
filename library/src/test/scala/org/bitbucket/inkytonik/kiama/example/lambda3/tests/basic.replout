@@ -1,0 +1,16 @@
+3
+3
+true
+false
+a
+(c a)
+((\a . (a b)) (\x . x))
+true
+true
+false
+1
+(\b0 . (\a1 . a1))
+Set()
+Set(b, c)
+1
+(\b2 . (b b2))

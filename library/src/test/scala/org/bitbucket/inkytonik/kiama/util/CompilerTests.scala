@@ -115,7 +115,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
 
     /**
      * Make tests that process the files in relPath which is relative to the
-     * Kiama library sub-project test sources.  `name` is an identifying
+     * top of the Kiama library test sources. `name` is an identifying
      * name for this set of tests.  All files whose names end in `srcext` are
      * processed.  Processing is done by the function `testdriver` which
      * is given a configuration which has an emitter. All output of the run
@@ -146,7 +146,7 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
          */
         def filetest(name : String, rp : String, args : Seq[String], rt : String,
             extra : String = "") {
-            val ct = args.mkString(" ").replaceAllLiterally(basePath, "")
+            val ct = args.mkString(" ").replaceAllLiterally(path + "/", "")
             val title = s"$name: $ct, expecting $rt$extra"
             test(title) {
                 val config = createAndInitConfig("--Koutput" +: "string" +: args)

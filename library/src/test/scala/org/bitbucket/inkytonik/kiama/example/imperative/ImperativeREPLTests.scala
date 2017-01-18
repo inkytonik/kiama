@@ -19,16 +19,16 @@
  */
 
 package org.bitbucket.inkytonik.kiama
-package example.lambda2
+package example.imperative
 
-import org.bitbucket.inkytonik.kiama.util.TestREPLWithConfig
+import org.bitbucket.inkytonik.kiama.util.TestREPL
 
 /**
  * Tests that check that the REPL produces appropriate output.
  */
-class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
+class ImperativeREPLTests extends ImperativeDriver with TestREPL {
 
-    val path = "example/lambda2/tests"
-    filetests("Lambda2 REPL", path, ".repl", ".replout")
+    val path = "example/imperative/tests"
+    filetests("Imperative REPL", path, ".repl", ".replout")
 
 }

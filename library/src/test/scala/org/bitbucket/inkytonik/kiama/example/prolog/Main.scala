@@ -69,7 +69,7 @@ class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
  * interactive read-eval-print loop (REPL) to read queries.  For each
  * query, call the interpreter to evaluate it.
  */
-object Main extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrinter {
+class PrologDriver extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrinter {
 
     import org.bitbucket.inkytonik.kiama.parsing.Success
     import org.bitbucket.inkytonik.kiama.util.{
@@ -139,3 +139,5 @@ object Main extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrin
     }
 
 }
+
+object Main extends PrologDriver

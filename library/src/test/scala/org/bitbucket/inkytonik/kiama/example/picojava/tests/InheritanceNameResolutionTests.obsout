@@ -1,0 +1,24 @@
+{
+    class n0 {
+        int n1;
+        int n2;
+        int n3;
+        class n4 {
+            int n5;
+            int n6;
+            int n7;
+            n1 = n5;
+        }
+    }
+    class n8 extends n0 {
+        int n9;
+        int n10;
+        int n11;
+        n1 = n9;
+        class n12 extends n4 {
+            int n13;
+            n1 = n13;
+            n10 = n11;
+        }
+    }
+}

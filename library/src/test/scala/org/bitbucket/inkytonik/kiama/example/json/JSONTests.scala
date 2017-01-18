@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2011-2017 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2017 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -21,31 +21,15 @@
 package org.bitbucket.inkytonik.kiama
 package example.json
 
+import org.bitbucket.inkytonik.kiama.util.TestCompiler
 import JSONTree.JValue
-import org.bitbucket.inkytonik.kiama.util.Compiler
 
-class Driver extends Compiler[JValue] {
+/**
+ * Tests that check that the JSON main program produces appropriate output.
+ */
+class JSONTests extends Driver with TestCompiler[JValue] {
 
-    import PrettyPrinter.{any, pretty}
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.bitbucket.inkytonik.kiama.util.{Config, Source}
-
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.jvalue
-
-    def process(source : Source, ast : JValue, config : Config) = {
-
-        // Pretty-print tree as a product value
-        config.output().emitln(pretty(any(ast)).layout)
-
-        // Pretty-print tree as a JSON value
-        config.output().emitln(format(ast).layout)
-
-    }
-
-    def format(ast : JValue) : Document =
-        PrettyPrinter.format(ast)
+    val path = "example/json/tests"
+    filetests("JSON", path, ".json", ".out")
 
 }
-
-object Main extends Driver

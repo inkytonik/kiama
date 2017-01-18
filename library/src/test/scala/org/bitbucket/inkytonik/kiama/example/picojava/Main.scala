@@ -36,7 +36,7 @@ class PicojavaConfig(args : Seq[String]) extends Config(args) {
     lazy val obfuscate = opt[Boolean]("obfuscate", descr = "Obfuscate the code")
 }
 
-object Main extends CompilerWithConfig[Program, PicojavaConfig] {
+class Driver extends CompilerWithConfig[Program, PicojavaConfig] {
 
     import PicoJavaTree.PicoJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
@@ -63,8 +63,7 @@ object Main extends CompilerWithConfig[Program, PicojavaConfig] {
             config.output().emitln(messages)
         } else if (config.obfuscate()) {
             val obfuscator = new Obfuscator(analysis)
-            config.output().emitln(format(program))
-            config.output().emitln(format(obfuscator.obfuscate(program)))
+            config.output().emitln(format(obfuscator.obfuscate(program)).layout)
         }
 
     }
@@ -76,3 +75,5 @@ object Main extends CompilerWithConfig[Program, PicojavaConfig] {
         PrettyPrinter.format(ast)
 
 }
+
+object Main extends Driver

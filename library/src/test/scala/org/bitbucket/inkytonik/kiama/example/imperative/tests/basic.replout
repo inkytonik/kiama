@@ -1,0 +1,32 @@
+Null()
+;
+Asgn(Var("a"),Num(10.0))
+a = 10.0;
+Asgn(Var("a"),Add(Var("a"),Num(12.345)))
+a = (a + 12.345);
+Asgn(Var("a"),Neg(Num(98.0)))
+a = (-98.0);
+Asgn(Var("b"),Add(Add(Num(1.0),Num(2.0)),Num(3.0)))
+b = ((1.0 + 2.0) + 3.0);
+Asgn(Var("b"),Sub(Num(1.0),Sub(Num(2.0),Num(3.0))))
+b = (1.0 - (2.0 - 3.0));
+Asgn(Var("b"),Add(Num(1.0),Mul(Num(2.0),Num(3.0))))
+b = (1.0 + (2.0 * 3.0));
+Asgn(Var("b"),Mul(Add(Num(1.0),Num(2.0)),Num(3.0)))
+b = ((1.0 + 2.0) * 3.0);
+Asgn(Var("b"),Add(Div(Num(1.0),Num(2.0)),Num(3.0)))
+b = ((1.0 / 2.0) + 3.0);
+Asgn(Var("b"),Div(Num(1.0),Add(Num(2.0),Num(3.0))))
+b = (1.0 / (2.0 + 3.0));
+Seqn(Vector())
+{  }
+Seqn(Vector(Asgn(Var("x"),Num(1.0))))
+{ x = 1.0; }
+Seqn(Vector(Asgn(Var("x"),Num(1.0)), Asgn(Var("y"),Num(2.0))))
+{ x = 1.0; y = 2.0; }
+While(Var("x"),Asgn(Var("a"),Num(1.0)))
+while (x) a = 1.0;
+While(Add(Num(1.0),Var("x")),Seqn(Vector(Asgn(Var("x"),Var("a")), Asgn(Var("a"),Add(Var("a"),Num(1.0))))))
+while ((1.0 + x)) { x = a; a = (a + 1.0); }
+While(Var("x"),While(Var("y"),Asgn(Var("a"),Num(0.0))))
+while (x) while (y) a = 0.0;

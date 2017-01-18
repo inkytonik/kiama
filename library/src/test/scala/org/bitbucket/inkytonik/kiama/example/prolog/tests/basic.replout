@@ -1,0 +1,15 @@
+yes
+yes
+yes
+X = albert
+X = edward
+X = bob
+Y = albert
+Y = victoria
+Y = bob
+Y = victoria
+Y = albert
+X = edward Y = victoria
+X = edward Y = albert
+Y = edward
+Y = alice

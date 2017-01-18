@@ -1,0 +1,6 @@
+JObject (
+ Vector (
+  JName ("one") -> JNumber (1.7),
+  JName ("two") -> JString ("two"),
+  JName ("three") -> JTrue ()))
+{ "one" : 1.7, "two" : "two", "three" : true }

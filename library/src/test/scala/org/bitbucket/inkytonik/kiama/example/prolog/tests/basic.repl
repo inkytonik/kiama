@@ -1,0 +1,11 @@
+male(victoria).
+
+male(bob).
+female(victoria).
+parent(alice,albert).
+
+male(X).
+parent(alice,Y).
+father(edward,Y).
+father(X,Y).
+daughter(victoria,Y).

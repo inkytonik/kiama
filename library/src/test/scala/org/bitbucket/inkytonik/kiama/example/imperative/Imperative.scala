@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.util.ParsingREPL
  * A read-eval-print loop for parsing imperative programs and printing thei
  * abstract synax trees.
  */
-object Imperative extends ParsingREPL[Stmt] {
+class ImperativeDriver extends ParsingREPL[Stmt] {
 
     import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
     import PrettyPrinter.format
@@ -46,3 +46,8 @@ object Imperative extends ParsingREPL[Stmt] {
     }
 
 }
+
+/**
+ * Main object for Imperative REPL.
+ */
+object Imperative extends ImperativeDriver

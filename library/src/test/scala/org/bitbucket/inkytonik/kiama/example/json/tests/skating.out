@@ -1,0 +1,48 @@
+JArray (
+ Vector (
+  JObject (
+   Vector (
+    JName ("age") -> JNumber (25.0),
+    JName ("name") -> JString ("Sven"),
+    JName ("titles") -> JArray (
+     Vector (
+      JObject (
+       Vector (
+        JName ("name") -> JString ("Olympic 5000m"),
+        JName ("year") -> JNumber (2010.0))),
+      JObject (
+       Vector (
+        JName ("name") -> JString ("World Allround"),
+        JName ("year") -> JNumber (2007.0))))))),
+  JObject (
+   Vector (
+    JName ("age") -> JNumber (25.0),
+    JName ("name") -> JString ("Ireen"),
+    JName ("titles") -> JArray (
+     Vector (
+      JObject (
+       Vector (
+        JName ("name") -> JString ("Olympic 1500m"),
+        JName ("year") -> JNumber (2010.0))),
+      JObject (
+       Vector (
+        JName ("name") -> JString ("World Cup Allround"),
+        JName ("year") -> JNumber (2012.0)))))))))
+[
+ {
+  "age" : 25,
+  "name" : "Sven",
+  "titles" : [
+   { "name" : "Olympic 5000m", "year" : 2010 },
+   { "name" : "World Allround", "year" : 2007 }
+  ]
+ },
+ {
+  "age" : 25,
+  "name" : "Ireen",
+  "titles" : [
+   { "name" : "Olympic 1500m", "year" : 2010 },
+   { "name" : "World Cup Allround", "year" : 2012 }
+  ]
+ }
+]

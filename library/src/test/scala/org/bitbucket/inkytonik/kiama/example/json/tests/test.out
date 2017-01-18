@@ -1,0 +1,25 @@
+JObject (
+ Vector (
+  JName ("one") -> JNumber (1.7),
+  JName ("two") -> JString ("two"),
+  JName ("three") -> JTrue (),
+  JName ("four") -> JFalse (),
+  JName ("five") -> JNull (),
+  JName ("six") -> JObject (
+   Vector (JName ("a") -> JNumber (5.0), JName ("b") -> JString ("hello"))),
+  JName ("seven") -> JArray (
+   Vector (
+    JString ("c"),
+    JNumber (700000.0),
+    JArray (Vector (JFalse (), JTrue ())),
+    JObject (
+     Vector (JName ("d") -> JString ("D"), JName ("e") -> JString ("E")))))))
+{
+ "one" : 1.7,
+ "two" : "two",
+ "three" : true,
+ "four" : false,
+ "five" : null,
+ "six" : { "a" : 5, "b" : "hello" },
+ "seven" : [ "c", 700000, [ false, true ], { "d" : "D", "e" : "E" } ]
+}

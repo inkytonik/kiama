@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2009-2017 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2017 Anthony M Sloane, Macquarie University.
  *
  * Kiama is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the
@@ -19,16 +19,16 @@
  */
 
 package org.bitbucket.inkytonik.kiama
-package example.lambda2
+package example.lambda
 
-import org.bitbucket.inkytonik.kiama.util.TestREPLWithConfig
+import org.bitbucket.inkytonik.kiama.util.TestREPL
 
 /**
  * Tests that check that the REPL produces appropriate output.
  */
-class LambdaREPLTests extends LambdaDriver with TestREPLWithConfig[LambdaConfig] {
+class LambdaREPLTests extends LambdaDriver with TestREPL {
 
-    val path = "example/lambda2/tests"
-    filetests("Lambda2 REPL", path, ".repl", ".replout")
+    val path = "example/lambda/tests"
+    filetests("Lambda REPL", path, ".repl", ".replout")
 
 }

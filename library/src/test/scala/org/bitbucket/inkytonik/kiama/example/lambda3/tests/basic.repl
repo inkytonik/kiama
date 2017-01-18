@@ -1,0 +1,16 @@
+3
+(\x . x) 3
+e # 1
+e # (\f . e)
+(a <-> a) a
+(a <-> b) c b
+(a <-> b) (\b . b a) (\x . x)
+a === a
+\a . \a . a === \b . \a . a
+(\x . x) (\y. y) === (\x . y) (\y . x)
+[a -> 1] a
+[a -> b] \b . \a . a
+fv 1
+fv \a . b c
+(\a . a) 1
+(\a . \b . a b) b

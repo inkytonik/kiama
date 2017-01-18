@@ -212,7 +212,7 @@ class Evaluator {
  * nominal rewriting. This implementation is closely based on the example
  * used in Scrap your Nameplate, James Cheney, ICFP 2005.
  */
-object Lambda extends ParsingREPL[LambdaTree.Query[_]] {
+class LambdaDriver extends ParsingREPL[LambdaTree.Query[_]] {
 
     import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
 
@@ -243,3 +243,5 @@ object Lambda extends ParsingREPL[LambdaTree.Query[_]] {
     }
 
 }
+
+object Lambda extends LambdaDriver
