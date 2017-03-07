@@ -77,11 +77,11 @@ case object LazyClone extends TreeProp
  * If `LazyClone` is not in `props`, then the structure will be left alone
  * and `root` will always be the same as `originalRoot`.
  *
- * If `EnsureTree` is in `props` then a dynamic check will be performed when
+ * If `CheckTree` is in `props` then a dynamic check will be performed when
  * the tree relations are created to ensure that structure is actually a tree.
  * If a node has more than one parent, then an error will be thrown.
  *
- * If `EnsureTree` is not in `props` then there will be no attempt to check the
+ * If `CheckTree` is not in `props` then there will be no attempt to check the
  * tree structure.
  *
  * The `child` relation of a tree is defined to skip certain nodes.
