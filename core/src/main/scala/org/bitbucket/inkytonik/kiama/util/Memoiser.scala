@@ -124,8 +124,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * associated value.
      */
     def putIfAbsent(t : T, u : U) {
-        if (!hasBeenComputedAt(t))
-            put(t, u)
+        cache.putIfAbsent(t, u)
     }
 
     /**
