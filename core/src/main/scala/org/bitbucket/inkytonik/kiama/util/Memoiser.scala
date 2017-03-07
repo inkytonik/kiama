@@ -50,7 +50,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
     /**
      * The cache for this instance.
      */
-    private[this] val cache : ConcurrentMap[T, U] =
+    private[this] val map : ConcurrentMap[T, U] =
         (tipe match {
             case ValueKeys =>
                 new MapMaker()
@@ -62,7 +62,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * Get the value stored at key `t` or return null if no value.
      */
     def apply(t : T) : U =
-        cache.get(t)
+        map.get(t)
 
     /**
      * Duplicate an entry if possible. If `t1` has a memoised value associated
@@ -70,7 +70,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * is no value associated with `t1`, do nothing.
      */
     def dup(t1 : T, t2 : T) {
-        val u = cache.get(t1)
+        val u = map.get(t1)
         if (u != null)
             put(t2, u)
     }
@@ -79,14 +79,14 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * Return the value stored at key `t` as an option.
      */
     def get(t : T) : Option[U] =
-        Option(cache.get(t))
+        Option(map.get(t))
 
     /**
      * Return the value stored at key `t` if there is one, otherwise
      * return `u`. `u` is only evaluated if necessary.
      */
     def getOrDefault(t : T, u : => U) : U = {
-        val v = cache.get(t)
+        val v = map.get(t)
         if (v == null)
             u
         else
@@ -98,25 +98,25 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * the memo table contain a value for `t`?
      */
     def hasBeenComputedAt(t : T) : Boolean =
-        cache.get(t) != null
+        map.get(t) != null
 
     /**
      * Get the value stored at key `t` or return null if no value.
      */
     def image(t : T) : U =
-        cache.get(t)
+        map.get(t)
 
     /**
      * A view of the set of keys that are currently in this memo table.
      */
     def keys : Vector[T] =
-        cache.keySet.asScala.toVector
+        map.keySet.asScala.toVector
 
     /**
      * Store the value `u` under the key `t`.
      */
     def put(t : T, u : U) {
-        cache.put(t, u)
+        map.put(t, u)
     }
 
     /**
@@ -124,28 +124,28 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * associated value.
      */
     def putIfAbsent(t : T, u : U) {
-        cache.putIfAbsent(t, u)
+        map.putIfAbsent(t, u)
     }
 
     /**
      * Immediately reset the memo table.
      */
     def reset() {
-        cache.clear()
+        map.clear()
     }
 
     /**
      * Immediately reset the memo table at `t`.
      */
     def resetAt(t : T) {
-        cache.remove(t)
+        map.remove(t)
     }
 
     /**
      * The number of entries in the memo table.
      */
     def size() : Long =
-        cache.size
+        map.size
 
     /**
      * Update the value associated with `t` by applying `f` to it. If there
@@ -153,7 +153,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * is only evaluated if necessary.
      */
     def updateAt(t : T, f : U => U, u : => U) {
-        val v = cache.get(t)
+        val v = map.get(t)
         if (v == null)
             put(t, u)
         else
@@ -164,7 +164,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * A view of the set of values that are currently in this memo table.
      */
     def values : Vector[U] =
-        cache.values.asScala.toVector
+        map.values.asScala.toVector
 
 }
 
