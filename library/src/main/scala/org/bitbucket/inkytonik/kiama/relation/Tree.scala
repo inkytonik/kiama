@@ -50,7 +50,8 @@ case object CheckTree extends TreeProp
 
 /**
  * When creating the tree, laziy clone the structure so that there are no
- * duplicate nodes.
+ * duplicate nodes. This property is not useful if you also specify `CheckTree`
+ * since a structure with sharing will not be accepted at all.
  */
 case object LazyClone extends TreeProp
 
@@ -121,10 +122,11 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, props : Seq[TreeProp] = 
         bottomupNoBridges(attempt(s))
 
     /**
-     * The root node of the tree. The root node will be different from the
-     * original root if any nodes in the original tree are shared, since
-     * they will be cloned as necessary to yield a proper tree structure.
-     * If there is no sharing then `root` will be same as `originalRoot`.
+     * The root node of the tree. If `LazyClone` is in this tree's properties
+     * the root node will be different from the original root if any nodes in
+     * the original tree are shared, since they will be cloned as necessary
+     * to yield a proper tree structure. If there is no sharing or `LazyClone` 
+     * is not specified then `root` will be same as `originalRoot`.
      * Bridges to other structures will not be traversed.
      */
     lazy val root =
@@ -134,7 +136,10 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, props : Seq[TreeProp] = 
             originalRoot
     /**
      * The basic relations between a node and its children. All of the
-     * other relations are derived from `child` and `parent`.
+     * other relations are derived from `child`. If `CheckTree` is in 
+     * this tree's properties then a check will be performed that the 
+     * structure is actually a tree. A runtime error will be thrown 
+     * if it's not a tree.
      */
     lazy val child : TreeRelation[T] = {
 
