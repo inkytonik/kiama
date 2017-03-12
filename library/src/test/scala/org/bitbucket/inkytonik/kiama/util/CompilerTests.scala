@@ -135,7 +135,8 @@ trait TestDriverWithConfig[C <: Config] extends Tests {
         import java.io.FilenameFilter
 
         val basePath = "src/test/scala/org/bitbucket/inkytonik/kiama/"
-        val path = basePath + relPath
+        val base = new File(basePath)
+        val path = if (base.exists) basePath + relPath else relPath
 
         /*
          * Make a single file test processing using the command-line `args`,
