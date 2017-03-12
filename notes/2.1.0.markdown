@@ -4,13 +4,13 @@ This is a simplification, enhancement and bug fix release cross-published for Sc
 
 ### Potentially breaking changes
 
- * `Relation`: `unapply` on relations has been replaced by `unapplySeq` which returns the image of the matched value as a sequence. The old usage of matching a single value and failing otherwise still works, since the pattern `rel(x)` only succeeds if the image contains exactly one value. Since the whole image is now returned it is possible to check other image structures, including the empty image `rel()` and one that contains at least one element `rel(a, rest @ _*)`.
+ * `Relation`: `unapplySeq` replaces `unapply` on relations and returns the image of the matched value as a sequence. The old usage of matching a single value and failing otherwise still works, since the pattern `rel(x)` succeeds if the image contains one value. Since the whole image is now returned you can check for other image structures such as the empty image `rel()` and one that contains at least one element `rel(a, rest @ _*)`.
 
-* `Relation`: following the previous change, the `pair` extractor on relations has been modified to use `unapplySeq`. It now returns the matched value and that value's image as a tuple. Thus, a pattern such as `rel.pair(n, x, y)` succeeds if the matched value has a two-element image, binding `n` to the matched value, `x` to the first element of the image and `y` to the second element of the image.
+* `Relation`: the `pair` extractor on relations now uses `unapplySeq`. It returns the matched value and that value's image in a single sequence. Thus, the pattern `rel.pair(n, x, y)` succeeds if the matched value has a two-element image, binding `n` to the matched value, `x` to the first element of the image and `y` to the second element of the image.
 
-* `Relation`: simplify API by removing rarely used relational operations (`collect`, `compose`, `containsInRange`, `index`, `preImage`, `preIndex`, `projDomain`, `projRange`, `union`, `withDomain` and `withRange`).
+* `Relation`: API no longer contains uncommonly used relational operations (`collect`, `compose`, `containsInRange`, `index`, `preImage`, `preIndex`, `projDomain`, `projRange`, `union`, `withDomain` and `withRange`).
 
-* `Tree`: the constructor now has a `props` argument that can be used to specify optional properties for the tree. The available properties are: `CheckTree` that causes dynamic checks to be performed to check that the structure is actually a tree, and `LazyClone` that ensures that the structure is a tree by cloning any shared nodes. By default, the `props` argument is empty which changes behaviour since lazy cloning was always performed in the previous version. Thus, pass `LazyClone` if there is a chance that your structure is not already a tree. The `rewriteTree` operation in the `Rewriter` passes `LazyClone` by default since sharing is likely after rewriting.
+* `Tree`: the constructor now has a `shape` argument to specify constraints on the tree structure. The available shapes are: `LeaveAlone` that means we assume the provided tree structure is ok, `CheckTree` that causes a dynamic check that the structure is actually a tree and a runtime error if it isn't, and `EnsureTree` that ensures that the structure is a tree by cloning any shared nodes. By default, the `shape` argument is `LeaveAlone` which changes behaviour since shared node cloning was always performed in the previous version. If there is a chance that your structure is not already a tree, restore the previous behaviour by passing `EnsureTree`. The `rewriteTree` operation in the `Rewriter` passes `EnsureTree` by default since sharing often occurs after rewriting.
 
 * `Tree`: old `siblings` relation is now called `sibling` which better matches the naming of relations such as `child`.
 
@@ -20,14 +20,14 @@ This is a simplification, enhancement and bug fix release cross-published for Sc
 
 * `Relation` and `Tree`: major performance improvements primarily due to replacing an embarrassing linear search with an identity-based cache to access relations .
 
-* `Util`: include message labels in sort criteria after message location so multiple messages at same location are now in a known order.
+* `Util`: include message labels in sort criteria after message location so messages at the same location are now in a well-defined order.
 
 ### Bug Fixes
 
 * Handling of source file paths should now work properly on Windows (contributed by Matt Pigram).
 * `Source.dropPrefix`:
 ** Avoid separator bug when dropping filename prefixes when there is no prefix.
-** Don't drop if there is only a partial overlap.
+** Don't drop if there is a partial overlap.
 
 ### Other
 

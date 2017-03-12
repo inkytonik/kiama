@@ -40,20 +40,26 @@ case class Bridge[T](cross : T)
 /**
  * Tree properties
  */
-abstract class TreeProp
+sealed abstract class TreeShape
 
 /**
- * When creating the child relation for the structure, check that it is
- * in fact a tree. A system error will result if it's not.
+ * The incoming structure has an acceptable shape and should be left alone
+ * by the tree processing.
  */
-case object CheckTree extends TreeProp
+case object LeaveAlone extends TreeShape
 
 /**
- * When creating the tree, laziy clone the structure so that there are no
- * duplicate nodes. This property is not useful if you also specify `CheckTree`
- * since a structure with sharing will not be accepted at all.
+ * The incoming structure should be a tree (i.e., no sharing nor cycles) but
+ * a runtime check should be performed to make sure.
  */
-case object LazyClone extends TreeProp
+case object CheckTree extends TreeShape
+
+/**
+ * The incoming structure may not be a tree (e.g., may contain sharing) and
+ * shared parts should be cloned to make it a tree before any further
+ * processing is performed.
+ */
+case object EnsureTree extends TreeShape
 
 /**
  * Relational representations of trees built out of hierarchical `Product`
@@ -66,24 +72,19 @@ case object LazyClone extends TreeProp
  * that contains only `Product` instances of type `T` (unless they are skipped,
  * see below).
  *
- * The `props` argument is a sequence of `TreeProp` values, defaulting to an
- * empty sequence.
+ * The `shape` argument governs how the structure referred to by `originalRoot`
+ * is treated. If `shape` is `LeaveAlone` (the default) then the structure is
+ * used without change. If `shape` is `CheckTree` then a check is run before
+ * the structure is used to make sure that it is a tree (i.e., no node sharing
+ * nor cycles). A runtime error occurs if this is not the case. If `shape` is
+ * `EnsureTree` then shared parts of the structure are cloned to ensure that
+ * it is a tree before it is used.
  *
- * If `LazyClone` is in `props` then the structure reachable from `originalRoot`
- * will be processed to ensure that it is a tree structure. I.e., nodes will
- * be cloned if they are shared. If the structure reachable from `originalRoot`
- * is actually a tree (i.e., contains no shared nodes) then the field `root`
- * will be the same as `originalRoot`.
- *
- * If `LazyClone` is not in `props`, then the structure will be left alone
- * and `root` will always be the same as `originalRoot`.
- *
- * If `CheckTree` is in `props` then a dynamic check will be performed when
- * the tree relations are created to ensure that structure is actually a tree.
- * If a node has more than one parent, then an error will be thrown.
- *
- * If `CheckTree` is not in `props` then there will be no attempt to check the
- * tree structure.
+ * If you are confident that your structure is a tree (e.g., it comes from a
+ * parser) then the default shape should be fine. If you prefer a bit more
+ * safety, then use `CheckTree` so that a non-tree structure cannot be missed.
+ * Finally, use `EnsureTree` if you know that your structure may contain
+ * sharing (e.g., it is produced by a term rewriting process).
  *
  * The `child` relation of a tree is defined to skip certain nodes.
  * Specifically, if a node of type `T` is wrapped in a `Some` of an option,
@@ -95,7 +96,7 @@ case object LazyClone extends TreeProp
  * Thanks to Len Hamey for the idea to use lazy cloning to restore the tree
  * structure instead of requiring that the input trees contain no sharing.
  */
-class Tree[T <: Product, +R <: T](val originalRoot : R, props : Seq[TreeProp] = Seq()) {
+class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = LeaveAlone) {
 
     tree =>
 
@@ -122,23 +123,27 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, props : Seq[TreeProp] = 
         bottomupNoBridges(attempt(s))
 
     /**
-     * The root node of the tree. If `LazyClone` is in this tree's properties
+     * The root node of the tree. If this tree's `shape` argument is `EnsureTree`
      * the root node will be different from the original root if any nodes in
      * the original tree are shared, since they will be cloned as necessary
-     * to yield a proper tree structure. If there is no sharing or `LazyClone` 
+     * to yield a proper tree structure. If there is no sharing or `EnsureTree`
      * is not specified then `root` will be same as `originalRoot`.
-     * Bridges to other structures will not be traversed.
+     *
+     * Bridges to other structures will not be traversed. This behaviour means
+     * that you can have references to other structures while still processing
+     * this structure as a tree in its own right.
      */
     lazy val root =
-        if (props.contains(LazyClone))
+        if (shape == EnsureTree)
             lazyclone(originalRoot, everywherebuNoBridges)
         else
             originalRoot
+
     /**
      * The basic relations between a node and its children. All of the
-     * other relations are derived from `child`. If `CheckTree` is in 
-     * this tree's properties then a check will be performed that the 
-     * structure is actually a tree. A runtime error will be thrown 
+     * other relations are derived from `child`. If this tree's shape
+     * argument is `CheckTree` then a check will be performed that the
+     * structure is actually a tree. A runtime error will be thrown
      * if it's not a tree.
      */
     lazy val child : TreeRelation[T] = {
@@ -150,7 +155,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, props : Seq[TreeProp] = 
 
         // As a safety check, we make sure that values are not children
         // of more than one parent.
-        if (props.contains(CheckTree)) {
+        if (shape == CheckTree) {
             val msgBuilder = new StringBuilder
             val parent = child.inverse
             for (c <- parent.domain) {

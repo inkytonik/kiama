@@ -31,7 +31,7 @@ package rewriting
  */
 trait Rewriter extends RewriterCore {
 
-    import org.bitbucket.inkytonik.kiama.relation.{LazyClone, Tree, TreeProp}
+    import org.bitbucket.inkytonik.kiama.relation.{EnsureTree, Tree, TreeShape}
     import scala.collection.generic.CanBuildFrom
     import scala.language.higherKinds
 
@@ -53,14 +53,14 @@ trait Rewriter extends RewriterCore {
      * a tree formed from the result term if `s` succeeds, otherwise return the
      * original tree.
      *
-     * The `props` parameter specifies the tree properties taht should be used
-     * when creating the new tree. The default is `List(LazyClone)` since it is
+     * The `shape` parameter specifies the tree shape that should be used
+     * when creating the new tree. The default is `EnsureTree` since it is
      * likely that rewrites will result in node sharing that should be removed.
      */
-    def rewriteTree[T <: Product, U <: T](s : Strategy)(t : Tree[T, U], props : Seq[TreeProp] = List(LazyClone)) : Tree[T, U] = {
+    def rewriteTree[T <: Product, U <: T](s : Strategy)(t : Tree[T, U], shape : TreeShape = EnsureTree) : Tree[T, U] = {
         s(t.root) match {
             case Some(t1) =>
-                new Tree[T, U](t1.asInstanceOf[U], props)
+                new Tree[T, U](t1.asInstanceOf[U], shape)
             case None =>
                 t
         }
