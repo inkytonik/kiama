@@ -23,13 +23,22 @@ package relation
 
 /**
  * Exception thrown if a tree relation operation tries to use a node that
- * is not in the tree to which the relation applies.
+ * is not in the tree to which the relation applies. `t` is the node that
+ * was found not to be in the tree.
  *
  * For the time-being, the exception does not indicate which tree is involved
  * because it's not clear how to identify the tree briefly in a short message.
  * The stack trace that accompanies the exception should be sufficient.
  */
 case class NodeNotInTreeException[T](t : T) extends Exception(s"node not in tree: $t")
+
+/**
+ * Exception thrown if `CheckTree` is specified as a tree's shape but the
+ * provided structure is not a tree. `msg` describes the reason(s) why the
+ * structure is not a tree by listing the nodes that have more than one
+ * parent.
+ */
+case class StructureIsNotATreeException(msg : String) extends Exception(msg)
 
 /**
  * A bridge node in a tree structure which connects to another structure.
@@ -168,7 +177,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
                 }
             }
             if (!msgBuilder.isEmpty)
-                sys.error("Tree creation: illegal tree structure:\n" + msgBuilder.result)
+                throw (new StructureIsNotATreeException(msgBuilder.result))
         }
 
         // All ok
