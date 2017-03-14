@@ -30,6 +30,7 @@ class TreeTests extends Tests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.relation.TreeRelation.isLeaf
+    import org.bitbucket.inkytonik.kiama.relation.StructureIsNotATreeException
     import scala.collection.immutable.Set
 
     // Test tree
@@ -919,6 +920,47 @@ class TreeTests extends Tests {
             sibling(nonNode)
         }
         i.getMessage shouldBe "node not in tree: Num(1.0)"
+    }
+
+    // Tree creation anomalies
+
+    test("CheckTree of a tree structure doesn't throw a StructureIsNotATreeException") {
+        val t = Add(Num(1), Num(2))
+        (try {
+            (new Tree(t, CheckTree)).child
+            true
+        } catch {
+            case _ : StructureIsNotATreeException =>
+                false
+        }) shouldBe true
+    }
+
+    test("CheckTree of a non-tree structure throws a StructureIsNotATreeException") {
+        val n = Num(1)
+        val t = Add(n, n)
+        val i = intercept[StructureIsNotATreeException] {
+            (new Tree(t, CheckTree)).child
+        }
+        i.getMessage shouldBe "child Num(1.0) has multiple parents:\n  Add(Num(1.0),Num(1.0))\n  Add(Num(1.0),Num(1.0))\n"
+    }
+
+    test("EnsureTree of a tree structure doesn't change the structure") {
+        val n1 = Num(1)
+        val n2 = Num(2)
+        val t = Add(n1, n2)
+        val u = new Tree(t, EnsureTree)
+        u.root should be theSameInstanceAs t
+    }
+
+    test("EnsureTree of a non-tree structure should make the structure into a tree") {
+        val n = Num(1)
+        val t = Add(n, n)
+        val u = new Tree(t, EnsureTree)
+        u.root shouldBe t
+        u.root shouldNot be theSameInstanceAs t
+        u.root.l should be theSameInstanceAs n
+        u.root.r shouldBe n
+        u.root.r shouldNot be theSameInstanceAs n
     }
 
 }
