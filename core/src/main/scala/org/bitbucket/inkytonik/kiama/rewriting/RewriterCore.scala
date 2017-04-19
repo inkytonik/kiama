@@ -443,8 +443,8 @@ trait RewriterCore {
                     ctor.newInstance(children : _*)
                 } catch {
                     case e : IllegalArgumentException =>
-                        sys.error(s"""dup illegal arguments: $ctor (${children.mkString(",")}), expects ${ctor.getParameterTypes.length}
-                                    |Common cause: term classes are nested in another class, move them to the top level""".stripMargin)
+                        sys.error(s"""dup illegal arguments: $ctor got (${children.mkString(",")})
+                                  |Common cause: term classes are nested in another class, move them to the top level""".stripMargin)
                 }
 
         }
