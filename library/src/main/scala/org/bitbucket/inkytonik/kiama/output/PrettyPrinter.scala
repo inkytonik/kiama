@@ -1114,7 +1114,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                             Done(
                                 (r : Remaining) =>
                                     for {
-                                        c1 <- f(w - r)(i, w)(c)
+                                        c1 <- f(w - r)((i, w))(c)
                                         out <- c1(p, dq)
                                         bp <- out(r)
                                     } yield bp
@@ -1143,7 +1143,7 @@ trait PrettyPrinter extends PrettyPrinterBase {
                 Done((r : Remaining) => Done(initBuffer))
         val finalBufferComputation =
             for {
-                c <- d(0, w)(cend)
+                c <- d((0, w))(cend)
                 o <- c(0, emptyDq)
                 buffer <- o(w)
             } yield buffer

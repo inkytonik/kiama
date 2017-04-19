@@ -23,8 +23,6 @@ package example.lambda2
 
 import LambdaTree.Exp
 import org.bitbucket.inkytonik.kiama.util.{
-    Emitter,
-    OutputEmitter,
     ParsingREPLWithConfig,
     REPLConfig
 }
@@ -53,7 +51,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree.LambdaTree
     import PrettyPrinter.formattedLayout
-    import org.bitbucket.inkytonik.kiama.util.{Console, Emitter, Source}
+    import org.bitbucket.inkytonik.kiama.util.{Console, Source}
 
     def createConfig(args : Seq[String]) : LambdaConfig =
         new LambdaConfig(args)
@@ -155,4 +153,3 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
  * Main object for Lambda REPL.
  */
 object Lambda extends LambdaDriver
-

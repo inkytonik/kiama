@@ -54,12 +54,11 @@ import scala.language.higherKinds
  */
 class ParsersBase(positions : Positions) {
 
-    import java.util.regex.Pattern
-    import org.bitbucket.inkytonik.kiama.util.{Messaging, Source, StringSource}
+    import org.bitbucket.inkytonik.kiama.util.{Source, StringSource}
     import scala.annotation.tailrec
     import scala.collection.immutable.Set
-    import scala.collection.mutable.{Builder, HashMap, ListBuffer}
-    import scala.language.{existentials, implicitConversions, postfixOps}
+    import scala.collection.mutable.{Builder, HashMap}
+    import scala.language.implicitConversions
     import scala.util.DynamicVariable
     import scala.util.matching.Regex
 
@@ -124,12 +123,7 @@ class ParsersBase(positions : Positions) {
     /**
      * An answer that is a left recursion record.
      */
-    case class LR[T](var seed : ParseResult[T], rule : Rule, var head : Head, next : LR[_]) extends Answer[T]
-
-    /**
-     * Left recursion stack.
-     */
-    var LRStack : LR[_] = null
+    case class LR[T](var seed : ParseResult[T], rule : Rule, var head : Head, next : LR[T]) extends Answer[T]
 
     /**
      * Common supertype for all rules (ie regardless of result type).
@@ -160,6 +154,11 @@ class ParsersBase(positions : Positions) {
          * The section of the memo table relating to this rule.
          */
         val memo = new HashMap[Input, MemoEntry]
+
+        /**
+         * Left recursion stack.
+         */
+        var LRStack : LR[T] = null
 
         /**
          * Apply this rule to the given input, memoising the result.

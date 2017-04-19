@@ -57,7 +57,7 @@ class SemanticAnalyser(tree : TransformTree) extends Attribution {
                 op_tree(e1)
             case e1 @ Factor(e) =>
                 val (optor, opnd) = ops(e1)
-                val (_, es) = eval_top(optor, "", e +: opnd)(e1)
+                val (_, es) = eval_top((optor, "", e +: opnd))(e1)
                 es.head
         }
 
@@ -67,7 +67,7 @@ class SemanticAnalyser(tree : TransformTree) extends Attribution {
         {
             case tree.parent(e0 @ BinExpR(e, op, _)) =>
                 val (optor, opnd) = ops(e0)
-                eval_top(optor, op, e +: opnd)(e0)
+                eval_top((optor, op, e +: opnd))(e0)
             case _ =>
                 (Nil, Nil)
         }
@@ -84,7 +84,7 @@ class SemanticAnalyser(tree : TransformTree) extends Attribution {
                         (op :: top_op :: rest_ops, opnd)
                     else {
                         val o1 :: o2 :: rest = opnd
-                        eval_top(rest_ops, op, BinExp(o2, top_op, o1) :: rest)(e)
+                        eval_top((rest_ops, op, BinExp(o2, top_op, o1) :: rest))(e)
                     }
             )
         }

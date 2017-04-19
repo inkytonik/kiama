@@ -22,7 +22,6 @@ package org.bitbucket.inkytonik.kiama
 package example.prolog
 
 import PrologTree.PrologTree
-import org.bitbucket.inkytonik.kiama.util.Messaging
 
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
 

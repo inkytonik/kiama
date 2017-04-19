@@ -24,12 +24,10 @@ package base
 
 import source.ModuleDecl
 import source.SourceTree.SourceTree
-import org.bitbucket.inkytonik.kiama.output.PrettyPrinter
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
     Config,
-    Emitter,
-    OutputEmitter
+    Emitter
 }
 
 /**
@@ -74,8 +72,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
 
     this : source.SourcePrettyPrinter =>
 
-    import java.io.File
-    import org.bitbucket.inkytonik.kiama.util.{Emitter, FileSource, Source}
+    import org.bitbucket.inkytonik.kiama.util.{FileSource, Source}
 
     override def createConfig(args : Seq[String]) : Oberon0Config =
         new Oberon0Config(args)

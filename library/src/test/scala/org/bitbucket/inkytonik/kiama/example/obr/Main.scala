@@ -26,9 +26,6 @@ import ObrTree.ObrInt
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
     Config,
-    Emitter,
-    JLineConsole,
-    OutputEmitter,
     Messaging,
     Source
 }

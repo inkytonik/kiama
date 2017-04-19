@@ -24,9 +24,7 @@ package example.picojava
 import PicoJavaTree.Program
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
-    Config,
-    Emitter,
-    OutputEmitter
+    Config
 }
 
 /**

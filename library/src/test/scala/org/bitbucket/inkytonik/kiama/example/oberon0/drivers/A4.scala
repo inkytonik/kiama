@@ -44,7 +44,6 @@ trait A4Phases extends L4.source.SourcePrettyPrinter
 
     def buildTransformer(atree : SourceTree) : base.Transformer =
         new L2.Lifter with L2.Desugarer {
-            val tree = atree
             def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
                 phases.buildAnalyser(atree)
         }
@@ -52,8 +51,6 @@ trait A4Phases extends L4.source.SourcePrettyPrinter
     def buildTranslator(atree : SourceTree) : base.Translator =
         new L4.CCodeGenerator {
             val tree = atree
-            def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
-                phases.buildAnalyser(atree)
         }
 
 }

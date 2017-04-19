@@ -34,7 +34,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt, ObrConfi
     import ObrTree.ObrTree
     import RISCTree._
     import org.bitbucket.inkytonik.kiama.example.obr.RISCTransformer
-    import org.bitbucket.inkytonik.kiama.util.{Config, Emitter, FileSource}
+    import org.bitbucket.inkytonik.kiama.util.{Emitter, FileSource}
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
 
     /**

@@ -11,8 +11,8 @@ version in ThisBuild := "2.1.0-SNAPSHOT"
 
 organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
-scalaVersion in ThisBuild := "2.12.1"
-crossScalaVersions in ThisBuild := Seq ("2.12.1", "2.11.8", "2.10.6")
+scalaVersion in ThisBuild := "2.12.2"
+crossScalaVersions in ThisBuild := Seq ("2.12.2", "2.11.11", "2.10.6")
 
 scalacOptions in ThisBuild := {
     // Turn on all lint warnings, except:
@@ -52,21 +52,21 @@ libraryDependencies in ThisBuild ++= {
             "0.4.0"
     Seq(
         // Caching:
-        "com.google.code.findbugs" % "jsr305" % "3.0.1",
-        "com.google.guava" % "guava" % "19.0",
+        "com.google.code.findbugs" % "jsr305" % "3.0.2",
+        "com.google.guava" % "guava" % "21.0",
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
         "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion,
         // Command-line handling:
-        "org.rogach" %% "scallop" % "2.0.5",
+        "org.rogach" %% "scallop" % "2.1.1",
         // Reflection
         "org.scala-lang" % "scala-reflect" % scalaVersion.value,
         // REPLs:
-        "jline" % "jline" % "2.14.1",
+        "jline" % "jline" % "2.14.3",
         // Testing:
-        "org.scalacheck" %% "scalacheck" % "1.13.4" % "test",
-        "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+        "org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
+        "org.scalatest" %% "scalatest" % "3.0.2" % "test"
     )
 }
 

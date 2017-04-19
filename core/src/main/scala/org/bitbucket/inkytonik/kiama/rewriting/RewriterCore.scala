@@ -668,7 +668,7 @@ trait RewriterCore {
             val b = cbf(t)
             b.sizeHint(t.size)
             val (changed, _) =
-                t.foldLeft(false, 0) {
+                t.foldLeft((false, 0)) {
                     case ((changed, i), ct) =>
                         s(ct) match {
                             case Some(ti) =>
@@ -694,7 +694,7 @@ trait RewriterCore {
             val b = cbf(t)
             b.sizeHint(t.size)
             val (changed, _) =
-                t.foldLeft(false, 0) {
+                t.foldLeft((false, 0)) {
                     case ((changed, i), ct) =>
                         s(ct) match {
                             case Some(ti @ (tix, tiy)) =>
@@ -775,7 +775,6 @@ trait RewriterCore {
      * Implementation of `one` for `Product` values.
      */
     def oneProduct(s : Strategy, p : Product) : Option[Any] = {
-        val numchildren = p.productArity
         p.productIterator.foldLeft(0) {
             case (i, ct) =>
                 s(ct) match {
@@ -905,7 +904,7 @@ trait RewriterCore {
         else {
             val newchildren = Seq.newBuilder[Any]
             val (success, changed) =
-                r.deconstruct.foldLeft(false, false) {
+                r.deconstruct.foldLeft((false, false)) {
                     case ((success, changed), ct) =>
                         s(ct) match {
                             case Some(ti) =>
@@ -936,7 +935,7 @@ trait RewriterCore {
         else {
             val newchildren = Array.newBuilder[AnyRef]
             val (success, changed) =
-                p.productIterator.foldLeft(false, false) {
+                p.productIterator.foldLeft((false, false)) {
                     case ((success, changed), ct) =>
                         s(ct) match {
                             case Some(ti) =>
@@ -967,7 +966,7 @@ trait RewriterCore {
             val b = cbf(t)
             b.sizeHint(t.size)
             val (success, changed) =
-                t.foldLeft(false, false) {
+                t.foldLeft((false, false)) {
                     case ((success, changed), ct) =>
                         s(ct) match {
                             case Some(ti) =>
@@ -997,7 +996,7 @@ trait RewriterCore {
             val b = cbf(t)
             b.sizeHint(t.size)
             val (success, changed) =
-                t.foldLeft(false, false) {
+                t.foldLeft((false, false)) {
                     case ((success, changed), ct) =>
                         s(ct) match {
                             case Some(ti @ (tix, tiy)) =>
@@ -1055,7 +1054,7 @@ trait RewriterCore {
         if (numchildren == ss.length) {
             val newchildren = Array.newBuilder[AnyRef]
             val (changed, _) =
-                p.productIterator.foldLeft(false, 0) {
+                p.productIterator.foldLeft((false, 0)) {
                     case ((changed, i), ct) =>
                         (ss(i))(ct) match {
                             case Some(ti) =>

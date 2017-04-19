@@ -32,6 +32,11 @@ class Obfuscator(analysis : NameResolution) extends Rewriter {
     import PicoJavaTree._
 
     /**
+     * Choose between which traversal approach to use.
+     */
+    val optimiseTraversal = true
+
+    /**
      * Obfuscate a program by renaming variable and class identifiers.
      * The variables and classes are numbered and the input names replaced
      * by `v` or `c` followed by a number.
@@ -138,8 +143,10 @@ class Obfuscator(analysis : NameResolution) extends Rewriter {
 
         // Actually make the transformation
 
-        rewrite(obfuscateProgram)(p)
-        // rewrite (obfuscateProgram2) (p)
+        if (optimiseTraversal)
+            rewrite(obfuscateProgram2)(p)
+        else
+            rewrite(obfuscateProgram)(p)
 
     }
 

@@ -43,7 +43,6 @@ trait A3Phases extends L3.source.SourcePrettyPrinter
 
     def buildTransformer(atree : SourceTree) : base.Transformer =
         new L2.Lifter with L2.Desugarer {
-            val tree = atree
             def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
                 phases.buildAnalyser(atree)
         }

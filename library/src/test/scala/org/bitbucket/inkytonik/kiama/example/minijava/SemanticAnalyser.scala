@@ -41,7 +41,7 @@ class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
         message,
         noMessages
     }
-    import org.bitbucket.inkytonik.kiama.util.{Entity, Message, MultipleEntity, UnknownEntity}
+    import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import SymbolTable._
 
     val decorators = new Decorators(tree)

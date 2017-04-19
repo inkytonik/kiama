@@ -22,7 +22,6 @@ package org.bitbucket.inkytonik.kiama
 package example.prolog
 
 import PrologTree._
-import org.bitbucket.inkytonik.kiama.rewriting.Rewriter
 import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{Term => _, _}
 import scala.collection.immutable
 

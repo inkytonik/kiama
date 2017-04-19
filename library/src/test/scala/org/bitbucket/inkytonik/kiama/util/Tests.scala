@@ -162,8 +162,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
  */
 trait ParseTests extends Tests {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Input, ParseResult, ParsersBase, Success}
-    import org.bitbucket.inkytonik.kiama.util.StringSource
+    import org.bitbucket.inkytonik.kiama.parsing.{Failure, ParseResult, ParsersBase, Success}
 
     /**
      * The suite of parsers that is used by these tests.

@@ -31,7 +31,6 @@ class TreeTests extends Tests {
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.relation.TreeRelation.isLeaf
     import org.bitbucket.inkytonik.kiama.relation.StructureIsNotATreeException
-    import scala.collection.immutable.Set
 
     // Test tree
 

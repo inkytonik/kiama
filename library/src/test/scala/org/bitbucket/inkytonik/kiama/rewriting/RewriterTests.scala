@@ -976,10 +976,6 @@ class RewriterTests extends Tests with Generator {
     }
 
     {
-        val l = Add(Num(1), Num(2))
-        val r = Add(Num(3), Num(4))
-        val t = Sub(l, r)
-
         val incnum = rule[Num] { case Num(i) => Num(i + 1) }
         val inczerothchild = child(0, incnum)
         val incfirstchild = child(1, incnum)

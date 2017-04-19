@@ -70,8 +70,6 @@ class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
 trait TestDriverWithConfig[C <: Config] extends Tests {
 
     import java.io.File
-    import org.bitbucket.inkytonik.kiama.attribution.Attribution
-    import org.bitbucket.inkytonik.kiama.util.Config
     import scala.io.Source
 
     /**

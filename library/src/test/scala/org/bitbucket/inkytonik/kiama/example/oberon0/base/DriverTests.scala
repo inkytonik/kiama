@@ -24,8 +24,6 @@ package base
 
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerBase,
-    Emitter,
-    OutputEmitter,
     TestCompilerWithConfig
 }
 import source.ModuleDecl

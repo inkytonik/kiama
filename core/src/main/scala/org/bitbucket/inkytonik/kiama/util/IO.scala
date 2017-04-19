@@ -33,9 +33,7 @@ object IO {
         FileOutputStream,
         InputStreamReader,
         OutputStreamWriter,
-        Reader,
-        StringReader,
-        Writer
+        StringReader
     }
 
     /**

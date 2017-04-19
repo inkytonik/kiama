@@ -34,7 +34,6 @@ class LambdaTests extends ParseTests with Messaging {
     import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{all => rwall, _}
     import org.bitbucket.inkytonik.kiama.rewriting.Strategy
-    import org.bitbucket.inkytonik.kiama.util.Message
     import org.bitbucket.inkytonik.kiama.util.StringSource
     import org.scalatest.matchers.{Matcher, MatchResult}
 

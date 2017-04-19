@@ -24,7 +24,7 @@ package L3
 
 trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
 
-    import base.source.{Block, IdnDef, IdnUse, ModuleDecl, SourceNode}
+    import base.source.{Block, IdnDef, IdnUse, SourceNode}
     import decorators.down
     import org.bitbucket.inkytonik.kiama.util.Entity
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, message, Messages, noMessages}

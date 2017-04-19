@@ -78,7 +78,6 @@ class TreeRelation[T <: Product](
  */
 object TreeRelation {
 
-    import org.bitbucket.inkytonik.kiama.util.Comparison.same
     import scala.annotation.tailrec
     import scala.collection.immutable.Queue
 
@@ -173,7 +172,7 @@ object TreeRelation {
                 val next = treeChildren(l)
                 if (!next.isEmpty)
                     relation.set(l, next)
-                loop(pending.tail ++ next)
+                loop(pending.tail.enqueue(next))
             }
 
         loop(Queue(tree.root))

@@ -35,7 +35,6 @@ class SyntaxAnalyserTests extends ParseTests {
 
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree._
     import org.bitbucket.inkytonik.kiama.example.picojava.SyntaxAnalyser
-    import org.bitbucket.inkytonik.kiama.util.Positions
 
     val parsers = new SyntaxAnalyser(positions)
     import parsers._

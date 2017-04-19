@@ -29,7 +29,6 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 class AttributionTests extends Tests {
 
     import org.bitbucket.inkytonik.kiama.relation.Tree
-    import scala.collection.GenSeq
 
     abstract class TestTree extends Product
     case class Pair(left : TestTree, right : TestTree) extends TestTree

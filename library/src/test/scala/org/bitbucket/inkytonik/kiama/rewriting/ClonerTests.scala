@@ -63,7 +63,6 @@ class ClonerTests extends Tests {
             )
         )
 
-        val ttree = new Tree[Exp, Exp](t)
         val ct : Add = deepclone(t)
 
         isATree(ct) shouldBe true
@@ -80,7 +79,6 @@ class ClonerTests extends Tests {
             Asgn(Var("c"), Num(3))
         ))
 
-        val ttree = new Tree[ImperativeNode, Seqn](t)
         val ct : Seqn = deepclone(t)
 
         isATree(ct) shouldBe true
@@ -94,7 +92,6 @@ class ClonerTests extends Tests {
 
     test("lazy cloning a term with no sharing gives that term") {
         val t = Add(Num(1), Num(2))
-        val ttree = new Tree[Exp, Exp](t)
         val ct : Add = lazyclone(t)
 
         isATree(ct) shouldBe true
@@ -105,7 +102,6 @@ class ClonerTests extends Tests {
     test("lazy cloning a term with sharing clones the shared sub-term") {
         val u = Add(Num(1), Num(2))
         val t = Add(u, u)
-        val ttree = new Tree[Exp, Exp](t)
         val ct : Add = lazyclone(t)
 
         isATree(ct) shouldBe true

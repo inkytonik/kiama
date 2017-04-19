@@ -44,7 +44,7 @@ trait Source {
      * indexed starting at zero and contains at least one entry.
      */
     lazy val (lineStarts, lineCount) =
-        (0 until content.length).foldLeft(Vector[Int](0), 1) {
+        (0 until content.length).foldLeft((Vector[Int](0), 1)) {
             case ((v, n), i) =>
                 if (content.charAt(i) == '\n')
                     (v :+ (i + 1), n + 1)

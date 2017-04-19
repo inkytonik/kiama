@@ -32,7 +32,6 @@ trait Driver extends Compiler[Program] {
 
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
-    import PrettyPrinter.{any, layout}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 

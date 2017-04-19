@@ -41,7 +41,6 @@ class LambdaTests extends ParseTests {
     object NominalTree
 
     val parsers = new SyntaxAnalyser(positions)
-    import parsers.{exp, query}
 
     /**
      * Matcher for query parsing and evaluation with expected value.

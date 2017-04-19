@@ -23,7 +23,6 @@ package example.lambda2
 
 import LambdaTree.LambdaTree
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
-import org.bitbucket.inkytonik.kiama.util.Messaging
 
 /**
  * Analyses for typed lambda calculus expressions.  A simple free variable

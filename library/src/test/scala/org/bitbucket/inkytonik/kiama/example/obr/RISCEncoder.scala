@@ -23,7 +23,6 @@ package org.bitbucket.inkytonik.kiama
 package example.obr
 
 import org.bitbucket.inkytonik.kiama.attribution.Attribution
-import org.bitbucket.inkytonik.kiama.util.Emitter
 
 /**
  * Translate RISC programs into RISC assembly code.  Completes the code
@@ -35,7 +34,6 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
     import labels.genlabelnum
     import RISCTree._
     import org.bitbucket.inkytonik.kiama.example.RISC.RISCISA.{Label => RISCLabel, _}
-    import scala.math.max
 
     /**
      * The code sequence that is being assembled.
@@ -76,7 +74,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
 
         // Pass 1: compile mappings between labels and offsets
         val (labels, _) =
-            instrs.foldLeft(Map[RISCLabel, Int](), 0) {
+            instrs.foldLeft((Map[RISCLabel, Int](), 0)) {
                 case ((labels, currloc), instr) =>
                     instr match {
                         case Target(lab) =>
@@ -90,7 +88,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
 
         // Pass 2: remove pseudo instructions, add displacements to labels
         val (newcode, _) =
-            instrs.foldLeft(Vector.empty[Instr], 0) {
+            instrs.foldLeft((Vector.empty[Instr], 0)) {
                 case ((newcode, currloc), instr) =>
                     instr match {
                         case b : Branch =>

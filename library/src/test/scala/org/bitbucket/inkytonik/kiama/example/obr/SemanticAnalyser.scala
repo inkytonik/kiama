@@ -31,7 +31,6 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     import SymbolTable._
     import org.bitbucket.inkytonik.kiama.attribution.Decorators
     import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
-    import org.bitbucket.inkytonik.kiama.util.Message
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, collectMessages, Messages, message, noMessages}
 
     val decorators = new Decorators(tree)

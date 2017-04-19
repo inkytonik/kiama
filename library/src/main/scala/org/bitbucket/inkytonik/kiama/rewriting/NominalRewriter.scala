@@ -92,7 +92,7 @@ class NominalRewriter extends Rewriter {
                 n1 == n2
             case (Bind(a, x), Bind(b, y)) =>
                 ((a == b) && alphaequiv(x, y)) ||
-                    (fresh(a)(y) && alphaequiv(x, swap(a, b)(y)))
+                    (fresh(a)(y) && alphaequiv(x, swap((a, b))(y)))
             case (p1 : Product, p2 : Product) =>
                 (p1.productPrefix == p2.productPrefix) &&
                     p1.productIterator.zip(p2.productIterator).forall {
@@ -135,7 +135,7 @@ class NominalRewriter extends Rewriter {
     object Binding {
         def unapply(b : Bind) : Option[(Name, Any)] = {
             val n = genName(b.name)
-            Some((n, swap(n, b.name)(b.term)))
+            Some((n, swap((n, b.name))(b.term)))
         }
     }
 

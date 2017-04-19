@@ -23,7 +23,7 @@ package example.prolog
 
 import PrologTree.Literal
 import org.bitbucket.inkytonik.kiama.output.PrettyPrinter
-import org.bitbucket.inkytonik.kiama.util.{Emitter, REPLConfig, ParsingREPLWithConfig}
+import org.bitbucket.inkytonik.kiama.util.{REPLConfig, ParsingREPLWithConfig}
 
 /**
  * Configuration for the Prolog REPL.
@@ -73,9 +73,7 @@ class PrologDriver extends ParsingREPLWithConfig[Literal, PrologConfig] with Pre
 
     import org.bitbucket.inkytonik.kiama.parsing.Success
     import org.bitbucket.inkytonik.kiama.util.{
-        Emitter,
         FileSource,
-        OutputEmitter,
         Source,
         StringEmitter
     }

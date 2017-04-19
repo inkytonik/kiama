@@ -27,7 +27,7 @@ import org.bitbucket.inkytonik.kiama.util.Compiler
 class Driver extends Compiler[JValue] {
 
     import PrettyPrinter.{any, pretty}
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
     val parsers = new SyntaxAnalyser(positions)

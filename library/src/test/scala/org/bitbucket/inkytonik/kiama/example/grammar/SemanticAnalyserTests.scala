@@ -29,7 +29,6 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 class SemanticAnalyserTests extends Tests {
 
     import GrammarTree._
-    import org.bitbucket.inkytonik.kiama.util.Message
 
     def S = NonTermSym(NonTermUse("S"))
     def E = NonTermSym(NonTermUse("E"))

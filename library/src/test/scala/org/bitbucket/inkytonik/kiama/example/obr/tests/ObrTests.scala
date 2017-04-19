@@ -61,8 +61,6 @@ class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrInt
  */
 class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig] {
 
-    import org.bitbucket.inkytonik.kiama.util.{Config, StringEmitter}
-
     filetests("ObrExec", "example/obr/tests/generic", ".obr", ".out",
         Some(".in"), "0", List(Array("-e")))
 
