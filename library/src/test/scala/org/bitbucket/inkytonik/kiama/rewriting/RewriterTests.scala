@@ -733,7 +733,7 @@ class RewriterTests extends Tests with Generator {
     case object NotSame extends Expecting
 
     def travtest(basemsg : String, testmsg : String,
-        eval : Option[Any], expected : Option[Any],
+        eval : => Option[Any], expected : => Option[Any],
         expecting : Expecting = Equal) {
         val msg = s"$basemsg - $testmsg, $expecting"
         test(msg) {
