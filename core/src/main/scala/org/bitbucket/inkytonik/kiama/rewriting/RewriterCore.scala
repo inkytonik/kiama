@@ -410,7 +410,7 @@ trait RewriterCore {
         import com.google.common.base.Function
         import com.google.common.cache.{CacheBuilder, CacheLoader}
         import java.lang.{Class, IllegalArgumentException, NoSuchFieldException}
-        import java.lang.reflect.Constructor
+        import java.lang.reflect.{Constructor, Modifier}
 
         type Duper = (Any, Array[AnyRef]) => Any
 
@@ -440,12 +440,37 @@ trait RewriterCore {
 
             def makeInstance(ctor : Constructor[_], children : Array[AnyRef]) : Any =
                 try {
-                    ctor.newInstance(children : _*)
+                    ctor.newInstance(unboxPrimitives(ctor, children) : _*)
                 } catch {
                     case e : IllegalArgumentException =>
                         sys.error(s"""dup illegal arguments: $ctor got (${children.mkString(",")})
                                   |Common cause: term classes are nested in another class, move them to the top level""".stripMargin)
                 }
+
+            def unboxPrimitives(ctor : Constructor[_], children : Array[AnyRef]) : Array[AnyRef] = {
+                val numChildren = ctor.getParameterCount()
+                val childrenTypes = ctor.getParameterTypes()
+                val newChildren = new Array[AnyRef](numChildren)
+                var i = 0
+                while (i < numChildren) {
+                    if (childrenTypes(i).isPrimitive())
+                        newChildren(i) = unboxAnyVal(children(i))
+                    else
+                        newChildren(i) = children(i)
+                    i = i + 1
+                }
+                newChildren
+            }
+
+            def unboxAnyVal(s : AnyRef) : AnyRef = {
+                val klass = s.getClass
+                s match {
+                    case p : Product if Modifier.isFinal(klass.getModifiers) && p.productArity == 1 =>
+                        p.productElement(0).asInstanceOf[AnyRef]
+                    case _ =>
+                        s
+                }
+            }
 
         }
 

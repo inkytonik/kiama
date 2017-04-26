@@ -46,6 +46,26 @@ object RewriterTests {
         def productElement(n : Int) = throw new IndexOutOfBoundsException(n.toString)
     }
 
+    /**
+     * A class that extends `AnyVal` so needs special treatment.
+     */
+    case class AnyValClass(i : Int) extends AnyVal
+
+    /**
+     * A class that extends `AnyVal` so needs special treatment.
+     */
+    case class ProdClass(i : Int)
+
+    /**
+     * A container for just `AnyVal` instances.
+     */
+    case class AnyValContainer(f1 : AnyValClass, f2 : AnyValClass)
+
+    /**
+     * A container for a mixture of normal and `AnyVal` instances.
+     */
+    case class MixedValContainer(f1 : AnyValClass, f2 : Int, f3 : ProdClass)
+
 }
 
 /**
@@ -55,7 +75,7 @@ class RewriterTests extends Tests with Generator {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.util.Comparison.optsame
-    import RewriterTests.{SingleCaseObject, SingleObject}
+    import RewriterTests._
 
     /**
      * The rewriter which is being tested.
@@ -2194,6 +2214,23 @@ class RewriterTests extends Tests with Generator {
 
     test("strategy that takes a basic type and returns a reference type doesn't compile") {
         "strategy[Int] { case i => Some (Num (i)) }" shouldNot typeCheck
+    }
+
+    // AnyVals
+
+    {
+        val s =
+            everywheretd(rule[Any] {
+                case AnyValClass(i) => AnyValClass(i + 1)
+            })
+
+        test("a structure containing just AnyVals rewrites correctly", FocusTest) {
+            s(AnyValContainer(AnyValClass(1), AnyValClass(2))) shouldBe Some(AnyValContainer(AnyValClass(2), AnyValClass(3)))
+        }
+
+        test("a structure containing a mixture of AnyVals and other values rewrites correctly", FocusTest) {
+            s(MixedValContainer(AnyValClass(1), 2, ProdClass(3))) shouldBe Some(MixedValContainer(AnyValClass(2), 2, ProdClass(3)))
+        }
     }
 
 }
