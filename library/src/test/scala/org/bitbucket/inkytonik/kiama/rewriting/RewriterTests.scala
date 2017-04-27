@@ -52,7 +52,7 @@ object RewriterTests {
     case class AnyValClass(i : Int) extends AnyVal
 
     /**
-     * A class that extends `AnyVal` so needs special treatment.
+     * A class that doesn't extend `AnyVal`.
      */
     case class ProdClass(i : Int)
 
