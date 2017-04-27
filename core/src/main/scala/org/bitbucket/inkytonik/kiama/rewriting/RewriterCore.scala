@@ -410,7 +410,7 @@ trait RewriterCore {
         import com.google.common.base.Function
         import com.google.common.cache.{CacheBuilder, CacheLoader}
         import java.lang.{Class, IllegalArgumentException, NoSuchFieldException}
-        import java.lang.reflect.{Constructor, Modifier}
+        import java.lang.reflect.Constructor
 
         type Duper = (Any, Array[AnyRef]) => Any
 
@@ -462,15 +462,13 @@ trait RewriterCore {
                 newChildren
             }
 
-            def unboxAnyVal(s : AnyRef) : AnyRef = {
-                val klass = s.getClass
+            def unboxAnyVal(s : AnyRef) : AnyRef =
                 s match {
-                    case p : Product if Modifier.isFinal(klass.getModifiers) && p.productArity == 1 =>
+                    case p : Product if p.productArity == 1 =>
                         p.productElement(0).asInstanceOf[AnyRef]
                     case _ =>
                         s
                 }
-            }
 
         }
 

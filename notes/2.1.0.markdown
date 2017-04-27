@@ -24,6 +24,8 @@ This is a simplification, enhancement and bug fix release cross-published for Sc
 
 ### Bug Fixes
 
+* `Rewriter`: structures that contain case classes that extend `AnyVal` are now rewritten correctly by unboxing the value where necessary.
+
 * Handling of source file paths should now work properly on Windows (contributed by Matt Pigram).
 * `Source.dropPrefix`:
 ** Avoid separator bug when dropping filename prefixes when there is no prefix.
