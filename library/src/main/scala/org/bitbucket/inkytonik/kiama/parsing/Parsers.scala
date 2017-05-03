@@ -63,11 +63,11 @@ class ParsersBase(positions : Positions) {
     import scala.util.matching.Regex
 
     /**
-     * Record failures so that we can nicely handle the case where a phrase fails
-     * looking for the end of input but there was a later failure for some other
-     * reason.
+     * Record lack of success so that we can nicely handle the case where a phrase
+     * doesn't parse when looking for the end of input but there was a later lack
+     * of success for some other reason.
      */
-    lazy val failureStack = new DynamicVariable[Option[Failure]](None)
+    lazy val latestNoSuccess = new DynamicVariable[Option[NoSuccess]](None)
 
     /**
      * Convenience method for making a parser out of its body function,
@@ -85,18 +85,23 @@ class ParsersBase(positions : Positions) {
                                 positions.setStart(t, start.position)
                                 positions.setFinish(t, finish.position)
                                 res
-                            case failure @ Failure(message, next) =>
-                                // Record this failure if it occurs later than the most
-                                // recent one, but ignore artificial left recursion failures
-                                if ((message != "") &&
-                                    (failureStack.value.forall(_.next.offset <= next.offset)))
-                                    failureStack.value = Some(failure)
-                                failure
+                            // Can't merge these into a NoSuccess case since type is ParseResult[T]
+                            case res @ Error(message, next) =>
+                                updateLatestNoSuccess(res)
+                            case res @ Failure(message, next) =>
+                                updateLatestNoSuccess(res)
                         }
-                    case failure : Failure =>
-                        failure
+                    case result : NoSuccess =>
+                        result
                 }
         }
+
+    def updateLatestNoSuccess[T](res : NoSuccess) : ParseResult[T] = {
+        if ((res.message != "") &&
+            (latestNoSuccess.value.forall(_.next.offset <= res.next.offset)))
+            latestNoSuccess.value = Some(res)
+        res
+    }
 
     // Memoising parsers, support left recursion.
 
@@ -325,6 +330,17 @@ class ParsersBase(positions : Positions) {
         }
 
         /**
+         * Sequential composition with no back-tracking back past this point.
+         * Modelled on same operator in FastParse and `~!` in Scala parser
+         * combinators.
+         */
+        def ~/[U](q : => Parser[U]) : Parser[~[T, U]] = {
+            lazy val qq = q
+            for (t <- p; u <- commit(qq))
+                yield new ~(t, u)
+        }
+
+        /**
          * Sequential composition ignoring left side.
          */
         def ~>[U](q : => Parser[U]) : Parser[U] = {
@@ -445,6 +461,15 @@ class ParsersBase(positions : Positions) {
         }
 
     /**
+     * A parser that always errors with the given message.
+     */
+    def error(message : String) : Parser[Nothing] =
+        Parser {
+            in =>
+                Error(message, in)
+        }
+
+    /**
      * A parser that always fails with the given message.
      */
     def failure(message : String) : Parser[Nothing] =
@@ -497,8 +522,8 @@ class ParsersBase(positions : Positions) {
                     case Success(t, next) =>
                         buf += t
                         rest(t, next)
-                    case failure : Failure =>
-                        failure
+                    case result : NoSuccess =>
+                        result
                 }
         }
 
@@ -572,6 +597,35 @@ class ParsersBase(positions : Positions) {
         p ^^ (t => Some(t)) | success(None)
 
     /**
+     * Wrap `p` so that its failures become errors. See also `nocut`.
+     */
+    def commit[U](p : => Parser[U]) =
+        Parser {
+            in =>
+                p(in) match {
+                    case Failure(msg, next) =>
+                        Error(msg, next)
+                    case result =>
+                        result
+                }
+        }
+
+    /**
+     * Suppress cuts in the parser `p`. I.e., errors produced by `p` are
+     * propagated as failures instead. See also `commit`.
+     */
+    def nocut[T](p : => Parser[T]) : Parser[T] =
+        Parser {
+            in =>
+                p(in) match {
+                    case Error(msg, next) =>
+                        Failure(msg, next)
+                    case result =>
+                        result
+                }
+        }
+
+    /**
      * Phrases, i.e., parse and succeed with no input remaining, except possibly
      * for whitespace at the end. If there is another later failure, prefer it
      * over the failure due to end of input being expected since the later one is
@@ -580,17 +634,17 @@ class ParsersBase(positions : Positions) {
     def phrase[T](p : => Parser[T]) : Parser[T] =
         Parser {
             in =>
-                failureStack.withValue(None) {
+                latestNoSuccess.withValue(None) {
                     (p <~ "")(in) match {
                         case s @ Success(t, next) =>
                             if (next.atEnd)
                                 s
                             else
-                                failureStack.value.filterNot {
+                                latestNoSuccess.value.filterNot {
                                     _.next.offset < next.offset
                                 }.getOrElse(Failure("end of input expected", next))
-                        case f : Failure =>
-                            failureStack.value.getOrElse(f)
+                        case result : NoSuccess =>
+                            latestNoSuccess.value.getOrElse(result)
                     }
                 }
         }
@@ -821,8 +875,8 @@ class ParsersBase(positions : Positions) {
                             case Right(msg) =>
                                 Failure(msg, in)
                         }
-                    case failure : Failure =>
-                        failure
+                    case result : NoSuccess =>
+                        result
                 }
         }
 

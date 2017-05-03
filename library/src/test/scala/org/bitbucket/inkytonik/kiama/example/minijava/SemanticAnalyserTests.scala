@@ -31,7 +31,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
 
     import MiniJavaTree._
     import SymbolTable.format
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.util.StringSource
 
     val parsers = new SyntaxAnalyser(positions)
@@ -50,8 +50,8 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
                 val tree = new MiniJavaTree(program)
                 val analyser = new SemanticAnalyser(tree)
                 formatMessages(analyser.errors)
-            case Failure(msg, _) =>
-                msg
+            case result : NoSuccess =>
+                result.message
         }
     }
 

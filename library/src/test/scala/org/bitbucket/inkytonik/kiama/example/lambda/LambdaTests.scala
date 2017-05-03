@@ -30,7 +30,7 @@ import org.bitbucket.inkytonik.kiama.util.GeneratingREPL
 class LambdaTests extends ParseTests with Evaluator with Generator {
 
     import LambdaTree._
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.util.StringSource
     import org.scalacheck.Prop._
 
@@ -45,7 +45,7 @@ class LambdaTests extends ParseTests with Evaluator with Generator {
         parsers.parseAll(parsers.exp, StringSource(term)) match {
             case Success(exp, _) =>
                 Right(evaluate(exp))
-            case Failure(msg, _) =>
+            case NoSuccess(msg, _) =>
                 Left(msg)
         }
     }

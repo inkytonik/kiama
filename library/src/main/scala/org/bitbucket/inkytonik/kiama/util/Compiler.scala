@@ -137,7 +137,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
  */
 trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, ParsersBase, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, ParsersBase, Success}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{message, Messages}
 
     /**
@@ -159,11 +159,11 @@ trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
             parsers.parseAll(parser, source) match {
                 case Success(ast, _) =>
                     Left(ast)
-                case f @ Failure(label, next) =>
-                    val pos = next.position
-                    positions.setStart(f, pos)
-                    positions.setFinish(f, pos)
-                    val messages = message(f, label)
+                case res : NoSuccess =>
+                    val pos = res.next.position
+                    positions.setStart(res, pos)
+                    positions.setFinish(res, pos)
+                    val messages = message(res, res.message)
                     Right(messages)
             }
         } catch {

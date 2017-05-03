@@ -26,6 +26,10 @@ package parsing
  */
 sealed abstract class ParseResult[+T] {
 
+    def kind : String
+
+    def toMessage : String
+
     def next : Input
 
     def append[U >: T](r : => ParseResult[U]) : ParseResult[U]
@@ -41,6 +45,11 @@ sealed abstract class ParseResult[+T] {
  */
 case class Success[+T](result : T, next : Input) extends ParseResult[T] {
 
+    val kind = "success"
+
+    def toMessage : String =
+        s"""Parse $kind at ${next.format}"""
+
     def append[U >: T](r : => ParseResult[U]) : ParseResult[U] =
         this
 
@@ -55,22 +64,12 @@ case class Success[+T](result : T, next : Input) extends ParseResult[T] {
 }
 
 /**
- * A failure parse result.
+ * All parse results that are not successful.
  */
-case class Failure(message : String, next : Input) extends ParseResult[Nothing] {
+sealed abstract class NoSuccess(val message : String, val next : Input) extends ParseResult[Nothing] {
 
-    def append[U >: Nothing](r : => ParseResult[U]) : ParseResult[U] = {
-        val rr = r
-        rr match {
-            case _ : Failure =>
-                if (rr.next.offset < next.offset)
-                    this
-                else
-                    rr
-            case _ =>
-                rr
-        }
-    }
+    def toMessage : String =
+        s"""Parse $kind with message "$message" at ${next.format}"""
 
     def flatMapWithNext[U](f : Nothing => Input => ParseResult[U]) : ParseResult[U] =
         this
@@ -80,3 +79,50 @@ case class Failure(message : String, next : Input) extends ParseResult[Nothing] 
 
 }
 
+/**
+ * Support for NoSuccess.
+ */
+object NoSuccess {
+
+    def unapply[T](r : ParseResult[T]) : Option[(String, Input)] =
+        r match {
+            case Error(m, n)   => Some((m, n))
+            case Failure(m, n) => Some((m, n))
+            case _             => None
+        }
+
+}
+
+/**
+ * An error parse result. Parsers that error do not backtrack.
+ */
+case class Error(override val message : String, override val next : Input) extends NoSuccess(message, next) {
+
+    val kind = "error"
+
+    def append[U >: Nothing](r : => ParseResult[U]) : ParseResult[U] =
+        this
+
+}
+
+/**
+ * A failure parse result.
+ */
+case class Failure(override val message : String, override val next : Input) extends NoSuccess(message, next) {
+
+    val kind = "failure"
+
+    def append[U >: Nothing](r : => ParseResult[U]) : ParseResult[U] = {
+        val rr = r
+        rr match {
+            case _ : NoSuccess =>
+                if (rr.next.offset < next.offset)
+                    this
+                else
+                    rr
+            case _ =>
+                rr
+        }
+    }
+
+}

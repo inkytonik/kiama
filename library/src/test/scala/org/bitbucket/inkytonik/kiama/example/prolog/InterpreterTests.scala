@@ -30,7 +30,7 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
  */
 class InterpreterTests extends ParseTests {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.util.StringEmitter
     import org.scalatest.matchers.{Matcher, MatchResult}
     import scala.io.Source
@@ -60,19 +60,11 @@ class InterpreterTests extends ParseTests {
                                     s""""$term" evaluated to "$value" not expected "$expected"""",
                                     s""""$term" evaluated to "$expected""""
                                 )
-                            case Failure(msg, _) =>
-                                MatchResult(
-                                    false,
-                                    s""""$term" failed to parse: $msg"""",
-                                    "NOT USED"
-                                )
+                            case result : NoSuccess =>
+                                MatchResult(false, s""""$term" ${result.toMessage}""", "NOT USED")
                         }
-                    case Failure(msg, _) =>
-                        MatchResult(
-                            false,
-                            s""""$filename" failed to parse: $msg"""",
-                            "NOT USED"
-                        )
+                    case result : NoSuccess =>
+                        MatchResult(false, s""""$filename" ${result.toMessage}""", "NOT USED")
                 }
             }
         }

@@ -35,6 +35,7 @@ class ParsersTests extends ParseTests {
     case class Tup4(n1 : Node, n2 : Node, n3 : Node, n4 : Node)
     case class Tup5(n1 : Node, n2 : Node, n3 : Node, n4 : Node, n5 : Node)
     case class Tup6(n1 : Node, n2 : Node, n3 : Node, n4 : Node, n5 : Node, n6 : Node)
+    case class NodeStr(n : Node, s : String)
 
     val parsers = new Parsers(positions)
     import parsers._
@@ -95,6 +96,82 @@ class ParsersTests extends ParseTests {
         val p : Parser[(Node, Node, Node, Node, Node, Node)] =
             node ~ node ~ node ~ node ~ node ~ node
         p("1 2 3 4 5 6") should parseTo((Node(1), Node(2), Node(3), Node(4), Node(5), Node(6)))
+    }
+
+    {
+        val alphaNode =
+            parsers.regex("a[0-9]+".r) ^^ (s => Node(s.tail.toInt))
+
+        val p1a = node ~ "foo"
+        val p1b = node ~/ "foo"
+        val p2 = node ~ "bar"
+        val p3 = alphaNode ~ "bar"
+
+        test("normal sequence interacts properly with alternation") {
+            val p = p1a | p2
+            p("1 foo") should parseTo(new ~(Node(1), "foo"))
+            p("1 bar") should parseTo(new ~(Node(1), "bar"))
+            p("a2 bar") should failParseAt(1, 1, "string matching regex '[0-9]+' expected but 'a' found")
+        }
+
+        test("non-backtracking sequence interacts properly with alternation") {
+            val p = p1b | p2 | p3
+            p("1 foo") should parseTo(new ~(Node(1), "foo"))
+            p("1 bar") should errorParseAt(1, 3, "'foo' expected but 'b' found")
+            p("a2 bar") should parseTo(new ~(Node(2), "bar"))
+        }
+    }
+
+    {
+        // FastParse cut examples: http://www.lihaoyi.com/fastparse/#Cuts
+
+        val alphas = parsers.regex("[a-z]+".r)
+
+        test("non-backtracking sequence operator properly cuts") {
+            val valp = "val" ~/ alphas
+            val defp = "def" ~/ alphas
+            val nocut = valp | defp
+            nocut("val abcd") should parseTo(new ~("val", "abcd"))
+            nocut("val 1234") should errorParseAt(1, 5, "string matching regex '[a-z]+' expected but '1' found")
+        }
+
+        test("cut sequence operator properly cuts inside repetition") {
+            val stmt = "val" ~/ alphas <~ ";"
+            val stmts = phrase(rep1(stmt))
+            stmts("val abcd;") should parseTo(Vector(new ~("val", "abcd")))
+            stmts("val abcd; val efg;") should parseTo(
+                Vector(new ~("val", "abcd"), new ~("val", "efg"))
+            )
+            stmts("val abcd; val") should errorParseAt(1, 14, "string matching regex '[a-z]+' expected but end of source found")
+        }
+
+        val digit = parsers.regex("[0-9]".r)
+        val time1 = (opt("1") ~ digit ~ ":" ~/ (digit ~ digit ~ ("am" | "pm"))) ^^^ (())
+        val time2 = (opt("1" | "2") ~ digit ~ ":" ~/ (digit ~ digit)) ^^^ (())
+
+        test("cut-based time parsers work in isolation") {
+            time1("12:30pm") should parseTo(())
+            time2("17:45") should parseTo(())
+        }
+
+        test("cut nested in time parsers propagate outwards") {
+            val time = time1 | time2
+            time("12:30pm") should parseTo(())
+            time("17:45") should errorParseAt(1, 6, "'pm' expected but end of source found")
+        }
+
+        test("nocut successfully supresses nested cut in time parsers") {
+            val time = nocut(time1) | time2
+            time("12:30pm") should parseTo(())
+            time("17:45") should parseTo(())
+        }
+    }
+
+    test("error parser combinator skips whitespace and gives correct error") {
+        val p = error("MESSAGE")
+        p("foo") should errorParseAt(1, 1, "MESSAGE")
+        p("   foo") should errorParseAt(1, 4, "MESSAGE")
+        p("  \n  foo") should errorParseAt(2, 3, "MESSAGE")
     }
 
     test("failure parser combinator skips whitespace and gives correct failure") {

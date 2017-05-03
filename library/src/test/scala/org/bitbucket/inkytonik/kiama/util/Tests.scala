@@ -162,7 +162,14 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
  */
 trait ParseTests extends Tests {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, ParseResult, ParsersBase, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{
+        Error,
+        Failure,
+        NoSuccess,
+        ParseResult,
+        ParsersBase,
+        Success
+    }
 
     /**
      * The suite of parsers that is used by these tests.
@@ -182,12 +189,8 @@ trait ParseTests extends Tests {
                             s"""Parse succeeded with "$value" instead of expected "$expected" at ${in.format}""",
                             s"""Parse succeeded with disallowed value "$value" at ${in.format}"""
                         )
-                    case Failure(message, in) =>
-                        MatchResult(
-                            false,
-                            s"""Parse failed with message "$message" at ${in.format}""",
-                            "NOT USED"
-                        )
+                    case result : NoSuccess =>
+                        MatchResult(false, result.toMessage, "NOT USED")
                 }
         }
 
@@ -206,19 +209,17 @@ trait ParseTests extends Tests {
                             s"""Parse succeeded matching "$matched" instead of expected "Some($expected)" at ${in.format}""",
                             s"""Parse succeeded with disallowed value "$value" at ${in.format}"""
                         )
-                    case Failure(message, in) =>
-                        MatchResult(
-                            false,
-                            s"""Parse failed with message "$message" at ${in.format}""",
-                            "NOT USED"
-                        )
+                    case result : NoSuccess =>
+                        MatchResult(false, result.toMessage, "NOT USED")
                 }
         }
 
     /**
-     * Matcher for parse failure at given location and with given message.
+     * Matcher for unsucessful parse at given location and with given message.
+     * The predicate `ok` is used to detect the unsucecsful results that are
+     * acceptable.
      */
-    def failParseAt[T](line : Int, column : Int, expectedMsg : String) =
+    def noSuccessParseAt[T](line : Int, column : Int, expectedMsg : String, ok : ParseResult[T] => Boolean) =
         new Matcher[ParseResult[T]] {
             def apply(result : ParseResult[T]) = {
                 result match {
@@ -228,33 +229,48 @@ trait ParseTests extends Tests {
                             s"""Parse succeeded with "$value" at ${in.format}""",
                             "NOT USED"
                         )
-                    case Failure(message, in) =>
-                        MatchResult(
-                            (in.position.line == line) && (in.position.column == column) && (message == expectedMsg),
-                            {
-                                val buf = new scala.collection.mutable.ListBuffer[String]()
-                                if (in.position.line != line)
-                                    buf += s"line is ${in.position.line} not $line"
-                                if (in.position.column != column)
-                                    buf += s"column is ${in.position.column} not $column"
-                                if (message != expectedMsg)
-                                    buf += s"""message is "$message" not "$expectedMsg""""
-                                buf.mkString("Parse failed wrongly: ", ", ", "")
-                            },
-                            {
-                                val buf = new scala.collection.mutable.ListBuffer[String]()
-                                if (in.position.line == line)
-                                    buf += s"line is $line"
-                                if (in.position.column == column)
-                                    buf += s"column is $column"
-                                if (message == expectedMsg)
-                                    buf += s"""message is "$expectedMsg""""
-                                buf.mkString("Parse failed as expected: ", ", ", "")
-                            }
-                        )
+                    case res @ NoSuccess(message, in) =>
+                        if (ok(res))
+                            MatchResult(
+                                (in.position.line == line) && (in.position.column == column) && (message == expectedMsg),
+                                {
+                                    val buf = new scala.collection.mutable.ListBuffer[String]()
+                                    if (in.position.line != line)
+                                        buf += s"line is ${in.position.line} not $line"
+                                    if (in.position.column != column)
+                                        buf += s"column is ${in.position.column} not $column"
+                                    if (message != expectedMsg)
+                                        buf += s"""message is "$message" not "$expectedMsg""""
+                                    buf.mkString(s"Wrong parse ${res.kind}: ", ", ", "")
+                                },
+                                {
+                                    val buf = new scala.collection.mutable.ListBuffer[String]()
+                                    if (in.position.line == line)
+                                        buf += s"line is $line"
+                                    if (in.position.column == column)
+                                        buf += s"column is $column"
+                                    if (message == expectedMsg)
+                                        buf += s"""message is "$expectedMsg""""
+                                    buf.mkString(s"Expected parse ${res.kind}: ", ", ", "")
+                                }
+                            )
+                        else
+                            MatchResult(false, s"Wrong parse: ${res.toMessage}", "")
                 }
             }
         }
+
+    /**
+     * Matcher for parse error at given location and with given message.
+     */
+    def errorParseAt[T](line : Int, column : Int, expectedMsg : String) =
+        noSuccessParseAt(line, column, expectedMsg, (r : ParseResult[T]) => r.isInstanceOf[Error])
+
+    /**
+     * Matcher for parse failure at given location and with given message.
+     */
+    def failParseAt[T](line : Int, column : Int, expectedMsg : String) =
+        noSuccessParseAt(line, column, expectedMsg, (r : ParseResult[T]) => r.isInstanceOf[Failure])
 
 }
 
@@ -263,7 +279,7 @@ trait ParseTests extends Tests {
  */
 trait TransformerTests extends ParseTests {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
 
     /**
      * Matcher for parsing and then transformation with expected value. Try to
@@ -283,12 +299,8 @@ trait TransformerTests extends ParseTests {
                             s""""$term" transformed to "$transformed" not expected "$expected"""",
                             s""""$term" evaluated to "$expected""""
                         )
-                    case Failure(msg, _) =>
-                        MatchResult(
-                            false,
-                            s""""$term" failed to parse: $msg"""",
-                            "NOT USED"
-                        )
+                    case result : NoSuccess =>
+                        MatchResult(false, s""""$term" ${result.toMessage}"""", "NOT USED")
                 }
         }
 

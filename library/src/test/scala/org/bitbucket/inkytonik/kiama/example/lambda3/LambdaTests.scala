@@ -28,7 +28,7 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
  */
 class LambdaTests extends ParseTests {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.rewriting.NominalTree.Name
     import org.scalatest.matchers.{Matcher, MatchResult}
 
@@ -57,12 +57,8 @@ class LambdaTests extends ParseTests {
                             s""""$term" evaluated to "$value" not expected "$expected"""",
                             s""""$term" evaluated to "$expected""""
                         )
-                    case Failure(msg, _) =>
-                        MatchResult(
-                            false,
-                            s""""$term" failed to parse: $msg"""",
-                            "NOT USED"
-                        )
+                    case result : NoSuccess =>
+                        MatchResult(false, s""""$term" ${result.toMessage}"""", "NOT USED")
                 }
         }
 
@@ -76,12 +72,8 @@ class LambdaTests extends ParseTests {
                 parsers.exp(expectedStr) match {
                     case Success(exp, _) =>
                         queryTo(exp)(term)
-                    case Failure(msg, _) =>
-                        MatchResult(
-                            false,
-                            s""""$expectedStr" failed to parse: $msg"""",
-                            "NOT USED"
-                        )
+                    case result : NoSuccess =>
+                        MatchResult(false, s""""$expectedStr" ${result.toMessage}"""", "NOT USED")
                 }
         }
 

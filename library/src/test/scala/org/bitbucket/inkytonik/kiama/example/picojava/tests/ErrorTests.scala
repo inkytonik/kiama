@@ -37,7 +37,7 @@ class ErrorTests extends ParseTests {
     import java.util.ArrayList
     import org.bitbucket.inkytonik.kiama.example.picojava.ErrorCheck
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree.PicoJavaTree
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.util.StringSource
 
     val parsers = new SyntaxAnalyser(positions)
@@ -52,10 +52,10 @@ class ErrorTests extends ParseTests {
                 val tree = new PicoJavaTree(ast)
                 val analyser = new ErrorCheck(tree)
                 analyser.errors
-            case Failure(msg, _) =>
-                val result = new ArrayList[String]
-                result.add(msg)
-                result
+            case result : NoSuccess =>
+                val messages = new ArrayList[String]
+                messages.add(result.message)
+                messages
         }
     }
 

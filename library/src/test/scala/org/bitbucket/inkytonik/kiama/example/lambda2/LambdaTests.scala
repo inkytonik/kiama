@@ -31,7 +31,7 @@ class LambdaTests extends ParseTests with Messaging {
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree._
     import PrettyPrinter.formattedLayout
-    import org.bitbucket.inkytonik.kiama.parsing.{Failure, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{all => rwall, _}
     import org.bitbucket.inkytonik.kiama.rewriting.Strategy
     import org.bitbucket.inkytonik.kiama.util.StringSource
@@ -57,7 +57,7 @@ class LambdaTests extends ParseTests with Messaging {
                 else
                     "There were differences between 'errors' and 'errors2'\n" +
                         "errors:\n" + errors + "errors2:\n" + errors2
-            case Failure(msg, _) =>
+            case NoSuccess(msg, _) =>
                 msg
         }
     }
@@ -174,7 +174,7 @@ class LambdaTests extends ParseTests with Messaging {
         parsers.parseAll(parsers.exp, StringSource(term)) match {
             case Success(exp, _) =>
                 Right(evaluator.eval(exp))
-            case Failure(msg, _) =>
+            case NoSuccess(msg, _) =>
                 Left(msg)
         }
     }
@@ -365,12 +365,8 @@ class LambdaTests extends ParseTests with Messaging {
                             s""""$term" round-tripped to "$layout not expected "$expected"""",
                             s""""$term" round-tripped to "$expected""""
                         )
-                    case Failure(msg, _) =>
-                        MatchResult(
-                            false,
-                            s""""$term" failed to parse: $msg"""",
-                            "NOT USED"
-                        )
+                    case result : NoSuccess =>
+                        MatchResult(false, s""""$term" ${result.toMessage}""", "NOT USED")
                 }
         }
 
