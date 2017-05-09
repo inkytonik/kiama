@@ -13,8 +13,7 @@ Department of Computing, Macquarie University
 
 Anthony.Sloane@mq.edu.au
 inkytonik@gmail.com
-
-http://plrg.science.mq.edu.au/
+https://www.comp.mq.edu.au/~asloane
 
 ## Latest News
 
