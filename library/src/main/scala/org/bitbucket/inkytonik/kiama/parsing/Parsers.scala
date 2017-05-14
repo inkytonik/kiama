@@ -350,6 +350,13 @@ class ParsersBase(positions : Positions) {
         }
 
         /**
+         * Sequential composition with no back-tracking back past this point
+         * and ignoring left side.
+         */
+        def ~/>[U](q : => Parser[U]) : Parser[U] =
+            p ~> commit(q)
+
+        /**
          * Sequential composition ignoring right side.
          */
         def <~[U](q : => Parser[U]) : Parser[T] = {
@@ -357,6 +364,13 @@ class ParsersBase(positions : Positions) {
             for (t <- p; u <- qq)
                 yield t
         }
+
+        /**
+         * Sequential composition with no back-tracking back past this point
+         * and ignoring right side.
+         */
+        def <~/[U](q : => Parser[U]) : Parser[T] =
+            p <~ commit(q)
 
         /**
          * Alternation.

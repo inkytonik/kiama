@@ -20,7 +20,7 @@ This is a simplification, enhancement and bug fix release cross-published for Sc
 
 * `Relation` and `Tree`: major performance improvements primarily due to replacing an embarrassing linear search with an identity-based cache to access relations .
 
-* `Parsing`: distinguish between parser *failures* that are local and can be avoided by trying another alternative and parser *errors* that cause the parse to terminate without trying other alternatives. Added  `~/` cut sequence operator that commits to the current alternative on the right. I.e., `p1 ~/ p2` will return an error if `p2` fails. In contrast, `p1 ~ p2` fails if `p2` fails. Added 'nocut(p)' method to stop propagation of errors outward from within parser `p`.
+* `Parsing`: distinguish between parser *failures* that are local and can be avoided by trying another alternative and parser *errors* that cause the parse to terminate without trying other alternatives. Added  `~/` cut sequence operator that commits to the current alternative on the right. I.e., `p1 ~/ p2` will return an error if `p2` fails. In contrast, `p1 ~ p2` fails if `p2` fails. Similarly, added `~/>` and `<~/` which are analogous to `~>` and `<~` to ignore left and right side values, respectively. Added 'nocut(p)' to stop propagation of errors outward from within parser `p` and `commit(p)` to turn failures in `p` into errors.
 
 * `Util`: include message labels in sort criteria after message location so messages at the same location are now in a well-defined order.
 

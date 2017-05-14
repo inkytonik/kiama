@@ -104,8 +104,16 @@ class ParsersTests extends ParseTests {
 
         val p1a = node ~ "foo"
         val p1b = node ~/ "foo"
+        val p1bl = node <~/ "foo"
+        val p1br = node ~/> "foo"
+
         val p2 = node ~ "bar"
+        val p2l = node <~ "bar"
+        val p2r = node ~> "bar"
+
         val p3 = alphaNode ~ "bar"
+        val p3l = alphaNode <~ "bar"
+        val p3r = alphaNode ~> "bar"
 
         test("normal sequence interacts properly with alternation") {
             val p = p1a | p2
@@ -119,6 +127,16 @@ class ParsersTests extends ParseTests {
             p("1 foo") should parseTo(new ~(Node(1), "foo"))
             p("1 bar") should errorParseAt(1, 3, "'foo' expected but 'b' found")
             p("a2 bar") should parseTo(new ~(Node(2), "bar"))
+
+            val pl = p1bl | p2l | p3l
+            pl("1 foo") should parseTo(Node(1))
+            pl("1 bar") should errorParseAt(1, 3, "'foo' expected but 'b' found")
+            pl("a2 bar") should parseTo(Node(2))
+
+            val pr = p1br | p2r | p3r
+            pr("1 foo") should parseTo("foo")
+            pr("1 bar") should errorParseAt(1, 3, "'foo' expected but 'b' found")
+            pr("a2 bar") should parseTo("bar")
         }
     }
 
