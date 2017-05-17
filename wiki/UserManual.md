@@ -55,8 +55,7 @@ for more detail.
 More research-oriented material in the form of papers, talks and slides can be
 found on the [Research](Research.md) page.
 
-See the
-[API documentation](doc/1.8.0/api/index.html)
-for details about classes and methods provided in Kiama releases.
+API documentation can be found by searching for Kiama on [javadoc.io](https://www.javadoc.io).
+Alternatively, links to the API documentation for specific releases can be found on the [Releases](Releases.md) page.
 
 Up: [Documentation](Documentation.md), Next: [Examples](Examples.md)
