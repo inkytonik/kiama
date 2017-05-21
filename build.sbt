@@ -209,8 +209,8 @@ lazy val kiama =
             <url>https://bitbucket.org/inkytonik/kiama</url>
             <licenses>
                 <license>
-                    <name>LGPL 3.0 license</name>
-                    <url>http://www.opensource.org/licenses/lgpl-3.0.html</url>
+                    <name>Mozilla Public License, v. 2.0</name>
+                    <url>http://mozilla.org/MPL/2.0/</url>
                     <distribution>repo</distribution>
                 </license>
             </licenses>
