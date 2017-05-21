@@ -6,7 +6,7 @@ Kiama is now distributed under the Mozilla Public License, v. 2.0, rather than u
 
 ### Potentially breaking changes
 
- * `Relation`: `unapplySeq` replaces `unapply` on relations and returns the image of the matched value as a sequence. The old usage of matching a single value and failing otherwise still works, since the pattern `rel(x)` succeeds if the image contains one value. Since the whole image is now returned you can check for other image structures such as the empty image `rel()` and one that contains at least one element `rel(a, rest @ _*)`.
+* `Relation`: `unapplySeq` replaces `unapply` on relations and returns the image of the matched value as a sequence. The old usage of matching a single value and failing otherwise still works, since the pattern `rel(x)` succeeds if the image contains one value. Since the whole image is now returned you can check for other image structures such as the empty image `rel()` and one that contains at least one element `rel(a, rest @ _*)`.
 
 * `Relation`: the `pair` extractor on relations now uses `unapplySeq`. It returns the matched value and that value's image in a single sequence. Thus, the pattern `rel.pair(n, x, y)` succeeds if the matched value has a two-element image, binding `n` to the matched value, `x` to the first element of the image and `y` to the second element of the image.
 
@@ -16,7 +16,7 @@ Kiama is now distributed under the Mozilla Public License, v. 2.0, rather than u
 
 * `Tree`: old `siblings` relation is now called `sibling` which better matches the naming of relations such as `child`.
 
-* `Util`: simplify `Memoiser` by removing use of traits and separate classes
+* `Util`: simplify `Memoiser` by removing use of traits and separate classes.
 
 ### Enhancements
 
