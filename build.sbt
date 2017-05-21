@@ -66,7 +66,7 @@ libraryDependencies in ThisBuild ++= {
         "jline" % "jline" % "2.14.3",
         // Testing:
         "org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
-        "org.scalatest" %% "scalatest" % "3.0.2" % "test"
+        "org.scalatest" %% "scalatest" % "3.0.3" % "test"
     )
 }
 

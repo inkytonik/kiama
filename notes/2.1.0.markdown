@@ -38,7 +38,7 @@ Kiama is now distributed under the Mozilla Public License, v. 2.0, rather than u
 ### Other
 
 * Source reorganised to match standard Maven/Sbt structure.
-* Tidied and simplified build specs, removed Build.scala, moved to sbt 0.13.13
-* Moved to Scala 2.12.1 as default version
-* Moved to ScalaTest 3.0.0, ScalaCheck 1.13.4, Scallop 2.0.5, Guava 21.
+* Tidied and simplified build specs, removed Build.scala, moved to sbt 0.13.15
+* Moved to Scala 2.12.2 as default version
+* Moved to ScalaTest 3.0.2, ScalaCheck 1.13.5, Scallop 2.1.1, Guava 21.
 * Fix URLs in POM that pointed to old Google Code setup.
