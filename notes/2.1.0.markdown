@@ -2,6 +2,8 @@
 
 This is a simplification, enhancement and bug fix release cross-published for Scala 2.10, 2.11 and 2.12. It includes some API changes that may require source code changes in clients of the `Tree` and `Relation` components. It also includes major performance improvements in these components.
 
+Kiama is now distributed under the Mozilla Public License, v. 2.0, rather than under the GNU Lesser General Public License.
+
 ### Potentially breaking changes
 
  * `Relation`: `unapplySeq` replaces `unapply` on relations and returns the image of the matched value as a sequence. The old usage of matching a single value and failing otherwise still works, since the pattern `rel(x)` succeeds if the image contains one value. Since the whole image is now returned you can check for other image structures such as the empty image `rel()` and one that contains at least one element `rel(a, rest @ _*)`.

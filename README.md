@@ -38,9 +38,7 @@ See the [Installation wiki page](https://bitbucket.org/inkytonik/kiama/src/defau
 
 ## Licensing
 
-Kiama is distributed under the GNU Lesser General Public License.  See the files
-COPYING and COPYING.LESSER for details of these licenses.  More information can
-be found at http://www.gnu.org/licenses/.
+Kiama is distributed under the Mozilla Public License, v. 2.0. See the file LICENSE for details of the license. More information can be obtained from [Mozilla](http://mozilla.org/MPL/2.0/).
 
 ## Some Examples
 
