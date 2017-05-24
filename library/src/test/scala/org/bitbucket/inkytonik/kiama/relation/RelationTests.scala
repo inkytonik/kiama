@@ -292,7 +292,7 @@ class RelationTests extends Tests {
     }
 
     test("domain of multiple element int-int relation is correct") {
-        multiIntInt.domain should haveSameElementsAs(Vector(0, 1, 2, 3, 4))
+        multiIntInt.domain should haveSameElementsAs(Vector(0, 1, 2))
     }
 
     // inverse
@@ -426,7 +426,7 @@ class RelationTests extends Tests {
     }
 
     test("range of multiple element int-int relation is correct") {
-        multiIntInt.domain should haveSameElementsAs(Vector(0, 1, 2, 3, 4))
+        multiIntInt.domain should haveSameElementsAs(Vector(0, 1, 2))
     }
 
     // unapplySeq (direct)

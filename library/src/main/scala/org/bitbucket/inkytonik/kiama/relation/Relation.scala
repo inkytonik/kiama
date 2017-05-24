@@ -176,7 +176,8 @@ object Relation {
             else {
                 val l = pending.front
                 val next = onestep(l)
-                relation.putAll(l, next)
+                if (!next.isEmpty)
+                    relation.putAll(l, next)
                 loop(pending.tail.enqueue(next))
             }
 
