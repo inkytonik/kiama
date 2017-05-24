@@ -19,8 +19,9 @@ object Comparison {
     import scala.collection.mutable.TreeSet
 
     /**
-     * Compare two arbitrary values. If they are both references, use
-     * reference equality, otherwise use value equality.
+     * Compare two arbitrary values. If they are both references and not
+     * tuples, use reference equality. If they are tuples, use `same` to
+     * compare the components. Otherwise use value equality.
      */
     def same(v1 : Any, v2 : Any) : Boolean =
         if (v1 == null)
@@ -37,6 +38,8 @@ object Comparison {
                     i1 == i2
                 case (l1 : Long, l2 : Long) =>
                     l1 == l2
+                case ((l1, r1), (l2, r2)) =>
+                    same(l1, l2) && same(r1, r2)
                 case (r1 : AnyRef, r2 : AnyRef) =>
                     r1 eq r2
                 case _ =>
@@ -68,7 +71,7 @@ object Comparison {
                 case ((t1, t2), (t3, t4)) =>
                     sameCollection(t1, t3) && sameCollection(t2, t4)
                 case (t1 : Iterable[_], t2 : Iterable[_]) =>
-                    (t1.size == t2.size) && (t1.zip(t2).forall(Function.tupled(sameCollection)))
+                    (t1.size == t2.size) && t1.zip(t2).forall(Function.tupled(sameCollection))
                 case _ =>
                     same(v1, v2)
             }
@@ -99,9 +102,9 @@ object Comparison {
             }
 
     /**
-     * Does the sequence `s` contain `t`? Equality is tested using `same`.
+     * Does the iterable `s` contain `t`? Equality is tested using `same`.
      */
-    def contains[T](s : Seq[T], t : T) : Boolean =
+    def contains[T](s : Iterable[T], t : T) : Boolean =
         s.exists(same(_, t))
 
     /**
