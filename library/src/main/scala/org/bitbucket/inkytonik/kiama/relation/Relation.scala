@@ -27,6 +27,7 @@ class Relation[T, U](
     rel =>
 
     import org.bitbucket.inkytonik.kiama.relation.Relation.emptyImage
+    import scala.collection.mutable.ListBuffer
 
     /**
      * An accessor for the graph field for those rare cases where a
@@ -83,12 +84,33 @@ class Relation[T, U](
     }
 
     /**
-     * Add the pair `(t,u)`` to the relation and the pair `(u,t)` to
+     * Return pairs that describe the mappings in this relation. I.e., the
+     * pair `(t,u)` will be included if `t` is related to `u`.
+     */
+    def pairs : Vector[(T, U)] = {
+        val buffer = new ListBuffer[(T, U)]
+        for (t <- domain; u <- apply(t))
+            buffer += ((t, u))
+        buffer.toVector
+    }
+
+    /**
+     * Add the pair `(t,u)` to the relation and the pair `(u,t)` to
      * its inverse.
      */
     def put(t : T, u : U) {
         graph.updateAt(t, _ :+ u, Vector(u))
         inverseGraph.updateAt(u, _ :+ t, Vector(t))
+    }
+
+    /**
+     * For each `u` taken from `us` add the pair `(t,u)` to the relation
+     * and the pair `(u,t)` to its inverse.
+     */
+    def putAll(t : T, us : Vector[U]) {
+        graph.updateAt(t, _ ++ us, us)
+        for (u <- us)
+            inverseGraph.updateAt(u, _ :+ t, Vector(t))
     }
 
     /**
@@ -121,6 +143,9 @@ class Relation[T, U](
  */
 object Relation {
 
+    import scala.annotation.tailrec
+    import scala.collection.immutable.Queue
+
     /**
      * A single empty image that can be used for all lookups.
      */
@@ -134,6 +159,29 @@ object Relation {
         for ((t, u) <- pairs)
             relation.put(t, u)
         relation
+    }
+
+    /**
+     * Make a relation from the repeated application of `onestep` to `t` and
+     * the results that it produces.
+     */
+    def fromOneStep[T](t : T, onestep : T => Vector[T]) : Relation[T, T] = {
+
+        val relation = new Relation[T, T]
+
+        @tailrec
+        def loop(pending : Queue[T]) : Relation[T, T] =
+            if (pending.isEmpty)
+                relation
+            else {
+                val l = pending.front
+                val next = onestep(l)
+                relation.putAll(l, next)
+                loop(pending.tail.enqueue(next))
+            }
+
+        loop(Queue(t))
+
     }
 
 }

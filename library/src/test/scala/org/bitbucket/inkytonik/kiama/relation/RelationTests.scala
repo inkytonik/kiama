@@ -19,7 +19,7 @@ import org.bitbucket.inkytonik.kiama.util.Tests
 class RelationTests extends Tests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree.Num
-    import org.bitbucket.inkytonik.kiama.relation.Relation.fromPairs
+    import org.bitbucket.inkytonik.kiama.relation.Relation.{fromOneStep, fromPairs}
 
     // Empty relations
 
@@ -40,12 +40,22 @@ class RelationTests extends Tests {
     val singleBoolNum = fromPairs(Vector((false, num3)))
     val singleNumNum = fromPairs(Vector((num4, num5)))
 
-    // Multiple element relations
+    // Multiple element relations from pairs
 
     val multiIntBool = fromPairs(Vector((1, true), (2, false), (1, true)))
     val multiNumInt = fromPairs(Vector((num2, 2), (num3, 3)))
     val multiBoolNum = fromPairs(Vector((false, num3), (false, num4), (true, num4)))
     val multiNumNum = fromPairs(Vector((num4, num5), (num4, num5)))
+
+    // Multiple elemnent relation from one step function
+
+    def nextTwoUpToThree(i : Int) : Vector[Int] =
+        if (i < 3)
+            Vector(i + 1, i + 2)
+        else
+            Vector()
+
+    val multiIntInt = fromOneStep(0, nextTwoUpToThree)
 
     // apply
 
@@ -133,6 +143,14 @@ class RelationTests extends Tests {
         multiNumNum(num2) shouldBe empty
     }
 
+    test("apply of multiple element int-int relation is empty (present)") {
+        multiIntInt(1) should haveSameElementsAs(Vector(2, 3))
+    }
+
+    test("apply of multiple element int-int relation is empty (not present)") {
+        multiIntInt(5) shouldBe empty
+    }
+
     // containsInDomain
 
     test("domain of singleton value-value relation contains its element") {
@@ -207,6 +225,22 @@ class RelationTests extends Tests {
         multiNumNum.containsInDomain(num5) shouldBe false
     }
 
+    test("domain of multiple element int-int relation contains its first element") {
+        multiIntInt.containsInDomain(0) shouldBe true
+    }
+
+    test("domain of multiple element int-int relation contains its second element") {
+        multiIntInt.containsInDomain(1) shouldBe true
+    }
+
+    test("domain of multiple element int-int relation contains its third element") {
+        multiIntInt.containsInDomain(2) shouldBe true
+    }
+
+    test("domain of multiple element int-int relation doesn't contains a non-element") {
+        multiIntInt.containsInDomain(5) shouldBe false
+    }
+
     // domain
 
     test("domain of empty value-value relation is empty") {
@@ -257,6 +291,10 @@ class RelationTests extends Tests {
         multiNumNum.domain should haveSameElementsAs(Vector(num4))
     }
 
+    test("domain of multiple element int-int relation is correct") {
+        multiIntInt.domain should haveSameElementsAs(Vector(0, 1, 2, 3, 4))
+    }
+
     // inverse
 
     test("inverting an empty relation yields an empty relation") {
@@ -279,6 +317,62 @@ class RelationTests extends Tests {
         num4image.size shouldBe 2
         num4image should contain(false)
         num4image should contain(true)
+    }
+
+    // pairs
+
+    test("pairs of empty value-value relation is empty") {
+        emptyIntBool.pairs shouldBe empty
+    }
+
+    test("pairs of empty ref-value relation is empty") {
+        emptyNumInt.pairs shouldBe empty
+    }
+
+    test("pairs of empty value-ref relation is empty") {
+        emptyBoolNum.pairs shouldBe empty
+    }
+
+    test("pairs of empty ref-ref relation is empty") {
+        emptyNumNum.pairs shouldBe empty
+    }
+
+    test("pairs of singleton value-value relation is correct") {
+        singleIntBool.pairs should haveSameElementsAs(Vector((1, true)))
+    }
+
+    test("pairs of singleton ref-value relation is correct") {
+        singleNumInt.pairs should haveSameElementsAs(Vector((num2, 2)))
+    }
+
+    test("pairs of singleton value-ref relation is correct") {
+        singleBoolNum.pairs should haveSameElementsAs(Vector((false, num3)))
+    }
+
+    test("pairs of singleton ref-ref relation is correct") {
+        singleNumNum.pairs should haveSameElementsAs(Vector((num4, num5)))
+    }
+
+    test("pairs of multiple element value-value relation is correct") {
+        multiIntBool.pairs should haveSameElementsAs(Vector((1, true), (2, false), (1, true)))
+    }
+
+    test("pairs of multiple element ref-value relation is correct") {
+        multiNumInt.pairs should haveSameElementsAs(Vector((num2, 2), (num3, 3)))
+    }
+
+    test("pairs of multiple element value-ref relation is correct") {
+        multiBoolNum.pairs should haveSameElementsAs(Vector((false, num3), (true, num4), (false, num4)))
+    }
+
+    test("pairs of multiple element ref-ref relation is correct") {
+        multiNumNum.pairs should haveSameElementsAs(Vector((num4, num5), (num4, num5)))
+    }
+
+    test("pairs of multiple element int-int relation is correct") {
+        multiIntInt.pairs should haveSameElementsAs(
+            Vector((0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (2, 4), (2, 3), (2, 4))
+        )
     }
 
     // range
@@ -329,6 +423,10 @@ class RelationTests extends Tests {
 
     test("range of multiple element ref-ref relation is correct") {
         multiNumNum.range should haveSameElementsAs(Vector(num5))
+    }
+
+    test("range of multiple element int-int relation is correct") {
+        multiIntInt.domain should haveSameElementsAs(Vector(0, 1, 2, 3, 4))
     }
 
     // unapplySeq (direct)
