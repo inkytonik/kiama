@@ -17,6 +17,7 @@ https://www.comp.mq.edu.au/~asloane
 
 ## Latest News
 
+ * Jun 19, 2017: Version 2.1.0 released
  * Apr 6, 2016: Version 2.0.0 released
  * Jun 24, 2015: moved project to BitBucket
  * Nov 10, 2014: Version 1.8.0 released
