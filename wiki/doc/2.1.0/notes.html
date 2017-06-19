@@ -1,0 +1,64 @@
+<p><a href="https://bitbucket.org/inkytonik/kiama">Kiama</a> is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.</p>
+
+<p>This is a simplification, enhancement and bug fix release cross-published for Scala 2.10, 2.11 and 2.12. It includes some API changes that may require source code changes in clients of the <code>Tree</code> and <code>Relation</code> components. It also includes major performance improvements in these components.</p>
+
+<p>Kiama is now distributed under the Mozilla Public License, v. 2.0, rather than under the GNU Lesser General Public License.</p>
+
+<h3 id="potentially-breaking-changes">Potentially breaking changes</h3>
+
+<ul>
+  <li>
+    <p><code>Relation</code>: <code>unapplySeq</code> replaces <code>unapply</code> on relations and returns the image of the matched value as a sequence. The old usage of matching a single value and failing otherwise still works, since the pattern <code>rel(x)</code> succeeds if the image contains one value. Since the whole image is now returned you can check for other image structures such as the empty image <code>rel()</code> and one that contains at least one element <code>rel(a, rest @ _*)</code>.</p>
+  </li>
+  <li>
+    <p><code>Relation</code>: the <code>pair</code> extractor on relations now uses <code>unapplySeq</code>. It returns the matched value and that value’s image in a single sequence. Thus, the pattern <code>rel.pair(n, x, y)</code> succeeds if the matched value has a two-element image, binding <code>n</code> to the matched value, <code>x</code> to the first element of the image and <code>y</code> to the second element of the image.</p>
+  </li>
+  <li>
+    <p><code>Relation</code>: API no longer contains uncommonly used relational operations (<code>collect</code>, <code>compose</code>, <code>containsInRange</code>, <code>index</code>, <code>preImage</code>, <code>preIndex</code>, <code>projDomain</code>, <code>projRange</code>, <code>union</code>, <code>withDomain</code> and <code>withRange</code>).</p>
+  </li>
+  <li>
+    <p><code>Tree</code>: the constructor now has a <code>shape</code> argument to specify constraints on the tree structure. The available shapes are: <code>LeaveAlone</code> that means we assume the provided tree structure is ok, <code>CheckTree</code> that causes a dynamic check that the structure is actually a tree and throws a <code>StructureIsNotATreeException</code> if it isn’t, and <code>EnsureTree</code> that ensures that the structure is a tree by cloning any shared nodes. By default, the <code>shape</code> argument is <code>LeaveAlone</code> which changes behaviour since shared node cloning was always performed in the previous version. If there is a chance that your structure is not already a tree, restore the previous behaviour by passing <code>EnsureTree</code>. The <code>rewriteTree</code> operation in the <code>Rewriter</code> passes <code>EnsureTree</code> by default since sharing often occurs after rewriting.</p>
+  </li>
+  <li>
+    <p><code>Tree</code>: old <code>siblings</code> relation is now called <code>sibling</code> which better matches the naming of relations such as <code>child</code>.</p>
+  </li>
+  <li>
+    <p><code>Util</code>: simplify <code>Memoiser</code> by removing use of traits and separate classes.</p>
+  </li>
+</ul>
+
+<h3 id="enhancements">Enhancements</h3>
+
+<ul>
+  <li>
+    <p><code>Relation</code> and <code>Tree</code>: major performance improvements primarily due to replacing an embarrassing linear search with an identity-based cache to access relations.</p>
+  </li>
+  <li>
+    <p><code>Parsing</code>: distinguish between parser <em>failures</em> that are local and can be avoided by trying another alternative and parser <em>errors</em> that cause the parse to terminate without trying other alternatives. Added  <code>~/</code> cut sequence operator that commits to the current alternative on the right. I.e., <code>p1 ~/ p2</code> will return an error if <code>p2</code> fails. In contrast, <code>p1 ~ p2</code> fails if <code>p2</code> fails. Similarly, added <code>~/&gt;</code> and <code>&lt;~/</code> which are analogous to <code>~&gt;</code> and <code>&lt;~</code> to ignore left and right side values, respectively. Added ‘nocut(p)’ to stop propagation of errors outward from within parser <code>p</code> and <code>commit(p)</code> to turn failures in <code>p</code> into errors.</p>
+  </li>
+  <li>
+    <p><code>Util</code>: include message labels in sort criteria after message location so messages at the same location are now in a well-defined order.</p>
+  </li>
+</ul>
+
+<h3 id="bug-fixes">Bug Fixes</h3>
+
+<ul>
+  <li>
+    <p><code>Rewriter</code>: structures that contain case classes that extend <code>AnyVal</code> are now rewritten correctly by unboxing the value where necessary.</p>
+  </li>
+  <li>Handling of source file paths should now work properly on Windows (contributed by Matt Pigram).</li>
+  <li><code>Source.dropPrefix</code>:
+** Avoid separator bug when dropping filename prefixes when there is no prefix.
+** Don’t drop if there is a partial overlap.</li>
+</ul>
+
+<h3 id="other">Other</h3>
+
+<ul>
+  <li>Source reorganised to match standard Maven/Sbt structure.</li>
+  <li>Tidied and simplified build specs, removed Build.scala, moved to sbt 0.13.15</li>
+  <li>Moved to Scala 2.12.2 as default version</li>
+  <li>Moved to ScalaTest 3.0.2, ScalaCheck 1.13.5, Scallop 2.1.1, Guava 21.</li>
+  <li>Fix URLs in POM that pointed to old Google Code setup.</li>
+</ul>
