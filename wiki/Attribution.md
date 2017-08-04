@@ -2,11 +2,6 @@
 
 Up: [User Manual](UserManual.md), Prev: [Rewriting](Rewriting.md), Next: [Machines](Machines.md)
 
-IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
-to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
-
 This page provides an overview of Kiama's support for
 _attribute grammars_. For the context in which this part of the library
 operates, see [Context](Context.md). Attribute grammars are used in the following
@@ -54,19 +49,9 @@ attribute grammar language as in the JastAdd system. The Kiama
 approach enables attributes to be defined on a pre-existing class
 hierarchy.
 
-The Kiama attribute grammar library is made available by the object
+The Kiama attribute grammar library is made available by the class
 `org.bitbucket.inkytonik.kiama.attribution.Attribution`.
-Import the types and methods you need from that object. (There is
-also an `Attribution` trait so you can mix it in with your own
-functionality.)
-
-For example,
-
-```
-import org.bitbucket.inkytonik.kiama.attribution.Attribution._
-```
-
-imports all names from the `Attribution` object.
+Extend that class to build a module that uses attribution.
 
 To get full support for pattern matching in
 attribute definitions it is best to use data structures constructed
@@ -86,9 +71,9 @@ tree.
 Suppose that the tree structure for Repmin is defined as follows.
 
 ```
-abstract class Tree
-case class Fork (left : Tree, right : Tree) extends Tree
-case class Leaf (value : Int) extends Tree
+sealed abstract class RepminTree extends Product
+case class Fork(left : RepminTree, right : RepminTree) extends RepminTree
+case class Leaf(value : Int) extends RepminTree
 ```
 
 If the input tree is
@@ -121,11 +106,11 @@ of the input tree whose value is the output tree. In Kiama this
 attribute signature would look like this:
 
 ```
-val repmin : Tree => Tree
+val repmin : RepminTree => RepminTree
 ```
 
 In the type of `repmin` the `=>` indicates that `repmin` is a function,
-in this case from type `Tree` to type `Tree`. We can use `repmin` as
+in this case from type `RepminTree` to type `RepminTree`. We can use `repmin` as
 an ordinary function without having to worry about its extra _attribute_
 behaviour, such as caching its results.
 
@@ -133,7 +118,7 @@ To define `repmin` we will need to know the minimum leaf value of the
 input tree. Let's define another attribute for that.
 
 ```
-val globmin : Tree => Int
+val globmin : RepminTree => Int
 ```
 
 Finally, to define the `globmin` attribute we will need to recursively
@@ -141,7 +126,7 @@ compute the mimima in each sub-tree of the input tree. We use a
 `locmin` attribute for those values.
 
 ```
-val locmin : Tree => Int
+val locmin : RepminTree => Int
 ```
 
 ## Defining attributes
@@ -156,8 +141,8 @@ equations can be stated as follows.
 ```
 val repmin : Tree => Tree =
     attr {
-        case Fork (l, r) => Fork (l->repmin, r->repmin)
-        case t : Leaf    => Leaf (t->globmin)
+        case Fork(l, r) => Fork(repmin(l), repmin(r))
+        case t : Leaf   => Leaf(globmin(t))
     }
 ```
 
@@ -167,32 +152,14 @@ based on the equations. `attr` can be regarded as packaging the
 equations up as a function and wrapping them in caching behaviour so
 that an attribute of a node is evaluated at most once.
 
-The attribute creation functions such as `attr` also have variants
-where you can specify a name for the attribute. The name is used
-when the attribute is printed, such as when the library reports a
-cycle in the attribute's dependencies. Use the form
-
-```
-attr ("name") { ... }
-```
-
-to specify a name.
-
-The `n->a` notation is used to refer to attribute `a` of node `n`.
-Since attributes are just functions, `n->a` is exactly the same as `a (n)`.
-The arrow form is usually used since it puts the focus on the
-node, but the function call form can be useful sometimes to
-match domain notation more closely. (For example, see the `in` and `out`
-attributes in the [Dataflow](Dataflow.md) example.)
-
 Continuing with the other Repmin attributes, we can define the local
 minimum as follows.
 
 ```
 val locmin : Tree => Int =
     attr {
-        case Fork (l, r) => (l->locmin) min (r->locmin)
-        case Leaf (v)    => v
+        case Fork(l, r) => locmin(l).min(locmin(r))
+        case Leaf(v)    => v
     }
 ```
 
@@ -205,92 +172,61 @@ Finally, the global minimum can be defined as follows.
 ```
 val globmin : Tree => Int =
     attr {
-        case t if t isRoot => t->locmin
-        case t             => t.parent[Tree]->globmin
+        case tree.parent(p) =>
+            globmin(p)
+        case t =>
+            locmin(t)
     }
 ```
 
-## Attributable
+## Tree relations
 
-This definition makes use of some meta-level properties of the tree
-that Kiama provides automatically if the tree nodes inherit from
-`org.bitbucket.inkytonik.kiama.attribution.Attributable`.  For Repmin, the following suffices.
+The definition of `globmin` uses a value `tree` that encapsulates
+relational information about the abstract syntax tree.
+We can use it to examine the tree structure to help us decide
+which equation to use.
+For example, in `globmin` we match `tree.parent(p)` which uses
+the `parent` relation to see if the node we are at has a parent.
+If it does have a parent, the match will succeed and `p` will
+be bound to that parent.
+Thus, the first case of `globmin` asks the parent for its
+`globmin`.
+The second case will only be used if the first fails, in other words,
+if the node has no parent.
+In that case, we just use `locmin` since a node with no parent is
+the root of the tree and its `globmin` is the same as its `locmin`.
 
-```
-abstract class Tree extends Attributable
-```
-
-`Attributable` provides access to information about the tree such as
-the parent of a given node (`parent`) or whether the node is the root
-of the tree (`isRoot`). These properties are made available by the
-`Attributable` class.
-
-You must call the method `Attribution.initTree(t)` on each tree
-root `t` if you want to access these node properties within the
-tree rooted at `t`. `t` must extend `Attributable`. It is not
-necessary to call it on every node in the tree, just on the root.
-We suggest that you perform this initialisation once after the tree
-has been constructed but before you evaluate any attributes on it.
-You must also initialise any trees that you construct during
-attribution if you want to evaluate attributes on them later.
-
-(Versions of Kiama before 1.2.0 initialised node properties in the
-`Attributable` constructor. This approach was not robust since it
-was hard to keep track of when nodes were constructed in relation
-to their parents and children. Thus, in 1.2.0 the `initTree` method
-was introduced to make the initialisation more explicit and
-predictable.)
-
-`Attributable` also provides other properties that are derived from
-`parent`, such as `children` that contains all of the children nodes
-of a node, and `prev` and `next` that provide access to nodes on the
-same level as a node. All of these node properties will work for any
-child that implements `Attributable`, but also recursively for the contents
-of any tuple, `Some` or `GenTraversable` child. For example, if `x`
-is a node that has a tuple child which contains `Attribtuable` node
-`y`, then the parent of `y` will be `x`. See [Collections](Collections.md) for more
-discussion of this point.
-
-We use both `parent` and `isRoot` in the definition of `globmin`. If
-we are asking for the global minimum of the root of the tree, then
-it's just the local minimum of the sub-tree rooted at that node. Other
-nodes just ask their parent for their global minimum value. Thus the
-request propagates up the tree to the root and the value propagates
-down.
-
-In the second case for `globmin` we use the form `t.parent[Tree]` to
-refer to the current node's parent. The type information `Tree` is
-necessary in this access since the `Attributable` class does not know
-the structure of the tree. Thus `parent` has a generic type to which
-`globmin` cannot be applied. An alternative would be to define
-`globmin` to have type
+The only question remaining is "where does `tree` come from"?
+It is usually created by the module that builds the attribution
+module and passed as a constructor argument.
 
 ```
-val globmin : Attributable => Int
+import org.bitbucket.inkytonik.kiama.relation.Tree
+
+class Repmin(tree : Tree[RepminTree, RepminTree]) extends Attribution {
+    ... attributes go here ...
+}
 ```
 
-but this would imply some loss of checking that `globmin` can only be
-applied to trees. This tradeoff is one of the sacrifices that
-currently has to be made to define attribute grammars as standard
-Scala programs without any pre-processing or meta-programming.
+The type `Tree` takes two type parameters: one to specify the type
+of the tree nodes, and another to specify the type of the root of the
+tree.
+In this example they are both `RepminTree`.
 
-`Attributable` provides some other operations such as the `->`
-notation for accessing attributes and a `clone` method. The
-`Attributable` companion object provides a `deepclone` operation
-that uses the Kiama [Rewriting](Rewriting.md) library and `clone` to clone a
-whole `Attributable` tree.
+If `ast` is the root of the actual abstract syntax tree, then the
+following code is typical to create a `Tree` for that AST, make
+an attribute module that uses it, and then use the attributes.
 
-(Kiama also provides a
-[Patterns](doc/1.8.0/api/org/kiama/util/Patterns$.html)
-utility module that provides extractor objects which are useful for
-dealing with node properties. For example, `HasParent` can be used
-to match on both a node and its parent at the same time.)
+```
+val tree = new Tree[RepminTree,RepminTree](ast)
+val repmin = new Repmin(tree)
+... use repmin.globmin etc ...
+```
 
-If you don't want to use the things that `Attributable` provides, you
-don't need to use it.  In that case, you will need to provide node
-properties in some other way, if needed.  Also, you will need to use
-the `a(n)` form of attribute reference since `->` will not be
-available.
+Kiama's tree relation support includes other relations such as
+`prev` and `next` for the previous and next nodes at the same
+level, or `firstChild` to get the first child of a node.
+See the documentation of Kiama's `Tree` class for more details.
 
 ## Embedding attribute grammars
 
@@ -310,44 +246,6 @@ other Scala code, just by regarding the attribute as a function.
 The rest of this page summarises the Kiama attribute library,
 particularly focussing on features not used in the Repmin example.
 
-## Node properties
-
-In addition to the `parent` and `isRoot` node properties described
-earlier, Kiama also provides properties to provide information about
-nodes that occur in sequences.  Suppose that your tree structure
-contains a node type like this:
-
-```
-abstract class Stmt extends Attributable
-case class Seqn (ss : Seq[Stmt]) extends Stmt
-```
-
-where sequences of statements are also statements. The Attributable
-class provides nodes in the sequence with properties to enable them to
-query their surroundings. If `s` is a node in the sequence, then
-`s.next` refers to the next node in the sequence (or null if there is
-none) and `s.prev` refers to the previous node in the sequence (or
-null if there is none). The Boolean-valued properties `isFirst` and
-`isLast` can be used to test if a sequence member occurs first or last
-in the sequence, respectively.
-
-(In fact, these attributes are more general than shown here. They also
-work in contexts where the node in question has other `Attributable`
-siblings (i.e., at the same tree level) but not within the same
-sequence.)
-
-The `parent` node property and the sequence member properties only pay
-attention to the `Attributable` nodes in the structure. For example,
-the parent of a node in the `ss` component of a `Seqn` construct will
-be the `Seqn` node, not the `Seq[Stmt]` value. This behaviour is
-designed to allow attribution to be conveniently attached to the relevant
-semantic nodes rather than nodes that only serve to implement the
-structure. For example, in the example above, the `Seqn` node
-represents the sequence so it is the one that should have attributes
-of the sequence. Similar remarks apply to nodes that occur inside
-`Option` and `Either` values.  In fact, `Seq` values are a special
-case; in general, any `Traversable` value is treated as described.
-
 ## Attribute definitions
 
 Many attributes can be defined using the `attr` function as seen in
@@ -355,35 +253,9 @@ the Repmin example. As noted earlier, attributes cache their results
 so that if they are called more than once on a particular node, the
 attribute computation is only performed the first time. You can clear
 the cache using an attribute's `reset` method, but this is rarely
-needed. All attribute caches can be lazily reset using the method
-`Attribution.resetMemo`. Cached attributes also have a method
+needed. Cached attributes also have a method
 `hasBeenComputedAt` which can be used to determine whether an
 attribute has already been computed at a particular node.
-
-In some cases, it is useful to be able to examine the parent context
-when defining an attribute. It is possible to explicitly match on the
-`parent` property of a node in an `attr` definition, but Kiama also
-provides the `childAttr` function to make this a bit easier. A
-definition of the form
-
-```
-val a : CachedAttribute[U,V] =
-    childAttr {
-        upat => {
-            ppat => {
-                case ... => ...
-                ...
-            }
-            ...
-        }
-        ...
-    }
-}
-```
-
-matches both on the `U` node to which it is applied (with `upat`) and
-on the parent of the `U` node (with `ppat`). An example of the use of
-`childAttr` can be found in the [Dataflow](Dataflow.md) example.
 
 ## Reference attributes
 
@@ -411,13 +283,6 @@ a construct, for example, where the new tree represents the
 translation. The new tree can have attributes in just the same way as
 the nodes in the main tree.
 
-At the moment, the root of a tree-value attribute is always unrelated
-to the main tree. In a future version of Kiama there will be a
-mechanism to attach a calculated tree to another node, so that parent
-references will be propagated to that node. We also plan to support
-_forwarded attributes_ where attributes of a tree-valued attribute can
-be automatically referred to another node.
-
 ## Parameterised attributes
 
 A common way to define a reference attribute is by a search process
@@ -428,24 +293,21 @@ found. We say that `lookup` is a _parameterised attribute_ since its
 definition depends on the identifier that is being looked up.
 
 Kiama provides a `paramAttr` function to assist with defining
-parameterised attributes.  The general form is
+parameterised attributes.  
+For example, the `lookup` attribute in the Kiama PicoJava example
+is defined as follows so that it is parameterised by a string
+name.
 
 ```
-val a : CachedParamAttribute[T,U,V] =
+val lookup : String => PicoJavaNode => Decl =
     paramAttr {
-        t => {
-            ppat => {
-                case ... => ...
+        name =>
+            {
+                case ... =>
+                case ... =>
             }
-           ...
-        }
-}
+    }
 ```
-
-where `T` is the type of the parameter, `U` is the type of tree nodes
-for which this attribute is defined and `V` is the type of the
-attribute value. See the `lookup` attribute of the [PicoJava](PicoJava.md) example
-for a full example of the use of`paramAttr`.
 
 `paramAttr` provides caching behaviour for parameterised attributes
 where the attributes are cached using both the parameter value and the
@@ -492,7 +354,7 @@ See the [Dataflow](Dataflow.md) example for an illustration of the use of circul
 attributes to define iterative dataflow equations to compute live
 variables for an imperative programming language.
 
-## Tree splicing
+## Tree splicing (Kiama 1.x only)
 
 Encodings of translations using attribute grammars commonly use `tree
 splicing` to connect an original tree (representing the thing that is
@@ -517,7 +379,7 @@ snippet from the Transform example.
 ```
 val ast : ExpR => Exp =
     tree {
-       case e => e->op_tree
+       case e => op_tree(e)
     }
 ```
 
@@ -526,20 +388,20 @@ val ast : ExpR => Exp =
 that node, just as `globmin` defines a translation of a Repmin node.
 The `ast` attribute causes the `op_tree` value to be spliced in so
 that the new tree has the same parent as the node in the old tree. In
-other words, `n->ast` will have the same value as `n->op_tree` but
+other words, `ast(n)` will have the same value as `op_tree(n)` but
 will also have the same parent as `n`.
 
 Using a tree splice, we can explicitly access attributes of new trees,
 via the nodes in the old tree. For example, if we want to access the
 `errors` attribute of the translation of node `n`, we can use
-`n->ast->errors`. The computation of the `errors` attribute has access
+`errors(ast(n))`. The computation of the `errors` attribute has access
 to the context of node `n` since the `ast` attribute is spliced in.
 
 ## Attribute forwarding
 
 It is sometimes desirable to refer to attributes such as `errors`
 implicitly instead of specifying the exact access path via a spliced
-tree. For example, we might like to refer to `n->errors` and have that
+tree. For example, we might like to refer to `errors(n)` and have that
 _forwarded_ automatically to the `ast` attribute. This idea allows us
 to decouple the use of the attribute `errors` from the precise way in
 which its value is computed (by passing it off to the `ast`
@@ -554,7 +416,7 @@ definition is the same as before.
 implicit val ast : ExpR => Exp = ...
 ```
 
-Thus, if we try to evaluate `n->errors`, where `n` is an `ExpR`, but
+Thus, if we try to evaluate `errors(n)`, where `n` is an `ExpR`, but
 `errors` is defined only on `Exp` nodes, the implicit conversion will
 kick in to convert `n` to an `Exp`.
 
@@ -575,16 +437,15 @@ down to the node where we need it. Since this pattern is general, the
 `down` has the following signature:
 
 ```
-def down[T <: Attributable,U] (a : T ==> U) : T => U
+def down[U](default : T => U)(a : T ==> U) : CachedAttribute[T, U] = {
 ```
 
-The attribute that results from the `down` decorator can only be
-used on `Attributable` nodes since it uses the `parent` property
-to find the closest ancestor. The parameter `a` is a partial
+The parameter `a` is a partial
 function that defines the behaviour of the attribute at those
 nodes where it is defined directly. Wherever `a` is not defined
-the decorator will ask the parent for the value. For this reason,
-`a` should at least be defined at the root of the tree.
+the decorator will ask the parent for the value.
+The parameter `default` is a function to use on a node that has
+no parent.
 
 `T ==> U` is an alias for the Scala library type `PartialFunction[T,U]`.
 You can obtain the `==>` type constructor for use in your own code
@@ -593,6 +454,12 @@ by importing it from the `org.bitbucket.inkytonik.kiama` package:
 ```
 import org.bitbucket.inkytonik.kiama.==>
 ```
+
+There are other variants of `down` that a) take a default value
+rather than a function, and b) throw an error if the root is reached
+(but `a` is not defined there).
+The `atRoot` decorator is the same as `down` with a default
+function when `a` is not defined anywhere.
 
 The other decorator provided by the library at the moment is `chain`.
 It enables you to thread a value through a tree, going past every
