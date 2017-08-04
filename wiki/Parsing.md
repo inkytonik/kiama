@@ -2,11 +2,6 @@
 
 Up: [User Manual](UserManual.md), Prev: [Context](Context.md), Next: [Rewriting](Rewriting.md)
 
-IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
-to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
-
 It is necessary to have a tree representation of the data that is
 to be manipulated in order to use Kiama's facilities. This
 representation is usually an _abstract syntax tree_ (AST) that
@@ -33,13 +28,12 @@ either an indication of parsing success and possibly a value
 representing the parsed text, or an indication of failure and a
 failure message.
 
-Detailed documentation for the parsing library may be found in its
-[API documentation](http://www.scala-lang.org/docu/files/api/scala/util/parsing/combinator/Parsers.html).
+Detailed documentation for the parsing library may be found in the
+[Kiama API documentation](https://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.12/2.1.0) (search "Parsers" to start).
 Chapter 31 of
 [Programming in Scala](http://www.artima.com/shop/programming_in_scala)
-provides an excellent overview of both using the library and its (non-packrat)
-implementation. This chapter from the first edition of the book is freely
-[available](http://www.artima.com/pins1ed/combinator-parsing.html).
+provides an excellent overview of a similar library that used to be part of the Scala standard library.
+This chapter from the first edition of the book is freely [available](http://www.artima.com/pins1ed/combinator-parsing.html).
 
 More detailed information on using the parsing library with Kiama can be
 found in these pages:

@@ -2,64 +2,79 @@
 
 Up: [Parsing](Parsing.md), Next: [Parser combinators](ParserCombs.md)
 
-IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
-to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
-
 See also [Parsing](Parsing.md) and [Parser combinators](ParserCombs.md) for general information about defining
 and using parser combinators.
 
 Most parsers for use with Kiama will operate on character input.
-We recommend using the following two library traits.
+For simplest usage extend the following class:
 
 ```
-import scala.util.parsing.combinator.PackratParsers
-import scala.util.parsing.combinator.RegexParsers
+org.bitbucket.inkytonik.kiama.parsing.Parsers
 ```
 
-The `PackratParsers` trait gives you backtracking parsers that
+The `Parsers` trait gives you backtracking parsers that
 _memoise_ their results, so that they allow unlimited lookahead
 and performance that is linear in terms of the input size.  They
 also allow left recursive productions to be directly encoded.
-(`PackratParsers` extends a more standard `Parsers` trait that
-uses less space than the packrat parsers because memoisation is
-not done, but loses the linear performance and left recursion.)
-`RegexParsers` provides facilities particular for parsers of
-character input.
+`Parsers` uses `Vector` values to record repeated constructs;
+use `ListParsers` if you prefer to use `List` values for this
+purpose.
 
-Thus, the usual structure for a parser is as follows.
+The `Parsers` class uses a `Positions` data structure to keep
+track of the input positions of parsed values. You should
+provide one when you extend the class.
 
 ```
-trait Parser extends RegexParsers with PackratParsers {
+class SyntaxAnalysis (positions : Positions) extends Parsers(positions) {
     ... parser definitions ...
 }
 ```
 
-## Parser inputs
+Thus, the usual approach is as follows where the `positions` argument to `SyntaxAnalysis` is provided by the code that creates the parser.
 
-A parser processes input of type `Input` which is defined to be
-[scala.util.parsing.input.Reader[Elem](http://www.scala-lang.org/docu/files/api/scala/util/parsing/input/Reader.html)]
-where `Elem` is the type of the input elements to be processed.
-`RegexParsers` defines `Elem` to be `Char`.
+```
+import org.bitbucket.inkytonik.kiama.util.Positions
+
+val positions = new Positions
+val parsers = new SyntaxAnalysis (positions)
+```
+
+## Parser sources and inputs
+
+A parser processes sources of type `org.bitbucket.inkytonik.kiama.util.Source`.
+The most common type of source is a `FileSource` that obtains its input from a file.
+
+```
+import org.bitbucket.inkytonik.kiama.util.FileSource
+
+val source = FileSource ("file.txt")
+```
+
+The class `StringSource` is also available so that a string can be used instead of a file.
+
+Parser input then is a source combined with an offset which records the current parsing positions.
+
+```
+case class Input (source : Source, offset : Int)
+```
 
 ## Parser results
 
 A parser that returns a value of type `T` on success is of type `Parser[T]`
 which extends the function type `Input => ParseResult[T]`.
-`ParseResult` has subclasses to represent the possible outcomes of
+`ParseResult` has sub-classes to represent the possible outcomes of
 a parse.
 
 ```
 case class Success[T] (result : T, next : Input) extends ParseResult[T]
-abstract class NoSuccess(msg: String, next: Input) extends ParseResult[Nothing]
-case class Failure (msg : String, next : Input) extends NoSuccess (msg, next)
-case class Error (msg : String, next : Input) extends NoSuccess (msg, next)
+abstract class NoSuccess(message : String, next: Input) extends ParseResult[Nothing]
+case class Failure (message : String, next : Input) extends NoSuccess (message, next)
+case class Error (message : String, next : Input) extends NoSuccess (message, next)
 ```
 
-In each cases, the `next` parameter represents the input remaining after
+In each case, the `next` parameter represents the input remaining after
 the parse. `Success.result` is the value produced by the successful
-parse, whereas the `msg` field is the message resulting from a failed
+parse, whereas a `message` field is the message resulting from a failed
 parse.  A `Failure` represents a failure that can backtrack to retry
 earlier parses, whereas an `Error` represents a final error.
 
@@ -69,14 +84,11 @@ Since a parser is just a function, it can be applied directly to an
 input to get a result. I.e., `p (in)` for a parser `p` and input `in`.
 
 Invocation of a parser is also encapsulated by the `parse` function,
-provided by `RegexParsers`.
+provided by `Parsers` which begins parser at the start of a source:
 
 ```
-def parse[T] (p : Parser[T], in: Reader[Char]) : ParseResult[T]
+def parse[T] (p : Parser[T], source : Source) : ParseResult[T]
 ```
-
-In addition to this simple version, Kiama overloads `parse` to take
-input values of type `java.lang.CharSequence` and `java.io.Reader`.
 
 It is often useful to make sure that a parser consumes all of its
 input. The `phrase` combinator returns a parser that recognises what
@@ -87,18 +99,20 @@ remaining.
 def phrase[T] (p : Parser[T]) : Parser[T]
 ```
 
-`phrase` is used by a set of `parseAll` functions that have the same
-signatures as `parse` but require that the entire input be consumed
+`phrase` is used by `parseAll` that has the same
+signature as `parse` but requires that the entire input be consumed
 by a successful parse. Thus, a typical invocation of a parser `p` is
 
 ```
 parseAll (p, s) match {
     case Success (e, _) =>
         println ("successful parse: " + e)
-    case f              =>
+    case f =>
         println (f)
 }
 ```
+
+In the `Success` case `e` is the value created by the parse.
 
 Note that the printable representation of a `Failure` includes the
 location of the failure, so it is almost always better to print the

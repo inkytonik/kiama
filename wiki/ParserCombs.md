@@ -2,21 +2,11 @@
 
 Up: [Parsing](Parsing.md), Prev: [Parser input](ParserInput.md)
 
-IMPORTANT NOTE: This page describes Kiama 1.x. Much of it also applies
-to Kiama 2.x, but not all. Please consult the 2.x release notes for the
-main differences. We are currently writing comprehensive documentation
-for 2.x that will eventually replace these pages.
-
 Like any combinator-based approach to parsing, Scala's library starts
 with simple parsers and uses functions to combine them into more
 complicated ones. The most common ways to construct parsers are
-covered here. See the Scala library API documentation for `Parsers`
-and `Parsers.Parser` for a complete list.
-
-Kiama contains a
-[parser utilities trait](doc/1.8.0/api/org/kiama/util/ParserUtilities.html)
-that provides useful operations to augment the ones provided by the
-Scala library. We mention those facilities at the end of this page.
+covered here. See the Kiama library API documentation for `Parsers`
+for a complete list.
 
 See also [Parsing](Parsing.md) and [ParserInput](ParserInput.md) for general information about
 defining and using parser combinators.
@@ -25,55 +15,32 @@ defining and using parser combinators.
 
 The simplest way to create a parser is to build one that doesn't
 consume any input. `success` produces a parser that always succeeds
-with a given result value. `failure` produces a parser that always
-fails with a given message.
+with a given result value. `failure` and `error` produce parsers that always
+fail or error with a given message.
 
 ```
-def success[T] (v : T) : Parser[T]
-def failure (msg : String) : Parser[Nothing]
+def success[T] (v : => T) : Parser[T]
+def failure (message : String) : Parser[Nothing]
+def error (message : String) : Parser[Nothing]
 ```
 
-`success` is not very useful, but `failure` can be used to produce
+`success` is not very useful, but the other two can be used to produce
 useful error messages if other input-consuming parsers have failed.
 See below for an example.
 
 The simplest way to create a parser that consumes some input is from
-an existing input element value. `accept` takes a value `e` and
-returns a parser that succeeds only if `e` is the next input element.
+an existing input character. `elem` takes a character `ch` and
+returns a parser that succeeds only if `ch` is the next input element.
 
 ```
-implicit def accept (e : Elem) : Parser[Elem]
+implicit def elem (ch : Char) : Parser[Char]
 ```
 
-Since `accept` is implicit, the compiler will insert a call to it if a
-`Parser[Elem]` is needed but an `Elem` is found. (Implicits are also
-used for other common parsing situations.) The following parser uses
-`accept` to recognise only a capital E.
+If any input element is legal instead of just a single one,
+the `any` combinator can be used.
 
 ```
-lazy val onlyE : Parser[Char] = 'E'
-```
-
-The type signature is necessary to trigger the implicit, so in this
-case it would be shorter to just call `accept` directly, but in more
-complex cases these calls become cumbersome.
-
-If any input element from a set is legal instead of just a single one,
-the `acceptIf` combinator can be used. `acceptIf` takes a predicate
-that defines the legal element set.
-
-```
-def acceptIf (p : Elem => Boolean) (err : Elem => String) : Parser[Elem]
-```
-
-The second argument to `acceptIf` is a function that is used to make an
-error message if the element is not accepted. For example, you can use
-`acceptIf` to define a number of useful elementary parsers, such as one
-that recognises a single digit.
-
-```
-lazy val digit : Parser[Char] =
-    acceptIf ((ch : Char) => ch.isDigit) (_ => "digit expected")
+def any : Parser[Char]
 ```
 
 ## Tokens
@@ -92,6 +59,11 @@ multi-character operator symbols.
 
 ```
 implicit def literal (s : String) : Parser[String]
+```
+
+Since literal is `implicit` if a parser is required you can just give a string.
+
+```
 lazy val whileParser : Parser[String] = "while"
 ```
 
@@ -99,28 +71,23 @@ Note that the values returned by literal parsers are of type `String`
 since a sequence of characters is recognised. `literal` will also skip any white
 space that is present, before trying to parse the literal.  You can
 customise the definition of white space by overriding the `whiteSpace`
-regular expression from `RegexParsers`.
+regular expression from `Parsers`.
 
-(Kiama also provides a
-[WhitespaceParser](doc/1.8.0/api/org/kiama/util/WhitespaceParser.html)
-utility trait that allows white space to be defined using
-a parser instead of just a regular expression. Using a parser means that some
-forms of white space, such as nested comments, are easier to define. See the
-[Oberon0](Oberon0.md) example for an application of this technique.)
-
-A cousin of `literal` is `regex` which recognises input that matches a
+A cousin of `literal` is `regex` which creates a parser that recognises input that matches a
 given regular expression. For example, a decimal number might be
 specified to be a sequence of one or more digits.  White space is also
-skipped.
+skipped. `regex` is also implicit so it suffices to provide a regular expression object.
 
 ```
 implicit def regex (r: Regex) : Parser[String]
+
 lazy val decimal : Parser[String] = """\d+""".r
 ```
 
-(The `"""...""".r` form is Scala's way of obtaining a regular
-expression from a string in which escape sequences are not
-interpreted.)
+Recall that `"foo".r` converts a string into a regular expression object.
+The `"""...""".r` form is Scala's way of obtaining a regular
+expression from a string in which backslash escape sequences are not
+interpreted.
 
 ## Identifiers
 
@@ -129,7 +96,7 @@ represents something. It is easy to use `regex` to define the form that
 identifiers can take. For example,
 
 ```
-lazy val identifier : Parser[String] = """[a-zA-Z]+""".r
+lazy val identifier : Parser[String] = "[a-zA-Z]+".r
 ```
 
 When parsing some languages, care must be taken to avoid clashes between
@@ -172,9 +139,8 @@ one option:
 lazy val keyword : Parser[String] = "if[^a-zA-Z]"
 ```
 
-Again, this can be extended to multiple keywords. In Kiama versions
-after 1.3.0, the `ParserUtilities` trait provides an operation called
-`keywords` to make it easy to apply this approach.
+Again, this can be extended to multiple keywords. `Parsers`
+provides an operation called `keywords` to make it easy to apply this approach.
 
 This approach is not without flaws. It requires the keywords to be
 repeated, once in the place where they are actually parsed and once
@@ -200,7 +166,7 @@ class, containing the result of `p` as the first component and the
 result of `q` as the second component.
 
 ```
-case class ~[+U,+V] (l : U, r : V)
+case class ~[+U,+V] (_1 : U, _2 : V)
 ```
 
 On some occasions a sequence needs to be recognised, but only the
@@ -215,6 +181,9 @@ abstract class Parser[+T] ... {
     def <~[U] (q : => Parser[U]) : Parser[T]
 }
 ```
+
+There is also a non-backtracking sequence combinator called `~/` with
+variants `~/>` and `<~/`.
 
 The following parsers use the sequencing methods to recognise
 assignment statements and while loops, discarding the results of
@@ -288,37 +257,31 @@ lazy val xtends     = "extends" ~> IDENTIFIER
 A collection of combinators and methods facilitate specification of
 repeated constructs.
 
-| `p*`, `rep (p)` | repeat `p` zero or more times |
+| `rep (p)` | repeat `p` zero or more times |
 |:----------------|:------------------------------|
-| `p* (sep)`, `repsep (p, sep)` | repeat `p` zero or more times separated by `sep` |
-| `p+`, `rep1 (p)` | repeat `p` one or more times  |
-| `p+ (sep)`, `rep1sep (p, sep)` | repeat `p` one or more times separated by `sep` |
-| `repN (n, p)`   | repeat `p` exactly `n` times  |
+| `repsep (p, sep)` | repeat `p` zero or more times separated by `sep` |
+| `rep1 (p)` | repeat `p` one or more times  |
+| `rep1sep (p, sep)` | repeat `p` one or more times separated by `sep` |
 
-The parsers created by these combinators return lists of the result
+The parsers created by these combinators return vectors of the result
 produced by `p`. In the separator versions, the results of `sep` are
 discarded.
 
 ```
-def rep[T] (p : => Parser[T]) : Parser[List[T]]
-def repsep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[List[T]]
-def rep1[T] (p : => Parser[T]) : Parser[List[T]]
-def rep1sep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[List[T]]
-def repN[T] (n : Int, p : => Parser[T]) : Parser[List[T]]
-
-abstract class Parser[+T] ... {
-    def *[U] : Parser[List[T]]
-    def *[U] (sep : => Parser[U]) : Parser[List[T]]
-    def +[U] Parser[List[T]]
-    def +[U] (sep : => Parser[U]) : Parser[List[T]]
-}
+def rep[T] (p : => Parser[T]) : Parser[Vector[T]]
+def repsep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[Vector[T]]
+def rep1[T] (p : => Parser[T]) : Parser[Vector[T]]
+def rep1sep[T,U] (p : => Parser[T], sep: => Parser[U]) : Parser[Vector[T]]
 ```
+
+Use the `ListParsers` class instead of `Parsers` to have these
+methods return lists instead of vectors.
 
 The following examples show how repetition is used to parse statement
 sequences and comma-separated expression lists.
 
 ```
-lazy val stmtseq = "{" ~> (stmt*) <~ "}"
+lazy val stmtseq = "{" ~> rep (stmt) <~ "}"
 lazy val explist = repsep (exp, ",")
 ```
 
@@ -378,6 +341,42 @@ objects for constant nodes, but this practice should be avoided when
 building an AST, since the resulting structure will be a graph, not a
 tree because the case object leaves will be shared.
 
+## Convenient value construction conversions
+
+In the second example from the previous section
+we must decompose the pair that is built by the underlying parser,
+only to pass each component to the `Asgn` constructor. This pattern
+is very common, so Kiama provides implicit conversions and the
+pattern matching can be omitted. For example, for the pair case we
+have
+
+```
+implicit def constToTupleFunction2[A,B,R] (r : (A,B) => R) : (A ~ B) => R = {
+    case a ~ b =>
+        r (a, b)
+}
+```
+
+The example can be simplified using the conversion since it takes
+care of converting the `Asgn` constructor into something that can
+take the pair produced by the parser.
+
+```
+lazy val asgnStmt : Parser[Asgn] =
+    idn ~ ("=" ~> exp) <~ ";" ^^ Asgn
+```
+
+Similar conversions are provided for up to six arguments.
+
+Similarly, it is sometimes useful to return a regular Scala tuple
+from a parser that makes a _tilde_ tuple. Kiama provides implicit
+conversions up to tuples of size six for this purpose.
+
+```
+implicit def parseResultToTuple2[A,B] (p : Parser[A ~ B]) : PackratParser[(A,B)] =
+    p ^^ { case a ~ b => (a,b) }
+```
+
 ## Testing the input with parsers
 
 Sometimes it is useful to be able to test whether a parser applies
@@ -391,10 +390,6 @@ fails, in both cases without changing the input.
 def guard[T] (p : => Parser[T]) : Parser[T]
 def not[T] (p : => Parser[T]) : Parser[Unit]
 ```
-
-A common usage of `not` is to ensure that identifiers are not allowed
-to have the same form as keywords, as described above in
-[Identifiers](#markdown-header-identifiers).
 
 ## Left recursion and memoisation
 
@@ -410,7 +405,7 @@ will not work since `exp` calls itself without consuming any input.
 The usual solution to this problem is to rewrite the `exp` definition
 using repetition to avoid the left recursion. Unfortunately, this
 approach obscures the structure of the grammar and makes AST
-construction more complicated. Scala provides an alternative via
+construction more complicated. Kiama provides an alternative via
 _packrat_ or _memoising parsers_ represented by the type
 `PackratParser[T]` that extends `Parser[T]`.
 
@@ -457,75 +452,25 @@ of true packrat parsers.
 
 ## Positions
 
-Often it is useful to attach position (coordinate) information to the
-results of a parse. E.g., you might want to [produce error
-or warning messages](Messaging.md) during semantic analysis and you want the
-messages to point to meaningful places in the code.
+The combinators discussed here will automatically keep track of
+position infirmation and store it using the `positions` argument
+to `Parsers`.
 
-The Scala parser combinator library provides the `positioned`
-combinator to help you attach positions to parsed structures. The
-expression `positioned (p)` denotes a parser that parses exactly what
-the parser `p` parses and returns the same value. However, if the
-value returned by `p` is an instance of the
-`scala.util.parsing.input.Positional` class, the value is also
-annotated with the current input position.
+It is possible to query this position information later.
+For example, if `n` is a node that was created by one of these
+parsers then `positions.getStart (n)` is the (optional) position
+encoding where the input corresponding to `n` started.
+Similarly, for `getFinish`.
 
-This approach to position handling is used in a number of the Kiama
-examples. E.g., in the [Lambda2](Lambda2.md) example, the `exp0` parser is written
-as follows so that positions are attached to basic expressions.
+See the API documentation for `Positions` for more information.
 
-```
-lazy val exp0 : PackratParser[Exp] =
-    positioned (number | idn ^^ Var) |
-    "(" ~> positioned (exp) <~ ")"
-```
-
-The `positioned` will only work if the tree nodes being constructed
-are instances of `Positional`, so it is usual to declare that
-supertype when the tree type is being defined.
-
-Kiama's [Messaging](Messaging.md) module is designed to work with values that are
-instances of `Positional`.  All you need to do is pass such a value
+Kiama's [Messaging](Messaging.md) module is designed to work with
+values that have positions.
+All you need to do is pass such a value
 to the `message` method and the position information will be used
 automatically.
 
-## `ParserUtilities`
-
-Kiama's
-[parser utilities trait](doc/1.8.0/api/org/kiama/util/ParserUtilities.html)
-provides operations to make it easier to write a parser
-using `RegexParsers` and `PackratParsers`.
-Some of them are described here, but see the API documentation for
-complete details of what is available.
-
-`any` is a parser that accepts any character, which can be useful
-for describing constructs such as comments.
-
-```
-def any : PackratParser[Char]
-```
-
-The `err` and `failure` combinators from the Scala library will cause
-parsing to fail. Unfortunately, they report the failure at the current
-parsing position, which is usually at the location of some whitespace
-just before the text that could not be parsed. Kiama provides versions
-of `err` and `failure` that skip whitespace before they fail.
-
-```
-def err (msg : String) : Parser[Nothing]
-def failure (msg : String) : Parser[Nothing]
-```
-
-The `success` combinator in the Scala library makes a parser that
-always succeeds with the argument passed to `success`. The argument
-is passed by value, so each invocation of the parser will return
-the same value. Sometimes you want it to return a different value
-each time. Kiama's `result` combinator is just like `success` except
-that the argument is passed by name.
-
-```
-def result[T] (v : => T) : Parser[T]
-```
+## Other combinators
 
 Kiama's `wrap` combinator wraps a parser `p` so that its value (of
 type `T`) is post-processed by a function `f`. `f` can either produce
@@ -542,50 +487,5 @@ by a parser before deciding whether the parse has succeeded or not.
 For example, Kiama provides the `constrainedInt` parser which parses
 a string of digits but only succeeds if the numeric value will fit
 into an `Int` (as determined by the operation `stringToInt`).
-
-Writing actions to return values from parsers is somewhat tedious
-using the Scala library since the default parser values are constructed
-using the _tilde_ pair constructor. Recall the example from above:
-
-```
-case class Asgn (s : Idn, e : Exp) extends Stmt
-
-lazy val asgnStmt : Parser[Asgn] =
-    idn ~ ("=" ~> exp) <~ ";" ^^
-        { case s ~ e => Asgn (s, e) }
-```
-
-We must decompose the pair that is built by the underlying parser,
-only to pass each component to the `Asgn` constructor. This pattern
-is very common, so Kiama provides implicit conversions and the
-pattern matching can be omitted. For example, for the pair case we
-have
-
-```
-implicit def constToTupleFunction2[A,B,R] (r : (A,B) => R) : (A ~ B) => R = {
-    case a ~ b =>
-        r (a, b)
-}
-```
-
-The example can be simplified using the conversion since it takes
-care of converting the `Asgn` constructor into something that can
-take the pair produced by the parser.
-
-```
-lazy val asgnStmt : Parser[Asgn] =
-    idn ~ ("=" ~> exp) <~ ";" ^^ Asgn
-```
-
-Similar conversions are provided for up to six arguments.
-
-Similarly, it is sometimes useful to return a regular Scala tuple
-from a parser that makes a _tilde_ tuple. Kiama provides implicit
-conversions up to tuples of size six for this purpose.
-
-```
-implicit def parseResultToTuple2[A,B] (p : Parser[A ~ B]) : PackratParser[(A,B)] =
-    p ^^ { case a ~ b => (a,b) }
-```
 
 Up: [Parsing](Parsing.md), Prev: [Parser input](ParserInput.md)
