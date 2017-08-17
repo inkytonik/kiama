@@ -1,10 +1,12 @@
 # Overview of Kiama's support for attribute grammars
 
-Up: [User Manual](UserManual.md), Prev: [Rewriting](Rewriting.md), Next: [Machines](Machines.md)
+Up: [User Manual](UserManual.md), Prev: [Rewriting](Rewriting.md), Next: [Relations](Relations.md)
 
 This page provides an overview of Kiama's support for
 _attribute grammars_. For the context in which this part of the library
-operates, see [Context](Context.md). Attribute grammars are used in the following
+operates, see [Context](Context.md). For a description of Kiama's support for relations, particularly in trees, and how they can be used in attribution, see [Relations](Relations.md).
+
+Attribute grammars are used in the following
 examples.
 
   * [Dataflow](Dataflow.md)

@@ -44,6 +44,7 @@ The rest of this user manual contains the following sections:
   * one section for each of the major processing paradigms supported by Kiama:
     * [strategy-based rewriting](Rewriting.md)
     * [attribute definition](Attribution.md)
+    * [tree relations](Relations.md)
     * [abstract state machines](Machines.md)
     * [pretty printing](PrettyPrinting.md)
 
