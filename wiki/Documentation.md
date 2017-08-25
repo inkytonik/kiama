@@ -8,6 +8,7 @@
       * [Defining parsers using combinators](ParserCombs.md)
     * [Term rewriting](Rewriting.md)
     * [Attribute grammars](Attribution.md)
+    * [Tree relations](Relations.md)
     * [Abstract state machines](Machines.md)
     * [Pretty printing](PrettyPrinting.md)
     * [Messages](Messaging.md)
