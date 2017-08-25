@@ -92,7 +92,7 @@ For example, `tree.parent(n)` will return a vector of the nodes that are in the 
 The vector will contain at most one node if the structure is actually a tree.
 An exception will be thrown if `n` isn't a part of the tree structure.
 
-Similarly, there are operations `child, `firstChild`, `lastChild`, `prev`, `next` and `sibling` that can be used to get all children, the first child, the last child, the previous node at the same leve, the next node at the same level and sibling nodes, respectively.
+Similarly, there are operations `child`, `firstChild`, `lastChild`, `prev`, `next` and `sibling` that can be used to get all children, the first child, the last child, the previous node at the same leve, the next node at the same level and sibling nodes, respectively.
 
 ## Using relational tree operations as patterns
 
