@@ -1,9 +1,14 @@
-image: williamyeh/sbt
+image: bitbucketpipelines/scala-sbt:scala-2.12
 
 pipelines:
   default:
     - step:
+        caches:
+            - sbt
+            - ivy2
         script:
           - sbt sbtVersion
-          - sbt +clean +test
-          - sbt +kiama/package +kiama/package-src +kiama/package-doc +kiama/test:package +kiama/test:package-src +kiama/test:package-doc
+          - sbt +clean
+          - sbt +test
+          - sbt +kiama/package +kiama/packageSrc +kiama/package-doc
+          - sbt +kiama/test:package +kiama/test:packageSrc +kiama/test:packageDoc
