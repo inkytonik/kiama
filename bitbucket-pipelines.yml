@@ -10,5 +10,5 @@ pipelines:
           - sbt sbtVersion
           - sbt +clean
           - sbt +test
-          - sbt +kiama/package +kiama/packageSrc +kiama/package-doc
+          - sbt +kiama/package +kiama/packageSrc +kiama/packageDoc
           - sbt +kiama/test:package +kiama/test:packageSrc +kiama/test:packageDoc
