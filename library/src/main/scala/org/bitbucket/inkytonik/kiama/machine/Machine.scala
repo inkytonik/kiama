@@ -24,7 +24,7 @@ import org.bitbucket.inkytonik.kiama.output.PrettyPrinter
  * fashion.
  */
 abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
-        extends PrettyPrinter {
+    extends PrettyPrinter {
 
     import scala.annotation.tailrec
     import scala.collection.mutable.{Map => MutableMap}

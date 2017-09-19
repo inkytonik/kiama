@@ -22,9 +22,9 @@ import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser
  * tree nodes.
  */
 class TreeRelation[T <: Product](
-        tree : Tree[T, _ <: T],
-        override val graph : Memoiser[T, Vector[T]] = makeIdMemoiser[T, Vector[T]](),
-        override val inverseGraph : Memoiser[T, Vector[T]] = makeIdMemoiser[T, Vector[T]]()
+    tree : Tree[T, _ <: T],
+    override val graph : Memoiser[T, Vector[T]] = makeIdMemoiser[T, Vector[T]](),
+    override val inverseGraph : Memoiser[T, Vector[T]] = makeIdMemoiser[T, Vector[T]]()
 ) extends Relation[T, T](graph, inverseGraph) {
 
     rel =>

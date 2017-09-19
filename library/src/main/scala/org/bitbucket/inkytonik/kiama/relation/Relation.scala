@@ -20,8 +20,8 @@ import org.bitbucket.inkytonik.kiama.util.Memoiser.makeIdMemoiser
  * and vice versa.
  */
 class Relation[T, U](
-        val graph : Memoiser[T, Vector[U]] = makeIdMemoiser[T, Vector[U]](),
-        val inverseGraph : Memoiser[U, Vector[T]] = makeIdMemoiser[U, Vector[T]]()
+    val graph : Memoiser[T, Vector[U]] = makeIdMemoiser[T, Vector[U]](),
+    val inverseGraph : Memoiser[U, Vector[T]] = makeIdMemoiser[U, Vector[T]]()
 ) {
 
     rel =>

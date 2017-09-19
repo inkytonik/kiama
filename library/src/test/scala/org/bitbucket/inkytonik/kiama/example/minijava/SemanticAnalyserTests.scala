@@ -141,14 +141,14 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """4:9: mult is declared more than once
+                """4:9: mult is declared more than once
               |    int mult;
               |        ^
               |5:9: mult is declared more than once
               |    int mult;
               |        ^
               |""".stripMargin
-        )
+            )
     }
 
     test("two declarations of same name in different scopes is ok") {
@@ -178,11 +178,11 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """5:9: notdecl is not declared
+                """5:9: notdecl is not declared
               |        notdecl = 1;
               |        ^
               |""".stripMargin
-        )
+            )
     }
 
     test("use of a name that is declared in wrong scope is an error") {
@@ -201,11 +201,11 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """9:9: notdecl is not declared
+                """9:9: notdecl is not declared
               |        notdecl = 1;
               |        ^
               |""".stripMargin
-        )
+            )
     }
 
     // Test type of integer expression (Rule 4)
@@ -238,11 +238,11 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """6:16: can't refer to methods directly
+                """6:16: can't refer to methods directly
               |        return m;
               |               ^
               |""".stripMargin
-        )
+            )
     }
 
     // Test type of condition in if and while statements (Rule 7)
@@ -488,11 +488,11 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """6:21: illegal call to non-method
+                """6:21: illegal call to non-method
               |        return this.v ();
               |                    ^
               |""".stripMargin
-        )
+            )
     }
 
     test("a superclass method can be called") {
@@ -544,11 +544,11 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """9:13: type error: expected int got boolean
+                """9:13: type error: expected int got boolean
              |        v = this.m ();
              |            ^
              |""".stripMargin
-        )
+            )
     }
 
     test("the numbers of arguments in a call can match the declaration") {
@@ -579,11 +579,11 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """8:21: wrong number of arguments, got 1 but expected 2
+                """8:21: wrong number of arguments, got 1 but expected 2
               |        return this.m (42);
               |                    ^
               |""".stripMargin
-        )
+            )
     }
 
     test("the types of arguments in a call must match the declaration") {
@@ -600,14 +600,14 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """8:24: type error: expected boolean got int
+                """8:24: type error: expected boolean got int
               |        return this.m (42, 99);
               |                       ^
               |8:28: type error: expected int[] got int
               |        return this.m (42, 99);
               |                           ^
               |""".stripMargin
-        )
+            )
     }
 
     test("forward references to methods work") {
@@ -698,11 +698,11 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-            """5:16: type error: expected int got boolean
+                """5:16: type error: expected int got boolean
               |        return true;
               |               ^
               |""".stripMargin
-        )
+            )
     }
 
     // Pretty-printing of environments

@@ -19,8 +19,8 @@ import org.scalatest.prop.Checkers
  * General test support designed to be mixed in to compilers or drivers.
  */
 trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
-        with BeforeAndAfterEach with Checkers with Matchers with PositionStore
-        with Messaging {
+    with BeforeAndAfterEach with Checkers with Matchers with PositionStore
+    with Messaging {
 
     import Comparison.{same, sameCollection, sameElements}
     import org.scalatest.Tag

@@ -13,7 +13,7 @@ package example.oberon0
 package drivers
 
 trait A1Phases extends L2.source.SourcePrettyPrinter
-        with base.FrontEndDriver {
+    with base.FrontEndDriver {
 
     import base.source.SourceTree.SourceTree
 

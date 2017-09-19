@@ -20,7 +20,7 @@ import org.bitbucket.inkytonik.kiama.util.{Console, Emitter}
  * given code, reading input from console and emitting output using emitter.
  */
 class RISC(code : Code, console : Console, emitter : Emitter)
-        extends Machine("RISC", emitter) {
+    extends Machine("RISC", emitter) {
 
     /**
      * Debug flag. Set this to true in sub-classes or objects to obtain

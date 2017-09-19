@@ -1,9 +1,7 @@
 import com.typesafe.sbt.pgp.PgpKeys.{publishSigned, publishLocalSigned}
 
 import scalariform.formatter.preferences._
-import SbtScalariform.ScalariformKeys
-
-import sbtunidoc.Plugin.UnidocKeys.unidoc
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
 // Settings for entire build
 
@@ -72,7 +70,6 @@ libraryDependencies in ThisBuild ++= {
 
 incOptions in ThisBuild :=
     (incOptions in ThisBuild).value.
-        withNameHashing(true).
         withLogRecompileOnMacro(false)
 
 logLevel in ThisBuild := Level.Info
@@ -88,7 +85,7 @@ mainClass in ThisBuild := None
 // Project settings
 
 val subProjectSettings =
-    scalariformSettings ++
+    scalariformSettings(autoformat = true) ++
     Seq(
         // No publishing, it's done in the root project
 
@@ -102,6 +99,7 @@ val subProjectSettings =
         ScalariformKeys.preferences :=
             ScalariformKeys.preferences.value
                 .setPreference(AlignSingleLineCaseStatements, true)
+                .setPreference(DanglingCloseParenthesis, Force)
                 .setPreference(IndentSpaces, 4)
                 .setPreference(SpaceBeforeColon, true)
                 .setPreference(SpacesAroundMultiImports, false)
@@ -157,8 +155,8 @@ lazy val kiama =
     setupProject(
         project in file("."),
         "kiama"
-    ).settings(
-        unidocSettings : _*
+    ).enablePlugins(
+        ScalaUnidocPlugin
     ).settings(
         // File mappings
 

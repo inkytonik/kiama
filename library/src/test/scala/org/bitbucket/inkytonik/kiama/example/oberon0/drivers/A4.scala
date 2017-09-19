@@ -13,8 +13,8 @@ package example.oberon0
 package drivers
 
 trait A4Phases extends L4.source.SourcePrettyPrinter
-        with L4.c.CPrettyPrinter
-        with base.TranslatingDriver {
+    with L4.c.CPrettyPrinter
+    with base.TranslatingDriver {
 
     phases =>
 

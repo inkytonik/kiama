@@ -1,11 +1,11 @@
 // Required plugins:
 
-addSbtPlugin ("com.eed3si9n" % "sbt-unidoc" % "0.3.0")
-addSbtPlugin ("org.scalariform" % "sbt-scalariform" % "1.5.1")
+addSbtPlugin ("com.eed3si9n" % "sbt-unidoc" % "0.4.1")
+addSbtPlugin ("org.scalariform" % "sbt-scalariform" % "1.8.0")
 
 // Desirable plugins:
 
-addSbtPlugin ("com.jsuereth" % "sbt-pgp" % "1.0.0")
+addSbtPlugin ("com.jsuereth" % "sbt-pgp" % "1.1.0")
 
 // Optional plugins:
 

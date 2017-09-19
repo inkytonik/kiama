@@ -13,7 +13,7 @@ package example.oberon0
 package drivers
 
 trait A3Phases extends L3.source.SourcePrettyPrinter
-        with base.TransformingDriver {
+    with base.TransformingDriver {
 
     phases =>
 
