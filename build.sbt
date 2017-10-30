@@ -5,12 +5,12 @@ import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
 // Settings for entire build
 
-version in ThisBuild := "2.1.0"
+version in ThisBuild := "2.2.0-SNAPSHOT"
 
 organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
 
-scalaVersion in ThisBuild := "2.12.3"
-crossScalaVersions in ThisBuild := Seq ("2.12.3", "2.11.11", "2.10.6")
+scalaVersion in ThisBuild := "2.12.4"
+crossScalaVersions in ThisBuild := Seq ("2.12.4", "2.11.11", "2.10.6")
 
 scalacOptions in ThisBuild := {
     // Turn on all lint warnings, except:
