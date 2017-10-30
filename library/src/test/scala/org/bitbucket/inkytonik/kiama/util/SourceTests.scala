@@ -14,7 +14,7 @@ package util
 /**
  * Tests of source utility routiines.
  */
-class SourceTests extends Tests {
+class SourceTests extends KiamaTests {
 
     import Source.{dropCurrentPath, dropPrefix}
     import java.io.File.separator

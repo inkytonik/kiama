@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package example.dataflow
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Tests of extended data flow attribution.
  */
-class DataflowForTests extends Tests {
+class DataflowForTests extends KiamaTests {
 
     import DataflowTree._
 

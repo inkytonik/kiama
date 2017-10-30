@@ -11,13 +11,13 @@
 package org.bitbucket.inkytonik.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Rewriting tests that operate on normal class values, i.e., not instances
  * of products or collection class values.
  */
-class RewriterClassTests extends Tests {
+class RewriterClassTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeNonCaseTree._
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._

@@ -12,7 +12,7 @@ package org.bitbucket.inkytonik.kiama
 package rewriting
 
 import org.bitbucket.inkytonik.kiama.example.imperative.Generator
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Support for rewriting tests.
@@ -61,7 +61,7 @@ object RewriterTests {
 /**
  * Rewriting tests.
  */
-class RewriterTests extends Tests with Generator {
+class RewriterTests extends KiamaTests with Generator {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.util.Comparison.optsame

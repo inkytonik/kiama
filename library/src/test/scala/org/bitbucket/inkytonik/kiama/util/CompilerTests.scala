@@ -15,7 +15,7 @@ package util
  * Basic tests of compiler module.  Normal usage is tested by many of
  * the examples.
  */
-class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
+class CompilerTests extends KiamaTests with Compiler[Any] with TestCompiler[Any] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.parsing.Parsers
@@ -57,7 +57,7 @@ class CompilerTests extends Tests with Compiler[Any] with TestCompiler[Any] {
 /**
  * Support for testing drivers.
  */
-trait TestDriverWithConfig[C <: Config] extends Tests {
+trait TestDriverWithConfig[C <: Config] extends KiamaTests {
 
     import java.io.File
     import scala.io.Source

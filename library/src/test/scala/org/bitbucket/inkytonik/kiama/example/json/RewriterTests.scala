@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package example.json
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Tests that check that the rewriting and decoration works correctly.
  */
-class RewriterTests extends Tests {
+class RewriterTests extends KiamaTests {
 
     import JSONTree._
     import Rewriter._

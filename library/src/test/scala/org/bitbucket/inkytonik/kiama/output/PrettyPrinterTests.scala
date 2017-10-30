@@ -11,7 +11,7 @@
 package org.bitbucket.inkytonik.kiama
 package output
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Basic tests of pretty-printer module.  More complex setups and some
@@ -432,7 +432,7 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
  * particularly Oberon0, test most cases; we just pick up the remainder
  * for coverage here.
  */
-class ParenPrettyPrinterTests extends Tests with ParenPrettyPrinter {
+class ParenPrettyPrinterTests extends KiamaTests with ParenPrettyPrinter {
 
     abstract class Exp extends PrettyExpression
 

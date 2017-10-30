@@ -19,9 +19,9 @@
 package org.bitbucket.inkytonik.kiama
 package example.picojava.tests
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
-class InheritanceNameResolutionTests extends Tests {
+class InheritanceNameResolutionTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.example.picojava.ErrorCheck
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree._

@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package attribution
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Tests of basic attribution.
  */
-class AttributionTests extends Tests {
+class AttributionTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.relation.Tree
 

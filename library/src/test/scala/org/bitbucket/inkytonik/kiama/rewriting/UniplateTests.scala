@@ -11,14 +11,14 @@
 package org.bitbucket.inkytonik.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 import org.bitbucket.inkytonik.kiama.example.imperative.Generator
 
 /**
  * Tests based on examples from the paper "Uniform boilerplate and list
  * processing" by Mitchell and Runciman, from Haskell Workshop 2007.
  */
-class UniplateTests extends Tests with Generator {
+class UniplateTests extends KiamaTests with Generator {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._

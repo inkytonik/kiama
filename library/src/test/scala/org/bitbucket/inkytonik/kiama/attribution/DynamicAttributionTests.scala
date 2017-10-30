@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package attribution
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Tests of dynamic attribution.
  */
-class DynamicAttributionTests extends Attribution with Tests {
+class DynamicAttributionTests extends Attribution with KiamaTests {
 
     abstract class TestNode
     case class Pair(left : TestNode, right : TestNode) extends TestNode

@@ -14,7 +14,7 @@ package util
 /**
  * Tests of comparison routiines.
  */
-class ComparisonTests extends Tests {
+class ComparisonTests extends KiamaTests {
 
     import Comparison.{optsame, same}
 

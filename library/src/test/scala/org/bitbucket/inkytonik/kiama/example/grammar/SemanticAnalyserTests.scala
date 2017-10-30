@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package example.grammar
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Tests of grammar semantic analysis.
  */
-class SemanticAnalyserTests extends Tests {
+class SemanticAnalyserTests extends KiamaTests {
 
     import GrammarTree._
 

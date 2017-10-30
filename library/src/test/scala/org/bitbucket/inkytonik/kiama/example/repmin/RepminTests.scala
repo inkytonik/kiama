@@ -12,9 +12,9 @@ package org.bitbucket.inkytonik.kiama
 package example.repmin
 
 import org.bitbucket.inkytonik.kiama.relation.Tree
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
-class RepminTests extends Tests {
+class RepminTests extends KiamaTests {
 
     val t = Fork(Leaf(3), Fork(Leaf(1), Leaf(10)))
     val u = Fork(Leaf(1), Fork(Leaf(1), Leaf(1)))

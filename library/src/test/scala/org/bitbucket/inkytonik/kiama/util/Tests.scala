@@ -64,7 +64,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
      * `library/src` with `suitePackagePath` appended.
      */
     def suiteSourcePath : String =
-        s"library/src/test/scala/$suitePackagePath"
+        s"src/test/scala/$suitePackagePath"
 
     /**
      * Matcher for being the same collection, i.e., equal and containing
@@ -148,9 +148,23 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
 }
 
 /**
+ * Common base for all tests within the Kiama project.
+ */
+trait KiamaTests extends Tests {
+
+    /**
+     * Path to the source folder that contains this suite. By default,
+     * `library/src/test/scala` with `suitePackagePath` appended.
+     */
+    override def suiteSourcePath : String =
+        s"library/src/test/scala/$suitePackagePath"
+
+}
+
+/**
  * Infrastructure for writing parser tests.
  */
-trait ParseTests extends Tests {
+trait ParseTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.parsing.{
         Error,
@@ -300,7 +314,7 @@ trait TransformerTests extends ParseTests {
  * Useful test routines for pretty-printers.
  */
 
-trait PrettyPrinterTests extends Tests {
+trait PrettyPrinterTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, Links}
 

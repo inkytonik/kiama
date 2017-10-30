@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package output
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Basic tests of filters.
  */
-class FiltersTests extends Tests with PrettyPrinter {
+class FiltersTests extends KiamaTests with PrettyPrinter {
 
     import Filters.{
         keepMaxChars,

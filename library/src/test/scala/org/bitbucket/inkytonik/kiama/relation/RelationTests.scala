@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package relation
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Tests of binary relations.
  */
-class RelationTests extends Tests {
+class RelationTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree.Num
     import org.bitbucket.inkytonik.kiama.relation.Relation.{fromOneStep, fromPairs}

@@ -11,9 +11,9 @@
 package org.bitbucket.inkytonik.kiama
 package example.oneohonecompanies
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
-class OneOhOneTests extends Tests {
+class OneOhOneTests extends KiamaTests {
 
     import CompanyTree._
     import SampleCompany._

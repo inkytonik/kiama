@@ -11,13 +11,13 @@
 package org.bitbucket.inkytonik.kiama
 package machine
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Basic tests of machine module.  More complex setups are tested
  * within particular examples.
  */
-class MachineTests extends Tests {
+class MachineTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.util.{Emitter, StringEmitter}
 

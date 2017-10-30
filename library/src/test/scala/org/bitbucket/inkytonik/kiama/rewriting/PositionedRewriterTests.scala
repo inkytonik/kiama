@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Positioned rewriting tests.
  */
-class PositionedRewriterTests extends Tests {
+class PositionedRewriterTests extends KiamaTests {
 
     import PositionedRewriter._
     import SupportPositionedRewriterTests._

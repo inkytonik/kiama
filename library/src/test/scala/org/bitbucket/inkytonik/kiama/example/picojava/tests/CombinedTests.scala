@@ -19,12 +19,12 @@
 package org.bitbucket.inkytonik.kiama
 package example.picojava.tests
 
-import org.bitbucket.inkytonik.kiama.util.Tests
+import org.bitbucket.inkytonik.kiama.util.KiamaTests
 
 /**
  * Test of many picojava features together, Due to Niklas Fors.
  */
-class CombinedTests extends Tests {
+class CombinedTests extends KiamaTests {
 
     import org.bitbucket.inkytonik.kiama.example.picojava.ErrorCheck
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree._
