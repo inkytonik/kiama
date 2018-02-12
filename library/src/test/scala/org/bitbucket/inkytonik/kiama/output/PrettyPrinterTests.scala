@@ -155,7 +155,7 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
     }
 
     test("pretty any-print Some") {
-        layout(any(Some(1))) shouldBe "Some (1)"
+        layout(any(Some(1))) shouldBe "Some(1)"
     }
 
     test("pretty-print identifier") {
@@ -344,7 +344,7 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
     val l2 = List('a', 'b')
 
     test("pretty-print lists of simple values - non-wrap") {
-        layout(list(l1)) shouldBe "List (1, 2, 3)"
+        layout(list(l1)) shouldBe "List(1, 2, 3)"
     }
 
     test("pretty-print simple value arguments - non-wrap") {
@@ -352,7 +352,7 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
     }
 
     test("pretty-print lists of simple values - wrap") {
-        layout(list(l2), 3) shouldBe "List (\n    a,\n    b)"
+        layout(list(l2), 3) shouldBe "List(\n    a,\n    b)"
     }
 
     test("pretty-print simple value arguments - wrap") {
@@ -360,7 +360,7 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
     }
 
     test("pretty-print lists of simple values - wrap, non-default") {
-        layout(list(l1, "Foo", (_ : Int) => plus, semi, lterm), 3) shouldBe "Foo (\n    +;\n    +;\n    +;)"
+        layout(list(l1, "Foo", (_ : Int) => plus, semi, lterm), 3) shouldBe "Foo(\n    +;\n    +;\n    +;)"
     }
 
     test("pretty-print simple value arguments  - wrap, non-default") {
@@ -368,54 +368,54 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
     }
 
     test("pretty-print sequences of simple values - non-wrap") {
-        layout(seq(l1)) shouldBe "Seq (1, 2, 3)"
+        layout(seq(l1)) shouldBe "Seq(1, 2, 3)"
     }
 
     test("pretty-print sequences of simple values - wrap") {
-        layout(seq(l1), 3) shouldBe "Seq (\n    1,\n    2,\n    3)"
+        layout(seq(l1), 3) shouldBe "Seq(\n    1,\n    2,\n    3)"
     }
 
     case class Val(i : Int)
     val l3 = List(Val(1), Val(2), Val(3))
 
     test("pretty-print lists of structured values - non-wrap") {
-        layout(list(l3)) shouldBe "List (Val(1), Val(2), Val(3))"
+        layout(list(l3)) shouldBe "List(Val(1), Val(2), Val(3))"
     }
 
     test("pretty-print lists of structured values - wrap") {
-        layout(list(l3), 3) shouldBe "List (\n    Val(1),\n    Val(2),\n    Val(3))"
+        layout(list(l3), 3) shouldBe "List(\n    Val(1),\n    Val(2),\n    Val(3))"
     }
 
     test("pretty-print sequences of structured values - non-wrap") {
-        layout(seq(l3)) shouldBe "Seq (Val(1), Val(2), Val(3))"
+        layout(seq(l3)) shouldBe "Seq(Val(1), Val(2), Val(3))"
     }
 
     test("pretty-print sequences of structured values - wrap") {
-        layout(seq(l3), 3) shouldBe "Seq (\n    Val(1),\n    Val(2),\n    Val(3))"
+        layout(seq(l3), 3) shouldBe "Seq(\n    Val(1),\n    Val(2),\n    Val(3))"
     }
 
     test("pretty any-print empty vector") {
-        layout(any(Vector())) shouldBe "Vector ()"
+        layout(any(Vector())) shouldBe "Vector()"
     }
 
     test("pretty any-print singleton vector") {
-        layout(any(Vector(1))) shouldBe "Vector (1)"
+        layout(any(Vector(1))) shouldBe "Vector(1)"
     }
 
     test("pretty any-print multiple-element vector") {
-        layout(any(Vector(1, 2, 3))) shouldBe "Vector (1, 2, 3)"
+        layout(any(Vector(1, 2, 3))) shouldBe "Vector(1, 2, 3)"
     }
 
     test("pretty any-print empty map") {
-        layout(any(Map())) shouldBe "Map ()"
+        layout(any(Map())) shouldBe "Map()"
     }
 
     test("pretty any-print singleton map") {
-        layout(any(Map(1 -> "One"))) shouldBe "Map (1 -> \"One\")"
+        layout(any(Map(1 -> "One"))) shouldBe "Map(1 -> \"One\")"
     }
 
     test("pretty any-print multiple-element map") {
-        layout(any(Map(1 -> "One", 2 -> "Two", 3 -> "Three"))) shouldBe "Map (1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")"
+        layout(any(Map(1 -> "One", 2 -> "Two", 3 -> "Three"))) shouldBe "Map(1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")"
     }
 
     // Position map

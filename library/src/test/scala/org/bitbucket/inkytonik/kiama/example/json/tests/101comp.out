@@ -1,69 +1,69 @@
-JObject (
- Vector (
-  JName ("depts") -> JArray (
-   Vector (
-    JObject (
-     Vector (
-      JName ("type") -> JString ("department"),
-      JName ("name") -> JString ("Research"),
-      JName ("manager") -> JObject (
-       Vector (
-        JName ("name") -> JString ("Craig"),
-        JName ("address") -> JString ("Redmond"),
-        JName ("salary") -> JNumber (123456.0))),
-      JName ("subunits") -> JArray (
-       Vector (
-        JObject (
-         Vector (
-          JName ("type") -> JString ("employee"),
-          JName ("name") -> JString ("Erik"),
-          JName ("address") -> JString ("Utrecht"),
-          JName ("salary") -> JNumber (12345.0))),
-        JObject (
-         Vector (
-          JName ("type") -> JString ("employee"),
-          JName ("name") -> JString ("Ralf"),
-          JName ("address") -> JString ("Koblenz"),
-          JName ("salary") -> JNumber (1234.0))))))),
-    JObject (
-     Vector (
-      JName ("type") -> JString ("department"),
-      JName ("name") -> JString ("Development"),
-      JName ("manager") -> JObject (
-       Vector (
-        JName ("name") -> JString ("Ray"),
-        JName ("address") -> JString ("Redmond"),
-        JName ("salary") -> JNumber (234567.0))),
-      JName ("subunits") -> JArray (
-       Vector (
-        JObject (
-         Vector (
-          JName ("type") -> JString ("department"),
-          JName ("name") -> JString ("Dev1"),
-          JName ("manager") -> JObject (
-           Vector (
-            JName ("name") -> JString ("Klaus"),
-            JName ("address") -> JString ("Boston"),
-            JName ("salary") -> JNumber (23456.0))),
-          JName ("subunits") -> JArray (
-           Vector (
-            JObject (
-             Vector (
-              JName ("type") -> JString ("department"),
-              JName ("name") -> JString ("Dev1.1"),
-              JName ("manager") -> JObject (
-               Vector (
-                JName ("name") -> JString ("Karl"),
-                JName ("address") -> JString ("Riga"),
-                JName ("salary") -> JNumber (2345.0))),
-              JName ("subunits") -> JArray (
-               Vector (
-                JObject (
-                 Vector (
-                  JName ("type") -> JString ("employee"),
-                  JName ("name") -> JString ("Joe"),
-                  JName ("address") -> JString ("Wifi City"),
-                  JName ("salary") -> JNumber (2344.0)))))))))))))))))))
+JObject(
+ Vector(
+  JName("depts") -> JArray(
+   Vector(
+    JObject(
+     Vector(
+      JName("type") -> JString("department"),
+      JName("name") -> JString("Research"),
+      JName("manager") -> JObject(
+       Vector(
+        JName("name") -> JString("Craig"),
+        JName("address") -> JString("Redmond"),
+        JName("salary") -> JNumber(123456.0))),
+      JName("subunits") -> JArray(
+       Vector(
+        JObject(
+         Vector(
+          JName("type") -> JString("employee"),
+          JName("name") -> JString("Erik"),
+          JName("address") -> JString("Utrecht"),
+          JName("salary") -> JNumber(12345.0))),
+        JObject(
+         Vector(
+          JName("type") -> JString("employee"),
+          JName("name") -> JString("Ralf"),
+          JName("address") -> JString("Koblenz"),
+          JName("salary") -> JNumber(1234.0))))))),
+    JObject(
+     Vector(
+      JName("type") -> JString("department"),
+      JName("name") -> JString("Development"),
+      JName("manager") -> JObject(
+       Vector(
+        JName("name") -> JString("Ray"),
+        JName("address") -> JString("Redmond"),
+        JName("salary") -> JNumber(234567.0))),
+      JName("subunits") -> JArray(
+       Vector(
+        JObject(
+         Vector(
+          JName("type") -> JString("department"),
+          JName("name") -> JString("Dev1"),
+          JName("manager") -> JObject(
+           Vector(
+            JName("name") -> JString("Klaus"),
+            JName("address") -> JString("Boston"),
+            JName("salary") -> JNumber(23456.0))),
+          JName("subunits") -> JArray(
+           Vector(
+            JObject(
+             Vector(
+              JName("type") -> JString("department"),
+              JName("name") -> JString("Dev1.1"),
+              JName("manager") -> JObject(
+               Vector(
+                JName("name") -> JString("Karl"),
+                JName("address") -> JString("Riga"),
+                JName("salary") -> JNumber(2345.0))),
+              JName("subunits") -> JArray(
+               Vector(
+                JObject(
+                 Vector(
+                  JName("type") -> JString("employee"),
+                  JName("name") -> JString("Joe"),
+                  JName("address") -> JString("Wifi City"),
+                  JName("salary") -> JNumber(2344.0)))))))))))))))))))
 {
  "depts" : [
   {

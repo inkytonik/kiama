@@ -326,7 +326,7 @@ trait PrettyPrinterBase {
         elemToDoc : T => Doc = (x : T) => value(x),
         sep : Doc = comma,
         sepfn : (Seq[Doc], Doc) => Doc = lsep) : Doc =
-        text(prefix) <+> arguments(l, elemToDoc, sep, sepfn)
+        text(prefix) <> arguments(l, elemToDoc, sep, sepfn)
 
     /**
      * Return a document that pretty-prints a sequence as a Scala argument

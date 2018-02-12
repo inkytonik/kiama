@@ -24,7 +24,7 @@ class PrettyPrinterTests extends PrettyPrinter with util.PrettyPrinterTests {
     }
 
     test("pretty-print imperative variable - product") {
-        pretty(any(Var("xyz123"))).layout shouldBe """Var ("xyz123")"""
+        pretty(any(Var("xyz123"))).layout shouldBe """Var("xyz123")"""
     }
 
     test("pretty-print imperative assignment") {
@@ -32,7 +32,7 @@ class PrettyPrinterTests extends PrettyPrinter with util.PrettyPrinterTests {
     }
 
     test("pretty-print imperative assignment - product") {
-        pretty(any(Asgn(Var("i"), Mul(Num(0), Var("j"))))).layout shouldBe """Asgn (Var ("i"), Mul (Num (0.0), Var ("j")))"""
+        pretty(any(Asgn(Var("i"), Mul(Num(0), Var("j"))))).layout shouldBe """Asgn(Var("i"), Mul(Num(0.0), Var("j")))"""
     }
 
     // { i = 10; count = 0; while (i) { count = count + 1; i = 1 + i; } }
@@ -68,16 +68,16 @@ class PrettyPrinterTests extends PrettyPrinter with util.PrettyPrinterTests {
           |}""".stripMargin
 
     val ppp =
-        """Seqn (
-          |    Vector (
-          |        Asgn (Var ("i"), Num (10.0)),
-          |        Asgn (Var ("count"), Num (0.0)),
-          |        While (
-          |            Var ("i"),
-          |            Seqn (
-          |                Vector (
-          |                    Asgn (Var ("count"), Add (Var ("count"), Num (1.0))),
-          |                    Asgn (Var ("i"), Add (Num (1.0), Var ("i"))))))))""".stripMargin
+        """Seqn(
+          |    Vector(
+          |        Asgn(Var("i"), Num(10.0)),
+          |        Asgn(Var("count"), Num(0.0)),
+          |        While(
+          |            Var("i"),
+          |            Seqn(
+          |                Vector(
+          |                    Asgn(Var("count"), Add(Var("count"), Num(1.0))),
+          |                    Asgn(Var("i"), Add(Num(1.0), Var("i"))))))))""".stripMargin
 
     test("pretty-print non-trivial imperative program (default width)") {
         format(p).layout shouldBe pp1

@@ -31,26 +31,26 @@ class PrettyPrinterTests extends PrettyPrinter with org.bitbucket.inkytonik.kiam
 
     test("a simple MiniJava program pretty-prints with the correct positions using any") {
 
-        // Program (
-        //     MainClass (
-        //         IdnDef ("Mul"),
-        //         MainMethod (Println (StarExp (IntExp (5), IntExp (5))))),
-        //     Vector ())
+        // Program(
+        //     MainClass(
+        //         IdnDef("Mul"),
+        //         MainMethod(Println(StarExp(IntExp(5), IntExp(5))))),
+        //     Vector())
 
         val links =
             List(
-                Link(program, Range(0, 131)),
-                Link(nothing, Range(120, 130)),
-                Link(mainclass, Range(14, 115)),
-                Link(mainmethod, Range(58, 114)),
-                Link(println, Range(70, 113)),
-                Link(starexp, Range(79, 112)),
-                Link(otherfive, Range(100, 111)),
-                Link(5, Range(108, 110)),
-                Link(five, Range(88, 99)),
-                Link(5, Range(96, 98)),
-                Link(mul, Range(34, 49)),
-                Link("Mul", Range(42, 48))
+                Link(program, Range(0, 122)),
+                Link(nothing, Range(112, 121)),
+                Link(mainclass, Range(13, 107)),
+                Link(mainmethod, Range(55, 106)),
+                Link(println, Range(66, 105)),
+                Link(starexp, Range(74, 104)),
+                Link(otherfive, Range(93, 103)),
+                Link(5, Range(100, 102)),
+                Link(five, Range(82, 92)),
+                Link(5, Range(89, 91)),
+                Link(mul, Range(32, 46)),
+                Link("Mul", Range(39, 45))
             )
 
         pretty(any(program)) should produceLinks(links)
