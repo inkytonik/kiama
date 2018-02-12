@@ -1,0 +1,21 @@
+DRAFT
+
+[Kiama](https://bitbucket.org/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
+
+This is a maintenance release with only minor changes.
+
+### Potentially breaking changes
+
+* `Output`: To match standard code formatting styles, the `seq` pretty-printer now doesn't include a space after the prefix. E.g., what was previously printed as `Seq (1, 2, 3)` will now be printed as `Seq(1, 2, 3)`. This change is also visible via the pretty-printers `any` and `list` which are defined in terms of `seq`.
+
+### Enhancements
+
+* FIXME
+
+### Bug Fixes
+
+* `Util`: Separate Kiama `suiteSourcePath` setting from that used by clients of test code. The Kiama test suites now use the `KiamaTests` trait that sets `suiteSourcePath` appropriately for Kiama. The `Tests` suite now sets it to be suitable for clients who are using the default Scala project setup.
+
+### Other
+
+* Move to sbt 1.0.3, Scala 2.12.4
