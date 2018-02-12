@@ -26,7 +26,7 @@ Sloane, A. M. and Roberts, M. [Domain-specific program profiling and its applica
 
 Sloane, A. M. [Profile-based Abstraction and Analysis of Attribute Grammar Evaluation](papers/SLE12.pdf). In [Proceedings](http://link.springer.com/chapter/10.1007%2F978-3-642-36089-3_3#) of the [5th Conference on Software Language Engineering (SLE 2012)](http://planet-sl.org/sle2012), K. Czarnecki and G. Hedin, Eds. [Slides](https://speakerdeck.com/inkytonik/profile-based-abstraction-and-analysis-of-attribute-grammar-evaluation).
 
-Sloane, A. M., Kats, L. C. L., and Visser, E. A pure embedding of attribute grammars. Science of Computer Programming, 78(10), October 2013. [ScienceDirect](http://dx.doi.org/10.1016/j.scico.2011.11.005). [Pre-print](papers/SCP11.pdf). This paper is a heavily revised and extended version of the LDTA 2009 workshop paper.
+Sloane, A. M., Kats, L. C. L., and Visser, E. [A pure embedding of attribute grammars](papers/SCP13.pdf). Science of Computer Programming, 78(10), October 2013. [ScienceDirect](http://dx.doi.org/10.1016/j.scico.2011.11.005). This paper is a heavily revised and extended version of the LDTA 2009 workshop paper.
 
 Sloane, A. M., Kats, L. C. L., and Visser, E. [A pure object-oriented embedding of attribute grammars](papers/LDTA09.pdf). In Proceedings of the [9th Workshop on Language Descriptions, Tools and Applications (LDTA 2009)](http://ldta.info/), J. Vinju and T. Ekman, Eds. Electronic Notes in Theoretical Computer Science, 253(7), September 2010, 205--219, Elsevier.  [Slides](https://speakerdeck.com/inkytonik/a-pure-object-oriented-embedding-of-attribute-grammars).
 
