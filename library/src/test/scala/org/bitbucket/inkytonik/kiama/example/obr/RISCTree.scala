@@ -1,8 +1,8 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright (C) 2009-2017 Anthony M Sloane, Macquarie University.
- * Copyright (C) 2010-2017 Dominic Verity, Macquarie University.
+ * Copyright (C) 2009-2018 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2010-2018 Dominic Verity, Macquarie University.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
