@@ -18,4 +18,5 @@ This is a maintenance release with only minor changes.
 
 ### Other
 
-* Move to sbt 1.0.3, Scala 2.12.4
+* Move to sbt 1.1.1, Scala 2.12.4, 2.11.12, 2.10.7
+* Update libraries to Guava 24, Scallop 3.1.1, JLine, 2.14.5, ScalaTest 3.0.5
