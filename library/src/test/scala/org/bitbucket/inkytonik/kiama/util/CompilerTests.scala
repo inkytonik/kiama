@@ -35,14 +35,27 @@ class CompilerTests extends KiamaTests with Compiler[Any] with TestCompiler[Any]
         emptyDocument
 
     test("compiler driver produces an appropriate message if a file is not found") {
-        val config = createAndInitConfig(Vector("--Koutput", "string", "IDoNotExist.txt"))
-        val expectedMsg =
-            if (System.getProperty("os.name").startsWith("Windows"))
-                "The system cannot find the file specified"
-            else
-                "No such file or directory"
-        testdriver(config)
-        config.stringEmitter.result shouldBe s"IDoNotExist.txt ($expectedMsg)\n"
+        createAndInitConfig(Vector("--Koutput", "string", "IDoNotExist.txt")) match {
+            case Left(message) =>
+                fail(message)
+            case Right(config) =>
+                val expectedMsg =
+                    if (System.getProperty("os.name").startsWith("Windows"))
+                        "The system cannot find the file specified"
+                    else
+                        "No such file or directory"
+                testdriver(config)
+                config.stringEmitter.result shouldBe s"IDoNotExist.txt ($expectedMsg)\n"
+        }
+    }
+
+    test("compiler driver produces an appropriate message if a command-line option is unknown") {
+        createAndInitConfig(Vector("--broken", "string", "IDoNotExist.txt")) match {
+            case Left(message) =>
+                message shouldBe "Unknown option 'broken'"
+            case Right(config) =>
+            // do nothing
+        }
     }
 
     test("filetests using a directory that doesn't exist fails") {
@@ -71,8 +84,10 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
     /**
      * Create and initialise the configuration for a particular run of the REPL.
      * Default: call `createConfig` and then initialise the resulting configuration.
+     * Returns either the created configuration or an error message describing
+     * why the configuration couldn't be created.
      */
-    def createAndInitConfig(args : Seq[String]) : C
+    def createAndInitConfig(args : Seq[String]) : Either[String, C]
 
     /**
      * Run the driver in test mode using the given configuration.
@@ -138,18 +153,22 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
             val ct = args.mkString(" ").replaceAllLiterally(path + "/", "")
             val title = s"$name: $ct, expecting $rt$extra"
             test(title) {
-                val config = createAndInitConfig("--Koutput" +: "string" +: args)
-                positions.reset()
-                try {
-                    testdriver(config)
-                } catch {
-                    case e : Exception =>
-                        info("failed with an exception ")
-                        throw (e)
+                createAndInitConfig("--Koutput" +: "string" +: args) match {
+                    case Left(message) =>
+                        fail(message)
+                    case Right(config) =>
+                        positions.reset()
+                        try {
+                            testdriver(config)
+                        } catch {
+                            case e : Exception =>
+                                info("failed with an exception ")
+                                throw (e)
+                        }
+                        val cc = config.stringEmitter.result
+                        val rc = Source.fromFile(rp).mkString
+                        sanitise(cc) shouldBe sanitise(rc)
                 }
-                val cc = config.stringEmitter.result
-                val rc = Source.fromFile(rp).mkString
-                sanitise(cc) shouldBe sanitise(rc)
             }
         }
 

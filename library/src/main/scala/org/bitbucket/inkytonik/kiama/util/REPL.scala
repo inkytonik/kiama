@@ -18,6 +18,7 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
 
     import scala.annotation.tailrec
     import org.bitbucket.inkytonik.kiama.util.{Source, StringSource}
+    import org.rogach.scallop.exceptions.ScallopException
 
     /**
      * Banner message that is printed before the REPL starts.
@@ -40,11 +41,18 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
     /**
      * Create and initialise the configuration for a particular run of the REPL.
      * Default: call `createConfig` and then initialise the resulting configuration.
+     * Returns either the created configuration or an error message describing
+     * why the configuration couldn't be created.
      */
-    def createAndInitConfig(args : Seq[String]) : C = {
-        val config = createConfig(args)
-        config.verify()
-        config
+    def createAndInitConfig(args : Seq[String]) : Either[String, C] = {
+        try {
+            val config = createConfig(args)
+            config.verify()
+            Right(config)
+        } catch {
+            case e : ScallopException =>
+                Left(e.getMessage())
+        }
     }
 
     /**
@@ -56,25 +64,26 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      * returns false. Call `prompt` each time input is about to be read.
      */
     def driver(args : Seq[String]) {
-
         // Set up the configuration
-        val config = createAndInitConfig(args)
+        createAndInitConfig(args) match {
+            case Left(message) =>
+                println(message)
+            case Right(config) =>
+                // Process any filename arguments
+                processfiles(config)
 
-        // Process any filename arguments
-        processfiles(config)
+                // Enter interactive phase
+                config.output().emitln(banner)
+                if (config.profile.isDefined) {
+                    val dimensions = parseProfileOption(config.profile())
+                    profile(processlines(config), dimensions, config.logging())
+                } else if (config.time())
+                    time(processlines(config))
+                else
+                    processlines(config)
 
-        // Enter interactive phase
-        config.output().emitln(banner)
-        if (config.profile.isDefined) {
-            val dimensions = parseProfileOption(config.profile())
-            profile(processlines(config), dimensions, config.logging())
-        } else if (config.time())
-            time(processlines(config))
-        else
-            processlines(config)
-
-        config.output().emitln
-
+                config.output().emitln
+        }
     }
 
     /**

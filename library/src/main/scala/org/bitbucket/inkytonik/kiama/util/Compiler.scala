@@ -22,6 +22,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
+    import org.rogach.scallop.exceptions.ScallopException
 
     /**
      * The entry point for this compiler.
@@ -39,11 +40,18 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     /**
      * Create and initialise the configuration for a particular run of the compiler.
      * Default: call `createConfig` and then initialise the resulting configuration.
+     * Returns either the created configuration or an error message describing
+     * why the configuration couldn't be created.
      */
-    def createAndInitConfig(args : Seq[String]) : C = {
-        val config = createConfig(args)
-        config.verify()
-        config
+    def createAndInitConfig(args : Seq[String]) : Either[String, C] = {
+        try {
+            val config = createConfig(args)
+            config.verify()
+            Right(config)
+        } catch {
+            case e : ScallopException =>
+                Left(e.getMessage())
+        }
     }
 
     /**
@@ -52,14 +60,18 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * run the file processing in the appropriate way.
      */
     def driver(args : Seq[String]) {
-        val config = createAndInitConfig(args)
-        if (config.profile.isDefined) {
-            val dimensions = parseProfileOption(config.profile())
-            profile(processfiles(config), dimensions, config.logging())
-        } else if (config.time())
-            time(processfiles(config))
-        else
-            processfiles(config)
+        createAndInitConfig(args) match {
+            case Left(message) =>
+                println(message)
+            case Right(config) =>
+                if (config.profile.isDefined) {
+                    val dimensions = parseProfileOption(config.profile())
+                    profile(processfiles(config), dimensions, config.logging())
+                } else if (config.time())
+                    time(processfiles(config))
+                else
+                    processfiles(config)
+        }
     }
 
     /**

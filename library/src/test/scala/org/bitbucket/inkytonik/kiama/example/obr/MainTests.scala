@@ -38,19 +38,23 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt, ObrConfi
 
         test(title) {
             val filename = dirname + obrfile
-            val config = createAndInitConfig(Array(filename))
-            val source = FileSource(filename)
-            makeast(source, config) match {
-                case Left(ast) =>
-                    val tree = new ObrTree(ast)
-                    val analyser = new SemanticAnalyser(tree)
-                    val messages = analyser.errors
-                    messages shouldBe empty
-                    val labels = new RISCLabels
-                    val transformer = new RISCTransformer(analyser, labels)
-                    tester(title, config.output(), transformer.code(ast))
-                case Right(msgs) =>
-                    msgs shouldBe empty
+            createAndInitConfig(Array(filename)) match {
+                case Left(message) =>
+                    fail(message)
+                case Right(config) =>
+                    val source = FileSource(filename)
+                    makeast(source, config) match {
+                        case Left(ast) =>
+                            val tree = new ObrTree(ast)
+                            val analyser = new SemanticAnalyser(tree)
+                            val messages = analyser.errors
+                            messages shouldBe empty
+                            val labels = new RISCLabels
+                            val transformer = new RISCTransformer(analyser, labels)
+                            tester(title, config.output(), transformer.code(ast))
+                        case Right(msgs) =>
+                            msgs shouldBe empty
+                    }
             }
         }
     }
