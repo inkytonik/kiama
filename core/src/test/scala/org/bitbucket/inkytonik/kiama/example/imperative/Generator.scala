@@ -11,9 +11,6 @@
 package org.bitbucket.inkytonik.kiama
 package example.imperative
 
-import ImperativeTree._
-import org.bitbucket.inkytonik.kiama.util.GeneratingREPL
-
 /**
  * ScalaCheck generators for programs in the imperative language.
  */
@@ -95,24 +92,5 @@ trait Generator {
 
     implicit def arbStmt : Arbitrary[Stmt] =
         Arbitrary { Gen.sized(sz => genStmt(sz)) }
-
-}
-
-/**
- * A read-eval-print loop for generating random imperative statements.
- */
-object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
-
-    import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
-    import org.scalacheck.Arbitrary
-    import PrettyPrinter.format
-
-    def generator : Arbitrary[Stmt] =
-        arbStmt
-
-    override def process(source : Source, s : Stmt, config : REPLConfig) {
-        super.process(source, s, config)
-        config.output().emitln(format(s).layout)
-    }
 
 }

@@ -1,18 +1,17 @@
 import com.typesafe.sbt.pgp.PgpKeys.{publishSigned, publishLocalSigned}
 
 import scalariform.formatter.preferences._
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 
 // Settings for entire build
 
-version in ThisBuild := "2.2.0-SNAPSHOT"
+ThisBuild/version := "2.2.0-SNAPSHOT"
 
-organization in ThisBuild := "org.bitbucket.inkytonik.kiama"
+ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
-scalaVersion in ThisBuild := "2.12.4"
-crossScalaVersions in ThisBuild := Seq ("2.12.4", "2.11.12", "2.10.7")
+ThisBuild/scalaVersion := "2.12.4"
+ThisBuild/crossScalaVersions := Seq ("2.12.4", "2.11.12", "2.10.7")
 
-scalacOptions in ThisBuild := {
+ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
     //  - stars-align: incorrectly reports problems if pattern matching of
     //    unapplySeq extractor doesn't match sequence directly
@@ -32,166 +31,43 @@ scalacOptions in ThisBuild := {
     )
 }
 
-resolvers in ThisBuild ++= Seq(
-    Resolver.sonatypeRepo("releases"),
-    Resolver.sonatypeRepo("snapshots")
-)
-
-libraryDependencies in ThisBuild ++= {
-    val dsinfoVersion =
-        if (scalaVersion.value.startsWith("2.10"))
-            "0.3.0"
-        else
-            "0.4.0"
-    val dsprofileVersion =
-        if (scalaVersion.value.startsWith("2.10"))
-            "0.3.0"
-        else
-            "0.4.0"
+ThisBuild/resolvers ++=
     Seq(
-        // Caching:
-        "com.google.guava" % "guava" % "24.0-jre",
-        // DSL support:
-        "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
-        // Profiling:
-        "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion,
-        // Command-line handling:
-        "org.rogach" %% "scallop" % "3.1.1",
-        // Reflection
-        "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-        // REPLs:
-        "jline" % "jline" % "2.14.5",
-        // Testing:
-        "org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
-        "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+        Resolver.sonatypeRepo("releases"),
+        Resolver.sonatypeRepo("snapshots")
     )
-}
 
-incOptions in ThisBuild :=
-    (incOptions in ThisBuild).value.
-        withLogRecompileOnMacro(false)
+ThisBuild/incOptions := (ThisBuild/incOptions).value.withLogRecompileOnMacro(false)
 
-logLevel in ThisBuild := Level.Info
+ThisBuild/logLevel := Level.Info
 
-shellPrompt in ThisBuild := {
+ThisBuild/shellPrompt := {
     state =>
         Project.extract(state).currentRef.project + " " + version.value +
             " " + scalaVersion.value + "> "
 }
 
-mainClass in ThisBuild := None
+ThisBuild/mainClass := None
 
-// Project settings
+// Common project settings
 
-val subProjectSettings =
-    scalariformSettings(autoformat = true) ++
+val commonSettings =
     Seq(
-        // No publishing, it's done in the root project
-
-        publish := {},
-        publishLocal := {},
-        publishSigned := {},
-        publishLocalSigned := {},
-
-        // Source code formatting
-
-        ScalariformKeys.preferences :=
-            ScalariformKeys.preferences.value
-                .setPreference(AlignSingleLineCaseStatements, true)
-                .setPreference(DanglingCloseParenthesis, Force)
-                .setPreference(IndentSpaces, 4)
-                .setPreference(SpaceBeforeColon, true)
-                .setPreference(SpacesAroundMultiImports, false)
-    )
-
-// Project configuration:
-//   - core project containing macros and code that they need
-//   - library project containing everything else, including all tests
-//   - kiama (root) project aggregates core and library
-
-def setupProject(project : Project, projectName : String) : Project =
-    project.settings(
-        name := projectName
-    )
-
-def setupSubProject(project : Project, projectName : String) : Project =
-    setupProject(
-        project,
-        projectName
-    ).settings(
-        subProjectSettings : _*
-    )
-
-lazy val core =
-    setupSubProject(
-        project in file("core"),
-        "core"
-    )
-
-lazy val library =
-    setupSubProject(
-        project in file("library"),
-        "library"
-    ).settings(
-        javaOptions ++= Seq("-Xss8M"),
-        fork := true,
-        connectInput in run := true,
-        outputStrategy in run := Some(StdoutOutput),
-        initialCommands in console := """
-            import org.bitbucket.inkytonik.kiama._
-            import rewriting.Rewriter._
-        """.stripMargin,
-        initialCommands in console in Test :=
-            (initialCommands in console).value + """
-                import example.json.JSONTree._
-                import example.json.PrettyPrinter._
-            """.stripMargin
-    ).dependsOn(
-        core % "compile-internal, test-internal"
-    )
-
-lazy val kiama =
-    setupProject(
-        project in file("."),
-        "kiama"
-    ).enablePlugins(
-        ScalaUnidocPlugin
-    ).settings(
-        // File mappings
-
-        mappings in (Compile, packageBin) :=
-            (mappings in (core, Compile, packageBin)).value ++
-            (mappings in (library, Compile, packageBin)).value,
-        mappings in (Compile, packageSrc) :=
-            (mappings in (core, Compile, packageSrc)).value ++
-            (mappings in (library, Compile, packageSrc)).value,
-        mappings in (Test, packageBin) :=
-            (mappings in (library, Test, packageBin)).value,
-        mappings in (Test, packageSrc) :=
-            (mappings in (library, Test, packageSrc)).value,
-
-        // Unidoc
-
-        doc in Compile := (doc in ScalaUnidoc).value,
-        doc in Test := (doc in TestScalaUnidoc).value,
-        target in unidoc in ScalaUnidoc := crossTarget.value / "api",
-        target in unidoc in TestScalaUnidoc := crossTarget.value / "test-api",
-        scalacOptions in (ScalaUnidoc, unidoc) ++= {
-            val macroExpandOption =
-                if (scalaVersion.value.startsWith("2.10"))
-                "-Ymacro-no-expand"
-                else
-                "-Ymacro-expand:none"
-                Seq(
-                    macroExpandOption,
-                    "-doc-source-url",
-                    "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
-                )
-            },
-        scalacOptions in (TestScalaUnidoc, unidoc) := (scalacOptions in (ScalaUnidoc, unidoc)).value,
-
+        libraryDependencies :=
+            Seq(
+                "org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
+                "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+            ),
+            
+        // Formatting
+        scalariformPreferences := scalariformPreferences.value
+            .setPreference(AlignSingleLineCaseStatements, true)
+            .setPreference(DanglingCloseParenthesis, Force)
+            .setPreference(IndentSpaces, 4)
+            .setPreference(SpaceBeforeColon, true)
+            .setPreference(SpacesAroundMultiImports, false),
+        
         // Publishing
-
         publishTo := {
             val nexus = "https://oss.sonatype.org/"
             if (version.value.trim.endsWith("SNAPSHOT"))
@@ -200,8 +76,8 @@ lazy val kiama =
                 Some("releases" at nexus + "service/local/staging/deploy/maven2")
         },
         publishMavenStyle := true,
-        publishArtifact in Test := true,
-        pomIncludeRepository := { x => false },
+        Test/publishArtifact := true,
+        pomIncludeRepository := { _ => false },
         pomExtra := (
             <url>https://bitbucket.org/inkytonik/kiama</url>
             <licenses>
@@ -223,5 +99,143 @@ lazy val kiama =
                 </developer>
             </developers>
         )
+    )
 
-    ).aggregate(core, library)
+// Project configuration:
+//   - base project containing macros and code that they need
+//   - core project containing main Kiama functionality, including its tests
+//   - extras project containing utilities, including their tests and examples
+//   - kiama (root) project aggregates base, core and extras 
+
+def setupProject(project : Project, projectName : String) : Project =
+    project.settings(
+        name := projectName
+    )
+
+def setupSubProject(project : Project, projectName : String) : Project =
+    setupProject(
+        project,
+        projectName
+    ).enablePlugins(
+        ScalaUnidocPlugin
+    ).settings(
+        commonSettings : _*
+    )
+
+def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
+    val dsinfoVersion =
+        if (scalaVersion.startsWith("2.10"))
+            "0.3.0"
+        else
+            "0.4.0"
+    val dsprofileVersion =
+        if (scalaVersion.startsWith("2.10"))
+            "0.3.0"
+        else
+            "0.4.0"
+    Seq(
+        // Caching:
+        "com.google.guava" % "guava" % "24.0-jre",
+        // DSL support:
+        "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
+        // Profiling:
+        "org.bitbucket.inkytonik.dsprofile" %% "dsprofile" % dsprofileVersion,
+        // Reflection
+        "org.scala-lang" % "scala-reflect" % scalaVersion
+    )
+}
+
+val noPublishSettings =
+    Seq(
+        publish := {},
+        publishLocal := {},
+        publishSigned := {},
+        publishLocalSigned := {}
+    )
+
+lazy val base =
+    setupSubProject(
+        project in file("base"),
+        "base"
+    ).settings( 
+        noPublishSettings : _*
+    ).settings(
+        libraryDependencies := baseLibraryDependencies(scalaVersion.value),
+    )
+    
+val extrasProject = ProjectRef(file("."), "extras")    
+
+lazy val core =
+    setupSubProject(
+        project in file("core"),
+        "kiama"
+    ).settings(
+        libraryDependencies ++= baseLibraryDependencies(scalaVersion.value),
+
+        console/initialCommands := """
+            import org.bitbucket.inkytonik.kiama._
+            import rewriting.Rewriter._
+        """.stripMargin,
+        Compile/packageBin/mappings := (Compile/packageBin/mappings).value ++ (base/Compile/packageBin/mappings).value,
+        Compile/packageSrc/mappings := (Compile/packageSrc/mappings).value ++ (base/Compile/packageSrc/mappings).value,
+        
+        // Unidoc so we combine docs from base and core (but not extras)
+        Compile/doc := (ScalaUnidoc/doc).value,
+        Test/doc := (TestScalaUnidoc/doc).value,
+        ScalaUnidoc/unidoc/target := crossTarget.value / "api",
+        TestScalaUnidoc/unidoc/target := crossTarget.value / "test-api",
+        ScalaUnidoc/unidoc/scalacOptions ++= {
+            val macroExpandOption =
+                if (scalaVersion.value.startsWith("2.10"))
+                    "-Ymacro-no-expand"
+                else
+                    "-Ymacro-expand:none"
+            Seq(
+                macroExpandOption,
+                "-doc-source-url",
+                "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
+            )
+        },
+        TestScalaUnidoc/unidoc/scalacOptions := (ScalaUnidoc/unidoc/scalacOptions).value,
+        ScalaUnidoc/unidoc/unidocProjectFilter := inAnyProject -- inProjects(extrasProject),
+        TestScalaUnidoc/unidoc/unidocProjectFilter := (ScalaUnidoc/unidoc/unidocProjectFilter).value
+    ).dependsOn(
+        base % "compile-internal; test-internal"
+    )
+    
+lazy val extras =
+    setupSubProject(
+        project in file("extras"),
+        "kiama-extras"
+    ).settings(
+        libraryDependencies ++=
+            Seq(
+                // Command-line handling:
+                "org.rogach" %% "scallop" % "3.1.1",
+                // REPLs:
+                "jline" % "jline" % "2.14.5"
+            ),
+        javaOptions ++= Seq("-Xss8M"),
+        fork := true,
+        run/connectInput := true,
+        run/outputStrategy := Some(StdoutOutput),
+        Test/console/initialCommands :=
+            (Test/console/initialCommands).value + """
+                import org.bitbucket.inkytonik.kiama._
+                import example.json.PrettyPrinter._
+                import example.json.JSONTree._
+            """.stripMargin
+    ).dependsOn(
+        base % "compile-internal; test-internal",
+        core % "compile; test->test"
+    )    
+
+lazy val root =
+    setupProject(
+        project in file("."),
+        "root"
+    ).settings( 
+        noPublishSettings : _*
+    ).aggregate(
+        core, extras
+    )
