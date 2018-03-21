@@ -58,7 +58,7 @@ val commonSettings =
                 "org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
                 "org.scalatest" %% "scalatest" % "3.0.5" % "test"
             ),
-            
+
         // Formatting
         scalariformPreferences := scalariformPreferences.value
             .setPreference(AlignSingleLineCaseStatements, true)
@@ -66,7 +66,7 @@ val commonSettings =
             .setPreference(IndentSpaces, 4)
             .setPreference(SpaceBeforeColon, true)
             .setPreference(SpacesAroundMultiImports, false),
-        
+
         // Publishing
         publishTo := {
             val nexus = "https://oss.sonatype.org/"
@@ -105,7 +105,7 @@ val commonSettings =
 //   - base project containing macros and code that they need
 //   - core project containing main Kiama functionality, including its tests
 //   - extras project containing utilities, including their tests and examples
-//   - kiama (root) project aggregates base, core and extras 
+//   - kiama (root) project aggregates base, core and extras
 
 def setupProject(project : Project, projectName : String) : Project =
     project.settings(
@@ -157,13 +157,13 @@ lazy val base =
     setupSubProject(
         project in file("base"),
         "base"
-    ).settings( 
+    ).settings(
         noPublishSettings : _*
     ).settings(
         libraryDependencies := baseLibraryDependencies(scalaVersion.value),
     )
-    
-val extrasProject = ProjectRef(file("."), "extras")    
+
+val extrasProject = ProjectRef(file("."), "extras")
 
 lazy val core =
     setupSubProject(
@@ -178,7 +178,7 @@ lazy val core =
         """.stripMargin,
         Compile/packageBin/mappings := (Compile/packageBin/mappings).value ++ (base/Compile/packageBin/mappings).value,
         Compile/packageSrc/mappings := (Compile/packageSrc/mappings).value ++ (base/Compile/packageSrc/mappings).value,
-        
+
         // Unidoc so we combine docs from base and core (but not extras)
         Compile/doc := (ScalaUnidoc/doc).value,
         Test/doc := (TestScalaUnidoc/doc).value,
@@ -202,7 +202,7 @@ lazy val core =
     ).dependsOn(
         base % "compile-internal; test-internal"
     )
-    
+
 lazy val extras =
     setupSubProject(
         project in file("extras"),
@@ -228,13 +228,13 @@ lazy val extras =
     ).dependsOn(
         base % "compile-internal; test-internal",
         core % "compile; test->test"
-    )    
+    )
 
 lazy val root =
     setupProject(
         project in file("."),
         "root"
-    ).settings( 
+    ).settings(
         noPublishSettings : _*
     ).aggregate(
         core, extras
