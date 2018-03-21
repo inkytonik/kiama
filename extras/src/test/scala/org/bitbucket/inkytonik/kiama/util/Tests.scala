@@ -61,7 +61,7 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
 
     /**
      * Path to the source folder that contains this suite. By default,
-     * `library/src` with `suitePackagePath` appended.
+     * `src/test/scala` with `suitePackagePath` appended.
      */
     def suiteSourcePath : String =
         s"src/test/scala/$suitePackagePath"
@@ -148,16 +148,16 @@ trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
 }
 
 /**
- * Common base for all tests within the Kiama project.
+ * Common base for all tests within the core Kiama project.
  */
 trait KiamaTests extends Tests {
 
     /**
      * Path to the source folder that contains this suite. By default,
-     * `library/src/test/scala` with `suitePackagePath` appended.
+     * `extras/src/test/scala` with `suitePackagePath` appended.
      */
     override def suiteSourcePath : String =
-        s"library/src/test/scala/$suitePackagePath"
+        s"extras/src/test/scala/$suitePackagePath"
 
 }
 
