@@ -13,7 +13,7 @@ structured representations for use with Kiama: using the Scala parser
 combinator library and using the separate
 [Rats! parser generator](http://cs.nyu.edu/rgrimm/xtc/rats.html). For
 documentation on how to use Rats! with Scala, please see the
-[sbt-rats](http://sbt-rats.googlecode.com) project and the Rats!
+[sbt-rats](https://bitbucket.org/inkytonik/sbt-rats) project and the Rats!
 documentation. For simplicity, the remainder of this documentation
 focuses on combinator-based parsing.
 

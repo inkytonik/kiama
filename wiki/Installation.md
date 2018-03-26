@@ -18,7 +18,7 @@ If you are new to sbt, we strongly advise you to read the [sbt Getting Started G
 If you are using Kiama in an sbt project, you should add a dependence on
 
 ```
-"com.googlecode.kiama" %% "kiama" % "version"
+"org.bitbucket.inkytonik.kiama" %% "kiama" % "version"
 ```
 
 where "version" is the version number of the Kiama library that you
@@ -33,7 +33,7 @@ by including the following in your `build.sbt`:
 ```
 libraryDependencies ++=
     Seq (
-        "com.googlecode.kiama" %% "kiama" % "1.8.0",
+        "org.bitbucket.inkytonik.kiama" %% "kiama" % "1.8.0",
         ... other libraries here ...
     )
 ```
@@ -44,12 +44,11 @@ library in your project tests, add a dependency of the following form to your
 sbt build configuration.
 
 ```
-"com.googlecode.kiama" %% "kiama" % "version" % "test" classifier ("test")
+"org.bitbucket.inkytonik.kiama" %% "kiama" % "version" % "test" classifier ("test")
 ```
 
-Versions of Kiama before 1.2.0 were published with a group ID of
-`com.googlecode` instead of `com.googlecode.kiama`, so you will need to use
-that shorter ID if you want to use an older version of the library.
+Kiama before version 2.0.0 was published under the "com.googlecode.kiama" (1.2.0-1.8.0) and "com.googlecode" (before 1.2.0) organisations, so you will need to use
+that ID if you want to use an older version of the library.
 
 A [giter8](http://github.com/n8han/giter8#readme) template for a sample
 Kiama-based sbt project is [available](https://github.com/inkytonik/kiama.g8).
@@ -59,13 +58,9 @@ It's a good way to easily take a look at what is possible.
 
 ## Downloading a binary version
 
-Binary distributions of Kiama version 1.5.2 and earlier are available as
-Java archives (jar files) from the Downloads section of this site.
-
-As of January 2014, Google Code no longer allows hosted projects to
-publish new files for download. Jars etc for Kiama version 1.5.3 and
-later can be obtained from
+Jars for Kiama can can be obtained from
 [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ckiama).
+Nightly builds are available on [CloudBees](https://inkytonik.ci.cloudbees.com/job/Kiama).
 
 ## Running using a binary version
 
