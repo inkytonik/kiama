@@ -1130,46 +1130,43 @@ class RewriterTests extends KiamaTests with Generator {
         e.result shouldBe s"hello there: $t\n"
     }
 
-    test("log strategy produces the expected message and result on success") {
+    {
         import org.bitbucket.inkytonik.kiama.util.StringEmitter
-        val e = new StringEmitter
         val r = rule[Asgn] { case Asgn(l, r) => Asgn(l, Num(42)) }
-        val s = log(r, "test log ", e)
-        val t = Asgn(Var("i"), Add(Num(1), Var("i")))
-        val u = Asgn(Var("i"), Num(42))
-        s(t) shouldBe Some(u)
-        e.result shouldBe s"test log $t succeeded with $u\n"
-    }
 
-    test("log strategy produces the expected message and result on failure") {
-        import org.bitbucket.inkytonik.kiama.util.StringEmitter
-        val e = new StringEmitter
-        val r = rule[Asgn] { case Asgn(l, r) => Asgn(l, Num(42)) }
-        val s = log(r, "test log ", e)
-        val t = Add(Num(1), Var("i"))
-        s(t) should beFailure
-        e.result shouldBe s"test log $t failed\n"
-    }
+        test("log strategy produces the expected message and result on success") {
+            val e = new StringEmitter
+            val s = log(r, "test log ", e)
+            val t = Asgn(Var("i"), Add(Num(1), Var("i")))
+            val u = Asgn(Var("i"), Num(42))
+            s(t) shouldBe Some(u)
+            e.result shouldBe s"test log $t succeeded with $u\n"
+        }
 
-    test("logfail strategy produces no message but the right result on success") {
-        import org.bitbucket.inkytonik.kiama.util.StringEmitter
-        val e = new StringEmitter
-        val r = rule[Asgn] { case Asgn(l, r) => Asgn(l, Num(42)) }
-        val s = logfail(r, "test log ", e)
-        val t = Asgn(Var("i"), Add(Num(1), Var("i")))
-        val u = Asgn(Var("i"), Num(42))
-        s(t) shouldBe Some(u)
-        e.result shouldBe ""
-    }
+        test("log strategy produces the expected message and result on failure") {
+            val e = new StringEmitter
+            val s = log(r, "test log ", e)
+            val t = Add(Num(1), Var("i"))
+            s(t) should beFailure
+            e.result shouldBe s"test log $t failed\n"
+        }
 
-    test("logfail strategy produces the expected message and result on failure") {
-        import org.bitbucket.inkytonik.kiama.util.StringEmitter
-        val e = new StringEmitter
-        val r = rule[Asgn] { case Asgn(l, r) => Asgn(l, Num(42)) }
-        val s = logfail(r, "test log ", e)
-        val t = Add(Num(1), Var("i"))
-        s(t) should beFailure
-        e.result shouldBe s"test log $t failed\n"
+        test("logfail strategy produces no message but the right result on success") {
+            val e = new StringEmitter
+            val s = logfail(r, "test log ", e)
+            val t = Asgn(Var("i"), Add(Num(1), Var("i")))
+            val u = Asgn(Var("i"), Num(42))
+            s(t) shouldBe Some(u)
+            e.result shouldBe ""
+        }
+
+        test("logfail strategy produces the expected message and result on failure") {
+            val e = new StringEmitter
+            val s = logfail(r, "test log ", e)
+            val t = Add(Num(1), Var("i"))
+            s(t) should beFailure
+            e.result shouldBe s"test log $t failed\n"
+        }
     }
 
     test("rewrite returns the original term when the strategy fails") {
