@@ -79,10 +79,9 @@ trait RewriterCore {
      * Create a logging strategy based on a strategy `s`. The returned strategy
      * succeeds or fails exactly as `s` does, but also prints the provided message,
      * the subject term, the success or failure status, and on success, the result
-     * term, to the provided emitter (default: terminal output). `s` is evaluated
-     * at most once.
+     * term, to the provided emitter. `s` is evaluated at most once.
      */
-    def log(s : Strategy, msg : String, emitter : Emitter = new OutputEmitter) : Strategy = macro RewriterCoreMacros.logMacro
+    def log(s : Strategy, msg : String, emitter : Emitter) : Strategy = macro RewriterCoreMacros.logMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for
@@ -109,10 +108,10 @@ trait RewriterCore {
     /**
      * Create a logging strategy based on a strategy `s`.  The returned strategy
      * succeeds or fails exactly as `s` does, but if `s` fails, also prints the
-     * provided message and the subject term to the provided emitter (default:
-     * terminal output). `s` is evaluated at most once.
+     * provided message and the subject term to the provided emitter. `s` is
+     * evaluated at most once.
      */
-    def logfail[T](s : Strategy, msg : String, emitter : Emitter = new OutputEmitter) : Strategy = macro RewriterCoreMacros.logfailMacro
+    def logfail[T](s : Strategy, msg : String, emitter : Emitter) : Strategy = macro RewriterCoreMacros.logfailMacro
 
     /**
      * As for the version without the `name` argument but specifies the name for

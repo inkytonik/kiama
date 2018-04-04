@@ -14,6 +14,8 @@ This is a maintenance release with only minor changes in functionality but a new
 
 ### Bug Fixes
 
+* `Rewriting`: The `log` and `logfail` strategies no longer have a default emitter argument since default arguments are not allowed on macro applications.
+
 * `Util`: The compiler, REPL and test drivers now give a sensible message when the command-line is illegal, rather than crashing with an exception.
 
 * `Util`: Separate Kiama `suiteSourcePath` setting from that used by clients of test code. The Kiama test suites now use the `KiamaTests` trait that sets `suiteSourcePath` appropriately for Kiama. The `Tests` suite now sets it to be suitable for clients who are using the default Scala project setup.
