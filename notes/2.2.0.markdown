@@ -2,15 +2,13 @@ DRAFT
 
 [Kiama](https://bitbucket.org/inkytonik/kiama) is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.
 
-This is a maintenance release with only minor changes in functionality but a new publishing approach.
+This is a maintenance release with only minor changes in functionality but splits the library into two pieces for publishing.
 
 ### Potentially breaking changes
 
 * Kiama is now published as two separate libraries `kiama` and `kiama-extras` with the former containing just the core Kiama functionality and the latter containing extra support that is useful in many Kiama-based applications. At the moment, the `kiama-extras` library contains the `Compiler`, `Config`, `Console` and `REPL` components that are useful for building command-line configurable compilers and read-eval-print loops, plus the Kiama examples. In the new scheme clients can depend on one or both of these libraries, depending on their needs. Previously you got the extras (and their dependencies) whether you wanted them or not.
 
 * `Output`: To match standard code formatting styles, the `seq` pretty-printer now doesn't include a space after the prefix. E.g., what was previously printed as `Seq (1, 2, 3)` will now be printed as `Seq(1, 2, 3)`. This change is also visible via the pretty-printers `any` and `list` which are defined in terms of `seq`.
-
-### Enhancements
 
 ### Bug Fixes
 
@@ -22,5 +20,5 @@ This is a maintenance release with only minor changes in functionality but a new
 
 ### Other
 
-* Move to sbt 1.1.1, Scala 2.12.4, 2.11.12, 2.10.7
-* Update libraries to Guava 24, Scallop 3.1.1, JLine, 2.14.5, ScalaTest 3.0.5
+* Move to sbt 1.1.4, Scala 2.12.5, 2.11.12, 2.10.7
+* Update libraries to Guava 24.1, Scallop 3.1.2, JLine 2.14.6, ScalaCheck 3.0.5, ScalaTest 1.13.5, Scallop 3.1.2
