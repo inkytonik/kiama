@@ -1,0 +1,35 @@
+<p><a href="https://bitbucket.org/inkytonik/kiama">Kiama</a> is a Scala library for language processing including attribute grammars, term rewriting, abstract state machines and pretty printing.</p>
+
+<p>This is a maintenance release with only minor changes in functionality but splits the library into two pieces for publishing.</p>
+
+<h3 id="potentially-breaking-changes">Potentially breaking changes</h3>
+
+<ul>
+  <li>
+    <p>Kiama is now published as two separate libraries <code>kiama</code> and <code>kiama-extras</code> with the former containing just the core Kiama functionality and the latter containing extra support that is useful in many Kiama-based applications. At the moment, the <code>kiama-extras</code> library contains the <code>Compiler</code>, <code>Config</code>, <code>Console</code> and <code>REPL</code> components that are useful for building command-line configurable compilers and read-eval-print loops, plus the Kiama examples. In the new scheme clients can depend on one or both of these libraries, depending on their needs. Previously you got the extras (and their dependencies) whether you wanted them or not.</p>
+  </li>
+  <li>
+    <p><code>Output</code>: To match standard code formatting styles, the <code>seq</code> pretty-printer now doesn’t include a space after the prefix. E.g., what was previously printed as <code>Seq (1, 2, 3)</code> will now be printed as <code>Seq(1, 2, 3)</code>. This change is also visible via the pretty-printers <code>any</code> and <code>list</code> which are defined in terms of <code>seq</code>.</p>
+  </li>
+</ul>
+
+<h3 id="bug-fixes">Bug Fixes</h3>
+
+<ul>
+  <li>
+    <p><code>Rewriting</code>: The <code>log</code> and <code>logfail</code> strategies no longer have a default emitter argument since default arguments are not allowed on macro applications.</p>
+  </li>
+  <li>
+    <p><code>Util</code>: The compiler, REPL and test drivers now give a sensible message when the command-line is illegal, rather than crashing with an exception.</p>
+  </li>
+  <li>
+    <p><code>Util</code>: Separate Kiama <code>suiteSourcePath</code> setting from that used by clients of test code. The Kiama test suites now use the <code>KiamaTests</code> trait that sets <code>suiteSourcePath</code> appropriately for Kiama. The <code>Tests</code> suite now sets it to be suitable for clients who are using the default Scala project setup.</p>
+  </li>
+</ul>
+
+<h3 id="other">Other</h3>
+
+<ul>
+  <li>Move to sbt 1.1.4, Scala 2.12.5, 2.11.12, 2.10.7</li>
+  <li>Update libraries to Guava 24.1, Scallop 3.1.2, JLine 2.14.6, ScalaCheck 3.0.5, ScalaTest 1.13.5, Scallop 3.1.2</li>
+</ul>
