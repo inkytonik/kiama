@@ -27,24 +27,30 @@ be used for your Scala build version. See the
 [search facility on Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ckiama)
 for the available versions.
 
-For example, you can add a library dependence on version 1.8.0 of Kiama
+If you want to use the Kiama extras library to support your Kiama-based project, you will also need to add a dependence on the `kiama-extras` library.
+
+```
+"org.bitbucket.inkytonik.kiama" %% "kiama-extras" % "version"
+```
+
+For example, you can add a library dependence on version 2.2.0 of Kiama
 by including the following in your `build.sbt`:
 
 ```
 libraryDependencies ++=
     Seq (
-        "org.bitbucket.inkytonik.kiama" %% "kiama" % "1.8.0",
+        "org.bitbucket.inkytonik.kiama" %% "kiama" % "2.2.0",
         ... other libraries here ...
     )
 ```
 
-The Kiama test library contains a collection of examples, tests that use
+The Kiama extras library contains a collection of examples, tests that use
 those examples, and useful test support code. If you want to use the Kiama test
 library in your project tests, add a dependency of the following form to your
 sbt build configuration.
 
 ```
-"org.bitbucket.inkytonik.kiama" %% "kiama" % "version" % "test" classifier ("test")
+"org.bitbucket.inkytonik.kiama" %% "kiama-extras" % "version" % "test" classifier ("test")
 ```
 
 Kiama before version 2.0.0 was published under the "com.googlecode.kiama" (1.2.0-1.8.0) and "com.googlecode" (before 1.2.0) organisations, so you will need to use
