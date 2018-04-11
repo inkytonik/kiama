@@ -29,7 +29,7 @@ representing the parsed text, or an indication of failure and a
 failure message.
 
 Detailed documentation for the parsing library may be found in the
-[Kiama API documentation](https://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.12/2.1.0) (search "Parsers" to start).
+[Kiama API documentation](https://www.javadoc.io/doc/org.bitbucket.inkytonik.kiama/kiama_2.12/2.2.0) (search "Parsers" to start).
 Chapter 31 of
 [Programming in Scala](http://www.artima.com/shop/programming_in_scala)
 provides an excellent overview of a similar library that used to be part of the Scala standard library.
