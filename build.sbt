@@ -184,18 +184,15 @@ lazy val core =
         Test/doc := (TestScalaUnidoc/doc).value,
         ScalaUnidoc/unidoc/target := crossTarget.value / "api",
         TestScalaUnidoc/unidoc/target := crossTarget.value / "test-api",
-        ScalaUnidoc/unidoc/scalacOptions ++= {
-            val macroExpandOption =
+        ScalaUnidoc/unidoc/scalacOptions ++=    
+            Seq(
                 if (scalaVersion.value.startsWith("2.10"))
                     "-Ymacro-no-expand"
                 else
-                    "-Ymacro-expand:none"
-            Seq(
-                macroExpandOption,
+                    "-Ymacro-expand:none",
                 "-doc-source-url",
-                "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
-            )
-        },
+                    "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
+            ),
         TestScalaUnidoc/unidoc/scalacOptions := (ScalaUnidoc/unidoc/scalacOptions).value,
         ScalaUnidoc/unidoc/unidocProjectFilter := inAnyProject -- inProjects(extrasProject),
         TestScalaUnidoc/unidoc/unidocProjectFilter := (ScalaUnidoc/unidoc/unidocProjectFilter).value
@@ -224,7 +221,17 @@ lazy val extras =
                 import org.bitbucket.inkytonik.kiama._
                 import example.json.PrettyPrinter._
                 import example.json.JSONTree._
-            """.stripMargin
+            """.stripMargin,
+        Compile/doc/scalacOptions ++=
+            Seq(
+                if (scalaVersion.value.startsWith("2.10"))
+                    "-Ymacro-no-expand"
+                else
+                    "-Ymacro-expand:none",
+                "-doc-source-url",
+                    "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
+            ),
+        Test/doc/scalacOptions := (Compile/doc/scalacOptions).value
     ).dependsOn(
         base % "compile-internal; test-internal",
         core % "compile; test->test"
