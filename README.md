@@ -20,6 +20,7 @@ https://www.comp.mq.edu.au/~asloane
 
 ## Latest News
 
+ * Apr 11, 2018: Version 2.2.0 released
  * Jun 19, 2017: Version 2.1.0 released
  * Apr 6, 2016: Version 2.0.0 released
  * Jun 24, 2015: moved project to BitBucket
@@ -32,7 +33,7 @@ https://www.comp.mq.edu.au/~asloane
 
 Documentation about how to build, install and use Kiama can be found on the [Kiama wiki](https://bitbucket.org/inkytonik/kiama/src/default/wiki/Documentation.md).
 
-The main documentation for Kiama takes the form of wiki pages covering library features and examples, available at the Google Code site. The [User Manual](https://bitbucket.org/inkytonik/kiama/src/default/wiki/UserManual.md) is a good place to start.
+The main documentation for Kiama takes the form of wiki pages covering library features and examples. The [User Manual](https://bitbucket.org/inkytonik/kiama/src/default/wiki/UserManual.md) is a good place to start.
 
 See the [Research wiki page](https://bitbucket.org/inkytonik/kiama/src/default/wiki/Research.md) for links to papers and presentations about Kiama.
 
@@ -158,7 +159,7 @@ Kiama 1.x and 2.x:
             case While(e, b) => "while" <+> parens(toDoc(e)) <> group(nest(line <> toDoc(b)))
         }
 
-    def binToDoc(l : ImperativeNode, op : String, r : ImperativeNode) : Doc =
+    def binToDoc(l : ImperativeNode, op : String, r : Im****perativeNode) : Doc =
         parens(toDoc(l) <+> op <+> toDoc (r))
 
 ## Mailing lists
