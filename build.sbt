@@ -211,9 +211,9 @@ lazy val extras =
         libraryDependencies ++=
             Seq(
                 // Command-line handling:
-                "org.rogach" %% "scallop" % "3.1.1",
+                "org.rogach" %% "scallop" % "3.1.2",
                 // REPLs:
-                "jline" % "jline" % "2.14.5"
+                "jline" % "jline" % "2.14.6"
             ),
         javaOptions ++= Seq("-Xss8M"),
         fork := true,
