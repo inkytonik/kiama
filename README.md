@@ -5,7 +5,9 @@
 [![Sonatype Nexus (Snapshots)](https://img.shields.io/nexus/s/https/oss.sonatype.org/org.bitbucket.inkytonik.kiama/kiama_2.12.svg?label=Sonatype%20Nexus%20Snapshot)]()
 [![Build Status](https://inkytonik.ci.cloudbees.com/buildStatus/icon?job=Kiama)](https://inkytonik.ci.cloudbees.com/job/Kiama)
 
-Kiama is a Scala library for language processing.  In the Kiama project we are investigating embedding of language processing formalisms such as grammars, parsers, rewriters and analysers into general-purpose programming languages.
+Kiama is a Scala library for language processing.
+In the Kiama project we are investigating embedding of language processing formalisms such as grammars, parsers, rewriters and analysers into general-purpose programming languages.
+Learn about Kiama by reading our [research papers](https://bitbucket.org/inkytonik/kiama/src/default/wiki/Research.md) starting with [Lightweight Language Processing in Kiama](https://doi.org/10.1007/978-3-642-18023-1_12).
 
 IMPORTANT NOTE: Kiama is a research project, so many details will change. Consult with us before you rely on it for serious work. We make no guarantees about the features or performance of the Kiama library if you do choose to use it.
 
