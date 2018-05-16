@@ -5,3 +5,7 @@ This is a maintenance release with some minor enhancements and updates.
 ### Enhancements
 
 * `Tree`: The `CheckTree` version of `Tree` construction now includes more information in the exception reason if the structure is not a tree. Instead of just including the immediate parents of the offending node(s), now all ancestors are included. Also, the index of each node in its parent is shown.
+
+### Other
+
+* Move to sbt 1.1.5, Scala 2.12.6, 2.11.12, 2.10.7
