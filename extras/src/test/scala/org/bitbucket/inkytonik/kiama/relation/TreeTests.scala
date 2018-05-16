@@ -926,11 +926,11 @@ class TreeTests extends KiamaTests {
 
     test("CheckTree of a non-tree structure throws a StructureIsNotATreeException") {
         val n = Num(1)
-        val t = Add(n, n)
+        val t = Mul(Add(Num(2), Add(n, Num(3))), n)
         val i = intercept[StructureIsNotATreeException] {
             (new Tree(t, CheckTree)).child
         }
-        i.getMessage shouldBe "child Num(1.0) has multiple parents:\n  Add(Num(1.0),Num(1.0))\n  Add(Num(1.0),Num(1.0))\n"
+        i.getMessage shouldBe "child Num(1.0) has multiple parents:\n  child 1 of Mul(Add(Num(2.0),Add(Num(1.0),Num(3.0))),Num(1.0))\n  child 0 of Add(Num(1.0),Num(3.0))\n    child 1 of Add(Num(2.0),Add(Num(1.0),Num(3.0)))\n      child 0 of Mul(Add(Num(2.0),Add(Num(1.0),Num(3.0))),Num(1.0))\n"
     }
 
     test("EnsureTree of a tree structure doesn't change the structure") {

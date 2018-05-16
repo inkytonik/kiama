@@ -157,13 +157,21 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
         if (shape == CheckTree) {
             val msgBuilder = new StringBuilder
             val parent = child.inverse
+
+            def addAncestors(c : T, ps : Vector[T], level : Int = 1) {
+                for (p <- ps) {
+                    val index = indexInVector(child(p), c)
+                    val indent = "  " * level
+                    msgBuilder ++= s"${indent}child $index of $p\n"
+                    addAncestors(p, parent(p), level + 1)
+                }
+            }
+
             for (c <- parent.domain) {
                 val ps = parent(c)
                 if (ps.length > 1) {
                     msgBuilder ++= s"child $c has multiple parents:\n"
-                    for (p <- ps) {
-                        msgBuilder ++= s"  $p\n"
-                    }
+                    addAncestors(c, ps)
                 }
             }
             if (!msgBuilder.isEmpty)
@@ -262,13 +270,19 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
     // Predicates derived from the relations
 
     /**
+     * Return the index of a child in a particular child vector.
+     */
+    def indexInVector(vector : Vector[T], t : T) : Int =
+        Comparison.indexOf(vector, t)
+
+    /**
      * Return the first index of `t` in the children of `t's` parent node.
      * Counts from zero. Is zero for root.
      */
     def index(t : T) : Int =
         parent(t) match {
             case Vector(p) =>
-                Comparison.indexOf(child(p), t)
+                indexInVector(child(p), t)
             case _ =>
                 if (same(t, root))
                     0
