@@ -10,4 +10,4 @@ This is a maintenance release with some minor enhancements and updates.
 
 ### Other
 
-* Move to sbt 1.1.5, Scala 2.12.6, 2.11.12, 2.10.7
+* Move to sbt 1.1.6, Scala 2.12.6, 2.11.12, 2.10.7
