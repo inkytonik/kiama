@@ -60,7 +60,7 @@ class Decorators[T <: Product, R <: T](tree : Tree[T, R]) {
     /**
      * Variant of `down` that takes a default value instead of a default function.
      */
-    def down[U](default : U)(a : T ==> U) : CachedAttribute[T, U] =
+    def down[U](default : => U)(a : T ==> U) : CachedAttribute[T, U] =
         down[U]((_ : T) => default)(a)
 
     /**
