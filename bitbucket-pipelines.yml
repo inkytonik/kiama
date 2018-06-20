@@ -7,10 +7,4 @@ pipelines:
             - sbt
             - ivy2
         script:
-          - sbt sbtVersion
-          - sbt +clean
           - sbt +test
-          - sbt +core/package +core/packageSrc +core/packageDoc
-          - sbt +extras/package +extras/packageSrc +extras/packageDoc
-          - sbt +core/test:package +core/test:packageSrc +core/test:packageDoc
-          - sbt +extras/test:package +extras/test:packageSrc +extras/test:packageDoc
