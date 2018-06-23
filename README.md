@@ -1,3 +1,4 @@
+
 # Kiama
 
 [![License: MPL v2.0](https://img.shields.io/badge/License-MPL%20v2-blue.svg)](http://mozilla.org/MPL/2.0/)
@@ -22,6 +23,7 @@ https://www.comp.mq.edu.au/~asloane
 
 ## Latest News
 
+ * Jun 23, 2018: Move Kiama source repo to Git
  * Apr 11, 2018: Version 2.2.0 released
  * Jun 19, 2017: Version 2.1.0 released
  * Apr 6, 2016: Version 2.0.0 released
