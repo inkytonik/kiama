@@ -17,7 +17,7 @@ with a user-selected mechanism.
 
 ## Abstract syntax
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTree.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTree.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTree.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTree.scala)
 
 Programs for this example consist of expressions represented by the
 `Exp` type. `Exp` extends [Attributable](Attribution.md#markdown-header-attributable)
@@ -75,7 +75,7 @@ case class Bind (name : Idn, tipe : Type, exp : Exp)
 
 ## Types
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTree.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTree.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTree.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTree.scala)
 
 It is possible to support a large variety of primitive types, but
 adding new ones does not really add anything meaningful to the
@@ -95,7 +95,7 @@ case class FunType (arg : Type, res : Type) extends Type
 
 ## Operations
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTree.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTree.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTree.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTree.scala)
 
 Primitive binary operations are represented by `Op` instances. Each
 `Op` subclass provides an evaluation method to actually run the
@@ -123,7 +123,7 @@ case object SubOp extends Op {
 
 ## Pretty printing
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.PrettyPrinter.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/PrettyPrinter.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.PrettyPrinter.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/PrettyPrinter.scala)
 
 The result of an expression evaluation is pretty printed using a
 straight-forward functional application of Kiama's
@@ -202,7 +202,7 @@ object PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
 
 ## Parser
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.SyntaxAnalyser.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/SyntaxAnalyser.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.SyntaxAnalyser.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/SyntaxAnalyser.scala)
 
 The [parser](Parsing.md) is a simple application of Scala's [parser combinators](ParserCombs.md).
 (See the [Imperative](Imperative.md) example for more explanation of a similar parser.)  Types are optional
@@ -252,7 +252,7 @@ lazy val number =
 
 ## Name and type analysis
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda.Analyser.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda/Analyser.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Analyser.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda/Analyser.scala)
 
 After an abstract syntax tree has been built, we check it for semantic
 correctness. In this example that means we make sure that each
@@ -267,7 +267,7 @@ semantic analysis, which are described in the next two sections.
 
 ## An Environment-based Analysis
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda.Analyser.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda/Analyser.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Analyser.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda/Analyser.scala)
 
 A classical solution to this kind of analysis problem is to construct
 an _environment_ (usually called a _symbol table_ in a compiler
@@ -388,7 +388,7 @@ case e @ Var (x) => (e->env).find { case (y,_) => x == y } match {
 
 ## A Reference-based Analysis
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda.Analyser.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda/Analyser.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda.Analyser.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda/Analyser.scala)
 
 Instead of building a separate environment structure to keep track of
 variables that are in scope, we can use the tree itself. In this
@@ -434,7 +434,7 @@ def lookup (name : Idn) : Exp => Option[Lam] =
 
 ## Evaluation mechanisms
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.Evaluators.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Evaluators.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.Evaluators.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Evaluators.scala)
 
 The example includes a number of different evaluation mechanisms
 defined by [rewrite rules](Rewriting.md). The evaluation strategies used
@@ -446,7 +446,7 @@ on how they work.
 
 ## Repeated reduction with meta-level substitution
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.Reduce.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Reduce.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.Reduce.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Reduce.scala)
 
 The standard evaluation rule for lambda calculus is _beta reduction_ which we can
 write as follows, given a function that performs variable substitution.
@@ -507,7 +507,7 @@ def eval (exp : Exp) : Exp =
 
 ## Repeated reduction with explicit substitution
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.ReduceSubst.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ReduceSubst.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.ReduceSubst.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ReduceSubst.scala)
 
 Instead of encoding substitution separately, we can incorporate it
 into the language and the rewrite rules by using `Let` constructs to
@@ -574,7 +574,7 @@ override lazy val s =
 
 ## Innermost evaluation
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.InnermostSubst.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/InnermostSubst.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.InnermostSubst.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/InnermostSubst.scala)
 
 An alternative to `reduce` is to explicitly use an `innermost`
 strategy so that the order of evaluation is more precisely defined. In
@@ -600,7 +600,7 @@ def innermost (s : => Strategy) : Strategy =
 
 ## Eager evaluation
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.EagerSubst.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/EagerSubst.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.EagerSubst.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/EagerSubst.scala)
 
 Some functional languages such as the ML family use an _eager
 evaluation_ method where the arguments to functions are evaluated
@@ -628,7 +628,7 @@ be applied to the application.
 
 ## Lazy evaluation
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.LazySubst.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LazySubst.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.LazySubst.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LazySubst.scala)
 
 Instead of evaluating function arguments before substitution, we can
 use _lazy evaluation_ where arguments are only evaluated if and when
@@ -644,8 +644,8 @@ override lazy val s : Strategy =
 
 ## Parallel substitution
 
-Files: [org.bitbucket.inkytonik.kiama.example.lambda2.ParEagerSubst.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParEagerSubst.scala)
-[org.bitbucket.inkytonik.kiama.example.lambda2.ParLazySubst.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParLazySubst.scala)
+Files: [org.bitbucket.inkytonik.kiama.example.lambda2.ParEagerSubst.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParEagerSubst.scala)
+[org.bitbucket.inkytonik.kiama.example.lambda2.ParLazySubst.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParLazySubst.scala)
 
 Variants of eager and lazy evaluation can be written that manage
 substitutions in parallel rather than in sequence as in the earlier
@@ -656,7 +656,7 @@ that share and update results as evaluation proceeds.
 
 ## Running
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Lambda.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.Lambda.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/Lambda.scala)
 
 The example code includes a [read-eval-print loop](ReadEvalPrintLoops.md)
 that reads an expression from the user, parses the expression,
@@ -698,7 +698,7 @@ lambda2>
 
 ## Tests
 
-File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTests.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTests.scala)
+File: [org.bitbucket.inkytonik.kiama.example.lambda2.LambdaTests.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/LambdaTests.scala)
 
 Some simple tests of lambda calculus evaluation using all of the strategies.
 

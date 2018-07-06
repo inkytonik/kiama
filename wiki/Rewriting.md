@@ -213,7 +213,7 @@ returns a strategy, not a term.  The returned strategy is applied to the
 subject term.  Therefore, `rulefs` is most useful in situations where you
 want to match some pattern to bind some variables, then use those
 variables in another strategy.  See the
-File: [ParLazy.scala](https://bitbucket.org/inkytonik/kiama/src/default/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParLazy.scala)
+File: [ParLazy.scala](https://bitbucket.org/inkytonik/kiama/src/master/library/src/test/scala/org/bitbucket/inkytonik/kiama/example/lambda2/ParLazy.scala)
 of the lambda2 example for uses of `rulefs`.
 
 Stratego allows the use of concrete syntax in strategies. For example

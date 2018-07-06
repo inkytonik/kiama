@@ -191,7 +191,7 @@ lazy val core =
                 else
                     "-Ymacro-expand:none",
                 "-doc-source-url",
-                    "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
+                    "https://bitbucket.org/inkytonik/kiama/src/master€{FILE_PATH}.scala"
             ),
         TestScalaUnidoc/unidoc/scalacOptions := (ScalaUnidoc/unidoc/scalacOptions).value,
         ScalaUnidoc/unidoc/unidocProjectFilter := inAnyProject -- inProjects(extrasProject),
@@ -229,7 +229,7 @@ lazy val extras =
                 else
                     "-Ymacro-expand:none",
                 "-doc-source-url",
-                    "https://bitbucket.org/inkytonik/kiama/src/default€{FILE_PATH}.scala"
+                    "https://bitbucket.org/inkytonik/kiama/src/master€{FILE_PATH}.scala"
             ),
         Test/doc/scalacOptions := (Compile/doc/scalacOptions).value
     ).dependsOn(
