@@ -27,6 +27,7 @@ ThisBuild/scalacOptions := {
         "-unchecked",
         "-Xcheckinit",
         "-Xfatal-warnings",
+        "-Yrangepos",
         lintOption
     )
 }
@@ -184,7 +185,7 @@ lazy val core =
         Test/doc := (TestScalaUnidoc/doc).value,
         ScalaUnidoc/unidoc/target := crossTarget.value / "api",
         TestScalaUnidoc/unidoc/target := crossTarget.value / "test-api",
-        ScalaUnidoc/unidoc/scalacOptions ++=    
+        ScalaUnidoc/unidoc/scalacOptions ++=
             Seq(
                 if (scalaVersion.value.startsWith("2.10"))
                     "-Ymacro-no-expand"
