@@ -101,6 +101,18 @@ class AttributionTests extends KiamaTests {
         lazy val answer : TestTree => Int =
             constant { count = count + 1; 42 }
 
+        lazy val exception : CachedAttribute[TestTree, Int] =
+            attr {
+                case _ =>
+                    throw new Exception("exception in attribute definition")
+            }
+
+        lazy val exceptionParam : CachedParamAttribute[Int, TestTree, Int] =
+            paramAttr(i => {
+                case _ =>
+                    throw new Exception("exception in attribute definition")
+            })
+
     }
 
     test("attributes of a value type are correctly evaluated") {
@@ -762,6 +774,30 @@ class AttributionTests extends KiamaTests {
         entry(n) shouldBe 0.0
         pass1(n) shouldBe 0.0
         pass2(n) shouldBe 0.0
+    }
+
+    test("cached attribute definitions that throw exceptions reset evaluation status") {
+        val definitions = new Definitions
+        import definitions._
+
+        val i = intercept[Exception] {
+            exception(t)
+        }
+        i.getMessage shouldBe "exception in attribute definition"
+        exception.memo.hasBeenComputedAt(t) shouldBe false
+    }
+
+    test("cached parameterised attribute definitions that throw exceptions reset evaluation status") {
+        val definitions = new Definitions
+        import definitions._
+
+        val arg = 1
+        val i = intercept[Exception] {
+            exceptionParam(arg)(t)
+        }
+        i.getMessage shouldBe "exception in attribute definition"
+        val key = new ParamAttributeKey(arg, t)
+        exceptionParam.memo.hasBeenComputedAt(key) shouldBe false
     }
 
 }

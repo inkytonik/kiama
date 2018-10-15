@@ -52,11 +52,17 @@ trait AttributionCore extends AttributionCommon {
                 case Some(None) =>
                     reportCycle(t)
                 case None =>
-                    memo.put(t, None)
-                    val u = f(t)
-                    memo.put(t, Some(u))
-                    finish(i, List("value" -> u, "cached" -> false))
-                    u
+                    try {
+                        memo.put(t, None)
+                        val u = f(t)
+                        memo.put(t, Some(u))
+                        finish(i, List("value" -> u, "cached" -> false))
+                        u
+                    } catch {
+                        case e : Exception =>
+                            memo.resetAt(t)
+                            throw e
+                    }
             }
         }
 
@@ -112,11 +118,17 @@ trait AttributionCore extends AttributionCommon {
                         case Some(None) =>
                             reportCycle(t)
                         case None =>
-                            memo.put(key, None)
-                            val u = f(arg)(t)
-                            memo.put(key, Some(u))
-                            finish(i, List("value" -> u, "cached" -> false))
-                            u
+                            try {
+                                memo.put(key, None)
+                                val u = f(arg)(t)
+                                memo.put(key, Some(u))
+                                finish(i, List("value" -> u, "cached" -> false))
+                                u
+                            } catch {
+                                case e : Exception =>
+                                    memo.resetAt(key)
+                                    throw e
+                            }
                     }
                 }
 
@@ -179,12 +191,18 @@ trait AttributionCore extends AttributionCommon {
                 case Some(None) =>
                     reportCycle(t)
                 case None =>
-                    memo.put(t, None)
-                    val pf = functions.find(_.isDefinedAt(t))
-                    val func = pf.getOrElse(f)
-                    val u = func(t)
-                    memo.put(t, Some(u))
-                    u
+                    try {
+                        memo.put(t, None)
+                        val pf = functions.find(_.isDefinedAt(t))
+                        val func = pf.getOrElse(f)
+                        val u = func(t)
+                        memo.put(t, Some(u))
+                        u
+                    } catch {
+                        case e : Exception =>
+                            memo.resetAt(t)
+                            throw e
+                    }
             }
         }
 
@@ -306,7 +324,7 @@ trait AttributionCore extends AttributionCommon {
             try {
                 f(t)
             } catch {
-                case e : RuntimeException =>
+                case e : Exception =>
                     resetState()
                     throw e
             }
