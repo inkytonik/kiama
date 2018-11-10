@@ -56,7 +56,7 @@ val commonSettings =
     Seq(
         libraryDependencies :=
             Seq(
-                "org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
+                "org.scalacheck" %% "scalacheck" % "1.14.0" % "test",
                 "org.scalatest" %% "scalatest" % "3.0.5" % "test"
             ),
 
@@ -136,7 +136,7 @@ def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
             "0.4.0"
     Seq(
         // Caching:
-        "com.google.guava" % "guava" % "24.1-jre",
+        "com.google.guava" % "guava" % "27.0-jre",
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
@@ -209,7 +209,7 @@ lazy val extras =
         libraryDependencies ++=
             Seq(
                 // Command-line handling:
-                "org.rogach" %% "scallop" % "3.1.2",
+                "org.rogach" %% "scallop" % "3.1.3",
                 // REPLs:
                 "jline" % "jline" % "2.14.6"
             ),
