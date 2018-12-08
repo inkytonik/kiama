@@ -8,8 +8,8 @@ ThisBuild/version := "2.2.1-SNAPSHOT"
 
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
-ThisBuild/scalaVersion := "2.12.7"
-ThisBuild/crossScalaVersions := Seq ("2.12.7", "2.11.12", "2.10.7")
+ThisBuild/scalaVersion := "2.12.8"
+ThisBuild/crossScalaVersions := Seq ("2.12.8", "2.11.12", "2.10.7")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
