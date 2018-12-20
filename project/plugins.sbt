@@ -6,6 +6,7 @@ addSbtPlugin ("org.scalariform" % "sbt-scalariform" % "1.8.2")
 // Desirable plugins:
 
 addSbtPlugin ("com.jsuereth" % "sbt-pgp" % "1.1.1")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.9")
 
 // Optional plugins:
 

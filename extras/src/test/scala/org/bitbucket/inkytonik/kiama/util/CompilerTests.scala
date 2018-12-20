@@ -240,7 +240,7 @@ trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
      * Run the compiler in test mode using the given configuration.
      */
     def testdriver(config : C) {
-        processfiles(config)
+        compileFiles(config)
     }
 
 }

@@ -105,6 +105,18 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
     )(consoleConverter)
 
     /**
+     * Debug operations of a language server.
+     */
+    lazy val debug = toggle(
+        "Kdebug",
+        descrYes = "Debug language server operations",
+        descrNo = "Don't debug language server operations",
+        default = Some(false),
+        noshort = true,
+        hidden = true
+    )
+
+    /**
      * Profiling dimensions.
      */
     lazy val profile = opt[String](

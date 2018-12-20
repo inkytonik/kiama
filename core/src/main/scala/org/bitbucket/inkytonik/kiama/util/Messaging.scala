@@ -89,30 +89,45 @@ trait Messaging {
     import scala.math.Ordering._
 
     /**
-     * An ordering on messages that prioritises line over column.
+     * An ordering on messages that uses starting position and prioritises
+     * line over column. The messages are assumed to refer to the same
+     * source.
      */
     implicit object messageOrdering extends Ordering[Message] {
         def compare(m1 : Message, m2 : Message) =
             Ordering[(Option[Int], Option[Int], String)].compare(
-                (line(m1), column(m1), m1.label),
-                (line(m2), column(m2), m2.label)
+                (startLine(m1), startColumn(m1), m1.label),
+                (startLine(m2), startColumn(m2), m2.label)
             )
     }
 
     /**
-     * Return the optional column number of a message.
+     * A message's finishing position as determined from the finishing position
+     * of the message's value. Will be `None` if the value has no position.
      */
-    def column(message : Message) : Option[Int] =
-        positionOf(message).map(_.column)
+    def finish(message : Message) : Option[Position] =
+        positions.getFinish(message.value)
 
     /**
-     * Format the message for reporting as a line containing the position
-     * and label, the input text line and line(s) containing the context
-     * of the position. If no position is associated with this message
-     * just format as a line containing the label.
+     * Return the optional finishing column number of a message.
+     */
+    def finishColumn(message : Message) : Option[Int] =
+        finish(message).map(_.column)
+
+    /**
+     * Return the optional finishing line number of a message.
+     */
+    def finishLine(message : Message) : Option[Int] =
+        finish(message).map(_.line)
+
+    /**
+     * Format the message for reporting as a line containing the starting
+     * position and label, the input text line and line(s) containing the
+     * context of the position. If no position is associated with this
+     * message just format as a line containing the label.
      */
     def formatMessage(message : Message) : String =
-        positionOf(message) match {
+        start(message) match {
             case Some(pos) =>
                 val context = pos.optContext.getOrElse("")
                 s"${pos.format} ${message.label}\n$context\n"
@@ -127,17 +142,31 @@ trait Messaging {
         messages.sorted.map(formatMessage).mkString("")
 
     /**
-     * Return the optional line number of a message.
+     * A message's source name as determined from the source of the
+     * message's value's position. Will be `None` if the value has no
+     * position or that position's source has no name.
      */
-    def line(message : Message) : Option[Int] =
-        positionOf(message).map(_.line)
+    def name(message : Message) : Option[String] =
+        positions.getStart(message.value).map(_.source.optName).map(_.get)
 
     /**
      * A message's starting position as determined from the starting position
      * of the message's value. Will be `None` if the value has no position.
      */
-    def positionOf(message : Message) : Option[Position] =
+    def start(message : Message) : Option[Position] =
         positions.getStart(message.value)
+
+    /**
+     * Return the optional starting column number of a message.
+     */
+    def startColumn(message : Message) : Option[Int] =
+        start(message).map(_.column)
+
+    /**
+     * Return the optional starting line number of a message.
+     */
+    def startLine(message : Message) : Option[Int] =
+        start(message).map(_.line)
 
     /**
      * Output the messages in order of position using the given emitter, which

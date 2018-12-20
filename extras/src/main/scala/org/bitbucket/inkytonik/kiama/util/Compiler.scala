@@ -55,59 +55,73 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     }
 
     /**
-     * Driver for this compiler. First, use the argument list to create a
-     * configuration for this execution. Then, use the configuration to
-     * run the file processing in the appropriate way.
+     * Command-line driver for this compiler. First, use the argument list
+     * to create a configuration for this execution. Then, use the
+     * configuration to run the file compilation in the appropriate way.
      */
     def driver(args : Seq[String]) {
         createAndInitConfig(args) match {
             case Left(message) =>
-                println(message)
+                System.err.println(message)
             case Right(config) =>
-                if (config.profile.isDefined) {
-                    val dimensions = parseProfileOption(config.profile())
-                    profile(processfiles(config), dimensions, config.logging())
-                } else if (config.time())
-                    time(processfiles(config))
-                else
-                    processfiles(config)
+                run(config)
         }
     }
 
     /**
-     * Process the files one by one.
+     * Run the compiler given a configuration.
      */
-    def processfiles(config : C) {
+    def run(config : C) {
+        if (config.profile.isDefined) {
+            val dimensions = parseProfileOption(config.profile())
+            profile(compileFiles(config), dimensions, config.logging())
+        } else if (config.time())
+            time(compileFiles(config))
+        else
+            compileFiles(config)
+    }
+
+    /**
+     * Compile the files one by one.
+     */
+    def compileFiles(config : C) {
         for (filename <- config.filenames()) {
-            processfile(filename, config)
+            compileFile(filename, config)
         }
     }
 
     /**
-     * The character encoding of input files read by this compiler.
-     * Defaults to UTF-8.
+     * Compile input from a file. The character encoding of the
+     * file is given by the `encoding` argument (default: UTF-8).
      */
-    def encoding : String =
-        "UTF-8"
-
-    /**
-     * Process a file argument by using `makeast` to turn their contents into
-     * abstract syntax trees (ASTs) and then by process which conducts arbitrary
-     * processing on the ASTs. The character encoding of the files is given by
-     * the `encoding` method.
-     */
-    def processfile(filename : String, config : C) {
+    def compileFile(filename : String, config : C,
+        encoding : String = "UTF-8") {
         try {
-            val source = FileSource(filename, encoding)
-            makeast(source, config) match {
-                case Left(ast) =>
-                    process(source, ast, config)
-                case Right(messages) =>
-                    report(messages, config.output())
-            }
+            compileSource(FileSource(filename, encoding), config)
         } catch {
             case e : java.io.FileNotFoundException =>
                 config.output().emitln(e.getMessage)
+        }
+    }
+
+    /**
+     * Compile input from a string.
+     */
+    def compileString(uri : String, input : String, config : C) {
+        compileSource(StringSource(input, Some(uri)), config)
+    }
+
+    /**
+     * Compile the given source by using `makeast` to turn its contents into
+     * an abstract syntax tree and then by `process` which conducts arbitrary
+     * processing on the AST. If `makeast` produces messages, report them.
+     */
+    def compileSource(source : Source, config : C) {
+        makeast(source, config) match {
+            case Left(ast) =>
+                process(source, ast, config)
+            case Right(messages) =>
+                report(messages, config)
         }
     }
 
@@ -130,6 +144,13 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * Format an abstract syntax tree for printing. Default: return an empty document.
      */
     def format(ast : T) : Document
+
+    /**
+     * Output the messages in order of position to the configuration's output.
+     */
+    def report(messages : Messages, config : C) {
+        super.report(messages, config.output())
+    }
 
 }
 
@@ -162,9 +183,9 @@ trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
                 case Success(ast, _) =>
                     Left(ast)
                 case res : NoSuccess =>
-                    val pos = res.next.position
-                    positions.setStart(res, pos)
-                    positions.setFinish(res, pos)
+                    val input = res.next
+                    positions.setStart(res, input.position)
+                    positions.setFinish(res, input.nextPosition)
                     val messages = message(res, res.message)
                     Right(messages)
             }

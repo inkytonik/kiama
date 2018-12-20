@@ -145,8 +145,10 @@ object Source {
 /**
  * A source that is a string.
  */
-case class StringSource(content : String) extends Source {
-    val optName : Option[String] = None
+case class StringSource(
+    content : String,
+    optName : Option[String] = None
+) extends Source {
     def reader : Reader = IO.stringreader(content)
 }
 
@@ -154,7 +156,7 @@ case class StringSource(content : String) extends Source {
  * A source that is a named file.
  */
 case class FileSource(filename : String, encoding : String = "UTF-8") extends Source {
-    val optName : Option[String] = Some(Source.dropCurrentPath(filename))
-    lazy val content : String = scala.io.Source.fromFile(filename, encoding).mkString
+    val optName = Some(Source.dropCurrentPath(filename))
+    lazy val content = scala.io.Source.fromFile(filename, encoding).mkString
     def reader : Reader = IO.filereader(filename, encoding)
 }

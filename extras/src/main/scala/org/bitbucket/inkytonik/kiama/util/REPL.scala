@@ -172,7 +172,7 @@ trait REPL extends REPLBase[REPLConfig] {
 trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
 
     import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, ParsersBase, Success}
-    import org.bitbucket.inkytonik.kiama.util.Messaging.message
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{message, Messages}
     import org.bitbucket.inkytonik.kiama.util.Source
 
     /**
@@ -200,7 +200,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
                     positions.setStart(res, pos)
                     positions.setFinish(res, pos)
                     val messages = message(res, res.message)
-                    report(messages, config.output())
+                    report(messages, config)
             }
         }
         Some(config)
@@ -210,6 +210,14 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
      * Process a user input value in the given configuration.
      */
     def process(source : Source, t : T, config : C)
+
+    /**
+     * Output the messages in order of position using the given configuration,
+     * which defaults to that configuration's output.
+     */
+    def report(messages : Messages, config : C) {
+        config.output().emit(formatMessages(messages))
+    }
 
 }
 

@@ -59,6 +59,12 @@ case class Input(source : Source, offset : Int) {
         source.offsetToPosition(offset)
 
     /**
+     * Return the next position of the input.
+     */
+    val nextPosition : Position =
+        source.offsetToPosition(offset + 1)
+
+    /**
      * The rest of the input, unchanged if already at end.
      */
     def rest : Input =

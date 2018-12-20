@@ -12,7 +12,8 @@ package org.bitbucket.inkytonik.kiama
 package example.minijava
 
 import MiniJavaTree.Program
-import org.bitbucket.inkytonik.kiama.util.Compiler
+import org.bitbucket.inkytonik.kiama.util.{Compiler, Server}
+import org.bitbucket.inkytonik.kiama.util.Config
 
 /**
  * Compile the MiniJava program in the file given as the first command-line
@@ -23,7 +24,7 @@ trait Driver extends Compiler[Program] {
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
-    import org.bitbucket.inkytonik.kiama.util.{Config, Source}
+    import org.bitbucket.inkytonik.kiama.util.Source
 
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
@@ -44,7 +45,7 @@ trait Driver extends Compiler[Program] {
     def process(source : Source, ast : Program, config : Config) {
 
         // Pretty print the abstract syntax tree
-        // config.output().emitln (layout (any (ast)))
+        // config.output().emitln(layout(any(ast)))
 
         // Perform the semantic checks
         val tree = new MiniJavaTree(ast)
@@ -54,7 +55,7 @@ trait Driver extends Compiler[Program] {
         // Report any messages that were produced
         if (messages.length > 0) {
 
-            report(messages, config.output())
+            report(messages, config)
 
         } else {
 
@@ -66,7 +67,7 @@ trait Driver extends Compiler[Program] {
             val targettree = translator.translate(ast, filename, analyser)
 
             // Pretty print the target tree
-            // config.output().emitln (layout (any (targettree)))
+            // config.output().emitln(layout(any(targettree)))
 
             // Output code for the target tree
             targettree.map(generate(isTest, _, config.output()))
@@ -88,4 +89,11 @@ trait Driver extends Compiler[Program] {
  */
 object Main extends Driver {
     override def isTest = false
+}
+
+/**
+ * Main program for MiniJava server.
+ */
+object ServerMain extends Driver with Server[Program] {
+    val name = "minijava"
 }

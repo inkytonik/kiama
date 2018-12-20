@@ -13,7 +13,7 @@ package util
 
 /**
  * Record of a source position at a particular line and column relative to
- * a given source.
+ * a given source. The line and column numbers are one-indexed.
  */
 case class Position(line : Int, column : Int, source : Source) {
 

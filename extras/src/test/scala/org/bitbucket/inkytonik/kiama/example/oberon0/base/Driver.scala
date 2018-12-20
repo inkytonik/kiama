@@ -72,9 +72,10 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
      * a parse error occurs: in challenge mode, just send "parse failed" to
      * standard output, otherwise send the message to the errors file.
      */
-    override def processfile(filename : String, config : Oberon0Config) {
+    override def compileFile(filename : String, config : Oberon0Config,
+        encoding : String = "UTF-8") {
         val output = config.output()
-        val source = FileSource(filename)
+        val source = FileSource(filename, encoding)
         makeast(source, config) match {
             case Left(ast) =>
                 process(source, ast, config)
@@ -135,11 +136,11 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
             // to errors file.
             if (config.challenge()) {
                 section(output, "stdout")
-                val l = line(messages.sorted.head)
+                val l = startLine(messages.sorted.head)
                 output.emitln(s"line $l")
             }
             section(output, "errors")
-            report(messages, output)
+            report(messages, config)
 
         }
 

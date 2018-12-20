@@ -133,7 +133,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
             config.output().emitln(formattedLayout(evaluator.eval(e)))
         } else {
             // Otherwise report the errors
-            report(messages, config.output())
+            report(messages, config)
         }
     }
 

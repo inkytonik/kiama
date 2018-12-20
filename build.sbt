@@ -210,6 +210,8 @@ lazy val extras =
             Seq(
                 // Command-line handling:
                 "org.rogach" %% "scallop" % "3.1.3",
+                // Language server protocol:
+                "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.6.0",
                 // REPLs:
                 "jline" % "jline" % "2.14.6"
             ),
@@ -233,6 +235,11 @@ lazy val extras =
                     "https://bitbucket.org/inkytonik/kiama/src/master€{FILE_PATH}.scala"
             ),
         Test/doc/scalacOptions := (Compile/doc/scalacOptions).value
+    ).settings(
+       inConfig(Test)(baseAssemblySettings)
+    ).settings(
+        // Test/assembly/test := {},
+        Test/assembly/assemblyJarName := s"${name.value}-assembly-${version.value}-tests.jar"
     ).dependsOn(
         base % "compile-internal; test-internal",
         core % "compile; test->test"

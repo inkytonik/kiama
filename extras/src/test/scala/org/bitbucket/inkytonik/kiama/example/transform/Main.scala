@@ -44,7 +44,7 @@ class Driver extends Compiler[Program] {
 
         // Report any semantic errors
         if (messages.length > 0)
-            report(messages, config.output())
+            report(messages, config)
 
     }
 
