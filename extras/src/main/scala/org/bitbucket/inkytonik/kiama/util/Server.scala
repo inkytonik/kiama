@@ -95,8 +95,7 @@ trait ServerWithConfig[T, C <: Config] {
         val s = convertPosition(start(message))
         val f = convertPosition(finish(message))
         val range = new Range(s, f)
-        // FIXME: customise minijava
-        new Diagnostic(range, message.label, DiagnosticSeverity.Error, "minijava")
+        new Diagnostic(range, message.label, DiagnosticSeverity.Error, name)
     }
 
     def convertPosition(optPos : Option[Position]) : LSPPosition =
