@@ -65,6 +65,12 @@ trait ServerWithConfig[T, C <: Config] {
         launcher.startListening()
     }
 
+    // Messages
+
+    def showMessage(tipe : MessageType, msg : String) {
+        client.showMessage(new MessageParams(tipe, msg))
+    }
+
     // Dynamic capabilities
 
     def registerCapability(id : String, method : String, options : Object) {
@@ -73,7 +79,7 @@ trait ServerWithConfig[T, C <: Config] {
         client.registerCapability(params)
     }
 
-    // Messaging
+    // Diagnostics
 
     def publishDiagnostics(uri : String, diagnostics : Vector[Diagnostic]) {
         val params = new PublishDiagnosticsParams(uri, diagnostics.asJava)
