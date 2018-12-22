@@ -12,7 +12,7 @@ package org.bitbucket.inkytonik.kiama
 package example.minijava
 
 import MiniJavaTree.Program
-import org.bitbucket.inkytonik.kiama.util.{Compiler, Server}
+import org.bitbucket.inkytonik.kiama.util.Compiler
 import org.bitbucket.inkytonik.kiama.util.Config
 
 /**
@@ -25,6 +25,8 @@ trait Driver extends Compiler[Program] {
     import MiniJavaTree.MiniJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.Source
+
+    val name = "minijava"
 
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
@@ -69,8 +71,9 @@ trait Driver extends Compiler[Program] {
             // Pretty print the target tree
             // config.output().emitln(layout(any(targettree)))
 
-            // Output code for the target tree
-            targettree.map(generate(isTest, _, config.output()))
+            // Output code for the target tree in compiler mode
+            if (!config.server())
+                targettree.map(generate(isTest, _, config.output()))
 
         }
 
@@ -89,11 +92,4 @@ trait Driver extends Compiler[Program] {
  */
 object Main extends Driver {
     override def isTest = false
-}
-
-/**
- * Main program for MiniJava server.
- */
-object ServerMain extends Driver with Server[Program] {
-    val name = "minijava"
 }

@@ -18,11 +18,17 @@ package util
  * to the main processing of the compiler. `C` is the type of the
  * configuration.
  */
-trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Profiler {
+trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Profiler
+    with ServerWithConfig[T, C] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.rogach.scallop.exceptions.ScallopException
+
+    /**
+     * The name of this compiler which can be shown to the user.
+     */
+    def name : String
 
     /**
      * The entry point for this compiler.
@@ -72,12 +78,14 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * Run the compiler given a configuration.
      */
     def run(config : C) {
-        if (config.profile.isDefined) {
+        if (config.server()) {
+            launch(config)
+        } else if (config.profile.isDefined) {
             val dimensions = parseProfileOption(config.profile())
             profile(compileFiles(config), dimensions, config.logging())
-        } else if (config.time())
+        } else if (config.time()) {
             time(compileFiles(config))
-        else
+        } else
             compileFiles(config)
     }
 
@@ -149,7 +157,10 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * Output the messages in order of position to the configuration's output.
      */
     def report(messages : Messages, config : C) {
-        super.report(messages, config.output())
+        if (config.server())
+            publishMessages(messages)
+        else
+            super.report(messages, config.output())
     }
 
 }

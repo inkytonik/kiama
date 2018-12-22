@@ -64,6 +64,8 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
 
     import org.bitbucket.inkytonik.kiama.util.{FileSource, Source}
 
+    val name = "oberon0"
+
     override def createConfig(args : Seq[String]) : Oberon0Config =
         new Oberon0Config(args)
 

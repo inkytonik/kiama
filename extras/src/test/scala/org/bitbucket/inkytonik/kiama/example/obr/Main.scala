@@ -44,6 +44,8 @@ class Driver extends CompilerWithConfig[ObrInt, ObrConfig] {
     override def createConfig(args : Seq[String]) : ObrConfig =
         new ObrConfig(args)
 
+    val name = "obr"
+
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 

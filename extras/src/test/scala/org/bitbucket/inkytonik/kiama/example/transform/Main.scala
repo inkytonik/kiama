@@ -23,6 +23,8 @@ class Driver extends Compiler[Program] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
+    val name = "transform"
+
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 

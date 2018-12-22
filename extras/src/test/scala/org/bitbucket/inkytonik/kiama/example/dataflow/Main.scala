@@ -23,6 +23,8 @@ class Driver extends Compiler[Stm] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
+    val name = "dataflow"
+
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.stm
 

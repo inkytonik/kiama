@@ -30,11 +30,6 @@ trait ServerWithConfig[T, C <: Config] {
     import org.eclipse.lsp4j.jsonrpc.Launcher
     import scala.collection.JavaConverters._
 
-    /**
-     * The name of this server which will be shown to the user.
-     */
-    def name : String
-
     // Client saving
 
     private[this] var client : LanguageClient = _
@@ -45,7 +40,7 @@ trait ServerWithConfig[T, C <: Config] {
 
     // Launching
 
-    override def run(config : C) {
+    def launch(config : C) {
         val services = new Services(this, config)
         val launcherBase =
             new Launcher.Builder[LanguageClient]()
@@ -82,16 +77,16 @@ trait ServerWithConfig[T, C <: Config] {
 
     // Diagnostics
 
-    def publishDiagnostics(uri : String, diagnostics : Vector[Diagnostic]) {
-        val params = new PublishDiagnosticsParams(uri, diagnostics.asJava)
-        client.publishDiagnostics(params)
-    }
-
-    override def report(messages : Messages, config : C) {
+    def publishMessages(messages : Messages) {
         val groups = messages.groupBy(name(_).getOrElse(""))
         for ((uri, msgs) <- groups) {
             publishDiagnostics(uri, msgs.map(messageToDiagnostic))
         }
+    }
+
+    def publishDiagnostics(uri : String, diagnostics : Vector[Diagnostic]) {
+        val params = new PublishDiagnosticsParams(uri, diagnostics.asJava)
+        client.publishDiagnostics(params)
     }
 
     def clearDiagnostics(uri : String) {
@@ -119,16 +114,6 @@ trait ServerWithConfig[T, C <: Config] {
             case Information => DiagnosticSeverity.Information
             case Hint        => DiagnosticSeverity.Hint
         }
-
-}
-
-/**
- * A server that uses the given compiler to provide its services.
- * Uses the default configuration type.
- */
-trait Server[T] extends ServerWithConfig[T, Config] {
-
-    this : CompilerBase[T, Config] =>
 
 }
 

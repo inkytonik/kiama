@@ -22,6 +22,8 @@ trait ParsingMain extends Compiler[Program] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
 
+    val name = "til"
+
     def process(source : Source, ast : Program, config : Config) {
         config.output().emitln(ast)
     }

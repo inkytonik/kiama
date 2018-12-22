@@ -25,6 +25,8 @@ class CompilerTests extends KiamaTests with Compiler[Any] with TestCompiler[Any]
         val dummy : Parser[String] = "dummy".r
     }
 
+    val name = "compiler"
+
     val parser = parsers.dummy
 
     def process(source : Source, ast : Any, config : Config) {

@@ -105,6 +105,16 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
     )(consoleConverter)
 
     /**
+     * Language server mode for a compiler.
+     */
+    lazy val server = toggle(
+        "server",
+        descrYes = "Run compiler as a language server",
+        descrNo = "Run compiler in standard batch mode",
+        default = Some(false),
+    )
+
+    /**
      * Debug operations of a language server.
      */
     lazy val debug = toggle(

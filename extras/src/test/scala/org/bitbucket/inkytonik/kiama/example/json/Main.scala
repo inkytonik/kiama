@@ -20,6 +20,8 @@ class Driver extends Compiler[JValue] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
+    val name = "json"
+
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.jvalue
 

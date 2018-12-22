@@ -26,6 +26,8 @@ class SemanticAnalyserTests extends Compiler[Program] with TestCompiler[Program]
 
     filetests("Prolog", "example/prolog/tests", ".pl", ".sem")
 
+    val name = "prolog"
+
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 

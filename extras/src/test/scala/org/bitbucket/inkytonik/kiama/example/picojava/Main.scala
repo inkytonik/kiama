@@ -33,6 +33,8 @@ class Driver extends CompilerWithConfig[Program, PicojavaConfig] {
     def createConfig(args : Seq[String]) : PicojavaConfig =
         new PicojavaConfig(args)
 
+    val name = "picojava"
+
     val parsers = new SyntaxAnalyser(positions)
     val parser = parsers.program
 
