@@ -6,6 +6,6 @@ MODULE typenodecl;
 
 END typenodecl.
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/typenodecl.ob:4:12: NOTYPE is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/typenodecl.ob:4:12:error: NOTYPE is not declared
     avar : NOTYPE;
            ^

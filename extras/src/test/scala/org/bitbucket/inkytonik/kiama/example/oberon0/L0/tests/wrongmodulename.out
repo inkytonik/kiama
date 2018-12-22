@@ -2,6 +2,6 @@
 MODULE aname;
 END anothername.
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/wrongmodulename.ob:3:5: end module name 'anothername' should be 'aname'
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/wrongmodulename.ob:3:5:error: end module name 'anothername' should be 'aname'
 END anothername.
     ^

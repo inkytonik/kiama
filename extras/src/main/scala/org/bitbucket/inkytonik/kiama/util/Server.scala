@@ -26,6 +26,7 @@ trait ServerWithConfig[T, C <: Config] {
     import java.lang.System.{in, out}
     import java.util.Collections
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
+    import org.bitbucket.inkytonik.kiama.util.Severities._
     import org.eclipse.lsp4j.jsonrpc.Launcher
     import scala.collection.JavaConverters._
 
@@ -101,13 +102,22 @@ trait ServerWithConfig[T, C <: Config] {
         val s = convertPosition(start(message))
         val f = convertPosition(finish(message))
         val range = new Range(s, f)
-        new Diagnostic(range, message.label, DiagnosticSeverity.Error, name)
+        val severity = convertSeverity(message.severity)
+        new Diagnostic(range, message.label, severity, name)
     }
 
     def convertPosition(optPos : Option[Position]) : LSPPosition =
         optPos match {
             case Some(p) => new LSPPosition(p.line - 1, p.column - 1)
             case None    => new LSPPosition(0, 0)
+        }
+
+    def convertSeverity(severity : Severity) : DiagnosticSeverity =
+        severity match {
+            case Error       => DiagnosticSeverity.Error
+            case Warning     => DiagnosticSeverity.Warning
+            case Information => DiagnosticSeverity.Information
+            case Hint        => DiagnosticSeverity.Hint
         }
 
 }

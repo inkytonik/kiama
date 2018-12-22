@@ -1,4 +1,4 @@
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casenoclause.ob:8:5: clause expected
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L2/tests/casenoclause.ob:8:5:error: clause expected
     END
     ^

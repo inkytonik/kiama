@@ -18,7 +18,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
     import L0.source.{Assignment, NamedType, TypeDef}
     import L3.source.{FPSection, ValMode}
     import org.bitbucket.inkytonik.kiama.util.Entity
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, message, Messages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, error, Messages}
     import source.{ArrayTypeDef, FieldExp, FieldIdn, Fields, IndexExp, RecordTypeDef}
 
     /**
@@ -28,40 +28,40 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
         super.errorsDef(n) ++
             check(n) {
                 case FPSection(_, _, t) if !t.isInstanceOf[NamedType] =>
-                    message(t, "parameter type must be identifier")
+                    error(t, "parameter type must be identifier")
 
                 case n @ FPSection(ValMode(), _, t) if !(isNotArray(typebasetype(deftype(t)))) =>
-                    message(n, "array parameter must be VAR")
+                    error(n, "array parameter must be VAR")
 
                 case n @ FPSection(ValMode(), _, t) if !(isNotRecord(typebasetype(deftype(t)))) =>
-                    message(n, "record parameter must be VAR")
+                    error(n, "record parameter must be VAR")
 
                 case ArrayTypeDef(s, t) =>
-                    message(s, s"ARRAY size is ${value(s)} but should be >= 0",
+                    error(s, s"ARRAY size is ${value(s)} but should be >= 0",
                         isInteger(tipe(s)) && isconst(s) && (value(s) < 0))
 
                 case Assignment(l, _) if !isNotArray(basetype(l)) =>
-                    message(l, "can't assign to array")
+                    error(l, "can't assign to array")
 
                 case IndexExp(a, _) if !isArray(basetype(a)) =>
-                    message(a, "array indexing attempted on non-ARRAY")
+                    error(a, "array indexing attempted on non-ARRAY")
 
                 case IndexExp(a, e) =>
                     val ArrayType(s, _) = basetype(a)
-                    message(e, "index out of range",
+                    error(e, "index out of range",
                         (basetype(e) == integerType) && isconst(e) &&
                             ((value(e) < 0) || (value(e) >= s)))
 
                 case Assignment(l, _) if !isNotRecord(basetype(l)) =>
-                    message(l, "can't assign to record")
+                    error(l, "can't assign to record")
 
                 case FieldExp(r, f @ FieldIdn(i)) =>
                     val t = basetype(r)
                     if (isRecord(t))
-                        message(f, s"record doesn't contain a field called '$i'",
+                        error(f, s"record doesn't contain a field called '$i'",
                             !hasField(t, i))
                     else
-                        message(f, "field access attempted on non-RECORD")
+                        error(f, "field access attempted on non-RECORD")
             }
 
     override def rootconstexpDef : Expression => Boolean =

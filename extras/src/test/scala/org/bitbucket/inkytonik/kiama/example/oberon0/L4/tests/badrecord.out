@@ -24,51 +24,51 @@ BEGIN
     abool := rec2.r.i
 END badrecord.
 * errors
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:4:16: record contains duplicate field names
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:4:16:error: record contains duplicate field names
 [3]    arecord1 = RECORD x : INTEGER; x : INTEGER END;
 [3]               ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:6:16: record contains duplicate field names
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:6:16:error: record contains duplicate field names
 [3]    arecord3 = RECORD x, x : INTEGER END;
 [3]               ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:15:5: can't assign to record
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:15:5:error: can't assign to record
 [3]    rec1 := 10;
 [3]    ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:15:13: type error: got INTEGER, but expected arecord2
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:15:13:error: got INTEGER, but expected arecord2
 [3]    rec1 := 10;
 [3]            ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:5: can't assign to record
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:5:error: can't assign to record
 [3]    rec2 := rec1 + rec2;
 [3]    ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:13: type error: got INTEGER, but expected RECORD h : INTEGER; r : RECORD i : INTEGER; j : BOOLEAN END END
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:13:error: got INTEGER, but expected RECORD h : INTEGER; r : RECORD i : INTEGER; j : BOOLEAN END END
 [3]    rec2 := rec1 + rec2;
 [3]            ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:13: type error: got arecord2, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:13:error: got arecord2, but expected INTEGER
 [3]    rec2 := rec1 + rec2;
 [3]            ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:20: type error: got RECORD h : INTEGER; r : RECORD i : INTEGER; j : BOOLEAN END END, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:16:20:error: got RECORD h : INTEGER; r : RECORD i : INTEGER; j : BOOLEAN END END, but expected INTEGER
 [3]    rec2 := rec1 + rec2;
 [3]                   ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:17:5: can't assign to record
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:17:5:error: can't assign to record
 [3]    rec2.r := TRUE;
 [3]    ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:17:15: type error: got BOOLEAN, but expected RECORD i : INTEGER; j : BOOLEAN END
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:17:15:error: got BOOLEAN, but expected RECORD i : INTEGER; j : BOOLEAN END
 [3]    rec2.r := TRUE;
 [3]              ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:18:10: record doesn't contain a field called 'h'
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:18:10:error: record doesn't contain a field called 'h'
 [3]    rec1.h := 1;
 [3]         ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:19:20: record doesn't contain a field called 'h'
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:19:20:error: record doesn't contain a field called 'h'
 [3]    rec2.h := rec1.h;
 [3]                   ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:20:12: record doesn't contain a field called 'k'
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:20:12:error: record doesn't contain a field called 'k'
 [3]    rec2.r.k := 10;
 [3]           ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:21:22: record doesn't contain a field called 'k'
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:21:22:error: record doesn't contain a field called 'k'
 [3]    rec2.h := rec2.r.k;
 [3]                     ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:22:14: type error: got BOOLEAN, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:22:14:error: got BOOLEAN, but expected INTEGER
 [3]    anint := rec1.f;
 [3]             ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:23:14: type error: got INTEGER, but expected BOOLEAN
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/badrecord.ob:23:14:error: got INTEGER, but expected BOOLEAN
 [3]    abool := rec2.r.i
 [3]             ^

@@ -12,21 +12,21 @@ BEGIN
     bvar := bvar # FALSE
 END badeq.
 [3]* errors
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:8:20: type error: got BOOLEAN, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:8:20:error: got BOOLEAN, but expected INTEGER
 [3]    bvar := avar = bvar;
 [3]                   ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:9:13: type error: got BOOLEAN, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:9:13:error: got BOOLEAN, but expected INTEGER
 [3]    bvar := bvar # avar;
 [3]            ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:10:13: type error: got BOOLEAN, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:10:13:error: got BOOLEAN, but expected INTEGER
 [3]    bvar := bvar = TRUE;
 [3]            ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:10:20: type error: got BOOLEAN, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:10:20:error: got BOOLEAN, but expected INTEGER
 [3]    bvar := bvar = TRUE;
 [3]                   ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:11:13: type error: got BOOLEAN, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:11:13:error: got BOOLEAN, but expected INTEGER
 [3]    bvar := bvar # FALSE
 [3]            ^
-[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:11:20: type error: got BOOLEAN, but expected INTEGER
+[3]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badeq.ob:11:20:error: got BOOLEAN, but expected INTEGER
 [3]    bvar := bvar # FALSE
 [3]                   ^

@@ -15,7 +15,7 @@ package L3
 trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
 
     import base.source.{Expression, Identifier, IdnDef, IdnUse, SourceNode}
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, message, Messages, noMessages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, error, Messages, noMessages}
     import source.{Call, Mode, ValMode, VarMode}
 
     /**
@@ -27,13 +27,13 @@ trait TypeAnalyser extends L2.TypeAnalyser with NameAnalyser {
                 case Call(u @ IdnUse(i), cps) =>
                     check(numparams(u)) {
                         case Some(m) =>
-                            message(u, s"wrong number of parameters in call of $i, expected $m, got ${cps.length}", m != cps.length)
+                            error(u, s"wrong number of parameters in call of $i, expected $m, got ${cps.length}", m != cps.length)
                     }
 
                 case tree.parent.pair(e : Expression, Call(u, _)) =>
                     parammode(u, tree.index(e)) match {
                         case VarMode() if !isLvalue(e) =>
-                            message(e, "illegal VAR parameter")
+                            error(e, "illegal VAR parameter")
                         case _ =>
                             noMessages
                     }

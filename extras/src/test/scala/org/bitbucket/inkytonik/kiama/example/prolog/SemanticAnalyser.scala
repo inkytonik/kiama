@@ -19,7 +19,7 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
 
     import PrologTree._
     import SymbolTable._
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, collectMessages, message, Messages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, collectMessages, error, Messages}
     import org.bitbucket.inkytonik.kiama.util.{Entity, UnknownEntity}
 
     /**
@@ -30,18 +30,18 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
             case n @ Pred(s, ts) =>
                 check(entity(n)) {
                     case Predicate(argtypes) if argtypes.length != ts.length =>
-                        message(n, s"$s should have ${argtypes.length} arguments but has ${ts.length}")
+                        error(n, s"$s should have ${argtypes.length} arguments but has ${ts.length}")
                     case UnknownEntity() =>
-                        message(n, s"$s is not declared")
+                        error(n, s"$s is not declared")
                 } ++
                     checktype(n)
 
             case n @ Atom(s) =>
                 check(entity(n)) {
                     case Predicate(argtypes) if argtypes.length != 0 =>
-                        message(n, s"$s should have ${argtypes.length} arguments but has 0")
+                        error(n, s"$s should have ${argtypes.length} arguments but has 0")
                     case UnknownEntity() =>
-                        message(n, s"$s is not declared")
+                        error(n, s"$s is not declared")
                 } ++
                     checktype(n)
 
@@ -54,7 +54,7 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
      * expected type.  The unknown type is compatible with any other type.
      */
     def checktype(n : Term) : Messages =
-        message(n, s"argument ${tipe(n)} found, ${exptipe(n)} expected",
+        error(n, s"argument ${tipe(n)} found, ${exptipe(n)} expected",
             (tipe(n) != UnknownType()) && (exptipe(n) != UnknownType()) &&
                 (tipe(n) != exptipe(n)))
 

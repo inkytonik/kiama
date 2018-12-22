@@ -17,7 +17,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
     import base.source.{Block, IdnDef, IdnUse, SourceNode}
     import decorators.down
     import org.bitbucket.inkytonik.kiama.util.Entity
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, message, Messages, noMessages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, error, Messages, noMessages}
     import source.{Call, FPSection, ProcDecl}
 
     /**
@@ -27,7 +27,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
         super.errorsDef(n) ++
             check(n) {
                 case tree.parent.pair(u @ IdnUse(i1), ProcDecl(IdnDef(i2), _, _, _)) =>
-                    message(u, s"end procedure name $i1 should be $i2", i1 != i2)
+                    error(u, s"end procedure name $i1 should be $i2", i1 != i2)
 
                 case u : IdnUse =>
                     checkNonLocalVarAccess(u)
@@ -37,7 +37,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
                         case _ : BuiltinProc | _ : Procedure =>
                             noMessages
                         case _ =>
-                            message(u, s"call of non-procedure $i")
+                            error(u, s"call of non-procedure $i")
                     }
             }
 
@@ -49,13 +49,13 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
     def checkNonLocalVarAccess(u : IdnUse) : Messages =
         checkUse(entity(u)) {
             case Procedure(i, p) =>
-                message(u, s"non-local procedure access to $i is not allowed", level(u) > level(p))
+                error(u, s"non-local procedure access to $i is not allowed", level(u) > level(p))
 
             case Variable(i, t) if (level(t) != 0) && (level(u) > level(t)) =>
-                message(u, s"non-local variable access to $i is not allowed")
+                error(u, s"non-local variable access to $i is not allowed")
 
             case Parameter(_, Variable(i, t)) if (level(t) != 0) && (level(u) > level(t)) =>
-                message(u, s"non-local parameter access to $i is not allowed")
+                error(u, s"non-local parameter access to $i is not allowed")
         }
 
     /**

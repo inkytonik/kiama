@@ -1,4 +1,4 @@
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/intoverflow.ob:8:13: expression expected
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/intoverflow.ob:8:13:error: expression expected
     avar := 2147483648
             ^

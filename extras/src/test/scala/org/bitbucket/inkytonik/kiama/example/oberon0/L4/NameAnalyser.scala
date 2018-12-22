@@ -15,7 +15,7 @@ package L4
 trait NameAnalyser extends L3.NameAnalyser {
 
     import base.source.{Expression, SourceNode}
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, message, Messages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, error, Messages}
     import source.{FieldExp, IndexExp, RecordTypeDef}
 
     /**
@@ -26,7 +26,7 @@ trait NameAnalyser extends L3.NameAnalyser {
             check(n) {
                 case n @ RecordTypeDef(fls) =>
                     val flnames = fls.flatMap(_.idndefs)
-                    message(n, "record contains duplicate field names", flnames.distinct != flnames)
+                    error(n, "record contains duplicate field names", flnames.distinct != flnames)
             }
 
     override def isLvalue(l : Expression) : Boolean =

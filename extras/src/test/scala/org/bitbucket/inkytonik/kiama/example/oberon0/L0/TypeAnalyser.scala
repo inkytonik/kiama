@@ -40,7 +40,7 @@ trait TypeAnalyser extends NameAnalyser {
         super.errorsDef(n) ++
             check(n) {
                 case e : Expression if !isCompatible(tipe(e), exptype(e)) =>
-                    message(e, s"type error: got ${tipe(e)}, but expected ${exptype(e)}")
+                    message(e, s"got ${tipe(e)}, but expected ${exptype(e)}")
             }
 
     /**

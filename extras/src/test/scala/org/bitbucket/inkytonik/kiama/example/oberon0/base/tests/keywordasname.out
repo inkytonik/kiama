@@ -1,4 +1,4 @@
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/base/tests/keywordasname.ob:1:8: ident expected
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/base/tests/keywordasname.ob:1:8:error: ident expected
 MODULE END;
        ^

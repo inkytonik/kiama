@@ -1,4 +1,4 @@
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badassign.ob:4:5: 'END' expected but '1' found
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/badassign.ob:4:5:error: 'END' expected but '1' found
     1 := 2
     ^

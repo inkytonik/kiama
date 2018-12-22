@@ -54,7 +54,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an unknown variable by itself is reported") {
         analyse("y") shouldBe
-            """1:1: 'y' unknown
+            """1:1:error: 'y' unknown
               |y
               |^
               |""".stripMargin
@@ -62,7 +62,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an unknown variable in an abstraction is reported (typed)") {
         analyse("""\x : Int . x + y""") shouldBe
-            """1:16: 'y' unknown
+            """1:16:error: 'y' unknown
               |\x : Int . x + y
               |               ^
               |""".stripMargin
@@ -70,7 +70,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an unknown variable in an abstraction is reported (untyped)") {
         analyse("""\x . x + y""") shouldBe
-            """1:10: 'y' unknown
+            """1:10:error: 'y' unknown
               |\x . x + y
               |         ^
               |""".stripMargin
@@ -78,7 +78,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an Int -> Int cannot be used as an Int (typed)") {
         analyse("""(\x : Int -> Int . x + 1) (\y : Int . y)""") shouldBe
-            """1:20: expected Int, found Int -> Int
+            """1:20:error: expected Int, found Int -> Int
               |(\x : Int -> Int . x + 1) (\y : Int . y)
               |                   ^
               |""".stripMargin
@@ -90,7 +90,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an Int cannot be passed to an Int -> Int (typed)") {
         analyse("""(\x : Int -> Int . x 4) 3""") shouldBe
-            """1:25: expected Int -> Int, found Int
+            """1:25:error: expected Int -> Int, found Int
               |(\x : Int -> Int . x 4) 3
               |                        ^
               |""".stripMargin
@@ -102,7 +102,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an Int -> Int cannot be passed to an Int (typed)") {
         analyse("""(\x : Int . x + x) (\y : Int . y + 1)""") shouldBe
-            """1:21: expected Int, found Int -> Int
+            """1:21:error: expected Int, found Int -> Int
               |(\x : Int . x + x) (\y : Int . y + 1)
               |                    ^
               |""".stripMargin
@@ -114,7 +114,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an Int cannot be directly applied as a function") {
         analyse("""1 3""") shouldBe
-            """1:1: application of non-function
+            """1:1:error: application of non-function
               |1 3
               |^
               |""".stripMargin
@@ -122,7 +122,7 @@ class LambdaTests extends ParseTests with Messaging {
 
     test("an Int cannot be applied as a function via a parameter (typed)") {
         analyse("""(\x : Int . x 5) 7""") shouldBe
-            """1:13: application of non-function
+            """1:13:error: application of non-function
               |(\x : Int . x 5) 7
               |            ^
               |""".stripMargin

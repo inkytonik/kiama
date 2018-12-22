@@ -1,24 +1,24 @@
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:7:5: CarColour is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:7:5:error: CarColour is declared more than once
     CarColour : (Red, Blue, Green);
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:8:5: CarColour is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:8:5:error: CarColour is declared more than once
     CarColour: (Monday, Tuesday, Wednesday, Thursday, Friday);
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:11:5: Bob is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:11:5:error: Bob is declared more than once
     Bob : INTEGER;
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:12:5: Bob is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:12:5:error: Bob is declared more than once
     Bob : (Harold, Eugene);
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:15:15: January is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:15:15:error: January is declared more than once
     Months : (January, February, March, January, April);
               ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:15:41: January is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:15:41:error: January is declared more than once
     Months : (January, February, March, January, April);
                                         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:18:37: Ford is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:18:37:error: Ford is declared more than once
     AusssieBrands : (Mazda, Toyota, Ford, Holden);
                                     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:19:29: Ford is declared more than once
+src/test/scala/org/bitbucket/inkytonik/kiama/example/obr/tests/enum/semantic/enumerr1.obr:19:29:error: Ford is declared more than once
     CoolBrands : (Mercedes, Ford, Volkswagen);
                             ^

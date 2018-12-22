@@ -12,10 +12,56 @@ package org.bitbucket.inkytonik.kiama
 package util
 
 /**
+ * The severities of a message.
+ */
+object Severities {
+
+    /**
+     * Base class of message severities.
+     */
+    sealed abstract class Severity
+
+    /**
+     * A message severity that indicates a fatal problem after which later
+     * phases of processing cannot proceed.
+     */
+    case object Error extends Severity
+
+    /**
+     * A message severity that indicates a problem that should be addressed
+     * but does not inhibit later phases of processing.
+     */
+    case object Warning extends Severity
+
+    /**
+     * A message severity that indicates that the message provides information,
+     * but does not constitute an error or warning.
+     */
+    case object Information extends Severity
+
+    /**
+     * A message severity that indicates that the message describes a hint
+     * that the user may wish to act on.
+     */
+    case object Hint extends Severity
+
+    /**
+     * Convery a severity to a descriptive word for use in formatted messages.
+     */
+    def severityToWord(severity : Severity) : String =
+        severity match {
+            case Error       => "error"
+            case Warning     => "warning"
+            case Information => "info"
+            case Hint        => "hint"
+        }
+}
+
+/**
  * A message record consisting of a value with which the message is associated
  * and a label string.
  */
-case class Message(value : AnyRef, label : String)
+case class Message(value : AnyRef, label : String, severity : Severities.Severity)
 
 /**
  * Shared definitions for all messaging.
@@ -24,6 +70,7 @@ object Messaging {
 
     import org.bitbucket.inkytonik.kiama.relation.Tree
     import org.bitbucket.inkytonik.kiama.util.{Entity, ErrorEntity}
+    import org.bitbucket.inkytonik.kiama.util.Severities._
 
     /**
      * The type of a sequence of messages.
@@ -67,14 +114,40 @@ object Messaging {
 
     /**
      * If `cond` is true make a singleton message list that associates the
-     * label with the start position recorded for `value` (if any). `cond`
-     * can be omitted and defaults to true.
+     * label with the start position recorded for `value` (if any).  If `cond`
+     * is false make an empty message list. `cond` can be omitted and defaults
+     * to true.
      */
-    def message(value : AnyRef, label : String, cond : Boolean = true) : Messages =
+    def message(value : AnyRef, label : String, severity : Severity = Error,
+        cond : Boolean = true) : Messages =
         if (cond)
-            Vector(Message(value, label))
+            Vector(Message(value, label, severity))
         else
             noMessages
+
+    /**
+     * As for `message` but forces an error severity.
+     */
+    def error(value : AnyRef, label : String, cond : Boolean = true) : Messages =
+        message(value, label, Error, cond)
+
+    /**
+     * As for `message` but forces a warning severity.
+     */
+    def warning(value : AnyRef, label : String, cond : Boolean = true) : Messages =
+        message(value, label, Warning, cond)
+
+    /**
+     * As for `message` but forces an information severity.
+     */
+    def info(value : AnyRef, label : String, cond : Boolean = true) : Messages =
+        message(value, label, Information, cond)
+
+    /**
+     * As for `message` but forces a hint severity.
+     */
+    def hint(value : AnyRef, label : String, cond : Boolean = true) : Messages =
+        message(value, label, Hint, cond)
 
 }
 
@@ -86,6 +159,7 @@ trait Messaging {
     self : PositionStore =>
 
     import org.bitbucket.inkytonik.kiama.util.Messaging._
+    import org.bitbucket.inkytonik.kiama.util.Severities.severityToWord
     import scala.math.Ordering._
 
     /**
@@ -129,8 +203,9 @@ trait Messaging {
     def formatMessage(message : Message) : String =
         start(message) match {
             case Some(pos) =>
+                val severity = severityToWord(message.severity)
                 val context = pos.optContext.getOrElse("")
-                s"${pos.format} ${message.label}\n$context\n"
+                s"${pos.format}$severity: ${message.label}\n$context\n"
             case None =>
                 s"${message.label}\n"
         }

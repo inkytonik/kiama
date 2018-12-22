@@ -25,7 +25,7 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
     }
     import decorators.{chain, Chain}
     import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, message, Messages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, error, Messages}
     import source.{
         AddExp,
         Assignment,
@@ -52,34 +52,34 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
         super.errorsDef(n) ++
             check(n) {
                 case ModuleDecl(_, _, u @ IdnUse(i)) if !isModule(entity(u)) =>
-                    message(u, s"$i is not a module")
+                    error(u, s"$i is not a module")
 
                 case d @ IdnDef(i) if entity(d) == MultipleEntity() =>
-                    message(d, s"$i is already declared")
+                    error(d, s"$i is already declared")
 
                 case tree.parent.pair(u @ IdnUse(i2), ModuleDecl(IdnDef(i1), _, _)) if i1 != i2 =>
-                    message(u, s"end module name '$i2' should be '$i1'")
+                    error(u, s"end module name '$i2' should be '$i1'")
 
                 case u @ IdnUse(i) if entity(u) == UnknownEntity() =>
-                    message(u, s"$i is not declared")
+                    error(u, s"$i is not declared")
 
                 case NamedType(u @ IdnUse(i)) if !isType(entity(u)) =>
-                    message(u, s"$i is not a type name")
+                    error(u, s"$i is not a type name")
 
                 case Assignment(l, _) if !isLvalue(l) =>
-                    message(l, "illegal assignment")
+                    error(l, "illegal assignment")
 
                 case e : Expression =>
-                    message(e, "expression is not constant", rootconstexp(e) && !isconst(e)) ++
+                    error(e, "expression is not constant", rootconstexp(e) && !isconst(e)) ++
                         check(e) {
                             case u @ IdnExp(IdnUse(i)) if !(isRvalue(u)) =>
-                                message(u, s"$i cannot be used in an expression")
+                                error(u, s"$i cannot be used in an expression")
 
                             case DivExp(_, r) if expconst(r) && isconst(r) && (value(r) == 0) =>
-                                message(r, "division by zero in constant expression")
+                                error(r, "division by zero in constant expression")
 
                             case ModExp(_, r) if expconst(r) && isconst(r) && (value(r) == 0) =>
-                                message(r, "modulus by zero in constant expression")
+                                error(r, "modulus by zero in constant expression")
                         }
             }
 

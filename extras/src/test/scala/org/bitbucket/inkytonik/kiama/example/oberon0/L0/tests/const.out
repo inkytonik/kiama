@@ -17,15 +17,15 @@ BEGIN
     aconst1 := 42
 END const.
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:7:15: noconst is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:7:15:error: noconst is not declared
     aconst4 = noconst + 1;
               ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:8:21: division by zero in constant expression
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:8:21:error: division by zero in constant expression
     aconst5 = 1 DIV 0;
                     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:9:22: modulus by zero in constant expression
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:9:22:error: modulus by zero in constant expression
     aconst6 = 2 MOD (3 DIV 4);
                      ^
-[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:16:5: illegal assignment
+[2]src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/const.ob:16:5:error: illegal assignment
 [2]    aconst1 := 42
 [2]    ^

@@ -21,7 +21,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     import SymbolTable._
     import org.bitbucket.inkytonik.kiama.attribution.Decorators
     import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, collectMessages, Messages, message, noMessages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, collectMessages, error, Messages, noMessages}
 
     val decorators = new Decorators(tree)
     import decorators.{chain, Chain}
@@ -32,25 +32,25 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     lazy val errors : Messages =
         collectMessages(tree) {
             case p @ ObrInt(i1, ds, ss, i2) if i1 != i2 =>
-                message(p, s"identifier $i2 at end should be $i1")
+                error(p, s"identifier $i2 at end should be $i1")
 
             case d @ IdnDef(i) if entity(d) == MultipleEntity() =>
-                message(d, s"$i is declared more than once")
+                error(d, s"$i is declared more than once")
 
             case u @ IdnUse(i) if entity(u) == UnknownEntity() =>
-                message(u, s"$i is not declared")
+                error(u, s"$i is not declared")
 
             case n @ AssignStmt(l, r) if !assignable(l) =>
-                message(l, "illegal assignment")
+                error(l, "illegal assignment")
 
             case n @ ExitStmt() if !isinloop(n) =>
-                message(n, "an EXIT statement must be inside a LOOP statement")
+                error(n, "an EXIT statement must be inside a LOOP statement")
 
             case ForStmt(n @ IdnUse(i), e1, e2, ss) =>
                 checkUse(entity(n)) {
                     case ent =>
                         val t = enttipe(ent)
-                        message(n, s"for loop variable $i must be integer",
+                        error(n, s"for loop variable $i must be integer",
                             (t != IntType()) && (t != UnknownType()))
                 }
 
@@ -59,7 +59,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
                 checkUse(entity(v)) {
                     case ent =>
                         val t = enttipe(ent)
-                        message(n, s"raise parameter $i must be an exception constant",
+                        error(n, s"raise parameter $i must be an exception constant",
                             (t != ExnType()) && (t != UnknownType()))
                 }
 
@@ -68,14 +68,14 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
                 checkUse(entity(v)) {
                     case ent =>
                         val t = enttipe(ent)
-                        message(n, s"catch clause parameter $i must be an exception constant",
+                        error(n, s"catch clause parameter $i must be an exception constant",
                             (t != ExnType()) && (t != UnknownType()))
                 }
 
             case RecordVar(n @ IdnDef(i), _) =>
                 checkUse(entity(n)) {
                     case Variable(RecordType(fs)) =>
-                        message(n, s"$i contains duplicate field(s)",
+                        error(n, s"$i contains duplicate field(s)",
                             fs.distinct.length != fs.length)
                 }
 
@@ -86,18 +86,18 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
                             case ArrayType(_) | UnknownType() =>
                                 noMessages
                             case _ =>
-                                message(v, s"attempt to index the non-array $a")
+                                error(v, s"attempt to index the non-array $a")
                         }
 
                     case FieldExp(v @ IdnUse(r), f) =>
                         check(enttipe(entity(v))) {
                             case RecordType(fs) =>
-                                message(v, s"$f is not a field of $r", !(fs contains f))
+                                error(v, s"$f is not a field of $r", !(fs contains f))
                             case _ =>
-                                message(v, s"attempt to access field of non-record $r")
+                                error(v, s"attempt to access field of non-record $r")
                         }
                 } ++
-                    message(e, s"""type error: expected ${exptipe(e).mkString(" or ")} got ${tipe(e)}""",
+                    error(e, s"""expected ${exptipe(e).mkString(" or ")} type got ${tipe(e)}""",
                         !(exptipe(e) exists ((_ : TypeBase) iscompatible tipe(e))))
         }
 

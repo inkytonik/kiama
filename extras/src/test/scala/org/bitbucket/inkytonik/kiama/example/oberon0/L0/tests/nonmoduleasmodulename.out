@@ -6,6 +6,6 @@ MODULE aname;
 
 END i.
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/nonmoduleasmodulename.ob:6:5: end module name 'i' should be 'aname'
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/nonmoduleasmodulename.ob:6:5:error: end module name 'i' should be 'aname'
 END i.
     ^

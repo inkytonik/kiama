@@ -59,7 +59,7 @@
 <pre>
 case e : Expression =>
     if (!iscompatible (e->tipe, e->exptipe))
-        message (e, "type error: expected " + (e->exptipe) + " got " + (e->tipe))
+        message (e, "expected " + (e->exptipe) + " type got " + (e->tipe))
 </pre>
 
     <p>I followed the same scheme as in the practical exercises by
@@ -445,7 +445,7 @@ test ("a Boolean expression is not assignment compatible with an integer var") {
     val stmts = List (VarAssign (IdnUse ("v"), exp1))
     embedExpressionAndCheck (exp, IntType (), vars, stmts)
     assert (messagecount === 1)
-    assertMessage (0, 0, 0, "type error: expected int got boolean")
+    assertMessage (0, 0, 0, "expected int type got boolean")
 }
 </pre>
 

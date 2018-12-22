@@ -7,9 +7,9 @@ MODULE arrayname;
 
 END arrayname.
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/arrayname.ob:4:26: atype0 is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/arrayname.ob:4:26:error: atype0 is not declared
     atype1 = ARRAY 10 OF atype0;
                          ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/arrayname.ob:5:24: aconst is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L4/tests/arrayname.ob:5:24:error: aconst is not declared
     atype2 = ARRAY 3 * aconst OF INTEGER;
                        ^

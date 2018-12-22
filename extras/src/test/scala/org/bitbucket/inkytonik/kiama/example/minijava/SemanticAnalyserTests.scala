@@ -121,10 +121,10 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |class Main { public static void main () { System.out.println (0); } }
             |class Main { }
             """.stripMargin) shouldBe (
-            """2:7: Main is declared more than once
+            """2:7:error: Main is declared more than once
               |class Main { public static void main () { System.out.println (0); } }
               |      ^
-              |3:7: Main is declared more than once
+              |3:7:error: Main is declared more than once
               |class Main { }
               |      ^
               |""".stripMargin
@@ -141,10 +141,10 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """4:9: mult is declared more than once
+                """4:9:error: mult is declared more than once
               |    int mult;
               |        ^
-              |5:9: mult is declared more than once
+              |5:9:error: mult is declared more than once
               |    int mult;
               |        ^
               |""".stripMargin
@@ -178,7 +178,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """5:9: notdecl is not declared
+                """5:9:error: notdecl is not declared
               |        notdecl = 1;
               |        ^
               |""".stripMargin
@@ -201,7 +201,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """9:9: notdecl is not declared
+                """9:9:error: notdecl is not declared
               |        notdecl = 1;
               |        ^
               |""".stripMargin
@@ -238,7 +238,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """6:16: can't refer to methods directly
+                """6:16:error: can't refer to methods directly
               |        return m;
               |               ^
               |""".stripMargin
@@ -259,7 +259,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
         val cond = IntExp(42)
         val stmts = Vector(If(cond, Block(Vector()), Block(Vector())))
         errors(exp, IntType(), Vector(), stmts) shouldBe (
-            "type error: expected boolean got int\n"
+            "expected boolean type got int\n"
         )
     }
 
@@ -275,7 +275,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
         val cond = IntExp(42)
         val stmts = Vector(While(cond, Block(Vector())))
         errors(exp, IntType(), Vector(), stmts) shouldBe (
-            "type error: expected boolean got int\n"
+            "expected boolean type got int\n"
         )
     }
 
@@ -337,7 +337,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
         val vars = Vector(Var(IntType(), IdnDef("v")))
         val stmts = Vector(VarAssign(IdnUse("v"), exp1))
         errors(exp, IntType(), vars, stmts) shouldBe (
-            "type error: expected int got boolean\n"
+            "expected int type got boolean\n"
         )
     }
 
@@ -355,7 +355,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
         val vars = Vector(Var(BooleanType(), IdnDef("v")))
         val stmts = Vector(VarAssign(IdnUse("v"), exp1))
         errors(exp, IntType(), vars, stmts) shouldBe (
-            "type error: expected boolean got int\n"
+            "expected boolean type got int\n"
         )
     }
 
@@ -373,7 +373,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
         val vars = Vector(Var(IntArrayType(), IdnDef("v")))
         val stmts = Vector(VarAssign(IdnUse("v"), exp1))
         errors(exp, IntType(), vars, stmts) shouldBe (
-            "type error: expected int[] got int\n"
+            "expected int[] type got int\n"
         )
     }
 
@@ -395,7 +395,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
         val vars = Vector(Var(IntArrayType(), IdnDef("v")))
         val stmts = Vector(ArrayAssign(IdnUse("v"), exp1, exp2))
         errors(exp, IntType(), vars, stmts) shouldBe (
-            "type error: expected int got boolean\ntype error: expected int got boolean\n"
+            "expected int type got boolean\nexpected int type got boolean\n"
         )
     }
 
@@ -409,7 +409,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     test("the children of a plus expression must be integers and its type is integer") {
         val exp = PlusExp(TrueExp(), FalseExp())
         errors(exp) shouldBe (
-            "type error: expected int got boolean\ntype error: expected int got boolean\n"
+            "expected int type got boolean\nexpected int type got boolean\n"
         )
         typeOf(exp) shouldBe IntType()
     }
@@ -424,7 +424,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     test("the children of an and expression must be Booelans and its type is Boolean") {
         val exp = AndExp(IntExp(42), IntExp(99))
         errors(exp, BooleanType()) shouldBe (
-            "type error: expected boolean got int\ntype error: expected boolean got int\n"
+            "expected boolean type got int\nexpected boolean type got int\n"
         )
         typeOf(exp) shouldBe BooleanType()
     }
@@ -439,7 +439,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     test("the child of a not expression must be Boolean and its type is Boolean") {
         val exp = NotExp(IntExp(42))
         errors(exp, BooleanType()) shouldBe (
-            "type error: expected boolean got int\n"
+            "expected boolean type got int\n"
         )
         typeOf(exp) shouldBe BooleanType()
     }
@@ -454,7 +454,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     test("the children of a less-than expression must be integers and its type is Boolean") {
         val exp = LessExp(TrueExp(), FalseExp())
         errors(exp, BooleanType()) shouldBe (
-            "type error: expected int got boolean\ntype error: expected int got boolean\n"
+            "expected int type got boolean\nexpected int type got boolean\n"
         )
         typeOf(exp) shouldBe BooleanType()
     }
@@ -469,7 +469,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     test("the child of a length expression must be an integer array and its type is integer") {
         val exp = LengthExp(IntExp(42))
         errors(exp) shouldBe (
-            "type error: expected int[] got int\n"
+            "expected int[] type got int\n"
         )
         typeOf(exp) shouldBe IntType()
     }
@@ -488,7 +488,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """6:21: illegal call to non-method
+                """6:21:error: illegal call to non-method
               |        return this.v ();
               |                    ^
               |""".stripMargin
@@ -544,7 +544,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """9:13: type error: expected int got boolean
+                """9:13:error: expected int type got boolean
              |        v = this.m ();
              |            ^
              |""".stripMargin
@@ -579,7 +579,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """8:21: wrong number of arguments, got 1 but expected 2
+                """8:21:error: wrong number of arguments, got 1 but expected 2
               |        return this.m (42);
               |                    ^
               |""".stripMargin
@@ -600,10 +600,10 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """8:24: type error: expected boolean got int
+                """8:24:error: expected boolean type got int
               |        return this.m (42, 99);
               |                       ^
-              |8:28: type error: expected int[] got int
+              |8:28:error: expected int[] type got int
               |        return this.m (42, 99);
               |                           ^
               |""".stripMargin
@@ -649,7 +649,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     test("The type of the parameter in a new integer array expression must be an integer") {
         val exp = NewArrayExp(TrueExp())
         errors(exp, IntArrayType()) shouldBe (
-            "type error: expected int got boolean\n"
+            "expected int type got boolean\n"
         )
     }
 
@@ -698,9 +698,22 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             |}
             """.stripMargin
         ) shouldBe (
-                """5:16: type error: expected int got boolean
+                """5:16:error: expected int type got boolean
               |        return true;
               |               ^
+              |""".stripMargin
+            )
+    }
+
+    test("A lowercase-starting class name produces an appropriate information message") {
+        check(
+            """
+            |class dummy { public static void main () { System.out.println (0); } }
+            """.stripMargin
+        ) shouldBe (
+                """2:7:info: Style guides suggest starting class names with an upper case letter
+              |class dummy { public static void main () { System.out.println (0); } }
+              |      ^
               |""".stripMargin
             )
     }

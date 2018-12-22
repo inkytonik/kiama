@@ -27,8 +27,9 @@ class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
         check,
         checkUse,
         collectMessages,
+        error,
+        info,
         Messages,
-        message,
         noMessages
     }
     import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
@@ -42,36 +43,43 @@ class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
      */
     lazy val errors : Messages =
         collectMessages(tree) {
-            case d @ IdnDef(i) if entity(d) == MultipleEntity() =>
-                message(d, s"$i is declared more than once")
+            case d @ IdnDef(i) =>
+                entity(d) match {
+                    case MultipleEntity() =>
+                        error(d, s"$i is declared more than once")
+                    case MainClassEntity(_) | ClassEntity(_) if i(0).isLower =>
+                        info(d, s"Style guides suggest starting class names with an upper case letter")
+                    case _ =>
+                        noMessages
+                }
 
             case u @ IdnUse(i) if entity(u) == UnknownEntity() =>
-                message(u, s"$i is not declared")
+                error(u, s"$i is not declared")
 
             case VarAssign(u, _) =>
                 checkUse(entity(u)) {
                     case _ : ClassEntity | _ : MethodEntity =>
-                        message(u, "illegal assignment to non-variable, non-argument")
+                        error(u, "illegal assignment to non-variable, non-argument")
                 }
 
             case e : Expression =>
-                message(e, s"type error: expected ${exptipe(e)} got ${tipe(e)}",
+                error(e, s"expected ${exptipe(e)} type got ${tipe(e)}",
                     !iscompatible(tipe(e), exptipe(e))) ++
                     check(e) {
                         case IdnExp(u) =>
                             checkUse(entity(u)) {
                                 case _ : MethodEntity =>
-                                    message(u, "can't refer to methods directly")
+                                    error(u, "can't refer to methods directly")
                             }
 
                         case CallExp(_, u, args) =>
                             checkUse(entity(u)) {
                                 case MethodEntity(decl) =>
                                     val expargnum = decl.body.args.length
-                                    message(u, s"wrong number of arguments, got ${args.length} but expected $expargnum",
+                                    error(u, s"wrong number of arguments, got ${args.length} but expected $expargnum",
                                         expargnum != args.length)
                                 case _ =>
-                                    message(u, "illegal call to non-method")
+                                    error(u, "illegal call to non-method")
                             }
 
                         case NewExp(u) =>
@@ -79,7 +87,7 @@ class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
                                 case _ : ClassEntity =>
                                     noMessages
                                 case _ =>
-                                    message(u, "illegal instance creation of non-class type")
+                                    error(u, "illegal instance creation of non-class type")
                             }
                     }
         }

@@ -1,4 +1,4 @@
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/repeatsection.ob:6:1: 'END' expected but 'C' found
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/repeatsection.ob:6:1:error: 'END' expected but 'C' found
 CONST
 ^

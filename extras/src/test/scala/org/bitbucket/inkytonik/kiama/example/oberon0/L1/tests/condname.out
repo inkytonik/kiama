@@ -69,138 +69,138 @@ BEGIN
     END
 END condname.
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:4:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:4:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:7:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:7:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:8:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:8:9:error: avar is not declared
         avar := 0
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:12:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:12:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:13:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:13:9:error: avar is not declared
         avar := 0;
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:14:11: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:14:11:error: bvar is not declared
     ELSIF bvar THEN
           ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:17:9: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:17:9:error: bvar is not declared
     IF ~bvar THEN
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:18:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:18:9:error: avar is not declared
         avar := 2
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:21:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:21:8:error: bvar is not declared
     IF bvar & ~bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:21:16: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:21:16:error: bvar is not declared
     IF bvar & ~bvar THEN
                ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:22:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:22:9:error: avar is not declared
         avar := 3;
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:23:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:23:9:error: avar is not declared
         avar := 4
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:25:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:25:9:error: avar is not declared
         avar := 5;
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:26:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:26:9:error: avar is not declared
         avar := 6
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:29:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:29:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:30:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:30:9:error: avar is not declared
         avar := 7
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:31:11: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:31:11:error: bvar is not declared
     ELSIF bvar THEN
           ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:32:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:32:9:error: avar is not declared
         avar := 8
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:35:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:35:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:36:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:36:9:error: avar is not declared
         avar := 9
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:37:11: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:37:11:error: bvar is not declared
     ELSIF bvar THEN
           ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:38:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:38:9:error: avar is not declared
         avar := 10
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:40:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:40:9:error: avar is not declared
         avar := 11
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:43:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:43:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:44:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:44:9:error: avar is not declared
         avar := 12
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:45:11: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:45:11:error: bvar is not declared
     ELSIF bvar THEN
           ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:46:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:46:9:error: avar is not declared
         avar := 13;
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:47:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:47:9:error: avar is not declared
         avar := 14
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:48:11: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:48:11:error: bvar is not declared
     ELSIF bvar THEN
           ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:49:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:49:9:error: avar is not declared
         avar := 15
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:50:11: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:50:11:error: bvar is not declared
     ELSIF bvar THEN
           ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:51:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:51:9:error: avar is not declared
         avar := 16;
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:52:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:52:9:error: avar is not declared
         avar := 17
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:54:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:54:9:error: avar is not declared
         avar := 18
         ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:57:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:57:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:58:12: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:58:12:error: bvar is not declared
         IF bvar THEN
            ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:59:13: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:59:13:error: avar is not declared
             avar := 19
             ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:61:13: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:61:13:error: avar is not declared
             avar := 20
             ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:65:8: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:65:8:error: bvar is not declared
     IF bvar THEN
        ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:66:12: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:66:12:error: bvar is not declared
         IF bvar THEN
            ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:67:13: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:67:13:error: avar is not declared
             avar := 21
             ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:68:15: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:68:15:error: bvar is not declared
         ELSIF bvar THEN
               ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:69:13: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:69:13:error: avar is not declared
             avar := 22
             ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:71:11: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:71:11:error: bvar is not declared
     ELSIF bvar THEN
           ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:72:9: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L1/tests/condname.ob:72:9:error: avar is not declared
         avar := 23
         ^

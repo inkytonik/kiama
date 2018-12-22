@@ -25,33 +25,33 @@ BEGIN
     avar7 := 1
 END var.
 * errors
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:5:13: avar1 is not a type name
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:5:13:error: avar1 is not a type name
     avar2 : avar1;
             ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:8:5: avar3 is already declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:8:5:error: avar3 is already declared
     avar3 : BOOLEAN;
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:9:5: avar4 is already declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:9:5:error: avar4 is already declared
     avar4 : INTEGER;
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:10:12: avar5 is already declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:10:12:error: avar5 is already declared
     avar5, avar5 : INTEGER;
            ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:12:13: avar1 is not a type name
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:12:13:error: avar1 is not a type name
     avar7 : avar1;
             ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:15:5: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:15:5:error: avar is not declared
     avar := 42;
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:16:5: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:16:5:error: avar is not declared
     avar := bvar;
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:16:13: bvar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:16:13:error: bvar is not declared
     avar := bvar;
             ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:17:5: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:17:5:error: avar is not declared
     avar := 99 - (avar + 1);
     ^
-src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:17:19: avar is not declared
+src/test/scala/org/bitbucket/inkytonik/kiama/example/oberon0/L0/tests/var.ob:17:19:error: avar is not declared
     avar := 99 - (avar + 1);
                   ^

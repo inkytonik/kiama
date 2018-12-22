@@ -25,7 +25,7 @@ class Analyser(tree : LambdaTree) extends Attribution {
 
     import LambdaTree._
     import PrettyPrinter.formattedLayout
-    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, collectMessages, message, Messages}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.{check, collectMessages, error, Messages}
 
     /**
      * The semantic error messages for the tree. This one uses the `tipe`
@@ -39,10 +39,10 @@ class Analyser(tree : LambdaTree) extends Attribution {
                         case App(e1, e2) =>
                             check(tipe(e1)) {
                                 case _ : IntType =>
-                                    message(e1, "application of non-function")
+                                    error(e1, "application of non-function")
                             }
                         case Var(x) =>
-                            message(e, s"'$x' unknown", tipe(e) == UnknownType())
+                            error(e, s"'$x' unknown", tipe(e) == UnknownType())
                     }
         }
 
@@ -58,10 +58,10 @@ class Analyser(tree : LambdaTree) extends Attribution {
                         case App(e1, e2) =>
                             check(tipe2(e1)) {
                                 case _ : IntType =>
-                                    message(e1, "application of non-function")
+                                    error(e1, "application of non-function")
                             }
                         case Var(x) =>
-                            message(e, s"'$x' unknown", tipe2(e) == UnknownType())
+                            error(e, s"'$x' unknown", tipe2(e) == UnknownType())
                     }
         }
 
@@ -115,7 +115,7 @@ class Analyser(tree : LambdaTree) extends Attribution {
      */
     def checkType(e : Exp, tipe : Exp => Type) : Messages = {
         val expectedType = exptipe(e)
-        message(e, s"expected ${formattedLayout(expectedType)}, found ${formattedLayout(tipe(e))}",
+        error(e, s"expected ${formattedLayout(expectedType)}, found ${formattedLayout(tipe(e))}",
             tipe(e) != NoType() && tipe(e) != UnknownType() &&
                 expectedType != NoType() && tipe(e) != expectedType)
     }
