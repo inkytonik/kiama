@@ -12,7 +12,6 @@ package org.bitbucket.inkytonik.kiama
 package util
 
 import org.eclipse.lsp4j.{Position => LSPPosition, _}
-import org.eclipse.lsp4j.services.LanguageClient
 
 /**
  * A language server that is mixed with a compiler that provide the basis
@@ -32,9 +31,9 @@ trait ServerWithConfig[T, C <: Config] {
 
     // Client saving
 
-    private[this] var client : LanguageClient = _
+    private[this] var client : Client = _
 
-    def connect(aClient : LanguageClient) {
+    def connect(aClient : Client) {
         client = aClient
     }
 
@@ -43,9 +42,9 @@ trait ServerWithConfig[T, C <: Config] {
     def launch(config : C) {
         val services = new Services(this, config)
         val launcherBase =
-            new Launcher.Builder[LanguageClient]()
+            new Launcher.Builder[Client]()
                 .setLocalService(services)
-                .setRemoteInterface(classOf[LanguageClient])
+                .setRemoteInterface(classOf[Client])
                 .setInput(in)
                 .setOutput(out)
         val launcherFull =
@@ -61,7 +60,7 @@ trait ServerWithConfig[T, C <: Config] {
         launcher.startListening()
     }
 
-    // Messages
+    // User messages
 
     def showMessage(tipe : MessageType, msg : String) {
         client.showMessage(new MessageParams(tipe, msg))
@@ -115,6 +114,13 @@ trait ServerWithConfig[T, C <: Config] {
             case Hint        => DiagnosticSeverity.Hint
         }
 
+    // Monto
+
+    def publishProduct(uri : String, name : String, language : String,
+        content : String) {
+        client.publishProduct(Product(uri, name, language, content))
+    }
+
 }
 
 class Services[T, C <: Config](
@@ -136,9 +142,9 @@ class Services[T, C <: Config](
     @JsonRequest("initialize")
     def initialize(params : InitializeParams) : CompletableFuture[InitializeResult] =
         CompletableFuture.completedFuture {
-            val capabilities = new ServerCapabilities
-            capabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
-            new InitializeResult(capabilities)
+            val serverCapabilities = new ServerCapabilities
+            serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
+            new InitializeResult(serverCapabilities)
         }
 
     @JsonNotification("initialized")
@@ -165,8 +171,8 @@ class Services[T, C <: Config](
 
     @JsonNotification("textDocument/didOpen")
     def didOpen(params : DidOpenTextDocumentParams) {
-        val document = params.getTextDocument()
-        process(document.getUri(), document.getText())
+        val document = params.getTextDocument
+        process(document.getUri, document.getText)
     }
 
     @JsonNotification("textDocument/didChange")
@@ -176,13 +182,13 @@ class Services[T, C <: Config](
 
     @JsonNotification("textDocument/didSave")
     def didSave(params : DidSaveTextDocumentParams) {
-        val documentId = params.getTextDocument()
-        process(documentId.getUri(), params.getText())
+        val documentId = params.getTextDocument
+        process(documentId.getUri, params.getText)
     }
 
     @JsonNotification("textDocument/didClose")
     def didClose(params : DidCloseTextDocumentParams) {
-        val uri = params.getTextDocument().getUri()
+        val uri = params.getTextDocument.getUri
         server.clearDiagnostics(uri)
     }
 

@@ -22,11 +22,13 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     with ServerWithConfig[T, C] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, layout}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.rogach.scallop.exceptions.ScallopException
 
     /**
-     * The name of this compiler which can be shown to the user.
+     * The name of the language that this compiler processes. The best choice
+     * is the extension used for files containing this language.
      */
     def name : String
 
@@ -127,10 +129,36 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     def compileSource(source : Source, config : C) {
         makeast(source, config) match {
             case Left(ast) =>
+                if (config.server() || config.debug()) {
+                    val astText = layout(any(ast))
+                    if (config.server()) {
+                        publishSourceProduct(source, format(ast).layout)
+                        publishSourceTreeProduct(source, astText)
+                    } else if (config.debug())
+                        config.output().emitln(astText)
+                }
                 process(source, ast, config)
             case Right(messages) =>
+                if (config.server()) {
+                    publishSourceProduct(source, "")
+                    publishSourceTreeProduct(source, "")
+                }
                 report(messages, config)
         }
+    }
+
+    def publishSourceProduct(source : Source, content : String) {
+        publishProduct(
+            source.optName.getOrElse("unknown"),
+            "source", name, content
+        )
+    }
+
+    def publishSourceTreeProduct(source : Source, content : String) {
+        publishProduct(
+            source.optName.getOrElse("unknown"),
+            "sourcetree", "scala", content
+        )
     }
 
     /**

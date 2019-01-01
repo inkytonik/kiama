@@ -115,12 +115,12 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
     )
 
     /**
-     * Debug operations of a language server.
+     * Debug operations of a compiler.
      */
     lazy val debug = toggle(
-        "Kdebug",
-        descrYes = "Debug language server operations",
-        descrNo = "Don't debug language server operations",
+        "debug",
+        descrYes = "Debug compiler operations",
+        descrNo = "Don't debug compiler operations",
         default = Some(false),
         noshort = true,
         hidden = true

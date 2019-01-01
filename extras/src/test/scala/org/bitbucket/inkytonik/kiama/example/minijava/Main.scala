@@ -24,7 +24,8 @@ trait Driver extends Compiler[Program] {
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
-    import org.bitbucket.inkytonik.kiama.util.Source
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, layout}
+    import org.bitbucket.inkytonik.kiama.util.{Source, StringEmitter}
 
     val name = "minijava"
 
@@ -46,9 +47,6 @@ trait Driver extends Compiler[Program] {
      */
     def process(source : Source, ast : Program, config : Config) {
 
-        // Pretty print the abstract syntax tree
-        // config.output().emitln(layout(any(ast)))
-
         // Perform the semantic checks
         val tree = new MiniJavaTree(ast)
         val analyser = new SemanticAnalyser(tree)
@@ -58,6 +56,10 @@ trait Driver extends Compiler[Program] {
         if (messages.length > 0) {
 
             report(messages, config)
+
+            if (config.server()) {
+                publishTargetTreeProduct(source, "")
+            }
 
         } else {
 
@@ -69,12 +71,36 @@ trait Driver extends Compiler[Program] {
             val targettree = translator.translate(ast, filename, analyser)
 
             // Pretty print the target tree
-            // config.output().emitln(layout(any(targettree)))
+            if (config.server() || config.debug()) {
+                val targetTreeText = layout(any(targettree))
+                if (config.server()) {
+                    publishTargetTreeProduct(source, targetTreeText)
+                } else if (config.debug())
+                    config.output().emitln(targetTreeText)
+            }
 
-            // Output code for the target tree in compiler mode
-            if (!config.server())
+            // Output code for the target tree
+            if (config.server()) {
+                val target = new StringEmitter
+                targettree.map(generate(true, _, target))
+                publishTargetProduct(source, target.result())
+            } else
                 targettree.map(generate(isTest, _, config.output()))
 
+        }
+
+        def publishTargetProduct(source : Source, content : String) {
+            publishProduct(
+                source.optName.getOrElse("unknown"),
+                "target", "jasmin", content
+            )
+        }
+
+        def publishTargetTreeProduct(source : Source, content : String) {
+            publishProduct(
+                source.optName.getOrElse("unknown"),
+                "targettree", "scala", content
+            )
         }
 
     }
