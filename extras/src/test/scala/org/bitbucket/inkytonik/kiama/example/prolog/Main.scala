@@ -95,7 +95,7 @@ class PrologDriver extends ParsingREPLWithConfig[Literal, PrologConfig] with Pre
                     val messages = analyser.errors
                     if (messages.length > 0) {
                         val emitter = new StringEmitter
-                        report(messages, emitter)
+                        report(source, messages, emitter)
                         Left(s"database file errors: ${emitter.result}")
                     } else {
                         Right(Some(dbtree))

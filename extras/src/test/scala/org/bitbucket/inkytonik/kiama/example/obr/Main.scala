@@ -56,7 +56,7 @@ class Driver extends CompilerWithConfig[ObrInt, ObrConfig] {
         val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
         if (messages.length > 0) {
-            report(messages, config)
+            report(source, messages, config)
         } else {
             // Print out final environment
             if (config.envPrint()) {
@@ -127,7 +127,7 @@ class SemanticDriver extends Driver with Messaging {
         val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
         if (messages.length > 0)
-            report(messages, config)
+            report(source, messages, config)
 
     }
 

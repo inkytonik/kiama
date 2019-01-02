@@ -244,10 +244,11 @@ trait Messaging {
         start(message).map(_.line)
 
     /**
-     * Output the messages in order of position using the given emitter, which
-     * defaults to terminal output.
+     * Output the messages arising from the given source in order of position
+     * using the given emitter, which defaults to terminal output.
      */
-    def report(messages : Messages, emitter : Emitter = new OutputEmitter) {
+    def report(source : Source, messages : Messages,
+        emitter : Emitter = new OutputEmitter) {
         emitter.emit(formatMessages(messages))
     }
 

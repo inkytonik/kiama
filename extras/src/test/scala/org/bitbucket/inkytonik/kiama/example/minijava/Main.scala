@@ -25,6 +25,7 @@ trait Driver extends Compiler[Program] {
     import MiniJavaTree.MiniJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, layout}
+    import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.bitbucket.inkytonik.kiama.util.{Source, StringEmitter}
 
     val name = "minijava"
@@ -55,11 +56,7 @@ trait Driver extends Compiler[Program] {
         // Report any messages that were produced
         if (messages.length > 0) {
 
-            report(messages, config)
-
-            if (config.server()) {
-                publishTargetTreeProduct(source, "")
-            }
+            report(source, messages, config)
 
         } else {
 
@@ -89,20 +86,14 @@ trait Driver extends Compiler[Program] {
 
         }
 
-        def publishTargetProduct(source : Source, content : String) {
-            publishProduct(
-                source.optName.getOrElse("unknown"),
-                "target", "jasmin", content
-            )
-        }
+    }
 
-        def publishTargetTreeProduct(source : Source, content : String) {
-            publishProduct(
-                source.optName.getOrElse("unknown"),
-                "targettree", "scala", content
-            )
+    override def report(source : Source, messages : Messages, config : Config) {
+        super.report(source, messages, config)
+        if (config.server()) {
+            publishTargetProduct(source)
+            publishTargetTreeProduct(source)
         }
-
     }
 
     /**
@@ -110,6 +101,22 @@ trait Driver extends Compiler[Program] {
      */
     override def format(ast : Program) : Document =
         PrettyPrinter.format(ast)
+
+    // Monto products
+
+    def publishTargetProduct(source : Source, content : String = "") {
+        publishProduct(
+            source.optName.getOrElse("unknown"),
+            "target", "jasmin", content
+        )
+    }
+
+    def publishTargetTreeProduct(source : Source, content : String = "") {
+        publishProduct(
+            source.optName.getOrElse("unknown"),
+            "targettree", "scala", content
+        )
+    }
 
 }
 

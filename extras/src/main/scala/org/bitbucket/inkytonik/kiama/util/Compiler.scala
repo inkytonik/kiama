@@ -140,21 +140,21 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
                 process(source, ast, config)
             case Right(messages) =>
                 if (config.server()) {
-                    publishSourceProduct(source, "")
-                    publishSourceTreeProduct(source, "")
+                    publishSourceProduct(source)
+                    publishSourceTreeProduct(source)
                 }
-                report(messages, config)
+                report(source, messages, config)
         }
     }
 
-    def publishSourceProduct(source : Source, content : String) {
+    def publishSourceProduct(source : Source, content : String = "") {
         publishProduct(
             source.optName.getOrElse("unknown"),
             "source", name, content
         )
     }
 
-    def publishSourceTreeProduct(source : Source, content : String) {
+    def publishSourceTreeProduct(source : Source, content : String = "") {
         publishProduct(
             source.optName.getOrElse("unknown"),
             "sourcetree", "scala", content
@@ -184,11 +184,11 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     /**
      * Output the messages in order of position to the configuration's output.
      */
-    def report(messages : Messages, config : C) {
+    def report(source : Source, messages : Messages, config : C) {
         if (config.server())
             publishMessages(messages)
         else
-            super.report(messages, config.output())
+            super.report(source, messages, config.output())
     }
 
 }

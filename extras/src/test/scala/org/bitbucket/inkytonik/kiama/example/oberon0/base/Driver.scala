@@ -142,7 +142,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
                 output.emitln(s"line $l")
             }
             section(output, "errors")
-            report(messages, config)
+            report(source, messages, config)
 
         }
 

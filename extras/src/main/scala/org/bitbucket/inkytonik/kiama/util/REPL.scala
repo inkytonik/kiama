@@ -200,7 +200,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
                     positions.setStart(res, pos)
                     positions.setFinish(res, pos)
                     val messages = message(res, res.message)
-                    report(messages, config)
+                    report(source, messages, config)
             }
         }
         Some(config)
@@ -215,7 +215,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
      * Output the messages in order of position using the given configuration,
      * which defaults to that configuration's output.
      */
-    def report(messages : Messages, config : C) {
+    def report(source : Source, messages : Messages, config : C) {
         config.output().emit(formatMessages(messages))
     }
 
