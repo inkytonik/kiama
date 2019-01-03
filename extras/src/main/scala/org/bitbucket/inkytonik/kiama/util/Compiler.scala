@@ -148,17 +148,11 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     }
 
     def publishSourceProduct(source : Source, content : String = "") {
-        publishProduct(
-            source.optName.getOrElse("unknown"),
-            "source", name, content
-        )
+        publishProduct(source, "source", name, content)
     }
 
     def publishSourceTreeProduct(source : Source, content : String = "") {
-        publishProduct(
-            source.optName.getOrElse("unknown"),
-            "sourcetree", "scala", content
-        )
+        publishProduct(source, "sourcetree", "scala", content)
     }
 
     /**

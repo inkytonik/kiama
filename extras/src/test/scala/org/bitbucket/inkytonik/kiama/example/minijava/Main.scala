@@ -112,31 +112,19 @@ trait Driver extends Compiler[Program] {
     // Monto product publishing
 
     def publishTargetProduct(source : Source, content : String = "") {
-        publishProduct(
-            source.optName.getOrElse("unknown"),
-            "target", "jasmin", content
-        )
+        publishProduct(source, "target", "jasmin", content)
     }
 
     def publishTargetTreeProduct(source : Source, content : String = "") {
-        publishProduct(
-            source.optName.getOrElse("unknown"),
-            "targettree", "scala", content
-        )
+        publishProduct(source, "targettree", "scala", content)
     }
 
     def publishOutlineProduct(source : Source, content : String = "") {
-        publishProduct(
-            source.optName.getOrElse("unknown"),
-            "outline", "minijava", content
-        )
+        publishProduct(source, "outline", "minijava", content)
     }
 
     def publishNameProduct(source : Source, content : String = "") {
-        publishProduct(
-            source.optName.getOrElse("unknown"),
-            "name", "minijava", content
-        )
+        publishProduct(source, "name", "minijava", content)
     }
 
 }

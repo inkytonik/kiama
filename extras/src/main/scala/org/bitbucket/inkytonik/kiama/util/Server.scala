@@ -116,8 +116,10 @@ trait ServerWithConfig[T, C <: Config] {
 
     // Monto
 
-    def publishProduct(uri : String, name : String, language : String,
-        content : String) {
+    def publishProduct(
+        source : Source, name : String, language : String, content : String
+    ) {
+        val uri = source.optName.getOrElse("unknown")
         client.publishProduct(Product(uri, name, language, content))
     }
 
