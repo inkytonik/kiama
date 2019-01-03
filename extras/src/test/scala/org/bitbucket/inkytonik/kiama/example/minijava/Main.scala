@@ -23,6 +23,7 @@ trait Driver extends Compiler[Program] {
 
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
+    import Monto.{nameDocument, outlineDocument}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, layout}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
@@ -52,6 +53,12 @@ trait Driver extends Compiler[Program] {
         val tree = new MiniJavaTree(ast)
         val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors
+
+        // Publish the outline and name analysis products
+        if (config.server()) {
+            publishOutlineProduct(source, outlineDocument(ast).layout)
+            publishNameProduct(source, nameDocument(tree, analyser).layout)
+        }
 
         // Report any messages that were produced
         if (messages.length > 0) {
@@ -102,7 +109,7 @@ trait Driver extends Compiler[Program] {
     override def format(ast : Program) : Document =
         PrettyPrinter.format(ast)
 
-    // Monto products
+    // Monto product publishing
 
     def publishTargetProduct(source : Source, content : String = "") {
         publishProduct(
@@ -115,6 +122,20 @@ trait Driver extends Compiler[Program] {
         publishProduct(
             source.optName.getOrElse("unknown"),
             "targettree", "scala", content
+        )
+    }
+
+    def publishOutlineProduct(source : Source, content : String = "") {
+        publishProduct(
+            source.optName.getOrElse("unknown"),
+            "outline", "minijava", content
+        )
+    }
+
+    def publishNameProduct(source : Source, content : String = "") {
+        publishProduct(
+            source.optName.getOrElse("unknown"),
+            "name", "minijava", content
         )
     }
 
