@@ -21,12 +21,11 @@ import org.bitbucket.inkytonik.kiama.util.Config
  */
 trait Driver extends Compiler[Program] {
 
-    import CodeGenerator.generate
+    import CodeGenerator.{any, classFileToDoc, generate, hcat, pretty}
     import MiniJavaTree.MiniJavaTree
     import Monto.{nameDocument, outlineDocument}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
-    import org.bitbucket.inkytonik.kiama.util.{Source, StringEmitter}
+    import org.bitbucket.inkytonik.kiama.util.Source
 
     val name = "minijava"
 
@@ -84,11 +83,8 @@ trait Driver extends Compiler[Program] {
 
             // Output code for the target tree
             if (config.server()) {
-                // FIXME: want to capture a pp doc...
-                // can't really do with an emitter...
-                val target = new StringEmitter
-                targettree.map(generate(true, _, target))
-                publishTargetProduct(source, Document(target.result(), List()))
+                val targetDocument = pretty(hcat(targettree.map(classFileToDoc)))
+                publishTargetProduct(source, targetDocument)
             } else
                 targettree.map(generate(isTest, _, config.output()))
 
