@@ -58,15 +58,23 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.ParenPrettyPrin
                 val ext = optsc.map(n => space <> "extends" <+> toDoc(n)).getOrElse(emptyDoc)
                 "class" <+> toDoc(i) <> ext <+> braces(
                     nest(
-                        line <>
-                            toDoc(b)
+                        toDoc(b)
                     ) <>
                         line
                 ) <>
                     line <>
                     line
             case ClassBody(fs, ms) =>
-                vsep(fs map toDoc) <@> vsep(ms map toDoc)
+                (if (fs.isEmpty)
+                    emptyDoc
+                else
+                    line <>
+                        vsep(fs map toDoc)) <>
+                    (if (ms.isEmpty)
+                        emptyDoc
+                    else
+                        (if (fs.isEmpty) emptyDoc else line) <>
+                            vsep(ms map toDoc))
             case Field(t, i) =>
                 toDoc(t) <+> toDoc(i) <> semi
             case Var(t, i) =>
@@ -74,12 +82,10 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.ParenPrettyPrin
             case Method(i, b) =>
                 line <> "public" <+> toDoc(b.tipe) <+> toDoc(i) <+> toDoc(b)
             case MethodBody(_, as, vs, ss, r) =>
-                parens(hsep(as map toDoc, comma)) <>
-                    line <>
-                    braces(
-                        nest(bodyToDoc(vs, ss, r)) <>
-                            line
-                    )
+                parens(hsep(as map toDoc, comma)) <+> braces(
+                    nest(bodyToDoc(vs, ss, r)) <>
+                        line
+                )
             case Argument(t, i) =>
                 toDoc(t) <+> toDoc(i)
             case Result(e) =>
@@ -125,10 +131,12 @@ class PrettyPrinter extends org.bitbucket.inkytonik.kiama.output.ParenPrettyPrin
             emptyDoc
         else
             line <>
-                vsep(vs map toDoc) <>
-                line) <>
-            line <>
-            vsep(ss map toDoc) <@>
+                vsep(vs map toDoc)) <>
+            (if (ss.isEmpty)
+                emptyDoc
+            else
+                line <>
+                    vsep(ss map toDoc)) <@>
             toDoc(r) <> semi
 
     override def toParenDoc(e : PrettyExpression) : Doc =
