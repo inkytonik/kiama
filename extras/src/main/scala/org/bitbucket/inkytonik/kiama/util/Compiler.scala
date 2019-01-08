@@ -21,8 +21,8 @@ package util
 trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Profiler
     with ServerWithConfig[T, C] {
 
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, layout}
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.rogach.scallop.exceptions.ScallopException
 
@@ -130,12 +130,12 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
         makeast(source, config) match {
             case Left(ast) =>
                 if (config.server() || config.debug()) {
-                    val astText = layout(any(ast))
+                    val astDocument = pretty(any(ast))
                     if (config.server()) {
-                        publishSourceProduct(source, format(ast).layout)
-                        publishSourceTreeProduct(source, astText)
+                        publishSourceProduct(source, format(ast))
+                        publishSourceTreeProduct(source, astDocument)
                     } else if (config.debug())
-                        config.output().emitln(astText)
+                        config.output().emitln(astDocument.layout)
                 }
                 process(source, ast, config)
             case Right(messages) =>
@@ -147,12 +147,12 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
         }
     }
 
-    def publishSourceProduct(source : Source, content : String = "") {
-        publishProduct(source, "source", name, content)
+    def publishSourceProduct(source : Source, document : Document = emptyDocument) {
+        publishProduct(source, "source", name, document)
     }
 
-    def publishSourceTreeProduct(source : Source, content : String = "") {
-        publishProduct(source, "sourcetree", "scala", content)
+    def publishSourceTreeProduct(source : Source, document : Document = emptyDocument) {
+        publishProduct(source, "sourcetree", "scala", document)
     }
 
     /**

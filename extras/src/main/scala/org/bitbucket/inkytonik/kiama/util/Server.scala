@@ -24,6 +24,7 @@ trait ServerWithConfig[T, C <: Config] {
     import java.io.PrintWriter
     import java.lang.System.{in, out}
     import java.util.Collections
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, Link}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.bitbucket.inkytonik.kiama.util.Severities._
     import org.eclipse.lsp4j.jsonrpc.Launcher
@@ -117,11 +118,39 @@ trait ServerWithConfig[T, C <: Config] {
     // Monto
 
     def publishProduct(
-        source : Source, name : String, language : String, content : String
+        source : Source, name : String, language : String, document : Document
     ) {
         val uri = source.optName.getOrElse("unknown")
-        client.publishProduct(Product(uri, name, language, content))
+        val content = document.layout
+        val positions = positionsOfDocument(document)
+        client.publishProduct(Product(uri, name, language, content, positions))
     }
+
+    def positionsOfDocument(document : Document) : Array[RangePair] =
+        document.links.flatMap {
+            case Link(n, r) =>
+                val start = positions.getStart(n)
+                val finish = positions.getFinish(n)
+                positionOfStartFinish(start, finish) match {
+                    case Some((s, f)) =>
+                        Some(RangePair(s, f, r.start, r.end))
+                    case None =>
+                        None
+                }
+        }.toArray
+
+    def positionOfStartFinish(optStart : Option[Position], optFinish : Option[Position]) : Option[(Int, Int)] =
+        (optStart, optFinish) match {
+            case (Some(start), Some(finish)) =>
+                (start.optOffset, finish.optOffset) match {
+                    case (Some(s), Some(f)) =>
+                        Some((s, f))
+                    case _ =>
+                        None
+                }
+            case _ =>
+                None
+        }
 
 }
 

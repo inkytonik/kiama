@@ -17,7 +17,13 @@ case class Product(
     uri : String,
     name : String,
     language : String,
-    content : String
+    content : String,
+    rangeMap : Array[RangePair]
+)
+
+case class RangePair(
+    sbegin : Int, send : Int,
+    tbegin : Int, tend : Int
 )
 
 /**

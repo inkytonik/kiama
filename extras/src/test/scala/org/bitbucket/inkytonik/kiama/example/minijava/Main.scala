@@ -24,8 +24,8 @@ trait Driver extends Compiler[Program] {
     import CodeGenerator.generate
     import MiniJavaTree.MiniJavaTree
     import Monto.{nameDocument, outlineDocument}
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, layout}
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.bitbucket.inkytonik.kiama.util.{Source, StringEmitter}
 
@@ -56,8 +56,8 @@ trait Driver extends Compiler[Program] {
 
         // Publish the outline and name analysis products
         if (config.server()) {
-            publishOutlineProduct(source, outlineDocument(ast).layout)
-            publishNameProduct(source, nameDocument(tree, analyser).layout)
+            publishOutlineProduct(source, outlineDocument(ast))
+            publishNameProduct(source, nameDocument(tree, analyser))
         }
 
         // Report any messages that were produced
@@ -76,18 +76,20 @@ trait Driver extends Compiler[Program] {
 
             // Pretty print the target tree
             if (config.server() || config.debug()) {
-                val targetTreeText = layout(any(targettree))
+                val targetTreeDocument = pretty(any(targettree))
                 if (config.server()) {
-                    publishTargetTreeProduct(source, targetTreeText)
+                    publishTargetTreeProduct(source, targetTreeDocument)
                 } else if (config.debug())
-                    config.output().emitln(targetTreeText)
+                    config.output().emitln(targetTreeDocument.layout)
             }
 
             // Output code for the target tree
             if (config.server()) {
+                // FIXME: want to capture a pp doc...
+                // can't really do with an emitter...
                 val target = new StringEmitter
                 targettree.map(generate(true, _, target))
-                publishTargetProduct(source, target.result())
+                publishTargetProduct(source, Document(target.result(), List()))
             } else
                 targettree.map(generate(isTest, _, config.output()))
 
@@ -111,20 +113,20 @@ trait Driver extends Compiler[Program] {
 
     // Monto product publishing
 
-    def publishTargetProduct(source : Source, content : String = "") {
-        publishProduct(source, "target", "jasmin", content)
+    def publishTargetProduct(source : Source, document : Document = emptyDocument) {
+        publishProduct(source, "target", "jasmin", document)
     }
 
-    def publishTargetTreeProduct(source : Source, content : String = "") {
-        publishProduct(source, "targettree", "scala", content)
+    def publishTargetTreeProduct(source : Source, document : Document = emptyDocument) {
+        publishProduct(source, "targettree", "scala", document)
     }
 
-    def publishOutlineProduct(source : Source, content : String = "") {
-        publishProduct(source, "outline", "minijava", content)
+    def publishOutlineProduct(source : Source, document : Document = emptyDocument) {
+        publishProduct(source, "outline", "minijava", document)
     }
 
-    def publishNameProduct(source : Source, content : String = "") {
-        publishProduct(source, "name", "minijava", content)
+    def publishNameProduct(source : Source, document : Document = emptyDocument) {
+        publishProduct(source, "name", "minijava", document)
     }
 
 }
