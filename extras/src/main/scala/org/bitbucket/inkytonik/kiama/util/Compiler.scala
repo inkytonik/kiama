@@ -139,10 +139,8 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
                 }
                 process(source, ast, config)
             case Right(messages) =>
-                if (config.server()) {
-                    publishSourceProduct(source)
-                    publishSourceTreeProduct(source)
-                }
+                clearSyntacticMessages(source, config)
+                clearSemanticMessages(source, config)
                 report(source, messages, config)
         }
     }
@@ -183,6 +181,25 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
             publishMessages(messages)
         else
             super.report(source, messages, config.output())
+    }
+
+    /**
+     * Clear any previously reported semantic messages. By default,
+     * clear the servers's source and sourcetree products.
+     */
+    def clearSyntacticMessages(source : Source, config : C) {
+        if (config.server()) {
+            publishSourceProduct(source)
+            publishSourceTreeProduct(source)
+        }
+    }
+
+    /**
+     * Clear any previously reported semantic messages. By default,
+     * do nothing.
+     */
+    def clearSemanticMessages(source : Source, config : C) {
+        // Do nothing
     }
 
 }

@@ -26,7 +26,6 @@ trait Driver extends Compiler[Program] {
     import Monto.{nameDocument, outlineDocument}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
-    import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.bitbucket.inkytonik.kiama.util.{Source, StringEmitter}
 
     val name = "minijava"
@@ -97,11 +96,13 @@ trait Driver extends Compiler[Program] {
 
     }
 
-    override def report(source : Source, messages : Messages, config : Config) {
-        super.report(source, messages, config)
+    override def clearSemanticMessages(source : Source, config : Config) {
+        super.clearSemanticMessages(source, config)
         if (config.server()) {
             publishTargetProduct(source)
             publishTargetTreeProduct(source)
+            publishOutlineProduct(source)
+            publishNameProduct(source)
         }
     }
 
