@@ -18,12 +18,17 @@ case class Product(
     name : String,
     language : String,
     content : String,
-    rangeMap : Array[RangePair]
+    rangeMap : Array[RangeEntry],
+    rangeMapRev : Array[RangeEntry]
 )
 
-case class RangePair(
-    sstart : Int, send : Int,
-    tstart : Int, tend : Int
+case class RangeEntry(
+    source : OffsetRange,
+    targets : Array[OffsetRange]
+)
+
+case class OffsetRange(
+    start : Int, end : Int
 )
 
 /**

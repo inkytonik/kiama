@@ -11,7 +11,7 @@
 package org.bitbucket.inkytonik.kiama
 package util
 
-import org.eclipse.lsp4j.{Position => LSPPosition, _}
+import org.eclipse.lsp4j.{Position => LSPPosition, Range => LSPRange, _}
 
 /**
  * A language server that is mixed with a compiler that provide the basis
@@ -96,7 +96,7 @@ trait ServerWithConfig[T, C <: Config] {
     def messageToDiagnostic(message : Message) : Diagnostic = {
         val s = convertPosition(start(message))
         val f = convertPosition(finish(message))
-        val range = new Range(s, f)
+        val range = new LSPRange(s, f)
         val severity = convertSeverity(message.severity)
         new Diagnostic(range, message.label, severity, name)
     }
@@ -117,16 +117,47 @@ trait ServerWithConfig[T, C <: Config] {
 
     // Monto
 
+    case class RangePair(
+        sstart : Int, send : Int,
+        tstart : Int, tend : Int
+    )
+
     def publishProduct(
         source : Source, name : String, language : String, document : Document
     ) {
         val uri = source.optName.getOrElse("unknown")
         val content = document.layout
-        val positions = positionsOfDocument(document)
-        client.publishProduct(Product(uri, name, language, content, positions))
+        val pairs = positionsOfDocument(document)
+        val rangeMap = sortBySourceRangeSize(pairsToMap(pairs, pairToSourceRange, pairToTargetRange))
+        val rangeMapRev = sortBySourceRangeSize(pairsToMap(pairs, pairToTargetRange, pairToSourceRange))
+        client.publishProduct(
+            Product(uri, name, language, content, rangeMap, rangeMapRev)
+        )
     }
 
-    def positionsOfDocument(document : Document) : Array[RangePair] =
+    def sortBySourceRangeSize(pairs : Array[RangeEntry]) : Array[RangeEntry] =
+        pairs.sortBy {
+            entry => entry.source.end - entry.source.start
+        }
+
+    def pairsToMap(
+        pairs : List[RangePair],
+        key : RangePair => OffsetRange,
+        value : RangePair => OffsetRange
+    ) : Array[RangeEntry] = {
+        pairs.groupBy(key).toArray.map {
+            case (s, ts) =>
+                RangeEntry(s, ts.map(value).toArray)
+        }
+    }
+
+    def pairToSourceRange(pair : RangePair) : OffsetRange =
+        OffsetRange(pair.sstart, pair.send)
+
+    def pairToTargetRange(pair : RangePair) : OffsetRange =
+        OffsetRange(pair.tstart, pair.tend)
+
+    def positionsOfDocument(document : Document) : List[RangePair] =
         document.links.flatMap {
             case Link(n, r) =>
                 val start = positions.getStart(n)
@@ -137,7 +168,7 @@ trait ServerWithConfig[T, C <: Config] {
                     case None =>
                         None
                 }
-        }.toArray
+        }
 
     def positionOfStartFinish(optStart : Option[Position], optFinish : Option[Position]) : Option[(Int, Int)] =
         (optStart, optFinish) match {
