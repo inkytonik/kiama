@@ -63,7 +63,7 @@ object CodeGenerator extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
                 line
 
         link(
-            classfile.source,
+            classfile.source.cross,
             header <>
                 hcat(classfile.fields.map(fieldToDoc)) <@>
                 defaultConstructor <>
@@ -77,7 +77,11 @@ object CodeGenerator extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
      * Generate a declaration for a field.
      */
     def fieldToDoc(field : JVMField) : Doc =
-        line <> link(field, ".field public" <+> field.name <+> value(field.tipe))
+        line <>
+            link(
+                field.source.cross,
+                ".field public" <+> field.name <+> value(field.tipe)
+            )
 
     /*
      * Generate a declaration of a method including its code.
@@ -113,7 +117,7 @@ object CodeGenerator extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
 
         line <>
             link(
-                method.source,
+                method.source.cross,
                 ".method public" <+>
                     (if (method.isStatic) "static " else emptyDoc) <>
                     value(method.spec) <@>
@@ -136,12 +140,12 @@ object CodeGenerator extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
     def instrToDoc(instr : JVMInstr) : Doc =
         instr.op match {
             case Label(label) =>
-                line <> link(instr.source, label <> colon)
+                line <> link(instr.source.cross, label <> colon)
             case op =>
                 nest(
                     line <>
                         link(
-                            instr.source,
+                            instr.source.cross,
                             op.productPrefix.toLowerCase <>
                                 hcat(op.productIterator.toVector.map {
                                     case arg => space <> value(arg)

@@ -18,6 +18,7 @@ package example.minijava
 object JVMTree {
 
     import MiniJavaTree.MiniJavaNode
+    import org.bitbucket.inkytonik.kiama.relation.Bridge
 
     /**
      * A class file defining a JVM class. `source` gives the name of the source
@@ -25,8 +26,8 @@ object JVMTree {
      * that is being defined, and `superClass` is the name of the super class
      * of this class. `fields` and `methods` define the components of the class.
      */
-    case class ClassFile(source : MiniJavaNode, filename : String, name : String,
-        superclassname : String, fields : Vector[JVMField],
+    case class ClassFile(source : Bridge[MiniJavaNode], filename : String,
+        name : String, superclassname : String, fields : Vector[JVMField],
         methods : Vector[JVMMethod])
 
     /**
@@ -79,25 +80,26 @@ object JVMTree {
     /**
      * A field in the class.
      */
-    case class JVMField(name : String, tipe : JVMType)
+    case class JVMField(source : Bridge[MiniJavaNode], name : String, tipe : JVMType)
 
     /**
      * A method in the class.
      */
-    case class JVMMethod(source : MiniJavaNode, spec : JVMMethodSpec, isStatic : Boolean,
-        instrs : Vector[JVMInstr])
+    case class JVMMethod(source : Bridge[MiniJavaNode], spec : JVMMethodSpec,
+        isStatic : Boolean, instrs : Vector[JVMInstr])
 
     /**
      * A method specification.
      */
-    case class JVMMethodSpec(name : String, argTypes : Vector[JVMType], retType : JVMType) {
+    case class JVMMethodSpec(name : String, argTypes : Vector[JVMType],
+        retType : JVMType) {
         override def toString = name + argTypes.mkString("(", "", ")") + retType
     }
 
     /*
      * An instruction and its associated MiniJava construct.
      */
-    case class JVMInstr(op : JVMOp, source : MiniJavaNode)
+    case class JVMInstr(op : JVMOp, source : Bridge[MiniJavaNode])
 
     /**
      * Base class for JVM operations. `stackChange` records the number of

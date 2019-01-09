@@ -21,6 +21,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
 
     import JVMTree._
     import MiniJavaTree._
+    import org.bitbucket.inkytonik.kiama.relation.Bridge
     import org.bitbucket.inkytonik.kiama.util.Counter
     import SymbolTable._
 
@@ -40,7 +41,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          */
         def gen(source : MiniJavaNode, ops : JVMOp*) {
             for (op <- ops)
-                instructions += JVMInstr(op, source)
+                instructions += JVMInstr(op, Bridge(source))
         }
 
         /*
@@ -136,7 +137,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
             // Make a main method containing the statement from this class
             val mainMethod =
                 JVMMethod(
-                    m.main,
+                    Bridge(m.main),
                     JVMMethodSpec(
                         "main",
                         Vector(JVMArrayType(JVMStringType())),
@@ -146,7 +147,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                     instrs
                 )
 
-            ClassFile(m, sourceFilename, m.name.idn, "java/lang/Object",
+            ClassFile(Bridge(m), sourceFilename, m.name.idn, "java/lang/Object",
                 Vector(), Vector(mainMethod))
 
         }
@@ -167,8 +168,8 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          */
         def translateFields(fieldVars : Vector[Field]) : Vector[JVMField] =
             fieldVars.map {
-                case Field(tipe, IdnDef(idn)) =>
-                    JVMField(idn, translateType(tipe))
+                case field @ Field(tipe, IdnDef(idn)) =>
+                    JVMField(Bridge(field), idn, translateType(tipe))
             }
 
         /*
@@ -216,7 +217,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
             // Gather all of the method's instructions
             val instrs = instructions.result
 
-            JVMMethod(method, methodSpec("", method), false, instrs)
+            JVMMethod(Bridge(method), methodSpec("", method), false, instrs)
 
         }
 
@@ -244,7 +245,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
             // Translate the methods
             val methods = translateMethods(cls.body.methods)
 
-            ClassFile(cls, sourceFilename, cls.name.idn, superclassName,
+            ClassFile(Bridge(cls), sourceFilename, cls.name.idn, superclassName,
                 fields, methods)
 
         }
