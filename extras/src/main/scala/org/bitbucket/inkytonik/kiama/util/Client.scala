@@ -22,8 +22,8 @@ case class Product(
 )
 
 case class RangePair(
-    sbegin : Int, send : Int,
-    tbegin : Int, tend : Int
+    sstart : Int, send : Int,
+    tstart : Int, tend : Int
 )
 
 /**
