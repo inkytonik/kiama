@@ -84,6 +84,7 @@ object PrettyPrinterTypes {
  */
 trait PrettyPrinterBase {
 
+    import org.bitbucket.inkytonik.kiama.relation.Bridge
     import PrettyPrinterTypes.{Document, Indent, Layout, Links, Width}
     import scala.collection.immutable.Seq
 
@@ -358,20 +359,33 @@ trait PrettyPrinterBase {
                 "null"
             else
                 a match {
+                    case a : Array[_]  => list(a.toList, "Array", any)
                     case v : Vector[_] => list(v.toList, "Vector", any)
                     case m : Map[_, _] => list(m.toList, "Map", any)
                     case Nil           => "Nil"
                     case l : List[_]   => list(l, "List", any)
                     case (l, r)        => any(l) <+> "->" <+> any(r)
                     case None          => "None"
-                    case p : Product => list(
-                        p.productIterator.toList,
-                        p.productPrefix, any
-                    )
+                    case p : Product =>
+                        val children = p.productIterator.toList
+                        val (bs, cs) = children.partition(isBridge)
+                        val doc = list(cs, p.productPrefix, any)
+                        bs match {
+                            case (Bridge(n : AnyRef)) :: _ =>
+                                link(n, doc)
+                            case _ =>
+                                doc
+                        }
                     case s : String => dquotes(text(s))
                     case _          => value(a)
                 }
         )
+
+    def isBridge(a : Any) : Boolean =
+        a match {
+            case Bridge(_) => true
+            case _         => false
+        }
 
     // Extended combinator set
 

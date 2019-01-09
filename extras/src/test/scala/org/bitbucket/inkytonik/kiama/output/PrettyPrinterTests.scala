@@ -19,6 +19,8 @@ import org.bitbucket.inkytonik.kiama.util.KiamaTests
  */
 class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinterTests with PrettyPrinter {
 
+    import org.bitbucket.inkytonik.kiama.relation.Bridge
+
     test("pretty-print empty document") {
         layout(emptyDoc) shouldBe ""
     }
@@ -394,6 +396,18 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
         layout(seq(l3), 3) shouldBe "Seq(\n    Val(1),\n    Val(2),\n    Val(3))"
     }
 
+    test("pretty any-print empty array") {
+        layout(any(Array())) shouldBe "Array()"
+    }
+
+    test("pretty any-print singleton array") {
+        layout(any(Array(1))) shouldBe "Array(1)"
+    }
+
+    test("pretty any-print multiple-element array") {
+        layout(any(Array(1, 2, 3))) shouldBe "Array(1, 2, 3)"
+    }
+
     test("pretty any-print empty vector") {
         layout(any(Vector())) shouldBe "Vector()"
     }
@@ -416,6 +430,12 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
 
     test("pretty any-print multiple-element map") {
         layout(any(Map(1 -> "One", 2 -> "Two", 3 -> "Three"))) shouldBe "Map(1 -> \"One\", 2 -> \"Two\", 3 -> \"Three\")"
+    }
+
+    test("pretty any-print a product including a bridge omits the bridge") {
+        case class Foo(i : Int)
+        case class Bar(bridge : Bridge[Foo], s : String)
+        layout(any(Bar(Bridge(Foo(42)), "hello"))) shouldBe "Bar(\"hello\")"
     }
 
     // Position map
