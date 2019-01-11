@@ -42,13 +42,15 @@ object Monto {
                     idndefToDoc(i) <> line
                 case Class(i, _, b) =>
                     idndefToDoc(i) <> nest(toEnvDoc(b)) <> line
-                case ClassBody(_, ms) =>
-                    hcat(ms map toEnvDoc)
+                case ClassBody(fs, ms) =>
+                    hcat(fs map toEnvDoc) <> hcat(ms map toEnvDoc)
                 case Method(i, b) =>
                     line <> idndefToDoc(i) <> nest(toEnvDoc(b))
                 case MethodBody(_, as, vs, _, _) =>
                     hcat(as map toEnvDoc) <> hcat(vs map toEnvDoc)
                 case Argument(_, i) =>
+                    idndefToDoc(i)
+                case Field(_, i) =>
                     idndefToDoc(i)
                 case Var(_, i) =>
                     idndefToDoc(i)
