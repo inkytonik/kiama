@@ -146,11 +146,13 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
     }
 
     def publishSourceProduct(source : Source, document : Document = emptyDocument) {
-        publishProduct(source, "source", name, document)
+        if (setting("showSource"))
+            publishProduct(source, "source", name, document)
     }
 
     def publishSourceTreeProduct(source : Source, document : Document = emptyDocument) {
-        publishProduct(source, "sourcetree", "scala", document)
+        if (setting("showSourceTree"))
+            publishProduct(source, "sourcetree", "scala", document)
     }
 
     /**

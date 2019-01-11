@@ -111,19 +111,23 @@ trait Driver extends Compiler[Program] {
     // Monto product publishing
 
     def publishTargetProduct(source : Source, document : Document = emptyDocument) {
-        publishProduct(source, "target", "jasmin", document)
+        if (setting("showTarget"))
+            publishProduct(source, "target", "jasmin", document)
     }
 
     def publishTargetTreeProduct(source : Source, document : Document = emptyDocument) {
-        publishProduct(source, "targettree", "scala", document)
+        if (setting("showTargetTree"))
+            publishProduct(source, "targettree", "scala", document)
     }
 
     def publishOutlineProduct(source : Source, document : Document = emptyDocument) {
-        publishProduct(source, "outline", "minijava", document)
+        if (setting("showOutline"))
+            publishProduct(source, "outline", "minijava", document)
     }
 
     def publishNameProduct(source : Source, document : Document = emptyDocument) {
-        publishProduct(source, "name", "minijava", document)
+        if (setting("showNameAnalysisStructure"))
+            publishProduct(source, "name", "minijava", document)
     }
 
 }

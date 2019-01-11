@@ -21,6 +21,7 @@ trait ServerWithConfig[T, C <: Config] {
 
     this : CompilerBase[T, C] =>
 
+    import com.google.gson.{JsonElement, JsonObject}
     import java.io.PrintWriter
     import java.lang.System.{in, out}
     import java.util.Collections
@@ -36,6 +37,29 @@ trait ServerWithConfig[T, C <: Config] {
 
     def connect(aClient : Client) {
         client = aClient
+    }
+
+    // Client settings saving
+
+    private[this] var _settings : JsonObject = _
+
+    def settings() : JsonObject =
+        _settings
+
+    def setSettings(settings : JsonObject) {
+        _settings = settings
+    }
+
+    def setSettings(settings : Object) {
+        setSettings(settings.asInstanceOf[JsonElement].getAsJsonObject)
+    }
+
+    def setting(key : String, default : Boolean = false) : Boolean = {
+        val value = settings.get(key)
+        if (value == null)
+            default
+        else
+            value.getAsBoolean
     }
 
     // Launching
@@ -65,6 +89,10 @@ trait ServerWithConfig[T, C <: Config] {
 
     def showMessage(tipe : MessageType, msg : String) {
         client.showMessage(new MessageParams(tipe, msg))
+    }
+
+    def logMessage(msg : String) {
+        client.logMessage(new MessageParams(MessageType.Log, msg))
     }
 
     // Dynamic capabilities
@@ -239,19 +267,19 @@ class Services[T, C <: Config](
 
     @JsonNotification("textDocument/didChange")
     def didChange(params : DidChangeTextDocumentParams) {
-        // Do nothing
+        if (server.setting("updateOnChange")) {
+            process(params.getTextDocument.getUri, params.getContentChanges.get(0).getText)
+        }
     }
 
     @JsonNotification("textDocument/didSave")
     def didSave(params : DidSaveTextDocumentParams) {
-        val documentId = params.getTextDocument
-        process(documentId.getUri, params.getText)
+        process(params.getTextDocument.getUri, params.getText)
     }
 
     @JsonNotification("textDocument/didClose")
     def didClose(params : DidCloseTextDocumentParams) {
-        val uri = params.getTextDocument.getUri
-        server.clearDiagnostics(uri)
+        server.clearDiagnostics(params.getTextDocument.getUri)
     }
 
     def process(uri : String, text : String) {
@@ -259,4 +287,20 @@ class Services[T, C <: Config](
         server.compileString(uri, text, config)
     }
 
+    // Workspace services
+
+    @JsonNotification("workspace/didChangeConfiguration")
+    def didChangeConfiguration(params : DidChangeConfigurationParams) {
+        server.setSettings(params.getSettings)
+    }
+
+    // Missing services not supported by LSP4J but sent by client side
+
+    @JsonNotification("$/setTraceNotification")
+    def setTrace(params : SetTraceNotificationParams) {
+        // Do nothing
+    }
+
 }
+
+class SetTraceNotificationParams(value : String = "off")
