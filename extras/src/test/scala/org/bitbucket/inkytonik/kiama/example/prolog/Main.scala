@@ -61,7 +61,7 @@ class PrologConfig(args : Seq[String]) extends REPLConfig(args) {
  */
 class PrologDriver extends ParsingREPLWithConfig[Literal, PrologConfig] with PrettyPrinter {
 
-    import org.bitbucket.inkytonik.kiama.parsing.Success
+    import org.bitbucket.inkytonik.kiama.parsing.{ParseResult, Success}
     import org.bitbucket.inkytonik.kiama.util.{
         FileSource,
         Source,
@@ -74,8 +74,15 @@ class PrologDriver extends ParsingREPLWithConfig[Literal, PrologConfig] with Pre
     def createConfig(args : Seq[String]) : PrologConfig =
         new PrologConfig(args)
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.query
+    def parse(source : Source) : ParseResult[Literal] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.query, source)
+    }
+
+    def parseProgram(source : Source) : ParseResult[Program] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.program, source)
+    }
 
     /**
      * Helper function to create the database from the given filename or return
@@ -85,7 +92,7 @@ class PrologDriver extends ParsingREPLWithConfig[Literal, PrologConfig] with Pre
         try {
             // Parse the file
             val source = FileSource(filename)
-            parsers.parseAll(parsers.program, source) match {
+            parseProgram(source) match {
                 // If parse worked, we get a source tree, check it
                 case Success(dbtree, _) =>
                     // Pretty print the source tree

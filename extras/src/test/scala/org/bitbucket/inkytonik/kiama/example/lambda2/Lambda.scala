@@ -41,6 +41,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree.LambdaTree
     import PrettyPrinter.formattedLayout
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{Console, Source}
 
     def createConfig(args : Seq[String]) : LambdaConfig =
@@ -48,9 +49,10 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
 
     val banner = "Enter lambda calculus expressions for evaluation (:help for help)"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.exp
-
+    def parse(source : Source) : ParseResult[Exp] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.exp, source)
+    }
     /**
      * Process a user input line by intercepting meta-level commands to
      * update the evaluation mechanisms.  By default we just parse what

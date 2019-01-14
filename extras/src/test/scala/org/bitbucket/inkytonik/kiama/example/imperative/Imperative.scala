@@ -20,6 +20,7 @@ import org.bitbucket.inkytonik.kiama.util.ParsingREPL
  */
 class ImperativeDriver extends ParsingREPL[Stmt] {
 
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
     import PrettyPrinter.format
 
@@ -27,8 +28,10 @@ class ImperativeDriver extends ParsingREPL[Stmt] {
 
     override val prompt = "imperative> "
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.stmt
+    def parse(source : Source) : ParseResult[Stmt] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.stmt, source)
+    }
 
     def process(source : Source, s : Stmt, config : REPLConfig) {
         config.output().emitln(s)

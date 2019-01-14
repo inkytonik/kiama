@@ -186,19 +186,14 @@ trait REPL extends REPLBase[REPLConfig] {
  */
 trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, ParsersBase, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, ParseResult, Success}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{message, Messages}
     import org.bitbucket.inkytonik.kiama.util.Source
 
     /**
-     * The suite of parsers that is used by this compiler.
+     * Parse a source, returning a parse result.
      */
-    val parsers : ParsersBase
-
-    /**
-     * The particular parser used to parse this compiler's input.
-     */
-    val parser : parsers.Parser[T]
+    def parse(source : Source) : ParseResult[T]
 
     /**
      * Process a user input line by parsing it to get a value of type `T`,
@@ -207,7 +202,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
      */
     def processline(source : Source, console : Console, config : C) : Option[C] = {
         if (config.processWhitespaceLines() || (source.content.trim.length != 0)) {
-            parsers.parseAll(parser, source) match {
+            parse(source) match {
                 case Success(e, _) =>
                     process(source, e, config)
                 case res : NoSuccess =>

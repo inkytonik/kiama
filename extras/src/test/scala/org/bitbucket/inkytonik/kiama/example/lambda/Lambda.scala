@@ -182,14 +182,17 @@ trait Evaluator {
  */
 class LambdaDriver extends ParsingREPL[LambdaTree.Exp] with Evaluator {
 
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
 
     val banner = "Enter lambda calculus expressions for evaluation."
 
     override val prompt = "lambda> "
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.exp
+    def parse(source : Source) : ParseResult[LambdaTree.Exp] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.exp, source)
+    }
 
     def process(source : Source, e : LambdaTree.Exp, config : REPLConfig) {
         val result =

@@ -204,6 +204,7 @@ class Evaluator {
  */
 class LambdaDriver extends ParsingREPL[LambdaTree.Query[_]] {
 
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
 
     val banner =
@@ -225,8 +226,10 @@ class LambdaDriver extends ParsingREPL[LambdaTree.Query[_]] {
 
     val evaluator = new Evaluator
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.query
+    def parse(source : Source) : ParseResult[LambdaTree.Query[_]] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.query, source)
+    }
 
     def process(source : Source, q : LambdaTree.Query[_], config : REPLConfig) {
         config.output().emitln(evaluator.execute(q))
