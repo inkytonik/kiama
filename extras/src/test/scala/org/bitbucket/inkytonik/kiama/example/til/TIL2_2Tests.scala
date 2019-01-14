@@ -18,15 +18,16 @@ class TIL2_2Tests extends TransformerTests {
     import TILTree._
 
     val til2_2 = new TIL2_2
-    val parsers = til2_2.parsers
-    import parsers.program
+
+    def parse = til2_2.parse _
+
     import til2_2.transform
 
     test("transform a single for loop") {
         val x = Id("x")
         val upperx = Id("Upperx")
         "for x := 1 to n do write x; end" should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Decl(x),
                 Assign(x, Num(1)),
@@ -46,7 +47,7 @@ class TIL2_2Tests extends TransformerTests {
         val j = Id("j")
         val upperj = Id("Upperj")
         "for i := 1 to 9 do for j := 1 to 10 do write i*j; end end" should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Decl(i),
                 Assign(i, Num(1)),

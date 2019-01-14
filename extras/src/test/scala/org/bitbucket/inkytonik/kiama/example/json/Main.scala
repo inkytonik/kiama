@@ -11,19 +11,22 @@
 package org.bitbucket.inkytonik.kiama
 package example.json
 
-import JSONTree.JValue
+import JSONTree.{JSONNode, JValue}
 import org.bitbucket.inkytonik.kiama.util.Compiler
 
-class Driver extends Compiler[JValue] {
+class Driver extends Compiler[JSONNode, JValue] {
 
     import PrettyPrinter.{any, pretty}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
     val name = "json"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.jvalue
+    def parse(source : Source) : ParseResult[JValue] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.jvalue, source)
+    }
 
     def process(source : Source, ast : JValue, config : Config) = {
 

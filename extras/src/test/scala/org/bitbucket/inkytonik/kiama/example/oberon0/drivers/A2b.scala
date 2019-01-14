@@ -15,14 +15,19 @@ package drivers
 trait A2bPhases extends L2.source.SourcePrettyPrinter
     with base.FrontEndDriver {
 
+    import base.source.ModuleDecl
     import base.source.SourceTree.SourceTree
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
+    import org.bitbucket.inkytonik.kiama.util.Source
 
     def artefact : String = "A2b"
     def langlevel : Int = 2
     def tasklevel : Int = 3
 
-    val parsers = new L2.SyntaxAnalyser(positions)
-    val parser = parsers.moduledecl
+    def parse(source : Source) : ParseResult[ModuleDecl] = {
+        val parsers = new L2.SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.moduledecl, source)
+    }
 
     def buildAnalyser(atree : SourceTree) : base.Analyser =
         new L2.NameAnalyser with L2.TypeAnalyser {

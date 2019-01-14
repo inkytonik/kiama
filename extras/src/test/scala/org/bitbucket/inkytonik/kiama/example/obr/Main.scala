@@ -12,7 +12,7 @@
 package org.bitbucket.inkytonik.kiama
 package example.obr
 
-import ObrTree.ObrInt
+import ObrTree.{ObrInt, ObrNode}
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
     Config,
@@ -33,21 +33,24 @@ class ObrConfig(args : Seq[String]) extends Config(args) {
 /**
  * Obr language implementation compiler driver.
  */
-class Driver extends CompilerWithConfig[ObrInt, ObrConfig] {
+class Driver extends CompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     import ObrTree.ObrTree
     import org.bitbucket.inkytonik.kiama.example.obr.{RISCEncoder, RISCTransformer}
     import org.bitbucket.inkytonik.kiama.example.RISC.{RISC, RISCISA}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
 
     override def createConfig(args : Seq[String]) : ObrConfig =
         new ObrConfig(args)
 
     val name = "obr"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.program
+    def parse(source : Source) : ParseResult[ObrInt] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.program, source)
+    }
 
     def process(source : Source, ast : ObrInt, config : ObrConfig) {
 

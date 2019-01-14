@@ -13,13 +13,13 @@ package org.bitbucket.inkytonik.kiama
 package example.obr.tests
 
 import org.bitbucket.inkytonik.kiama.example.obr._
-import org.bitbucket.inkytonik.kiama.example.obr.ObrTree.ObrInt
+import org.bitbucket.inkytonik.kiama.example.obr.ObrTree.{ObrInt, ObrNode}
 import org.bitbucket.inkytonik.kiama.util.TestCompilerWithConfig
 
 /**
  * Obr regression tests: compilation to assembly.
  */
-class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig] {
+class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     filetests("ObrRegression", "example/obr/tests/generic", ".obr", ".risc",
         argslist = List(Seq("-a")))
@@ -29,7 +29,7 @@ class ObrRegressionTests extends Driver with TestCompilerWithConfig[ObrInt, ObrC
 /**
  * Obr parser tests.
  */
-class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrInt, ObrConfig] {
+class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     filetests("ObrParserEnum", "example/obr/tests/enum/parser", ".obr", ".out")
     filetests("ObrParserException", "example/obr/tests/exceptions/parser", ".obr", ".out")
@@ -39,7 +39,7 @@ class ObrParserTests extends ParserDriver with TestCompilerWithConfig[ObrInt, Ob
 /**
  * Obr semantic analysis tests.
  */
-class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrInt, ObrConfig] {
+class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     filetests("ObrSemanticEnum", "example/obr/tests/enum/semantic", ".obr", ".out")
     filetests("ObrSemanticException", "example/obr/tests/exceptions/semantic", ".obr", ".out")
@@ -49,7 +49,7 @@ class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrInt
 /**
  * Obr tests: compilation and execution.
  */
-class ObrExecTests extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig] {
+class ObrExecTests extends Driver with TestCompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     filetests("ObrExec", "example/obr/tests/generic", ".obr", ".out",
         Some(".in"), "0", List(Array("-e")))

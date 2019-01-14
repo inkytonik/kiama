@@ -16,14 +16,14 @@ import org.bitbucket.inkytonik.kiama.util.{
     CompilerBase,
     TestCompilerWithConfig
 }
-import source.ModuleDecl
+import source.{ModuleDecl, SourceNode}
 
 /**
  * A driver for testing.
  */
-trait TestDriver extends Driver with TestCompilerWithConfig[ModuleDecl, Oberon0Config] {
+trait TestDriver extends Driver with TestCompilerWithConfig[SourceNode, ModuleDecl, Oberon0Config] {
 
-    this : CompilerBase[ModuleDecl, Oberon0Config] =>
+    this : CompilerBase[SourceNode, ModuleDecl, Oberon0Config] =>
 
     /**
      * The language level of this program.  The levels are:

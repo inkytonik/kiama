@@ -17,9 +17,9 @@ import org.eclipse.lsp4j.{Position => LSPPosition, Range => LSPRange, _}
  * A language server that is mixed with a compiler that provide the basis
  * for its services. Allows specialisation of configuraiton via `C`.
  */
-trait ServerWithConfig[T, C <: Config] {
+trait ServerWithConfig[N, T <: N, C <: Config] {
 
-    this : CompilerBase[T, C] =>
+    this : CompilerBase[N, T, C] =>
 
     import com.google.gson.{JsonElement, JsonObject}
     import java.io.PrintWriter
@@ -215,14 +215,33 @@ trait ServerWithConfig[T, C <: Config] {
                 None
         }
 
+    // Support for services
+
+    def locationOfNode(node : N) : Location = {
+        (positions.getStart(node), positions.getFinish(node)) match {
+            case (start @ Some(st), finish @ Some(_)) =>
+                st.source match {
+                    case StringSource(_, Some(name)) =>
+                        val s = convertPosition(start)
+                        val f = convertPosition(finish)
+                        new Location(name, new LSPRange(s, f))
+                    case _ =>
+                        null
+                }
+            case _ =>
+                null
+        }
+    }
+
 }
 
-class Services[T, C <: Config](
-    server : ServerWithConfig[T, C] with CompilerBase[T, C],
+class Services[N, T <: N, C <: Config](
+    server : ServerWithConfig[N, T, C] with CompilerBase[N, T, C],
     config : C
 ) {
 
     import java.util.concurrent.CompletableFuture
+    import org.eclipse.lsp4j.jsonrpc.CompletableFutures
     import org.eclipse.lsp4j.jsonrpc.services._
 
     // Life-cycle
@@ -238,6 +257,8 @@ class Services[T, C <: Config](
         CompletableFuture.completedFuture {
             val serverCapabilities = new ServerCapabilities
             serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
+            serverCapabilities.setHoverProvider(true)
+            serverCapabilities.setDefinitionProvider(true)
             new InitializeResult(serverCapabilities)
         }
 
@@ -289,6 +310,32 @@ class Services[T, C <: Config](
         server.clearDiagnostics(uri)
         server.compileString(uri, text, config)
     }
+
+    def positionOfNotification(params : TextDocumentPositionParams) : Option[Position] =
+        server.lastSource.map(source => {
+            val posLSP = params.getPosition
+            Position(posLSP.getLine + 1, posLSP.getCharacter + 1, source)
+        })
+
+    @JsonNotification("textDocument/hover")
+    def hover(params : TextDocumentPositionParams) : CompletableFuture[Hover] =
+        CompletableFutures.computeAsync { _ =>
+            positionOfNotification(params).flatMap(position =>
+                server.getHover(position).map(content => {
+                    val markup = new MarkupContent()
+                    markup.setValue(content)
+                    markup.setKind("markdown")
+                    new Hover(markup)
+                })).getOrElse(null)
+        }
+
+    @JsonNotification("textDocument/definition")
+    def definition(params : TextDocumentPositionParams) : CompletableFuture[Location] =
+        CompletableFutures.computeAsync { _ =>
+            positionOfNotification(params).flatMap(position =>
+                server.getDefinition(position).map(definition =>
+                    server.locationOfNode(definition))).getOrElse(null)
+        }
 
     // Workspace services
 

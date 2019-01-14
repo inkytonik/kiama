@@ -12,14 +12,14 @@
 package org.bitbucket.inkytonik.kiama
 package example.obr
 
-import ObrTree.ObrInt
+import ObrTree.{ObrNode, ObrInt}
 import org.bitbucket.inkytonik.kiama.util.TestCompilerWithConfig
 
 /**
  * A driver which compiles a file and allows a test to be run on the resulting
  * target tree.
  */
-trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrInt, ObrConfig] {
+trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     import ObrTree.ObrTree
     import RISCTree._

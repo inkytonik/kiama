@@ -18,15 +18,18 @@ import org.bitbucket.inkytonik.kiama.util.Compiler
  * Parse a simple imperative language program, calculate its dataflow
  * relations and use them to remove dead assignments.
  */
-class Driver extends Compiler[Stm] {
+class Driver extends Compiler[Stm, Stm] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
     val name = "dataflow"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.stm
+    def parse(source : Source) : ParseResult[Stm] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.stm, source)
+    }
 
     def process(source : Source, ast : Stm, config : Config) {
         val tree = new DataflowTree(ast)

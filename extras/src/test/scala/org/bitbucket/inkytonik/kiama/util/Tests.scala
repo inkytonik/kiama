@@ -171,14 +171,8 @@ trait ParseTests extends KiamaTests {
         Failure,
         NoSuccess,
         ParseResult,
-        ParsersBase,
         Success
     }
-
-    /**
-     * The suite of parsers that is used by these tests.
-     */
-    val parsers : ParsersBase
 
     /**
      * Matcher for parse success yielding an expected value.
@@ -283,7 +277,8 @@ trait ParseTests extends KiamaTests {
  */
 trait TransformerTests extends ParseTests {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, ParseResult, Success}
+    import org.bitbucket.inkytonik.kiama.util.StringSource
 
     /**
      * Matcher for parsing and then transformation with expected value. Try to
@@ -292,10 +287,10 @@ trait TransformerTests extends ParseTests {
      * `transform` transformation function. The result of the transformation is
      * then compared to `expected`.
      */
-    def transformTo[T](parser : parsers.Parser[T], transform : T => T, expected : T) =
+    def transformTo[T](parser : Source => ParseResult[T], transform : T => T, expected : T) =
         new Matcher[String] {
             def apply(term : String) =
-                parser(term) match {
+                parser(StringSource(term)) match {
                     case Success(ast, _) =>
                         val transformed = transform(ast)
                         MatchResult(

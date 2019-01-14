@@ -13,12 +13,12 @@ package example.picojava
 package tests
 
 import org.bitbucket.inkytonik.kiama.util.TestCompilerWithConfig
-import PicoJavaTree.Program
+import PicoJavaTree.{PicoJavaNode, Program}
 
 /**
  * Tests that check that the PicoJava main program produces appropriate output.
  */
-class PicoJavaTests extends Driver with TestCompilerWithConfig[Program, PicojavaConfig] {
+class PicoJavaTests extends Driver with TestCompilerWithConfig[PicoJavaNode, Program, PicojavaConfig] {
 
     val path = "example/picojava/tests"
     filetests("PicoJava", path, ".pj", ".out")

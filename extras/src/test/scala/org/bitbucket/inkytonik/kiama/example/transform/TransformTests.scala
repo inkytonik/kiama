@@ -11,13 +11,13 @@
 package org.bitbucket.inkytonik.kiama
 package example.transform
 
-import TransformTree.Program
+import TransformTree.{Program, TransformNode}
 import org.bitbucket.inkytonik.kiama.util.TestCompiler
 
 /**
  * Transformation compiler tests.
  */
-class TransformTests extends Driver with TestCompiler[Program] {
+class TransformTests extends Driver with TestCompiler[TransformNode, Program] {
 
     filetests("Transform", "example/transform/tests", ".exp", ".out")
 

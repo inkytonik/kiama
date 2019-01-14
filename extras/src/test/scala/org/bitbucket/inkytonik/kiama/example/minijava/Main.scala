@@ -11,26 +11,31 @@
 package org.bitbucket.inkytonik.kiama
 package example.minijava
 
-import MiniJavaTree.Program
-import org.bitbucket.inkytonik.kiama.util.Compiler
-import org.bitbucket.inkytonik.kiama.util.Config
+import MiniJavaTree.{MiniJavaNode, Program}
+import org.bitbucket.inkytonik.kiama.util.{Compiler, Config, Position}
 
 /**
  * Compile the MiniJava program in the file given as the first command-line
  * argument.
  */
-trait Driver extends Compiler[Program] {
+trait Driver extends Compiler[MiniJavaNode, Program] {
 
     import CodeGenerator.{any, classFileToDoc, generate, hcat, pretty}
-    import MiniJavaTree.MiniJavaTree
-    import Monto.{nameDocument, outlineDocument}
+    import MiniJavaTree.{IdnTree, MiniJavaTree}
+    import Monto.{hoverDocument, nameDocument, outlineDocument}
+    import SymbolTable.MiniJavaEntity
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
+    import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.bitbucket.inkytonik.kiama.util.Source
 
     val name = "minijava"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.program
+    /**
+     * The most recent analyser used by the semantic analysis phase of this
+     * compiler, or `None` if there isn't one.
+     */
+    var lastAnalyser : Option[SemanticAnalyser] = None
 
     /**
      * Whether this is a test run or not. Test runs generate all of their
@@ -39,6 +44,24 @@ trait Driver extends Compiler[Program] {
      * file so that they can be compiled by Jasmin.
      */
     def isTest = true
+
+    /**
+     * Reset the server's analyser before making the AST in the standard
+     * way so that erroneous parses can't reuse an analyser from an older
+     * successful run.
+     */
+    override def makeast(source : Source, config : Config) : Either[Program, Messages] = {
+        lastAnalyser = None
+        super.makeast(source, config)
+    }
+
+    /**
+     * Parse a MiniJava program.
+     */
+    def parse(source : Source) : ParseResult[Program] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.program, source)
+    }
 
     /**
      * Process the source tree by analysing it to check for semantic
@@ -50,7 +73,9 @@ trait Driver extends Compiler[Program] {
         // Perform the semantic checks
         val tree = new MiniJavaTree(ast)
         val analyser = new SemanticAnalyser(tree)
-        val messages = analyser.errors
+
+        // Save for server use
+        lastAnalyser = Some(analyser)
 
         // Publish the outline and name analysis products
         if (config.server()) {
@@ -59,6 +84,7 @@ trait Driver extends Compiler[Program] {
         }
 
         // Report any messages that were produced
+        val messages = analyser.errors
         if (messages.length > 0) {
 
             report(source, messages, config)
@@ -101,6 +127,40 @@ trait Driver extends Compiler[Program] {
             publishNameProduct(source)
         }
     }
+
+    /**
+     * Hover information is provided for identifier defs and uses.
+     * It consists of a short description of the associated entity
+     * and a pretty-printed version of the corresponding declaration.
+     */
+    override def getHover(position : Position) : Option[String] =
+        lastAnalyser.flatMap(analyser => {
+            val nodes = analyser.tree.nodes
+            positions.findNodesContaining(nodes, position).collectFirst {
+                case n : IdnTree =>
+                    analyser.entity(n) match {
+                        case e : MiniJavaEntity =>
+                            val p = hoverDocument(e.decl).layout
+                            s"${e.desc} ${n.idn}\n\n```\n$p```"
+                    }
+            }
+        })
+
+    /**
+     * Definitions are provided for defined identifiers and point
+     * to the corresponding declaration node.
+     */
+    override def getDefinition(position : Position) : Option[MiniJavaNode] =
+        lastAnalyser.flatMap(analyser => {
+            val nodes = analyser.tree.nodes
+            positions.findNodesContaining(nodes, position).collectFirst {
+                case n : IdnTree =>
+                    analyser.entity(n) match {
+                        case e : MiniJavaEntity =>
+                            e.decl
+                    }
+            }
+        })
 
     /**
      * Pretty printer to use to print minijava ASTs.

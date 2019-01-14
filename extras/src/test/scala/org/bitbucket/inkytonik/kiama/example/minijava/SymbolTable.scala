@@ -24,10 +24,11 @@ object SymbolTable extends Environments {
 
     /**
      * Superclass of all MiniJava entities. Provides generic access to
-     * the declaration node of the entity.
+     * the declaration node of the entity and a textual description.
      */
     sealed abstract class MiniJavaEntity extends Entity with Product {
         def decl : MiniJavaNode
+        def desc : String
     }
 
     /**
@@ -35,37 +36,49 @@ object SymbolTable extends Environments {
      * The `decl` field gives us access back to the declaration from the
      * entity.
      */
-    case class MainClassEntity(decl : MainClass) extends MiniJavaEntity
+    case class MainClassEntity(decl : MainClass) extends MiniJavaEntity {
+        val desc = "main class"
+    }
 
     /**
      * A normal class entity (i.e., all the non-main classes). The `decl`
      * field gives us access back to the declaration from the entity.
      */
-    case class ClassEntity(decl : Class) extends MiniJavaEntity
+    case class ClassEntity(decl : Class) extends MiniJavaEntity {
+        val desc = "class"
+    }
 
     /**
      * A method entity. The `decl` field gives us access back to the
      * declaration from the entity.
      */
-    case class MethodEntity(decl : Method) extends MiniJavaEntity
+    case class MethodEntity(decl : Method) extends MiniJavaEntity {
+        val desc = "method"
+    }
 
     /**
      * An entity representing an argument to a method. The `decl` field
      * gives us access back to the declaration from the entity.
      */
-    case class ArgumentEntity(decl : Argument) extends MiniJavaEntity
+    case class ArgumentEntity(decl : Argument) extends MiniJavaEntity {
+        val desc = "method argument"
+    }
 
     /**
      * A instance variable (field) entity. The `decl` field gives us access
      * back to the declaration from the entity.
      */
-    case class FieldEntity(decl : Field) extends MiniJavaEntity
+    case class FieldEntity(decl : Field) extends MiniJavaEntity {
+        val desc = "class field"
+    }
 
     /**
      * A local variable entity. The `decl` field gives us access back
      * to the declaration from the entity.
      */
-    case class VariableEntity(decl : Var) extends MiniJavaEntity
+    case class VariableEntity(decl : Var) extends MiniJavaEntity {
+        val desc = "local variable"
+    }
 
     // Internal types, not created from user programs by the parser but
     // used to represent some types internally to the semantic analysis.

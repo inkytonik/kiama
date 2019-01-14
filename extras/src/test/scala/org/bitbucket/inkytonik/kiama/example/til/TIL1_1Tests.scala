@@ -16,10 +16,11 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
 class TIL1_1Tests extends ParseTests {
 
     import TILTree._
+    import org.bitbucket.inkytonik.kiama.util.StringSource
 
     val til1_1 = new TIL1_1
-    val parsers = til1_1.parsers
-    import parsers.program
+
+    def parse = til1_1.parse _
 
     val n = Id("n")
     val f = Id("f")
@@ -60,7 +61,7 @@ write "\n";"""
                     Write(Str("\"\\n\""))
                 )
             )
-        program(input) should parseTo(tree)
+        parse(StringSource(input)) should parseTo(tree)
     }
 
     test("parse factors program") {
@@ -102,7 +103,7 @@ end"""
                     )
                 )
             )
-        program(input) should parseTo(tree)
+        parse(StringSource(input)) should parseTo(tree)
     }
 
     test("parse multiples program") {
@@ -125,7 +126,7 @@ end
                         ))
                 )
             )
-        program(input) should parseTo(tree)
+        parse(StringSource(input)) should parseTo(tree)
     }
 
 }

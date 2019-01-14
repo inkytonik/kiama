@@ -11,14 +11,14 @@
 package org.bitbucket.inkytonik.kiama
 package example.til
 
-import TILTree.Program
+import TILTree.{Program, TilNode}
 import org.bitbucket.inkytonik.kiama.util.{Compiler, Config, Source}
 
 /**
  * Main program for TIL chairmarks that just parse and print their ASTs
  * to standard output.
  */
-trait ParsingMain extends Compiler[Program] {
+trait ParsingMain extends Compiler[TilNode, Program] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
 

@@ -171,4 +171,36 @@ object Monto {
 
     }
 
+    // Hover support
+
+    def hoverDocument(t : MiniJavaNode) : Document = {
+
+        def toHoverDoc(t : MiniJavaNode) : Doc =
+            t match {
+                case MainClass(i, _) =>
+                    "class" <+> toHoverDoc(i)
+                case Class(i, _, b @ ClassBody(fs, ms)) =>
+                    "class" <+> toHoverDoc(i)
+                case Field(t, i) =>
+                    toHoverDoc(t) <+> toHoverDoc(i)
+                case Var(t, i) =>
+                    toHoverDoc(t) <+> toHoverDoc(i)
+                case Method(i, b) =>
+                    toHoverDoc(b.tipe) <+> toHoverDoc(i) <+> toHoverDoc(b)
+                case MethodBody(_, as, _, _, _) =>
+                    parens(hsep(as map toHoverDoc, comma))
+                case Argument(t, i) =>
+                    toHoverDoc(t) <+> toHoverDoc(i)
+                case t : Type =>
+                    t.toString
+                case n : IdnTree =>
+                    n.idn
+                case _ =>
+                    emptyDoc
+            }
+
+        pretty(toHoverDoc(t))
+
+    }
+
 }

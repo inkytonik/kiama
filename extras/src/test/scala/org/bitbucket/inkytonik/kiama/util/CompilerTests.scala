@@ -15,19 +15,22 @@ package util
  * Basic tests of compiler module.  Normal usage is tested by many of
  * the examples.
  */
-class CompilerTests extends KiamaTests with Compiler[Any] with TestCompiler[Any] {
+class CompilerTests extends KiamaTests with Compiler[Any, Any] with TestCompiler[Any, Any] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
-    import org.bitbucket.inkytonik.kiama.parsing.Parsers
+    import org.bitbucket.inkytonik.kiama.parsing.{Parsers, ParseResult}
     import org.bitbucket.inkytonik.kiama.util.Source
-
-    object parsers extends Parsers(positions) {
-        val dummy : Parser[String] = "dummy".r
-    }
 
     val name = "compiler"
 
-    val parser = parsers.dummy
+    class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
+        val dummy : Parser[String] = "dummy".r
+    }
+
+    def parse(source : Source) : ParseResult[String] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.dummy, source)
+    }
 
     def process(source : Source, ast : Any, config : Config) {
         // Do nothing
@@ -234,9 +237,9 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
 /**
  * Support for testing compiler drivers.
  */
-trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
+trait TestCompilerWithConfig[N, T <: N, C <: Config] extends TestDriverWithConfig[C] {
 
-    self : CompilerBase[T, C] =>
+    self : CompilerBase[N, T, C] =>
 
     /**
      * Run the compiler in test mode using the given configuration.
@@ -251,8 +254,8 @@ trait TestCompilerWithConfig[T, C <: Config] extends TestDriverWithConfig[C] {
  * Specialisation of `TestCompilerWithConfig` that uses the default
  * configuration type.
  */
-trait TestCompiler[T] extends TestCompilerWithConfig[T, Config] {
+trait TestCompiler[N, T <: N] extends TestCompilerWithConfig[N, T, Config] {
 
-    self : CompilerBase[T, Config] =>
+    self : CompilerBase[N, T, Config] =>
 
 }

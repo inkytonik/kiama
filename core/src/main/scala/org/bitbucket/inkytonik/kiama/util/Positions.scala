@@ -45,17 +45,39 @@ case class Position(line : Int, column : Int, source : Source) {
         source.positionToOffset(this)
 
     /**
-     * Does this position occur at least as late as `p`? The two positions
+     * Apply a binary Boolean operation to this position and another one,
+     * as offsets, return the result.
+     */
+    def op2(op : (Int, Int) => Boolean, p : Position) : Boolean =
+        (optOffset, p.optOffset) match {
+            case (Some(l), Some(r)) =>
+                op(l, r)
+            case (l, r) =>
+                false
+        }
+
+    /**
+     * Does this position occur no later than `p`? The two positions
      * are assumed to refer to the same source. False is returned if one
      * of the positions is invalid.
      */
     def <=(p : Position) : Boolean =
-        (optOffset, p.optOffset) match {
-            case (Some(l), Some(r)) =>
-                l <= r
-            case (l, r) =>
-                false
-        }
+        op2(_ <= _, p)
+
+    /**
+     * Does this position occur before `p`? The two positions are assumed
+     * to refer to the same source. False is returned if one of the
+     * positions is invalid.
+     */
+    def <(p : Position) : Boolean =
+        op2(_ < _, p)
+
+    /**
+     * Does this position occur between two other positions, inclusive of
+     * start position and exclusive of finish position?
+     */
+    def between(start : Position, finish : Position) : Boolean =
+        (start <= this) && (this < finish)
 
 }
 
@@ -173,13 +195,22 @@ class Positions {
      * the start and finish positions (if present) both refer to the same
      * source.
      */
-    def textOf[T](t : T) : Option[String] = {
+    def textOf[T](t : T) : Option[String] =
         (getStart(t), getFinish(t)) match {
             case (Some(start), Some(finish)) =>
                 substring(start, finish)
             case _ =>
                 None
         }
-    }
+
+    /**
+     * Find all of the given nodes whose range contains `position`.
+     */
+    def findNodesContaining[T](nodes : Vector[T], position : Position) : Vector[T] =
+        nodes.collect(t =>
+            (getStart(t), getFinish(t)) match {
+                case (Some(start), Some(finish)) if position.between(start, finish) =>
+                    t
+            })
 
 }

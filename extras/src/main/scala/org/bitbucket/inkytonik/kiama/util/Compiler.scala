@@ -14,12 +14,13 @@ package util
 /**
  * Trait to provide basic functionality for a compiler-like program
  * constructed from phases, including profiling and timing support.
- * `T` is the type of the syntax tree communicated from the parser
+ * `N` is the syntax tree node type used by this compiler. `T` is
+ * the type of the syntax tree communicated from the parser
  * to the main processing of the compiler. `C` is the type of the
  * configuration.
  */
-trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Profiler
-    with ServerWithConfig[T, C] {
+trait CompilerBase[N, T <: N, C <: Config] extends PositionStore with Messaging with Profiler
+    with ServerWithConfig[N, T, C] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
@@ -31,6 +32,12 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * is the extension used for files containing this language.
      */
     def name : String
+
+    /**
+     * The most recent source processed by this compiler, or `None` if there
+     * isn't one.
+     */
+    var lastSource : Option[Source] = None
 
     /**
      * The entry point for this compiler.
@@ -127,6 +134,7 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
      * processing on the AST. If `makeast` produces messages, report them.
      */
     def compileSource(source : Source, config : C) {
+        lastSource = Some(source)
         makeast(source, config) match {
             case Left(ast) =>
                 if (config.server() || config.debug()) {
@@ -204,26 +212,30 @@ trait CompilerBase[T, C <: Config] extends PositionStore with Messaging with Pro
         // Do nothing
     }
 
+    /**
+     * Return markdown hover markup for the given position (if any).
+     * Default is to never return anything.
+     */
+    def getHover(position : Position) : Option[String] =
+        None
+
+    /**
+     * Return the corresponding definition node for the given position
+     * (if any). Default is to never return anything.
+     */
+    def getDefinition(position : Position) : Option[N] =
+        None
+
 }
 
 /**
  * A compiler that uses Parsers to produce positioned ASTs. `C` is the type of the
  * compiler configuration.
  */
-trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
+trait CompilerWithConfig[N, T <: N, C <: Config] extends CompilerBase[N, T, C] {
 
-    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, ParsersBase, Success}
+    import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, ParseResult, Success}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{message, Messages}
-
-    /**
-     * The suite of parsers that is used by this compiler.
-     */
-    val parsers : ParsersBase
-
-    /**
-     * The particular parser used to parse this compiler's input.
-     */
-    val parser : parsers.Parser[T]
 
     /**
      * Make an AST by running the parser on the given source, returning messages
@@ -231,7 +243,8 @@ trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
      */
     def makeast(source : Source, config : C) : Either[T, Messages] = {
         try {
-            parsers.parseAll(parser, source) match {
+            positions.reset()
+            parse(source) match {
                 case Success(ast, _) =>
                     Left(ast)
                 case res : NoSuccess =>
@@ -247,13 +260,18 @@ trait CompilerWithConfig[T, C <: Config] extends CompilerBase[T, C] {
         }
     }
 
+    /**
+     * Parse a source, returning a parse result.
+     */
+    def parse(source : Source) : ParseResult[T]
+
 }
 
 /**
  * Specialisation of `CompilerWithConfig` that uses the default configuration
  * type.
  */
-trait Compiler[T] extends CompilerWithConfig[T, Config] {
+trait Compiler[N, T <: N] extends CompilerWithConfig[N, T, Config] {
 
     def createConfig(args : Seq[String]) : Config =
         new Config(args)

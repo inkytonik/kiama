@@ -11,25 +11,28 @@
 package org.bitbucket.inkytonik.kiama
 package example.prolog
 
-import PrologTree.Program
+import PrologTree.{PrologNode, Program}
 import org.bitbucket.inkytonik.kiama.util.{Compiler, TestCompiler}
 
 /**
  * Tests that check that the semantic analyser works correctly.  I.e., it correctly
  * diagnoses errors where they are present, and passes correct code.
  */
-class SemanticAnalyserTests extends Compiler[Program] with TestCompiler[Program] {
+class SemanticAnalyserTests extends Compiler[PrologNode, Program] with TestCompiler[PrologNode, Program] {
 
     import PrologTree.{PrologTree, Program}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
     filetests("Prolog", "example/prolog/tests", ".pl", ".sem")
 
     val name = "prolog"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.program
+    def parse(source : Source) : ParseResult[Program] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.program, source)
+    }
 
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.

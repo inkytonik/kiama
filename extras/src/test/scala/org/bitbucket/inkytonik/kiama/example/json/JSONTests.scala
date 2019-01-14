@@ -12,12 +12,12 @@ package org.bitbucket.inkytonik.kiama
 package example.json
 
 import org.bitbucket.inkytonik.kiama.util.TestCompiler
-import JSONTree.JValue
+import JSONTree.{JSONNode, JValue}
 
 /**
  * Tests that check that the JSON main program produces appropriate output.
  */
-class JSONTests extends Driver with TestCompiler[JValue] {
+class JSONTests extends Driver with TestCompiler[JSONNode, JValue] {
 
     val path = "example/json/tests"
     filetests("JSON", path, ".json", ".out")

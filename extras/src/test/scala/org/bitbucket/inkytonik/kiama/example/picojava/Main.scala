@@ -11,7 +11,7 @@
 package org.bitbucket.inkytonik.kiama
 package example.picojava
 
-import PicoJavaTree.Program
+import PicoJavaTree.{PicoJavaNode, Program}
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
     Config
@@ -24,10 +24,11 @@ class PicojavaConfig(args : Seq[String]) extends Config(args) {
     lazy val obfuscate = opt[Boolean]("obfuscate", descr = "Obfuscate the code")
 }
 
-class Driver extends CompilerWithConfig[Program, PicojavaConfig] {
+class Driver extends CompilerWithConfig[PicoJavaNode, Program, PicojavaConfig] {
 
     import PicoJavaTree.PicoJavaTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.Source
 
     def createConfig(args : Seq[String]) : PicojavaConfig =
@@ -35,8 +36,10 @@ class Driver extends CompilerWithConfig[Program, PicojavaConfig] {
 
     val name = "picojava"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.program
+    def parse(source : Source) : ParseResult[Program] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.program, source)
+    }
 
     /**
      * Process a PicoJava program by checking for errors, optionally obfuscating and

@@ -11,13 +11,13 @@
 package org.bitbucket.inkytonik.kiama
 package example.minijava
 
-import MiniJavaTree.Program
+import MiniJavaTree.{MiniJavaNode, Program}
 import org.bitbucket.inkytonik.kiama.util.TestCompiler
 
 /**
  * Tests that check that the code generator produces the expected byte code.
  */
-class CodeGeneratorTests extends Driver with TestCompiler[Program] {
+class CodeGeneratorTests extends Driver with TestCompiler[MiniJavaNode, Program] {
 
     val path = "example/minijava/tests"
     filetests("minijava code generation", path, ".mj", ".out")

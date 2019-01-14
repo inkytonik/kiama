@@ -18,7 +18,7 @@ import org.bitbucket.inkytonik.kiama.attribution.Attribution
  * Semantic analysis module containing static checking of Minijava
  * semantic rules, most notably name analysis.
  */
-class SemanticAnalyser(tree : MiniJavaTree) extends Attribution {
+class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
 
     import MiniJavaTree._
     import org.bitbucket.inkytonik.kiama.==>

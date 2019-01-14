@@ -18,8 +18,9 @@ class TIL2_1Tests extends TransformerTests {
     import TILTree._
 
     val til2_1 = new TIL2_1
-    val parsers = til2_1.parsers
-    import parsers.program
+
+    def parse = til2_1.parse _
+
     import til2_1.transform
 
     val x = Id("x")
@@ -28,7 +29,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform a single for loop") {
         "for x := 1 to n do write x; end" should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Decl(x),
                 For(x, Num(1), Var(n), List(
@@ -40,7 +41,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform a for loop that occurs first in a sequence") {
         "for x := 1 to n do write x; end write x;" should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Decl(x),
                 For(x, Num(1), Var(n), List(
@@ -53,7 +54,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform a for loop that occurs last in a sequence") {
         "write x; for x := 1 to n do write x; end" should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Write(Var(x)),
                 Decl(x),
@@ -66,7 +67,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform a for loop that occurs in the middle of a sequence") {
         "write x; for x := 1 to n do write x; end write x;" should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Write(Var(x)),
                 Decl(x),
@@ -80,7 +81,7 @@ class TIL2_1Tests extends TransformerTests {
 
     test("transform nested for loops") {
         "for x := 1 to n do for y := 0 to x do write y; end end" should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Decl(x),
                 For(x, Num(1), Var(n), List(

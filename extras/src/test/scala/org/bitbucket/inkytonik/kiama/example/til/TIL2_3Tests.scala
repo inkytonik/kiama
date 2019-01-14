@@ -18,8 +18,9 @@ class TIL2_3Tests extends TransformerTests {
     import TILTree._
 
     val til2_3 = new TIL2_3
-    val parsers = til2_3.parsers
-    import parsers.program
+
+    def parse = til2_3.parse _
+
     import til2_3.transform
 
     test("transform a program with many nested declarations") {
@@ -73,7 +74,7 @@ end
         val y = Id("y")
         val z = Id("z")
         term should transformTo(
-            program, transform,
+            parse, transform,
             Program(List(
                 Decl(d),
                 Decl(r),

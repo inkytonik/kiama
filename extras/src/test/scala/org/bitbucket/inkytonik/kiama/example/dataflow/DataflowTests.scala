@@ -17,7 +17,7 @@ import org.bitbucket.inkytonik.kiama.util.TestCompiler
 /**
  * Tests of data flow attribution.
  */
-class DataflowTests extends Driver with TestCompiler[Stm] {
+class DataflowTests extends Driver with TestCompiler[Stm, Stm] {
 
     import DataflowTree._
 

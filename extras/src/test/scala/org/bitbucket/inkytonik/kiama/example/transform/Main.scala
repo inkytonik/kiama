@@ -11,22 +11,25 @@
 package org.bitbucket.inkytonik.kiama
 package example.transform
 
-import TransformTree.Program
+import TransformTree.{Program, TransformNode}
 import org.bitbucket.inkytonik.kiama.util.Compiler
 
 /**
  * Main program for transformation compiler.
  */
-class Driver extends Compiler[Program] {
+class Driver extends Compiler[TransformNode, Program] {
 
     import TransformTree.TransformTree
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{emptyDocument, Document}
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.{Config, Source}
 
     val name = "transform"
 
-    val parsers = new SyntaxAnalyser(positions)
-    val parser = parsers.program
+    def parse(source : Source) : ParseResult[Program] = {
+        val parsers = new SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.program, source)
+    }
 
     def process(source : Source, program : Program, config : Config) {
 

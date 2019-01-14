@@ -18,14 +18,19 @@ trait A4Phases extends L4.source.SourcePrettyPrinter
 
     phases =>
 
+    import base.source.ModuleDecl
     import base.source.SourceTree.SourceTree
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
+    import org.bitbucket.inkytonik.kiama.util.Source
 
     def artefact : String = "A4"
     def langlevel : Int = 4
     def tasklevel : Int = 6
 
-    val parsers = new L4.SyntaxAnalyser(positions)
-    val parser = parsers.moduledecl
+    def parse(source : Source) : ParseResult[ModuleDecl] = {
+        val parsers = new L4.SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.moduledecl, source)
+    }
 
     def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
         new L4.NameAnalyser with L4.TypeAnalyser {

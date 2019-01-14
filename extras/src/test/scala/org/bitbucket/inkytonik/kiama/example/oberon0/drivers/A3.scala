@@ -17,14 +17,19 @@ trait A3Phases extends L3.source.SourcePrettyPrinter
 
     phases =>
 
+    import base.source.ModuleDecl
     import base.source.SourceTree.SourceTree
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
+    import org.bitbucket.inkytonik.kiama.util.Source
 
     def artefact : String = "A3"
     def langlevel : Int = 3
     def tasklevel : Int = 3
 
-    val parsers = new L3.SyntaxAnalyser(positions)
-    val parser = parsers.moduledecl
+    def parse(source : Source) : ParseResult[ModuleDecl] = {
+        val parsers = new L3.SyntaxAnalyser(positions)
+        parsers.parseAll(parsers.moduledecl, source)
+    }
 
     def buildAnalyser(atree : SourceTree) : L0.TypeAnalyser =
         new L3.NameAnalyser with L3.TypeAnalyser {

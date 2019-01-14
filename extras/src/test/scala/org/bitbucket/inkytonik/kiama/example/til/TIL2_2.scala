@@ -17,10 +17,14 @@ package example.til
 class TIL2_2 extends TransformingMain {
 
     import TILTree._
+    import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter._
+    import org.bitbucket.inkytonik.kiama.util.Source
 
-    val parsers = new TIL1_1Parsers(positions)
-    val parser = parsers.program
+    def parse(source : Source) : ParseResult[Program] = {
+        val parsers = new TIL1_1Parsers(positions)
+        parsers.parseAll(parsers.program, source)
+    }
 
     def transform(ast : Program) : Program =
         rewrite(fortowhile)(ast)

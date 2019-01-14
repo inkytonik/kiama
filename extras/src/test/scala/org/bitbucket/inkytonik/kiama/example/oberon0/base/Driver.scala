@@ -12,7 +12,7 @@ package org.bitbucket.inkytonik.kiama
 package example.oberon0
 package base
 
-import source.ModuleDecl
+import source.{ModuleDecl, SourceNode}
 import source.SourceTree.SourceTree
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
@@ -58,7 +58,7 @@ class Oberon0Config(args : Seq[String]) extends Config(args) {
  * A driver for an artefact that parses, pretty prints and performs semantic
  * analysis.
  */
-trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0Config] {
+trait FrontEndDriver extends Driver with CompilerWithConfig[SourceNode, ModuleDecl, Oberon0Config] {
 
     this : source.SourcePrettyPrinter =>
 
@@ -167,7 +167,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[ModuleDecl, Oberon0C
  * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis and transforms.
  */
-trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDecl, Oberon0Config] {
+trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[SourceNode, ModuleDecl, Oberon0Config] {
 
     this : source.SourcePrettyPrinter =>
 
@@ -202,7 +202,7 @@ trait TransformingDriver extends FrontEndDriver with CompilerWithConfig[ModuleDe
  * A driver for an artefact that parses, pretty prints, performs semantic
  * analysis, transforms and translates.
  */
-trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[ModuleDecl, Oberon0Config] {
+trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[SourceNode, ModuleDecl, Oberon0Config] {
 
     this : source.SourcePrettyPrinter with c.CPrettyPrinter =>
 
