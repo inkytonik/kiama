@@ -56,7 +56,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     def setting(key : String, default : Boolean = false) : Boolean = {
         if (settings == null)
-            default
+            true
         else {
             val value = settings.get(key)
             if (value == null)
@@ -286,7 +286,8 @@ class Services[N, T <: N, C <: Config](
 
     @JsonNotification("textDocument/didOpen")
     def didOpen(params : DidOpenTextDocumentParams) {
-        // Do nothing
+        val document = params.getTextDocument
+        process(document.getUri, document.getText)
     }
 
     @JsonNotification("textDocument/didChange")
