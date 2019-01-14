@@ -19,25 +19,10 @@ import org.scalatest.prop.Checkers
  * General test support designed to be mixed in to compilers or drivers.
  */
 trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
-    with BeforeAndAfterEach with Checkers with Matchers with PositionStore
-    with Messaging {
+    with BeforeAndAfterEach with Checkers with Matchers {
 
     import Comparison.{same, sameCollection, sameElements}
     import org.scalatest.Tag
-
-    /**
-     * Initialise positions before next test. By default, the positions are reset.
-     */
-    def initialisePositions() {
-        positions.reset()
-    }
-
-    /**
-     * Set up before each test.
-     */
-    override def beforeEach() {
-        initialisePositions()
-    }
 
     /**
      * ScalaTest by default only shows the unqualified class name when
@@ -196,7 +181,7 @@ trait ParseTests extends KiamaTests {
      * Matcher for parse success where the parsed value corresponds to
      * particluar input text.
      */
-    def parseText[T](expected : String) =
+    def parseText[T](positions : Positions, expected : String) =
         new Matcher[ParseResult[T]] {
             def apply(result : ParseResult[T]) =
                 result match {

@@ -19,6 +19,8 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
  */
 class ParsersTests extends ParseTests {
 
+    import org.bitbucket.inkytonik.kiama.util.Positions
+
     case class Node(i : Int)
     case class Tup2(n1 : Node, n2 : Node)
     case class Tup3(n1 : Node, n2 : Node, n3 : Node)
@@ -27,6 +29,7 @@ class ParsersTests extends ParseTests {
     case class Tup6(n1 : Node, n2 : Node, n3 : Node, n4 : Node, n5 : Node, n6 : Node)
     case class NodeStr(n : Node, s : String)
 
+    val positions = new Positions
     val parsers = new Parsers(positions)
     import parsers._
 

@@ -21,10 +21,11 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
 class InterpreterTests extends ParseTests {
 
     import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
-    import org.bitbucket.inkytonik.kiama.util.StringEmitter
+    import org.bitbucket.inkytonik.kiama.util.{Positions, StringEmitter}
     import org.scalatest.matchers.{Matcher, MatchResult}
     import scala.io.Source
 
+    val positions = new Positions
     val parsers = new SyntaxAnalyser(positions)
 
     val path = "src/test/scala/org/bitbucket/inkytonik/kiama/example/prolog/tests"

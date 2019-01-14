@@ -110,7 +110,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     // Diagnostics
 
     def publishMessages(messages : Messages) {
-        val groups = messages.groupBy(name(_).getOrElse(""))
+        val groups = messages.groupBy(messaging.name(_).getOrElse(""))
         for ((uri, msgs) <- groups) {
             publishDiagnostics(uri, msgs.map(messageToDiagnostic))
         }
@@ -126,8 +126,8 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     }
 
     def messageToDiagnostic(message : Message) : Diagnostic = {
-        val s = convertPosition(start(message))
-        val f = convertPosition(finish(message))
+        val s = convertPosition(messaging.start(message))
+        val f = convertPosition(messaging.finish(message))
         val range = new LSPRange(s, f)
         val severity = convertSeverity(message.severity)
         new Diagnostic(range, message.label, severity, name)

@@ -16,7 +16,6 @@ import ObrTree.{ObrInt, ObrNode}
 import org.bitbucket.inkytonik.kiama.util.{
     CompilerWithConfig,
     Config,
-    Messaging,
     Source
 }
 
@@ -119,7 +118,7 @@ class ParserDriver extends Driver {
 /**
  * A driver which parses a program file and runs the semantic analyser.
  */
-class SemanticDriver extends Driver with Messaging {
+class SemanticDriver extends Driver {
 
     import ObrTree.ObrTree
 

@@ -19,6 +19,9 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
  */
 class SyntaxAnalyserTests extends PrettyPrinter with ParseTests {
 
+    import org.bitbucket.inkytonik.kiama.util.Positions
+
+    val positions = new Positions
     val parsers = new SyntaxAnalyser(positions)
     import parsers._
 

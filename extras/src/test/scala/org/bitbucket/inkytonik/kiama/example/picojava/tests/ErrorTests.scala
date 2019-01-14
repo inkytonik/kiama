@@ -28,8 +28,9 @@ class ErrorTests extends ParseTests {
     import org.bitbucket.inkytonik.kiama.example.picojava.ErrorCheck
     import org.bitbucket.inkytonik.kiama.example.picojava.PicoJavaTree.PicoJavaTree
     import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
-    import org.bitbucket.inkytonik.kiama.util.StringSource
+    import org.bitbucket.inkytonik.kiama.util.{Positions, StringSource}
 
+    val positions = new Positions
     val parsers = new SyntaxAnalyser(positions)
 
     /**

@@ -19,8 +19,7 @@ package util
  * to the main processing of the compiler. `C` is the type of the
  * configuration.
  */
-trait CompilerBase[N, T <: N, C <: Config] extends PositionStore with Messaging with Profiler
-    with ServerWithConfig[N, T, C] {
+trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
 
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
@@ -38,6 +37,21 @@ trait CompilerBase[N, T <: N, C <: Config] extends PositionStore with Messaging 
      * isn't one.
      */
     var lastSource : Option[Source] = None
+
+    /**
+     * The position store used by this compiler.
+     */
+    val positions = new Positions
+
+    /**
+     * The messaging facilitiy used by this compiler.
+     */
+    val messaging = new Messaging(positions)
+
+    /**
+     * Profiler for this compiler.
+     */
+    val profiler = new Profiler
 
     /**
      * The entry point for this compiler.
@@ -90,10 +104,10 @@ trait CompilerBase[N, T <: N, C <: Config] extends PositionStore with Messaging 
         if (config.server()) {
             launch(config)
         } else if (config.profile.isDefined) {
-            val dimensions = parseProfileOption(config.profile())
-            profile(compileFiles(config), dimensions, config.logging())
+            val dimensions = profiler.parseProfileOption(config.profile())
+            profiler.profile(compileFiles(config), dimensions, config.logging())
         } else if (config.time()) {
-            time(compileFiles(config))
+            profiler.time(compileFiles(config))
         } else
             compileFiles(config)
     }
@@ -190,7 +204,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends PositionStore with Messaging 
         if (config.server())
             publishMessages(messages)
         else
-            super.report(source, messages, config.output())
+            messaging.report(source, messages, config.output())
     }
 
     /**

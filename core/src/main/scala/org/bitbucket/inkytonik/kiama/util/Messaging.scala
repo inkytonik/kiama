@@ -154,9 +154,7 @@ object Messaging {
 /**
  * General facility for processing messages relative to positioned values.
  */
-trait Messaging {
-
-    self : PositionStore =>
+class Messaging(positions : Positions) {
 
     import org.bitbucket.inkytonik.kiama.util.Messaging._
     import org.bitbucket.inkytonik.kiama.util.Severities.severityToWord

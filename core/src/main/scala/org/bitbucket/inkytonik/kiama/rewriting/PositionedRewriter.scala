@@ -11,8 +11,6 @@
 package org.bitbucket.inkytonik.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.kiama.util.PositionStore
-
 /**
  * Strategy-based term rewriting that copies positions to rewritten terms.
  * The positions are stored in a Kiama `Positions` object.
@@ -27,7 +25,14 @@ import org.bitbucket.inkytonik.kiama.util.PositionStore
  * of the term that results from a successful application of the rule.
  * Override the `rewriting` method to add more specific behaviour.
  */
-trait PositionedRewriter extends PositionStore with CallbackRewriter {
+trait PositionedRewriter extends CallbackRewriter {
+
+    import org.bitbucket.inkytonik.kiama.util.Positions
+
+    /**
+     * The position store to use for this rewriter.
+     */
+    val positions = new Positions
 
     /**
      * Use the `Positioned` support to set the start and finish positions

@@ -14,7 +14,7 @@ package util
 /**
  * General support for applications that implement read-eval-print loops (REPLs).
  */
-trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profiler {
+trait REPLBase[C <: REPLConfig] {
 
     import scala.annotation.tailrec
     import org.bitbucket.inkytonik.kiama.util.{Source, StringSource}
@@ -24,6 +24,21 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
      * Banner message that is printed before the REPL starts.
      */
     def banner : String
+
+    /**
+     * The position store used by this REPL.
+     */
+    val positions = new Positions
+
+    /**
+     * The messaging facilitiy used by this REPL.
+     */
+    val messaging = new Messaging(positions)
+
+    /**
+     * Profiler for this compiler.
+     */
+    val profiler = new Profiler
 
     /**
      * The entry point for this REPL.
@@ -75,10 +90,10 @@ trait REPLBase[C <: REPLConfig] extends PositionStore with Messaging with Profil
                 // Enter interactive phase
                 config.output().emitln(banner)
                 if (config.profile.isDefined) {
-                    val dimensions = parseProfileOption(config.profile())
-                    profile(processlines(config), dimensions, config.logging())
+                    val dimensions = profiler.parseProfileOption(config.profile())
+                    profiler.profile(processlines(config), dimensions, config.logging())
                 } else if (config.time())
-                    time(processlines(config))
+                    profiler.time(processlines(config))
                 else
                     processlines(config)
 
@@ -216,7 +231,7 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
      * which defaults to that configuration's output.
      */
     def report(source : Source, messages : Messages, config : C) {
-        config.output().emit(formatMessages(messages))
+        config.output().emit(messaging.formatMessages(messages))
     }
 
 }

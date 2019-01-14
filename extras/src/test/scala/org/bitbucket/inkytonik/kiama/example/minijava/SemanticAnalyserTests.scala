@@ -11,19 +11,21 @@
 package org.bitbucket.inkytonik.kiama
 package example.minijava
 
-import org.bitbucket.inkytonik.kiama.util.{Messaging, ParseTests}
+import org.bitbucket.inkytonik.kiama.util.ParseTests
 
 /**
  * Tests that check that the parser works correctly.  I.e., it accepts correct
  * input and produces the appropriate trees, and it rejects illegal input.
  */
-class SemanticAnalyserTests extends ParseTests with Messaging {
+class SemanticAnalyserTests extends ParseTests {
 
     import MiniJavaTree._
     import SymbolTable.format
     import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
-    import org.bitbucket.inkytonik.kiama.util.StringSource
+    import org.bitbucket.inkytonik.kiama.util.{Messaging, Positions, StringSource}
 
+    val positions = new Positions
+    val messaging = new Messaging(positions)
     val parsers = new SyntaxAnalyser(positions)
 
     /**
@@ -39,7 +41,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
             case Success(program, _) =>
                 val tree = new MiniJavaTree(program)
                 val analyser = new SemanticAnalyser(tree)
-                formatMessages(analyser.errors)
+                messaging.formatMessages(analyser.errors)
             case result : NoSuccess =>
                 result.message
         }
@@ -58,7 +60,7 @@ class SemanticAnalyserTests extends ParseTests with Messaging {
     ) : String = {
         val tree = new MiniJavaTree(embedExpression(exp, retType, vars, stmts))
         val analyser = new SemanticAnalyser(tree)
-        formatMessages(analyser.errors)
+        messaging.formatMessages(analyser.errors)
     }
 
     /**

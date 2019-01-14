@@ -11,12 +11,12 @@
 package org.bitbucket.inkytonik.kiama
 package example.lambda2
 
-import org.bitbucket.inkytonik.kiama.util.{Messaging, ParseTests}
+import org.bitbucket.inkytonik.kiama.util.ParseTests
 
 /**
  * Lambda calculus tests.
  */
-class LambdaTests extends ParseTests with Messaging {
+class LambdaTests extends ParseTests {
 
     import Evaluators.{evaluatorFor, mechanisms}
     import LambdaTree._
@@ -24,9 +24,11 @@ class LambdaTests extends ParseTests with Messaging {
     import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{all => rwall, _}
     import org.bitbucket.inkytonik.kiama.rewriting.Strategy
-    import org.bitbucket.inkytonik.kiama.util.StringSource
+    import org.bitbucket.inkytonik.kiama.util.{Messaging, Positions, StringSource}
     import org.scalatest.matchers.{Matcher, MatchResult}
 
+    val positions = new Positions
+    val messaging = new Messaging(positions)
     val parsers = new SyntaxAnalyser(positions)
 
     /**
@@ -40,8 +42,8 @@ class LambdaTests extends ParseTests with Messaging {
             case Success(exp, _) =>
                 val tree = new LambdaTree(exp)
                 val analyser = new Analyser(tree)
-                val errors = formatMessages(analyser.errors)
-                val errors2 = formatMessages(analyser.errors2)
+                val errors = messaging.formatMessages(analyser.errors)
+                val errors2 = messaging.formatMessages(analyser.errors2)
                 if (errors == errors2)
                     errors
                 else

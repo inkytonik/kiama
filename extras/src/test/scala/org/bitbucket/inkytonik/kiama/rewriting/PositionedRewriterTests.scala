@@ -23,15 +23,6 @@ class PositionedRewriterTests extends KiamaTests {
     import org.bitbucket.inkytonik.kiama.util.{Position, StringSource}
 
     val source = StringSource("dummy")
-    override val positions = PositionedRewriter.positions
-
-    /**
-     * Don't do anything to the positions before the next test so that
-     * settings are preserved.
-     */
-    override def initialisePositions() {
-        // Do nothing
-    }
 
     val pl1s = Position(1, 2, source)
     val pl1f = Position(3, 4, source)

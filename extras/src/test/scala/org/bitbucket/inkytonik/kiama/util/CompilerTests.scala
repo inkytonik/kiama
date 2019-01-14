@@ -162,7 +162,6 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
                     case Left(message) =>
                         fail(message)
                     case Right(config) =>
-                        positions.reset()
                         try {
                             testdriver(config)
                         } catch {
@@ -242,9 +241,11 @@ trait TestCompilerWithConfig[N, T <: N, C <: Config] extends TestDriverWithConfi
     self : CompilerBase[N, T, C] =>
 
     /**
-     * Run the compiler in test mode using the given configuration.
+     * Run the compiler in test mode using the given configuration
+     * with reset position store.
      */
     def testdriver(config : C) {
+        positions.reset()
         compileFiles(config)
     }
 

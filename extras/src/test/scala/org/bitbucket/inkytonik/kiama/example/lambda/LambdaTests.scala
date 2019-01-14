@@ -21,9 +21,10 @@ class LambdaTests extends ParseTests with Evaluator with Generator {
 
     import LambdaTree._
     import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
-    import org.bitbucket.inkytonik.kiama.util.StringSource
+    import org.bitbucket.inkytonik.kiama.util.{Positions, StringSource}
     import org.scalacheck.Prop._
 
+    val positions = new Positions
     val parsers = new SyntaxAnalyser(positions)
 
     /**

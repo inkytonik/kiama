@@ -20,6 +20,7 @@ class LambdaTests extends ParseTests {
 
     import org.bitbucket.inkytonik.kiama.parsing.{NoSuccess, Success}
     import org.bitbucket.inkytonik.kiama.rewriting.NominalTree.Name
+    import org.bitbucket.inkytonik.kiama.util.Positions
     import org.scalatest.matchers.{Matcher, MatchResult}
 
     /**
@@ -30,6 +31,7 @@ class LambdaTests extends ParseTests {
      */
     object NominalTree
 
+    val positions = new Positions
     val parsers = new SyntaxAnalyser(positions)
 
     /**

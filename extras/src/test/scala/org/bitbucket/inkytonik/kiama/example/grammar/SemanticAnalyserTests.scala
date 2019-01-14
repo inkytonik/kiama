@@ -19,6 +19,10 @@ import org.bitbucket.inkytonik.kiama.util.KiamaTests
 class SemanticAnalyserTests extends KiamaTests {
 
     import GrammarTree._
+    import org.bitbucket.inkytonik.kiama.util.{Messaging, Positions}
+
+    val positions = new Positions
+    val messaging = new Messaging(positions)
 
     def S = NonTermSym(NonTermUse("S"))
     def E = NonTermSym(NonTermUse("E"))
@@ -225,6 +229,7 @@ class SemanticAnalyserTests extends KiamaTests {
     }
 
     test("g3: has the expected semantic errors") {
+        import messaging.messageOrdering
         val errors = g3analyser.errors.sorted
         errors.length shouldBe 3
         errors(0).label shouldBe "E is defined more than once"

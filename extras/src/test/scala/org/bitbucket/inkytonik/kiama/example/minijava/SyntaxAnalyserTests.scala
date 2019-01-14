@@ -20,7 +20,9 @@ import org.bitbucket.inkytonik.kiama.util.ParseTests
 class SyntaxAnalyserTests extends ParseTests {
 
     import MiniJavaTree._
+    import org.bitbucket.inkytonik.kiama.util.Positions
 
+    val positions = new Positions
     val parsers = new SyntaxAnalyser(positions)
     import parsers._
 
@@ -751,11 +753,11 @@ class SyntaxAnalyserTests extends ParseTests {
     }
 
     test("input text from an identifier parse is the identifier") {
-        expression("    x") should parseText("x")
+        expression("    x") should parseText(positions, "x")
     }
 
     test("input text from an operator expression parse is correct") {
-        expression("  x   +  1 ") should parseText("x   +  1")
+        expression("  x   +  1 ") should parseText(positions, "x   +  1")
     }
 
     test("input text from a statement with comments is correct") {
@@ -767,6 +769,7 @@ class SyntaxAnalyserTests extends ParseTests {
             |}
             |// Out
             |""".stripMargin) should parseText(
+            positions,
             """while (a < 1) { // In
             |    b = 1;
             |    // In

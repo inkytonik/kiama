@@ -12,7 +12,7 @@ package org.bitbucket.inkytonik.kiama
 package example.lambda
 
 import org.bitbucket.inkytonik.kiama.parsing.Parsers
-import org.bitbucket.inkytonik.kiama.util.{ParsingREPL, Positions, Profiler}
+import org.bitbucket.inkytonik.kiama.util.{ParsingREPL, Positions}
 
 /**
  * A simple lambda calculus.
@@ -180,7 +180,7 @@ trait Evaluator {
 /**
  * A read-eval-print loop for evaluation of lambda calculus expressions.
  */
-class LambdaDriver extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profiler {
+class LambdaDriver extends ParsingREPL[LambdaTree.Exp] with Evaluator {
 
     import org.bitbucket.inkytonik.kiama.util.{REPLConfig, Source}
 
@@ -194,8 +194,8 @@ class LambdaDriver extends ParsingREPL[LambdaTree.Exp] with Evaluator with Profi
     def process(source : Source, e : LambdaTree.Exp, config : REPLConfig) {
         val result =
             if (config.profile.isDefined) {
-                val dimensions = parseProfileOption(config.profile())
-                profile(normal(e), dimensions, config.logging())
+                val dimensions = profiler.parseProfileOption(config.profile())
+                profiler.profile(normal(e), dimensions, config.logging())
             } else
                 normal(e)
         config.output().emitln(result.getOrElse("reduction failed"))

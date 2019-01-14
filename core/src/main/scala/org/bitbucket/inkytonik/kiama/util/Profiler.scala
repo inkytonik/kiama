@@ -14,7 +14,7 @@ package util
 /**
  * Kiama-specific additions to `dsprofile` profilers.
  */
-trait Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
+class Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
 
     import org.bitbucket.inkytonik.dsprofile.Events.{Dimension, Value}
     // import org.bitbucket.inkytonik.kiama.attribution.Attributable

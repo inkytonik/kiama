@@ -82,13 +82,6 @@ case class Position(line : Int, column : Int, source : Source) {
 }
 
 /**
- * Interface for objects that have a position store.
- */
-trait PositionStore {
-    val positions = new Positions
-}
-
-/**
  * Record of source positions that correspond to program elements.
  */
 class Positions {

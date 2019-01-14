@@ -87,7 +87,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[SourceNode, ModuleDe
                     output.emitln("parse failed")
                 }
                 section(output, "errors")
-                output.emit(formatMessages(msgs))
+                output.emit(messaging.formatMessages(msgs))
         }
     }
 
@@ -137,8 +137,9 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[SourceNode, ModuleDe
             // line number of first error to standard output.  Make full report
             // to errors file.
             if (config.challenge()) {
+                import messaging.messageOrdering
                 section(output, "stdout")
-                val l = startLine(messages.sorted.head)
+                val l = messaging.startLine(messages.sorted.head)
                 output.emitln(s"line $l")
             }
             section(output, "errors")
