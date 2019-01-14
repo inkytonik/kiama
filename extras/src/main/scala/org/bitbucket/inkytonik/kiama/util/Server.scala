@@ -56,7 +56,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     def setting(key : String, default : Boolean = false) : Boolean = {
         if (settings == null)
-            true
+            default
         else {
             val value = settings.get(key)
             if (value == null)
@@ -255,6 +255,7 @@ class Services[N, T <: N, C <: Config](
     @JsonRequest("initialize")
     def initialize(params : InitializeParams) : CompletableFuture[InitializeResult] =
         CompletableFuture.completedFuture {
+            server.setSettings(params.getInitializationOptions)
             val serverCapabilities = new ServerCapabilities
             serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
             serverCapabilities.setHoverProvider(true)
