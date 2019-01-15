@@ -231,17 +231,24 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     }
 
     /**
-     * Return markdown hover markup for the given position (if any).
-     * Default is to never return anything.
-     */
-    def getHover(position : Position) : Option[String] =
-        None
-
-    /**
      * Return the corresponding definition node for the given position
      * (if any). Default is to never return anything.
      */
     def getDefinition(position : Position) : Option[N] =
+        None
+
+    /**
+     * Return a formatted version of the whole of the given source.
+     * By default, return `None` meaning there is no formatter.
+     */
+    def getFormatted(source : Source) : Option[String] =
+        None
+
+    /**
+     * Return markdown hover markup for the given position (if any).
+     * Default is to never return anything.
+     */
+    def getHover(position : Position) : Option[String] =
         None
 
     /**

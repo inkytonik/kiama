@@ -54,6 +54,32 @@ trait Server {
         ) yield info
 
     /**
+     * Definitions are provided for defined identifiers and point
+     * to the corresponding declaration node.
+     */
+    override def getDefinition(position : Position) : Option[MiniJavaNode] =
+        getRelevantInfo(position, {
+            case (analyser, nodes) =>
+                nodes.collectFirst {
+                    case n : IdnTree => n
+                }.collectFirst(n =>
+                    analyser.entity(n) match {
+                        case e : MiniJavaOkEntity =>
+                            e.decl
+                    })
+        })
+
+    /**
+     * Return a formatted version of the whole of the given MiniJava source.
+     */
+    override def getFormatted(source : Source) : Option[String] =
+        for (
+            name <- source.optName;
+            analyser <- analysers.get(name);
+            formatted = format(analyser.tree.root).layout
+        ) yield formatted
+
+    /**
      * Hover information is provided for identifier defs and uses.
      * It consists of a short description of the associated entity
      * and a pretty-printed version of the corresponding declaration.
@@ -73,22 +99,6 @@ trait Server {
                                 s"${e.desc} ${n.idn}\n\n```\n$p```"
                         }
                 }
-        })
-
-    /**
-     * Definitions are provided for defined identifiers and point
-     * to the corresponding declaration node.
-     */
-    override def getDefinition(position : Position) : Option[MiniJavaNode] =
-        getRelevantInfo(position, {
-            case (analyser, nodes) =>
-                nodes.collectFirst {
-                    case n : IdnTree => n
-                }.collectFirst(n =>
-                    analyser.entity(n) match {
-                        case e : MiniJavaOkEntity =>
-                            e.decl
-                    })
         })
 
     /**

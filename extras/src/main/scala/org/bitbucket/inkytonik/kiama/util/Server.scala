@@ -264,6 +264,7 @@ class Services[N, T <: N, C <: Config](
             server.setSettings(params.getInitializationOptions)
             val serverCapabilities = new ServerCapabilities
             serverCapabilities.setDefinitionProvider(true)
+            serverCapabilities.setDocumentFormattingProvider(true)
             serverCapabilities.setDocumentSymbolProvider(true)
             serverCapabilities.setHoverProvider(true)
             serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
@@ -290,7 +291,7 @@ class Services[N, T <: N, C <: Config](
         }
     }
 
-    // Text document services
+    // Basic text document processing
 
     @JsonNotification("textDocument/didOpen")
     def didOpen(params : DidOpenTextDocumentParams) {
@@ -320,29 +321,7 @@ class Services[N, T <: N, C <: Config](
         server.compileString(uri, text, config)
     }
 
-    def positionOfNotification(params : TextDocumentPositionParams) : Option[Position] =
-        server.sources.get(params.getTextDocument.getUri).map(source => {
-            val posLSP = params.getPosition
-            Position(posLSP.getLine + 1, posLSP.getCharacter + 1, source)
-        })
-
-    def hoverMarkup(markdown : String) : Hover = {
-        val markup = new MarkupContent()
-        markup.setValue(markdown)
-        markup.setKind("markdown")
-        new Hover(markup)
-    }
-
-    @JsonNotification("textDocument/hover")
-    def hover(params : TextDocumentPositionParams) : CompletableFuture[Hover] =
-        CompletableFutures.computeAsync { _ =>
-            (
-                for (
-                    position <- positionOfNotification(params);
-                    markdown <- server.getHover(position)
-                ) yield hoverMarkup(markdown)
-            ).getOrElse(null)
-        }
+    // Text document services
 
     @JsonNotification("textDocument/definition")
     def definition(params : TextDocumentPositionParams) : CompletableFuture[Location] =
@@ -365,6 +344,44 @@ class Services[N, T <: N, C <: Config](
                     symbols <- server.getSymbols(source)
                 ) yield symbols.toArray
             }.getOrElse(Array())
+        }
+
+    @JsonNotification("textDocument/formatting")
+    def formatting(params : DocumentFormattingParams) : CompletableFuture[Array[TextEdit]] =
+        CompletableFutures.computeAsync { _ =>
+            {
+                for (
+                    source <- server.sources.get(params.getTextDocument.getUri);
+                    formatted <- server.getFormatted(source);
+                    start = new LSPPosition(0, 0);
+                    finish = new LSPPosition(source.lineCount, 0);
+                    edit = new TextEdit(new LSPRange(start, finish), formatted)
+                ) yield Array(edit)
+            }.getOrElse(null)
+        }
+
+    def positionOfNotification(params : TextDocumentPositionParams) : Option[Position] =
+        server.sources.get(params.getTextDocument.getUri).map(source => {
+            val posLSP = params.getPosition
+            Position(posLSP.getLine + 1, posLSP.getCharacter + 1, source)
+        })
+
+    def hoverMarkup(markdown : String) : Hover = {
+        val markup = new MarkupContent()
+        markup.setValue(markdown)
+        markup.setKind("markdown")
+        new Hover(markup)
+    }
+
+    @JsonNotification("textDocument/hover")
+    def hover(params : TextDocumentPositionParams) : CompletableFuture[Hover] =
+        CompletableFutures.computeAsync { _ =>
+            (
+                for (
+                    position <- positionOfNotification(params);
+                    markdown <- server.getHover(position)
+                ) yield hoverMarkup(markdown)
+            ).getOrElse(null)
         }
 
     // Workspace services
