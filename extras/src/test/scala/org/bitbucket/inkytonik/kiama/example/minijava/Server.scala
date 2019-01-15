@@ -1,7 +1,7 @@
 /*
  * This file is part of Kiama.
  *
- * Copyright(C) 2019 Anthony M Sloane, Macquarie University.
+ * Copyright (C) 2019 Anthony M Sloane, Macquarie University.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,13 +11,122 @@
 package org.bitbucket.inkytonik.kiama
 package example.minijava
 
-object Monto {
+import org.bitbucket.inkytonik.kiama.util.Compiler
+import MiniJavaTree.{MiniJavaNode, Program}
 
-    import org.bitbucket.inkytonik.kiama.example.minijava.PrettyPrinter._
+/**
+ * Language server support for MiniJava.
+ */
+trait Server {
+
+    this : Compiler[MiniJavaNode, Program] =>
+
     import org.bitbucket.inkytonik.kiama.example.minijava.MiniJavaTree._
-    import org.bitbucket.inkytonik.kiama.example.minijava.SemanticAnalyser
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
+    import org.bitbucket.inkytonik.kiama.example.minijava.PrettyPrinter._
+    import org.bitbucket.inkytonik.kiama.example.minijava.SymbolTable._
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.collectl
+    import org.bitbucket.inkytonik.kiama.util.{Position, Source}
+    import org.eclipse.lsp4j.{DocumentSymbol, SymbolKind}
+    import scala.collection.mutable
+
+    /**
+     * The analysers previously used by the semantic analysis phase of this
+     * compiler, indexed by source name.
+     */
+    val analysers = mutable.Map[String, SemanticAnalyser]()
+
+    /**
+     * Find nodes that overlap the given position and return the
+     * first value that `f` produces when applied to the appropriate
+     * analyser and an overlapping node.
+     */
+    def getRelevantInfo[I](
+        position : Position,
+        f : (SemanticAnalyser, Vector[MiniJavaNode]) ==> Option[I]
+    ) : Option[I] =
+        for (
+            name <- position.source.optName;
+            analyser <- analysers.get(name);
+            nodes = analyser.tree.nodes;
+            relevantNodes = positions.findNodesContaining(nodes, position);
+            info <- f((analyser, relevantNodes))
+        ) yield info
+
+    /**
+     * Hover information is provided for identifier defs and uses.
+     * It consists of a short description of the associated entity
+     * and a pretty-printed version of the corresponding declaration.
+     */
+    override def getHover(position : Position) : Option[String] =
+        getRelevantInfo(position, {
+            case (analyser, nodes) =>
+                nodes.collectFirst {
+                    case n : IdnTree =>
+                        analyser.entity(n) match {
+                            case MultipleEntity() =>
+                                s"multiply-defined ${n.idn}"
+                            case UnknownEntity() =>
+                                s"unknown ${n.idn}"
+                            case e : MiniJavaOkEntity =>
+                                val p = hoverDocument(e.decl).layout
+                                s"${e.desc} ${n.idn}\n\n```\n$p```"
+                        }
+                }
+        })
+
+    /**
+     * Definitions are provided for defined identifiers and point
+     * to the corresponding declaration node.
+     */
+    override def getDefinition(position : Position) : Option[MiniJavaNode] =
+        getRelevantInfo(position, {
+            case (analyser, nodes) =>
+                nodes.collectFirst {
+                    case n : IdnTree => n
+                }.collectFirst(n =>
+                    analyser.entity(n) match {
+                        case e : MiniJavaOkEntity =>
+                            e.decl
+                    })
+        })
+
+    /**
+     * Convert MiniJava entities into LSP symbol kinds.
+     */
+    def getSymbolKind(entity : MiniJavaEntity) : Option[SymbolKind] =
+        entity match {
+            case _ : MainClassEntity | _ : ClassEntity =>
+                Some(SymbolKind.Class)
+            case _ : MethodEntity =>
+                Some(SymbolKind.Method)
+            case _ : ArgumentEntity | _ : VariableEntity =>
+                Some(SymbolKind.Variable)
+            case _ : FieldEntity =>
+                Some(SymbolKind.Field)
+            case _ =>
+                None
+        }
+
+    /**
+     * The symbols of an entire compilation unit.
+     */
+    override def getSymbols(source : Source) : Option[Vector[DocumentSymbol]] =
+        for (
+            name <- source.optName;
+            analyser <- analysers.get(name);
+            nodes = analyser.tree.nodes;
+            idndefs = nodes.collect { case n : IdnDef => n };
+            symbols = for (
+                idndef <- idndefs;
+                entity = analyser.entity(idndef);
+                kind <- getSymbolKind(entity);
+                decl = entity.asInstanceOf[MiniJavaOkEntity].decl;
+                detail = hoverDocument(decl).layout
+            ) yield new DocumentSymbol(
+                idndef.idn, kind, rangeOfNode(decl), rangeOfNode(idndef), detail
+            )
+        ) yield symbols
 
     // Name analysis product support
 
@@ -25,7 +134,6 @@ object Monto {
 
         import analyser.entity
         import org.bitbucket.inkytonik.kiama.example.minijava.SymbolTable._
-        import org.bitbucket.inkytonik.kiama.util.Entity
         import tree.parent
 
         val bullet = "-"
@@ -69,7 +177,7 @@ object Monto {
             def specialEntityToDoc(kind : String) : Doc =
                 line <> bullet <+> link(idndef, kind <+> idn)
 
-            def entityUsesToDoc(ent : Entity) : Doc = {
+            def entityUsesToDoc(ent : MiniJavaEntity) : Doc = {
                 val uses = idnuses.filter(entity(_) eq ent)
                 if (uses.isEmpty)
                     emptyDoc
@@ -106,7 +214,7 @@ object Monto {
                 }
 
             ent match {
-                case mjent : MiniJavaEntity =>
+                case mjent : MiniJavaOkEntity =>
                     kindDeclToDoc(mjent.productPrefix, mjent.decl)
                 case p : Product =>
                     specialEntityToDoc(p.productPrefix)
@@ -201,6 +309,28 @@ object Monto {
 
         pretty(toHoverDoc(t))
 
+    }
+
+    // Monto product publishing
+
+    def publishTargetProduct(source : Source, document : Document = emptyDocument) {
+        if (setting("showTarget"))
+            publishProduct(source, "target", "jasmin", document)
+    }
+
+    def publishTargetTreeProduct(source : Source, document : Document = emptyDocument) {
+        if (setting("showTargetTree"))
+            publishProduct(source, "targettree", "scala", document)
+    }
+
+    def publishOutlineProduct(source : Source, document : Document = emptyDocument) {
+        if (setting("showOutline"))
+            publishProduct(source, "outline", "minijava", document)
+    }
+
+    def publishNameProduct(source : Source, document : Document = emptyDocument) {
+        if (setting("showNameAnalysisStructure"))
+            publishProduct(source, "name", "minijava", document)
     }
 
 }

@@ -14,25 +14,25 @@ package L3
 
 trait SymbolTable extends L0.SymbolTable {
 
-    import org.bitbucket.inkytonik.kiama.util.Entity
+    import base.Oberon0Entity
     import source.{Mode, ProcDecl, ValMode, VarMode}
 
     /**
      * A procedure entity represented by a procedure declaration.
      */
-    case class Procedure(ident : String, decl : ProcDecl) extends NamedEntity
+    case class Procedure(ident : String, decl : ProcDecl) extends Oberon0Entity with Named
 
     /**
      * A parameter is a variable augmented with a passing mode.
      */
-    case class Parameter(mode : Mode, varr : Variable) extends NamedEntity {
+    case class Parameter(mode : Mode, varr : Variable) extends Oberon0Entity with Named {
         def ident : String = varr.ident
     }
 
     /**
      * Parameters are variables too.
      */
-    override def isVariable(e : Entity) : Boolean =
+    override def isVariable(e : Oberon0Entity) : Boolean =
         super.isVariable(e) || e.isInstanceOf[Parameter]
 
     /**
@@ -44,7 +44,7 @@ trait SymbolTable extends L0.SymbolTable {
     /**
      * A built-in procedure with its parameter information.
      */
-    case class BuiltinProc(ident : String, params : Vector[ParamInfo]) extends Entity
+    case class BuiltinProc(ident : String, params : Vector[ParamInfo]) extends Oberon0Entity
 
     /**
      * The built-in Read procedure.
@@ -67,13 +67,13 @@ trait SymbolTable extends L0.SymbolTable {
     /**
      * Return true if the entity is a builtin, false otherwise.
      */
-    override def isBuiltin(e : Entity) : Boolean =
+    override def isBuiltin(e : Oberon0Entity) : Boolean =
         super.isBuiltin(e) || e.isInstanceOf[BuiltinProc]
 
     /**
      * The default environment with pre-defined procedures added.
      */
-    override def defenvPairs : List[(String, Entity)] =
+    override def defenvPairs : List[(String, Oberon0Entity)] =
         List(
             "Read" -> readProc,
             "Write" -> writeProc,

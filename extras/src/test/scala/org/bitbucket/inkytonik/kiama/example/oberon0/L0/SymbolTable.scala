@@ -14,29 +14,29 @@ package L0
 
 trait SymbolTable extends base.SymbolTable {
 
+    import base.Oberon0Entity
     import base.source.ModuleDecl
-    import org.bitbucket.inkytonik.kiama.util.{Entity, ErrorEntity}
     import source.{ConstDecl, TypeDecl, TypeDef}
 
     /**
      * A user-defined module represented by a module declaration.
      */
-    case class Module(ident : String, decl : ModuleDecl) extends NamedEntity
+    case class Module(ident : String, decl : ModuleDecl) extends Oberon0Entity with Named
 
     /**
      * A user-defined constant entity represented by a constant declaration.
      */
-    case class Constant(ident : String, decl : ConstDecl) extends NamedEntity
+    case class Constant(ident : String, decl : ConstDecl) extends Oberon0Entity with Named
 
     /**
      * A variable entity including a reference to its types' definition.
      */
-    case class Variable(ident : String, tipe : TypeDef) extends NamedEntity
+    case class Variable(ident : String, tipe : TypeDef) extends Oberon0Entity with Named
 
     /**
      * An entity representing by a user-provided type declaration.
      */
-    abstract class Type extends Entity
+    abstract class Type extends Oberon0Entity
 
     /**
      * A user-defined type.
@@ -74,7 +74,7 @@ trait SymbolTable extends base.SymbolTable {
      * cannot be defined using a constant declaration so the compiler has to
      * have special knowledge of them.
      */
-    case class IntegerValue(ident : String, tipe : Type, value : Int) extends Entity
+    case class IntegerValue(ident : String, tipe : Type, value : Int) extends Oberon0Entity
 
     /**
      * Built-in true constant.
@@ -92,7 +92,7 @@ trait SymbolTable extends base.SymbolTable {
     def defenv : Environment =
         rootenv(defenvPairs : _*)
 
-    def defenvPairs : List[(String, Entity)] =
+    def defenvPairs : List[(String, Oberon0Entity)] =
         List(
             "INTEGER" -> integerType,
             "BOOLEAN" -> booleanType,
@@ -103,37 +103,37 @@ trait SymbolTable extends base.SymbolTable {
     /**
      * Return true if the entity is a builtin, false otherwise.
      */
-    def isBuiltin(e : Entity) : Boolean =
+    def isBuiltin(e : Oberon0Entity) : Boolean =
         e.isInstanceOf[BuiltinType] || e.isInstanceOf[IntegerValue]
 
     /**
      * Return true if the entity is an error, false otherwise.
      */
-    def isError(e : Entity) : Boolean =
-        e.isInstanceOf[ErrorEntity]
+    def isError(e : Oberon0Entity) : Boolean =
+        e.isInstanceOf[MultipleEntity] || e.isInstanceOf[UnknownEntity]
 
     /**
      * Return true if the entity is erroneous or is a module.
      */
-    def isModule(e : Entity) : Boolean =
+    def isModule(e : Oberon0Entity) : Boolean =
         isError(e) || e.isInstanceOf[Module]
 
     /**
      * Return true if the entity is erroneous or is a constant.
      */
-    def isConstant(e : Entity) : Boolean =
+    def isConstant(e : Oberon0Entity) : Boolean =
         isError(e) || e.isInstanceOf[Constant] || e.isInstanceOf[IntegerValue]
 
     /**
      * Return true if the entity is erroneous or is a type.
      */
-    def isType(e : Entity) : Boolean =
+    def isType(e : Oberon0Entity) : Boolean =
         isError(e) || e.isInstanceOf[Type]
 
     /**
      * Return true if the entity is erroneous or is a variable.
      */
-    def isVariable(e : Entity) : Boolean =
+    def isVariable(e : Oberon0Entity) : Boolean =
         isError(e) || e.isInstanceOf[Variable]
 
     /**

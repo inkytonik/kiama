@@ -14,22 +14,13 @@ package util
 /**
  * An entity that represents some program object.
  */
-abstract class Entity
+abstract class Entity {
 
-/**
- * An entity that represents an error situation. These entities are
- * usually accepted in most situations to avoid cascade errors.
- */
-abstract class ErrorEntity extends Entity
+    /**
+     * Does this entity represent an error state or not? Default:
+     * no.
+     */
+    def isError : Boolean =
+        false
 
-/**
- * A entity represented by names for whom we have seen more than one
- * declaration so we are unsure what is being represented.
- */
-case class MultipleEntity() extends ErrorEntity
-
-/**
- * An unknown entity, for example one that is represened by names whose
- * declarations are missing.
- */
-case class UnknownEntity() extends ErrorEntity
+}

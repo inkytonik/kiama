@@ -14,7 +14,7 @@ package L4
 
 trait SymbolTable extends L3.SymbolTable {
 
-    import org.bitbucket.inkytonik.kiama.util.Entity
+    import base.Oberon0Entity
 
     /**
      * An array type with the given size and element type.  Setting size
@@ -35,32 +35,32 @@ trait SymbolTable extends L3.SymbolTable {
     /**
      * A record field.
      */
-    case class Field(ident : String, tipe : Type) extends Entity {
+    case class Field(ident : String, tipe : Type) extends Oberon0Entity {
         override def toString : String = s"$ident : $tipe"
     }
 
     /**
      * Return true if the entity is erroneous or is an array.
      */
-    def isArray(e : Entity) : Boolean =
+    def isArray(e : Oberon0Entity) : Boolean =
         isError(e) || e.isInstanceOf[ArrayType]
 
     /**
      * Return true if the entity is erroneous or is not an array.
      */
-    def isNotArray(e : Entity) : Boolean =
+    def isNotArray(e : Oberon0Entity) : Boolean =
         isError(e) || !e.isInstanceOf[ArrayType]
 
     /**
      * Return true if the entity is erroneous or is a record.
      */
-    def isRecord(e : Entity) : Boolean =
+    def isRecord(e : Oberon0Entity) : Boolean =
         isError(e) || e.isInstanceOf[RecordType]
 
     /**
      * Return true if the entity is erroneous or is not a record.
      */
-    def isNotRecord(e : Entity) : Boolean =
+    def isNotRecord(e : Oberon0Entity) : Boolean =
         isError(e) || !e.isInstanceOf[RecordType]
 
     /**

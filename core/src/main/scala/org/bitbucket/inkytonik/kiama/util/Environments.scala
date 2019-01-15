@@ -13,9 +13,10 @@ package util
 
 /**
  * General implementation of environments as stacked scopes.  The objects
- * associated with names in environments are of type Entity.
+ * associated with names in environments are of type `E` which must be a
+ * subtype of the general Entity class.
  */
-trait Environments {
+trait Environments[E <: Entity] {
 
     import scala.collection.immutable.HashMap
 
@@ -53,14 +54,9 @@ trait Environments {
     }
 
     /**
-     * A named entity.
-     */
-    trait NamedEntity extends Entity with Named
-
-    /**
      * A scope maps identifiers to entities.
      */
-    type Scope = Map[String, Entity]
+    type Scope = Map[String, E]
 
     /**
      * An environment is a stack of scopes with the innermost scope on the top.
@@ -71,14 +67,14 @@ trait Environments {
      * Create a root environment, i.e., one that has a single scope containing
      * the given bindings.
      */
-    def rootenv(bindings : (String, Entity)*) : Environment =
+    def rootenv(bindings : (String, E)*) : Environment =
         List(HashMap(bindings : _*))
 
     /**
      * Enter a new empty scope nested within the given environment.
      */
     def enter(env : Environment) : Environment =
-        (new HashMap[String, Entity]) :: env
+        (new HashMap[String, E]) :: env
 
     /**
      * Leave the outermost scope of the given environment, raising an error if
@@ -94,7 +90,7 @@ trait Environments {
      * Define `i` to be `e` in the current scope of `env`, raising an error if
      * the environment is empty.
      */
-    def define(env : Environment, i : String, e : Entity) : Environment =
+    def define(env : Environment, i : String, e : E) : Environment =
         env match {
             case s :: t => (s + ((i, e))) :: t
             case _      => sys.error("define called on empty environment")
@@ -105,8 +101,8 @@ trait Environments {
      * scope of `env`, define it to be `MultipleEntity` instead. The entity
      * `e` is only evaluated if needed.
      */
-    def defineIfNew(env : Environment, i : String, e : => Entity) : Environment =
-        define(env, i, if (isDefinedInScope(env, i)) MultipleEntity() else e)
+    def defineIfNew(env : Environment, i : String, eold : E, enew : => E) : Environment =
+        define(env, i, if (isDefinedInScope(env, i)) eold else enew)
 
     /**
      * Say whether `i` is defined in the current scope of `env`.
@@ -155,7 +151,7 @@ trait Environments {
      * scope, otherwise search outwards in all scopes, returning the first
      * entity found, if any.
      */
-    def lookup(env : Environment, i : String, e : => Entity, local : Boolean = false) : Entity =
+    def lookup(env : Environment, i : String, e : => E, local : Boolean = false) : E =
         env match {
             case s :: t =>
                 if (local)

@@ -11,25 +11,44 @@
 package org.bitbucket.inkytonik.kiama
 package example.prolog
 
-import org.bitbucket.inkytonik.kiama.util.Environments
+import org.bitbucket.inkytonik.kiama.util.{Entity, Environments}
+
+/**
+ * Superclass of all Obr entities.
+ */
+sealed abstract class PrologEntity extends Entity with Product
 
 /**
  * Symbol table module containing facilities for creating and
  * manipulating expression language symbol information.
  */
-object SymbolTable extends Environments {
-
-    import org.bitbucket.inkytonik.kiama.util.Entity
+object SymbolTable extends Environments[PrologEntity] {
 
     /**
      * A predicate entity and its argument type constraints.
      */
-    case class Predicate(argtypes : Vector[Type]) extends Entity
+    case class Predicate(argtypes : Vector[Type]) extends PrologEntity
 
     /**
      * A variable entity including the type constraint that we know so far.
      */
-    case class Variable(tipe : Type) extends Entity
+    case class Variable(tipe : Type) extends PrologEntity
+
+    /**
+     * An entity represented by names for whom we have seen more than one
+     * declaration so we are unsure what is being represented.
+     */
+    case class MultipleEntity() extends PrologEntity {
+        override val isError = true
+    }
+
+    /**
+     * An unknown entity, for example one that is represened by names whose
+     * declarations are missing.
+     */
+    case class UnknownEntity() extends PrologEntity {
+        override val isError = true
+    }
 
     /**
      * The type of a predicate argument.

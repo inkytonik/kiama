@@ -20,7 +20,6 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     import ObrTree._
     import SymbolTable._
     import org.bitbucket.inkytonik.kiama.attribution.Decorators
-    import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, collectMessages, error, Messages, noMessages}
 
     val decorators = new Decorators(tree)
@@ -146,7 +145,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
      * The entity defined by a defining occurrence of an identifier.
      * Defined by the context of the occurrence.
      */
-    lazy val defentity : IdnDef => Entity =
+    lazy val defentity : IdnDef => ObrEntity =
         attr {
             case tree.parent(p) =>
                 p match {
@@ -191,7 +190,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
         // been defined in this scope. If so, change its entity to MultipleEntity,
         // otherwise use the entity appropriate for this definition.
         case n @ IdnDef(i) =>
-            defineIfNew(out(n), i, defentity(n))
+            defineIfNew(out(n), i, MultipleEntity(), defentity(n))
 
     }
 
@@ -218,7 +217,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     /**
      * The program entity referred to by an identifier definition or use.
      */
-    lazy val entity : IdnTree => Entity =
+    lazy val entity : IdnTree => ObrEntity =
         attr {
 
             // Just look the identifier up in the environment at the node.
@@ -321,7 +320,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     /**
      * Is the entity assignable?
      */
-    val isassignable : Entity => Boolean =
+    val isassignable : ObrEntity => Boolean =
         attr {
             case _ : Constant => false
             case _            => true
@@ -344,7 +343,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     /**
      * The type of an entity.
      */
-    val enttipe : Entity => Type =
+    val enttipe : ObrEntity => Type =
         attr {
             case Variable(tipe)    => tipe
             case Constant(tipe, _) => tipe
@@ -354,7 +353,7 @@ class SemanticAnalyser(val tree : ObrTree) extends Attribution {
     /**
      * Is an entity constant or not?
      */
-    val isconst : Entity => Boolean =
+    val isconst : ObrEntity => Boolean =
         attr {
             case _ : Variable => false
             case _            => true

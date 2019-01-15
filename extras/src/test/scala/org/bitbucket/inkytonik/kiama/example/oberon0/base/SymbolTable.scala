@@ -12,9 +12,32 @@ package org.bitbucket.inkytonik.kiama
 package example.oberon0
 package base
 
-import org.bitbucket.inkytonik.kiama.util.Environments
+import org.bitbucket.inkytonik.kiama.util.{Entity, Environments}
+
+/**
+ * Superclass of all Oberon0 entities.
+ */
+abstract class Oberon0Entity extends Entity with Product
 
 /**
  * Basic symbol table definitions.
  */
-trait SymbolTable extends Environments
+trait SymbolTable extends Environments[Oberon0Entity] {
+
+    /**
+     * An entity represented by names for whom we have seen more than one
+     * declaration so we are unsure what is being represented.
+     */
+    case class MultipleEntity() extends Oberon0Entity {
+        override val isError = true
+    }
+
+    /**
+     * An unknown entity, for example one that is represened by names whose
+     * declarations are missing.
+     */
+    case class UnknownEntity() extends Oberon0Entity {
+        override val isError = true
+    }
+
+}

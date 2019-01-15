@@ -11,22 +11,25 @@
 package org.bitbucket.inkytonik.kiama
 package example.minijava
 
-import org.bitbucket.inkytonik.kiama.util.Environments
+import MiniJavaTree._
+import org.bitbucket.inkytonik.kiama.util.{Entity, Environments}
+
+/**
+ * Superclass of all MiniJava entities. Provides generic access to
+ * the declaration node of the entity and a textual description.
+ */
+sealed abstract class MiniJavaEntity extends Entity with Product
 
 /**
  * Symbol table module containing facilities for creating and
  * manipulating MiniJava language symbol information.
  */
-object SymbolTable extends Environments {
-
-    import MiniJavaTree._
-    import org.bitbucket.inkytonik.kiama.util.Entity
+object SymbolTable extends Environments[MiniJavaEntity] {
 
     /**
-     * Superclass of all MiniJava entities. Provides generic access to
-     * the declaration node of the entity and a textual description.
+     * A MiniJava entity that represents a legally resolved entity.
      */
-    sealed abstract class MiniJavaEntity extends Entity with Product {
+    sealed abstract class MiniJavaOkEntity extends MiniJavaEntity {
         def decl : MiniJavaNode
         def desc : String
     }
@@ -36,7 +39,7 @@ object SymbolTable extends Environments {
      * The `decl` field gives us access back to the declaration from the
      * entity.
      */
-    case class MainClassEntity(decl : MainClass) extends MiniJavaEntity {
+    case class MainClassEntity(decl : MainClass) extends MiniJavaOkEntity {
         val desc = "main class"
     }
 
@@ -44,7 +47,7 @@ object SymbolTable extends Environments {
      * A normal class entity (i.e., all the non-main classes). The `decl`
      * field gives us access back to the declaration from the entity.
      */
-    case class ClassEntity(decl : Class) extends MiniJavaEntity {
+    case class ClassEntity(decl : Class) extends MiniJavaOkEntity {
         val desc = "class"
     }
 
@@ -52,7 +55,7 @@ object SymbolTable extends Environments {
      * A method entity. The `decl` field gives us access back to the
      * declaration from the entity.
      */
-    case class MethodEntity(decl : Method) extends MiniJavaEntity {
+    case class MethodEntity(decl : Method) extends MiniJavaOkEntity {
         val desc = "method"
     }
 
@@ -60,7 +63,7 @@ object SymbolTable extends Environments {
      * An entity representing an argument to a method. The `decl` field
      * gives us access back to the declaration from the entity.
      */
-    case class ArgumentEntity(decl : Argument) extends MiniJavaEntity {
+    case class ArgumentEntity(decl : Argument) extends MiniJavaOkEntity {
         val desc = "method argument"
     }
 
@@ -68,7 +71,7 @@ object SymbolTable extends Environments {
      * A instance variable (field) entity. The `decl` field gives us access
      * back to the declaration from the entity.
      */
-    case class FieldEntity(decl : Field) extends MiniJavaEntity {
+    case class FieldEntity(decl : Field) extends MiniJavaOkEntity {
         val desc = "class field"
     }
 
@@ -76,8 +79,24 @@ object SymbolTable extends Environments {
      * A local variable entity. The `decl` field gives us access back
      * to the declaration from the entity.
      */
-    case class VariableEntity(decl : Var) extends MiniJavaEntity {
+    case class VariableEntity(decl : Var) extends MiniJavaOkEntity {
         val desc = "local variable"
+    }
+
+    /**
+     * An entity represented by names for whom we have seen more than one
+     * declaration so we are unsure what is being represented.
+     */
+    case class MultipleEntity() extends MiniJavaEntity {
+        override val isError = true
+    }
+
+    /**
+     * An unknown entity, for example one that is represened by names whose
+     * declarations are missing.
+     */
+    case class UnknownEntity() extends MiniJavaEntity {
+        override val isError = true
     }
 
     // Internal types, not created from user programs by the parser but

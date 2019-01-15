@@ -23,7 +23,7 @@ class RISCTransformer(analyser : SemanticAnalyser, labels : RISCLabels) {
     import RISCTree._
     import SymbolTable._
     import org.bitbucket.inkytonik.kiama.attribution.Decorators
-    import org.bitbucket.inkytonik.kiama.util.{Counter, Entity}
+    import org.bitbucket.inkytonik.kiama.util.Counter
 
     val tree = analyser.tree
     val decorators = new Decorators(tree)
@@ -56,7 +56,7 @@ class RISCTransformer(analyser : SemanticAnalyser, labels : RISCLabels) {
      * Get the location of an entity. Only valid for variables,
      * but defined on all entities.
      */
-    val locn : Entity => Int =
+    val locn : ObrEntity => Int =
         attr {
             case entity @ Variable(tipe) =>
                 val loc = prevLocCounter.value
@@ -84,7 +84,10 @@ class RISCTransformer(analyser : SemanticAnalyser, labels : RISCLabels) {
                                 Bne(CmpltW(LdW(Local(tempintloc)), IntDatum(0)), Label(lab1)),
                                 Beq(CmpltW(
                                     entity(v) match {
-                                        case Variable(ArrayType(size)) => IntDatum(size - 1)
+                                        case Variable(ArrayType(size)) =>
+                                            IntDatum(size - 1)
+                                        case e =>
+                                            sys.error(s"location: unexpected exception entity $e for $v")
                                     }, LdW(Local(tempintloc))
                                 ), Label(lab2)),
                                 LabelDef(Label(lab1)),
@@ -331,7 +334,10 @@ class RISCTransformer(analyser : SemanticAnalyser, labels : RISCLabels) {
                 // Get hold of the integer constant associated with the exception
                 // kind specified in this RAISE statement
                 val exnconst = entity(s) match {
-                    case Constant(_, v) => IntDatum(v)
+                    case Constant(_, v) =>
+                        IntDatum(v)
+                    case e =>
+                        sys.error(s"sitems: unexpected exception entity $e for $s")
                 }
                 // Generate code to store that vale as the current exception number
                 // and then to jump to the entry point of the exception handler currently
@@ -354,7 +360,10 @@ class RISCTransformer(analyser : SemanticAnalyser, labels : RISCLabels) {
                 // Get hold of the integer constant associated with the exception
                 // identifier of this catch block from the entity of this node.
                 val exnconst = entity(n) match {
-                    case Constant(_, v) => IntDatum(v)
+                    case Constant(_, v) =>
+                        IntDatum(v)
+                    case e =>
+                        sys.error(s"cblock: unexpected exception entity $e for $n")
                 }
                 // Generate code for statements in the catch body, guarded by a
                 // conditional branch to test the exception value thrown.

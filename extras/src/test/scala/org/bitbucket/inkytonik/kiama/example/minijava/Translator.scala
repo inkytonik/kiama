@@ -295,6 +295,8 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                     loadLocal(decl.tipe)
                 case VariableEntity(decl) =>
                     loadLocal(decl.tipe)
+                case _ =>
+                // Do nothing
             }
 
         }
@@ -338,6 +340,8 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                     storeLocal(decl.tipe)
                 case VariableEntity(decl) =>
                     storeLocal(decl.tipe)
+                case _ =>
+                // Do nothing
             }
         }
 

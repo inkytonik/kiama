@@ -12,31 +12,22 @@ package org.bitbucket.inkytonik.kiama
 package example.minijava
 
 import MiniJavaTree.{MiniJavaNode, Program}
-import org.bitbucket.inkytonik.kiama.util.{Compiler, Config, Position}
+import org.bitbucket.inkytonik.kiama.util.{Compiler, Config}
 
 /**
  * Compile the MiniJava program in the file given as the first command-line
  * argument.
  */
-trait Driver extends Compiler[MiniJavaNode, Program] {
+trait Driver extends Compiler[MiniJavaNode, Program] with Server {
 
-    import CodeGenerator.{any, classFileToDoc, generate, hcat, pretty}
-    import MiniJavaTree.{IdnTree, MiniJavaTree}
-    import Monto.{hoverDocument, nameDocument, outlineDocument}
-    import SymbolTable.MiniJavaEntity
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
+    import org.bitbucket.inkytonik.kiama.example.minijava.CodeGenerator.{any, classFileToDoc, generate, hcat, pretty}
+    import org.bitbucket.inkytonik.kiama.example.minijava.MiniJavaTree.MiniJavaTree
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.Document
     import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
-    import org.bitbucket.inkytonik.kiama.util.{MultipleEntity, Source, UnknownEntity}
-    import scala.collection.mutable
+    import org.bitbucket.inkytonik.kiama.util.Source
 
     val name = "minijava"
-
-    /**
-     * The analysers previously used by the semantic analysis phase of this
-     * compiler, indexed by source name.
-     */
-    val analysers = mutable.Map[String, SemanticAnalyser]()
 
     /**
      * Whether this is a test run or not. Test runs generate all of their
@@ -140,87 +131,10 @@ trait Driver extends Compiler[MiniJavaNode, Program] {
     }
 
     /**
-     * Find nodes that overlap the given position and return the
-     * first value that `f` produces when applied to the appropriate
-     * analyser and an overlapping node.
-     */
-    def getRelevantInfo[I](
-        position : Position,
-        f : (SemanticAnalyser, Vector[MiniJavaNode]) ==> Option[I]
-    ) : Option[I] =
-        for (
-            name <- position.source.optName;
-            analyser <- analysers.get(name);
-            nodes = analyser.tree.nodes;
-            relevantNodes = positions.findNodesContaining(nodes, position);
-            info <- f((analyser, relevantNodes))
-        ) yield info
-
-    /**
-     * Hover information is provided for identifier defs and uses.
-     * It consists of a short description of the associated entity
-     * and a pretty-printed version of the corresponding declaration.
-     */
-    override def getHover(position : Position) : Option[String] =
-        getRelevantInfo(position, {
-            case (analyser, nodes) =>
-                nodes.collectFirst {
-                    case n : IdnTree =>
-                        analyser.entity(n) match {
-                            case e : MiniJavaEntity =>
-                                val p = hoverDocument(e.decl).layout
-                                s"${e.desc} ${n.idn}\n\n```\n$p```"
-                            case MultipleEntity() =>
-                                s"multiply-defined ${n.idn}"
-                            case UnknownEntity() =>
-                                s"unknown ${n.idn}"
-                        }
-                }
-        })
-
-    /**
-     * Definitions are provided for defined identifiers and point
-     * to the corresponding declaration node.
-     */
-    override def getDefinition(position : Position) : Option[MiniJavaNode] =
-        getRelevantInfo(position, {
-            case (analyser, nodes) =>
-                nodes.collectFirst {
-                    case n : IdnTree => n
-                }.collectFirst(n =>
-                    analyser.entity(n) match {
-                        case e : MiniJavaEntity =>
-                            e.decl
-                    })
-        })
-
-    /**
      * Pretty printer to use to print minijava ASTs.
      */
     override def format(ast : Program) : Document =
         PrettyPrinter.format(ast)
-
-    // Monto product publishing
-
-    def publishTargetProduct(source : Source, document : Document = emptyDocument) {
-        if (setting("showTarget"))
-            publishProduct(source, "target", "jasmin", document)
-    }
-
-    def publishTargetTreeProduct(source : Source, document : Document = emptyDocument) {
-        if (setting("showTargetTree"))
-            publishProduct(source, "targettree", "scala", document)
-    }
-
-    def publishOutlineProduct(source : Source, document : Document = emptyDocument) {
-        if (setting("showOutline"))
-            publishProduct(source, "outline", "minijava", document)
-    }
-
-    def publishNameProduct(source : Source, document : Document = emptyDocument) {
-        if (setting("showNameAnalysisStructure"))
-            publishProduct(source, "name", "minijava", document)
-    }
 
 }
 

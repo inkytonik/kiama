@@ -139,6 +139,9 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
             case None    => new LSPPosition(0, 0)
         }
 
+    def convertRange(optStart : Option[Position], optFinish : Option[Position]) : LSPRange =
+        new LSPRange(convertPosition(optStart), convertPosition(optFinish))
+
     def convertSeverity(severity : Severity) : DiagnosticSeverity =
         severity match {
             case Error       => DiagnosticSeverity.Error
@@ -233,6 +236,9 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
         }
     }
 
+    def rangeOfNode(node : N) : LSPRange =
+        convertRange(positions.getStart(node), positions.getFinish(node))
+
 }
 
 class Services[N, T <: N, C <: Config](
@@ -257,9 +263,10 @@ class Services[N, T <: N, C <: Config](
         CompletableFuture.completedFuture {
             server.setSettings(params.getInitializationOptions)
             val serverCapabilities = new ServerCapabilities
-            serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
-            serverCapabilities.setHoverProvider(true)
             serverCapabilities.setDefinitionProvider(true)
+            serverCapabilities.setDocumentSymbolProvider(true)
+            serverCapabilities.setHoverProvider(true)
+            serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
             new InitializeResult(serverCapabilities)
         }
 
@@ -347,6 +354,17 @@ class Services[N, T <: N, C <: Config](
                     location = server.locationOfNode(definition)
                 ) yield location
             ).getOrElse(null)
+        }
+
+    @JsonNotification("textDocument/documentSymbol")
+    def symbols(params : DocumentSymbolParams) : CompletableFuture[Array[DocumentSymbol]] =
+        CompletableFutures.computeAsync { _ =>
+            {
+                for (
+                    source <- server.sources.get(params.getTextDocument.getUri);
+                    symbols <- server.getSymbols(source)
+                ) yield symbols.toArray
+            }.getOrElse(Array())
         }
 
     // Workspace services

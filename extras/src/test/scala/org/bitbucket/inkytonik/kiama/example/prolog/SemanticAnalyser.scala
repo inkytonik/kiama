@@ -20,7 +20,6 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
     import PrologTree._
     import SymbolTable._
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, collectMessages, error, Messages}
-    import org.bitbucket.inkytonik.kiama.util.{Entity, UnknownEntity}
 
     /**
      * The semantic error messages for a given tree.
@@ -132,7 +131,7 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
      * have implemented the environments correctly, nothing can be unknown
      * since the first appearance is the defining ocurrence.
      */
-    val entity : NamedLiteral => Entity =
+    val entity : NamedLiteral => PrologEntity =
         attr {
             case n @ Pred(s, ts) =>
                 lookup(env(n), s, UnknownEntity(), true)
@@ -146,7 +145,7 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
      * implied by the node itself.  Used for type checking since we don't want
      * to use information from this node to check this node (a circularity).
      */
-    val entityin : NamedLiteral => Entity =
+    val entityin : NamedLiteral => PrologEntity =
         attr {
             case n @ Pred(s, ts) =>
                 lookup(envin(n), s, UnknownEntity(), true)
@@ -184,10 +183,10 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
                 lookup(varsin(n), s, UnknownEntity(), true) match {
                     case Variable(UnknownType()) =>
                         define(varsin(n), s, Variable(exptipe(n)))
-                    case Variable(_) =>
-                        varsin(n)
                     case UnknownEntity() =>
                         define(varsin(n), s, Variable(exptipe(n)))
+                    case _ =>
+                        varsin(n)
                 }
             case tree.lastChild(c) =>
                 vars(c)
@@ -199,7 +198,7 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
      * The variable entity for a particular variable name, given by
      * the context before this occurrence.
      */
-    val varentity : Var => Entity =
+    val varentity : Var => PrologEntity =
         attr {
             case n @ Var(s) =>
                 lookup(varsin(n), s, UnknownEntity(), true)

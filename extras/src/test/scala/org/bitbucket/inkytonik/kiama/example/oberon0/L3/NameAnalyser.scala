@@ -14,9 +14,9 @@ package L3
 
 trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
 
+    import base.Oberon0Entity
     import base.source.{Block, IdnDef, IdnUse, SourceNode}
     import decorators.down
-    import org.bitbucket.inkytonik.kiama.util.Entity
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, checkUse, error, Messages, noMessages}
     import source.{Call, FPSection, ProcDecl}
 
@@ -68,7 +68,7 @@ trait NameAnalyser extends L2.NameAnalyser with SymbolTable {
                 level(p) + 1
         }
 
-    override def entityFromDecl(n : IdnDef, i : String) : Entity =
+    override def entityFromDecl(n : IdnDef, i : String) : Oberon0Entity =
         n match {
             case tree.parent(p : ProcDecl) =>
                 Procedure(i, p)

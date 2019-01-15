@@ -28,7 +28,6 @@ class SemanticAnalyser(tree : GrammarTree) extends Attribution {
     import org.bitbucket.inkytonik.kiama.attribution.Decorators
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.collect
     import org.bitbucket.inkytonik.kiama.util.Messaging.{collectMessages, Messages, message}
-    import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import scala.collection.immutable.Set
 
     val decorators = new Decorators(tree)
@@ -92,7 +91,7 @@ class SemanticAnalyser(tree : GrammarTree) extends Attribution {
      * The program entity referred to by a non-terminal occurrence.  We just
      * look in the environment.  If it's not there, then it's unknown.
      */
-    val entity : NonTerm => Entity =
+    val entity : NonTerm => GrammarEntity =
         attr {
             case nt =>
                 lookup(env(nt), nt.name, UnknownEntity())

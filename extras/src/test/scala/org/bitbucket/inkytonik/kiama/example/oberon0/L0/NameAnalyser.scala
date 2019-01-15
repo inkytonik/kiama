@@ -14,6 +14,7 @@ package L0
 
 trait NameAnalyser extends base.Analyser with SymbolTable {
 
+    import base.Oberon0Entity
     import base.source.{
         Block,
         Expression,
@@ -24,7 +25,6 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
         SourceNode
     }
     import decorators.{chain, Chain}
-    import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, error, Messages}
     import source.{
         AddExp,
@@ -110,7 +110,7 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      * The entity for an identifier definition as given by its declaration
      * context.
      */
-    def entityFromDecl(n : IdnDef, i : String) : Entity =
+    def entityFromDecl(n : IdnDef, i : String) : Oberon0Entity =
         n match {
             case tree.parent(p) =>
                 p match {
@@ -129,7 +129,7 @@ trait NameAnalyser extends base.Analyser with SymbolTable {
      * it's the thing defined elsewhere that is being referred to here, so
      * look it up in the environment.
      */
-    lazy val entity : Identifier => Entity =
+    lazy val entity : Identifier => Oberon0Entity =
         attr {
             case n @ IdnDef(i) =>
                 if (isDefinedInScope(env.in(n), i))

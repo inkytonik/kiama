@@ -24,6 +24,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
+    import org.eclipse.lsp4j.DocumentSymbol
     import org.rogach.scallop.exceptions.ScallopException
     import scala.collection.mutable
 
@@ -243,6 +244,12 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     def getDefinition(position : Position) : Option[N] =
         None
 
+    /**
+     * Return the symbols frmo a compilation unit. Default is to return
+     * no symbols.
+     */
+    def getSymbols(source : Source) : Option[Vector[DocumentSymbol]] =
+        None
 }
 
 /**

@@ -12,27 +12,47 @@
 package org.bitbucket.inkytonik.kiama
 package example.obr
 
-import org.bitbucket.inkytonik.kiama.util.Environments
+import org.bitbucket.inkytonik.kiama.util.{Entity, Environments}
+
+/**
+ * Superclass of all Obr entities.
+ */
+sealed abstract class ObrEntity extends Entity with Product
 
 /**
  * Symbol table module containing facilities for creating and
  * manipulating Obr language symbol information.
  */
-object SymbolTable extends Environments {
+object SymbolTable extends Environments[ObrEntity] {
 
     import ObrTree._
-    import org.bitbucket.inkytonik.kiama.util.Entity
 
     /**
      * A variable entity of the given type.
      */
-    case class Variable(tipe : Type) extends Entity
+    case class Variable(tipe : Type) extends ObrEntity
 
     /**
      * A constant integer entity with the given type and value.
      * Can represent an integer or an enumeration constant.
      */
-    case class Constant(tipe : Type, value : Int) extends Entity
+    case class Constant(tipe : Type, value : Int) extends ObrEntity
+
+    /**
+     * An entity represented by names for whom we have seen more than one
+     * declaration so we are unsure what is being represented.
+     */
+    case class MultipleEntity() extends ObrEntity {
+        override val isError = true
+    }
+
+    /**
+     * An unknown entity, for example one that is represened by names whose
+     * declarations are missing.
+     */
+    case class UnknownEntity() extends ObrEntity {
+        override val isError = true
+    }
 
     /**
      * The size in bytes of a word used to store both integer and Boolean

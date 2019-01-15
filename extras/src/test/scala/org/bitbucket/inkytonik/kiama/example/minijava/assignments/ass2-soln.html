@@ -516,7 +516,7 @@ case MethodBody (t, _, _, _, _) =>
     identifier use just the same.</p>
 
 <pre>
-lazy val entity : IdnNode => Entity =
+lazy val entity : IdnNode => MiniJavaEntity =
     attr {
 
         case HasParent (n @ IdnUse (i), CallExp (base, _, _)) =>
@@ -552,7 +552,7 @@ findMethod (decl, i)
     the unknown entity.</p>
 
 <pre>
-def findMethod (decl : Class, i : String) : Entity =
+def findMethod (decl : Class, i : String) : MiniJavaEntity =
     lookup (decl->env, i, UnknownEntity) match {
 
         case UnknownEntity =>

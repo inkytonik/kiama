@@ -14,10 +14,10 @@ package L4
 
 trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
 
+    import base.Oberon0Entity
     import base.source.{Expression, IdnDef, SourceNode}
     import L0.source.{Assignment, NamedType, TypeDef}
     import L3.source.{FPSection, ValMode}
-    import org.bitbucket.inkytonik.kiama.util.Entity
     import org.bitbucket.inkytonik.kiama.util.Messaging.{check, error, Messages}
     import source.{ArrayTypeDef, FieldExp, FieldIdn, Fields, IndexExp, RecordTypeDef}
 
@@ -83,7 +83,7 @@ trait TypeAnalyser extends L3.TypeAnalyser with SymbolTable {
                 super.isCompatible(tipe, exptype)
         }
 
-    override def entityFromDecl(n : IdnDef, i : String) : Entity =
+    override def entityFromDecl(n : IdnDef, i : String) : Oberon0Entity =
         n match {
             case tree.parent(Fields(_, p)) =>
                 Field(i, deftype(p))

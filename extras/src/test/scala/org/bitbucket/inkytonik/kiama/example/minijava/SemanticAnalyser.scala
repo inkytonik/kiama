@@ -32,7 +32,6 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
         Messages,
         noMessages
     }
-    import org.bitbucket.inkytonik.kiama.util.{Entity, MultipleEntity, UnknownEntity}
     import SymbolTable._
 
     val decorators = new Decorators(tree)
@@ -105,7 +104,7 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
      * The entity defined by a defining occurrence of an identifier.
      * Defined by the context of the occurrence.
      */
-    lazy val defentity : IdnDef => Entity =
+    lazy val defentity : IdnDef => MiniJavaEntity =
         attr {
             case tree.parent(p) =>
                 p match {
@@ -154,7 +153,7 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
         // been defined in this scope. If so, change its entity to MultipleEntity,
         // otherwise use the entity appropriate for this definition.
         case n @ IdnDef(i) =>
-            defineIfNew(out(n), i, defentity(n))
+            defineIfNew(out(n), i, MultipleEntity(), defentity(n))
 
     }
 
@@ -182,7 +181,7 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
     /**
      * The program entity referred to by an identifier definition or use.
      */
-    lazy val entity : IdnTree => Entity =
+    lazy val entity : IdnTree => MiniJavaEntity =
         attr {
 
             // If we are looking at an identifier used as a method call,
@@ -212,7 +211,7 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
      * found or no more superclasses exist, in which case return an
      * the unknown entity.
      */
-    def findMethod(decl : Class, i : String) : Entity =
+    def findMethod(decl : Class, i : String) : MiniJavaEntity =
         lookup(env(decl), i, UnknownEntity()) match {
 
             case UnknownEntity() =>

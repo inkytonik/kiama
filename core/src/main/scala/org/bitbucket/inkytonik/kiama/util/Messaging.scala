@@ -69,7 +69,7 @@ case class Message(value : AnyRef, label : String, severity : Severities.Severit
 object Messaging {
 
     import org.bitbucket.inkytonik.kiama.relation.Tree
-    import org.bitbucket.inkytonik.kiama.util.{Entity, ErrorEntity}
+    import org.bitbucket.inkytonik.kiama.util.Entity
     import org.bitbucket.inkytonik.kiama.util.Severities._
 
     /**
@@ -97,13 +97,11 @@ object Messaging {
      * Otherwise, if `f` is defined at `e` return the messages that `f (e)`
      * evaluates to. If `f` is not defined at `e`, keep silent.
      */
-    def checkUse(e : Entity)(f : Entity ==> Messages) : Messages =
-        e match {
-            case _ : ErrorEntity =>
-                noMessages
-            case _ =>
-                check(e)(f)
-        }
+    def checkUse[E <: Entity](e : E)(f : E ==> Messages) : Messages =
+        if (e.isError)
+            noMessages
+        else
+            check(e)(f)
 
     /**
      * Recursively collect all messages in the given tree using the partial
