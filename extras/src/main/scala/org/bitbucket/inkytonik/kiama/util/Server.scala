@@ -314,29 +314,39 @@ class Services[N, T <: N, C <: Config](
     }
 
     def positionOfNotification(params : TextDocumentPositionParams) : Option[Position] =
-        server.lastSource.map(source => {
+        server.sources.get(params.getTextDocument.getUri).map(source => {
             val posLSP = params.getPosition
             Position(posLSP.getLine + 1, posLSP.getCharacter + 1, source)
         })
 
+    def hoverMarkup(markdown : String) : Hover = {
+        val markup = new MarkupContent()
+        markup.setValue(markdown)
+        markup.setKind("markdown")
+        new Hover(markup)
+    }
+
     @JsonNotification("textDocument/hover")
     def hover(params : TextDocumentPositionParams) : CompletableFuture[Hover] =
         CompletableFutures.computeAsync { _ =>
-            positionOfNotification(params).flatMap(position =>
-                server.getHover(position).map(content => {
-                    val markup = new MarkupContent()
-                    markup.setValue(content)
-                    markup.setKind("markdown")
-                    new Hover(markup)
-                })).getOrElse(null)
+            (
+                for (
+                    position <- positionOfNotification(params);
+                    markdown <- server.getHover(position)
+                ) yield hoverMarkup(markdown)
+            ).getOrElse(null)
         }
 
     @JsonNotification("textDocument/definition")
     def definition(params : TextDocumentPositionParams) : CompletableFuture[Location] =
         CompletableFutures.computeAsync { _ =>
-            positionOfNotification(params).flatMap(position =>
-                server.getDefinition(position).map(definition =>
-                    server.locationOfNode(definition))).getOrElse(null)
+            (
+                for (
+                    position <- positionOfNotification(params);
+                    definition <- server.getDefinition(position);
+                    location = server.locationOfNode(definition)
+                ) yield location
+            ).getOrElse(null)
         }
 
     // Workspace services

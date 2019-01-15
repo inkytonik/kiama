@@ -25,6 +25,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinter.{any, pretty}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.rogach.scallop.exceptions.ScallopException
+    import scala.collection.mutable
 
     /**
      * The name of the language that this compiler processes. The best choice
@@ -33,10 +34,10 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     def name : String
 
     /**
-     * The most recent source processed by this compiler, or `None` if there
-     * isn't one.
+     * The sources previously used by the semantic analysis phase of this
+     * compiler, indexed by source name.
      */
-    var lastSource : Option[Source] = None
+    val sources = mutable.Map[String, Source]()
 
     /**
      * The position store used by this compiler.
@@ -148,7 +149,9 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * processing on the AST. If `makeast` produces messages, report them.
      */
     def compileSource(source : Source, config : C) {
-        lastSource = Some(source)
+        if (source.optName.isDefined) {
+            sources(source.optName.get) = source
+        }
         makeast(source, config) match {
             case Left(ast) =>
                 if (config.server() || config.debug()) {
@@ -257,7 +260,6 @@ trait CompilerWithConfig[N, T <: N, C <: Config] extends CompilerBase[N, T, C] {
      */
     def makeast(source : Source, config : C) : Either[T, Messages] = {
         try {
-            positions.reset()
             parse(source) match {
                 case Success(ast, _) =>
                     Left(ast)

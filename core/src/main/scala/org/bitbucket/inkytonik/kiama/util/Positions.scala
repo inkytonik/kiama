@@ -73,8 +73,8 @@ case class Position(line : Int, column : Int, source : Source) {
         op2(_ < _, p)
 
     /**
-     * Does this position occur between two other positions, inclusive of
-     * start position and exclusive of finish position?
+     * Does this position occur between two other positions, in the same
+     * source, inclusive of start position and exclusive of finish position?
      */
     def between(start : Position, finish : Position) : Boolean =
         (start <= this) && (this < finish)

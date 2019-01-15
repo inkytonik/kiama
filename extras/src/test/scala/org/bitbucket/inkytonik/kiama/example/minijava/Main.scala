@@ -27,15 +27,16 @@ trait Driver extends Compiler[MiniJavaNode, Program] {
     import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument}
     import org.bitbucket.inkytonik.kiama.parsing.ParseResult
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
-    import org.bitbucket.inkytonik.kiama.util.Source
+    import org.bitbucket.inkytonik.kiama.util.{MultipleEntity, Source, UnknownEntity}
+    import scala.collection.mutable
 
     val name = "minijava"
 
     /**
-     * The most recent analyser used by the semantic analysis phase of this
-     * compiler, or `None` if there isn't one.
+     * The analysers previously used by the semantic analysis phase of this
+     * compiler, indexed by source name.
      */
-    var lastAnalyser : Option[SemanticAnalyser] = None
+    val analysers = mutable.Map[String, SemanticAnalyser]()
 
     /**
      * Whether this is a test run or not. Test runs generate all of their
@@ -51,7 +52,8 @@ trait Driver extends Compiler[MiniJavaNode, Program] {
      * successful run.
      */
     override def makeast(source : Source, config : Config) : Either[Program, Messages] = {
-        lastAnalyser = None
+        if (source.optName.isDefined)
+            analysers -= source.optName.get
         super.makeast(source, config)
     }
 
@@ -75,7 +77,8 @@ trait Driver extends Compiler[MiniJavaNode, Program] {
         val analyser = new SemanticAnalyser(tree)
 
         // Save for server use
-        lastAnalyser = Some(analyser)
+        if (source.optName.isDefined)
+            analysers(source.optName.get) = analyser
 
         // Publish the outline and name analysis products
         if (config.server()) {
@@ -129,21 +132,42 @@ trait Driver extends Compiler[MiniJavaNode, Program] {
     }
 
     /**
+     * Find nodes that overlap the given position and return the
+     * first value that `f` produces when applied to the appropriate
+     * analyser and an overlapping node.
+     */
+    def getRelevantInfo[I](
+        position : Position,
+        f : (SemanticAnalyser, Vector[MiniJavaNode]) ==> Option[I]
+    ) : Option[I] =
+        for (
+            name <- position.source.optName;
+            analyser <- analysers.get(name);
+            nodes = analyser.tree.nodes;
+            relevantNodes = positions.findNodesContaining(nodes, position);
+            info <- f((analyser, relevantNodes))
+        ) yield info
+
+    /**
      * Hover information is provided for identifier defs and uses.
      * It consists of a short description of the associated entity
      * and a pretty-printed version of the corresponding declaration.
      */
     override def getHover(position : Position) : Option[String] =
-        lastAnalyser.flatMap(analyser => {
-            val nodes = analyser.tree.nodes
-            positions.findNodesContaining(nodes, position).collectFirst {
-                case n : IdnTree =>
-                    analyser.entity(n) match {
-                        case e : MiniJavaEntity =>
-                            val p = hoverDocument(e.decl).layout
-                            s"${e.desc} ${n.idn}\n\n```\n$p```"
-                    }
-            }
+        getRelevantInfo(position, {
+            case (analyser, nodes) =>
+                nodes.collectFirst {
+                    case n : IdnTree =>
+                        analyser.entity(n) match {
+                            case e : MiniJavaEntity =>
+                                val p = hoverDocument(e.decl).layout
+                                s"${e.desc} ${n.idn}\n\n```\n$p```"
+                            case MultipleEntity() =>
+                                s"multiply-defined ${n.idn}"
+                            case UnknownEntity() =>
+                                s"unknown ${n.idn}"
+                        }
+                }
         })
 
     /**
@@ -151,15 +175,15 @@ trait Driver extends Compiler[MiniJavaNode, Program] {
      * to the corresponding declaration node.
      */
     override def getDefinition(position : Position) : Option[MiniJavaNode] =
-        lastAnalyser.flatMap(analyser => {
-            val nodes = analyser.tree.nodes
-            positions.findNodesContaining(nodes, position).collectFirst {
-                case n : IdnTree =>
+        getRelevantInfo(position, {
+            case (analyser, nodes) =>
+                nodes.collectFirst {
+                    case n : IdnTree => n
+                }.collectFirst(n =>
                     analyser.entity(n) match {
                         case e : MiniJavaEntity =>
                             e.decl
-                    }
-            }
+                    })
         })
 
     /**
