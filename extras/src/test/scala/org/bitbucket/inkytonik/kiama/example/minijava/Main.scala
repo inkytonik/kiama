@@ -76,9 +76,17 @@ trait Driver extends Compiler[MiniJavaNode, Program] {
         val tree = new MiniJavaTree(ast)
         val analyser = new SemanticAnalyser(tree)
 
-        // Save for server use
-        if (source.optName.isDefined)
+        // Save for server use, clearing out previous position information
+        // Other semantic information should go via the analyser replacement
+        if (source.optName.isDefined) {
+            analysers.get(source.optName.get) match {
+                case Some(prevAnalyser) =>
+                    positions.resetAllAt(prevAnalyser.tree.nodes)
+                case _ =>
+                // Do nothing
+            }
             analysers(source.optName.get) = analyser
+        }
 
         // Publish the outline and name analysis products
         if (config.server()) {

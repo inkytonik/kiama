@@ -125,6 +125,15 @@ class Memoiser[T, U](tipe : MemoiserType) {
     }
 
     /**
+     * Immediately reset the memo table at all values in `ts`.
+     */
+    def resetAllAt(ts : Seq[T]) {
+        for (t <- ts) {
+            resetAt(t)
+        }
+    }
+
+    /**
      * Immediately reset the memo table at `t`.
      */
     def resetAt(t : T) {

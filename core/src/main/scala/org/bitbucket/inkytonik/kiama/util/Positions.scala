@@ -168,6 +168,22 @@ class Positions {
     }
 
     /**
+     * Reset the position maps to be empty at all values in `ts`.
+     */
+    def resetAllAt(ts : Seq[Any]) {
+        startMap.resetAllAt(ts)
+        finishMap.resetAllAt(ts)
+    }
+
+    /**
+     * Reset the position maps to be empty at `t`.
+     */
+    def resetAt(t : Seq[Any]) {
+        startMap.resetAt(t)
+        finishMap.resetAt(t)
+    }
+
+    /**
      * Get the source text associated with the substring of a source
      * between given starting and finishing positions. The two positions
      * are assumed to reference the same source. If either of the
