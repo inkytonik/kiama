@@ -267,6 +267,7 @@ class Services[N, T <: N, C <: Config](
             serverCapabilities.setDocumentFormattingProvider(true)
             serverCapabilities.setDocumentSymbolProvider(true)
             serverCapabilities.setHoverProvider(true)
+            serverCapabilities.setReferencesProvider(true)
             serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
             new InitializeResult(serverCapabilities)
         }
@@ -381,6 +382,18 @@ class Services[N, T <: N, C <: Config](
                     position <- positionOfNotification(params);
                     markdown <- server.getHover(position)
                 ) yield hoverMarkup(markdown)
+            ).getOrElse(null)
+        }
+
+    @JsonNotification("textDocument/references")
+    def references(params : ReferenceParams) : CompletableFuture[Array[Location]] =
+        CompletableFutures.computeAsync { _ =>
+            (
+                for (
+                    position <- positionOfNotification(params);
+                    references <- server.getReferences(position, params.getContext.isIncludeDeclaration);
+                    locations = references.map(server.locationOfNode(_))
+                ) yield locations.toArray
             ).getOrElse(null)
         }
 

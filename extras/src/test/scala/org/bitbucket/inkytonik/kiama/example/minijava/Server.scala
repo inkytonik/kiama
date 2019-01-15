@@ -102,6 +102,45 @@ trait Server {
         })
 
     /**
+     * The identifier definition associated with an entity declaration.
+     */
+    def idndefOfEntityDecl(entity : MiniJavaEntity) : Option[IdnDef] =
+        entity match {
+            case MainClassEntity(decl) => Some(decl.name)
+            case ClassEntity(decl)     => Some(decl.name)
+            case MethodEntity(decl)    => Some(decl.name)
+            case ArgumentEntity(decl)  => Some(decl.name)
+            case FieldEntity(decl)     => Some(decl.name)
+            case VariableEntity(decl)  => Some(decl.name)
+            case _ =>
+                None
+        }
+
+    /**
+     * The references to a symbol at a given position.
+     */
+    override def getReferences(position : Position, includeDecl : Boolean) : Option[Vector[MiniJavaNode]] =
+        getRelevantInfo(position, {
+            case (analyser, nodes) =>
+                nodes.collectFirst {
+                    case n : IdnTree => n
+                }.collectFirst(n =>
+                    analyser.entity(n) match {
+                        case e : MiniJavaOkEntity =>
+                            val uses = analyser.tree.nodes.collect {
+                                case u : IdnUse if analyser.entity(u) == e =>
+                                    u
+                            }
+                            idndefOfEntityDecl(e) match {
+                                case Some(decl) if includeDecl =>
+                                    decl +: uses
+                                case _ =>
+                                    uses
+                            }
+                    })
+        })
+
+    /**
      * Convert MiniJava entities into LSP symbol kinds.
      */
     def getSymbolKind(entity : MiniJavaEntity) : Option[SymbolKind] =

@@ -252,6 +252,15 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
         None
 
     /**
+     * Return the corresponding reference nodes (uses) of the symbol
+     * at the given position (if any). If `includeDecl` is true, also
+     * include the declaration of the symbol. Default is to never return
+     * anything.
+     */
+    def getReferences(position : Position, includeDecl : Boolean) : Option[Vector[N]] =
+        None
+
+    /**
      * Return the symbols frmo a compilation unit. Default is to return
      * no symbols.
      */
