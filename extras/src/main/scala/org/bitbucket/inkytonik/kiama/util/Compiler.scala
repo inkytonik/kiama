@@ -231,6 +231,21 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     }
 
     /**
+     * A representation of a simple named code action that replaces
+     * a tree node with other text.
+     */
+    // FIXME: can the "to" be a node too? But server can't access correct PP...
+    case class TreeAction(name : String, uri : String, from : N, to : String)
+
+    /**
+     * Return applicable code actions for the given position (if any).
+     * Each action is in terms of an old tree node and a new node that
+     * replaces it. Default is to return no actions.
+     */
+    def getCodeActions(position : Position) : Option[Vector[TreeAction]] =
+        None
+
+    /**
      * Return the corresponding definition node for the given position
      * (if any). Default is to never return anything.
      */

@@ -12,6 +12,7 @@ package org.bitbucket.inkytonik.kiama
 package util
 
 import org.eclipse.lsp4j.{Position => LSPPosition, Range => LSPRange, _}
+import scala.collection.JavaConverters._
 
 /**
  * A language server that is mixed with a compiler that provide the basis
@@ -29,7 +30,6 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.bitbucket.inkytonik.kiama.util.Severities._
     import org.eclipse.lsp4j.jsonrpc.Launcher
-    import scala.collection.JavaConverters._
 
     // Client saving
 
@@ -263,6 +263,7 @@ class Services[N, T <: N, C <: Config](
         CompletableFuture.completedFuture {
             server.setSettings(params.getInitializationOptions)
             val serverCapabilities = new ServerCapabilities
+            serverCapabilities.setCodeActionProvider(true)
             serverCapabilities.setDefinitionProvider(true)
             serverCapabilities.setDocumentFormattingProvider(true)
             serverCapabilities.setDocumentSymbolProvider(true)
@@ -324,12 +325,39 @@ class Services[N, T <: N, C <: Config](
 
     // Text document services
 
+    def positionOfNotification(document : TextDocumentIdentifier, position : LSPPosition) : Option[Position] =
+        server.sources.get(document.getUri).map(source => {
+            Position(position.getLine + 1, position.getCharacter + 1, source)
+        })
+
+    @JsonNotification("textDocument/codeAction")
+    def codeactions(params : CodeActionParams) : CompletableFuture[Array[CodeAction]] =
+        CompletableFutures.computeAsync { _ =>
+            (
+                for (
+                    position <- positionOfNotification(params.getTextDocument, params.getRange.getStart);
+                    treeActions <- server.getCodeActions(position);
+                    codeActions = treeActions.map {
+                        case server.TreeAction(name, uri, oldNode, newText) =>
+                            val indText = server.positions.indent(newText, oldNode)
+                            val textEdit = new TextEdit(server.rangeOfNode(oldNode), indText)
+                            val changes = Map(uri -> List(textEdit).asJava)
+                            val workspaceEdit = new WorkspaceEdit(changes.asJava)
+                            val action = new CodeAction(name)
+                            action.setKind(CodeActionKind.Refactor)
+                            action.setEdit(workspaceEdit)
+                            action
+                    }
+                ) yield codeActions.toArray
+            ).getOrElse(null)
+        }
+
     @JsonNotification("textDocument/definition")
     def definition(params : TextDocumentPositionParams) : CompletableFuture[Location] =
         CompletableFutures.computeAsync { _ =>
             (
                 for (
-                    position <- positionOfNotification(params);
+                    position <- positionOfNotification(params.getTextDocument, params.getPosition);
                     definition <- server.getDefinition(position);
                     location = server.locationOfNode(definition)
                 ) yield location
@@ -361,12 +389,6 @@ class Services[N, T <: N, C <: Config](
             }.getOrElse(null)
         }
 
-    def positionOfNotification(params : TextDocumentPositionParams) : Option[Position] =
-        server.sources.get(params.getTextDocument.getUri).map(source => {
-            val posLSP = params.getPosition
-            Position(posLSP.getLine + 1, posLSP.getCharacter + 1, source)
-        })
-
     def hoverMarkup(markdown : String) : Hover = {
         val markup = new MarkupContent()
         markup.setValue(markdown)
@@ -379,7 +401,7 @@ class Services[N, T <: N, C <: Config](
         CompletableFutures.computeAsync { _ =>
             (
                 for (
-                    position <- positionOfNotification(params);
+                    position <- positionOfNotification(params.getTextDocument, params.getPosition);
                     markdown <- server.getHover(position)
                 ) yield hoverMarkup(markdown)
             ).getOrElse(null)
@@ -390,7 +412,7 @@ class Services[N, T <: N, C <: Config](
         CompletableFutures.computeAsync { _ =>
             (
                 for (
-                    position <- positionOfNotification(params);
+                    position <- positionOfNotification(params.getTextDocument, params.getPosition);
                     references <- server.getReferences(position, params.getContext.isIncludeDeclaration);
                     locations = references.map(server.locationOfNode(_))
                 ) yield locations.toArray

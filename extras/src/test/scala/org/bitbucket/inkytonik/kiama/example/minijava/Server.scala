@@ -43,15 +43,31 @@ trait Server {
      */
     def getRelevantInfo[I](
         position : Position,
-        f : (SemanticAnalyser, Vector[MiniJavaNode]) ==> Option[I]
+        f : (String, SemanticAnalyser, Vector[MiniJavaNode]) ==> Option[I]
     ) : Option[I] =
         for (
-            name <- position.source.optName;
-            analyser <- analysers.get(name);
+            uri <- position.source.optName;
+            analyser <- analysers.get(uri);
             nodes = analyser.tree.nodes;
             relevantNodes = positions.findNodesContaining(nodes, position);
-            info <- f((analyser, relevantNodes))
+            info <- f((uri, analyser, relevantNodes))
         ) yield info
+
+    /**
+     * Return applicable code actions for the given position (if any).
+     */
+    override def getCodeActions(position : Position) : Option[Vector[TreeAction]] =
+        getRelevantInfo(position, {
+            case (uri, analyser, nodes) =>
+                Some(
+                    nodes.collect {
+                        case n @ If(c, t, e) =>
+                            val newNode = If(c, e, t)
+                            val newText = PrettyPrinter.format(newNode).layout
+                            TreeAction("swap if-statement branches", uri, n, newText)
+                    }
+                )
+        })
 
     /**
      * Definitions are provided for defined identifiers and point
@@ -59,7 +75,7 @@ trait Server {
      */
     override def getDefinition(position : Position) : Option[MiniJavaNode] =
         getRelevantInfo(position, {
-            case (analyser, nodes) =>
+            case (uri, analyser, nodes) =>
                 nodes.collectFirst {
                     case n : IdnTree => n
                 }.collectFirst(n =>
@@ -86,7 +102,7 @@ trait Server {
      */
     override def getHover(position : Position) : Option[String] =
         getRelevantInfo(position, {
-            case (analyser, nodes) =>
+            case (uri, analyser, nodes) =>
                 nodes.collectFirst {
                     case n : IdnTree =>
                         analyser.entity(n) match {
@@ -121,7 +137,7 @@ trait Server {
      */
     override def getReferences(position : Position, includeDecl : Boolean) : Option[Vector[MiniJavaNode]] =
         getRelevantInfo(position, {
-            case (analyser, nodes) =>
+            case (uri, analyser, nodes) =>
                 nodes.collectFirst {
                     case n : IdnTree => n
                 }.collectFirst(n =>

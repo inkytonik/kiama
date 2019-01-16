@@ -222,4 +222,18 @@ class Positions {
                     t
             })
 
+    /**
+     * Indent text to the same nesting level as a value. The required spacing
+     * given by the column of the value is placed after each newline in the
+     * string. If the value has no position, then the original string is
+     * returned.
+     */
+    def indent[T](text : String, t : T) : String =
+        getStart(t) match {
+            case Some(start) =>
+                text.replace("\n", "\n" + " " * (start.column - 1))
+            case None =>
+                text
+        }
+
 }
