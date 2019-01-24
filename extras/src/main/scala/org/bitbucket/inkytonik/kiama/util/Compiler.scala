@@ -171,12 +171,12 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
         }
     }
 
-    def publishSourceProduct(source : Source, document : Document = emptyDocument) {
+    def publishSourceProduct(source : Source, document : => Document = emptyDocument) {
         if (setting("showSource"))
             publishProduct(source, "source", name, document)
     }
 
-    def publishSourceTreeProduct(source : Source, document : Document = emptyDocument) {
+    def publishSourceTreeProduct(source : Source, document : => Document = emptyDocument) {
         if (setting("showSourceTree"))
             publishProduct(source, "sourcetree", "scala", document)
     }
