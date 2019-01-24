@@ -16,7 +16,7 @@ import scala.collection.JavaConverters._
 
 /**
  * A language server that is mixed with a compiler that provide the basis
- * for its services. Allows specialisation of configuraiton via `C`.
+ * for its services. Allows specialisation of configuration via `C`.
  */
 trait ServerWithConfig[N, T <: N, C <: Config] {
 
