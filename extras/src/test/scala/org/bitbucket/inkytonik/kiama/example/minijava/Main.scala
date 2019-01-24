@@ -100,12 +100,12 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
             val filename = source.optName.getOrElse("")
             val targettree = translator.translate(ast, filename, analyser)
 
-            // Pretty print the target tree
+            // Debugging output of target tree
             if (config.server() || config.debug()) {
                 val targetTreeDocument = pretty(any(targettree))
-                if (config.server()) {
+                if (config.server())
                     publishTargetTreeProduct(source, targetTreeDocument)
-                } else if (config.debug())
+                else if (config.debug())
                     config.output().emitln(targetTreeDocument.layout)
             }
 
