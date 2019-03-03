@@ -111,7 +111,7 @@ class Config(args : Seq[String]) extends ScallopConf(args) {
         "server",
         descrYes = "Run compiler as a language server",
         descrNo = "Run compiler in standard batch mode",
-        default = Some(false),
+        default = Some(false)
     )
 
     /**
