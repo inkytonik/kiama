@@ -27,7 +27,6 @@ ThisBuild/scalacOptions := {
         "-unchecked",
         "-Xcheckinit",
         "-Xfatal-warnings",
-        "-Yrangepos",
         lintOption
     )
 }
