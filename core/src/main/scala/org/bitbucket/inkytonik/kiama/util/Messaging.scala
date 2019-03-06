@@ -58,10 +58,12 @@ object Severities {
 }
 
 /**
- * A message record consisting of a value with which the message is associated
- * and a label string.
+ * A message record consisting of a value with which the message is associated,
+ * a label string, and a severity (which defaults to error).
  */
-case class Message(value : AnyRef, label : String, severity : Severities.Severity)
+case class Message(value : AnyRef, label : String) {
+    val severity : Severities.Severity = Severities.Error
+}
 
 /**
  * Shared definitions for all messaging.
@@ -116,10 +118,12 @@ object Messaging {
      * is false make an empty message list. `cond` can be omitted and defaults
      * to true.
      */
-    def message(value : AnyRef, label : String, severity : Severity = Error,
+    def message(value : AnyRef, label : String, newSeverity : Severity = Error,
         cond : Boolean = true) : Messages =
         if (cond)
-            Vector(Message(value, label, severity))
+            Vector(new Message(value, label) {
+                override val severity = newSeverity
+            })
         else
             noMessages
 
