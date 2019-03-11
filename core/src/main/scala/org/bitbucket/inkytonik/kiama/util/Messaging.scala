@@ -219,10 +219,10 @@ class Messaging(positions : Positions) {
     /**
      * A message's source name as determined from the source of the
      * message's value's position. Will be `None` if the value has no
-     * position or that position's source has no name.
+     * position.
      */
     def name(message : Message) : Option[String] =
-        positions.getStart(message.value).map(_.source.optName).map(_.get)
+        positions.getStart(message.value).map(_.source.name)
 
     /**
      * A message's starting position as determined from the starting position

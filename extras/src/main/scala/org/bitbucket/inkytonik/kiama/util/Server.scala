@@ -160,7 +160,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     def publishProduct(
         source : Source, name : String, language : String, document : Document
     ) {
-        val uri = source.optName.getOrElse("unknown")
+        val uri = source.name
         val content = document.layout
         val pairs = positionsOfDocument(document)
         val rangeMap = sortBySourceRangeSize(pairsToMap(pairs, pairToSourceRange, pairToTargetRange))
@@ -224,7 +224,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
         (positions.getStart(node), positions.getFinish(node)) match {
             case (start @ Some(st), finish @ Some(_)) =>
                 st.source match {
-                    case StringSource(_, Some(name)) =>
+                    case StringSource(_, name) =>
                         val s = convertPosition(start)
                         val f = convertPosition(finish)
                         new Location(name, new LSPRange(s, f))

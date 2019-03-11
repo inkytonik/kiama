@@ -140,8 +140,8 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     /**
      * Compile input from a string.
      */
-    def compileString(uri : String, input : String, config : C) {
-        compileSource(StringSource(input, Some(uri)), config)
+    def compileString(name : String, input : String, config : C) {
+        compileSource(StringSource(input, name), config)
     }
 
     /**
@@ -150,9 +150,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * processing on the AST. If `makeast` produces messages, report them.
      */
     def compileSource(source : Source, config : C) {
-        if (source.optName.isDefined) {
-            sources(source.optName.get) = source
-        }
+        sources(source.name) = source
         makeast(source, config) match {
             case Left(ast) =>
                 if (config.server() || config.debug()) {

@@ -14,14 +14,14 @@ package util
 import java.io.Reader
 
 /**
- * A source of input to which a position might refer.
+ * A simple source of characters.
  */
 trait Source {
 
     /**
-     * The name of this source or `None` if it doesn't have a name.
+     * The name of this source.
      */
-    def optName : Option[String]
+    def name : String
 
     /**
      * The content of the source.
@@ -33,13 +33,13 @@ trait Source {
      * count of how many lines are present. The line offset map is
      * indexed starting at zero and contains at least one entry.
      */
-    lazy val (lineStarts, lineCount) =
-        (0 until content.length).foldLeft((Vector[Int](0), 1)) {
-            case ((v, n), i) =>
-                if (content.charAt(i) == '\n')
-                    (v :+ (i + 1), n + 1)
+    lazy val (lineStarts, charCount, lineCount) =
+        content.foldLeft((Vector[Int](0), 1, 1)) {
+            case ((v, chs, nls), ch) =>
+                if (ch == '\n')
+                    (v :+ chs, chs + 1, nls + 1)
                 else
-                    (v, n)
+                    (v, chs + 1, nls)
         }
 
     /**
@@ -101,62 +101,17 @@ trait Source {
 }
 
 /**
- * Support code for various sources.
- */
-
-object Source {
-
-    import java.io.File.separatorChar
-    import java.lang.System.getProperty
-
-    /**
-     * Return a simplified filename where a string has been dropped if it
-     * occurs as a prefix of the given filename. The system separator
-     * character is also dropped if it occurs immediately after a
-     * non-empty prefix.
-     */
-    def dropPrefix(filename : String, prefix : String) : String = {
-
-        def dropIgnoreSep(i : Int) : String =
-            if ((i == 0) || ((i == 1) && (filename(0) == separatorChar)))
-                filename
-            else if (i < filename.length)
-                filename.drop(if (filename(i) == separatorChar) i + 1 else i)
-            else
-                ""
-
-        for (i <- 0 until prefix.length) {
-            if ((i == filename.length) || (filename(i) != prefix(i)))
-                return filename
-        }
-        dropIgnoreSep(prefix.length)
-
-    }
-
-    /**
-     * Return a simplified filename where the current path has been dropped
-     * if it occurs as a prefix of the given filename.
-     */
-    def dropCurrentPath(filename : String) : String =
-        dropPrefix(filename, getProperty("user.dir"))
-
-}
-
-/**
  * A source that is a string.
  */
-case class StringSource(
-    content : String,
-    optName : Option[String] = None
-) extends Source {
+case class StringSource(content : String, name : String = "") extends Source {
     def reader : Reader = IO.stringreader(content)
 }
 
 /**
  * A source that is a named file.
  */
-case class FileSource(filename : String, encoding : String = "UTF-8") extends Source {
-    val optName = Some(Source.dropCurrentPath(filename))
-    lazy val content = scala.io.Source.fromFile(filename, encoding).mkString
-    def reader : Reader = IO.filereader(filename, encoding)
+case class FileSource(name : String, encoding : String = "UTF-8") extends Source {
+    val shortName = Filenames.dropCurrentPath(name)
+    lazy val content = scala.io.Source.fromFile(name, encoding).mkString
+    def reader : Reader = IO.filereader(name, encoding)
 }

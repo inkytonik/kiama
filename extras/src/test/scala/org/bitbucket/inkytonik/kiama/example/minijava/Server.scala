@@ -34,7 +34,7 @@ trait Server {
      * The analysers previously used by the semantic analysis phase of this
      * compiler, indexed by source name.
      */
-    val analysers = mutable.Map[String, SemanticAnalyser]()
+    val analysers = mutable.Map[Source, SemanticAnalyser]()
 
     /**
      * Find nodes that overlap the given position and return the
@@ -46,11 +46,10 @@ trait Server {
         f : (String, SemanticAnalyser, Vector[MiniJavaNode]) ==> Option[I]
     ) : Option[I] =
         for (
-            uri <- position.source.optName;
-            analyser <- analysers.get(uri);
+            analyser <- analysers.get(position.source);
             nodes = analyser.tree.nodes;
             relevantNodes = positions.findNodesContaining(nodes, position);
-            info <- f((uri, analyser, relevantNodes))
+            info <- f((position.source.name, analyser, relevantNodes))
         ) yield info
 
     /**
@@ -90,8 +89,7 @@ trait Server {
      */
     override def getFormatted(source : Source) : Option[String] =
         for (
-            name <- source.optName;
-            analyser <- analysers.get(name);
+            analyser <- analysers.get(source);
             formatted = format(analyser.tree.root).layout
         ) yield formatted
 
@@ -178,8 +176,7 @@ trait Server {
      */
     override def getSymbols(source : Source) : Option[Vector[DocumentSymbol]] =
         for (
-            name <- source.optName;
-            analyser <- analysers.get(name);
+            analyser <- analysers.get(source);
             nodes = analyser.tree.nodes;
             idndefs = nodes.collect { case n : IdnDef => n };
             symbols = for (

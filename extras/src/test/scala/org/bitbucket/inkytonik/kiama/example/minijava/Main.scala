@@ -43,8 +43,7 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
      * successful run.
      */
     override def makeast(source : Source, config : Config) : Either[Program, Messages] = {
-        if (source.optName.isDefined)
-            analysers -= source.optName.get
+        analysers -= source
         super.makeast(source, config)
     }
 
@@ -69,15 +68,13 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
 
         // Save for server use, clearing out previous position information
         // Other semantic information should go via the analyser replacement
-        if (source.optName.isDefined) {
-            analysers.get(source.optName.get) match {
-                case Some(prevAnalyser) =>
-                    positions.resetAllAt(prevAnalyser.tree.nodes)
-                case _ =>
-                // Do nothing
-            }
-            analysers(source.optName.get) = analyser
+        analysers.get(source) match {
+            case Some(prevAnalyser) =>
+                positions.resetAllAt(prevAnalyser.tree.nodes)
+            case _ =>
+            // Do nothing
         }
+        analysers(source) = analyser
 
         // Publish the outline and name analysis products
         if (config.server()) {
@@ -97,8 +94,7 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
             val translator = new Translator(tree)
 
             // Translate the source tree to JVM
-            val filename = source.optName.getOrElse("")
-            val targettree = translator.translate(ast, filename, analyser)
+            val targettree = translator.translate(ast, source.name, analyser)
 
             // Debugging output of target tree
             if (config.server() || config.debug()) {

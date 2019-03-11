@@ -24,7 +24,7 @@ case class Position(line : Int, column : Int, source : Source) {
      * by column.
      */
     lazy val format : String = {
-        val name = source.optName.map(_ + ":").getOrElse("")
+        val name = if (source.name == "") "" else s"${source.name}:"
         s"$name$line:$column:"
     }
 
