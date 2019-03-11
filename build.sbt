@@ -210,7 +210,7 @@ lazy val extras =
                 // Command-line handling:
                 "org.rogach" %% "scallop" % "3.1.3",
                 // Language server protocol:
-                "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.6.0",
+                "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.7.0",
                 "com.google.code.gson" % "gson" % "2.8.5",
                 // REPLs:
                 "jline" % "jline" % "2.14.6"
