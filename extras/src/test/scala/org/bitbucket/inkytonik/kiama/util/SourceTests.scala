@@ -17,10 +17,9 @@ package util
 class SourceTests extends KiamaTests {
 
     import java.io.File.separator
-    import java.lang.System.getProperty
-    import org.bitbucket.inkytonik.kiama.util.Filenames.{dropCurrentPath, dropPrefix}
+    import org.bitbucket.inkytonik.kiama.util.Filenames.{cwd, dropCurrentPath, dropPrefix}
 
-    val currentPath = getProperty("user.dir")
+    val currentPath = cwd()
     val currentPathFile = currentPath + separator + "foo.txt"
     val currentPathBase = "foo.txt"
     val notCurrentPathFileWithSep = separator + "x" + currentPathFile
