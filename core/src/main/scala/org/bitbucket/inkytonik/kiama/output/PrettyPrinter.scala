@@ -38,7 +38,18 @@ object PrettyPrinterTypes {
      * of mappings between pretty-printed values and their printed
      * representations.
      */
-    case class Link(value : Any, range : Range)
+    sealed abstract class Link
+
+    /**
+     * Link a value to a target range. Ultimately, the source will be
+     * from the position of the value.
+     */
+    case class LinkValue(value : Any, to : Range) extends Link
+
+    /**
+     * Link a source range to a target range.
+     */
+    case class LinkRange(from : Range, to : Range) extends Link
 
     /**
      * A collection of link.s.
@@ -252,6 +263,12 @@ trait PrettyPrinterBase {
      * information in the `Document` returned when this `Doc` is pretty-printed.
      */
     def link(n : AnyRef, d : Doc) : Doc
+
+    /**
+     * Return a document that prints as `d` but also records the fact that the
+     * printed representation of `d` is linked to the range from `f` to `t`.
+     */
+    def linkRange(f : Int, t : Int, d : Doc) : Doc
 
     // Extended combinators that are implemented in terms of the basic
     // combinators and the representation-independent document operations.
@@ -884,7 +901,7 @@ trait PrettyPrinterBase {
 trait PrettyPrinter extends PrettyPrinterBase {
 
     import org.bitbucket.inkytonik.kiama.util.Trampolines.{Done, More, step, Trampoline}
-    import PrettyPrinterTypes.{Document, emptyLinks, Indent, Layout, Link, Width}
+    import PrettyPrinterTypes.{Document, emptyLinks, Indent, Layout, LinkRange, Links, LinkValue, Width}
     import scala.collection.immutable.{Queue, Seq}
     import scala.collection.immutable.Queue.{empty => emptyDq}
     import scala.collection.mutable.StringBuilder
@@ -902,14 +919,28 @@ trait PrettyPrinter extends PrettyPrinterBase {
     case class Text(s : String) extends Entry
 
     /**
-     * An output entry that indicates the finish of a document linked with `n`.
+     * An output entry that indicates the start of a document linked with
+     * the position of value `n`.
      */
     case class Start(n : AnyRef) extends Entry
 
     /**
-     * An output entry that indicates the finish of a document linked with `n`.
+     * An output entry that indicates the start of a document linked with
+     * the offset `o`.
+     */
+    case class StartOffset(o : Int) extends Entry
+
+    /**
+     * An output entry that indicates the finish of a document linked with
+     * the position of value `n`.
      */
     case class Finish(n : AnyRef) extends Entry
+
+    /**
+     * An output entry that indicates the finish of a document linked with
+     * the offset `o`.
+     */
+    case class FinishOffset(o : Int) extends Entry
 
     // As per Swierstra and Chitil with addition of trampolines
 
@@ -1137,6 +1168,9 @@ trait PrettyPrinter extends PrettyPrinterBase {
     def link(n : AnyRef, d : Doc) : Doc =
         insert(0, Start(n)) <> d <> insert(0, Finish(n))
 
+    def linkRange(f : Int, t : Int, d : Doc) : Doc =
+        insert(0, StartOffset(f)) <> d <> insert(0, FinishOffset(t))
+
     // Obtaining output
 
     def pretty(d : Doc, w : Width = defaultWidth) : Document = {
@@ -1153,18 +1187,42 @@ trait PrettyPrinter extends PrettyPrinterBase {
             } yield buffer
         val finalBuffer = finalBufferComputation.runT
 
-        val (links, _, _, stringBuilder) =
-            finalBuffer.foldLeft((emptyLinks, List[Int](), 0, new StringBuilder)) {
-                case ((m, s, p, o), e) =>
-                    e match {
-                        case Start(a) =>
-                            (m, p :: s, p, o)
-                        case Finish(a) =>
-                            (Link(a, Range(s.head, p + 1)) :: m, s.tail, p, o)
-                        case Text(t) =>
-                            (m, s, p + t.length, o.append(t))
-                    }
-            }
+        case class PPState(
+            links : Links,
+            sourceStarts : List[Int],
+            targetStarts : List[Int],
+            offset : Int,
+            layout : StringBuilder
+        )
+
+        val PPState(links, _, _, _, stringBuilder) =
+            finalBuffer.foldLeft(
+                PPState(emptyLinks, List[Int](), List[Int](), 0,
+                    new StringBuilder)
+            ) {
+                    case (PPState(x, ss, ts, o, l), e) =>
+                        e match {
+                            case Start(a) =>
+                                PPState(x, ss, o :: ts, o, l)
+                            case StartOffset(t) =>
+                                PPState(x, t :: ss, o :: ts, o, l)
+                            case Finish(a) =>
+                                PPState(
+                                    LinkValue(a, Range(ts.head, o + 1)) :: x,
+                                    ss, ts.tail, o, l
+                                )
+                            case FinishOffset(f) =>
+                                PPState(
+                                    LinkRange(
+                                        Range(ss.head, f),
+                                        Range(ts.head, o + 1)
+                                    ) :: x,
+                                    ss.tail, ts.tail, o, l
+                                )
+                            case Text(t) =>
+                                PPState(x, ss, ts, o + t.length, l.append(t))
+                        }
+                }
 
         Document(stringBuilder.result, links)
 

@@ -19,6 +19,7 @@ import org.bitbucket.inkytonik.kiama.util.KiamaTests
  */
 class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinterTests with PrettyPrinter {
 
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{LinkRange, LinkValue}
     import org.bitbucket.inkytonik.kiama.relation.Bridge
 
     test("pretty-print empty document") {
@@ -440,9 +441,32 @@ class PrettyPrinterTests extends org.bitbucket.inkytonik.kiama.util.PrettyPrinte
 
     // Position map
 
-    test("pretty-printing a doc with no linked nodes yields an empty position map") {
+    test("pretty-printing with no linked nodes yields an empty position map") {
         val d = indent("hi" <+> ("nice" <@> "world"), 2)
+        val doc = pretty(d)
+        doc.layout shouldBe "  hi nice\n  world"
         pretty(d).links.size shouldBe 0
+    }
+
+    test("pretty-printing linked values yields the correct position map") {
+        case class Foo(i : Int)
+        val a = Foo(1)
+        val b = Foo(2)
+        val d = link(a, "hi" <+> link(b, "hello") <+> "world")
+        val doc = pretty(d)
+        doc.layout shouldBe "hi hello world"
+        doc.links.size shouldBe 2
+        doc.links(0) shouldBe LinkValue(a, Range(0, 15))
+        doc.links(1) shouldBe LinkValue(b, Range(3, 9))
+    }
+
+    test("pretty-printing linked ranges yields the correct position map") {
+        val d = linkRange(0, 100, "hi" <+> linkRange(10, 20, "hello") <+> "world")
+        val doc = pretty(d)
+        doc.layout shouldBe "hi hello world"
+        doc.links.size shouldBe 2
+        doc.links(0) shouldBe LinkRange(Range(0, 100), Range(0, 15))
+        doc.links(1) shouldBe LinkRange(Range(10, 20), Range(3, 9))
     }
 
 }
