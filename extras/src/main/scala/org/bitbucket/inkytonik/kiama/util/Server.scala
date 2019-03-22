@@ -267,8 +267,14 @@ class Services[N, T <: N, C <: Config](
 ) {
 
     import java.util.concurrent.CompletableFuture
-    import org.eclipse.lsp4j.jsonrpc.CompletableFutures
+    import org.eclipse.lsp4j.jsonrpc.{CancelChecker, CompletableFutures}
     import org.eclipse.lsp4j.jsonrpc.services._
+    import scala.language.implicitConversions
+
+    implicit def toJavaFunction[U, V](f : Function1[U, V]) : java.util.function.Function[U, V] =
+        new java.util.function.Function[U, V] {
+            override def apply(t : U) : V = f(t)
+        }
 
     // Life-cycle
 
@@ -352,62 +358,66 @@ class Services[N, T <: N, C <: Config](
 
     @JsonNotification("textDocument/codeAction")
     def codeactions(params : CodeActionParams) : CompletableFuture[Array[CodeAction]] =
-        CompletableFutures.computeAsync { _ =>
-            (
-                for (
-                    position <- positionOfNotification(params.getTextDocument, params.getRange.getStart);
-                    treeActions <- server.getCodeActions(position);
-                    codeActions = treeActions.map {
-                        case server.TreeAction(name, uri, oldNode, newText) =>
-                            val indText = server.positions.indent(newText, oldNode)
-                            val textEdit = new TextEdit(server.rangeOfNode(oldNode), indText)
-                            val changes = Map(uri -> List(textEdit).asJava)
-                            val workspaceEdit = new WorkspaceEdit(changes.asJava)
-                            val action = new CodeAction(name)
-                            action.setKind(CodeActionKind.Refactor)
-                            action.setEdit(workspaceEdit)
-                            action
-                    }
-                ) yield codeActions.toArray
-            ).getOrElse(null)
-        }
+        CompletableFutures.computeAsync(
+            (_ : CancelChecker) =>
+                (
+                    for (
+                        position <- positionOfNotification(params.getTextDocument, params.getRange.getStart);
+                        treeActions <- server.getCodeActions(position);
+                        codeActions = treeActions.map {
+                            case server.TreeAction(name, uri, oldNode, newText) =>
+                                val indText = server.positions.indent(newText, oldNode)
+                                val textEdit = new TextEdit(server.rangeOfNode(oldNode), indText)
+                                val changes = Map(uri -> List(textEdit).asJava)
+                                val workspaceEdit = new WorkspaceEdit(changes.asJava)
+                                val action = new CodeAction(name)
+                                action.setKind(CodeActionKind.Refactor)
+                                action.setEdit(workspaceEdit)
+                                action
+                        }
+                    ) yield codeActions.toArray
+                ).getOrElse(null)
+        )
 
     @JsonNotification("textDocument/definition")
     def definition(params : TextDocumentPositionParams) : CompletableFuture[Location] =
-        CompletableFutures.computeAsync { _ =>
-            (
-                for (
-                    position <- positionOfNotification(params.getTextDocument, params.getPosition);
-                    definition <- server.getDefinition(position);
-                    location = server.locationOfNode(definition)
-                ) yield location
-            ).getOrElse(null)
-        }
+        CompletableFutures.computeAsync(
+            (_ : CancelChecker) =>
+                (
+                    for (
+                        position <- positionOfNotification(params.getTextDocument, params.getPosition);
+                        definition <- server.getDefinition(position);
+                        location = server.locationOfNode(definition)
+                    ) yield location
+                ).getOrElse(null)
+        )
 
     @JsonNotification("textDocument/documentSymbol")
     def symbols(params : DocumentSymbolParams) : CompletableFuture[Array[DocumentSymbol]] =
-        CompletableFutures.computeAsync { _ =>
-            {
-                for (
-                    source <- server.sources.get(params.getTextDocument.getUri);
-                    symbols <- server.getSymbols(source)
-                ) yield symbols.toArray
-            }.getOrElse(Array())
-        }
+        CompletableFutures.computeAsync(
+            (_ : CancelChecker) =>
+                (
+                    for (
+                        source <- server.sources.get(params.getTextDocument.getUri);
+                        symbols <- server.getSymbols(source)
+                    ) yield symbols.toArray
+                ).getOrElse(Array())
+        )
 
     @JsonNotification("textDocument/formatting")
     def formatting(params : DocumentFormattingParams) : CompletableFuture[Array[TextEdit]] =
-        CompletableFutures.computeAsync { _ =>
-            {
-                for (
-                    source <- server.sources.get(params.getTextDocument.getUri);
-                    formatted <- server.getFormatted(source);
-                    start = new LSPPosition(0, 0);
-                    finish = new LSPPosition(source.lineCount, 0);
-                    edit = new TextEdit(new LSPRange(start, finish), formatted)
-                ) yield Array(edit)
-            }.getOrElse(null)
-        }
+        CompletableFutures.computeAsync(
+            (_ : CancelChecker) =>
+                (
+                    for (
+                        source <- server.sources.get(params.getTextDocument.getUri);
+                        formatted <- server.getFormatted(source);
+                        start = new LSPPosition(0, 0);
+                        finish = new LSPPosition(source.lineCount, 0);
+                        edit = new TextEdit(new LSPRange(start, finish), formatted)
+                    ) yield Array(edit)
+                ).getOrElse(null)
+        )
 
     def hoverMarkup(markdown : String) : Hover = {
         val markup = new MarkupContent()
@@ -418,26 +428,28 @@ class Services[N, T <: N, C <: Config](
 
     @JsonNotification("textDocument/hover")
     def hover(params : TextDocumentPositionParams) : CompletableFuture[Hover] =
-        CompletableFutures.computeAsync { _ =>
-            (
-                for (
-                    position <- positionOfNotification(params.getTextDocument, params.getPosition);
-                    markdown <- server.getHover(position)
-                ) yield hoverMarkup(markdown)
-            ).getOrElse(null)
-        }
+        CompletableFutures.computeAsync(
+            (_ : CancelChecker) =>
+                (
+                    for (
+                        position <- positionOfNotification(params.getTextDocument, params.getPosition);
+                        markdown <- server.getHover(position)
+                    ) yield hoverMarkup(markdown)
+                ).getOrElse(null)
+        )
 
     @JsonNotification("textDocument/references")
     def references(params : ReferenceParams) : CompletableFuture[Array[Location]] =
-        CompletableFutures.computeAsync { _ =>
-            (
-                for (
-                    position <- positionOfNotification(params.getTextDocument, params.getPosition);
-                    references <- server.getReferences(position, params.getContext.isIncludeDeclaration);
-                    locations = references.map(server.locationOfNode(_))
-                ) yield locations.toArray
-            ).getOrElse(null)
-        }
+        CompletableFutures.computeAsync(
+            (_ : CancelChecker) =>
+                (
+                    for (
+                        position <- positionOfNotification(params.getTextDocument, params.getPosition);
+                        references <- server.getReferences(position, params.getContext.isIncludeDeclaration);
+                        locations = references.map(server.locationOfNode(_))
+                    ) yield locations.toArray
+                ).getOrElse(null)
+        )
 
     // Workspace services
 
