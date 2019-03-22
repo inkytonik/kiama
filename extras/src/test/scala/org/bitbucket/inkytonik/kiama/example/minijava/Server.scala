@@ -376,22 +376,22 @@ trait Server {
     // Monto product publishing
 
     def publishTargetProduct(source : Source, document : => Document = emptyDocument) {
-        if (setting("showTarget"))
+        if (settingBool("showTarget"))
             publishProduct(source, "target", "jasmin", document)
     }
 
     def publishTargetTreeProduct(source : Source, document : => Document = emptyDocument) {
-        if (setting("showTargetTree"))
+        if (settingBool("showTargetTree"))
             publishProduct(source, "targettree", "scala", document)
     }
 
     def publishOutlineProduct(source : Source, document : => Document = emptyDocument) {
-        if (setting("showOutline"))
+        if (settingBool("showOutline"))
             publishProduct(source, "outline", "minijava", document)
     }
 
     def publishNameProduct(source : Source, document : => Document = emptyDocument) {
-        if (setting("showNameAnalysisStructure"))
+        if (settingBool("showNameAnalysisStructure"))
             publishProduct(source, "name", "minijava", document)
     }
 

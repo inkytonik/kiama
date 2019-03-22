@@ -26,7 +26,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     import java.io.PrintWriter
     import java.lang.System.{in, out}
     import java.util.Collections
-    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, Link}
+    import org.bitbucket.inkytonik.kiama.output.PrettyPrinterTypes.{Document, emptyDocument, LinkRange, LinkValue}
     import org.bitbucket.inkytonik.kiama.util.Messaging.Messages
     import org.bitbucket.inkytonik.kiama.util.Severities._
     import org.eclipse.lsp4j.jsonrpc.Launcher
@@ -54,7 +54,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
         setSettings(settings.asInstanceOf[JsonElement].getAsJsonObject)
     }
 
-    def setting(key : String, default : Boolean = false) : Boolean = {
+    def setting[V](key : String, get : JsonElement => V, default : V) : V =
         if (settings == null)
             default
         else {
@@ -62,9 +62,17 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
             if (value == null)
                 default
             else
-                value.getAsBoolean
+                get(value)
         }
-    }
+
+    def settingBool(key : String, default : Boolean = false) : Boolean =
+        setting(key, _.getAsBoolean, default)
+
+    def settingInt(key : String, default : Int = 0) : Int =
+        setting(key, _.getAsInt, default)
+
+    def settingStr(key : String, default : String = "") : String =
+        setting(key, _.getAsString, default)
 
     // Launching
 
@@ -111,18 +119,19 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     def publishMessages(messages : Messages) {
         val groups = messages.groupBy(messaging.name(_).getOrElse(""))
-        for ((uri, msgs) <- groups) {
-            publishDiagnostics(uri, msgs.map(messageToDiagnostic))
+        for ((name, msgs) <- groups) {
+            publishDiagnostics(name, msgs.map(messageToDiagnostic))
         }
     }
 
-    def publishDiagnostics(uri : String, diagnostics : Vector[Diagnostic]) {
+    def publishDiagnostics(name : String, diagnostics : Vector[Diagnostic]) {
+        val uri = if (name startsWith "file://") name else s"file://$name"
         val params = new PublishDiagnosticsParams(uri, diagnostics.asJava)
         client.publishDiagnostics(params)
     }
 
-    def clearDiagnostics(uri : String) {
-        publishDiagnostics(uri, Vector())
+    def clearDiagnostics(name : String) {
+        publishDiagnostics(name, Vector())
     }
 
     def messageToDiagnostic(message : Message) : Diagnostic = {
@@ -158,16 +167,25 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     )
 
     def publishProduct(
-        source : Source, name : String, language : String, document : Document
+        source : Source, name : String, language : String,
+        document : Document = emptyDocument,
+        append : Boolean = false
     ) {
-        val uri = source.name
+        val uri = s"file://${source.name}"
         val content = document.layout
         val pairs = positionsOfDocument(document)
         val rangeMap = sortBySourceRangeSize(pairsToMap(pairs, pairToSourceRange, pairToTargetRange))
         val rangeMapRev = sortBySourceRangeSize(pairsToMap(pairs, pairToTargetRange, pairToSourceRange))
         client.publishProduct(
-            Product(uri, name, language, content, rangeMap, rangeMapRev)
+            Product(uri, name, language, content, append, rangeMap, rangeMapRev)
         )
+    }
+
+    def publishProductStr(
+        source : Source, name : String, language : String,
+        message : String = "", append : Boolean = false
+    ) {
+        publishProduct(source, name, language, Document(message, Nil), append)
     }
 
     def sortBySourceRangeSize(pairs : Array[RangeEntry]) : Array[RangeEntry] =
@@ -194,7 +212,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     def positionsOfDocument(document : Document) : List[RangePair] =
         document.links.flatMap {
-            case Link(n, r) =>
+            case LinkValue(n, r) =>
                 val start = positions.getStart(n)
                 val finish = positions.getFinish(n)
                 positionOfStartFinish(start, finish) match {
@@ -203,6 +221,8 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
                     case None =>
                         None
                 }
+            case LinkRange(f, t) =>
+                Some(RangePair(f.start, f.end, t.start, t.end))
         }
 
     def positionOfStartFinish(optStart : Option[Position], optFinish : Option[Position]) : Option[(Int, Int)] =
@@ -303,7 +323,7 @@ class Services[N, T <: N, C <: Config](
 
     @JsonNotification("textDocument/didChange")
     def didChange(params : DidChangeTextDocumentParams) {
-        if (server.setting("updateOnChange")) {
+        if (server.settingBool("updateOnChange")) {
             process(params.getTextDocument.getUri, params.getContentChanges.get(0).getText)
         }
     }

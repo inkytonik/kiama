@@ -18,6 +18,7 @@ case class Product(
     name : String,
     language : String,
     content : String,
+    append : Boolean,
     rangeMap : Array[RangeEntry],
     rangeMapRev : Array[RangeEntry]
 )
