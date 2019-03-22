@@ -48,7 +48,18 @@ object Filenames {
      * if it occurs as a prefix of the given filename.
      */
     def dropCurrentPath(filename : String) : String =
-        dropPrefix(filename, getProperty("user.dir"))
+        dropPrefix(filename, cwd())
+
+    /**
+     * Return a simplified filename where any directory part has been dropped.
+     */
+    def dropDirectory(filename : String) : String =
+        filename.lastIndexOf(separatorChar) match {
+            case -1 =>
+                filename
+            case index =>
+                filename.substring(index + 1)
+        }
 
     /**
      * Return a temporaray file name based on the current time. Append the
@@ -57,8 +68,27 @@ object Filenames {
     def makeTempFilename(suffix : String = "") : String = {
         import scala.compat.Platform.currentTime
 
-        val tmpDir = System.getProperty("java.io.tmpdir")
+        val tmpDir = getProperty("java.io.tmpdir")
         s"${tmpDir}${separatorChar}kiama${currentTime}${suffix}"
     }
+
+    /**
+     * Replace the extension of a filename with a new extension. E.g.
+     * if the new extension is ".ll" and the filename is "foo.c", you
+     * get "foo.ll". If the filename has no extension then the new
+     * extension is just appended.
+     */
+    def replaceExtension(filename : String, newext : String) : String = {
+        (if (filename.lastIndexOf(".") >= 0)
+            filename.substring(0, filename.lastIndexOf('.'))
+        else
+            filename) + newext
+    }
+
+    /**
+     * Return the current working directory.
+     */
+    def cwd() : String =
+        getProperty("user.dir")
 
 }
