@@ -25,6 +25,8 @@ object IO {
         OutputStreamWriter,
         StringReader
     }
+    import java.nio.file.Files.deleteIfExists
+    import java.nio.file.Paths.get
 
     /**
      * Return a new buffered reader on the file with the given name.
@@ -58,5 +60,21 @@ object IO {
      */
     def stringreader(string : String) : BufferedReader =
         new BufferedReader(new StringReader(string))
+
+    /**
+     * Createa a file with the given filename and content.
+     */
+    def createFile(filename : String, content : String) {
+        val writer = filewriter(filename)
+        writer.write(content)
+        writer.close()
+    }
+
+    /**
+     * Delete the file with the given filename.
+     */
+    def deleteFile(filename : String) {
+        deleteIfExists(get(filename))
+    }
 
 }
