@@ -22,7 +22,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     this : CompilerBase[N, T, C] =>
 
-    import com.google.gson.{JsonElement, JsonObject}
+    import com.google.gson.{JsonArray, JsonElement, JsonObject}
     import java.io.PrintWriter
     import java.lang.System.{in, out}
     import java.util.Collections
@@ -73,6 +73,9 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     def settingStr(key : String, default : String = "") : String =
         setting(key, _.getAsString, default)
+
+    def settingArray(key : String, default : JsonArray = new JsonArray()) : JsonArray =
+        setting(key, _.getAsJsonArray, default)
 
     // Launching
 
