@@ -4,12 +4,12 @@ import scalariform.formatter.preferences._
 
 // Settings for entire build
 
-ThisBuild/version := "2.2.0"
+ThisBuild/version := "2.2.1"
 
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
-ThisBuild/scalaVersion := "2.12.5"
-ThisBuild/crossScalaVersions := Seq ("2.12.5", "2.11.12", "2.10.7")
+ThisBuild/scalaVersion := "2.12.8"
+ThisBuild/crossScalaVersions := Seq ("2.12.8", "2.11.12", "2.10.7")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -26,7 +26,7 @@ ThisBuild/scalacOptions := {
         "-sourcepath", baseDirectory.value.getAbsolutePath,
         "-unchecked",
         "-Xcheckinit",
-        "-Xfatal-warnings",
+        // "-Xfatal-warnings",
         lintOption
     )
 }
@@ -55,8 +55,8 @@ val commonSettings =
     Seq(
         libraryDependencies :=
             Seq(
-                "org.scalacheck" %% "scalacheck" % "1.13.5" % "test",
-                "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+                "org.scalacheck" %% "scalacheck" % "1.14.0" % "test",
+                "org.scalatest" %% "scalatest" % "3.0.7" % "test"
             ),
 
         // Formatting
@@ -135,7 +135,7 @@ def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
             "0.4.0"
     Seq(
         // Caching:
-        "com.google.guava" % "guava" % "24.1-jre",
+        "com.google.guava" % "guava" % "27.1-jre",
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
@@ -184,7 +184,7 @@ lazy val core =
         Test/doc := (TestScalaUnidoc/doc).value,
         ScalaUnidoc/unidoc/target := crossTarget.value / "api",
         TestScalaUnidoc/unidoc/target := crossTarget.value / "test-api",
-        ScalaUnidoc/unidoc/scalacOptions ++=    
+        ScalaUnidoc/unidoc/scalacOptions ++=
             Seq(
                 if (scalaVersion.value.startsWith("2.10"))
                     "-Ymacro-no-expand"
@@ -208,7 +208,7 @@ lazy val extras =
         libraryDependencies ++=
             Seq(
                 // Command-line handling:
-                "org.rogach" %% "scallop" % "3.1.2",
+                "org.rogach" %% "scallop" % "3.2.0",
                 // REPLs:
                 "jline" % "jline" % "2.14.6"
             ),
