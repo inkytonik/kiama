@@ -21,6 +21,7 @@ https://www.comp.mq.edu.au/~asloane
 
 ## Latest News
 
+ * Apr 26, 2019: Version 2.2.1 released
  * Jun 23, 2018: Move Kiama source repo to Git
  * Apr 11, 2018: Version 2.2.0 released
  * Jun 19, 2017: Version 2.1.0 released
