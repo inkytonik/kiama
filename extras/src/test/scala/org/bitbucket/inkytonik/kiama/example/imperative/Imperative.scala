@@ -15,8 +15,8 @@ import ImperativeTree.Stmt
 import org.bitbucket.inkytonik.kiama.util.ParsingREPL
 
 /**
- * A read-eval-print loop for parsing imperative programs and printing thei
- * abstract synax trees.
+ * A read-eval-print loop for parsing imperative programs and printing their
+ * abstract syntax trees.
  */
 class ImperativeDriver extends ParsingREPL[Stmt] {
 
