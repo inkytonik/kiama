@@ -121,6 +121,36 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
         else
             s
 
+    /*
+        * Make a single file test processing using the command-line `args`,
+        * expecting output as in the file `rp`.  The `extra` string is appended
+        * to the normal test title. `name` is an identifying string used in
+        * messages. If the compilation fails, `rp` is assumed to contain the
+        * expected messages. `rt` is a version of `rp` to use in the test title.
+        */
+    def filetest(name : String, path : String, rp : String, args : Seq[String], rt : String,
+        extra : String = "") {
+        val ct = args.mkString(" ").replaceAllLiterally(path + "/", "")
+        val title = s"$name: $ct, expecting $rt$extra"
+        test(title) {
+            createAndInitConfig("--Koutput" +: "string" +: args) match {
+                case Left(message) =>
+                    fail(message)
+                case Right(config) =>
+                    try {
+                        testdriver(config)
+                    } catch {
+                        case e : Exception =>
+                            info("failed with an exception ")
+                            throw (e)
+                    }
+                    val cc = config.stringEmitter.result
+                    val rc = Source.fromFile(rp).mkString
+                    sanitise(cc) shouldBe sanitise(rc)
+            }
+        }
+    }
+
     /**
      * Make tests that process the files in relPath which is relative to the
      * top of the Kiama library test sources. `name` is an identifying
@@ -145,36 +175,6 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
         val basePath = "src/test/scala/org/bitbucket/inkytonik/kiama/"
         val base = new File(basePath)
         val path = if (base.exists) basePath + relPath else relPath
-
-        /*
-         * Make a single file test processing using the command-line `args`,
-         * expecting output as in the file `rp`.  The `extra` string is appended
-         * to the normal test title. `name` is an identifying string used in
-         * messages. If the compilation fails, `rp` is assumed to contain the
-         * expected messages. `rt` is a version of `rp` to use in the test title.
-         */
-        def filetest(name : String, rp : String, args : Seq[String], rt : String,
-            extra : String = "") {
-            val ct = args.mkString(" ").replaceAllLiterally(path + "/", "")
-            val title = s"$name: $ct, expecting $rt$extra"
-            test(title) {
-                createAndInitConfig("--Koutput" +: "string" +: args) match {
-                    case Left(message) =>
-                        fail(message)
-                    case Right(config) =>
-                        try {
-                            testdriver(config)
-                        } catch {
-                            case e : Exception =>
-                                info("failed with an exception ")
-                                throw (e)
-                        }
-                        val cc = config.stringEmitter.result
-                        val rc = Source.fromFile(rp).mkString
-                        sanitise(cc) shouldBe sanitise(rc)
-                }
-            }
-        }
 
         /*
          * Make a set of file tests to produce the result files in `dir`.  For
@@ -203,7 +203,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
                         (Vector("--Kconsole", "file", ip), s" from input $it")
                     else
                         (Vector("--Kconsole", "string", indefault), s" from string '$indefault'")
-                filetest(name, rp, consoleArgs ++ args :+ "--" :+ cp, r, msg)
+                filetest(name, path, rp, consoleArgs ++ args :+ "--" :+ cp, r, msg)
             }
         }
 
@@ -222,7 +222,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
                                 val cp = s"$path/$c"
                                 val rt = c.replace(srcext, resext)
                                 val rp = s"$path/$rt"
-                                filetest(name, rp, args :+ "--" :+ cp, rt)
+                                filetest(name, path, rp, args :+ "--" :+ cp, rt)
                         }
                     }
                 }
