@@ -557,7 +557,7 @@ trait PrettyPrinterBase {
 
     /**
      * Return a document that is like `d` but whose second and subsequent lines
-     * have hanging indentation of `i` spaces (defaults to the deafult indentation).
+     * have hanging indentation of `i` spaces (defaults to the default indentation).
      * In other words, the first line is indented at the current nesting level
      * and the remaining lines are indented `i` spaces more.
      */
