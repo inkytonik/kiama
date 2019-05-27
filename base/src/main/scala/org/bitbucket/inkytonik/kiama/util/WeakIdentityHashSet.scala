@@ -26,14 +26,14 @@ class WeakIdentityHashSet[T] {
     /**
      * Add the value `t` to the set.
      */
-    def add(t : T) {
+    def add(t : T) : Unit = {
         cache.put(t, ())
     }
 
     /**
      * Remove all entries from the set.
      */
-    def clear() {
+    def clear() : Unit = {
         cache.reset()
     }
 
@@ -46,7 +46,7 @@ class WeakIdentityHashSet[T] {
     /**
      * Remove the value `t` from the set if it is a member.
      */
-    def remove(t : T) {
+    def remove(t : T) : Unit = {
         cache.resetAt(t)
     }
 

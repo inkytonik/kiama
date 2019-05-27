@@ -19,22 +19,22 @@ abstract class Emitter {
     /**
      * Emit `any`.
      */
-    def emit(any : Any)
+    def emit(any : Any) : Unit
 
     /**
      * Emit `any` and start a new line.
      */
-    def emitln(any : Any)
+    def emitln(any : Any) : Unit
 
     /**
      * Emit a new line.
      */
-    def emitln()
+    def emitln() : Unit
 
     /**
      * Close this emitter. Default: do nothing.
      */
-    def close() {
+    def close() : Unit = {
     }
 
 }
@@ -49,21 +49,21 @@ class OutputEmitter extends Emitter {
     /**
      * Emit `any`.
      */
-    def emit(any : Any) {
+    def emit(any : Any) : Unit = {
         print(any.toString)
     }
 
     /**
      * Emit `any` and start a new line.
      */
-    def emitln(any : Any) {
+    def emitln(any : Any) : Unit = {
         println(any.toString)
     }
 
     /**
      * Emit a new line.
      */
-    def emitln() {
+    def emitln() : Unit = {
         println
     }
 
@@ -75,10 +75,10 @@ class OutputEmitter extends Emitter {
  */
 class StringEmitter extends Emitter {
     val b = new StringBuilder
-    override def emit(any : Any) { b.append(any.toString) }
-    override def emitln(any : Any) { b.append(any.toString).append('\n') }
-    override def emitln() { b.append('\n') }
-    def clear() { b.clear }
+    override def emit(any : Any) : Unit = { b.append(any.toString) }
+    override def emitln(any : Any) : Unit = { b.append(any.toString).append('\n') }
+    override def emitln() : Unit = { b.append('\n') }
+    def clear() : Unit = { b.clear }
     def result() : String = b.result
 }
 
@@ -89,7 +89,7 @@ class StringEmitter extends Emitter {
 class FileEmitter(filename : String) extends StringEmitter {
     import org.bitbucket.inkytonik.kiama.util.IO.filewriter
 
-    override def close() {
+    override def close() : Unit = {
         val out = filewriter(filename)
         out.write(result())
         out.close()

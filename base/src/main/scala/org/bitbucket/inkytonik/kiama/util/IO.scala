@@ -64,7 +64,7 @@ object IO {
     /**
      * Createa a file with the given filename and content.
      */
-    def createFile(filename : String, content : String) {
+    def createFile(filename : String, content : String) : Unit = {
         val writer = filewriter(filename)
         writer.write(content)
         writer.close()
@@ -73,7 +73,7 @@ object IO {
     /**
      * Delete the file with the given filename.
      */
-    def deleteFile(filename : String) {
+    def deleteFile(filename : String) : Unit = {
         deleteIfExists(get(filename))
     }
 

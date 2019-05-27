@@ -59,7 +59,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * with it, set the value associated with `t2` to the same value. If there
      * is no value associated with `t1`, do nothing.
      */
-    def dup(t1 : T, t2 : T) {
+    def dup(t1 : T, t2 : T) : Unit = {
         val u = map.get(t1)
         if (u != null)
             put(t2, u)
@@ -105,7 +105,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
     /**
      * Store the value `u` under the key `t`.
      */
-    def put(t : T, u : U) {
+    def put(t : T, u : U) : Unit = {
         map.put(t, u)
     }
 
@@ -113,21 +113,21 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * Store the value `u` under the key `t` if `t` does not already have an
      * associated value.
      */
-    def putIfAbsent(t : T, u : U) {
+    def putIfAbsent(t : T, u : U) : Unit = {
         map.putIfAbsent(t, u)
     }
 
     /**
      * Immediately reset the memo table.
      */
-    def reset() {
+    def reset() : Unit = {
         map.clear()
     }
 
     /**
      * Immediately reset the memo table at all values in `ts`.
      */
-    def resetAllAt(ts : Seq[T]) {
+    def resetAllAt(ts : Seq[T]) : Unit = {
         for (t <- ts) {
             resetAt(t)
         }
@@ -136,7 +136,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
     /**
      * Immediately reset the memo table at `t`.
      */
-    def resetAt(t : T) {
+    def resetAt(t : T) : Unit = {
         map.remove(t)
     }
 
@@ -151,7 +151,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * is no value currently associated with `t`, associate it with `u`. `u`
      * is only evaluated if necessary.
      */
-    def updateAt(t : T, f : U => U, u : => U) {
+    def updateAt(t : T, f : U => U, u : => U) : Unit = {
         val v = map.get(t)
         if (v == null)
             put(t, u)

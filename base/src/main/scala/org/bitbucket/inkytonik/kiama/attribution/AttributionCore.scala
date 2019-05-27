@@ -81,7 +81,7 @@ trait AttributionCore extends AttributionCommon {
         /**
          * Reset the cache for this attribute.
          */
-        def reset() {
+        def reset() : Unit = {
             memo.reset()
         }
 
@@ -147,14 +147,14 @@ trait AttributionCore extends AttributionCommon {
         /**
          * Reset the cache for this attribute.
          */
-        def reset() {
+        def reset() : Unit = {
             memo.reset()
         }
 
         /**
          * Reset this attribute's cache at `t` for just parameter value `arg`.
          */
-        def resetAt(arg : A, t : T) {
+        def resetAt(arg : A, t : T) : Unit = {
             memo.resetAt(new ParamAttributeKey(arg, t))
         }
 
@@ -210,7 +210,7 @@ trait AttributionCore extends AttributionCommon {
          * Add a new partial function to the definition of this attribute.
          * Resets the memo table for this attribute.
          */
-        def +=(g : T ==> U) {
+        def +=(g : T ==> U) : Unit = {
             g +=: functions
             memo.reset()
         }
@@ -221,7 +221,7 @@ trait AttributionCore extends AttributionCommon {
          * definition, just remove the first one. Resets the memo table for this
          * attribute.
          */
-        def -=(g : T ==> U) {
+        def -=(g : T ==> U) : Unit = {
             functions -= g
             memo.reset()
         }
@@ -232,7 +232,7 @@ trait AttributionCore extends AttributionCommon {
          * definition of the attribute for use within the block. Any definitions
          * that are added will be automatically removed at the end of the block.
          */
-        def block(b : => Any) {
+        def block(b : => Any) : Unit = {
             val savedFunctions = functions.toList
             b
             functions.clear()
@@ -265,7 +265,7 @@ trait AttributionCore extends AttributionCommon {
         /**
          * Reset the circular attribute evaluation state.
          */
-        def resetState() {
+        def resetState() : Unit = {
             IN_CIRCLE = false
             CHANGE = false
             READY = false
@@ -460,7 +460,7 @@ trait AttributionCore extends AttributionCommon {
         /**
          * Immediately reset this attribute's memoisation cache.
          */
-        def reset() {
+        def reset() : Unit = {
             memo.reset()
             computed.clear()
             visited.clear()
