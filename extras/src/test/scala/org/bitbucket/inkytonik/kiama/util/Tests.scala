@@ -11,14 +11,15 @@
 package org.bitbucket.inkytonik.kiama
 package util
 
-import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, BeforeAndAfterEach, FunSuiteLike, Matchers}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, BeforeAndAfterEach, Matchers}
+import org.scalatest.funsuite.AnyFunSuiteLike
 import org.scalatest.matchers.{Matcher, MatchResult}
-import org.scalatest.prop.Checkers
+import org.scalatestplus.scalacheck.Checkers
 
 /**
  * General test support designed to be mixed in to compilers or drivers.
  */
-trait Tests extends FunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
+trait Tests extends AnyFunSuiteLike with BeforeAndAfter with BeforeAndAfterAll
     with BeforeAndAfterEach with Checkers with Matchers {
 
     import Comparison.{same, sameCollection, sameElements}

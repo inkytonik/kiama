@@ -56,7 +56,8 @@ val commonSettings =
         libraryDependencies :=
             Seq(
                 "org.scalacheck" %% "scalacheck" % "1.14.0" % "test",
-                "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+                "org.scalatest" %% "scalatest" % "3.0.8-RC4" % "test",
+                "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP6"  % "test"
             ),
 
         // Formatting
@@ -208,7 +209,7 @@ lazy val extras =
         libraryDependencies ++=
             Seq(
                 // Command-line handling:
-                "org.rogach" %% "scallop" % "3.1.3",
+                "org.rogach" %% "scallop" % "3.3.0",
                 // Language server protocol:
                 "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.7.0",
                 "com.google.code.gson" % "gson" % "2.8.5",
