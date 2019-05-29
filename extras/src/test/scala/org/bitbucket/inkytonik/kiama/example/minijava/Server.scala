@@ -77,7 +77,7 @@ trait Server {
             case (uri, analyser, nodes) =>
                 nodes.collectFirst {
                     case n : IdnTree => n
-                }.collectFirst(n =>
+                }.toList.collectFirst(n =>
                     analyser.entity(n) match {
                         case e : MiniJavaOkEntity =>
                             e.decl
@@ -138,7 +138,7 @@ trait Server {
             case (uri, analyser, nodes) =>
                 nodes.collectFirst {
                     case n : IdnTree => n
-                }.collectFirst(n =>
+                }.toList.collectFirst(n =>
                     analyser.entity(n) match {
                         case e : MiniJavaOkEntity =>
                             val uses = analyser.tree.nodes.collect {
@@ -375,22 +375,22 @@ trait Server {
 
     // Monto product publishing
 
-    def publishTargetProduct(source : Source, document : => Document = emptyDocument) {
+    def publishTargetProduct(source : Source, document : => Document = emptyDocument) : Unit = {
         if (settingBool("showTarget"))
             publishProduct(source, "target", "jasmin", document)
     }
 
-    def publishTargetTreeProduct(source : Source, document : => Document = emptyDocument) {
+    def publishTargetTreeProduct(source : Source, document : => Document = emptyDocument) : Unit = {
         if (settingBool("showTargetTree"))
             publishProduct(source, "targettree", "scala", document)
     }
 
-    def publishOutlineProduct(source : Source, document : => Document = emptyDocument) {
+    def publishOutlineProduct(source : Source, document : => Document = emptyDocument) : Unit = {
         if (settingBool("showOutline"))
             publishProduct(source, "outline", "minijava", document)
     }
 
-    def publishNameProduct(source : Source, document : => Document = emptyDocument) {
+    def publishNameProduct(source : Source, document : => Document = emptyDocument) : Unit = {
         if (settingBool("showNameAnalysisStructure"))
             publishProduct(source, "name", "minijava", document)
     }

@@ -76,11 +76,11 @@ class ErrorCheck(val tree : PicoJavaTree) extends Attribution with NameResolutio
         c
     }
 
-    def error(c : ArrayList[String], s : String) {
+    def error(c : ArrayList[String], s : String) : Unit = {
         c.add(s)
     }
 
-    def collectErrors(p : PicoJavaNode, c : ArrayList[String]) {
+    def collectErrors(p : PicoJavaNode, c : ArrayList[String]) : Unit = {
 
         // Collect error from p's children
         val children = p.productIterator

@@ -98,7 +98,7 @@ class Relation[T, U](
      * Add the pair `(t,u)` to the relation and the pair `(u,t)` to
      * its inverse.
      */
-    def put(t : T, u : U) {
+    def put(t : T, u : U) : Unit = {
         graph.updateAt(t, _ :+ u, Vector(u))
         inverseGraph.updateAt(u, _ :+ t, Vector(t))
     }
@@ -107,7 +107,7 @@ class Relation[T, U](
      * For each `u` taken from `us` add the pair `(t,u)` to the relation
      * and the pair `(u,t)` to its inverse.
      */
-    def putAll(t : T, us : Vector[U]) {
+    def putAll(t : T, us : Vector[U]) : Unit = {
         graph.updateAt(t, _ ++ us, us)
         for (u <- us)
             inverseGraph.updateAt(u, _ :+ t, Vector(t))
@@ -178,7 +178,7 @@ object Relation {
                 val next = onestep(l)
                 if (!next.isEmpty)
                     relation.putAll(l, next)
-                loop(pending.tail.enqueue(next))
+                loop(pending.tail ++ next)
             }
 
         loop(Queue(t))

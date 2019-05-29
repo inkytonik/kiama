@@ -45,7 +45,7 @@ class Driver extends CompilerWithConfig[PicoJavaNode, Program, PicojavaConfig] {
      * Process a PicoJava program by checking for errors, optionally obfuscating and
      * then printing any errors that were found.
      */
-    def process(source : Source, program : Program, config : PicojavaConfig) {
+    def process(source : Source, program : Program, config : PicojavaConfig) : Unit = {
 
         val tree = new PicoJavaTree(program)
         val analysis = new ErrorCheck(tree)

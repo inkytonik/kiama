@@ -32,13 +32,13 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrNode, ObrInt,
      * the resulting target tree.
      */
     def targettreetest(name : String, relDirname : String, obrfile : String,
-        tester : (String, Emitter, RISCNode) => Unit) {
+        tester : (String, Emitter, RISCNode) => Unit) : Unit = {
         val title = s"$name processing $obrfile"
         val dirname = "src/test/scala/org/bitbucket/inkytonik/kiama/" + relDirname
 
         test(title) {
             val filename = dirname + obrfile
-            createAndInitConfig(Array(filename)) match {
+            createAndInitConfig(Vector(filename)) match {
                 case Left(message) =>
                     fail(message)
                 case Right(config) =>
@@ -63,7 +63,7 @@ trait TreeTestDriver extends Driver with TestCompilerWithConfig[ObrNode, ObrInt,
      * Test a target tree by collecting together its IntDatum leaves and checking the resulting
      * sequence of integers to see if it contains an expected sequence of integers.
      */
-    def checkintdatums(expected : List[Int])(title : String, emitter : Emitter, code : RISCNode) {
+    def checkintdatums(expected : List[Int])(title : String, emitter : Emitter, code : RISCNode) : Unit = {
         val realised = List.newBuilder[Int]
         bottomup(attempt(query[RISCNode] {
             case IntDatum(num) =>

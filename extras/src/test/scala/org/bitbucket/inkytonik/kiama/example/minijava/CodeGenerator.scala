@@ -22,7 +22,7 @@ object CodeGenerator extends org.bitbucket.inkytonik.kiama.output.PrettyPrinter 
     /**
      * Generate the Jasmine code for a single classfile.
      */
-    def generate(isTest : Boolean, classfile : ClassFile, emitter : Emitter) {
+    def generate(isTest : Boolean, classfile : ClassFile, emitter : Emitter) : Unit = {
 
         // If it's a test use the provided emitter for output, otherwise make
         // a file emitter that is based on the the class name and use that.

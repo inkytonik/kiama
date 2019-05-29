@@ -11,18 +11,13 @@
 package org.bitbucket.inkytonik.kiama
 package rewriting
 
-import org.bitbucket.inkytonik.kiama.util.Compat210._
-
 object RewriterCoreMacros {
 
     import org.bitbucket.inkytonik.dsinfo.DSInfo.{makeCallWithName, makeThisCallWithName}
+    import org.bitbucket.inkytonik.kiama.util.Collections.Factory
     import org.bitbucket.inkytonik.kiama.util.Emitter
-    import scala.collection.generic.CanBuildFrom
     import scala.language.higherKinds
     import scala.reflect.macros._
-
-    // Avoid unused import warning for Compat210
-    val used = dummy
 
     // Macros for the builder methods
 
@@ -252,10 +247,10 @@ object RewriterCoreMacros {
 
     // Queries
 
-    def collectMacro[CC[X] <: Traversable[X], U](c : blackbox.Context)(f : c.Expr[Any ==> U])(cbf : c.Expr[CanBuildFrom[CC[Any], U, CC[U]]]) : c.Expr[Any => CC[U]] =
+    def collectMacro[CC[X] <: Iterable[X], U](c : blackbox.Context)(f : c.Expr[Any ==> U])(cbf : c.Expr[Factory[U, CC[U]]]) : c.Expr[Any => CC[U]] =
         makeCallWithName(c, "this.collectWithName")
 
-    def collectallMacro[CC[X] <: Traversable[X], U](c : blackbox.Context)(f : c.Expr[Any ==> CC[U]])(cbf : c.Expr[CanBuildFrom[CC[Any], U, CC[U]]]) : c.Expr[Any => CC[U]] =
+    def collectallMacro[CC[X] <: Iterable[X], U](c : blackbox.Context)(f : c.Expr[Any ==> CC[U]])(cbf : c.Expr[Factory[U, CC[U]]]) : c.Expr[Any => CC[U]] =
         makeCallWithName(c, "this.collectallWithName")
 
     def countMacro(c : blackbox.Context)(f : c.Expr[Any ==> Int]) : c.Expr[Any => Int] =

@@ -172,7 +172,7 @@ object MiniJavaTree {
      * An assignment of the value of the `exp` expression to the array element
      * of the named array whose index is given by the `ind` expression.
      */
-    case class ArrayAssign(name : IdnUse, ind : Expression,
+    case class ArrayAssign(arr : IdnExp, ind : Expression,
         exp : Expression) extends Statement
 
     /**

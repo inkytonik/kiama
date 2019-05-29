@@ -11,8 +11,8 @@
 package org.bitbucket.inkytonik.kiama
 package util
 
+import org.bitbucket.inkytonik.kiama.util.Collections.{mapToJavaMap, seqToJavaList}
 import org.eclipse.lsp4j.{Position => LSPPosition, Range => LSPRange, _}
-import scala.collection.JavaConverters._
 
 /**
  * A language server that is mixed with a compiler that provide the basis
@@ -35,7 +35,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     private[this] var client : Client = _
 
-    def connect(aClient : Client) {
+    def connect(aClient : Client) : Unit = {
         client = aClient
     }
 
@@ -46,11 +46,11 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     def settings() : JsonObject =
         _settings
 
-    def setSettings(settings : JsonObject) {
+    def setSettings(settings : JsonObject) : Unit = {
         _settings = settings
     }
 
-    def setSettings(settings : Object) {
+    def setSettings(settings : Object) : Unit = {
         setSettings(settings.asInstanceOf[JsonElement].getAsJsonObject)
     }
 
@@ -79,7 +79,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     // Launching
 
-    def launch(config : C) {
+    def launch(config : C) : Unit = {
         val services = new Services(this, config)
         val launcherBase =
             new Launcher.Builder[Client]()
@@ -102,17 +102,17 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     // User messages
 
-    def showMessage(tipe : MessageType, msg : String) {
+    def showMessage(tipe : MessageType, msg : String) : Unit = {
         client.showMessage(new MessageParams(tipe, msg))
     }
 
-    def logMessage(msg : String) {
+    def logMessage(msg : String) : Unit = {
         client.logMessage(new MessageParams(MessageType.Log, msg))
     }
 
     // Dynamic capabilities
 
-    def registerCapability(id : String, method : String, options : Object) {
+    def registerCapability(id : String, method : String, options : Object) : Unit = {
         val registration = new Registration(id, method, options)
         val params = new RegistrationParams(Collections.singletonList(registration))
         client.registerCapability(params)
@@ -120,20 +120,20 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
 
     // Diagnostics
 
-    def publishMessages(messages : Messages) {
+    def publishMessages(messages : Messages) : Unit = {
         val groups = messages.groupBy(messaging.name(_).getOrElse(""))
         for ((name, msgs) <- groups) {
             publishDiagnostics(name, msgs.map(messageToDiagnostic))
         }
     }
 
-    def publishDiagnostics(name : String, diagnostics : Vector[Diagnostic]) {
+    def publishDiagnostics(name : String, diagnostics : Vector[Diagnostic]) : Unit = {
         val uri = if (name startsWith "file://") name else s"file://$name"
-        val params = new PublishDiagnosticsParams(uri, diagnostics.asJava)
+        val params = new PublishDiagnosticsParams(uri, seqToJavaList(diagnostics))
         client.publishDiagnostics(params)
     }
 
-    def clearDiagnostics(name : String) {
+    def clearDiagnostics(name : String) : Unit = {
         publishDiagnostics(name, Vector())
     }
 
@@ -173,7 +173,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
         source : Source, name : String, language : String,
         document : Document = emptyDocument,
         append : Boolean = false
-    ) {
+    ) : Unit = {
         val uri = s"file://${source.name}"
         val content = document.layout
         val pairs = positionsOfDocument(document)
@@ -187,7 +187,7 @@ trait ServerWithConfig[N, T <: N, C <: Config] {
     def publishProductStr(
         source : Source, name : String, language : String,
         message : String = "", append : Boolean = false
-    ) {
+    ) : Unit = {
         publishProduct(source, name, language, Document(message, Nil), append)
     }
 
@@ -303,14 +303,14 @@ class Services[N, T <: N, C <: Config](
         }
 
     @JsonNotification("initialized")
-    def initialized(params : InitializedParams) {
+    def initialized(params : InitializedParams) : Unit = {
         val saveOptions = new TextDocumentSaveRegistrationOptions()
         saveOptions.setIncludeText(true)
         server.registerCapability("kiama/textDocument/didSave", "textDocument/didSave", saveOptions)
     }
 
     @JsonNotification("exit")
-    def exit() {
+    def exit() : Unit = {
         sys.exit(exitStatus)
     }
 
@@ -325,29 +325,29 @@ class Services[N, T <: N, C <: Config](
     // Basic text document processing
 
     @JsonNotification("textDocument/didOpen")
-    def didOpen(params : DidOpenTextDocumentParams) {
+    def didOpen(params : DidOpenTextDocumentParams) : Unit = {
         val document = params.getTextDocument
         process(document.getUri, document.getText)
     }
 
     @JsonNotification("textDocument/didChange")
-    def didChange(params : DidChangeTextDocumentParams) {
+    def didChange(params : DidChangeTextDocumentParams) : Unit = {
         if (server.settingBool("updateOnChange")) {
             process(params.getTextDocument.getUri, params.getContentChanges.get(0).getText)
         }
     }
 
     @JsonNotification("textDocument/didSave")
-    def didSave(params : DidSaveTextDocumentParams) {
+    def didSave(params : DidSaveTextDocumentParams) : Unit = {
         process(params.getTextDocument.getUri, params.getText)
     }
 
     @JsonNotification("textDocument/didClose")
-    def didClose(params : DidCloseTextDocumentParams) {
+    def didClose(params : DidCloseTextDocumentParams) : Unit = {
         server.clearDiagnostics(params.getTextDocument.getUri)
     }
 
-    def process(uri : String, text : String) {
+    def process(uri : String, text : String) : Unit = {
         server.clearDiagnostics(uri)
         server.compileString(uri, text, config)
     }
@@ -371,8 +371,8 @@ class Services[N, T <: N, C <: Config](
                             case server.TreeAction(name, uri, oldNode, newText) =>
                                 val indText = server.positions.indent(newText, oldNode)
                                 val textEdit = new TextEdit(server.rangeOfNode(oldNode), indText)
-                                val changes = Map(uri -> List(textEdit).asJava)
-                                val workspaceEdit = new WorkspaceEdit(changes.asJava)
+                                val changes = Map(uri -> seqToJavaList(List(textEdit)))
+                                val workspaceEdit = new WorkspaceEdit(mapToJavaMap(changes))
                                 val action = new CodeAction(name)
                                 action.setKind(CodeActionKind.Refactor)
                                 action.setEdit(workspaceEdit)
@@ -457,14 +457,14 @@ class Services[N, T <: N, C <: Config](
     // Workspace services
 
     @JsonNotification("workspace/didChangeConfiguration")
-    def didChangeConfiguration(params : DidChangeConfigurationParams) {
+    def didChangeConfiguration(params : DidChangeConfigurationParams) : Unit = {
         server.setSettings(params.getSettings)
     }
 
     // Missing services not supported by LSP4J but sent by client side
 
     @JsonNotification("$/setTraceNotification")
-    def setTrace(params : SetTraceNotificationParams) {
+    def setTrace(params : SetTraceNotificationParams) : Unit = {
         // Do nothing
     }
 

@@ -33,7 +33,7 @@ class ImperativeDriver extends ParsingREPL[Stmt] {
         parsers.parseAll(parsers.stmt, source)
     }
 
-    def process(source : Source, s : Stmt, config : REPLConfig) {
+    def process(source : Source, s : Stmt, config : REPLConfig) : Unit = {
         config.output().emitln(s)
         config.output().emitln(format(s).layout)
     }

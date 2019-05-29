@@ -61,17 +61,11 @@ object RewriterTests {
 /**
  * Rewriting tests.
  */
-class RewriterTests extends KiamaTests with Generator {
+class RewriterTests(val rewriter : Rewriter) extends KiamaTests with Generator {
 
     import org.bitbucket.inkytonik.kiama.example.imperative.ImperativeTree._
     import org.bitbucket.inkytonik.kiama.util.Comparison.optsame
     import RewriterTests._
-
-    /**
-     * The rewriter which is being tested.
-     */
-    val rewriter : Rewriter = Rewriter
-
     import rewriter.{fail => rwfail, test => rwtest, _}
 
     test("basic arithmetic evaluation") {
@@ -744,7 +738,7 @@ class RewriterTests extends KiamaTests with Generator {
 
     def travtest(basemsg : String, testmsg : String,
         eval : => Option[Any], expected : => Option[Any],
-        expecting : Expecting = Equal) {
+        expecting : Expecting = Equal) : Unit = {
         val msg = s"$basemsg - $testmsg, $expecting"
         test(msg) {
             expecting match {
@@ -1288,22 +1282,6 @@ class RewriterTests extends KiamaTests with Generator {
         test("a dup of a node with multiple children dups") {
             val u = dup(t, Array(Num(3), Num(4)))
             u shouldBe Add(Num(3), Num(4))
-            u should not(be theSameInstanceAs t)
-        }
-    }
-
-    {
-        val t = List(Var("i"), Num(1))
-
-        test("a copy of a non-empty sequence copies") {
-            val u = copy(t)
-            u shouldBe t
-            u should not(be theSameInstanceAs t)
-        }
-
-        test("a dup of a non-empty sequence dups") {
-            val u = dup(t, Array(Var("j"), List(Num(2))))
-            u shouldBe List(Var("j"), Num(2))
             u should not(be theSameInstanceAs t)
         }
     }

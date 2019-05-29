@@ -24,7 +24,7 @@ trait ParsingMain extends Compiler[TilNode, Program] {
 
     val name = "til"
 
-    def process(source : Source, ast : Program, config : Config) {
+    def process(source : Source, ast : Program, config : Config) : Unit = {
         config.output().emitln(ast)
     }
 
@@ -40,7 +40,7 @@ trait TransformingMain extends ParsingMain {
 
     def transform(ast : Program) : Program
 
-    override def process(source : Source, ast : Program, config : Config) {
+    override def process(source : Source, ast : Program, config : Config) : Unit = {
         val newast = transform(ast)
         super.process(source, newast, config)
     }

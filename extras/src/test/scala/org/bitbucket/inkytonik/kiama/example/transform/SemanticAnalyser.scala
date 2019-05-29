@@ -72,10 +72,13 @@ class SemanticAnalyser(tree : TransformTree) extends Attribution {
                 e =>
                     if (prio(top_op)(e) < prio(op)(e))
                         (op :: top_op :: rest_ops, opnd)
-                    else {
-                        val o1 :: o2 :: rest = opnd
-                        eval_top((rest_ops, op, BinExp(o2, top_op, o1) :: rest))(e)
-                    }
+                    else
+                        opnd match {
+                            case o1 :: o2 :: rest =>
+                                eval_top((rest_ops, op, BinExp(o2, top_op, o1) :: rest))(e)
+                            case _ =>
+                                sys.error(s"eval_top: unexpected opnd stack contents: $opnd")
+                        }
             )
         }
 

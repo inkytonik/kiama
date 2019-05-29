@@ -62,7 +62,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
         /**
          * Make this state item undefined.
          */
-        def undefine() {
+        def undefine() : Unit = {
             _value = None
         }
 
@@ -84,7 +84,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
          * step happen simultaneously (along with consistency checking).  The
          * state value only becomes defined when this latter process happens.
          */
-        def :=(t : T) {
+        def :=(t : T) : Unit = {
             updates = new ScalarUpdate(this, t) :: updates
         }
 
@@ -92,7 +92,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
          * Change this item of state to the value `t`.  The change occurs
          * immediately.
          */
-        def change(t : T) {
+        def change(t : T) : Unit = {
             _value = Some(t)
         }
 
@@ -135,7 +135,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
          * step happen simultaneously (along with consistency checking).  The
          * state value only becomes defined when this latter process happens.
          */
-        def :=(u : U) {
+        def :=(u : U) : Unit = {
             updates = new ParamUpdate(state, t, u) :: updates
         }
 
@@ -177,10 +177,10 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
         /**
          * Make this state item undefined at `t`.
          */
-        def undefine(t : T) {
+        def undefine(t : T) : Unit = {
             _value match {
                 case None    => // Nothing to undefine
-                case Some(m) => _value = Some(m - t)
+                case Some(m) => m.remove(t)
             }
         }
 
@@ -214,7 +214,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
          * Change this item of state to the value u at parameter `t`.  The
          * change occurs immediately.
          */
-        def change(t : T, u : U) {
+        def change(t : T, u : U) : Unit = {
             _value match {
                 case None    => _value = Some(MutableMap((t, u)))
                 case Some(m) => m += ((t, u))
@@ -261,7 +261,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
         /**
          * Perform this update.
          */
-        def perform() {
+        def perform() : Unit = {
             s.change(t)
             if (debug) {
                 val d = name <> '.' <> s.sname <+> ":=" </> nest(ppvalue(s))
@@ -299,7 +299,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
         /**
          * Perform this update.
          */
-        def perform() {
+        def perform() : Unit = {
             s.change(t, u)
             if (debug) {
                 val d = name <> '.' <> s.sname <> '(' <> ppvalue(t) <> ')' <+>
@@ -340,7 +340,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
      * state updates will be performed after this routine returns.
      * Default: do nothing.
      */
-    def init() {}
+    def init() : Unit = {}
 
     /**
      * The rule to execute to run one step of this machine.
@@ -351,7 +351,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
      * Clean up after this machine.  This routine is called after the
      * machine terminates.  Default: do nothing.
      */
-    def finit() {}
+    def finit() : Unit = {}
 
     /**
      * Perform any pending updates, returning true if updates were
@@ -379,7 +379,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
     /**
      * Reset the machine to begin a step.
      */
-    def reset() {
+    def reset() : Unit = {
         updates = Nil
     }
 
@@ -398,7 +398,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
      * updates.  `init` should be called before this method.
      */
     @tailrec
-    final def steps(nstep : Int) {
+    final def steps(nstep : Int) : Unit = {
         if (debug)
             emitter.emitln(s"$name step $nstep")
         if (step)
@@ -409,7 +409,7 @@ abstract class Machine(val name : String, emitter : Emitter = new OutputEmitter)
      * Run this machine by initialising its state and then executing
      * its steps.
      */
-    def run() {
+    def run() : Unit = {
         init
         performUpdates
         steps(0)

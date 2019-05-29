@@ -194,7 +194,7 @@ class LambdaDriver extends ParsingREPL[LambdaTree.Exp] with Evaluator {
         parsers.parseAll(parsers.exp, source)
     }
 
-    def process(source : Source, e : LambdaTree.Exp, config : REPLConfig) {
+    def process(source : Source, e : LambdaTree.Exp, config : REPLConfig) : Unit = {
         val result =
             if (config.profile.isDefined) {
                 val dimensions = profiler.parseProfileOption(config.profile())

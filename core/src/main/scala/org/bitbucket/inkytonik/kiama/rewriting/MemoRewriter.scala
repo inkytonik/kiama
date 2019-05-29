@@ -67,7 +67,7 @@ trait MemoRewriter extends Rewriter {
         /**
          * Reset the memo table that backs this strategy.
          */
-        def reset() {
+        def reset() : Unit = {
             memo.reset()
         }
 

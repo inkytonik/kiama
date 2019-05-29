@@ -107,7 +107,7 @@ class SemanticAnalyser(tree : PrologTree) extends Attribution {
                     case Predicate(oldargtypes) =>
                         val extargtypes = argtypes.padTo(oldargtypes.length, UnknownType())
                         val newargtypes =
-                            (oldargtypes, extargtypes).zipped.map {
+                            oldargtypes.zip(extargtypes).map {
                                 case (UnknownType(), argtipe) =>
                                     argtipe
                                 case (oldtipe, _) =>

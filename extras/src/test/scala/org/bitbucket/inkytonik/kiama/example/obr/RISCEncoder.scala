@@ -33,21 +33,21 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
     /**
      * Emit a RISC instruction.
      */
-    def emit(instr : Assembler) {
+    def emit(instr : Assembler) : Unit = {
         code += instr
     }
 
     /**
      * Emit a comment.
      */
-    def emitcomment(text : String) {
+    def emitcomment(text : String) : Unit = {
         code += Comment(text)
     }
 
     /**
      * Reset the code cache
      */
-    def resetcode() {
+    def resetcode() : Unit = {
         code.clear
     }
 
@@ -142,7 +142,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
      * encoding of each of the program's instructions, then the epilogue.
      */
 
-    def encode(p : RISCProg) {
+    def encode(p : RISCProg) : Unit = {
 
         // Tree for this RISC progarm
         val tree = new RISCTree(p)
@@ -239,7 +239,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
         /*
          * Encode a comparison node
          */
-        def compare(op : (RISCLabel) => Instr, l : Datum, r : Datum, d : Datum) {
+        def compare(op : (RISCLabel) => Instr, l : Datum, r : Datum, d : Datum) : Unit = {
             val lab = genlabelnum()
             datum(l)
             datum(r)
@@ -253,7 +253,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
         /*
          * Encode a 1-parameter arithmetic operation
          */
-        def arith1(op : (RegNo, RegNo) => Instr, e : Datum, d : Datum) {
+        def arith1(op : (RegNo, RegNo) => Instr, e : Datum, d : Datum) : Unit = {
             datum(e)
             emit(op(reg(d), reg(e)))
         }
@@ -261,7 +261,7 @@ class RISCEncoder(labels : RISCLabels) extends Attribution {
         /*
          * Encode a 2-parameter arithmetic operation
          */
-        def arith2(op : (RegNo, RegNo, RegNo) => Instr, l : Datum, r : Datum, d : Datum) {
+        def arith2(op : (RegNo, RegNo, RegNo) => Instr, l : Datum, r : Datum, d : Datum) : Unit = {
             datum(l)
             datum(r)
             emit(op(reg(d), reg(l), reg(r)))

@@ -386,7 +386,7 @@ class SemanticAnalyserTests extends ParseTests {
         val exp1 = IntExp(42)
         val exp2 = IntExp(99)
         val vars = Vector(Var(IntArrayType(), IdnDef("v")))
-        val stmts = Vector(ArrayAssign(IdnUse("v"), exp1, exp2))
+        val stmts = Vector(ArrayAssign(IdnExp(IdnUse("v")), exp1, exp2))
         errors(exp, IntType(), vars, stmts) shouldBe ("")
     }
 
@@ -395,7 +395,7 @@ class SemanticAnalyserTests extends ParseTests {
         val exp1 = TrueExp()
         val exp2 = FalseExp()
         val vars = Vector(Var(IntArrayType(), IdnDef("v")))
-        val stmts = Vector(ArrayAssign(IdnUse("v"), exp1, exp2))
+        val stmts = Vector(ArrayAssign(IdnExp(IdnUse("v")), exp1, exp2))
         errors(exp, IntType(), vars, stmts) shouldBe (
             "expected int type got boolean\nexpected int type got boolean\n"
         )

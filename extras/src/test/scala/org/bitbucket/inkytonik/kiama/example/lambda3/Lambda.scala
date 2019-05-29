@@ -231,7 +231,7 @@ class LambdaDriver extends ParsingREPL[LambdaTree.Query[_]] {
         parsers.parseAll(parsers.query, source)
     }
 
-    def process(source : Source, q : LambdaTree.Query[_], config : REPLConfig) {
+    def process(source : Source, q : LambdaTree.Query[_], config : REPLConfig) : Unit = {
         config.output().emitln(evaluator.execute(q))
     }
 

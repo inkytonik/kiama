@@ -51,7 +51,7 @@ class Driver extends CompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
         parsers.parseAll(parsers.program, source)
     }
 
-    def process(source : Source, ast : ObrInt, config : ObrConfig) {
+    def process(source : Source, ast : ObrInt, config : ObrConfig) : Unit = {
 
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree(ast)
@@ -109,7 +109,7 @@ object Main extends Driver
  */
 class ParserDriver extends Driver {
 
-    override def process(source : Source, ast : ObrInt, config : ObrConfig) {
+    override def process(source : Source, ast : ObrInt, config : ObrConfig) : Unit = {
         config.output().emitln(ast.toString)
     }
 
@@ -122,7 +122,7 @@ class SemanticDriver extends Driver {
 
     import ObrTree.ObrTree
 
-    override def process(source : Source, ast : ObrInt, config : ObrConfig) {
+    override def process(source : Source, ast : ObrInt, config : ObrConfig) : Unit = {
 
         // Conduct semantic analysis and report any errors
         val tree = new ObrTree(ast)

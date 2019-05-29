@@ -158,7 +158,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
             val msgBuilder = new StringBuilder
             val parent = child.inverse
 
-            def addAncestors(c : T, ps : Vector[T], level : Int = 1) {
+            def addAncestors(c : T, ps : Vector[T], level : Int = 1) : Unit = {
                 for (p <- ps) {
                     val index = indexInVector(child(p), c)
                     val indent = "  " * level

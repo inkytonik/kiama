@@ -37,7 +37,7 @@ class SemanticAnalyserTests extends Compiler[PrologNode, Program] with TestCompi
     /**
      * Process the tree by conducting semantic analysis and reporting any errors.
      */
-    def process(source : Source, ast : Program, config : Config) {
+    def process(source : Source, ast : Program, config : Config) : Unit = {
         val tree = new PrologTree(ast)
         val analyser = new SemanticAnalyser(tree)
         val messages = analyser.errors

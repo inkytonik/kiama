@@ -32,7 +32,7 @@ class CompilerTests extends KiamaTests with Compiler[Any, Any] with TestCompiler
         parsers.parseAll(parsers.dummy, source)
     }
 
-    def process(source : Source, ast : Any, config : Config) {
+    def process(source : Source, ast : Any, config : Config) : Unit = {
         // Do nothing
     }
 
@@ -97,7 +97,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
     /**
      * Run the driver in test mode using the given configuration.
      */
-    def testdriver(config : C)
+    def testdriver(config : C) : Unit
 
     /**
      * Flag to decide whether to sanitise the output before comparison
@@ -129,7 +129,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
         * expected messages. `rt` is a version of `rp` to use in the test title.
         */
     def filetest(name : String, path : String, rp : String, args : Seq[String], rt : String,
-        extra : String = "") {
+        extra : String = "") : Unit = {
         val ct = args.mkString(" ").replaceAllLiterally(path + "/", "")
         val title = s"$name: $ct, expecting $rt$extra"
         test(title) {
@@ -168,7 +168,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
      */
     def filetests(name : String, relPath : String, srcext : String, resext : String,
         optinext : Option[String] = None, indefault : String = "",
-        argslist : List[Seq[String]] = List(Seq())) {
+        argslist : List[Seq[String]] = List(Seq())) : Unit = {
 
         import java.io.FilenameFilter
 
@@ -185,7 +185,7 @@ trait TestDriverWithConfig[C <: Config] extends KiamaTests {
          * command line args to use.
          */
         def infiletests(c : String, dir : File, inext : String,
-            args : Seq[String]) {
+            args : Seq[String]) : Unit = {
             val resfilter =
                 new FilenameFilter {
                     def accept(dir : File, name : String) : Boolean = {
@@ -244,7 +244,7 @@ trait TestCompilerWithConfig[N, T <: N, C <: Config] extends TestDriverWithConfi
      * Run the compiler in test mode using the given configuration
      * with reset position store.
      */
-    def testdriver(config : C) {
+    def testdriver(config : C) : Unit = {
         positions.reset()
         compileFiles(config)
     }

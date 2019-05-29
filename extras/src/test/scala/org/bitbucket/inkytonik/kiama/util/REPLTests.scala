@@ -52,7 +52,7 @@ trait GeneratingREPLBase[T] extends REPL {
     /**
      * Process a generated value.  Default: print it.
      */
-    def process(source : Source, t : T, config : REPLConfig) {
+    def process(source : Source, t : T, config : REPLConfig) : Unit = {
         config.output().emitln(t)
     }
 
@@ -74,7 +74,7 @@ trait TestREPLWithConfig[C <: REPLConfig] extends TestDriverWithConfig[C] {
     /**
      * Run the REPL in test mode using the given configuration.
      */
-    def testdriver(config : C) {
+    def testdriver(config : C) : Unit = {
         processfiles(config)
     }
 

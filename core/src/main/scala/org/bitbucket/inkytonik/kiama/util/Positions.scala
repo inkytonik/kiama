@@ -120,21 +120,21 @@ class Positions {
     /**
      * Set the start position of `t` to `p` if it has not already been set.
      */
-    def setStart[T](t : T, p : Position) {
+    def setStart[T](t : T, p : Position) : Unit = {
         startMap.putIfAbsent(t, p)
     }
 
     /**
      * Set the `finish` position of `t` to `p` if it has not already been set.
      */
-    def setFinish[T](t : T, p : Position) {
+    def setFinish[T](t : T, p : Position) : Unit = {
         finishMap.putIfAbsent(t, p)
     }
 
     /**
      * Set all positions of `t` to `p`.
      */
-    def setAllPositions[T](t : T, p : Position) {
+    def setAllPositions[T](t : T, p : Position) : Unit = {
         setStart(t, p)
         setFinish(t, p)
     }
@@ -162,7 +162,7 @@ class Positions {
     /**
      * Reset the position maps to be empty.
      */
-    def reset() {
+    def reset() : Unit = {
         startMap.reset()
         finishMap.reset()
     }
@@ -170,7 +170,7 @@ class Positions {
     /**
      * Reset the position maps to be empty at all values in `ts`.
      */
-    def resetAllAt(ts : Seq[Any]) {
+    def resetAllAt(ts : Seq[Any]) : Unit = {
         startMap.resetAllAt(ts)
         finishMap.resetAllAt(ts)
     }
@@ -178,7 +178,7 @@ class Positions {
     /**
      * Reset the position maps to be empty at `t`.
      */
-    def resetAt(t : Seq[Any]) {
+    def resetAt(t : Seq[Any]) : Unit = {
         startMap.resetAt(t)
         finishMap.resetAt(t)
     }

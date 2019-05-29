@@ -38,7 +38,7 @@ class TreeRelation[T <: Product](
      * sure that all mentioned nodes are present in the graph and the
      * inverse graph.
      */
-    def set(t : T, us : Vector[T]) {
+    def set(t : T, us : Vector[T]) : Unit = {
         graph.updateAt(t, _ ++ us, us)
         for (u <- us)
             graph.putIfAbsent(u, emptyImage)
@@ -162,7 +162,7 @@ object TreeRelation {
                 val next = treeChildren(l)
                 if (!next.isEmpty)
                     relation.set(l, next)
-                loop(pending.tail.enqueue(next))
+                loop(pending.tail ++ next)
             }
 
         loop(Queue(tree.root))

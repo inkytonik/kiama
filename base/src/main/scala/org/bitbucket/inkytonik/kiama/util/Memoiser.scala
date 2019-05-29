@@ -35,7 +35,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
 
     import com.google.common.collect.MapMaker
     import java.util.concurrent.ConcurrentMap
-    import scala.collection.JavaConverters._
+    import org.bitbucket.inkytonik.kiama.util.Collections.javaCollectionToVector
 
     /**
      * The cache for this instance.
@@ -100,7 +100,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * A view of the set of keys that are currently in this memo table.
      */
     def keys : Vector[T] =
-        map.keySet.asScala.toVector
+        javaCollectionToVector(map.keySet)
 
     /**
      * Store the value `u` under the key `t`.
@@ -163,7 +163,7 @@ class Memoiser[T, U](tipe : MemoiserType) {
      * A view of the set of values that are currently in this memo table.
      */
     def values : Vector[U] =
-        map.values.asScala.toVector
+        javaCollectionToVector(map.values)
 
 }
 

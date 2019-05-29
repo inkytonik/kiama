@@ -66,7 +66,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
         /*
          * Print help about the available commands.
          */
-        def printHelp() {
+        def printHelp() : Unit = {
             output.emitln("""exp                  print the result of evaluating exp
                 |:eval                list the available evaluation mechanisms
                 |:eval <mechanism>    change to using <mechanism> to evaluate
@@ -121,7 +121,7 @@ class LambdaDriver extends ParsingREPLWithConfig[Exp, LambdaConfig] {
     /**
      * Process an expression.
      */
-    def process(source : Source, e : Exp, config : LambdaConfig) {
+    def process(source : Source, e : Exp, config : LambdaConfig) : Unit = {
         // Make an analyser for a tree for this expression
         val tree = new LambdaTree(e)
         val analyser = new Analyser(tree)

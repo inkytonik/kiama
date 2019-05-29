@@ -38,7 +38,7 @@ object Evaluators {
     /**
      * Return the names of the available evaluation mechanisms.
      */
-    val mechanisms = evalmap.keySet
+    val mechanisms = evalmap.keySet.toList.sorted
 
     /**
      * The evaluator for the given mechanism.

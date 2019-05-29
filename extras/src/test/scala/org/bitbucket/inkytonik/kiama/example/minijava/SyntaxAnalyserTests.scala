@@ -333,7 +333,7 @@ class SyntaxAnalyserTests extends ParseTests {
 
     test("parsing an array assignment statement produces the correct tree") {
         statement("a[1] = 2;") should parseToStmt(
-            ArrayAssign(IdnUse("a"), IntExp(1), IntExp(2))
+            ArrayAssign(IdnExp(IdnUse("a")), IntExp(1), IntExp(2))
         )
     }
 

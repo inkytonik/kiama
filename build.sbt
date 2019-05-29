@@ -9,7 +9,7 @@ ThisBuild/version := "2.3.0-SNAPSHOT"
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
 ThisBuild/scalaVersion := "2.12.8"
-ThisBuild/crossScalaVersions := Seq ("2.12.8", "2.11.12", "2.10.7")
+ThisBuild/crossScalaVersions := Seq("2.13.0-RC2", "2.12.8", "2.11.12", "2.10.7")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -18,6 +18,8 @@ ThisBuild/scalacOptions := {
     val lintOption =
         if (scalaVersion.value.startsWith("2.10"))
             "-Xlint"
+        else if (scalaVersion.value.startsWith("2.13"))
+            "-Xlint:-stars-align,-nonlocal-return,_"
         else
             "-Xlint:-stars-align,_"
     Seq(
@@ -53,6 +55,18 @@ ThisBuild/mainClass := None
 
 val commonSettings =
     Seq(
+        unmanagedSourceDirectories in Compile ++= {
+            val sourceDir = (sourceDirectory in Compile).value
+            CrossVersion.partialVersion(scalaVersion.value) match {
+                case Some((2, 10)) =>
+                    Seq(sourceDir / "scala-2.10", sourceDir / "scala-2.12-")
+                case Some((2, 13)) =>
+                    Seq(sourceDir / "scala-2.11+", sourceDir / "scala-2.13")
+                case _ =>
+                    Seq(sourceDir / "scala-2.11+", sourceDir / "scala-2.12-")
+            }
+        },
+
         libraryDependencies :=
             Seq(
                 "org.scalacheck" %% "scalacheck" % "1.14.0" % "test",

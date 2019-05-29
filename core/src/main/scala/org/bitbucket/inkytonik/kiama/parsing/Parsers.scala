@@ -187,7 +187,7 @@ class ParsersBase(positions : Positions) {
         /**
          * Initialise the left recursion data for a new application of this rule.
          */
-        def setuplr(l : LR[T]) {
+        def setuplr(l : LR[T]) : Unit = {
             if (l.head == null)
                 l.head = Head(p, Set(), Set())
             var s = LRStack

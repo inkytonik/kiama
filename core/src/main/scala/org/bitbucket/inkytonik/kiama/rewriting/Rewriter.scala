@@ -22,7 +22,7 @@ package rewriting
 trait Rewriter extends RewriterCore {
 
     import org.bitbucket.inkytonik.kiama.relation.{EnsureTree, Tree, TreeShape}
-    import scala.collection.generic.CanBuildFrom
+    import org.bitbucket.inkytonik.kiama.util.Collections.{Factory, newBuilder}
     import scala.language.higherKinds
 
     /**
@@ -388,7 +388,7 @@ trait Rewriter extends RewriterCore {
     def map(name : String, s : Strategy) : Strategy =
         strategyWithName[Seq[_]](name, {
             case l : Seq[_] =>
-                allTraversable[Seq](s, l)
+                allIterable[Seq](s, l)
         })
 
     /**
@@ -612,10 +612,10 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.collect
      */
-    def collectWithName[CC[X] <: Traversable[X], U](name : String, f : Any ==> U)(implicit cbf : CanBuildFrom[CC[Any], U, CC[U]]) : Any => CC[U] =
+    def collectWithName[CC[X] <: Iterable[X], U](name : String, f : Any ==> U)(implicit cbf : Factory[U, CC[U]]) : Any => CC[U] =
         (t : Any) => {
-            val b = cbf()
-            def add(u : U) { b += u }
+            val b = newBuilder(cbf)
+            val add = (u : U) => { b += u; () }
             (everywhere(query(f andThen add)))(t)
             b.result
         }
@@ -625,10 +625,10 @@ trait Rewriter extends RewriterCore {
      * specifies the name for the constructed strategy.
      * @see RewriterCore.collectall
      */
-    def collectallWithName[CC[X] <: Traversable[X], U](name : String, f : Any ==> CC[U])(implicit cbf : CanBuildFrom[CC[Any], U, CC[U]]) : Any => CC[U] =
+    def collectallWithName[CC[X] <: Iterable[X], U](name : String, f : Any ==> CC[U])(implicit cbf : Factory[U, CC[U]]) : Any => CC[U] =
         (t : Any) => {
-            val b = cbf()
-            def addall(us : CC[U]) { b ++= us }
+            val b = newBuilder(cbf)
+            val addall = (us : CC[U]) => { b ++= us; () }
             (everywhere(query(f andThen addall)))(t)
             b.result
         }

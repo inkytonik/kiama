@@ -74,7 +74,7 @@ class Interpreter {
     /**
      * Interpret a query against the given program.
      */
-    def interpret(query : Term, program : Program, emitter : Emitter) {
+    def interpret(query : Term, program : Program, emitter : Emitter) : Unit = {
 
         // Get the program clauses.  We reverse them so that when we use
         // them we push onto the goal stack in the correct order, so that

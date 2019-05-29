@@ -26,7 +26,7 @@ object ImperativeGen extends GeneratingREPL[Stmt] with Generator {
     def generator : Arbitrary[Stmt] =
         arbStmt
 
-    override def process(source : Source, s : Stmt, config : REPLConfig) {
+    override def process(source : Source, s : Stmt, config : REPLConfig) : Unit = {
         super.process(source, s, config)
         config.output().emitln(format(s).layout)
     }

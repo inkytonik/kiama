@@ -60,7 +60,7 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
      * errors. If any messages are produced, print them. If all is ok,
      * translate the program and generate code for the translation.
      */
-    def process(source : Source, ast : Program, config : Config) {
+    def process(source : Source, ast : Program, config : Config) : Unit = {
 
         // Perform the semantic checks
         val tree = new MiniJavaTree(ast)
@@ -116,7 +116,7 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
 
     }
 
-    override def clearSemanticMessages(source : Source, config : Config) {
+    override def clearSemanticMessages(source : Source, config : Config) : Unit = {
         super.clearSemanticMessages(source, config)
         if (config.server()) {
             publishTargetProduct(source)

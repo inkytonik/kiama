@@ -66,9 +66,8 @@ object Filenames {
      * suffix (default: nothing).
      */
     def makeTempFilename(suffix : String = "") : String = {
-        import scala.compat.Platform.currentTime
-
         val tmpDir = getProperty("java.io.tmpdir")
+        val currentTime = java.lang.System.currentTimeMillis()
         s"${tmpDir}${separatorChar}kiama${currentTime}${suffix}"
     }
 

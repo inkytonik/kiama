@@ -14,15 +14,7 @@ package util
 /**
  * A console using which input data can be read from standard input.
  */
-class Console {
-
-    import Compat210._
-
-    /**
-     * Read a line after prompting with the given prompt.
-     */
-    def readLine(prompt : String) : String =
-        io.StdIn.readLine(prompt)
+class Console extends ConsoleBase {
 
     /**
      * Read an integer after prompting with the given prompt.  Throws a

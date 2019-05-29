@@ -51,7 +51,7 @@ class PositionedRewriterTests extends KiamaTests {
         case Leaf(i) => Leaf(i + 1)
     })
 
-    def check(no : One) {
+    def check(no : One) : Unit = {
         no shouldBe One(Two(Leaf(43), Leaf(100)))
         positions.getStart(no) should beSomeOf(pos)
         positions.getFinish(no) should beSomeOf(pof)

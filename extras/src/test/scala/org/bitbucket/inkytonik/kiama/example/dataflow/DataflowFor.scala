@@ -19,7 +19,7 @@ case class For(init : Stm, c : Stm, inc : Stm, body : Stm) extends Stm
 
 class DataflowFor(override val tree : DataflowTree) extends Dataflow(tree) {
 
-    def addForAndForeachCases() {
+    def addForAndForeachCases() : Unit = {
 
         succ +=
             {

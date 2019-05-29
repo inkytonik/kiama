@@ -19,7 +19,7 @@ trait RewriterCore {
 
     import org.bitbucket.inkytonik.kiama.util.Comparison.same
     import org.bitbucket.inkytonik.kiama.util.{Emitter, OutputEmitter}
-    import scala.collection.generic.CanBuildFrom
+    import org.bitbucket.inkytonik.kiama.util.Collections.{CanBuildFrom, Factory, newBuilder}
     import scala.collection.immutable.Seq
     import scala.language.higherKinds
     import scala.language.experimental.macros
@@ -563,7 +563,7 @@ trait RewriterCore {
                 case Some(ti) if same(ct, ti) =>
                     Some(t)
                 case Some(ti) =>
-                    val b = cbf(t)
+                    val b = newBuilder(cbf, t)
                     b.sizeHint(t.size)
                     t.foldLeft(0) {
                         case (j, ct) =>
@@ -585,7 +585,7 @@ trait RewriterCore {
      * child, fail. If there are no children, succeed.  If `s` succeeds on all
      * children producing the same terms (by `eq` for references and by `==` for
      * other values), then the overall strategy returns the subject term.
-     * This operation works on finite `Rewritable`, `Product`, `Map` and `Traversable`
+     * This operation works on finite `Rewritable`, `Product`, `Map` and `Iterable`
      * values, checked for in that order.
      * Children of a `Rewritable` (resp. Product, collection) value are processed
      * in the order returned by the value's deconstruct (resp. `productElement`,
@@ -609,8 +609,8 @@ trait RewriterCore {
                         allProduct(strat, p)
                     case m : Map[_, _] =>
                         allMap(strat, m.asInstanceOf[Map[Any, Any]])
-                    case t : Traversable[_] =>
-                        allTraversable(strat, t.asInstanceOf[Traversable[Any]])
+                    case t : Iterable[_] =>
+                        allIterable(strat, t.asInstanceOf[Iterable[Any]])
                     case _ =>
                         Some(t)
                 }
@@ -671,13 +671,13 @@ trait RewriterCore {
     }
 
     /**
-     * Implementation of `all` for `Traversable` values.
+     * Implementation of `all` for `Iterable` values.
      */
-    def allTraversable[CC[U] <: Traversable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] =
+    def allIterable[CC[U] <: Iterable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] =
         if (t.size == 0)
             Some(t)
         else {
-            val b = cbf(t)
+            val b = newBuilder(cbf, t)
             b.sizeHint(t.size)
             val (changed, _) =
                 t.foldLeft((false, 0)) {
@@ -703,7 +703,7 @@ trait RewriterCore {
         if (t.size == 0)
             Some(t)
         else {
-            val b = cbf(t)
+            val b = newBuilder(cbf, t)
             b.sizeHint(t.size)
             val (changed, _) =
                 t.foldLeft((false, 0)) {
@@ -733,7 +733,7 @@ trait RewriterCore {
      * the same term (by `eq` for references and by `==` for other values), then
      * the overall strategy returns the subject term.
      * This operation works on instances of finite `Rewritable`, `Product`, `Map`
-     * and `Traversable` values, checked for in that order.
+     * and `Iterable` values, checked for in that order.
      * Children of a `Rewritable` (resp. `Product`, collection) value are processed
      * in the order returned by the value's `deconstruct` (resp. `productElement`,
      * `foreach`) method.
@@ -756,8 +756,8 @@ trait RewriterCore {
                         oneProduct(strat, p)
                     case m : Map[_, _] =>
                         oneMap(strat, m.asInstanceOf[Map[Any, Any]])
-                    case t : Traversable[_] =>
-                        oneTraversable(strat, t.asInstanceOf[Traversable[Any]])
+                    case t : Iterable[_] =>
+                        oneIterable(strat, t.asInstanceOf[Iterable[Any]])
                     case _ =>
                         None
                 }
@@ -804,10 +804,10 @@ trait RewriterCore {
     }
 
     /**
-     * Implementation of `one` for `Traversable` values.
+     * Implementation of `one` for `Iterable` values.
      */
-    def oneTraversable[CC[U] <: Traversable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] = {
-        val b = cbf(t)
+    def oneIterable[CC[U] <: Iterable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] = {
+        val b = newBuilder(cbf, t)
         b.sizeHint(t.size)
         val add =
             t.foldLeft(true) {
@@ -838,7 +838,7 @@ trait RewriterCore {
      * Implementation of `one` for `Map` values.
      */
     def oneMap[CC[V, W] <: Map[V, W]](s : Strategy, t : CC[Any, Any])(implicit cbf : CanBuildFrom[CC[Any, Any], (Any, Any), CC[Any, Any]]) : Option[CC[Any, Any]] = {
-        val b = cbf(t)
+        val b = newBuilder(cbf, t)
         b.sizeHint(t.size)
         val add =
             t.foldLeft(true) {
@@ -876,7 +876,7 @@ trait RewriterCore {
      * for references and by `==` for other values), then the overall strategy
      * returns the subject term.
      * This operation works on instances of finite `Rewritable`, `Product`, `Map` and
-     * `Traversable` values, checked for in that order.
+     * `Iterable` values, checked for in that order.
      * Children of a `Rewritable` (resp. `Product`, collection) value are processed
      * in the order returned by the value's `deconstruct` (resp. `productElement`,
      * `foreach`) method.
@@ -899,8 +899,8 @@ trait RewriterCore {
                         someProduct(strat, p)
                     case m : Map[_, _] =>
                         someMap(strat, m.asInstanceOf[Map[Any, Any]])
-                    case t : Traversable[_] =>
-                        someTraversable(strat, t.asInstanceOf[Traversable[Any]])
+                    case t : Iterable[_] =>
+                        someIterable(strat, t.asInstanceOf[Iterable[Any]])
                     case _ =>
                         None
                 }
@@ -969,13 +969,13 @@ trait RewriterCore {
     }
 
     /**
-     * Implementation of `some` for `Traversable` values.
+     * Implementation of `some` for `Iterable` values.
      */
-    def someTraversable[CC[U] <: Traversable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] =
+    def someIterable[CC[U] <: Iterable[U]](s : Strategy, t : CC[Any])(implicit cbf : CanBuildFrom[CC[Any], Any, CC[Any]]) : Option[CC[Any]] =
         if (t.size == 0)
             None
         else {
-            val b = cbf(t)
+            val b = newBuilder(cbf, t)
             b.sizeHint(t.size)
             val (success, changed) =
                 t.foldLeft((false, false)) {
@@ -1005,7 +1005,7 @@ trait RewriterCore {
         if (t.size == 0)
             None
         else {
-            val b = cbf(t)
+            val b = newBuilder(cbf, t)
             b.sizeHint(t.size)
             val (success, changed) =
                 t.foldLeft((false, false)) {
@@ -1460,20 +1460,20 @@ trait RewriterCore {
     // Queries below here
 
     /**
-     * Collect query results in a traversable collection.  Run the function
+     * Collect query results in a Iterable collection.  Run the function
      * `f` as a top-down left-to-right query on the subject term.  Each
      * application of `f` returns a single value. All of these values are
      * accumulated in the collection.
      */
-    def collect[CC[X] <: Traversable[X], U](f : Any ==> U)(implicit cbf : CanBuildFrom[CC[Any], U, CC[U]]) : Any => CC[U] = macro RewriterCoreMacros.collectMacro[CC, U]
+    def collect[CC[X] <: Iterable[X], U](f : Any ==> U)(implicit cbf : Factory[U, CC[U]]) : Any => CC[U] = macro RewriterCoreMacros.collectMacro[CC, U]
 
     /**
-     * Collect query results in a traversable collection.  Run the function
+     * Collect query results in a Iterable collection.  Run the function
      * `f` as a top-down left-to-right query on the subject term.  Each
      * application of `f` returns a collection of values. All of these values
      * are accumulated in the collection.
      */
-    def collectall[CC[X] <: Traversable[X], U](f : Any ==> CC[U])(implicit cbf : CanBuildFrom[CC[Any], U, CC[U]]) : Any => CC[U] = macro RewriterCoreMacros.collectallMacro[CC, U]
+    def collectall[CC[X] <: Iterable[X], U](f : Any ==> CC[U])(implicit cbf : Factory[U, CC[U]]) : Any => CC[U] = macro RewriterCoreMacros.collectallMacro[CC, U]
 
     /**
      * Count function results.  Run the function `f` as a top-down query on

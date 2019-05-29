@@ -33,7 +33,7 @@ trait Driver {
     /**
      * Output a section heading so that the output can be split later.
      */
-    def section(emitter : Emitter, name : String) {
+    def section(emitter : Emitter, name : String) : Unit = {
         emitter.emitln(s"* $name")
     }
 
@@ -75,7 +75,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[SourceNode, ModuleDe
      * standard output, otherwise send the message to the errors file.
      */
     override def compileFile(filename : String, config : Oberon0Config,
-        encoding : String = "UTF-8") {
+        encoding : String = "UTF-8") : Unit = {
         val output = config.output()
         val source = FileSource(filename, encoding)
         makeast(source, config) match {
@@ -100,7 +100,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[SourceNode, ModuleDe
      * Process the given abstract syntax tree.  Send output to emitter,
      * marking sections so that we can split things later.
      */
-    def process(source : Source, ast : ModuleDecl, config : Oberon0Config) {
+    def process(source : Source, ast : ModuleDecl, config : Oberon0Config) : Unit = {
 
         val output = config.output()
 
@@ -159,7 +159,7 @@ trait FrontEndDriver extends Driver with CompilerWithConfig[SourceNode, ModuleDe
      * Consume the AST. For example, translate it to something else. By default, do
      * nothing.
      */
-    def consumeast(tree : SourceTree, config : Oberon0Config) {
+    def consumeast(tree : SourceTree, config : Oberon0Config) : Unit = {
     }
 
 }
@@ -215,7 +215,7 @@ trait TranslatingDriver extends TransformingDriver with CompilerWithConfig[Sourc
     /**
      * Consume the AST by translating it to C.
      */
-    override def consumeast(tree : SourceTree, config : Oberon0Config) {
+    override def consumeast(tree : SourceTree, config : Oberon0Config) : Unit = {
         val output = config.output()
         val translator = buildTranslator(tree)
         val cast = translator.translate(tree.root) // FIXME should be tree

@@ -39,7 +39,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          * Generate instructions by appending the operations and the associated
          * source node to the instruction buffer.
          */
-        def gen(source : MiniJavaNode, ops : JVMOp*) {
+        def gen(source : MiniJavaNode, ops : JVMOp*) : Unit = {
             for (op <- ops)
                 instructions += JVMInstr(op, Bridge(source))
         }
@@ -66,7 +66,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
         /*
          * Reset the label count to zero.
          */
-        def resetVarCount() {
+        def resetVarCount() : Unit = {
             varCounter.reset()
         }
 
@@ -111,7 +111,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
         /*
          * Reset the label count to zero.
          */
-        def resetLabelCount() {
+        def resetLabelCount() : Unit = {
             labelCounter.reset()
         }
 
@@ -263,9 +263,9 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          * method argument that corresponds to the identifier, depending
          * on which of these cases apply.
          */
-        def translateIdnLoad(idnuse : IdnUse) {
+        def translateIdnLoad(idnuse : IdnUse) : Unit = {
 
-            def loadField(field : Field) {
+            def loadField(field : Field) : Unit = {
                 field match {
                     case tree.parent(tree.parent(cls : Class)) =>
                         val className = cls.name.idn
@@ -278,7 +278,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                 }
             }
 
-            def loadLocal(tipe : Type) {
+            def loadLocal(tipe : Type) : Unit = {
                 gen(
                     idnuse,
                     if (isIntegerType(tipe))
@@ -309,9 +309,9 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          * on which of these cases apply. The expression argument is the
          * thing that computes the value to be stored.
          */
-        def translateIdnStore(stmt : Statement, idnuse : IdnUse, exp : Expression) {
+        def translateIdnStore(stmt : Statement, idnuse : IdnUse, exp : Expression) : Unit = {
 
-            def storeField(field : Field) {
+            def storeField(field : Field) : Unit = {
                 field match {
                     case tree.parent(tree.parent(cls : Class)) =>
                         val className = cls.name.idn
@@ -322,7 +322,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                 }
             }
 
-            def storeLocal(tipe : Type) {
+            def storeLocal(tipe : Type) : Unit = {
                 translateExp(exp)
                 gen(
                     stmt,
@@ -348,11 +348,11 @@ class Translator(tree : MiniJavaTree) extends Attribution {
         /*
          * Append the translation of a statement to the instruction buffer.
          */
-        def translateStmt(stmt : Statement) {
+        def translateStmt(stmt : Statement) : Unit = {
             stmt match {
 
-                case ArrayAssign(idnuse, ind, exp) =>
-                    translateIdnLoad(idnuse)
+                case ArrayAssign(arr, ind, exp) =>
+                    translateExp(arr)
                     translateExp(ind)
                     translateExp(exp)
                     gen(stmt, Iastore())
@@ -408,7 +408,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          * the next instruction after the comparison. In the translation
          * of MiniJava Booleans zero is false and one is true.
          */
-        def translateCond(stmt : Statement, cond : Expression, falseLabel : String) {
+        def translateCond(stmt : Statement, cond : Expression, falseLabel : String) : Unit = {
             translateExp(cond)
             gen(stmt, Ifeq(falseLabel))
         }
@@ -418,7 +418,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
          * expression on which the call is being made into code that
          * puts that object on the top of the operand stack.
          */
-        def translateCall(exp : CallExp) {
+        def translateCall(exp : CallExp) : Unit = {
             analyser.tipe(exp.base) match {
 
                 case ReferenceType(Class(IdnDef(className), _, _)) =>
@@ -431,7 +431,13 @@ class Translator(tree : MiniJavaTree) extends Attribution {
                     exp.args.map(translateExp)
 
                     // Get the method that is being called
-                    val MethodEntity(method) = analyser.entity(exp.name)
+                    val method =
+                        analyser.entity(exp.name) match {
+                            case MethodEntity(method) =>
+                                method
+                            case e =>
+                                sys.error(s"translateCall: call to non-method: $e")
+                        }
 
                     // Generate an invocation of the correct method spec
                     gen(exp, InvokeVirtual(methodSpec(className, method)))
@@ -444,7 +450,7 @@ class Translator(tree : MiniJavaTree) extends Attribution {
         /*
          * Append the translation of an expression to the instruction buffer.
          */
-        def translateExp(exp : Expression) {
+        def translateExp(exp : Expression) : Unit = {
             exp match {
 
                 case AndExp(left, right) =>

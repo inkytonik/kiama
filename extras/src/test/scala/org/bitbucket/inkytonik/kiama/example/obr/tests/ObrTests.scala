@@ -52,7 +52,7 @@ class ObrSemanticTests extends SemanticDriver with TestCompilerWithConfig[ObrNod
 class ObrExecTests extends Driver with TestCompilerWithConfig[ObrNode, ObrInt, ObrConfig] {
 
     filetests("ObrExec", "example/obr/tests/generic", ".obr", ".out",
-        Some(".in"), "0", List(Array("-e")))
+        Some(".in"), "0", List(Vector("-e")))
 
     /*
      * Method to execute an execution test on a single Obr program
@@ -64,7 +64,7 @@ class ObrExecTests extends Driver with TestCompilerWithConfig[ObrNode, ObrInt, O
      *                          - a list containing the parameters to pass to the Obr program
      *                          - the corresponding result we expect the program to produce
      */
-    def exectest(name : String, relDirname : String, spec : (String, List[Int], Int)) {
+    def exectest(name : String, relDirname : String, spec : (String, List[Int], Int)) : Unit = {
         val (obrfile, params, expect) = spec
         val dirname = "src/test/scala/org/bitbucket/inkytonik/kiama/" + relDirname
         val title = s"""$name processing $obrfile parameters ${params.mkString("(", ", ", ")")} expecting $expect"""

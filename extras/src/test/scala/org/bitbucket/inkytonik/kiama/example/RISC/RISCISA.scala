@@ -459,7 +459,7 @@ object RISCISA {
     /**
      * Pretty-print a list of assembly code instructions to an emitter.
      */
-    def prettyprint(emitter : Emitter, code : AssemCode) {
+    def prettyprint(emitter : Emitter, code : AssemCode) : Unit = {
         for (line <- code) {
             line match {
                 case _ : Target => emitter.emitln(line)

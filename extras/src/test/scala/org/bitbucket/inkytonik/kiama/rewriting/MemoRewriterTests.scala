@@ -28,11 +28,7 @@ object MemoRewriterTestsSupport {
 /**
  * Tests of memoising rewriting.
  */
-class MemoRewriterTests extends {
-
-    override val rewriter = MemoRewriter
-
-} with RewriterTests {
+class MemoRewriterTestsBase(override val rewriter : MemoRewriter = MemoRewriter) extends RewriterTests(rewriter) {
 
     import MemoRewriterTestsSupport._
     import rewriter._
@@ -80,7 +76,7 @@ class MemoRewriterTests extends {
      * in a traversal by `strat` the results at each stage will be shared in
      * the overall result.
      */
-    def testSharingRewrite(direction : String, strat : Strategy) {
+    def testSharingRewrite(direction : String, strat : Strategy) : Unit = {
 
         val s = P(A(), A())
         val t = P(s, s)

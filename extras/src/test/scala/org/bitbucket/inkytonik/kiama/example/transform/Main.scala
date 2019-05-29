@@ -31,7 +31,7 @@ class Driver extends Compiler[TransformNode, Program] {
         parsers.parseAll(parsers.program, source)
     }
 
-    def process(source : Source, program : Program, config : Config) {
+    def process(source : Source, program : Program, config : Config) : Unit = {
 
         // Print original program and obtain "no priority" expression
         config.output().emitln(program)

@@ -29,7 +29,7 @@ class MachineTests extends KiamaTests {
     def makeMachine(emitter : Emitter = new StringEmitter) : Machine =
         new Machine("m", emitter) {
             override def debug = true
-            def main {}
+            def main : Unit = {}
         }
 
     // Scalar state
@@ -254,7 +254,7 @@ class MachineTests extends KiamaTests {
         !(p("one") =:= 1) shouldBe true
     }
 
-    test("inconsistent parameterised state updates in differents steps are allowed") {
+    test("inconsistent parameterised state updates in different steps are allowed") {
         val m = makeMachine()
         val p = new m.ParamState[String, Int]("p")
         m.reset
@@ -293,7 +293,7 @@ class MachineTests extends KiamaTests {
             val t = new State[String]("t")
             val p = new ParamState[String, Int]("p")
 
-            def main {
+            def main : Unit = {
                 if (s.isUndefined) {
                     s := 0
                     p("one") := 42

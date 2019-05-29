@@ -26,7 +26,7 @@ class Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
     /**
      * Take any actions that need to be done at the start of reporting.
      */
-    override def startReport(dimensionNames : Seq[Dimension]) {
+    override def startReport(dimensionNames : Seq[Dimension]) : Unit = {
         if (dimensionNames contains "dependencies")
             printTables = false
     }
@@ -127,7 +127,7 @@ class Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
      * Print the dependency graph for the attribute evaluation represented
      * by `record`. The output is in dot form.
      */
-    def printDependencyGraph(record : Record, dim : Dimension) {
+    def printDependencyGraph(record : Record, dim : Dimension) : Unit = {
 
         import scala.collection.mutable.{Set => MutableSet}
 
@@ -156,14 +156,14 @@ class Profiler extends org.bitbucket.inkytonik.dsprofile.Profiler {
         def subjectOf(record : Record) : Value =
             dimValue(record, "subject")
 
-        def addAtrrName(subject : Value, attribute : Value) {
+        def addAtrrName(subject : Value, attribute : Value) : Unit = {
             if (!attributes.contains(subject))
                 attributes(subject) = MutableSet[Value]()
             attributes(subject).add(attribute)
         }
 
         // Set the node number of subject if it doesn't already have one
-        def setNodeNum(subject : Value) {
+        def setNodeNum(subject : Value) : Unit = {
             if (!nodeNums.contains(subject))
                 nodeNums(subject) = nodeNumCounter.next()
         }

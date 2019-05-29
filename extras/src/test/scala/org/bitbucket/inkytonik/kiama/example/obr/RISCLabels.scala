@@ -33,7 +33,7 @@ class RISCLabels {
     /**
      * Reset the label counter.
      */
-    def reset() {
+    def reset() : Unit = {
         newLabelCounter.reset()
     }
 

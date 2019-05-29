@@ -55,6 +55,9 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
             case u @ IdnUse(i) if entity(u) == UnknownEntity() =>
                 error(u, s"$i is not declared")
 
+            case ArrayAssign(e, _, _) if tipe(e) != IntArrayType() =>
+                error(e, "illegal index of non-array")
+
             case VarAssign(u, _) =>
                 checkUse(entity(u)) {
                     case _ : ClassEntity | _ : MethodEntity =>
@@ -404,10 +407,6 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
                     case _ =>
                         UnknownType()
                 }
-
-            // Rule 10
-            case e @ tree.parent(ArrayAssign(base, _, _)) if base eq e =>
-                IntArrayType()
 
             // Rule 10
             case e @ tree.parent(ArrayAssign(_, index, _)) if index eq e =>

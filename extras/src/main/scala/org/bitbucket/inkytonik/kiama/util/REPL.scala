@@ -43,8 +43,8 @@ trait REPLBase[C <: REPLConfig] {
     /**
      * The entry point for this REPL.
      */
-    def main(args : Array[String]) {
-        driver(args)
+    def main(args : Array[String]) : Unit = {
+        driver(args.toIndexedSeq)
     }
 
     /**
@@ -78,7 +78,7 @@ trait REPLBase[C <: REPLConfig] {
      * contain just whitespace, otherwise do. Continue until `processline`
      * returns false. Call `prompt` each time input is about to be read.
      */
-    def driver(args : Seq[String]) {
+    def driver(args : Seq[String]) : Unit = {
         // Set up the configuration
         createAndInitConfig(args) match {
             case Left(message) =>
@@ -111,7 +111,7 @@ trait REPLBase[C <: REPLConfig] {
      * Process interactively entered lines, one by one, until end of file.
      * Prompt with the given prompt.
      */
-    def processlines(config : C) {
+    def processlines(config : C) : Unit = {
         processconsole(config.console(), prompt, config)
     }
 
@@ -219,13 +219,13 @@ trait ParsingREPLBase[T, C <: REPLConfig] extends REPLBase[C] {
     /**
      * Process a user input value in the given configuration.
      */
-    def process(source : Source, t : T, config : C)
+    def process(source : Source, t : T, config : C) : Unit
 
     /**
      * Output the messages in order of position using the given configuration,
      * which defaults to that configuration's output.
      */
-    def report(source : Source, messages : Messages, config : C) {
+    def report(source : Source, messages : Messages, config : C) : Unit = {
         config.output().emit(messaging.formatMessages(messages))
     }
 

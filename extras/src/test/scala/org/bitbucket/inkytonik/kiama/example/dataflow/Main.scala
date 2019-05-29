@@ -31,7 +31,7 @@ class Driver extends Compiler[Stm, Stm] {
         parsers.parseAll(parsers.stm, source)
     }
 
-    def process(source : Source, ast : Stm, config : Config) {
+    def process(source : Source, ast : Stm, config : Config) : Unit = {
         val tree = new DataflowTree(ast)
         val optimiser = new Optimiser(tree)
         val optast = optimiser.run(ast)

@@ -50,7 +50,7 @@ class Counter(init : Int = -1) {
     /**
      * Reset the value, by default to the initial value of the counter.
      */
-    def reset(to : Int = init) {
+    def reset(to : Int = init) : Unit = {
         synchronized {
             _value = to
         }

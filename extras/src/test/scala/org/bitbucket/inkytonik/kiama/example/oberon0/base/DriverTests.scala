@@ -57,7 +57,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[SourceNode, ModuleDe
      * Make the tests for a given language subset. proglang denotes the
      * language subset whose tests are used.
      */
-    def mktests(proglang : String) {
+    def mktests(proglang : String) : Unit = {
         val name = s"Oberon0 testing $artefact on $proglang tests"
         val path = s"example/oberon0/$proglang/tests"
         filetests(name, path, ".ob", ".out")
@@ -104,7 +104,7 @@ trait TestDriver extends Driver with TestCompilerWithConfig[SourceNode, ModuleDe
         // Fold over all possible output lines, checking them if they are
         // marked. Unmarked lines are always included.
         val lines =
-            s.lines.foldLeft(List[String]()) {
+            s.split('\n').foldLeft(List[String]()) {
                 case (lines, MarkedLine1(ps, line)) =>
                     processline(lines, line, ps.toInt)
                 case (lines, MarkedLine2(ps, qs, rs, line)) =>

@@ -70,7 +70,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * Initialise the machine.
      */
-    override def init {
+    override def init : Unit = {
         PC := 0
         R(0) := 0
         Z := false
@@ -81,7 +81,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * The main rule of this machine.
      */
-    def main {
+    def main : Unit = {
         if (!halt)
             execute(code(PC))
     }
@@ -89,7 +89,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * Execute a single instruction.
      */
-    def execute(instr : Instr) {
+    def execute(instr : Instr) : Unit = {
         if (debug)
             emitter.emitln(s"$name exec: $instr")
         try {
@@ -117,7 +117,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * Execute arithmetic instructions.
      */
-    def arithmetic(instr : Instr) {
+    def arithmetic(instr : Instr) : Unit = {
         instr match {
             case MOV(a, b, c)   => R(a) := R(c) << b
             case MOVI(a, b, im) => R(a) := im << b
@@ -148,7 +148,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * Execute memory instructions.
      */
-    def memory(instr : Instr) {
+    def memory(instr : Instr) : Unit = {
         instr match {
             case LDW(a, b, im) => R(a) := Mem((R(b) + im) / 4)
             case LDB(a, b, im) => halt := true // not implemented
@@ -167,7 +167,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * Execute control instructions, including default control step.
      */
-    def control(instr : Instr) {
+    def control(instr : Instr) : Unit = {
         instr match {
             case b : BEQ if Z        => PC := PC + b.label.disp
             case b : BNE if !Z       => PC := PC + b.label.disp
@@ -189,7 +189,7 @@ class RISC(code : Code, console : Console, emitter : Emitter)
     /**
      * Execute input/output instructions.
      */
-    def inputoutput(instr : Instr) {
+    def inputoutput(instr : Instr) : Unit = {
         instr match {
             case RD(a)  => R(a) := console.readInt("Enter integer: ")
             case WRD(c) => emitter.emit(R(c))

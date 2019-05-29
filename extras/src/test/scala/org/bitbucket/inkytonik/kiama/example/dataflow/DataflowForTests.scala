@@ -46,7 +46,7 @@ class DataflowForTests extends KiamaTests {
     val dataflowfor = new DataflowFor(tree)
     import dataflowfor._
 
-    override def beforeAll {
+    override def beforeAll : Unit = {
         addForAndForeachCases()
     }
 

@@ -1,23 +1,23 @@
 Available evaluation mechanisms:
-  parlazyupdate
   eagersubst
+  innermostsubst
   lazysubst
   pareagersubst
   parlazyshare
   parlazysubst
+  parlazyupdate
   reduce (current)
   reducesubst
-  innermostsubst
 5
 Available evaluation mechanisms:
-  parlazyupdate
   eagersubst
+  innermostsubst
   lazysubst (current)
   pareagersubst
   parlazyshare
   parlazysubst
+  parlazyupdate
   reduce
   reducesubst
-  innermostsubst
 5
 unknown evaluation mechanism: bob

@@ -248,7 +248,7 @@ class Messaging(positions : Positions) {
      * using the given emitter, which defaults to terminal output.
      */
     def report(source : Source, messages : Messages,
-        emitter : Emitter = new OutputEmitter) {
+        emitter : Emitter = new OutputEmitter) : Unit = {
         emitter.emit(formatMessages(messages))
     }
 

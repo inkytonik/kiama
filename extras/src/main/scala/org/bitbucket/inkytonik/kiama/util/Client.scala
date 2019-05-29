@@ -40,6 +40,6 @@ trait Client extends LanguageClient {
     import org.eclipse.lsp4j.jsonrpc.services._
 
     @JsonNotification("monto/publishProduct")
-    def publishProduct(product : Product)
+    def publishProduct(product : Product) : Unit
 
 }

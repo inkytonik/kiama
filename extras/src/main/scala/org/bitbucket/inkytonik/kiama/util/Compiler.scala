@@ -58,8 +58,8 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     /**
      * The entry point for this compiler.
      */
-    def main(args : Array[String]) {
-        driver(args)
+    def main(args : Array[String]) : Unit = {
+        driver(args.toIndexedSeq)
     }
 
     /**
@@ -90,7 +90,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * to create a configuration for this execution. Then, use the
      * configuration to run the file compilation in the appropriate way.
      */
-    def driver(args : Seq[String]) {
+    def driver(args : Seq[String]) : Unit = {
         createAndInitConfig(args) match {
             case Left(message) =>
                 System.err.println(message)
@@ -102,7 +102,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     /**
      * Run the compiler given a configuration.
      */
-    def run(config : C) {
+    def run(config : C) : Unit = {
         if (config.server()) {
             launch(config)
         } else if (config.profile.isDefined) {
@@ -117,7 +117,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     /**
      * Compile the files one by one.
      */
-    def compileFiles(config : C) {
+    def compileFiles(config : C) : Unit = {
         for (filename <- config.filenames()) {
             compileFile(filename, config)
         }
@@ -128,7 +128,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * file is given by the `encoding` argument (default: UTF-8).
      */
     def compileFile(filename : String, config : C,
-        encoding : String = "UTF-8") {
+        encoding : String = "UTF-8") : Unit = {
         try {
             compileSource(FileSource(filename, encoding), config)
         } catch {
@@ -140,7 +140,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     /**
      * Compile input from a string.
      */
-    def compileString(name : String, input : String, config : C) {
+    def compileString(name : String, input : String, config : C) : Unit = {
         compileSource(StringSource(input, name), config)
     }
 
@@ -149,7 +149,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * an abstract syntax tree and then by `process` which conducts arbitrary
      * processing on the AST. If `makeast` produces messages, report them.
      */
-    def compileSource(source : Source, config : C) {
+    def compileSource(source : Source, config : C) : Unit = {
         sources(source.name) = source
         makeast(source, config) match {
             case Left(ast) =>
@@ -169,12 +169,12 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
         }
     }
 
-    def publishSourceProduct(source : Source, document : => Document = emptyDocument) {
+    def publishSourceProduct(source : Source, document : => Document = emptyDocument) : Unit = {
         if (settingBool("showSource"))
             publishProduct(source, "source", name, document)
     }
 
-    def publishSourceTreeProduct(source : Source, document : => Document = emptyDocument) {
+    def publishSourceTreeProduct(source : Source, document : => Document = emptyDocument) : Unit = {
         if (settingBool("showSourceTree"))
             publishProduct(source, "sourcetree", "scala", document)
     }
@@ -192,7 +192,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * produced by the parser from that text. `config` provides access to all
      * aspects of the configuration.
      */
-    def process(source : Source, ast : T, config : C)
+    def process(source : Source, ast : T, config : C) : Unit
 
     /**
      * Format an abstract syntax tree for printing. Default: return an empty document.
@@ -202,7 +202,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
     /**
      * Output the messages in order of position to the configuration's output.
      */
-    def report(source : Source, messages : Messages, config : C) {
+    def report(source : Source, messages : Messages, config : C) : Unit = {
         if (config.server())
             publishMessages(messages)
         else
@@ -213,7 +213,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * Clear any previously reported semantic messages. By default,
      * clear the servers's source and sourcetree products.
      */
-    def clearSyntacticMessages(source : Source, config : C) {
+    def clearSyntacticMessages(source : Source, config : C) : Unit = {
         if (config.server()) {
             publishSourceProduct(source)
             publishSourceTreeProduct(source)
@@ -224,7 +224,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      * Clear any previously reported semantic messages. By default,
      * do nothing.
      */
-    def clearSemanticMessages(source : Source, config : C) {
+    def clearSemanticMessages(source : Source, config : C) : Unit = {
         // Do nothing
     }
 

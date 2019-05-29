@@ -129,7 +129,7 @@ class PrologDriver extends ParsingREPLWithConfig[Literal, PrologConfig] with Pre
     /**
      * Process a query by passing it and the program to the interpreter.
      */
-    def process(source : Source, querytree : Literal, config : PrologConfig) {
+    def process(source : Source, querytree : Literal, config : PrologConfig) : Unit = {
         interpreter.interpret(querytree, config.database(), config.output())
     }
 

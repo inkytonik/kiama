@@ -101,8 +101,12 @@ class RISCTransformer(analyser : SemanticAnalyser, labels : RISCLabels) {
                     )
                 )
             case FieldExp(v, f) =>
-                val e @ Variable(RecordType(fs)) = entity(v)
-                Local(locn(e) + fs.indexOf(f) * WORDSIZE)
+                entity(v) match {
+                    case e @ Variable(RecordType(fs)) =>
+                        Local(locn(e) + fs.indexOf(f) * WORDSIZE)
+                    case e =>
+                        sys.error(s"location: unexpected non-record variable in field expression: $e")
+                }
             case _ =>
                 Local(locn(entity(n.idn)))
         }

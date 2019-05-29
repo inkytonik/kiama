@@ -73,7 +73,7 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
             "while" ~> ("(" ~> expression <~ ")") ~ statement ^^ While |
             "System.out.println" ~> ("(" ~> expression <~ ")") <~ ";" ^^ Println |
             idnuse ~ ("=" ~> expression) <~ ";" ^^ VarAssign |
-            idnuse ~ ("[" ~> expression <~ "]") ~ ("=" ~> expression) <~ ";" ^^ ArrayAssign
+            idnexp ~ ("[" ~> expression <~ "]") ~ ("=" ~> expression) <~ ";" ^^ ArrayAssign
 
     lazy val expression : PackratParser[Expression] =
         expression ~ ("&&" ~> expression2) ^^ AndExp |
@@ -105,9 +105,12 @@ class SyntaxAnalyser(positions : Positions) extends Parsers(positions) {
             "this" ^^ (_ => ThisExp()) |
             "new" ~> "int" ~> "[" ~> expression <~ "]" ^^ NewArrayExp |
             "new" ~> idnuse <~ "(" <~ ")" ^^ NewExp |
-            idnuse ^^ IdnExp |
+            idnexp |
             "!" ~> expression ^^ NotExp |
             "(" ~> expression <~ ")"
+
+    lazy val idnexp : PackratParser[IdnExp] =
+        idnuse ^^ IdnExp
 
     lazy val expressionList =
         repsep(expression, ",")

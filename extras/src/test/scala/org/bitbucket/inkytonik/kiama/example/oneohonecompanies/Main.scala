@@ -17,7 +17,7 @@ object Main {
     import CompanyTree.CompanyTree
     import SampleCompany.company
 
-    def main(args : Array[String]) {
+    def main(args : Array[String]) : Unit = {
         val output = new OutputEmitter
         val tree = new CompanyTree(company)
         output.emitln(Total.total(company))
