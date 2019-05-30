@@ -97,11 +97,11 @@ trait Environments[E <: Entity] {
         }
 
     /**
-     * As for `define`, except if `i` is already defined in the innermost
-     * scope of `env`, define it to be `MultipleEntity` instead. The entity
-     * `e` is only evaluated if needed.
+     * As for `define` using entity `enew`, except if `i` is already defined
+     * in the innermost scope of `env`, define it to be `eold` instead. The
+     * entities are only evaluated if needed.
      */
-    def defineIfNew(env : Environment, i : String, eold : E, enew : => E) : Environment =
+    def defineIfNew(env : Environment, i : String, eold : => E, enew : => E) : Environment =
         define(env, i, if (isDefinedInScope(env, i)) eold else enew)
 
     /**
