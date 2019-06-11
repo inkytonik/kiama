@@ -150,7 +150,7 @@ def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
             "0.4.0"
     Seq(
         // Caching:
-        "com.google.guava" % "guava" % "27.1-jre",
+        "com.google.guava" % "guava" % "21.0",
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
