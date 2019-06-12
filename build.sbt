@@ -116,6 +116,20 @@ val commonSettings =
         )
     )
 
+val versionSettings =
+    Seq(
+        libraryDependencies ++= {
+            CrossVersion.partialVersion(scalaVersion.value) match {
+                case Some((2, 10)) =>
+                    // Avoids "Class javax.annotation.Nullable not found - continuing with a stub."
+                    // and similar with 2.10 compiler
+                    Seq("com.google.code.findbugs" % "jsr305" % "3.0.2")
+                case _ =>
+                    Seq()
+            }
+        }
+    )
+
 // Project configuration:
 //   - base project containing macros and code that they need
 //   - core project containing main Kiama functionality, including its tests
@@ -135,6 +149,8 @@ def setupSubProject(project : Project, projectName : String) : Project =
         ScalaUnidocPlugin
     ).settings(
         commonSettings : _*
+    ).settings(
+        versionSettings : _*
     )
 
 def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
@@ -175,7 +191,7 @@ lazy val base =
     ).settings(
         noPublishSettings : _*
     ).settings(
-        libraryDependencies := baseLibraryDependencies(scalaVersion.value),
+        libraryDependencies ++= baseLibraryDependencies(scalaVersion.value),
     )
 
 val extrasProject = ProjectRef(file("."), "extras")
