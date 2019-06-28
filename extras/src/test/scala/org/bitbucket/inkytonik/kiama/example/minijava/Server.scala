@@ -142,7 +142,7 @@ trait Server {
                     analyser.entity(n) match {
                         case e : MiniJavaOkEntity =>
                             val uses = analyser.tree.nodes.collect {
-                                case u : IdnUse if analyser.entity(u) == e =>
+                                case u : IdnUse if analyser.entity(u) eq e =>
                                     u
                             }
                             idndefOfEntityDecl(e) match {
