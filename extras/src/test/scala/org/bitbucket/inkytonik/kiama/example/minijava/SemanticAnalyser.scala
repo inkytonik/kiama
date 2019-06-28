@@ -173,7 +173,7 @@ class SemanticAnalyser(val tree : MiniJavaTree) extends Attribution {
             case tree.lastChild.pair(_ : Program | _ : Class | _ : Method, c) =>
                 defenv(c)
 
-            // Otherwise, ask our parent so we work out way up to the
+            // Otherwise, ask our parent so we work our way up to the
             // nearest scope node ancestor (which represents the smallest
             // enclosing scope).
             case tree.parent(p) =>

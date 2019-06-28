@@ -66,8 +66,8 @@ trait Driver extends Compiler[MiniJavaNode, Program] with Server {
         val tree = new MiniJavaTree(ast)
         val analyser = new SemanticAnalyser(tree)
 
-        // Save for server use, clearing out previous position information
-        // Other semantic information should go via the analyser replacement
+        // Save for server use, clearing out previous position information.
+        // Other semantic information should go via the analyser replacement.
         analysers.get(source) match {
             case Some(prevAnalyser) =>
                 positions.resetAllAt(prevAnalyser.tree.nodes)
