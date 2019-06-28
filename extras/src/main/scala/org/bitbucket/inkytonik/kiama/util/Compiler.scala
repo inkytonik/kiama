@@ -274,7 +274,7 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
         None
 
     /**
-     * Return the symbols frmo a compilation unit. Default is to return
+     * Return the symbols from a compilation unit. Default is to return
      * no symbols.
      */
     def getSymbols(source : Source) : Option[Vector[DocumentSymbol]] =
