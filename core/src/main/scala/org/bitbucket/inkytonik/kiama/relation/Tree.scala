@@ -199,7 +199,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
         else
             throw new NodeNotInTreeException(t)
 
-    // Derived relationsc
+    // Derived relations
 
     /**
      * Map the function `f` over the images of this tree's child relation and

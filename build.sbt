@@ -9,7 +9,7 @@ ThisBuild/version := "2.3.0-SNAPSHOT"
 ThisBuild/organization := "org.bitbucket.inkytonik.kiama"
 
 ThisBuild/scalaVersion := "2.12.8"
-ThisBuild/crossScalaVersions := Seq("2.13.0-RC3", "2.12.8", "2.11.12", "2.10.7")
+ThisBuild/crossScalaVersions := Seq("2.13.0", "2.12.8", "2.11.12", "2.10.7")
 
 ThisBuild/scalacOptions := {
     // Turn on all lint warnings, except:
@@ -70,8 +70,8 @@ val commonSettings =
         libraryDependencies :=
             Seq(
                 "org.scalacheck" %% "scalacheck" % "1.14.0" % "test",
-                "org.scalatest" %% "scalatest" % "3.0.8-RC5" % "test",
-                "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP7"  % "test"
+                "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+                "org.scalatestplus" %% "scalatestplus-scalacheck" % "1.0.0-SNAP8" % "test"
             ),
 
         // Formatting
@@ -116,6 +116,20 @@ val commonSettings =
         )
     )
 
+val versionSettings =
+    Seq(
+        libraryDependencies ++= {
+            CrossVersion.partialVersion(scalaVersion.value) match {
+                case Some((2, 10)) =>
+                    // Avoids "Class javax.annotation.Nullable not found - continuing with a stub."
+                    // and similar with 2.10 compiler
+                    Seq("com.google.code.findbugs" % "jsr305" % "3.0.2")
+                case _ =>
+                    Seq()
+            }
+        }
+    )
+
 // Project configuration:
 //   - base project containing macros and code that they need
 //   - core project containing main Kiama functionality, including its tests
@@ -135,6 +149,8 @@ def setupSubProject(project : Project, projectName : String) : Project =
         ScalaUnidocPlugin
     ).settings(
         commonSettings : _*
+    ).settings(
+        versionSettings : _*
     )
 
 def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
@@ -150,7 +166,7 @@ def baseLibraryDependencies (scalaVersion : String) : Seq[ModuleID] = {
             "0.4.0"
     Seq(
         // Caching:
-        "com.google.guava" % "guava" % "27.1-jre",
+        "com.google.guava" % "guava" % "21.0",
         // DSL support:
         "org.bitbucket.inkytonik.dsinfo" %% "dsinfo" % dsinfoVersion,
         // Profiling:
@@ -175,7 +191,7 @@ lazy val base =
     ).settings(
         noPublishSettings : _*
     ).settings(
-        libraryDependencies := baseLibraryDependencies(scalaVersion.value),
+        libraryDependencies ++= baseLibraryDependencies(scalaVersion.value),
     )
 
 val extrasProject = ProjectRef(file("."), "extras")
@@ -225,8 +241,8 @@ lazy val extras =
                 // Command-line handling:
                 "org.rogach" %% "scallop" % "3.3.0",
                 // Language server protocol:
-                "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.7.0",
-                "com.google.code.gson" % "gson" % "2.8.5",
+                "org.eclipse.lsp4j" % "org.eclipse.lsp4j" % "0.7.2",
+                "com.google.code.gson" % "gson" % "2.7",
                 // REPLs:
                 "jline" % "jline" % "2.14.6"
             ),
