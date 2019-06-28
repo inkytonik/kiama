@@ -148,24 +148,25 @@ object TreeRelation {
     /**
      * Make a child tree relation for the given tree. Populate the relation
      * using `treeChildren` to traverse the structure from the tree's root.
+     * Also return an ordered list of all nodes in the tree.
      */
-    def childFromTree[T <: Product, R <: T](tree : Tree[T, R]) : TreeRelation[T] = {
+    def childAndNodesFromTree[T <: Product, R <: T](tree : Tree[T, R]) : (TreeRelation[T], Vector[T]) = {
 
         val relation = new TreeRelation(tree)
 
         @tailrec
-        def loop(pending : Queue[T]) : TreeRelation[T] =
+        def loop(pending : Queue[T], nodes : Vector[T]) : (TreeRelation[T], Vector[T]) =
             if (pending.isEmpty)
-                relation
+                (relation, nodes)
             else {
                 val l = pending.front
                 val next = treeChildren(l)
                 if (!next.isEmpty)
                     relation.set(l, next)
-                loop(pending.tail ++ next)
+                loop(pending.tail ++ next, l +: nodes)
             }
 
-        loop(Queue(tree.root))
+        loop(Queue(tree.root), Vector())
 
     }
 

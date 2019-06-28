@@ -101,7 +101,7 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
 
     import org.bitbucket.inkytonik.kiama.relation.Relation.emptyImage
     import org.bitbucket.inkytonik.kiama.relation.TreeRelation
-    import org.bitbucket.inkytonik.kiama.relation.TreeRelation.childFromTree
+    import org.bitbucket.inkytonik.kiama.relation.TreeRelation.childAndNodesFromTree
     import org.bitbucket.inkytonik.kiama.rewriting.Strategy
     import org.bitbucket.inkytonik.kiama.rewriting.Cloner.lazyclone
     import org.bitbucket.inkytonik.kiama.rewriting.Rewriter.{all, attempt, rule}
@@ -139,18 +139,24 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
             originalRoot
 
     /**
+     * child:
      * The basic relations between a node and its children. All of the
      * other relations are derived from `child`. If this tree's shape
      * argument is `CheckTree` then a check will be performed that the
      * structure is actually a tree. A runtime error will be thrown
      * if it's not a tree.
+     *
+     * nodes:
+     * The nodes that occur in this tree. Mostly useful if you want to
+     * iterate to look at every node.
      */
-    lazy val child : TreeRelation[T] = {
+    lazy val (child, nodes) : (TreeRelation[T], Vector[T]) = {
 
         /*
-         * The child relation for this tree.
+         * The child relation for this tree, and
+         * a Vector of all nodes (ordered).
          */
-        val child = childFromTree(tree)
+        val (child, nodes) = childAndNodesFromTree(tree)
 
         // As a safety check, we make sure that values are not children
         // of more than one parent.
@@ -179,16 +185,9 @@ class Tree[T <: Product, +R <: T](val originalRoot : R, shape : TreeShape = Leav
         }
 
         // All ok
-        child
+        (child, nodes)
 
     }
-
-    /**
-     * The nodes that occur in this tree. Mostly useful if you want to
-     * iterate to look at every node.
-     */
-    lazy val nodes : Vector[T] =
-        child.domain
 
     /**
      * If the tree contains node `u` return `v`, otherwise throw a
