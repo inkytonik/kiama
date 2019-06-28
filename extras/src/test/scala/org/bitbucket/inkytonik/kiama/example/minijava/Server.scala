@@ -190,8 +190,41 @@ trait Server {
             )
         ) yield symbols
 
-    // Name analysis product support
+    def listToVector[A](list : List[A]) = Vector[A]() ++ list
 
+    def idnDefFromEntity : MiniJavaEntity => (IdnDef, MiniJavaNode) = {
+        case MainClassEntity(decl) => (decl.name, decl)
+        case ClassEntity(decl)     => (decl.name, decl)
+        case MethodEntity(decl)    => (decl.name, decl)
+        case ArgumentEntity(decl)  => (decl.name, decl)
+        case FieldEntity(decl)     => (decl.name, decl)
+        case VariableEntity(decl)  => (decl.name, decl)
+        case _                     => (null, null)
+    }
+
+    /**
+     * The symbols in scope at a given location
+     */
+    override def getSymbolsInScope(position : Position) : Option[Vector[DocumentSymbol]] =
+        getRelevantInfo(position, {
+            case (uri, analyser, nodes) =>
+                nodes.collectFirst {
+                    case n => {
+                        val env = analyser.env(n)
+                        for (
+                            scope <- env;
+                            (name, entity) <- scope;
+                            kind <- getSymbolKind(entity);
+                            (idndef, decl) = idnDefFromEntity(entity);
+                            detail = hoverDocument(decl).layout
+                        ) yield new DocumentSymbol(
+                            name, kind, rangeOfNode(decl), rangeOfNode(idndef), detail
+                        )
+                    }
+                }
+        }).map(listToVector(_))
+
+    // Name analysis product support
     def nameDocument(tree : MiniJavaTree, analyser : SemanticAnalyser) : Document = {
 
         import analyser.entity

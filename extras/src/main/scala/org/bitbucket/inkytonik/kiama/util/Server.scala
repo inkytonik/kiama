@@ -298,6 +298,10 @@ class Services[N, T <: N, C <: Config](
             serverCapabilities.setDocumentSymbolProvider(true)
             serverCapabilities.setHoverProvider(true)
             serverCapabilities.setReferencesProvider(true)
+            serverCapabilities.setCompletionProvider(new CompletionOptions(
+                /* resolveProvider = */ false,
+                /* triggerCharacters = */ seqToJavaList(List("."))
+            ))
             serverCapabilities.setTextDocumentSync(TextDocumentSyncKind.Full)
             new InitializeResult(serverCapabilities)
         }
@@ -452,6 +456,40 @@ class Services[N, T <: N, C <: Config](
                         locations = references.map(server.locationOfNode(_))
                     ) yield locations.toArray
                 ).getOrElse(null)
+        )
+
+    def symbolKindToCompletionItemKind(skind : SymbolKind) : CompletionItemKind =
+        skind match {
+            case SymbolKind.Class    => CompletionItemKind.Class
+            case SymbolKind.Method   => CompletionItemKind.Method
+            case SymbolKind.Variable => CompletionItemKind.Variable
+            case SymbolKind.Field    => CompletionItemKind.Field
+            case _                   => null
+        }
+
+    def symbolToCompletionItem(symbol : DocumentSymbol) : CompletionItem = {
+        val comp = new CompletionItem();
+        comp.setLabel(symbol.getName())
+        comp.setKind(symbolKindToCompletionItemKind(symbol.getKind()))
+        comp.setDetail(symbol.getDetail())
+        comp
+    }
+
+    @JsonNotification("textDocument/completion")
+    def completion(params : TextDocumentPositionParams) : CompletableFuture[CompletionList] =
+        CompletableFutures.computeAsync(
+            (_ : CancelChecker) => {
+                val out = new CompletionList(
+                    seqToJavaList(
+                        (for (
+                            position <- positionOfNotification(params.getTextDocument, params.getPosition);
+                            symbols <- server.getSymbolsInScope(position);
+                            items = symbols.map(symbolToCompletionItem(_))
+                        ) yield items).getOrElse(Vector())
+                    )
+                )
+                out
+            }
         )
 
     // Workspace services

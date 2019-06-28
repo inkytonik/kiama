@@ -279,6 +279,13 @@ trait CompilerBase[N, T <: N, C <: Config] extends ServerWithConfig[N, T, C] {
      */
     def getSymbols(source : Source) : Option[Vector[DocumentSymbol]] =
         None
+
+    /**
+     * Return the symbols from a particular point in a document. Default
+     * is to return no symbols
+     */
+    def getSymbolsInScope(position : Position) : Option[Vector[DocumentSymbol]] =
+        None
 }
 
 /**
