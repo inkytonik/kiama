@@ -62,7 +62,7 @@ object IO {
         new BufferedReader(new StringReader(string))
 
     /**
-     * Createa a file with the given filename and content.
+     * Create a file with the given filename and content.
      */
     def createFile(filename : String, content : String) : Unit = {
         val writer = filewriter(filename)
