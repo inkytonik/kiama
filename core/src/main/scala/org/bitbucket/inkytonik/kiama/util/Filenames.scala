@@ -62,7 +62,7 @@ object Filenames {
         }
 
     /**
-     * Return a temporaray file name based on the current time. Append the
+     * Return a temporary file name based on the current time. Append the
      * suffix (default: nothing).
      */
     def makeTempFilename(suffix : String = "") : String = {
